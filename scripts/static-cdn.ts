@@ -4,9 +4,13 @@
 //   node scripts/static-cdn.ts verify                          CI: HEADs every key through the CDN (200, size, CORS)
 // CI needs STATIC_CDN_BASE and STATIC_CDN_UPLOAD_TOKEN. The token can never overwrite or delete anything.
 import { createHmac } from 'node:crypto'
+import { setDefaultResultOrder } from 'node:dns'
 import { readFileSync } from 'node:fs'
 import { extname, join } from 'node:path'
 import { CDN, cdnBase, listFiles, publicHash } from './static-cdn-base.ts'
+
+// GitHub-hosted runners have no IPv6 route while the CDN publishes AAAA records.
+setDefaultResultOrder('ipv4first')
 
 const DIST = 'dist'
 const PUBLIC = 'public'
@@ -60,8 +64,14 @@ async function put(tok: string, it: { key: string; body: Buffer; type: string })
 
 const mime = (f: string) => (CDN.mime as Record<string, string>)[extname(f).toLowerCase()] ?? 'application/octet-stream'
 
-async function head(url: string): Promise<Response> {
-  return fetch(url, { method: 'HEAD', headers: { Origin: 'https://cdn-check.invalid', 'Accept-Encoding': 'identity' } })
+async function head(url: string): Promise<{ ok: boolean; status: number; headers: Headers }> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await fetch(url, { method: 'HEAD', headers: { Origin: 'https://cdn-check.invalid', 'Accept-Encoding': 'identity' } })
+    } catch (e) {
+      if (attempt >= 2) return { ok: false, status: 0, headers: new Headers({ 'x-error': (e as Error).message }) }
+    }
+  }
 }
 
 async function upload(): Promise<void> {
