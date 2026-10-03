@@ -1,0 +1,54 @@
+/* Objective tracker (sits in the HUD's top-left stack under the quest line) and the one-time tip card.
+   Looks come from the ui-kit theme; this file only places things. */
+.ap-objective {
+  position: relative;
+  max-width: calc(var(--u) * 176);
+  padding: calc(var(--u) * 3) calc(var(--u) * 10) calc(var(--u) * 4) calc(var(--u) * 7);
+  background: linear-gradient(90deg, rgba(8, 11, 22, 0.86) 0%, rgba(14, 20, 36, 0.66) 70%, rgba(14, 20, 36, 0) 100%);
+  border-left: var(--u) solid var(--ap-info);
+  pointer-events: none;
+}
+.ap-objective[hidden] { display: none; }
+.ap-objective.is-new { animation: ap-rise 220ms ease-out both; }
+.ap-objective-title { display: flex; align-items: center; gap: calc(var(--u) * 4); color: var(--ap-info); }
+.ap-objective-text { white-space: normal; overflow-wrap: anywhere; color: var(--ap-text); }
+.ap-objective-text .ap-key { color: inherit; }
+.ap-objective-text .ap-key kbd { min-width: calc(var(--u) * 12); height: calc(var(--u) * 12); line-height: calc(var(--u) * 10); }
+.ap-objective-nav { display: flex; align-items: center; gap: calc(var(--u) * 4); margin-top: calc(var(--u) * 2); color: var(--ap-gold-hi); }
+.ap-objective-nav[hidden] { display: none; }
+.ap-objective-arrow {
+  display: inline-block;
+  width: calc(var(--u) * 9);
+  height: calc(var(--u) * 9);
+  background: var(--ap-gold-hi);
+  /* Points east at rotate(0); the tracker rotates it toward the target. */
+  clip-path: polygon(0 20%, 55% 20%, 55% 0, 100% 50%, 55% 100%, 55% 80%, 0 80%);
+  filter: drop-shadow(var(--u) var(--u) 0 var(--ap-ink));
+  transition: transform 160ms linear;
+}
+html.ap-battle-on .ap-objective { display: none; }
+
+/* index.html sets `#ap-ui > * { pointer-events: auto }`; the full-screen layer must stay click-through, only the card takes input. */
+#ap-ui > .ap-l-tips, .ap-l-tips { pointer-events: none; }
+.ap-l-tips { z-index: 30; display: flex; justify-content: center; align-items: flex-end; }
+.ap-layer.ap-l-tips[hidden] { display: none; }
+.ap-l-tips.is-top { align-items: flex-start; }
+.ap-l-tips.is-right { justify-content: flex-end; }
+.ap-l-tips.is-right .ap-tip { width: calc(var(--u) * 176); margin: 0 calc(var(--u) * 12) calc(var(--u) * 86) 0; }
+.ap-tip {
+  position: relative;
+  margin: calc(var(--u) * 22 + env(safe-area-inset-top, 0px)) 0 calc(var(--u) * 14 + var(--ap-bottom-inset, 0px) + env(safe-area-inset-bottom, 0px));
+  width: calc(var(--u) * 240);
+  max-width: calc(100% - var(--u) * 24);
+  pointer-events: auto !important;
+  cursor: pointer;
+  opacity: 0;
+}
+.ap-tip[hidden] { display: none; }
+.ap-tip.is-in { animation: ap-rise 260ms ease-out both; opacity: 1; }
+.ap-tip.is-out { opacity: 0; transition: opacity 260ms; }
+.ap-tip-title { display: flex; align-items: center; gap: calc(var(--u) * 5); color: var(--ap-gold-hi); margin-bottom: calc(var(--u) * 4); }
+.ap-tip-body { white-space: normal; overflow-wrap: anywhere; line-height: calc(var(--u) * 17); }
+.ap-tip-body .ap-key, .ap-tip-foot .ap-key { color: inherit; vertical-align: baseline; }
+.ap-tip-body .ap-key kbd, .ap-tip-foot .ap-key kbd { height: calc(var(--u) * 13); line-height: calc(var(--u) * 11); }
+.ap-tip-foot { margin-top: calc(var(--u) * 5); color: var(--ap-text-dim); font-size: calc(var(--u) * 9); text-align: right; }

@@ -14,6 +14,8 @@ import {
 import { createRenderer, createWorldView } from './render/index.ts'
 import { createChatUI, createHUD, createMinimap, createUIKit } from './ui/index.ts'
 import { createNetClient } from './net/index.ts'
+import { createOnboarding } from './onboarding/index.ts'
+import { validateTutorial } from './onboarding/config.ts'
 import { createFallbackBattleRunner, createFallbackScreens, createOverworld, GAME, validateGameContent, type MultiplayerHooks, type OverworldExt } from './world/index.ts'
 import { ownedKeyItem } from './world/save-ops.ts'
 import { flyLanding, resolvePlace } from './world/explore.ts'
@@ -151,6 +153,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   await new Promise((r) => setTimeout(r, 0))
   const world = buildWorld()
   const data: GameData = { ...CONTENT, world }
+  if (dbg.dev) for (const e of validateTutorial(world, worldAnchors(world))) console.warn(`[onboarding] ${e}`)
   const saves = createSaveManager({ world })
   if (dbg.dev && dbg.reset) localStorage.removeItem(`${CONTENT.config.save.storagePrefix}${dbg.slot}`)
   const stored = saves.load(dbg.slot)
@@ -260,6 +263,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     ...(screensMod?.questHudText ? { questText: screensMod.questHudText } : {}),
   })
   ctxObj.overworld = overworld
+  const onboarding = createOnboarding(ctx, overworld, uiRoot)
   if (!screensMod) console.warn('[game] screens module missing: using fallback screens')
   if (!battleMod) console.warn('[game] battle module missing: battles auto-resolve')
 
@@ -343,7 +347,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   function globalKeys(): void {
     if (input.pressed('debug')) { input.consume('debug'); debugOverlay.toggle() }
     if (modal || !overworld.free) return
-    if (input.pressed('menu')) { input.consume('menu'); void runModal(() => screens.pauseMenu()) }
+    if (input.pressed('menu')) { input.consume('menu'); onboarding.notifyMenuOpened(); void runModal(() => screens.pauseMenu()) }
     else if (input.pressed('map')) {
       input.consume('map')
       const fly = canFly()
@@ -382,6 +386,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         globalKeys()
         const battleUp = battleScreenUp()
         if (!battleUp) overworld.update(dt)
+        onboarding.update(dt)
         autosaveT -= dt
         if (autosaveT <= 0) { autosaveT = data.config.save.autosaveSeconds; ctx.persist('auto') }
         if (!battleUp && worldView.map) renderer.render(worldView.renderView(), dt)
@@ -394,6 +399,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   }
   requestAnimationFrame(frame)
   if (dbg.dev) (window as unknown as { __AP: GameContext }).__AP = ctx
+  if (dbg.dev) (window as unknown as { __apOnboarding: typeof onboarding }).__apOnboarding = onboarding
   if (dbg.dev) installDebugHooks(ctx, overworld, world, { flyTo: (id) => runModal(() => flyTo(id)) })
 
   // ---- title flow ---------------------------------------------------------
@@ -469,6 +475,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   await overworld.enterMap(startMap.map, startMap.x, startMap.y, startMap.facing, false)
   inWorld = true
   hud.setVisible(true)
+  onboarding.setVisible(true)
   minimap.setVisible(ctx.save.settings.showMinimap)
   chat.setVisible(true)
   hud.setMoney(ctx.save.money)

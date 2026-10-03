@@ -29,5 +29,5 @@
   "settingsMigrations": [
     {"id": "bgm-mute-20261003", "set": {"bgmVolume": 0}}
   ],
-  "defaultSettings": {"bgmVolume": 0, "sfxVolume": 0.8, "quality": "high", "pixelScale": 2, "dof": true, "bloom": true, "shadows": true, "textSpeed": "normal", "showMinimap": true, "showNames": true, "autoRun": false, "touchControls": "auto"}
+  "defaultSettings": {"bgmVolume": 0, "sfxVolume": 0.8, "quality": "high", "pixelScale": 2, "dof": true, "bloom": true, "shadows": true, "textSpeed": "normal", "showMinimap": true, "showNames": true, "showObjective": true, "showTips": true, "autoRun": false, "touchControls": "auto"}
 }

@@ -182,7 +182,8 @@ export function createScriptRunner(host: ScriptHost) {
       }
       case 'battle': {
         const r = await host.trainerBattle(s.trainer, npc)
-        if (isLoss(r) && GAME.battle.lossAbortsScript) { await host.blackout(); return 'abort' }
+        if (s.lossFlag && r !== null) ctx.save.flags[flagName(s.lossFlag)] = isLoss(r)
+        if (isLoss(r) && GAME.battle.lossAbortsScript && !s.lossContinues) { await host.blackout(); return 'abort' }
         return 'done'
       }
       case 'wildBattle': {

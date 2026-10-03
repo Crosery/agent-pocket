@@ -155,7 +155,12 @@ export interface OverworldSpec {
   spots: SpotSpec[]
 }
 
-export interface EncounterRules { minSlots: number; maxSpecies: number; rareMinOrder: number; nightPhase: string }
+export interface EncounterRules {
+  minSlots: number; maxSpecies: number; rareMinOrder: number; nightPhase: string
+  /** Early-game fairness: tables whose top level is <= maxLevel only hold species of rarity order <= maxOrder and,
+   * when `onlyTypes` is set, whose types are all listed (first matching entry wins). */
+  rarityLevelCaps?: { maxLevel: number; maxOrder: number; onlyTypes?: string[] }[]
+}
 
 export interface WorldSpec {
   overworld: OverworldSpec

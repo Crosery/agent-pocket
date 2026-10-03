@@ -1,0 +1,31 @@
+{
+  "objective": {
+    "refreshSec": 0.4,
+    "arrow": {"minDistance": 3, "stepsPerTile": 1},
+    "markers": [
+      {"flag": "ob:route1", "on": "region:entered", "region": "route-1"}
+    ],
+    "rules": [
+      {"id": "starter", "when": {"noFlag": ["starter"], "maxParty": 0}, "text": "tutorial.objective.starter", "target": ["origin-lab:professor"]},
+      {"id": "rival", "when": {"flag": ["starter"], "noFlag": ["rival:lab"]}, "text": "tutorial.objective.rival", "target": ["origin-lab:rival"]},
+      {"id": "route", "when": {"flag": ["rival:lab"], "noFlag": ["ob:route1"], "maxBadges": 0}, "text": "tutorial.objective.route", "target": ["route:route-1:1"]},
+      {"id": "catch", "when": {"flag": ["rival:lab"], "maxStat": {"caught": 0}, "maxBadges": 0}, "text": "tutorial.objective.catch", "target": ["route:route-1:3"]},
+      {"id": "heal", "when": {"flag": ["rival:lab"], "noFlag": ["ob:healed"], "maxBadges": 0}, "text": "tutorial.objective.heal", "target": ["town:origin:center", "town:opensource:center"]},
+      {"id": "gym1", "when": {"maxBadges": 0}, "text": "tutorial.objective.gym1", "target": ["town:opensource:gym"]},
+      {"id": "next", "fromQuest": "main", "text": "tutorial.objective.next", "textDone": "tutorial.objective.explore"}
+    ]
+  },
+  "tips": {
+    "layer": {"ttlSec": 11, "fadeMs": 260, "gapSec": 1.2},
+    "list": [
+      {"id": "move", "trigger": {"kind": "free", "delaySec": 1.2}, "text": "tutorial.tip.move", "expires": {"flag": ["starter"]}, "doneOn": "moved"},
+      {"id": "talk", "trigger": {"kind": "npcNear", "radius": 2}, "text": "tutorial.tip.talk", "expires": {"flag": ["rival:lab"]}, "doneOn": "dialogue"},
+      {"id": "menuHint", "trigger": {"kind": "free", "delaySec": 2.5, "needs": {"flag": ["starter"]}}, "text": "tutorial.tip.menuHint", "expires": {"minBadges": 1}},
+      {"id": "grass", "trigger": {"kind": "tallGrass"}, "text": "tutorial.tip.grass", "expires": {"minBadges": 1}},
+      {"id": "hurt", "trigger": {"kind": "hurt", "hpBelow": 0.5, "delaySec": 2}, "text": "tutorial.tip.hurt", "expires": {"flag": ["ob:healed"]}},
+      {"id": "battle", "trigger": {"kind": "battle", "delaySec": 1.6}, "text": "tutorial.tip.battle", "place": "right", "expires": {"minStat": {"battlesWon": 3}}},
+      {"id": "catch", "trigger": {"kind": "battle", "battleKinds": ["wild"], "delaySec": 1.6, "after": "battle"}, "text": "tutorial.tip.catch", "place": "right", "expires": {"minStat": {"caught": 1}}},
+      {"id": "menu", "trigger": {"kind": "menu", "delaySec": 0.5}, "text": "tutorial.tip.menu"}
+    ]
+  }
+}

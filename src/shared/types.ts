@@ -555,7 +555,8 @@ export type ScriptStep =
   | { op: 'takeMoney'; amount: number; failText?: string }
   | { op: 'giveCreature'; species?: string; pick?: SpeciesPick; level: number; shiny?: boolean }
   | { op: 'chooseStarter' }
-  | { op: 'battle'; trainer: string }
+  /** lossContinues: a loss does not black out or abort the script (story-scripted fights); lossFlag records win/loss. */
+  | { op: 'battle'; trainer: string; lossContinues?: boolean; lossFlag?: string }
   | { op: 'wildBattle'; species?: string; pick?: SpeciesPick; level: number; music?: string }
   | { op: 'heal' }
   | { op: 'shop'; items: string[] }
@@ -913,6 +914,9 @@ export interface Settings {
   textSpeed: 'slow' | 'normal' | 'fast' | 'instant'
   showMinimap: boolean
   showNames: boolean
+  /** Objective tracker in the HUD / one-time contextual tips (content/tutorial.json). */
+  showObjective: boolean
+  showTips: boolean
   autoRun: boolean
   touchControls: 'auto' | 'on' | 'off'
   /** Ids of one-time settings migrations (config.settingsMigrations) already applied to this save. */

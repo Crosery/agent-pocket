@@ -85,6 +85,8 @@ export function sanitizeSettings(raw: unknown, c: Content): Settings {
     textSpeed: oneOf(r.textSpeed, TEXT_SPEEDS, d.textSpeed),
     showMinimap: bool(r.showMinimap, d.showMinimap),
     showNames: bool(r.showNames, d.showNames),
+    showObjective: bool(r.showObjective, d.showObjective),
+    showTips: bool(r.showTips, d.showTips),
     autoRun: bool(r.autoRun, d.autoRun),
     touchControls: oneOf(r.touchControls, TOUCH_MODES, d.touchControls),
     migrations: [...applied, ...pending.map((m) => m.id)],
