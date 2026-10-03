@@ -1,10 +1,15 @@
 import { defineConfig } from 'vite'
+import { CDN, cdnBase, publicHash } from './scripts/static-cdn-base.ts'
 
 const SERVER_PORT = Number(process.env.AP_SERVER_PORT ?? 8787)
+// Static CDN (see scripts/static-cdn-base.ts): HTML stays on the origin, everything else loads from the CDN.
+const CDN_BASE = cdnBase()
+const PUBLIC_BASE = CDN_BASE ? `${CDN_BASE}${CDN.publicDir}${publicHash('public')}/` : null
 
 export default defineConfig({
   root: '.',
   publicDir: 'public',
+  define: { __AP_PUBLIC_BASE__: JSON.stringify(PUBLIC_BASE) },
   server: {
     port: 5173,
     host: true,
@@ -18,4 +23,7 @@ export default defineConfig({
     target: 'es2022',
     chunkSizeWarningLimit: 4000,
   },
+  experimental: CDN_BASE && PUBLIC_BASE
+    ? { renderBuiltUrl: (file, { type }) => (type === 'public' ? PUBLIC_BASE : CDN_BASE) + file.replace(/^\//, '') }
+    : {},
 })

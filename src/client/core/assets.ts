@@ -23,9 +23,13 @@ const TERRAIN_DIR = 'terrain/'
 
 const emptyManifest = (): AssetManifest => ({ creatures: [], characters: [], portraits: [], textures: [], models: [], items: [], bgm: [], ui: [] })
 
+/** Content-addressed CDN prefix for public/ in static CDN builds (vite.config.ts define), else null. */
+declare const __AP_PUBLIC_BASE__: string | null | undefined
+
 function baseUrl(): string {
   const env = (import.meta as { env?: { BASE_URL?: string } }).env
-  const b = env?.BASE_URL ?? '/'
+  const cdn = typeof __AP_PUBLIC_BASE__ === 'string' ? __AP_PUBLIC_BASE__ : null
+  const b = cdn ?? env?.BASE_URL ?? '/'
   return b.endsWith('/') ? b : `${b}/`
 }
 
@@ -79,6 +83,7 @@ export function createAssetStore(): AssetStore {
       tex = new THREE.Texture(blankCanvas(size[0], size[1]))
       const img = new Image()
       img.decoding = 'async'
+      img.crossOrigin = 'anonymous'   // CDN-hosted textures must be CORS-clean for WebGL
       img.onload = () => { tex.image = img; tex.needsUpdate = true }
       img.onerror = () => { tex.image = placeholders.canvas(ph.kind, ph.id); setup(tex, false); tex.needsUpdate = true }
       img.src = src

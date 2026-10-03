@@ -1,0 +1,19 @@
+{
+  "origin": "https://cdn.crosery.com",
+  "bucket": "crosery",
+  "prefix": "ap/static/",
+  "publicDir": "p/",
+  "uploadUrl": "https://up-z2.qiniup.com",
+  "tokenDays": 180,
+  "tokenMinRemainingHours": 2,
+  "fsizeLimit": 20971520,
+  "concurrency": 8,
+  "mime": {
+    ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".html": "text/html",
+    ".png": "image/png", ".webp": "image/webp", ".jpg": "image/jpeg", ".svg": "image/svg+xml", ".ico": "image/x-icon",
+    ".woff2": "font/woff2", ".woff": "font/woff", ".ttf": "font/ttf",
+    ".mp3": "audio/mpeg", ".ogg": "audio/ogg", ".wav": "audio/wav",
+    ".glb": "model/gltf-binary", ".gltf": "model/gltf+json", ".bin": "application/octet-stream", ".wasm": "application/wasm",
+    ".txt": "text/plain"
+  }
+}
