@@ -1,0 +1,10 @@
+{
+  "source": "assets_src/fonts/fusion-pixel-12px-zh_hans.woff2",
+  "output": "public/assets/fonts/fusion-pixel-12px-zh_hans.woff2",
+  "ranges": [[32, 126], [160, 255], [8192, 8303], [8592, 8703], [9472, 9727], [9728, 9983], [12288, 12351], [12352, 12447], [12448, 12543], [65280, 65519]],
+  "gb2312_level1_rows": [16, 55],
+  "scan": {
+    "roots": ["content", "src", "index.html", "tests", "sandbox", "docs", "README.md", "README_EN.md"],
+    "suffixes": [".json", ".ts", ".css", ".html", ".md", ".js"]
+  }
+}

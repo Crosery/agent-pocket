@@ -113,8 +113,9 @@ function scan(spec: ManifestSpec): string[] {
         continue
       }
       const ext = extname(name).toLowerCase()
-      if (!spec.ext.includes(ext) || name.startsWith('.') || name.startsWith('_') || name.endsWith(`.part${ext}`)) continue
-      ids.push(relative(base, p).slice(0, -ext.length).split('\\').join('/'))
+      if (!(spec.ext.includes(ext) || ext === '.webp') || name.startsWith('.') || name.startsWith('_') || name.endsWith(`.part${ext}`)) continue
+      const rel = relative(base, p).split('\\').join('/')
+      ids.push(ext === '.webp' ? rel : rel.slice(0, -ext.length))
     }
   }
   walk(base)

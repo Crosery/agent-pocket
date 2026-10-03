@@ -30,12 +30,15 @@ def scan() -> dict[str, list[str]]:
             for f in files:
                 if (
                     f.is_file()
-                    and f.suffix.lower() in spec["ext"]
+                    and (f.suffix.lower() in spec["ext"] or f.suffix.lower() == ".webp")
                     and not f.name.startswith((".", "_"))
                     and not f.name.endswith(".part" + f.suffix)
                 ):
-                    ids.add(f.relative_to(base).with_suffix("").as_posix())
-        out[kind] = sorted(ids)
+                    # .webp entries keep their extension (client default is the layout ext); webp wins over a stale sibling.
+                    rel = f.relative_to(base)
+                    ids.add(rel.as_posix() if f.suffix.lower() == ".webp" else rel.with_suffix("").as_posix())
+        webp = {i[:-5] for i in ids if i.endswith(".webp")}
+        out[kind] = sorted(i for i in ids if i.endswith(".webp") or i not in webp)
     return out
 
 
