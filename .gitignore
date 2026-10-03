@@ -9,7 +9,8 @@ assets_src/tmp/
 promo/out/
 promo/node_modules/
 promo/audio/*.wav
-assets_src/music/
+assets_src/music/*
+!assets_src/music/captions.json
 assets_src/backup_cute_pass/
 assets_src/logs/
 *.mp4
