@@ -202,7 +202,7 @@ test('creature prompts: every (stage, family size) in the roster has its own sta
     // (refs are private and absent from other checkouts; there only check jobs.json names a subset, in order)
     const fam = roster.find((r) => r.id === j.id)!.family
     const cand = ['assets_src/refs/creature/_style.png', `assets_src/refs/creature/${fam}.png`]
-    const want = existsSync(join(ROOT, 'assets_src/refs')) ? cand.filter((p) => existsSync(join(ROOT, p))) : cand.filter((p) => j.images.includes(p))
+    const want = existsSync(join(ROOT, 'assets_src/refs')) ? cand.filter((p) => existsSync(join(ROOT, p))) : cand.filter((p) => (j.images ?? []).includes(p))
     assert.deepEqual(j.images, want, `${j.id}: reference images`)
     assert.ok(j.prompt.startsWith('REFERENCE IMAGES: Image 1 '), `${j.id}: prompt must explain its reference images`)
   }
