@@ -70,6 +70,8 @@ The full cut is [`docs/readme/agent-pocket-promo-720p.mp4`](docs/readme/agent-po
 
 ## Quick start
 
+Play online at **https://ap.crosery.com** (preview: https://prev.ap.crosery.com). Branching, commit and release rules: [`docs/RELEASING.md`](docs/RELEASING.md).
+
 ```bash
 git clone https://github.com/Crosery/agent-pocket.git && cd agent-pocket
 npm install

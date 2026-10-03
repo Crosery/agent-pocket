@@ -1,0 +1,70 @@
+name: ci
+
+# Checks only; nothing here deploys or sees secrets. `verify` is the single required check.
+on:
+  pull_request:
+    branches: [main, stage]
+  push:
+    branches: [main, stage, 'task/**', 'dev/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/stage' }}
+
+jobs:
+  branch-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Branch rules (docs/RELEASING.md)
+        env:
+          EVENT: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref || github.ref_name }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          git fetch -q origin main stage
+          git merge-base --is-ancestor origin/main origin/stage \
+            || { echo "::error::stage must contain main (merge main back into stage after a hotfix)"; exit 1; }
+          if [ "$EVENT" = pull_request ] && [ "$BASE_REF" = main ] && [ "$HEAD_REF" != stage ] && [[ ! $HEAD_REF =~ ^hotfix/ ]]; then
+            echo "::error::PRs into main come from stage (or hotfix/*); task branches target stage"; exit 1
+          fi
+          case "$HEAD_REF" in
+            main|stage|dev/*) ;;
+            task/*) [[ $HEAD_REF =~ ^task/[0-9]+/[a-z0-9]+(_[a-z0-9]+)*$ ]] || { echo "::error::task branches are task/<issue>/<slug_with_underscores>"; exit 1; } ;;
+            hotfix/*) [[ $HEAD_REF =~ ^hotfix/[0-9]+/[a-z0-9]+(_[a-z0-9]+)*$ ]] || { echo "::error::hotfix branches are hotfix/<issue>/<slug>"; exit 1; } ;;
+            *) [ "$EVENT" = pull_request ] && { echo "::error::branch $HEAD_REF does not follow task/<issue>/<slug>"; exit 1; } ;;
+          esac
+
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install numpy pillow
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+        env:
+          AP_PERF_SCALE: 3
+      - run: npm run build
+
+  verify:
+    if: always()
+    needs: [branch-guard, check]
+    runs-on: ubuntu-latest
+    steps:
+      - run: '[ "${{ needs.branch-guard.result }}" = success ] && [ "${{ needs.check.result }}" = success ]'

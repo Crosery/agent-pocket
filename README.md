@@ -106,6 +106,8 @@
 
 ## 快速开始
 
+在线试玩：**https://ap.crosery.com**（预发布：https://prev.ap.crosery.com）。分支、提交和发布规则见 [`docs/RELEASING.md`](docs/RELEASING.md)。
+
 ### 1. 安装
 
 ```bash

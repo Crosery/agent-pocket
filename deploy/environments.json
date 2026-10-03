@@ -1,0 +1,4 @@
+{
+  "preview": { "label": "预发布", "origin": "https://prev.ap.crosery.com", "tag": "rc", "branch": "stage" },
+  "production": { "label": "正式", "origin": "https://ap.crosery.com", "tag": "final", "branch": "main" }
+}

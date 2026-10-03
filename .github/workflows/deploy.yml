@@ -1,74 +1,92 @@
 name: deploy
 
-# Merging to main ships to production (ap.crosery.com).
-# "Run workflow" on any branch ships it to preview (prev.ap.crosery.com).
+# Tag-driven releases (docs/RELEASING.md). Pushing a branch never deploys.
+#   vX.Y.Z-rc.N on a stage commit                         -> preview     prev.ap.crosery.com
+#   vX.Y.Z on that same commit after main fast-forwards  -> production  ap.crosery.com (environment approval)
 on:
   push:
-    branches: [main]
+    tags: ['v*']
   workflow_dispatch:
     inputs:
-      target:
-        description: prev = prev.ap.crosery.com, prod = ap.crosery.com
-        type: choice
-        options: [prev, prod]
-        default: prev
+      tag:
+        description: Existing release tag to (re)deploy
+        required: true
 
-concurrency:
-  group: deploy-${{ inputs.target || 'prod' }}
-  cancel-in-progress: false
-
-env:
-  TARGET: ${{ inputs.target || 'prod' }}
-  DEPLOY_HOST: 156.238.244.78
-  DEPLOY_USER: ap
-  # Optional Qiniu CDN (repo variables + secrets). When QINIU_CDN_BASE is unset the server serves all assets itself.
-  CDN_BASE: ${{ vars.QINIU_CDN_BASE }}
+permissions:
+  contents: read
 
 jobs:
-  deploy:
+  plan:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    outputs:
+      environment: ${{ steps.plan.outputs.environment }}
+      origin: ${{ steps.plan.outputs.origin }}
+      sha: ${{ steps.plan.outputs.sha }}
+      version: ${{ steps.plan.outputs.version }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - id: plan
+        run: bash deploy/release-plan.sh "${{ inputs.tag || github.ref_name }}" | tee -a "$GITHUB_OUTPUT"
 
+  deploy:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: ${{ needs.plan.outputs.environment }}
+      url: ${{ needs.plan.outputs.origin }}
+    concurrency:
+      group: deploy-${{ needs.plan.outputs.environment }}
+      cancel-in-progress: false
+    env:
+      ENVIRONMENT: ${{ needs.plan.outputs.environment }}
+      ORIGIN: ${{ needs.plan.outputs.origin }}
+      SHA: ${{ needs.plan.outputs.sha }}
+      VERSION: ${{ needs.plan.outputs.version }}
+      DEPLOY_HOST: 156.238.244.78
+      DEPLOY_USER: ap
+    steps:
+      - name: Deploy switch
+        if: (needs.plan.outputs.environment == 'preview' && vars.DEPLOY_PREVIEW_ENABLED != 'enabled') || (needs.plan.outputs.environment == 'production' && vars.DEPLOY_PRODUCTION_ENABLED != 'enabled')
+        run: echo "::error::DEPLOY_${ENVIRONMENT^^}_ENABLED is not 'enabled'" && exit 1
+
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.plan.outputs.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install numpy pillow
       - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-
-      - run: pip install numpy pillow
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
         env:
           AP_PERF_SCALE: 3
 
-      - name: Build
-        run: |
-          if [ -n "$CDN_BASE" ]; then
-            npx vite build --base "${CDN_BASE%/}/ap/${GITHUB_SHA}/"
-          else
-            npm run build
-          fi
-
-      - name: Upload static assets to Qiniu
-        if: env.CDN_BASE != ''
+      # Without an upload token the build stays same-origin instead of pointing at files that were never uploaded.
+      - name: Static CDN switch
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.QINIU_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.QINIU_SECRET_KEY }}
-          AWS_DEFAULT_REGION: ${{ vars.QINIU_REGION }}
-          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
-          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
-        run: >
-          aws s3 sync dist/ "s3://${{ vars.QINIU_BUCKET }}/ap/${GITHUB_SHA}/"
-          --endpoint-url "${{ vars.QINIU_S3_ENDPOINT }}"
-          --exclude index.html
-          --cache-control "public,max-age=31536000,immutable"
-          --only-show-errors
+          BASE: ${{ vars.STATIC_CDN_BASE }}
+          HAS_TOKEN: ${{ secrets.STATIC_CDN_UPLOAD_TOKEN != '' }}
+        run: |
+          if [ -n "$BASE" ] && [ "$HAS_TOKEN" = true ]; then echo "STATIC_CDN_BASE=$BASE" >> "$GITHUB_ENV"
+          elif [ -n "$BASE" ]; then echo "::warning::STATIC_CDN_UPLOAD_TOKEN missing: building same-origin"; fi
+
+      - run: npm run build
+      - name: Release stamp
+        run: node -e 'const e=process.env; require("fs").writeFileSync("dist/release.json", JSON.stringify({environment:e.ENVIRONMENT, version:e.VERSION, commit:e.SHA}))'
+
+      - name: Upload static assets to Qiniu CDN
+        if: env.STATIC_CDN_BASE != ''
+        env:
+          STATIC_CDN_UPLOAD_TOKEN: ${{ secrets.STATIC_CDN_UPLOAD_TOKEN }}
+        run: node scripts/static-cdn.ts upload && node scripts/static-cdn.ts verify
 
       - name: Ship release
         env:
@@ -79,12 +97,12 @@ jobs:
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
           SSH="ssh -i $HOME/.ssh/deploy -o IdentitiesOnly=yes"
-          R=/srv/ap/$TARGET/releases/$GITHUB_SHA
+          R=/srv/ap/$ENVIRONMENT/releases/$SHA
           $SSH "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p $R"
           rsync -az --delete -e "$SSH" src content dist deploy package.json package-lock.json "$DEPLOY_USER@$DEPLOY_HOST:$R/"
-          $SSH "$DEPLOY_USER@$DEPLOY_HOST" "bash $R/deploy/remote-deploy.sh $TARGET $GITHUB_SHA"
+          $SSH "$DEPLOY_USER@$DEPLOY_HOST" "bash $R/deploy/remote-deploy.sh $ENVIRONMENT $SHA"
 
       - name: Smoke test
         run: |
-          host=$([ "$TARGET" = prod ] && echo ap.crosery.com || echo prev.ap.crosery.com)
-          curl -fsS --retry 5 --retry-delay 3 -o /dev/null -w "https://$host -> %{http_code}\n" "https://$host/"
+          curl -fsS --retry 5 --retry-delay 3 "$ORIGIN/release.json" | tee /dev/stderr | grep -q "\"commit\":\"$SHA\""
+          curl -fsS -o /dev/null -w "$ORIGIN -> %{http_code}\n" "$ORIGIN/"
