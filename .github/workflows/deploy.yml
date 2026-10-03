@@ -36,9 +36,16 @@ jobs:
           node-version: 24
           cache: npm
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - run: pip install numpy pillow
       - run: npm ci
       - run: npm run typecheck
       - run: npm test
+        env:
+          AP_PERF_SCALE: 3
 
       - name: Build
         run: |

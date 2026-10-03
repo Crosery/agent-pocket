@@ -11,8 +11,9 @@ import { createNoise, fbm, fbm01, perlin, ridged, simplex, upsample, sampleField
 
 // Budgets for one 1024x1024 build (generous for slow CI machines; typical is ~1.7 s cold). Measured as process CPU
 // time (buildWorld is synchronous), so the parallel full suite on a busy host does not fail on CPU contention alone.
-const COLD_BUDGET_MS = 4000
-const WARM_BUDGET_MS = 3000
+// AP_PERF_SCALE loosens timing budgets on slower shared CI runners.
+const COLD_BUDGET_MS = 4000 * Number(process.env.AP_PERF_SCALE ?? 1)
+const WARM_BUDGET_MS = 3000 * Number(process.env.AP_PERF_SCALE ?? 1)
 const cpuMs = (since: NodeJS.CpuUsage) => { const u = process.cpuUsage(since); return (u.user + u.system) / 1000 }
 
 const c0 = process.cpuUsage()
