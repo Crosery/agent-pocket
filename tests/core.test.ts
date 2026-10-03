@@ -15,6 +15,12 @@ import { compileSong, getSong, midiToFreq, nextBar, noteToMidi, parseChord } fro
 import { cryRecipe } from '../src/client/core/audio-cry.ts'
 import { INPUT_CONFIG, boundActions } from '../src/client/core/input-config.ts'
 import { computeUiScale } from '../src/client/core/settings.ts'
+
+/** config.defaultSettings with the one-time settings migrations applied (what a fresh save holds). */
+function expectedDefaults(cfg = CONTENT.config) {
+  const ms = cfg.settingsMigrations ?? []
+  return { ...cfg.defaultSettings, ...Object.assign({}, ...ms.map((m) => m.set)), migrations: ms.map((m) => m.id) }
+}
 import { PH } from '../src/client/core/placeholders-data.ts'
 import { drawPlaceholder, TUFT_SUFFIX } from '../src/client/core/placeholders.ts'
 import { alphaAt } from '../src/client/core/pixel.ts'
@@ -114,7 +120,7 @@ test('newGame builds a complete save from config', () => {
   assert.equal(save.name, '小智')
   assert.ok(CONTENT.characterById[save.avatar]?.playable)
   assert.equal(save.money, cfg.economy.startMoney)
-  assert.deepEqual(save.settings, cfg.defaultSettings)
+  assert.deepEqual(save.settings, expectedDefaults(cfg))
   assert.equal(save.boxes.length, cfg.party.boxCount)
   assert.deepEqual(save.party, [])
   assert.equal(save.clockMinutes, cfg.time.startMinutes)
@@ -201,7 +207,7 @@ test('sanitize repairs hostile data', () => {
     position: { map: 'start', x: 999, y: 3, facing: 'sideways' },
     respawn: { map: 'nowhere', x: 1, y: 1, facing: 'down' },
     flags: { ok: 1, bad: { nested: true }, nan: Number.NaN },
-    settings: { bgmVolume: 7, sfxVolume: -1, quality: 'potato', textSpeed: 'fast', touchControls: 'on', pixelScale: 0 },
+    settings: { bgmVolume: 7, sfxVolume: -1, quality: 'potato', textSpeed: 'fast', touchControls: 'on', pixelScale: 0, migrations: (CONTENT.config.settingsMigrations ?? []).map((m) => m.id) },
     stats: { battlesWon: -3, caught: 2.5 },
     clockMinutes: -1,
     repelSteps: 'x',
@@ -245,9 +251,9 @@ test('sanitize repairs hostile data', () => {
 test('defaultSettings is a fresh copy of config.defaultSettings', () => {
   const saves = manager()
   const a = saves.defaultSettings()
-  assert.deepEqual(a, CONTENT.config.defaultSettings)
-  a.bgmVolume = 0
-  assert.notEqual(saves.defaultSettings().bgmVolume, 0)
+  assert.deepEqual(a, expectedDefaults())
+  a.sfxVolume = -5
+  assert.notEqual(saves.defaultSettings().sfxVolume, -5)
 })
 
 // ---------------------------------------------------------------------------

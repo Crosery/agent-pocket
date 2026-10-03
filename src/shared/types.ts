@@ -374,6 +374,8 @@ export interface GameConfig {
   camera: { fov: number; pitchDeg: number; zoomDistances: number[]; followDamping: number; lookAhead: number }
   render: { maxPointLights: number; shadowMapSize: number; internalHeight: Record<Settings['quality'], number> }
   defaultSettings: Settings
+  /** One-time overrides applied once to every save that hasn't seen them (e.g. a new default volume). */
+  settingsMigrations?: { id: string; set: Partial<Settings> }[]
 }
 
 export type TextTable = Record<string, string>
@@ -913,6 +915,8 @@ export interface Settings {
   showNames: boolean
   autoRun: boolean
   touchControls: 'auto' | 'on' | 'off'
+  /** Ids of one-time settings migrations (config.settingsMigrations) already applied to this save. */
+  migrations?: string[]
 }
 
 export interface SaveData {

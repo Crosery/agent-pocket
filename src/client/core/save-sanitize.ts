@@ -68,7 +68,10 @@ export function sanitizeName(raw: unknown, c: Content, fallback: string): string
 
 export function sanitizeSettings(raw: unknown, c: Content): Settings {
   const d = c.config.defaultSettings
-  const r = isObj(raw) ? raw : {}
+  const r0 = isObj(raw) ? raw : {}
+  const applied = Array.isArray(r0.migrations) ? r0.migrations.filter((x): x is string => typeof x === 'string') : []
+  const pending = (c.config.settingsMigrations ?? []).filter((m) => !applied.includes(m.id))
+  const r: Record<string, unknown> = Object.assign({}, r0, ...pending.map((m) => m.set))
   const qualities = Object.keys(c.config.render.internalHeight) as Settings['quality'][]
   const pixelScale = num(r.pixelScale)
   return {
@@ -84,6 +87,7 @@ export function sanitizeSettings(raw: unknown, c: Content): Settings {
     showNames: bool(r.showNames, d.showNames),
     autoRun: bool(r.autoRun, d.autoRun),
     touchControls: oneOf(r.touchControls, TOUCH_MODES, d.touchControls),
+    migrations: [...applied, ...pending.map((m) => m.id)],
   }
 }
 

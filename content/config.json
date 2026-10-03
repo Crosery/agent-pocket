@@ -26,5 +26,8 @@
   "save": {"autosaveSeconds": 60, "storagePrefix": "agent-pocket/save/", "version": 1},
   "camera": {"fov": 32, "pitchDeg": 36, "zoomDistances": [11, 16, 24], "followDamping": 6, "lookAhead": 1.2},
   "render": {"maxPointLights": 10, "shadowMapSize": 2048, "internalHeight": {"low": 300, "medium": 360, "high": 450, "ultra": 540}},
-  "defaultSettings": {"bgmVolume": 0.6, "sfxVolume": 0.8, "quality": "high", "pixelScale": 2, "dof": true, "bloom": true, "shadows": true, "textSpeed": "normal", "showMinimap": true, "showNames": true, "autoRun": false, "touchControls": "auto"}
+  "settingsMigrations": [
+    {"id": "bgm-mute-20261003", "set": {"bgmVolume": 0}}
+  ],
+  "defaultSettings": {"bgmVolume": 0, "sfxVolume": 0.8, "quality": "high", "pixelScale": 2, "dof": true, "bloom": true, "shadows": true, "textSpeed": "normal", "showMinimap": true, "showNames": true, "autoRun": false, "touchControls": "auto"}
 }
