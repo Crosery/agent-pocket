@@ -1,0 +1,83 @@
+name: deploy
+
+# Merging to main ships to production (ap.crosery.com).
+# "Run workflow" on any branch ships it to preview (prev.ap.crosery.com).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: prev = prev.ap.crosery.com, prod = ap.crosery.com
+        type: choice
+        options: [prev, prod]
+        default: prev
+
+concurrency:
+  group: deploy-${{ inputs.target || 'prod' }}
+  cancel-in-progress: false
+
+env:
+  TARGET: ${{ inputs.target || 'prod' }}
+  DEPLOY_HOST: 156.238.244.78
+  DEPLOY_USER: ap
+  # Optional Qiniu CDN (repo variables + secrets). When QINIU_CDN_BASE is unset the server serves all assets itself.
+  CDN_BASE: ${{ vars.QINIU_CDN_BASE }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+
+      - name: Build
+        run: |
+          if [ -n "$CDN_BASE" ]; then
+            npx vite build --base "${CDN_BASE%/}/ap/${GITHUB_SHA}/"
+          else
+            npm run build
+          fi
+
+      - name: Upload static assets to Qiniu
+        if: env.CDN_BASE != ''
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.QINIU_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.QINIU_SECRET_KEY }}
+          AWS_DEFAULT_REGION: ${{ vars.QINIU_REGION }}
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+        run: >
+          aws s3 sync dist/ "s3://${{ vars.QINIU_BUCKET }}/ap/${GITHUB_SHA}/"
+          --endpoint-url "${{ vars.QINIU_S3_ENDPOINT }}"
+          --exclude index.html
+          --cache-control "public,max-age=31536000,immutable"
+          --only-show-errors
+
+      - name: Ship release
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ vars.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -d -m700 ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          SSH="ssh -i $HOME/.ssh/deploy -o IdentitiesOnly=yes"
+          R=/srv/ap/$TARGET/releases/$GITHUB_SHA
+          $SSH "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p $R"
+          rsync -az --delete -e "$SSH" src content dist deploy package.json package-lock.json "$DEPLOY_USER@$DEPLOY_HOST:$R/"
+          $SSH "$DEPLOY_USER@$DEPLOY_HOST" "bash $R/deploy/remote-deploy.sh $TARGET $GITHUB_SHA"
+
+      - name: Smoke test
+        run: |
+          host=$([ "$TARGET" = prod ] && echo ap.crosery.com || echo prev.ap.crosery.com)
+          curl -fsS --retry 5 --retry-delay 3 -o /dev/null -w "https://$host -> %{http_code}\n" "https://$host/"
