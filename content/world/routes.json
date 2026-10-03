@@ -1,5 +1,5 @@
 [
-  {"id": "route-1", "nameZh": "1 号道路", "from": "origin", "fromExit": "west", "to": "opensource", "toExit": "east", "width": 2, "terrain": "path", "biome": "meadow", "music": "route", "levelRange": [3, 7], "encounterRate": 0.1, "roamingDensity": 0.6, "trainerSpots": 6},
+  {"id": "route-1", "nameZh": "1 号道路", "from": "origin", "fromExit": "west", "to": "opensource", "toExit": "east", "width": 2, "terrain": "path", "biome": "meadow", "music": "route", "levelRange": [3, 6], "encounterRate": 0.1, "roamingDensity": 0.6, "trainerSpots": 6},
   {"id": "route-2", "nameZh": "2 号道路", "from": "origin", "fromExit": "east", "to": "pixelport", "toExit": "west", "width": 2, "terrain": "path", "biome": "coast", "music": "route", "levelRange": [7, 12], "encounterRate": 0.1, "roamingDensity": 0.6, "trainerSpots": 7},
   {"id": "route-3", "nameZh": "3 号道路", "from": "opensource", "fromExit": "north", "to": "chord", "toExit": "south", "width": 2, "terrain": "path", "biome": "forest", "music": "route", "levelRange": [11, 16], "encounterRate": 0.1, "roamingDensity": 0.5, "trainerSpots": 7},
   {"id": "route-4", "nameZh": "4 号道路", "from": "chord", "fromExit": "north", "to": "retrieval", "toExit": "south", "width": 2, "terrain": "path", "biome": "desert", "music": "route", "levelRange": [16, 22], "encounterRate": 0.1, "roamingDensity": 0.5, "trainerSpots": 7},

@@ -37,6 +37,7 @@ import textBattleUi from '../../../content/text/zh-CN/battleui.json' with { type
 import textMultiplayer from '../../../content/text/zh-CN/multiplayer.json' with { type: 'json' }
 import textEvents from '../../../content/text/zh-CN/events.json' with { type: 'json' }
 import textResearch from '../../../content/text/zh-CN/research.json' with { type: 'json' }
+import textTutorial from '../../../content/text/zh-CN/tutorial.json' with { type: 'json' }
 // Gameplay content (content/events/**, content/research.json) is loaded by src/shared/gameplay/data.ts; only its
 // reference checks are hooked in here (both modules import JSON/types only, so there is no cycle).
 import { GAMEPLAY } from '../gameplay/data.ts'
@@ -139,7 +140,7 @@ function build(): Content {
     text: flattenText({
       common: textCommon, battle: textBattle, ui: textUi, hud: textHud, screens: textScreens, world: textWorld,
       net: textNet, game: textGame, items: textItems, audio: textAudio, battleui: textBattleUi, multiplayer: textMultiplayer,
-      events: textEvents, research: textResearch,
+      events: textEvents, research: textResearch, tutorial: textTutorial,
     }),
   }
 }

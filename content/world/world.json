@@ -94,6 +94,6 @@
     "accessStairSpacing": 18,
     "access": {"minPocket": 16, "maxRepairs": 900, "propCost": 4}
   },
-  "encounters": {"minSlots": 4, "maxSpecies": 10, "rareMinOrder": 2, "nightPhase": "night"},
+  "encounters": {"minSlots": 4, "maxSpecies": 10, "rareMinOrder": 2, "nightPhase": "night", "rarityLevelCaps": [{"maxLevel": 9, "maxOrder": 0, "onlyTypes": ["chat", "write", "sound", "vision", "motion"]}, {"maxLevel": 14, "maxOrder": 1}]},
   "text": {"gymSign": "{town}道馆\n{type}系 · {leader}", "routeSign": "{route}\n{from} ⇄ {to}", "caveSign": "{cave}\n通往{region}", "dungeonSign": "{dungeon}\n共 {floors} 层 · 推荐 Lv.{level}+"}
 }

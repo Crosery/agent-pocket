@@ -1,7 +1,7 @@
 {
   "nurse": [
     {"op": "say", "text": "欢迎来到{townName}智灵补给站！要让你的智灵休息一下吗？"},
-    {"op": "choice", "text": "要恢复智灵吗？", "options": ["拜托了", "不用了"], "branches": [[{"op": "say", "text": "好的，请把智灵交给我。正在清理上下文缓存……"}, {"op": "heal"}, {"op": "setRespawn"}, {"op": "say", "text": "久等了！你的智灵已经全部恢复。欢迎再来！"}], [{"op": "say", "text": "欢迎随时再来！"}]]}
+    {"op": "choice", "text": "要恢复智灵吗？", "options": ["拜托了", "不用了"], "branches": [[{"op": "say", "text": "好的，请把智灵交给我。正在清理上下文缓存……"}, {"op": "heal"}, {"op": "setFlag", "flag": "ob:healed"}, {"op": "setRespawn"}, {"op": "say", "text": "久等了！你的智灵已经全部恢复。欢迎再来！"}], [{"op": "say", "text": "欢迎随时再来！"}]]}
   ],
   "box": [
     {"op": "say", "text": "这台终端连着云端智灵仓库。队伍满了的话，新收服的智灵会自动存到这里。"},
@@ -73,10 +73,9 @@
   ],
   "rival-lab-battle": [
     {"op": "say", "text": "博士，我的搭档也选好了！——喂，新来的，来试试手吧！", "speaker": "零", "portrait": "rival"},
-    {"op": "rivalBattle", "battle": "lab"},
+    {"op": "rivalBattle", "battle": "lab", "lossContinues": true, "lossFlag": "rival:lab-lost"},
     {"op": "setFlag", "flag": "rival:lab"},
-    {"op": "say", "text": "啧……看来你的搭档和你很合得来嘛。", "speaker": "零", "portrait": "rival"},
-    {"op": "say", "text": "我先走一步了。下次见面，我可不会再输！", "speaker": "零", "portrait": "rival"},
+    {"op": "ifFlag", "flag": "rival:lab-lost", "then": [{"op": "heal"}, {"op": "say", "text": "哼，这次是我赢了！不过说真的，你的搭档也没有想象中那么弱。", "speaker": "零", "portrait": "rival"}, {"op": "say", "text": "我帮你把它们都治好了。记住：招式有相克，先看清对手的属性再出手。", "speaker": "零", "portrait": "rival"}, {"op": "say", "text": "我先走一步了。下次见面，我可不会手下留情！", "speaker": "零", "portrait": "rival"}], "else": [{"op": "say", "text": "啧……看来你的搭档和你很合得来嘛。", "speaker": "零", "portrait": "rival"}, {"op": "say", "text": "我先走一步了。下次见面，我可不会再输！", "speaker": "零", "portrait": "rival"}]},
     {"op": "hideNpc", "npc": "rival-lab"}
   ],
   "legend-call": [

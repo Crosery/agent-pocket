@@ -42,11 +42,12 @@ function nightBoost(s: SpeciesDef, c: Content): number {
 
 interface Candidate { s: SpeciesDef; min: number; max: number; w: number }
 
-function candidates(biomes: string[], range: Vec2, c: Content, allowStarters: boolean): Candidate[] {
+function candidates(biomes: string[], range: Vec2, c: Content, allowStarters: boolean, cap?: { maxOrder: number; onlyTypes?: string[] }): Candidate[] {
   const out: Candidate[] = []
   for (const s of c.speciesList) {
     if (s.starter && !allowStarters) continue
     if (!s.habitats.some((h) => biomes.includes(h))) continue
+    if (cap && ((c.rarityById[s.rarity]?.order ?? 0) > cap.maxOrder || (cap.onlyTypes && !s.types.every((ty) => cap.onlyTypes!.includes(ty))))) continue
     const w = baseWeight(s, c)
     if (w <= 0) continue
     const min = Math.max(range[0], wildMinLevel(s, c))
@@ -59,11 +60,12 @@ function candidates(biomes: string[], range: Vec2, c: Content, allowStarters: bo
 export function computeEncounters(q: EncounterQuery, rules: EncounterRules, seed: number, c: Content = CONTENT): EncounterSlot[] {
   const allBiomes = c.biomes.map((b) => b.id)
   const picked = new Map<string, Candidate>()
+  const cap = rules.rarityLevelCaps?.find((x) => q.levelRange[1] <= x.maxLevel)
   const tiers = [q.biomes, q.fallback, allBiomes]
   for (const allowStarters of [false, true]) {
     for (const tier of tiers) {
       if (picked.size >= rules.minSlots) break
-      const cands = candidates(tier, q.levelRange, c, allowStarters).filter((x) => !picked.has(x.s.id))
+      const cands = candidates(tier, q.levelRange, c, allowStarters, cap).filter((x) => !picked.has(x.s.id))
       // Deterministic per-region ordering; round-robin across rarities keeps tables varied.
       const salt = hashString(q.key)
       cands.sort((a, b) => hash3(seed, salt, hashString(a.s.id)) - hash3(seed, salt, hashString(b.s.id)) || a.s.dexNo - b.s.dexNo)

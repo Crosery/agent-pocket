@@ -630,7 +630,7 @@ class StoryBuilder implements PopHost {
           let chain: ScriptStep[] = []
           for (let k = this.starters.length - 1; k >= 0; k--) {
             const st = this.starters[k].id
-            const step: ScriptStep = { op: 'ifFlag', flag: this.sc.meta.flags.starter, equals: st, then: [{ op: 'battle', trainer: rivalTrainerId(key, st, this.sc.rival) }] }
+            const step: ScriptStep = { op: 'ifFlag', flag: this.sc.meta.flags.starter, equals: st, then: [{ op: 'battle', trainer: rivalTrainerId(key, st, this.sc.rival), ...(s.lossContinues ? { lossContinues: true } : {}), ...(typeof s.lossFlag === 'string' ? { lossFlag: s.lossFlag } : {}) }] }
             if (chain.length) step.else = chain
             chain = [step]
           }
