@@ -8,6 +8,9 @@
   "tokenMinRemainingHours": 2,
   "fsizeLimit": 20971520,
   "concurrency": 8,
+  "verifyConcurrency": 4,
+  "verifyRetries": 5,
+  "verifyBackoffMs": 500,
   "mime": {
     ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".html": "text/html",
     ".png": "image/png", ".webp": "image/webp", ".jpg": "image/jpeg", ".svg": "image/svg+xml", ".ico": "image/x-icon",

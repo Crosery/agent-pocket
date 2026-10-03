@@ -35,9 +35,9 @@ function plan(): { base: string; hash: string; bundles: Item[]; pub: Item[]; mar
 
 const cdnUrl = (key: string) => `${CDN.origin}/${key.split('/').map(encodeURIComponent).join('/')}`
 
-async function pool<T>(items: T[], fn: (x: T) => Promise<void>): Promise<void> {
+async function pool<T>(items: T[], fn: (x: T) => Promise<void>, width: number = CDN.concurrency): Promise<void> {
   let i = 0
-  await Promise.all(Array.from({ length: Math.min(CDN.concurrency, items.length) }, async () => { while (i < items.length) await fn(items[i++]) }))
+  await Promise.all(Array.from({ length: Math.min(width, items.length) }, async () => { while (i < items.length) await fn(items[i++]) }))
 }
 
 function token(): string {
@@ -65,12 +65,15 @@ async function put(tok: string, it: { key: string; body: Buffer; type: string })
 const mime = (f: string) => (CDN.mime as Record<string, string>)[extname(f).toLowerCase()] ?? 'application/octet-stream'
 
 async function head(url: string): Promise<{ ok: boolean; status: number; headers: Headers }> {
+  // CI runners reach the CDN over a lossy path: retry network errors and 5xx with backoff.
   for (let attempt = 0; ; attempt++) {
     try {
-      return await fetch(url, { method: 'HEAD', headers: { Origin: 'https://cdn-check.invalid', 'Accept-Encoding': 'identity' } })
+      const res = await fetch(url, { method: 'HEAD', headers: { Origin: 'https://cdn-check.invalid', 'Accept-Encoding': 'identity' } })
+      if (res.status < 500 || attempt >= CDN.verifyRetries) return res
     } catch (e) {
-      if (attempt >= 2) return { ok: false, status: 0, headers: new Headers({ 'x-error': (e as Error).message }) }
+      if (attempt >= CDN.verifyRetries) return { ok: false, status: 0, headers: new Headers({ 'x-error': String((e as Error).cause ?? e) }) }
     }
+    await new Promise((r) => setTimeout(r, CDN.verifyBackoffMs * 2 ** attempt))
   }
 }
 
@@ -90,10 +93,10 @@ async function verify(): Promise<void> {
   await pool([...p.bundles, ...p.pub], async (it) => {
     const res = await head(cdnUrl(it.key))
     const size = readFileSync(it.file).length
-    if (!res.ok) bad.push(`${res.status} ${it.key}`)
+    if (!res.ok) bad.push(`${res.status} ${it.key}${res.headers.get('x-error') ? ` (${res.headers.get('x-error')})` : ''}`)
     else if (Number(res.headers.get('content-length')) !== size) bad.push(`size ${res.headers.get('content-length')} != ${size} ${it.key}`)
     else if (!res.headers.get('access-control-allow-origin')) bad.push(`no CORS ${it.key}`)
-  })
+  }, CDN.verifyConcurrency)
   if (bad.length) die(`verify failed for ${bad.length} keys:\n${bad.slice(0, 20).join('\n')}`)
   console.log(`static-cdn: verified ${p.bundles.length + p.pub.length} keys via ${p.base}`)
 }
