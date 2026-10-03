@@ -45,7 +45,9 @@ jobs:
       ORIGIN: ${{ needs.plan.outputs.origin }}
       SHA: ${{ needs.plan.outputs.sha }}
       VERSION: ${{ needs.plan.outputs.version }}
-      DEPLOY_HOST: 156.238.244.78
+      # The game servers run on the home Arch; the HK VPS forwards DEPLOY_HOST:DEPLOY_PORT to its sshd.
+      DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+      DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
       DEPLOY_USER: ap
     steps:
       - name: Deploy switch
@@ -96,7 +98,7 @@ jobs:
           install -d -m700 ~/.ssh
           printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy && chmod 600 ~/.ssh/deploy
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
-          SSH="ssh -i $HOME/.ssh/deploy -o IdentitiesOnly=yes"
+          SSH="ssh -p $DEPLOY_PORT -i $HOME/.ssh/deploy -o IdentitiesOnly=yes"
           R=/srv/ap/$ENVIRONMENT/releases/$SHA
           $SSH "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p $R"
           rsync -az --delete -e "$SSH" src content dist deploy package.json package-lock.json "$DEPLOY_USER@$DEPLOY_HOST:$R/"

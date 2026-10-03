@@ -5,11 +5,12 @@ set -euo pipefail
 ENV=$1 SHA=$2 KEEP=${KEEP:-5} WAIT=${WAIT:-120}
 BASE=/srv/ap/$ENV
 PORT=$(sed -n 's/^PORT=//p' "/srv/ap/$ENV.env")
+HOST=$(sed -n 's/^AP_HOST=//p' "/srv/ap/$ENV.env"); HOST=${HOST:-127.0.0.1}
 PREV=$(readlink "$BASE/current" 2>/dev/null || true)
 log() { echo "$(date -Is) $*" | tee -a "$BASE/deploy-history.log"; }
 activate() { ln -sfn "$1" "$BASE/current.next" && mv -T "$BASE/current.next" "$BASE/current" && sudo /usr/bin/systemctl restart "ap@$ENV"; }
 # The server builds the world at boot (~25 s on this host), so allow a generous wait.
-healthy() { for _ in $(seq "$WAIT"); do curl -fsS "http://127.0.0.1:$PORT/release.json" 2>/dev/null | grep -q "\"commit\":\"$1\"" && return 0; sleep 1; done; return 1; }
+healthy() { for _ in $(seq "$WAIT"); do curl -fsS "http://$HOST:$PORT/release.json" 2>/dev/null | grep -q "\"commit\":\"$1\"" && return 0; sleep 1; done; return 1; }
 
 cd "$BASE/releases/$SHA"
 npm ci --omit=dev --ignore-scripts --no-audit --no-fund --loglevel=error

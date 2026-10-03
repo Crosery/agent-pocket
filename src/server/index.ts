@@ -137,7 +137,8 @@ if (isMain) {
   const port = Number(process.env.PORT) || NET.server.defaultPort
   const dataDir = process.env.AP_DATA_DIR ? resolve(process.env.AP_DATA_DIR) : resolve(PROJECT_ROOT, NET.store.defaultDir)
   const distDir = process.env.AP_DIST_DIR ? resolve(process.env.AP_DIST_DIR) : undefined
-  startServer({ port, dataDir, distDir }).then(
+  const host = process.env.AP_HOST || undefined
+  startServer({ port, host, dataDir, distDir }).then(
     (srv) => {
       const stop = () => { srv.close().then(() => process.exit(0), () => process.exit(1)) }
       process.once('SIGINT', stop)
