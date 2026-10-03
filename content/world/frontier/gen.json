@@ -1,0 +1,103 @@
+{
+  "chunkSize": 64,
+  "cache": {"chunks": 320, "sites": 2048, "edges": 4096, "regions": 2048, "interiors": 64, "sampleChunks": 512, "layouts": 256, "sampleCounters": 4096},
+  "sampleSheetAfter": 48,
+  "lattice": 4,
+  "continent": {
+    "large": {"scale": 1500, "octaves": 3, "gain": 0.5, "lacunarity": 2.1, "salt": "fx-cont-large"},
+    "mid": {"scale": 420, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "fx-cont-mid"},
+    "small": {"scale": 80, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-cont-small"},
+    "weights": [0.55, 0.32, 0.13],
+    "contrast": 2.3,
+    "seaLevel": 0.5,
+    "shallowBand": 0.022,
+    "inlandRange": 0.32,
+    "archipelago": {"mask": {"scale": 900, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-arch-mask"}, "islands": {"scale": 46, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-arch-isles"}, "maskRange": [0.52, 0.7], "amplitude": 0.55},
+    "moat": {"depth": 0.7, "near": 26, "far": 230},
+    "beachInland": 0.05
+  },
+  "height": {
+    "inlandLevels": 6,
+    "coastRamp": 0.18,
+    "erosion": {"scale": 700, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-erosion"},
+    "erosionRange": [0.36, 0.62],
+    "hills": {"scale": 120, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "fx-hills"},
+    "hillAmp": 2.4,
+    "mountains": {"mask": {"scale": 1100, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-mount-mask"}, "maskRange": [0.5, 0.66], "ridge": {"scale": 280, "octaves": 3, "gain": 0.5, "lacunarity": 2.1, "salt": "fx-mount-ridge"}, "amplitude": 9, "pass": {"scale": 140, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-mount-pass"}, "passRange": [0.56, 0.68], "passDepth": 0.8},
+    "plateaus": {"noise": {"scale": 190, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "fx-plateau"}, "threshold": 0.6, "edge": 0.02, "amplitude": 3, "moistureMax": 0.42},
+    "canyons": {"noise": {"scale": 240, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "fx-canyon"}, "threshold": 0.9, "depth": 4, "moistureMax": 0.4},
+    "detail": {"scale": 22, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-detail"},
+    "detailAmp": 0.35,
+    "maxLevel": 15,
+    "hillFlat": 0.35
+  },
+  "climate": {
+    "temperature": {"noise": {"scale": 1700, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "fx-temp"}, "contrast": 1.45, "latitude": {"gain": 0.12, "scale": 2400}, "lapse": 0.012},
+    "moisture": {"noise": {"scale": 1100, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "fx-moist"}, "contrast": 1.6, "coast": {"range": 0.12, "boost": 0.12}},
+    "weirdness": {"noise": {"scale": 1300, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "fx-weird"}, "contrast": 1.45, "perThousand": 0.025, "max": 0.12},
+    "volcanic": {"noise": {"scale": 800, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-volcanic"}, "contrast": 1.6},
+    "jitter": {"noise": {"scale": 26, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-climate-jitter"}, "amplitude": 0.05, "weights": {"t": 1, "m": -0.7, "w": 0.5, "volc": 1}}
+  },
+  "rivers": {
+    "noise": {"scale": 560, "octaves": 2, "gain": 0.45, "lacunarity": 2.2, "salt": "fx-river"},
+    "warp": {"x": {"scale": 210, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-river-wx"}, "y": {"scale": 210, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-river-wy"}, "amplitude": 70},
+    "size": {"scale": 700, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-river-size"},
+    "sizeCutoff": 0.42,
+    "width": [1, 5],
+    "deepMin": 2.5,
+    "bank": 1,
+    "valley": 9,
+    "valleyDepth": 2.2,
+    "gradStep": 2,
+    "moistureMin": 0.18,
+    "rapidsProp": "rock_small",
+    "rejectAbove": 0.07,
+    "strengthRamp": 0.2,
+    "carveMin": 0.4
+  },
+  "lakes": {"noise": {"scale": 170, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-lake"}, "threshold": 0.7, "deep": 0.025, "blend": 0.08, "moistureMin": 0.45, "mountainMax": 1.5, "inlandMin": 0.12, "coastFade": 0.3, "levelOffset": 0.3},
+  "ledges": {"noise": {"scale": 14, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-ledge"}},
+  "stairs": {"salt": "fx-stairs"},
+  "levels": {
+    "curve": [[0, 6], [300, 12], [700, 21], [1200, 31], [2000, 43], [3200, 56], [5000, 70], [8000, 84], [12000, 96]],
+    "span": 6,
+    "dangerDistances": [0, 600, 1500, 3000, 5000, 8000],
+    "dangerLevelBonus": [0, 1, 2, 3, 4, 5],
+    "rareBoost": [1, 1.3, 1.7, 2.2, 2.8, 3.5],
+    "encounterRate": [0.1, 0.105, 0.11, 0.115, 0.12, 0.125],
+    "roaming": [0.55, 0.65, 0.75, 0.85, 0.95, 1.05],
+    "nestDangerBonus": 1
+  },
+  "provinces": {
+    "cell": 300,
+    "jitter": 0.8,
+    "warp": {"x": {"scale": 160, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-prov-wx"}, "y": {"scale": 160, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-prov-wy"}, "amplitude": 70}
+  },
+  "roads": {"terrain": "path", "bridge": "bridge", "stairs": "stairs", "maxSeaRun": 70, "maxGap": 2, "skip": 0.12, "bend": [0.3, 0.7], "profileStep": 3, "smooth": 9, "cornerFree": 2, "signOffset": 3, "stop": {"plazaPad": 0.5, "poi": 2.5}},
+  "causeways": {
+    "specs": [
+      {"id": "south", "side": "south", "at": 0.5, "zones": ["meadow", "coast", "forest"], "search": 260},
+      {"id": "west", "side": "west", "at": 0.6, "zones": ["desert", "forest", "swamp", "meadow"], "search": 260},
+      {"id": "east", "side": "east", "at": 0.78, "zones": ["coast", "meadow"], "search": 220},
+      {"id": "southwest", "side": "south", "at": 0.18, "zones": ["forest", "meadow", "desert"], "search": 160}
+    ],
+    "terrain": "causeway",
+    "landLevelMax": 1,
+    "gateway": {"distance": 96, "radius": 70, "bump": 0.75, "land": 34, "wobble": 16, "core": 24, "coreInland": 0.25},
+    "onwardCells": 5,
+    "minRun": 2,
+    "offsetCost": 0.25,
+    "candidates": 24,
+    "spacing": 24
+  },
+  "encounters": {"minSlots": 4, "maxSpecies": 10, "rareMinOrder": 2, "nightPhase": "night"},
+  "rarityDefaults": {
+    "N": {"spawn": ["grass", "visible"], "minDistance": 0, "distanceWeightPer1000": -0.08, "fleeChancePerTurn": 0, "fleeAfterTurn": 99, "roamSpeed": 1, "avoidPlayer": false, "cue": "none"},
+    "R": {"spawn": ["grass", "visible"], "minDistance": 0, "distanceWeightPer1000": 0.1, "fleeChancePerTurn": 0, "fleeAfterTurn": 99, "roamSpeed": 1, "avoidPlayer": false, "cue": "none"},
+    "SR": {"spawn": ["grass", "visible"], "minDistance": 250, "distanceWeightPer1000": 0.35, "fleeChancePerTurn": 0.05, "fleeAfterTurn": 3, "roamSpeed": 1.1, "avoidPlayer": false, "cue": "sparkle"},
+    "SSR": {"spawn": ["grass", "visible"], "minDistance": 900, "distanceWeightPer1000": 0.5, "fleeChancePerTurn": 0.1, "fleeAfterTurn": 2, "roamSpeed": 1.2, "avoidPlayer": true, "cue": "aura"},
+    "UR": {"spawn": ["visible", "event"], "minDistance": 2000, "distanceWeightPer1000": 0.6, "fleeChancePerTurn": 0.15, "fleeAfterTurn": 2, "roamSpeed": 1.35, "avoidPlayer": true, "cue": "aura"},
+    "MYTHIC": {"spawn": ["legend"], "minDistance": 4000, "distanceWeightPer1000": 0.5, "fleeChancePerTurn": 0, "fleeAfterTurn": 99, "roamSpeed": 1.5, "avoidPlayer": true, "cue": "legend"}
+  },
+  "decor": {"seaStacks": {"prop": "rock_large", "density": 0.0016, "minDepth": 0.03}, "rapidsChance": 0.5, "pathDistCap": 8}
+}

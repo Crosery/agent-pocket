@@ -1,0 +1,108 @@
+{
+  "text": {"name": "events.ev.{id}.name", "description": "events.ev.{id}.desc"},
+  "scheduler": {"checkEveryMinutes": 1, "maxActive": 5, "maxStartsPerCheck": 1, "localRadius": 28, "regionRadius": 120, "placeRing": [4, 9], "trainerSightRange": 4},
+  "rumor": {"hiddenWeight": 2, "visibleWeight": 1, "chainWeight": 3, "legendWeight": 1.5, "flagPrefix": "rumor:", "heardWeightMul": 0.3},
+  "visible": {"areaTiles": 48, "conditionBonus": 1.4},
+  "legends": {"bandEdges": [0, 380, 900, 1600, 2600], "bandStep": 1200, "rotationDays": 3, "hopMinutes": 240, "blinkDivisor": 4, "appearRadius": 26, "senseRadius": 90, "pingFuzz": 48, "pingSlotMinutes": 120, "fleeRestMinutes": 180, "levelByBand": [40, 50, 58, 66, 74], "levelPerExtraBand": 4, "snapRadius": 12, "edgeMargin": 0.08},
+  "typeAffinity": {
+    "time": {"night": {"chaos": 1.3, "code": 1.25, "sound": 1.15}, "dawn": {"safety": 1.3, "logic": 1.25, "write": 1.1}, "dusk": {"write": 1.3, "sound": 1.25, "motion": 1.2}, "day": {"chat": 1.2, "agent": 1.2, "vision": 1.2, "search": 1.1}},
+    "weather": {"clear": {"vision": 1.15, "chat": 1.1}, "rain": {"open": 1.4, "write": 1.3, "sound": 1.15}, "fog": {"chaos": 1.6, "search": 1.3}, "snow": {"safety": 1.35, "logic": 1.2}, "sand": {"search": 1.4, "motion": 1.3, "agent": 1.1}, "aurora": {"safety": 1.7, "logic": 1.4, "vision": 1.2}, "ash": {"compute": 1.7, "code": 1.35}}
+  },
+  "typeConditions": {
+    "chat": [
+      {"hourRange": [11, 14]},
+      {"hourRange": [19, 22]}
+    ],
+    "logic": [
+      {"timeOfDay": ["dawn"]},
+      {"weather": ["snow", "aurora"]}
+    ],
+    "code": [
+      {"hourRange": [22, 3]},
+      {"weather": ["ash"]}
+    ],
+    "write": [
+      {"weather": ["rain"]},
+      {"timeOfDay": ["dusk"]}
+    ],
+    "vision": [
+      {"timeOfDay": ["day"], "weather": ["clear"]},
+      {"weather": ["aurora"]}
+    ],
+    "motion": [
+      {"timeOfDay": ["dusk"]},
+      {"weather": ["sand"]}
+    ],
+    "sound": [
+      {"timeOfDay": ["night"], "weather": ["clear"]},
+      {"weather": ["rain"]}
+    ],
+    "search": [
+      {"weather": ["fog"]},
+      {"weather": ["sand"]}
+    ],
+    "agent": [
+      {"timeOfDay": ["day"], "minDistance": 300},
+      {"regionDangerAtLeast": 2}
+    ],
+    "open": [
+      {"weather": ["rain"]},
+      {"dayOfWeek": [0, 6]}
+    ],
+    "compute": [
+      {"weather": ["ash"]},
+      {"biomes": ["volcano", "city", "ashlands", "circuit"], "timeOfDay": ["night"]}
+    ],
+    "chaos": [
+      {"timeOfDay": ["night"]},
+      {"weather": ["fog"]}
+    ],
+    "safety": [
+      {"weather": ["aurora", "snow"]},
+      {"timeOfDay": ["dawn"]}
+    ]
+  },
+  "speciesConditions": {
+    "sora-2": [
+      {"eventsActive": ["server-outage"]},
+      {"weather": ["fog"], "timeOfDay": ["night"]}
+    ],
+    "claude-mythos-preview": [
+      {"biomes": ["ruins", "glitch"], "timeOfDay": ["night"]},
+      {"weather": ["fog"]}
+    ],
+    "notebooklm": [
+      {"weather": ["rain"]},
+      {"nearPlace": ["monolith", "ruins"]}
+    ],
+    "gemini-live": [
+      {"realHourRange": [19, 23]},
+      {"timeOfDay": ["dusk"]}
+    ],
+    "deepseek-r1": [
+      {"hourRange": [0, 6]},
+      {"weather": ["snow"]}
+    ],
+    "gpt-5-5": [
+      {"weather": ["rain"], "biomes": ["meadow", "swamp", "lavender", "mangrove"]},
+      {"timeOfDay": ["dusk"]}
+    ],
+    "midjourney-v8": [
+      {"timeOfDay": ["dusk"], "weather": ["clear"]},
+      {"weather": ["aurora"]}
+    ],
+    "chatgpt-dots": [
+      {"hourRange": [8, 10]},
+      {"hourRange": [17, 19]}
+    ]
+  },
+  "pickExcludeRarities": ["UR", "MYTHIC"],
+  "cues": {
+    "aura": ["aura-soft", "aura-epic", "aura-legend", "aura-mythic", "aura-festival", "aura-illusion", "aura-glitch"],
+    "spawn": ["dust", "sparkle-soft", "sparkle-epic", "legend-arrive", "mythic-arrive"],
+    "notice": ["exclaim", "question", "shy"],
+    "flee": ["dust", "blink-out", "legend-depart"],
+    "ping": ["ping-legend", "ping-mythic", "ping-event"],
+    "ambience": ["lanterns", "fireworks", "hearts", "confetti", "hallucination", "moon", "binaryRain", "pumpkin", "snowglow", "gpuHeat", "contextStorm", "tokenRain", "eclipse", "lightsOut", "distill", "rateLimit", "deadline", "benchmark", "alarm", "starfall", "aurora", "steleGlow", "glitch", "sakuraStorm", "circuitPulse", "synapse", "cloudSea", "bioluminescence", "legend-chat", "legend-stars", "legend-sun", "legend-code", "legend-light", "legend-snow", "legend-verse", "legend-dream", "legend-aurora", "legend-wind", "legend-music", "legend-sea", "legend-moon", "legend-heat", "legend-thunder"]
+  }
+}

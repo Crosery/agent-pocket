@@ -1,0 +1,24 @@
+node_modules/
+dist/
+data/server/
+assets_src/raw/
+assets_src/tmp/
+*.log
+.DS_Store
+# large / generated / local-only
+promo/out/
+promo/node_modules/
+promo/audio/*.wav
+assets_src/music/
+assets_src/backup_cute_pass/
+assets_src/logs/
+*.mp4
+!docs/readme/*.mp4
+promo/audio/raw/
+# private / machine-local (security)
+assets_src/pipeline.local.json
+assets_src/refs/
+docs/HANDOFF.md
+docs/handoff/
+__pycache__/
+*.pyc

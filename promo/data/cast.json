@@ -1,0 +1,182 @@
+{
+ "_doc": "Which creatures appear where (species ids from data/game.json). Order matters. The user's nine-heroine cast (key art public/assets/ui/title.png) in-game: deepseek-v4 (lead), gpt-6-astra, gemini-argon, claude-opus, minimax-h3, kimi-k3, qwen3-8-max, glm-5-3, grok-4-7. DeepSeek-V4 is the one caught in 'catch' and the player's partner from then on.",
+ "reveal": "gpt-35",
+ "faces": [
+  "doubao-app",
+  "midjourney-v7",
+  "sora-2",
+  "suno-v6",
+  "yuanbao",
+  "openclaw",
+  "neuro-sama",
+  "nano-banana-2",
+  "github-copilot",
+  "seedance-2-5",
+  "cursor",
+  "wan-3",
+  "mimo-v2-6-pro",
+  "claude-code",
+  "genie-3",
+  "unitree-gd01"
+ ],
+ "facesBeats": [
+  2,
+  2,
+  2,
+  2,
+  1,
+  1,
+  1,
+  1,
+  0.5,
+  0.5,
+  0.5,
+  0.5,
+  0.5,
+  0.5,
+  0.5,
+  0.5
+ ],
+ "rarity": [
+  {
+   "tier": "N",
+   "id": "codex-2021",
+   "beat": 0
+  },
+  {
+   "tier": "R",
+   "id": "kimi-chat",
+   "beat": 2
+  },
+  {
+   "tier": "SR",
+   "id": "gemini-2-5-pro",
+   "beat": 4
+  },
+  {
+   "tier": "SSR",
+   "id": "deepseek-r1",
+   "beat": 6
+  },
+  {
+   "tier": "UR",
+   "id": "chatgpt",
+   "beat": 8
+  },
+  {
+   "tier": "MYTHIC",
+   "id": "agi",
+   "beat": 12
+  }
+ ],
+ "world": {
+  "hero": "hero_engineer",
+  "partner": "deepseek-v4",
+  "extras": [
+   "gpt-6-astra",
+   "gemini-argon",
+   "claude-opus",
+   "kimi-k3",
+   "qwen3-8-max",
+   "minimax-h3",
+   "glm-5-3",
+   "grok-4-7"
+  ]
+ },
+ "together": [
+  {
+   "character": "hero_engineer",
+   "partner": "deepseek-v4"
+  },
+  {
+   "character": "hero_hacker",
+   "partner": "gemini-flash"
+  }
+ ],
+ "battle": {
+  "left": "deepseek-v4",
+  "right": "gemini-flash",
+  "bg": "battle_bg_meadow",
+  "attacks": [
+   {
+    "by": "left",
+    "dash": 1.5,
+    "hit": 2,
+    "dmg": 0.62,
+    "super": true
+   },
+   {
+    "by": "right",
+    "dash": 5.5,
+    "hit": 6,
+    "dmg": 0.3,
+    "super": false
+   }
+  ]
+ },
+ "multiply": {
+  "seed": 20261003,
+  "grids": [
+   [
+    2,
+    2,
+    2,
+    272
+   ],
+   [
+    4,
+    4,
+    1,
+    136
+   ],
+   [
+    8,
+    8,
+    0.5,
+    68
+   ],
+   [
+    19,
+    10,
+    0.5,
+    64
+   ]
+  ]
+ },
+ "displayNames": {
+  "_doc": "promo-only on-screen names: the game's nameZh with its bracketed gloss dropped (full-width brackets open wide gaps in the pixel face)",
+  "chatgpt": "ChatGPT",
+  "gemini-argon": "Gemini 4 Argon",
+  "gpt-6-astra": "GPT-6 Astra",
+  "deepseek-v4": "DeepSeek-V4",
+  "sora-2": "Sora 2",
+  "neuro-sama": "Neuro-sama"
+ },
+ "items": [
+  "prompt-ball"
+ ],
+ "tufts": [
+  "tall_grass_tuft",
+  "dark_grass_tuft"
+ ],
+ "catch": {
+  "wild": "deepseek-v4",
+  "ball": "prompt-ball",
+  "tuft": "tall_grass_tuft",
+  "tuftBack": "dark_grass_tuft",
+  "_doc": "the wild one is the partner of the world/together/battle plates: caught here, it travels with the player from then on"
+ },
+ "heroines": [
+  "deepseek-v4",
+  "gpt-6-astra",
+  "gemini-argon",
+  "claude-opus",
+  "minimax-h3",
+  "kimi-k3",
+  "qwen3-8-max",
+  "glm-5-3",
+  "grok-4-7"
+ ],
+ "_heroines": "the reveal's 'meet them' arc: first = centre (lands on the bar), the rest pop on eighths alternating left/right outward",
+ "_faces": "other species than the heroines (who were just introduced together in the reveal): breadth of the roster"
+}

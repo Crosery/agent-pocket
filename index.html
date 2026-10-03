@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0d1a" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="智灵口袋 · Agent Pocket —— 收集当下最火的 AI 智灵，在 HD-2D 像素开放世界里冒险、对战、交易。" />
+  <title>智灵口袋 · Agent Pocket</title>
+  <link rel="preload" href="/assets/fonts/fusion-pixel-12px-zh_hans.woff2" as="font" type="font/woff2" crossorigin />
+  <style>
+    @font-face { font-family: 'FusionPixel'; src: url('/assets/fonts/fusion-pixel-12px-zh_hans.woff2') format('woff2'); font-display: swap; }
+    html, body { margin: 0; height: 100%; background: #05060d; overflow: hidden; overscroll-behavior: none; touch-action: none; }
+    body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+    #app { position: fixed; inset: 0; overflow: hidden; }
+    #ap-canvas { position: absolute; left: 0; top: 0; display: block; image-rendering: pixelated; outline: none; }
+    #ap-ui { position: absolute; inset: 0; pointer-events: none; }
+    #ap-ui > * { pointer-events: auto; }
+
+    #ap-loading {
+      position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center;
+      background: radial-gradient(ellipse at 50% 40%, #1b1f3d 0%, #0b0d1a 60%, #05060d 100%);
+      color: #f3ecd2; font-family: 'FusionPixel', 'PingFang SC', 'Microsoft YaHei', monospace;
+      transition: opacity 420ms steps(6);
+    }
+    #ap-loading.is-done { opacity: 0; pointer-events: none; }
+    #ap-loading[hidden] { display: none; }
+    .ap-loading__box { display: flex; flex-direction: column; align-items: center; gap: 14px; width: min(360px, 80vw); }
+    .ap-loading__orb {
+      width: 32px; height: 32px; image-rendering: pixelated;
+      background:
+        linear-gradient(#0b0d1a 0 0) 12px 4px / 8px 4px no-repeat,
+        linear-gradient(#ffd34d 0 0) 8px 8px / 16px 4px no-repeat,
+        linear-gradient(#ffd34d 0 0) 4px 12px / 24px 8px no-repeat,
+        linear-gradient(#f3ecd2 0 0) 4px 20px / 24px 4px no-repeat,
+        linear-gradient(#f3ecd2 0 0) 8px 24px / 16px 4px no-repeat,
+        linear-gradient(#0b0d1a 0 0) 4px 16px / 24px 2px no-repeat;
+      animation: ap-bob 900ms steps(2) infinite;
+    }
+    @keyframes ap-bob { 50% { transform: translateY(-4px); } }
+    .ap-loading__title { font-size: 32px; letter-spacing: 6px; text-shadow: 3px 3px 0 #3a2d6b, 0 0 18px rgba(255, 211, 77, 0.35); }
+    .ap-loading__sub { font-size: 12px; letter-spacing: 4px; color: #9aa3d8; margin-top: -8px; }
+    .ap-loading__bar { width: 100%; height: 12px; padding: 2px; box-sizing: border-box; background: #05060d; border: 2px solid #f3ecd2; box-shadow: 0 0 0 2px #3a2d6b; }
+    .ap-loading__fill { height: 100%; width: 0; background: repeating-linear-gradient(90deg, #ffd34d 0 6px, #f0a83a 6px 8px); transition: width 160ms steps(4); }
+    .ap-loading__label { font-size: 12px; color: #c9c3e8; min-height: 1.4em; text-align: center; }
+    #ap-loading.is-error .ap-loading__label { color: #ff9b8a; }
+    .ap-loading__retry { font: inherit; font-size: 12px; color: #0b0d1a; background: #ffd34d; border: 2px solid #f3ecd2; padding: 4px 12px; cursor: pointer; }
+    .ap-loading__retry[hidden] { display: none; }
+
+    /* While a modal UI owns input the touch stick zone must not swallow taps on lists / choices / chat. */
+    html.ap-ui-blocking .ap-touch__zone { pointer-events: none; visibility: hidden; }
+
+    #ap-debug {
+      position: fixed; right: 8px; top: 8px; z-index: 900; margin: 0; padding: 6px 8px; pointer-events: none;
+      color: #d8f7c4; background: rgba(5, 8, 16, 0.72); border: 1px solid #3c4a6e;
+      font: 11px/1.4 'FusionPixel', ui-monospace, monospace; white-space: pre;
+    }
+    #ap-debug[hidden] { display: none; }
+    noscript p { position: fixed; inset: 0; display: grid; place-items: center; margin: 0; padding: 24px; color: #f3ecd2; background: #0b0d1a; font: 16px/1.6 sans-serif; text-align: center; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <canvas id="ap-canvas" tabindex="-1" aria-label="智灵口袋 游戏画面"></canvas>
+    <div id="ap-ui"></div>
+  </div>
+  <div id="ap-loading" role="status" aria-live="polite">
+    <div class="ap-loading__box">
+      <div class="ap-loading__orb" aria-hidden="true"></div>
+      <div class="ap-loading__title">智灵口袋</div>
+      <div class="ap-loading__sub">Agent Pocket</div>
+      <div class="ap-loading__bar"><div class="ap-loading__fill"></div></div>
+      <div class="ap-loading__label">正在启动……</div>
+      <button class="ap-loading__retry" type="button" hidden>刷新重试</button>
+    </div>
+  </div>
+  <noscript><p>智灵口袋需要启用 JavaScript 才能运行。请在浏览器设置中开启 JavaScript 后刷新页面。</p></noscript>
+  <script type="module" src="/src/client/main.ts"></script>
+</body>
+</html>

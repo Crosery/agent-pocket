@@ -1,0 +1,58 @@
+{
+  "_doc": "Music edit for the promo. The raw take is MiniMax Music3 (via crosery-ct advanced_music_generate, instrumental, seed 777, caption audio/caption_v1.txt). analysis/edit.py renders audio/trailer.wav from this file; analysis/analyze.py writes data/audio.json from that WAV.",
+  "source": "audio/raw/music3/trailer_v2.wav",
+  "output": "audio/trailer.wav",
+  "sampleRate": 48000,
+  "fadeInSec": 0.05,
+  "fadeOutStartSec": 54.6,
+  "fadeOutSec": 0.8,
+  "tail": {
+    "seconds": 2.2,
+    "rt60": 2.4,
+    "wet": 0.55,
+    "fromSec": 52.0
+  },
+  "loudness": {
+    "integratedLufs": -14.0,
+    "truePeakDb": -1.0,
+    "lra": 11
+  },
+  "grid": {
+    "bpmSearch": [
+      110,
+      140
+    ],
+    "beatsPerBar": 4,
+    "firstDownbeatBeat": 3
+  },
+  "sections": [
+    {
+      "name": "intro",
+      "bar": -1
+    },
+    {
+      "name": "groove",
+      "bar": 4
+    },
+    {
+      "name": "breakdown",
+      "bar": 16
+    },
+    {
+      "name": "finale",
+      "bar": 20
+    },
+    {
+      "name": "cadence",
+      "bar": 24
+    },
+    {
+      "name": "final",
+      "bar": 26
+    }
+  ],
+  "mix": {
+    "output": "audio/final.wav",
+    "_doc": "analysis/mix.py: audio/trailer.wav (music) + sound design (data/sfx.json at the times in data/sfx_events.json), trimmed to the film, picture-synced fade, loudness-normalised. The video is muxed with this file."
+  }
+}

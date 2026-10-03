@@ -1,0 +1,542 @@
+{
+  "_doc": "Style bible values. Colours are sRGB hex; the engine converts to linear. Palette = the game's UI (src/client/ui/styles.css --ap-*) + rarity colours from data/game.json.",
+  "palette": {
+    "ink": "#05070d",
+    "navy": "#0e1424",
+    "navy2": "#16203a",
+    "bone": "#f6f2e7",
+    "ash": "#9da3b6",
+    "graphite": "#4a5068",
+    "gold": "#c9a45c",
+    "goldHi": "#f3dca0",
+    "goldDk": "#6b5024",
+    "sky": "#8fd3ff",
+    "hit": "#ff6b5b",
+    "halo": "#1d2a4a"
+  },
+  "fonts": {
+    "pixel": {
+      "family": "Fusion Pixel 12",
+      "url": "fonts/fusion-pixel-12px-zh_hans.woff2",
+      "designPx": 12,
+      "ascentPx": 13,
+      "license": "OFL-1.1 (TakWolf)"
+    },
+    "mono": {
+      "family": "IBM Plex Mono",
+      "url": "fonts/IBMPlexMono-Regular.ttf",
+      "urlMedium": "fonts/IBMPlexMono-Medium.ttf",
+      "license": "OFL-1.1 (IBM)"
+    }
+  },
+  "type": {
+    "zhScale": 4,
+    "zhLabelScale": 2,
+    "enPx": 30,
+    "enTracking": 0.05,
+    "monoSmallPx": 26,
+    "lineGapPx": 18,
+    "pixelSpacing": {
+      "_doc": "Fusion Pixel spacing (design px): a space touching a CJK character is a hair space; '·' is a dotPx square on the CJK body centre line with dotGapPx either side. bodyRef: the glyph whose ink defines the CJK body (cursor height, dot line).",
+      "zhGapPx": 2,
+      "dotGapPx": 2,
+      "dotPx": 2,
+      "bodyRef": "口"
+    },
+    "narratorScale": 6,
+    "narratorEnPx": 36,
+    "_narrator": "the narrator's lines (hook, pocket, tagline) at x6 (72 px) with English at 36 px",
+    "overPicture": {
+      "outline": "ink",
+      "outlineAlpha": 0.55,
+      "enShadow": 0.85,
+      "_doc": "copy over a lit picture plate (world, title key art): one-art-pixel ink outline on the pixel face, soft ink shadow under the mono"
+    }
+  },
+  "layout": {
+    "safe": 120,
+    "heroY": 450,
+    "labelY": 770,
+    "copyY": 858,
+    "copyEnGap": 26
+  },
+  "post": {
+    "bloom": 0.5,
+    "bloomThreshold": 1.05,
+    "bloomKnee": 0.45,
+    "bloomRadius": 0.7,
+    "halation": 0.12,
+    "ca": 0.0,
+    "grain": 0.03,
+    "vignette": 0.32
+  },
+  "motion": {
+    "hopPx": 36,
+    "squash": 0.08,
+    "typeCharBeats": 0.25
+  },
+  "multiply": {
+    "_doc": "Plate 'multiply' layout (px). The grids themselves are in data/cast.json multiply.grids.",
+    "gridCy": 356,
+    "rippleSpeed": 1500,
+    "rippleHopPx": 10,
+    "countScale": 12,
+    "countHopArtPx": 2,
+    "lineScale": 4,
+    "unitScale": 4,
+    "unitGapArtPx": 3,
+    "countTop": 700,
+    "lineGap": 40,
+    "enGap": 20
+  },
+  "rarity": {
+    "_doc": "Plate 'rarity'. Arrays are per tier order (N R SR SSR UR MYTHIC). Gold is light only: an additive core under the sprite and thin beams; the field stays navy.",
+    "glow": [
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0
+    ],
+    "glowR": [
+      300,
+      310,
+      320,
+      330,
+      340,
+      0
+    ],
+    "spark": [
+      0,
+      4,
+      8,
+      12,
+      16,
+      22
+    ],
+    "sparkR": [
+      0,
+      300,
+      330,
+      360,
+      400,
+      470
+    ],
+    "keepOutPx": 40,
+    "labelDelaySec": [
+      0,
+      0,
+      0,
+      0,
+      0.2,
+      0.3
+    ],
+    "ur": {
+      "spriteFlash": 0.5,
+      "shakePx": 4,
+      "flash": {
+        "I": 0.0,
+        "r": 520,
+        "halfLifeSec": 0.03,
+        "core": 0.0,
+        "coreR": 140
+      }
+    },
+    "mythic": {
+      "coreR": 60,
+      "coreI": 1.5,
+      "coreBurst": 0.8,
+      "haloI": 1.1,
+      "haloR": 540,
+      "spriteFlash": 0.4,
+      "shakePx": 9,
+      "flash": {
+        "I": 0.2,
+        "r": 520,
+        "halfLifeSec": 0.012,
+        "core": 1.0,
+        "coreR": 150
+      },
+      "chargeR": [
+        14,
+        60
+      ],
+      "chargeI": [
+        0.5,
+        2.6
+      ],
+      "chargeParticles": 10,
+      "beams": {
+        "count": 7,
+        "len": 540,
+        "width": 0.018,
+        "I": 0.38,
+        "spin": 0.08
+      },
+      "chargeI2": 3.0
+    },
+    "chargeSfxLeadSec": 1.15,
+    "pips": {
+      "y": 1006,
+      "gap": 64,
+      "px": 16,
+      "flyStagger": 0.14,
+      "flyBeats": 1.1
+    },
+    "headlineY": 56,
+    "spriteDy": 0,
+    "labelDy": 0,
+    "captionDy": 96,
+    "captionScale": 3,
+    "labelOutline": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true
+    ],
+    "outlineAlpha": 0.6,
+    "haloI": 0.4,
+    "haloR": 520,
+    "labelBobSec": 0.1
+  },
+  "battle": {
+    "_doc": "Plate 'battle'. left/right: [x, groundY, scale] of each partner; burst: impact squares (px in art px at the target's scale), life in s.",
+    "left": [
+      560,
+      930,
+      4
+    ],
+    "right": [
+      1390,
+      660,
+      3
+    ],
+    "dashReach": 0.62,
+    "burst": {
+      "count": 16,
+      "px": 3,
+      "speed": [
+        220,
+        520
+      ],
+      "life": 0.45,
+      "I": 1.5
+    },
+    "panel": {
+      "w": 470,
+      "h": 178,
+      "pad": 20,
+      "bar": 20
+    },
+    "panelRight": [
+      150,
+      96
+    ],
+    "panelLeft": [
+      1300,
+      784
+    ],
+    "superAbovePx": 470,
+    "rim": {
+      "I": 1.0,
+      "color": "#ffd9a8",
+      "dx": -1,
+      "dy": -1,
+      "amount": 0.5,
+      "_doc": "inside-edge rim: one art pixel on the silhouette's side toward the light (dx, dy), at amount"
+    },
+    "nameScale": 3,
+    "superScale": 5,
+    "entryHopPx": [
+      30,
+      10
+    ],
+    "hitFlash": {
+      "I": 0.25,
+      "r": 420
+    },
+    "ground": {
+      "color": "#ffcf9a",
+      "poolR": 260,
+      "poolI": 0.05,
+      "flat": 0.22,
+      "shadowW": 300,
+      "shadowA": 0.75,
+      "_doc": "contact on the dark backdrop: a faint warm pool + a dark core ellipse under each sprite (sizes at scale 4)"
+    }
+  },
+  "title": {
+    "_doc": "Plate 'title'. The point bursts at the key art's sun (keyArt.pivot = the pocket point); its light warms from goldHi into the sunset (logoGlow) over coolSec and the art blooms out of it. keyArt: the game's title-screen art (game/ui/title.png, AI-generated key art, see THIRD_PARTY.md), crop = [x0, y0, w, h] in art px of the 16:9 window (scale 1.2563, sun centroid (764.2, 431.1) on the pivot), push [from, to] about the pivot, radial reveal and over-exposure, the sky behind the logo and the bottom behind the type darkened toward ink (ellipse [cx, cy, rx, ry] px), vignette to ink. shine: additive glint clipped to the logo alpha, artPx = the logo's own pixel size.",
+    "logoY": 250,
+    "glowI": 0.012,
+    "coolSec": 0.3,
+    "logoGlow": "#ffad66",
+    "logoSpark": "#ffe0a6",
+    "sparkles": 0,
+    "keepOutPx": 120,
+    "taglineY": 792,
+    "ctaY": 1012,
+    "ctaZhScale": 3,
+    "ctaEnPx": 30,
+    "ctaTracking": 0.22,
+    "ctaCapHeight": 0.698,
+    "ctaDotArtPx": 2,
+    "ctaGapArtPx": 5,
+    "burstGlow": 0.8,
+    "flash": {
+      "I": 0.25,
+      "r": 560,
+      "halfLifeSec": 0.014,
+      "core": 0.9,
+      "coreR": 160
+    },
+    "burstField": 0.0,
+    "debris": 20,
+    "debrisSec": 0.4,
+    "tileFlashFrames": 3,
+    "urlDy": 48,
+    "haloI": 0.35,
+    "keyArt": {
+      "file": "game/ui/title.png",
+      "crop": [
+        0.07,
+        1.25,
+        1528.3,
+        859.7
+      ],
+      "pivot": [
+        960,
+        540
+      ],
+      "push": [
+        1.0,
+        1.03
+      ],
+      "exposure": 1.0,
+      "revealSec": 0.42,
+      "revealMaxPx": 1500,
+      "revealSoftPx": 260,
+      "hot": 1.6,
+      "hotSec": 0.9,
+      "darkLogo": [
+        960,
+        250,
+        660,
+        240
+      ],
+      "darkLogoK": 0.4,
+      "darkBottom": [
+        960,
+        1080,
+        860,
+        300
+      ],
+      "darkBottomK": 0.62,
+      "vignette": 0.4
+    },
+    "shine": {
+      "sec": 0.45,
+      "widthArtPx": 3,
+      "artPx": 4,
+      "slant": 0.35,
+      "I": 1.4,
+      "color": "#fff1d6"
+    },
+    "sunGlowR": 180,
+    "sunGlowI": 0.18
+  },
+  "cursor": {
+    "_doc": "the gold cursor's linear intensity: 1.0 shows goldHi itself (below the bloom threshold, so it never blows to white)",
+    "I": 1.0
+  },
+  "label": {
+    "_doc": "name card under a creature (dex mono baseline at y): name em top at y+nameDy, maker baseline metaDy under the name's em box",
+    "nameDy": 16,
+    "metaDy": 38
+  },
+  "halo": {
+    "_doc": "light behind a subject on the navy field (Backdrop): I/r = the subject's own hue (capped so the field keeps B > R), haloI/haloR = the navy-blue falloff (palette.halo)",
+    "reveal": {
+      "I": 0.12,
+      "r": 360,
+      "haloI": 0.45,
+      "haloR": 560
+    },
+    "faces": {
+      "I": 0.12,
+      "r": 360,
+      "haloI": 0.45,
+      "haloR": 560
+    },
+    "catch": {
+      "I": 0.1,
+      "r": 360,
+      "haloI": 0.4,
+      "haloR": 600
+    }
+  },
+  "platePost": {
+    "_doc": "per-plate post (merged over post); scenes only add event overrides (flash, shake)",
+    "rarity": {
+      "bloom": 0.55
+    },
+    "world": {
+      "bloom": 0.6,
+      "vignette": 0.45,
+      "bloomThreshold": 1.0
+    },
+    "together": {
+      "bloom": 0.7,
+      "vignette": 0.45,
+      "bloomThreshold": 1.0
+    },
+    "battle": {
+      "bloom": 0.5,
+      "vignette": 0.55
+    },
+    "catch": {
+      "bloom": 0.6,
+      "vignette": 0.4
+    },
+    "title": {
+      "bloom": 0.55,
+      "vignette": 0.2
+    }
+  },
+  "grade": {
+    "_doc": "in-scene grade of picture plates (3D diorama, painted backdrop) before type is composited: exposure (linear gain), saturation, contrast (log, pivot 0.18), tint (linear multiply). world/together/catch are golden hour (warm, saturation 1.1).",
+    "world": {
+      "exposure": 0.78,
+      "saturation": 1.05,
+      "contrast": 1.05,
+      "tint": [
+        1.04,
+        1.0,
+        0.95
+      ]
+    },
+    "together": {
+      "exposure": 0.8,
+      "saturation": 1.05,
+      "contrast": 1.05,
+      "tint": [
+        1.04,
+        1.0,
+        0.95
+      ]
+    },
+    "battle": {
+      "exposure": 0.055,
+      "saturation": 0.7,
+      "contrast": 1.0,
+      "blurPx": 9,
+      "tint": [
+        0.9,
+        0.96,
+        1.12
+      ]
+    },
+    "catch": {
+      "exposure": 0.85,
+      "saturation": 1.05,
+      "contrast": 1.0,
+      "tint": [
+        1.03,
+        1.0,
+        0.96
+      ]
+    }
+  },
+  "catch": {
+    "_doc": "Plate 'catch' (px). tufts/rowDy/rowTint: [front, back] grass rows (rowTint linear rgb: the golden-hour light on the game's tufts); tuftJitterArtPx: each tuft sunk 0..n art px; hover = where the ball hangs while it fills; throwFrom = off-screen start of the throw; ballGroundDy: the resting ball's centre below the creature's ground line (its bottom sits just in front of the front grass row, on its contact shadow); darkTint: extra linear-rgb multiplier on the dark tufts (the game sprite is cool grey-violet; warmed to dusky olive)",
+    "scale": 4,
+    "tuftScale": 4,
+    "tufts": [
+      9,
+      8
+    ],
+    "rowDy": [
+      30,
+      -4
+    ],
+    "rowTint": [
+      [
+        0.86,
+        0.84,
+        0.68
+      ],
+      [
+        0.62,
+        0.58,
+        0.6
+      ]
+    ],
+    "tuftGap": 96,
+    "hopPx": 44,
+    "hover": [
+      960,
+      420
+    ],
+    "throwFrom": [
+      -140,
+      1200
+    ],
+    "throwArc": 300,
+    "rebound": 46,
+    "ballGroundDy": -20,
+    "ballScale": 4,
+    "bouncePx": 24,
+    "shakeBeats": 0.42,
+    "shakeRot": 0.38,
+    "coreR": 56,
+    "coreI": 0.7,
+    "starBeats": 0.6,
+    "starDist": 120,
+    "textScale": 5,
+    "push": {
+      "zoom": 1.5,
+      "to": [
+        960,
+        640
+      ]
+    },
+    "textGap": 90,
+    "tuftJitterArtPx": 2,
+    "contactShadow": 0.55,
+    "ballShadowLiftPx": 6,
+    "darkTint": [
+      1.4,
+      1.9,
+      0.7
+    ]
+  },
+  "pocket": {
+    "_doc": "Plate 'pocket': the gold point keeps its light inside coreR; the halo (palette.halo) carries the falloff",
+    "coreR": 56,
+    "coreI": 0.9,
+    "beatI": 0.9,
+    "haloI": [
+      0.15,
+      0.7
+    ],
+    "haloR": 420,
+    "r0": 300,
+    "r1": 560,
+    "copyDy": 70
+  },
+  "castArc": {
+    "_doc": "reveal plate, last bar: the nine heroines (data/cast.json heroines) in an arc; slot k pops at ceil(i/2)*popBeats after cue cast; outer slots stand higher (further back): ground = groundY - risePx*(|k|/4)^risePow",
+    "stepPx": 194,
+    "groundY": 724,
+    "risePx": 110,
+    "risePow": 1.4,
+    "scale": 2,
+    "leadScale": 3,
+    "popBeats": 0.5,
+    "hopPx": 40,
+    "copyY": 800
+  }
+}

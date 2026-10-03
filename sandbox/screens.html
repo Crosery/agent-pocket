@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Agent Pocket - screens sandbox</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #05070d; overflow: hidden; }
+    #bg { position: fixed; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; }
+    #game { position: fixed; inset: 0; }
+    #dev {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 100; display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 3px; padding: 3px; font: 11px/1.2 monospace; background: rgba(0, 0, 0, 0.35);
+    }
+    #dev button { font: 11px monospace; padding: 2px 6px; cursor: pointer; }
+    body.shot #dev { display: none; }
+  </style>
+</head>
+<body>
+  <canvas id="bg"></canvas>
+  <div id="game"></div>
+  <div id="dev"></div>
+  <script type="module" src="./screens.ts"></script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+{
+ "_doc": "The edit. Plates are windows in bars of the analysed music (bar k = data/audio.json downbeats[k]; bar -1 = t 0, a virtual bar before the first downbeat; \"end\" = audio duration). Cut points are hard cuts on downbeats. Cue values are beats counted from the plate's first downbeat (bar `from`, beat 0). `shutter` (optional, per plate): a factor on the motion-blur shutter (pixel crowds and dashes stay readable mid-move).",
+ "plates": [
+  {
+   "id": "hook",
+   "scene": "hook",
+   "from": -1,
+   "to": 1,
+   "cues": {
+    "cursorIn": 0.5,
+    "line1": 1.5,
+    "line1Rate": 0.125,
+    "line2": 5.0,
+    "line2Rate": 0.125,
+    "toCenter": 7.25,
+    "_doc": "plate beat 0 is the virtual bar before the first downbeat (-0.43 s): line1 types from 0.28 s, line2 from 1.94 s, the cursor glides to centre from 3.02 s and the unpack lands on the bar-1 downbeat (3.37 s)"
+   }
+  },
+  {
+   "id": "reveal",
+   "scene": "reveal",
+   "from": 1,
+   "to": 4,
+   "cues": {
+    "burst": 0,
+    "label": 1.5,
+    "cast": 8,
+    "copy": 9.5,
+    "copyRate": 0.125
+   }
+  },
+  {
+   "id": "faces",
+   "scene": "faces",
+   "from": 4,
+   "to": 8,
+   "cues": {
+    "firstLand": 0.52,
+    "_firstLand": "the groove's bass enters on the off-eighth after the cut (9.35 s in data/audio.json: low band 0.23 -> 0.87): the first face falls longer and lands on it"
+   }
+  },
+  {
+   "id": "multiply",
+   "scene": "multiply",
+   "from": 8,
+   "to": 10,
+   "cues": {
+    "steps": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "unit": 3.25,
+    "copy": 3.75,
+    "copyRate": 0.125,
+    "ripple": 4.75
+   },
+   "shutter": 0.5
+  },
+  {
+   "id": "catch",
+   "scene": "catch",
+   "from": 10,
+   "to": 12,
+   "cues": {
+    "appear": 0,
+    "throw": 1,
+    "hit": 2,
+    "absorb": 0.6,
+    "drop": 2.75,
+    "land": 3.25,
+    "shake": [
+     4,
+     5
+    ],
+    "click": 6
+   }
+  },
+  {
+   "id": "rarity",
+   "scene": "rarity",
+   "from": 12,
+   "to": 16,
+   "cues": {
+    "copyIn": 0.25,
+    "copyOut": 3.0,
+    "charge": 10
+   }
+  },
+  {
+   "id": "world",
+   "scene": "world",
+   "from": 16,
+   "to": 20,
+   "cues": {
+    "copy": 9,
+    "copyRate": 0.2
+   }
+  },
+  {
+   "id": "together",
+   "scene": "together",
+   "from": 20,
+   "to": 22,
+   "cues": {
+    "walkStart": 0.5,
+    "meet": 4.5,
+    "say1": 5,
+    "say2": 6,
+    "copy": 0,
+    "copyRate": 0.1,
+    "_walkStart": "the re-entry's first hit is on the off-eighth (39.88 s): the walkers' first step lands on it"
+   }
+  },
+  {
+   "id": "battle",
+   "scene": "battle",
+   "from": 22,
+   "to": 24,
+   "cues": {
+    "drop": 0
+   },
+   "shutter": 0.25
+  },
+  {
+   "id": "pocket",
+   "scene": "pocket",
+   "from": 24,
+   "to": 26,
+   "cues": {
+    "copy": 0.5,
+    "copyRate": 0.15,
+    "gather": 2,
+    "gone": 6.5,
+    "shake": [
+     7.0,
+     7.5
+    ]
+   },
+   "shutter": 0.25
+  },
+  {
+   "id": "title",
+   "scene": "title",
+   "from": 26,
+   "to": 28,
+   "cues": {
+    "logo": 0,
+    "sweepBeats": 0.5,
+    "tagline": 0.5,
+    "cta": 1,
+    "typeRate": 0.1,
+    "fadeOutSec": 0.9,
+    "blackSec": 0.2,
+    "keyArtIn": 0,
+    "shine": 0.75
+   }
+  }
+ ]
+}

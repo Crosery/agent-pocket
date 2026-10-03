@@ -1,0 +1,6 @@
+[
+  {"id": "overclock", "nameZh": "算力过载", "color": "#ff8a3d", "powerMul": {"compute": 1.5, "code": 1.5, "safety": 0.75}, "chip": {"fraction": 0.0625, "exemptTypes": ["compute"]}, "startText": "GPU 集群开始满载运转，进入了{weather}状态！", "continueText": "{weather}仍在持续……", "endText": "机房温度回落，{weather}结束了。", "fieldWeather": "ash"},
+  {"id": "datastorm", "nameZh": "数据风暴", "color": "#d6b84a", "powerMul": {"search": 1.5, "motion": 1.5}, "chip": {"fraction": 0.0625, "exemptTypes": ["search", "open"]}, "startText": "海量数据席卷而来，刮起了{weather}！", "continueText": "{weather}仍在肆虐。", "endText": "{weather}平息了。", "fieldWeather": "sand"},
+  {"id": "blackout", "nameZh": "断网", "color": "#4a4060", "powerMul": {"search": 0.5, "agent": 0.5, "chaos": 1.5}, "startText": "网络连接中断了！场地陷入{weather}。", "continueText": "依旧处于{weather}状态……", "endText": "网络恢复了连接。", "fieldWeather": "fog"},
+  {"id": "aurora", "nameZh": "对齐极光", "color": "#9fdcff", "powerMul": {"safety": 1.3, "logic": 1.3, "chaos": 0.7}, "heal": {"fraction": 0.0625, "types": ["safety"]}, "startText": "天空中浮现出{weather}！", "continueText": "{weather}温柔地闪耀着。", "endText": "{weather}消散了。", "fieldWeather": "aurora"}
+]

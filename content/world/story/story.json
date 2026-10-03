@@ -1,0 +1,13 @@
+{
+  "pick": {"relaxOrder": ["habitats", "countries", "families", "stages", "rarities", "excludeStarters", "types"], "defaultExcludeRarities": ["UR", "MYTHIC"], "defaultExcludeStarters": true, "avoidRarityWiden": 1},
+  "flags": {"starter": "starter", "trainerWon": "trainer:", "groundItem": "item:"},
+  "facing": {"lookDistance": 5},
+  "text": {"listSeparator": "、", "trainerNpcName": "{class} {name}"},
+  "trainers": {"aiLevel": 1, "rewardPerLevel": 40, "sightRange": 4},
+  "trainerNpc": {
+    "role": "trainer",
+    "script": [
+      {"op": "ifFlag", "flag": "trainer:{id}", "then": [{"op": "say", "text": "{after}"}], "else": [{"op": "battle", "trainer": "{id}"}]}
+    ]
+  }
+}

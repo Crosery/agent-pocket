@@ -1,0 +1,218 @@
+{
+  "scheduler": {"mapKinds": ["overworld"], "minCheckRealSec": 0.4, "localEndDistance": 96, "fallbackAreaLevel": [5, 12], "seedSalt": "events"},
+  "places": {"nearCacheTiles": 8, "revealSearchRadius": 900, "revealPinReachTiles": 6, "revealPinsMax": 4, "revealPingMinutes": 4320},
+  "start": {"bannerTags": ["festival", "culture", "legend", "chain"], "bannerCooldownSec": 25, "hiddenSfx": "notify", "startSfx": "notify", "rumorToastKind": "info", "hiddenToastKind": "success"},
+  "flags": {"news": "news:", "spawnTaken": "evspawn:", "itemTaken": "evitem:", "revealed": "revealed:"},
+  "rumors": {"townEnterChance": 0.45, "cooldownMinutes": 90, "ambientEveryMinutes": 240, "ambientChance": 0.25, "toastKind": "info"},
+  "items": {"pickupRadius": 0.8, "glintEverySec": 2.2, "hiddenGlintRadius": 3.5, "visibleFx": "sparkle", "hiddenFx": "sparkle", "sfx": "item", "snapRadius": 4},
+  "special": {"mapKinds": ["overworld", "cave"], "speed": 1.5, "wanderRadius": 4, "idleSec": [1.2, 3.2], "fleeSpeedMul": 1.7, "touchRadius": 0.62, "cullDistance": 34, "despawnDistance": 70, "snapRadius": 6, "arriveEpsilon": 0.08, "shinyCue": "sparkle-soft"},
+  "legends": {"checkSec": 1.0, "mapKinds": ["overworld"], "senseToastCooldownSec": 150, "despawnBeyondMul": 2.2, "senseAmbience": true},
+  "roaming": {"rareFromOrder": 2, "noticeBubbleFallback": "!"},
+  "presentation": {"arriveHoldMs": 900, "arriveDistance": 2.2, "rarities": ["UR", "MYTHIC"]},
+  "research": {"claimFlag": "research:claimed", "toastGains": true, "toastKind": "info", "visibleRows": 8, "compactVisibleRows": 5},
+  "hud": {
+    "maxChips": 3,
+    "refreshSec": 0.5,
+    "overlayFadeMs": 900,
+    "chipTags": ["festival", "culture", "legend", "chain", "stele", "hidden", "easter", "rumor"],
+    "tagColors": {"festival": "#ff7ab0", "culture": "#7ad8ff", "legend": "#ff5c5c", "chain": "#ffe66b", "stele": "#ffe66b", "hidden": "#b07cff", "easter": "#b07cff", "rumor": "#9fe0a8"},
+    "defaultColor": "#7ad8ff"
+  },
+  "intel": {"calendarDays": 60, "maxNews": 40, "maxRumors": 80, "visibleRows": 8, "compactVisibleRows": 5},
+  "markers": {"legendRoamer": "legend", "eventRoamer": "rare", "revealPin": "event", "senseClampTiles": 40},
+  "debug": {"global": "__ap", "key": "gameplay"},
+  "cues": {
+    "aura-soft": {"color": "#b07cff"},
+    "aura-epic": {"color": "#ffb43c"},
+    "aura-legend": {"color": "#ff5c5c"},
+    "aura-mythic": {"color": "#ffe66b"},
+    "aura-festival": {"color": "#ff7ab0"},
+    "aura-illusion": {"color": "#7af0ff"},
+    "aura-glitch": {"color": "#5cff9a"},
+    "dust": {"fx": ["dust"]},
+    "sparkle-soft": {"fx": ["sparkle"]},
+    "sparkle-epic": {"fx": ["sparkle", "shiny"], "sfx": "notify"},
+    "legend-arrive": {"fx": ["warp", "shiny"], "sfx": "exclaim", "flash": {"color": "#ffd6d6", "ms": 220}, "shake": {"intensity": 0.25, "ms": 320}},
+    "mythic-arrive": {"fx": ["warp", "levelup", "shiny"], "sfx": "evolve", "flash": {"color": "#fff3b0", "ms": 420}, "shake": {"intensity": 0.35, "ms": 520}},
+    "blink-out": {"fx": ["warp", "sparkle"]},
+    "legend-depart": {"fx": ["warp", "shiny"], "sfx": "run"},
+    "exclaim": {"bubble": "!", "bubbleMs": 900, "fx": ["exclaim"]},
+    "question": {"bubble": "?", "bubbleMs": 1000},
+    "shy": {"bubble": "…", "bubbleMs": 1100, "fx": ["question"]},
+    "ping-legend": {"color": "#ff5c5c", "marker": "legend"},
+    "ping-mythic": {"color": "#ffe66b", "marker": "legend"},
+    "ping-event": {"color": "#7ad8ff", "marker": "event"},
+    "lanterns": {
+      "ambient": {"fx": ["sparkle"], "everySec": 1.4, "radius": 7, "count": 1},
+      "overlay": {"background": "radial-gradient(ellipse at 50% 120%, rgba(255,140,60,0.34), rgba(255,140,60,0) 62%)", "blend": "screen", "anim": "pulse", "opacity": 1}
+    },
+    "fireworks": {
+      "ambient": {"fx": ["shiny", "sparkle"], "everySec": 0.7, "radius": 10, "count": 2},
+      "overlay": {"background": "radial-gradient(circle at 28% 18%, rgba(255,90,150,0.24), rgba(255,90,150,0) 34%), radial-gradient(circle at 72% 14%, rgba(120,200,255,0.22), rgba(120,200,255,0) 30%)", "blend": "screen", "anim": "flash", "opacity": 1}
+    },
+    "hearts": {
+      "ambient": {"fx": ["heart"], "everySec": 1.1, "radius": 5, "count": 1},
+      "overlay": {"background": "radial-gradient(ellipse at 50% 50%, rgba(255,120,170,0), rgba(255,120,170,0.16) 100%)", "blend": "screen", "anim": "pulse", "opacity": 1}
+    },
+    "confetti": {
+      "ambient": {"fx": ["sparkle"], "everySec": 0.5, "radius": 6, "count": 2},
+      "overlay": {"background": "linear-gradient(180deg, rgba(255,230,120,0.12), rgba(255,230,120,0) 50%)", "blend": "screen", "anim": "drift", "opacity": 1}
+    },
+    "hallucination": {
+      "ambient": {"fx": ["question"], "everySec": 3.0, "radius": 6, "count": 1},
+      "overlay": {"background": "linear-gradient(120deg, rgba(255,0,200,0.12), rgba(0,255,220,0.12))", "blend": "color", "anim": "hue", "opacity": 1}
+    },
+    "moon": {
+      "ambient": {"fx": ["sparkle"], "everySec": 2.5, "radius": 8, "count": 1},
+      "overlay": {"background": "radial-gradient(circle at 78% 12%, rgba(255,250,220,0.40), rgba(255,250,220,0) 18%)", "blend": "screen", "anim": "none", "opacity": 1}
+    },
+    "binaryRain": {
+      "ambient": {"fx": ["sparkle"], "everySec": 0.9, "radius": 7, "count": 1},
+      "overlay": {"background": "repeating-linear-gradient(180deg, rgba(90,255,140,0.10) 0 2px, rgba(0,0,0,0) 2px 9px)", "blend": "screen", "anim": "scan", "opacity": 1}
+    },
+    "pumpkin": {
+      "ambient": {"fx": ["question"], "everySec": 3.0, "radius": 6, "count": 1},
+      "overlay": {"background": "radial-gradient(ellipse at 50% 110%, rgba(255,120,20,0.30), rgba(255,120,20,0) 55%), linear-gradient(rgba(60,0,80,0.14), rgba(60,0,80,0.14))", "blend": "normal", "anim": "pulse", "opacity": 1}
+    },
+    "snowglow": {
+      "ambient": {"fx": ["sparkle"], "everySec": 1.2, "radius": 7, "count": 1},
+      "overlay": {"background": "linear-gradient(180deg, rgba(220,240,255,0.20), rgba(220,240,255,0) 60%)", "blend": "screen", "anim": "none", "opacity": 1}
+    },
+    "gpuHeat": {
+      "ambient": {"fx": ["dust"], "everySec": 1.0, "radius": 5, "count": 1},
+      "overlay": {"background": "radial-gradient(ellipse at 50% 100%, rgba(255,80,30,0.26), rgba(255,80,30,0) 60%)", "blend": "screen", "anim": "heat", "opacity": 1}
+    },
+    "contextStorm": {
+      "ambient": {"fx": ["dust", "sparkle"], "everySec": 0.6, "radius": 8, "count": 2},
+      "overlay": {"background": "linear-gradient(90deg, rgba(120,140,255,0.14), rgba(120,140,255,0) 50%, rgba(120,140,255,0.14))", "blend": "screen", "anim": "drift", "opacity": 1}
+    },
+    "tokenRain": {
+      "ambient": {"fx": ["sparkle"], "everySec": 0.5, "radius": 7, "count": 2},
+      "overlay": {"background": "repeating-linear-gradient(100deg, rgba(255,215,90,0.10) 0 2px, rgba(0,0,0,0) 2px 14px)", "blend": "screen", "anim": "scan", "opacity": 1}
+    },
+    "eclipse": {
+      "overlay": {"background": "radial-gradient(circle at 50% 42%, rgba(10,0,20,0) 30%, rgba(10,0,20,0.50) 82%)", "blend": "multiply", "anim": "none", "opacity": 1}
+    },
+    "lightsOut": {
+      "ambient": {"fx": ["question"], "everySec": 4.0, "radius": 6, "count": 1},
+      "overlay": {"background": "linear-gradient(rgba(0,0,12,0.46), rgba(0,0,12,0.46))", "blend": "multiply", "anim": "flicker", "opacity": 1}
+    },
+    "distill": {
+      "ambient": {"fx": ["sparkle"], "everySec": 1.5, "radius": 6, "count": 1},
+      "overlay": {"background": "linear-gradient(180deg, rgba(140,220,255,0.14), rgba(140,220,255,0))", "blend": "screen", "anim": "pulse", "opacity": 1}
+    },
+    "rateLimit": {
+      "ambient": {"fx": ["exclaim"], "everySec": 4.0, "radius": 5, "count": 1},
+      "overlay": {"background": "repeating-linear-gradient(45deg, rgba(255,60,60,0.09) 0 10px, rgba(0,0,0,0) 10px 20px)", "blend": "normal", "anim": "flicker", "opacity": 1}
+    },
+    "deadline": {
+      "ambient": {"fx": ["exclaim"], "everySec": 3.0, "radius": 5, "count": 1},
+      "overlay": {"background": "radial-gradient(circle, rgba(255,40,40,0) 50%, rgba(255,40,40,0.24) 100%)", "blend": "normal", "anim": "pulse", "opacity": 1}
+    },
+    "benchmark": {
+      "ambient": {"fx": ["levelup"], "everySec": 5.0, "radius": 6, "count": 1},
+      "overlay": {"background": "linear-gradient(90deg, rgba(90,255,200,0.12), rgba(90,255,200,0) 40%)", "blend": "screen", "anim": "scan", "opacity": 1}
+    },
+    "alarm": {
+      "ambient": {"fx": ["exclaim"], "everySec": 2.0, "radius": 6, "count": 1},
+      "overlay": {"background": "linear-gradient(rgba(255,30,30,0.16), rgba(255,30,30,0.16))", "blend": "normal", "anim": "alarm", "opacity": 1}
+    },
+    "starfall": {
+      "ambient": {"fx": ["shiny", "sparkle"], "everySec": 0.8, "radius": 9, "count": 1},
+      "overlay": {"background": "linear-gradient(180deg, rgba(40,40,140,0.22), rgba(40,40,140,0) 60%)", "blend": "screen", "anim": "none", "opacity": 1}
+    },
+    "aurora": {
+      "ambient": {"fx": ["sparkle"], "everySec": 1.6, "radius": 8, "count": 1},
+      "overlay": {"background": "linear-gradient(170deg, rgba(80,255,180,0.20), rgba(120,120,255,0.12) 40%, rgba(120,120,255,0) 70%)", "blend": "screen", "anim": "drift", "opacity": 1}
+    },
+    "steleGlow": {
+      "ambient": {"fx": ["sparkle"], "everySec": 1.8, "radius": 4, "count": 1},
+      "overlay": {"background": "radial-gradient(circle at 50% 55%, rgba(140,220,255,0.20), rgba(140,220,255,0) 45%)", "blend": "screen", "anim": "pulse", "opacity": 1}
+    },
+    "glitch": {
+      "ambient": {"fx": ["warp"], "everySec": 3.0, "radius": 6, "count": 1},
+      "overlay": {"background": "repeating-linear-gradient(0deg, rgba(0,255,160,0.08) 0 3px, rgba(0,0,0,0) 3px 7px), linear-gradient(90deg, rgba(255,0,120,0.09), rgba(0,200,255,0.09))", "blend": "screen", "anim": "glitch", "opacity": 1}
+    },
+    "sakuraStorm": {
+      "ambient": {"fx": ["heart", "sparkle"], "everySec": 0.6, "radius": 7, "count": 2},
+      "overlay": {"background": "linear-gradient(180deg, rgba(255,180,210,0.18), rgba(255,180,210,0) 70%)", "blend": "screen", "anim": "drift", "opacity": 1}
+    },
+    "circuitPulse": {
+      "ambient": {"fx": ["sparkle"], "everySec": 1.0, "radius": 6, "count": 1},
+      "overlay": {"background": "repeating-linear-gradient(90deg, rgba(80,200,255,0.08) 0 1px, rgba(0,0,0,0) 1px 16px), repeating-linear-gradient(0deg, rgba(80,200,255,0.08) 0 1px, rgba(0,0,0,0) 1px 16px)", "blend": "screen", "anim": "pulse", "opacity": 1}
+    },
+    "synapse": {
+      "ambient": {"fx": ["sparkle"], "everySec": 0.9, "radius": 6, "count": 1},
+      "overlay": {"background": "radial-gradient(circle at 40% 50%, rgba(255,120,255,0.16), rgba(255,120,255,0) 40%)", "blend": "screen", "anim": "pulse", "opacity": 1}
+    },
+    "cloudSea": {
+      "overlay": {"background": "linear-gradient(0deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 45%)", "blend": "screen", "anim": "drift", "opacity": 1}
+    },
+    "bioluminescence": {
+      "ambient": {"fx": ["sparkle"], "everySec": 1.0, "radius": 7, "count": 1},
+      "overlay": {"background": "radial-gradient(ellipse at 50% 100%, rgba(60,255,220,0.22), rgba(60,255,220,0) 55%)", "blend": "screen", "anim": "pulse", "opacity": 1}
+    },
+    "legend-chat": {
+      "ambient": {"fx": ["sparkle"], "everySec": 1.2, "radius": 6, "count": 1},
+      "overlay": {"background": "radial-gradient(circle at 50% 50%, rgba(120,255,200,0), rgba(120,255,200,0.14) 100%)", "blend": "screen", "anim": "pulse", "opacity": 1}
+    },
+    "legend-stars": {
+      "ambient": {"fx": ["shiny"], "everySec": 0.9, "radius": 8, "count": 1},
+      "overlay": {"background": "linear-gradient(180deg, rgba(60,60,170,0.24), rgba(60,60,170,0) 70%)", "blend": "screen", "anim": "none", "opacity": 1}
+    },
+    "legend-sun": {
+      "ambient": {"fx": ["sparkle"], "everySec": 1.0, "radius": 7, "count": 1},
+      "overlay": {"background": "radial-gradient(circle at 50% 0%, rgba(255,220,120,0.32), rgba(255,220,120,0) 60%)", "blend": "screen", "anim": "pulse", "opacity": 1}
+    },
+    "legend-code": {
+      "ambient": {"fx": ["sparkle"], "everySec": 0.9, "radius": 6, "count": 1},
+      "overlay": {"background": "repeating-linear-gradient(180deg, rgba(90,255,140,0.10) 0 2px, rgba(0,0,0,0) 2px 8px)", "blend": "screen", "anim": "scan", "opacity": 1}
+    },
+    "legend-light": {
+      "ambient": {"fx": ["shiny"], "everySec": 1.1, "radius": 6, "count": 1},
+      "overlay": {"background": "radial-gradient(circle, rgba(255,255,255,0.20), rgba(255,255,255,0) 60%)", "blend": "screen", "anim": "pulse", "opacity": 1}
+    },
+    "legend-snow": {
+      "ambient": {"fx": ["sparkle"], "everySec": 0.8, "radius": 8, "count": 2},
+      "overlay": {"background": "linear-gradient(180deg, rgba(220,240,255,0.24), rgba(220,240,255,0))", "blend": "screen", "anim": "drift", "opacity": 1}
+    },
+    "legend-verse": {
+      "ambient": {"fx": ["heart"], "everySec": 1.2, "radius": 6, "count": 1},
+      "overlay": {"background": "linear-gradient(90deg, rgba(255,200,240,0.14), rgba(255,200,240,0) 60%)", "blend": "screen", "anim": "drift", "opacity": 1}
+    },
+    "legend-dream": {
+      "ambient": {"fx": ["sparkle"], "everySec": 1.0, "radius": 7, "count": 1},
+      "overlay": {"background": "linear-gradient(120deg, rgba(200,150,255,0.16), rgba(120,220,255,0.12))", "blend": "screen", "anim": "hue", "opacity": 1}
+    },
+    "legend-aurora": {
+      "ambient": {"fx": ["sparkle", "shiny"], "everySec": 0.9, "radius": 9, "count": 1},
+      "overlay": {"background": "linear-gradient(170deg, rgba(80,255,180,0.26), rgba(150,120,255,0.16) 40%, rgba(150,120,255,0) 75%)", "blend": "screen", "anim": "drift", "opacity": 1}
+    },
+    "legend-wind": {
+      "ambient": {"fx": ["dust"], "everySec": 0.6, "radius": 7, "count": 2},
+      "overlay": {"background": "linear-gradient(90deg, rgba(200,255,230,0.12), rgba(200,255,230,0))", "blend": "screen", "anim": "drift", "opacity": 1}
+    },
+    "legend-music": {
+      "ambient": {"fx": ["heart"], "everySec": 0.9, "radius": 6, "count": 1},
+      "overlay": {"background": "radial-gradient(circle at 50% 60%, rgba(255,160,220,0.16), rgba(255,160,220,0) 50%)", "blend": "screen", "anim": "pulse", "opacity": 1}
+    },
+    "legend-sea": {
+      "ambient": {"fx": ["splash"], "everySec": 1.0, "radius": 7, "count": 1},
+      "overlay": {"background": "linear-gradient(0deg, rgba(60,160,255,0.22), rgba(60,160,255,0) 60%)", "blend": "screen", "anim": "drift", "opacity": 1}
+    },
+    "legend-moon": {
+      "ambient": {"fx": ["sparkle"], "everySec": 1.4, "radius": 8, "count": 1},
+      "overlay": {"background": "radial-gradient(circle at 76% 12%, rgba(255,250,220,0.46), rgba(255,250,220,0) 20%), linear-gradient(rgba(20,20,60,0.16), rgba(20,20,60,0.16))", "blend": "screen", "anim": "none", "opacity": 1}
+    },
+    "legend-heat": {
+      "ambient": {"fx": ["dust"], "everySec": 0.8, "radius": 6, "count": 1},
+      "overlay": {"background": "radial-gradient(ellipse at 50% 100%, rgba(255,90,30,0.30), rgba(255,90,30,0) 62%)", "blend": "screen", "anim": "heat", "opacity": 1}
+    },
+    "legend-thunder": {
+      "ambient": {"fx": ["sparkle"], "everySec": 2.0, "radius": 7, "count": 1},
+      "overlay": {"background": "linear-gradient(rgba(255,255,255,0.10), rgba(255,255,255,0.10))", "blend": "screen", "anim": "thunder", "opacity": 1},
+      "flash": {"color": "#ffffff", "ms": 120, "everySec": 7}
+    }
+  },
+  "pings": {"legend": "ping-legend", "mythic": "ping-mythic", "event": "ping-event", "place": "ping-event"}
+}

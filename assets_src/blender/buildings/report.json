@@ -1,0 +1,2066 @@
+{
+ "house_small": {
+  "glb": "public/assets/models/house_small.glb",
+  "bytes": 56488,
+  "tris": 550,
+  "bboxMin": [
+   -2.02,
+   -1.6755,
+   0.0
+  ],
+  "bboxMax": [
+   2.02,
+   1.6589,
+   3.4
+  ],
+  "footprint": [
+   4,
+   3
+  ],
+  "height": 3.4,
+  "door": [
+   0,
+   2
+  ],
+  "doorCenters": [
+   [
+    0.0,
+    -1.24,
+    0.22
+   ],
+   [
+    1.0,
+    -1.24,
+    0.22
+   ],
+   [
+    1.0,
+    -1.35,
+    0.22
+   ],
+   [
+    0.0,
+    -1.35,
+    0.22
+   ],
+   [
+    0.0,
+    -1.35,
+    1.58
+   ],
+   [
+    1.0,
+    -1.35,
+    1.58
+   ],
+   [
+    1.0,
+    -1.24,
+    1.58
+   ],
+   [
+    0.0,
+    -1.24,
+    1.58
+   ],
+   [
+    0.0,
+    -1.35,
+    0.22
+   ],
+   [
+    1.0,
+    -1.35,
+    0.22
+   ],
+   [
+    1.0,
+    -1.35,
+    1.58
+   ],
+   [
+    0.0,
+    -1.35,
+    1.58
+   ],
+   [
+    1.0,
+    -1.35,
+    0.22
+   ],
+   [
+    1.0,
+    -1.24,
+    0.22
+   ],
+   [
+    1.0,
+    -1.24,
+    1.58
+   ],
+   [
+    1.0,
+    -1.35,
+    1.58
+   ],
+   [
+    1.0,
+    -1.24,
+    0.22
+   ],
+   [
+    0.0,
+    -1.24,
+    0.22
+   ],
+   [
+    0.0,
+    -1.24,
+    1.58
+   ],
+   [
+    1.0,
+    -1.24,
+    1.58
+   ],
+   [
+    0.0,
+    -1.24,
+    0.22
+   ],
+   [
+    0.0,
+    -1.35,
+    0.22
+   ],
+   [
+    0.0,
+    -1.35,
+    1.58
+   ],
+   [
+    0.0,
+    -1.24,
+    1.58
+   ]
+  ],
+  "emissive": [
+   "EMIT_window_warm"
+  ],
+  "materials": [
+   "EMIT_window_warm",
+   "brick_red",
+   "door_wood",
+   "flowers",
+   "paint_green",
+   "plaster_cream",
+   "roof_red",
+   "stone_block",
+   "timber_dark",
+   "wood_light",
+   "wood_planks"
+  ],
+  "problems": []
+ },
+ "house_large": {
+  "glb": "public/assets/models/house_large.glb",
+  "bytes": 106760,
+  "tris": 1244,
+  "bboxMin": [
+   -3.0834,
+   -2.07,
+   0.0
+  ],
+  "bboxMax": [
+   3.0834,
+   2.0334,
+   4.45
+  ],
+  "footprint": [
+   6,
+   4
+  ],
+  "height": 4.4,
+  "door": [
+   0,
+   2
+  ],
+  "doorCenters": [
+   [
+    -0.1,
+    -1.64,
+    0.24
+   ],
+   [
+    1.1,
+    -1.64,
+    0.24
+   ],
+   [
+    1.1,
+    -1.75,
+    0.24
+   ],
+   [
+    -0.1,
+    -1.75,
+    0.24
+   ],
+   [
+    -0.1,
+    -1.75,
+    1.49
+   ],
+   [
+    1.1,
+    -1.75,
+    1.49
+   ],
+   [
+    1.1,
+    -1.64,
+    1.49
+   ],
+   [
+    -0.1,
+    -1.64,
+    1.49
+   ],
+   [
+    -0.1,
+    -1.75,
+    0.24
+   ],
+   [
+    1.1,
+    -1.75,
+    0.24
+   ],
+   [
+    1.1,
+    -1.75,
+    1.49
+   ],
+   [
+    -0.1,
+    -1.75,
+    1.49
+   ],
+   [
+    1.1,
+    -1.75,
+    0.24
+   ],
+   [
+    1.1,
+    -1.64,
+    0.24
+   ],
+   [
+    1.1,
+    -1.64,
+    1.49
+   ],
+   [
+    1.1,
+    -1.75,
+    1.49
+   ],
+   [
+    1.1,
+    -1.64,
+    0.24
+   ],
+   [
+    -0.1,
+    -1.64,
+    0.24
+   ],
+   [
+    -0.1,
+    -1.64,
+    1.49
+   ],
+   [
+    1.1,
+    -1.64,
+    1.49
+   ],
+   [
+    -0.1,
+    -1.64,
+    0.24
+   ],
+   [
+    -0.1,
+    -1.75,
+    0.24
+   ],
+   [
+    -0.1,
+    -1.75,
+    1.49
+   ],
+   [
+    -0.1,
+    -1.64,
+    1.49
+   ]
+  ],
+  "emissive": [
+   "EMIT_window_warm"
+  ],
+  "materials": [
+   "EMIT_window_warm",
+   "brick_red",
+   "door_wood",
+   "flowers",
+   "paint_blue",
+   "plaster_cream",
+   "roof_teal",
+   "stone_block",
+   "stone_light",
+   "timber_dark",
+   "wood_light",
+   "wood_planks"
+  ],
+  "problems": []
+ },
+ "center": {
+  "glb": "public/assets/models/center.glb",
+  "bytes": 53852,
+  "tris": 520,
+  "bboxMin": [
+   -3.0466,
+   -2.73,
+   0.0
+  ],
+  "bboxMax": [
+   3.0466,
+   2.4466,
+   4.2
+  ],
+  "footprint": [
+   6,
+   5
+  ],
+  "height": 4.2,
+  "door": [
+   0,
+   3
+  ],
+  "doorCenters": [
+   [
+    -0.9,
+    -2.44,
+    0.2
+   ],
+   [
+    0.9,
+    -2.44,
+    0.2
+   ],
+   [
+    0.9,
+    -2.55,
+    0.2
+   ],
+   [
+    -0.9,
+    -2.55,
+    0.2
+   ],
+   [
+    -0.9,
+    -2.55,
+    1.8
+   ],
+   [
+    0.9,
+    -2.55,
+    1.8
+   ],
+   [
+    0.9,
+    -2.44,
+    1.8
+   ],
+   [
+    -0.9,
+    -2.44,
+    1.8
+   ],
+   [
+    -0.9,
+    -2.55,
+    0.2
+   ],
+   [
+    0.9,
+    -2.55,
+    0.2
+   ],
+   [
+    0.9,
+    -2.55,
+    1.8
+   ],
+   [
+    -0.9,
+    -2.55,
+    1.8
+   ],
+   [
+    0.9,
+    -2.55,
+    0.2
+   ],
+   [
+    0.9,
+    -2.44,
+    0.2
+   ],
+   [
+    0.9,
+    -2.44,
+    1.8
+   ],
+   [
+    0.9,
+    -2.55,
+    1.8
+   ],
+   [
+    0.9,
+    -2.44,
+    0.2
+   ],
+   [
+    -0.9,
+    -2.44,
+    0.2
+   ],
+   [
+    -0.9,
+    -2.44,
+    1.8
+   ],
+   [
+    0.9,
+    -2.44,
+    1.8
+   ],
+   [
+    -0.9,
+    -2.44,
+    0.2
+   ],
+   [
+    -0.9,
+    -2.55,
+    0.2
+   ],
+   [
+    -0.9,
+    -2.55,
+    1.8
+   ],
+   [
+    -0.9,
+    -2.44,
+    1.8
+   ]
+  ],
+  "emissive": [
+   "EMIT_door_glass",
+   "EMIT_sign_cross",
+   "EMIT_window_pink"
+  ],
+  "materials": [
+   "EMIT_door_glass",
+   "EMIT_sign_cross",
+   "EMIT_window_pink",
+   "awning_pink",
+   "flowers",
+   "metal_white",
+   "paint_pink",
+   "pink_trim",
+   "plaster_white",
+   "roof_pink",
+   "stone_light"
+  ],
+  "problems": []
+ },
+ "shop": {
+  "glb": "public/assets/models/shop.glb",
+  "bytes": 48276,
+  "tris": 394,
+  "bboxMin": [
+   -2.5,
+   -2.0296,
+   0.0
+  ],
+  "bboxMax": [
+   2.5,
+   2.0296,
+   3.8
+  ],
+  "footprint": [
+   5,
+   4
+  ],
+  "height": 3.8,
+  "door": [
+   0,
+   2
+  ],
+  "doorCenters": [
+   [
+    -0.5,
+    -1.64,
+    0.22
+   ],
+   [
+    0.5,
+    -1.64,
+    0.22
+   ],
+   [
+    0.5,
+    -1.75,
+    0.22
+   ],
+   [
+    -0.5,
+    -1.75,
+    0.22
+   ],
+   [
+    -0.5,
+    -1.75,
+    1.67
+   ],
+   [
+    0.5,
+    -1.75,
+    1.67
+   ],
+   [
+    0.5,
+    -1.64,
+    1.67
+   ],
+   [
+    -0.5,
+    -1.64,
+    1.67
+   ],
+   [
+    -0.5,
+    -1.75,
+    0.22
+   ],
+   [
+    0.5,
+    -1.75,
+    0.22
+   ],
+   [
+    0.5,
+    -1.75,
+    1.67
+   ],
+   [
+    -0.5,
+    -1.75,
+    1.67
+   ],
+   [
+    0.5,
+    -1.75,
+    0.22
+   ],
+   [
+    0.5,
+    -1.64,
+    0.22
+   ],
+   [
+    0.5,
+    -1.64,
+    1.67
+   ],
+   [
+    0.5,
+    -1.75,
+    1.67
+   ],
+   [
+    0.5,
+    -1.64,
+    0.22
+   ],
+   [
+    -0.5,
+    -1.64,
+    0.22
+   ],
+   [
+    -0.5,
+    -1.64,
+    1.67
+   ],
+   [
+    0.5,
+    -1.64,
+    1.67
+   ],
+   [
+    -0.5,
+    -1.64,
+    0.22
+   ],
+   [
+    -0.5,
+    -1.75,
+    0.22
+   ],
+   [
+    -0.5,
+    -1.75,
+    1.67
+   ],
+   [
+    -0.5,
+    -1.64,
+    1.67
+   ]
+  ],
+  "emissive": [
+   "EMIT_door_glass",
+   "EMIT_sign_coin",
+   "EMIT_window_warm"
+  ],
+  "materials": [
+   "EMIT_door_glass",
+   "EMIT_sign_coin",
+   "EMIT_window_warm",
+   "awning_blue",
+   "brick_red",
+   "fruit",
+   "metal_dark",
+   "paint_blue",
+   "paint_sky",
+   "plaster_white",
+   "roof_blue",
+   "stone_block",
+   "wood_planks"
+  ],
+  "problems": []
+ },
+ "lab": {
+  "glb": "public/assets/models/lab.glb",
+  "bytes": 75800,
+  "tris": 852,
+  "bboxMin": [
+   -3.83,
+   -2.73,
+   0.0
+  ],
+  "bboxMax": [
+   3.83,
+   2.23,
+   4.6
+  ],
+  "footprint": [
+   8,
+   5
+  ],
+  "height": 4.6,
+  "door": [
+   0,
+   3
+  ],
+  "doorCenters": [
+   [
+    -0.9,
+    -2.49,
+    0.2
+   ],
+   [
+    0.9,
+    -2.49,
+    0.2
+   ],
+   [
+    0.9,
+    -2.6,
+    0.2
+   ],
+   [
+    -0.9,
+    -2.6,
+    0.2
+   ],
+   [
+    -0.9,
+    -2.6,
+    2.05
+   ],
+   [
+    0.9,
+    -2.6,
+    2.05
+   ],
+   [
+    0.9,
+    -2.49,
+    2.05
+   ],
+   [
+    -0.9,
+    -2.49,
+    2.05
+   ],
+   [
+    -0.9,
+    -2.6,
+    0.2
+   ],
+   [
+    0.9,
+    -2.6,
+    0.2
+   ],
+   [
+    0.9,
+    -2.6,
+    2.05
+   ],
+   [
+    -0.9,
+    -2.6,
+    2.05
+   ],
+   [
+    0.9,
+    -2.6,
+    0.2
+   ],
+   [
+    0.9,
+    -2.49,
+    0.2
+   ],
+   [
+    0.9,
+    -2.49,
+    2.05
+   ],
+   [
+    0.9,
+    -2.6,
+    2.05
+   ],
+   [
+    0.9,
+    -2.49,
+    0.2
+   ],
+   [
+    -0.9,
+    -2.49,
+    0.2
+   ],
+   [
+    -0.9,
+    -2.49,
+    2.05
+   ],
+   [
+    0.9,
+    -2.49,
+    2.05
+   ],
+   [
+    -0.9,
+    -2.49,
+    0.2
+   ],
+   [
+    -0.9,
+    -2.6,
+    0.2
+   ],
+   [
+    -0.9,
+    -2.6,
+    2.05
+   ],
+   [
+    -0.9,
+    -2.49,
+    2.05
+   ]
+  ],
+  "emissive": [
+   "EMIT_beacon_red",
+   "EMIT_door_glass",
+   "EMIT_sign_flask",
+   "EMIT_window_cyan"
+  ],
+  "materials": [
+   "EMIT_beacon_red",
+   "EMIT_door_glass",
+   "EMIT_sign_flask",
+   "EMIT_window_cyan",
+   "concrete",
+   "grate_vent",
+   "metal_dark",
+   "metal_grey",
+   "metal_white",
+   "paint_cyan"
+  ],
+  "problems": []
+ },
+ "gym": {
+  "glb": "public/assets/models/gym.glb",
+  "bytes": 70744,
+  "tris": 762,
+  "bboxMin": [
+   -4.0916,
+   -3.51,
+   0.0
+  ],
+  "bboxMax": [
+   4.0916,
+   3.205,
+   5.6
+  ],
+  "footprint": [
+   8,
+   7
+  ],
+  "height": 5.6,
+  "door": [
+   0,
+   4
+  ],
+  "doorCenters": [
+   [
+    -0.9,
+    -2.79,
+    0.35
+   ],
+   [
+    0.9,
+    -2.79,
+    0.35
+   ],
+   [
+    0.9,
+    -2.9,
+    0.35
+   ],
+   [
+    -0.9,
+    -2.9,
+    0.35
+   ],
+   [
+    -0.9,
+    -2.9,
+    2.3
+   ],
+   [
+    0.9,
+    -2.9,
+    2.3
+   ],
+   [
+    0.9,
+    -2.79,
+    2.3
+   ],
+   [
+    -0.9,
+    -2.79,
+    2.3
+   ],
+   [
+    -0.9,
+    -2.9,
+    0.35
+   ],
+   [
+    0.9,
+    -2.9,
+    0.35
+   ],
+   [
+    0.9,
+    -2.9,
+    2.3
+   ],
+   [
+    -0.9,
+    -2.9,
+    2.3
+   ],
+   [
+    0.9,
+    -2.9,
+    0.35
+   ],
+   [
+    0.9,
+    -2.79,
+    0.35
+   ],
+   [
+    0.9,
+    -2.79,
+    2.3
+   ],
+   [
+    0.9,
+    -2.9,
+    2.3
+   ],
+   [
+    0.9,
+    -2.79,
+    0.35
+   ],
+   [
+    -0.9,
+    -2.79,
+    0.35
+   ],
+   [
+    -0.9,
+    -2.79,
+    2.3
+   ],
+   [
+    0.9,
+    -2.79,
+    2.3
+   ],
+   [
+    -0.9,
+    -2.79,
+    0.35
+   ],
+   [
+    -0.9,
+    -2.9,
+    0.35
+   ],
+   [
+    -0.9,
+    -2.9,
+    2.3
+   ],
+   [
+    -0.9,
+    -2.79,
+    2.3
+   ]
+  ],
+  "emissive": [
+   "EMIT_lantern",
+   "EMIT_sign_badge",
+   "EMIT_window_warm"
+  ],
+  "materials": [
+   "EMIT_lantern",
+   "EMIT_sign_badge",
+   "EMIT_window_warm",
+   "banner_badge",
+   "door_red",
+   "gold_trim",
+   "metal_dark",
+   "plaster_cream",
+   "roof_crimson",
+   "stone_light",
+   "stone_warm"
+  ],
+  "problems": []
+ },
+ "tower": {
+  "glb": "public/assets/models/tower.glb",
+  "bytes": 75624,
+  "tris": 1044,
+  "bboxMin": [
+   -2.4,
+   -2.43,
+   0.0
+  ],
+  "bboxMax": [
+   2.4,
+   2.4,
+   12.0
+  ],
+  "footprint": [
+   5,
+   5
+  ],
+  "height": 12,
+  "door": [
+   0,
+   3
+  ],
+  "doorCenters": [
+   [
+    -0.575,
+    -2.14,
+    0.3
+   ],
+   [
+    0.575,
+    -2.14,
+    0.3
+   ],
+   [
+    0.575,
+    -2.25,
+    0.3
+   ],
+   [
+    -0.575,
+    -2.25,
+    0.3
+   ],
+   [
+    -0.575,
+    -2.25,
+    1.75
+   ],
+   [
+    0.575,
+    -2.25,
+    1.75
+   ],
+   [
+    0.575,
+    -2.14,
+    1.75
+   ],
+   [
+    -0.575,
+    -2.14,
+    1.75
+   ],
+   [
+    -0.575,
+    -2.25,
+    0.3
+   ],
+   [
+    0.575,
+    -2.25,
+    0.3
+   ],
+   [
+    0.575,
+    -2.25,
+    1.75
+   ],
+   [
+    -0.575,
+    -2.25,
+    1.75
+   ],
+   [
+    0.575,
+    -2.25,
+    0.3
+   ],
+   [
+    0.575,
+    -2.14,
+    0.3
+   ],
+   [
+    0.575,
+    -2.14,
+    1.75
+   ],
+   [
+    0.575,
+    -2.25,
+    1.75
+   ],
+   [
+    0.575,
+    -2.14,
+    0.3
+   ],
+   [
+    -0.575,
+    -2.14,
+    0.3
+   ],
+   [
+    -0.575,
+    -2.14,
+    1.75
+   ],
+   [
+    0.575,
+    -2.14,
+    1.75
+   ],
+   [
+    -0.575,
+    -2.14,
+    0.3
+   ],
+   [
+    -0.575,
+    -2.25,
+    0.3
+   ],
+   [
+    -0.575,
+    -2.25,
+    1.75
+   ],
+   [
+    -0.575,
+    -2.14,
+    1.75
+   ]
+  ],
+  "emissive": [
+   "EMIT_core",
+   "EMIT_door_cyber",
+   "EMIT_ring_cyan",
+   "EMIT_window_cyan"
+  ],
+  "materials": [
+   "EMIT_core",
+   "EMIT_door_cyber",
+   "EMIT_ring_cyan",
+   "EMIT_window_cyan",
+   "metal_dark",
+   "metal_navy",
+   "metal_white",
+   "tower_panel"
+  ],
+  "problems": []
+ },
+ "datacenter": {
+  "glb": "public/assets/models/datacenter.glb",
+  "bytes": 63828,
+  "tris": 712,
+  "bboxMin": [
+   -4.85,
+   -2.98,
+   0.0
+  ],
+  "bboxMax": [
+   4.85,
+   2.8,
+   5.0
+  ],
+  "footprint": [
+   10,
+   6
+  ],
+  "height": 5,
+  "door": [
+   0,
+   3
+  ],
+  "doorCenters": [
+   [
+    -0.9,
+    -2.69,
+    0.15
+   ],
+   [
+    0.9,
+    -2.69,
+    0.15
+   ],
+   [
+    0.9,
+    -2.8,
+    0.15
+   ],
+   [
+    -0.9,
+    -2.8,
+    0.15
+   ],
+   [
+    -0.9,
+    -2.8,
+    2.25
+   ],
+   [
+    0.9,
+    -2.8,
+    2.25
+   ],
+   [
+    0.9,
+    -2.69,
+    2.25
+   ],
+   [
+    -0.9,
+    -2.69,
+    2.25
+   ],
+   [
+    -0.9,
+    -2.8,
+    0.15
+   ],
+   [
+    0.9,
+    -2.8,
+    0.15
+   ],
+   [
+    0.9,
+    -2.8,
+    2.25
+   ],
+   [
+    -0.9,
+    -2.8,
+    2.25
+   ],
+   [
+    0.9,
+    -2.8,
+    0.15
+   ],
+   [
+    0.9,
+    -2.69,
+    0.15
+   ],
+   [
+    0.9,
+    -2.69,
+    2.25
+   ],
+   [
+    0.9,
+    -2.8,
+    2.25
+   ],
+   [
+    0.9,
+    -2.69,
+    0.15
+   ],
+   [
+    -0.9,
+    -2.69,
+    0.15
+   ],
+   [
+    -0.9,
+    -2.69,
+    2.25
+   ],
+   [
+    0.9,
+    -2.69,
+    2.25
+   ],
+   [
+    -0.9,
+    -2.69,
+    0.15
+   ],
+   [
+    -0.9,
+    -2.8,
+    0.15
+   ],
+   [
+    -0.9,
+    -2.8,
+    2.25
+   ],
+   [
+    -0.9,
+    -2.69,
+    2.25
+   ]
+  ],
+  "emissive": [
+   "EMIT_sign_chip",
+   "EMIT_strip_green",
+   "EMIT_window_cyan"
+  ],
+  "materials": [
+   "EMIT_sign_chip",
+   "EMIT_strip_green",
+   "EMIT_window_cyan",
+   "concrete",
+   "dark_solid",
+   "door_metal",
+   "fan",
+   "grate_vent",
+   "metal_dark",
+   "metal_grey",
+   "paint_cyan"
+  ],
+  "problems": []
+ },
+ "windmill": {
+  "glb": "public/assets/models/windmill.glb",
+  "bytes": 44884,
+  "tris": 462,
+  "bboxMin": [
+   -1.9092,
+   -1.485,
+   0.0
+  ],
+  "bboxMax": [
+   1.9092,
+   1.275,
+   6.9
+  ],
+  "footprint": [
+   3,
+   3
+  ],
+  "height": 7,
+  "door": null,
+  "doorCenters": [
+   [
+    -0.31,
+    -1.295,
+    0.12
+   ],
+   [
+    0.31,
+    -1.295,
+    0.12
+   ],
+   [
+    0.31,
+    -1.405,
+    0.12
+   ],
+   [
+    -0.31,
+    -1.405,
+    0.12
+   ],
+   [
+    -0.31,
+    -1.405,
+    1.17
+   ],
+   [
+    0.31,
+    -1.405,
+    1.17
+   ],
+   [
+    0.31,
+    -1.295,
+    1.17
+   ],
+   [
+    -0.31,
+    -1.295,
+    1.17
+   ],
+   [
+    -0.31,
+    -1.405,
+    0.12
+   ],
+   [
+    0.31,
+    -1.405,
+    0.12
+   ],
+   [
+    0.31,
+    -1.405,
+    1.17
+   ],
+   [
+    -0.31,
+    -1.405,
+    1.17
+   ],
+   [
+    0.31,
+    -1.405,
+    0.12
+   ],
+   [
+    0.31,
+    -1.295,
+    0.12
+   ],
+   [
+    0.31,
+    -1.295,
+    1.17
+   ],
+   [
+    0.31,
+    -1.405,
+    1.17
+   ],
+   [
+    0.31,
+    -1.295,
+    0.12
+   ],
+   [
+    -0.31,
+    -1.295,
+    0.12
+   ],
+   [
+    -0.31,
+    -1.295,
+    1.17
+   ],
+   [
+    0.31,
+    -1.295,
+    1.17
+   ],
+   [
+    -0.31,
+    -1.295,
+    0.12
+   ],
+   [
+    -0.31,
+    -1.405,
+    0.12
+   ],
+   [
+    -0.31,
+    -1.405,
+    1.17
+   ],
+   [
+    -0.31,
+    -1.295,
+    1.17
+   ]
+  ],
+  "emissive": [
+   "EMIT_window_warm"
+  ],
+  "materials": [
+   "EMIT_window_warm",
+   "canvas_tan",
+   "door_wood",
+   "gold_trim",
+   "plaster_cream",
+   "roof_brown",
+   "stone_block",
+   "timber_dark"
+  ],
+  "problems": []
+ },
+ "temple": {
+  "glb": "public/assets/models/temple.glb",
+  "bytes": 102440,
+  "tris": 1358,
+  "bboxMin": [
+   -4.9,
+   -3.9,
+   0.0
+  ],
+  "bboxMax": [
+   4.9,
+   3.9,
+   8.0
+  ],
+  "footprint": [
+   10,
+   8
+  ],
+  "height": 8,
+  "door": [
+   0,
+   4
+  ],
+  "doorCenters": [
+   [
+    -0.9,
+    -2.79,
+    1.0
+   ],
+   [
+    0.9,
+    -2.79,
+    1.0
+   ],
+   [
+    0.9,
+    -2.9,
+    1.0
+   ],
+   [
+    -0.9,
+    -2.9,
+    1.0
+   ],
+   [
+    -0.9,
+    -2.9,
+    3.3
+   ],
+   [
+    0.9,
+    -2.9,
+    3.3
+   ],
+   [
+    0.9,
+    -2.79,
+    3.3
+   ],
+   [
+    -0.9,
+    -2.79,
+    3.3
+   ],
+   [
+    -0.9,
+    -2.9,
+    1.0
+   ],
+   [
+    0.9,
+    -2.9,
+    1.0
+   ],
+   [
+    0.9,
+    -2.9,
+    3.3
+   ],
+   [
+    -0.9,
+    -2.9,
+    3.3
+   ],
+   [
+    0.9,
+    -2.9,
+    1.0
+   ],
+   [
+    0.9,
+    -2.79,
+    1.0
+   ],
+   [
+    0.9,
+    -2.79,
+    3.3
+   ],
+   [
+    0.9,
+    -2.9,
+    3.3
+   ],
+   [
+    0.9,
+    -2.79,
+    1.0
+   ],
+   [
+    -0.9,
+    -2.79,
+    1.0
+   ],
+   [
+    -0.9,
+    -2.79,
+    3.3
+   ],
+   [
+    0.9,
+    -2.79,
+    3.3
+   ],
+   [
+    -0.9,
+    -2.79,
+    1.0
+   ],
+   [
+    -0.9,
+    -2.9,
+    1.0
+   ],
+   [
+    -0.9,
+    -2.9,
+    3.3
+   ],
+   [
+    -0.9,
+    -2.79,
+    3.3
+   ]
+  ],
+  "emissive": [
+   "EMIT_core",
+   "EMIT_door_temple",
+   "EMIT_gold_glow",
+   "EMIT_rune"
+  ],
+  "materials": [
+   "EMIT_core",
+   "EMIT_door_temple",
+   "EMIT_gold_glow",
+   "EMIT_rune",
+   "gold_trim",
+   "marble_white",
+   "roof_white",
+   "stone_light",
+   "temple_panel"
+  ],
+  "problems": []
+ },
+ "cave_entrance": {
+  "glb": "public/assets/models/cave_entrance.glb",
+  "bytes": 25816,
+  "tris": 186,
+  "bboxMin": [
+   -1.657,
+   -1.06,
+   0.0
+  ],
+  "bboxMax": [
+   1.722,
+   0.9829,
+   2.6176
+  ],
+  "footprint": [
+   3,
+   2
+  ],
+  "height": 2.8,
+  "door": [
+   0,
+   1
+  ],
+  "doorCenters": [
+   [
+    -0.525,
+    -0.95,
+    1.32
+   ],
+   [
+    0.525,
+    -0.95,
+    1.32
+   ],
+   [
+    0.525,
+    -0.82,
+    1.32
+   ],
+   [
+    -0.525,
+    -0.82,
+    1.32
+   ],
+   [
+    -0.525,
+    -0.95,
+    0.0
+   ],
+   [
+    0.525,
+    -0.95,
+    0.0
+   ],
+   [
+    0.525,
+    -0.95,
+    1.32
+   ],
+   [
+    -0.525,
+    -0.95,
+    1.32
+   ],
+   [
+    0.525,
+    -0.95,
+    0.0
+   ],
+   [
+    0.525,
+    -0.82,
+    0.0
+   ],
+   [
+    0.525,
+    -0.82,
+    1.32
+   ],
+   [
+    0.525,
+    -0.95,
+    1.32
+   ],
+   [
+    0.525,
+    -0.82,
+    0.0
+   ],
+   [
+    -0.525,
+    -0.82,
+    0.0
+   ],
+   [
+    -0.525,
+    -0.82,
+    1.32
+   ],
+   [
+    0.525,
+    -0.82,
+    1.32
+   ],
+   [
+    -0.525,
+    -0.82,
+    0.0
+   ],
+   [
+    -0.525,
+    -0.95,
+    0.0
+   ],
+   [
+    -0.525,
+    -0.95,
+    1.32
+   ],
+   [
+    -0.525,
+    -0.82,
+    1.32
+   ]
+  ],
+  "emissive": [
+   "EMIT_lantern"
+  ],
+  "materials": [
+   "EMIT_lantern",
+   "cave_dark",
+   "metal_dark",
+   "rock_brown",
+   "rock_grey",
+   "timber_dark"
+  ],
+  "problems": []
+ },
+ "stall": {
+  "glb": "public/assets/models/stall.glb",
+  "bytes": 21516,
+  "tris": 156,
+  "bboxMin": [
+   -1.05,
+   -1.025,
+   0.0
+  ],
+  "bboxMax": [
+   1.05,
+   1.0094,
+   1.9969
+  ],
+  "footprint": [
+   2,
+   2
+  ],
+  "height": 2,
+  "door": null,
+  "doorCenters": [],
+  "emissive": [
+   "EMIT_lantern"
+  ],
+  "materials": [
+   "EMIT_lantern",
+   "awning_red",
+   "fruit",
+   "metal_dark",
+   "timber_dark",
+   "wood_light",
+   "wood_planks"
+  ],
+  "problems": []
+ },
+ "tent": {
+  "glb": "public/assets/models/tent.glb",
+  "bytes": 15600,
+  "tris": 106,
+  "bboxMin": [
+   -0.99,
+   -0.99,
+   0.0
+  ],
+  "bboxMax": [
+   0.99,
+   0.99,
+   1.8
+  ],
+  "footprint": [
+   2,
+   2
+  ],
+  "height": 1.8,
+  "door": null,
+  "doorCenters": [],
+  "emissive": [],
+  "materials": [
+   "canvas_shadow",
+   "canvas_tan",
+   "timber_dark",
+   "wood_light",
+   "wood_planks"
+  ],
+  "problems": []
+ },
+ "well": {
+  "glb": "public/assets/models/well.glb",
+  "bytes": 25468,
+  "tris": 204,
+  "bboxMin": [
+   -0.9,
+   -0.82,
+   0.0
+  ],
+  "bboxMax": [
+   0.99,
+   0.82,
+   1.8
+  ],
+  "footprint": [
+   2,
+   2
+  ],
+  "height": 1.8,
+  "door": null,
+  "doorCenters": [],
+  "emissive": [],
+  "materials": [
+   "dark_solid",
+   "roof_red",
+   "rope",
+   "stone_block",
+   "stone_light",
+   "timber_dark",
+   "water",
+   "wood_planks"
+  ],
+  "problems": []
+ },
+ "fountain": {
+  "glb": "public/assets/models/fountain.glb",
+  "bytes": 22040,
+  "tris": 268,
+  "bboxMin": [
+   -1.3396,
+   -1.3396,
+   0.0
+  ],
+  "bboxMax": [
+   1.3396,
+   1.3396,
+   1.6
+  ],
+  "footprint": [
+   3,
+   3
+  ],
+  "height": 1.6,
+  "door": null,
+  "doorCenters": [],
+  "emissive": [
+   "EMIT_water"
+  ],
+  "materials": [
+   "EMIT_water",
+   "marble_white",
+   "stone_block"
+  ],
+  "problems": []
+ },
+ "statue": {
+  "glb": "public/assets/models/statue.glb",
+  "bytes": 30560,
+  "tris": 286,
+  "bboxMin": [
+   -0.9,
+   -0.9,
+   0.0
+  ],
+  "bboxMax": [
+   0.9,
+   0.9,
+   2.6
+  ],
+  "footprint": [
+   2,
+   2
+  ],
+  "height": 2.6,
+  "door": null,
+  "doorCenters": [],
+  "emissive": [
+   "EMIT_core"
+  ],
+  "materials": [
+   "EMIT_core",
+   "gold_trim",
+   "marble_white",
+   "plaque",
+   "stone_block",
+   "stone_light",
+   "stone_warm"
+  ],
+  "problems": []
+ },
+ "dock": {
+  "glb": "public/assets/models/dock.glb",
+  "bytes": 23092,
+  "tris": 268,
+  "bboxMin": [
+   -0.9379,
+   -1.95,
+   -0.7
+  ],
+  "bboxMax": [
+   0.9379,
+   1.95,
+   0.44
+  ],
+  "footprint": [
+   2,
+   4
+  ],
+  "height": 0.3,
+  "door": null,
+  "doorCenters": [],
+  "emissive": [],
+  "materials": [
+   "metal_dark",
+   "rope",
+   "timber_dark",
+   "wood_planks"
+  ],
+  "problems": []
+ },
+ "boat": {
+  "glb": "public/assets/models/boat.glb",
+  "bytes": 19316,
+  "tris": 208,
+  "bboxMin": [
+   -0.88,
+   -1.48,
+   0.02
+  ],
+  "bboxMax": [
+   0.88,
+   1.42,
+   1.0
+  ],
+  "footprint": [
+   2,
+   3
+  ],
+  "height": 1,
+  "door": null,
+  "doorCenters": [],
+  "emissive": [],
+  "materials": [
+   "hull_wood",
+   "rope",
+   "timber_dark",
+   "wood_light"
+  ],
+  "problems": []
+ },
+ "ruin_arch": {
+  "glb": "public/assets/models/ruin_arch.glb",
+  "bytes": 15660,
+  "tris": 137,
+  "bboxMin": [
+   -1.41,
+   -0.5567,
+   0.0
+  ],
+  "bboxMax": [
+   1.41,
+   0.42,
+   3.41
+  ],
+  "footprint": [
+   3,
+   1
+  ],
+  "height": 3.4,
+  "door": null,
+  "doorCenters": [],
+  "emissive": [
+   "EMIT_rune"
+  ],
+  "materials": [
+   "EMIT_rune",
+   "moss_stone",
+   "rock_grey"
+  ],
+  "problems": []
+ },
+ "ruin_pillar": {
+  "glb": "public/assets/models/ruin_pillar.glb",
+  "bytes": 13768,
+  "tris": 120,
+  "bboxMin": [
+   -0.45,
+   -0.5969,
+   0.0
+  ],
+  "bboxMax": [
+   0.5294,
+   0.45,
+   2.9944
+  ],
+  "footprint": [
+   1,
+   1
+  ],
+  "height": 3,
+  "door": null,
+  "doorCenters": [],
+  "emissive": [
+   "EMIT_rune"
+  ],
+  "materials": [
+   "EMIT_rune",
+   "moss_stone",
+   "ruin_marble"
+  ],
+  "problems": []
+ }
+}

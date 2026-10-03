@@ -1,0 +1,237 @@
+{
+  "sfx": {"useItem": "item", "heal": "heal", "buy": "money", "sell": "money", "save": "save", "learn": "levelup", "levelUp": "levelup", "release": "cancel", "toss": "cancel", "start": "confirm", "pick": "confirm", "drop": "select", "error": "error", "shiny": "notify", "press": "confirm"},
+  "anim": {"walkFps": 7, "walkTurnMs": 1700, "cardStaggerMs": 45, "pressBlinkMs": 1100, "artPanSeconds": 48, "mapBlinkMs": 700, "creditsScrollUnits": 24},
+  "glyphs": {
+    "dex": {
+      "rows": ["..ooooooo..", ".orrrrrrRo.", "orwcorrrrRo", "orccorryrRo", "orrrrrrrrRo", "oRRRRRRRRRo", "ossssssssSo", "osBBBBBBsSo", "osBccbbBsSo", "osssssssSSo", ".ooooooooo."]
+    },
+    "party": {
+      "rows": ["...ooooo...", ".oorrrrroo.", ".orwrrrrRo.", "orwrrrrrrRo", "orrrooorrRo", "oooowhwoooo", "osssooossSo", "owssssssSSo", ".osssssSSo.", ".ooSSSSSoo.", "...ooooo..."]
+    },
+    "bag": {
+      "rows": ["...ooooo...", "..od...do..", ".ooooooooo.", "onnnnnnnnNo", "onhnnnnnnNo", "oNNNoyoNNNo", "onnnoooonNo", "onnnnnnnnNo", "onnnnnnnnNo", "oNNNNNNNNNo", ".ooooooooo."]
+    },
+    "map": {
+      "rows": ["ooo...ooo..", "oeeoooeeooo", "oeEeeyeEeeo", "oeeEeeeeEeo", "obbeeEeeeeo", "obbbeeeeEeo", "oBbbbeeEeeo", "obBbbbeeeeo", "obbbBbbeeEo", "ooobbbooobo", "...ooo...oo"]
+    },
+    "quests": {
+      "rows": [".ooooooooo.", "ohhhhhhhhdo", "ohoooooohdo", "ohhhhhhhhdo", "ohooooohhdo", "ohhhhhhhhdo", "ohoooohhhdo", "ohhhhhhhhdo", "ohhhhhhrRdo", "oddddddRrdo", ".ooooooooo."]
+    },
+    "online": {
+      "rows": ["...ooooo...", ".oobbcbboo.", ".obcbbbcbo.", "obbcbbbcbBo", "occccccccco", "obbcbbbcbBo", "occccccccco", "obbcbbbcbBo", ".obcbbbcBo.", ".ooBbcbBoo.", "...ooooo..."]
+    },
+    "save": {
+      "rows": ["ooooooooo..", "oBBssssBBo.", "oBBssoSBBBo", "oBBssoSBBBo", "oBBsssSBBBo", "oBBBBBBBBBo", "oBwwwwwwwBo", "oBwSSSSSwBo", "oBwwwwwwwBo", "oBwSSSSwwBo", "ooooooooooo"]
+    },
+    "settings": {
+      "rows": ["....ooo....", ".oo.oso.oo.", ".ososssoso.", "..ossssso..", "ooosoooosoo", "osssokossso", "ooosoooosoo", "..ossssso..", ".ososssoso.", ".oo.oso.oo.", "....ooo...."]
+    },
+    "title": {
+      "rows": ["..ooooooo..", ".oddddddo..", ".odNNNNdo..", ".odNNNNdo..", ".odNNNNdoh.", ".odNNNydohh", ".odNNNNdoh.", ".odNNNNdo..", ".odNNNNdo..", ".oddddddo..", "ooooooooooo"]
+    },
+    "star": {
+      "rows": ["....o....", "...oyo...", "...oho...", "oooyhyooo", "oyyyhyyyo", ".oyyyyyo.", "..oyyyo..", ".oyyoyyo.", ".ooo.ooo."]
+    },
+    "starOff": {
+      "rows": ["....o....", "...oko...", "...oko...", "ooookoooo", "okkkkkkko", ".okkkkko.", "..okkko..", ".okkokko.", ".ooo.ooo."]
+    },
+    "heart": {
+      "rows": ["..oo.oo..", ".orroRro.", "orwrrrrRo", "orwrrrrRo", "orrrrrrRo", ".orrrrRo.", "..orrRo..", "...oRo...", "....o...."]
+    },
+    "heartOff": {
+      "rows": ["..oo.oo..", ".oSSoSko.", "oSkkkkkko", "oSkkkkkko", "oSkkkkkko", ".oSkkkko.", "..oSkko..", "...oko...", "....o...."]
+    },
+    "check": {"rows": ["......oo", ".....oeo", "oo..oeo.", "oeooeo..", ".oeeo...", "..oo...."]},
+    "ball": {"rows": [".ooooo.", "orwrrRo", "orrrrRo", "ooowooo", "osssssS", "oSssSSo", ".ooooo."]},
+    "lock": {"rows": ["..ooo..", ".o...o.", ".o...o.", "ooooooo", "ohhohho", "ohhhhdo", "ooooooo"]},
+    "close": {"rows": ["h.....h", "hh...hh", ".hh.hh.", "..hhh..", ".hh.hh.", "hh...hh", "h.....h"]},
+    "arrowL": {"rows": ["...h", "..hh", ".hhh", "hhhh", ".hhh", "..hh", "...h"]},
+    "arrowR": {"rows": ["h...", "hh..", "hhh.", "hhhh", "hhh.", "hh..", "h..."]},
+    "research": {
+      "rows": ["...ooooo...", "..ocwwwco..", ".ocwccccco.", ".ocwcccbco.", ".occcccbco.", ".oocccbcoo.", "..ooooooso.", ".......osso", "........oso", ".........oo", "..........."]
+    },
+    "intel": {
+      "rows": [".ooooooooo.", "ommmmmmmmmo", "omooooommmo", "ommmmmmmmmo", "omoooommyyo", "ommmmmmmyyo", "omooooommmo", "ommmmmmmmmo", "omoooommmmo", "ommmmmmmmmo", ".ooooooooo."]
+    }
+  },
+  "glyphPalette": {"p": "#c58cff", "P": "#7a4ab8"},
+  "title": {
+    "music": "title",
+    "keyArt": "title",
+    "logo": "logo",
+    "logoSize": {"units": 250, "maxVw": 72},
+    "art": {
+      "pan": {"x": 0.006, "y": -0.004, "scale": 1.025},
+      "fits": [
+        {"minAspect": 1.25, "focus": [0.5, 0.5], "keep": [0.02, 0.36, 0.98, 0.87]},
+        {"minAspect": 0.7, "focus": [0.21, 0.5], "keep": [0.022, 0.36, 0.405, 0.87], "zoom": 1.4},
+        {"minAspect": 0, "focus": [0.3, 0.6], "keep": [0.165, 0.375, 0.4, 0.84], "zoom": 1.3}
+      ]
+    },
+    "vignette": {"ellipse": [84, 80, 50, 40], "clearTo": 0.6, "corner": 0.42, "top": 0.3, "topTo": 0.2, "bottomFrom": 0.8, "bottom": 0.55},
+    "menu": [
+      {"id": "continue", "label": "screens.title.menu.continue", "needsSave": true},
+      {"id": "new", "label": "screens.title.menu.new"},
+      {"id": "import", "label": "screens.title.menu.import"},
+      {"id": "settings", "label": "screens.title.menu.settings"}
+    ],
+    "particles": {"count": 44, "speedMin": 4, "speedMax": 12, "sizeMin": 1, "sizeMax": 2, "swayUnits": 5, "swayHz": 0.35, "twinkleHz": 1.3, "colors": ["#fff4d6", "#a8ecff", "#ffd27a", "#d9c2ff"]},
+    "scene": {
+      "sky": ["#141a3e", "#3a2c6a", "#a04f7a", "#f19a5c"],
+      "stars": 90,
+      "starColors": ["#ffffff", "#cfe4ff", "#ffe9b8"],
+      "starBand": 0.55,
+      "sun": {"x": 0.5, "y": 0.62, "radius": 0.06, "color": "#ffe2a0", "glow": "#ff9f5a"},
+      "ridges": [
+        {"color": "#4b3a73", "base": 0.62, "amp": 0.16, "freq": 2.3, "seed": 3},
+        {"color": "#33295a", "base": 0.7, "amp": 0.12, "freq": 3.7, "seed": 7},
+        {"color": "#211c40", "base": 0.8, "amp": 0.08, "freq": 6.1, "seed": 11},
+        {"color": "#14122a", "base": 0.9, "amp": 0.05, "freq": 9.3, "seed": 17}
+      ],
+      "haze": "#f6b07a",
+      "hazeAlpha": 0.22
+    }
+  },
+  "newGame": {"previewDirs": ["down", "left", "up", "right"], "cols": 3, "compactCols": 3},
+  "pause": {
+    "entries": [
+      {"id": "dex", "action": "dex", "label": "screens.pause.dex", "glyph": "dex"},
+      {"id": "party", "action": "party", "label": "screens.pause.party", "glyph": "party", "requires": "party"},
+      {"id": "bag", "action": "bag", "label": "screens.pause.bag", "glyph": "bag"},
+      {"id": "map", "action": "map", "label": "screens.pause.map", "glyph": "map"},
+      {"id": "quests", "action": "quests", "label": "screens.pause.quests", "glyph": "quests"},
+      {"id": "research", "action": "research", "label": "screens.pause.research", "glyph": "research"},
+      {"id": "intel", "action": "intel", "label": "screens.pause.intel", "glyph": "intel"},
+      {"id": "online", "action": "online", "label": "screens.pause.online", "glyph": "online"},
+      {"id": "save", "action": "save", "label": "screens.pause.save", "glyph": "save"},
+      {"id": "settings", "action": "settings", "label": "screens.pause.settings", "glyph": "settings"},
+      {"id": "title", "action": "title", "label": "screens.pause.title", "glyph": "title"}
+    ],
+    "titleEvent": "ap:return-title"
+  },
+  "party": {
+    "viewMenu": [
+      {"id": "summary", "label": "screens.party.menu.summary"},
+      {"id": "swap", "label": "screens.party.menu.swap"},
+      {"id": "nickname", "label": "screens.party.menu.nickname"},
+      {"id": "cancel", "label": "screens.party.menu.cancel"}
+    ],
+    "cols": 2,
+    "compactCols": 1,
+    "iconSize": 40,
+    "hpBarWidth": 96,
+    "expBarWidth": 96
+  },
+  "summary": {
+    "pages": [
+      {"id": "info", "label": "screens.summary.page.info"},
+      {"id": "stats", "label": "screens.summary.page.stats"},
+      {"id": "moves", "label": "screens.summary.page.moves"},
+      {"id": "ability", "label": "screens.summary.page.ability"}
+    ],
+    "ivStars": 5,
+    "friendshipHearts": 5,
+    "friendshipMax": 255,
+    "radarSize": 76
+  },
+  "bag": {
+    "tabs": [
+      {"id": "medicine", "label": "items.category.medicine", "categories": ["medicine"], "battle": true},
+      {"id": "ball", "label": "items.category.ball", "categories": ["ball"], "battle": true},
+      {"id": "battle", "label": "items.category.battle", "categories": ["battle"], "battle": true},
+      {"id": "chip", "label": "items.category.chip", "categories": ["chip"], "battle": false},
+      {"id": "evolution", "label": "items.category.evolution", "categories": ["evolution"], "battle": false},
+      {"id": "misc", "label": "items.category.misc", "categories": ["misc"], "battle": false},
+      {"id": "key", "label": "items.category.key", "categories": ["key"], "battle": false}
+    ],
+    "itemMenu": [
+      {"id": "use", "label": "screens.bag.menu.use"},
+      {"id": "toss", "label": "screens.bag.menu.toss"},
+      {"id": "cancel", "label": "screens.bag.menu.cancel"}
+    ],
+    "consumeChip": true,
+    "keyItems": {"map": {"open": "worldMap"}, "dex": {"open": "dex"}, "badgeCase": {"open": "badges"}, "bike": {"hint": "screens.bag.keyHint.bike", "action": "bike"}, "surf": {"hint": "screens.bag.keyHint.surf"}, "pass": {"hint": "screens.bag.keyHint.pass"}},
+    "tossMax": 99,
+    "visibleRows": 12,
+    "compactVisibleRows": 14
+  },
+  "dex": {
+    "cols": 8,
+    "compactCols": 5,
+    "rows": 4,
+    "compactRows": 6,
+    "countries": [
+      {"id": "domestic", "label": "screens.dex.country.domestic", "codes": ["CN"]},
+      {"id": "overseas", "label": "screens.dex.country.overseas", "exclude": ["CN"]}
+    ],
+    "filters": ["type", "rarity", "country", "company", "caught"],
+    "caughtOptions": ["caught", "seen", "unseen"],
+    "searchMaxLen": 16,
+    "companiesFromSeenOnly": true,
+    "statBarMax": 180,
+    "radarSize": 60,
+    "cryOnOpen": true
+  },
+  "shop": {"tabs": [{"id": "buy", "label": "screens.shop.tab.buy"}, {"id": "sell", "label": "screens.shop.tab.sell"}], "qtyMax": 99, "qtyBigStep": 10, "visibleRows": 11, "compactVisibleRows": 10},
+  "box": {
+    "cols": 6,
+    "wallpapers": [["#22305a", "#141d38"], ["#2b4a3a", "#16281f"], ["#4a2f3f", "#281824"], ["#3f3a22", "#221f12"], ["#2a3f52", "#14222e"], ["#40284f", "#22152b"], ["#4a3624", "#271c12"], ["#253e45", "#132226"]],
+    "menu": [
+      {"id": "move", "label": "screens.box.menu.move"},
+      {"id": "summary", "label": "screens.box.menu.summary"},
+      {"id": "release", "label": "screens.box.menu.release"},
+      {"id": "cancel", "label": "screens.box.menu.cancel"}
+    ],
+    "cellIconSize": 28,
+    "partyIconSize": 24
+  },
+  "worldMap": {"townGlyph": "diamond", "playerGlyph": "mPlayer", "visitedPalette": {"h": "#fff6c8", "g": "#ffd257", "o": "#2a1a06"}, "unvisitedPalette": {"h": "#b8c0d0", "g": "#6b7488", "o": "#0d0a08"}, "minLabelTiles": 260, "padUnits": 6},
+  "quests": {
+    "tabs": [
+      {"id": "main", "label": "screens.quests.tab.main", "kinds": ["main"], "done": false},
+      {"id": "side", "label": "screens.quests.tab.side", "kinds": ["side"], "done": false},
+      {"id": "done", "label": "screens.quests.tab.done", "kinds": ["main", "side"], "done": true}
+    ],
+    "visibleRows": 11,
+    "compactVisibleRows": 5
+  },
+  "settings": {
+    "tabs": [
+      {"id": "options", "label": "screens.settings.tab.options"},
+      {"id": "save", "label": "screens.settings.tab.save"},
+      {"id": "keys", "label": "screens.settings.tab.keys"},
+      {"id": "credits", "label": "screens.settings.tab.credits"}
+    ],
+    "fields": [
+      {"key": "bgmVolume", "kind": "slider", "section": "audio", "min": 0, "max": 1, "step": 0.1},
+      {"key": "sfxVolume", "kind": "slider", "section": "audio", "min": 0, "max": 1, "step": 0.1},
+      {"key": "textSpeed", "kind": "choice", "section": "game", "options": ["slow", "normal", "fast", "instant"]},
+      {"key": "autoRun", "kind": "toggle", "section": "game"},
+      {"key": "showMinimap", "kind": "toggle", "section": "game"},
+      {"key": "showNames", "kind": "toggle", "section": "game"},
+      {"key": "quality", "kind": "choice", "section": "video", "options": ["low", "medium", "high", "ultra"]},
+      {"key": "pixelScale", "kind": "choice", "section": "video", "options": [1, 2, 3, 4], "format": "screens.settings.scaleValue"},
+      {"key": "dof", "kind": "toggle", "section": "video"},
+      {"key": "bloom", "kind": "toggle", "section": "video"},
+      {"key": "shadows", "kind": "toggle", "section": "video"},
+      {"key": "touchControls", "kind": "choice", "section": "control", "options": ["auto", "on", "off"]}
+    ],
+    "saveActions": [
+      {"id": "export", "label": "screens.settings.saveAction.export"},
+      {"id": "import", "label": "screens.settings.saveAction.import"}
+    ],
+    "codeMaxLen": 400000,
+    "reloadAfterImport": true,
+    "keyHelp": ["up", "down", "left", "right", "confirm", "cancel", "menu", "run", "map", "minimap", "chat", "bike", "quickSave"],
+    "credits": [
+      {"role": "screens.credits.role.game", "names": ["Agent Pocket · 智灵口袋"]},
+      {"role": "screens.credits.role.engine", "names": ["three.js — MIT License", "Vite — MIT License", "ws — MIT License", "TypeScript — Apache License 2.0"]},
+      {"role": "screens.credits.role.fonts", "names": ["Fusion Pixel Font 12px — SIL Open Font License 1.1"]},
+      {"role": "screens.credits.role.music", "names": ["screens.credits.procedural"]},
+      {"role": "screens.credits.role.thanks", "names": ["screens.credits.thanksPlayers"]}
+    ]
+  },
+  "learnMove": {},
+  "moveCategoryColors": {"physical": "#ff9a7a", "special": "#8fc8ff", "status": "#c9c9d6"},
+  "badges": {"tintLight": 0.55, "tintDark": -0.45, "cols": 4, "compactCols": 2}
+}

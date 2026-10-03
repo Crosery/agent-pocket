@@ -1,0 +1,185 @@
+// Typed view of content/game.json (overworld + integration tunables) and its validation against CONTENT.
+import type { Dir, FieldWeatherKind, GameMap, ScriptStep } from '../../shared/types.ts'
+import type { WorldFx } from '../contracts.ts'
+import { CONTENT, t, type Content } from '../../shared/content/index.ts'
+import gameJson from '../../../content/game.json' with { type: 'json' }
+
+export type MapKind = GameMap['kind']
+export type Range = [number, number]
+
+export interface FootstepDef { sfx: string; volume: number; pitch: number; fx?: WorldFx }
+export interface PropInteraction { action: 'box' | 'statue' | 'text' | 'script'; text?: string; script?: ScriptStep[] }
+
+export interface GameTuning {
+  loop: { maxDtSec: number; pauseWhenHidden: boolean }
+  loading: { showAfterMs: number; fadeOutMs: number; steps: string[] }
+  title: { importCodeMaxLen: number }
+  newGame: { startAnchor: string; facing: Dir; respawnAtStart: boolean; introScript: ScriptStep[] }
+  player: {
+    radius: number; cornerSlip: number; cornerSlipRate: number; substepTiles: number; axisDeadzone: number
+    facingHysteresis: number; elevSmoothing: number; zoomByMapKind: Partial<Record<MapKind, number>>; showOwnName: boolean
+    /** Fraction of the intended step that must actually be covered to count as moving. */
+    movingRatio: number
+    /** bump plays when blocked and less than stuckRatio of the intended step was covered. */
+    bump: { sfx: string; cooldownMs: number; volume: number; stuckRatio: number }
+    bike: { mapKinds: MapKind[]; sfxOn: string; sfxOff: string }
+    surf: { hopMs: number; rideLift: number; splashEverySec: number; sfx: string; fx: WorldFx }
+  }
+  footsteps: {
+    stride: { walk: number; run: number; bike: number; surf: number }
+    default: FootstepDef
+    surf: FootstepDef
+    terrain: Record<string, FootstepDef>
+  }
+  follower: {
+    distance: number; trailSpacing: number; maxTrail: number; indoorMaxSize: number; followRate: number
+    teleportDistance: number; moveEpsilon: number; mapKinds: MapKind[]; interactRadius: number; fx: WorldFx; cryPitch: number
+    tiredBelow: number
+    /** Map kinds where indoorMaxSize applies. */
+    sizeCapMapKinds: MapKind[]
+  }
+  interact: { reach: number; radius: number; reachAcrossProps: string[]; props: Record<string, PropInteraction>; sfx: string }
+  npc: {
+    showNames: boolean; walkSpeed: number; turnToPlayer: boolean; cullDistance: number; blockedRetrySec: number
+    wander: { pauseMinSec: number; pauseMaxSec: number; stepChance: number; maxStepsPerMove: number }
+    trainer: { exclaimMs: number; approachSpeed: number; sfx: string; fx: WorldFx; bubble: string; cooldownSec: number }
+  }
+  encounters: {
+    requireConsciousParty: boolean; surfEncounters: boolean; graceSteps: number
+    transition: { kind: 'fade' | 'battle' | 'iris'; inMs: number; flashColor: string; flashMs: number; sfx: string; fx: WorldFx }
+    legendRarityOrder: number; scriptedCanRun: boolean; repelOfferRefill: boolean
+  }
+  roaming: {
+    mapKinds: MapKind[]; spawnIntervalSec: number; spawnTries: number; minSpawnDistance: number; despawnMargin: number
+    lifetimeSec: Range; idleSec: Range; wanderRadius: number; speed: number; fleeSpeed: number; chaseSpeed: number
+    touchRadius: number; noticeRange: number; fleeChance: number; rareFleeChance: number; chaseChance: number
+    noticeBubble: string; noticeBubbleMs: number; fleeBubble: string; despawnFx: WorldFx; spawnFx: WorldFx
+    requireEncounterTerrain: boolean; cullDistance: number; arriveEpsilon: number
+    /** Terrain keys no roamer or event creature spawns on (1-tile causeways would force the battle). */
+    avoidTerrain?: string[]
+  }
+  warp: { fadeMs: number; sfx: Record<string, string>; fx: WorldFx }
+  region: {
+    bannerCooldownSec: number; musicFadeMs: number; nightMusicForTowns: boolean
+    weatherIntensity: Partial<Record<FieldWeatherKind, number>>; recheckSec: number
+    /** Map kinds whose regions drive the HUD name, banner, music and weather. */
+    mapKinds: MapKind[]; defaultWeather: FieldWeatherKind
+  }
+  items: { pickupSfx: string; keyItemSfx: string; hiddenGlint: { radius: number; intervalSec: number; fx: WorldFx } }
+  battle: { sayIntroBefore: boolean; sayDefeatTextAfter: boolean; lossAbortsScript: boolean; afterBattleSettleMs: number; fallbackMaxSteps: number }
+  blackout: { fadeMs: number; sfx: string }
+  fly: { minBadges: number; keyItemKind: string; mapKinds: MapKind[]; sfx: string }
+  script: {
+    maxDepth: number; healWaitMs: number; healSfx: string; moneySfx: string; questSfx: string; unlockSfx: string
+    fadeMs: number; moveNpcSpeed: number
+  }
+  presence: {
+    chatBubbleMs: number; emoteBubbleMs: number; bubbleMaxChars: number; interactRadius: number
+    followerDistance: number; followerRate: number; leadDebounceSec: number; inspectTimeoutMs: number
+  }
+  markers: { refreshSec: number; trainers: boolean; quest: boolean; others: boolean; rares: boolean; wild: boolean; items: boolean }
+  fog: { mapKinds: MapKind[] }
+  autosave: { events: string[]; minIntervalSec: number; onHidden: boolean }
+  hud: { moneyCheckSec: number }
+  flags: { badgePrefix: string }
+  debug: {
+    partySize: number; partyLevel: number; money: number; keyItemKinds: string[]
+    categoryQty: Record<string, number>; freezeClockWithTime: boolean; overlayRefreshMs: number; battleLevel: number
+  }
+}
+
+export const GAME: GameTuning = gameJson as unknown as GameTuning
+
+/** Text that is either a text-table key (localised via t()) or a literal string from data. */
+export function textOrKey(s: string, params?: Record<string, string | number>, c: Content = CONTENT): string {
+  return s in c.text ? t(s, params, c) : s
+}
+
+/** Overworld fx kinds the renderer implements (code capability ids, mirrored from the WorldFx contract). */
+const WORLD_FX: readonly WorldFx[] = ['exclaim', 'question', 'grass', 'dust', 'sparkle', 'splash', 'heart', 'warp', 'levelup', 'shiny']
+const MAP_KINDS: readonly MapKind[] = ['overworld', 'interior', 'cave']
+const GAME_EVENTS = [
+  'save:changed', 'party:changed', 'bag:changed', 'money:changed', 'dex:seen', 'dex:caught', 'map:entered', 'region:entered',
+  'quest:updated', 'badge:earned', 'battle:start', 'battle:end', 'settings:changed', 'net:status', 'chat:message', 'toast',
+]
+
+/** Problems in content/game.json (unknown sfx/fx/terrain/prop/event ids, bad ranges). Empty = consistent. */
+export function validateGameContent(g: GameTuning = GAME, c: Content = CONTENT): string[] {
+  const errs: string[] = []
+  const sfx = new Set(c.audio.sfx)
+  const checkSfx = (where: string, id: string, optional = false) => {
+    if (optional && id === '') return
+    if (!sfx.has(id)) errs.push(`game.json ${where}: unknown sfx "${id}"`)
+  }
+  const checkFx = (where: string, id: string | undefined) => {
+    if (id !== undefined && !WORLD_FX.includes(id as WorldFx)) errs.push(`game.json ${where}: unknown fx "${id}"`)
+  }
+  const checkKinds = (where: string, kinds: string[]) => {
+    for (const k of kinds) if (!MAP_KINDS.includes(k as MapKind)) errs.push(`game.json ${where}: unknown map kind "${k}"`)
+  }
+  const checkRange = (where: string, r: Range) => {
+    if (!Array.isArray(r) || r.length !== 2 || !(r[0] <= r[1]) || r[0] < 0) errs.push(`game.json ${where}: bad range`)
+  }
+  const checkStep = (where: string, f: FootstepDef) => {
+    checkSfx(where, f.sfx)
+    checkFx(where, f.fx)
+    if (!(f.volume >= 0 && f.volume <= 1)) errs.push(`game.json ${where}: volume out of 0..1`)
+    if (!(f.pitch > 0)) errs.push(`game.json ${where}: pitch must be > 0`)
+  }
+
+  checkSfx('player.bump.sfx', g.player.bump.sfx)
+  checkSfx('player.bike.sfxOn', g.player.bike.sfxOn)
+  checkSfx('player.bike.sfxOff', g.player.bike.sfxOff)
+  checkSfx('player.surf.sfx', g.player.surf.sfx)
+  checkFx('player.surf.fx', g.player.surf.fx)
+  checkKinds('player.bike.mapKinds', g.player.bike.mapKinds)
+  if (!(g.player.radius > 0 && g.player.radius < 0.5)) errs.push('game.json player.radius must be in (0, 0.5)')
+  if (!(g.player.substepTiles > 0 && g.player.substepTiles <= 0.5)) errs.push('game.json player.substepTiles must be in (0, 0.5]')
+  checkStep('footsteps.default', g.footsteps.default)
+  checkStep('footsteps.surf', g.footsteps.surf)
+  for (const [key, f] of Object.entries(g.footsteps.terrain)) {
+    if (!c.terrainByKey[key]) errs.push(`game.json footsteps.terrain: unknown terrain "${key}"`)
+    checkStep(`footsteps.terrain.${key}`, f)
+  }
+  checkKinds('follower.mapKinds', g.follower.mapKinds)
+  checkFx('follower.fx', g.follower.fx)
+  checkSfx('interact.sfx', g.interact.sfx)
+  for (const key of g.interact.reachAcrossProps) if (!c.props[key]) errs.push(`game.json interact.reachAcrossProps: unknown prop "${key}"`)
+  for (const [key, p] of Object.entries(g.interact.props)) {
+    if (!c.props[key]) errs.push(`game.json interact.props: unknown prop "${key}"`)
+    if (!['box', 'statue', 'text', 'script'].includes(p.action)) errs.push(`game.json interact.props.${key}: unknown action "${p.action}"`)
+    if (p.action === 'text' && !p.text) errs.push(`game.json interact.props.${key}: text action needs "text"`)
+    if (p.action === 'script' && !Array.isArray(p.script)) errs.push(`game.json interact.props.${key}: script action needs "script"`)
+  }
+  checkSfx('npc.trainer.sfx', g.npc.trainer.sfx)
+  checkFx('npc.trainer.fx', g.npc.trainer.fx)
+  checkSfx('encounters.transition.sfx', g.encounters.transition.sfx)
+  checkFx('encounters.transition.fx', g.encounters.transition.fx)
+  checkKinds('roaming.mapKinds', g.roaming.mapKinds)
+  checkRange('roaming.lifetimeSec', g.roaming.lifetimeSec)
+  checkRange('roaming.idleSec', g.roaming.idleSec)
+  checkFx('roaming.despawnFx', g.roaming.despawnFx)
+  checkFx('roaming.spawnFx', g.roaming.spawnFx)
+  for (const key of g.roaming.avoidTerrain ?? []) if (!c.terrainByKey[key]) errs.push(`game.json roaming.avoidTerrain: unknown terrain "${key}"`)
+  for (const [kind, id] of Object.entries(g.warp.sfx)) checkSfx(`warp.sfx.${kind}`, id, true)
+  checkFx('warp.fx', g.warp.fx)
+  checkSfx('items.pickupSfx', g.items.pickupSfx)
+  checkSfx('items.keyItemSfx', g.items.keyItemSfx)
+  checkFx('items.hiddenGlint.fx', g.items.hiddenGlint.fx)
+  checkSfx('blackout.sfx', g.blackout.sfx)
+  checkSfx('fly.sfx', g.fly.sfx)
+  checkKinds('fly.mapKinds', g.fly.mapKinds)
+  for (const k of ['healSfx', 'moneySfx', 'questSfx', 'unlockSfx'] as const) checkSfx(`script.${k}`, g.script[k])
+  checkKinds('fog.mapKinds', g.fog.mapKinds)
+  checkKinds('follower.sizeCapMapKinds', g.follower.sizeCapMapKinds)
+  checkKinds('region.mapKinds', g.region.mapKinds)
+  for (const k of Object.keys(g.region.weatherIntensity)) if (!(`game.weather.${k}` in c.text)) errs.push(`text: missing "game.weather.${k}"`)
+  if (!(g.region.defaultWeather in g.region.weatherIntensity)) errs.push(`game.json region.defaultWeather: "${g.region.defaultWeather}" has no weatherIntensity`)
+  for (const e of g.autosave.events) if (!GAME_EVENTS.includes(e)) errs.push(`game.json autosave.events: unknown event "${e}"`)
+  for (const cat of Object.keys(g.debug.categoryQty)) if (!c.itemList.some((it) => it.category === cat)) errs.push(`game.json debug.categoryQty: no items in category "${cat}"`)
+  for (const step of g.newGame.introScript) {
+    if (step.op === 'say' && !(step.text in c.text)) errs.push(`game.json newGame.introScript: missing text key "${step.text}"`)
+    if (step.op === 'sfx') checkSfx('newGame.introScript', step.id)
+  }
+  return errs
+}

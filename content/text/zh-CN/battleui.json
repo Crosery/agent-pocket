@@ -1,0 +1,16 @@
+{
+  "cmd": {"fight": "战斗", "bag": "背包", "party": "队伍", "run": "逃跑", "forfeit": "投降"},
+  "prompt": {"command": "要让 {name} 做什么？", "move": "要使用哪个招式？", "forcedSwitch": "要让哪只智灵上场？", "switchTitle": "要换上哪只智灵？", "waiting": "正在等待 {name} 行动……", "timer": "{sec} 秒"},
+  "move": {"pp": "{pp}/{max}", "power": "威力", "accuracy": "命中", "category": {"physical": "物理", "special": "特殊", "status": "变化"}, "none": "—", "never": "必中", "priority": "先制 {n}", "back": "返回"},
+  "eff": {"immune": "没有效果", "weak": "效果不理想", "normal": "效果一般", "super": "效果绝佳", "unknown": "效果未知"},
+  "hud": {"level": "Lv.{level}", "hp": "HP", "exp": "EXP", "stage": "{stat}{sign}{n}", "plus": "+", "minus": "-"},
+  "levelUp": {"title": "{name} 升到了 Lv.{level}", "delta": "+{n}"},
+  "bag": {"cantCatch": "不能捕捉别人的智灵！", "noSpace": "队伍和盒子都已经满了，无法再收服智灵！", "cantUse": "现在不能使用这个道具。"},
+  "party": {"level": "Lv.{level}", "active": "正在战斗", "fainted": "无法战斗"},
+  "forfeit": {"confirm": "真的要认输吗？"},
+  "catch": {"newDex": "{name} 的数据已登记到图鉴中！", "newDexToast": "图鉴新增：{name}", "nicknameAsk": "要给 {name} 起个昵称吗？", "nicknamePrompt": "给 {name} 起个昵称吧", "toParty": "{name} 加入了队伍！", "toBox": "{name} 被传送到了第 {box} 号盒子！", "shinyToast": "收服了闪光的 {name}！"},
+  "learn": {"forgot": "1、2……砰！{name} 忘记了 {old}……", "learned": "然后……{name} 学会了 {move}！", "skipped": "{name} 最终没有学习 {move}。"},
+  "evolve": {"start": "咦？{name} 的样子……", "done": "恭喜！{name} 进化成了 {to}！", "cancelled": "咦？{name} 停止了进化。", "hint": "按 {key} 键中止进化", "newDexToast": "图鉴新增：{name}"},
+  "ability": {"banner": "{name} 的「{ability}」"},
+  "error": {"aborted": "战斗出现异常，已安全结束。"}
+}

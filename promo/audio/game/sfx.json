@@ -1,0 +1,195 @@
+{
+  "fallback": "select",
+  "sfx": {
+    "select": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.25, "freq": 1318, "dur": 0.028, "env": [0.001, 0.02, 0.4, 0.02], "gain": 0.2}
+      ]
+    },
+    "confirm": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.25, "note": "B5", "notes": [0, 5], "step": 0.055, "dur": 0.05, "env": [0.001, 0.03, 0.6, 0.03], "gain": 0.22}
+      ]
+    },
+    "cancel": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.5, "note": "E5", "notes": [0, -5], "step": 0.055, "dur": 0.05, "env": [0.001, 0.03, 0.5, 0.03], "gain": 0.17}
+      ]
+    },
+    "error": {
+      "layers": [
+        {"wave": "square", "freq": 185, "dur": 0.08, "env": [0.001, 0.02, 0.8, 0.02], "gain": 0.16, "filter": {"type": "lowpass", "freq": 2200}, "repeat": {"count": 2, "every": 0.11}}
+      ]
+    },
+    "step": {
+      "layers": [
+        {"wave": "noise", "dur": 0.02, "env": [0.001, 0.015, 0.0, 0.01], "gain": 0.12, "filter": {"type": "lowpass", "freq": 900, "q": 0.5}}
+      ]
+    },
+    "bump": {
+      "layers": [
+        {"wave": "triangle", "freq": 150, "to": 60, "dur": 0.09, "env": [0.001, 0.06, 0.3, 0.03], "gain": 0.45},
+        {"wave": "noise", "dur": 0.04, "env": [0.001, 0.03, 0.0, 0.02], "gain": 0.16, "filter": {"type": "lowpass", "freq": 500}}
+      ]
+    },
+    "door": {
+      "layers": [
+        {"wave": "noise", "dur": 0.24, "env": [0.03, 0.12, 0.4, 0.08], "gain": 0.28, "filter": {"type": "bandpass", "freq": 2600, "to": 500, "q": 0.9}},
+        {"wave": "triangle", "freq": 330, "to": 196, "dur": 0.12, "env": [0.002, 0.08, 0.2, 0.04], "gain": 0.18}
+      ]
+    },
+    "encounter": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.5, "freq": 196, "notes": [0, 3, 6, 9, 12, 15, 18, 21, 24, 27], "step": 0.035, "dur": 0.04, "env": [0.001, 0.02, 0.7, 0.02], "gain": 0.16},
+        {"wave": "pulse", "duty": 0.125, "freq": 392, "notes": [0, 3, 6, 9, 12, 15, 18, 21, 24, 27], "step": 0.035, "at": 0.0175, "dur": 0.04, "env": [0.001, 0.02, 0.7, 0.02], "gain": 0.1},
+        {"wave": "noise", "at": 0.3, "dur": 0.35, "env": [0.08, 0.2, 0.3, 0.15], "gain": 0.2, "filter": {"type": "bandpass", "freq": 600, "to": 4000, "q": 0.8}}
+      ]
+    },
+    "hit": {
+      "layers": [
+        {"wave": "noise", "dur": 0.09, "env": [0.001, 0.07, 0.1, 0.04], "gain": 0.45, "filter": {"type": "lowpass", "freq": 3200, "to": 500, "q": 0.8}},
+        {"wave": "square", "freq": 170, "to": 55, "dur": 0.09, "env": [0.001, 0.06, 0.2, 0.03], "gain": 0.22}
+      ]
+    },
+    "hit_super": {
+      "layers": [
+        {"wave": "noise", "dur": 0.12, "env": [0.001, 0.09, 0.15, 0.05], "gain": 0.55, "filter": {"type": "lowpass", "freq": 5200, "to": 600, "q": 1.0}},
+        {"wave": "square", "freq": 220, "to": 50, "dur": 0.12, "env": [0.001, 0.08, 0.2, 0.04], "gain": 0.26},
+        {"wave": "noise", "at": 0.07, "dur": 0.1, "env": [0.001, 0.07, 0.1, 0.05], "gain": 0.35, "filter": {"type": "highpass", "freq": 2500}},
+        {"wave": "pulse", "duty": 0.125, "at": 0.06, "freq": 880, "to": 220, "dur": 0.14, "env": [0.001, 0.08, 0.3, 0.05], "gain": 0.12}
+      ]
+    },
+    "hit_weak": {
+      "layers": [
+        {"wave": "noise", "dur": 0.06, "env": [0.001, 0.05, 0.0, 0.03], "gain": 0.3, "filter": {"type": "lowpass", "freq": 1300, "to": 300}},
+        {"wave": "triangle", "freq": 120, "to": 70, "dur": 0.06, "env": [0.001, 0.04, 0.2, 0.03], "gain": 0.2}
+      ]
+    },
+    "faint": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.25, "freq": 660, "to": 70, "dur": 0.75, "env": [0.005, 0.2, 0.7, 0.15], "gain": 0.2, "vibrato": {"rate": 9, "depth": 0.6}},
+        {"wave": "noise", "at": 0.5, "dur": 0.3, "env": [0.02, 0.2, 0.2, 0.1], "gain": 0.1, "filter": {"type": "lowpass", "freq": 800, "to": 200}}
+      ]
+    },
+    "ball_throw": {
+      "layers": [
+        {"wave": "noise", "dur": 0.26, "env": [0.04, 0.15, 0.3, 0.06], "gain": 0.22, "filter": {"type": "bandpass", "freq": 700, "to": 3600, "q": 1.4}},
+        {"wave": "sine", "freq": 420, "to": 980, "dur": 0.2, "env": [0.01, 0.1, 0.4, 0.05], "gain": 0.1}
+      ]
+    },
+    "ball_shake": {
+      "layers": [
+        {"wave": "triangle", "freq": 330, "to": 190, "dur": 0.05, "env": [0.001, 0.04, 0.1, 0.02], "gain": 0.32, "repeat": {"count": 2, "every": 0.09}},
+        {"wave": "noise", "dur": 0.02, "env": [0.001, 0.015, 0.0, 0.01], "gain": 0.15, "filter": {"type": "highpass", "freq": 3000}, "repeat": {"count": 2, "every": 0.09}}
+      ]
+    },
+    "catch": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.25, "notes": ["G5", "C6", "E6", "G6"], "step": 0.08, "dur": 0.07, "env": [0.001, 0.03, 0.6, 0.03], "gain": 0.18},
+        {"wave": "pulse", "duty": 0.25, "at": 0.34, "note": "C7", "dur": 0.42, "env": [0.002, 0.1, 0.6, 0.2], "gain": 0.15, "vibrato": {"rate": 6, "depth": 0.15}},
+        {"wave": "triangle", "at": 0.34, "note": "C5", "dur": 0.42, "env": [0.002, 0.1, 0.8, 0.2], "gain": 0.3},
+        {"wave": "pulse", "duty": 0.5, "at": 0.34, "note": "E6", "dur": 0.42, "env": [0.002, 0.1, 0.5, 0.2], "gain": 0.07}
+      ]
+    },
+    "heal": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.5, "notes": ["E5", "G#5", "B5", "E6", "G#6", "B6", "E7"], "step": 0.075, "dur": 0.11, "env": [0.002, 0.05, 0.5, 0.08], "gain": 0.12},
+        {"wave": "triangle", "notes": ["E4", "B4", "E5"], "step": 0.17, "dur": 0.16, "env": [0.005, 0.05, 0.8, 0.1], "gain": 0.28},
+        {"wave": "sine", "at": 0.5, "note": "E6", "dur": 0.35, "env": [0.01, 0.1, 0.6, 0.25], "gain": 0.12, "fm": {"ratio": 3.5, "index": 1.2}}
+      ]
+    },
+    "levelup": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.25, "notes": ["C5", "E5", "G5", "C6"], "step": 0.065, "dur": 0.06, "env": [0.001, 0.03, 0.7, 0.03], "gain": 0.18},
+        {"wave": "pulse", "duty": 0.25, "at": 0.28, "notes": ["G5", "A5", "B5"], "step": 0.07, "dur": 0.06, "env": [0.001, 0.03, 0.7, 0.03], "gain": 0.16},
+        {"wave": "pulse", "duty": 0.25, "at": 0.5, "note": "C6", "dur": 0.45, "env": [0.002, 0.1, 0.65, 0.2], "gain": 0.18, "vibrato": {"rate": 6, "depth": 0.18}},
+        {"wave": "pulse", "duty": 0.5, "at": 0.5, "note": "E5", "dur": 0.45, "env": [0.002, 0.1, 0.5, 0.2], "gain": 0.08},
+        {"wave": "triangle", "notes": ["C4", "G4", "C4"], "step": 0.25, "dur": 0.22, "env": [0.003, 0.05, 0.8, 0.1], "gain": 0.3}
+      ]
+    },
+    "item": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.25, "notes": ["A5", "C#6", "E6", "A6"], "step": 0.07, "dur": 0.065, "env": [0.001, 0.03, 0.7, 0.03], "gain": 0.17},
+        {"wave": "pulse", "duty": 0.25, "at": 0.3, "note": "E6", "notes": [0, 5], "step": 0.12, "dur": 0.12, "env": [0.002, 0.06, 0.6, 0.12], "gain": 0.15},
+        {"wave": "triangle", "at": 0.3, "note": "A4", "dur": 0.3, "env": [0.003, 0.05, 0.8, 0.12], "gain": 0.28}
+      ]
+    },
+    "money": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.5, "note": "B5", "dur": 0.06, "env": [0.001, 0.02, 0.8, 0.01], "gain": 0.16},
+        {"wave": "pulse", "duty": 0.5, "at": 0.065, "note": "E6", "dur": 0.05, "env": [0.001, 0.25, 0.0, 0.2], "gain": 0.18}
+      ]
+    },
+    "evolve": {
+      "layers": [
+        {"wave": "triangle", "freq": 220, "to": 880, "dur": 1.1, "env": [0.2, 0.3, 0.8, 0.3], "gain": 0.3, "vibrato": {"rate": 7, "depth": 0.3}},
+        {"wave": "pulse", "duty": 0.125, "notes": ["C6", "E6", "G6", "C7", "G6", "E6", "G6", "C7", "E7"], "step": 0.11, "dur": 0.1, "env": [0.002, 0.05, 0.4, 0.08], "gain": 0.08},
+        {"wave": "sine", "at": 0.9, "note": "C6", "dur": 0.6, "env": [0.01, 0.2, 0.6, 0.4], "gain": 0.16, "fm": {"ratio": 2, "index": 1.5}},
+        {"wave": "noise", "dur": 1.2, "env": [0.4, 0.3, 0.4, 0.4], "gain": 0.06, "filter": {"type": "bandpass", "freq": 2000, "to": 7000, "q": 2}}
+      ]
+    },
+    "run": {
+      "layers": [
+        {"wave": "noise", "dur": 0.03, "env": [0.001, 0.02, 0.0, 0.01], "gain": 0.2, "filter": {"type": "bandpass", "freq": 1200, "q": 1}, "repeat": {"count": 4, "every": 0.065}},
+        {"wave": "pulse", "duty": 0.25, "freq": 330, "to": 990, "dur": 0.22, "env": [0.002, 0.1, 0.5, 0.06], "gain": 0.11}
+      ]
+    },
+    "stat_up": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.25, "freq": 392, "to": 1175, "dur": 0.11, "env": [0.002, 0.05, 0.6, 0.03], "gain": 0.15, "repeat": {"count": 3, "every": 0.1}},
+        {"wave": "sine", "at": 0.3, "note": "G6", "dur": 0.18, "env": [0.005, 0.08, 0.5, 0.12], "gain": 0.1}
+      ]
+    },
+    "stat_down": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.25, "freq": 1175, "to": 330, "dur": 0.13, "env": [0.002, 0.05, 0.6, 0.03], "gain": 0.15, "repeat": {"count": 3, "every": 0.11}}
+      ]
+    },
+    "status": {
+      "layers": [
+        {"wave": "square", "freq": 280, "bend": [0, 1, -1, 1.5, -2], "dur": 0.32, "env": [0.005, 0.1, 0.6, 0.08], "gain": 0.12, "vibrato": {"rate": 18, "depth": 0.8}, "filter": {"type": "lowpass", "freq": 2400}},
+        {"wave": "noise", "dur": 0.3, "env": [0.02, 0.1, 0.4, 0.08], "gain": 0.08, "filter": {"type": "bandpass", "freq": 900, "to": 300, "q": 3}}
+      ]
+    },
+    "chat": {
+      "layers": [
+        {"wave": "sine", "freq": 1100, "to": 1650, "dur": 0.045, "env": [0.002, 0.03, 0.4, 0.03], "gain": 0.2},
+        {"wave": "triangle", "at": 0.05, "freq": 1650, "dur": 0.04, "env": [0.002, 0.03, 0.3, 0.03], "gain": 0.12}
+      ]
+    },
+    "notify": {
+      "layers": [
+        {"wave": "triangle", "notes": ["E6", "B6"], "step": 0.1, "dur": 0.12, "env": [0.002, 0.06, 0.5, 0.12], "gain": 0.22},
+        {"wave": "sine", "at": 0.1, "note": "B6", "dur": 0.2, "env": [0.003, 0.1, 0.4, 0.2], "gain": 0.1, "fm": {"ratio": 3.5, "index": 0.8}}
+      ]
+    },
+    "save": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.25, "notes": ["G5", "D6", "G6"], "step": 0.09, "dur": 0.1, "env": [0.002, 0.05, 0.6, 0.06], "gain": 0.15},
+        {"wave": "triangle", "notes": ["G4", "B4", "D5"], "step": 0.09, "dur": 0.12, "env": [0.003, 0.05, 0.8, 0.12], "gain": 0.25}
+      ]
+    },
+    "menu_open": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.25, "freq": 620, "to": 1240, "dur": 0.06, "env": [0.001, 0.04, 0.5, 0.03], "gain": 0.15}
+      ]
+    },
+    "menu_close": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.25, "freq": 1240, "to": 620, "dur": 0.06, "env": [0.001, 0.04, 0.5, 0.03], "gain": 0.15}
+      ]
+    },
+    "exclaim": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.25, "note": "E6", "notes": [0, 12], "step": 0.06, "dur": 0.055, "env": [0.001, 0.03, 0.7, 0.03], "gain": 0.18},
+        {"wave": "pulse", "duty": 0.125, "note": "B6", "at": 0.12, "dur": 0.12, "env": [0.001, 0.06, 0.4, 0.08], "gain": 0.12}
+      ]
+    },
+    "splash": {
+      "layers": [
+        {"wave": "noise", "dur": 0.32, "env": [0.005, 0.15, 0.3, 0.12], "gain": 0.3, "filter": {"type": "bandpass", "freq": 2200, "to": 400, "q": 0.9}},
+        {"wave": "sine", "freq": 700, "to": 240, "dur": 0.07, "env": [0.002, 0.04, 0.3, 0.03], "gain": 0.12, "repeat": {"count": 3, "every": 0.07}}
+      ]
+    }
+  }
+}

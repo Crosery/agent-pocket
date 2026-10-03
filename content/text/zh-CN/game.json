@@ -1,0 +1,26 @@
+{
+  "appTitle": "智灵口袋 · Agent Pocket",
+  "loading": {
+    "title": "智灵口袋",
+    "subtitle": "Agent Pocket",
+    "steps": {"content": "读取数据……", "assets": "加载资源清单……", "world": "生成世界……", "renderer": "初始化渲染器……", "ui": "准备界面……", "modules": "加载模块……", "ready": "准备就绪", "map": "进入{map}……"},
+    "error": "加载失败：{error}",
+    "retry": "刷新重试",
+    "webgl": "你的浏览器无法创建 WebGL 画布，游戏无法运行。请更换浏览器或开启硬件加速。"
+  },
+  "intro": {"narration1": "在这个世界里，数据的洪流孕育出了一种奇妙的生命——人们称之为「智灵」。", "narration2": "它们有的擅长聊天，有的会写代码，有的能把梦境画成画……人们与智灵结伴，一起学习、对战、成长。", "narration3": "而今天，是{name}成为训练家的第一天。", "wake": "……叮铃铃！闹钟响了。{name}从床上坐了起来。", "hint": "楼下好像有人在叫你。（用方向键或 WASD 移动，Z / 空格 对话与确认）"},
+  "save": {"quick": "已快速保存。", "failed": "保存失败：存储空间不足或被禁用。"},
+  "title": {"overwrite": "开始新游戏会覆盖现有的存档，确定吗？", "imported": "存档导入成功！欢迎回来，{name}。", "importFailed": "存档码无效。"},
+  "net": {"offlineChat": "当前离线，消息没有发送出去。"},
+  "debug": {"title": "调试信息（F3）", "fps": "FPS {fps} · 帧 {ms}ms", "calls": "绘制调用 {calls} · 三角形 {tris}k", "pos": "{map} ({x}, {y}) 高度 {elev}", "region": "区域 {region} · 地形 {terrain}", "time": "时间 {clock}（{tod}）· 天气 {weather}", "net": "网络 {status} · 在线 {n} · 附近玩家 {near}", "player": "{mode} · 驱散 {repel} 步 · 野生 {roamers}"},
+  "mode": {"walk": "步行", "run": "奔跑", "bike": "滑板", "surf": "冲浪"},
+  "fallback": {
+    "unavailable": "这个界面暂时无法打开。",
+    "title": {"prompt": "智灵口袋", "continue": "继续游戏", "new": "新的冒险", "import": "导入存档", "settings": "设置"},
+    "namePrompt": "请输入你的名字：",
+    "avatarPrompt": "选择你的形象：",
+    "starterPrompt": "选择你的第一位搭档：",
+    "battle": {"start": "{foe}出现了！", "trainer": "{trainer}发起了对战！", "win": "{name}赢得了胜利！", "lose": "{name}输掉了对战……", "run": "顺利逃走了！", "caught": "收服了{species}！", "draw": "双方同时倒下了……", "money": "获得了 {money} {currency}。"}
+  },
+  "weather": {"clear": "晴朗", "rain": "雨", "snow": "雪", "sand": "沙尘", "fog": "雾", "aurora": "极光", "ash": "火山灰"}
+}

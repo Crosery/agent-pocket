@@ -1,0 +1,95 @@
+{
+  "keeper": {
+    "sites": {"stele": 0.9, "monolith": 0.8, "ruins": 0.6, "shrine": 0.5, "glitchrift": 0.6, "skyaltar": 0.7, "neuralgrove": 0.5, "sakurashrine": 0.5, "serverfarm": 0.5, "datacenter": 0.5, "grove": 0.4, "crystalfield": 0.4, "caldera": 0.4, "campsite": 0.3, "landmark": 0.15},
+    "sprites": ["villager_old", "trainer_scientist", "hero_ranger"],
+    "names": ["守碑老人", "碑文学者", "拓片师", "考古队员·阿析", "遗迹向导", "古文字研究者"],
+    "intro": [["你也是来看碑文的吗？我在这里守了很多年了。"], ["这里的每一块石头，都记得旧时代的事。"], ["来，我念给你听。"]],
+    "lore": {
+      "patterns": ["{era}，{who}在{landmark}写下了第一行{thing}。", "碑上刻着：「{maxim}」", "{era}，{who}曾在这里{deed}。", "据说自从{who}{deed}，{biome}一带的智灵便开始{change}。", "此地铭记：{event}。"],
+      "words": {
+        "era": ["算力纪元元年", "参数还只有百万的年代", "第一次 AI 寒冬结束的那年", "Transformer 诞生的春天", "大模型尚未开口说话的时代", "开源之火燃遍大陆的那一年", "Token 比黄金还贵的岁月"],
+        "who": ["无名的研究者", "第一位提示词诗人", "初代对齐骑士", "开源先贤", "某位不愿透露姓名的炼丹师", "沉睡的智灵始祖", "迷途的网络爬虫"],
+        "thing": ["代码", "提示词", "训练日志", "开源协议", "对话"],
+        "maxim": ["Attention is all you need.", "先对齐，再变强。", "幻觉不是罪，固执才是。", "Hello, World.", "数据即土壤，算力即阳光。", "Scaling 终有尽头，好奇心没有。", "别把 rm -rf 当成答案。"],
+        "deed": ["收服了一只会写诗的智灵", "与幻觉之王对峙了三天三夜", "封印了一段失控的代码", "第一次让智灵说出了「谢谢」", "埋下了一块装满数据的硬盘", "训练出了第一个会反思的模型"],
+        "change": ["说人话", "学会做梦", "在月光下聚会", "互相开源", "躲着人走"],
+        "event": ["这里曾有一万张显卡同时点亮", "一只智灵在此第一次通过了图灵测试", "开源与闭源的训练家在此握手言和", "一场持续了 404 天的停机在此结束"]
+      },
+      "lines": [1, 2]
+    },
+    "clue": {
+      "intro": [["碑文的最后一行，写着一个谜……"], ["我在拓片里发现了一段奇怪的记载。"]],
+      "here": "——碑文说，答案就在此地。",
+      "reveal": "碑文提到的地方，应该是{dir}边{dist}的{name}。我在你的地图上标出来了。",
+      "far": "碑文提到的地方……这附近我没见过。也许要走得更远。",
+      "none": [["这块碑上的字太模糊了，我也读不出更多。"], ["剩下的字被风沙磨平了。"]]
+    },
+    "plaque": {"prop": "sign", "format": "【{landmark}·碑文】\n{lore}"}
+  },
+  "hermit": {
+    "sites": {"grove": 0.5, "hotspring": 0.6, "shrine": 0.4, "sakurashrine": 0.5, "skyaltar": 0.5, "neuralgrove": 0.5, "oasis": 0.4, "windmill": 0.2, "stele": 0.2, "crystalfield": 0.3, "caldera": 0.3, "landmark": 0.1},
+    "minDistance": 250,
+    "sprites": ["villager_old", "hero_ranger", "trainer_scientist"],
+    "names": ["隐士·云", "白胡子仙人", "山中老师傅", "退隐的炼丹宗师", "游方技师", "无名剑客"],
+    "title": "{type}系隐士",
+    "intro": [["……很少有人走到这里。我是{title}，{name}。"], ["呵呵，年轻人，{type}系的奥义，你想学吗？"]],
+    "requirement": [[0, 2], [1000, 4], [3000, 7], [6000, 10]],
+    "notEnough": "先去收服 {count} 种{type}系的智灵吧。等你真正了解它们，我再传授你「{move}」。",
+    "offer": "你已经懂{type}系的智灵了。要我把「{move}」刻进技能芯片传给你吗？学费 {fee} 元。",
+    "options": ["请赐教", "再考虑一下"],
+    "taught": "去吧。让「{move}」在你的智灵手中发光。",
+    "decline": [["不急。招式会等你。"]],
+    "after": [["招式用得还顺手吗？"], ["我能教的，都已经教给你了。去更远的地方看看吧。"]],
+    "priceMul": 0.5,
+    "priceRound": 50,
+    "noMoney": "……学费不够啊。修行也是要吃饭的。",
+    "tip": "提醒你一句：{type}系的智灵，在{when}最活跃。"
+  },
+  "merchant": {
+    "sites": {"campsite": 0.3, "oasis": 0.5, "lighthouse": 0.3, "dock": 0.3, "mangrovedock": 0.4, "serverfarm": 0.4, "datacenter": 0.3, "windmill": 0.3, "caldera": 0.3, "ruins": 0.15, "landmark": 0.15},
+    "minDistance": 300,
+    "types": [
+      {"id": "night-market", "weight": 2, "sprites": ["clerk", "trainer_gamer"], "names": ["夜市老板·影", "神秘商人", "提灯小贩"], "intro": [["嘿嘿，夜市开张了，好东西不等人。"]], "outro": [["下次天黑再来。"]], "times": ["dusk", "night"], "closed": [["夜市只在黄昏后开张，白天我得补觉。"]], "stock": "rare", "count": [3, 5]},
+      {"id": "chip-dealer", "weight": 2, "sprites": ["hero_hacker", "trainer_coder"], "names": ["芯片贩子·零", "游商·阿码", "招式收藏家"], "intro": [["这片地方的智灵，用得上这些招式。"], ["本地限定的技能芯片，过了这村就没这店。"]], "outro": [["招式要配对类型，别乱学。"]], "stock": "chips", "count": [2, 3]},
+      {"id": "collector", "weight": 1.5, "sprites": ["villager_old", "trainer_scientist"], "names": ["古董收藏家·钱老", "旧硬件发烧友", "考古商人"], "intro": [["我只收旧时代的宝贝。"]], "outro": [["那就算了，下次再说。"]], "stock": "exchange", "count": [1, 1]},
+      {"id": "rain-peddler", "weight": 1, "sprites": ["villager_man", "trainer_swimmer"], "names": ["雨天行商", "撑伞的货郎"], "intro": [["下雨天才出摊，货都是雨里捡来的宝贝。"]], "outro": [["雨停之前，记得再来。"]], "weathers": ["rain", "fog"], "closed": [["天晴的时候我在睡觉，下雨天才出摊。"]], "stock": "rare", "count": [3, 4]}
+    ]
+  },
+  "merchantStock": {
+    "rare": [
+      {"minDistance": 0, "items": ["few-shot-ball", "quick-ball", "night-ball", "super-repel", "token-refill", "super-cache"]},
+      {"minDistance": 800, "items": ["cot-ball", "distill-ball", "finetune-ball", "hyper-cache", "universal-patch", "quota-pack"]},
+      {"minDistance": 2000, "items": ["rare-ball", "full-cache", "quota-pack", "finetune-dataset", "rare-dataset", "token-max"]},
+      {"minDistance": 5000, "items": ["rare-ball", "full-restore", "hard-reboot", "quota-max", "rare-dataset", "finetune-dataset"]}
+    ],
+    "chipsPerType": 2,
+    "maxChipPrice": [[0, 4000], [1000, 6000], [3000, 8000], [6000, 10000]]
+  },
+  "exchange": {
+    "valuables": ["retro-floppy", "old-gpu", "silicon-wafer", "rare-chip", "quantum-bit", "gold-token"],
+    "offer": "用一个{item:{give}}，换我的{item:{prize}}×{qty}，怎么样？",
+    "options": ["成交", "算了"],
+    "done": "好交易！这件宝贝我会好好珍藏的。",
+    "lacking": [["你身上没有我想要的宝贝。旧时代的硬件，记得留意。"]],
+    "prizes": [
+      {"minDistance": 0, "pool": [{"item": "cot-ball", "qty": [2, 3], "weight": 3}, {"item": "rare-dataset", "qty": [1, 1], "weight": 1}, {"item": "chip-eureka", "qty": [1, 1], "weight": 1}]},
+      {"minDistance": 1500, "pool": [{"item": "rare-ball", "qty": [1, 2], "weight": 3}, {"item": "finetune-dataset", "qty": [1, 1], "weight": 1}, {"item": "chip-swarm-mind", "qty": [1, 1], "weight": 1}]},
+      {"minDistance": 4000, "pool": [{"item": "rare-ball", "qty": [2, 3], "weight": 3}, {"item": "rare-dataset", "qty": [1, 2], "weight": 2}, {"item": "chip-symphony-finale", "qty": [1, 1], "weight": 1}]}
+    ]
+  },
+  "watcher": {
+    "sites": {"nest": 1},
+    "sprites": ["trainer_scientist", "hero_ranger"],
+    "names": ["巢穴观察员·小林", "保育员·阿暖", "野生智灵研究生"],
+    "intro": [["嘘……别吓到它们。我在这里做长期观察。"], ["欢迎来到{landmark}。这里的智灵都很怕生。"]],
+    "rare": "这片巢穴里最稀有的，是{rarity}级的「{species}」。",
+    "conditions": "根据我的记录，它常在{when}出现。",
+    "noConditions": "它出现的时机……我还没找到规律。",
+    "notes": "这是我的观察笔记，送你一份——你的图鉴会记下「{species}」的研究进度。",
+    "notesDone": [["笔记要好好读哦。"], ["有新发现记得告诉我！"]],
+    "researchTask": "see",
+    "tipChance": 0.5,
+    "parts": {"time": "{list}", "weather": "{list}天", "biomes": "{list}一带", "hours": "{from} 点到 {to} 点之间", "joiner": "、", "sep": "，"}
+  },
+  "clueCells": 3
+}

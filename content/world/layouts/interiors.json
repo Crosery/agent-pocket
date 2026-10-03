@@ -1,0 +1,355 @@
+{
+  "legend": {"#": {"terrain": "@wall", "elev": 2}, ".": {"terrain": "@floor"}, ",": {"terrain": "@floor2"}, "_": {"terrain": "@mat"}, "c": {"terrain": "carpet"}, "w": {"terrain": "wood"}, "t": {"terrain": "tile_floor"}, "x": {"terrain": "tech"}, "u": {"terrain": "ruin"}, "i": {"terrain": "ice"}, "n": {"terrain": "snow"}, "g": {"terrain": "grass"}, "l": {"terrain": "lava"}, "~": {"terrain": "water"}, "h": {"terrain": "shallow"}, "k": {"terrain": "crystal_floor"}, "P": {"terrain": "@floor", "prop": "plant"}, "C": {"terrain": "@floor", "prop": "chair"}, "V": {"terrain": "@floor", "prop": "tv"}, "Q": {"terrain": "@floor", "prop": "pc_terminal"}, "G": {"terrain": "@floor", "prop": "gym_pillar"}, "K": {"terrain": "@floor", "prop": "crate"}, "O": {"terrain": "@floor", "prop": "barrel"}, "R": {"terrain": "@floor", "prop": "server_rack"}, "A": {"terrain": "@floor", "prop": "antenna"}, "I": {"terrain": "@floor", "prop": "ice_spike"}, "Y": {"terrain": "@floor", "prop": "crystal"}, "F": {"terrain": "@floor", "prop": "flower_pot"}, "L": {"terrain": "@floor", "prop": "lamp"}, "X": {"terrain": "@floor", "prop": "rock_small"}, "Z": {"terrain": "@floor", "prop": "lava_rock"}, "B": {"terrain": "@floor", "prop": "bush"}, "M": {"terrain": "@floor", "prop": "mushroom"}, "o": {"terrain": "@floor", "prop": "@obstacle"}, "q": {"terrain": "@floor", "prop": "@obstacle2"}},
+  "palette": {"wall": "wall", "floor": "wood", "floor2": "carpet", "mat": "carpet", "obstacle": "plant", "obstacle2": "flower_pot"},
+  "templates": {
+    "center": {
+      "w": 14,
+      "h": 10,
+      "nameZh": "{town}·算力补给站",
+      "music": "center",
+      "palette": {"floor": "tile_floor", "floor2": "carpet", "mat": "carpet"},
+      "rows": [
+        {"r": "##############"},
+        {"r": "#P..........P#"},
+        {"r": "#............#"},
+        {"r": "#....F.F....P#"},
+        {"r": "#............#"},
+        {"r": "#...........Q#"},
+        {"r": "#C..C........#"},
+        {"r": "#.......C..C.#"},
+        {"r": "#P..........P#"},
+        {"r": "######_#######"}
+      ],
+      "props": [
+        {"prop": "heal_machine", "x": 5, "y": 1},
+        {"prop": "counter", "x": 1, "y": 3},
+        {"prop": "counter", "x": 8, "y": 3},
+        {"prop": "table", "x": 2, "y": 6},
+        {"prop": "table", "x": 9, "y": 7},
+        {"prop": "rug", "x": 5, "y": 7}
+      ],
+      "arrive": [6, 8],
+      "anchors": {"nurse": [6, 3], "counter": [6, 4], "pc": [12, 5], "pc-front": [11, 5], "npc-1": [3, 5], "npc-2": [10, 5], "npc-3": [9, 8]},
+      "exit": [6, 9]
+    },
+    "shop": {
+      "w": 12,
+      "h": 9,
+      "nameZh": "{town}·Token 商店",
+      "music": "town",
+      "palette": {"floor": "tile_floor", "mat": "carpet"},
+      "rows": [
+        {"r": "############"},
+        {"r": "#.........K#"},
+        {"r": "#..........#"},
+        {"r": "#.....F....#"},
+        {"r": "#..........#"},
+        {"r": "#..........#"},
+        {"r": "#..........#"},
+        {"r": "#P........P#"},
+        {"r": "#####_######"}
+      ],
+      "props": [
+        {"prop": "shelf", "x": 1, "y": 1},
+        {"prop": "shelf", "x": 4, "y": 1},
+        {"prop": "shelf", "x": 8, "y": 1},
+        {"prop": "counter", "x": 1, "y": 3},
+        {"prop": "shelf", "x": 8, "y": 4},
+        {"prop": "shelf", "x": 8, "y": 6}
+      ],
+      "arrive": [5, 7],
+      "anchors": {"clerk": [5, 3], "counter": [5, 4], "npc-1": [3, 5], "npc-2": [7, 2]},
+      "exit": [5, 8]
+    },
+    "house_a": {
+      "w": 10,
+      "h": 8,
+      "nameZh": "{town}·民居",
+      "music": "town",
+      "palette": {"floor": "wood", "mat": "carpet"},
+      "rows": [
+        {"r": "##########"},
+        {"r": "#....V...#"},
+        {"r": "#........#"},
+        {"r": "#.C..C...#"},
+        {"r": "#........#"},
+        {"r": "#P.......#"},
+        {"r": "#.......O#"},
+        {"r": "####_#####"}
+      ],
+      "props": [
+        {"prop": "bookshelf", "x": 1, "y": 1},
+        {"prop": "bed", "x": 8, "y": 1},
+        {"prop": "table", "x": 3, "y": 3},
+        {"prop": "rug", "x": 4, "y": 5}
+      ],
+      "arrive": [4, 6],
+      "anchors": {"resident-1": [6, 4], "resident-2": [2, 5], "tv": [5, 1]},
+      "exit": [4, 7]
+    },
+    "house_b": {
+      "w": 12,
+      "h": 8,
+      "nameZh": "{town}·民居",
+      "music": "town",
+      "palette": {"floor": "wood", "floor2": "carpet", "mat": "carpet"},
+      "rows": [
+        {"r": "############"},
+        {"r": "#.....P...V#"},
+        {"r": "#C..C......#"},
+        {"r": "#..........#"},
+        {"r": "#..........#"},
+        {"r": "#KO........#"},
+        {"r": "#P.........#"},
+        {"r": "######_#####"}
+      ],
+      "props": [
+        {"prop": "table", "x": 2, "y": 2},
+        {"prop": "bookshelf", "x": 7, "y": 1},
+        {"prop": "bed", "x": 10, "y": 4},
+        {"prop": "rug", "x": 5, "y": 4}
+      ],
+      "arrive": [6, 6],
+      "anchors": {"resident-1": [8, 3], "resident-2": [3, 4], "tv": [10, 1]},
+      "exit": [6, 7]
+    },
+    "house_c": {
+      "w": 11,
+      "h": 9,
+      "nameZh": "{town}·民居",
+      "music": "town",
+      "palette": {"floor": "tile_floor", "mat": "carpet"},
+      "rows": [
+        {"r": "###########"},
+        {"r": "#......V.Q#"},
+        {"r": "#.........#"},
+        {"r": "#.........#"},
+        {"r": "#F...C..C.#"},
+        {"r": "#.........#"},
+        {"r": "#.........#"},
+        {"r": "#P.......P#"},
+        {"r": "#####_#####"}
+      ],
+      "props": [
+        {"prop": "bed", "x": 1, "y": 1},
+        {"prop": "bed", "x": 3, "y": 1},
+        {"prop": "table", "x": 6, "y": 4},
+        {"prop": "rug", "x": 4, "y": 6}
+      ],
+      "arrive": [5, 7],
+      "anchors": {"resident-1": [3, 5], "resident-2": [8, 2], "pc": [9, 1], "tv": [7, 1]},
+      "exit": [5, 8]
+    },
+    "player_house": {
+      "w": 12,
+      "h": 9,
+      "nameZh": "{town}·我的家",
+      "music": "town",
+      "palette": {"floor": "wood", "mat": "carpet"},
+      "rows": [
+        {"r": "############"},
+        {"r": "#.....V....#"},
+        {"r": "#..........#"},
+        {"r": "#..C..C....#"},
+        {"r": "#..........#"},
+        {"r": "#Q.......PP#"},
+        {"r": "#..........#"},
+        {"r": "#.........F#"},
+        {"r": "#####_######"}
+      ],
+      "props": [
+        {"prop": "bookshelf", "x": 1, "y": 1},
+        {"prop": "bed", "x": 9, "y": 1},
+        {"prop": "table", "x": 4, "y": 3},
+        {"prop": "rug", "x": 4, "y": 6}
+      ],
+      "arrive": [5, 7],
+      "anchors": {"mom": [7, 4], "wake": [8, 2], "bed": [9, 1], "pc": [1, 5], "pc-front": [2, 5], "tv": [6, 1], "tv-front": [6, 2]},
+      "exit": [5, 8]
+    },
+    "lab": {
+      "w": 16,
+      "h": 12,
+      "nameZh": "{town}·图灵研究所",
+      "music": "lab",
+      "palette": {"floor": "tile_floor", "floor2": "carpet", "mat": "carpet"},
+      "rows": [
+        {"r": "################"},
+        {"r": "#..............#"},
+        {"r": "#..............#"},
+        {"r": "#..............#"},
+        {"r": "#..............#"},
+        {"r": "#..............#"},
+        {"r": "#..............#"},
+        {"r": "#Q..........P..#"},
+        {"r": "#....C....C....#"},
+        {"r": "#P............P#"},
+        {"r": "#..............#"},
+        {"r": "#######_########"}
+      ],
+      "props": [
+        {"prop": "bookshelf", "x": 1, "y": 1},
+        {"prop": "bookshelf", "x": 3, "y": 1},
+        {"prop": "bookshelf", "x": 11, "y": 1},
+        {"prop": "bookshelf", "x": 13, "y": 1},
+        {"prop": "lab_machine", "x": 7, "y": 1},
+        {"prop": "lab_machine", "x": 1, "y": 5},
+        {"prop": "lab_machine", "x": 12, "y": 5},
+        {"prop": "table", "x": 6, "y": 5},
+        {"prop": "table", "x": 3, "y": 8},
+        {"prop": "table", "x": 11, "y": 8}
+      ],
+      "arrive": [7, 10],
+      "anchors": {"professor": [7, 3], "aide-1": [3, 6], "aide-2": [13, 7], "rival": [9, 6], "starters": [6, 5], "starters-front": [7, 6], "machine": [7, 1], "pc": [1, 7], "pc-front": [2, 7]},
+      "exit": [7, 11]
+    },
+    "datacenter": {
+      "w": 16,
+      "h": 10,
+      "nameZh": "{town}·数据中心",
+      "music": "city",
+      "palette": {"floor": "tech", "floor2": "tile_floor", "mat": "tile_floor"},
+      "rows": [
+        {"r": "################"},
+        {"r": "#R.R.R.R.R.R.R.#"},
+        {"r": "#..............#"},
+        {"r": "#.RR.RR..RR.RR.#"},
+        {"r": "#..............#"},
+        {"r": "#.RR.RR..RR.RR.#"},
+        {"r": "#..............#"},
+        {"r": "#......QQ......#"},
+        {"r": "#P............P#"},
+        {"r": "#######_########"}
+      ],
+      "props": [],
+      "arrive": [7, 8],
+      "anchors": {"engineer-1": [4, 4], "engineer-2": [11, 6], "core": [7, 7], "core-front": [7, 8], "npc-1": [2, 7]},
+      "exit": [7, 9]
+    },
+    "tower_f1": {
+      "w": 14,
+      "h": 12,
+      "nameZh": "{town}·数据塔 1F",
+      "music": "city",
+      "palette": {"floor": "tech", "floor2": "tile_floor", "mat": "tile_floor"},
+      "rows": [
+        {"r": "##############"},
+        {"r": "#P..........,#"},
+        {"r": "#............#"},
+        {"r": "#.........Q..#"},
+        {"r": "#............#"},
+        {"r": "#R..........R#"},
+        {"r": "#....RRRR....#"},
+        {"r": "#............#"},
+        {"r": "#............#"},
+        {"r": "#P..........P#"},
+        {"r": "#............#"},
+        {"r": "######_#######"}
+      ],
+      "props": [
+        {"prop": "stairs_down", "x": 12, "y": 1},
+        {"prop": "counter", "x": 2, "y": 3}
+      ],
+      "arrive": [6, 10],
+      "anchors": {"receptionist": [6, 3], "guard": [8, 9], "npc-1": [3, 7], "pc": [10, 3], "pc-front": [10, 4]},
+      "exit": [6, 11],
+      "links": {"up": {"x": 12, "y": 1, "arrive": [11, 1], "facing": "left"}}
+    },
+    "tower_f2": {
+      "w": 14,
+      "h": 15,
+      "nameZh": "{town}·数据塔 2F",
+      "music": "city",
+      "palette": {"floor": "tech", "floor2": "tile_floor"},
+      "rows": [
+        {"r": "##############"},
+        {"r": "#,...........#"},
+        {"r": "#............#"},
+        {"r": "#RRRRRRRR....#"},
+        {"r": "#............#"},
+        {"r": "#............#"},
+        {"r": "#....RRRRRRRR#"},
+        {"r": "#............#"},
+        {"r": "#............#"},
+        {"r": "#RRRRRRRR....#"},
+        {"r": "#............#"},
+        {"r": "#............#"},
+        {"r": "#....RRRRRRRR#"},
+        {"r": "#...........,#"},
+        {"r": "##############"}
+      ],
+      "props": [
+        {"prop": "stairs_down", "x": 1, "y": 1},
+        {"prop": "stairs_down", "x": 12, "y": 13}
+      ],
+      "arrive": [2, 1],
+      "anchors": {"grunt-1": [10, 4], "grunt-2": [3, 7], "grunt-3": [10, 10], "scientist": [2, 13]},
+      "links": {"down": {"x": 1, "y": 1, "arrive": [2, 1], "facing": "right"}, "up": {"x": 12, "y": 13, "arrive": [11, 13], "facing": "left"}}
+    },
+    "tower_f3": {
+      "w": 14,
+      "h": 12,
+      "nameZh": "{town}·数据塔 顶层",
+      "music": "city",
+      "palette": {"floor": "tech", "floor2": "tile_floor"},
+      "rows": [
+        {"r": "##############"},
+        {"r": "#,..RRAARR...#"},
+        {"r": "#............#"},
+        {"r": "#............#"},
+        {"r": "#............#"},
+        {"r": "#R..........R#"},
+        {"r": "#............#"},
+        {"r": "#............#"},
+        {"r": "#R..........R#"},
+        {"r": "#............#"},
+        {"r": "#..Y......Y..#"},
+        {"r": "##############"}
+      ],
+      "props": [
+        {"prop": "stairs_down", "x": 1, "y": 1},
+        {"prop": "lab_machine", "x": 6, "y": 3},
+        {"prop": "rug", "x": 5, "y": 6}
+      ],
+      "arrive": [2, 1],
+      "anchors": {"boss": [7, 4], "console": [6, 3], "grunt-1": [4, 7], "grunt-2": [10, 7], "view": [7, 9], "top": [6, 9]},
+      "links": {"down": {"x": 1, "y": 1, "arrive": [2, 1], "facing": "right"}}
+    },
+    "temple": {
+      "w": 17,
+      "h": 20,
+      "nameZh": "AGI 圣殿·大殿",
+      "music": "ruins",
+      "palette": {"floor": "ruin", "floor2": "carpet", "mat": "carpet"},
+      "rows": [
+        {"r": "#################"},
+        {"r": "#...Y...Y...Y...#"},
+        {"r": "#.G.....,.....G.#"},
+        {"r": "#.......,.......#"},
+        {"r": "#.G...L.,.L...G.#"},
+        {"r": "#.......,.......#"},
+        {"r": "#.G.....,.....G.#"},
+        {"r": "#.......,.......#"},
+        {"r": "#.G.....,.....G.#"},
+        {"r": "#.......,.......#"},
+        {"r": "#.G.....,.....G.#"},
+        {"r": "#.......,.......#"},
+        {"r": "#.G.....,.....G.#"},
+        {"r": "#.......,.......#"},
+        {"r": "#.G.....,.....G.#"},
+        {"r": "#.....L.,.L.....#"},
+        {"r": "#.G.....,.....G.#"},
+        {"r": "#.......,.......#"},
+        {"r": "#.......,.......#"},
+        {"r": "########_########"}
+      ],
+      "props": [
+        {"prop": "statue", "x": 4, "y": 8},
+        {"prop": "statue", "x": 11, "y": 8}
+      ],
+      "arrive": [8, 18],
+      "anchors": {"champion": [8, 3], "altar": [8, 1], "guard-1": [6, 12], "guard-2": [10, 12], "elder": [5, 17], "npc-1": [12, 17]},
+      "exit": [8, 19]
+    }
+  }
+}

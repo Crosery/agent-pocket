@@ -1,0 +1,125 @@
+{
+ "_doc": "What scripts/sync-assets.ts copies from the game (read-only) into promo/public/game/, and which game tables it extracts into data/game.json. Paths are relative to the game root (promo/..).",
+ "copy": [
+  {
+   "from": "public/assets/creatures",
+   "to": "public/game/creatures",
+   "glob": ".png"
+  },
+  {
+   "from": "public/assets/characters",
+   "to": "public/game/characters",
+   "files": [
+    "hero_girl.png",
+    "hero_boy.png",
+    "professor.png",
+    "villager_kid.png",
+    "hero_engineer.png",
+    "hero_hacker.png"
+   ]
+  },
+  {
+   "from": "public/assets/textures/terrain",
+   "to": "public/game/terrain",
+   "glob": ".png"
+  },
+  {
+   "from": "public/assets/models",
+   "to": "public/game/models",
+   "files": [
+    "tree_oak.glb",
+    "tree_pine.glb",
+    "tree_cherry.glb",
+    "tree_snowpine.glb",
+    "tree_palm.glb",
+    "bush.glb",
+    "rock_small.glb",
+    "rock_large.glb",
+    "house_small.glb",
+    "lamp.glb",
+    "fence.glb",
+    "sign.glb",
+    "crystal.glb",
+    "windmill.glb",
+    "stump.glb",
+    "mushroom.glb",
+    "cactus.glb",
+    "flower_pot.glb",
+    "campfire.glb",
+    "log.glb"
+   ]
+  },
+  {
+   "from": "public/assets/items",
+   "to": "public/game/items",
+   "files": [
+    "prompt-ball.png"
+   ]
+  },
+  {
+   "from": "public/assets/ui",
+   "to": "public/game/ui",
+   "files": [
+    "logo.png",
+    "battle_bg_meadow.png",
+    "title.png"
+   ]
+  },
+  {
+   "from": "public/assets/fonts",
+   "to": "public/fonts",
+   "files": [
+    "fusion-pixel-12px-zh_hans.woff2"
+   ]
+  },
+  {
+   "from": "public/assets/fonts/licenses",
+   "to": "public/fonts/licenses",
+   "files": [
+    "fusion-pixel-OFL.txt"
+   ]
+  },
+  {
+   "from": "content/audio",
+   "to": "audio/game",
+   "files": [
+    "sfx.json"
+   ]
+  }
+ ],
+ "extract": {
+  "species": {
+   "from": "content/species.json",
+   "fields": [
+    "id",
+    "dexNo",
+    "nameZh",
+    "nameEn",
+    "company",
+    "country",
+    "rarity",
+    "types",
+    "releaseDate"
+   ]
+  },
+  "rarities": {
+   "from": "content/rarities.json",
+   "fields": [
+    "id",
+    "nameZh",
+    "color",
+    "order",
+    "aura"
+   ]
+  },
+  "types": {
+   "from": "content/types.json",
+   "key": "types",
+   "fields": [
+    "id",
+    "nameZh",
+    "color"
+   ]
+  }
+ }
+}

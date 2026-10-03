@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Agent Pocket - multiplayer sandbox</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: radial-gradient(circle at 30% 30%, #26324f, #05070d 70%); overflow: hidden; }
+    #game { position: fixed; inset: 0; }
+    #dev {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 100; display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 3px; padding: 3px; font: 11px/1.2 monospace; color: #ccd; background: rgba(0, 0, 0, 0.45);
+    }
+    #dev button { font: 11px monospace; padding: 2px 6px; cursor: pointer; }
+    #log { position: fixed; left: 4px; top: 4px; z-index: 100; font: 10px/1.3 monospace; color: #9ab; white-space: pre; pointer-events: none; }
+    body.shot #dev, body.shot #log { display: none; }
+  </style>
+</head>
+<body>
+  <div id="game"></div>
+  <div id="log"></div>
+  <div id="dev"></div>
+  <script type="module" src="./pvp.ts"></script>
+</body>
+</html>

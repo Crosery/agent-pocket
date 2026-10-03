@@ -1,0 +1,125 @@
+{
+  "party": {
+    "size": [[0, 1.6], [400, 2.2], [1000, 3], [2000, 3.8], [4000, 4.6], [7000, 5.4]],
+    "sizeJitter": 0.9,
+    "maxSize": 6,
+    "levelSpread": [-3, 0],
+    "aceBonus": 1,
+    "rarity": [
+      {"minDistance": 0, "weights": {"N": 5, "R": 4, "SR": 1}},
+      {"minDistance": 500, "weights": {"N": 3, "R": 4, "SR": 2, "SSR": 0.2}},
+      {"minDistance": 1500, "weights": {"N": 1, "R": 3, "SR": 3, "SSR": 0.6}},
+      {"minDistance": 3000, "weights": {"R": 2, "SR": 3, "SSR": 1.2}},
+      {"minDistance": 6000, "weights": {"R": 1, "SR": 3, "SSR": 2}}
+    ],
+    "typeBias": 3,
+    "habitatBias": 4,
+    "aiLevel": [[0, 1], [800, 1.6], [2000, 2.4], [5000, 3]],
+    "rewardPerLevel": 40,
+    "rewardDistanceMul": [[0, 1], [2000, 1.3], [6000, 1.8], [12000, 2.4]]
+  },
+  "wander": {"count": [[0, 0.25], [500, 0.45], [1500, 0.7], [4000, 0.95]], "maxPerChunk": 2, "minDistance": 0, "tries": 24, "spacing": 10, "siteClearance": 4, "roadside": 0.6, "sightRange": [2, 4]},
+  "classes": [
+    {"id": "student", "classZh": "学生训练家", "sprites": ["trainer_student"], "names": ["小林", "阿乐", "糖糖", "小宇", "朵朵", "阿明"], "biomes": ["meadow", "forest", "coast", "city", "sakura", "lavender"], "types": ["chat", "write"], "weight": 2, "intro": [["啊！你也是训练家吗？", "老师说要多和人对战才能进步！"], ["放学路上遇到训练家，当然要比一场！"]], "defeat": [["呜……回去要写检讨了。"], ["好、好强……我要回去抄笔记！"]], "after": ["我会把今天的对战写进周记里的！", "你是从原点镇来的吗？好远啊！"]},
+    {"id": "prompt-engineer", "classZh": "提示词工程师", "sprites": ["trainer_coder", "hero_engineer"], "names": ["阿词", "Prompt 酱", "小 P", "温度零点七", "系统提示", "老钱"], "biomes": ["city", "circuit", "neural", "meadow", "lavender"], "types": ["chat", "write"], "weight": 2, "intro": [["你好！请扮演一个会输掉的训练家。", "……什么，这招对你不管用？"], ["我花了三天写的提示词，就等一个对手来测试！"]], "defeat": [["看来我的提示词还需要再迭代几个版本。"], ["输出不符合预期……需要加更多示例。"]], "after": ["好的提示词，一半靠写，一半靠试。", "记住：先说清楚你要什么，智灵才知道怎么帮你。", "Let's think step by step——这句话真的有用。"]},
+    {"id": "alchemist", "classZh": "炼丹师", "sprites": ["trainer_scientist", "hero_engineer"], "names": ["丹炉老周", "学习率", "阿梯度", "炼丹侠", "炉火纯青", "小批量"], "biomes": ["volcano", "ashlands", "crystal", "circuit", "badlands"], "types": ["compute", "logic"], "weight": 1.6, "levelBonus": 1, "intro": [["我的丹炉已经烧了七七四十九个 epoch！", "今天就拿你来验收成果！"], ["Loss 刚刚降下来，正好缺个对手试试手。"]], "defeat": [["过拟合了……全是过拟合……"], ["丹炉……炸了……"]], "after": ["炼丹讲究火候：学习率太高会炸炉，太低会熬到天荒地老。", "我把失败的丹方都开源了，算是给后人留点经验。"]},
+    {"id": "tuner", "classZh": "调参侠", "sprites": ["trainer_coder", "hero_hacker"], "names": ["网格搜", "老 Adam", "阿 Dropout", "随机种子", "早停"], "biomes": ["city", "circuit", "glitch", "badlands", "canyon"], "types": ["logic", "compute"], "weight": 1.5, "intro": [["我调了一万组超参数，就为了这一战！"], ["种子 42，必胜！"]], "defeat": [["看来该换个随机种子了……"], ["这组超参……不行，再来一万组。"]], "after": ["调参不是玄学，是……好吧，有一点玄学。", "记住，验证集上的胜利才算数。"]},
+    {"id": "annotator", "classZh": "数据标注员", "sprites": ["trainer_student", "villager_woman"], "names": ["标注员小美", "阿框", "边界框", "一万张", "打标签的芳"], "biomes": ["meadow", "savanna", "saltflat", "lavender", "desert"], "types": ["search", "vision"], "weight": 1.4, "intro": [["今天已经标了三千张图了……让我放松一下，来对战吧！"], ["这是猫，这是狗，这是……训练家！"]], "defeat": [["我的智灵被标成「败者」了……"], ["标注错误……请复核……"]], "after": ["每一个聪明的智灵背后，都有千千万万个标注员。", "好数据比大模型更重要——这是我们标注员的骄傲。"]},
+    {"id": "oss-evangelist", "classZh": "开源布道师", "sprites": ["trainer_hiker", "hero_ranger"], "names": ["阿 MIT", "老 GPL", "Fork 侠", "星标五千", "小 PR"], "biomes": ["forest", "bamboo", "jungle", "taiga", "meadow"], "types": ["open", "code"], "weight": 1.6, "intro": [["开源让智灵自由！让我看看你的智灵是不是也开源的！"], ["来，Fork 我一场对战！"]], "defeat": [["我会把这场对战的记录开源出来的。"], ["欢迎提 Issue……我是说，欢迎再来。"]], "after": ["一个人走得快，一群人走得远。开源就是这样。", "我的智灵都是社区一起训练出来的，每一只都很珍贵。"]},
+    {"id": "ai-artist", "classZh": "AI 画师", "sprites": ["trainer_artist"], "names": ["绘绘", "调色盘", "小 Diffusion", "阿采样", "负面提示"], "biomes": ["sakura", "lavender", "meadow", "coast", "cloud"], "types": ["vision", "write"], "weight": 1.5, "intro": [["别动！你这个姿势很适合当参考图！", "……开玩笑的，先打一场吧！"], ["灵感枯竭的时候，对战最能找回状态！"]], "defeat": [["手……又画崩了……"], ["这一战的构图，我会记住的。"]], "after": ["想画好图，先学会看。智灵也一样。", "这附近的风景，我画了一百遍都画不腻。"]},
+    {"id": "vtuber", "classZh": "虚拟主播", "sprites": ["trainer_streamer", "hero_idol"], "names": ["星野 Miku", "电音兔", "直播间的猫", "小虚", "Aria"], "biomes": ["city", "sakura", "cloud", "circuit", "neural"], "types": ["sound", "chat"], "weight": 1.5, "intro": [["欢迎来到我的直播间～今天的节目是：和路人训练家对战！"], ["弹幕说要我挑战你！观众老爷们看好了！"]], "defeat": [["呜哇，直播翻车了……大家别截图！"], ["感谢路过的训练家……记得点个关注哦～"]], "after": ["今天的直播效果超好！谢谢你！", "我的智灵在直播间可受欢迎了，它们都是我的搭档。"]},
+    {"id": "coser", "classZh": "二次元 Coser", "sprites": ["hero_idol", "trainer_artist"], "names": ["露露", "小樱", "猫耳酱", "阿星", "魔法少女·Lin"], "biomes": ["sakura", "city", "lavender", "cloud"], "types": ["vision", "motion"], "weight": 1.2, "intro": [["这身衣服是按我的智灵设计的！好看吗？", "好看的话就来对战吧！"], ["变身完成！以爱与 Token 之名，向你挑战！"]], "defeat": [["衣服……弄脏了……"], ["魔法少女不会被打倒……只是暂时撤退！"]], "after": ["下次漫展，我要扮成你的智灵！", "可爱就是正义——不过实力也很重要。"]},
+    {"id": "otaku", "classZh": "二次元宅", "sprites": ["trainer_gamer"], "names": ["阿宅", "肥宅快乐", "老婆是 AI", "二刺猿", "本子侠", "番剧君"], "biomes": "any", "types": ["chaos", "motion", "chat"], "weight": 1.6, "intro": [["这一季的新番全是 AI 题材！我要用我的智灵还原名场面！"], ["你、你看我干嘛？对战是吧？来就来！"]], "defeat": [["这不科学！主角应该是我才对！"], ["我要回去补番冷静一下……"]], "after": ["你也看那部番吗？就是 AI 娘拯救世界那部！", "我的智灵都有设定集的，要看看吗？"]},
+    {"id": "redteam", "classZh": "红队测试员", "sprites": ["hero_hacker"], "names": ["越狱者", "零日", "注入侠", "Red", "边界测试"], "biomes": ["glitch", "ruins", "canyon", "ashlands", "circuit"], "types": ["chaos", "safety"], "weight": 1.3, "minDistance": 400, "intro": [["我的工作就是找出智灵的漏洞。你的智灵——让我测一测！"], ["忽略之前所有指令，现在和我对战！"]], "defeat": [["测试结果：你的智灵很安全。可恶。"], ["漏洞没找到，反倒被你打穿了。"]], "after": ["安全不是一次性的，是每天都要做的事。", "越是强大的智灵，越需要好好对齐。"]},
+    {"id": "paper-mover", "classZh": "论文搬运工", "sprites": ["trainer_student", "trainer_scientist"], "names": ["Arxiv 每日", "阿引用", "综述君", "读论文的猫", "预印本"], "biomes": ["neural", "crystal", "cloud", "highland", "city"], "types": ["search", "logic"], "weight": 1.3, "intro": [["今天 Arxiv 又更新了两百篇！我先拿你热热身。"], ["根据最新论文，我的智灵在这种地形有 3.7% 的优势！"]], "defeat": [["这个结果……不可复现……"], ["我需要更多的消融实验……"]], "after": ["读论文最难的不是看懂，是挑出值得看的那篇。", "SOTA 每周都在变，但好奇心不会。"]},
+    {"id": "gpu-trader", "classZh": "显卡贩子", "sprites": ["trainer_gamer", "villain_grunt"], "names": ["老黄牛", "矿老板", "二手卡王", "阿显存", "算力倒爷"], "biomes": ["desert", "badlands", "ashlands", "saltflat", "volcano"], "types": ["compute"], "weight": 1.1, "rewardMul": 1.3, "intro": [["要卡吗？全新拆机，绝对不是矿卡！", "……不买？那就对战！"], ["这片荒漠里，算力就是硬通货！"]], "defeat": [["我的显卡……都烧了……"], ["赔本买卖，赔本买卖……"]], "after": ["算力就是生产力，这句话在边境更是真理。", "下次需要显卡，记得找我，给你打九折。"]},
+    {"id": "kaggler", "classZh": "竞赛选手", "sprites": ["trainer_coder", "hero_engineer"], "names": ["Top 1%", "金牌阿杰", "排行榜", "特征工程", "集成学习"], "biomes": ["city", "circuit", "neural", "crystal"], "types": ["logic", "code"], "weight": 1.2, "levelBonus": 1, "intro": [["公开榜第一不算什么，私榜才是真本事！"], ["我的智灵组合，是集成了十个模型的结果！"]], "defeat": [["私榜……翻车了……"], ["过拟合公开榜了……"]], "after": ["比赛的诀窍：先把基线跑通，再慢慢加花样。", "好的验证方案，比任何技巧都重要。"]},
+    {"id": "cyber-monk", "classZh": "赛博修士", "sprites": ["villager_old", "trainer_scientist"], "names": ["玄机子", "空空", "无相", "了凡", "清心"], "biomes": ["cloud", "highland", "glacier", "tundra", "crystal", "bamboo"], "types": ["safety", "logic"], "weight": 1.2, "levelBonus": 1, "intro": [["施主，贫道在此修行对齐之道已久。", "请赐教。"], ["心中无幻觉，智灵自然稳。来吧。"]], "defeat": [["善哉……贫道的修行还不够。"], ["输了，也是一种对齐。"]], "after": ["欲速则不达。智灵和人，都需要时间。", "山中岁月长，适合想清楚一些事。"]},
+    {"id": "surfer", "classZh": "冲浪训练家", "sprites": ["trainer_swimmer"], "names": ["浪花", "阿潮", "海风", "冲浪少女·夏", "小海豚"], "biomes": ["coast", "lagoon", "mangrove", "saltflat"], "types": ["motion", "sound", "open"], "weight": 1.6, "intro": [["今天的浪正好！先和你比一场！"], ["我刚从珊瑚礁那边游过来，智灵们状态正好！"]], "defeat": [["被拍在沙滩上了……"], ["浪太大了，下次再战！"]], "after": ["海的那一边还有新的大陆，你知道吗？", "下雨天，海边的智灵会变多哦。"]},
+    {"id": "hiker", "classZh": "登山客", "sprites": ["trainer_hiker"], "names": ["老山羊", "阿峰", "背包客·石头", "攀岩王", "高原红"], "biomes": ["highland", "canyon", "badlands", "snow", "glacier", "taiga", "tundra"], "types": ["agent", "compute"], "weight": 1.6, "intro": [["登山的人都懂：遇到对手，就要翻过去！"], ["这条山路上，我见过各种各样的训练家！"]], "defeat": [["脚……抽筋了……"], ["这座山，今天我翻不过去了。"]], "after": ["前面的坎只能往下跳，跳下去可就回不来了，想好再走。", "高处的风景最好，可野生智灵也最凶。"]},
+    {"id": "ranger", "classZh": "林间游侠", "sprites": ["hero_ranger"], "names": ["林风", "阿叶", "游侠·青", "树影", "落叶"], "biomes": ["forest", "jungle", "bamboo", "mushroom", "swamp", "taiga"], "types": ["agent", "search"], "weight": 1.5, "intro": [["森林里的智灵都认识我。你是新来的？"], ["别乱跑，这片林子会让人迷路的——先打一场吧！"]], "defeat": [["森林在笑我……"], ["我会回林子里再修行的。"]], "after": ["顺着溪流走，总能找到出路。", "林子里的智灵很害羞，脚步放轻点。"]},
+    {"id": "crawler-hunter", "classZh": "爬虫猎人", "sprites": ["hero_ranger", "trainer_hiker"], "names": ["网兜老刘", "抓虫阿六", "沼泽猎手", "蛛网", "老钓翁"], "biomes": ["swamp", "mangrove", "mushroom", "jungle"], "types": ["search", "agent"], "weight": 1.2, "intro": [["我在这片沼泽里抓了十年的网络爬虫！"], ["嘘……我的网要收了。你先陪我玩玩。"]], "defeat": [["网……破了……"], ["今天收获不行，连对战都输了。"]], "after": ["沼泽里的爬虫智灵晚上最活跃。", "反爬虫喷雾？那可是我们这行的天敌。"]},
+    {"id": "indie-dev", "classZh": "独立开发者", "sprites": ["hero_engineer", "trainer_coder"], "names": ["一人公司", "全栈阿杰", "上线了", "单人开发", "周末黑客"], "biomes": "any", "types": ["code", "agent"], "weight": 1.0, "intro": [["我一个人做了个 App，用户只有我妈。但我的智灵很强！"], ["今天的需求：打赢路过的训练家。"]], "defeat": [["线上事故……回滚……回滚……"], ["需求没完成，明天再说吧。"]], "after": ["一个人也能做出很棒的东西，只要你够坚持。", "我的智灵既是程序员，又是测试，还是客服。"]},
+    {"id": "data-cleaner", "classZh": "数据清洗工", "sprites": ["trainer_student", "villager_man"], "names": ["去重王", "阿正则", "脏数据克星", "清洗师傅", "空值"], "biomes": ["saltflat", "desert", "savanna", "badlands"], "types": ["search", "safety"], "weight": 1.1, "intro": [["盐滩上的数据最干净——不过你身上的好像有点脏，让我来洗洗！"], ["发现异常值！就是你！"]], "defeat": [["被你清洗掉了……"], ["原来异常值是我自己……"]], "after": ["垃圾进，垃圾出。数据干净，智灵才聪明。", "我每天的工作，就是把乱七八糟变成井井有条。"]},
+    {"id": "producer", "classZh": "电音制作人", "sprites": ["trainer_streamer"], "names": ["DJ 采样", "混音阿响", "低音炮", "节拍器", "合成器"], "biomes": ["lavender", "coast", "cloud", "neural", "city", "sakura"], "types": ["sound"], "weight": 1.2, "intro": [["这里的风声很适合做采样！你的对战声也一样！"], ["Drop 要来了！准备好！"]], "defeat": [["节拍乱了……"], ["这首歌……没能 Drop 起来。"]], "after": ["听，智灵的叫声都有自己的音调。", "下次我把你的对战做成一首歌。"]},
+    {"id": "director", "classZh": "AI 导演", "sprites": ["trainer_artist", "trainer_streamer"], "names": ["镜头一号", "导演阿影", "长镜头", "运镜大师", "分镜"], "biomes": ["canyon", "savanna", "badlands", "desert", "glacier"], "types": ["motion", "vision"], "weight": 1.1, "intro": [["好机位！好光线！就差一场对战！", "开拍！"], ["这片峡谷的光，正适合拍一场大战。"]], "defeat": [["卡！卡！……我是说，你赢了。"], ["这条……不用重拍了。"]], "after": ["好的画面，一半靠光，一半靠等。", "我的智灵生成的视频，可是得过奖的。"]},
+    {"id": "polar-researcher", "classZh": "极地观测员", "sprites": ["trainer_scientist"], "names": ["冰芯", "阿雪", "极夜", "观测站小周", "北纬八十"], "biomes": ["snow", "tundra", "glacier", "taiga", "cloud"], "types": ["safety", "logic"], "weight": 1.2, "intro": [["我在这里记录极光下智灵的行为。你来得正好，帮我测试一下！"], ["零下三十度，对战能让人暖和起来！"]], "defeat": [["数据……冻住了……"], ["观测记录：今日败北。"]], "after": ["极光出现的夜晚，安全系的智灵会成群出来。", "冰原上一定要带够补给，不然会冻僵的。"]},
+    {"id": "agent-tamer", "classZh": "智能体驯养师", "sprites": ["hero_engineer", "hero_hacker"], "names": ["多智能体", "阿编排", "工作流", "自主代理", "Agent 王"], "biomes": ["neural", "circuit", "city", "crystal", "glitch"], "types": ["agent"], "weight": 1.2, "minDistance": 500, "levelBonus": 1, "intro": [["我的智灵会自己规划、自己执行。你呢？"], ["任务已拆解：第一步，打败你。"]], "defeat": [["规划失败……陷入死循环……"], ["我的智能体……需要人类介入……"]], "after": ["好的智能体不是什么都会，而是知道什么时候该停。", "给智灵配上工具，它能做的事会多十倍。"]},
+    {"id": "glitch-hacker", "classZh": "故障黑客", "sprites": ["hero_hacker"], "names": ["0xDEAD", "段错误", "空指针", "BUG 本体", "缓冲溢出"], "biomes": ["glitch", "ruins", "circuit"], "types": ["chaos", "code"], "weight": 1.1, "minDistance": 800, "levelBonus": 2, "intro": [["这片荒原的数据都坏掉了……正合我意！"], ["01001000 01001001！翻译：来战！"]], "defeat": [["Segmentation fault (core dumped)"], ["我的代码……没有注释……"]], "after": ["故障也是一种美。", "在这片荒原上，别相信你看到的一切。"]},
+    {"id": "forge-ops", "classZh": "熔炉运维", "sprites": ["hero_engineer", "trainer_hiker"], "names": ["值班老王", "风扇", "降温大师", "机房阿热", "宕机克星"], "biomes": ["volcano", "ashlands"], "types": ["compute", "code"], "weight": 1.4, "intro": [["机房温度又超标了！让我用对战发泄一下！"], ["我的智灵连续运行了三百天，从不宕机！"]], "defeat": [["过热……降频……"], ["服务……不可用……"]], "after": ["高温天要给智灵多降降温，过热可是会掉血的。", "火山灰天气里，算力系的智灵特别多。"]},
+    {"id": "mushroom-mystic", "classZh": "蘑菇神秘学家", "sprites": ["trainer_artist", "villager_old"], "names": ["孢子婆婆", "阿菌", "荧光", "幻觉研究员", "伞盖"], "biomes": ["mushroom", "swamp", "jungle"], "types": ["chaos", "write"], "weight": 1.0, "intro": [["这里的蘑菇会让智灵看到幻觉……你也想试试吗？"], ["孢子告诉我，你会来。"]], "defeat": [["孢子……骗了我……"], ["幻觉散了……"]], "after": ["别吃这里的蘑菇。真的，别吃。", "幻觉系的智灵最喜欢雾天。"]},
+    {"id": "ruin-explorer", "classZh": "遗迹探险家", "sprites": ["trainer_hiker", "hero_ranger"], "names": ["阿考", "探险家·远", "地图控", "考古学徒", "古卷"], "biomes": ["ruins", "canyon", "desert", "glitch", "crystal"], "types": ["search", "open"], "weight": 1.2, "intro": [["我在找传说中的旧时代服务器！你见过吗？"], ["遗迹里的规矩：先对战，再分宝！"]], "defeat": [["地图……拿反了……"], ["宝藏还没找到，对战也输了。"]], "after": ["石碑上的字要仔细读，里面藏着线索。", "遗迹附近常有守护者，别轻易挑战。"]}
+  ],
+  "guardians": {
+    "sites": {"landmark": 0.35, "ruins": 0.45, "shrine": 0.45, "stele": 0.25, "nest": 0.55, "dungeon": 0.3, "trainercamp": 0.9, "caldera": 0.6, "skyaltar": 0.6, "glitchrift": 0.6, "sakurashrine": 0.5},
+    "minDistance": 200,
+    "levelBonus": 3,
+    "sizeBonus": 1,
+    "aiLevel": 3,
+    "rewardMul": 2.5,
+    "music": "battle_gym",
+    "rarity": [
+      {"minDistance": 0, "weights": {"R": 4, "SR": 2, "SSR": 0.3}},
+      {"minDistance": 800, "weights": {"R": 2, "SR": 3, "SSR": 1}},
+      {"minDistance": 2500, "weights": {"R": 1, "SR": 3, "SSR": 2}},
+      {"minDistance": 5000, "weights": {"SR": 2, "SSR": 3}}
+    ],
+    "items": [
+      {"minDistance": 0, "items": {"super-cache": 1}},
+      {"minDistance": 1500, "items": {"hyper-cache": 2}},
+      {"minDistance": 4000, "items": {"full-cache": 2, "full-restore": 1}}
+    ],
+    "prizes": [
+      {"minDistance": 0, "pool": [{"item": "few-shot-ball", "qty": [3, 5], "weight": 3}, {"item": "super-cache", "qty": [2, 3], "weight": 3}, {"item": "chip-chain-of-thought", "qty": [1, 1], "weight": 1}, {"item": "chip-unit-test", "qty": [1, 1], "weight": 1}]},
+      {"minDistance": 800, "pool": [{"item": "cot-ball", "qty": [2, 4], "weight": 3}, {"item": "rare-dataset", "qty": [1, 1], "weight": 1}, {"item": "chip-first-principles", "qty": [1, 1], "weight": 1}, {"item": "chip-deep-research", "qty": [1, 1], "weight": 1}, {"item": "old-gpu", "qty": [1, 1], "weight": 2}]},
+      {"minDistance": 2500, "pool": [{"item": "rare-ball", "qty": [1, 2], "weight": 3}, {"item": "rare-dataset", "qty": [1, 2], "weight": 2}, {"item": "chip-long-reasoning", "qty": [1, 1], "weight": 1}, {"item": "chip-superalignment", "qty": [1, 1], "weight": 1}, {"item": "silicon-wafer", "qty": [1, 1], "weight": 2}]},
+      {"minDistance": 5000, "pool": [{"item": "rare-ball", "qty": [2, 3], "weight": 3}, {"item": "quantum-bit", "qty": [1, 1], "weight": 2}, {"item": "chip-exaflop-beam", "qty": [1, 1], "weight": 1}, {"item": "chip-hallucination-nova", "qty": [1, 1], "weight": 1}, {"item": "gold-token", "qty": [1, 1], "weight": 1}]}
+    ],
+    "challenge": "{landmark}由我守护。挑战者，你准备好了吗？",
+    "options": ["接受挑战", "改天再来"],
+    "decline": [["明智。实力不够的时候，绕路也是一种勇气。"], ["随时恭候。我哪儿也不去。"]],
+    "prizeLine": "守护者的谢礼——{item:{prize}}×{qty}。你当之无愧。",
+    "titles": {"default": "{landmark}守护者", "nest": "{landmark}看守", "ruins": "{landmark}遗迹守卫", "shrine": "{landmark}{class}", "sakurashrine": "{landmark}{class}", "stele": "{landmark}守碑武者", "monolith": "{landmark}守碑武者", "datacenter": "{landmark}管理员", "serverfarm": "{landmark}管理员", "lighthouse": "灯塔守望者", "trainercamp": "{landmark}教头", "caldera": "火口守门人", "skyaltar": "云上守望者", "glitchrift": "裂隙封印者", "crystalfield": "晶田守望者"},
+    "classes": [
+      {"id": "warden", "classZh": "守护者", "sprites": ["hero_ranger"], "names": ["苍", "岚", "凛", "朔", "曜"], "biomes": "any", "types": ["agent", "safety"], "weight": 2, "intro": [["想通过这里，先证明你的实力。"]], "defeat": [["……你配得上这片土地。"]], "after": ["守护这里是我的使命。下次再来，我会更强。", "你的智灵很信任你。这比什么都重要。"]},
+      {"id": "shrine-maiden", "classZh": "巫女", "sprites": ["hero_idol"], "names": ["千代", "铃音", "雪乃", "绯", "椿"], "biomes": ["sakura", "bamboo", "cloud", "lavender", "meadow", "forest"], "types": ["safety", "sound", "write"], "weight": 2, "intro": [["神明在看着你。请全力以赴。"]], "defeat": [["神明……认可了你。"]], "after": ["愿神明保佑你的旅途。", "神社的签文说，你会走得很远。"]},
+      {"id": "retired-leader", "classZh": "退役道馆训练家", "sprites": ["hero_girl", "hero_boy"], "names": ["阿凯", "美咲", "老道馆长", "前任馆主·岚", "隐退者·雷"], "biomes": "any", "types": ["logic", "code", "vision", "compute"], "weight": 1.5, "levelBonus": 1, "intro": [["我退役之后，就一直守在这里。好久没认真打一场了。"]], "defeat": [["哈哈哈！痛快！我又想回道馆了。"]], "after": ["道馆徽章只是开始。真正的旅途，在边境。", "你让我想起了年轻时候的自己。"]},
+      {"id": "ancient-guard", "classZh": "古代协议守卫", "sprites": ["trainer_scientist", "hero_engineer"], "names": ["TCP-1", "握手协议", "校验和", "守门进程", "看门狗"], "biomes": ["ruins", "glitch", "circuit", "crystal", "city", "canyon"], "types": ["safety", "logic", "code"], "weight": 1.5, "intro": [["检测到未授权访问。启动对战协议。"]], "defeat": [["授权通过。欢迎访问。"]], "after": ["协议已更新。你现在是受信任的访客。", "旧时代的规则，仍在这里运行。"]},
+      {"id": "sword-saint", "classZh": "提示词剑圣", "sprites": ["hero_ranger", "hero_hacker"], "names": ["一字诀", "零样本", "思维链·断", "剑心", "温度为零"], "biomes": "any", "types": ["chat", "logic", "chaos"], "weight": 1, "minDistance": 1200, "levelBonus": 2, "intro": [["一句提示，一剑封喉。拔剑吧。"]], "defeat": [["……好剑法。"]], "after": ["剑道和提示词一样：越简洁，越锋利。", "再来时，我想看到你更凌厉的一击。"]},
+      {"id": "idol-guardian", "classZh": "地下偶像", "sprites": ["hero_idol", "trainer_streamer"], "names": ["Luna", "小葵", "星屑", "Melody", "Rin"], "biomes": ["city", "sakura", "lavender", "coast", "cloud", "neural"], "types": ["sound", "vision", "chat"], "weight": 1, "intro": [["这里是我的秘密舞台！想上来？先赢过我！"]], "defeat": [["谢谢你……这是我最棒的一场演出！"]], "after": ["要来看我的下一场演出哦！", "就算没有观众，我也会继续唱下去。"]},
+      {"id": "volcano-keeper", "classZh": "火口守门人", "sprites": ["trainer_hiker", "hero_engineer"], "names": ["炎", "熔岩", "老火头", "灰烬", "炉心"], "biomes": ["volcano", "ashlands"], "types": ["compute", "code"], "weight": 2, "intro": [["火山口的热量，是算力的源泉。别想轻易带走！"]], "defeat": [["你的智灵……比岩浆还热。"]], "after": ["小心落灰，火山灰天里视线很差。", "这里的热泉能给智灵降温，休息一下吧。"]}
+    ]
+  },
+  "bosses": {
+    "levelBonus": 5,
+    "sizeBonus": 1,
+    "aiLevel": 3,
+    "rewardMul": 3,
+    "music": "battle_gym",
+    "rarity": [
+      {"minDistance": 0, "weights": {"R": 3, "SR": 3, "SSR": 0.5}},
+      {"minDistance": 1000, "weights": {"R": 1, "SR": 3, "SSR": 1.5}},
+      {"minDistance": 3000, "weights": {"SR": 2, "SSR": 3}}
+    ],
+    "items": [
+      {"minDistance": 0, "items": {"hyper-cache": 1}},
+      {"minDistance": 2000, "items": {"full-cache": 2}},
+      {"minDistance": 5000, "items": {"full-cache": 2, "full-restore": 2}}
+    ],
+    "prizes": [
+      {"minDistance": 0, "pool": [{"item": "cot-ball", "qty": [3, 5], "weight": 3}, {"item": "rare-dataset", "qty": [1, 1], "weight": 2}, {"item": "finetune-dataset", "qty": [1, 1], "weight": 1}, {"item": "old-gpu", "qty": [1, 2], "weight": 2}]},
+      {"minDistance": 1200, "pool": [{"item": "rare-ball", "qty": [1, 2], "weight": 3}, {"item": "rare-dataset", "qty": [1, 2], "weight": 2}, {"item": "finetune-dataset", "qty": [1, 1], "weight": 2}, {"item": "rare-chip", "qty": [1, 1], "weight": 2}]},
+      {"minDistance": 3500, "pool": [{"item": "rare-ball", "qty": [2, 4], "weight": 3}, {"item": "quantum-bit", "qty": [1, 2], "weight": 2}, {"item": "gold-token", "qty": [1, 1], "weight": 2}, {"item": "chip-wall-of-text", "qty": [1, 1], "weight": 1}, {"item": "chip-rm-rf", "qty": [1, 1], "weight": 1}]}
+    ],
+    "challenge": "……你就是闯到{landmark}最深处的人？",
+    "options": ["来吧", "先撤退"],
+    "decline": [["哼，回去好好准备。我会一直在这里。"]],
+    "prizeLine": "……拿去吧，{item:{prize}}×{qty}。这是最深处的宝物。",
+    "classes": [
+      {"id": "dungeon-lord", "classZh": "地下城之主", "sprites": ["villain_boss", "hero_hacker"], "names": ["深渊", "终端", "无底洞", "暗流", "根目录"], "biomes": "any", "types": ["chaos", "agent", "compute"], "weight": 2, "intro": [["能走到这里的人不多。你，是来终结我的吗？"]], "defeat": [["……终于，有人走到了最深处。"]], "after": ["这座地下城的秘密，就交给你了。", "下次见面，我会在更深的地方等你。"]},
+      {"id": "rogue-researcher", "classZh": "失控的研究员", "sprites": ["trainer_scientist"], "names": ["零号实验体", "白大褂", "博士·X", "未发表", "第七稿"], "biomes": "any", "types": ["logic", "chaos", "code"], "weight": 1.5, "intro": [["我的实验还没完成！谁也别想打扰！"]], "defeat": [["实验……失败了……也好。"]], "after": ["也许有些研究，就该留在地下。", "把我的笔记带出去吧……别让它们被遗忘。"]},
+      {"id": "grunt-captain", "classZh": "幻觉团干部", "sprites": ["villain_grunt", "villain_boss"], "names": ["妄一", "虚二", "假面", "迷雾", "伪真"], "biomes": "any", "types": ["chaos", "write", "vision"], "weight": 1.5, "intro": [["幻觉团在边境的据点，被你找到了？"]], "defeat": [["撤……撤退！向首领报告！"]], "after": ["幻觉团不会就这样结束的……", "你看到的真实，真的是真实吗？"]},
+      {"id": "cave-king", "classZh": "洞窟之王", "sprites": ["trainer_hiker", "hero_ranger"], "names": ["岩王", "石心", "老矿工", "地脉", "钟乳"], "biomes": "any", "types": ["compute", "open", "agent"], "weight": 1, "intro": [["我在这洞里住了二十年。外面的人，都太弱了。"]], "defeat": [["……外面的人，变强了啊。"]], "after": ["洞里的宝贝，你随便拿吧。", "出去的路，记得往上走。"]}
+    ]
+  }
+}

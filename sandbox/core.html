@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>core sandbox · 智灵口袋</title>
+  <style>
+    @font-face { font-family: 'FusionPixel'; src: url('/assets/fonts/fusion-pixel-12px-zh_hans.woff2') format('woff2'); }
+    :root { --ap-font: 'FusionPixel', monospace; }
+    body { margin: 0; background: #1b1830; color: #e9e6ff; font: 13px/1.4 var(--ap-font); }
+    h2 { font-size: 15px; margin: 18px 12px 6px; color: #ffd76b; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 12px; align-items: flex-end; }
+    .card { background: #262243; border: 2px solid #3b3566; padding: 6px; text-align: center; }
+    .card small { display: block; color: #b7b0e6; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    canvas, img { image-rendering: pixelated; display: block; margin: 0 auto; }
+    button { font: inherit; background: #3b3566; color: #fff; border: 2px solid #5a52a0; padding: 3px 8px; cursor: pointer; }
+    button:hover { background: #4b4380; }
+    #input { padding: 0 12px; color: #9fe6ff; }
+    .grass-bg { background: #6cbf4f; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="./core.ts"></script>
+</body>
+</html>

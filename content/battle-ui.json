@@ -1,0 +1,16 @@
+{
+  "transition": {"selfCover": {"kind": "battle", "ms": 900, "sfx": "encounter"}, "reveal": {"kind": "iris", "ms": 560}, "exit": {"fadeMs": 420}, "returnFadeMs": 380},
+  "stage": {"indoorMapKinds": ["interior"], "maxDtSec": 0.1},
+  "introByKind": {"wild": "wild", "trainer": "trainer", "gym": "trainer", "legend": "legend", "pvp": "pvp"},
+  "music": {"fadeMs": 500, "victory": "victory", "victoryKinds": ["wild", "trainer", "gym", "legend"], "evolution": "evolution"},
+  "message": {"charsPerSecond": {"slow": 26, "normal": 58, "fast": 140, "instant": 0}, "autoAdvanceMs": {"slow": 1500, "normal": 950, "fast": 600, "instant": 520}, "autoAdvance": true, "pause": {"chars": "，。！？；…,.!?", "ms": 70}, "blip": {"sfx": "select", "everyChars": 4, "volume": 0.16, "pitch": 1.8}},
+  "timing": {"afterIntroMs": 150, "abilityBannerMs": 1400, "levelUpPanelMs": 2600, "endHoldMs": 500, "faintSettleMs": 120, "pvpTimerWarnSec": 10, "stageGuardMs": 12000},
+  "channel": {"maxAutoSteps": 64},
+  "sfx": {"hit": {"immune": "hit_weak", "weak": "hit_weak", "normal": "hit", "super": "hit_super"}, "crit": "hit_super", "miss": "cancel", "faint": "faint", "throwBall": "ball_throw", "catch": "catch", "catchFail": "cancel", "heal": "heal", "levelUp": "levelup", "item": "item", "money": "money", "evolveStart": "evolve", "evolveDone": "levelup", "evolveCancel": "cancel", "run": "run", "statUp": "stat_up", "statDown": "stat_down", "status": "status", "learn": "levelup", "ability": "notify", "select": "select", "confirm": "confirm", "cancel": "cancel", "error": "error", "advance": "select"},
+  "cry": {"onSendOut": true, "onFaint": true, "faintPitch": 0.72, "evolvePitch": 1.12},
+  "hud": {"hpBarWidth": 92, "expBarWidth": 128, "foeHpNumbers": false, "ownHpNumbers": true, "showTypes": true, "showStages": true, "maxVolatileTags": 3},
+  "commands": {"normal": ["fight", "bag", "party", "run"], "pvp": ["fight", "bag", "party", "forfeit"], "columns": 2},
+  "moves": {"columns": 2, "hintRequiresSeen": true, "categoryColors": {"physical": "#e8823a", "special": "#5aa0f0", "status": "#a0a6b8"}},
+  "catch": {"nicknamePrompt": true},
+  "evolve": {"startHoldMs": 400, "endHoldMs": 600}
+}

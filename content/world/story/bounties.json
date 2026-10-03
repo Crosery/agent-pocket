@@ -1,0 +1,194 @@
+{
+  "count": [16, 20],
+  "idPatterns": {"quest": "bq-{n}", "giver": "{quest}-giver", "partner": "{quest}-partner", "target": "{quest}-target", "intro": "{quest}:intro", "idle": "{quest}:idle"},
+  "givers": ["^hamlet:(?<site>[^:]+):npc-\\d+$", "^poi:(?<site>(?:campsite|trainercamp|lighthouse|dock|windmill|oasis)-\\d+):spot:\\d+$"],
+  "distance": [40, 260],
+  "levelSlack": 4,
+  "reward": {
+    "moneyPerLevel": 60,
+    "round": 50,
+    "items": [
+      {"maxLevel": 15, "pool": [{"few-shot-ball": 3}, {"super-cache": 3}, {"x-speed": 2}, {"repel": 3}]},
+      {"maxLevel": 30, "pool": [{"cot-ball": 2}, {"hyper-cache": 2}, {"universal-patch": 3}, {"super-repel": 3}, {"token-refill": 1}]},
+      {"maxLevel": 45, "pool": [{"rare-ball": 1}, {"full-cache": 2}, {"reboot": 2}, {"token-refill": 2}, {"old-gpu": 1}]},
+      {"maxLevel": 100, "pool": [{"rare-ball": 2}, {"full-restore": 2}, {"hard-reboot": 1}, {"quantum-bit": 1}, {"rare-dataset": 1}]}
+    ]
+  },
+  "kinds": {
+    "deliver": {
+      "weight": 3,
+      "names": ["{destName}的包裹", "送给{partnerName}的急件", "跑腿委托·{destName}"],
+      "target": "npc",
+      "targets": "^(?:hamlet:[^:]+:npc-\\d+|poi:(?:campsite|dock|lighthouse|windmill|oasis|hotspring|grove|datacenter|crystalfield)-\\d+:spot:\\d+)$",
+      "stages": [
+        {"text": "把{item:{parcel}}送到{destDir}边{destDist}的{destName}，交给{partnerName}。", "target": "partner"}
+      ],
+      "giver": [
+        {"sprite": "villager_woman", "names": ["包子铺老板娘", "织围巾的奶奶", "邮差阿姨", "开花店的小梅"], "lines": [["哎呀，训练家！你来得正好。", "我这儿有件{item:{parcel}}，得送去给住在{destName}的{partnerName}。"], ["能帮我跑一趟腿吗？", "{partnerName}在{destName}等着这个呢，我腿脚不方便。"]]},
+        {"sprite": "villager_kid", "names": ["小邮差豆豆", "跑腿的阿毛", "爱写信的小芽"], "lines": [["我是村里的小邮差！可是……{destName}好远哦。", "你能帮我把{item:{parcel}}交给{partnerName}吗？我请你吃糖！"]]},
+        {"sprite": "villager_man", "names": ["修电脑的老陈", "快递站长", "杂货铺老板"], "lines": [["我答应{partnerName}，今天之内把{item:{parcel}}送到{destName}。", "结果店里一步都走不开……拜托你了！"]]},
+        {"sprite": "villager_old", "names": ["拄拐的老爷爷", "村里的老会计"], "lines": [["年轻人，帮老头子一个忙。", "{destName}的{partnerName}是我的老朋友，这件{item:{parcel}}得亲手交给他。"]]}
+      ],
+      "partner": [
+        {"sprite": "villager_man", "names": ["等快递的程序员", "收件人·阿明", "守林人老杨"], "lines": [["今天会不会有人给我送东西来呢……"], ["在这儿等人，顺便看看风景。", "野生智灵路过的时候，还会跟我打招呼。"]]},
+        {"sprite": "villager_woman", "names": ["在等包裹的姐姐", "小卖部的阿芳"], "lines": [["我订的东西怎么还没到呀？", "要是能有个好心的训练家顺路帮忙就好了。"]]},
+        {"sprite": "villager_old", "names": ["老朋友·王伯", "看海的老人"], "lines": [["我那老伙计，好久没来信了。"]]},
+        {"sprite": "trainer_scientist", "names": ["野外研究员·小林", "驻站观察员"], "lines": [["我在{place}做调查，补给全靠大家帮忙送。"]]},
+        {"sprite": "villager_kid", "names": ["等信的小孩·乐乐", "盼礼物的糖糖"], "lines": [["爷爷说会给我寄礼物的！是不是快到啦？"]]}
+      ],
+      "parcels": ["data-shard", "broken-ssd"],
+      "texts": {
+        "decline": ["没关系，改变主意了再来找我。", "好吧……我再等等别人。", "那下次路过，记得再来看看我哦。"],
+        "reminder": ["东西交给{destName}的{partnerName}了吗？就在{destDir}边{destDist}。", "{partnerName}还在{destName}等着呢，往{destDir}边走就到啦。"],
+        "doneLine": ["{partnerName}收到了吗？太好啦！谢谢你！", "听说东西送到了。你真是个靠谱的训练家！"],
+        "partnerThanks": ["正是我要的！辛苦你跑这么远。", "太好了，我等这个好久了！替我谢谢{giverName}！"],
+        "partnerDone": ["东西我收好啦。路上小心！", "下次见到{giverName}，替我问声好。"]
+      },
+      "scripts": {
+        "giver": [
+          {"op": "ifFlag", "flag": "{quest}:done", "then": [{"op": "say", "text": "{doneLine}"}], "else": [{"op": "ifFlag", "flag": "{quest}:given", "then": [{"op": "say", "text": "{reminder}"}], "else": [{"op": "include", "script": "{intro}"}, {"op": "choice", "text": "要接下这份委托吗？", "options": ["交给我吧", "现在没空"], "branches": [[{"op": "giveItem", "item": "{parcel}", "qty": 1}, {"op": "setFlag", "flag": "{quest}:given"}, {"op": "quest", "quest": "{quest}", "stage": 0}, {"op": "say", "text": "{partnerName}就在{destDir}边{destDist}的{destName}。路上小心，别让野生智灵把它当零食！"}], [{"op": "say", "text": "{decline}"}]]}]}]}
+        ],
+        "partner": [
+          {"op": "ifFlag", "flag": "{quest}:done", "then": [{"op": "say", "text": "{partnerDone}"}], "else": [{"op": "ifFlag", "flag": "{quest}:given", "then": [{"op": "ifItem", "item": "{parcel}", "then": [{"op": "say", "text": "这是……{giverName}托你带来的{item:{parcel}}？"}, {"op": "takeItem", "item": "{parcel}", "qty": 1}, {"op": "say", "text": "{partnerThanks}"}, {"op": "setFlag", "flag": "{quest}:done"}, {"op": "quest", "quest": "{quest}", "stage": 0, "done": true}], "else": [{"op": "say", "text": "{giverName}托你给我带了东西？……咦，你包里好像没有呀。"}]}], "else": [{"op": "include", "script": "{idle}"}]}]}
+        ]
+      },
+      "rewardMul": 1
+    },
+    "visit": {
+      "weight": 2,
+      "names": ["寻找{partnerName}", "{destName}的失联者", "替{giverName}报平安"],
+      "target": "npc",
+      "targets": "^(?:poi:(?:ruins|shrine|grove|hotspring|crystalfield|oasis|campsite|windmill)-\\d+:spot:\\d+|wild:[^:]+:\\d+)$",
+      "stages": [
+        {"text": "去{destDir}边{destDist}的{destName}，找到{partnerName}。", "target": "partner"},
+        {"text": "回{giverSite}，告诉{giverName}：{partnerName}平安无事。", "target": "giver"}
+      ],
+      "giver": [
+        {"sprite": "villager_woman", "names": ["担心孩子的妈妈", "等人的阿婆", "惦记弟弟的姐姐"], "lines": [["我家那位去了{destName}好几天，一点消息都没有……", "你能去看看{partnerName}是不是平安吗？"]]},
+        {"sprite": "villager_old", "names": ["老村长", "守村的大爷"], "lines": [["村里的{partnerName}说要去{destName}考察，一直没回来。", "那地方在{destDir}边{destDist}，野生智灵可不少。能帮忙找找吗？"]]},
+        {"sprite": "villager_kid", "names": ["想念哥哥的小豆", "小芽"], "lines": [["我哥哥{partnerName}去{destName}找稀有智灵了。", "他说好晚饭前回来的……可是都三天了！"]]}
+      ],
+      "partner": [
+        {"sprite": "trainer_hiker", "names": ["迷路的登山客", "探险家·阿远", "背包客·小周"], "lines": [["这里的风景太美了，一不小心就待了好几天。"]]},
+        {"sprite": "trainer_scientist", "names": ["野外调查员·小林", "研究生·阿析"], "lines": [["数据还没采完，不能走！"]]},
+        {"sprite": "villager_man", "names": ["钓鱼忘了时间的大叔"], "lines": [["鱼还没上钩呢……再等一会儿。"]]},
+        {"sprite": "trainer_student", "names": ["离家出走的少年", "看星星的小宇"], "lines": [["我只是想一个人出来看看世界。"]]}
+      ],
+      "texts": {
+        "decline": ["没关系，改变主意了再来找我。", "好吧……我再等等别人。", "那下次路过，记得再来看看我哦。"],
+        "reminder": ["{partnerName}应该在{destDir}边{destDist}的{destName}附近。拜托了！"],
+        "giverThanks": ["平安无事？太好了……这是一点心意，请收下！", "谢谢你！我总算能睡个好觉了。"],
+        "doneLine": ["谢谢你帮我找到{partnerName}。", "{partnerName}昨天给我写信了，说路上遇到一个很好心的训练家。"],
+        "partnerFound": ["啊？是{giverName}托你来找我的？我在这儿太入迷，忘了回去。", "原来已经过了这么多天了吗！帮我跟{giverName}说一声，我很好。"],
+        "partnerWait": ["我收拾一下就回去，你先帮我报个平安吧！", "麻烦你先回去告诉{giverName}，我马上就走。"],
+        "partnerDone": ["谢谢你特地跑一趟。", "下次我出门，一定先说一声。"]
+      },
+      "scripts": {
+        "giver": [
+          {"op": "ifFlag", "flag": "{quest}:done", "then": [{"op": "say", "text": "{doneLine}"}], "else": [{"op": "ifFlag", "flag": "{quest}:found", "then": [{"op": "say", "text": "{giverThanks}"}, {"op": "setFlag", "flag": "{quest}:done"}, {"op": "quest", "quest": "{quest}", "stage": 1, "done": true}], "else": [{"op": "ifFlag", "flag": "{quest}:started", "then": [{"op": "say", "text": "{reminder}"}], "else": [{"op": "include", "script": "{intro}"}, {"op": "choice", "text": "要接下这份委托吗？", "options": ["交给我吧", "现在没空"], "branches": [[{"op": "setFlag", "flag": "{quest}:started"}, {"op": "quest", "quest": "{quest}", "stage": 0}, {"op": "say", "text": "{destName}在{destDir}边{destDist}。拜托你了！"}], [{"op": "say", "text": "{decline}"}]]}]}]}]}
+        ],
+        "partner": [
+          {"op": "ifFlag", "flag": "{quest}:done", "then": [{"op": "say", "text": "{partnerDone}"}], "else": [{"op": "ifFlag", "flag": "{quest}:found", "then": [{"op": "say", "text": "{partnerWait}"}], "else": [{"op": "ifFlag", "flag": "{quest}:started", "then": [{"op": "say", "text": "{partnerFound}"}, {"op": "setFlag", "flag": "{quest}:found"}, {"op": "quest", "quest": "{quest}", "stage": 1}], "else": [{"op": "include", "script": "{idle}"}]}]}]}
+        ]
+      },
+      "rewardMul": 1.1
+    },
+    "defeat": {
+      "weight": 2,
+      "names": ["讨伐·{trainerClass}{trainerName}", "{destName}的不速之客", "通缉：{trainerName}"],
+      "target": "trainer",
+      "targets": "^wild:[^:]+:\\d+$",
+      "stages": [
+        {"text": "去{destDir}边{destDist}的{destName}，打败{trainerClass}{trainerName}。", "target": "partner"},
+        {"text": "回{giverSite}向{giverName}报告。", "target": "giver"}
+      ],
+      "giver": [
+        {"sprite": "villager_man", "names": ["被抢了零食的大叔", "村口的保安"], "lines": [["最近{destName}来了个不讲理的家伙，见人就要对战。", "村里的孩子都不敢出门了。你能去教训教训他吗？"]]},
+        {"sprite": "villager_woman", "names": ["愁眉苦脸的阿姨", "养智灵的姐姐"], "lines": [["有个叫{trainerName}的{trainerClass}，把我家智灵的零食全抢走了！", "他就在{destDir}边{destDist}的{destName}。"]]},
+        {"sprite": "trainer_hiker", "names": ["受伤的登山客"], "lines": [["我在{destName}被一个{trainerClass}打得落花流水……", "你看起来很强，能帮我讨回公道吗？"]]}
+      ],
+      "trainer": [
+        {"classZh": "幻觉团残党", "sprite": "villain_grunt", "names": ["妄五", "乱七", "假八", "糊九"], "types": ["chaos", "code"], "introText": [["幻觉团虽然散了，我可没散！"], ["你看到的一切，都是我想让你看到的！"]], "defeatText": [["这……这不是我的幻觉吧？"], ["撤、撤退！"]], "after": ["我再也不在这附近捣乱了……", "老大说过：输了就要认。我认。"]},
+        {"classZh": "野外恶霸", "sprite": "trainer_gamer", "names": ["阿横", "霸霸", "大黑"], "types": ["motion", "chaos", "agent"], "introText": [["这片地盘是我的！要过路，先打赢我！"]], "defeatText": [["呜……我只是想有人陪我玩。"]], "after": ["对不起，我会把零食还回去的。"]},
+        {"classZh": "偷猎者", "sprite": "trainer_hiker", "names": ["老鬼", "阿暗", "刀疤"], "types": ["search", "open", "compute"], "introText": [["这里的稀有智灵，统统归我！"]], "defeatText": [["可恶，我的网……"]], "after": ["我不抓了，我不抓了。"]},
+        {"classZh": "失控的调参侠", "sprite": "trainer_coder", "names": ["老三", "阿调", "学习率"], "types": ["logic", "compute", "code"], "introText": [["我的学习率调到了 10！谁都别想挡我！"]], "defeatText": [["梯度……爆炸了……"]], "after": ["我把学习率调回 0.001 了。冷静多了。"]}
+      ],
+      "party": [2, 3],
+      "levelBonus": 2,
+      "rarityShift": 1,
+      "texts": {
+        "decline": ["没关系，改变主意了再来找我。", "好吧……我再等等别人。", "那下次路过，记得再来看看我哦。"],
+        "reminder": ["{trainerClass}{trainerName}还在{destDir}边{destDist}的{destName}。小心点！"],
+        "giverThanks": ["真的打赢了？太痛快了！这是谢礼！", "这下{giverSite}又能安心睡觉了。谢谢你！"],
+        "doneLine": ["多亏了你，{destName}又恢复平静了。"]
+      },
+      "scripts": {
+        "giver": [
+          {"op": "ifFlag", "flag": "{quest}:done", "then": [{"op": "say", "text": "{doneLine}"}], "else": [{"op": "ifFlag", "flag": "{quest}:started", "then": [{"op": "ifFlag", "flag": "trainer:{trainerId}", "then": [{"op": "say", "text": "{giverThanks}"}, {"op": "setFlag", "flag": "{quest}:done"}, {"op": "quest", "quest": "{quest}", "stage": 1, "done": true}], "else": [{"op": "say", "text": "{reminder}"}]}], "else": [{"op": "include", "script": "{intro}"}, {"op": "choice", "text": "要接下这份委托吗？", "options": ["交给我吧", "现在没空"], "branches": [[{"op": "setFlag", "flag": "{quest}:started"}, {"op": "quest", "quest": "{quest}", "stage": 0}, {"op": "say", "text": "{trainerClass}{trainerName}就在{destDir}边{destDist}的{destName}。要小心哦！"}], [{"op": "say", "text": "{decline}"}]]}]}]}
+        ],
+        "target": [
+          {"op": "ifFlag", "flag": "trainer:{id}", "then": [{"op": "say", "text": "{after}"}], "else": [{"op": "battle", "trainer": "{id}"}, {"op": "ifFlag", "flag": "trainer:{id}", "then": [{"op": "ifFlag", "flag": "{quest}:started", "then": [{"op": "quest", "quest": "{quest}", "stage": 1}]}]}]}
+        ]
+      },
+      "rewardMul": 1.3
+    },
+    "catch": {
+      "weight": 2,
+      "names": ["{type:{type}}系智灵普查", "{giverName}的{type:{type}}系图鉴"],
+      "stages": [
+        {"text": "收服 {count} 种{type:{type}}系智灵，然后去{giverSite}找{giverName}。", "target": "giver"}
+      ],
+      "giver": [
+        {"sprite": "trainer_scientist", "names": ["图鉴调查员", "智灵研究员·阿瑶"], "lines": [["我在做{giverSite}一带的智灵普查。", "能帮我收服几种{type:{type}}系的智灵吗？"]]},
+        {"sprite": "villager_kid", "names": ["想养智灵的小孩", "收集卡片的阿乐"], "lines": [["我最喜欢{type:{type}}系的智灵了！", "你能收服给我看看吗？{count} 种就好！"]]},
+        {"sprite": "trainer_artist", "names": ["画绘本的画师"], "lines": [["我在画一本{type:{type}}系智灵的绘本。", "可我没见过那么多种……你能帮我收集吗？"]]}
+      ],
+      "catchCount": [1, 3],
+      "texts": {
+        "decline": ["没关系，改变主意了再来找我。", "好吧……我再等等别人。", "那下次路过，记得再来看看我哦。"],
+        "reminder": ["收服 {count} 种{type:{type}}系智灵后，再来找我吧！"],
+        "giverThanks": ["哇，真的有 {count} 种！谢谢你！", "数据齐了！这份谢礼请收下。"],
+        "doneLine": ["多亏了你，{type:{type}}系的调查报告写完啦！"]
+      },
+      "scripts": {
+        "giver": [
+          {"op": "ifFlag", "flag": "{quest}:done", "then": [{"op": "say", "text": "{doneLine}"}], "else": [{"op": "ifFlag", "flag": "{quest}:started", "then": [{"op": "ifCaught", "type": "{type}", "atLeast": "{count}", "then": [{"op": "say", "text": "{giverThanks}"}, {"op": "setFlag", "flag": "{quest}:done"}, {"op": "quest", "quest": "{quest}", "stage": 0, "done": true}], "else": [{"op": "say", "text": "{reminder}"}]}], "else": [{"op": "include", "script": "{intro}"}, {"op": "choice", "text": "要接下这份委托吗？", "options": ["交给我吧", "现在没空"], "branches": [[{"op": "setFlag", "flag": "{quest}:started"}, {"op": "quest", "quest": "{quest}", "stage": 0}, {"op": "say", "text": "{reminder}"}], [{"op": "say", "text": "{decline}"}]]}]}]}
+        ]
+      },
+      "rewardMul": 0.9
+    },
+    "fetch": {
+      "weight": 2,
+      "names": ["补给委托：{item:{item}}", "{giverSite}的补给"],
+      "stages": [
+        {"text": "带 {qty} 个{item:{item}}到{giverSite}交给{giverName}。", "target": "giver"}
+      ],
+      "giver": [
+        {"sprite": "villager_woman", "names": ["补给站的志愿者", "开小诊所的阿姨"], "lines": [["村里的智灵最近总是打喷嚏，药快不够用了。", "能帮我带 {qty} 个{item:{item}}来吗？商店就有卖。"]]},
+        {"sprite": "trainer_hiker", "names": ["准备登山的队长", "探险队后勤"], "lines": [["明天要进山了，补给还差一点。", "能帮我带 {qty} 个{item:{item}}吗？"]]},
+        {"sprite": "villager_man", "names": ["杂货铺老板", "旅店老板"], "lines": [["店里的{item:{item}}卖光了，进货的车还没来。", "你能先帮我带 {qty} 个吗？"]]}
+      ],
+      "fetch": {
+        "bands": [
+          {"maxLevel": 15, "items": ["cache-potion", "antivirus", "prompt-ball", "restart-script", "cooling-patch", "escape-rope"]},
+          {"maxLevel": 30, "items": ["super-cache", "few-shot-ball", "repel", "unlock-tool", "speed-pack"]},
+          {"maxLevel": 45, "items": ["hyper-cache", "super-repel", "universal-patch", "reboot"]},
+          {"maxLevel": 100, "items": ["full-cache", "max-repel", "cot-ball"]}
+        ],
+        "qty": [2, 3]
+      },
+      "texts": {
+        "decline": ["没关系，改变主意了再来找我。", "好吧……我再等等别人。", "那下次路过，记得再来看看我哦。"],
+        "reminder": ["还要 {qty} 个{item:{item}}，商店里就能买到。"],
+        "giverThanks": ["正好 {qty} 个！太感谢了！", "得救了！这些谢礼你拿着。"],
+        "doneLine": ["多亏你送来的补给，大家都精神多了！"]
+      },
+      "scripts": {
+        "giver": [
+          {"op": "ifFlag", "flag": "{quest}:done", "then": [{"op": "say", "text": "{doneLine}"}], "else": [{"op": "ifFlag", "flag": "{quest}:started", "then": [{"op": "ifItem", "item": "{item}", "atLeast": "{qty}", "then": [{"op": "takeItem", "item": "{item}", "qty": "{qty}"}, {"op": "say", "text": "{giverThanks}"}, {"op": "setFlag", "flag": "{quest}:done"}, {"op": "quest", "quest": "{quest}", "stage": 0, "done": true}], "else": [{"op": "say", "text": "{reminder}"}]}], "else": [{"op": "include", "script": "{intro}"}, {"op": "choice", "text": "要接下这份委托吗？", "options": ["交给我吧", "现在没空"], "branches": [[{"op": "setFlag", "flag": "{quest}:started"}, {"op": "quest", "quest": "{quest}", "stage": 0}, {"op": "say", "text": "{reminder}"}], [{"op": "say", "text": "{decline}"}]]}]}]}
+        ]
+      },
+      "rewardMul": 1.2
+    }
+  }
+}

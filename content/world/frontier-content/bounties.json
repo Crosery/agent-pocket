@@ -1,0 +1,28 @@
+{
+  "perHamlet": [2, 3],
+  "neighbourCells": 2,
+  "kinds": {
+    "deliver": {"weight": 3, "story": "deliver", "destKinds": ["hamlet"], "rewardMul": 1},
+    "hunt": {"weight": 2.5, "story": "defeat", "road": [12, 30], "partySize": [2, 3], "destName": "通往{name}的路边", "gateName": "海堤路口", "sightRange": 3},
+    "catch": {"weight": 2, "story": "catch"},
+    "fetch": {"weight": 2, "story": "fetch", "daily": true, "rewardMul": 0.5},
+    "visit": {"weight": 2, "story": "visit", "destKinds": ["ruins", "shrine", "stele", "landmark", "nest"]}
+  },
+  "board": {"prop": "sign", "format": "【{place}·委托板】\n{entries}", "entry": "· {name}（委托人：{giver}）", "daily": "· [每日] {name}（委托人：{giver}）"},
+  "courier": {
+    "sprites": ["villager_man", "villager_woman", "villager_old"],
+    "names": ["驿站长·老杨", "邮差·小鸽", "信使阿飞", "驿站的芳姐", "送信的豆豆", "驿站老周"],
+    "idle": [["我是{place}的驿站员。附近村子寄来的包裹，都归我收。"], ["边境的信件全靠两条腿送。有你们这些训练家帮忙，真是太好了。"], ["要寄东西吗？……开玩笑的，我只负责收。"]],
+    "neighbour": "往{dir}边{dist}，有个地方叫{name}。",
+    "inboundHint": "这是{giverSite}的{giverName}托你带来的{item:{parcel}}吧？我替{place}收下了！"
+  },
+  "accept": {"question": "要接下这份委托吗？", "options": ["交给我吧", "现在没空"]},
+  "daily": {
+    "doneToday": [["今天的份已经够啦，明天再来吧！"], ["多亏了你，今天的事都办妥了。明天再来看看？"]],
+    "notEnough": [["还差一点呢……"]],
+    "handIn": "要把 {qty} 个{item:{item}}交给我吗？",
+    "options": ["交给你", "再等等"]
+  },
+  "flags": {"given": "{quest}:given", "done": "{quest}:done", "found": "{quest}:found", "daily": "{quest}:{day}", "scouted": "{site}:scouted"},
+  "outlawStory": "defeat"
+}

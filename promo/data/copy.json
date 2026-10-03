@@ -1,0 +1,66 @@
+{
+  "_doc": "All on-screen text. zh is set in Fusion Pixel (integer-scaled), en in IBM Plex Mono. {count} is filled from data/game.json.",
+  "hook1": {
+    "zh": "你每天都在和 AI 说话",
+    "en": "You talk to AI every day."
+  },
+  "hook2": {
+    "zh": "却从没见过它们",
+    "en": "But you have never seen them."
+  },
+  "reveal": {
+    "zh": "现在，见见它们",
+    "en": "Now, meet them."
+  },
+  "multiply": {
+    "zh": "化身像素伙伴",
+    "unit": "位 AI",
+    "en": "Each one a pixel companion.",
+    "_doc": "The number ({count}, from data/game.json) is the big counter; `unit` sits on its baseline to its right (one lockup: 「190 位 AI」); zh is the second line."
+  },
+  "rarity": {
+    "zh": "稀有度，取决于真实实力",
+    "en": "Rarity follows real-world capability."
+  },
+  "world": {
+    "zh": "一个没有尽头的世界",
+    "en": "A world without end."
+  },
+  "together": {
+    "zh": "和朋友一起冒险、对战、交换",
+    "en": "Explore, battle and trade with friends."
+  },
+  "pocket": {
+    "zh": "你认识的每一个 AI",
+    "en": "Every AI you know —"
+  },
+  "tagline": {
+    "zh": "都装进口袋",
+    "en": "now in your pocket."
+  },
+  "cta": {
+    "zh": "网页即玩",
+    "en": "PLAY IN BROWSER",
+    "url": "",
+    "_url": "destination line under the CTA (a URL or 搜索「智灵口袋」); empty = not shown. Needs the owner's decision."
+  },
+  "dexPrefix": "No.",
+  "players": [
+    {
+      "name": "Lin",
+      "say": "来对战？"
+    },
+    {
+      "name": "Kai",
+      "say": "好!"
+    }
+  ],
+  "battle": {
+    "super": "效果拔群！"
+  },
+  "catch": {
+    "zh": "抓到了 {name}！",
+    "en": "",
+    "_doc": "the game's own catch message (content/text/zh-CN/battle.json \"caught\"); {name} = the wild one's on-screen name"
+  }
+}

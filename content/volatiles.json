@@ -1,0 +1,8 @@
+[
+  {"id": "confusion", "nameZh": "幻觉", "durationMin": 2, "durationMax": 5, "selfHitChance": 0.333},
+  {"id": "flinch", "nameZh": "畏缩", "flinch": true, "durationMin": 1, "durationMax": 1},
+  {"id": "protect", "nameZh": "守住", "protects": true, "durationMin": 1, "durationMax": 1},
+  {"id": "leech", "nameZh": "被爬取", "drainFraction": 0.125},
+  {"id": "focus", "nameZh": "专注", "critStageAdd": 2},
+  {"id": "taunt", "nameZh": "挑衅", "blocksStatusMoves": true, "durationMin": 3, "durationMax": 3}
+]

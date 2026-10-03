@@ -1,0 +1,24 @@
+{
+  "surf": {"prompt": "水面泛着数据的微光，看起来很深。要使用{item}在水上前进吗？", "yes": "使用", "no": "算了", "noItem": "水面看起来很深，现在没有办法过去。", "noCreature": "没有能陪你渡水的智灵。", "start": "{name}使用了{item}，跃入了水中！"},
+  "bike": {"on": "{name}踏上了{item}！", "off": "{name}收起了{item}。", "notHere": "这里不能使用{item}。", "surfing": "在水上不能使用{item}。"},
+  "item": {"found": "{name}找到了{item}！", "foundQty": "{name}找到了{item}×{qty}！", "hidden": "地上好像埋着什么东西……", "pocket": "{name}把{item}放进了背包。"},
+  "interact": {"prop": "这是{prop}。", "box": "{name}启动了云端终端。", "statue": "一座刻着智灵纹样的雕像，在光下闪闪发亮。", "statueGym": "{town}·{type}道馆\n馆主：{leader}", "statueWinners": "认证训练家：{name}"},
+  "follower": {"happy": "{name}开心地蹭了蹭你。", "calm": "{name}安静地陪在你身边。", "tired": "{name}看起来有点累了。"},
+  "script": {"giveItem": "{name}获得了{item}！", "giveItemQty": "{name}获得了{item}×{qty}！", "keyItem": "{name}获得了重要物品「{item}」！", "takeItem": "{name}交出了{item}×{qty}。", "giveMoney": "{name}获得了 {money} {currency}！", "takeMoney": "{name}支付了 {money} {currency}。", "noMoney": "{currency}不够……", "giveCreature": "{name}获得了{species}！", "toBox": "队伍已满，{species}被传送到了云端「{box}」。", "boxFull": "仓库也满了，{species}只好留在了原地……", "starter": "{name}和{species}成为了搭档！", "heal": "智灵们恢复了精神！", "questStart": "新任务：{quest}", "questStage": "任务更新：{quest}", "questDone": "完成任务：{quest}", "questReward": "任务奖励：{reward}", "rewardItem": "{item}×{qty}", "rewardMoney": "{money} {currency}", "rewardJoin": "、", "unlockTown": "现在可以飞往{town}了！", "boxName": "仓库 {n}"},
+  "repel": {"wornOff": "{item}的效果消失了。", "useAnother": "要再使用一个{item}吗？", "used": "{name}使用了{item}！"},
+  "blackout": {"fainted": "{name}的队伍全部失去了战斗能力！", "money": "{name}慌乱中掉落了 {money} {currency}……", "dark": "{name}眼前一黑……", "recovered": "智灵们恢复了精神。下次要更小心哦！"},
+  "remote": {"prompt": "要对{name}做什么？", "inspect": "查看资料", "trade": "交易", "battle": "对战", "cancel": "取消", "offline": "还没有连接到服务器。", "busy": "{name}正在忙。", "inspectFailed": "无法获取{name}的资料。", "profileTitle": "{name}的资料", "profileSub": "徽章 {badges} · 图鉴 {dex} · {wins}胜{losses}负", "partyEmpty": "{name}的队伍中没有智灵。", "partyLevel": "Lv.{level}", "unavailable": "这个功能暂时无法使用。"},
+  "fly": {"arrive": "{name}飞往了{town}！", "blocked": "那里附近找不到可以降落的地方。"},
+  "banner": {"levels": "野生智灵 Lv.{min}–{max}"},
+  "quest": {"hud": "{quest}：{stage}"},
+  "encounter": {"shiny": "闪闪发光！"},
+  "frontier": {
+    "bannerSub": "危险度 {stars}　{levels}",
+    "ledgeTrap": "坎下是一处死角，跳下去就爬不上来了……还是绕路吧。",
+    "milestone": "你已离开原点镇 {distance} 格！",
+    "milestoneTitle": "远行 {distance} 格",
+    "milestoneSub": "更远的边境，栖息着更稀有的智灵",
+    "discovered": "发现了{kind}「{place}」！",
+    "kind": {"town": "城镇", "hamlet": "村落", "landmark": "地标", "dungeon": "地下城"}
+  }
+}

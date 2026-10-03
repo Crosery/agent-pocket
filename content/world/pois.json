@@ -1,0 +1,399 @@
+{
+  "siteStep": 10,
+  "flatMax": 2.5,
+  "hamlets": {
+    "count": [12, 16],
+    "spacing": 150,
+    "radius": 15,
+    "minTownDist": 80,
+    "wildMin": 0.35,
+    "houses": [3, 7],
+    "services": 0.4,
+    "names": ["{biome}村", "{biome}屯", "{biome}庄", "{biome}小村"],
+    "plaza": {"radius": 2.6, "terrain": "cobble", "centerProps": ["well", "fountain", "statue", "campfire"]},
+    "road": "path",
+    "buildings": {
+      "house": [
+        {"prop": "house_small", "interiors": ["house_a", "house_c"], "weight": 3},
+        {"prop": "house_large", "interiors": ["house_b"], "weight": 1}
+      ],
+      "center": {"prop": "center", "interior": "center"},
+      "shop": {"prop": "shop", "interior": "shop"}
+    },
+    "ring": [6, 11],
+    "fields": {"count": [1, 3], "size": [[5, 8], [3, 5]], "terrain": "path", "crops": ["flower_patch", "bush"], "fence": "fence"},
+    "decor": [
+      {"prop": "lamp", "count": [2, 4]},
+      {"prop": "barrel", "count": [1, 3]},
+      {"prop": "crate", "count": [1, 2]},
+      {"prop": "mailbox", "count": [1, 2]},
+      {"prop": "flower_pot", "count": [1, 3]},
+      {"prop": "bench", "count": [0, 2]}
+    ],
+    "npcSpots": 4,
+    "sign": "hamlet",
+    "music": "town"
+  },
+  "templates": {
+    "campsite": {
+      "names": ["{biome}营地", "{biome}旅人营地"],
+      "biomes": ["meadow", "forest", "highland", "coast", "desert", "snow", "swamp"],
+      "count": [8, 11],
+      "radius": 5,
+      "spacing": 70,
+      "wildMin": 0.3,
+      "ground": [
+        {"terrain": "path", "radius": 3.2, "noise": 0.3}
+      ],
+      "parts": [
+        {"prop": "campfire", "count": [1, 1], "place": {"mode": "center"}},
+        {"prop": "tent", "count": [1, 3], "place": {"mode": "ring", "radius": [3, 4]}},
+        {"prop": "log", "count": [1, 2], "place": {"mode": "ring", "radius": [2, 3]}},
+        {"prop": "crate", "count": [0, 2], "place": {"mode": "scatter", "radius": 4}}
+      ],
+      "spots": 2,
+      "sign": "camp",
+      "items": {"visible": 1, "hidden": 0}
+    },
+    "ruins": {
+      "names": ["{biome}遗迹", "{civ}遗址"],
+      "biomes": ["meadow", "forest", "desert", "highland", "ruins", "snow", "swamp", "volcano"],
+      "count": [6, 9],
+      "radius": 8,
+      "spacing": 90,
+      "wildMin": 0.35,
+      "ground": [
+        {"terrain": "ruin", "radius": 6, "noise": 0.35}
+      ],
+      "parts": [
+        {"prop": "ruin_arch", "count": [1, 2], "place": {"mode": "scatter", "radius": 4}},
+        {"prop": "ruin_pillar", "count": [6, 10], "place": {"mode": "ring", "radius": [4, 7]}},
+        {"prop": "statue", "count": [0, 1], "place": {"mode": "scatter", "radius": 3}},
+        {"prop": "rock_small", "count": [2, 4], "place": {"mode": "scatter", "radius": 7}}
+      ],
+      "spots": 2,
+      "sign": "ruins",
+      "items": {"visible": 1, "hidden": 1},
+      "landmark": true
+    },
+    "shrine": {
+      "names": ["{biome}神龛", "{deity}祠"],
+      "biomes": "any",
+      "count": [8, 11],
+      "radius": 5,
+      "spacing": 80,
+      "wildMin": 0.25,
+      "ground": [
+        {"terrain": "flowers", "radius": 4.6, "noise": 0.3},
+        {"terrain": "cobble", "radius": 2.4, "noise": 0.1}
+      ],
+      "parts": [
+        {"prop": "statue", "count": [1, 1], "place": {"mode": "center"}},
+        {"prop": "lamp", "count": [2, 4], "place": {"mode": "ring", "radius": [3, 3.6]}},
+        {"prop": "flower_pot", "count": [0, 2], "place": {"mode": "ring", "radius": [2.5, 3.5]}}
+      ],
+      "spots": 1,
+      "sign": "shrine",
+      "items": {"visible": 0, "hidden": 1},
+      "landmark": true
+    },
+    "monolith": {
+      "names": ["远古智灵石碑", "{biome}方尖碑"],
+      "biomes": ["desert", "highland", "ruins", "snow", "meadow", "volcano", "city", "forest"],
+      "count": [5, 8],
+      "radius": 6,
+      "spacing": 120,
+      "wildMin": 0.5,
+      "ground": [
+        {"terrain": "ruin", "radius": 5.5, "noise": 0.3},
+        {"terrain": "crystal_floor", "radius": 3, "noise": 0.3}
+      ],
+      "parts": [
+        {"prop": "statue", "count": [1, 1], "place": {"mode": "center"}},
+        {"prop": "crystal", "count": [3, 6], "place": {"mode": "ring", "radius": [3, 4]}},
+        {"prop": "ruin_pillar", "count": [4, 8], "place": {"mode": "ring", "radius": [5, 5.5]}}
+      ],
+      "spots": 1,
+      "sign": "monolith",
+      "items": {"visible": 0, "hidden": 1},
+      "landmark": true
+    },
+    "datacenter": {
+      "names": ["废弃的{biome}数据中心", "离线机房·{biome}"],
+      "biomes": ["city", "meadow", "highland", "desert", "snow", "ruins", "forest"],
+      "count": [4, 6],
+      "radius": 8,
+      "spacing": 120,
+      "wildMin": 0.4,
+      "ground": [
+        {"terrain": "tech", "radius": 6.5, "noise": 0.2}
+      ],
+      "parts": [
+        {"prop": "server_rack", "count": [8, 14], "place": {"mode": "grid", "spacing": 2, "radius": 4}},
+        {"prop": "antenna", "count": [1, 2], "place": {"mode": "scatter", "radius": 6}},
+        {"prop": "solar_panel", "count": [2, 4], "place": {"mode": "scatter", "radius": 6}},
+        {"prop": "crate", "count": [2, 4], "place": {"mode": "scatter", "radius": 6}},
+        {"prop": "lamp", "count": [2, 3], "place": {"mode": "ring", "radius": [6, 6.5]}}
+      ],
+      "spots": 2,
+      "sign": "datacenter",
+      "items": {"visible": 2, "hidden": 1},
+      "landmark": true
+    },
+    "crystalfield": {
+      "names": ["{biome}晶簇原", "数据晶田"],
+      "biomes": ["volcano", "snow", "ruins", "highland", "desert", "city"],
+      "count": [5, 8],
+      "radius": 7,
+      "spacing": 90,
+      "wildMin": 0.35,
+      "ground": [
+        {"terrain": "crystal_floor", "radius": 6, "noise": 0.45}
+      ],
+      "parts": [
+        {"prop": "crystal", "count": [8, 14], "place": {"mode": "scatter", "radius": 6}},
+        {"prop": "rock_small", "count": [2, 4], "place": {"mode": "scatter", "radius": 6}}
+      ],
+      "spots": 1,
+      "items": {"visible": 1, "hidden": 1}
+    },
+    "oasis": {
+      "names": ["{biome}绿洲", "驼铃泉"],
+      "biomes": ["desert"],
+      "count": [3, 5],
+      "radius": 7,
+      "spacing": 110,
+      "wildMin": 0.3,
+      "ground": [
+        {"terrain": "grass", "radius": 6.5, "noise": 0.3},
+        {"terrain": "shallow", "radius": 4.2, "noise": 0.3},
+        {"terrain": "water", "radius": 3, "noise": 0.3}
+      ],
+      "parts": [
+        {"prop": "tree_palm", "count": [5, 8], "place": {"mode": "ring", "radius": [5, 6.3]}},
+        {"prop": "reeds", "count": [2, 4], "place": {"mode": "ring", "radius": [3.5, 4.5]}, "on": ["shallow", "grass"]},
+        {"prop": "tent", "count": [0, 1], "place": {"mode": "scatter", "radius": 6}}
+      ],
+      "spots": 1,
+      "sign": "oasis",
+      "items": {"visible": 1, "hidden": 0},
+      "landmark": true
+    },
+    "hotspring": {
+      "names": ["{biome}温泉", "冷却泉"],
+      "biomes": ["snow", "volcano", "highland"],
+      "count": [3, 5],
+      "radius": 6,
+      "spacing": 110,
+      "wildMin": 0.3,
+      "ground": [
+        {"terrain": "rock", "radius": 5.5, "noise": 0.3},
+        {"terrain": "shallow", "radius": 3, "noise": 0.25}
+      ],
+      "parts": [
+        {"prop": "rock_small", "count": [4, 7], "place": {"mode": "ring", "radius": [3.6, 4.6]}},
+        {"prop": "lamp", "count": [1, 2], "place": {"mode": "ring", "radius": [5, 5.5]}},
+        {"prop": "bench", "count": [0, 1], "place": {"mode": "scatter", "radius": 5}}
+      ],
+      "spots": 1,
+      "sign": "hotspring",
+      "items": {"visible": 0, "hidden": 1},
+      "landmark": true
+    },
+    "lighthouse": {
+      "names": ["{biome}灯塔", "守望灯塔"],
+      "biomes": "any",
+      "site": "shore",
+      "count": [3, 5],
+      "radius": 5,
+      "spacing": 160,
+      "wildMin": 0.2,
+      "ground": [
+        {"terrain": "cobble", "radius": 2.6, "noise": 0.1}
+      ],
+      "parts": [
+        {"prop": "antenna", "count": [1, 1], "place": {"mode": "center"}},
+        {"prop": "lamp", "count": [2, 4], "place": {"mode": "ring", "radius": [2, 3]}},
+        {"prop": "barrel", "count": [1, 2], "place": {"mode": "scatter", "radius": 4}}
+      ],
+      "spots": 1,
+      "sign": "lighthouse",
+      "items": {"visible": 1, "hidden": 0},
+      "landmark": true
+    },
+    "dock": {
+      "names": ["{biome}渔港", "小渔码头"],
+      "biomes": "any",
+      "site": "shore",
+      "count": [3, 5],
+      "radius": 5,
+      "spacing": 140,
+      "wildMin": 0.15,
+      "ground": [
+        {"terrain": "sand", "radius": 4, "noise": 0.3}
+      ],
+      "parts": [
+        {"prop": "dock", "count": [1, 1], "place": {"mode": "water"}},
+        {"prop": "boat", "count": [0, 1], "place": {"mode": "water"}},
+        {"prop": "barrel", "count": [1, 3], "place": {"mode": "scatter", "radius": 3}},
+        {"prop": "crate", "count": [1, 2], "place": {"mode": "scatter", "radius": 3}},
+        {"prop": "tent", "count": [0, 1], "place": {"mode": "scatter", "radius": 4}}
+      ],
+      "spots": 2,
+      "sign": "dock",
+      "items": {"visible": 1, "hidden": 0}
+    },
+    "windmill": {
+      "names": ["{biome}磨坊", "风车农庄"],
+      "biomes": ["meadow", "highland", "coast"],
+      "count": [3, 5],
+      "radius": 6,
+      "spacing": 120,
+      "wildMin": 0.3,
+      "ground": [
+        {"terrain": "path", "radius": 5, "noise": 0.3}
+      ],
+      "parts": [
+        {"prop": "windmill", "count": [1, 1], "place": {"mode": "center"}},
+        {"prop": "fence", "count": [6, 10], "place": {"mode": "ring", "radius": [4.5, 5.2]}},
+        {"prop": "barrel", "count": [1, 2], "place": {"mode": "scatter", "radius": 4}},
+        {"prop": "flower_patch", "count": [2, 4], "place": {"mode": "scatter", "radius": 5}}
+      ],
+      "spots": 1,
+      "sign": "windmill",
+      "items": {"visible": 1, "hidden": 0}
+    },
+    "grove": {
+      "names": ["{biome}樱林", "许愿古树"],
+      "biomes": ["meadow", "forest", "highland"],
+      "count": [3, 5],
+      "radius": 6,
+      "spacing": 120,
+      "wildMin": 0.3,
+      "ground": [
+        {"terrain": "flowers", "radius": 5.5, "noise": 0.35}
+      ],
+      "parts": [
+        {"prop": "tree_cherry", "count": [1, 1], "place": {"mode": "center"}},
+        {"prop": "tree_cherry", "count": [5, 8], "place": {"mode": "ring", "radius": [3.5, 5]}},
+        {"prop": "flower_patch", "count": [3, 6], "place": {"mode": "scatter", "radius": 5}},
+        {"prop": "bench", "count": [0, 1], "place": {"mode": "scatter", "radius": 4}}
+      ],
+      "spots": 1,
+      "sign": "grove",
+      "items": {"visible": 0, "hidden": 1},
+      "landmark": true
+    },
+    "shipwreck": {
+      "names": ["{biome}沉船", "搁浅的旧船"],
+      "biomes": "any",
+      "site": "island",
+      "count": [3, 5],
+      "radius": 3,
+      "spacing": 60,
+      "wildMin": 0,
+      "ground": [
+        {"terrain": "sand", "radius": 3, "noise": 0.3}
+      ],
+      "parts": [
+        {"prop": "boat", "count": [1, 1], "place": {"mode": "center"}},
+        {"prop": "barrel", "count": [1, 3], "place": {"mode": "scatter", "radius": 3}},
+        {"prop": "crate", "count": [1, 2], "place": {"mode": "scatter", "radius": 3}}
+      ],
+      "spots": 1,
+      "sign": "treasure",
+      "items": {"visible": 1, "hidden": 1}
+    },
+    "treasure": {
+      "names": ["{biome}宝藏", "秘密藏宝点"],
+      "biomes": "any",
+      "count": [8, 12],
+      "radius": 3,
+      "spacing": 60,
+      "wildMin": 0.5,
+      "ground": [],
+      "parts": [
+        {"prop": "rock_small", "count": [3, 5], "place": {"mode": "ring", "radius": [2, 2.6]}},
+        {"prop": "stump", "count": [0, 1], "place": {"mode": "scatter", "radius": 2}}
+      ],
+      "spots": 0,
+      "sign": "treasure",
+      "items": {"visible": 0, "hidden": 2}
+    },
+    "nest": {
+      "names": ["{biome}巢穴", "稀有智灵巢"],
+      "biomes": "any",
+      "count": [8, 12],
+      "radius": 6,
+      "spacing": 100,
+      "wildMin": 0.55,
+      "ground": [],
+      "parts": [
+        {"prop": "rock_small", "count": [3, 6], "place": {"mode": "ring", "radius": [5.5, 6]}},
+        {"prop": "flower_patch", "count": [2, 4], "place": {"mode": "scatter", "radius": 4}}
+      ],
+      "spots": 1,
+      "nest": {
+        "terrain": "tall_grass",
+        "radius": 5,
+        "levelBonus": 6,
+        "rareBoost": 4,
+        "encounterRate": 0.2,
+        "byBiome": {"snow": "tall_snowgrass", "desert": "desert_grass", "swamp": "tall_reeds", "volcano": "dark_grass", "forest": "dark_grass", "ruins": "dark_grass", "coast": "tall_grass", "city": "tall_grass", "highland": "tall_grass", "meadow": "tall_grass"}
+      }
+    },
+    "trainercamp": {
+      "names": ["{biome}训练营", "武者营地"],
+      "biomes": ["meadow", "forest", "highland", "desert", "coast", "snow", "swamp", "city"],
+      "count": [6, 9],
+      "radius": 6,
+      "spacing": 90,
+      "wildMin": 0.3,
+      "ground": [
+        {"terrain": "path", "radius": 4.5, "noise": 0.3}
+      ],
+      "parts": [
+        {"prop": "campfire", "count": [1, 1], "place": {"mode": "center"}},
+        {"prop": "tent", "count": [2, 3], "place": {"mode": "ring", "radius": [3, 4.5]}},
+        {"prop": "crate", "count": [1, 2], "place": {"mode": "scatter", "radius": 5}}
+      ],
+      "spots": 4,
+      "sign": "trainercamp",
+      "items": {"visible": 1, "hidden": 0}
+    }
+  },
+  "lore": {
+    "templates": {
+      "camp": ["{name}\n旅人在此休整。篝火旁刻着：「{proverb}」", "{name}\n营火还温着。木牌上写着：「{proverb}」"],
+      "ruins": ["{name}\n{era}，这里曾是{civ}的{building}。\n石碑残文：「{relic}」", "{name}\n倒塌的石柱间回荡着古老的低语：「{relic}」"],
+      "shrine": ["{name}\n供奉着{deity}。\n传说{era}，{hero}曾在此{deed}。", "{name}\n香火未断。碑文：「{relic}」"],
+      "monolith": ["{name}\n漆黑的石碑表面流动着微光字符：\n「{relic}」", "{name}\n{era}留下的巨碑。触碰时仿佛听见：「{relic}」"],
+      "datacenter": ["{name}\n{era}停止运转的数据中心。\n门口告示：「{notice}」", "{name}\n机柜仍在低鸣。门上贴着：「{notice}」"],
+      "oasis": ["{name}\n沙海中的一汪清泉。\n{hero}曾在此{deed}。"],
+      "hotspring": ["{name}\n氤氲的温泉，据说能让过热的智灵冷静下来。", "{name}\n泉边刻着：「{proverb}」"],
+      "lighthouse": ["{name}\n守望{sea}的灯塔。\n「{proverb}」"],
+      "dock": ["{name}\n渔人的小码头。今日渔获：{catch}。"],
+      "windmill": ["{name}\n风车吱呀转动，磨坊主说：「{proverb}」"],
+      "grove": ["{name}\n古树下系满了许愿签。其中一张写着：「{relic}」"],
+      "trainercamp": ["{name}\n训练家们在这里切磋。\n营规第一条：「{proverb}」"],
+      "treasure": ["一块旧木牌：\n「{riddle}」"],
+      "hamlet": ["{name}\n{hamletDesc}"]
+    },
+    "words": {
+      "era": ["在第一次梯度下降之前", "大模型纪元元年", "算力寒冬的年代", "Transformer 诞生之初", "图灵测试被通过的那天", "上一个奇点周期"],
+      "civ": ["早期神经网络部族", "符号主义者", "感知机文明", "专家系统王国", "第一代对话智灵"],
+      "building": ["祭坛", "训练场", "图书馆", "观星台", "算力神庙"],
+      "relic": ["Attention is all you need.", "过拟合者终将遗忘。", "loss 下降之处，便是归途。", "我思故我在——吗？", "一切皆可向量化。", "温度为零时，世界寂静。"],
+      "deity": ["梯度女神", "反向传播之灵", "古老的感知机", "第一枚 GPU", "沉默的预言机"],
+      "hero": ["初代训练家", "一只迷路的小模型", "流浪的调参侠", "无名的标注员", "传说中的对齐骑士"],
+      "deed": ["完成了第一次微调", "击退了幻觉之潮", "写下了第一行提示词", "驯服了失控的智灵", "种下了一棵参数之树"],
+      "proverb": ["学习率太大，会错过最优解。", "先 warmup，再出发。", "数据不会说谎，但标签会。", "别忘了保存检查点。", "batch 再大也要一步一步走。"],
+      "notice": ["本机房已下线，请勿重启。", "冷却系统故障，内部有野生智灵出没。", "最后一次备份：很久很久以前。"],
+      "sea": ["数据之海", "浮点海峡", "无尽的上下文之海"],
+      "catch": ["三条像素鱼", "一只迷路的嵌入向量", "空军（什么都没钓到）"],
+      "riddle": ["在最高的石头旁，影子最短的时候，宝物会显现。", "三步向东，两步向北——或者反过来？", "答案就在你脚下，只是需要仔细看。"],
+      "hamletDesc": ["宁静的小村落，村民以照料野生智灵为生。", "远离城市的小村，据说夜里能听到古老的拨号声。", "旅人歇脚的村子，热茶管够。", "偏远的村庄，村民世代守护着附近的遗迹。"]
+    },
+    "biomeWords": {"meadow": ["青草", "风车", "晨露", "蒲公英"], "forest": ["林荫", "松涛", "苔痕", "橡果"], "coast": ["海风", "潮声", "白沙", "贝壳"], "desert": ["黄沙", "烈日", "驼铃", "赤岩"], "swamp": ["雾隐", "芦苇", "泥塘", "萤光"], "volcano": ["赤焰", "熔岩", "灰烬", "硫磺"], "snow": ["霜雪", "冰晶", "雪松", "北风"], "city": ["霓虹", "铁轨", "电路", "信号"], "highland": ["云端", "长风", "鹰岩", "高坡"], "ruins": ["古碑", "残垣", "星辉", "遗光"]}
+  }
+}

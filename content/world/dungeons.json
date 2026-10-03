@@ -1,0 +1,24 @@
+{
+  "count": [7, 9],
+  "floors": [1, 3],
+  "spacing": 150,
+  "minTownDist": 60,
+  "mouthProp": "cave_entrance",
+  "stairsProp": "stairs_down",
+  "styles": [
+    {"id": "cave", "biomes": ["meadow", "forest", "highland", "coast", "swamp"], "names": ["{biome}洞窟", "{biome}岩洞", "深层缓存洞"], "size": [[40, 52], [30, 40]], "algo": "ca", "floor": "cave", "wall": "wall", "wallElev": 2, "mat": "cave", "fill": 0.45, "iterations": 4, "birth": 5, "survive": 4, "tunnelRadius": 1, "tunnelCost": {"open": 1, "wall": 3, "noise": 4}, "accents": [{"terrain": "crystal_floor", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "dg-cave-crystal"}, "min": 0.66}], "props": [{"prop": "rock_small", "density": 0.03}, {"prop": "mushroom", "density": 0.025}, {"prop": "crystal", "density": 0.012}, {"prop": "rock_large", "density": 0.006}], "music": "cave", "weather": "fog", "habitats": ["forest", "highland", "swamp"]},
+    {"id": "ruin", "biomes": ["ruins", "desert", "city", "meadow"], "names": ["{biome}地宫", "失落的{biome}神殿", "沉睡的存储库"], "size": [[44, 56], [34, 42]], "algo": "walk", "walk": {"walkers": 7, "steps": 340, "radius": 1, "turn": 0.18}, "floor": "ruin", "wall": "wall", "wallElev": 2, "mat": "ruin", "fill": 0.45, "iterations": 2, "birth": 5, "survive": 4, "tunnelRadius": 1, "tunnelCost": {"open": 1, "wall": 2, "noise": 3}, "accents": [{"terrain": "tile_floor", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "dg-ruin-tiles"}, "min": 0.64}], "props": [{"prop": "ruin_pillar", "density": 0.03}, {"prop": "rock_small", "density": 0.02}, {"prop": "statue", "density": 0.004}, {"prop": "crystal", "density": 0.008}], "music": "ruins", "weather": "fog", "habitats": ["ruins", "city", "desert"]},
+    {"id": "crystal", "biomes": ["snow", "highland", "city", "ruins"], "names": ["{biome}晶洞", "冰晶矿脉", "数据晶窟"], "size": [[40, 52], [30, 40]], "algo": "ca", "floor": "crystal_floor", "wall": "wall", "wallElev": 2, "mat": "cave", "fill": 0.44, "iterations": 4, "birth": 5, "survive": 4, "tunnelRadius": 1, "tunnelCost": {"open": 1, "wall": 3, "noise": 4}, "accents": [{"terrain": "ice", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "dg-crystal-ice"}, "min": 0.62}, {"terrain": "cave", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "dg-crystal-cave"}, "min": 0.64}], "props": [{"prop": "crystal", "density": 0.05}, {"prop": "ice_spike", "density": 0.02}, {"prop": "rock_small", "density": 0.015}], "music": "cave", "weather": "fog", "habitats": ["snow", "highland", "city"]},
+    {"id": "lava", "biomes": ["volcano", "desert"], "names": ["{biome}熔洞", "过热机房", "炎核地穴"], "size": [[40, 52], [30, 40]], "algo": "ca", "floor": "ash", "wall": "wall", "wallElev": 2, "mat": "cave", "fill": 0.46, "iterations": 4, "birth": 5, "survive": 4, "tunnelRadius": 1, "tunnelCost": {"open": 1, "wall": 3, "noise": 4}, "accents": [{"terrain": "rock", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "dg-lava-rock"}, "min": 0.6}, {"terrain": "lava", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "dg-lava-pools"}, "min": 0.74}], "props": [{"prop": "lava_rock", "density": 0.03}, {"prop": "rock_small", "density": 0.02}, {"prop": "crystal", "density": 0.006}], "music": "volcano", "weather": "ash", "habitats": ["volcano", "desert"]},
+    {"id": "mine", "biomes": "any", "names": ["{biome}矿坑", "废弃的算力矿井", "旧时代的服务器井"], "size": [[44, 56], [32, 42]], "algo": "walk", "walk": {"walkers": 6, "steps": 380, "radius": 1, "turn": 0.12}, "floor": "cave", "wall": "wall", "wallElev": 2, "mat": "cave", "fill": 0.45, "iterations": 2, "birth": 5, "survive": 4, "tunnelRadius": 1, "tunnelCost": {"open": 1, "wall": 2, "noise": 3}, "accents": [{"terrain": "rock", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "dg-mine-rock"}, "min": 0.6}, {"terrain": "tech", "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "dg-mine-tech"}, "min": 0.7}], "props": [{"prop": "crate", "density": 0.012}, {"prop": "barrel", "density": 0.008}, {"prop": "server_rack", "density": 0.01}, {"prop": "rock_small", "density": 0.02}, {"prop": "lamp", "density": 0.006}], "music": "cave", "weather": "fog", "habitats": ["highland", "city", "meadow"]}
+  ],
+  "floorName": "{name} B{floor}F",
+  "levelPerFloor": 3,
+  "encounterRate": 0.1,
+  "roamingDensity": 0.4,
+  "spotsPerFloor": 3,
+  "items": {"visible": 2, "hidden": 1},
+  "tunnelNoise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "dg-tunnel"},
+  "rareBoost": 2,
+  "minFloor": 0.2
+}

@@ -1,0 +1,975 @@
+// Typed access to content/render.json (every visual tunable of the HD-2D renderer) plus pure helpers
+// over it: time-of-day sampling, sun path, prop style lookup and validation. No three.js here so the
+// helpers run in node tests.
+import renderJson from '../../../content/render.json' with { type: 'json' }
+import { CONTENT, type Content } from '../../shared/content/index.ts'
+import type { GameMap, Settings } from '../../shared/types.ts'
+
+export type Vec2 = [number, number]
+export type Vec3 = [number, number, number]
+export type QualityId = Settings['quality']
+
+export interface QualityPreset {
+  shadows: boolean
+  shadowMapScale: number
+  shadowRadius: number
+  dof: boolean
+  dofSamples: number
+  bloom: boolean
+  grassPerTile: number
+  particleScale: number
+  pointLights: number
+  /** Chunks/blocks farther than this (world units) from the focus are hidden. */
+  viewRadius: number
+  propShadows: boolean
+  waterSparkles: boolean
+  glowSprites: boolean
+  /** Procedural mesh variants generated per nature prop (the GLB, when present, is one more variant). */
+  natureVariants: number
+  /** Ground-decor density multiplier (0 = off). */
+  decorDensity: number
+  /** Soft fringes where a higher-priority terrain meets a lower one. */
+  terrainFringe: boolean
+  /** Snow dusting on prop / terrain tops from the climate snow field. */
+  snowDust: boolean
+  /** LRU cap of built terrain chunks (memory bound). */
+  maxChunks: number
+}
+
+export interface PostConfig {
+  focusRange: number
+  focusFalloff: number
+  tiltShift: number
+  tiltBand: number
+  bokehScale: number
+  bloomStrength: number
+  bloomRadius: number
+  bloomThreshold: number
+  vignette: number
+  vignetteSoftness: number
+  saturation: number
+  contrast: number
+  contrastPivot: number
+  warmth: number
+  warmthScale: number
+  exposure: number
+  toneMapping: 'neutral' | 'aces' | 'agx' | 'none'
+  lift: Vec3
+  gain: Vec3
+  minScale: number
+  flash: { color: string; ms: number; strength: number }
+  shake: { frequency: number; rollDeg: number }
+  transition: {
+    fadeColor: string; swirlPortion: number; swirlTurns: number; shardCells: number; shardSpin: number
+    shardStagger: number; battleFlash: number; irisSoftPx: number; irisMaxRadius: number
+  }
+}
+
+export interface CameraRenderConfig {
+  near: number; far: number; edgeMargin: number; zoomDamping: number; lookAheadDamping: number
+  lookAheadMinSpeed: number; interiorMargin: number; snapDistance: number
+  /** Furthest the focus may sit from the screen centre (fraction of the half height up / down, half width sideways), overriding map-edge clamping. */
+  focusSafe: { north: number; south: number; side: number }
+  /** Pose of overworld actor sprites against the camera pitch. */
+  billboard: BillboardConfig
+}
+
+/**
+ * HD-2D sprite pose: `lean` = fraction of the camera pitch the card tilts back around its feet (1 = parallel to the
+ * view plane), `compensate` = fraction of the remaining foreshortening undone by stretching (1 = art proportions).
+ */
+export interface BillboardConfig { lean: number; compensate: number }
+
+export interface SunConfig {
+  distance: number; shadowExtent: number; shadowNear: number; shadowFar: number; bias: number; normalBias: number
+  sunrise: number; sunset: number; switchFadeMinutes: number; switchFloor: number
+  minElevationDeg: number; maxElevationDeg: number; azimuthRiseDeg: number; azimuthSetDeg: number
+  moonElevationDeg: number; moonAzimuthDeg: number
+  /** Shadow frustum half-extent grows with camera distance by this factor. */
+  extentPerDistance: number
+}
+
+/** One lighting look. Color fields are '#rrggbb' (sRGB); everything else is a scalar. */
+export interface LightingState {
+  skyTop: string; skyHorizon: string; skyBottom: string
+  sun: string; sunIntensity: number
+  hemiSky: string; hemiGround: string; hemiIntensity: number
+  fog: string; fogNear: number; fogFar: number
+  exposure: number; saturation: number; contrast: number; warmth: number
+  bloomStrength: number; vignette: number
+  /** 0..1 how much night-only lights / emissive windows are on. */
+  lamps: number
+  stars: number
+}
+export interface LightingKey extends LightingState { minute: number }
+export interface StaticLighting extends LightingState { sunElevationDeg: number; sunAzimuthDeg: number; ambient: string[] }
+
+export type SurfaceKind = 'none' | 'water' | 'lava' | 'glossy' | 'wall'
+export interface SurfaceDef {
+  kind: SurfaceKind
+  /** Texture key drawn under a liquid surface. */
+  bed?: string
+  /** Liquid depth below the tile top (world units). */
+  depth?: number
+  /** 0 = shallow look, 1 = deep look. */
+  deep?: number
+  /** Wall height (world units) and the height used when the wall would hide the room from the camera. */
+  height?: number
+  cutawayHeight?: number
+  /** Side-face texture key; "$cliff" = the biome's cliff texture. Defaults to the terrain's own texture. */
+  face?: string
+  /** Wall top texture key (defaults to the terrain's own) and tint multiplier (defaults to terrain.wallTopColor). */
+  top?: string
+  topColor?: string
+}
+
+export type MapKind = GameMap['kind']
+/** Per-tile UV variation: none = plain tiling, mirror = alternate flips (for non-tileable art), flip = hashed random flips. */
+export type UvMode = 'none' | 'mirror' | 'flip'
+export const UV_MODES: readonly UvMode[] = ['none', 'mirror', 'flip']
+
+export interface TerrainRenderConfig {
+  atlasCell: number; atlasPad: number
+  uvVariation: { default: UvMode; keys: Record<string, UvMode> }
+  tintVariation: number; tintScale: number; aoStrength: number; cliffBottomShade: number; cliffTopLight: number
+  skirtDepth: number; presetSkirtDepth: number; liquidDrop: number; stairSteps: number; stairsInset: number; wallTopColor: string
+  defaultCliff: string; fallbackColor: string
+  /** Surface used for liquid terrain without an explicit entry in surfaces. */
+  defaultLiquid: SurfaceDef
+  glossy: { shininess: number; specular: string }
+  surfaces: Record<string, SurfaceDef>
+  /** Surface overrides per map kind (e.g. cave walls drawn as rock instead of masonry). */
+  mapKindSurfaces: Partial<Record<MapKind, Record<string, SurfaceDef>>>
+  /** Per terrain key: RGB vertex-colour multipliers reached at full strength of a climate field; `base` applies
+   * everywhere (albedo correction, e.g. keeps bright snow from clipping at noon). */
+  fieldTint: Record<string, Partial<Record<FieldName | 'base', Vec3>>>
+  /** One-way ledge tiles (TerrainDef.ledge): overhanging lip on the drop edge (world units) and per-key face texture. */
+  ledge: LedgeRenderConfig
+}
+
+export interface LedgeRenderConfig {
+  /** How far the lip overhangs the drop, how far it rises above the tile top, its front height and colour multiplier. */
+  lipOut: number; lipRaise: number; lipHeight: number; lipShade: number
+  /** Drop-face texture per ledge terrain key (defaults to the biome cliff). */
+  faces: Record<string, string>
+  /** Top texture per ledge key when no flat neighbour at its level shows the ground it belongs to. */
+  tops: Record<string, string>
+}
+
+/** Waterfall sheets where water drops to lower water. */
+export interface FallsConfig {
+  body: string; streak: string
+  /** Scroll speed (world units / s), streak columns per tile, share of streak pixels (0..1). */
+  speed: number; streaks: number; streakAmount: number
+  /** Foam bands (world units) at the crest and at the splash, sheet alpha. */
+  crestBand: number; splashBand: number; alpha: number
+  /** Sheet offset in front of the bed's cliff face, how far it dips into the pool and rises above the crest. */
+  offset: number; overlap: number; crest: number
+}
+
+export interface WaterConfig {
+  deep: string; mid: string; shallow: string; foam: string; sparkle: string
+  sparkleIntensity: number; sparkleDensity: number; alphaDeep: number; alphaShallow: number
+  pixelsPerTile: number; waveSpeed: number; waveScale: number; waveHeight: number
+  foamWidth: number; foamSpeed: number; foamNoise: number; lightMin: number
+  /** Pixel ripples: noise frequency per tile, scroll speed, trough/crest thresholds (0..1) and their strength. */
+  rippleScale: number; rippleSpeed: number; troughLevel: number; troughShade: number; crestLevel: number; crestAmount: number
+  falls: FallsConfig
+}
+export interface LavaConfig {
+  hot: string; mid: string; crust: string; emissive: number; pixelsPerTile: number
+  flowSpeed: number; crustAmount: number; pulseSpeed: number
+}
+export interface WindConfig { dir: Vec2; strength: number; speed: number; gust: number; gustSpeed: number; swayHeight: number }
+export interface GrassConfig {
+  height: number; width: number; planes: number; jitter: number; colorJitter: number; scaleJitter: number
+  bendRadius: number; bendStrength: number; sway: number; texSize: number; blades: number
+  rootShade: number; tipLight: number; maxBenders: number; alphaTest: number; bendSink: number; bendCore: number
+  /** Tall-grass keys drawn with the asset store's tuft texture (placeholder art included) instead of blades derived
+   * from the ground texture's average colour. */
+  assetTufts?: string[]
+}
+export interface LightsConfig {
+  pointIntensity: number; decay: number; distanceMul: number; glowSize: number; glowIntensity: number
+  glowFlicker: number; flickerSpeed: number; reassignSeconds: number; fadeSpeed: number
+  emissiveNight: number; emissiveDay: number; emissiveAlways: number; frontOffset: number
+}
+
+export interface WeatherGrade {
+  exposure?: number; saturation?: number; contrast?: number; warmth?: number
+  fogNear?: number; fogFar?: number; sun?: number; hemi?: number; lamps?: number
+  bloomStrength?: number; tint?: string; tintAmount?: number; vignette?: number
+}
+export interface WeatherRenderDef {
+  particles: string[]; grade: WeatherGrade; wind?: number; aurora?: boolean
+  /** Multiplier on biome ambient particles at full weather (fireflies hide from the rain). */
+  ambientScale?: number
+}
+export interface AuroraConfig {
+  colors: string[]; intensity: number; speed: number; bands: number; height: number; alpha: number
+  distance: number; nightOnly: boolean
+}
+
+export type ParticleShape = 'dot' | 'streak' | 'hstreak' | 'ring' | 'soft' | 'leaf' | 'star'
+export const PARTICLE_SHAPES: readonly ParticleShape[] = ['dot', 'streak', 'hstreak', 'ring', 'soft', 'leaf', 'star']
+export interface ParticleKindDef {
+  count: number
+  /** Simulation box size around the focus (x, height, z). */
+  box: Vec3
+  /** Height range above the ground. */
+  y: Vec2
+  color?: string
+  colors?: string[]
+  alpha: number
+  /** Point size in internal pixels (or world units when worldSize). */
+  size: number
+  shape: ParticleShape
+  velocity: Vec3
+  swirl: number
+  swirlSpeed: number
+  /** Color multiplier (> bloom threshold glows). */
+  glow: number
+  twinkle: number
+  time: 'any' | 'day' | 'night'
+  /** Lifetime for ring-shaped (respawning) particles. */
+  life?: number
+  windFactor: number
+  worldSize?: boolean
+}
+
+export interface ActorsConfig {
+  height: number; width: number; alphaTest: number; walkFps: number; runFps: number; grassCut: number
+  normalTilt: number; hop: { height: number; ms: number }; blob: { size: number; opacity: number }
+  bubbleMs: number; remoteAlpha: number; nameColor: string
+  /** Walk frames follow the distance covered: one stride (contact + legs-together frame) per `stride` tiles,
+   * at most maxFps; jumps >= teleportTiles are ignored; walkFps/runFps apply when moving without covering ground. */
+  walkCycle: { stride: { walk: number; run: number }; maxFps: number; teleportTiles: number }
+  /** Chibi motion: step bounce height (world units, x runBounceMul when running) and squash per walk step
+   * (stepsPerCycle steps per sheet cycle), idle breathing (scale amplitude, Hz), landing squash after a hop. */
+  motion: {
+    stepBounce: number; runBounceMul: number; stepSquash: number; stepsPerCycle: number
+    breathe: number; breatheHz: number; landSquash: number; landMs: number
+  }
+}
+export interface CreaturesConfig {
+  height: number; alphaTest: number
+  /** Source creature art faces left (setFacingLeft(true) shows it unflipped). */
+  artFacesLeft: boolean
+  bob: { amp: number; hz: number; squash: number }
+  move: { hopHeight: number; hz: number }
+  shiny: { hue: number; saturation: number; sparkles: number; sparkleColor: string; sparkleGlow: number; sparkleSize: number; twinkleSpeed: number }
+  aura: { radius: number; intensity: number; pulseHz: number; motes: number; moteHeight: number; ringInner: number; moteSpeed: number; moteSize: number }
+}
+export interface OverlayStyle {
+  tagFontPx: number; tagPadding: string; tagBackground: string; tagRadiusPx: number; tagTextShadow: string
+  bubbleFontPx: number; bubblePadding: string; bubbleText: string; bubbleBackground: string; bubbleBorder: string
+  bubbleBorderPx: number; bubbleRadiusPx: number; bubbleShadow: string; bubbleMaxWidthPx: number; bubbleTailPx: number; popMs: number
+}
+export interface OverlayConfig { nameOffsetPx: number; bubbleOffsetPx: number; maxDistance: number; style: OverlayStyle }
+export interface GroundItemsConfig { color: string; radius: number; glow: number; bobAmp: number; bobHz: number; height: number; glowSize: number }
+
+export interface FxIcon { type: 'icon'; glyph: string; color: string; outline: string; size: number; y: number; rise: number; life: number; pop: number }
+export interface FxBurst {
+  type: 'burst'; count: number; colors: string[]; speed: Vec2; up: Vec2; gravity: number; life: Vec2; size: Vec2
+  glow: number; shape: ParticleShape; y: number; radius: number; drag: number
+}
+export interface FxRing { type: 'ring'; color: string; radius: Vec2; life: number; intensity: number; width: number; y: number }
+export interface FxColumn { type: 'column'; color: string; radius: number; height: number; life: number; intensity: number }
+export type FxEmitter = FxIcon | FxBurst | FxRing | FxColumn
+export interface FxConfig { poolSize: number; iconFont: string; iconTexSize: number; kinds: Record<string, FxEmitter[]> }
+
+export type PartShape = 'box' | 'cylinder' | 'cone' | 'pyramid' | 'sphere' | 'dome' | 'prism' | 'plane' | 'torus' | 'rock'
+export const PART_SHAPES: readonly PartShape[] = ['box', 'cylinder', 'cone', 'pyramid', 'sphere', 'dome', 'prism', 'plane', 'torus', 'rock']
+
+/**
+ * A primitive of a procedural prop. Coordinates are normalised to the prop: x in footprint widths, z in
+ * footprint depths (+z = facade), y in prop heights. `pos` is the bottom-centre anchor of the part.
+ */
+export interface PartDef {
+  shape: PartShape
+  pos: Vec3
+  size: Vec3
+  /** Degrees, applied X then Y then Z around the anchor (or the part centre when pivot = 'center'). */
+  rot?: Vec3
+  pivot?: 'base' | 'center'
+  /** Which world axis the shape's own height axis is laid along (for parts rotated onto their side). */
+  lengthAxis?: 'x' | 'y' | 'z'
+  /** '#rrggbb' or '$paletteName'. */
+  color: string
+  color2?: string
+  colors?: string[]
+  pattern?: string
+  emissive?: number
+  emissiveColor?: string
+  emissiveMap?: boolean
+  foliage?: boolean
+  glossy?: boolean
+  cutout?: boolean
+  opacity?: number
+  segments?: number
+  /** Top/bottom ratio for cylinders, cones-with-tops and boxes. */
+  taper?: number
+  /** Prism ridge axis: 'x' gable along x, 'z' gable along z, 'y' upright wedge pointing +z. */
+  ridge?: 'x' | 'y' | 'z'
+  repeat?: { count: number; step: Vec3 }
+  /** Emissive regardless of time of day (otherwise follows the prop light: night-only lights glow at night). */
+  alwaysOn?: boolean
+}
+
+interface StyleCommon {
+  randomYaw?: boolean
+  scaleJitter?: number
+  tintJitter?: number
+  palette?: Record<string, string>
+  variants?: Record<string, string>[]
+  /** Emissive weight of GLB 'EMIT_*' materials for this prop (defaults to props.modelEmissive). */
+  modelEmissive?: number
+}
+export interface PartsStyle extends StyleCommon { builder: 'parts'; parts: PartDef[] }
+export interface BillboardStyle extends StyleCommon {
+  builder: 'billboard'; planes: number; pattern: string; color: string; colors?: string[]; width: number
+}
+export interface HouseStyle extends StyleCommon {
+  builder: 'house'
+  roof: 'gable' | 'hip' | 'flat'
+  wallHeight: number
+  overhang: number
+  inset: number
+  wallPattern: string
+  roofPattern: string
+  basePattern: string
+  palette: Record<string, string>
+  windows: { rows: number; perSide: number; w: number; h: number; y: number; alwaysOn?: boolean }
+  chimney?: { x: number; z: number; w: number; h: number } | null
+  sign?: { w: number; h: number; emissive: number; pattern: string } | null
+  awning?: { color: string; color2: string; depth: number; y: number }
+  doorWidth?: number
+  doorHeight?: number
+  doorEmissive?: number
+  extraParts?: PartDef[]
+}
+export type PropStyle = PartsStyle | BillboardStyle | HouseStyle
+
+export interface HouseBuilderConfig {
+  plinth: number; cornerTrim: number; band: number; bandOut: number; ridgeCap: Vec2; eave: number; flatSlab: number
+  parapet: Vec2; doorFrame: Vec3; doorDepth: number; doorStep: Vec3; doorWidth: number; doorHeight: number
+  windowFrame: number; windowDepth: number; sill: Vec3; signGap: number; signDepth: number; chimneyRoofShare: number
+  awningTilt: number; awningThickness: number; gableFill: number
+}
+
+export interface PropsRenderConfig {
+  instanceBlock: number
+  patternSize: number
+  patternUnits: number
+  /** Default emissive weight of GLB 'EMIT_*' materials (procedural parts carry their own weight). */
+  modelEmissive: number
+  defaultTintJitter: number
+  foliageAlphaTest: number
+  /** How far foliage normals bend toward "outward from the canopy centre" (0..1). */
+  foliageNormalBlend: number
+  rock: { jitter: number; floor: number }
+  /** Construction dimensions (world units) of the parametric house builder. */
+  house: HouseBuilderConfig
+  patterns: { noiseAmount: number }
+  default: PropStyle
+  styles: Record<string, PropStyle>
+}
+
+// ---------------------------------------------------------------------------
+// Large-map streaming, climate fields, terrain fringes, ground decor, procedural nature
+// ---------------------------------------------------------------------------
+
+export interface StreamingConfig {
+  /** Per-frame chunk-building budget (ms). */
+  budgetMs: number
+  /** Budget while chunks inside the camera frustum are still missing (after a load or teleport). */
+  catchUpBudgetMs: number
+  /** Built chunks farther than viewRadius + keepMargin are evicted immediately; within it only by the LRU cap. */
+  keepMargin: number
+  /** Max chunk disposals per frame. */
+  disposePerFrame: number
+  /** Radius (world units) around the spawn built synchronously by loadMap, besides the camera frustum. */
+  prefillRadius: number
+  /** Chunks ahead of the focus movement are prioritised: distance bonus per unit of speed (world units). */
+  moveLookAhead: number
+  /** Priority penalty (world units) for chunks outside the camera frustum. */
+  offscreenPenalty: number
+  /** Height (world units) added above the top terrain level for chunk bounds (frustum tests). */
+  boundsHeight: number
+  /** Show a finished chunk only once its shader programs are linked (WebGLRenderer.compileAsync, parallel compile),
+   * or after compileTimeoutMs. */
+  compileAsync: boolean
+  compileTimeoutMs: number
+  /** Infinite overworld (GameMap.infinite) streaming. */
+  infinite: InfiniteStreamingConfig
+}
+
+export interface InfiniteStreamingConfig {
+  /** Tiles around a render chunk whose world chunks must exist before it builds (AO, cliffs, shores, decor rules,
+   * prop footprints and lights read that far). */
+  ensureMargin: number
+  /** World-chunk prefetch ring: radius (tiles) beyond the view, max generations per frame and their budget (ms);
+   * only runs in frames where no visible chunk is waiting. */
+  prefetchMargin: number
+  prefetchPerFrame: number
+  prefetchBudgetMs: number
+  /** Every retainSeconds: decoded blocks beyond viewRadius + blockMargin and provider chunks beyond providerRadius
+   * (tiles from the focus) are dropped. */
+  retainSeconds: number
+  blockMargin: number
+  providerRadius: number
+  /** Toroidal heightmap (particles) and climate texture windows: texels per side (heights: tiles; climate: cells).
+   * Both must cover the streamed diameter ((viewRadius + keepMargin) * 2 + 2 chunks). */
+  heightWindow: number
+  climateWindow: number
+  /** Elevation level assumed for not-yet-built chunks in frustum tests. */
+  assumedTopLevel: number
+  /** Preload every prop model of the content up front (frontier props are not known at load time). */
+  preloadAllModels: boolean
+}
+
+export type FieldName = 'dry' | 'lush' | 'autumn' | 'blossom' | 'snow'
+export const FIELD_NAMES: readonly FieldName[] = ['dry', 'lush', 'autumn', 'blossom', 'snow']
+
+/** Fractal noise spec (feature size `scale` in tiles) remapped by smoothstep(lo, hi). */
+export interface FieldNoise { scale: number; octaves: number; gain?: number; lacunarity?: number; salt?: number; lo: number; hi: number }
+
+export interface FieldBiome {
+  /** Added to the dryness noise (-1..1). */
+  dry?: number
+  /** Multipliers of the autumn / blossom patch fields. */
+  autumn?: number
+  blossom?: number
+  /** Base snow cover (0..1) and snow-line override (elevation level). */
+  snow?: number
+  snowLine?: number
+}
+
+export interface FieldsConfig {
+  /** Tiles per field cell (CPU grid and GPU texture texel). */
+  cell: number
+  dry: FieldNoise
+  autumn: FieldNoise
+  blossom: FieldNoise
+  /** Snow: cover rises from snowLine - band to snowLine (elevation levels), jittered by noise. */
+  snow: { line: number; band: number; noise: FieldNoise; noiseAmount: number }
+  biomes: Record<string, FieldBiome>
+  /** Snow dusting shader: colour, overall amount, normal.y smoothstep range, dither pixels per tile, clump noise
+   * frequency (per tile) and how much the clumps (vs per-pixel hash) decide coverage (0..1). */
+  dust: { color: string; amount: number; slope: Vec2; pixels: number; clump: number; clumpMix: number }
+}
+
+export interface FringeConfig {
+  /** Fringe band width (tiles) laid over the lower-priority neighbour. */
+  width: number
+  /** Height above the tile top (world units). */
+  lift: number
+  /** Mask texture size [along, across] in pixels per tile / band. */
+  mask: Vec2
+  /** Jaggedness of the fringe edge (0..1) and stray-speck density. */
+  jag: number
+  specks: number
+  alphaTest: number
+  /** Terrain keys taking part in blending; a higher number spreads over lower neighbours at the same height. */
+  priorities: Record<string, number>
+}
+
+export type DecorShape = 'sprig' | 'blossom' | 'pebble' | 'leaf' | 'twig' | 'shell' | 'shroom' | 'mound' | 'ember' | 'puddle' | 'bone' | 'shard'
+export const DECOR_SHAPES: readonly DecorShape[] = ['sprig', 'blossom', 'pebble', 'leaf', 'twig', 'shell', 'shroom', 'mound', 'ember', 'puddle', 'bone', 'shard']
+
+export interface DecorKind {
+  shape: DecorShape
+  /** Uniform scale range (world units of the unit shape). */
+  size: Vec2
+  /** sRGB instance colours; "$terrain" = the terrain texture average (times terrainShade). */
+  colors: string[]
+  terrainShade?: number
+  colorJitter?: number
+  pattern?: string
+  emissive?: number
+  glossy?: boolean
+  sway?: boolean
+  /** Shape variants generated (different seeds). */
+  variants?: number
+}
+
+export interface DecorRule {
+  kind: string
+  terrain: string[]
+  biomes?: string[]
+  /** Expected instances per tile at decorDensity 1. */
+  density: number
+  /** Density multiplier from fractal noise. */
+  noise?: FieldNoise
+  /** Density multiplier from a climate field: smoothstep(lo, hi, field). */
+  field?: { name: FieldName; lo: number; hi: number }
+  /** Density multiplier 1 - smoothstep(lo, hi, field): suppressed where the field is high (no leaves on snow). */
+  unless?: { name: FieldName; lo: number; hi: number }
+  /** Only on tiles within `near` tiles of a terrain key in this list (e.g. shells near water). */
+  near?: { terrain: string[]; dist: number }
+}
+
+export interface DecorConfig { kinds: Record<string, DecorKind>; rules: DecorRule[]; maxPerTile: number; margin: number; lift: number }
+
+/** Material of a procedural nature part (resolved into a prop MaterialSpec). */
+export interface NatureMaterial {
+  pattern: string
+  color: string
+  color2?: string
+  colors?: string[]
+  emissive?: number
+  emissiveColor?: string
+  emissiveMap?: boolean
+  glossy?: boolean
+  cutout?: boolean
+}
+
+export type NatureGen = 'broadleaf' | 'conifer' | 'palm' | 'deadtree' | 'bush' | 'rock' | 'crystal' | 'cactus' | 'mushroom' | 'stump' | 'log' | 'cards'
+export const NATURE_GENS: readonly NatureGen[] = ['broadleaf', 'conifer', 'palm', 'deadtree', 'bush', 'rock', 'crystal', 'cactus', 'mushroom', 'stump', 'log', 'cards']
+
+export interface TintFieldRule {
+  field: FieldName
+  /** Target colour(s) (sRGB); one is picked per instance. */
+  colors: string[]
+  /** Weight multiplier and smoothstep window over the field value (jittered per instance by `spread`). */
+  amount?: number
+  lo?: number
+  hi?: number
+  spread?: number
+}
+
+/** Per-instance colour for a part role: ratio of a target colour to `base` (so textured parts keep their shading). */
+export interface TintDef { base: string; jitter?: number; hueJitter?: number; fields?: TintFieldRule[] }
+
+export interface NatureInstance {
+  /** Uniform scale range, extra independent xz / y jitter (fractions), max lean (deg), sink into the ground (world units). */
+  scale: Vec2
+  scaleXZ: number
+  scaleY: number
+  lean: number
+  sink?: number
+}
+
+export interface NatureProp {
+  gen: NatureGen
+  /** Generator parameters (world units; shapes per generator, see world/nature.ts). */
+  params: Record<string, unknown>
+  /** Weight of the GLB variant relative to one procedural variant (0 = never use the GLB). */
+  glbWeight?: number
+  instance: NatureInstance
+  tints?: Record<string, TintDef>
+}
+
+export interface NatureConfig {
+  /** GLB material-name prefix -> part role (FOLIAGE -> foliage ...). */
+  roles: Record<string, string>
+  /** Default per-instance brightness jitter for roles without a tint. */
+  jitter: number
+  /** Normal blend toward "outward from the cluster centre" for foliage (soft, rounded light). */
+  foliageNormalBlend: number
+  props: Record<string, NatureProp>
+  /** Per-biome recolour of nature parts by tint role (frontier biomes reuse the base models: bamboo = tall reeds,
+   * neon foliage in the neural woods ...): `colors` = sRGB targets (needs the prop's tints[role].base), else `mul` =
+   * RGB multipliers; one entry is picked per instance and blended by `amount`. */
+  biomeTints?: Record<string, Record<string, { colors?: string[]; mul?: Vec3[]; amount?: number }>>
+  /** Per-biome re-modelling of a nature prop: biome -> prop key -> full recipe used for placements inside that biome
+   * (acacia oaks on the savanna, bamboo culms for bamboo-grove reeds, coral for lagoon rocks, neon glitch shards ...). */
+  biomeVariants?: Record<string, Record<string, NatureProp>>
+}
+
+/** Camera-occlusion cutaway around the player (world/occlusion.ts). */
+export interface OcclusionConfig {
+  enabled: boolean
+  /** Height of the ellipse centre above the player's feet (world units). */
+  lift: number
+  /** Half extents across the view ray (camera right, camera up), world units. */
+  radius: Vec2
+  /** Soft edge as a fraction of the radius, and coverage kept at the centre (0 = fully cut away). */
+  soft: number
+  keep: number
+  /** Only surfaces at least `near` world units closer to the camera than the player are cut, fading in over `fade`. */
+  near: number
+  fade: number
+}
+
+export interface SkyConfig { domeRadius: number; starDensity: number; starColor: string; starIntensity: number; twinkleSpeed: number }
+
+export interface RenderContent {
+  quality: Record<QualityId, QualityPreset>
+  post: PostConfig
+  camera: CameraRenderConfig
+  sun: SunConfig
+  timeOfDay: LightingKey[]
+  interior: StaticLighting
+  cave: StaticLighting
+  sky: SkyConfig
+  terrain: TerrainRenderConfig
+  water: WaterConfig
+  lava: LavaConfig
+  wind: WindConfig
+  grass: GrassConfig
+  lights: LightsConfig
+  weather: Record<string, WeatherRenderDef>
+  weatherFadeSeconds: number
+  aurora: AuroraConfig
+  particles: Record<string, ParticleKindDef>
+  /** Particle kinds whose glow exceeds this blend additively. */
+  particleAdditiveGlow: number
+  ambientFadeSeconds: number
+  actors: ActorsConfig
+  creatures: CreaturesConfig
+  overlay: OverlayConfig
+  groundItems: GroundItemsConfig
+  fx: FxConfig
+  props: PropsRenderConfig
+  streaming: StreamingConfig
+  fields: FieldsConfig
+  fringe: FringeConfig
+  decor: DecorConfig
+  nature: NatureConfig
+  occlusion: OcclusionConfig
+}
+
+export const RENDER: RenderContent = renderJson as unknown as RenderContent
+
+// ---------------------------------------------------------------------------
+// Colors
+// ---------------------------------------------------------------------------
+
+const HEX = /^#[0-9a-fA-F]{6}$/
+
+export function isHexColor(s: unknown): s is string { return typeof s === 'string' && HEX.test(s) }
+
+/** '#rrggbb' -> sRGB components 0..1. Invalid input yields magenta so mistakes are visible. */
+export function hexToRgb(hex: string): Vec3 {
+  if (!HEX.test(hex)) return [1, 0, 1]
+  const n = parseInt(hex.slice(1), 16)
+  return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255]
+}
+
+export function rgbToHex(c: Vec3): string {
+  const to = (v: number) => Math.round(Math.min(1, Math.max(0, v)) * 255).toString(16).padStart(2, '0')
+  return `#${to(c[0])}${to(c[1])}${to(c[2])}`
+}
+
+export function lerpHex(a: string, b: string, t: number): string {
+  const x = hexToRgb(a), y = hexToRgb(b)
+  return rgbToHex([x[0] + (y[0] - x[0]) * t, x[1] + (y[1] - x[1]) * t, x[2] + (y[2] - x[2]) * t])
+}
+
+/** Resolves '$name' palette references (with variant overrides) to a hex color. */
+export function resolveColor(ref: string, palette: Record<string, string> | undefined): string {
+  if (!ref.startsWith('$')) return ref
+  const v = palette?.[ref.slice(1)]
+  return v && isHexColor(v) ? v : '#ff00ff'
+}
+
+// ---------------------------------------------------------------------------
+// Time of day
+// ---------------------------------------------------------------------------
+
+const MINUTES_PER_DAY = 1440
+const wrapMinute = (m: number) => ((m % MINUTES_PER_DAY) + MINUTES_PER_DAY) % MINUTES_PER_DAY
+
+/** Interpolates two lighting states field by field (colors in sRGB space). */
+export function lerpLighting<T extends LightingState>(a: T, b: LightingState, t: number, out: LightingState = { ...a }): LightingState {
+  for (const k of Object.keys(b) as (keyof LightingState)[]) {
+    const va = a[k], vb = b[k]
+    if (typeof va === 'number' && typeof vb === 'number') (out[k] as number) = va + (vb - va) * t
+    else if (typeof va === 'string' && typeof vb === 'string') (out[k] as string) = lerpHex(va, vb, t)
+  }
+  return out
+}
+
+/** Lighting look at a minute of day, interpolated between the (wrapping) keys of render.json. */
+export function sampleLighting(minute: number, keys: LightingKey[] = RENDER.timeOfDay): LightingState {
+  const m = wrapMinute(minute)
+  const n = keys.length
+  if (n === 1) return { ...keys[0] }
+  let i = n - 1
+  for (let k = 0; k < n; k++) if (keys[k].minute <= m) i = k
+  const a = keys[i]
+  const b = keys[(i + 1) % n]
+  const start = a.minute
+  let end = b.minute
+  let cur = m
+  if (end <= start) end += MINUTES_PER_DAY
+  if (cur < start) cur += MINUTES_PER_DAY
+  const t = end > start ? (cur - start) / (end - start) : 0
+  const out = lerpLighting(a, b, Math.min(1, Math.max(0, t)))
+  delete (out as Partial<LightingKey>).minute
+  return out
+}
+
+export interface SunState {
+  /** Unit direction from the scene toward the light. */
+  dir: Vec3
+  /** True when the directional light acts as the moon. */
+  moon: boolean
+  /** 0..1 intensity factor that dips around sunrise/sunset to hide the sun/moon swap. */
+  fade: number
+}
+
+const circDist = (a: number, b: number) => { const d = Math.abs(wrapMinute(a) - wrapMinute(b)); return Math.min(d, MINUTES_PER_DAY - d) }
+
+export function dirFromAngles(elevationDeg: number, azimuthDeg: number): Vec3 {
+  const el = elevationDeg * Math.PI / 180, az = azimuthDeg * Math.PI / 180
+  return [Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el)]
+}
+
+export function sunState(minute: number, s: SunConfig = RENDER.sun): SunState {
+  const m = wrapMinute(minute)
+  const day = s.sunrise <= s.sunset ? m >= s.sunrise && m < s.sunset : m >= s.sunrise || m < s.sunset
+  const fadeDist = Math.min(circDist(m, s.sunrise), circDist(m, s.sunset))
+  const fade = s.switchFadeMinutes > 0 ? Math.min(1, Math.max(s.switchFloor, fadeDist / s.switchFadeMinutes)) : 1
+  if (!day) return { dir: dirFromAngles(s.moonElevationDeg, s.moonAzimuthDeg), moon: true, fade }
+  const span = wrapMinute(s.sunset - s.sunrise) || MINUTES_PER_DAY
+  const t = wrapMinute(m - s.sunrise) / span
+  const el = s.minElevationDeg + (s.maxElevationDeg - s.minElevationDeg) * Math.sin(Math.PI * t)
+  const az = s.azimuthRiseDeg + (s.azimuthSetDeg - s.azimuthRiseDeg) * t
+  return { dir: dirFromAngles(el, az), moon: false, fade }
+}
+
+// ---------------------------------------------------------------------------
+// Lookups
+// ---------------------------------------------------------------------------
+
+export function qualityPreset(q: QualityId, r: RenderContent = RENDER): QualityPreset {
+  return r.quality[q] ?? r.quality.high
+}
+
+/** Procedural fallback style for a prop key (render.json styles, else the generic default). */
+export function propStyle(key: string, r: RenderContent = RENDER): PropStyle {
+  return r.props.styles[key] ?? r.props.default
+}
+
+export function surfaceOf(terrainKey: string, mapKind?: MapKind, r: RenderContent = RENDER): SurfaceDef | null {
+  return (mapKind && r.terrain.mapKindSurfaces[mapKind]?.[terrainKey]) || r.terrain.surfaces[terrainKey] || null
+}
+
+export function uvModeOf(textureKey: string, r: RenderContent = RENDER): UvMode {
+  return r.terrain.uvVariation.keys[textureKey] ?? r.terrain.uvVariation.default
+}
+
+/** Merges a variant's palette overrides over a style palette. */
+export function stylePalette(style: PropStyle, variant: number): Record<string, string> {
+  const base = style.palette ?? {}
+  const vs = style.variants ?? []
+  if (!vs.length || variant <= 0) return base
+  return { ...base, ...vs[(variant - 1) % vs.length] }
+}
+
+/** Number of palette variants a style offers (variant 0 = base palette). */
+export function styleVariantCount(style: PropStyle): number {
+  return 1 + (style.variants?.length ?? 0)
+}
+
+// ---------------------------------------------------------------------------
+// Validation (run by tests/render.test.ts)
+// ---------------------------------------------------------------------------
+
+export function validateRenderContent(r: RenderContent = RENDER, c: Content = CONTENT): string[] {
+  const errs: string[] = []
+  const color = (where: string, v: unknown, palette?: Record<string, string>) => {
+    if (typeof v === 'string' && v.startsWith('$')) {
+      if (palette && !(v.slice(1) in palette)) errs.push(`${where}: unknown palette color "${v}"`)
+      return
+    }
+    if (!isHexColor(v)) errs.push(`${where}: bad color ${JSON.stringify(v)}`)
+  }
+  for (const q of Object.keys(c.config.render.internalHeight)) if (!r.quality[q as QualityId]) errs.push(`quality: missing preset "${q}"`)
+  for (const k of ['north', 'south', 'side'] as const) {
+    const v = r.camera.focusSafe?.[k]
+    if (!(typeof v === 'number' && v >= 0 && v < 1)) errs.push(`camera.focusSafe.${k}: must be a screen fraction in 0..1`)
+  }
+  for (const k of ['lean', 'compensate'] as const) {
+    const v = r.camera.billboard?.[k]
+    if (!(typeof v === 'number' && v >= 0 && v <= 1)) errs.push(`camera.billboard.${k}: must be a number in 0..1`)
+  }
+  if (!(c.config.camera.pitchDeg > 0 && c.config.camera.pitchDeg <= 60)) errs.push('config.camera.pitchDeg: billboard pose supports 0 < pitch <= 60')
+  const keys = r.timeOfDay
+  if (!keys.length) errs.push('timeOfDay: needs at least one key')
+  keys.forEach((k, i) => {
+    if (k.minute < 0 || k.minute >= MINUTES_PER_DAY) errs.push(`timeOfDay[${i}]: minute out of range`)
+    if (i > 0 && keys[i - 1].minute >= k.minute) errs.push(`timeOfDay[${i}]: minutes must increase`)
+    for (const f of ['skyTop', 'skyHorizon', 'skyBottom', 'sun', 'hemiSky', 'hemiGround', 'fog'] as const) color(`timeOfDay[${i}].${f}`, k[f])
+  })
+  for (const [name, s] of [['interior', r.interior], ['cave', r.cave]] as const) {
+    for (const a of s.ambient) if (!r.particles[a]) errs.push(`${name}.ambient: unknown particle kind "${a}"`)
+  }
+  const textureKeys = new Set([...c.terrain.map((t) => t.key), ...c.biomes.map((b) => b.cliff), r.terrain.defaultCliff])
+  const checkSurfaces = (where: string, list: Record<string, SurfaceDef>) => {
+    for (const [key, s] of Object.entries(list)) {
+      if (!c.terrainByKey[key]) errs.push(`${where}: unknown terrain key "${key}"`)
+      if (s.bed && !c.terrainByKey[s.bed]) errs.push(`${where}.${key}: unknown bed terrain "${s.bed}"`)
+      if (s.face && s.face !== '$cliff' && !textureKeys.has(s.face)) errs.push(`${where}.${key}: unknown face texture "${s.face}"`)
+      if (s.topColor) color(`${where}.${key}.topColor`, s.topColor)
+      if (s.top && !textureKeys.has(s.top)) errs.push(`${where}.${key}: unknown top texture "${s.top}"`)
+      if (!['none', 'water', 'lava', 'glossy', 'wall'].includes(s.kind)) errs.push(`${where}.${key}: bad kind "${s.kind}"`)
+    }
+  }
+  checkSurfaces('terrain.surfaces', r.terrain.surfaces)
+  for (const [kind, list] of Object.entries(r.terrain.mapKindSurfaces)) {
+    if (!['overworld', 'interior', 'cave'].includes(kind)) errs.push(`terrain.mapKindSurfaces: unknown map kind "${kind}"`)
+    checkSurfaces(`terrain.mapKindSurfaces.${kind}`, list ?? {})
+  }
+  const uv = r.terrain.uvVariation
+  if (!UV_MODES.includes(uv.default)) errs.push(`terrain.uvVariation.default: bad mode "${uv.default}"`)
+  for (const [k, m] of Object.entries(uv.keys)) {
+    if (!textureKeys.has(k)) errs.push(`terrain.uvVariation.keys: unknown texture key "${k}"`)
+    if (!UV_MODES.includes(m)) errs.push(`terrain.uvVariation.keys.${k}: bad mode "${m}"`)
+  }
+  for (const b of c.biomes) for (const a of b.ambient) if (!r.particles[a]) errs.push(`biome ${b.id}: ambient "${a}" has no particle definition`)
+  if (!r.weather.clear) errs.push('weather: missing "clear"')
+  for (const w of c.weathers) if (w.fieldWeather && !r.weather[w.fieldWeather]) errs.push(`weather: no render definition for field weather "${w.fieldWeather}"`)
+  for (const [k, w] of Object.entries(r.weather)) {
+    for (const p of w.particles) if (!r.particles[p]) errs.push(`weather.${k}: unknown particle kind "${p}"`)
+    if (w.grade.tint) color(`weather.${k}.grade.tint`, w.grade.tint)
+  }
+  for (const [k, p] of Object.entries(r.particles)) {
+    if (!PARTICLE_SHAPES.includes(p.shape)) errs.push(`particles.${k}: bad shape "${p.shape}"`)
+    if (!p.color && !p.colors?.length) errs.push(`particles.${k}: needs color or colors`)
+    if (p.color) color(`particles.${k}.color`, p.color)
+    p.colors?.forEach((x, i) => color(`particles.${k}.colors[${i}]`, x))
+  }
+  for (const [k, list] of Object.entries(r.fx.kinds)) {
+    list.forEach((e, i) => {
+      const w = `fx.${k}[${i}]`
+      if (e.type === 'burst') { if (!PARTICLE_SHAPES.includes(e.shape)) errs.push(`${w}: bad shape`); e.colors.forEach((x) => color(w, x)) }
+      else if (e.type === 'icon') { color(w, e.color); color(w, e.outline); if (!e.glyph) errs.push(`${w}: empty glyph`) }
+      else if (e.type === 'ring' || e.type === 'column') color(w, e.color)
+      else errs.push(`${w}: unknown emitter type`)
+    })
+  }
+  const checkParts = (where: string, parts: PartDef[], palette?: Record<string, string>) => {
+    parts.forEach((p, i) => {
+      const w = `${where}.parts[${i}]`
+      if (!PART_SHAPES.includes(p.shape)) errs.push(`${w}: bad shape "${p.shape}"`)
+      if (!Array.isArray(p.pos) || p.pos.length !== 3) errs.push(`${w}: pos must be [x,y,z]`)
+      if (!Array.isArray(p.size) || p.size.length !== 3) errs.push(`${w}: size must be [x,y,z]`)
+      color(w, p.color, palette)
+      if (p.color2) color(w, p.color2, palette)
+      if (p.emissiveColor) color(w, p.emissiveColor, palette)
+    })
+  }
+  const checkStyle = (where: string, s: PropStyle) => {
+    const pal = { ...(s.palette ?? {}) }
+    for (const v of s.variants ?? []) for (const [k, x] of Object.entries(v)) { color(`${where}.variants.${k}`, x); if (!(k in pal)) errs.push(`${where}.variants: "${k}" not in palette`) }
+    for (const [k, x] of Object.entries(pal)) color(`${where}.palette.${k}`, x)
+    if (s.builder === 'parts') checkParts(where, s.parts, pal)
+    else if (s.builder === 'house') {
+      for (const need of ['wall', 'roof', 'trim', 'window', 'glow', 'frame', 'door', 'base']) if (!(need in pal)) errs.push(`${where}: palette needs "${need}"`)
+      if (s.sign && !('sign' in pal)) errs.push(`${where}: sign needs palette "sign"`)
+      if (s.extraParts) checkParts(where, s.extraParts, pal)
+    } else if (s.builder === 'billboard') { color(where, s.color); s.colors?.forEach((x) => color(where, x)) }
+    else errs.push(`${where}: unknown builder`)
+  }
+  // quality presets: new large-map knobs
+  for (const [id, q] of Object.entries(r.quality)) {
+    for (const k of ['natureVariants', 'decorDensity', 'maxChunks'] as const) if (typeof q[k] !== 'number') errs.push(`quality.${id}.${k}: missing number`)
+    for (const k of ['terrainFringe', 'snowDust'] as const) if (typeof q[k] !== 'boolean') errs.push(`quality.${id}.${k}: missing boolean`)
+    const reach = q.viewRadius + c.config.world.chunk * 0.75
+    const wanted = Math.PI * reach * reach / (c.config.world.chunk * c.config.world.chunk)
+    if (q.maxChunks < wanted) errs.push(`quality.${id}.maxChunks ${q.maxChunks} < ~${Math.ceil(wanted)} chunks inside viewRadius`)
+  }
+  // climate fields / terrain tints
+  const biomeIds = new Set(c.biomes.map((b) => b.id))
+  for (const b of Object.keys(r.fields.biomes)) if (!biomeIds.has(b)) errs.push(`fields.biomes: unknown biome "${b}"`)
+  color('fields.dust.color', r.fields.dust.color)
+  for (const k of ['amount', 'pixels', 'clump', 'clumpMix'] as const) if (typeof r.fields.dust[k] !== 'number') errs.push(`fields.dust.${k}: missing number`)
+  for (const [k, ft] of Object.entries(r.terrain.fieldTint)) {
+    if (!c.terrainByKey[k]) errs.push(`terrain.fieldTint: unknown terrain "${k}"`)
+    for (const f of Object.keys(ft)) if (f !== 'base' && !FIELD_NAMES.includes(f as FieldName)) errs.push(`terrain.fieldTint.${k}: unknown field "${f}"`)
+  }
+  for (const k of Object.keys(r.fringe.priorities)) if (!c.terrainByKey[k]) errs.push(`fringe.priorities: unknown terrain "${k}"`)
+  for (const b of c.biomes) if (!r.fields.biomes[b.id]) errs.push(`fields.biomes: no climate entry for biome "${b.id}"`)
+  for (const k of r.grass.assetTufts ?? []) if (!c.terrainByKey[k]?.tallGrass) errs.push(`grass.assetTufts: "${k}" is not a tall-grass terrain`)
+  const L = r.terrain.ledge
+  if (!L) errs.push('terrain.ledge: missing')
+  else {
+    for (const k of ['lipOut', 'lipRaise', 'lipHeight', 'lipShade'] as const) if (typeof L[k] !== 'number') errs.push(`terrain.ledge.${k}: missing number`)
+    for (const part of ['faces', 'tops'] as const) for (const [k, f] of Object.entries(L[part] ?? {})) {
+      if (!c.terrainByKey[k]?.ledge) errs.push(`terrain.ledge.${part}: "${k}" is not a ledge terrain`)
+      if (!textureKeys.has(f)) errs.push(`terrain.ledge.${part}.${k}: unknown texture "${f}"`)
+    }
+  }
+  const F = r.water.falls
+  if (!F) errs.push('water.falls: missing')
+  else {
+    color('water.falls.body', F.body); color('water.falls.streak', F.streak)
+    for (const k of ['speed', 'streaks', 'streakAmount', 'crestBand', 'splashBand', 'alpha', 'offset', 'overlap', 'crest'] as const) if (typeof F[k] !== 'number') errs.push(`water.falls.${k}: missing number`)
+  }
+  const I = r.streaming.infinite
+  if (!I) errs.push('streaming.infinite: missing')
+  else {
+    for (const k of ['ensureMargin', 'prefetchMargin', 'prefetchPerFrame', 'prefetchBudgetMs', 'retainSeconds', 'blockMargin', 'providerRadius', 'heightWindow', 'climateWindow', 'assumedTopLevel'] as const) {
+      if (!(typeof I[k] === 'number' && I[k] >= 0)) errs.push(`streaming.infinite.${k}: must be a number >= 0`)
+    }
+    const chunk = c.config.world.chunk
+    const reach = Math.max(...Object.values(r.quality).map((q) => q.viewRadius)) + r.streaming.keepMargin + chunk * 2
+    if (I.heightWindow % chunk !== 0) errs.push(`streaming.infinite.heightWindow must be a multiple of the render chunk (${chunk})`)
+    if (I.heightWindow < reach * 2) errs.push(`streaming.infinite.heightWindow ${I.heightWindow} < streamed diameter ${Math.ceil(reach * 2)}`)
+    if (I.climateWindow * r.fields.cell < reach * 2 + r.fields.cell * 2) errs.push(`streaming.infinite.climateWindow x fields.cell must cover the streamed diameter ${Math.ceil(reach * 2)}`)
+    if (I.providerRadius < reach + I.prefetchMargin) errs.push('streaming.infinite.providerRadius must cover the streamed radius + prefetchMargin')
+  }
+  const oc = r.occlusion
+  if (!oc || typeof oc.enabled !== 'boolean') errs.push('occlusion: missing "enabled"')
+  else {
+    for (const k of ['lift', 'soft', 'keep', 'near', 'fade'] as const) if (typeof oc[k] !== 'number') errs.push(`occlusion.${k}: missing number`)
+    if (!Array.isArray(oc.radius) || oc.radius.length !== 2 || oc.radius.some((v) => !(v > 0))) errs.push('occlusion.radius: must be [right, up] > 0')
+  }
+  // ground decor
+  for (const [id, k] of Object.entries(r.decor.kinds)) {
+    if (!DECOR_SHAPES.includes(k.shape)) errs.push(`decor.kinds.${id}: bad shape "${k.shape}"`)
+    if (!k.colors.length) errs.push(`decor.kinds.${id}: needs colors`)
+    k.colors.forEach((x) => { if (x !== '$terrain') color(`decor.kinds.${id}.colors`, x) })
+  }
+  r.decor.rules.forEach((rule, i) => {
+    const w = `decor.rules[${i}]`
+    if (!r.decor.kinds[rule.kind]) errs.push(`${w}: unknown kind "${rule.kind}"`)
+    for (const t of rule.terrain) if (!c.terrainByKey[t]) errs.push(`${w}: unknown terrain "${t}"`)
+    for (const b of rule.biomes ?? []) if (!biomeIds.has(b)) errs.push(`${w}: unknown biome "${b}"`)
+    for (const t of rule.near?.terrain ?? []) if (!c.terrainByKey[t]) errs.push(`${w}.near: unknown terrain "${t}"`)
+    if (rule.field && !FIELD_NAMES.includes(rule.field.name)) errs.push(`${w}.field: unknown field "${rule.field.name}"`)
+    if (rule.unless && !FIELD_NAMES.includes(rule.unless.name)) errs.push(`${w}.unless: unknown field "${rule.unless.name}"`)
+  })
+  // procedural nature
+  for (const [key, n] of Object.entries(r.nature.props)) {
+    const w = `nature.props.${key}`
+    if (!c.props[key]) errs.push(`${w}: unknown prop`)
+    if (!NATURE_GENS.includes(n.gen)) errs.push(`${w}: unknown generator "${n.gen}"`)
+    if (!n.instance || !Array.isArray(n.instance.scale)) errs.push(`${w}: instance.scale missing`)
+    for (const [role, t] of Object.entries(n.tints ?? {})) {
+      color(`${w}.tints.${role}.base`, t.base)
+      t.fields?.forEach((f, i) => {
+        if (!FIELD_NAMES.includes(f.field)) errs.push(`${w}.tints.${role}.fields[${i}]: unknown field "${f.field}"`)
+        f.colors.forEach((x) => color(`${w}.tints.${role}.fields[${i}]`, x))
+      })
+    }
+  }
+  for (const [biome, list] of Object.entries(r.nature.biomeVariants ?? {})) {
+    if (!biomeIds.has(biome)) errs.push(`nature.biomeVariants: unknown biome "${biome}"`)
+    for (const [key, n] of Object.entries(list)) {
+      const w = `nature.biomeVariants.${biome}.${key}`
+      if (!c.props[key]) errs.push(`${w}: unknown prop`)
+      if (!r.nature.props[key]) errs.push(`${w}: only nature props can have biome variants`)
+      if (!NATURE_GENS.includes(n.gen)) errs.push(`${w}: unknown generator "${n.gen}"`)
+      if (!n.instance || !Array.isArray(n.instance.scale)) errs.push(`${w}: instance.scale missing`)
+      for (const [role, t] of Object.entries(n.tints ?? {})) color(`${w}.tints.${role}.base`, t.base)
+    }
+  }
+  for (const [biome, roles] of Object.entries(r.nature.biomeTints ?? {})) {
+    if (!biomeIds.has(biome)) errs.push(`nature.biomeTints: unknown biome "${biome}"`)
+    for (const [role, t] of Object.entries(roles)) {
+      if (!t.mul?.length && !t.colors?.length) errs.push(`nature.biomeTints.${biome}.${role}: needs colors or mul`)
+      if (t.mul?.some((m) => !Array.isArray(m) || m.length !== 3)) errs.push(`nature.biomeTints.${biome}.${role}: mul must be a list of [r,g,b]`)
+      t.colors?.forEach((x) => color(`nature.biomeTints.${biome}.${role}.colors`, x))
+    }
+  }
+  checkStyle('props.default', r.props.default)
+  for (const [k, s] of Object.entries(r.props.styles)) {
+    if (!c.props[k]) errs.push(`props.styles: unknown prop "${k}"`)
+    checkStyle(`props.styles.${k}`, s)
+  }
+  return errs
+}

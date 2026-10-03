@@ -1,0 +1,53 @@
+{
+  "tasks": [
+    {"id": "see", "nameZh": "research.task.see", "kind": "see", "thresholds": [1, 5, 15], "points": 2},
+    {"id": "catch", "nameZh": "research.task.catch", "kind": "catch", "thresholds": [1, 3, 10, 25], "points": 4},
+    {"id": "defeat", "nameZh": "research.task.defeat", "kind": "defeat", "thresholds": [1, 5, 20, 50], "points": 3},
+    {"id": "evolve", "nameZh": "research.task.evolve", "kind": "evolve", "thresholds": [1, 3], "points": 6},
+    {"id": "shiny", "nameZh": "research.task.shiny", "kind": "catchShiny", "thresholds": [1], "points": 20},
+    {"id": "catch-night", "nameZh": "research.task.catch-night", "kind": "catchAtTime", "thresholds": [1, 3], "points": 6, "param": "night"},
+    {"id": "catch-dawn", "nameZh": "research.task.catch-dawn", "kind": "catchAtTime", "thresholds": [1], "points": 5, "param": "dawn"},
+    {"id": "catch-weather", "nameZh": "research.task.catch-weather", "kind": "catchInWeather", "thresholds": [1, 3], "points": 6, "param": "*"},
+    {"id": "see-night", "nameZh": "research.task.see-night", "kind": "seeAtTime", "thresholds": [1, 5], "points": 5, "param": "night"},
+    {"id": "see-weather", "nameZh": "research.task.see-weather", "kind": "seeInWeather", "thresholds": [1, 5], "points": 5, "param": "*"},
+    {"id": "move-own", "nameZh": "research.task.move-own", "kind": "useMoveType", "thresholds": [5, 15, 40], "points": 3, "param": "own"},
+    {"id": "befriend", "nameZh": "research.task.befriend", "kind": "befriend", "thresholds": [120, 200, 255], "points": 5},
+    {"id": "trade", "nameZh": "research.task.trade", "kind": "trade", "thresholds": [1], "points": 10},
+    {"id": "roam-defeat", "nameZh": "research.task.roam-defeat", "kind": "defeatRoaming", "thresholds": [1, 3], "points": 15},
+    {"id": "mythic-chain", "nameZh": "research.task.mythic-chain", "kind": "chainStep", "thresholds": [1, 3, 5], "points": 20}
+  ],
+  "byRarity": {
+    "N": ["see", "catch", "defeat", "evolve", "befriend", "catch-night"],
+    "R": ["see", "catch", "defeat", "evolve", "move-own", "catch-night", "befriend"],
+    "SR": ["see", "catch", "defeat", "move-own", "catch-weather", "shiny", "befriend"],
+    "SSR": ["see", "see-night", "see-weather", "catch", "catch-weather", "defeat", "move-own", "shiny", "trade"],
+    "UR": ["see", "roam-defeat", "defeat", "catch", "move-own", "shiny", "befriend"],
+    "MYTHIC": ["mythic-chain", "see", "catch", "befriend"]
+  },
+  "rarityPointMul": {"N": 1, "R": 1.2, "SR": 1.5, "SSR": 2, "UR": 3, "MYTHIC": 4},
+  "completePoints": {"N": 40, "R": 50, "SR": 60, "SSR": 80, "UR": 100, "MYTHIC": 120},
+  "shinyMultiplierOnComplete": 2,
+  "wildcardIgnore": ["clear", "none"],
+  "levels": [
+    {"points": 30, "reward": {"items": {"prompt-ball": 10}}},
+    {"points": 80, "reward": {"money": 1000}},
+    {"points": 150, "reward": {"items": {"few-shot-ball": 5}}},
+    {"points": 250, "reward": {"items": {"super-cache": 5}}},
+    {"points": 380, "reward": {"money": 3000, "items": {"cot-ball": 3}}},
+    {"points": 550, "reward": {"items": {"rare-ball": 2}}},
+    {"points": 760, "reward": {"items": {"full-restore": 3}}},
+    {"points": 1000, "reward": {"money": 5000, "items": {"finetune-dataset": 1}}},
+    {"points": 1300, "reward": {"items": {"rare-dataset": 1}}},
+    {"points": 1650, "reward": {"items": {"gold-token": 1, "rare-ball": 3}}},
+    {"points": 2050, "reward": {"money": 8000}},
+    {"points": 2500, "reward": {"items": {"quota-pack": 2}}},
+    {"points": 3000, "reward": {"items": {"rare-dataset": 2}}},
+    {"points": 3600, "reward": {"money": 12000, "items": {"max-repel": 5}}},
+    {"points": 4300, "reward": {"items": {"quantum-bit": 1}}},
+    {"points": 5100, "reward": {"items": {"hard-reboot": 3}}},
+    {"points": 6000, "reward": {"money": 20000}},
+    {"points": 7000, "reward": {"items": {"gold-token": 2}}},
+    {"points": 8200, "reward": {"items": {"rare-dataset": 3}}},
+    {"points": 10000, "reward": {"money": 50000, "items": {"agi-key": 1}}}
+  ]
+}

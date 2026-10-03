@@ -1,0 +1,21 @@
+{
+  "caches": {
+    "chance": [[0, 0.12], [800, 0.22], [2500, 0.35], [6000, 0.5]],
+    "hidden": 0.7,
+    "nearProps": ["rock_large", "rock_small", "tree_dead", "stump", "log", "crystal", "ruin_pillar", "lava_rock", "ice_spike", "cactus"],
+    "tries": 12,
+    "tiers": [
+      {"minDistance": 0, "pool": [{"item": "data-shard", "qty": [1, 2], "weight": 4}, {"item": "cache-potion", "qty": [2, 3], "weight": 3}, {"item": "few-shot-ball", "qty": [1, 2], "weight": 2}, {"item": "server-fan", "qty": [1, 1], "weight": 1}]},
+      {"minDistance": 800, "pool": [{"item": "broken-ssd", "qty": [1, 1], "weight": 3}, {"item": "super-cache", "qty": [2, 3], "weight": 3}, {"item": "cot-ball", "qty": [1, 2], "weight": 2}, {"item": "retro-floppy", "qty": [1, 1], "weight": 1}]},
+      {"minDistance": 2500, "pool": [{"item": "old-gpu", "qty": [1, 1], "weight": 3}, {"item": "hyper-cache", "qty": [2, 3], "weight": 3}, {"item": "rare-ball", "qty": [1, 1], "weight": 1}, {"item": "silicon-wafer", "qty": [1, 1], "weight": 2}]},
+      {"minDistance": 6000, "pool": [{"item": "rare-chip", "qty": [1, 1], "weight": 3}, {"item": "full-cache", "qty": [1, 2], "weight": 3}, {"item": "quantum-bit", "qty": [1, 1], "weight": 2}, {"item": "gold-token", "qty": [1, 1], "weight": 1}, {"item": "rare-dataset", "qty": [1, 1], "weight": 1}]}
+    ]
+  },
+  "hermitCamps": {"chance": [[0, 0], [800, 0.015], [3000, 0.03], [8000, 0.05]], "minDistance": 800, "props": ["tent", "campfire"], "tries": 16},
+  "merchantCamps": {"chance": [[0, 0.01], [1000, 0.025], [4000, 0.04]], "minDistance": 400, "prop": "stall", "tries": 16},
+  "roadSigns": {
+    "prop": "sign",
+    "province": {"format": "【{region}】\n{biome} · 危险度 {stars} · 推荐 Lv.{lo}-{hi}"},
+    "milestones": {"format": "距原点 {distance} 格", "rarity": "· 从这里起，{rarity}级智灵开始在野外现身", "danger": "· 前方进入「{danger}」地带 {stars}", "extra": [1000, 2000, 5000, 10000]}
+  }
+}

@@ -1,0 +1,7 @@
+[
+  {"id": "burn", "nameZh": "过热", "short": "热", "color": "#ff7043", "dotFraction": 0.0625, "physicalMul": 0.5, "catchBonus": 1.5},
+  {"id": "paralysis", "nameZh": "宕机", "short": "宕", "color": "#f4d03f", "skipChance": 0.25, "speedMul": 0.5, "catchBonus": 1.5},
+  {"id": "sleep", "nameZh": "限流", "short": "限", "color": "#9aa5b1", "skipChance": 1, "durationMin": 1, "durationMax": 3, "catchBonus": 2.5},
+  {"id": "poison", "nameZh": "数据污染", "short": "污", "color": "#a05fd8", "dotFraction": 0.125, "catchBonus": 1.5},
+  {"id": "freeze", "nameZh": "死锁", "short": "锁", "color": "#7fd3ff", "skipChance": 1, "cureChancePerTurn": 0.2, "catchBonus": 2.5}
+]

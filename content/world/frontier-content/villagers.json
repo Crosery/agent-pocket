@@ -1,0 +1,117 @@
+{
+  "perHamlet": [3, 5],
+  "wander": 2,
+  "names": {
+    "surnames": ["王", "李", "陈", "林", "周", "吴", "赵", "孙", "杨", "黄", "苏", "叶", "许", "沈", "顾"],
+    "given": ["豆豆", "阿明", "小芽", "乐乐", "糖糖", "阿远", "小雪", "阿星", "团团", "小葵", "阿杰", "可可"]
+  },
+  "archetypes": [
+    {"id": "elder", "weight": 2, "sprites": ["villager_old"], "names": ["村长{surname}爷爷", "{surname}老伯", "守村的{surname}大爷", "{surname}奶奶"], "lines": [["欢迎来到{place}，年轻人。这里离原点镇已经有 {distance} 格远了。"], ["我年轻的时候也像你一样，背着智灵到处跑。", "那时候边境还没有路，全靠一双脚。"], ["{place}虽然小，但每一户人家都养着智灵。"]]},
+    {"id": "kid", "weight": 2, "sprites": ["villager_kid"], "names": ["小{given}", "{given}{given}", "调皮的小{given}", "爱哭的{given}"], "lines": [["哇！是训练家！你的智灵可以让我摸摸吗？"], ["我长大以后也要当训练家，走到世界的尽头！"], ["妈妈说不能一个人去草丛里玩……可是草丛里有智灵啊！"]]},
+    {"id": "gossip-auntie", "weight": 2, "sprites": ["villager_woman"], "names": ["村口的{surname}大妈", "爱聊天的{surname}婶", "情报通·{given}姐"], "role": "gossip", "lines": [["哎哟，生面孔！你从哪儿来的？"], ["我在这村口坐了三十年，什么消息都知道。"]]},
+    {"id": "traveller", "weight": 1.2, "sprites": ["trainer_hiker", "villager_man"], "names": ["背包客{given}", "旅人{surname}", "流浪画家{given}"], "role": "gossip", "lines": [["我也是路过这里的旅人。这片大陆，越走越大。"], ["每到一个村子，我都会听听当地的传闻。"]]},
+    {"id": "programmer", "weight": 1.2, "sprites": ["trainer_coder"], "names": ["程序员{given}", "远程办公的{surname}哥", "写代码的{given}"], "role": "tips", "lines": [["我在这儿远程办公。网速虽然慢，但智灵们很治愈。"], ["这里的智灵 bug 很少，比城里的好调教多了。"]]},
+    {"id": "otaku-villager", "weight": 1.2, "sprites": ["trainer_gamer", "trainer_student"], "names": ["二次元少年{given}", "追番的{given}", "宅家的{surname}君"], "role": "tips", "lines": [["你知道吗？智灵们其实都有自己的人设！"], ["我在研究智灵的行为模式，就像研究番剧角色一样。"]]},
+    {"id": "researcher", "weight": 1, "sprites": ["trainer_scientist"], "names": ["野外研究员{surname}", "博士生{given}", "观测员{given}"], "role": "tips", "lines": [["我在做智灵的野外调查。稀有度越高的智灵，行为越特别。"], ["根据我的统计……啊，你想听吗？"]]},
+    {"id": "farmer", "weight": 1.2, "sprites": ["villager_man", "villager_woman"], "names": ["果农{surname}叔", "种田的{surname}婶", "养蜂人{given}"], "role": "gift", "lines": [["今年收成不错，智灵们也帮了不少忙。"], ["田里的智灵会帮我们赶走害虫爬虫。"]]},
+    {"id": "sage", "weight": 0.8, "sprites": ["villager_old", "trainer_scientist"], "names": ["占卜师{given}", "老学者{surname}", "说书人{surname}先生"], "role": "sage", "minDistance": 600, "lines": [["……你身上有远方的气味。坐下吧，我给你讲个故事。"], ["世界上有三个传说，从来没有人见过它们的全貌。"]]},
+    {"id": "shrine-novice", "weight": 1.2, "sprites": ["hero_idol", "villager_woman"], "names": ["见习巫女{given}", "神社的{given}"], "role": "gossip", "biomes": ["sakura", "bamboo", "cloud", "lavender"], "lines": [["神社的签说，今天会有远方的客人来。原来是你呀。"], ["樱花飘落的方向，就是智灵指引的方向。"]]},
+    {"id": "fisher", "weight": 1.5, "sprites": ["villager_man", "trainer_swimmer"], "names": ["渔夫{surname}", "赶海的{given}", "老船长{surname}"], "role": "gift", "biomes": ["coast", "lagoon", "mangrove", "saltflat"], "lines": [["出海的时候，我在海面上见过发光的智灵。"], ["潮水退了，礁石缝里会藏着好东西。"]]},
+    {"id": "herder", "weight": 1.5, "sprites": ["villager_man", "villager_kid"], "names": ["牧民{given}", "放羊的{surname}娃"], "role": "tips", "biomes": ["savanna", "meadow", "tundra", "lavender"], "lines": [["草原上的智灵跟羊群一起吃草，很和谐。"], ["风往哪边吹，智灵就往哪边跑。"]]},
+    {"id": "miner", "weight": 1.5, "sprites": ["trainer_hiker", "villager_man"], "names": ["矿工{surname}", "挖晶石的{given}", "老矿头{surname}"], "role": "gift", "biomes": ["volcano", "ashlands", "crystal", "badlands", "canyon", "highland"], "lines": [["这山里的晶石，能给智灵充能。"], ["我挖矿挖出过一块会发光的旧硬盘。"]]},
+    {"id": "young-hacker", "weight": 1.4, "sprites": ["hero_hacker", "trainer_coder"], "names": ["少年黑客{given}", "电路板上的{given}"], "role": "gossip", "biomes": ["glitch", "circuit", "city", "neural"], "lines": [["这里的地面全是电路。你听，它们在嗡嗡响。"], ["我在这片故障区里抓到过不存在的智灵。"]]},
+    {"id": "fan-girl", "weight": 1, "sprites": ["hero_idol", "trainer_streamer"], "names": ["追星少女{given}", "小粉丝{given}"], "role": "tips", "lines": [["你知道最近最火的智灵是谁吗？我全都知道！"], ["我收集了所有智灵的应援周边！"]]},
+    {"id": "bard", "weight": 1, "sprites": ["trainer_streamer", "trainer_artist"], "names": ["吟游诗人{given}", "弹琴的{surname}"], "role": "gossip", "lines": [["来，听我唱一首边境的歌谣吧。"], ["每个村子都有自己的传说。我负责把它们唱出来。"]]},
+    {"id": "retired-trainer", "weight": 0.9, "sprites": ["villager_old", "hero_boy"], "names": ["退休训练家{surname}", "老对战家{given}"], "role": "gift", "minDistance": 300, "lines": [["我年轻时也收集过八枚徽章。现在嘛，种种花，养养智灵。"], ["对战的诀窍？了解你的智灵，比了解对手更重要。"]]}
+  ],
+  "biomeLines": {
+    "default": [["这附近的野生智灵，比原点镇那边凶多了。"], ["天气变了，草丛里的智灵也会换一批。"]],
+    "meadow": [["平原上的风很舒服，智灵们最喜欢在这里晒太阳。"], ["草丛里窸窸窣窣的，八成是对话系的小家伙。"]],
+    "forest": [["森林深处有棵老树，据说开源系的智灵在那里开会。"], ["林子里的雾天，总能遇到奇怪的智灵。"]],
+    "desert": [["沙漠里白天热得要命，晚上又冷得发抖。"], ["沙尘天的时候，检索系的智灵会成群出来找东西。"]],
+    "snow": [["雪山上的智灵都很耐冷，它们说这样能降温。"], ["下雪天，安全系的智灵会在雪地里巡逻。"]],
+    "coast": [["海边的浪声能让人平静下来。"], ["退潮的时候，沙滩上会留下好东西。"]],
+    "city": [["城里的智灵都很忙，跟上班族一样。"], ["夜里路灯下，代码系的智灵最活跃。"]],
+    "swamp": [["沼泽里的泥巴会粘住鞋子，走路小心点。"], ["沼泽的雾天最危险，幻觉系的智灵会跟着人走。"]],
+    "highland": [["高地上看得远，能看见好几个村子的炊烟。"], ["这里的智灵很有耐心，喜欢慢慢推理。"]],
+    "volcano": [["火山附近热得像机房，算力系的智灵很喜欢。"], ["火山灰天要戴口罩，智灵也会咳嗽的。"]],
+    "ruins": [["遗迹里的石碑上刻着旧时代的代码。"], ["晚上别去遗迹，那里会出现不该存在的东西。"]],
+    "sakura": [["樱花开的时候，整片山丘都是粉色的。"], ["花瓣落在智灵身上，它们会开心地转圈圈。"]],
+    "bamboo": [["竹林里风一吹，沙沙沙的，像有人在低语。"], ["竹林深处住着一位隐士，据说会传授招式。"]],
+    "jungle": [["雨林里一年四季都在下雨。"], ["这里的智灵长得特别大，因为数据特别丰富。"]],
+    "mangrove": [["红树林的根像迷宫一样，别迷路了。"], ["涨潮的时候，有些路会被淹掉。"]],
+    "savanna": [["稀树草原上，一棵树就是一个世界。"], ["傍晚的草原最美，影像系的智灵会出来奔跑。"]],
+    "lavender": [["薰衣草的香味能让智灵安静下来。"], ["花田里的智灵都很温柔，喜欢听音乐。"]],
+    "mushroom": [["蘑菇林里的光是蘑菇自己发的。别吃，真的别吃。"], ["这里的孢子会让智灵做梦。"]],
+    "taiga": [["针叶林的冬天很长，智灵们会抱团取暖。"], ["林子里的松果，智灵们很爱吃。"]],
+    "tundra": [["苔原上什么都没有，只有风和智灵。"], ["极光出现的夜里，整片苔原都在发光。"]],
+    "glacier": [["冰川上每走一步都要小心，冰缝很深。"], ["冰川下面埋着旧时代的数据，冻得很完整。"]],
+    "badlands": [["恶地的岩层一层一层的，像训练日志一样。"], ["这里的坎很多，跳下去就上不来了，注意看路。"]],
+    "saltflat": [["盐滩白得晃眼，晴天要戴墨镜。"], ["盐滩上的智灵都很干净，没有一点杂质。"]],
+    "canyon": [["峡谷里的回声会把你的话说好几遍。"], ["峡谷底下的河，是很久以前的数据流冲出来的。"]],
+    "ashlands": [["火山灰原上寸草不生，只有最顽强的智灵能活下来。"], ["灰烬下面还是热的，别光脚走。"]],
+    "lagoon": [["泻湖的水清得能看见底下的珊瑚。"], ["珊瑚礁边上，藏着不少稀有智灵。"]],
+    "crystal": [["水晶高地的晶石会唱歌，你听见了吗？"], ["晶石反射的光，会把智灵映成好几个。"]],
+    "cloud": [["云海高原上，伸手就能摸到云。"], ["在这里说话，声音会被云吸走。"]],
+    "glitch": [["这片荒原的数据坏掉了，地面会闪烁。"], ["别盯着地面太久，会看到不存在的东西。"]],
+    "circuit": [["电路平原的地面一直在嗡嗡作响。"], ["晚上电路会发光，像一座城市。"]],
+    "neural": [["神经网络森林里的树，会互相传递信号。"], ["这里的智灵学东西特别快。"]]
+  },
+  "distanceLines": [
+    {"minDistance": 0, "lines": [["沿着大路走就不会迷路，路边的告示牌会告诉你下一个村子在哪。"], ["往外走，野生智灵就越来越强，记得多带药。"]]},
+    {"minDistance": 600, "lines": [["这一带已经不算安稳了，野外的训练家也更厉害。"], ["从这里开始，草丛之外也能看到发光的稀有智灵了。"]]},
+    {"minDistance": 1500, "lines": [["能走到这里的训练家可不多见。"], ["这么远的地方，连补给站都要省着用。"]]},
+    {"minDistance": 3000, "lines": [["这里已经是地图上的空白了。你是第一个走到这儿的人吗？"], ["听说再往外走，连天空的颜色都不一样。"]]},
+    {"minDistance": 6000, "lines": [["……原点镇？我只在传说里听过那个名字。"], ["这里的智灵都强得离谱。你真的不怕吗？"]]}
+  ],
+  "lineChance": {"biome": 0.6, "distance": 0.35},
+  "tips": {"flee": "{rarity}级的智灵从第 {turn} 回合起，每回合都有 {chance}% 的几率逃走——遇到了就速战速决！", "minDistance": "听老猎人说，离原点 {distance} 格以外，才见得到{rarity}级的智灵。", "noGrass": "{rarity}级的智灵从不躲在草丛里，它们会带着光在野外现身。", "avoid": "{rarity}级的智灵很机灵，一看到训练家就会躲开。悄悄从背后靠近吧。", "legend": "{rarity}级的智灵一直在世界各地游荡。离它近了，你会有种说不出的感应……", "eventOnly": "{rarity}级的智灵只会在特别的事件里现身。多留意各地的传闻吧。", "affinityTime": "{time}的时候，{type}系的智灵特别活跃。", "affinityWeather": "{weather}天里，{type}系的智灵会变多哦。"},
+  "gossip": {
+    "intro": [["悄悄告诉你……"], ["你听说了吗？"], ["我跟你说个秘密，你可别告诉别人。"]],
+    "heard": "（又讲了一遍）{rumor}",
+    "none": [["最近好像没什么新鲜事。"], ["唉，这阵子太平得很，连个传闻都没有。"]],
+    "outro": [["……我也只是听说的啦。"], ["信不信由你。"], []],
+    "tagWeights": {"hidden": 3, "stele": 2.5, "rumor": 2, "easter": 1.5, "legend": 1.5, "culture": 1, "festival": 0.3},
+    "biomeMatch": 3,
+    "placeMatch": 4,
+    "candidates": 3
+  },
+  "sage": {
+    "intro": [["……你身上有远方的气味。"], ["坐吧。我讲一段只有少数人知道的传说。"]],
+    "notReady": [["……不，时候还没到。等你见识过更多的智灵，再来找我。"], ["传说不会向还没准备好的人开口。"]],
+    "done": [["那段传说，已经被你亲手写完了。了不起。"]],
+    "minDistance": 600
+  },
+  "gift": {
+    "intro": [["你走了这么远的路，这个送你。"], ["拿着吧，边境的路不好走。"]],
+    "after": [["东西还好用吗？"], ["路上小心啊。"]],
+    "tiers": [
+      {"minDistance": 0, "pool": [{"item": "cache-potion", "qty": [2, 3], "weight": 3}, {"item": "prompt-ball", "qty": [3, 5], "weight": 3}, {"item": "antivirus", "qty": [1, 2], "weight": 1}]},
+      {"minDistance": 600, "pool": [{"item": "super-cache", "qty": [2, 3], "weight": 3}, {"item": "few-shot-ball", "qty": [2, 4], "weight": 3}, {"item": "repel", "qty": [2, 3], "weight": 1}, {"item": "data-shard", "qty": [1, 2], "weight": 1}]},
+      {"minDistance": 1500, "pool": [{"item": "hyper-cache", "qty": [1, 3], "weight": 3}, {"item": "cot-ball", "qty": [2, 3], "weight": 3}, {"item": "universal-patch", "qty": [2, 3], "weight": 1}, {"item": "server-fan", "qty": [1, 1], "weight": 1}]},
+      {"minDistance": 3500, "pool": [{"item": "full-cache", "qty": [1, 2], "weight": 3}, {"item": "rare-ball", "qty": [1, 1], "weight": 2}, {"item": "reboot", "qty": [1, 2], "weight": 2}, {"item": "old-gpu", "qty": [1, 1], "weight": 1}]}
+    ]
+  },
+  "residents": {
+    "sprites": ["villager_old", "villager_woman", "villager_kid", "villager_man"],
+    "names": ["房主", "老奶奶", "小孩", "大叔", "阿姨", "看书的少年"],
+    "lines": [["这里是我家，随便坐吧。"], ["边境的夜晚很安静，能听见智灵在草丛里低语。"], ["你是从核心大陆来的吗？那边的道馆很厉害吧！"], ["我爷爷说，世界的尽头有一座会说话的服务器。"], ["家里的智灵在睡觉，小声点哦。"]],
+    "biomeLines": {
+      "snow": [["外面好冷，烤烤火再走吧。"]],
+      "tundra": [["外面好冷，烤烤火再走吧。"]],
+      "glacier": [["冰川上的房子，墙要砌得特别厚。"]],
+      "desert": [["喝口水吧，沙漠里最缺的就是水。"]],
+      "volcano": [["家里的智灵帮我们烧水，可方便了。"]],
+      "coast": [["窗外就是海，晚上能听见浪声。"]],
+      "sakura": [["院子里的樱花树，是我出生那年种的。"]],
+      "glitch": [["我家的墙偶尔会闪一下，习惯就好。"]],
+      "cloud": [["早上推开窗，云会飘进屋里来。"]],
+      "circuit": [["地板一直在发热，冬天倒是不冷。"]],
+      "mushroom": [["墙角长了一朵发光的蘑菇，我舍不得拔。"]],
+      "lagoon": [["我家的地板下面就是海水，能看见小鱼。"]]
+    },
+    "gossipChance": 0.3,
+    "giftChance": 0.15,
+    "tipsChance": 0.2
+  }
+}

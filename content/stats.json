@@ -1,0 +1,10 @@
+[
+  {"key": "hp", "nameZh": "上下文", "desc": "上下文窗口——决定能承受多少伤害"},
+  {"key": "atk", "nameZh": "推理", "desc": "推理能力——物理招式的威力"},
+  {"key": "def", "nameZh": "稳健", "desc": "稳健性——抵御物理招式"},
+  {"key": "spa", "nameZh": "创造", "desc": "创造力——特殊招式的威力"},
+  {"key": "spd", "nameZh": "知识", "desc": "知识储备——抵御特殊招式"},
+  {"key": "spe", "nameZh": "速度", "desc": "响应速度——决定出手顺序"},
+  {"key": "acc", "nameZh": "命中", "desc": "招式命中率"},
+  {"key": "eva", "nameZh": "闪避", "desc": "躲避招式的能力"}
+]

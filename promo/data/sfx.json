@@ -1,0 +1,344 @@
+{
+  "_doc": "Sound design. Event ids come from the scenes (Scene.sfx(), exported to data/sfx_events.json by `bun scripts/render.ts sfx`); each id maps to one or more layers of the GAME's own chiptune SFX recipes (audio/game/sfx.json, copied from content/audio/sfx.json by `bun run sync`) or to a recipe defined here in `recipes` (same format). Each layer is peak-normalised and placed at `db` dBFS (before the final loudness normalisation); `pitch` transposes (the cue is in D major: C-major game jingles go up a whole tone, 1.12246). An event's own pitch multiplies the layer's.",
+  "recipesFrom": "audio/game/sfx.json",
+  "sampleRate": 48000,
+  "sounds": {
+    "type": [
+      {
+        "recipe": "select",
+        "db": -29
+      }
+    ],
+    "unpack": [
+      {
+        "recipe": "heal",
+        "db": -19,
+        "pitch": 0.8909
+      }
+    ],
+    "face": [
+      {
+        "recipe": "menu_open",
+        "db": -13,
+        "pitch": 0.8909
+      }
+    ],
+    "faceFast": [
+      {
+        "recipe": "select",
+        "db": -18,
+        "pitch": 0.75
+      }
+    ],
+    "count": [
+      {
+        "recipe": "money",
+        "db": -21,
+        "pitch": 0.6674
+      }
+    ],
+    "countMax": [
+      {
+        "recipe": "item",
+        "db": -13,
+        "pitch": 0.8909
+      }
+    ],
+    "ripple": [
+      {
+        "recipe": "stat_up",
+        "db": -19,
+        "pitch": 1.12246
+      }
+    ],
+    "tier": [
+      {
+        "recipe": "exclaim",
+        "db": -15,
+        "pitch": 0.8909
+      }
+    ],
+    "tierHigh": [
+      {
+        "recipe": "exclaim",
+        "db": -13,
+        "pitch": 0.8909
+      },
+      {
+        "recipe": "bump",
+        "db": -20
+      }
+    ],
+    "charge": [
+      {
+        "recipe": "evolve",
+        "db": -11,
+        "pitch": 1.12246
+      }
+    ],
+    "mythic": [
+      {
+        "recipe": "levelup",
+        "db": -13,
+        "pitch": 1.12246
+      },
+      {
+        "recipe": "boomSmall",
+        "db": -12
+      }
+    ],
+    "pop": [
+      {
+        "recipe": "ball_shake",
+        "db": -16,
+        "pitch": 1.5
+      }
+    ],
+    "step": [
+      {
+        "recipe": "step",
+        "db": -21
+      }
+    ],
+    "chat": [
+      {
+        "recipe": "chat",
+        "db": -13
+      }
+    ],
+    "dash": [
+      {
+        "recipe": "ball_throw",
+        "db": -21
+      }
+    ],
+    "hitSuper": [
+      {
+        "recipe": "hit_super",
+        "db": -9
+      }
+    ],
+    "hit": [
+      {
+        "recipe": "hit",
+        "db": -7
+      }
+    ],
+    "gather": [
+      {
+        "recipe": "ball_throw",
+        "db": -17,
+        "pitch": 0.8
+      }
+    ],
+    "shake": [
+      {
+        "recipe": "ball_shake",
+        "db": -8
+      }
+    ],
+    "catch": [
+      {
+        "recipe": "catch",
+        "db": -11,
+        "pitch": 1.12246
+      }
+    ],
+    "boom": [
+      {
+        "recipe": "boom",
+        "db": -9
+      }
+    ],
+    "cta": [
+      {
+        "recipe": "confirm",
+        "db": -22,
+        "pitch": 0.8909
+      }
+    ],
+    "wild": [
+      {
+        "recipe": "exclaim",
+        "db": -17,
+        "pitch": 0.8909
+      }
+    ],
+    "rustle": [
+      {
+        "recipe": "step",
+        "db": -27,
+        "pitch": 1.4
+      }
+    ],
+    "throw": [
+      {
+        "recipe": "ball_throw",
+        "db": -11
+      }
+    ],
+    "ballHit": [
+      {
+        "recipe": "bump",
+        "db": -13,
+        "pitch": 1.5
+      }
+    ],
+    "absorb": [
+      {
+        "recipe": "stat_down",
+        "db": -25,
+        "pitch": 1.12246
+      }
+    ],
+    "ballLand": [
+      {
+        "recipe": "bump",
+        "db": -17
+      }
+    ],
+    "caught": [
+      {
+        "recipe": "catch",
+        "db": -8,
+        "pitch": 1.12246
+      }
+    ],
+    "cutWhoosh": [
+      {
+        "recipe": "ball_throw",
+        "db": -15,
+        "pitch": 0.7
+      }
+    ],
+    "castLead": [
+      {
+        "recipe": "menu_open",
+        "db": -14,
+        "pitch": 0.8909
+      },
+      {
+        "recipe": "bump",
+        "db": -22
+      }
+    ],
+    "castPop": [
+      {
+        "recipe": "select",
+        "db": -17,
+        "pitch": 1.5
+      }
+    ]
+  },
+  "recipes": {
+    "boom": {
+      "layers": [
+        {
+          "wave": "sine",
+          "freq": 72,
+          "to": 36,
+          "dur": 1.8,
+          "env": [
+            0.002,
+            0.35,
+            0.45,
+            1.1
+          ],
+          "gain": 1.0
+        },
+        {
+          "wave": "noise",
+          "dur": 0.22,
+          "env": [
+            0.001,
+            0.16,
+            0.0,
+            0.12
+          ],
+          "gain": 0.35,
+          "filter": {
+            "type": "lowpass",
+            "freq": 520,
+            "to": 90,
+            "q": 0.7
+          }
+        },
+        {
+          "wave": "triangle",
+          "note": "D2",
+          "dur": 1.6,
+          "env": [
+            0.004,
+            0.4,
+            0.3,
+            1.0
+          ],
+          "gain": 0.35
+        }
+      ]
+    },
+    "boomSmall": {
+      "layers": [
+        {
+          "wave": "sine",
+          "freq": 90,
+          "to": 45,
+          "dur": 0.7,
+          "env": [
+            0.002,
+            0.2,
+            0.3,
+            0.5
+          ],
+          "gain": 1.0
+        },
+        {
+          "wave": "noise",
+          "dur": 0.12,
+          "env": [
+            0.001,
+            0.1,
+            0.0,
+            0.08
+          ],
+          "gain": 0.3,
+          "filter": {
+            "type": "lowpass",
+            "freq": 900,
+            "to": 150
+          }
+        }
+      ]
+    }
+  },
+  "reverb": {
+    "rt60": 1.4,
+    "wet": 0.2,
+    "predelaySec": 0.012,
+    "seed": 11
+  },
+  "master": {
+    "fadeOutSec": 0.9,
+    "blackSec": 0.2,
+    "integratedLufs": -14.0,
+    "truePeakDb": -2.0,
+    "lra": 11,
+    "_doc": "fadeOutSec/blackSec mirror the title plate's picture fade (data/timeline.json title cues): sound reaches silence when the picture reaches black. truePeakDb leaves room for AAC overshoot so the delivered file stays under -1 dBTP."
+  },
+  "duck": [
+    {
+      "_doc": "the music dips under the catch's two shakes so the clicks read on a phone",
+      "ids": [
+        "shake"
+      ],
+      "plates": [
+        "catch"
+      ],
+      "db": -3,
+      "attackSec": 0.03,
+      "holdSec": 0.28,
+      "releaseSec": 0.25
+    }
+  ],
+  "_rev3": "rev 3: face +8, faceFast +6, pop +8, ripple +6, step +10, chat +6, throw/ballHit/shake/caught +6 dB (they measured 13-30 dB under the music); cutWhoosh into the together cut; castLead/castPop for the heroines' arc; music duck under the catch shakes"
+}

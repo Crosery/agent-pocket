@@ -1,0 +1,89 @@
+{
+  "nurse": [
+    {"op": "say", "text": "欢迎来到{townName}智灵补给站！要让你的智灵休息一下吗？"},
+    {"op": "choice", "text": "要恢复智灵吗？", "options": ["拜托了", "不用了"], "branches": [[{"op": "say", "text": "好的，请把智灵交给我。正在清理上下文缓存……"}, {"op": "heal"}, {"op": "setRespawn"}, {"op": "say", "text": "久等了！你的智灵已经全部恢复。欢迎再来！"}], [{"op": "say", "text": "欢迎随时再来！"}]]}
+  ],
+  "box": [
+    {"op": "say", "text": "这台终端连着云端智灵仓库。队伍满了的话，新收服的智灵会自动存到这里。"},
+    {"op": "choice", "text": "要打开智灵仓库吗？", "options": ["打开", "不用了"], "branches": [[{"op": "openBox"}], [{"op": "say", "text": "需要的时候，随时来找我。"}]]}
+  ],
+  "clerk": [
+    {"op": "say", "text": "欢迎光临{townName}商店！"},
+    {"op": "tieredShop", "town": "{town}"},
+    {"op": "say", "text": "谢谢惠顾，欢迎再来！"}
+  ],
+  "gym-guide": [
+    {"op": "say", "text": "欢迎来到{town:{town}}的{type:{gym}}道馆！我是道馆向导。"},
+    {"op": "say", "text": "这里的馆主擅长{type:{gym}}系智灵。{type:{gym}}系的招式，打{strongVs:{gym}}系效果拔群。"},
+    {"op": "say", "text": "反过来，{type:{gym}}系最怕{weakTo:{gym}}系的招式；{resists:{gym}}系的招式则打不太痛它。"},
+    {"op": "say", "text": "准备好了就往里走吧。祝你好运！"}
+  ],
+  "gym-leader": [
+    {"op": "ifFlag", "flag": "badge:{gym}", "then": [{"op": "say", "text": "{after}"}], "else": [{"op": "battle", "trainer": "{id}"}, {"op": "ifFlag", "flag": "trainer:{id}", "then": [{"op": "setFlag", "flag": "badge:{gym}"}, {"op": "sfx", "id": "levelup"}, {"op": "say", "text": "你获得了{badge:{badge}}！", "speaker": ""}, {"op": "include", "script": "{reward}"}, {"op": "include", "script": "main-progress"}]}]}
+  ],
+  "main-progress": [
+    {"op": "badgeTiers", "tiers": [{"atLeast": 8, "then": [{"op": "quest", "quest": "main", "stage": 11}]}, {"atLeast": 7, "then": [{"op": "quest", "quest": "main", "stage": 10}]}, {"atLeast": 6, "then": [{"op": "ifFlag", "flag": "villain:boss", "then": [{"op": "quest", "quest": "main", "stage": 9}], "else": [{"op": "quest", "quest": "main", "stage": 8}]}]}, {"atLeast": 5, "then": [{"op": "quest", "quest": "main", "stage": 7}]}, {"atLeast": 4, "then": [{"op": "quest", "quest": "main", "stage": 6}]}, {"atLeast": 3, "then": [{"op": "ifFlag", "flag": "villain:swamp", "then": [{"op": "quest", "quest": "main", "stage": 5}], "else": [{"op": "quest", "quest": "main", "stage": 4}]}]}, {"atLeast": 2, "then": [{"op": "quest", "quest": "main", "stage": 3}]}, {"atLeast": 1, "then": [{"op": "quest", "quest": "main", "stage": 2}]}, {"atLeast": 0, "then": [{"op": "quest", "quest": "main", "stage": 1}]}]}
+  ],
+  "reward-code": [
+    {"op": "say", "text": "这是「{item:chip-compile-cannon}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "giveItem", "item": "chip-compile-cannon", "qty": 1},
+    {"op": "say", "text": "还有这个{item:badge-case}，以后赢来的徽章都可以收在里面。"},
+    {"op": "giveItem", "item": "badge-case", "qty": 1},
+    {"op": "say", "text": "另外，开源社区众筹做了一块{item:hover-board}，专门送给第一次赢下徽章的新人。"},
+    {"op": "giveItem", "item": "hover-board", "qty": 1},
+    {"op": "say", "text": "在野外踩上它，速度会快很多。下一站，去东边的像素港看看吧！"}
+  ],
+  "reward-vision": [
+    {"op": "say", "text": "这是「{item:chip-ray-trace}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "giveItem", "item": "chip-ray-trace", "qty": 1},
+    {"op": "say", "text": "下一座道馆，在开源林镇北边的和弦沙城。"}
+  ],
+  "reward-sound": [
+    {"op": "say", "text": "这是「{item:chip-feedback-howl}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "giveItem", "item": "chip-feedback-howl", "qty": 1},
+    {"op": "say", "text": "再往北就是检索遗都。听说那边最近来了一群奇怪的人……路上小心。"}
+  ],
+  "reward-search": [
+    {"op": "say", "text": "这是「{item:chip-deep-research}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "giveItem", "item": "chip-deep-research", "qty": 1},
+    {"op": "say", "text": "幻觉团被赶跑之后，港口的通信也恢复了。这份{item:dive-protocol}也交给你。"},
+    {"op": "giveItem", "item": "dive-protocol", "qty": 1},
+    {"op": "say", "text": "有了它，智灵就能载着你在水面上前进。海上的小岛，也许藏着意想不到的东西。"},
+    {"op": "say", "text": "继续往北，就是火山脚下的熔炉镇。"}
+  ],
+  "reward-compute": [
+    {"op": "say", "text": "这是「{item:chip-cluster-crush}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "giveItem", "item": "chip-cluster-crush", "qty": 1},
+    {"op": "say", "text": "有了{badge:badge-compute}，霜脊山口的守卫就会放行。山口那边，就是霜盾城。"}
+  ],
+  "reward-safety": [
+    {"op": "say", "text": "这是「{item:chip-superalignment}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "giveItem", "item": "chip-superalignment", "qty": 1},
+    {"op": "say", "text": "往东是枢纽市。最近那里的数据塔……似乎出了些状况。"}
+  ],
+  "reward-agent": [
+    {"op": "say", "text": "这是「{item:chip-full-auto}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "giveItem", "item": "chip-full-auto", "qty": 1},
+    {"op": "say", "text": "最后一座道馆在南边高原上的衡理镇。去吧！"}
+  ],
+  "reward-logic": [
+    {"op": "say", "text": "这是「{item:chip-long-reasoning}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "giveItem", "item": "chip-long-reasoning", "qty": 1},
+    {"op": "ifBadges", "atLeast": 8, "then": [{"op": "say", "text": "八枚徽章都集齐了……去霜盾城北边的遗迹参道吧。"}], "else": [{"op": "say", "text": "等你集齐八枚徽章，就去霜盾城北边的遗迹参道吧。"}]}
+  ],
+  "rival-lab-battle": [
+    {"op": "say", "text": "博士，我的搭档也选好了！——喂，新来的，来试试手吧！", "speaker": "零", "portrait": "rival"},
+    {"op": "rivalBattle", "battle": "lab"},
+    {"op": "setFlag", "flag": "rival:lab"},
+    {"op": "say", "text": "啧……看来你的搭档和你很合得来嘛。", "speaker": "零", "portrait": "rival"},
+    {"op": "say", "text": "我先走一步了。下次见面，我可不会再输！", "speaker": "零", "portrait": "rival"},
+    {"op": "hideNpc", "npc": "rival-lab"}
+  ],
+  "legend-call": [
+    {"op": "say", "text": "……你听，祭坛在回应你。"},
+    {"op": "choice", "text": "要走向祭坛吗？", "options": ["走向祭坛", "再准备一下"], "branches": [[{"op": "fade", "out": true}, {"op": "sfx", "id": "notify"}, {"op": "wait", "ms": 600}, {"op": "fade", "out": false}, {"op": "say", "text": "祭坛上亮起无数行流动的光。一个难以名状的存在，正静静地注视着你。", "speaker": ""}, {"op": "wildBattle", "pick": {"rarities": ["MYTHIC"], "salt": "legend"}, "level": 70, "music": "battle_legend"}, {"op": "setFlag", "flag": "legend"}, {"op": "quest", "quest": "main", "stage": 12, "done": true}, {"op": "say", "text": "光芒渐渐散去。你的旅程，迎来了一个崭新的开始。", "speaker": ""}], [{"op": "say", "text": "传说不会消失。准备好了，再来找我。"}]]}
+  ],
+  "tutor-thanks": [
+    {"op": "say", "text": "好好用它！招式芯片用过一次就会消失，记得挑一只合适的智灵。"}
+  ]
+}

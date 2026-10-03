@@ -1,0 +1,1693 @@
+{
+  "quality": {
+    "low": {"shadows": false, "shadowMapScale": 0.5, "shadowRadius": 1, "dof": false, "dofSamples": 8, "bloom": false, "grassPerTile": 2, "particleScale": 0.35, "pointLights": 2, "viewRadius": 26, "propShadows": false, "waterSparkles": false, "glowSprites": true, "natureVariants": 1, "decorDensity": 0.35, "terrainFringe": false, "snowDust": true, "maxChunks": 36},
+    "medium": {"shadows": true, "shadowMapScale": 0.5, "shadowRadius": 1.5, "dof": true, "dofSamples": 12, "bloom": true, "grassPerTile": 3, "particleScale": 0.6, "pointLights": 4, "viewRadius": 30, "propShadows": true, "waterSparkles": true, "glowSprites": true, "natureVariants": 2, "decorDensity": 0.65, "terrainFringe": true, "snowDust": true, "maxChunks": 44},
+    "high": {"shadows": true, "shadowMapScale": 1, "shadowRadius": 2, "dof": true, "dofSamples": 20, "bloom": true, "grassPerTile": 4, "particleScale": 1, "pointLights": 8, "viewRadius": 36, "propShadows": true, "waterSparkles": true, "glowSprites": true, "natureVariants": 4, "decorDensity": 1.0, "terrainFringe": true, "snowDust": true, "maxChunks": 56},
+    "ultra": {"shadows": true, "shadowMapScale": 1.5, "shadowRadius": 2.5, "dof": true, "dofSamples": 32, "bloom": true, "grassPerTile": 6, "particleScale": 1.4, "pointLights": 10, "viewRadius": 44, "propShadows": true, "waterSparkles": true, "glowSprites": true, "natureVariants": 5, "decorDensity": 1.35, "terrainFringe": true, "snowDust": true, "maxChunks": 72}
+  },
+  "post": {
+    "focusRange": 3.2,
+    "focusFalloff": 9,
+    "tiltShift": 1.25,
+    "tiltBand": 0.1,
+    "bokehScale": 3.4,
+    "bloomStrength": 0.6,
+    "bloomRadius": 0.32,
+    "bloomThreshold": 1.3,
+    "vignette": 0.42,
+    "vignetteSoftness": 0.62,
+    "saturation": 1.12,
+    "contrast": 1.06,
+    "contrastPivot": 0.2,
+    "warmth": 0.12,
+    "warmthScale": 0.16,
+    "exposure": 1,
+    "toneMapping": "neutral",
+    "lift": [0.006, 0.004, 0.014],
+    "gain": [1.02, 1, 0.97],
+    "minScale": 1,
+    "flash": {"color": "#ffffff", "ms": 260, "strength": 1.6},
+    "shake": {"frequency": 26, "rollDeg": 0.6},
+    "transition": {"fadeColor": "#000000", "swirlPortion": 0.45, "swirlTurns": 2.2, "shardCells": 6, "shardSpin": 1.6, "shardStagger": 0.55, "battleFlash": 0.9, "irisSoftPx": 1.5, "irisMaxRadius": 1.25}
+  },
+  "camera": {"near": 0.5, "far": 180, "edgeMargin": 1.5, "zoomDamping": 5, "lookAheadDamping": 2.2, "lookAheadMinSpeed": 0.4, "interiorMargin": 1.2, "snapDistance": 12, "focusSafe": {"north": 0.36, "south": 0.6, "side": 0.35}, "billboard": {"lean": 1, "compensate": 1}},
+  "sun": {"distance": 60, "shadowExtent": 20, "shadowNear": 1, "shadowFar": 160, "bias": -0.0006, "normalBias": 0.035, "sunrise": 330, "sunset": 1170, "switchFadeMinutes": 28, "switchFloor": 0.12, "minElevationDeg": 16, "maxElevationDeg": 60, "azimuthRiseDeg": 72, "azimuthSetDeg": -72, "moonElevationDeg": 52, "moonAzimuthDeg": -28, "extentPerDistance": 1.15},
+  "timeOfDay": [
+    {"minute": 0, "skyTop": "#050920", "skyHorizon": "#172150", "skyBottom": "#0a0f28", "sun": "#8ea6ec", "sunIntensity": 0.8, "hemiSky": "#4a5ea8", "hemiGround": "#1c1832", "hemiIntensity": 1.05, "fog": "#111a3c", "fogNear": 10, "fogFar": 58, "exposure": 1.05, "saturation": 0.86, "contrast": 1.08, "warmth": -0.4, "bloomStrength": 0.55, "vignette": 0.52, "lamps": 1, "stars": 1},
+    {"minute": 290, "skyTop": "#070b26", "skyHorizon": "#1d2758", "skyBottom": "#0c112c", "sun": "#8ea6ec", "sunIntensity": 0.8, "hemiSky": "#4a5ea8", "hemiGround": "#1c1832", "hemiIntensity": 1.05, "fog": "#141d42", "fogNear": 10, "fogFar": 58, "exposure": 1.05, "saturation": 0.86, "contrast": 1.08, "warmth": -0.4, "bloomStrength": 0.55, "vignette": 0.52, "lamps": 1, "stars": 1},
+    {"minute": 345, "skyTop": "#3a4a8e", "skyHorizon": "#f5a57c", "skyBottom": "#6a5878", "sun": "#ffb07a", "sunIntensity": 1.8, "hemiSky": "#b4a6d8", "hemiGround": "#4c3a40", "hemiIntensity": 0.95, "fog": "#d8a698", "fogNear": 14, "fogFar": 66, "exposure": 1, "saturation": 1.02, "contrast": 1.05, "warmth": 0.4, "bloomStrength": 0.55, "vignette": 0.45, "lamps": 0.45, "stars": 0.15},
+    {"minute": 420, "skyTop": "#5a98e0", "skyHorizon": "#d0e6ff", "skyBottom": "#a6c2df", "sun": "#ffe6c0", "sunIntensity": 2.35, "hemiSky": "#bcd6ff", "hemiGround": "#5e4b38", "hemiIntensity": 1.0, "fog": "#c6dcf2", "fogNear": 16, "fogFar": 78, "exposure": 1, "saturation": 1.12, "contrast": 1.06, "warmth": 0.16, "bloomStrength": 0.55, "vignette": 0.4, "lamps": 0, "stars": 0},
+    {"minute": 720, "skyTop": "#4a8ee0", "skyHorizon": "#d8edff", "skyBottom": "#acc8e4", "sun": "#fff4e2", "sunIntensity": 2.7, "hemiSky": "#c4deff", "hemiGround": "#6a5640", "hemiIntensity": 1.05, "fog": "#cfe3f6", "fogNear": 18, "fogFar": 84, "exposure": 1, "saturation": 1.12, "contrast": 1.06, "warmth": 0.1, "bloomStrength": 0.5, "vignette": 0.38, "lamps": 0, "stars": 0},
+    {"minute": 1020, "skyTop": "#5a8ed8", "skyHorizon": "#f2dcc0", "skyBottom": "#b8b4c0", "sun": "#ffd8a2", "sunIntensity": 2.45, "hemiSky": "#c8d4f0", "hemiGround": "#6a5038", "hemiIntensity": 1.0, "fog": "#e4d6c6", "fogNear": 16, "fogFar": 78, "exposure": 1, "saturation": 1.14, "contrast": 1.06, "warmth": 0.24, "bloomStrength": 0.55, "vignette": 0.4, "lamps": 0, "stars": 0},
+    {"minute": 1110, "skyTop": "#5656a6", "skyHorizon": "#ff986a", "skyBottom": "#7a4e6e", "sun": "#ff9858", "sunIntensity": 2.3, "hemiSky": "#d49ab0", "hemiGround": "#402c34", "hemiIntensity": 1.0, "fog": "#e69e82", "fogNear": 14, "fogFar": 68, "exposure": 1, "saturation": 1.12, "contrast": 1.07, "warmth": 0.55, "bloomStrength": 0.55, "vignette": 0.46, "lamps": 0.55, "stars": 0},
+    {"minute": 1165, "skyTop": "#26286a", "skyHorizon": "#c4687a", "skyBottom": "#3a2a50", "sun": "#ff7a62", "sunIntensity": 0.6, "hemiSky": "#7a6cb0", "hemiGround": "#2a2238", "hemiIntensity": 0.95, "fog": "#5e4a7c", "fogNear": 12, "fogFar": 62, "exposure": 1.02, "saturation": 1.0, "contrast": 1.07, "warmth": 0.1, "bloomStrength": 0.55, "vignette": 0.5, "lamps": 1, "stars": 0.4},
+    {"minute": 1230, "skyTop": "#060a22", "skyHorizon": "#1a2454", "skyBottom": "#0b1028", "sun": "#8ea6ec", "sunIntensity": 0.8, "hemiSky": "#4a5ea8", "hemiGround": "#1c1832", "hemiIntensity": 1.05, "fog": "#121b3e", "fogNear": 10, "fogFar": 58, "exposure": 1.05, "saturation": 0.86, "contrast": 1.08, "warmth": -0.4, "bloomStrength": 0.55, "vignette": 0.52, "lamps": 1, "stars": 1}
+  ],
+  "interior": {"skyTop": "#0a0706", "skyHorizon": "#120c0a", "skyBottom": "#050303", "sun": "#ffe2b8", "sunIntensity": 1.25, "hemiSky": "#ffe6cc", "hemiGround": "#6a4a3a", "hemiIntensity": 1.2, "fog": "#0c0806", "fogNear": 30, "fogFar": 90, "exposure": 1.05, "saturation": 1.1, "contrast": 1.05, "warmth": 0.32, "bloomStrength": 0.6, "vignette": 0.5, "lamps": 1, "stars": 0, "sunElevationDeg": 62, "sunAzimuthDeg": 24, "ambient": ["motes"]},
+  "cave": {"skyTop": "#05040a", "skyHorizon": "#0c0a14", "skyBottom": "#030206", "sun": "#9a8cc8", "sunIntensity": 0.85, "hemiSky": "#6a5c90", "hemiGround": "#1c1622", "hemiIntensity": 1.35, "fog": "#0a0812", "fogNear": 12, "fogFar": 52, "exposure": 1.1, "saturation": 0.95, "contrast": 1.08, "warmth": -0.05, "bloomStrength": 0.5, "vignette": 0.6, "lamps": 1, "stars": 0, "sunElevationDeg": 70, "sunAzimuthDeg": 10, "ambient": ["motes", "spores"]},
+  "sky": {"domeRadius": 150, "starDensity": 0.0035, "starColor": "#dfe8ff", "starIntensity": 1.6, "twinkleSpeed": 2.2},
+  "terrain": {
+    "atlasCell": 64,
+    "atlasPad": 2,
+    "uvVariation": {
+      "default": "flip",
+      "keys": {"cliff_dirt": "mirror", "cliff_snow": "mirror", "flowers": "mirror", "crystal_floor": "mirror", "ruin": "mirror", "lava": "mirror", "tile_floor": "none", "carpet": "none", "wood": "none", "bridge": "none", "stairs": "none", "tech": "none", "wall": "none"}
+    },
+    "tintVariation": 0.09,
+    "tintScale": 0.09,
+    "aoStrength": 0.42,
+    "cliffBottomShade": 0.62,
+    "cliffTopLight": 1.06,
+    "skirtDepth": 4,
+    "presetSkirtDepth": 0.6,
+    "liquidDrop": 0.12,
+    "stairSteps": 4,
+    "stairsInset": 0.02,
+    "wallTopColor": "#2a2430",
+    "defaultCliff": "cliff_rock",
+    "fallbackColor": "#808080",
+    "glossy": {"shininess": 70, "specular": "#cfe6ff"},
+    "surfaces": {"void": {"kind": "none"}, "water": {"kind": "water", "bed": "sand", "depth": 0.62, "deep": 1}, "shallow": {"kind": "water", "bed": "sand", "depth": 0.24, "deep": 0}, "lava": {"kind": "lava", "bed": "ash", "depth": 0.3}, "ice": {"kind": "glossy"}, "crystal_floor": {"kind": "glossy"}, "tech": {"kind": "glossy"}, "tile_floor": {"kind": "glossy"}, "wall": {"kind": "wall", "height": 2.8, "cutawayHeight": 0.35}},
+    "defaultLiquid": {"kind": "water", "depth": 0.4, "deep": 0.5},
+    "mapKindSurfaces": {
+      "cave": {
+        "wall": {"kind": "wall", "height": 1.9, "cutawayHeight": 0.5, "face": "$cliff", "topColor": "#6a6278", "top": "rock"}
+      }
+    },
+    "fieldTint": {"grass": {"dry": [1.22, 1.02, 0.62], "lush": [0.88, 1.06, 0.9], "autumn": [1.1, 0.97, 0.8]}, "tall_grass": {"dry": [1.25, 1.04, 0.6], "lush": [0.86, 1.05, 0.88], "autumn": [1.12, 0.96, 0.78]}, "forest_floor": {"dry": [1.12, 1.0, 0.8], "lush": [0.86, 1.0, 0.86], "autumn": [1.28, 0.95, 0.7]}, "dark_grass": {"lush": [0.92, 1.0, 0.95], "autumn": [1.16, 0.95, 0.8]}, "flowers": {"dry": [1.1, 1.0, 0.82], "lush": [0.94, 1.03, 0.95]}, "sand": {"dry": [1.04, 1.0, 0.93], "lush": [0.95, 0.98, 0.96]}, "desert_grass": {"dry": [1.1, 1.0, 0.82], "lush": [0.9, 1.06, 0.88]}, "path": {"dry": [1.06, 1.0, 0.92], "lush": [0.94, 0.97, 0.94]}, "mud": {"lush": [0.9, 0.96, 0.9]}, "tall_reeds": {"dry": [1.15, 1.0, 0.72], "lush": [0.9, 1.04, 0.9]}, "rock": {"dry": [1.05, 1.0, 0.94]}, "snow": {"base": [0.8, 0.84, 0.9]}, "tall_snowgrass": {"base": [0.92, 0.95, 1.0]}, "ledge_grass": {"dry": [1.22, 1.02, 0.62], "lush": [0.88, 1.06, 0.9], "autumn": [1.1, 0.97, 0.8]}, "ledge_sand": {"dry": [1.04, 1.0, 0.93], "lush": [0.95, 0.98, 0.96]}, "ledge_rock": {"dry": [1.05, 1.0, 0.94]}, "ledge_snow": {"base": [0.8, 0.84, 0.9]}, "ledge_dirt": {"dry": [1.12, 1.0, 0.8], "lush": [0.86, 1.0, 0.86], "autumn": [1.28, 0.95, 0.7]}, "sakura_grass": {"dry": [1.15, 1.02, 0.7], "lush": [0.9, 1.05, 0.92], "blossom": [1.08, 0.95, 1.0]}, "tall_sakura": {"dry": [1.12, 1.0, 0.76], "lush": [0.92, 1.04, 0.94], "blossom": [1.06, 0.95, 1.0]}, "bamboo_floor": {"dry": [1.12, 1.0, 0.78], "lush": [0.9, 1.04, 0.9], "autumn": [1.15, 0.98, 0.8]}, "jungle_floor": {"dry": [1.1, 1.0, 0.8], "lush": [0.86, 1.04, 0.86]}, "tall_fern": {"dry": [1.18, 1.02, 0.66], "lush": [0.86, 1.05, 0.88], "autumn": [1.1, 0.97, 0.8]}, "savanna": {"dry": [1.1, 0.98, 0.78], "lush": [0.92, 1.06, 0.88]}, "tall_savanna": {"dry": [1.12, 1.0, 0.76], "lush": [0.92, 1.06, 0.88]}, "lavender": {"dry": [1.06, 1.0, 0.88], "blossom": [1.04, 0.96, 1.06]}, "tall_lavender": {"dry": [1.06, 1.0, 0.88], "blossom": [1.05, 0.95, 1.08]}, "moss": {"lush": [0.9, 1.04, 0.92], "autumn": [1.1, 0.98, 0.85]}, "salt": {"base": [0.86, 0.86, 0.87]}, "red_rock": {"dry": [1.05, 0.98, 0.92]}, "coral_sand": {"base": [0.95, 0.93, 0.92]}, "cloud": {"base": [0.84, 0.86, 0.9]}},
+    "ledge": {
+      "lipOut": 0.12,
+      "lipRaise": 0.035,
+      "lipHeight": 0.15,
+      "lipShade": 0.96,
+      "faces": {},
+      "tops": {"ledge_grass": "grass", "ledge_dirt": "forest_floor", "ledge_sand": "sand", "ledge_rock": "rock", "ledge_snow": "snow"}
+    }
+  },
+  "water": {
+    "deep": "#1d6aa6",
+    "mid": "#2c95c8",
+    "shallow": "#6ad0e0",
+    "foam": "#eafcff",
+    "sparkle": "#ffffff",
+    "sparkleIntensity": 2.4,
+    "sparkleDensity": 0.006,
+    "alphaDeep": 0.9,
+    "alphaShallow": 0.62,
+    "pixelsPerTile": 16,
+    "waveSpeed": 1.1,
+    "waveScale": 0.85,
+    "waveHeight": 0.035,
+    "foamWidth": 0.42,
+    "foamSpeed": 1.6,
+    "foamNoise": 0.18,
+    "lightMin": 0.18,
+    "rippleScale": 3.6,
+    "rippleSpeed": 0.9,
+    "troughLevel": 0.3,
+    "troughShade": 0.12,
+    "crestLevel": 0.75,
+    "crestAmount": 0.24,
+    "falls": {"body": "#78c4ec", "streak": "#e6f7ff", "speed": 2.4, "streaks": 5, "streakAmount": 0.36, "crestBand": 0.08, "splashBand": 0.24, "alpha": 0.88, "offset": 0.03, "overlap": 0.06, "crest": 0.02}
+  },
+  "lava": {"hot": "#ffcf4a", "mid": "#ff5a14", "crust": "#3c120a", "emissive": 2.6, "pixelsPerTile": 16, "flowSpeed": 0.22, "crustAmount": 0.45, "pulseSpeed": 1.3},
+  "wind": {"dir": [1, 0.35], "strength": 0.085, "speed": 1.6, "gust": 0.4, "gustSpeed": 0.35, "swayHeight": 3},
+  "grass": {"height": 0.62, "width": 0.78, "planes": 3, "jitter": 0.32, "colorJitter": 0.1, "scaleJitter": 0.22, "bendRadius": 1.15, "bendStrength": 0.6, "sway": 1.4, "texSize": 32, "blades": 11, "rootShade": 0.55, "tipLight": 1.22, "maxBenders": 8, "alphaTest": 0.5, "bendSink": 0.35, "bendCore": 0.2, "assetTufts": ["tall_sakura", "tall_lavender", "tall_fern", "tall_glitch", "tall_savanna"]},
+  "lights": {"pointIntensity": 1.9, "decay": 1.25, "distanceMul": 1.55, "glowSize": 0.4, "glowIntensity": 1.1, "glowFlicker": 0.06, "flickerSpeed": 9, "reassignSeconds": 0.2, "fadeSpeed": 2.5, "emissiveNight": 1.5, "emissiveDay": 0.06, "emissiveAlways": 1.25, "frontOffset": 0.4},
+  "weather": {
+    "clear": {"particles": [], "grade": {}},
+    "rain": {
+      "particles": ["rain", "splash"],
+      "grade": {"exposure": 0.8, "saturation": 0.76, "contrast": 0.98, "warmth": -0.25, "fogNear": 0.55, "fogFar": 0.5, "sun": 0.3, "hemi": 0.85, "lamps": 0.55, "bloomStrength": 1.15, "tint": "#7e92b4", "tintAmount": 0.3, "vignette": 0.08},
+      "wind": 2.2,
+      "ambientScale": 0.15
+    },
+    "snow": {
+      "particles": ["snow"],
+      "grade": {"exposure": 0.98, "saturation": 0.8, "contrast": 0.98, "warmth": -0.3, "fogNear": 0.65, "fogFar": 0.6, "sun": 0.6, "hemi": 1.08, "lamps": 0.25, "bloomStrength": 1.05, "tint": "#dfe8f6", "tintAmount": 0.35, "vignette": 0.02},
+      "wind": 0.8,
+      "ambientScale": 0.25
+    },
+    "sand": {
+      "particles": ["sand"],
+      "grade": {"exposure": 0.96, "saturation": 0.82, "contrast": 0.96, "warmth": 0.55, "fogNear": 0.35, "fogFar": 0.4, "sun": 0.6, "hemi": 0.95, "lamps": 0.2, "bloomStrength": 1, "tint": "#d8b070", "tintAmount": 0.55, "vignette": 0.06},
+      "wind": 3.2,
+      "ambientScale": 0.2
+    },
+    "fog": {
+      "particles": ["fogwisp"],
+      "grade": {"exposure": 0.95, "saturation": 0.7, "contrast": 0.94, "warmth": -0.1, "fogNear": 0.2, "fogFar": 0.32, "sun": 0.45, "hemi": 1.0, "lamps": 0.4, "bloomStrength": 1.2, "tint": "#b4bccc", "tintAmount": 0.6, "vignette": 0.04},
+      "wind": 0.5,
+      "ambientScale": 0.6
+    },
+    "aurora": {
+      "particles": [],
+      "aurora": true,
+      "grade": {"exposure": 1.05, "saturation": 1.1, "contrast": 1.02, "warmth": -0.2, "fogNear": 1, "fogFar": 1, "sun": 1, "hemi": 1.1, "lamps": 1, "bloomStrength": 1.25, "tint": "#7affd0", "tintAmount": 0.12, "vignette": 0},
+      "wind": 0.4
+    },
+    "ash": {
+      "particles": ["ash", "ashember"],
+      "grade": {"exposure": 0.86, "saturation": 0.78, "contrast": 1.04, "warmth": 0.3, "fogNear": 0.5, "fogFar": 0.55, "sun": 0.5, "hemi": 0.9, "lamps": 0.5, "bloomStrength": 1.15, "tint": "#8a6a5a", "tintAmount": 0.4, "vignette": 0.08},
+      "wind": 0.9,
+      "ambientScale": 0.3
+    }
+  },
+  "weatherFadeSeconds": 2.5,
+  "aurora": {"colors": ["#3cffb0", "#5ad0ff", "#b07cff"], "intensity": 1.6, "speed": 0.12, "bands": 3, "height": 0.42, "alpha": 0.55, "distance": 40, "nightOnly": true},
+  "particles": {
+    "rain": {"count": 2600, "box": [30, 12, 26], "y": [0, 12], "color": "#cfdcff", "alpha": 0.7, "size": 11, "shape": "streak", "velocity": [-2.2, -17, 1.2], "swirl": 0, "swirlSpeed": 0, "glow": 1.2, "twinkle": 0, "time": "any", "windFactor": 0.6},
+    "splash": {"count": 220, "box": [26, 0, 22], "y": [0.04, 0.04], "color": "#d6e4ff", "alpha": 0.55, "size": 5, "shape": "ring", "velocity": [0, 0, 0], "swirl": 0, "swirlSpeed": 0, "glow": 1.1, "twinkle": 0, "time": "any", "life": 0.42, "windFactor": 0},
+    "snow": {"count": 1400, "box": [30, 10, 26], "y": [0, 10], "color": "#ffffff", "alpha": 0.9, "size": 4.5, "shape": "dot", "velocity": [-0.4, -1.3, 0.25], "swirl": 0.45, "swirlSpeed": 0.8, "glow": 1.3, "twinkle": 0, "time": "any", "windFactor": 0.5},
+    "sand": {"count": 1300, "box": [32, 4, 26], "y": [0, 4], "color": "#e8c88a", "alpha": 0.55, "size": 3, "shape": "hstreak", "velocity": [9, -0.2, 1.5], "swirl": 0.35, "swirlSpeed": 1.6, "glow": 1, "twinkle": 0, "time": "any", "windFactor": 0.3},
+    "fogwisp": {"count": 46, "box": [34, 2, 28], "y": [0.2, 1.6], "color": "#e4eaf4", "alpha": 0.16, "size": 120, "shape": "soft", "velocity": [0.35, 0, 0.1], "swirl": 0.8, "swirlSpeed": 0.15, "glow": 1, "twinkle": 0, "time": "any", "windFactor": 0.3, "worldSize": true},
+    "ash": {"count": 700, "box": [30, 9, 26], "y": [0, 9], "color": "#5a5452", "alpha": 0.85, "size": 3, "shape": "dot", "velocity": [-0.3, -0.7, 0.1], "swirl": 0.5, "swirlSpeed": 0.6, "glow": 1, "twinkle": 0, "time": "any", "windFactor": 0.4},
+    "ashember": {"count": 140, "box": [28, 6, 24], "y": [0, 6], "color": "#ff8a3a", "alpha": 0.95, "size": 2, "shape": "dot", "velocity": [0.1, 0.6, 0], "swirl": 0.7, "swirlSpeed": 1.1, "glow": 3.2, "twinkle": 1.5, "time": "any", "windFactor": 0.3},
+    "fireflies": {"count": 70, "box": [26, 2.6, 22], "y": [0.25, 2.4], "color": "#d6ff76", "alpha": 1, "size": 2.5, "shape": "dot", "velocity": [0, 0, 0], "swirl": 0.9, "swirlSpeed": 0.35, "glow": 4, "twinkle": 1.4, "time": "night", "windFactor": 0},
+    "leaves": {"count": 60, "box": [26, 7, 22], "y": [0, 7], "colors": ["#7cb84a", "#c8a03a", "#d0703a", "#5a9a3a"], "alpha": 1, "size": 3, "shape": "leaf", "velocity": [0.7, -0.75, 0.2], "swirl": 0.9, "swirlSpeed": 1.1, "glow": 1, "twinkle": 0, "time": "day", "windFactor": 0.7},
+    "petals": {"count": 70, "box": [26, 6, 22], "y": [0, 6], "colors": ["#ffc6dc", "#ffe2ee", "#f49cc0"], "alpha": 1, "size": 2.5, "shape": "leaf", "velocity": [0.6, -0.55, 0.15], "swirl": 1.0, "swirlSpeed": 1.3, "glow": 1.1, "twinkle": 0, "time": "day", "windFactor": 0.7},
+    "dust": {"count": 120, "box": [28, 3, 24], "y": [0.1, 3], "color": "#f0dcae", "alpha": 0.5, "size": 2, "shape": "dot", "velocity": [0.4, 0.05, 0.05], "swirl": 0.6, "swirlSpeed": 0.4, "glow": 1.2, "twinkle": 0.4, "time": "any", "windFactor": 0.4},
+    "embers": {"count": 120, "box": [26, 6, 22], "y": [0, 6], "color": "#ff7a2a", "alpha": 1, "size": 2, "shape": "dot", "velocity": [0.1, 0.9, 0], "swirl": 0.6, "swirlSpeed": 1.2, "glow": 3.4, "twinkle": 1.6, "time": "any", "windFactor": 0.2},
+    "snowfall": {"count": 360, "box": [28, 8, 24], "y": [0, 8], "color": "#ffffff", "alpha": 0.85, "size": 2, "shape": "dot", "velocity": [-0.2, -0.8, 0.1], "swirl": 0.4, "swirlSpeed": 0.7, "glow": 1.2, "twinkle": 0, "time": "any", "windFactor": 0.4},
+    "spores": {"count": 90, "box": [24, 3, 20], "y": [0.2, 3], "color": "#9cff8a", "alpha": 0.9, "size": 2, "shape": "dot", "velocity": [0, 0.18, 0], "swirl": 0.5, "swirlSpeed": 0.3, "glow": 2.6, "twinkle": 1.0, "time": "any", "windFactor": 0.1},
+    "motes": {"count": 80, "box": [22, 3.5, 18], "y": [0.3, 3.5], "color": "#ffe9b0", "alpha": 0.8, "size": 2, "shape": "dot", "velocity": [0.05, 0.08, 0], "swirl": 0.5, "swirlSpeed": 0.25, "glow": 2.2, "twinkle": 1.2, "time": "any", "windFactor": 0},
+    "sparkles": {"count": 90, "box": [26, 1.2, 22], "y": [0.05, 1.2], "color": "#ffffff", "alpha": 1, "size": 3, "shape": "star", "velocity": [0, 0, 0], "swirl": 0.1, "swirlSpeed": 0.2, "glow": 3, "twinkle": 2.6, "time": "day", "windFactor": 0}
+  },
+  "ambientFadeSeconds": 2,
+  "actors": {
+    "height": 1.6,
+    "width": 1.6,
+    "alphaTest": 0.5,
+    "walkFps": 7,
+    "runFps": 11,
+    "grassCut": 0.3,
+    "normalTilt": 0.6,
+    "hop": {"height": 0.34, "ms": 300},
+    "blob": {"size": 0.72, "opacity": 0.36},
+    "bubbleMs": 1800,
+    "remoteAlpha": 1,
+    "nameColor": "#ffffff",
+    "walkCycle": {"stride": {"walk": 0.9, "run": 1.2}, "maxFps": 12, "teleportTiles": 2},
+    "motion": {"stepBounce": 0.045, "runBounceMul": 1.3, "stepSquash": 0.05, "stepsPerCycle": 2, "breathe": 0.018, "breatheHz": 0.55, "landSquash": 0.14, "landMs": 160}
+  },
+  "creatures": {
+    "height": 1.0,
+    "alphaTest": 0.45,
+    "bob": {"amp": 0.045, "hz": 1.5, "squash": 0.045},
+    "move": {"hopHeight": 0.16, "hz": 3.2},
+    "shiny": {"hue": 2.2, "saturation": 1.18, "sparkles": 10, "sparkleColor": "#fff6b0", "sparkleGlow": 3, "sparkleSize": 4, "twinkleSpeed": 4},
+    "aura": {"radius": 0.62, "intensity": 2.2, "pulseHz": 1.1, "motes": 12, "moteHeight": 1.4, "ringInner": 0.7, "moteSpeed": 0.4, "moteSize": 2},
+    "artFacesLeft": true
+  },
+  "overlay": {
+    "nameOffsetPx": 6,
+    "bubbleOffsetPx": 14,
+    "maxDistance": 40,
+    "style": {"tagFontPx": 12, "tagPadding": "2px 4px 1px", "tagBackground": "rgba(10, 12, 24, 0.55)", "tagRadiusPx": 3, "tagTextShadow": "1px 1px 0 rgba(0, 0, 0, 0.85)", "bubbleFontPx": 13, "bubblePadding": "4px 7px", "bubbleText": "#1d1a2a", "bubbleBackground": "#fffdf4", "bubbleBorder": "#1d1a2a", "bubbleBorderPx": 2, "bubbleRadiusPx": 6, "bubbleShadow": "2px 2px 0 rgba(0, 0, 0, 0.35)", "bubbleMaxWidthPx": 220, "bubbleTailPx": 5, "popMs": 160}
+  },
+  "groundItems": {"color": "#ffe27a", "radius": 0.13, "glow": 2.8, "bobAmp": 0.06, "bobHz": 1.3, "height": 0.32, "glowSize": 0.55},
+  "fx": {
+    "poolSize": 700,
+    "kinds": {
+      "exclaim": [
+        {"type": "icon", "glyph": "!", "color": "#ff4e42", "outline": "#ffffff", "size": 0.62, "y": 1.95, "rise": 0.22, "life": 0.95, "pop": 0.14}
+      ],
+      "question": [
+        {"type": "icon", "glyph": "?", "color": "#4fa8ff", "outline": "#ffffff", "size": 0.62, "y": 1.95, "rise": 0.22, "life": 1.1, "pop": 0.14}
+      ],
+      "heart": [
+        {"type": "icon", "glyph": "♥", "color": "#ff5c9a", "outline": "#ffffff", "size": 0.5, "y": 1.6, "rise": 0.6, "life": 1.2, "pop": 0.16},
+        {"type": "burst", "count": 6, "colors": ["#ff8ab8", "#ffc4dc"], "speed": [0.3, 0.8], "up": [0.6, 1.2], "gravity": -0.5, "life": [0.6, 1.0], "size": [2, 3], "glow": 2, "shape": "dot", "y": 1.4, "radius": 0.2, "drag": 1.2}
+      ],
+      "grass": [
+        {"type": "burst", "count": 10, "colors": ["#5aa83a", "#7cc84e", "#3f7f2a", "#a6d86a"], "speed": [0.6, 1.8], "up": [1.6, 2.8], "gravity": 9, "life": [0.35, 0.7], "size": [2, 3.5], "glow": 1, "shape": "leaf", "y": 0.25, "radius": 0.25, "drag": 1.6}
+      ],
+      "dust": [
+        {"type": "burst", "count": 7, "colors": ["#d8c49a", "#c4ae86", "#e8dcc0"], "speed": [0.4, 1.1], "up": [0.2, 0.6], "gravity": -0.4, "life": [0.35, 0.6], "size": [3, 5], "glow": 1, "shape": "soft", "y": 0.08, "radius": 0.15, "drag": 3}
+      ],
+      "sparkle": [
+        {"type": "burst", "count": 9, "colors": ["#ffffff", "#fff2a8", "#bfe8ff"], "speed": [0.3, 1.0], "up": [0.4, 1.4], "gravity": 0.6, "life": [0.5, 0.9], "size": [3, 4], "glow": 3.5, "shape": "star", "y": 0.5, "radius": 0.3, "drag": 1.4}
+      ],
+      "splash": [
+        {"type": "burst", "count": 12, "colors": ["#d8f2ff", "#9ad8ff", "#ffffff"], "speed": [0.6, 1.6], "up": [1.8, 3.2], "gravity": 10, "life": [0.35, 0.65], "size": [2, 3], "glow": 1.4, "shape": "dot", "y": 0.05, "radius": 0.2, "drag": 0.8},
+        {"type": "ring", "color": "#e4f6ff", "radius": [0.1, 0.9], "life": 0.5, "intensity": 1.2, "width": 0.08, "y": 0.04}
+      ],
+      "warp": [
+        {"type": "ring", "color": "#8ad8ff", "radius": [0.2, 1.2], "life": 0.7, "intensity": 2.6, "width": 0.12, "y": 0.04},
+        {"type": "column", "color": "#9ae2ff", "radius": 0.55, "height": 3.2, "life": 0.8, "intensity": 2.4},
+        {"type": "burst", "count": 18, "colors": ["#bfefff", "#ffffff", "#7ad0ff"], "speed": [0.1, 0.4], "up": [2, 4], "gravity": -1, "life": [0.5, 0.9], "size": [2, 3], "glow": 3, "shape": "dot", "y": 0.2, "radius": 0.5, "drag": 0.5}
+      ],
+      "levelup": [
+        {"type": "ring", "color": "#ffd84a", "radius": [0.15, 1.1], "life": 0.8, "intensity": 2.8, "width": 0.1, "y": 0.05},
+        {"type": "burst", "count": 22, "colors": ["#ffe27a", "#fff6c8", "#ffb43c"], "speed": [0.2, 0.7], "up": [1.6, 3.4], "gravity": -0.6, "life": [0.7, 1.2], "size": [2, 4], "glow": 3.4, "shape": "star", "y": 0.3, "radius": 0.45, "drag": 0.8}
+      ],
+      "shiny": [
+        {"type": "burst", "count": 16, "colors": ["#ffffff", "#fff4a0", "#a8f0ff", "#ffb0e0"], "speed": [0.8, 1.8], "up": [0.6, 1.6], "gravity": 0.4, "life": [0.6, 1.0], "size": [3, 5], "glow": 4, "shape": "star", "y": 0.7, "radius": 0.15, "drag": 1.8},
+        {"type": "ring", "color": "#fff4b0", "radius": [0.1, 1.0], "life": 0.55, "intensity": 3, "width": 0.06, "y": 0.06}
+      ]
+    },
+    "iconFont": "bold 26px 'Fusion Pixel', 'Fusion Pixel 12px', monospace",
+    "iconTexSize": 32
+  },
+  "props": {
+    "instanceBlock": 16,
+    "patternSize": 32,
+    "patternUnits": 1,
+    "modelEmissive": 0.75,
+    "defaultTintJitter": 0.05,
+    "foliageAlphaTest": 0.5,
+    "foliageNormalBlend": 0.65,
+    "rock": {"jitter": 0.4, "floor": -0.18},
+    "house": {"plinth": 0.12, "cornerTrim": 0.16, "band": 0.1, "bandOut": 0.08, "ridgeCap": [0.1, 0.16], "eave": 0.08, "flatSlab": 0.14, "parapet": [0.06, 0.3], "doorFrame": [0.18, 0.09, 0.08], "doorDepth": 0.06, "doorStep": [0.34, 0.07, 0.4], "doorWidth": 0.8, "doorHeight": 0.62, "windowFrame": 0.1, "windowDepth": 0.08, "sill": [0.16, 0.05, 0.12], "signGap": 0.14, "signDepth": 0.07, "chimneyRoofShare": 0.55, "awningTilt": 14, "awningThickness": 0.04, "gableFill": 0.95},
+    "patterns": {"noiseAmount": 0.05},
+    "default": {
+      "builder": "parts",
+      "parts": [
+        {"shape": "box", "pos": [0, 0, 0], "size": [0.86, 1, 0.86], "color": "#9a8a7a", "pattern": "stone"}
+      ]
+    },
+    "styles": {
+      "tree_oak": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.14,
+        "tintJitter": 0.1,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.22, 0.42, 0.22], "color": "#6b4a2f", "pattern": "bark"},
+          {"shape": "sphere", "pos": [0, 0.3, 0], "size": [1.18, 0.48, 1.18], "color": "#4a9438", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [-0.2, 0.5, 0.1], "size": [0.82, 0.36, 0.82], "color": "#5aa843", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.22, 0.46, -0.08], "size": [0.78, 0.36, 0.78], "color": "#3f8634", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.02, 0.66, 0.02], "size": [0.66, 0.32, 0.66], "color": "#6cbc4e", "pattern": "leaves", "foliage": true}
+        ]
+      },
+      "tree_pine": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.16,
+        "tintJitter": 0.08,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.2, 0.3, 0.2], "color": "#5a3c26", "pattern": "bark"},
+          {"shape": "cone", "pos": [0, 0.16, 0], "size": [1.15, 0.36, 1.15], "color": "#2c6440", "pattern": "leaves", "foliage": true},
+          {"shape": "cone", "pos": [0, 0.36, 0], "size": [0.9, 0.32, 0.9], "color": "#34744a", "pattern": "leaves", "foliage": true},
+          {"shape": "cone", "pos": [0, 0.55, 0], "size": [0.64, 0.28, 0.64], "color": "#3c8454", "pattern": "leaves", "foliage": true},
+          {"shape": "cone", "pos": [0, 0.73, 0], "size": [0.38, 0.27, 0.38], "color": "#46925c", "pattern": "leaves", "foliage": true}
+        ]
+      },
+      "tree_snowpine": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.16,
+        "tintJitter": 0.05,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.2, 0.3, 0.2], "color": "#4e3828", "pattern": "bark"},
+          {"shape": "cone", "pos": [0, 0.16, 0], "size": [1.15, 0.36, 1.15], "color": "#2a5a46", "pattern": "leaves", "foliage": true},
+          {"shape": "cone", "pos": [0, 0.27, 0], "size": [0.92, 0.22, 0.92], "color": "#eef4fb", "pattern": "plaster", "foliage": true},
+          {"shape": "cone", "pos": [0, 0.38, 0], "size": [0.88, 0.3, 0.88], "color": "#2e624c", "pattern": "leaves", "foliage": true},
+          {"shape": "cone", "pos": [0, 0.48, 0], "size": [0.7, 0.2, 0.7], "color": "#f2f7fc", "pattern": "plaster", "foliage": true},
+          {"shape": "cone", "pos": [0, 0.58, 0], "size": [0.6, 0.27, 0.6], "color": "#346a52", "pattern": "leaves", "foliage": true},
+          {"shape": "cone", "pos": [0, 0.7, 0], "size": [0.44, 0.3, 0.44], "color": "#f6faff", "pattern": "plaster", "foliage": true}
+        ]
+      },
+      "tree_palm": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.12,
+        "tintJitter": 0.08,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.2, 0.3, 0.2], "color": "#8a6a44", "pattern": "bark", "rot": [0, 0, 4]},
+          {"shape": "cylinder", "pos": [0.03, 0.29, 0], "size": [0.17, 0.3, 0.17], "color": "#93734a", "pattern": "bark", "rot": [0, 0, 8]},
+          {"shape": "cylinder", "pos": [0.1, 0.57, 0], "size": [0.15, 0.26, 0.15], "color": "#9a7a50", "pattern": "bark", "rot": [0, 0, 12]},
+          {"shape": "sphere", "pos": [0.42, 0.74, 0], "size": [0.9, 0.08, 0.3], "color": "#4c9a3c", "pattern": "leaves", "foliage": true, "rot": [0, 0, -22]},
+          {"shape": "sphere", "pos": [-0.22, 0.74, 0], "size": [0.9, 0.08, 0.3], "color": "#56a646", "pattern": "leaves", "foliage": true, "rot": [0, 0, 22]},
+          {"shape": "sphere", "pos": [0.12, 0.74, 0.32], "size": [0.3, 0.08, 0.9], "color": "#4a9438", "pattern": "leaves", "foliage": true, "rot": [22, 0, 0]},
+          {"shape": "sphere", "pos": [0.12, 0.74, -0.32], "size": [0.3, 0.08, 0.9], "color": "#5aa848", "pattern": "leaves", "foliage": true, "rot": [-22, 0, 0]},
+          {"shape": "sphere", "pos": [0.12, 0.79, 0], "size": [0.42, 0.1, 0.42], "color": "#62b04e", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.14, 0.73, 0.06], "size": [0.12, 0.04, 0.12], "color": "#6a4a2a"},
+          {"shape": "sphere", "pos": [0.08, 0.73, -0.05], "size": [0.12, 0.04, 0.12], "color": "#5e4224"}
+        ]
+      },
+      "tree_cherry": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.14,
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.2, 0.42, 0.2], "color": "#5a3a34", "pattern": "bark"},
+          {"shape": "sphere", "pos": [0, 0.3, 0], "size": [1.2, 0.46, 1.2], "color": "#f3a2c4", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [-0.2, 0.5, 0.1], "size": [0.84, 0.36, 0.84], "color": "#f8bed6", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.22, 0.46, -0.08], "size": [0.78, 0.34, 0.78], "color": "#e889b2", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.02, 0.66, 0.02], "size": [0.66, 0.3, 0.66], "color": "#ffd2e4", "pattern": "leaves", "foliage": true}
+        ]
+      },
+      "tree_dead": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.14,
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cone", "pos": [0, 0, 0], "size": [0.34, 0.9, 0.34], "color": "#6a5a4c", "pattern": "bark"},
+          {"shape": "cylinder", "pos": [0.12, 0.42, 0], "size": [0.07, 0.3, 0.07], "color": "#6a5a4c", "pattern": "bark", "rot": [0, 0, -40]},
+          {"shape": "cylinder", "pos": [-0.1, 0.55, 0.04], "size": [0.06, 0.26, 0.06], "color": "#635446", "pattern": "bark", "rot": [10, 0, 45]},
+          {"shape": "cylinder", "pos": [0.02, 0.62, -0.08], "size": [0.05, 0.2, 0.05], "color": "#5c4e42", "pattern": "bark", "rot": [-38, 0, 0]}
+        ]
+      },
+      "tree_swamp": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.14,
+        "tintJitter": 0.08,
+        "parts": [
+          {"shape": "cone", "pos": [0, 0, 0], "size": [0.5, 0.55, 0.5], "color": "#4a3c2c", "pattern": "bark"},
+          {"shape": "sphere", "pos": [0, 0.4, 0], "size": [1.3, 0.42, 1.3], "color": "#3e6a3a", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.1, 0.6, -0.05], "size": [0.9, 0.3, 0.9], "color": "#4a7a42", "pattern": "leaves", "foliage": true},
+          {"shape": "box", "pos": [0.38, 0.2, 0.2], "size": [0.04, 0.26, 0.04], "color": "#6a8a4a", "foliage": true},
+          {"shape": "box", "pos": [-0.36, 0.22, -0.1], "size": [0.04, 0.22, 0.04], "color": "#6a8a4a", "foliage": true},
+          {"shape": "box", "pos": [0.05, 0.18, 0.42], "size": [0.04, 0.28, 0.04], "color": "#5e7e44", "foliage": true}
+        ]
+      },
+      "bush": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.16,
+        "tintJitter": 0.1,
+        "parts": [
+          {"shape": "sphere", "pos": [0, 0, 0], "size": [0.95, 0.85, 0.85], "color": "#4a9a3c", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [-0.22, 0.15, 0.12], "size": [0.6, 0.75, 0.6], "color": "#5aae48", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.24, 0.1, -0.08], "size": [0.55, 0.7, 0.55], "color": "#3e8a34", "pattern": "leaves", "foliage": true}
+        ]
+      },
+      "cactus": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.14,
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.34, 0.9, 0.34], "color": "#4f9a4a", "pattern": "stripes", "color2": "#3e8240"},
+          {"shape": "sphere", "pos": [0, 0.82, 0], "size": [0.34, 0.18, 0.34], "color": "#58a650", "pattern": "stripes", "color2": "#3e8240"},
+          {"shape": "cylinder", "pos": [0.26, 0.42, 0], "size": [0.2, 0.3, 0.2], "color": "#4f9a4a", "pattern": "stripes", "color2": "#3e8240"},
+          {"shape": "cylinder", "pos": [0.17, 0.32, 0], "size": [0.2, 0.12, 0.2], "color": "#4f9a4a", "rot": [0, 0, 90]},
+          {"shape": "cylinder", "pos": [-0.25, 0.3, 0], "size": [0.18, 0.26, 0.18], "color": "#4f9a4a", "pattern": "stripes", "color2": "#3e8240"},
+          {"shape": "cylinder", "pos": [-0.16, 0.24, 0], "size": [0.18, 0.1, 0.18], "color": "#4f9a4a", "rot": [0, 0, 90]},
+          {"shape": "sphere", "pos": [0, 0.97, 0], "size": [0.12, 0.06, 0.12], "color": "#ff7aa8"}
+        ]
+      },
+      "rock_small": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.2,
+        "tintJitter": 0.08,
+        "parts": [
+          {"shape": "rock", "pos": [0, 0, 0], "size": [0.78, 1, 0.7], "color": "#8e8a84", "pattern": "stone"},
+          {"shape": "rock", "pos": [0.24, 0, 0.16], "size": [0.34, 0.5, 0.3], "color": "#9a958e", "pattern": "stone"}
+        ]
+      },
+      "rock_large": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.12,
+        "tintJitter": 0.08,
+        "parts": [
+          {"shape": "rock", "pos": [0, 0, 0], "size": [0.86, 1, 0.8], "color": "#8a857e", "pattern": "stone"},
+          {"shape": "rock", "pos": [0.3, 0, 0.22], "size": [0.4, 0.55, 0.38], "color": "#958f87", "pattern": "stone"},
+          {"shape": "rock", "pos": [-0.32, 0, 0.2], "size": [0.3, 0.38, 0.3], "color": "#7e7a74", "pattern": "stone"},
+          {"shape": "sphere", "pos": [-0.1, 0.78, -0.05], "size": [0.4, 0.12, 0.34], "color": "#5e8a44", "pattern": "leaves"}
+        ]
+      },
+      "crystal": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.14,
+        "tintJitter": 0.05,
+        "parts": [
+          {"shape": "rock", "pos": [0, 0, 0], "size": [0.7, 0.18, 0.6], "color": "#5e5a6a", "pattern": "stone"},
+          {"shape": "cone", "pos": [0, 0.05, 0], "size": [0.3, 0.95, 0.3], "color": "#8fe8ff", "pattern": "crystal", "emissive": 0.9, "emissiveColor": "#6fd8ff", "segments": 5, "glossy": true},
+          {"shape": "cone", "pos": [0.18, 0.04, 0.1], "size": [0.2, 0.6, 0.2], "color": "#a8f0ff", "pattern": "crystal", "emissive": 0.9, "emissiveColor": "#6fd8ff", "segments": 5, "rot": [12, 0, -22], "glossy": true},
+          {"shape": "cone", "pos": [-0.17, 0.04, -0.05], "size": [0.18, 0.5, 0.18], "color": "#7ad4f8", "pattern": "crystal", "emissive": 0.9, "emissiveColor": "#6fd8ff", "segments": 5, "rot": [-8, 0, 25], "glossy": true}
+        ],
+        "modelEmissive": 0.45
+      },
+      "mushroom": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.2,
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.14, 0.55, 0.14], "color": "#efe4d2", "pattern": "plaster"},
+          {"shape": "dome", "pos": [0, 0.5, 0], "size": [0.56, 0.42, 0.56], "color": "#a46ae0", "pattern": "spots", "color2": "#e8d4ff", "emissive": 1, "emissiveColor": "#c48bff"},
+          {"shape": "cylinder", "pos": [0.2, 0, 0.16], "size": [0.08, 0.3, 0.08], "color": "#efe4d2"},
+          {"shape": "dome", "pos": [0.2, 0.28, 0.16], "size": [0.28, 0.22, 0.28], "color": "#b47cf0", "pattern": "spots", "color2": "#e8d4ff", "emissive": 1, "emissiveColor": "#c48bff"}
+        ]
+      },
+      "flower_patch": {"builder": "billboard", "planes": 3, "pattern": "flowers", "color": "#4f9a3c", "colors": ["#ff7aa8", "#ffe27a", "#ffffff", "#9ac8ff", "#ff9a5a"], "width": 1.0, "randomYaw": true, "scaleJitter": 0.2},
+      "reeds": {"builder": "billboard", "planes": 3, "pattern": "reeds", "color": "#7a9a4a", "colors": ["#6a4a2a", "#8aa85a"], "width": 0.9, "randomYaw": true, "scaleJitter": 0.2},
+      "stump": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.12,
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.5, 1, 0.5], "color": "#6e4c30", "pattern": "bark"},
+          {"shape": "cylinder", "pos": [0, 0.98, 0], "size": [0.46, 0.04, 0.46], "color": "#c8a070", "pattern": "rings", "color2": "#9a7448"},
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.62, 0.22, 0.62], "color": "#62442c", "pattern": "bark"}
+        ]
+      },
+      "log": {
+        "builder": "parts",
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0.08, 0], "size": [0.9, 0.84, 0.5], "color": "#6e4c30", "pattern": "bark", "rot": [0, 0, 90], "lengthAxis": "x"},
+          {"shape": "box", "pos": [0.46, 0.08, 0], "size": [0.02, 0.84, 0.44], "color": "#c8a070", "pattern": "rings", "color2": "#9a7448"},
+          {"shape": "box", "pos": [-0.46, 0.08, 0], "size": [0.02, 0.84, 0.44], "color": "#c8a070", "pattern": "rings", "color2": "#9a7448"}
+        ]
+      },
+      "fence": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [-0.42, 0, 0], "size": [0.12, 1, 0.12], "color": "#8a6440", "pattern": "planks", "repeat": {"count": 2, "step": [0.84, 0, 0]}},
+          {"shape": "box", "pos": [0, 0.6, 0], "size": [1.0, 0.13, 0.07], "color": "#9a7248", "pattern": "planks"},
+          {"shape": "box", "pos": [0, 0.28, 0], "size": [1.0, 0.13, 0.07], "color": "#9a7248", "pattern": "planks"}
+        ]
+      },
+      "lamp": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.3, 0.06, 0.3], "color": "#3a3a46", "pattern": "metal"},
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.11, 0.8, 0.11], "color": "#34343e", "pattern": "metal"},
+          {"shape": "box", "pos": [0, 0.8, 0], "size": [0.32, 0.03, 0.32], "color": "#2e2e38", "pattern": "metal"},
+          {"shape": "box", "pos": [0, 0.82, 0], "size": [0.24, 0.12, 0.24], "color": "#ffe2a0", "pattern": "glass", "emissive": 1.4, "emissiveColor": "#ffc66a"},
+          {"shape": "pyramid", "pos": [0, 0.94, 0], "size": [0.38, 0.07, 0.38], "color": "#2e2e38"}
+        ]
+      },
+      "sign": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.1, 0.62, 0.1], "color": "#7a5636", "pattern": "planks"},
+          {"shape": "box", "pos": [0, 0.5, 0.04], "size": [0.78, 0.42, 0.08], "color": "#b88a58", "pattern": "planks", "color2": "#8a6440"},
+          {"shape": "box", "pos": [0, 0.92, 0.04], "size": [0.82, 0.06, 0.1], "color": "#6a4a2c"}
+        ]
+      },
+      "bench": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0.5, 0], "size": [0.92, 0.1, 0.5], "color": "#a87a4a", "pattern": "planks"},
+          {"shape": "box", "pos": [0, 0.58, -0.22], "size": [0.92, 0.42, 0.08], "color": "#a07246", "pattern": "planks", "rot": [-10, 0, 0]},
+          {"shape": "box", "pos": [-0.4, 0, 0], "size": [0.06, 0.52, 0.44], "color": "#3a3a42", "pattern": "metal"},
+          {"shape": "box", "pos": [0.4, 0, 0], "size": [0.06, 0.52, 0.44], "color": "#3a3a42", "pattern": "metal"}
+        ]
+      },
+      "well": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.82, 0.32, 0.82], "color": "#9a948a", "pattern": "stone", "segments": 12},
+          {"shape": "cylinder", "pos": [0, 0.3, 0], "size": [0.66, 0.02, 0.66], "color": "#2a5a7a", "glossy": true, "segments": 12},
+          {"shape": "box", "pos": [-0.36, 0.3, 0], "size": [0.07, 0.44, 0.07], "color": "#7a5636", "pattern": "planks"},
+          {"shape": "box", "pos": [0.36, 0.3, 0], "size": [0.07, 0.44, 0.07], "color": "#7a5636", "pattern": "planks"},
+          {"shape": "prism", "pos": [0, 0.7, 0], "size": [0.96, 0.3, 0.66], "color": "#a8483a", "pattern": "shingles"},
+          {"shape": "cylinder", "pos": [0, 0.56, 0], "size": [0.7, 0.04, 0.04], "color": "#5a4030", "rot": [0, 0, 90]},
+          {"shape": "cylinder", "pos": [0, 0.4, 0], "size": [0.14, 0.12, 0.14], "color": "#7a5636", "pattern": "planks"}
+        ]
+      },
+      "fountain": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.96, 0.2, 0.96], "color": "#c8c2b6", "pattern": "stone", "segments": 16},
+          {"shape": "cylinder", "pos": [0, 0.2, 0], "size": [0.86, 0.01, 0.86], "color": "#4aa6d8", "pattern": "water", "glossy": true, "emissive": 0.35, "emissiveColor": "#7fd0ff", "segments": 16},
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.12, 0.62, 0.12], "color": "#d4cec2", "pattern": "stone"},
+          {"shape": "cylinder", "pos": [0, 0.6, 0], "size": [0.42, 0.08, 0.42], "color": "#d4cec2", "pattern": "stone", "segments": 12},
+          {"shape": "cylinder", "pos": [0, 0.68, 0], "size": [0.36, 0.01, 0.36], "color": "#5ab6e8", "glossy": true, "emissive": 0.35, "emissiveColor": "#7fd0ff", "segments": 12},
+          {"shape": "cone", "pos": [0, 0.68, 0], "size": [0.12, 0.3, 0.12], "color": "#bfe8ff", "emissive": 0.6, "emissiveColor": "#9fdcff", "opacity": 0.75}
+        ]
+      },
+      "crate": {
+        "builder": "parts",
+        "randomYaw": false,
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.8, 1, 0.8], "color": "#b08452", "pattern": "crate", "color2": "#7a5634"}
+        ]
+      },
+      "barrel": {
+        "builder": "parts",
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.66, 1, 0.66], "color": "#9a6a3e", "pattern": "vplanks", "segments": 10},
+          {"shape": "cylinder", "pos": [0, 0.16, 0], "size": [0.68, 0.06, 0.68], "color": "#4a4a52", "pattern": "metal", "segments": 10},
+          {"shape": "cylinder", "pos": [0, 0.78, 0], "size": [0.68, 0.06, 0.68], "color": "#4a4a52", "pattern": "metal", "segments": 10}
+        ]
+      },
+      "mailbox": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.1, 0.62, 0.1], "color": "#5a5a62", "pattern": "metal"},
+          {"shape": "box", "pos": [0, 0.6, 0], "size": [0.36, 0.26, 0.5], "color": "#d84a3a", "pattern": "metal"},
+          {"shape": "cylinder", "pos": [0, 0.84, 0], "size": [0.36, 0.08, 0.5], "color": "#c8443a", "rot": [90, 0, 0], "lengthAxis": "z"},
+          {"shape": "box", "pos": [0.2, 0.74, 0.1], "size": [0.03, 0.18, 0.08], "color": "#ffd84a"}
+        ]
+      },
+      "stall": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0.12], "size": [0.9, 0.46, 0.4], "color": "#a87a4a", "pattern": "planks"},
+          {"shape": "box", "pos": [-0.42, 0, -0.1], "size": [0.05, 0.88, 0.05], "color": "#7a5636", "repeat": {"count": 2, "step": [0.84, 0, 0]}},
+          {"shape": "box", "pos": [-0.42, 0, 0.36], "size": [0.05, 0.8, 0.05], "color": "#7a5636", "repeat": {"count": 2, "step": [0.84, 0, 0]}},
+          {"shape": "box", "pos": [0, 0.8, 0.12], "size": [1.0, 0.05, 0.62], "color": "#e84a4a", "pattern": "stripes", "color2": "#fff4e8", "rot": [12, 0, 0]},
+          {"shape": "box", "pos": [-0.22, 0.46, 0.14], "size": [0.2, 0.1, 0.18], "color": "#ffb43c", "pattern": "noise"},
+          {"shape": "box", "pos": [0.08, 0.46, 0.14], "size": [0.2, 0.08, 0.18], "color": "#6ad05a", "pattern": "noise"},
+          {"shape": "sphere", "pos": [0.3, 0.46, 0.14], "size": [0.16, 0.08, 0.16], "color": "#e8483a"}
+        ]
+      },
+      "flower_pot": {
+        "builder": "parts",
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.46, 0.44, 0.46], "color": "#c86a44", "pattern": "plaster", "taper": 0.78},
+          {"shape": "sphere", "pos": [0, 0.36, 0], "size": [0.56, 0.5, 0.56], "color": "#4a9a3c", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.12, 0.72, 0.1], "size": [0.14, 0.12, 0.14], "color": "#ff7aa8"},
+          {"shape": "sphere", "pos": [-0.12, 0.66, 0.08], "size": [0.12, 0.1, 0.12], "color": "#ffe27a"}
+        ]
+      },
+      "statue": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.82, 0.26, 0.82], "color": "#a8a296", "pattern": "stone"},
+          {"shape": "box", "pos": [0, 0.26, 0], "size": [0.62, 0.08, 0.62], "color": "#bcb6aa", "pattern": "stone"},
+          {"shape": "cylinder", "pos": [0, 0.34, 0], "size": [0.3, 0.36, 0.26], "color": "#c6a24a", "pattern": "metal", "taper": 0.7},
+          {"shape": "sphere", "pos": [0, 0.7, 0], "size": [0.26, 0.15, 0.26], "color": "#d0aa52", "pattern": "metal"},
+          {"shape": "cone", "pos": [-0.1, 0.8, 0], "size": [0.08, 0.1, 0.08], "color": "#d0aa52", "rot": [0, 0, 20]},
+          {"shape": "cone", "pos": [0.1, 0.8, 0], "size": [0.08, 0.1, 0.08], "color": "#d0aa52", "rot": [0, 0, -20]},
+          {"shape": "cylinder", "pos": [0.2, 0.5, 0], "size": [0.06, 0.22, 0.06], "color": "#c6a24a", "rot": [0, 0, -50]},
+          {"shape": "sphere", "pos": [0.3, 0.64, 0], "size": [0.12, 0.07, 0.12], "color": "#ffe6a0", "emissive": 0.6, "emissiveColor": "#ffd27a"}
+        ]
+      },
+      "server_rack": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.8, 1, 0.74], "color": "#2e3440", "pattern": "panel", "color2": "#1e222a"},
+          {"shape": "box", "pos": [0, 0.1, 0.37], "size": [0.66, 0.8, 0.02], "color": "#1a1e26", "pattern": "grate", "color2": "#3a4250"},
+          {"shape": "box", "pos": [-0.24, 0.2, 0.385], "size": [0.05, 0.6, 0.01], "color": "#4dff9a", "emissive": 1, "emissiveColor": "#4dff9a", "pattern": "leds"},
+          {"shape": "box", "pos": [0.24, 0.24, 0.385], "size": [0.05, 0.52, 0.01], "color": "#7fe3ff", "emissive": 1, "emissiveColor": "#7fe3ff", "pattern": "leds"}
+        ]
+      },
+      "antenna": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.6, 0.04, 0.6], "color": "#6a6a72", "pattern": "metal"},
+          {"shape": "cone", "pos": [0, 0, 0], "size": [0.5, 0.94, 0.5], "color": "#b8bcc6", "pattern": "grate", "color2": "#6a6e78", "segments": 4, "cutout": true},
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.05, 0.98, 0.05], "color": "#9a9ea8", "pattern": "metal"},
+          {"shape": "dome", "pos": [0.12, 0.6, 0.08], "size": [0.36, 0.06, 0.36], "color": "#e8ecf2", "pattern": "metal", "rot": [70, 0, 0]},
+          {"shape": "sphere", "pos": [0, 0.965, 0], "size": [0.12, 0.03, 0.12], "color": "#ff5a4a", "emissive": 2.2, "emissiveColor": "#ff4d4d"}
+        ]
+      },
+      "solar_panel": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [-0.35, 0, 0], "size": [0.04, 0.5, 0.06], "color": "#6a6e78", "pattern": "metal", "repeat": {"count": 2, "step": [0.7, 0, 0]}},
+          {"shape": "box", "pos": [0, 0.45, 0], "size": [0.96, 0.05, 0.8], "color": "#24365a", "pattern": "panel", "color2": "#8aa6d8", "rot": [-28, 0, 0], "glossy": true}
+        ]
+      },
+      "tent": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "prism", "pos": [0, 0, 0], "size": [0.9, 1, 0.92], "color": "#e8823a", "pattern": "cloth", "color2": "#c4642a", "ridge": "z"},
+          {"shape": "prism", "pos": [0, 0, 0.465], "size": [0.3, 0.55, 0.02], "color": "#2a1c14", "ridge": "z"},
+          {"shape": "cylinder", "pos": [0, 0.98, 0.4], "size": [0.04, 0.12, 0.04], "color": "#6a4a2a"}
+        ]
+      },
+      "campfire": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "torus", "pos": [0, 0, 0], "size": [0.72, 0.18, 0.72], "color": "#7a746c", "pattern": "stone", "segments": 8},
+          {"shape": "cylinder", "pos": [0, 0.08, 0], "size": [0.62, 0.1, 0.1], "color": "#5a3c24", "pattern": "bark", "rot": [0, 30, 90], "lengthAxis": "x"},
+          {"shape": "cylinder", "pos": [0, 0.08, 0], "size": [0.62, 0.1, 0.1], "color": "#5a3c24", "pattern": "bark", "rot": [0, -40, 90], "lengthAxis": "x"},
+          {"shape": "cone", "pos": [0, 0.12, 0], "size": [0.36, 0.8, 0.36], "color": "#ff8a2a", "emissive": 2.2, "emissiveColor": "#ff7a1a", "segments": 6},
+          {"shape": "cone", "pos": [0.05, 0.14, 0.03], "size": [0.2, 0.56, 0.2], "color": "#ffe27a", "emissive": 2.6, "emissiveColor": "#ffd25a", "segments": 5}
+        ]
+      },
+      "ruin_pillar": {
+        "builder": "parts",
+        "randomYaw": true,
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.78, 0.1, 0.78], "color": "#a49c88", "pattern": "stone"},
+          {"shape": "cylinder", "pos": [0, 0.1, 0], "size": [0.52, 0.72, 0.52], "color": "#b4ac98", "pattern": "fluted", "color2": "#8e8674", "segments": 10},
+          {"shape": "cylinder", "pos": [0.03, 0.82, 0.02], "size": [0.5, 0.1, 0.5], "color": "#aaa28e", "pattern": "stone", "segments": 7, "rot": [6, 0, 4]},
+          {"shape": "sphere", "pos": [0.18, 0.06, 0.24], "size": [0.3, 0.1, 0.24], "color": "#5e8a44", "pattern": "leaves"}
+        ]
+      },
+      "ruin_arch": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [-0.36, 0, 0], "size": [0.24, 0.8, 0.8], "color": "#b0a894", "pattern": "bricks", "color2": "#8a826e"},
+          {"shape": "box", "pos": [0.36, 0, 0], "size": [0.24, 0.72, 0.8], "color": "#b0a894", "pattern": "bricks", "color2": "#8a826e"},
+          {"shape": "box", "pos": [-0.06, 0.8, 0], "size": [0.92, 0.18, 0.84], "color": "#a49c88", "pattern": "bricks", "color2": "#8a826e", "rot": [0, 0, -3]},
+          {"shape": "rock", "pos": [0.4, 0, 0.5], "size": [0.12, 0.12, 0.3], "color": "#9a9280", "pattern": "stone"}
+        ]
+      },
+      "ice_spike": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.18,
+        "tintJitter": 0.04,
+        "parts": [
+          {"shape": "cone", "pos": [0, 0, 0], "size": [0.42, 1, 0.42], "color": "#c4ecff", "pattern": "crystal", "segments": 6, "glossy": true, "emissive": 0.25, "emissiveColor": "#9fdcff"},
+          {"shape": "cone", "pos": [0.2, 0, 0.12], "size": [0.24, 0.6, 0.24], "color": "#d8f4ff", "pattern": "crystal", "segments": 5, "rot": [10, 0, -15], "glossy": true},
+          {"shape": "cone", "pos": [-0.18, 0, -0.06], "size": [0.2, 0.46, 0.2], "color": "#b0e2fa", "pattern": "crystal", "segments": 5, "rot": [-8, 0, 18], "glossy": true}
+        ]
+      },
+      "lava_rock": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.16,
+        "tintJitter": 0.05,
+        "parts": [
+          {"shape": "rock", "pos": [0, 0, 0], "size": [0.84, 1, 0.76], "color": "#3e3430", "pattern": "magma", "color2": "#ff6a2a", "emissive": 1, "emissiveColor": "#ff5a1a", "emissiveMap": true}
+        ]
+      },
+      "bamboo": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.12,
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.1, 1, 0.1], "color": "#5fa03d", "pattern": "stripes", "color2": "#3d6b2a"},
+          {"shape": "cylinder", "pos": [0.22, 0, 0.1], "size": [0.09, 0.85, 0.09], "color": "#68a83f", "pattern": "stripes", "color2": "#3d6b2a"},
+          {"shape": "cylinder", "pos": [-0.18, 0, 0.16], "size": [0.08, 0.78, 0.08], "color": "#5a9a3a", "pattern": "stripes", "color2": "#3d6b2a"},
+          {"shape": "cylinder", "pos": [0.05, 0, -0.22], "size": [0.08, 0.9, 0.08], "color": "#62a23c", "pattern": "stripes", "color2": "#3d6b2a"},
+          {"shape": "sphere", "pos": [0.02, 0.8, 0], "size": [0.72, 0.22, 0.72], "color": "#58a03a", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.15, 0.62, 0.08], "size": [0.5, 0.16, 0.5], "color": "#7cbf4a", "pattern": "leaves", "foliage": true}
+        ]
+      },
+      "mushroom_giant": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.14,
+        "tintJitter": 0.05,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.32, 0.52, 0.32], "color": "#e8dfcc", "pattern": "plaster"},
+          {"shape": "dome", "pos": [0, 0.46, 0], "size": [1.7, 0.5, 1.7], "color": "#d23c4c", "pattern": "spots", "color2": "#fff2e2"},
+          {"shape": "cylinder", "pos": [0.42, 0, 0.3], "size": [0.06, 0.1, 0.06], "color": "#efe4d2"},
+          {"shape": "dome", "pos": [0.42, 0.08, 0.3], "size": [0.2, 0.08, 0.2], "color": "#b47cf0", "pattern": "spots", "color2": "#e8d4ff", "emissive": 1, "emissiveColor": "#c48bff"}
+        ]
+      },
+      "tree_acacia": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.12,
+        "tintJitter": 0.08,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.16, 0.72, 0.16], "color": "#6c543e", "pattern": "bark"},
+          {"shape": "sphere", "pos": [0, 0.66, 0], "size": [2.4, 0.2, 2.4], "color": "#748f3a", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.1, 0.76, -0.05], "size": [1.5, 0.18, 1.5], "color": "#9cb24a", "pattern": "leaves", "foliage": true}
+        ]
+      },
+      "tree_baobab": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.1,
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.9, 0.62, 0.9], "color": "#927a70", "pattern": "bark", "taper": 0.6},
+          {"shape": "cylinder", "pos": [0, 0.6, 0], "size": [0.5, 0.12, 0.5], "color": "#86706a", "pattern": "bark", "taper": 0.7},
+          {"shape": "sphere", "pos": [0.42, 0.7, 0], "size": [0.4, 0.22, 0.4], "color": "#748f3a", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [-0.38, 0.72, 0.15], "size": [0.38, 0.2, 0.38], "color": "#9cb24a", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0, 0.76, -0.4], "size": [0.36, 0.2, 0.36], "color": "#728c34", "pattern": "leaves", "foliage": true}
+        ]
+      },
+      "tree_mangrove": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.14,
+        "tintJitter": 0.08,
+        "parts": [
+          {"shape": "cone", "pos": [0, 0, 0], "size": [0.9, 0.36, 0.9], "color": "#64402c", "pattern": "bark", "segments": 6},
+          {"shape": "cylinder", "pos": [0, 0.2, 0], "size": [0.16, 0.45, 0.16], "color": "#6a4229", "pattern": "bark"},
+          {"shape": "sphere", "pos": [0, 0.52, 0], "size": [1.3, 0.38, 1.3], "color": "#2a6e3e", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.1, 0.7, -0.05], "size": [0.9, 0.28, 0.9], "color": "#448e4e", "pattern": "leaves", "foliage": true}
+        ]
+      },
+      "coral": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.18,
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "rock", "pos": [0, 0, 0], "size": [0.8, 0.18, 0.72], "color": "#d6c2b0", "pattern": "stone"},
+          {"shape": "cone", "pos": [0.05, 0.1, 0], "size": [0.18, 0.9, 0.18], "color": "#f48e98", "segments": 5, "rot": [6, 0, -10]},
+          {"shape": "cone", "pos": [-0.16, 0.08, 0.1], "size": [0.14, 0.7, 0.14], "color": "#e06a80", "segments": 5, "rot": [-8, 0, 18]},
+          {"shape": "cone", "pos": [0.2, 0.06, -0.12], "size": [0.12, 0.55, 0.12], "color": "#ffb05a", "segments": 5, "rot": [10, 0, -20]},
+          {"shape": "sphere", "pos": [-0.22, 0.04, -0.2], "size": [0.26, 0.2, 0.26], "color": "#6ad4c4"}
+        ]
+      },
+      "glitch_monolith": {
+        "builder": "parts",
+        "randomYaw": false,
+        "scaleJitter": 0.1,
+        "tintJitter": 0.03,
+        "modelEmissive": 0.6,
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.9, 0.06, 0.9], "color": "#3e3060", "pattern": "stone"},
+          {"shape": "box", "pos": [0, 0.06, 0], "size": [0.5, 0.7, 0.34], "color": "#2c1652", "pattern": "panel", "color2": "#150a26"},
+          {"shape": "box", "pos": [0.08, 0.38, 0], "size": [0.52, 0.05, 0.36], "color": "#4ff0ff", "emissive": 1.4, "emissiveColor": "#4ff0ff"},
+          {"shape": "box", "pos": [-0.06, 0.55, 0], "size": [0.48, 0.03, 0.35], "color": "#ff6ad5", "emissive": 1.4, "emissiveColor": "#ff6ad5"},
+          {"shape": "box", "pos": [0.3, 0.84, 0.05], "size": [0.14, 0.08, 0.14], "color": "#b28cff", "emissive": 1.2, "emissiveColor": "#b28cff", "rot": [10, 20, 0]}
+        ]
+      },
+      "circuit_pylon": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.9, 0.04, 0.9], "color": "#2a6044", "pattern": "panel", "color2": "#d4a840"},
+          {"shape": "cone", "pos": [0, 0.06, 0], "size": [0.5, 0.86, 0.5], "color": "#33604a", "pattern": "grate", "color2": "#1c3a2c", "segments": 4, "cutout": true},
+          {"shape": "cylinder", "pos": [0, 0.06, 0], "size": [0.05, 0.9, 0.05], "color": "#4c8068", "pattern": "metal"},
+          {"shape": "sphere", "pos": [0, 0.92, 0], "size": [0.14, 0.06, 0.14], "color": "#4dff9a", "emissive": 2.2, "emissiveColor": "#4dff9a"},
+          {"shape": "sphere", "pos": [0.12, 0.45, 0.12], "size": [0.07, 0.03, 0.07], "color": "#9dffc8", "emissive": 2, "emissiveColor": "#4dff9a"}
+        ]
+      },
+      "neural_tree": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.12,
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.2, 0.52, 0.2], "color": "#1c2846", "pattern": "bark"},
+          {"shape": "sphere", "pos": [0, 0.5, 0], "size": [1.2, 0.36, 1.2], "color": "#1f5068", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.05, 0.68, 0], "size": [0.8, 0.26, 0.8], "color": "#2c6c88", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.5, 0.62, 0.1], "size": [0.14, 0.05, 0.14], "color": "#a8e2ff", "emissive": 2, "emissiveColor": "#56b4ff"},
+          {"shape": "sphere", "pos": [-0.42, 0.6, -0.2], "size": [0.14, 0.05, 0.14], "color": "#a8e2ff", "emissive": 2, "emissiveColor": "#56b4ff"},
+          {"shape": "sphere", "pos": [0, 0.94, 0], "size": [0.16, 0.06, 0.16], "color": "#f2fbff", "emissive": 2, "emissiveColor": "#56b4ff"}
+        ]
+      },
+      "cloud_puff": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.2,
+        "tintJitter": 0.03,
+        "parts": [
+          {"shape": "sphere", "pos": [0, 0, 0], "size": [0.9, 0.7, 0.85], "color": "#f4f7fc", "pattern": "snow"},
+          {"shape": "sphere", "pos": [-0.3, 0.05, 0.12], "size": [0.6, 0.55, 0.6], "color": "#e4ebf6"},
+          {"shape": "sphere", "pos": [0.3, 0.02, -0.1], "size": [0.6, 0.5, 0.55], "color": "#dce5f5"},
+          {"shape": "sphere", "pos": [0.05, 0.45, 0], "size": [0.55, 0.5, 0.55], "color": "#ffffff"}
+        ]
+      },
+      "hoodoo": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.14,
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.76, 0.36, 0.76], "color": "#a85834", "pattern": "stripes", "color2": "#c06a40", "taper": 0.75},
+          {"shape": "cylinder", "pos": [0, 0.35, 0], "size": [0.58, 0.34, 0.58], "color": "#c06a40", "pattern": "stripes", "color2": "#d8956a", "taper": 0.8},
+          {"shape": "cylinder", "pos": [0, 0.68, 0], "size": [0.42, 0.24, 0.42], "color": "#a85834", "pattern": "stripes", "color2": "#8a4226", "taper": 0.85},
+          {"shape": "rock", "pos": [0.02, 0.9, 0], "size": [0.72, 0.1, 0.62], "color": "#94765e", "pattern": "stone"}
+        ]
+      },
+      "salt_crystal": {
+        "builder": "parts",
+        "randomYaw": true,
+        "scaleJitter": 0.18,
+        "tintJitter": 0.03,
+        "parts": [
+          {"shape": "rock", "pos": [0, 0, 0], "size": [0.82, 0.14, 0.74], "color": "#e0dacf", "pattern": "stone"},
+          {"shape": "box", "pos": [0, 0.05, 0], "size": [0.26, 0.9, 0.26], "color": "#f2eef4", "glossy": true, "rot": [6, 20, -4]},
+          {"shape": "box", "pos": [0.24, 0.04, 0.06], "size": [0.16, 0.55, 0.16], "color": "#ebe6f0", "glossy": true, "rot": [0, 35, -18]},
+          {"shape": "box", "pos": [-0.2, 0.04, -0.12], "size": [0.14, 0.45, 0.14], "color": "#ffffff", "glossy": true, "rot": [12, -10, 16]}
+        ]
+      },
+      "dock": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0.4, 0], "size": [1, 0.6, 1], "color": "#a8784a", "pattern": "planks", "color2": "#7a5434"},
+          {"shape": "cylinder", "pos": [-0.44, -2, -0.45], "size": [0.1, 2.4, 0.04], "color": "#6a4a2c", "pattern": "bark", "repeat": {"count": 3, "step": [0, 0, 0.45]}},
+          {"shape": "cylinder", "pos": [0.44, -2, -0.45], "size": [0.1, 2.4, 0.04], "color": "#6a4a2c", "pattern": "bark", "repeat": {"count": 3, "step": [0, 0, 0.45]}}
+        ]
+      },
+      "boat": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, -0.06], "size": [0.62, 0.42, 0.74], "color": "#8a5a34", "pattern": "planks", "taper": 0.8},
+          {"shape": "prism", "pos": [0, 0, 0.42], "size": [0.62, 0.42, 0.24], "color": "#8a5a34", "pattern": "planks", "ridge": "y"},
+          {"shape": "box", "pos": [0, 0.38, -0.06], "size": [0.68, 0.06, 0.78], "color": "#e8e2d4", "pattern": "planks"},
+          {"shape": "box", "pos": [0, 0.3, -0.1], "size": [0.5, 0.06, 0.14], "color": "#6a4428", "pattern": "planks"}
+        ]
+      },
+      "house_small": {
+        "builder": "house",
+        "roof": "gable",
+        "wallHeight": 0.56,
+        "overhang": 0.07,
+        "inset": 0.04,
+        "wallPattern": "plaster",
+        "roofPattern": "shingles",
+        "basePattern": "stone",
+        "palette": {"wall": "#f1e4c8", "trim": "#7b5536", "roof": "#c04e3a", "window": "#2a3a52", "glow": "#ffcf7a", "frame": "#5b3b26", "door": "#7a4a2a", "base": "#8e857a", "chimney": "#8a6a5a"},
+        "variants": [
+          {"roof": "#3e72b4"},
+          {"roof": "#4c8a4a", "wall": "#f4eadc"},
+          {"roof": "#8a5a9a"},
+          {"roof": "#d08a3a", "wall": "#eadbc0"}
+        ],
+        "windows": {"rows": 1, "perSide": 2, "w": 0.14, "h": 0.34, "y": 0.4},
+        "chimney": {"x": 0.28, "z": -0.15, "w": 0.1, "h": 0.32},
+        "sign": null
+      },
+      "house_large": {
+        "builder": "house",
+        "roof": "gable",
+        "wallHeight": 0.6,
+        "overhang": 0.06,
+        "inset": 0.04,
+        "wallPattern": "planks",
+        "roofPattern": "shingles",
+        "basePattern": "stone",
+        "palette": {"wall": "#d8c2a0", "trim": "#5e3e26", "roof": "#7a3a44", "window": "#2a3a52", "glow": "#ffcf7a", "frame": "#4a2e1e", "door": "#5e3820", "base": "#7e766c", "chimney": "#7a5a4a"},
+        "variants": [
+          {"roof": "#2e5a8a"},
+          {"roof": "#3e6a3a", "wall": "#e0ccaa"}
+        ],
+        "windows": {"rows": 2, "perSide": 3, "w": 0.1, "h": 0.2, "y": 0.22},
+        "chimney": {"x": -0.3, "z": -0.12, "w": 0.08, "h": 0.28},
+        "sign": null
+      },
+      "center": {
+        "builder": "house",
+        "roof": "hip",
+        "wallHeight": 0.6,
+        "overhang": 0.05,
+        "inset": 0.03,
+        "wallPattern": "plaster",
+        "roofPattern": "shingles",
+        "basePattern": "stone",
+        "palette": {"wall": "#fbf3f0", "trim": "#e86a94", "roof": "#ee6e9a", "window": "#304a6a", "glow": "#ffd6e6", "frame": "#c8507a", "door": "#ffffff", "base": "#b8aeb4", "sign": "#ff7aa8"},
+        "windows": {"rows": 1, "perSide": 3, "w": 0.12, "h": 0.32, "y": 0.36},
+        "sign": {"w": 0.36, "h": 0.14, "emissive": 2.2, "pattern": "cross"},
+        "doorWidth": 0.24,
+        "doorHeight": 0.55,
+        "doorEmissive": 0.8
+      },
+      "shop": {
+        "builder": "house",
+        "roof": "flat",
+        "wallHeight": 0.72,
+        "overhang": 0.04,
+        "inset": 0.03,
+        "wallPattern": "plaster",
+        "roofPattern": "metal",
+        "basePattern": "stone",
+        "palette": {"wall": "#eef2f8", "trim": "#3a72c8", "roof": "#4a86e0", "window": "#2a4466", "glow": "#d8ecff", "frame": "#2a5aa0", "door": "#d8ecff", "base": "#a8aeb8", "sign": "#7ab8ff"},
+        "windows": {"rows": 1, "perSide": 2, "w": 0.2, "h": 0.34, "y": 0.32},
+        "sign": {"w": 0.5, "h": 0.14, "emissive": 2.0, "pattern": "stripes"},
+        "awning": {"color": "#4a86e0", "color2": "#ffffff", "depth": 0.14, "y": 0.62},
+        "doorWidth": 0.22,
+        "doorHeight": 0.55,
+        "doorEmissive": 0.6
+      },
+      "lab": {
+        "builder": "house",
+        "roof": "flat",
+        "wallHeight": 0.82,
+        "overhang": 0.03,
+        "inset": 0.03,
+        "wallPattern": "panel",
+        "roofPattern": "metal",
+        "basePattern": "stone",
+        "palette": {"wall": "#e8ecef", "trim": "#5aa6a0", "roof": "#9aa8b0", "window": "#2a4a5a", "glow": "#bff8f0", "frame": "#4a7a78", "door": "#3a5a5a", "base": "#9aa0a4", "sign": "#7fffd4"},
+        "windows": {"rows": 2, "perSide": 5, "w": 0.08, "h": 0.22, "y": 0.2},
+        "sign": {"w": 0.3, "h": 0.1, "emissive": 1.6, "pattern": "panel"},
+        "extraParts": [
+          {"shape": "dome", "pos": [-0.22, 0.82, -0.05], "size": [0.3, 0.3, 0.48], "color": "#c8d8e0", "pattern": "panel", "glossy": true},
+          {"shape": "cylinder", "pos": [0.3, 0.82, -0.1], "size": [0.04, 0.18, 0.06], "color": "#6a7078", "pattern": "metal"},
+          {"shape": "sphere", "pos": [0.3, 1.0, -0.1], "size": [0.05, 0.03, 0.08], "color": "#7fffd4", "emissive": 2, "emissiveColor": "#7fffd4"}
+        ]
+      },
+      "gym": {
+        "builder": "house",
+        "roof": "hip",
+        "wallHeight": 0.58,
+        "overhang": 0.05,
+        "inset": 0.03,
+        "wallPattern": "bricks",
+        "roofPattern": "shingles",
+        "basePattern": "stone",
+        "palette": {"wall": "#e8dcc0", "wall2": "#bca880", "trim": "#c8a040", "roof": "#c8483a", "window": "#3a3044", "glow": "#ffe08a", "frame": "#8a6a2a", "door": "#5a2a2a", "base": "#8a8274", "sign": "#ffe08a"},
+        "variants": [
+          {"roof": "#3a6ad0"},
+          {"roof": "#4aa04a"},
+          {"roof": "#9a4ad0"}
+        ],
+        "windows": {"rows": 1, "perSide": 4, "w": 0.06, "h": 0.32, "y": 0.4},
+        "sign": {"w": 0.3, "h": 0.12, "emissive": 2.4, "pattern": "badge"},
+        "doorWidth": 0.2,
+        "doorHeight": 0.55,
+        "extraParts": [
+          {"shape": "cylinder", "pos": [-0.36, 0, 0.49], "size": [0.06, 0.58, 0.06], "color": "#f2ead8", "pattern": "fluted", "color2": "#c8bea8", "repeat": {"count": 2, "step": [0.2, 0, 0]}},
+          {"shape": "cylinder", "pos": [0.16, 0, 0.49], "size": [0.06, 0.58, 0.06], "color": "#f2ead8", "pattern": "fluted", "color2": "#c8bea8", "repeat": {"count": 2, "step": [0.2, 0, 0]}},
+          {"shape": "cone", "pos": [0, 0.98, 0], "size": [0.05, 0.06, 0.05], "color": "#ffd84a", "emissive": 1.4, "emissiveColor": "#ffd84a"}
+        ]
+      },
+      "tower": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.96, 0.05, 0.96], "color": "#8a90a0", "pattern": "stone"},
+          {"shape": "cylinder", "pos": [0, 0.05, 0], "size": [0.8, 0.3, 0.8], "color": "#3a4256", "pattern": "panel", "color2": "#1e2432", "segments": 8, "taper": 0.85},
+          {"shape": "box", "pos": [0, 0.05, 0.36], "size": [0.22, 0.1, 0.06], "color": "#bfefff", "pattern": "glass", "emissive": 1.2, "emissiveColor": "#7fe3ff"},
+          {"shape": "torus", "pos": [0, 0.34, 0], "size": [0.72, 0.015, 0.72], "color": "#7fe3ff", "emissive": 2.2, "emissiveColor": "#7fe3ff", "segments": 16},
+          {"shape": "cylinder", "pos": [0, 0.35, 0], "size": [0.6, 0.3, 0.6], "color": "#424c62", "pattern": "panel", "color2": "#232a3a", "segments": 8, "taper": 0.8},
+          {"shape": "torus", "pos": [0, 0.64, 0], "size": [0.5, 0.015, 0.5], "color": "#7fe3ff", "emissive": 2.2, "emissiveColor": "#7fe3ff", "segments": 16},
+          {"shape": "cylinder", "pos": [0, 0.65, 0], "size": [0.4, 0.2, 0.4], "color": "#4a5670", "pattern": "panel", "color2": "#2a3244", "segments": 8, "taper": 0.7},
+          {"shape": "sphere", "pos": [0, 0.83, 0], "size": [0.3, 0.07, 0.3], "color": "#9af0ff", "pattern": "crystal", "emissive": 2, "emissiveColor": "#7fe3ff", "glossy": true},
+          {"shape": "cylinder", "pos": [0, 0.88, 0], "size": [0.03, 0.12, 0.03], "color": "#b8c0d0", "pattern": "metal"}
+        ]
+      },
+      "datacenter": {
+        "builder": "house",
+        "roof": "flat",
+        "wallHeight": 0.86,
+        "overhang": 0.02,
+        "inset": 0.02,
+        "wallPattern": "panel",
+        "roofPattern": "grate",
+        "basePattern": "stone",
+        "palette": {"wall": "#5a6478", "wall2": "#3a4254", "trim": "#2a3242", "roof": "#3e4656", "window": "#1a2232", "glow": "#7fe3ff", "frame": "#2a3242", "door": "#2a3242", "base": "#6a7080", "sign": "#7fe3ff"},
+        "windows": {"rows": 3, "perSide": 8, "w": 0.06, "h": 0.12, "y": 0.18, "alwaysOn": true},
+        "sign": {"w": 0.4, "h": 0.08, "emissive": 2.0, "pattern": "leds"},
+        "extraParts": [
+          {"shape": "box", "pos": [-0.3, 0.86, -0.1], "size": [0.16, 0.08, 0.3], "color": "#7a8292", "pattern": "grate", "color2": "#4a5262"},
+          {"shape": "box", "pos": [0.1, 0.86, -0.1], "size": [0.16, 0.08, 0.3], "color": "#7a8292", "pattern": "grate", "color2": "#4a5262"},
+          {"shape": "cylinder", "pos": [0.38, 0.86, 0.1], "size": [0.03, 0.2, 0.05], "color": "#9aa0b0", "pattern": "metal"}
+        ]
+      },
+      "windmill": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.62, 0.62, 0.62], "color": "#efe4cc", "pattern": "plaster", "segments": 10, "taper": 0.72},
+          {"shape": "cone", "pos": [0, 0.62, 0], "size": [0.54, 0.2, 0.54], "color": "#a8483a", "pattern": "shingles", "segments": 10},
+          {"shape": "box", "pos": [0, 0.04, 0.3], "size": [0.14, 0.14, 0.04], "color": "#6a4428", "pattern": "planks"},
+          {"shape": "box", "pos": [0, 0.3, 0.29], "size": [0.1, 0.06, 0.03], "color": "#2a3a52", "emissive": 1, "emissiveColor": "#ffcf7a", "pattern": "glass"},
+          {"shape": "cylinder", "pos": [0, 0.6, 0.27], "size": [0.06, 0.06, 0.06], "color": "#5a4030", "rot": [90, 0, 0], "lengthAxis": "z"},
+          {"shape": "box", "pos": [0, 0.3, 0.33], "size": [0.08, 0.6, 0.02], "color": "#e8dcc4", "pattern": "grate", "color2": "#8a6a44", "rot": [0, 0, 45], "pivot": "center"},
+          {"shape": "box", "pos": [0, 0.3, 0.33], "size": [0.08, 0.6, 0.02], "color": "#e8dcc4", "pattern": "grate", "color2": "#8a6a44", "rot": [0, 0, -45], "pivot": "center"}
+        ]
+      },
+      "temple": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [1, 0.05, 1], "color": "#d8d0bc", "pattern": "bricks", "color2": "#b0a890"},
+          {"shape": "box", "pos": [0, 0.05, -0.04], "size": [0.9, 0.05, 0.86], "color": "#e4dcc8", "pattern": "bricks", "color2": "#bcb49c"},
+          {"shape": "box", "pos": [0, 0.1, -0.1], "size": [0.72, 0.42, 0.62], "color": "#f2ecdc", "pattern": "plaster"},
+          {"shape": "cylinder", "pos": [-0.38, 0.1, 0.3], "size": [0.06, 0.44, 0.075], "color": "#fbf6ea", "pattern": "fluted", "color2": "#d8d0bc", "repeat": {"count": 6, "step": [0.152, 0, 0]}},
+          {"shape": "box", "pos": [0, 0.52, -0.02], "size": [0.92, 0.05, 0.8], "color": "#e8d8a8", "pattern": "stone"},
+          {"shape": "prism", "pos": [0, 0.57, -0.02], "size": [0.96, 0.22, 0.84], "color": "#3e5a9a", "pattern": "shingles"},
+          {"shape": "box", "pos": [0, 0.24, 0.215], "size": [0.14, 0.2, 0.01], "color": "#ffe8a0", "emissive": 1.8, "emissiveColor": "#ffd86a", "pattern": "glass"},
+          {"shape": "sphere", "pos": [0, 0.8, 0], "size": [0.08, 0.1, 0.1], "color": "#fff2b0", "emissive": 2.6, "emissiveColor": "#ffe27a"},
+          {"shape": "cone", "pos": [0, 0.88, 0], "size": [0.03, 0.12, 0.04], "color": "#ffd84a", "emissive": 1.2, "emissiveColor": "#ffd84a"}
+        ]
+      },
+      "cave_entrance": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "rock", "pos": [0, 0, -0.1], "size": [1, 1, 0.9], "color": "#7a746c", "pattern": "stone"},
+          {"shape": "rock", "pos": [-0.38, 0, 0.18], "size": [0.3, 0.7, 0.5], "color": "#857e74", "pattern": "stone"},
+          {"shape": "rock", "pos": [0.38, 0, 0.18], "size": [0.3, 0.66, 0.5], "color": "#6e6860", "pattern": "stone"},
+          {"shape": "dome", "pos": [0, 0, 0.4], "size": [0.42, 0.62, 0.1], "color": "#0a0808"}
+        ]
+      },
+      "counter": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [1, 0.92, 0.82], "color": "#a87a4a", "pattern": "vplanks", "color2": "#7a5434"},
+          {"shape": "box", "pos": [0, 0.92, 0], "size": [1.02, 0.08, 0.9], "color": "#e8dcc8", "pattern": "stone"}
+        ]
+      },
+      "heal_machine": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.94, 0.6, 0.8], "color": "#f4eef0", "pattern": "panel", "color2": "#d8ccd2"},
+          {"shape": "box", "pos": [0, 0.6, 0], "size": [0.96, 0.05, 0.84], "color": "#e86a94", "pattern": "metal"},
+          {"shape": "dome", "pos": [-0.25, 0.65, 0], "size": [0.3, 0.3, 0.5], "color": "#ffb0cc", "glossy": true, "emissive": 1.2, "emissiveColor": "#ff7aa8", "repeat": {"count": 3, "step": [0.25, 0, 0]}},
+          {"shape": "box", "pos": [0, 0.2, 0.4], "size": [0.4, 0.22, 0.02], "color": "#ff7aa8", "pattern": "leds", "emissive": 1.4, "emissiveColor": "#ff7aa8"}
+        ]
+      },
+      "pc_terminal": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.6, 0.55, 0.5], "color": "#d8dce4", "pattern": "panel", "color2": "#b0b6c2"},
+          {"shape": "box", "pos": [0, 0.55, -0.05], "size": [0.66, 0.42, 0.12], "color": "#3a4252", "pattern": "metal", "rot": [-12, 0, 0]},
+          {"shape": "box", "pos": [0, 0.6, 0.02], "size": [0.54, 0.32, 0.02], "color": "#7fe3ff", "pattern": "screen", "emissive": 1.5, "emissiveColor": "#7fe3ff", "rot": [-12, 0, 0]},
+          {"shape": "box", "pos": [0, 0.55, 0.16], "size": [0.48, 0.03, 0.16], "color": "#5a6272", "pattern": "grate", "color2": "#3a4252"}
+        ]
+      },
+      "shelf": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, -0.43], "size": [0.96, 1, 0.08], "color": "#8a6440", "pattern": "planks"},
+          {"shape": "box", "pos": [0, 0.02, -0.06], "size": [0.96, 0.04, 0.8], "color": "#a07446", "pattern": "planks", "repeat": {"count": 4, "step": [0, 0.32, 0]}},
+          {"shape": "box", "pos": [-0.47, 0, -0.06], "size": [0.04, 1, 0.8], "color": "#8a6440", "pattern": "planks", "repeat": {"count": 2, "step": [0.94, 0, 0]}},
+          {"shape": "box", "pos": [-0.25, 0.06, 0], "size": [0.3, 0.12, 0.5], "color": "#e8823a", "pattern": "noise", "repeat": {"count": 3, "step": [0.25, 0.32, 0]}},
+          {"shape": "box", "pos": [0.22, 0.06, 0], "size": [0.24, 0.1, 0.5], "color": "#4aa6d8", "pattern": "noise", "repeat": {"count": 2, "step": [0, 0.32, 0]}},
+          {"shape": "box", "pos": [0.05, 0.7, 0], "size": [0.24, 0.12, 0.5], "color": "#e8d84a", "pattern": "noise"}
+        ]
+      },
+      "bookshelf": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, -0.06], "size": [0.98, 1, 0.84], "color": "#6e4a2e", "pattern": "planks"},
+          {"shape": "box", "pos": [0, 0.06, 0.37], "size": [0.88, 0.88, 0.04], "color": "#a8483a", "pattern": "books", "colors": ["#a8483a", "#3e6ab0", "#4a8a4a", "#d8b04a", "#7a4a9a", "#e8e0d0"]}
+        ]
+      },
+      "table": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0.84, 0], "size": [0.96, 0.16, 0.86], "color": "#b0824e", "pattern": "planks"},
+          {"shape": "box", "pos": [-0.42, 0, -0.35], "size": [0.06, 0.84, 0.08], "color": "#7a5434", "repeat": {"count": 2, "step": [0.84, 0, 0]}},
+          {"shape": "box", "pos": [-0.42, 0, 0.35], "size": [0.06, 0.84, 0.08], "color": "#7a5434", "repeat": {"count": 2, "step": [0.84, 0, 0]}},
+          {"shape": "cylinder", "pos": [0.2, 1.0, 0], "size": [0.12, 0.14, 0.24], "color": "#f4f0e8", "pattern": "plaster"}
+        ]
+      },
+      "chair": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0.46, 0], "size": [0.56, 0.08, 0.56], "color": "#b0824e", "pattern": "planks"},
+          {"shape": "box", "pos": [0, 0.54, -0.25], "size": [0.56, 0.46, 0.06], "color": "#a07446", "pattern": "vplanks"},
+          {"shape": "box", "pos": [-0.24, 0, -0.24], "size": [0.06, 0.46, 0.06], "color": "#7a5434", "repeat": {"count": 2, "step": [0.48, 0, 0]}},
+          {"shape": "box", "pos": [-0.24, 0, 0.24], "size": [0.06, 0.46, 0.06], "color": "#7a5434", "repeat": {"count": 2, "step": [0.48, 0, 0]}}
+        ]
+      },
+      "bed": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.92, 0.4, 0.96], "color": "#8a5a34", "pattern": "planks"},
+          {"shape": "box", "pos": [0, 0.4, 0.02], "size": [0.86, 0.22, 0.9], "color": "#f4f0ea", "pattern": "cloth", "color2": "#e0d8cc"},
+          {"shape": "box", "pos": [0, 0.5, 0.14], "size": [0.88, 0.16, 0.66], "color": "#4a7ac8", "pattern": "cloth", "color2": "#3a62a8"},
+          {"shape": "box", "pos": [0, 0.6, -0.33], "size": [0.6, 0.14, 0.18], "color": "#ffffff", "pattern": "cloth", "color2": "#ece6dc"},
+          {"shape": "box", "pos": [0, 0, -0.47], "size": [0.96, 1, 0.06], "color": "#7a4e2c", "pattern": "planks"}
+        ]
+      },
+      "plant": {
+        "builder": "parts",
+        "tintJitter": 0.06,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.42, 0.34, 0.42], "color": "#d8d0c4", "pattern": "plaster", "taper": 0.8},
+          {"shape": "sphere", "pos": [0, 0.3, 0], "size": [0.6, 0.48, 0.6], "color": "#3e8a3a", "pattern": "leaves", "foliage": true},
+          {"shape": "sphere", "pos": [0.08, 0.6, 0.04], "size": [0.42, 0.36, 0.42], "color": "#4e9a44", "pattern": "leaves", "foliage": true}
+        ]
+      },
+      "tv": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.9, 0.36, 0.7], "color": "#6a4a30", "pattern": "planks"},
+          {"shape": "box", "pos": [0, 0.36, -0.05], "size": [0.84, 0.6, 0.12], "color": "#1e2028", "pattern": "metal"},
+          {"shape": "box", "pos": [0, 0.4, 0.02], "size": [0.74, 0.5, 0.02], "color": "#5aa6ff", "pattern": "screen", "emissive": 1.0, "emissiveColor": "#7fb8ff"}
+        ]
+      },
+      "rug": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "plane", "pos": [0, 0.5, 0], "size": [0.94, 1, 0.92], "color": "#b5485c", "pattern": "rug", "color2": "#f0d8a0"}
+        ]
+      },
+      "lab_machine": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.96, 0.46, 0.8], "color": "#d8e0e4", "pattern": "panel", "color2": "#aab4ba"},
+          {"shape": "cylinder", "pos": [-0.22, 0.46, 0], "size": [0.3, 0.46, 0.54], "color": "#8affd8", "glossy": true, "emissive": 1.0, "emissiveColor": "#7fffd4", "pattern": "glass", "opacity": 0.8},
+          {"shape": "cylinder", "pos": [-0.22, 0.92, 0], "size": [0.32, 0.05, 0.56], "color": "#6a7880", "pattern": "metal"},
+          {"shape": "box", "pos": [0.24, 0.46, -0.1], "size": [0.36, 0.3, 0.4], "color": "#3a4a52", "pattern": "metal"},
+          {"shape": "box", "pos": [0.24, 0.5, 0.11], "size": [0.28, 0.18, 0.02], "color": "#7fffd4", "pattern": "screen", "emissive": 1.4, "emissiveColor": "#7fffd4"}
+        ]
+      },
+      "gym_pillar": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "box", "pos": [0, 0, 0], "size": [0.76, 0.08, 0.76], "color": "#c8bea8", "pattern": "stone"},
+          {"shape": "cylinder", "pos": [0, 0.08, 0], "size": [0.5, 0.84, 0.5], "color": "#f2ead8", "pattern": "fluted", "color2": "#c8bea8", "segments": 12},
+          {"shape": "box", "pos": [0, 0.92, 0], "size": [0.7, 0.08, 0.7], "color": "#d8b04a", "pattern": "metal"},
+          {"shape": "torus", "pos": [0, 0.6, 0], "size": [0.54, 0.02, 0.54], "color": "#ffd84a", "emissive": 1.0, "emissiveColor": "#ffd84a", "segments": 12}
+        ]
+      },
+      "arena_mark": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "plane", "pos": [0, 0.5, 0], "size": [0.98, 1, 0.98], "color": "#ffffff", "pattern": "arena", "color2": "#c8483a", "cutout": true}
+        ]
+      },
+      "stairs_down": {
+        "builder": "parts",
+        "parts": [
+          {"shape": "plane", "pos": [0, 0.3, 0], "size": [0.9, 1, 0.9], "color": "#2a2228", "pattern": "stairsdown", "color2": "#8a7c6a"},
+          {"shape": "box", "pos": [0, 0, -0.47], "size": [0.96, 1, 0.06], "color": "#9a8a74", "pattern": "stone"}
+        ]
+      }
+    }
+  },
+  "particleAdditiveGlow": 1.5,
+  "streaming": {
+    "budgetMs": 4,
+    "catchUpBudgetMs": 7,
+    "keepMargin": 24,
+    "disposePerFrame": 6,
+    "prefillRadius": 20,
+    "moveLookAhead": 4,
+    "offscreenPenalty": 18,
+    "boundsHeight": 6,
+    "compileAsync": true,
+    "compileTimeoutMs": 1500,
+    "infinite": {"ensureMargin": 12, "prefetchMargin": 48, "prefetchPerFrame": 1, "prefetchBudgetMs": 3, "retainSeconds": 4, "blockMargin": 64, "providerRadius": 320, "heightWindow": 256, "climateWindow": 64, "assumedTopLevel": 8, "preloadAllModels": true}
+  },
+  "fields": {
+    "cell": 4,
+    "dry": {"scale": 140, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": 1, "lo": 0.3, "hi": 0.75},
+    "autumn": {"scale": 70, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": 2, "lo": 0.5, "hi": 0.66},
+    "blossom": {"scale": 46, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": 3, "lo": 0.56, "hi": 0.7},
+    "snow": {"line": 7, "band": 2, "noise": {"scale": 28, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 4, "lo": 0, "hi": 1}, "noiseAmount": 1.4},
+    "biomes": {"meadow": {"dry": 0, "autumn": 0.5, "blossom": 0.9}, "forest": {"dry": -0.1, "autumn": 1, "blossom": 0.35}, "desert": {"dry": 0.45, "autumn": 0, "blossom": 0}, "snow": {"dry": -0.05, "autumn": 0.25, "blossom": 0, "snow": 0.7, "snowLine": 4}, "coast": {"dry": 0.08, "autumn": 0.1, "blossom": 0.3}, "city": {"dry": 0.05, "autumn": 0.4, "blossom": 0.5}, "swamp": {"dry": -0.3, "autumn": 0.2, "blossom": 0.1}, "highland": {"dry": 0.05, "autumn": 0.7, "blossom": 0.3, "snowLine": 6}, "volcano": {"dry": 0.35, "autumn": 0, "blossom": 0, "snowLine": 99}, "ruins": {"dry": 0.1, "autumn": 0.5, "blossom": 0.4}, "sakura": {"dry": -0.05, "autumn": 0.12, "blossom": 1.6}, "bamboo": {"dry": -0.15, "autumn": 0.1, "blossom": 0.1}, "jungle": {"dry": -0.4, "autumn": 0, "blossom": 0.35}, "mangrove": {"dry": -0.35, "autumn": 0.05, "blossom": 0.05}, "savanna": {"dry": 0.3, "autumn": 0.15, "blossom": 0}, "lavender": {"dry": 0.05, "autumn": 0.1, "blossom": 0.6}, "mushroom": {"dry": -0.25, "autumn": 0.45, "blossom": 0.15}, "taiga": {"dry": -0.05, "autumn": 0.35, "blossom": 0, "snow": 0.35, "snowLine": 3}, "tundra": {"dry": 0.05, "autumn": 0.2, "blossom": 0, "snow": 0.45, "snowLine": 2}, "glacier": {"dry": 0, "autumn": 0, "blossom": 0, "snow": 0.9, "snowLine": 1}, "badlands": {"dry": 0.5, "autumn": 0, "blossom": 0, "snowLine": 99}, "saltflat": {"dry": 0.45, "autumn": 0, "blossom": 0, "snowLine": 99}, "canyon": {"dry": 0.4, "autumn": 0.05, "blossom": 0, "snowLine": 12}, "ashlands": {"dry": 0.4, "autumn": 0, "blossom": 0, "snowLine": 99}, "lagoon": {"dry": 0, "autumn": 0, "blossom": 0.35}, "crystal": {"dry": 0.05, "autumn": 0.1, "blossom": 0.2, "snowLine": 8}, "cloud": {"dry": -0.05, "autumn": 0, "blossom": 0.3, "snow": 0.12, "snowLine": 6}, "glitch": {"dry": 0.1, "autumn": 0.2, "blossom": 0.2}, "circuit": {"dry": 0.15, "autumn": 0.1, "blossom": 0}, "neural": {"dry": -0.15, "autumn": 0.1, "blossom": 0.4}},
+    "dust": {"color": "#dfe8f3", "amount": 1, "slope": [0.35, 0.8], "pixels": 16, "clump": 0.9, "clumpMix": 0.72}
+  },
+  "fringe": {
+    "width": 0.3,
+    "lift": 0.004,
+    "mask": [32, 10],
+    "jag": 0.55,
+    "specks": 0.12,
+    "alphaTest": 0.5,
+    "priorities": {"path": 1, "cave": 1, "cobble": 2, "mud": 2, "rock": 2, "ash": 2, "ruin": 2, "sand": 3, "desert_grass": 4, "forest_floor": 5, "tall_reeds": 5, "grass": 6, "tall_grass": 6, "dark_grass": 6, "flowers": 6, "snow": 8, "tall_snowgrass": 8, "causeway": 1, "circuit": 2, "red_rock": 2, "ledge_rock": 2, "salt": 3, "coral_sand": 3, "glitch": 3, "ledge_sand": 3, "savanna": 4, "tall_savanna": 4, "neural": 4, "moss": 5, "jungle_floor": 5, "bamboo_floor": 5, "tall_fern": 5, "ledge_dirt": 5, "lavender": 6, "tall_lavender": 6, "sakura_grass": 6, "tall_sakura": 6, "ledge_grass": 6, "tall_glitch": 3, "cloud": 7, "ledge_snow": 8}
+  },
+  "decor": {
+    "maxPerTile": 6,
+    "margin": 0.06,
+    "lift": 0,
+    "kinds": {
+      "sprig": {"shape": "sprig", "size": [0.28, 0.44], "colors": ["$terrain"], "terrainShade": 1.08, "colorJitter": 0.12, "sway": true, "variants": 2},
+      "drysprig": {"shape": "sprig", "size": [0.3, 0.5], "colors": ["#c8b070", "#b09a5a", "#d8c488", "#a8925a"], "colorJitter": 0.1, "sway": true, "variants": 2},
+      "reedsprig": {"shape": "sprig", "size": [0.35, 0.55], "colors": ["#5a7a3a", "#6a8a44", "#4e6e34"], "colorJitter": 0.1, "sway": true},
+      "blossom": {"shape": "blossom", "size": [0.22, 0.34], "colors": ["#ffffff", "#ffd84a", "#ff9ac8", "#a8c8ff", "#ff8a5a", "#d8a8ff"], "colorJitter": 0.08},
+      "pebble": {"shape": "pebble", "size": [0.16, 0.3], "colors": ["#9a948c", "#b0aaa0", "#857f78", "#c4beb4"], "pattern": "stone", "colorJitter": 0.1, "variants": 3},
+      "cinder": {"shape": "pebble", "size": [0.16, 0.32], "colors": ["#3a3432", "#4a4240", "#2e2a2a"], "pattern": "stone", "colorJitter": 0.1, "variants": 2},
+      "leaf": {"shape": "leaf", "size": [0.35, 0.55], "colors": ["#d8822a", "#c8502c", "#e2b23a", "#a85a2a", "#8a9a3a"], "colorJitter": 0.1, "variants": 2},
+      "twig": {"shape": "twig", "size": [0.4, 0.7], "colors": ["#7a5a3a", "#8a7058", "#6a4e34"], "pattern": "bark", "colorJitter": 0.1},
+      "bone": {"shape": "bone", "size": [0.35, 0.55], "colors": ["#efe6d2", "#e2d6bc"], "colorJitter": 0.05},
+      "shell": {"shape": "shell", "size": [0.18, 0.3], "colors": ["#ffd8e0", "#fff4e8", "#ffc8a8", "#e8e0ff"], "colorJitter": 0.06},
+      "shroom": {"shape": "shroom", "size": [0.3, 0.46], "colors": ["#e04a3a", "#c88a4a", "#b07cf0", "#f0d24a"], "colorJitter": 0.08, "variants": 2},
+      "mound": {"shape": "mound", "size": [0.35, 0.75], "colors": ["#f4f8ff", "#e8f0fa"], "pattern": "plaster", "colorJitter": 0.04, "variants": 2},
+      "ember": {"shape": "ember", "size": [0.4, 0.75], "colors": ["#ff7a2a", "#ffb03a", "#ff5a1a"], "emissive": 2.6, "colorJitter": 0.2},
+      "puddle": {"shape": "puddle", "size": [0.55, 0.95], "colors": ["#3a4a5a", "#2e3e4c", "#44505a"], "glossy": true, "colorJitter": 0.05},
+      "icicle": {"shape": "shard", "size": [0.22, 0.38], "colors": ["#cfe8ff", "#e4f2ff", "#b8dcff", "#d8d0ff"], "glossy": true, "colorJitter": 0.05, "variants": 3},
+      "petal": {"shape": "leaf", "size": [0.16, 0.28], "colors": ["#ffc4dc", "#ffd8e8", "#f6a8c8", "#ffffff"], "colorJitter": 0.06, "variants": 2},
+      "lavsprig": {"shape": "sprig", "size": [0.3, 0.5], "colors": ["#9a7ad0", "#b08ce0", "#7e62b8", "#c8a8f0"], "colorJitter": 0.08, "sway": true, "variants": 2},
+      "greenleaf": {"shape": "leaf", "size": [0.3, 0.5], "colors": ["#8aa848", "#a8b852", "#6e9a3c", "#c8c060"], "colorJitter": 0.1, "variants": 2},
+      "coral": {"shape": "shard", "size": [0.2, 0.36], "colors": ["#ff8a7a", "#ffb0a0", "#f0607a", "#ffd0a8"], "colorJitter": 0.08, "variants": 3},
+      "saltcrystal": {"shape": "shard", "size": [0.16, 0.3], "colors": ["#ffffff", "#f4f0ea", "#e8eef4"], "glossy": true, "colorJitter": 0.04, "variants": 3},
+      "glitchshard": {"shape": "shard", "size": [0.2, 0.42], "colors": ["#c060ff", "#40e8ff", "#ff50c8", "#80ff9a"], "emissive": 1.6, "glossy": true, "colorJitter": 0.1, "variants": 3},
+      "led": {"shape": "ember", "size": [0.3, 0.55], "colors": ["#4affb0", "#48d8ff", "#b8ff60"], "emissive": 2.2, "colorJitter": 0.15},
+      "synapse": {"shape": "ember", "size": [0.3, 0.6], "colors": ["#7ab8ff", "#ff8ad8", "#b89aff"], "emissive": 2.0, "colorJitter": 0.15},
+      "cloudpuff": {"shape": "mound", "size": [0.45, 0.9], "colors": ["#ffffff", "#f2f6ff", "#fff6fa"], "pattern": "plaster", "colorJitter": 0.03, "variants": 2},
+      "fern": {"shape": "sprig", "size": [0.4, 0.62], "colors": ["#3e7a36", "#4c8c3e", "#2f6a30"], "colorJitter": 0.1, "sway": true, "variants": 2}
+    },
+    "rules": [
+      {"kind": "sprig", "terrain": ["grass"], "density": 1.4, "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 11, "lo": 0.25, "hi": 0.75}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "blossom", "terrain": ["grass"], "biomes": ["meadow", "forest", "highland", "ruins", "coast", "city"], "density": 0.35, "noise": {"scale": 14, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 12, "lo": 0.55, "hi": 0.8}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "blossom", "terrain": ["grass"], "density": 0.5, "field": {"name": "blossom", "lo": 0.2, "hi": 0.8}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "pebble", "terrain": ["grass"], "density": 0.05},
+      {"kind": "leaf", "terrain": ["grass", "path", "ruin", "cobble"], "density": 0.6, "field": {"name": "autumn", "lo": 0.25, "hi": 0.85}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "shroom", "terrain": ["grass"], "biomes": ["forest", "swamp"], "density": 0.03, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "blossom", "terrain": ["tall_grass"], "density": 0.1, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "sprig", "terrain": ["flowers"], "density": 0.8, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "blossom", "terrain": ["flowers"], "density": 0.7, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "leaf", "terrain": ["forest_floor"], "density": 0.55, "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 13, "lo": 0.3, "hi": 0.7}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "leaf", "terrain": ["forest_floor", "dark_grass"], "density": 0.9, "field": {"name": "autumn", "lo": 0.2, "hi": 0.8}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "twig", "terrain": ["forest_floor"], "density": 0.12},
+      {"kind": "shroom", "terrain": ["forest_floor"], "density": 0.07, "noise": {"scale": 12, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 14, "lo": 0.45, "hi": 0.75}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "sprig", "terrain": ["forest_floor"], "density": 0.6, "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 15, "lo": 0.4, "hi": 0.8}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "pebble", "terrain": ["forest_floor"], "density": 0.05},
+      {"kind": "shroom", "terrain": ["dark_grass"], "density": 0.05, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "pebble", "terrain": ["path"], "density": 0.35, "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 16, "lo": 0.3, "hi": 0.7}},
+      {"kind": "sprig", "terrain": ["path"], "density": 0.18, "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 17, "lo": 0.45, "hi": 0.8}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "sprig", "terrain": ["cobble", "ruin"], "density": 0.16, "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 18, "lo": 0.4, "hi": 0.8}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "pebble", "terrain": ["cobble", "ruin"], "density": 0.08},
+      {"kind": "shell", "terrain": ["sand"], "biomes": ["coast"], "density": 0.3, "near": {"terrain": ["water", "shallow"], "dist": 2}},
+      {"kind": "pebble", "terrain": ["sand"], "density": 0.06},
+      {"kind": "twig", "terrain": ["sand", "desert_grass"], "biomes": ["desert", "coast"], "density": 0.04},
+      {"kind": "bone", "terrain": ["sand", "desert_grass"], "biomes": ["desert"], "density": 0.025},
+      {"kind": "drysprig", "terrain": ["sand"], "biomes": ["desert"], "density": 0.18, "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 19, "lo": 0.45, "hi": 0.75}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "drysprig", "terrain": ["desert_grass"], "density": 0.6, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "mound", "terrain": ["snow"], "density": 0.2, "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 20, "lo": 0.4, "hi": 0.75}},
+      {"kind": "pebble", "terrain": ["snow"], "density": 0.04},
+      {"kind": "twig", "terrain": ["snow"], "density": 0.03},
+      {"kind": "mound", "terrain": ["tall_snowgrass"], "density": 0.06},
+      {"kind": "puddle", "terrain": ["mud"], "density": 0.16, "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 21, "lo": 0.5, "hi": 0.75}},
+      {"kind": "reedsprig", "terrain": ["mud"], "density": 0.35, "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 22, "lo": 0.35, "hi": 0.75}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "shroom", "terrain": ["mud"], "density": 0.03, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "ember", "terrain": ["ash"], "density": 0.14, "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 23, "lo": 0.55, "hi": 0.8}},
+      {"kind": "cinder", "terrain": ["ash"], "density": 0.22},
+      {"kind": "pebble", "terrain": ["rock"], "density": 0.3},
+      {"kind": "pebble", "terrain": ["cave"], "density": 0.15},
+      {"kind": "shroom", "terrain": ["cave"], "density": 0.03, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "mound", "terrain": ["grass", "path", "ruin", "cobble", "forest_floor", "rock", "dark_grass", "flowers", "tall_grass", "sand", "mud"], "density": 0.3, "field": {"name": "snow", "lo": 0.45, "hi": 0.9}, "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 24, "lo": 0.3, "hi": 0.7}},
+      {"kind": "icicle", "terrain": ["snow", "ice", "tall_snowgrass"], "density": 0.06, "noise": {"scale": 11, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 25, "lo": 0.5, "hi": 0.8}},
+      {"kind": "icicle", "terrain": ["crystal_floor"], "density": 0.08},
+      {"kind": "sprig", "terrain": ["ledge_grass", "sakura_grass", "lavender", "moss"], "density": 1.0, "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 41, "lo": 0.3, "hi": 0.75}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "petal", "terrain": ["sakura_grass", "tall_sakura", "path", "cobble"], "biomes": ["sakura"], "density": 0.9, "noise": {"scale": 11, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 42, "lo": 0.25, "hi": 0.7}},
+      {"kind": "petal", "terrain": ["sakura_grass", "grass", "cloud"], "density": 0.5, "field": {"name": "blossom", "lo": 0.45, "hi": 0.95}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "lavsprig", "terrain": ["lavender", "tall_lavender"], "density": 1.1, "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 43, "lo": 0.25, "hi": 0.7}},
+      {"kind": "greenleaf", "terrain": ["bamboo_floor", "jungle_floor"], "density": 0.9, "noise": {"scale": 12, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 44, "lo": 0.3, "hi": 0.75}},
+      {"kind": "fern", "terrain": ["jungle_floor", "bamboo_floor", "moss"], "density": 0.55, "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 45, "lo": 0.35, "hi": 0.8}},
+      {"kind": "twig", "terrain": ["bamboo_floor", "jungle_floor", "ledge_dirt"], "density": 0.12},
+      {"kind": "shroom", "terrain": ["moss", "jungle_floor"], "density": 0.12, "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 46, "lo": 0.4, "hi": 0.85}, "unless": {"name": "snow", "lo": 0.25, "hi": 0.55}},
+      {"kind": "shroom", "terrain": ["moss", "dark_grass", "forest_floor"], "biomes": ["mushroom"], "density": 0.4, "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 47, "lo": 0.3, "hi": 0.75}},
+      {"kind": "drysprig", "terrain": ["savanna", "tall_savanna"], "density": 0.9, "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 48, "lo": 0.25, "hi": 0.75}},
+      {"kind": "bone", "terrain": ["savanna", "red_rock"], "biomes": ["savanna", "badlands", "canyon"], "density": 0.02},
+      {"kind": "pebble", "terrain": ["red_rock", "ledge_rock", "ledge_sand", "causeway"], "density": 0.25},
+      {"kind": "saltcrystal", "terrain": ["salt"], "density": 0.5, "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 49, "lo": 0.35, "hi": 0.8}},
+      {"kind": "shell", "terrain": ["coral_sand"], "density": 0.35, "near": {"terrain": ["water", "shallow"], "dist": 3}},
+      {"kind": "coral", "terrain": ["coral_sand"], "density": 0.25, "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 50, "lo": 0.45, "hi": 0.85}, "near": {"terrain": ["water", "shallow"], "dist": 2}},
+      {"kind": "glitchshard", "terrain": ["glitch", "tall_glitch"], "density": 0.35, "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 51, "lo": 0.4, "hi": 0.85}},
+      {"kind": "led", "terrain": ["circuit"], "density": 0.4, "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 52, "lo": 0.4, "hi": 0.85}},
+      {"kind": "synapse", "terrain": ["neural"], "density": 0.35, "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 53, "lo": 0.4, "hi": 0.85}},
+      {"kind": "sprig", "terrain": ["neural"], "density": 0.6, "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 54, "lo": 0.3, "hi": 0.75}},
+      {"kind": "cloudpuff", "terrain": ["cloud"], "density": 0.3, "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": 55, "lo": 0.4, "hi": 0.85}},
+      {"kind": "mound", "terrain": ["ledge_snow"], "density": 0.3}
+    ]
+  },
+  "nature": {
+    "roles": {"FOLIAGE": "foliage", "BARK": "bark", "WOOD": "bark", "STONE": "rock", "CACTUS": "cactus", "STEM": "stem", "ICE": "crystal", "SNOW": "snow"},
+    "jitter": 0.08,
+    "foliageNormalBlend": 0.65,
+    "props": {
+      "tree_oak": {
+        "gen": "broadleaf",
+        "glbWeight": 1,
+        "instance": {"scale": [0.85, 1.12], "scaleXZ": 0.1, "scaleY": 0.1, "lean": 4, "sink": 0.02},
+        "params": {
+          "trunk": {"height": [1.1, 1.5], "radius": [0.11, 0.15], "taper": 0.55, "bend": 0.12, "sides": 7, "rings": 4, "flare": 0.6, "roots": [3, 5], "rootLength": [0.18, 0.32], "material": {"pattern": "bark", "color": "#6b4a2f"}},
+          "branches": {"count": [2, 4], "from": [0.55, 0.85], "length": [0.45, 0.7], "radius": 0.5, "rise": [25, 50]},
+          "canopy": {"clusters": [5, 8], "radius": [0.5, 0.7], "spread": 0.45, "lift": [0.15, 0.7], "squash": 0.82, "detail": 1, "noise": 0.3, "noiseFreq": 1.5, "top": [0.92, 1.06], "colors": ["#4a9438", "#5aa843", "#3f8634", "#6cbc4e"], "material": {"pattern": "leaves", "color": "#4a9438"}},
+          "fruit": {"chance": 0.25, "count": [4, 8], "radius": 0.06, "colors": ["#e0453a", "#f0a030"], "material": {"pattern": "plain", "color": "#e0453a"}}
+        },
+        "tints": {
+          "foliage": {
+            "base": "#4a9438",
+            "jitter": 0.08,
+            "hueJitter": 0.04,
+            "fields": [
+              {"field": "dry", "colors": ["#8c9a4c"], "lo": 0.45, "hi": 1, "amount": 0.55},
+              {"field": "lush", "colors": ["#2f8a3a"], "lo": 0.55, "hi": 1, "amount": 0.5},
+              {"field": "autumn", "colors": ["#e08a2a", "#d0502c", "#e8b83a", "#c86a28"], "lo": 0.25, "hi": 0.7, "spread": 0.5},
+              {"field": "blossom", "colors": ["#f6c8dc", "#ffffff", "#ffd6e6"], "lo": 0.5, "hi": 0.9, "spread": 0.6, "amount": 0.8}
+            ]
+          },
+          "bark": {"base": "#6b4a2f", "jitter": 0.08}
+        }
+      },
+      "tree_cherry": {
+        "gen": "broadleaf",
+        "glbWeight": 1,
+        "instance": {"scale": [0.85, 1.12], "scaleXZ": 0.1, "scaleY": 0.1, "lean": 4, "sink": 0.02},
+        "params": {
+          "trunk": {"height": [1.0, 1.35], "radius": [0.1, 0.13], "taper": 0.55, "bend": 0.18, "sides": 7, "rings": 4, "flare": 0.5, "roots": [3, 4], "rootLength": [0.15, 0.28], "material": {"pattern": "bark", "color": "#5a3a34"}},
+          "branches": {"count": [3, 4], "from": [0.5, 0.85], "length": [0.5, 0.75], "radius": 0.5, "rise": [20, 45]},
+          "canopy": {"clusters": [6, 9], "radius": [0.45, 0.65], "spread": 0.55, "lift": [0.1, 0.6], "squash": 0.78, "detail": 1, "noise": 0.32, "noiseFreq": 1.7, "top": [0.9, 1.04], "colors": ["#f3a2c4", "#f8bed6", "#e889b2", "#ffd2e4"], "material": {"pattern": "leaves", "color": "#f3a2c4"}}
+        },
+        "tints": {
+          "foliage": {
+            "base": "#f3a2c4",
+            "jitter": 0.06,
+            "hueJitter": 0.03,
+            "fields": [
+              {"field": "autumn", "colors": ["#e86a3a", "#f0a050"], "lo": 0.3, "hi": 0.8, "spread": 0.5, "amount": 0.6},
+              {"field": "blossom", "colors": ["#ffffff", "#ffe8f0"], "lo": 0.4, "hi": 0.9, "spread": 0.5, "amount": 0.45}
+            ]
+          },
+          "bark": {"base": "#5a3a34", "jitter": 0.08}
+        }
+      },
+      "tree_swamp": {
+        "gen": "broadleaf",
+        "glbWeight": 1,
+        "instance": {"scale": [0.88, 1.12], "scaleXZ": 0.1, "scaleY": 0.1, "lean": 6, "sink": 0.02},
+        "params": {
+          "trunk": {"height": [0.9, 1.25], "radius": [0.15, 0.2], "taper": 0.5, "bend": 0.2, "sides": 7, "rings": 4, "flare": 1.3, "roots": [4, 6], "rootLength": [0.3, 0.5], "material": {"pattern": "bark", "color": "#4a3c2c"}},
+          "branches": {"count": [2, 4], "from": [0.6, 0.9], "length": [0.5, 0.8], "radius": 0.45, "rise": [10, 35]},
+          "canopy": {"clusters": [4, 7], "radius": [0.6, 0.85], "spread": 0.65, "lift": [0.0, 0.35], "squash": 0.6, "detail": 1, "noise": 0.34, "noiseFreq": 1.4, "top": [0.85, 1.0], "colors": ["#3e6a3a", "#4a7a42", "#365e34", "#567e46"], "material": {"pattern": "leaves", "color": "#3e6a3a"}},
+          "moss": {"count": [9, 15], "length": [0.6, 1.15], "width": 0.12, "rim": 0.96, "drop": 0.12, "material": {"pattern": "plain", "color": "#8a9c62"}}
+        },
+        "tints": {
+          "foliage": {
+            "base": "#3e6a3a",
+            "jitter": 0.08,
+            "hueJitter": 0.04,
+            "fields": [
+              {"field": "dry", "colors": ["#7a8a44"], "lo": 0.5, "hi": 1, "amount": 0.5},
+              {"field": "autumn", "colors": ["#a8862a", "#8a6a2a"], "lo": 0.3, "hi": 0.8, "spread": 0.5, "amount": 0.6}
+            ]
+          },
+          "bark": {"base": "#4a3c2c", "jitter": 0.08}
+        }
+      },
+      "tree_pine": {
+        "gen": "conifer",
+        "glbWeight": 0.4,
+        "instance": {"scale": [0.85, 1.15], "scaleXZ": 0.1, "scaleY": 0.1, "lean": 3, "sink": 0.02},
+        "params": {
+          "trunk": {"height": [1.0, 1.4], "radius": [0.1, 0.13], "taper": 0.5, "bend": 0, "sides": 6, "rings": 3, "flare": 0.5, "roots": [2, 4], "rootLength": [0.12, 0.22], "material": {"pattern": "bark", "color": "#5a3c26"}},
+          "tiers": {"count": [4, 6], "bottom": [0.5, 0.75], "radius": [0.7, 0.86], "shrink": [0.72, 0.82], "height": [0.9, 1.15], "overlap": 0.5, "sides": 9, "droop": [0.15, 0.3], "jag": 0.14, "under": 0.3, "top": [0.95, 1.08], "colors": ["#2c6440", "#34744a", "#3c8454", "#46925c"], "material": {"pattern": "leaves", "color": "#2c6440"}, "bend": 0.4, "puff": [0.28, 0.45], "rings": 2}
+        },
+        "tints": {
+          "foliage": {
+            "base": "#2c6440",
+            "jitter": 0.07,
+            "hueJitter": 0.03,
+            "fields": [
+              {"field": "dry", "colors": ["#5a7a40"], "lo": 0.5, "hi": 1, "amount": 0.5},
+              {"field": "lush", "colors": ["#1e5a3a"], "lo": 0.5, "hi": 1, "amount": 0.4},
+              {"field": "autumn", "colors": ["#6e8a3c", "#8a8a3e"], "lo": 0.5, "hi": 0.9, "spread": 0.6, "amount": 0.3}
+            ]
+          },
+          "bark": {"base": "#5a3c26", "jitter": 0.08}
+        }
+      },
+      "tree_snowpine": {
+        "gen": "conifer",
+        "glbWeight": 0.4,
+        "instance": {"scale": [0.85, 1.15], "scaleXZ": 0.1, "scaleY": 0.1, "lean": 3, "sink": 0.02},
+        "params": {
+          "trunk": {"height": [1.0, 1.4], "radius": [0.1, 0.13], "taper": 0.5, "bend": 0, "sides": 6, "rings": 3, "flare": 0.5, "roots": [2, 4], "rootLength": [0.12, 0.22], "material": {"pattern": "bark", "color": "#4e3828"}},
+          "tiers": {"count": [4, 6], "bottom": [0.5, 0.75], "radius": [0.7, 0.86], "shrink": [0.72, 0.82], "height": [0.9, 1.15], "overlap": 0.5, "sides": 9, "droop": [0.15, 0.3], "jag": 0.14, "under": 0.3, "top": [0.95, 1.08], "colors": ["#2a5a46", "#2e624c", "#346a52", "#3a7258"], "material": {"pattern": "leaves", "color": "#2a5a46"}, "bend": 0.4, "puff": [0.28, 0.45], "rings": 2},
+          "snow": {"cover": 0.62, "outset": 0.03, "material": {"pattern": "plaster", "color": "#e8f0fa"}}
+        },
+        "tints": {"foliage": {"base": "#2a5a46", "jitter": 0.06, "hueJitter": 0.03}, "bark": {"base": "#4e3828", "jitter": 0.08}}
+      },
+      "tree_palm": {
+        "gen": "palm",
+        "glbWeight": 1,
+        "instance": {"scale": [0.88, 1.12], "scaleXZ": 0.08, "scaleY": 0.12, "lean": 3, "sink": 0.02},
+        "params": {
+          "trunk": {"height": [2.6, 3.2], "radius": [0.1, 0.13], "taper": 0.7, "bend": 0, "sides": 7, "rings": 7, "flare": 0.5, "material": {"pattern": "bark", "color": "#8a6a44"}, "lean": [0.3, 0.75], "bulge": 0.12},
+          "fronds": {"count": [7, 10], "length": [1.0, 1.35], "width": [0.26, 0.34], "rise": [0.35, 0.55], "droop": [0.9, 1.3], "segments": 6, "fold": 0.25, "colors": ["#4c9a3c", "#56a646", "#4a9438", "#62b04e"], "material": {"pattern": "leaves", "color": "#4c9a3c"}},
+          "nuts": {"count": [2, 4], "radius": 0.08, "material": {"pattern": "plain", "color": "#6a4a2a"}}
+        },
+        "tints": {
+          "foliage": {
+            "base": "#4c9a3c",
+            "jitter": 0.08,
+            "hueJitter": 0.04,
+            "fields": [
+              {"field": "dry", "colors": ["#9aa040"], "lo": 0.45, "hi": 1, "amount": 0.6},
+              {"field": "lush", "colors": ["#2f8a3a"], "lo": 0.55, "hi": 1, "amount": 0.4}
+            ]
+          },
+          "bark": {"base": "#8a6a44", "jitter": 0.08}
+        }
+      },
+      "tree_dead": {
+        "gen": "deadtree",
+        "glbWeight": 1,
+        "instance": {"scale": [0.85, 1.15], "scaleXZ": 0.1, "scaleY": 0.1, "lean": 7, "sink": 0.02},
+        "params": {
+          "trunk": {"height": [1.5, 2.2], "radius": [0.11, 0.15], "taper": 0.3, "bend": 0.25, "sides": 6, "rings": 5, "flare": 0.7, "roots": [2, 4], "rootLength": [0.2, 0.35], "material": {"pattern": "bark", "color": "#6a5a4c"}},
+          "branches": {"levels": 2, "count": [2, 4], "from": [0.4, 0.95], "length": [0.6, 1.0], "shrink": 0.6, "rise": [15, 55], "radius": 0.55}
+        },
+        "tints": {"bark": {"base": "#6a5a4c", "jitter": 0.1, "hueJitter": 0.03}}
+      },
+      "bush": {
+        "gen": "bush",
+        "glbWeight": 1,
+        "instance": {"scale": [0.8, 1.2], "scaleXZ": 0.15, "scaleY": 0.12, "lean": 3, "sink": 0.02},
+        "params": {
+          "blobs": [3, 6],
+          "radius": [0.26, 0.38],
+          "spread": 0.24,
+          "top": [0.85, 1.1],
+          "squash": 0.85,
+          "detail": 1,
+          "noise": 0.3,
+          "noiseFreq": 2.0,
+          "colors": ["#4a9a3c", "#5aae48", "#3e8a34"],
+          "material": {"pattern": "leaves", "color": "#4a9a3c"},
+          "berries": {"chance": 0.35, "count": [5, 10], "radius": 0.045, "colors": ["#e0455a", "#5a6ae0", "#f0f0f0"], "material": {"pattern": "plain", "color": "#e0455a"}}
+        },
+        "tints": {
+          "foliage": {
+            "base": "#4a9a3c",
+            "jitter": 0.08,
+            "hueJitter": 0.04,
+            "fields": [
+              {"field": "dry", "colors": ["#9aa648"], "lo": 0.45, "hi": 1, "amount": 0.6},
+              {"field": "lush", "colors": ["#2f8a3a"], "lo": 0.55, "hi": 1, "amount": 0.5},
+              {"field": "autumn", "colors": ["#d8782a", "#c0402c", "#e0a838"], "lo": 0.3, "hi": 0.75, "spread": 0.5},
+              {"field": "blossom", "colors": ["#ffb0d0", "#ffffff", "#fff0a0"], "lo": 0.45, "hi": 0.85, "spread": 0.6, "amount": 0.7}
+            ]
+          }
+        }
+      },
+      "rock_small": {
+        "gen": "rock",
+        "glbWeight": 1,
+        "instance": {"scale": [0.85, 1.2], "scaleXZ": 0.15, "scaleY": 0.15, "lean": 0, "sink": 0.02},
+        "params": {"boulders": [1, 3], "radius": [0.3, 0.42], "spread": 0.25, "squash": [0.6, 0.85], "detail": 1, "noise": 0.35, "noiseFreq": 1.3, "sink": 0.06, "flat": true, "colors": ["#8e8a84", "#9a958e", "#83807a"], "material": {"pattern": "stone", "color": "#8e8a84"}, "moss": {"chance": 0.35, "color": "#6e9a4c", "threshold": 0.72}},
+        "tints": {
+          "rock": {"base": "#8e8a84", "jitter": 0.1, "hueJitter": 0.03, "fields": [{"field": "dry", "colors": ["#a89a84"], "lo": 0.5, "hi": 1, "amount": 0.4}]}
+        }
+      },
+      "rock_large": {
+        "gen": "rock",
+        "glbWeight": 1,
+        "instance": {"scale": [0.9, 1.1], "scaleXZ": 0.1, "scaleY": 0.12, "lean": 0, "sink": 0.04},
+        "params": {"boulders": [2, 4], "radius": [0.7, 0.92], "spread": 0.55, "squash": [0.55, 0.8], "detail": 2, "noise": 0.32, "noiseFreq": 1.1, "sink": 0.1, "flat": true, "colors": ["#8a857e", "#958f87", "#7e7a74"], "material": {"pattern": "stone", "color": "#8a857e"}, "moss": {"chance": 0.6, "color": "#6e9a4c", "threshold": 0.68}},
+        "tints": {
+          "rock": {"base": "#8a857e", "jitter": 0.1, "hueJitter": 0.03, "fields": [{"field": "dry", "colors": ["#a89a84"], "lo": 0.5, "hi": 1, "amount": 0.4}]}
+        }
+      },
+      "lava_rock": {
+        "gen": "rock",
+        "glbWeight": 1,
+        "instance": {"scale": [0.85, 1.15], "scaleXZ": 0.12, "scaleY": 0.15, "lean": 0, "sink": 0.03},
+        "params": {
+          "boulders": [1, 2],
+          "radius": [0.38, 0.5],
+          "spread": 0.25,
+          "squash": [0.7, 1.0],
+          "detail": 1,
+          "noise": 0.4,
+          "noiseFreq": 1.4,
+          "sink": 0.05,
+          "flat": true,
+          "colors": ["#3e3430", "#4a3e38"],
+          "material": {"pattern": "magma", "color": "#3e3430", "color2": "#ff6a2a", "emissive": 1, "emissiveColor": "#ff5a1a", "emissiveMap": true}
+        },
+        "tints": {}
+      },
+      "crystal": {
+        "gen": "crystal",
+        "glbWeight": 1,
+        "instance": {"scale": [0.85, 1.15], "scaleXZ": 0.1, "scaleY": 0.15, "lean": 6, "sink": 0.02},
+        "params": {
+          "base": {"radius": [0.22, 0.3], "squash": 0.45, "noise": 0.3, "material": {"pattern": "stone", "color": "#5e5a6a"}},
+          "shards": {"count": [3, 6], "length": [0.45, 0.85], "radius": [0.08, 0.13], "tilt": [12, 38], "sides": 6, "tip": 0.32, "spread": 0.12, "lead": 1.2},
+          "palettes": [
+            {"pattern": "crystal", "color": "#8fe8ff", "emissive": 0.9, "emissiveColor": "#6fd8ff", "glossy": true},
+            {"pattern": "crystal", "color": "#c8a8ff", "emissive": 0.9, "emissiveColor": "#b08cff", "glossy": true},
+            {"pattern": "crystal", "color": "#ffb0e0", "emissive": 0.9, "emissiveColor": "#ff8ad0", "glossy": true}
+          ]
+        }
+      },
+      "ice_spike": {
+        "gen": "crystal",
+        "glbWeight": 1,
+        "instance": {"scale": [0.85, 1.15], "scaleXZ": 0.1, "scaleY": 0.15, "lean": 5, "sink": 0.02},
+        "params": {
+          "base": {"radius": [0.25, 0.32], "squash": 0.35, "noise": 0.25, "material": {"pattern": "plaster", "color": "#eef6ff"}},
+          "shards": {"count": [3, 5], "length": [0.5, 0.9], "radius": [0.09, 0.14], "tilt": [8, 30], "sides": 6, "tip": 0.4, "spread": 0.14, "lead": 1.15},
+          "palettes": [
+            {"pattern": "crystal", "color": "#c4ecff", "emissive": 0.25, "emissiveColor": "#9fdcff", "glossy": true},
+            {"pattern": "crystal", "color": "#d8f4ff", "emissive": 0.15, "emissiveColor": "#bfe8ff", "glossy": true}
+          ]
+        }
+      },
+      "cactus": {
+        "gen": "cactus",
+        "glbWeight": 1,
+        "instance": {"scale": [0.85, 1.15], "scaleXZ": 0.08, "scaleY": 0.12, "lean": 4, "sink": 0.02},
+        "params": {
+          "forms": [["saguaro", 3], ["barrel", 1]],
+          "column": {"height": [1.25, 1.75], "radius": [0.13, 0.17], "sides": 12, "ribs": 0.16, "rings": 6},
+          "arms": {"count": [0, 3], "at": [0.35, 0.65], "out": [0.14, 0.24], "up": [0.2, 0.42], "scale": 0.72},
+          "barrel": {"radius": [0.24, 0.32], "height": [0.4, 0.6]},
+          "flower": {"chance": 0.55, "radius": 0.07, "colors": ["#ff7aa8", "#ffd25a", "#ffffff", "#ff8a4a"], "material": {"pattern": "plain", "color": "#ff7aa8"}},
+          "material": {"pattern": "stripes", "color": "#4f9a4a", "color2": "#3e8240"}
+        },
+        "tints": {
+          "cactus": {"base": "#4f9a4a", "jitter": 0.08, "hueJitter": 0.03, "fields": [{"field": "dry", "colors": ["#7a9a4a"], "lo": 0.5, "hi": 1, "amount": 0.4}]}
+        }
+      },
+      "mushroom": {
+        "gen": "mushroom",
+        "glbWeight": 1,
+        "instance": {"scale": [0.8, 1.2], "scaleXZ": 0.1, "scaleY": 0.15, "lean": 6, "sink": 0},
+        "params": {
+          "count": [1, 4],
+          "spread": 0.22,
+          "stem": {"height": [0.4, 0.62], "radius": [0.05, 0.075], "bend": 0.06, "material": {"pattern": "plaster", "color": "#efe4d2"}},
+          "cap": {
+            "radius": [0.18, 0.3],
+            "height": [0.55, 0.8],
+            "noise": 0.12,
+            "materials": [
+              {"pattern": "spots", "color": "#a46ae0", "color2": "#e8d4ff", "emissive": 1, "emissiveColor": "#c48bff"},
+              {"pattern": "spots", "color": "#5a8ae8", "color2": "#d8e8ff", "emissive": 1, "emissiveColor": "#7ab0ff"},
+              {"pattern": "spots", "color": "#e05a8a", "color2": "#ffe0ec", "emissive": 0.8, "emissiveColor": "#ff8ab0"}
+            ]
+          }
+        }
+      },
+      "stump": {
+        "gen": "stump",
+        "glbWeight": 1,
+        "instance": {"scale": [0.85, 1.15], "scaleXZ": 0.1, "scaleY": 0.15, "lean": 3, "sink": 0.01},
+        "params": {"height": [0.32, 0.5], "radius": [0.2, 0.27], "sides": 8, "flare": 0.5, "roots": [3, 5], "rootLength": [0.18, 0.3], "tilt": 0.3, "bark": {"pattern": "bark", "color": "#6e4c30"}, "top": {"pattern": "rings", "color": "#c8a070", "color2": "#9a7448"}},
+        "tints": {"bark": {"base": "#6e4c30", "jitter": 0.08}}
+      },
+      "log": {
+        "gen": "log",
+        "glbWeight": 1,
+        "instance": {"scale": [0.92, 1.08], "scaleXZ": 0.06, "scaleY": 0.1, "lean": 0, "sink": 0},
+        "params": {"length": [1.5, 1.85], "radius": [0.17, 0.23], "bend": 0.18, "sides": 8, "bark": {"pattern": "bark", "color": "#6e4c30"}, "ends": {"pattern": "rings", "color": "#c8a070", "color2": "#9a7448"}, "moss": {"chance": 0.4, "color": "#6e9a4c"}},
+        "tints": {"bark": {"base": "#6e4c30", "jitter": 0.08}}
+      },
+      "flower_patch": {
+        "gen": "cards",
+        "glbWeight": 0,
+        "instance": {"scale": [0.8, 1.2], "scaleXZ": 0.15, "scaleY": 0.2, "lean": 0, "sink": 0},
+        "params": {
+          "planes": [2, 4],
+          "width": [0.8, 1.1],
+          "height": [0.8, 1.2],
+          "subset": [2, 4],
+          "material": {"pattern": "flowers", "color": "#4f9a3c", "colors": ["#ff7aa8", "#ffe27a", "#ffffff", "#9ac8ff", "#ff9a5a", "#c89aff"]}
+        }
+      },
+      "reeds": {
+        "gen": "cards",
+        "glbWeight": 0,
+        "instance": {"scale": [0.85, 1.2], "scaleXZ": 0.15, "scaleY": 0.2, "lean": 4, "sink": 0},
+        "params": {"planes": [3, 4], "width": [0.7, 1.0], "height": [0.8, 1.15], "subset": [1, 2], "material": {"pattern": "reeds", "color": "#7a9a4a", "colors": ["#6a4a2a", "#8aa85a"]}}
+      }
+    },
+    "biomeTints": {
+      "bamboo": {"foliage": {"colors": ["#8ac040", "#a8c84a"], "amount": 0.8}, "flower": {"mul": [[0.95, 1.2, 0.55], [1.1, 1.18, 0.5]], "amount": 0.9}},
+      "jungle": {"foliage": {"colors": ["#1f7a3a", "#2a8a30", "#17663a"], "amount": 0.7}},
+      "mangrove": {"foliage": {"colors": ["#3a6a38", "#4a7038"], "amount": 0.5}, "bark": {"mul": [[0.85, 0.8, 0.75]], "amount": 0.6}},
+      "savanna": {"foliage": {"colors": ["#9aa040", "#b0a848", "#8a9a3a"], "amount": 0.65}},
+      "mushroom": {"foliage": {"colors": ["#8a6ab8", "#6a7ac8"], "amount": 0.5}, "cap": {"mul": [[1.15, 0.9, 1.2], [0.9, 1.0, 1.25]], "amount": 0.5}},
+      "taiga": {"foliage": {"colors": ["#2e5a3a", "#355e40"], "amount": 0.5}},
+      "badlands": {"rock": {"colors": ["#b8673e", "#a85a34", "#c47848"], "amount": 0.75}},
+      "canyon": {"rock": {"colors": ["#c07040", "#b86a3a", "#d08a58"], "amount": 0.75}},
+      "saltflat": {"rock": {"colors": ["#f0ece4", "#e4e0d8"], "amount": 0.7}, "bark": {"colors": ["#d8d0c4"], "amount": 0.6}, "crystal": {"mul": [[1.3, 1.3, 1.25]], "amount": 0.8}},
+      "ashlands": {"rock": {"colors": ["#3a3434", "#2e2a2a"], "amount": 0.7}, "bark": {"colors": ["#2a2424"], "amount": 0.7}},
+      "lagoon": {"foliage": {"colors": ["#2aa86a", "#3ab878"], "amount": 0.4}},
+      "crystal": {"rock": {"colors": ["#7a7ab8", "#8a6ab0"], "amount": 0.5}},
+      "cloud": {"foliage": {"colors": ["#f0f4ff", "#ffe8f4", "#e8f0ff"], "amount": 0.65}, "rock": {"colors": ["#e8ecf4"], "amount": 0.7}},
+      "glitch": {"foliage": {"colors": ["#a050e0", "#40c8e0", "#e050b0"], "amount": 0.85}, "bark": {"colors": ["#3a2a5a"], "amount": 0.7}, "rock": {"colors": ["#5a4a8a"], "amount": 0.7}, "crystal": {"mul": [[1.3, 0.6, 1.4], [0.6, 1.3, 1.4]], "amount": 0.8}},
+      "circuit": {"foliage": {"colors": ["#30a878", "#2a9a90"], "amount": 0.6}},
+      "neural": {"bark": {"colors": ["#2a3a5a"], "amount": 0.6}},
+      "sakura": {"foliage": {"colors": ["#f4b0cc"], "amount": 0.3}}
+    },
+    "biomeVariants": {
+      "mushroom": {
+        "mushroom": {
+          "gen": "mushroom",
+          "glbWeight": 0,
+          "instance": {"scale": [0.8, 1.2], "scaleXZ": 0.1, "scaleY": 0.15, "lean": 6, "sink": 0},
+          "params": {
+            "count": [1, 2],
+            "spread": 0.12,
+            "stem": {"height": [0.55, 0.8], "radius": [0.08, 0.11], "bend": 0.06, "material": {"pattern": "plaster", "color": "#efe4d2"}},
+            "cap": {
+              "radius": [0.3, 0.42],
+              "height": [0.55, 0.8],
+              "noise": 0.12,
+              "materials": [
+                {"pattern": "spots", "color": "#a46ae0", "color2": "#e8d4ff", "emissive": 1, "emissiveColor": "#c48bff"},
+                {"pattern": "spots", "color": "#5a8ae8", "color2": "#d8e8ff", "emissive": 1, "emissiveColor": "#7ab0ff"},
+                {"pattern": "spots", "color": "#e05a8a", "color2": "#ffe0ec", "emissive": 0.8, "emissiveColor": "#ff8ab0"}
+              ]
+            }
+          }
+        }
+      },
+      "mangrove": {
+        "tree_swamp": {
+          "gen": "broadleaf",
+          "glbWeight": 0,
+          "instance": {"scale": [0.88, 1.12], "scaleXZ": 0.1, "scaleY": 0.1, "lean": 6, "sink": 0.02},
+          "params": {
+            "trunk": {"height": [1.1, 1.4], "radius": [0.15, 0.2], "taper": 0.5, "bend": 0.2, "sides": 7, "rings": 4, "flare": 1.9, "roots": [6, 9], "rootLength": [0.5, 0.8], "material": {"pattern": "bark", "color": "#4a3c2c"}},
+            "branches": {"count": [2, 4], "from": [0.6, 0.9], "length": [0.5, 0.8], "radius": 0.45, "rise": [10, 35]},
+            "canopy": {"clusters": [4, 7], "radius": [0.6, 0.85], "spread": 0.65, "lift": [0.0, 0.35], "squash": 0.6, "detail": 1, "noise": 0.34, "noiseFreq": 1.4, "top": [0.85, 1.0], "colors": ["#3e6a3a", "#4a7a42", "#365e34", "#567e46"], "material": {"pattern": "leaves", "color": "#3e6a3a"}},
+            "moss": {"count": [9, 15], "length": [0.6, 1.15], "width": 0.12, "rim": 0.96, "drop": 0.12, "material": {"pattern": "plain", "color": "#8a9c62"}}
+          },
+          "tints": {
+            "foliage": {
+              "base": "#3e6a3a",
+              "jitter": 0.08,
+              "hueJitter": 0.04,
+              "fields": [
+                {"field": "dry", "colors": ["#7a8a44"], "lo": 0.5, "hi": 1, "amount": 0.5},
+                {"field": "autumn", "colors": ["#a8862a", "#8a6a2a"], "lo": 0.3, "hi": 0.8, "spread": 0.5, "amount": 0.6}
+              ]
+            },
+            "bark": {"base": "#4a3c2c", "jitter": 0.08}
+          }
+        }
+      },
+      "jungle": {
+        "tree_oak": {
+          "gen": "broadleaf",
+          "glbWeight": 0,
+          "instance": {"scale": [0.85, 1.12], "scaleXZ": 0.1, "scaleY": 0.1, "lean": 4, "sink": 0.02},
+          "params": {
+            "trunk": {"height": [1.3, 1.7], "radius": [0.14, 0.18], "taper": 0.55, "bend": 0.12, "sides": 7, "rings": 4, "flare": 1.4, "roots": [5, 7], "rootLength": [0.3, 0.45], "material": {"pattern": "bark", "color": "#5a4430"}},
+            "branches": {"count": [2, 4], "from": [0.55, 0.85], "length": [0.45, 0.7], "radius": 0.5, "rise": [25, 50]},
+            "canopy": {"clusters": [7, 10], "radius": [0.55, 0.75], "spread": 0.6, "lift": [0.15, 0.7], "squash": 0.82, "detail": 1, "noise": 0.3, "noiseFreq": 1.5, "top": [0.92, 1.06], "colors": ["#1f7a3a", "#2a8a30", "#17663a", "#2f9440"], "material": {"pattern": "leaves", "color": "#1f7a3a"}},
+            "moss": {"count": [6, 11], "length": [0.6, 1.15], "width": 0.12, "rim": 0.96, "drop": 0.12, "material": {"pattern": "plain", "color": "#3a7a34"}}
+          },
+          "tints": {
+            "foliage": {"base": "#1f7a3a", "jitter": 0.08, "hueJitter": 0.04, "fields": [{"field": "lush", "colors": ["#14602e"], "lo": 0.55, "hi": 1, "amount": 0.4}]},
+            "bark": {"base": "#5a4430", "jitter": 0.08}
+          }
+        }
+      },
+      "glitch": {
+        "crystal": {
+          "gen": "crystal",
+          "glbWeight": 0,
+          "instance": {"scale": [0.85, 1.15], "scaleXZ": 0.1, "scaleY": 0.15, "lean": 6, "sink": 0.02},
+          "params": {
+            "base": {"radius": [0.22, 0.3], "squash": 0.45, "noise": 0.3, "material": {"pattern": "stone", "color": "#2a2440"}},
+            "shards": {"count": [4, 7], "length": [0.45, 0.85], "radius": [0.08, 0.13], "tilt": [4, 22], "sides": 6, "tip": 0.32, "spread": 0.12, "lead": 1.6},
+            "palettes": [
+              {"pattern": "crystal", "color": "#ff4fd8", "emissive": 1.2, "emissiveColor": "#ff4fd8", "glossy": true},
+              {"pattern": "crystal", "color": "#4ff0ff", "emissive": 1.2, "emissiveColor": "#4ff0ff", "glossy": true},
+              {"pattern": "crystal", "color": "#9aff6a", "emissive": 1.0, "emissiveColor": "#9aff6a", "glossy": true}
+            ]
+          }
+        }
+      },
+      "lagoon": {
+        "rock_small": {
+          "gen": "crystal",
+          "glbWeight": 0,
+          "instance": {"scale": [0.85, 1.15], "scaleXZ": 0.1, "scaleY": 0.15, "lean": 6, "sink": 0.02},
+          "params": {
+            "base": {"radius": [0.16, 0.22], "squash": 0.45, "noise": 0.3, "material": {"pattern": "stone", "color": "#e8b0a0"}},
+            "shards": {"count": [6, 10], "length": [0.22, 0.45], "radius": [0.045, 0.07], "tilt": [10, 55], "sides": 6, "tip": 0.6, "spread": 0.12, "lead": 1.2},
+            "palettes": [
+              {"pattern": "plain", "color": "#ff7a6a"},
+              {"pattern": "plain", "color": "#ffb07a"},
+              {"pattern": "plain", "color": "#ff6ab0"},
+              {"pattern": "plain", "color": "#b07aff"}
+            ]
+          }
+        }
+      }
+    }
+  },
+  "occlusion": {"enabled": true, "lift": 0.75, "radius": [1.05, 1.0], "soft": 0.45, "keep": 0.0, "near": 0.35, "fade": 0.6}
+}

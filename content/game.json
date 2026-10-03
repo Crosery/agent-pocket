@@ -1,0 +1,61 @@
+{
+  "loop": {"maxDtSec": 0.1, "pauseWhenHidden": true},
+  "loading": {"showAfterMs": 220, "fadeOutMs": 420, "steps": ["content", "assets", "world", "renderer", "ui", "modules", "ready"]},
+  "newGame": {
+    "startAnchor": "origin-home:wake",
+    "facing": "down",
+    "respawnAtStart": true,
+    "introScript": [
+      {"op": "wait", "ms": 500},
+      {"op": "say", "text": "game.intro.narration1"},
+      {"op": "say", "text": "game.intro.narration2"},
+      {"op": "say", "text": "game.intro.narration3"},
+      {"op": "sfx", "id": "notify"},
+      {"op": "say", "text": "game.intro.wake"},
+      {"op": "say", "text": "game.intro.hint"}
+    ]
+  },
+  "player": {"radius": 0.27, "cornerSlip": 0.45, "cornerSlipRate": 1.0, "substepTiles": 0.2, "axisDeadzone": 0.18, "facingHysteresis": 0.18, "elevSmoothing": 16, "zoomByMapKind": {"overworld": 1, "cave": 1, "interior": 0}, "bump": {"sfx": "bump", "cooldownMs": 420, "volume": 0.5, "stuckRatio": 0.3}, "bike": {"mapKinds": ["overworld"], "sfxOn": "confirm", "sfxOff": "cancel"}, "surf": {"hopMs": 360, "rideLift": 0.32, "splashEverySec": 1.4, "sfx": "splash", "fx": "splash"}, "showOwnName": true, "movingRatio": 0.05},
+  "footsteps": {
+    "stride": {"walk": 0.9, "run": 1.2, "bike": 2.4, "surf": 2.0},
+    "default": {"sfx": "step", "volume": 0.3, "pitch": 1},
+    "surf": {"sfx": "splash", "volume": 0.16, "pitch": 1.25},
+    "terrain": {"grass": {"sfx": "step", "volume": 0.24, "pitch": 0.92}, "tall_grass": {"sfx": "step", "volume": 0.34, "pitch": 0.78, "fx": "grass"}, "dark_grass": {"sfx": "step", "volume": 0.34, "pitch": 0.72, "fx": "grass"}, "tall_snowgrass": {"sfx": "step", "volume": 0.3, "pitch": 0.7, "fx": "grass"}, "tall_reeds": {"sfx": "step", "volume": 0.32, "pitch": 0.8, "fx": "grass"}, "desert_grass": {"sfx": "step", "volume": 0.3, "pitch": 0.84, "fx": "grass"}, "flowers": {"sfx": "step", "volume": 0.22, "pitch": 0.98}, "forest_floor": {"sfx": "step", "volume": 0.26, "pitch": 0.86}, "path": {"sfx": "step", "volume": 0.3, "pitch": 1.0}, "sand": {"sfx": "step", "volume": 0.26, "pitch": 0.74, "fx": "dust"}, "ash": {"sfx": "step", "volume": 0.26, "pitch": 0.7, "fx": "dust"}, "snow": {"sfx": "step", "volume": 0.28, "pitch": 0.66}, "ice": {"sfx": "step", "volume": 0.3, "pitch": 1.35}, "mud": {"sfx": "splash", "volume": 0.18, "pitch": 0.7}, "shallow": {"sfx": "splash", "volume": 0.22, "pitch": 1.1, "fx": "splash"}, "rock": {"sfx": "step", "volume": 0.34, "pitch": 1.1}, "cobble": {"sfx": "step", "volume": 0.34, "pitch": 1.16}, "ruin": {"sfx": "step", "volume": 0.34, "pitch": 1.08}, "cave": {"sfx": "step", "volume": 0.36, "pitch": 0.94}, "crystal_floor": {"sfx": "step", "volume": 0.32, "pitch": 1.4}, "tech": {"sfx": "step", "volume": 0.34, "pitch": 1.28}, "wood": {"sfx": "step", "volume": 0.34, "pitch": 1.2}, "bridge": {"sfx": "step", "volume": 0.36, "pitch": 1.18}, "tile_floor": {"sfx": "step", "volume": 0.3, "pitch": 1.24}, "carpet": {"sfx": "step", "volume": 0.16, "pitch": 0.9}, "stairs": {"sfx": "step", "volume": 0.34, "pitch": 1.12}}
+  },
+  "follower": {"distance": 1.05, "trailSpacing": 0.1, "maxTrail": 80, "indoorMaxSize": 1.3, "followRate": 9, "teleportDistance": 5, "moveEpsilon": 0.02, "mapKinds": ["overworld", "cave", "interior"], "interactRadius": 0.75, "fx": "heart", "cryPitch": 1, "tiredBelow": 0.5, "sizeCapMapKinds": ["interior", "cave"]},
+  "interact": {"reach": 0.85, "radius": 0.62, "reachAcrossProps": ["counter"], "props": {"pc_terminal": {"action": "box"}, "statue": {"action": "statue"}}, "sfx": "select"},
+  "npc": {
+    "showNames": false,
+    "walkSpeed": 3.4,
+    "turnToPlayer": true,
+    "wander": {"pauseMinSec": 1.6, "pauseMaxSec": 4.8, "stepChance": 0.65, "maxStepsPerMove": 2},
+    "trainer": {"exclaimMs": 850, "approachSpeed": 4.2, "sfx": "exclaim", "fx": "exclaim", "bubble": "!", "cooldownSec": 1.2},
+    "cullDistance": 34,
+    "blockedRetrySec": 1.6
+  },
+  "encounters": {
+    "requireConsciousParty": true,
+    "surfEncounters": true,
+    "graceSteps": 2,
+    "transition": {"kind": "battle", "inMs": 950, "flashColor": "#ffffff", "flashMs": 140, "sfx": "encounter", "fx": "exclaim"},
+    "legendRarityOrder": 4,
+    "scriptedCanRun": true,
+    "repelOfferRefill": true
+  },
+  "roaming": {"mapKinds": ["overworld", "cave"], "spawnIntervalSec": 0.9, "spawnTries": 14, "minSpawnDistance": 7, "despawnMargin": 5, "lifetimeSec": [90, 200], "idleSec": [1.0, 3.4], "wanderRadius": 4, "speed": 1.5, "fleeSpeed": 2.8, "chaseSpeed": 2.2, "touchRadius": 0.62, "noticeRange": 3.6, "fleeChance": 0.35, "rareFleeChance": 0.75, "chaseChance": 0.25, "noticeBubble": "!", "noticeBubbleMs": 900, "fleeBubble": "…", "despawnFx": "dust", "spawnFx": "dust", "requireEncounterTerrain": false, "avoidTerrain": ["causeway"], "cullDistance": 34, "arriveEpsilon": 0.05},
+  "warp": {"fadeMs": 240, "sfx": {"door": "door", "stairs": "door", "cave": "door", "edge": ""}, "fx": "warp"},
+  "region": {"bannerCooldownSec": 6, "musicFadeMs": 900, "nightMusicForTowns": true, "weatherIntensity": {"clear": 0, "rain": 0.85, "snow": 0.8, "sand": 0.7, "fog": 0.75, "aurora": 1, "ash": 0.7}, "recheckSec": 1, "mapKinds": ["overworld"], "defaultWeather": "clear"},
+  "items": {"pickupSfx": "item", "keyItemSfx": "levelup", "hiddenGlint": {"radius": 3.2, "intervalSec": 2.6, "fx": "sparkle"}},
+  "battle": {"sayIntroBefore": true, "sayDefeatTextAfter": true, "lossAbortsScript": true, "afterBattleSettleMs": 120, "fallbackMaxSteps": 1000},
+  "blackout": {"fadeMs": 650, "sfx": "faint"},
+  "fly": {"minBadges": 1, "keyItemKind": "map", "mapKinds": ["overworld"], "sfx": "door"},
+  "script": {"maxDepth": 48, "healWaitMs": 900, "healSfx": "heal", "moneySfx": "money", "questSfx": "notify", "unlockSfx": "notify", "fadeMs": 420, "moveNpcSpeed": 3.4},
+  "presence": {"chatBubbleMs": 3600, "emoteBubbleMs": 2200, "bubbleMaxChars": 22, "interactRadius": 0.9, "followerDistance": 1.0, "followerRate": 8, "leadDebounceSec": 0.5, "inspectTimeoutMs": 5000},
+  "markers": {"refreshSec": 0.2, "trainers": true, "quest": true, "others": true, "rares": true, "wild": false, "items": true},
+  "fog": {"mapKinds": ["overworld", "cave"]},
+  "autosave": {"events": ["badge:earned", "dex:caught", "quest:updated", "battle:end", "map:entered"], "minIntervalSec": 6, "onHidden": true},
+  "hud": {"moneyCheckSec": 0.5},
+  "flags": {"badgePrefix": "badge:"},
+  "debug": {"partySize": 6, "partyLevel": 30, "money": 99999, "keyItemKinds": ["bike", "surf", "map", "dex", "badgeCase"], "categoryQty": {"ball": 20, "medicine": 10, "battle": 3}, "freezeClockWithTime": true, "overlayRefreshMs": 250, "battleLevel": 10},
+  "title": {"importCodeMaxLen": 200000}
+}

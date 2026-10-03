@@ -1,0 +1,13 @@
+{
+  "visible": 300,
+  "hidden": 150,
+  "minSpacing": 8,
+  "excludeCategories": ["key"],
+  "hiddenPriceMul": 1.6,
+  "bands": [
+    {"maxLevel": 12, "maxPrice": 700, "weights": {"ball": 4, "medicine": 5, "battle": 1, "misc": 1}, "qty": [1, 2]},
+    {"maxLevel": 24, "maxPrice": 1600, "weights": {"ball": 4, "medicine": 5, "battle": 2, "chip": 1, "misc": 1, "evolution": 0.5}, "qty": [1, 2]},
+    {"maxLevel": 38, "maxPrice": 4000, "weights": {"ball": 3, "medicine": 5, "battle": 2, "chip": 2, "misc": 1, "evolution": 1}, "qty": [1, 3]},
+    {"maxLevel": 100, "maxPrice": 1000000, "weights": {"ball": 3, "medicine": 4, "battle": 2, "chip": 2, "misc": 1, "evolution": 1.5}, "qty": [1, 3]}
+  ]
+}

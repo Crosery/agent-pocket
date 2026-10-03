@@ -1,0 +1,937 @@
+{
+  "maxDt": 0.1,
+  "readyTimeoutMs": 6000,
+  "timeMinutes": {"dawn": 365, "day": 720, "dusk": 1120, "night": 1350},
+  "slots": [
+    {"creature": [-2.1, 1.7], "trainer": [-4.6, 4.4], "scale": 1.35, "facesRight": true, "trainerRow": "up", "ballFrom": [-3.5, 1.6, 5.5]},
+    {"creature": [2.3, -2.3], "trainer": [4.3, -4.5], "scale": 1.4, "facesRight": false, "trainerRow": "down", "ballFrom": [4.5, 1.8, -6.0]}
+  ],
+  "sprite": {"squashWiden": 0.5, "blobLift": 0.02, "blobLiftShrink": 0.35, "blobMinScale": 0.3, "blobLiftFade": 0.4, "blobMinOpacity": 0.25, "blobWidthMix": 0.5},
+  "creature": {"height": 1.25, "sizeInfluence": 0.5, "sizeClamp": [0.8, 1.3], "alphaTest": 0.45, "normalTilt": 0.55, "blob": {"size": 1.1, "opacity": 0.42}, "breath": {"hz": 0.55, "squash": 0.025, "bob": 0.015}, "dissolveCells": 40, "dissolveEdge": "#ffffff", "dissolveEdgeGlow": 2.5, "dissolveEdgeWidth": 0.08, "bend": 0.45, "breathPhase": [0.0, 2.1]},
+  "trainer": {"height": 1.75, "alphaTest": 0.5, "normalTilt": 0.55, "frame": 0, "blob": {"size": 0.8, "opacity": 0.38}, "breath": {"hz": 0.4, "squash": 0.012, "bob": 0.008}, "handH": 0.62, "breathPhase": [0.7, 2.0]},
+  "camera": {
+    "fov": 30,
+    "refAspect": 1.7778,
+    "near": 0.3,
+    "far": 220,
+    "sway": {"pos": [0.22, 0.07, 0.12], "look": [0.06, 0.03, 0.05], "hz": [0.045, 0.07, 0.057], "phase": 1.7, "rate": 2.0},
+    "shots": {
+      "base": {"pos": [-2.05, 2.38, 11.19], "look": [-0.12, 0.7, -0.34], "fov": 24.3},
+      "wide": {"pos": [0.0, 4.2, 12.5], "look": [0.2, 0.6, -1.5], "fov": 34},
+      "attack": [
+        {"pos": [-1.86, 1.81, 8.0], "look": [0.03, 0.38, -2.73]},
+        {"pos": [-1.38, 2.09, 10.62], "look": [0.05, 0.84, -0.55], "fov": 24}
+      ],
+      "target": [
+        {"pos": [1.3, 1.7, 5.2], "look": [-1.9, 1.0, 1.6]},
+        {"pos": [1.4, 1.9, 4.6], "look": [2.1, 0.9, -2.0]}
+      ],
+      "hit": [
+        {"pos": [-0.4, 2.1, 7.6], "look": [-0.9, 0.95, 0.6]},
+        {"pos": [-0.9, 2.5, 10.6], "look": [0.45, 0.85, -0.7], "fov": 24}
+      ],
+      "introWild": {"pos": [2.19, 1.57, 3.19], "look": [2.3, 0.95, -2.3], "fov": 26},
+      "introTrainer": {"pos": [3.0, 1.6, 0.8], "look": [3.5, 1.1, -4.2], "fov": 26},
+      "introLegend": {"pos": [1.4, 0.56, 4.76], "look": [2.3, 1.68, -2.3], "fov": 34},
+      "introPvp": {"pos": [-7.3, 3.0, 9.9], "look": [-2.8, 0.8, 0.9], "fov": 30},
+      "catch": {"pos": [0.4, 2.13, 6.1], "look": [2.19, 0.78, -1.96], "fov": 28},
+      "evolve": {"pos": [0.0, 1.5, 6.2], "look": [0.0, 1.2, -0.5], "fov": 30}
+    }
+  },
+  "post": {"tiltShift": 0.15, "bokehScale": 2.2, "vignetteAdd": 0.04, "bloomMul": 1.15},
+  "lighting": {
+    "sunYawDeg": 35,
+    "propLightPool": 6,
+    "vfxLights": 3,
+    "vfxLightDecay": 1.4,
+    "fogScale": 1.0,
+    "tod": {"dawn": {"sun": 1.1, "hemi": 1.15, "exposure": 1.05}, "day": {"sun": 1.0, "hemi": 1.0, "exposure": 1.0}, "dusk": {"sun": 1.1, "hemi": 1.2, "exposure": 1.05}, "night": {"sun": 2.3, "hemi": 1.9, "exposure": 1.25}},
+    "indoor": {"sun": 1.0, "hemi": 1.0, "exposure": 1.0},
+    "lampPhaseStep": 1.37,
+    "atlasRefresh": 0.5
+  },
+  "backdrop": {
+    "radius": 30,
+    "height": 17,
+    "baseY": -0.6,
+    "centerZ": 6,
+    "arcDeg": 150,
+    "segments": 64,
+    "cropV": [0.2, 1.0],
+    "tint": {"dawn": "#ffd9c4", "day": "#ffffff", "dusk": "#ffb38a", "night": "#6a78b4"},
+    "indoorTint": "#a08a7a",
+    "fogMix": 0.12,
+    "skyReplace": {"dawn": 0.0, "day": 0.0, "dusk": 0.15, "night": 0.7},
+    "skyFade": [0.55, 0.85],
+    "brightness": 1.0,
+    "silhouetteTex": [1024, 256],
+    "silhouettes": {
+      "default": [
+        {"kind": "mountains", "color": "#9fb4d8", "top": 0.92, "base": 0.42, "freq": 5, "amp": 1},
+        {"kind": "hills", "color": "#7f9cbc", "top": 0.55, "base": 0.28, "freq": 4, "amp": 1},
+        {"kind": "trees", "color": "#55787a", "top": 0.36, "base": 0.16, "freq": 8, "amp": 1}
+      ],
+      "meadow": [
+        {"kind": "mountains", "color": "#a8bcdc", "top": 0.9, "base": 0.45, "freq": 5, "amp": 1},
+        {"kind": "hills", "color": "#86a8b8", "top": 0.52, "base": 0.3, "freq": 4, "amp": 1},
+        {"kind": "trees", "color": "#5c8466", "top": 0.34, "base": 0.15, "freq": 8, "amp": 1}
+      ],
+      "forest": [
+        {"kind": "pines", "color": "#4a6a78", "top": 0.85, "base": 0.45, "freq": 6, "amp": 1},
+        {"kind": "pines", "color": "#38584e", "top": 0.6, "base": 0.25, "freq": 7, "amp": 1},
+        {"kind": "trees", "color": "#2c4838", "top": 0.38, "base": 0.12, "freq": 9, "amp": 1}
+      ],
+      "desert": [
+        {"kind": "mountains", "color": "#d8b890", "top": 0.7, "base": 0.4, "freq": 3, "amp": 0.9},
+        {"kind": "hills", "color": "#c89a68", "top": 0.42, "base": 0.25, "freq": 3, "amp": 1},
+        {"kind": "spires", "color": "#a87a52", "top": 0.4, "base": 0.18, "freq": 2, "amp": 1}
+      ],
+      "snow": [
+        {"kind": "mountains", "color": "#e4ecf8", "top": 0.95, "base": 0.45, "freq": 5, "amp": 1},
+        {"kind": "mountains", "color": "#b8c8e0", "top": 0.7, "base": 0.3, "freq": 7, "amp": 0.9},
+        {"kind": "pines", "color": "#5a7088", "top": 0.36, "base": 0.15, "freq": 8, "amp": 1}
+      ],
+      "coast": [
+        {"kind": "hills", "color": "#9cb8d8", "top": 0.5, "base": 0.36, "freq": 3, "amp": 1},
+        {"kind": "sea", "color": "#4a86c0", "top": 0.36, "base": 0.0, "freq": 6, "lightColor": "#cfe8ff", "lightDensity": 0.06}
+      ],
+      "city": [
+        {"kind": "city", "color": "#5a6488", "top": 0.92, "base": 0.3, "freq": 5, "amp": 1, "lightColor": "#ffe6a0", "lightDensity": 0.25},
+        {"kind": "city", "color": "#3c4462", "top": 0.62, "base": 0.15, "freq": 7, "amp": 1, "lightColor": "#9ae0ff", "lightDensity": 0.18}
+      ],
+      "swamp": [
+        {"kind": "trees", "color": "#4a5a58", "top": 0.75, "base": 0.4, "freq": 6, "amp": 1},
+        {"kind": "trees", "color": "#33443c", "top": 0.5, "base": 0.2, "freq": 8, "amp": 1},
+        {"kind": "hills", "color": "#2a3830", "top": 0.25, "base": 0.1, "freq": 5, "amp": 1}
+      ],
+      "highland": [
+        {"kind": "mountains", "color": "#a6b6d4", "top": 0.98, "base": 0.4, "freq": 6, "amp": 1},
+        {"kind": "mountains", "color": "#7e94b0", "top": 0.7, "base": 0.3, "freq": 8, "amp": 0.9},
+        {"kind": "hills", "color": "#5c7a6a", "top": 0.36, "base": 0.15, "freq": 5, "amp": 1}
+      ],
+      "volcano": [
+        {"kind": "mountains", "color": "#5a3a36", "top": 0.95, "base": 0.4, "freq": 3, "amp": 1},
+        {"kind": "spires", "color": "#3e2a2a", "top": 0.6, "base": 0.25, "freq": 4, "amp": 1},
+        {"kind": "hills", "color": "#2c1e1e", "top": 0.32, "base": 0.12, "freq": 5, "amp": 1}
+      ],
+      "ruins": [
+        {"kind": "mountains", "color": "#9aa4c0", "top": 0.8, "base": 0.4, "freq": 4, "amp": 1},
+        {"kind": "spires", "color": "#6a6a84", "top": 0.62, "base": 0.25, "freq": 4, "amp": 1},
+        {"kind": "columns", "color": "#545468", "top": 0.45, "base": 0.0, "freq": 7}
+      ],
+      "indoor": [
+        {"kind": "wall", "color": "#3a3046", "top": 0.95, "base": 0.0, "lightColor": "#4a3f5a"},
+        {"kind": "columns", "color": "#2a2234", "top": 0.9, "base": 0.0, "freq": 6}
+      ]
+    },
+    "shapes": {
+      "mountains": {"sharp": 1.4},
+      "sea": {"swell": 0.03, "glintPx": [2, 7]},
+      "trees": {"perFreq": 6, "jitter": 0.8, "height": [0.55, 1.0], "width": [1.1, 1.7], "crownH": 0.6, "crownR": 0.55},
+      "pines": {"perFreq": 6, "jitter": 0.8, "height": [0.55, 1.0], "width": [1.1, 1.7]},
+      "city": {"perFreq": 5, "jitter": 0.4, "height": [0.35, 1.0], "width": [0.6, 1.4], "windowPitch": 4, "windowPx": 2},
+      "spires": {"perFreq": 5, "jitter": 0.4, "height": [0.35, 1.0], "width": [0.25, 0.55], "tip": 1.2},
+      "wall": {"lines": 6, "lineOffset": 6},
+      "columns": {"width": 0.22, "capWidth": 1.5, "capHeight": 0.3},
+      "layerDefaults": {"amp": 1, "freq": 8, "lightDensity": 0.1}
+    }
+  },
+  "dioramas": {
+    "mapSize": [48, 36],
+    "origin": [24, 24],
+    "clear": 1.4,
+    "fallbackGround": "grass",
+    "scatterPad": 0.5,
+    "scatterTries": 12,
+    "noiseScale": 0.35,
+    "keepOut": [[-7, -1, 7, 12], [-4, -5, 6, 1]],
+    "default": {
+      "paint": [
+        {"elevation": 1, "rect": [-24, -24, 24, -13], "noise": 1.6}
+      ],
+      "grass": [
+        {"terrain": "tall_grass", "density": 0.4, "rect": [-16, -12, 16, -4], "noise": 1.3},
+        {"terrain": "tall_grass", "density": 0.32000000000000006, "rect": [-16, -4, -6, 5], "noise": 1.3},
+        {"terrain": "tall_grass", "density": 0.32000000000000006, "rect": [6, -4, 16, 5], "noise": 1.3}
+      ],
+      "props": [
+        {"prop": "tree_oak", "at": [-9, -10]},
+        {"prop": "tree_oak", "at": [8, -11]}
+      ],
+      "scatter": [
+        {"props": ["bush", "rock_small"], "count": 8, "rect": [-14, -10, 14, 3], "spacing": 2.5}
+      ]
+    },
+    "indoor": {
+      "ground": "tile_floor",
+      "kind": "interior",
+      "paint": [
+        {"terrain": "wall", "rect": [-24, -24, 24, -9]},
+        {"terrain": "carpet", "rect": [-3, -4, 3, 3]}
+      ],
+      "grass": [],
+      "props": [
+        {"prop": "gym_pillar", "at": [-6, -7]},
+        {"prop": "gym_pillar", "at": [6, -7]},
+        {"prop": "gym_pillar", "at": [-9, -3]},
+        {"prop": "gym_pillar", "at": [9, -3]},
+        {"prop": "plant", "at": [-4, -8]},
+        {"prop": "plant", "at": [4, -8]},
+        {"prop": "lab_machine", "at": [-1, -8]}
+      ],
+      "scatter": [],
+      "lights": [
+        {"at": [-4, -3], "h": 3.6, "color": "#ffe2b8", "intensity": 1.6, "radius": 9, "nightOnly": false},
+        {"at": [4, -3], "h": 3.6, "color": "#ffe2b8", "intensity": 1.6, "radius": 9, "nightOnly": false}
+      ],
+      "ambient": ["motes"],
+      "silhouettes": "indoor"
+    },
+    "biomes": {
+      "meadow": {
+        "paint": [
+          {"terrain": "flowers", "ellipse": [-8, -6, 3, 1.8], "noise": 0.8},
+          {"terrain": "flowers", "ellipse": [9, -3, 2.2, 1.4], "noise": 0.8},
+          {"elevation": 1, "rect": [-24, -24, 24, -14], "noise": 1.8},
+          {"elevation": 2, "rect": [-24, -24, -8, -19], "noise": 1.5}
+        ],
+        "grass": [
+          {"terrain": "tall_grass", "density": 0.45, "rect": [-16, -12, 16, -4], "noise": 1.3},
+          {"terrain": "tall_grass", "density": 0.36000000000000004, "rect": [-16, -4, -6, 5], "noise": 1.3},
+          {"terrain": "tall_grass", "density": 0.36000000000000004, "rect": [6, -4, 16, 5], "noise": 1.3}
+        ],
+        "props": [
+          {"prop": "tree_oak", "at": [-9, -10]},
+          {"prop": "tree_oak", "at": [-5, -12]},
+          {"prop": "tree_oak", "at": [7, -11]},
+          {"prop": "tree_cherry", "at": [11, -9]},
+          {"prop": "tree_oak", "at": [2, -16]},
+          {"prop": "fence", "at": [-12, -6]},
+          {"prop": "fence", "at": [-11, -6]}
+        ],
+        "scatter": [
+          {"props": ["bush", "rock_small", "flower_patch", "stump"], "count": 10, "rect": [-14, -12, 14, 4], "spacing": 2.5},
+          {"props": ["tree_oak", "tree_pine", "tree_cherry"], "count": 9, "rect": [-20, -22, 20, -12], "spacing": 3}
+        ]
+      },
+      "forest": {
+        "paint": [
+          {"terrain": "grass", "ellipse": [0.2, -0.3, 4.2, 3.0], "noise": 1.0},
+          {"elevation": 1, "rect": [-24, -24, 24, -15], "noise": 2}
+        ],
+        "grass": [
+          {"terrain": "dark_grass", "density": 0.5, "rect": [-16, -12, 16, -4], "noise": 1.3},
+          {"terrain": "dark_grass", "density": 0.4, "rect": [-16, -4, -6, 5], "noise": 1.3},
+          {"terrain": "dark_grass", "density": 0.4, "rect": [6, -4, 16, 5], "noise": 1.3}
+        ],
+        "props": [
+          {"prop": "tree_pine", "at": [-8, -9]},
+          {"prop": "tree_oak", "at": [-4, -11]},
+          {"prop": "tree_pine", "at": [6, -10]},
+          {"prop": "tree_pine", "at": [10, -8]},
+          {"prop": "log", "at": [-6, -5]},
+          {"prop": "mushroom", "at": [5, -5]},
+          {"prop": "mushroom", "at": [6, -4]}
+        ],
+        "scatter": [
+          {"props": ["bush", "mushroom", "stump", "rock_small"], "count": 12, "rect": [-14, -12, 14, 4], "spacing": 2.2},
+          {"props": ["tree_pine", "tree_oak", "tree_pine"], "count": 16, "rect": [-22, -22, 22, -9], "spacing": 2.6}
+        ]
+      },
+      "desert": {
+        "paint": [
+          {"elevation": 1, "rect": [-24, -24, 24, -15], "noise": 2.5},
+          {"elevation": 2, "rect": [4, -24, 24, -19], "noise": 2}
+        ],
+        "grass": [
+          {"terrain": "desert_grass", "density": 0.2, "rect": [-16, -12, 16, -4], "noise": 1.3},
+          {"terrain": "desert_grass", "density": 0.16000000000000003, "rect": [-16, -4, -6, 5], "noise": 1.3},
+          {"terrain": "desert_grass", "density": 0.16000000000000003, "rect": [6, -4, 16, 5], "noise": 1.3}
+        ],
+        "props": [
+          {"prop": "cactus", "at": [-7, -8]},
+          {"prop": "cactus", "at": [8, -9]},
+          {"prop": "rock_large", "at": [-11, -5]},
+          {"prop": "tree_dead", "at": [5, -12]},
+          {"prop": "cactus", "at": [-3, -13]}
+        ],
+        "scatter": [
+          {"props": ["rock_small", "cactus", "rock_small"], "count": 8, "rect": [-14, -12, 14, 4], "spacing": 3},
+          {"props": ["cactus", "rock_large", "tree_dead"], "count": 6, "rect": [-20, -22, 20, -12], "spacing": 4}
+        ]
+      },
+      "snow": {
+        "paint": [
+          {"terrain": "ice", "ellipse": [-8, -7, 2.5, 1.5], "noise": 0.7},
+          {"elevation": 1, "rect": [-24, -24, 24, -14], "noise": 1.8},
+          {"elevation": 2, "rect": [-24, -24, 2, -19], "noise": 1.8}
+        ],
+        "grass": [
+          {"terrain": "tall_snowgrass", "density": 0.35, "rect": [-16, -12, 16, -4], "noise": 1.3},
+          {"terrain": "tall_snowgrass", "density": 0.27999999999999997, "rect": [-16, -4, -6, 5], "noise": 1.3},
+          {"terrain": "tall_snowgrass", "density": 0.27999999999999997, "rect": [6, -4, 16, 5], "noise": 1.3}
+        ],
+        "props": [
+          {"prop": "tree_snowpine", "at": [-9, -9]},
+          {"prop": "tree_snowpine", "at": [-5, -12]},
+          {"prop": "tree_snowpine", "at": [7, -10]},
+          {"prop": "ice_spike", "at": [10, -6]},
+          {"prop": "rock_small", "at": [-6, -4]}
+        ],
+        "scatter": [
+          {"props": ["rock_small", "ice_spike", "bush"], "count": 7, "rect": [-14, -12, 14, 4], "spacing": 3},
+          {"props": ["tree_snowpine"], "count": 12, "rect": [-22, -22, 22, -11], "spacing": 2.8}
+        ]
+      },
+      "coast": {
+        "paint": [
+          {"terrain": "shallow", "rect": [-24, -24, 24, -9], "noise": 1.3},
+          {"terrain": "water", "rect": [-24, -24, 24, -12], "noise": 1.5}
+        ],
+        "grass": [
+          {"terrain": "tall_grass", "density": 0.25, "rect": [-14, -6, -6, 8], "noise": 1.2},
+          {"terrain": "tall_grass", "density": 0.25, "rect": [7, -6, 14, 8], "noise": 1.2}
+        ],
+        "props": [
+          {"prop": "tree_palm", "at": [-9, -7]},
+          {"prop": "tree_palm", "at": [8, -7]},
+          {"prop": "tree_palm", "at": [11, -5]},
+          {"prop": "rock_small", "at": [-6, -5]},
+          {"prop": "rock_large", "at": [-13, -9]}
+        ],
+        "scatter": [
+          {"props": ["rock_small", "bush"], "count": 5, "rect": [-14, -8, 14, 4], "spacing": 3}
+        ]
+      },
+      "city": {
+        "paint": [
+          {"terrain": "cobble", "rect": [-24, -24, 24, 12]},
+          {"terrain": "tech", "ellipse": [0.2, -0.3, 4.6, 3.2], "noise": 0.4},
+          {"terrain": "path", "rect": [-24, -9, 24, -7]}
+        ],
+        "grass": [],
+        "props": [
+          {"prop": "lamp", "at": [-6, -7]},
+          {"prop": "lamp", "at": [6, -7]},
+          {"prop": "server_rack", "at": [-10, -10]},
+          {"prop": "server_rack", "at": [-9, -10]},
+          {"prop": "antenna", "at": [10, -12]},
+          {"prop": "solar_panel", "at": [3, -12]},
+          {"prop": "bench", "at": [-3, -11]},
+          {"prop": "crate", "at": [9, -5]},
+          {"prop": "barrel", "at": [10, -4]}
+        ],
+        "scatter": [
+          {"props": ["crate", "barrel", "flower_pot"], "count": 6, "rect": [-14, -12, 14, 3], "spacing": 3},
+          {"props": ["server_rack", "antenna", "lamp"], "count": 8, "rect": [-20, -22, 20, -12], "spacing": 3}
+        ],
+        "ambient": ["dust"]
+      },
+      "swamp": {
+        "paint": [
+          {"terrain": "shallow", "ellipse": [-9, -7, 3.5, 2.0], "noise": 1.0},
+          {"terrain": "shallow", "ellipse": [8, -10, 4, 2.4], "noise": 1.0},
+          {"terrain": "shallow", "rect": [-24, -24, 24, -15], "noise": 2}
+        ],
+        "grass": [
+          {"terrain": "tall_reeds", "density": 0.4, "rect": [-16, -12, 16, -4], "noise": 1.3},
+          {"terrain": "tall_reeds", "density": 0.32000000000000006, "rect": [-16, -4, -6, 5], "noise": 1.3},
+          {"terrain": "tall_reeds", "density": 0.32000000000000006, "rect": [6, -4, 16, 5], "noise": 1.3}
+        ],
+        "props": [
+          {"prop": "tree_swamp", "at": [-6, -10]},
+          {"prop": "tree_swamp", "at": [5, -6]},
+          {"prop": "tree_swamp", "at": [11, -8]},
+          {"prop": "log", "at": [-12, -4]},
+          {"prop": "mushroom", "at": [-5, -5]}
+        ],
+        "scatter": [
+          {"props": ["reeds", "mushroom", "log", "stump"], "count": 10, "rect": [-14, -12, 14, 4], "spacing": 2.4},
+          {"props": ["tree_swamp", "tree_dead"], "count": 8, "rect": [-20, -22, 20, -12], "spacing": 3}
+        ]
+      },
+      "highland": {
+        "paint": [
+          {"terrain": "path", "ellipse": [0.2, -0.3, 4.0, 2.8], "noise": 1.0},
+          {"elevation": 1, "rect": [-24, -24, 24, -10], "noise": 1.6},
+          {"elevation": 2, "rect": [-24, -24, 24, -15], "noise": 2},
+          {"elevation": 3, "rect": [-24, -24, -4, -19], "noise": 1.6}
+        ],
+        "grass": [
+          {"terrain": "tall_grass", "density": 0.4, "rect": [-16, -12, 16, -4], "noise": 1.3},
+          {"terrain": "tall_grass", "density": 0.32000000000000006, "rect": [-16, -4, -6, 5], "noise": 1.3},
+          {"terrain": "tall_grass", "density": 0.32000000000000006, "rect": [6, -4, 16, 5], "noise": 1.3}
+        ],
+        "props": [
+          {"prop": "rock_large", "at": [-10, -7]},
+          {"prop": "tree_pine", "at": [7, -9]},
+          {"prop": "rock_small", "at": [5, -5]},
+          {"prop": "tree_pine", "at": [-6, -13]}
+        ],
+        "scatter": [
+          {"props": ["rock_small", "bush", "rock_large"], "count": 8, "rect": [-14, -12, 14, 4], "spacing": 3},
+          {"props": ["tree_pine", "rock_large"], "count": 8, "rect": [-20, -22, 20, -11], "spacing": 3}
+        ]
+      },
+      "volcano": {
+        "paint": [
+          {"terrain": "rock", "ellipse": [0.4, -0.6, 3.0, 2.0], "noise": 1.6},
+          {"terrain": "lava", "rect": [-24, -24, 24, -14], "noise": 2},
+          {"terrain": "lava", "ellipse": [-10, -6, 2.4, 1.4], "noise": 0.8},
+          {"elevation": 1, "rect": [-24, -24, -6, -18], "noise": 1.6}
+        ],
+        "grass": [],
+        "props": [
+          {"prop": "lava_rock", "at": [-7, -8]},
+          {"prop": "lava_rock", "at": [7, -9]},
+          {"prop": "rock_large", "at": [10, -6]},
+          {"prop": "tree_dead", "at": [-5, -11]},
+          {"prop": "crystal", "at": [4, -11]}
+        ],
+        "scatter": [
+          {"props": ["lava_rock", "rock_small", "tree_dead"], "count": 9, "rect": [-14, -12, 14, 4], "spacing": 2.6}
+        ]
+      },
+      "ruins": {
+        "paint": [
+          {"terrain": "cobble", "ellipse": [0.2, -0.3, 4.6, 3.2], "noise": 0.8},
+          {"terrain": "grass", "ellipse": [-9, -5, 3, 2], "noise": 1.0},
+          {"elevation": 1, "rect": [-24, -24, 24, -14], "noise": 1.6}
+        ],
+        "grass": [
+          {"terrain": "tall_grass", "density": 0.3, "rect": [-16, -12, 16, -4], "noise": 1.3},
+          {"terrain": "tall_grass", "density": 0.24, "rect": [-16, -4, -6, 5], "noise": 1.3},
+          {"terrain": "tall_grass", "density": 0.24, "rect": [6, -4, 16, 5], "noise": 1.3}
+        ],
+        "props": [
+          {"prop": "ruin_pillar", "at": [-7, -7]},
+          {"prop": "ruin_pillar", "at": [7, -7]},
+          {"prop": "ruin_arch", "at": [-1, -12]},
+          {"prop": "statue", "at": [-11, -10]},
+          {"prop": "ruin_pillar", "at": [10, -11]},
+          {"prop": "crystal", "at": [5, -4]}
+        ],
+        "scatter": [
+          {"props": ["rock_small", "ruin_pillar", "bush", "crystal"], "count": 8, "rect": [-14, -12, 14, 4], "spacing": 2.8},
+          {"props": ["ruin_pillar", "tree_dead", "rock_large"], "count": 6, "rect": [-20, -22, 20, -12], "spacing": 3}
+        ]
+      }
+    }
+  },
+  "weather": {"fadeSeconds": 1.2, "tintAmount": 0.25, "particleScale": 1.0, "auroraDay": 0.7, "backdropFog": 0.12, "fadeRate": 3.0, "skyTopShare": 0.6, "hemiShare": 0.5, "backdropShare": 0.5},
+  "vfx": {
+    "pool": {"add": 3200, "alpha": 1400},
+    "glyphFont": "bold 26px monospace",
+    "glyphCell": 32,
+    "glyphChars": "01{}<>/;=",
+    "lightMix": 0.55,
+    "darkMix": 0.55,
+    "neutral": "#e8e4ff",
+    "shakeScale": 1.0,
+    "lightScale": 1.0,
+    "maxEffects": 400,
+    "dimMax": 0.95,
+    "defaults": {
+      "particles": {"on": "foe", "h": 0.5, "count": 1, "glow": 1, "color": "$main", "shape": "dot", "emit": 0, "speed": [0, 0], "life": [0.5, 0.5], "size": [0.1, 0.1], "grow": 1, "gravity": 0, "drag": 0, "orbit": 0, "spin": 0, "dir": "radial", "blend": "add", "radius": 0},
+      "projectile": {"on": "self", "to": "foe", "h": 0.5, "glow": 1, "color": "$main", "color2": "$white", "dur": 0.35, "count": 1, "stagger": 0, "radius": 0, "size": [0.4, 0.4], "arcHeight": 0, "inK": 0.125},
+      "beam": {"on": "self", "to": "foe", "h": 0.5, "glow": 1, "color": "$main", "color2": "$white", "dur": 0.4, "width": 0.25, "segments": 40, "hz": 30, "inK": 0.08},
+      "ring": {"on": "foe", "h": 0, "glow": 1, "color": "$main", "color2": "$white", "radii": [0.2, 1], "orient": "ground", "dur": 0.4, "count": 1, "stagger": 0, "width": 0.25, "inK": 0.1},
+      "slash": {"on": "foe", "h": 0.5, "glow": 1, "color": "$main", "color2": "$white", "dur": 0.25, "arc": 120, "angle": 30, "jitter": 0, "count": 1, "stagger": 0, "radius": 0.6, "width": 0.12, "segments": 18, "spacing": 0},
+      "bolt": {"on": "foe", "h": 0.5, "glow": 1, "color": "$main", "color2": "$white", "segments": 10, "dur": 0.25, "hz": 24, "count": 1, "stagger": 0, "spacing": 0, "height": 4, "jitter": 0.3, "width": 0.08},
+      "shield": {"on": "self", "h": 0.5, "glow": 1, "color": "$main", "color2": "$white", "amount": 2.2, "segments": 7, "radius": 0.9, "dur": 0.7, "inK": 0.15, "outK": 0.35},
+      "column": {"on": "self", "h": 0, "glow": 1, "color": "$main", "color2": "$white", "count": 1, "stagger": 0, "segments": 3, "hz": 6, "spacing": 1, "radius": 0.5, "height": 3, "dur": 0.6, "inK": 0.1, "outK": 0.5},
+      "glow": {"on": "foe", "h": 0.5, "glow": 1, "color": "$main", "color2": "$white", "amount": 2, "width": 0.22, "size": [0.5, 0.5], "dur": 0.3, "inK": 0.12, "outK": 0.55},
+      "spikes": {"on": "foe", "h": 0, "glow": 0, "color": "$main", "count": 5, "spacing": 0.6, "angle": 18, "size": [0.8, 0.8], "radius": 0.18, "dur": 0.7},
+      "light": {"on": "foe", "h": 0.5, "color": "$main", "radius": 6, "intensity": 4, "dur": 0.4, "inK": 0.12},
+      "flash": {"color": "$white", "ms": 150, "amount": 1},
+      "shake": {"intensity": 0.1, "ms": 200},
+      "camera": {"on": "self", "shot": "base", "dur": 0.45, "back": 0.45},
+      "dim": {"amount": 0.5, "dur": 0.5, "inK": 0.2, "outK": 0.35},
+      "tint": {"on": "self", "dur": 0.3, "amount": 1, "glow": 1, "color": "$white", "mode": "blink", "pulses": 2, "inK": 0.15, "outK": 0.25},
+      "lunge": {"on": "self", "dur": 0.3, "glow": 1, "distance": 1, "height": 0},
+      "knock": {"on": "self", "dur": 0.3, "glow": 1, "distance": 0.3},
+      "dodge": {"on": "self", "dur": 0.3, "glow": 1, "distance": 0.6, "height": 0.15},
+      "jitter": {"on": "self", "dur": 0.3, "amount": 0.05, "hz": 20, "angle": 0, "glow": 1},
+      "squash": {"on": "self", "dur": 0.3, "glow": 1, "amount": 0.1},
+      "sink": {"on": "self", "dur": 0.3, "glow": 1, "distance": 0.5},
+      "dissolve": {"on": "self", "dur": 0.3, "glow": 1, "mode": "out"},
+      "reveal": {"on": "self", "dur": 0.3, "amount": 1, "glow": 1, "color": "$white", "mode": "pop", "height": 2},
+      "vanish": {"on": "self", "dur": 0.3, "amount": 1, "glow": 1, "color": "$white", "mode": "shrink"},
+      "enter": {"on": "self", "dur": 0.3, "glow": 1, "from": [0, 0, 0]}
+    },
+    "look": {
+      "glow": {"pulse": 0.12},
+      "ring": {"edge": 0.6, "groundLift": 0.04},
+      "beam": {"core": 0.32, "extend": 0.22, "thinFrom": 0.72, "flicker": 0.15, "flickerHz": 8, "flare": 3.2, "flareFalloff": 2, "flareCore": 0.3},
+      "projectile": {"falloff": 1.6, "core": 0.35, "jitterUp": 0.6, "shrinkFrom": 0.9, "shrinkMin": 0.2, "trailSpread": 0.08, "trailVel": 2, "trailDrag": 2, "trailGrow": 0.3},
+      "slash": {"core": 0.75, "draw": 0.5, "overshoot": 1.02, "altRoll": 0.62, "taper": 1.1, "tip": 0.08},
+      "bolt": {"flicker": 0.45, "upJitter": 0.3, "minSegments": 3},
+      "shield": {"pop": 0.25, "popFrom": 0.75, "spin": 0.6},
+      "column": {"grow": 0.3, "startH": 0.25, "narrow": 0.5},
+      "spikes": {"angleJitter": 0.4, "ring": [0.6, 1.1], "centerTilt": 0.2, "rise": 0.22, "fallFrom": 0.7, "fallShrink": 0.4, "minScale": 0.5},
+      "light": {"decayPow": 1.5},
+      "flash": {"decayPow": 2},
+      "tint": {"duty": 0.5, "blinkDecay": 0.3},
+      "lunge": {"peak": 0.38},
+      "knock": {"peak": 0.18},
+      "jitter": {"up": 0.3, "flash": 0.6, "flashChance": 0.5},
+      "vanish": {"flashRise": 3},
+      "particles": {"fadeIn": 0.083, "fadeOut": 0.4}
+    },
+    "geometry": {"columnSegments": 28, "sphereDetail": 3, "coneSides": 6}
+  },
+  "ball": {"radius": 0.18, "segments": [16, 12], "texSize": [64, 32], "white": "#f2f2f2", "band": "#20202a", "button": "#ffffff", "bandWidth": 0.09, "buttonSize": 0.12, "buttonRim": 1, "emissive": 0.12, "defaultColor": "#e8e8e8", "spin": 16, "shadowSize": 0.5, "shadowOpacity": 0.45, "shadowLift": 0.02, "shadowFade": 0.5, "shadowMinScale": 0.4, "throwDur": 0.62, "throwArc": 1.6, "hoverH": 0.85, "absorbDur": 0.55, "absorbPulse": 0.25, "dropDur": 0.55, "fallShare": 0.5, "bounceHeight": 0.18, "bounceDecay": 0.45, "bounces": 2, "preWobble": 0.35, "wobbleDeg": 24, "wobbleDecay": 0.3, "wobbleDur": 0.42, "wobblePause": 0.38, "successHold": 0.4, "failDur": 0.5, "sendOutDur": 0.5, "sendOutArc": 1.3, "openH": 0.55, "revealDur": 0.4, "recallDur": 0.45, "dimOnCatch": 0},
+  "evolve": {"spot": [0, -0.5], "scale": 1.6, "shot": "evolve", "fadeActors": 0.6, "gather": 1.6, "swapStart": 0.55, "swapEnd": 0.07, "swapCount": 18, "swapPulse": 0.08, "silhouetteColor": "#ffffff", "silhouetteGlow": 1.25, "revealDur": 0.9, "hold": 1.2, "restore": 0.8, "breathPhase": 0.4},
+  "timelines": {
+    "snippets": {
+      "lunge": [
+        {"fx": "lunge", "on": "self", "dur": 0.42, "distance": 1.6, "height": 0.15},
+        {"fx": "camera", "shot": "attack", "on": "self", "dur": 0.25, "hold": 0.35, "back": 0.5}
+      ],
+      "charge": [
+        {"fx": "glow", "on": "self", "h": 0.55, "size": [0.2, 1.1], "dur": 0.32, "glow": 3, "color": "$main"},
+        {"fx": "particles", "on": "self", "h": 0.55, "count": 16, "radius": 0.9, "dir": "inward", "speed": [2.2, 3], "life": [0.25, 0.32], "size": [0.05, 0.09], "shape": "dot", "glow": 3, "colors": ["$main", "$light"]},
+        {"fx": "camera", "shot": "attack", "on": "self", "dur": 0.3, "hold": 0.35, "back": 0.55}
+      ],
+      "impact": [
+        {"fx": "glow", "on": "foe", "h": 0.5, "size": [0.3, 1.0], "dur": 0.28, "glow": 2.5},
+        {"fx": "particles", "on": "foe", "h": 0.5, "count": 22, "dir": "radial", "radius": 0.15, "speed": [2.5, 5], "life": [0.2, 0.38], "size": [0.05, 0.1], "shape": "star", "glow": 4, "colors": ["$main", "$light", "$white"], "drag": 3, "gravity": 2, "spin": 5},
+        {"fx": "light", "on": "foe", "h": 0.5, "intensity": 3.5, "radius": 5, "dur": 0.35}
+      ]
+    },
+    "anims": {
+      "hit": [
+        {"use": "lunge", "when": ["physical", "status"]},
+        {"t": 0.16, "use": "impact", "when": ["physical", "status"]},
+        {"t": 0.16, "fx": "ring", "on": "foe", "h": 0.5, "orient": "facing", "radii": [0.2, 0.9], "width": 0.3, "dur": 0.25, "glow": 3, "when": ["physical", "status"]},
+        {"t": 0.17, "fx": "shake", "intensity": 0.05, "ms": 160, "when": ["physical", "status"]},
+        {"use": "charge", "when": ["special"]},
+        {"t": 0.28, "fx": "projectile", "on": "self", "h": 0.55, "to": "foe", "toH": 0.5, "dur": 0.26, "size": [0.45, 0.45], "glow": 4, "arcHeight": 0.4, "trail": {"rate": 90, "size": [0.04, 0.08], "life": [0.15, 0.3], "shape": "dot"}, "when": ["special"]},
+        {"t": 0.54, "use": "impact", "when": ["special"]},
+        {"t": 0.55, "fx": "shake", "intensity": 0.05, "ms": 160, "when": ["special"]}
+      ],
+      "slash": [
+        {"use": "lunge"},
+        {"t": 0.14, "fx": "slash", "on": "foe", "h": 0.55, "count": 3, "stagger": 0.07, "radius": 0.62, "width": 0.16, "arc": 130, "angle": 35, "jitter": 12, "dur": 0.28, "glow": 4, "color": "$main", "color2": "$white"},
+        {"t": 0.16, "fx": "particles", "on": "foe", "h": 0.55, "count": 18, "radius": 0.2, "dir": "radial", "speed": [3, 6], "life": [0.15, 0.3], "size": [0.06, 0.12], "shape": "hstreak", "glow": 4, "colors": ["$light", "$white"], "drag": 4},
+        {"t": 0.16, "fx": "light", "on": "foe", "h": 0.5, "intensity": 4, "radius": 5, "dur": 0.3},
+        {"t": 0.18, "fx": "shake", "intensity": 0.05, "ms": 160}
+      ],
+      "beam": [
+        {"use": "charge"},
+        {"t": 0.26, "fx": "beam", "on": "self", "h": 0.55, "off": [0.25, 0, 0], "to": "foe", "toH": 0.5, "dur": 0.46, "width": 0.24, "glow": 2.6, "color": "$main", "color2": "$white"},
+        {"t": 0.3, "fx": "glow", "on": "foe", "h": 0.5, "size": [0.6, 1.3], "dur": 0.42, "glow": 3, "hz": 9},
+        {"t": 0.3, "fx": "particles", "on": "foe", "h": 0.5, "count": 40, "emit": 0.36, "radius": 0.15, "dir": "radial", "speed": [2.5, 5], "life": [0.2, 0.35], "size": [0.05, 0.09], "shape": "dot", "glow": 4, "colors": ["$main", "$light", "$white"], "drag": 2},
+        {"t": 0.28, "fx": "light", "on": "foe", "h": 0.5, "intensity": 6, "radius": 7, "dur": 0.5},
+        {"t": 0.3, "fx": "shake", "intensity": 0.04, "ms": 380}
+      ],
+      "orb": [
+        {"use": "charge"},
+        {"t": 0.1, "fx": "glow", "on": "self", "h": 0.55, "off": [0.4, 0.3, 0], "size": [0.2, 0.7], "dur": 0.28, "glow": 4},
+        {"t": 0.26, "fx": "projectile", "on": "self", "h": 0.6, "off": [0.4, 0.3, 0], "to": "foe", "toH": 0.5, "dur": 0.3, "size": [0.7, 0.7], "glow": 4, "arcHeight": 0.6, "wobble": [0.1, 3], "trail": {"rate": 120, "size": [0.06, 0.12], "life": [0.2, 0.4], "shape": "soft", "spread": 0.12}},
+        {"t": 0.56, "use": "impact"},
+        {"t": 0.56, "fx": "ring", "on": "foe", "h": 0.5, "orient": "facing", "radii": [0.3, 1.3], "width": 0.25, "dur": 0.3, "glow": 3},
+        {"t": 0.56, "fx": "shake", "intensity": 0.06, "ms": 200}
+      ],
+      "burst": [
+        {"use": "charge"},
+        {"t": 0.1, "fx": "ring", "on": "self", "h": 0.02, "orient": "ground", "radii": [0.3, 1.6], "width": 0.2, "dur": 0.35, "glow": 3},
+        {"t": 0.32, "fx": "glow", "on": "foe", "h": 0.5, "size": [0.5, 2.4], "dur": 0.4, "glow": 5},
+        {"t": 0.32, "fx": "particles", "on": "foe", "h": 0.5, "count": 46, "radius": 0.3, "dir": "radial", "speed": [3, 7], "life": [0.3, 0.55], "size": [0.06, 0.13], "shape": "soft", "glow": 4, "colors": ["$main", "$light", "$white"], "color2": "$dark", "drag": 3.5, "grow": 1.5},
+        {"t": 0.32, "fx": "particles", "on": "foe", "h": 0.1, "count": 16, "spread": [0.6, 0, 0.6], "dir": "up", "speed": [1, 2.5], "life": [0.4, 0.7], "size": [0.12, 0.22], "shape": "soft", "blend": "alpha", "colors": ["#3a3340", "#5a5060"], "grow": 2},
+        {"t": 0.32, "fx": "ring", "on": "foe", "h": 0.05, "orient": "ground", "radii": [0.4, 2.6], "width": 0.18, "dur": 0.4, "glow": 3},
+        {"t": 0.32, "fx": "light", "on": "foe", "h": 0.5, "intensity": 8, "radius": 9, "dur": 0.45},
+        {"t": 0.32, "fx": "flash", "color": "$light", "ms": 140, "amount": 0.5},
+        {"t": 0.32, "fx": "shake", "intensity": 0.12, "ms": 320}
+      ],
+      "wave": [
+        {"use": "charge"},
+        {"t": 0.2, "fx": "ring", "on": "self", "h": 0.5, "to": "foe", "toH": 0.5, "orient": "axis", "radii": [0.3, 1.0], "width": 0.18, "dur": 0.45, "count": 3, "stagger": 0.1, "glow": 3.5},
+        {"t": 0.2, "fx": "particles", "on": "self", "h": 0.5, "count": 30, "emit": 0.3, "dir": "none", "vel": [6, 0, 0], "spread": [0, 0.4, 0.4], "life": [0.3, 0.45], "size": [0.04, 0.08], "shape": "hstreak", "glow": 3, "colors": ["$main", "$light"]},
+        {"t": 0.6, "use": "impact"},
+        {"t": 0.6, "fx": "shake", "intensity": 0.05, "ms": 200}
+      ],
+      "rain": [
+        {"fx": "glow", "on": "self", "h": 0.6, "size": [0.2, 0.9], "dur": 0.3, "glow": 3},
+        {"fx": "camera", "shot": "target", "on": "foe", "dur": 0.3, "hold": 0.45},
+        {"t": 0.15, "fx": "particles", "on": "foe", "h": 3.2, "spread": [1.2, 0.4, 1.2], "count": 70, "emit": 0.45, "dir": "down", "speed": [9, 12], "life": [0.28, 0.36], "size": [0.07, 0.11], "shape": "streak", "glow": 3, "colors": ["$main", "$light", "$white"]},
+        {"t": 0.35, "fx": "ring", "on": "foe", "h": 0.02, "orient": "ground", "radii": [0.2, 1.2], "width": 0.25, "dur": 0.35, "count": 3, "stagger": 0.1, "glow": 2.5},
+        {"t": 0.35, "fx": "particles", "on": "foe", "h": 0.05, "spread": [0.9, 0, 0.9], "count": 30, "emit": 0.35, "dir": "up", "speed": [1.5, 2.5], "life": [0.2, 0.3], "size": [0.04, 0.07], "shape": "dot", "gravity": 9, "glow": 3, "colors": ["$light", "$white"]},
+        {"t": 0.4, "fx": "tint", "on": "foe", "color": "$main", "amount": 0.5, "mode": "blink", "pulses": 2, "dur": 0.35}
+      ],
+      "shield": [
+        {"fx": "camera", "shot": "target", "on": "self", "dur": 0.3, "hold": 0.4},
+        {"fx": "shield", "on": "self", "h": 0.5, "radius": 0.95, "dur": 0.8, "glow": 2.5, "color": "$main", "color2": "$white"},
+        {"t": 0.05, "fx": "particles", "on": "self", "h": 0.5, "radius": 1.0, "count": 24, "dir": "none", "life": [0.3, 0.5], "size": [0.05, 0.09], "shape": "star", "glow": 4, "colors": ["$light", "$white"], "spin": 4},
+        {"t": 0.05, "fx": "tint", "on": "self", "color": "$light", "amount": 0.45, "mode": "hold", "dur": 0.5},
+        {"t": 0.05, "fx": "light", "on": "self", "h": 0.6, "intensity": 3, "radius": 5, "dur": 0.6}
+      ],
+      "heal": [
+        {"fx": "column", "on": "self", "h": 0, "radius": 0.65, "height": 2.8, "dur": 0.8, "glow": 2.6, "color": "$main", "color2": "$white"},
+        {"fx": "particles", "on": "self", "h": 0.1, "spread": [0.6, 0.2, 0.6], "count": 40, "emit": 0.55, "dir": "up", "speed": [1.2, 2.2], "life": [0.4, 0.7], "size": [0.06, 0.11], "shape": "star", "glow": 4, "orbit": 2.5, "colors": ["$light", "$white"], "spin": 3},
+        {"fx": "tint", "on": "self", "color": "$light", "amount": 0.55, "mode": "hold", "dur": 0.7},
+        {"fx": "ring", "on": "self", "h": 0.02, "orient": "ground", "radii": [0.3, 1.3], "width": 0.2, "dur": 0.6, "count": 2, "stagger": 0.25, "glow": 2.5},
+        {"fx": "light", "on": "self", "h": 0.8, "intensity": 3.5, "radius": 6, "dur": 0.8}
+      ],
+      "buff": [
+        {"fx": "camera", "shot": "target", "on": "self", "dur": 0.3, "hold": 0.35},
+        {"fx": "ring", "on": "self", "h": 0.02, "orient": "ground", "radii": [0.2, 1.4], "width": 0.22, "dur": 0.5, "glow": 3},
+        {"fx": "particles", "on": "self", "h": 0.0, "spread": [0.6, 0.1, 0.6], "count": 26, "emit": 0.4, "dir": "up", "speed": [3, 4.5], "life": [0.3, 0.45], "size": [0.1, 0.16], "shape": "streak", "glow": 4, "colors": ["$main", "$light"]},
+        {"fx": "tint", "on": "self", "color": "$light", "amount": 0.5, "mode": "blink", "pulses": 2, "dur": 0.55},
+        {"t": 0.1, "fx": "squash", "on": "self", "amount": 0.08, "dur": 0.35}
+      ],
+      "debuff": [
+        {"use": "charge"},
+        {"t": 0.25, "fx": "ring", "on": "foe", "h": 0.02, "orient": "ground", "radii": [1.5, 0.2], "width": 0.25, "dur": 0.45, "glow": 3, "color": "$dark"},
+        {"t": 0.25, "fx": "particles", "on": "foe", "h": 1.3, "spread": [0.6, 0.2, 0.6], "count": 24, "emit": 0.35, "dir": "down", "speed": [2.5, 3.5], "life": [0.3, 0.45], "size": [0.1, 0.16], "shape": "streak", "glow": 3, "colors": ["$main", "$dark"]},
+        {"t": 0.3, "fx": "particles", "on": "foe", "h": 0.4, "radius": 0.6, "count": 14, "dir": "up", "speed": [0.3, 0.8], "life": [0.5, 0.7], "size": [0.15, 0.25], "shape": "soft", "blend": "alpha", "colors": ["#2a2236", "#3c2f4a"], "grow": 1.8},
+        {"t": 0.3, "fx": "tint", "on": "foe", "color": "#3a2a4a", "amount": 0.6, "mode": "blink", "pulses": 2, "dur": 0.45}
+      ],
+      "glitch": [
+        {"use": "charge"},
+        {"t": 0.26, "fx": "projectile", "on": "self", "h": 0.55, "to": "foe", "toH": 0.5, "dur": 0.22, "size": [0.35, 0.35], "glow": 4, "count": 3, "stagger": 0.05, "radius": 0.3, "trail": {"rate": 80, "size": [0.06, 0.1], "life": [0.15, 0.3], "shape": "square"}},
+        {"t": 0.5, "fx": "jitter", "on": "foe", "amount": 0.12, "hz": 24, "angle": 2.5, "dur": 0.38, "color": "#ff2a6d"},
+        {"t": 0.5, "fx": "particles", "on": "foe", "h": 0.5, "radius": 0.6, "count": 36, "emit": 0.3, "dir": "none", "life": [0.08, 0.18], "size": [0.08, 0.2], "shape": "square", "glow": 4, "colors": ["#ff2a6d", "#05d9e8", "$main", "$white"]},
+        {"t": 0.5, "fx": "particles", "on": "foe", "h": 0.5, "radius": 0.4, "count": 14, "dir": "radial", "speed": [1, 2], "life": [0.25, 0.4], "size": [0.12, 0.16], "shape": "glyph", "chars": "█▓▒░#", "glow": 3, "colors": ["$main", "#05d9e8"]},
+        {"t": 0.5, "fx": "flash", "color": "$main", "ms": 90, "amount": 0.35},
+        {"t": 0.52, "fx": "shake", "intensity": 0.05, "ms": 240}
+      ],
+      "code": [
+        {"use": "charge"},
+        {"t": 0.2, "fx": "particles", "on": "self", "h": 0.6, "spread": [0.1, 0.35, 0.35], "count": 40, "emit": 0.25, "dir": "none", "vel": [9, 0.3, 0], "life": [0.52, 0.66], "size": [0.16, 0.2], "shape": "glyph", "chars": "01{}<>;=/", "glow": 3.5, "colors": ["$main", "$light", "$white"], "drag": 0.3},
+        {"t": 0.5, "fx": "particles", "on": "foe", "h": 1.5, "spread": [0.6, 0.3, 0.6], "count": 24, "emit": 0.18, "dir": "down", "speed": [2.5, 3.5], "life": [0.3, 0.4], "size": [0.14, 0.18], "shape": "glyph", "chars": "01", "glow": 3.5, "colors": ["$main", "$light"]},
+        {"t": 0.62, "use": "impact"},
+        {"t": 0.62, "fx": "ring", "on": "foe", "h": 0.02, "orient": "ground", "radii": [0.3, 1.3], "width": 0.15, "dur": 0.3, "glow": 3}
+      ],
+      "lightning": [
+        {"fx": "glow", "on": "self", "h": 0.6, "size": [0.3, 0.9], "dur": 0.25, "glow": 4},
+        {"fx": "camera", "shot": "target", "on": "foe", "dur": 0.25, "hold": 0.4},
+        {"fx": "dim", "amount": 0.35, "dur": 0.6},
+        {"t": 0.18, "fx": "bolt", "on": "foe", "h": 0.5, "height": 5, "segments": 12, "jitter": 0.35, "width": 0.12, "dur": 0.3, "count": 2, "stagger": 0.1, "spacing": 0.3, "glow": 4, "color": "$main", "color2": "$white", "hz": 28},
+        {"t": 0.18, "fx": "flash", "color": "$light", "ms": 110, "amount": 0.45},
+        {"t": 0.2, "use": "impact"},
+        {"t": 0.2, "fx": "particles", "on": "foe", "h": 0.05, "spread": [0.5, 0, 0.5], "count": 20, "dir": "up", "speed": [1.5, 3.5], "life": [0.15, 0.3], "size": [0.04, 0.07], "shape": "hstreak", "gravity": 10, "glow": 5, "colors": ["$light", "$white"]},
+        {"t": 0.2, "fx": "shake", "intensity": 0.09, "ms": 260}
+      ],
+      "fire": [
+        {"use": "charge"},
+        {"t": 0.24, "fx": "projectile", "on": "self", "h": 0.55, "to": "foe", "toH": 0.45, "dur": 0.28, "size": [0.6, 0.6], "glow": 4, "color": "$main", "color2": "#fff2b0", "arcHeight": 0.5, "trail": {"rate": 140, "size": [0.1, 0.18], "life": [0.2, 0.4], "shape": "soft", "color": "#ff7a2a", "glow": 3, "spread": 0.1}},
+        {"t": 0.52, "fx": "particles", "on": "foe", "h": 0.05, "spread": [0.5, 0, 0.5], "count": 50, "emit": 0.2, "dir": "up", "speed": [1.8, 3.2], "life": [0.25, 0.45], "size": [0.12, 0.22], "shape": "soft", "glow": 4, "colors": ["#ffd36b", "#ff7a2a", "$main"], "color2": "#5a1a0a", "grow": 0.4},
+        {"t": 0.52, "fx": "glow", "on": "foe", "h": 0.4, "size": [0.6, 1.6], "dur": 0.4, "glow": 3.5, "color": "#ff7a2a", "color2": "#fff2b0", "hz": 12},
+        {"t": 0.52, "fx": "light", "on": "foe", "h": 0.5, "intensity": 7, "radius": 8, "dur": 0.42, "color": "#ff8a3a"},
+        {"t": 0.54, "fx": "tint", "on": "foe", "color": "#ff7a2a", "amount": 0.6, "mode": "blink", "pulses": 3, "dur": 0.35},
+        {"t": 0.54, "fx": "shake", "intensity": 0.06, "ms": 220}
+      ],
+      "ice": [
+        {"use": "charge"},
+        {"t": 0.25, "fx": "particles", "on": "self", "h": 0.55, "spread": [0.1, 0.2, 0.2], "count": 20, "emit": 0.15, "dir": "none", "vel": [9, 0, 0], "life": [0.55, 0.65], "size": [0.08, 0.12], "shape": "star", "glow": 4, "colors": ["$light", "$white"], "spin": 6},
+        {"t": 0.45, "fx": "spikes", "on": "foe", "count": 7, "spacing": 0.7, "size": [0.6, 1.3], "radius": 0.16, "angle": 20, "dur": 0.45, "color": "$light", "glow": 0.5},
+        {"t": 0.45, "fx": "ring", "on": "foe", "h": 0.03, "orient": "ground", "radii": [0.2, 1.5], "width": 0.3, "dur": 0.4, "glow": 2.5, "color": "$light"},
+        {"t": 0.45, "fx": "particles", "on": "foe", "h": 0.5, "radius": 0.5, "count": 24, "dir": "radial", "speed": [2, 4], "life": [0.25, 0.45], "size": [0.05, 0.09], "shape": "star", "glow": 4, "colors": ["$light", "$white"], "gravity": 3, "spin": 5},
+        {"t": 0.45, "fx": "tint", "on": "foe", "color": "$light", "amount": 0.6, "mode": "fade", "dur": 0.45},
+        {"t": 0.45, "fx": "flash", "color": "$light", "ms": 100, "amount": 0.4},
+        {"t": 0.47, "fx": "shake", "intensity": 0.05, "ms": 200}
+      ],
+      "sound": [
+        {"fx": "squash", "on": "self", "amount": 0.1, "dur": 0.25},
+        {"fx": "camera", "shot": "attack", "on": "self", "dur": 0.3, "hold": 0.3, "back": 0.5},
+        {"fx": "ring", "on": "self", "h": 0.6, "to": "foe", "toH": 0.5, "orient": "axis", "radii": [0.25, 0.9], "width": 0.12, "dur": 0.42, "count": 4, "stagger": 0.08, "glow": 3.5},
+        {"t": 0.05, "fx": "particles", "on": "self", "h": 0.7, "spread": [0.2, 0.3, 0.3], "count": 12, "emit": 0.3, "dir": "none", "vel": [5, 0.8, 0], "life": [0.6, 0.8], "size": [0.18, 0.24], "shape": "glyph", "chars": "♪♫", "glow": 3, "colors": ["$main", "$light"]},
+        {"t": 0.45, "fx": "jitter", "on": "foe", "amount": 0.05, "hz": 30, "dur": 0.3},
+        {"t": 0.45, "fx": "ring", "on": "foe", "h": 0.5, "orient": "facing", "radii": [0.3, 1.4], "width": 0.12, "dur": 0.35, "count": 2, "stagger": 0.1, "glow": 3},
+        {"t": 0.47, "fx": "shake", "intensity": 0.04, "ms": 240}
+      ],
+      "light": [
+        {"fx": "glow", "on": "self", "h": 0.6, "size": [0.2, 1.0], "dur": 0.3, "glow": 4, "color": "$light"},
+        {"fx": "camera", "shot": "target", "on": "foe", "dur": 0.3, "hold": 0.4},
+        {"t": 0.2, "fx": "column", "on": "foe", "h": 0, "radius": 0.55, "height": 6, "dur": 0.55, "glow": 4, "color": "$light", "color2": "$white"},
+        {"t": 0.2, "fx": "particles", "on": "foe", "h": 0.5, "spread": [0.6, 1, 0.6], "count": 30, "emit": 0.3, "dir": "none", "life": [0.3, 0.5], "size": [0.06, 0.12], "shape": "star", "glow": 5, "colors": ["$light", "$white"], "spin": 4},
+        {"t": 0.25, "fx": "glow", "on": "foe", "h": 0.5, "size": [0.6, 1.8], "dur": 0.4, "glow": 4, "color": "$light"},
+        {"t": 0.25, "fx": "flash", "color": "$white", "ms": 120, "amount": 0.5},
+        {"t": 0.25, "fx": "light", "on": "foe", "h": 1, "intensity": 8, "radius": 8, "dur": 0.5, "color": "$light"},
+        {"t": 0.28, "fx": "tint", "on": "foe", "color": "$white", "amount": 0.7, "mode": "fade", "dur": 0.35}
+      ],
+      "dark": [
+        {"fx": "dim", "amount": 0.5, "dur": 0.85},
+        {"fx": "particles", "on": "self", "h": 0.55, "radius": 0.9, "count": 30, "emit": 0.25, "dir": "inward", "speed": [2.5, 3.5], "life": [0.25, 0.32], "size": [0.12, 0.2], "shape": "soft", "blend": "alpha", "colors": ["#120a1c", "#25153a"]},
+        {"fx": "glow", "on": "self", "h": 0.55, "size": [0.2, 0.8], "dur": 0.35, "glow": 2.5, "color": "$main", "color2": "$dark"},
+        {"fx": "camera", "shot": "attack", "on": "self", "dur": 0.3, "hold": 0.35, "back": 0.55},
+        {"t": 0.3, "fx": "projectile", "on": "self", "h": 0.55, "to": "foe", "toH": 0.5, "dur": 0.3, "size": [0.6, 0.6], "glow": 2.5, "color": "$main", "color2": "$dark", "trail": {"rate": 100, "size": [0.14, 0.22], "life": [0.25, 0.4], "shape": "soft", "color": "$dark", "glow": 1.5}},
+        {"t": 0.6, "fx": "particles", "on": "foe", "h": 0.5, "radius": 0.3, "count": 30, "dir": "radial", "speed": [1.5, 3], "life": [0.3, 0.5], "size": [0.18, 0.3], "shape": "soft", "blend": "alpha", "colors": ["#0c0614", "#22123a", "#3a1d5a"], "grow": 1.8, "drag": 2},
+        {"t": 0.6, "fx": "glow", "on": "foe", "h": 0.5, "size": [0.5, 1.5], "dur": 0.35, "glow": 3, "color": "$main", "color2": "$light"},
+        {"t": 0.6, "fx": "tint", "on": "foe", "color": "#1a0f26", "amount": 0.8, "mode": "blink", "pulses": 2, "dur": 0.3},
+        {"t": 0.62, "fx": "shake", "intensity": 0.07, "ms": 220}
+      ],
+      "wind": [
+        {"fx": "squash", "on": "self", "amount": -0.08, "dur": 0.3},
+        {"fx": "camera", "shot": "target", "on": "foe", "dur": 0.3, "hold": 0.4},
+        {"fx": "particles", "on": "self", "h": 0.5, "spread": [0.2, 0.5, 0.6], "count": 24, "emit": 0.3, "dir": "none", "vel": [8, 0, 0], "life": [0.45, 0.6], "size": [0.12, 0.2], "shape": "hstreak", "glow": 3, "colors": ["$light", "$white"]},
+        {"t": 0.3, "fx": "particles", "on": "foe", "h": 0.05, "radius": 0.7, "count": 60, "emit": 0.32, "dir": "up", "speed": [1.5, 3], "life": [0.35, 0.5], "size": [0.08, 0.16], "shape": "streak", "orbit": 9, "glow": 3, "colors": ["$main", "$light", "$white"]},
+        {"t": 0.3, "fx": "particles", "on": "foe", "h": 0.3, "radius": 0.6, "count": 12, "emit": 0.3, "dir": "up", "speed": [1, 2], "life": [0.4, 0.6], "size": [0.08, 0.12], "shape": "leaf", "orbit": 7, "glow": 1.2, "colors": ["$main", "$light"], "spin": 8},
+        {"t": 0.32, "fx": "slash", "on": "foe", "h": 0.5, "count": 2, "stagger": 0.12, "radius": 0.7, "width": 0.07, "arc": 160, "angle": -10, "dur": 0.25, "glow": 3, "color": "$light"},
+        {"t": 0.35, "fx": "knock", "on": "foe", "distance": 0.25, "dur": 0.35},
+        {"t": 0.35, "fx": "shake", "intensity": 0.04, "ms": 260}
+      ],
+      "quake": [
+        {"fx": "lunge", "on": "self", "distance": 0.3, "height": 0.55, "dur": 0.4},
+        {"fx": "camera", "shot": "wide", "dur": 0.3, "hold": 0.45},
+        {"t": 0.38, "fx": "shake", "intensity": 0.22, "ms": 520},
+        {"t": 0.38, "fx": "ring", "on": "foe", "h": 0.02, "orient": "ground", "radii": [0.4, 2.8], "width": 0.15, "dur": 0.45, "glow": 2.5, "count": 2, "stagger": 0.12},
+        {"t": 0.38, "fx": "spikes", "on": "foe", "count": 6, "spacing": 0.8, "size": [0.4, 0.9], "radius": 0.22, "angle": 25, "dur": 0.5, "color": "#7a6a5a", "glow": 0},
+        {"t": 0.38, "fx": "particles", "on": "foe", "h": 0.05, "spread": [0.9, 0, 0.9], "count": 28, "dir": "up", "speed": [2.5, 4.5], "life": [0.4, 0.6], "size": [0.07, 0.13], "shape": "square", "blend": "alpha", "gravity": 12, "colors": ["#6a5a48", "#4a3e32", "#8a7a62"]},
+        {"t": 0.38, "fx": "particles", "on": "foe", "h": 0.05, "spread": [1, 0, 1], "count": 16, "dir": "up", "speed": [0.3, 0.8], "life": [0.5, 0.7], "size": [0.25, 0.4], "shape": "soft", "blend": "alpha", "colors": ["#8a7a66", "#a09078"], "grow": 1.8},
+        {"t": 0.38, "fx": "knock", "on": "foe", "distance": 0.15, "dur": 0.3},
+        {"t": 0.4, "fx": "glow", "on": "foe", "h": 0.1, "size": [0.5, 1.6], "dur": 0.3, "glow": 2.5}
+      ],
+      "spark": [
+        {"fx": "glow", "on": "self", "h": 0.55, "size": [0.2, 0.7], "dur": 0.25, "glow": 4, "hz": 15},
+        {"fx": "particles", "on": "self", "h": 0.55, "radius": 0.4, "count": 10, "dir": "radial", "speed": [1.5, 3], "life": [0.1, 0.2], "size": [0.04, 0.06], "shape": "hstreak", "glow": 5, "colors": ["$light", "$white"]},
+        {"fx": "camera", "shot": "attack", "on": "self", "dur": 0.25, "hold": 0.3, "back": 0.5},
+        {"t": 0.15, "fx": "bolt", "on": "foe", "h": 0.5, "to": "self", "toH": 0.55, "segments": 14, "jitter": 0.25, "width": 0.07, "dur": 0.3, "glow": 5, "color": "$main", "color2": "$white", "hz": 30},
+        {"t": 0.18, "fx": "particles", "on": "foe", "h": 0.5, "radius": 0.2, "count": 24, "dir": "radial", "speed": [2.5, 5], "life": [0.12, 0.25], "size": [0.04, 0.07], "shape": "hstreak", "gravity": 6, "glow": 5, "colors": ["$main", "$light", "$white"]},
+        {"t": 0.18, "fx": "jitter", "on": "foe", "amount": 0.06, "hz": 30, "dur": 0.3},
+        {"t": 0.18, "fx": "light", "on": "foe", "h": 0.5, "intensity": 5, "radius": 6, "dur": 0.3},
+        {"t": 0.18, "fx": "tint", "on": "foe", "color": "$light", "amount": 0.7, "mode": "blink", "pulses": 3, "dur": 0.3},
+        {"t": 0.2, "fx": "shake", "intensity": 0.04, "ms": 160}
+      ]
+    },
+    "fallbackAnim": "hit",
+    "hit": {
+      "normal": [
+        {"fx": "tint", "on": "self", "color": "$white", "glow": 1.2, "amount": 0.9, "mode": "blink", "pulses": 2, "dur": 0.3},
+        {"fx": "knock", "on": "self", "distance": 0.22, "dur": 0.3},
+        {"fx": "shake", "intensity": 0.06, "ms": 180},
+        {"fx": "particles", "on": "self", "h": 0.5, "radius": 0.2, "count": 10, "dir": "radial", "speed": [2, 3.5], "life": [0.15, 0.3], "size": [0.04, 0.07], "shape": "dot", "glow": 3, "colors": ["$light", "$white"], "drag": 3}
+      ],
+      "super": [
+        {"fx": "tint", "on": "self", "color": "$white", "glow": 1.6, "amount": 1, "mode": "blink", "pulses": 3, "dur": 0.45},
+        {"fx": "knock", "on": "self", "distance": 0.45, "dur": 0.4},
+        {"fx": "squash", "on": "self", "amount": -0.12, "dur": 0.25},
+        {"fx": "flash", "color": "$light", "ms": 180, "amount": 0.4},
+        {"fx": "shake", "intensity": 0.2, "ms": 420},
+        {"fx": "camera", "shot": "hit", "on": "self", "dur": 0.12, "hold": 0.25, "back": 0.45},
+        {"fx": "glow", "on": "self", "h": 0.5, "size": [0.5, 1.4], "dur": 0.26, "glow": 2.5, "color": "$main"},
+        {"fx": "ring", "on": "self", "h": 0.5, "orient": "facing", "radii": [0.3, 1.2], "width": 0.1, "dur": 0.35, "glow": 2},
+        {"fx": "particles", "on": "self", "h": 0.5, "radius": 0.25, "count": 36, "dir": "radial", "speed": [3, 7], "life": [0.25, 0.45], "size": [0.05, 0.11], "shape": "star", "glow": 3.5, "colors": ["$main", "$light", "$white"], "drag": 2.5, "spin": 6},
+        {"fx": "light", "on": "self", "h": 0.5, "intensity": 4, "radius": 6, "dur": 0.4}
+      ],
+      "weak": [
+        {"fx": "tint", "on": "self", "color": "#c8c8d0", "amount": 0.6, "mode": "blink", "pulses": 1, "dur": 0.22},
+        {"fx": "knock", "on": "self", "distance": 0.1, "dur": 0.22},
+        {"fx": "particles", "on": "self", "h": 0.5, "radius": 0.2, "count": 6, "dir": "radial", "speed": [1, 2], "life": [0.2, 0.3], "size": [0.06, 0.1], "shape": "soft", "blend": "alpha", "colors": ["#b0b0b8", "#8a8a94"]}
+      ],
+      "immune": [
+        {"fx": "ring", "on": "self", "h": 0.5, "orient": "facing", "radii": [0.6, 0.9], "width": 0.2, "dur": 0.35, "glow": 1.5, "color": "#9aa0b0"},
+        {"fx": "particles", "on": "self", "h": 0.5, "radius": 0.5, "count": 8, "dir": "radial", "speed": [0.4, 0.8], "life": [0.3, 0.45], "size": [0.1, 0.16], "shape": "soft", "blend": "alpha", "colors": ["#a0a4b0"]}
+      ],
+      "crit": [
+        {"fx": "beam", "on": "self", "h": 1.0, "off": [-1.3, 0.3, 0.3], "to": "self", "toH": 0.1, "toOff": [1.3, -0.1, -0.3], "dur": 0.22, "width": 0.07, "glow": 3.5, "color": "$light", "color2": "$white"},
+        {"fx": "slash", "on": "self", "h": 0.55, "count": 1, "radius": 1.3, "width": 0.08, "arc": 60, "angle": -30, "dur": 0.2, "glow": 3.5, "color": "$white"},
+        {"fx": "flash", "color": "$white", "ms": 90, "amount": 0.45},
+        {"fx": "shake", "intensity": 0.1, "ms": 220},
+        {"fx": "particles", "on": "self", "h": 0.55, "radius": 0.2, "count": 18, "dir": "radial", "speed": [4, 8], "life": [0.15, 0.3], "size": [0.06, 0.1], "shape": "hstreak", "glow": 4, "colors": ["$white", "$light"], "drag": 3}
+      ]
+    },
+    "miss": [
+      {"fx": "dodge", "on": "foe", "distance": 0.7, "height": 0.12, "dur": 0.38},
+      {"fx": "particles", "on": "foe", "h": 0.5, "off": [0, 0, 0.6], "spread": [0.1, 0.3, 0.1], "count": 8, "dir": "none", "vel": [5, 0, 0], "life": [0.2, 0.3], "size": [0.1, 0.16], "shape": "hstreak", "glow": 2, "colors": ["$light", "$white"]},
+      {"fx": "ring", "on": "foe", "h": 0.02, "orient": "ground", "radii": [0.3, 0.8], "width": 0.2, "dur": 0.3, "glow": 1, "color": "#c8c8d0"}
+    ],
+    "faint": [
+      {"fx": "camera", "shot": "target", "on": "self", "dur": 0.35, "hold": 0.7},
+      {"fx": "tint", "on": "self", "color": "#ff5a6a", "amount": 0.6, "mode": "blink", "pulses": 3, "dur": 0.4},
+      {"fx": "jitter", "on": "self", "amount": 0.03, "hz": 16, "dur": 0.35},
+      {"t": 0.35, "fx": "sink", "on": "self", "distance": 0.45, "dur": 0.7},
+      {"t": 0.4, "fx": "dissolve", "on": "self", "dur": 0.65, "hideAfter": true},
+      {"t": 0.4, "fx": "particles", "on": "self", "h": 0.4, "spread": [0.4, 0.4, 0.2], "count": 40, "emit": 0.45, "dir": "up", "speed": [0.6, 1.4], "life": [0.4, 0.7], "size": [0.06, 0.09], "shape": "square", "glow": 2.2, "colors": ["$light", "$white", "#c8c0e0"]},
+      {"t": 0.45, "fx": "particles", "on": "self", "h": 0.05, "spread": [0.5, 0, 0.5], "count": 10, "dir": "up", "speed": [0.3, 0.6], "life": [0.6, 0.9], "size": [0.3, 0.45], "shape": "soft", "blend": "alpha", "colors": ["#8a8078", "#a09888"], "grow": 1.6}
+    ],
+    "status": {
+      "default": [
+        {"fx": "tint", "on": "self", "color": "$main", "amount": 0.6, "mode": "blink", "pulses": 2, "dur": 0.5},
+        {"fx": "particles", "on": "self", "h": 0.3, "spread": [0.5, 0.3, 0.5], "count": 16, "emit": 0.35, "dir": "up", "speed": [0.8, 1.5], "life": [0.4, 0.6], "size": [0.08, 0.14], "shape": "soft", "glow": 2.5, "colors": ["$main", "$light"]},
+        {"fx": "ring", "on": "self", "h": 0.02, "orient": "ground", "radii": [0.3, 1.1], "width": 0.2, "dur": 0.45, "glow": 2.5}
+      ],
+      "byId": {
+        "burn": [
+          {"fx": "tint", "on": "self", "color": "$main", "amount": 0.6, "mode": "blink", "pulses": 3, "dur": 0.5},
+          {"fx": "particles", "on": "self", "h": 0.05, "spread": [0.5, 0, 0.4], "count": 34, "emit": 0.45, "dir": "up", "speed": [1.4, 2.6], "life": [0.35, 0.55], "size": [0.1, 0.18], "shape": "soft", "glow": 4, "colors": ["#ffd36b", "#ff7a2a", "$main"], "color2": "#5a1a0a", "grow": 0.4},
+          {"fx": "particles", "on": "self", "h": 0.3, "spread": [0.5, 0.3, 0.4], "count": 14, "emit": 0.4, "dir": "up", "speed": [1, 2], "life": [0.5, 0.8], "size": [0.03, 0.05], "shape": "dot", "glow": 5, "colors": ["#ffd36b"]},
+          {"fx": "light", "on": "self", "h": 0.4, "intensity": 4, "radius": 5, "dur": 0.6, "color": "#ff8a3a"}
+        ],
+        "paralysis": [
+          {"fx": "jitter", "on": "self", "amount": 0.05, "hz": 30, "dur": 0.5},
+          {"fx": "bolt", "on": "self", "h": 0.4, "height": 1.4, "segments": 8, "jitter": 0.2, "width": 0.05, "dur": 0.18, "count": 3, "stagger": 0.12, "spacing": 0.5, "glow": 5, "color": "$main", "color2": "$white", "hz": 30},
+          {"fx": "tint", "on": "self", "color": "$main", "amount": 0.7, "mode": "blink", "pulses": 4, "dur": 0.5},
+          {"fx": "particles", "on": "self", "h": 0.5, "radius": 0.5, "count": 16, "emit": 0.4, "dir": "radial", "speed": [1, 2.5], "life": [0.1, 0.2], "size": [0.04, 0.06], "shape": "hstreak", "glow": 5, "colors": ["$main", "$white"]}
+        ],
+        "sleep": [
+          {"fx": "particles", "on": "self", "h": 0.9, "off": [0.3, 0, 0], "spread": [0.1, 0, 0.1], "count": 4, "emit": 0.6, "dir": "up", "speed": [0.5, 0.7], "vel": [0.3, 0, 0], "life": [0.7, 0.9], "size": [0.18, 0.26], "shape": "glyph", "chars": "Zz", "glow": 2.5, "colors": ["$light", "$white"], "grow": 1.4},
+          {"fx": "tint", "on": "self", "color": "$main", "amount": 0.45, "mode": "hold", "dur": 0.8},
+          {"fx": "squash", "on": "self", "amount": -0.06, "dur": 0.8}
+        ],
+        "poison": [
+          {"fx": "tint", "on": "self", "color": "$main", "amount": 0.6, "mode": "blink", "pulses": 2, "dur": 0.5},
+          {"fx": "particles", "on": "self", "h": 0.2, "spread": [0.5, 0.3, 0.4], "count": 18, "emit": 0.5, "dir": "up", "speed": [0.6, 1.2], "life": [0.4, 0.7], "size": [0.08, 0.16], "shape": "ring", "glow": 3, "colors": ["$main", "$light"], "grow": 1.3},
+          {"fx": "particles", "on": "self", "h": 0.3, "radius": 0.5, "count": 8, "dir": "up", "speed": [0.2, 0.5], "life": [0.5, 0.8], "size": [0.2, 0.3], "shape": "soft", "blend": "alpha", "colors": ["#3a1f4a", "#4a2a5e"], "grow": 1.6}
+        ],
+        "freeze": [
+          {"fx": "spikes", "on": "self", "count": 5, "spacing": 0.55, "size": [0.3, 0.6], "radius": 0.12, "angle": 15, "dur": 0.7, "color": "$light", "glow": 0.4},
+          {"fx": "tint", "on": "self", "color": "$light", "amount": 0.6, "mode": "hold", "dur": 0.7},
+          {"fx": "particles", "on": "self", "h": 0.5, "radius": 0.6, "count": 16, "emit": 0.4, "dir": "none", "life": [0.3, 0.5], "size": [0.05, 0.09], "shape": "star", "glow": 4, "colors": ["$light", "$white"], "spin": 4}
+        ]
+      }
+    },
+    "stat": {
+      "up": [
+        {"fx": "particles", "on": "self", "h": 0, "spread": [0.55, 0.1, 0.55], "count": 22, "emit": 0.45, "dir": "up", "speed": [2.5, 3.5], "life": [0.3, 0.45], "size": [0.1, 0.16], "shape": "streak", "glow": 4, "colors": ["#ff9a4a", "#ffd36b"]},
+        {"fx": "tint", "on": "self", "color": "#ff9a4a", "amount": 0.45, "mode": "blink", "pulses": 2, "dur": 0.5},
+        {"fx": "ring", "on": "self", "h": 0.02, "orient": "ground", "radii": [1.3, 0.3], "width": 0.2, "dur": 0.5, "glow": 3, "color": "#ff9a4a"}
+      ],
+      "down": [
+        {"fx": "particles", "on": "self", "h": 1.4, "spread": [0.55, 0.1, 0.55], "count": 22, "emit": 0.45, "dir": "down", "speed": [2.5, 3.5], "life": [0.3, 0.45], "size": [0.1, 0.16], "shape": "streak", "glow": 4, "colors": ["#4a8aff", "#8ac4ff"]},
+        {"fx": "tint", "on": "self", "color": "#3a6aff", "amount": 0.45, "mode": "blink", "pulses": 2, "dur": 0.5},
+        {"fx": "ring", "on": "self", "h": 0.02, "orient": "ground", "radii": [0.3, 1.3], "width": 0.2, "dur": 0.5, "glow": 2.5, "color": "#4a8aff"}
+      ]
+    },
+    "heal": [
+      {"fx": "column", "on": "self", "h": 0, "radius": 0.6, "height": 2.6, "dur": 0.8, "glow": 2.4, "color": "#6dffa8", "color2": "#ffffff"},
+      {"fx": "particles", "on": "self", "h": 0.1, "spread": [0.6, 0.2, 0.6], "count": 36, "emit": 0.55, "dir": "up", "speed": [1.2, 2.2], "life": [0.4, 0.7], "size": [0.06, 0.11], "shape": "star", "glow": 4, "orbit": 2.5, "colors": ["#b8ffd6", "#ffffff"], "spin": 3},
+      {"fx": "tint", "on": "self", "color": "#9dffc4", "amount": 0.5, "mode": "hold", "dur": 0.7},
+      {"fx": "ring", "on": "self", "h": 0.02, "orient": "ground", "radii": [0.3, 1.2], "width": 0.2, "dur": 0.6, "count": 2, "stagger": 0.25, "glow": 2.5, "color": "#6dffa8"},
+      {"fx": "light", "on": "self", "h": 0.8, "intensity": 3, "radius": 6, "dur": 0.8, "color": "#6dffa8"}
+    ],
+    "levelUp": [
+      {"fx": "column", "on": "self", "h": 0, "radius": 0.7, "height": 3.4, "dur": 0.9, "glow": 3, "color": "#ffe680", "color2": "#ffffff"},
+      {"fx": "particles", "on": "self", "h": 0.1, "spread": [0.6, 0.2, 0.6], "count": 40, "emit": 0.6, "dir": "up", "speed": [1.5, 2.8], "life": [0.4, 0.7], "size": [0.07, 0.12], "shape": "star", "glow": 5, "orbit": 3, "colors": ["#fff6b0", "#ffd36b", "#ffffff"], "spin": 4},
+      {"fx": "ring", "on": "self", "h": 0.02, "orient": "ground", "radii": [0.2, 1.6], "width": 0.18, "dur": 0.6, "glow": 3, "color": "#ffe680"},
+      {"fx": "tint", "on": "self", "color": "#fff2b0", "amount": 0.6, "mode": "fade", "dur": 0.6},
+      {"fx": "squash", "on": "self", "amount": 0.1, "dur": 0.35},
+      {"fx": "light", "on": "self", "h": 0.8, "intensity": 4, "radius": 6, "dur": 0.8, "color": "#ffe680"}
+    ],
+    "shiny": [
+      {"fx": "particles", "on": "self", "h": 0.55, "radius": 0.8, "count": 14, "emit": 0.5, "dir": "none", "life": [0.3, 0.5], "size": [0.08, 0.14], "shape": "star", "glow": 5, "colors": ["#fff6b0", "#ffffff", "#ffd36b"], "spin": 4},
+      {"t": 0.1, "fx": "glow", "on": "self", "h": 0.8, "size": [0.2, 0.6], "dur": 0.4, "glow": 4, "color": "#fff6b0"}
+    ],
+    "weatherStart": [
+      {"fx": "flash", "color": "$main", "ms": 220, "amount": 0.35},
+      {"fx": "particles", "on": "stage", "h": 4, "spread": [7, 1, 5], "count": 70, "emit": 0.6, "dir": "down", "speed": [2, 3.5], "life": [0.8, 1.2], "size": [0.06, 0.1], "shape": "soft", "glow": 3, "colors": ["$main", "$light"]},
+      {"fx": "ring", "on": "stage", "h": 0.03, "orient": "ground", "radii": [1, 7], "width": 0.06, "dur": 0.8, "glow": 2.5}
+    ],
+    "intro": {
+      "wild": [
+        {"fx": "camera", "shot": "introWild", "mode": "cut"},
+        {"fx": "reveal", "on": "foe", "mode": "silhouette", "dur": 1.1, "amount": 1, "color": "#000000"},
+        {"t": 0.1, "fx": "particles", "on": "foe", "h": 0.05, "spread": [0.8, 0, 0.5], "count": 14, "dir": "up", "speed": [0.4, 0.9], "life": [0.5, 0.8], "size": [0.2, 0.35], "shape": "soft", "blend": "alpha", "colors": ["#9a9080", "#b0a690"], "grow": 1.6},
+        {"t": 0.9, "fx": "squash", "on": "foe", "amount": 0.12, "dur": 0.3},
+        {"t": 0.6, "fx": "camera", "shot": "base", "dur": 1.2}
+      ],
+      "trainer": [
+        {"fx": "camera", "shot": "introTrainer", "mode": "cut"},
+        {"fx": "enter", "on": "foeTrainer", "dur": 0.7, "from": [4, 0, 0]},
+        {"t": 0.8, "fx": "squash", "on": "foeTrainer", "amount": 0.06, "dur": 0.3},
+        {"t": 0.9, "fx": "camera", "shot": "base", "dur": 1.1},
+        {"t": 1.0, "fx": "enter", "on": "selfTrainer", "dur": 0.8, "from": [-3, 0, 1.5]}
+      ],
+      "pvp": [
+        {"fx": "camera", "shot": "introPvp", "mode": "cut"},
+        {"fx": "enter", "on": "selfTrainer", "dur": 0.6, "from": [-3, 0, 0]},
+        {"t": 0.3, "fx": "enter", "on": "foeTrainer", "dur": 0.6, "from": [3, 0, 0]},
+        {"t": 0.2, "fx": "camera", "shot": "introTrainer", "dur": 0.9},
+        {"t": 1.0, "fx": "flash", "color": "#ffffff", "ms": 160, "amount": 0.6},
+        {"t": 1.1, "fx": "camera", "shot": "base", "dur": 0.9}
+      ],
+      "legend": [
+        {"fx": "camera", "shot": "introLegend", "mode": "cut"},
+        {"fx": "dim", "amount": 0.6, "dur": 2.6, "inK": 0.1, "outK": 0.3},
+        {"fx": "shake", "intensity": 0.04, "ms": 1500},
+        {"t": 0.2, "fx": "column", "on": "foe", "h": 0, "count": 4, "spacing": 1.5, "stagger": 0.18, "radius": 0.12, "height": 7, "dur": 1.2, "glow": 1.4, "color": "$main", "color2": "$white"},
+        {"t": 0.2, "fx": "particles", "on": "foe", "h": 0.0, "spread": [1.5, 0, 1.5], "count": 60, "emit": 1.0, "dir": "up", "speed": [1.5, 3], "life": [0.5, 0.8], "size": [0.05, 0.09], "shape": "star", "glow": 4, "colors": ["$main", "$light", "$white"]},
+        {"t": 1.0, "fx": "reveal", "on": "foe", "mode": "materialize", "dur": 0.8},
+        {"t": 1.0, "fx": "column", "on": "foe", "h": 0, "radius": 0.3, "height": 8, "dur": 0.9, "glow": 1.2, "color": "$light", "color2": "$white"},
+        {"t": 1.7, "fx": "flash", "color": "$light", "ms": 300, "amount": 0.7},
+        {"t": 1.7, "fx": "shake", "intensity": 0.25, "ms": 600},
+        {"t": 1.7, "fx": "ring", "on": "foe", "h": 0.02, "orient": "ground", "radii": [0.5, 5], "width": 0.12, "dur": 0.7, "glow": 3},
+        {"t": 1.9, "fx": "camera", "shot": "base", "dur": 1.0}
+      ]
+    },
+    "sendOut": {
+      "throw": [
+        {"fx": "squash", "on": "selfTrainer", "amount": -0.06, "dur": 0.25},
+        {"fx": "lunge", "on": "selfTrainer", "distance": 0.25, "dur": 0.35}
+      ],
+      "open": [
+        {"fx": "glow", "on": "self", "h": 0.55, "size": [0.3, 1.6], "dur": 0.35, "glow": 5, "color": "$main"},
+        {"fx": "particles", "on": "self", "h": 0.55, "radius": 0.15, "count": 26, "dir": "radial", "speed": [2, 4.5], "life": [0.25, 0.45], "size": [0.05, 0.1], "shape": "star", "glow": 5, "colors": ["$main", "$light", "$white"], "drag": 2.5, "spin": 5},
+        {"fx": "ring", "on": "self", "h": 0.02, "orient": "ground", "radii": [0.2, 1.4], "width": 0.2, "dur": 0.4, "glow": 3},
+        {"fx": "light", "on": "self", "h": 0.6, "intensity": 5, "radius": 6, "dur": 0.4},
+        {"fx": "reveal", "on": "self", "mode": "pop", "amount": 1, "glow": 1.5, "dur": 0.4},
+        {"t": 0.35, "fx": "squash", "on": "self", "amount": 0.1, "dur": 0.25}
+      ]
+    },
+    "recall": [
+      {"fx": "tint", "on": "self", "color": "#ff5a7a", "glow": 1.4, "amount": 0.9, "mode": "in", "dur": 0.25},
+      {"t": 0.2, "fx": "beam", "on": "self", "h": 0.5, "to": "selfTrainer", "toH": 0.6, "dur": 0.4, "width": 0.12, "glow": 4, "color": "#ff5a7a"},
+      {"t": 0.2, "fx": "vanish", "on": "self", "mode": "shrink", "color": "#ff5a7a", "glow": 1.4, "dur": 0.35}
+    ],
+    "catch": {
+      "throw": [
+        {"fx": "camera", "shot": "catch", "dur": 0.5},
+        {"fx": "lunge", "on": "selfTrainer", "distance": 0.3, "dur": 0.35}
+      ],
+      "absorb": [
+        {"fx": "glow", "on": "foe", "h": 0.85, "size": [0.3, 1.0], "dur": 0.4, "glow": 3, "color": "$main"},
+        {"fx": "tint", "on": "foe", "color": "$white", "glow": 1.5, "amount": 1, "mode": "in", "dur": 0.2},
+        {"t": 0.1, "fx": "vanish", "on": "foe", "mode": "shrink", "glow": 1.5, "dur": 0.4},
+        {"fx": "particles", "on": "foe", "h": 0.5, "radius": 0.9, "count": 30, "emit": 0.3, "dir": "inward", "speed": [2.5, 3.5], "life": [0.25, 0.3], "size": [0.05, 0.08], "shape": "dot", "glow": 4, "colors": ["$main", "$white"]},
+        {"fx": "light", "on": "foe", "h": 0.8, "intensity": 4, "radius": 5, "dur": 0.5},
+        {"fx": "flash", "color": "$light", "ms": 120, "amount": 0.45}
+      ],
+      "land": [
+        {"fx": "ring", "on": "foe", "h": 0.02, "orient": "ground", "radii": [0.1, 0.6], "width": 0.3, "dur": 0.3, "glow": 1.5, "color": "#c8c0b0"},
+        {"fx": "particles", "on": "foe", "h": 0.03, "radius": 0.2, "count": 8, "dir": "radial", "speed": [0.5, 1], "life": [0.3, 0.5], "size": [0.12, 0.2], "shape": "soft", "blend": "alpha", "colors": ["#a09484"]}
+      ],
+      "wobble": [
+        {"fx": "particles", "on": "foe", "h": 0.15, "radius": 0.1, "count": 3, "dir": "up", "speed": [0.4, 0.8], "life": [0.2, 0.3], "size": [0.04, 0.06], "shape": "star", "glow": 3, "colors": ["$light"]}
+      ],
+      "success": [
+        {"fx": "particles", "on": "foe", "h": 0.15, "radius": 0.1, "count": 20, "dir": "radial", "speed": [1.5, 3], "life": [0.4, 0.6], "size": [0.08, 0.14], "shape": "star", "glow": 5, "colors": ["#fff6b0", "#ffd36b", "$white"], "gravity": 2, "spin": 5},
+        {"fx": "glow", "on": "foe", "h": 0.12, "size": [0.2, 0.9], "dur": 0.35, "glow": 4, "color": "#fff6b0"},
+        {"fx": "flash", "color": "#fff6b0", "ms": 120, "amount": 0.3},
+        {"fx": "camera", "shot": "base", "dur": 0.8}
+      ],
+      "fail": [
+        {"fx": "glow", "on": "foe", "h": 0.3, "size": [0.3, 1.6], "dur": 0.35, "glow": 5, "color": "$main"},
+        {"fx": "particles", "on": "foe", "h": 0.3, "radius": 0.15, "count": 26, "dir": "radial", "speed": [2, 4.5], "life": [0.25, 0.45], "size": [0.05, 0.1], "shape": "star", "glow": 5, "colors": ["$main", "$light", "$white"], "drag": 2.5},
+        {"fx": "flash", "color": "$light", "ms": 150, "amount": 0.4},
+        {"fx": "reveal", "on": "foe", "mode": "pop", "glow": 1.5, "dur": 0.4},
+        {"fx": "shake", "intensity": 0.05, "ms": 200},
+        {"fx": "camera", "shot": "base", "dur": 0.8}
+      ]
+    },
+    "evolve": {
+      "start": [
+        {"fx": "dim", "amount": 0.6, "dur": 7.0, "inK": 0.08, "outK": 0.1},
+        {"fx": "particles", "on": "self", "h": 0.5, "radius": 2.2, "count": 120, "emit": 1.6, "dir": "inward", "speed": [1.8, 2.6], "life": [0.8, 1.0], "size": [0.05, 0.09], "shape": "star", "glow": 4, "colors": ["$main", "$light", "$white"]},
+        {"fx": "glow", "on": "self", "h": 0.5, "size": [0.5, 2.4], "dur": 1.8, "glow": 2.5, "color": "$main"},
+        {"t": 1.6, "fx": "column", "on": "self", "h": 0, "count": 6, "spacing": 1.2, "stagger": 0.4, "radius": 0.08, "height": 6, "dur": 2.0, "glow": 0.9, "color": "$light", "color2": "$white"},
+        {"t": 1.6, "fx": "particles", "on": "stage", "h": 0, "spread": [4, 0, 3], "count": 80, "emit": 4, "dir": "up", "speed": [0.6, 1.2], "life": [1.0, 1.6], "size": [0.04, 0.07], "shape": "dot", "glow": 4, "colors": ["$main", "$light"]}
+      ],
+      "swap": [
+        {"fx": "ring", "on": "self", "h": 0.5, "orient": "facing", "radii": [0.5, 1.1], "width": 0.06, "dur": 0.3, "glow": 2, "color": "$light"}
+      ],
+      "finish": [
+        {"fx": "flash", "color": "$white", "ms": 600, "amount": 0.85},
+        {"fx": "shake", "intensity": 0.08, "ms": 400},
+        {"fx": "particles", "on": "self", "h": 0.5, "radius": 0.3, "count": 80, "dir": "radial", "speed": [2.5, 6], "life": [0.5, 0.9], "size": [0.06, 0.12], "shape": "star", "glow": 5, "colors": ["$main", "$light", "$white"], "drag": 2, "spin": 5},
+        {"fx": "ring", "on": "self", "h": 0.02, "orient": "ground", "radii": [0.4, 4], "width": 0.12, "dur": 0.8, "glow": 3},
+        {"fx": "column", "on": "self", "h": 0, "radius": 0.35, "height": 9, "dur": 1.0, "glow": 1.4, "color": "$light", "color2": "$white"},
+        {"fx": "light", "on": "self", "h": 1, "intensity": 5, "radius": 8, "dur": 1.0}
+      ],
+      "cancel": [
+        {"fx": "particles", "on": "self", "h": 0.5, "radius": 0.6, "count": 30, "dir": "radial", "speed": [0.5, 1.5], "life": [0.4, 0.7], "size": [0.05, 0.09], "shape": "dot", "glow": 2, "colors": ["$light", "#c0c0d0"]},
+        {"fx": "squash", "on": "self", "amount": -0.1, "dur": 0.4}
+      ]
+    }
+  }
+}

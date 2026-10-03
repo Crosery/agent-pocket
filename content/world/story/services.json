@@ -1,0 +1,18 @@
+{
+  "npcs": [
+    {"id": "nurse-{town}", "at": "{town}-center:nurse", "facing": "down", "sprite": "nurse", "portrait": "nurse", "nameZh": "补给站护士", "role": "nurse", "script": [{"op": "include", "script": "nurse"}]},
+    {"id": "box-{town}", "at": "{town}-center:pc-front", "sprite": "clerk", "nameZh": "仓库管理员", "role": "boxTerminal", "script": [{"op": "include", "script": "box"}]},
+    {"id": "clerk-{town}", "at": "{town}-shop:clerk", "facing": "down", "sprite": "clerk", "portrait": "clerk", "nameZh": "店员", "role": "clerk", "script": [{"op": "include", "script": "clerk"}]}
+  ],
+  "shop": {
+    "tiers": [
+      {"atLeast": 0, "items": ["prompt-ball", "cache-potion", "antivirus", "restart-script", "speed-pack", "escape-rope"]},
+      {"atLeast": 1, "items": ["few-shot-ball", "super-cache", "cooling-patch", "unlock-tool", "repel", "x-reason", "x-create", "x-speed"]},
+      {"atLeast": 2, "items": ["reboot", "universal-patch", "super-repel", "x-robust", "x-know", "x-acc"]},
+      {"atLeast": 3, "items": ["cot-ball", "hyper-cache", "token-refill"]},
+      {"atLeast": 5, "items": ["full-cache", "max-repel"]},
+      {"atLeast": 6, "items": ["full-restore"]}
+    ],
+    "extra": {"opensource": ["chip-unit-test", "chip-community-support", "chip-quantize"], "pixelport": ["quick-ball", "chip-diffusion", "chip-spotlight"], "chord": ["night-ball", "chip-lullaby", "chip-voiceprint-wave"], "retrieval": ["finetune-ball", "chip-rag-recall", "chip-web-crawl"], "forge": ["chip-power-surge", "chip-gpu-overload"], "frostshield": ["chip-alignment-shield", "chip-oversight-beam"], "hub": ["rare-ball", "distill-ball", "chip-mcp-link", "chip-system-prompt"], "balance": ["chip-chain-of-thought", "chip-eureka", "chip-focus-mode"], "agi": ["rare-ball", "full-restore", "max-repel"]}
+  }
+}

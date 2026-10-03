@@ -1,0 +1,1557 @@
+{
+ "antenna": {
+  "bytes": 47852,
+  "tris": 574,
+  "min": [
+   -0.475,
+   -0.475,
+   0.0
+  ],
+  "max": [
+   0.475,
+   0.475,
+   4.5
+  ],
+  "materials": [
+   "METAL",
+   "BASE",
+   "EMIT_BEACON"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_BEACON"
+  ],
+  "doubleSided": [],
+  "images": 3
+ },
+ "arena_mark": {
+  "bytes": 2944,
+  "tris": 12,
+  "min": [
+   -2.45,
+   -3.45,
+   0.0
+  ],
+  "max": [
+   2.45,
+   3.45,
+   0.02
+  ],
+  "materials": [
+   "FLOOR"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "bamboo": {
+  "bytes": 107480,
+  "tris": 1274,
+  "min": [
+   -0.951,
+   -0.892,
+   0.0
+  ],
+  "max": [
+   0.951,
+   0.892,
+   3.8
+  ],
+  "materials": [
+   "BAMBOO",
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [
+   "FOLIAGE"
+  ],
+  "images": 2
+ },
+ "barrel": {
+  "bytes": 16324,
+  "tris": 204,
+  "min": [
+   -0.368,
+   -0.35,
+   0.0
+  ],
+  "max": [
+   0.368,
+   0.35,
+   0.9
+  ],
+  "materials": [
+   "WOOD",
+   "METAL"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "bed": {
+  "bytes": 9776,
+  "tris": 72,
+  "min": [
+   -0.46,
+   -0.96,
+   0.0
+  ],
+  "max": [
+   0.46,
+   0.96,
+   0.8
+  ],
+  "materials": [
+   "WOOD",
+   "SHEET",
+   "BLANKET"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 3
+ },
+ "bench": {
+  "bytes": 14504,
+  "tris": 156,
+  "min": [
+   -0.792,
+   -0.224,
+   0.0
+  ],
+  "max": [
+   0.792,
+   0.287,
+   0.7
+  ],
+  "materials": [
+   "WOOD",
+   "METAL"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "bookshelf": {
+  "bytes": 14772,
+  "tris": 144,
+  "min": [
+   -0.96,
+   -0.46,
+   0.0
+  ],
+  "max": [
+   0.96,
+   0.46,
+   2.2
+  ],
+  "materials": [
+   "WOOD",
+   "BOOKS"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "bush": {
+  "bytes": 51580,
+  "tris": 480,
+  "min": [
+   -0.711,
+   -0.658,
+   0.0
+  ],
+  "max": [
+   0.723,
+   0.659,
+   0.9
+  ],
+  "materials": [
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "cactus": {
+  "bytes": 20688,
+  "tris": 240,
+  "min": [
+   -0.469,
+   -0.203,
+   0.0
+  ],
+  "max": [
+   0.519,
+   0.203,
+   1.8
+  ],
+  "materials": [
+   "CACTUS"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "campfire": {
+  "bytes": 34736,
+  "tris": 340,
+  "min": [
+   -0.442,
+   -0.432,
+   0.0
+  ],
+  "max": [
+   0.443,
+   0.442,
+   0.6
+  ],
+  "materials": [
+   "STONE",
+   "WOOD",
+   "EMIT_FIRE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_FIRE"
+  ],
+  "doubleSided": [],
+  "images": 3
+ },
+ "chair": {
+  "bytes": 10880,
+  "tris": 108,
+  "min": [
+   -0.242,
+   -0.242,
+   0.0
+  ],
+  "max": [
+   0.242,
+   0.242,
+   0.9
+  ],
+  "materials": [
+   "WOOD",
+   "SEAT"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "circuit_pylon": {
+  "bytes": 109260,
+  "tris": 1160,
+  "min": [
+   -0.46,
+   -0.46,
+   0.0
+  ],
+  "max": [
+   0.46,
+   0.46,
+   3.0
+  ],
+  "materials": [
+   "BASE",
+   "METAL",
+   "EMIT_NODE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_NODE"
+  ],
+  "doubleSided": [],
+  "images": 3
+ },
+ "cloud_puff": {
+  "bytes": 59248,
+  "tris": 560,
+  "min": [
+   -0.629,
+   -0.656,
+   0.0
+  ],
+  "max": [
+   0.726,
+   0.718,
+   1.0
+  ],
+  "materials": [
+   "CLOUD"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "coral": {
+  "bytes": 70732,
+  "tris": 807,
+  "min": [
+   -0.39,
+   -0.306,
+   0.0
+  ],
+  "max": [
+   0.39,
+   0.413,
+   0.9
+  ],
+  "materials": [
+   "ROCK",
+   "CORAL"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "counter": {
+  "bytes": 4976,
+  "tris": 24,
+  "min": [
+   -1.98,
+   -0.48,
+   0.0
+  ],
+  "max": [
+   1.98,
+   0.48,
+   1.1
+  ],
+  "materials": [
+   "WOOD",
+   "TOP"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "crate": {
+  "bytes": 2836,
+  "tris": 12,
+  "min": [
+   -0.4,
+   -0.4,
+   0.0
+  ],
+  "max": [
+   0.4,
+   0.4,
+   0.8
+  ],
+  "materials": [
+   "WOOD"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "crystal": {
+  "bytes": 20904,
+  "tris": 212,
+  "min": [
+   -0.62,
+   -0.474,
+   0.0
+  ],
+  "max": [
+   0.65,
+   0.473,
+   1.6
+  ],
+  "materials": [
+   "STONE",
+   "EMIT_CRYSTAL"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_CRYSTAL"
+  ],
+  "doubleSided": [],
+  "images": 2
+ },
+ "fence": {
+  "bytes": 6928,
+  "tris": 72,
+  "min": [
+   -0.5,
+   -0.075,
+   0.0
+  ],
+  "max": [
+   0.5,
+   0.075,
+   0.8
+  ],
+  "materials": [
+   "WOOD"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "flower_pot": {
+  "bytes": 33036,
+  "tris": 336,
+  "min": [
+   -0.296,
+   -0.281,
+   0.0
+  ],
+  "max": [
+   0.296,
+   0.281,
+   0.7
+  ],
+  "materials": [
+   "POT",
+   "SOIL",
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [
+   "FOLIAGE"
+  ],
+  "images": 3
+ },
+ "glitch_monolith": {
+  "bytes": 10852,
+  "tris": 96,
+  "min": [
+   -0.433,
+   -0.433,
+   0.0
+  ],
+  "max": [
+   0.457,
+   0.433,
+   2.4
+  ],
+  "materials": [
+   "STONE",
+   "EMIT_GLITCH"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_GLITCH"
+  ],
+  "doubleSided": [],
+  "images": 2
+ },
+ "gym_pillar": {
+  "bytes": 10480,
+  "tris": 92,
+  "min": [
+   -0.434,
+   -0.434,
+   0.0
+  ],
+  "max": [
+   0.434,
+   0.434,
+   3.0
+  ],
+  "materials": [
+   "STONE",
+   "GOLD"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "heal_machine": {
+  "bytes": 43740,
+  "tris": 540,
+  "min": [
+   -0.96,
+   -0.46,
+   0.0
+  ],
+  "max": [
+   0.96,
+   0.46,
+   1.4
+  ],
+  "materials": [
+   "BODY",
+   "TRIM",
+   "EMIT_ORB",
+   "EMIT_SCREEN"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_ORB",
+   "EMIT_SCREEN"
+  ],
+  "doubleSided": [],
+  "images": 4
+ },
+ "hoodoo": {
+  "bytes": 26636,
+  "tris": 270,
+  "min": [
+   -0.472,
+   -0.492,
+   0.0
+  ],
+  "max": [
+   0.573,
+   0.509,
+   2.6
+  ],
+  "materials": [
+   "ROCK",
+   "CAP"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "ice_spike": {
+  "bytes": 17376,
+  "tris": 170,
+  "min": [
+   -0.414,
+   -0.373,
+   0.0
+  ],
+  "max": [
+   0.44,
+   0.489,
+   1.6
+  ],
+  "materials": [
+   "ICE",
+   "SNOW"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "lab_machine": {
+  "bytes": 22704,
+  "tris": 237,
+  "min": [
+   -0.96,
+   -0.46,
+   0.0
+  ],
+  "max": [
+   0.96,
+   0.46,
+   1.8
+  ],
+  "materials": [
+   "BODY",
+   "DARK",
+   "EMIT_TANK",
+   "EMIT_SCREEN"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_TANK",
+   "EMIT_SCREEN"
+  ],
+  "doubleSided": [],
+  "images": 4
+ },
+ "lamp": {
+  "bytes": 11560,
+  "tris": 108,
+  "min": [
+   -0.184,
+   -0.184,
+   0.0
+  ],
+  "max": [
+   0.184,
+   0.184,
+   2.4
+  ],
+  "materials": [
+   "METAL",
+   "EMIT_LAMP"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_LAMP"
+  ],
+  "doubleSided": [],
+  "images": 2
+ },
+ "lava_rock": {
+  "bytes": 16812,
+  "tris": 160,
+  "min": [
+   -0.734,
+   -0.658,
+   0.0
+  ],
+  "max": [
+   0.741,
+   0.652,
+   1.0
+  ],
+  "materials": [
+   "EMIT_LAVA"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_LAVA"
+  ],
+  "doubleSided": [],
+  "images": 2
+ },
+ "log": {
+  "bytes": 5328,
+  "tris": 41,
+  "min": [
+   -0.751,
+   -0.197,
+   0.0
+  ],
+  "max": [
+   0.751,
+   0.194,
+   0.5
+  ],
+  "materials": [
+   "WOOD"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "mailbox": {
+  "bytes": 10004,
+  "tris": 76,
+  "min": [
+   -0.153,
+   -0.234,
+   0.0
+  ],
+  "max": [
+   0.188,
+   0.234,
+   1.1
+  ],
+  "materials": [
+   "WOOD",
+   "METAL",
+   "FLAG"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 3
+ },
+ "mushroom": {
+  "bytes": 23332,
+  "tris": 262,
+  "min": [
+   -0.503,
+   -0.505,
+   0.0
+  ],
+  "max": [
+   0.595,
+   0.335,
+   0.8
+  ],
+  "materials": [
+   "STEM",
+   "EMIT_CAP"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_CAP"
+  ],
+  "doubleSided": [],
+  "images": 2
+ },
+ "mushroom_giant": {
+  "bytes": 31348,
+  "tris": 352,
+  "min": [
+   -1.282,
+   -1.303,
+   0.0
+  ],
+  "max": [
+   1.296,
+   1.301,
+   2.8
+  ],
+  "materials": [
+   "STEM",
+   "CAP",
+   "EMIT_CAP"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_CAP"
+  ],
+  "doubleSided": [],
+  "images": 3
+ },
+ "neural_tree": {
+  "bytes": 172168,
+  "tris": 1711,
+  "min": [
+   -1.012,
+   -1.032,
+   0.0
+  ],
+  "max": [
+   0.913,
+   0.96,
+   3.2
+  ],
+  "materials": [
+   "BARK",
+   "FOLIAGE",
+   "EMIT_NODE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_NODE"
+  ],
+  "doubleSided": [],
+  "images": 3
+ },
+ "pc_terminal": {
+  "bytes": 9560,
+  "tris": 60,
+  "min": [
+   -0.353,
+   -0.4,
+   0.0
+  ],
+  "max": [
+   0.353,
+   0.327,
+   1.4
+  ],
+  "materials": [
+   "BODY",
+   "DARK",
+   "EMIT_SCREEN"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_SCREEN"
+  ],
+  "doubleSided": [],
+  "images": 3
+ },
+ "plant": {
+  "bytes": 24012,
+  "tris": 268,
+  "min": [
+   -0.32,
+   -0.304,
+   0.0
+  ],
+  "max": [
+   0.32,
+   0.304,
+   1.2
+  ],
+  "materials": [
+   "POT",
+   "SOIL",
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [
+   "FOLIAGE"
+  ],
+  "images": 3
+ },
+ "rock_large": {
+  "bytes": 19456,
+  "tris": 180,
+  "min": [
+   -1.207,
+   -1.144,
+   0.0
+  ],
+  "max": [
+   1.356,
+   1.125,
+   1.6
+  ],
+  "materials": [
+   "STONE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "rock_small": {
+  "bytes": 10832,
+  "tris": 100,
+  "min": [
+   -0.522,
+   -0.427,
+   0.0
+  ],
+  "max": [
+   0.531,
+   0.442,
+   0.6
+  ],
+  "materials": [
+   "STONE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "rug": {
+  "bytes": 2888,
+  "tris": 12,
+  "min": [
+   -1.45,
+   -0.95,
+   0.0
+  ],
+  "max": [
+   1.45,
+   0.95,
+   0.02
+  ],
+  "materials": [
+   "RUG"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "salt_crystal": {
+  "bytes": 14712,
+  "tris": 140,
+  "min": [
+   -0.465,
+   -0.455,
+   0.0
+  ],
+  "max": [
+   0.538,
+   0.514,
+   0.9
+  ],
+  "materials": [
+   "CRUST",
+   "SALT"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "server_rack": {
+  "bytes": 7772,
+  "tris": 60,
+  "min": [
+   -0.424,
+   -0.414,
+   0.0
+  ],
+  "max": [
+   0.424,
+   0.399,
+   2.0
+  ],
+  "materials": [
+   "METAL",
+   "EMIT_LEDS"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_LEDS"
+  ],
+  "doubleSided": [],
+  "images": 2
+ },
+ "shelf": {
+  "bytes": 12248,
+  "tris": 120,
+  "min": [
+   -0.96,
+   -0.46,
+   0.0
+  ],
+  "max": [
+   0.96,
+   0.46,
+   2.0
+  ],
+  "materials": [
+   "FRAME",
+   "GOODS"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "sign": {
+  "bytes": 7492,
+  "tris": 60,
+  "min": [
+   -0.544,
+   -0.102,
+   0.0
+  ],
+  "max": [
+   0.544,
+   0.057,
+   1.1
+  ],
+  "materials": [
+   "WOOD",
+   "PAPER"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "solar_panel": {
+  "bytes": 8912,
+  "tris": 72,
+  "min": [
+   -0.96,
+   -0.46,
+   0.0
+  ],
+  "max": [
+   0.96,
+   0.46,
+   1.0
+  ],
+  "materials": [
+   "METAL",
+   "PANEL"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "stairs_down": {
+  "bytes": 6924,
+  "tris": 48,
+  "min": [
+   -0.5,
+   -0.5,
+   0.0
+  ],
+  "max": [
+   0.5,
+   0.5,
+   0.2
+  ],
+  "materials": [
+   "RIM",
+   "HOLE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "stump": {
+  "bytes": 10788,
+  "tris": 112,
+  "min": [
+   -0.494,
+   -0.494,
+   0.0
+  ],
+  "max": [
+   0.494,
+   0.494,
+   0.5
+  ],
+  "materials": [
+   "WOOD"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "table": {
+  "bytes": 7020,
+  "tris": 72,
+  "min": [
+   -0.96,
+   -0.46,
+   0.0
+  ],
+  "max": [
+   0.96,
+   0.46,
+   0.9
+  ],
+  "materials": [
+   "WOOD"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "tree_acacia": {
+  "bytes": 140880,
+  "tris": 1404,
+  "min": [
+   -1.867,
+   -1.852,
+   0.0
+  ],
+  "max": [
+   1.665,
+   1.732,
+   3.2
+  ],
+  "materials": [
+   "BARK",
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "tree_baobab": {
+  "bytes": 95396,
+  "tris": 1044,
+  "min": [
+   -1.015,
+   -1.01,
+   0.0
+  ],
+  "max": [
+   1.022,
+   0.976,
+   3.4
+  ],
+  "materials": [
+   "BARK",
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "tree_cherry": {
+  "bytes": 118492,
+  "tris": 1188,
+  "min": [
+   -1.303,
+   -1.34,
+   0.0
+  ],
+  "max": [
+   1.233,
+   1.225,
+   3.2
+  ],
+  "materials": [
+   "BARK",
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "tree_dead": {
+  "bytes": 28052,
+  "tris": 348,
+  "min": [
+   -0.65,
+   -0.457,
+   0.0
+  ],
+  "max": [
+   0.752,
+   0.413,
+   2.8
+  ],
+  "materials": [
+   "BARK"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 1
+ },
+ "tree_mangrove": {
+  "bytes": 128856,
+  "tris": 1379,
+  "min": [
+   -1.06,
+   -1.11,
+   0.0
+  ],
+  "max": [
+   1.264,
+   1.185,
+   3.0
+  ],
+  "materials": [
+   "BARK",
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "tree_oak": {
+  "bytes": 120880,
+  "tris": 1218,
+  "min": [
+   -0.946,
+   -1.045,
+   0.0
+  ],
+  "max": [
+   1.03,
+   0.942,
+   3.2
+  ],
+  "materials": [
+   "BARK",
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "tree_palm": {
+  "bytes": 60412,
+  "tris": 635,
+  "min": [
+   -1.055,
+   -1.446,
+   0.0
+  ],
+  "max": [
+   2.174,
+   1.577,
+   3.6
+  ],
+  "materials": [
+   "BARK",
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [
+   "FOLIAGE"
+  ],
+  "images": 2
+ },
+ "tree_pine": {
+  "bytes": 26032,
+  "tris": 260,
+  "min": [
+   -0.793,
+   -0.897,
+   0.0
+  ],
+  "max": [
+   0.759,
+   0.762,
+   3.8
+  ],
+  "materials": [
+   "BARK",
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "tree_snowpine": {
+  "bytes": 33100,
+  "tris": 350,
+  "min": [
+   -0.81,
+   -0.806,
+   0.0
+  ],
+  "max": [
+   0.745,
+   0.799,
+   3.8
+  ],
+  "materials": [
+   "BARK",
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [],
+  "images": 2
+ },
+ "tree_swamp": {
+  "bytes": 109308,
+  "tris": 1115,
+  "min": [
+   -1.082,
+   -0.896,
+   0.0
+  ],
+  "max": [
+   1.152,
+   1.073,
+   3.0
+  ],
+  "materials": [
+   "BARK",
+   "FOLIAGE"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [],
+  "doubleSided": [
+   "FOLIAGE"
+  ],
+  "images": 2
+ },
+ "tv": {
+  "bytes": 9204,
+  "tris": 60,
+  "min": [
+   -0.459,
+   -0.23,
+   0.0
+  ],
+  "max": [
+   0.459,
+   0.23,
+   1.0
+  ],
+  "materials": [
+   "WOOD",
+   "BODY",
+   "EMIT_SCREEN"
+  ],
+  "samplers": [
+   [
+    9728,
+    9728
+   ]
+  ],
+  "emissive": [
+   "EMIT_SCREEN"
+  ],
+  "doubleSided": [],
+  "images": 3
+ }
+}

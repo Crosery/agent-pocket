@@ -1,0 +1,14 @@
+{
+  "region": {"unknown": "未知区域"},
+  "tod": {"dawn": "黎明", "day": "白昼", "dusk": "黄昏", "night": "夜晚"},
+  "quest": {"title": "当前任务"},
+  "net": {"offline": "离线", "connecting": "连接中", "online": "在线", "error": "连接异常", "count": "在线 {n} 人"},
+  "minimap": {
+    "north": "N",
+    "title": "区域地图",
+    "close": "关闭",
+    "unexplored": "未探索",
+    "legend": {"player": "你", "other": "其他玩家", "npc": "居民", "trainer": "训练家", "center": "补给站", "shop": "商店", "gym": "道馆", "lab": "研究所", "quest": "任务目标", "item": "道具", "wild": "野生智灵", "rare": "稀有智灵", "warp": "出入口", "house": "民居", "tower": "高塔", "legend": "传说踪迹", "event": "事件地点"}
+  },
+  "clock": {"placeholder": "--:--"}
+}

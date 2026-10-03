@@ -1,0 +1,483 @@
+{
+  "scales": {"major": [0, 2, 4, 5, 7, 9, 11], "minor": [0, 2, 3, 5, 7, 8, 10], "harmonicMinor": [0, 2, 3, 5, 7, 8, 11], "dorian": [0, 2, 3, 5, 7, 9, 10], "phrygian": [0, 1, 3, 5, 7, 8, 10], "phrygianDominant": [0, 1, 4, 5, 7, 8, 10], "lydian": [0, 2, 4, 6, 7, 9, 11], "mixolydian": [0, 2, 4, 5, 7, 9, 10]},
+  "chordQualities": {"maj": [0, 4, 7], "min": [0, 3, 7], "dim": [0, 3, 6], "aug": [0, 4, 8], "sus2": [0, 2, 7], "sus4": [0, 5, 7], "5": [0, 7, 12], "6": [0, 4, 7, 9], "7": [0, 4, 7, 10], "maj7": [0, 4, 7, 11], "m7": [0, 3, 7, 10], "m7b5": [0, 3, 6, 10], "dim7": [0, 3, 6, 9], "add9": [0, 4, 7, 14], "madd9": [0, 3, 7, 14]},
+  "instruments": {
+    "lead": {"wave": "pulse", "duty": 0.25, "env": [0.004, 0.12, 0.62, 0.09], "gain": 0.12, "vibrato": {"rate": 5.6, "depth": 0.13, "delay": 0.22}},
+    "lead12": {"wave": "pulse", "duty": 0.125, "env": [0.004, 0.1, 0.58, 0.09], "gain": 0.12, "vibrato": {"rate": 5.8, "depth": 0.14, "delay": 0.2}},
+    "square": {"wave": "pulse", "duty": 0.5, "env": [0.004, 0.1, 0.6, 0.08], "gain": 0.09, "vibrato": {"rate": 5.5, "depth": 0.12, "delay": 0.24}},
+    "harmony": {"wave": "pulse", "duty": 0.25, "env": [0.005, 0.14, 0.4, 0.08], "gain": 0.06},
+    "bass": {"wave": "triangle", "env": [0.002, 0.06, 0.85, 0.04], "gain": 0.34},
+    "bassPulse": {"wave": "pulse", "duty": 0.5, "env": [0.002, 0.08, 0.7, 0.04], "gain": 0.11, "filter": {"type": "lowpass", "freq": 900, "q": 1.2, "env": 1.5, "decay": 0.12}},
+    "sub": {"wave": "sine", "env": [0.003, 0.08, 0.9, 0.06], "gain": 0.3},
+    "pluck": {"wave": "pulse", "duty": 0.25, "env": [0.002, 0.14, 0.0, 0.06], "gain": 0.08},
+    "arp": {"wave": "pulse", "duty": 0.125, "env": [0.002, 0.09, 0.2, 0.05], "gain": 0.055},
+    "pad": {"wave": "pulse", "duty": 0.5, "env": [0.12, 0.3, 0.7, 0.45], "gain": 0.045, "unison": 14, "filter": {"type": "lowpass", "freq": 1600, "q": 0.6}},
+    "strings": {"wave": "sawtooth", "env": [0.16, 0.3, 0.8, 0.4], "gain": 0.04, "unison": 12, "filter": {"type": "lowpass", "freq": 2100, "q": 0.5}},
+    "bell": {"wave": "sine", "env": [0.002, 0.7, 0.0, 0.45], "gain": 0.12, "fm": {"ratio": 3.5, "index": 2.2, "decay": 0.6}},
+    "flute": {"wave": "triangle", "env": [0.05, 0.15, 0.8, 0.12], "gain": 0.22, "vibrato": {"rate": 5.0, "depth": 0.15, "delay": 0.25}},
+    "organ": {"wave": "pulse", "duty": 0.5, "env": [0.01, 0.1, 0.9, 0.1], "gain": 0.05, "unison": 8, "filter": {"type": "lowpass", "freq": 1500, "q": 0.5}},
+    "brass": {"wave": "sawtooth", "env": [0.03, 0.15, 0.75, 0.12], "gain": 0.065, "filter": {"type": "lowpass", "freq": 1500, "q": 1.0, "env": 1.6, "decay": 0.18}},
+    "epiano": {"wave": "sine", "env": [0.002, 0.6, 0.3, 0.3], "gain": 0.11, "fm": {"ratio": 1, "index": 1.3, "decay": 0.4}},
+    "marimba": {"wave": "sine", "env": [0.001, 0.28, 0.0, 0.15], "gain": 0.15, "fm": {"ratio": 4, "index": 1.0, "decay": 0.1}},
+    "synth": {"wave": "sawtooth", "env": [0.005, 0.2, 0.5, 0.15], "gain": 0.055, "unison": 18, "filter": {"type": "lowpass", "freq": 2400, "q": 1.4, "env": 2, "decay": 0.2}}
+  },
+  "kit": {
+    "k": {
+      "layers": [
+        {"wave": "sine", "freq": 150, "to": 45, "dur": 0.14, "env": [0.001, 0.12, 0.0, 0.05], "gain": 0.85},
+        {"wave": "noise", "dur": 0.01, "env": [0.001, 0.008, 0.0, 0.005], "gain": 0.18, "filter": {"type": "lowpass", "freq": 3000}}
+      ]
+    },
+    "s": {
+      "layers": [
+        {"wave": "noise", "dur": 0.12, "env": [0.001, 0.1, 0.0, 0.05], "gain": 0.4, "filter": {"type": "bandpass", "freq": 1900, "q": 0.7}},
+        {"wave": "triangle", "freq": 220, "to": 160, "dur": 0.06, "env": [0.001, 0.05, 0.0, 0.03], "gain": 0.28}
+      ]
+    },
+    "h": {
+      "layers": [
+        {"wave": "noise", "dur": 0.03, "env": [0.001, 0.025, 0.0, 0.015], "gain": 0.12, "filter": {"type": "highpass", "freq": 7000}}
+      ]
+    },
+    "o": {
+      "layers": [
+        {"wave": "noise", "dur": 0.16, "env": [0.001, 0.12, 0.1, 0.06], "gain": 0.09, "filter": {"type": "highpass", "freq": 6500}}
+      ]
+    },
+    "t": {
+      "layers": [
+        {"wave": "sine", "freq": 210, "to": 120, "dur": 0.16, "env": [0.001, 0.12, 0.0, 0.05], "gain": 0.45}
+      ]
+    },
+    "l": {"layers": [{"wave": "sine", "freq": 140, "to": 75, "dur": 0.22, "env": [0.001, 0.18, 0.0, 0.06], "gain": 0.5}]},
+    "c": {
+      "layers": [
+        {"wave": "noise", "dur": 0.9, "env": [0.002, 0.7, 0.05, 0.3], "gain": 0.12, "filter": {"type": "highpass", "freq": 3500}}
+      ]
+    },
+    "p": {
+      "layers": [
+        {"wave": "noise", "dur": 0.02, "env": [0.001, 0.015, 0.0, 0.01], "gain": 0.28, "filter": {"type": "bandpass", "freq": 1400, "q": 0.9}, "repeat": {"count": 3, "every": 0.012}},
+        {"wave": "noise", "at": 0.036, "dur": 0.08, "env": [0.001, 0.07, 0.0, 0.04], "gain": 0.2, "filter": {"type": "bandpass", "freq": 1200, "q": 0.8}}
+      ]
+    },
+    "r": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.5, "freq": 1700, "dur": 0.015, "env": [0.001, 0.012, 0.0, 0.01], "gain": 0.1},
+        {"wave": "noise", "dur": 0.012, "env": [0.001, 0.01, 0.0, 0.008], "gain": 0.08, "filter": {"type": "bandpass", "freq": 3500}}
+      ]
+    },
+    "b": {
+      "layers": [
+        {"wave": "noise", "dur": 0.04, "env": [0.012, 0.03, 0.0, 0.02], "gain": 0.07, "filter": {"type": "bandpass", "freq": 6000, "q": 1.5}}
+      ]
+    }
+  },
+  "fallback": "route",
+  "songs": {
+    "title": {
+      "bpm": 92,
+      "key": "D",
+      "scale": "major",
+      "echo": {"beats": 0.75, "feedback": 0.25, "wet": 0.18},
+      "chords": ["1", "5", "6", "3", "4", "1", "4", "5:sus4 5"],
+      "tracks": [
+        {"inst": "lead", "kind": "melody", "octave": 5, "echo": 0.6, "bars": ["1 - - 2 3 - 5 -", "5 - - 4 3 - 2 -", "1 - - 7, 6, - 1 -", "7, - - 6, 5, - - -", "6, - - 1 4 - 6 -", "5 - - 4 3 - 1 -", "4 - 6 - 1' - 6 -", "5 - - - - - . ."]},
+        {"inst": "harmony", "kind": "chord", "octave": 4, "gain": 0.8, "pan": -0.3, "bars": ["2 - - 3 - - 2 -"]},
+        {"inst": "strings", "kind": "chord", "octave": 3, "bars": ["C"]},
+        {"inst": "arp", "kind": "chord", "octave": 4, "pan": 0.35, "echo": 0.4, "bars": ["1 3 2 3 4 3 2 3 1 3 2 3 4 3 2 3"]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 - - 1 1 - 3 -"]},
+        {"kind": "drums", "bars": [{"k": "x.......x.......", "s": "....o.......o...", "c": "x...............", "h": "..o...o...o...o."}, {"k": "x.......x.....x.", "s": "....o.......o...", "h": "..o...o...o...o."}, {"k": "x.......x.......", "s": "....o.......o...", "h": "..o...o...o...o."}, {"k": "x.......x.....x.", "s": "....o.......o.oo", "t": "............x.x.", "h": "..o...o........."}]}
+      ]
+    },
+    "town": {
+      "bpm": 100,
+      "key": "F",
+      "scale": "major",
+      "swing": 0.12,
+      "echo": {"beats": 0.5, "feedback": 0.2, "wet": 0.14},
+      "chords": ["1", "6", "2", "5", "1", "6", "4 5", "1"],
+      "tracks": [
+        {"inst": "lead12", "kind": "melody", "octave": 5, "echo": 0.4, "bars": ["3 - 2 1 3 - 5 -", "6 - 5 - 3 - - -", "4 - 3 2 4 - 6 -", "5 - - - 7, - 2 -", "3 - 2 1 3 - 5 -", "1' - 7 6 5 - 3 -", "4 - 6 - 5 - 7, -", "1 - - - . . . ."]},
+        {"inst": "epiano", "kind": "chord", "octave": 4, "bars": [". C . C . C . C"]},
+        {"inst": "marimba", "kind": "chord", "octave": 5, "gain": 0.6, "pan": 0.3, "bars": ["1 . . 3 . . 2 . . . 3 . . . . .", ". . . . 1 . . 3 . . 2 . . . . ."]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 . 3 . 2 . 3 ."]},
+        {"kind": "drums", "bars": [{"k": "x.......x.......", "b": "..o...o...o...o.", "r": "....x.......x..."}]}
+      ]
+    },
+    "route": {
+      "bpm": 132,
+      "key": "G",
+      "scale": "major",
+      "swing": 0.06,
+      "echo": {"beats": 0.5, "feedback": 0.18, "wet": 0.12},
+      "chords": ["1", "4", "5", "1", "6", "4", "2", "5:7"],
+      "tracks": [
+        {"inst": "lead", "kind": "melody", "octave": 4, "echo": 0.35, "bars": ["5 - 3 5 1' - 7 1'", "1' - 6 4 6 - 1' -", "7 - 5 2' 7 - 6 5", "1' - - 5 3 - - -", "3 - 5 - 6 5 3 5", "6 - 5 4 3 - 1 -", "2 - 4 6 1' - 6 -", "7 - 2' - 1' 7 6 5"]},
+        {"inst": "pluck", "kind": "chord", "octave": 4, "pan": -0.25, "bars": [". C . C . C . C"]},
+        {"inst": "arp", "kind": "chord", "octave": 4, "gain": 0.7, "pan": 0.3, "bars": ["1 . 2 . 3 . 2 . 1 . 2 . 3 . 4 ."]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 . 3 . 4 . 3 ."]},
+        {"kind": "drums", "bars": [{"k": "x.......x.x.....", "s": "....x.......x...", "h": "x.x.x.x.x.x.x.x."}, {"k": "x.......x.x.....", "s": "....x.......x.xo", "h": "x.x.x.x.x.x.x..."}]}
+      ]
+    },
+    "forest": {
+      "bpm": 84,
+      "key": "E",
+      "scale": "minor",
+      "stepsPerBeat": 3,
+      "echo": {"beats": 0.75, "feedback": 0.38, "wet": 0.28, "damp": 4200},
+      "chords": ["1", "6", "7", "1", "4", "1", "6", "5:maj"],
+      "tracks": [
+        {"inst": "flute", "kind": "melody", "octave": 4, "echo": 0.6, "bars": ["5 - - - - - 3 - 4 5 - -", "6 - - 5 - - 3 - - 1 - -", "6 - 5 4 - - 2 - - 7, - -", "1 - - - - - - - - . . .", "1' - - 7 - - 6 - - 4 - -", "5 - - 3 - - 2 - 3 5 - -", "6 - - 1' - - 3' - - 1' - -", "5 - - #7 - - 2' - - #7 - -"]},
+        {"inst": "bell", "kind": "chord", "octave": 4, "gain": 0.55, "pan": 0.3, "echo": 0.5, "bars": ["1 2 3 4 3 2 1 2 3 4 3 2"]},
+        {"inst": "strings", "kind": "chord", "octave": 3, "bars": ["C"]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 - - - - - 3 - - - - -"]},
+        {"kind": "drums", "bars": [{"l": "x...........", "b": "..o..o..o..o"}, {"l": "x.....x.....", "b": "..o..o..o..o"}]}
+      ]
+    },
+    "desert": {
+      "bpm": 108,
+      "key": "D",
+      "scale": "phrygianDominant",
+      "echo": {"beats": 0.75, "feedback": 0.3, "wet": 0.2},
+      "chords": ["1", "1", "2", "1", "4", "2", "7", "1"],
+      "tracks": [
+        {"inst": "lead12", "kind": "melody", "octave": 4, "echo": 0.45, "bars": ["5 - - - 6 5 3 - 4 - 3 - 2 - 1 -", "1 - 2 3 4 - 5 - 6 - 5 - - - . .", "6 - - 5 6 - 1' - 6 - - 5 4 - - -", "5 - 4 3 2 - 1 - - - - - . . . .", "4 - - 6 1' - - 6 4 - 5 6 5 - 4 -", "2 - - 3 4 - 6 - 5 - 4 - 3 - 2 -", "7, - - 2 4 - 2 - 7, - - - 6, - 7, -", "1 - - - - - - - . . . . . . . ."]},
+        {"inst": "pad", "kind": "chord", "octave": 3, "bars": ["s1"]},
+        {"inst": "pluck", "kind": "chord", "octave": 4, "pan": 0.3, "bars": [". . 1 . 2 . 3 . . . 1 . 2 . 3 ."]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 . . 1 . . 3 . 1 . . 1 . . 3 ."]},
+        {"kind": "drums", "bars": [{"t": "x..x..x.....x...", "r": "....x.......x.x.", "b": "x.x.x.x.x.x.x.x."}]}
+      ]
+    },
+    "snow": {
+      "bpm": 76,
+      "key": "B",
+      "scale": "minor",
+      "echo": {"beats": 1.5, "feedback": 0.45, "wet": 0.34, "damp": 3500},
+      "chords": ["1:madd9", "6:maj7", "4:m7", "5:m7", "1:madd9", "6:maj7", "3:maj7", "7:sus4 7"],
+      "tracks": [
+        {"inst": "bell", "kind": "melody", "octave": 4, "echo": 0.6, "bars": ["5 - 4 - 3 - 2 -", "1 - - - 5, - - -", "6, - 5, - 4, - 3, -", "2 - - - 5 - 7 -", "1' - 7 - 5 - 3 -", "5 - 6 - 1' - - -", "7 - 5 - 3 - 2 -", "4 - - - 2 - - -"]},
+        {"inst": "strings", "kind": "chord", "octave": 3, "bars": ["C"]},
+        {"inst": "arp", "kind": "chord", "octave": 4, "gain": 0.6, "pan": -0.35, "echo": 0.7, "bars": ["1 . 3 . 2 . 4 . 3 . 1 . 2 . 4 ."]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 3"]},
+        {"kind": "drums", "bars": [{"h": "..o...o...o...o."}]}
+      ]
+    },
+    "coast": {
+      "bpm": 112,
+      "key": "A",
+      "scale": "major",
+      "swing": 0.18,
+      "echo": {"beats": 0.5, "feedback": 0.2, "wet": 0.15},
+      "chords": ["1", "5", "6", "4", "1", "5", "4", "4 5"],
+      "tracks": [
+        {"inst": "flute", "kind": "melody", "octave": 4, "echo": 0.35, "bars": ["3 - 5 - 6 5 3 -", "2 - 7, - 5, - - -", "3 - 1 - 6, - 1 3", "4 - - 3 4 - 6 -", "5 - 1' - 7 - 5 -", "7 - 6 5 2 - 5 -", "6 - 4 - 1 - 4 -", "6 - 4 - 5 - 7 -"]},
+        {"inst": "pluck", "kind": "chord", "octave": 4, "pan": 0.3, "bars": [". C . C . C . C"]},
+        {"inst": "marimba", "kind": "chord", "octave": 4, "gain": 0.5, "pan": -0.3, "bars": ["1 . . 3 . . 2 . . . 3 . 1 . . ."]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 . . 1 3 . 4 ."]},
+        {"kind": "drums", "bars": [{"k": "x.......x.......", "r": "....x.......x...", "b": "x.x.x.x.x.x.x.x."}]}
+      ]
+    },
+    "city": {
+      "bpm": 118,
+      "key": "C",
+      "scale": "minor",
+      "echo": {"beats": 0.75, "feedback": 0.3, "wet": 0.2},
+      "chords": ["1:m7", "6:maj7", "3:maj7", "7", "1:m7", "6:maj7", "4:m7", "5:7"],
+      "tracks": [
+        {"inst": "lead", "kind": "melody", "octave": 5, "echo": 0.45, "bars": ["5 - - 3 - - 1 - 7, - 1 - 3 - - -", "3 - - 1 - - 6, - 5, - 6, - 1 - - -", "5 - - 3 - - 7 - 2' - 1' - 7 - - -", "4 - - 2 - - 7, - - - - - . . . .", "1' - - 7 - - 5 - 3 - 5 - 7 - - -", "1' - - 6 - - 3 - 5 - 6 - 1' - - -", "6 - - 4 - - 1 - 3 - 4 - 6 - - -", "#7 - - 2' - - 4' - 2' - #7 - 5 - - -"]},
+        {"inst": "synth", "kind": "chord", "octave": 4, "bars": ["C - - - - - C - - - C - - - - -"]},
+        {"inst": "arp", "kind": "chord", "octave": 4, "pan": 0.4, "echo": 0.5, "bars": ["1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4"]},
+        {"inst": "bassPulse", "kind": "chord", "octave": 2, "bars": ["1 1' 1 1' 1 1' 1 1'"]},
+        {"kind": "drums", "bars": [{"k": "x...x...x...x...", "p": "....x.......x...", "h": "..x...x...x...x."}, {"k": "x...x...x...x...", "p": "....x.......x...", "h": "..x...x...x.x.x.", "o": "..............x."}]}
+      ]
+    },
+    "swamp": {
+      "bpm": 70,
+      "key": "G",
+      "scale": "minor",
+      "echo": {"beats": 1, "feedback": 0.45, "wet": 0.3, "damp": 3000},
+      "chords": ["1", "b2:maj", "6", "5:maj", "1", "4", "b2:maj", "5:aug"],
+      "tracks": [
+        {"inst": "square", "kind": "melody", "octave": 4, "gain": 0.9, "echo": 0.55, "bars": ["5 - 6 - 5 - - -", "b2 - - - 4 - 6 -", "3 - 2 - 1 - - -", "#7, - 2 - 5 - - -", "1' - 7 - 6 - 5 -", "4 - 6 - 1' - - -", "6 - 4 - b2 - - -", "5 - #7 - #2' - - -"]},
+        {"inst": "strings", "kind": "chord", "octave": 3, "bars": ["C"]},
+        {"inst": "bell", "kind": "chord", "octave": 5, "gain": 0.5, "pan": 0.4, "echo": 0.7, "bars": ["1 . . 3 . . 2 . . . . . . . . .", ". . . . . . . . 3 . . 1 . . . ."]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 - 3 -"]},
+        {"kind": "drums", "bars": [{"t": "x.......x.....x.", "b": "..o...o...o...o."}]}
+      ]
+    },
+    "volcano": {
+      "bpm": 152,
+      "key": "E",
+      "scale": "phrygian",
+      "echo": {"beats": 0.5, "feedback": 0.15, "wet": 0.1},
+      "chords": ["1:5", "1:5", "6:5", "7:5", "1:5", "4:5", "2:5", "7:5"],
+      "tracks": [
+        {"inst": "square", "kind": "melody", "octave": 4, "echo": 0.3, "bars": ["5 - - - 3 - 5 - 6 - 5 - 3 - 2 -", "1 - - - - - - - 7, - 1 - 2 - 3 -", "6 - - - 5 - 6 - 1' - 6 - 5 - 3 -", "4 - - - 7, - 2 - 4 - 7 - 6 - - -", "5 - - - 3 - 5 - 1' - 7 - 5 - 3 -", "4 - - - 6 - 1' - 2' - 1' - 6 - 4 -", "2 - - - 6, - 2 - 3 - 2 - 6, - 2 -", "7, - - - 2 - 4 - 7 - - - . . . ."]},
+        {"inst": "brass", "kind": "chord", "octave": 3, "bars": ["C - - C - - C - C - - C - - C -"]},
+        {"inst": "bassPulse", "kind": "chord", "octave": 2, "bars": ["1! 1 1 1 1! 1 1 1 1! 1 1 1 1! 1 2 1"]},
+        {"kind": "drums", "bars": [{"k": "x.x...x.x.x...x.", "s": "....X.......X...", "h": "x.x.x.x.x.x.x.x.", "c": "x..............."}, {"k": "x.x...x.x.x...x.", "s": "....X.......X...", "h": "x.x.x.x.x.x.x.x."}, {"k": "x.x...x.x.x...x.", "s": "....X.......X...", "h": "x.x.x.x.x.x.x.x."}, {"k": "x.x...x.x.x.x.x.", "s": "....X.......XxXx", "h": "x.x.x.x.x.x....."}]}
+      ]
+    },
+    "ruins": {
+      "bpm": 88,
+      "key": "D",
+      "scale": "dorian",
+      "echo": {"beats": 0.75, "feedback": 0.35, "wet": 0.28, "damp": 4000},
+      "chords": ["1", "4", "1", "7", "3", "7", "4", "1"],
+      "tracks": [
+        {"inst": "flute", "kind": "melody", "octave": 5, "echo": 0.55, "bars": ["5 - - 6 5 - 3 -", "6 - - 5 4 - 2 -", "1 - 2 3 5 - - -", "4 - 3 2 7, - - -", "3 - 5 - 1' - 7 -", "4 - 3 2 4 - 7 -", "6 - 5 - 4 - 6 -", "5 - - - 1 - - -"]},
+        {"inst": "pluck", "kind": "chord", "octave": 4, "pan": -0.3, "echo": 0.5, "bars": ["1 2 3 4 5 4 3 2"]},
+        {"inst": "pad", "kind": "chord", "octave": 3, "bars": ["C"]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 - - - 3 - - -"]},
+        {"kind": "drums", "bars": [{"l": "x.....x.........", "t": "........x.....x.", "b": "..o...o...o...o."}]}
+      ]
+    },
+    "night": {
+      "bpm": 72,
+      "key": "Eb",
+      "scale": "major",
+      "echo": {"beats": 1, "feedback": 0.35, "wet": 0.25, "damp": 3800},
+      "chords": ["1:maj7", "6:m7", "2:m7", "5:sus4", "1:maj7", "3:m7", "4:maj7", "5:7"],
+      "tracks": [
+        {"inst": "flute", "kind": "melody", "octave": 5, "gain": 0.8, "echo": 0.5, "bars": ["5 - - 3 2 - 3 -", "1 - - 7, 6, - - -", "4 - - 6 1' - 6 -", "5 - - - 4 - 2 -", "3 - 5 - 1' - 7 -", "5 - - 3 2 - - -", "1 - - 3 6 - - -", "5 - 4 - 2 - 7, -"]},
+        {"inst": "epiano", "kind": "chord", "octave": 4, "gain": 0.8, "bars": ["C - - - - - C -"]},
+        {"inst": "bell", "kind": "chord", "octave": 5, "gain": 0.4, "pan": 0.35, "echo": 0.6, "bars": ["1 . 3 . 2 . 4 ."]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 - - - 3 - - -"]},
+        {"kind": "drums", "bars": [{"b": "........o......."}]}
+      ]
+    },
+    "center": {
+      "bpm": 96,
+      "key": "C",
+      "scale": "major",
+      "swing": 0.08,
+      "echo": {"beats": 0.5, "feedback": 0.22, "wet": 0.15},
+      "chords": ["1", "4", "1", "5", "1", "4", "5", "1"],
+      "tracks": [
+        {"inst": "bell", "kind": "melody", "octave": 5, "echo": 0.4, "bars": ["5 - 3 - 5 - 1' -", "6 - 4 - 6 - 1' -", "1' - 7 - 5 - 3 -", "2 - - - 5 - - -", "3 - 5 - 1' - 3' -", "2' - 1' - 6 - 4 -", "5 - 7 - 2' - 7 -", "1' - - - . . . ."]},
+        {"inst": "lead12", "kind": "melody", "octave": 4, "gain": 0.55, "pan": -0.3, "bars": ["3 - - - 1 - - -", "4 - - - 6 - - -", "5 - - - 3 - - -", "7, - - - 2 - - -", "3 - - - 5 - - -", "6 - - - 4 - - -", "2 - - - 7, - - -", "1 - - - . . . ."]},
+        {"inst": "epiano", "kind": "chord", "octave": 4, "gain": 0.8, "bars": ["C - - - C - - -"]},
+        {"inst": "bass", "kind": "chord", "octave": 3, "bars": ["1 . 3 . 2 . 3 ."]},
+        {"kind": "drums", "bars": [{"r": "....o.......o...", "b": "o.o.o.o.o.o.o.o."}]}
+      ],
+      "gain": 1.15
+    },
+    "lab": {
+      "bpm": 112,
+      "key": "F",
+      "scale": "lydian",
+      "echo": {"beats": 0.75, "feedback": 0.25, "wet": 0.18},
+      "chords": ["1", "2", "1", "2", "6", "5", "7", "5:sus4 5"],
+      "tracks": [
+        {"inst": "marimba", "kind": "melody", "octave": 4, "echo": 0.4, "bars": ["1 . 3 . 5 . 4 . 5 . . . 3 . . .", "2 . 4 . 6 . 5 . 6 . . . 4 . . .", "3 . 5 . 1' . 7 . 1' . 5 . 3 . . .", "4 . 6 . 2' . 1' . 2' . 6 . 4 . 2 .", "6 . 1' . 6 . 3 . 1 . 3 . 6 . . .", "5 . 7 . 2' . 7 . 5 . . . . . . .", "7 . 2' . 4' . 2' . 7 . . . 4 . . .", "1' . . . 2' . . . 5 . . . . . . ."]},
+        {"inst": "arp", "kind": "chord", "octave": 4, "pan": 0.4, "echo": 0.5, "bars": ["1 . . 2 . . 3 . . 2 . . 1 . . ."]},
+        {"inst": "pad", "kind": "chord", "octave": 3, "gain": 0.8, "bars": ["C"]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 . . 1 . . 3 ."]},
+        {"kind": "drums", "bars": [{"r": "x..x..x...x..x..", "h": "..x...x...x...x."}]}
+      ],
+      "gain": 1.2
+    },
+    "gym": {
+      "bpm": 126,
+      "key": "A",
+      "scale": "harmonicMinor",
+      "echo": {"beats": 0.5, "feedback": 0.2, "wet": 0.12},
+      "chords": ["1", "1", "6", "5", "4", "1", "2", "5:7"],
+      "tracks": [
+        {"inst": "lead", "kind": "melody", "octave": 4, "echo": 0.3, "bars": ["1 - - 3 - - 5 - 4 - 3 - 2 - 3 -", "5 - - - 6 - 5 - 3 - - - 1 - - -", "6 - - 1' - - 3' - 1' - 6 - 3 - 6 -", "7 - - - 5 - - - 2 - - - 7, - - -", "4 - - 6 - - 1' - 6 - 4 - 3 - 2 -", "1 - - 3 - - 5 - 1' - - - 7 - 6 -", "2 - - 4 - - 6 - 4 - 2 - 7, - 6, -", "5 - - - 7 - - - 2' - - - 4' - 2' -"]},
+        {"inst": "strings", "kind": "chord", "octave": 3, "bars": ["C"]},
+        {"inst": "harmony", "kind": "chord", "octave": 4, "pan": 0.3, "bars": ["C . . C . . C . . . C . C . . ."]},
+        {"inst": "bassPulse", "kind": "chord", "octave": 2, "bars": ["1 . 1 1 . 1 1 . 1 . 1 1 . 1 2 3"]},
+        {"kind": "drums", "bars": [{"k": "x..x..x.x..x..x.", "s": "....x.......x...", "h": "x.x.x.x.x.x.x.x."}]}
+      ]
+    },
+    "battle_wild": {
+      "bpm": 160,
+      "key": "E",
+      "scale": "minor",
+      "echo": {"beats": 0.5, "feedback": 0.15, "wet": 0.1},
+      "chords": ["1", "1", "6", "7", "1", "1", "4", "5:maj"],
+      "tracks": [
+        {"inst": "lead", "kind": "melody", "octave": 4, "echo": 0.25, "bars": ["1 - 5, - 1 - 2 - 3 - 2 - 1 - 7, -", "1 - - - 5 - - - 3 - 5 - 1' - 7 -", "6 - - 5 6 - 1' - 3' - 1' - 6 - 5 -", "4 - - 2 - - 7, - 2 - 4 - 6 - 7 -", "1' - 7 - 5 - 3 - 5 - 7 - 1' - 2' -", "3' - 2' - 1' - 7 - 1' - - - 5 - - -", "4 - 6 - 1' - 6 - 4' - 3' - 1' - 6 -", "5 - - - #7 - - - 2' - - - #7 - - -"]},
+        {"inst": "harmony", "kind": "chord", "octave": 4, "pan": -0.3, "bars": ["C . . C . . C . . . C . C . . ."]},
+        {"inst": "arp", "kind": "chord", "octave": 4, "gain": 0.6, "pan": 0.35, "bars": ["1 2 3 2 1 2 3 2 1 2 3 2 1 2 3 4"]},
+        {"inst": "bassPulse", "kind": "chord", "octave": 2, "bars": ["1 . 1' . 1 . 1' . 1 . 1' . 3 . 1' ."]},
+        {"kind": "drums", "bars": [{"k": "x...x...x...x...", "s": "....x.......x...", "h": "x.x.x.x.x.x.x.x."}, {"k": "x...x...x...x...", "s": "....x.......x.xx", "h": "x.x.x.x.x.x.x..."}]}
+      ]
+    },
+    "battle_trainer": {
+      "bpm": 168,
+      "key": "D",
+      "scale": "minor",
+      "echo": {"beats": 0.5, "feedback": 0.15, "wet": 0.1},
+      "chords": ["1", "7", "6", "5:maj", "4", "1", "b2:maj", "5:maj"],
+      "tracks": [
+        {"inst": "square", "kind": "melody", "octave": 4, "echo": 0.25, "bars": ["5 - 1' - 5 - 3 - 4 - 5 - 6 - 5 -", "4 - - 7 - - 4 - 5 - 4 - 3 - 2 -", "3 - - 6 - - 1' - 3' - 1' - 6 - 3 -", "5 - - - #7 - - - 2' - - - 5' - - -", "4 - 6 - 1' - 6 - 4 - 6 - 1' - 3' -", "2' - 1' - 7 - 6 - 5 - - - 1 - - -", "b2 - - 4 - - 6 - b2' - - 6 - - 4 -", "5 - - #7 - - 2' - 5' - 2' - #7 - 5 -"]},
+        {"inst": "lead12", "kind": "melody", "octave": 3, "gain": 0.6, "pan": -0.3, "bars": ["1 - - - 1 - - - 1 - - - 3 - - -", "7, - - - 7, - - - 2 - - - 7, - - -", "6, - - - 1 - - - 3 - - - 1 - - -", "5, - - - #7, - - - 2 - - - #7, - - -", "4, - - - 6, - - - 4, - - - 2 - - -", "1 - - - 3 - - - 5 - - - 3 - - -", "b2 - - - 4 - - - 6 - - - 4 - - -", "5, - - - #7, - - - 2 - - - 5 - - -"]},
+        {"inst": "arp", "kind": "chord", "octave": 4, "gain": 0.6, "pan": 0.35, "bars": ["1 2 3 2 1 2 3 2 1 2 3 2 1 2 3 4"]},
+        {"inst": "bassPulse", "kind": "chord", "octave": 2, "bars": ["1 1' 1 1' 1 1' 1 1'"]},
+        {"kind": "drums", "bars": [{"k": "x..x..x.x..x..x.", "s": "....X.......X...", "h": "x.x.x.x.x.x.x.x."}, {"k": "x..x..x.x..x..x.", "s": "....X.......X.xx", "h": "x.x.x.x.x.x.x.x."}]}
+      ]
+    },
+    "battle_gym": {
+      "bpm": 150,
+      "key": "C",
+      "scale": "minor",
+      "echo": {"beats": 0.5, "feedback": 0.18, "wet": 0.12},
+      "chords": ["1", "6", "3", "7", "4", "6", "5:maj", "5:7"],
+      "tracks": [
+        {"inst": "brass", "kind": "melody", "octave": 4, "bars": ["5 - - 3 1 - 5 -", "6 - - 5 6 - 1' -", "7 - - 6 5 - 3 -", "4 - - - 2 - 7, -", "4 - - 6 1' - 4' -", "3' - - 2' 1' - 6 -", "5 - - #7 2' - 5' -", "4' - 2' - #7 - 5 -"]},
+        {"inst": "lead", "kind": "melody", "octave": 5, "gain": 0.55, "echo": 0.3, "bars": ["5 - - 3 1 - 5 -", "6 - - 5 6 - 1' -", "7 - - 6 5 - 3 -", "4 - - - 2 - 7, -", "4 - - 6 1' - 4' -", "3' - - 2' 1' - 6 -", "5 - - #7 2' - 5' -", "4' - 2' - #7 - 5 -"]},
+        {"inst": "strings", "kind": "chord", "octave": 3, "bars": ["C C C C C C C C"]},
+        {"inst": "bassPulse", "kind": "chord", "octave": 2, "bars": ["1 . 1 . 1 . 1 . 1 . 1 . 3 . 2 ."]},
+        {"kind": "drums", "bars": [{"k": "x.x...x.x.x...x.", "s": "....X.......X..x", "h": "x.x.x.x.x.x.x.x.", "c": "x..............."}, {"k": "x.x...x.x.x...x.", "s": "....X.......X..x", "h": "x.x.x.x.x.x.x.x."}, {"k": "x.x...x.x.x...x.", "s": "....X.......X..x", "h": "x.x.x.x.x.x.x.x."}, {"k": "x.x...x.x.x.x.x.", "s": "....X.......XXXX", "t": "........x.x.....", "h": "x.x.x.x........."}]}
+      ]
+    },
+    "battle_legend": {
+      "bpm": 138,
+      "key": "B",
+      "scale": "harmonicMinor",
+      "echo": {"beats": 0.75, "feedback": 0.25, "wet": 0.16},
+      "chords": ["1", "b2:maj", "1", "b2:maj", "6", "4", "5", "5:7"],
+      "tracks": [
+        {"inst": "lead", "kind": "melody", "octave": 4, "echo": 0.35, "bars": ["1 - - - 5 - - - 3 - 4 - 5 - - -", "b2' - - 1' b2' - - - 6 - - - 4 - - -", "1' - - - 5 - - - 6 - 5 - 4 - 3 -", "4 - - - 6 - - - b2' - - - 6 - - -", "3 - - - 6 - - - 1' - - - 6 - 3 -", "4 - - - 6 - - - 1' - 6 - 4 - 3 -", "5 - - - 7 - - - 2' - - - 7 - 5 -", "4 - - - 5 - - - 7 - - - 2' - - -"]},
+        {"inst": "organ", "kind": "chord", "octave": 3, "bars": ["C - - - C - - -"]},
+        {"inst": "arp", "kind": "chord", "octave": 4, "gain": 0.7, "pan": 0.35, "bars": ["1 2 3 4 3 2 1 2 3 4 3 2 1 2 3 4"]},
+        {"inst": "bassPulse", "kind": "chord", "octave": 2, "bars": ["1 1 1 1 1 1 1 1"]},
+        {"inst": "sub", "kind": "chord", "octave": 1, "gain": 0.7, "bars": ["1"]},
+        {"kind": "drums", "bars": [{"k": "x...x...x...x...", "s": "....x.......x...", "c": "x...............", "h": "x.x.x.x.x.x.x.x."}, {"k": "x...x...x...x...", "s": "....x.......x...", "h": "x.x.x.x.x.x.x.x."}, {"k": "x...x...x...x...", "s": "....x.......x...", "h": "x.x.x.x.x.x.x.x."}, {"k": "x...x...x..xx...", "s": "....x...........", "t": "........x.x.x.x.", "h": "x.x.x.x........."}]}
+      ]
+    },
+    "victory": {
+      "bpm": 132,
+      "key": "G",
+      "scale": "major",
+      "loopFrom": 2,
+      "echo": {"beats": 0.5, "feedback": 0.2, "wet": 0.14},
+      "chords": ["1", "4 5", "1", "4", "6 5", "1"],
+      "tracks": [
+        {"inst": "lead", "kind": "melody", "octave": 4, "echo": 0.35, "bars": ["5, . 1 . 3 . 5 . 1' - - - - - . .", "6 - 4 - 6 - 1' - 7 - 5 - 7 - 2' -", "1' - - 5 3 - 5 - 1' - 3' - 2' - 1' -", "1' - - 6 4 - 6 - 1' - 6 - 4 - 6 -", "2' - 1' - 6 - 1' - 7 - 6 - 5 - 7 -", "1' - - - 5 - - - 1' - - - . . . ."]},
+        {"inst": "harmony", "kind": "chord", "octave": 4, "pan": -0.3, "bars": ["C . C . C . C ."]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 . 3 . 1 . 3 ."]},
+        {"kind": "drums", "bars": [{"c": "x...............", "s": "........x.x.xxxx", "k": "x..............."}, {"k": "x...x...x...x...", "s": "....x.......x...", "h": "x.x.x.x.x.x.x.x."}, {"k": "x...x...x...x...", "s": "....x.......x...", "h": "x.x.x.x.x.x.x.x.", "c": "x..............."}, {"k": "x...x...x...x...", "s": "....x.......x...", "h": "x.x.x.x.x.x.x.x."}, {"k": "x...x...x...x...", "s": "....x.......x...", "h": "x.x.x.x.x.x.x.x."}, {"k": "x...x...x...x...", "s": "....x.......x.x.", "h": "x.x.x.x.x.x.x..."}]}
+      ],
+      "gain": 0.85
+    },
+    "evolution": {
+      "bpm": 100,
+      "key": "E",
+      "scale": "lydian",
+      "echo": {"beats": 0.75, "feedback": 0.4, "wet": 0.3, "damp": 5000},
+      "chords": ["1", "2", "6", "5", "1", "2", "3", "5:sus4 5"],
+      "tracks": [
+        {"inst": "bell", "kind": "melody", "octave": 5, "echo": 0.6, "bars": ["3 - 5 - 1' - 7 -", "2' - 1' - 6 - 4 -", "3 - 1 - 6, - 1 -", "7 - - - 2' - - -", "1' - 7 - 5 - 3 -", "4 - 6 - 2' - 6 -", "5 - 3 - 7 - 1' -", "1' - - - 7 - - -"]},
+        {"inst": "flute", "kind": "melody", "octave": 4, "gain": 0.55, "pan": -0.3, "bars": ["3 - - - 5 - - -", "4 - - - 6 - - -", "3 - - - 1 - - -", "2 - - - 7, - - -", "1 - - - 3 - - -", "2 - - - 4 - - -", "3 - - - 5 - - -", "4 - - - 2 - - -"]},
+        {"inst": "arp", "kind": "chord", "octave": 4, "gain": 0.7, "pan": 0.35, "echo": 0.5, "bars": ["1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4"]},
+        {"inst": "strings", "kind": "chord", "octave": 3, "bars": ["C"]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1"]},
+        {"kind": "drums", "bars": [{"k": "x.......x.......", "b": "..o...o...o...o."}]}
+      ]
+    },
+    "cave": {
+      "bpm": 80,
+      "key": "A",
+      "scale": "minor",
+      "echo": {"beats": 1, "feedback": 0.5, "wet": 0.4, "damp": 2500},
+      "chords": ["1", "1", "6", "6", "4", "4", "5:maj", "5:maj"],
+      "tracks": [
+        {"inst": "pluck", "kind": "melody", "octave": 4, "gain": 1.2, "echo": 0.7, "bars": ["5 . . 3 . . 1 .", ". . 2 3 . . 5 .", "6 . . 5 . . 3 .", ". . 1 3 . . 6 .", "4 . . 6 . . 1' .", ". . 1' 7 . . 6 .", "#7, . . 2 . . 5 .", ". . 2 . #7, . . ."]},
+        {"inst": "bell", "kind": "melody", "octave": 5, "gain": 0.45, "pan": 0.45, "echo": 0.8, "bars": [". . . . . . 5 . . . . . . . . .", ". . . . . . . . . . . . 1' . . .", ". . . . . . . . . . 3 . . . . ."]},
+        {"inst": "strings", "kind": "chord", "octave": 3, "gain": 0.8, "bars": ["C"]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1"]},
+        {"kind": "drums", "bars": [{"l": "x...............", "b": "........o......."}]}
+      ]
+    },
+    "sakura": {
+      "bpm": 92,
+      "key": "D",
+      "scale": "major",
+      "echo": {"beats": 0.75, "feedback": 0.32, "wet": 0.24, "damp": 4200},
+      "chords": ["1", "6", "4", "5", "1", "3", "4", "5:sus4 5"],
+      "tracks": [
+        {"inst": "flute", "kind": "melody", "octave": 5, "echo": 0.5, "bars": ["3 - 5 - 6 - 5 3", "2 - 3 - 1 - - -", "6, - 1 - 2 - 3 5", "5 - - 3 2 - - -", "3 - 5 - 1' - 6 5", "6 - 5 3 2 - 3 -", "1 - 2 3 5 - 6 5", "3 - 2 - 2 - - -"]},
+        {"inst": "pluck", "kind": "chord", "octave": 4, "pan": -0.3, "echo": 0.45, "bars": ["1 . 2 . 3 . 4 . 3 . 2 . 3 . 2 ."]},
+        {"inst": "strings", "kind": "chord", "octave": 3, "gain": 0.8, "bars": ["C"]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 - - - 3 - - -"]},
+        {"kind": "drums", "bars": [{"l": "x.......x.......", "b": "....o.......o..."}]}
+      ]
+    },
+    "jungle": {
+      "bpm": 108,
+      "key": "G",
+      "scale": "dorian",
+      "echo": {"beats": 0.5, "feedback": 0.25, "wet": 0.18},
+      "chords": ["1:m7", "4", "1:m7", "7", "1:m7", "4", "3", "5:m7"],
+      "tracks": [
+        {"inst": "marimba", "kind": "melody", "octave": 5, "gain": 1.1, "echo": 0.35, "bars": ["5 - 4 5 7 - 5 4", "3 - 1 - 3 4 5 -", "4 - 3 4 6 - 4 3", "2 - 7, - 1 - - -", "5 - 5 6 7 - 1' -", "7 - 6 5 4 - 6 -", "5 - 4 3 4 - 3 2", "1 - 2 - 4 - 7, -"]},
+        {"inst": "bell", "kind": "chord", "octave": 5, "gain": 0.45, "pan": 0.35, "bars": ["1 . 3 . 2 . 3 . 1 . 3 . 2 . 4 ."]},
+        {"inst": "pad", "kind": "chord", "octave": 3, "gain": 0.7, "bars": ["C"]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 . . 1 3 . 2 ."]},
+        {"kind": "drums", "bars": [{"k": "x.......x.......", "t": "x..x..x...x..x..", "b": "x.x.x.x.x.x.x.x.", "r": "....x.......x..."}]}
+      ]
+    },
+    "glacier": {
+      "bpm": 72,
+      "key": "F#",
+      "scale": "minor",
+      "echo": {"beats": 1.5, "feedback": 0.48, "wet": 0.36, "damp": 3200},
+      "chords": ["1:madd9", "6:maj7", "3:maj7", "7", "1:madd9", "4:m7", "6:maj7", "5:sus4 5"],
+      "tracks": [
+        {"inst": "bell", "kind": "melody", "octave": 5, "echo": 0.65, "bars": ["1' - - 7 5 - - -", "3 - 5 - 7 - - -", "6 - - 5 3 - - -", "2 - 3 - 5 - - -", "1' - 7 - 5 - 3 -", "4 - 6 - 1' - 2' -", "3' - 2' - 7 - 5 -", "2' - - - 7 - - -"]},
+        {"inst": "strings", "kind": "chord", "octave": 3, "bars": ["C"]},
+        {"inst": "arp", "kind": "chord", "octave": 4, "gain": 0.55, "pan": 0.35, "echo": 0.7, "bars": ["1 . 2 . 3 . 4 . 3 . 2 . 3 . 4 ."]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 3"]},
+        {"kind": "drums", "bars": [{"l": "x...............", "h": "........o......."}]}
+      ]
+    },
+    "canyon": {
+      "bpm": 100,
+      "key": "E",
+      "scale": "mixolydian",
+      "swing": 0.12,
+      "echo": {"beats": 0.75, "feedback": 0.3, "wet": 0.2},
+      "chords": ["1", "7", "4", "1", "1", "7", "4", "5:sus4 5"],
+      "tracks": [
+        {"inst": "lead12", "kind": "melody", "octave": 4, "echo": 0.4, "bars": ["5 - 5 6 5 - 3 -", "1 - 2 3 2 - - -", "4 - 4 6 1' - 6 -", "5 - - - . . 5 6", "7 - 6 5 6 - 5 3", "4 - 3 2 4 - 6 -", "5 - 4 3 2 - 1 -", "2 - - - 5, - 7, -"]},
+        {"inst": "pluck", "kind": "chord", "octave": 4, "pan": -0.25, "bars": [". C . C . C . C"]},
+        {"inst": "harmony", "kind": "chord", "octave": 4, "gain": 0.5, "pan": 0.3, "bars": ["C - - - - - - -"]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 . . 3 1 . . 3"]},
+        {"kind": "drums", "bars": [{"t": "x.xx..x.x.xx..x.", "b": "x.x.x.x.x.x.x.x.", "r": "....x.......x..."}]}
+      ]
+    },
+    "cyber": {
+      "bpm": 112,
+      "key": "C#",
+      "scale": "dorian",
+      "echo": {"beats": 0.75, "feedback": 0.32, "wet": 0.2},
+      "chords": ["1:m7", "7", "4", "1:m7", "3", "7", "4", "5:m7"],
+      "tracks": [
+        {"inst": "square", "kind": "melody", "octave": 5, "echo": 0.4, "bars": ["1' - 7 - 5 - 3 - 4 - 5 - 7 - 1' -", "2' - 1' - 7 - 5 - 7 - - - . . . .", "6 - 5 - 4 - 2 - 4 - 5 - 6 - 7 -", "1' - - - 5 - - - 3 - - - . . . .", "5 - 5 - 7 - 1' - 2' - 1' - 7 - 5 -", "6 - 7 - 1' - 2' - 3' - 2' - 1' - 7 -", "6 - 4 - 2 - 4 - 6 - 7 - 1' - 2' -", "5 - - - 7 - - - 2' - - - 7 - - -"]},
+        {"inst": "arp", "kind": "chord", "octave": 4, "pan": 0.35, "echo": 0.5, "bars": ["1 2 3 4 1 2 3 4 1 2 3 4 1 2 3 4"]},
+        {"inst": "synth", "kind": "chord", "octave": 4, "gain": 0.7, "bars": ["C - - - - - C - - - C - - - - -"]},
+        {"inst": "bassPulse", "kind": "chord", "octave": 2, "bars": ["1 1' 1 1' 1 1' 1 1'"]},
+        {"kind": "drums", "bars": [{"k": "x...x...x...x...", "r": "....x.......x...", "h": "..x...x...x...x."}, {"k": "x...x...x...x...", "r": "....x.......x.x.", "h": "..x...x...x.xxxx"}]}
+      ]
+    },
+    "skyland": {
+      "bpm": 88,
+      "key": "A",
+      "scale": "lydian",
+      "beatsPerBar": 3,
+      "echo": {"beats": 1, "feedback": 0.4, "wet": 0.3, "damp": 4500},
+      "chords": ["1", "2", "1", "2", "6", "2", "3", "5"],
+      "tracks": [
+        {"inst": "flute", "kind": "melody", "octave": 5, "echo": 0.55, "bars": ["5 - - 3 4 5", "6 - 5 - - -", "5 - - 3 2 1", "2 - - - 3 -", "5 - 1' - 7 6", "6 - 5 - 4 -", "3 - 4 5 6 7", "1' - - - 7 -"]},
+        {"inst": "arp", "kind": "chord", "octave": 4, "gain": 0.6, "pan": -0.3, "echo": 0.6, "bars": ["1 . 2 . 3 . 4 . 3 . 2 ."]},
+        {"inst": "pluck", "kind": "chord", "octave": 4, "gain": 0.6, "pan": 0.3, "bars": [". C C"]},
+        {"inst": "bass", "kind": "chord", "octave": 2, "bars": ["1 - -"]},
+        {"kind": "drums", "bars": [{"l": "x...........", "b": "....o...o..."}]}
+      ]
+    }
+  }
+}

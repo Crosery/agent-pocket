@@ -1,0 +1,16 @@
+{
+  "directions": ["北", "东北", "东", "东南", "南", "西南", "西", "西北"],
+  "distances": [
+    {"max": 120, "text": "不远处"},
+    {"max": 260, "text": "一段路之外"},
+    {"max": 480, "text": "挺远的地方"},
+    {"max": 100000000, "text": "很远很远的地方"}
+  ],
+  "unknown": "某个地方",
+  "npcName": "{class} {name}",
+  "textKeys": {"weather": "game.weather.{id}", "timeOfDay": "hud.tod.{id}"},
+  "place": {"ring": [3, 8], "search": 6, "minNeighbours": 3, "spacing": 3, "avoidTerrain": ["path", "cobble", "bridge"]},
+  "stars": {"full": "★", "empty": "☆"},
+  "templateAliases": {"stele": ["monolith"], "serverfarm": ["datacenter"], "glitchrift": ["ruins"], "neuralgrove": ["grove"], "sakurashrine": ["shrine", "grove"], "skyaltar": ["shrine", "monolith"], "mangrovedock": ["dock"], "caldera": ["crystalfield"], "trainercamp": ["campsite"]},
+  "dangerNames": ["安稳", "微险", "危险", "凶险", "绝境", "未知之境"]
+}

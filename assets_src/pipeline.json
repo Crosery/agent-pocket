@@ -1,0 +1,495 @@
+{
+  "generator": {
+    "backend": "aigw",
+    "command": "crosery-ct",
+    "tool": "crosery_image_generate",
+    "aigw": {
+      "baseUrl": "",
+      "model": "gpt-image-2.5-flare",
+      "apiKeyEnv": "AIGW_API_KEY",
+      "secretsFile": "",
+      "sizes": {
+        "square": "1024x1024",
+        "landscape": "1536x1024",
+        "portrait": "1024x1536"
+      }
+    },
+    "concurrency": 6,
+    "maxConcurrency": 6,
+    "retries": 1,
+    "timeoutSeconds": 420
+  },
+  "chroma": {
+    "color": "#FF00FF",
+    "estimateMaxDist": 120,
+    "transparentBelow": 60,
+    "opaqueAbove": 150,
+    "despillRadius": 2,
+    "despillStrength": 1.0,
+    "haloMaxDist": 140,
+    "sourceAlphaMinFraction": 0.005,
+    "haloErode": 3,
+    "bboxMinCount": {
+      "min": 3,
+      "fraction": 0.004
+    }
+  },
+  "grid": {
+    "min": 2.5,
+    "max": 14,
+    "fallback": 4
+  },
+  "sheet": {
+    "topMargin": 2,
+    "bottomMargin": 2,
+    "sideMargin": 1,
+    "targetHeightFill": 0.95,
+    "palette": 40,
+    "minSpeck": 6,
+    "speckRatio": 0.04,
+    "pinhole": 2,
+    "torsoBand": [
+      0.4,
+      0.8
+    ],
+    "heightScale": {},
+    "facing": {
+      "headBand": 0.45,
+      "minSkinPixels": 6,
+      "minScore": 0.06,
+      "skin": {
+        "hueMax": 0.11,
+        "hueWrapMin": 0.97,
+        "satMin": 0.12,
+        "satMax": 0.6,
+        "valMin": 0.55
+      }
+    },
+    "profileMinCount": 2,
+    "bandSnap": {
+      "edge": 0.15,
+      "search": 0.3
+    },
+    "walkCycle": {
+      "enabled": true,
+      "bob": 1,
+      "lift": 2,
+      "legFrac": 0.13,
+      "minLegRows": 4,
+      "maxLegFrac": 0.3,
+      "splitSearch": 4,
+      "minRun": 4,
+      "minRise": 2,
+      "maxPlant": 3,
+      "footRows": 2,
+      "strideStartRows": 5,
+      "tuck": 0.8
+    }
+  },
+  "portrait": {
+    "work": 128,
+    "out": 256,
+    "fillWidth": 0.92,
+    "fillHeight": 0.96,
+    "resample": "box",
+    "palette": 64,
+    "minSpeck": 8,
+    "pinhole": 3,
+    "speckRatio": 0.02,
+    "bottomTouchFraction": 0.01
+  },
+  "texture": {
+    "size": 32,
+    "sizes": {},
+    "crop": 0.34,
+    "resample": "box",
+    "seamBlend": 0.25,
+    "palette": 16,
+    "previewRepeat": 4,
+    "workScale": 4,
+    "seamBlendByKey": {},
+    "searchMargin": 0.1,
+    "searchSteps": 9,
+    "cropByKind": {
+      "cliff": 0.4
+    },
+    "period": {
+      "min": 0.03,
+      "max": 0.34,
+      "minScore": 0.1
+    },
+    "seamOk": 1.0,
+    "cropByKey": {
+      "dark_grass": 0.2,
+      "tall_reeds": 0.2,
+      "circuit": 0.16,
+      "glitch": 0.22,
+      "lavender": 0.18,
+      "tall_lavender": 0.2,
+      "cliff_ice": 0.32,
+      "tall_sakura": 0.22,
+      "sakura_grass": 0.22
+    }
+  },
+  "tuft": {
+    "size": 32,
+    "margin": 1,
+    "resample": "box",
+    "palette": 12,
+    "minSpeck": 3
+  },
+  "icon": {
+    "size": 32,
+    "margin": 1,
+    "palette": 14,
+    "outline": true,
+    "outlineDarken": 0.28,
+    "minSpeck": 3
+  },
+  "backdrop": {
+    "width": 1536,
+    "height": 1024,
+    "pixel": 2,
+    "palette": 96
+  },
+  "logo": {
+    "maxWidth": 1024,
+    "maxHeight": 512,
+    "pixel": 2,
+    "palette": 48,
+    "minSpeck": 12,
+    "speckRatio": 0.0
+  },
+  "creature": {
+    "topMargin": 2,
+    "bottomMargin": 2,
+    "sideMargin": 2,
+    "fill": 1.0,
+    "minFill": 0.6,
+    "minFillById": {
+      "claude-code": 0.95
+    },
+    "minConfidence": 0.08,
+    "bboxPad": 16,
+    "palette": 32,
+    "minSpeck": 5,
+    "speckRatio": 0.0,
+    "pinhole": 2,
+    "detached": {
+      "pool": 3,
+      "keepRatio": 0.1
+    },
+    "torsoBand": [
+      0.4,
+      0.8
+    ],
+    "outline": {
+      "maxLuma": 96,
+      "darken": 0.3
+    },
+    "keyLikeDist": 100
+  },
+  "manifest": {
+    "creatures": {
+      "dir": "creatures",
+      "ext": [
+        ".png"
+      ]
+    },
+    "characters": {
+      "dir": "characters",
+      "ext": [
+        ".png"
+      ]
+    },
+    "portraits": {
+      "dir": "portraits",
+      "ext": [
+        ".png"
+      ]
+    },
+    "textures": {
+      "dir": "textures",
+      "ext": [
+        ".png"
+      ],
+      "recursive": true
+    },
+    "models": {
+      "dir": "models",
+      "ext": [
+        ".glb"
+      ]
+    },
+    "items": {
+      "dir": "items",
+      "ext": [
+        ".png"
+      ]
+    },
+    "bgm": {
+      "dir": "audio/bgm",
+      "ext": [
+        ".mp3",
+        ".ogg"
+      ]
+    },
+    "ui": {
+      "dir": "ui",
+      "ext": [
+        ".png"
+      ]
+    }
+  },
+  "cover": {
+    "board": {
+      "cols": 3,
+      "cell": 512,
+      "fill": 0.94,
+      "background": "#f3f4f8"
+    },
+    "jobs": "assets_src/prompts/cover_jobs.json",
+    "pixelDir": "assets_src/raw/cover/pixel",
+    "layered": {
+      "plate": "bl_plate",
+      "layers": [
+        {
+          "id": "bl_left",
+          "anchor": "left",
+          "x": 0.0,
+          "bottom": 1.0,
+          "width": 0.4,
+          "height": 0.62
+        },
+        {
+          "id": "bl_right",
+          "anchor": "right",
+          "x": 1.0,
+          "bottom": 1.0,
+          "width": 0.4,
+          "height": 0.62
+        }
+      ],
+      "out": "cover_bl_layered"
+    },
+    "backdrop": {
+      "width": 1536,
+      "height": 1024,
+      "pixel": 2,
+      "palette": 0
+    },
+    "fix": {
+      "base": "assets_src/raw/cover/cover_bg_r1.png",
+      "kind": "cover_fix",
+      "jobs": "assets_src/prompts/cover_fix_jobs.json",
+      "refDir": "assets_src/refs/cover/fix",
+      "inputSize": 1024,
+      "boardHeight": 768,
+      "boardGap": 16,
+      "boardBackground": "#f3f4f8",
+      "refs": {
+        "kimiSibling": {
+          "src": "assets_src/raw/cover/cover_bg_r2.png",
+          "box": [
+            1120,
+            380,
+            1340,
+            600
+          ]
+        },
+        "kimiSheet": {
+          "src": "assets_src/refs/cast/kimi-chibi-v1.png",
+          "box": [
+            440,
+            40,
+            1010,
+            610
+          ]
+        },
+        "dragonA": {
+          "src": "assets_src/raw/cover/cover_cg_r1.png",
+          "box": [
+            1180,
+            170,
+            1500,
+            370
+          ]
+        },
+        "dragonB": {
+          "src": "assets_src/raw/cover/cover_cg_r2.png",
+          "box": [
+            920,
+            190,
+            1200,
+            370
+          ]
+        },
+        "geminiSheet": {
+          "src": "assets_src/refs/cast/gemini-chibi-v1.png",
+          "box": [
+            0,
+            0,
+            1024,
+            1536
+          ]
+        }
+      },
+      "patches": [
+        {
+          "id": "kimi_k",
+          "box": [
+            1136,
+            312,
+            1392,
+            568
+          ],
+          "refs": [
+            "kimiSibling",
+            "kimiSheet"
+          ],
+          "zone": [
+            [
+              1250,
+              435,
+              34,
+              30
+            ]
+          ],
+          "diff": 28,
+          "grow": 3,
+          "feather": 2.5
+        },
+        {
+          "id": "sky_dragon",
+          "box": [
+            1216,
+            96,
+            1536,
+            416
+          ],
+          "refs": [
+            "dragonA",
+            "dragonB"
+          ],
+          "zone": [
+            [
+              1380,
+              220,
+              150,
+              105
+            ]
+          ],
+          "diff": 34,
+          "grow": 4,
+          "feather": 3
+        },
+        {
+          "id": "gemini_tail",
+          "box": [
+            320,
+            432,
+            512,
+            624
+          ],
+          "refs": [
+            "geminiSheet"
+          ],
+          "zone": [
+            [
+              418,
+              548,
+              36,
+              62
+            ]
+          ],
+          "diff": 28,
+          "grow": 3,
+          "feather": 2.5
+        }
+      ],
+      "align": {
+        "search": 10,
+        "scales": [
+          0.98,
+          0.99,
+          1.0,
+          1.01,
+          1.02
+        ],
+        "minArea": 24
+      },
+      "extend": {
+        "id": "top_ext",
+        "rows": 128,
+        "fill": "#808080",
+        "seam": 40,
+        "compareRows": 240
+      },
+      "grades": [
+        {
+          "note": "lead girl (DeepSeek): a touch more colour and contrast, faint warm light",
+          "ellipse": [
+            335,
+            640,
+            130,
+            160
+          ],
+          "strength": 0.04,
+          "saturation": 1.14,
+          "contrast": 1.08,
+          "color": "#ffd6a0"
+        },
+        {
+          "note": "lift the dark GLM + Grok corner",
+          "ellipse": [
+            1385,
+            650,
+            140,
+            210
+          ],
+          "strength": 0.07,
+          "saturation": 1.05,
+          "contrast": 1.0,
+          "color": "#ffc890"
+        }
+      ],
+      "out": "assets_src/raw/cover/cover_final.png",
+      "pixelOut": "assets_src/raw/cover/pixel/cover_final.png",
+      "backdrop": {
+        "keepSize": true,
+        "pixel": 2,
+        "palette": 0
+      }
+    }
+  },
+  "walkVideo": {
+    "enabled": true,
+    "rawDir": "assets_src/raw/walk_video",
+    "pad": 8,
+    "scale": 8,
+    "background": "#FF00FF",
+    "cycle": {
+      "topMinPx": 20,
+      "edgeFrames": 4,
+      "neckBand": [
+        0.4,
+        0.65
+      ],
+      "maxShift": 2,
+      "maxLift": 1,
+      "seedMaxDiff": 40,
+      "reach": 6,
+      "maxStray": 12,
+      "legFrac": 0.3,
+      "minAlternate": 20,
+      "maxBob": 6
+    },
+    "task": {
+      "flow": "i2v",
+      "aspect": "1:1",
+      "megapixels": 0.4,
+      "duration": 3,
+      "profile": "balanced"
+    }
+  }
+}

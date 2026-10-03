@@ -1,0 +1,54 @@
+{
+  "eventTemplate": {
+    "event": {
+      "id": "legend-{species}",
+      "nameZh": "events.legendEvent.name",
+      "description": "events.legend.{species}.appear",
+      "legend": "{species}",
+      "hidden": false,
+      "scope": "local",
+      "trigger": "legend",
+      "tag": "legend",
+      "priority": 10,
+      "when": {},
+      "effects": [
+        {"kind": "rumor", "text": "events.legend.{species}.appear"},
+        {"kind": "ambience", "cue": "{cue}", "minutes": 0}
+      ],
+      "durationMinutes": 45,
+      "cooldownDays": 0,
+      "repeatable": true,
+      "rumor": "events.legend.{species}.rumor"
+    },
+    "weatherEffect": {"kind": "weather", "weather": "{weather}", "minutes": 0}
+  },
+  "legends": [
+    {"species": "chatgpt", "pattern": "wander", "speed": 0, "minBand": 0, "when": {}, "cue": "legend-chat", "levelBonus": 2, "biomes": ["city", "meadow", "coast"]},
+    {"species": "gpt-6-astra", "pattern": "orbit", "speed": 9, "minBand": 1, "when": {"timeOfDay": ["night"]}, "cue": "legend-stars", "levelBonus": 4, "biomes": ["highland", "volcano"]},
+    {"species": "gpt-6-sol", "pattern": "orbit", "speed": 15, "minBand": 1, "when": {"timeOfDay": ["day"]}, "cue": "legend-sun", "levelBonus": 4, "biomes": ["volcano", "desert"]},
+    {"species": "openai-codex", "pattern": "blink", "speed": 0, "minBand": 0, "when": {"hourRange": [21, 5]}, "cue": "legend-code", "levelBonus": 2, "biomes": ["volcano", "city"]},
+    {"species": "gpt-image-2-5", "pattern": "wander", "speed": 0, "minBand": 0, "when": {"weather": ["clear", "aurora"]}, "cue": "legend-light", "levelBonus": 2, "biomes": ["coast", "meadow"]},
+    {"species": "claude-opus", "pattern": "tide", "speed": 4, "minBand": 1, "when": {}, "cue": "legend-snow", "levelBonus": 5, "biomes": ["snow", "highland"], "weather": "snow"},
+    {"species": "claude-sonnet", "pattern": "orbit", "speed": 6, "minBand": 0, "when": {"timeOfDay": ["dusk", "night"]}, "cue": "legend-verse", "levelBonus": 3, "biomes": ["snow", "city"]},
+    {"species": "claude-fable", "pattern": "wander", "speed": 0, "minBand": 1, "when": {"timeOfDay": ["dawn", "dusk"]}, "cue": "legend-dream", "levelBonus": 4, "biomes": ["highland", "snow"]},
+    {"species": "claude-code", "pattern": "blink", "speed": 0, "minBand": 0, "when": {}, "cue": "legend-code", "levelBonus": 2, "biomes": ["volcano", "coast"]},
+    {"species": "gemini-argon", "pattern": "tide", "speed": 5, "minBand": 1, "when": {"weather": ["aurora", "snow"]}, "cue": "legend-aurora", "levelBonus": 5, "biomes": ["highland", "snow"], "weather": "aurora"},
+    {"species": "genie-3", "pattern": "blink", "speed": 0, "minBand": 1, "when": {}, "cue": "legend-dream", "levelBonus": 3, "biomes": ["ruins", "meadow", "highland"]},
+    {"species": "grok-4-7", "pattern": "orbit", "speed": 12, "minBand": 1, "when": {"weather": ["sand", "clear"]}, "cue": "legend-wind", "levelBonus": 4, "biomes": ["desert", "volcano"], "weather": "sand"},
+    {"species": "muse-spark", "pattern": "wander", "speed": 0, "minBand": 0, "when": {}, "cue": "legend-light", "levelBonus": 2, "biomes": ["city", "coast"]},
+    {"species": "suno-v6", "pattern": "orbit", "speed": 8, "minBand": 0, "when": {"timeOfDay": ["dusk", "night"]}, "cue": "legend-music", "levelBonus": 3, "biomes": ["coast", "city", "forest"]},
+    {"species": "eleven-v4", "pattern": "tide", "speed": 6, "minBand": 0, "when": {}, "cue": "legend-music", "levelBonus": 2, "biomes": ["coast", "city"]},
+    {"species": "cursor", "pattern": "blink", "speed": 0, "minBand": 0, "when": {"timeOfDay": ["day"]}, "cue": "legend-code", "levelBonus": 2, "biomes": ["city", "volcano"]},
+    {"species": "openclaw", "pattern": "tide", "speed": 3, "minBand": 0, "when": {"weather": ["rain"]}, "cue": "legend-sea", "levelBonus": 3, "biomes": ["coast", "city", "swamp"], "weather": "rain"},
+    {"species": "deepseek-v4", "pattern": "wander", "speed": 0, "minBand": 1, "when": {}, "cue": "legend-sea", "levelBonus": 4, "biomes": ["coast", "highland"]},
+    {"species": "qwen3-8-max", "pattern": "orbit", "speed": 7, "minBand": 0, "when": {}, "cue": "legend-wind", "levelBonus": 3, "biomes": ["city", "highland"]},
+    {"species": "wan-3", "pattern": "wander", "speed": 0, "minBand": 0, "when": {"timeOfDay": ["dusk"]}, "cue": "legend-light", "levelBonus": 3, "biomes": ["coast", "meadow"]},
+    {"species": "kimi-k3", "pattern": "orbit", "speed": 5, "minBand": 0, "when": {"timeOfDay": ["night"]}, "cue": "legend-moon", "levelBonus": 3, "biomes": ["snow", "forest", "city"]},
+    {"species": "glm-5-3", "pattern": "tide", "speed": 4, "minBand": 0, "when": {}, "cue": "legend-heat", "levelBonus": 3, "biomes": ["volcano", "forest"]},
+    {"species": "doubao-app", "pattern": "wander", "speed": 0, "minBand": 0, "when": {"timeOfDay": ["day", "dusk"]}, "cue": "legend-chat", "levelBonus": 1, "biomes": ["city", "meadow", "coast"]},
+    {"species": "seedance-2-5", "pattern": "orbit", "speed": 10, "minBand": 0, "when": {"weather": ["clear"]}, "cue": "legend-music", "levelBonus": 3, "biomes": ["coast", "meadow", "city"]},
+    {"species": "mimo-v2-6-pro", "pattern": "blink", "speed": 0, "minBand": 1, "when": {}, "cue": "legend-light", "levelBonus": 4, "biomes": ["forest", "city", "volcano"]},
+    {"species": "minimax-h3", "pattern": "tide", "speed": 6, "minBand": 0, "when": {"weather": ["rain", "fog"]}, "cue": "legend-sea", "levelBonus": 3, "biomes": ["coast", "forest"], "weather": "fog"},
+    {"species": "unitree-gd01", "pattern": "orbit", "speed": 11, "minBand": 2, "when": {}, "cue": "legend-thunder", "levelBonus": 6, "biomes": ["volcano", "highland"], "weather": "ash"}
+  ]
+}

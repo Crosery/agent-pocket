@@ -1,0 +1,80 @@
+/* World-event HUD (src/client/ui/event-hud.ts). Colours of overlays come from content/events/client.json. */
+.ap-l-evfx { z-index: 7; pointer-events: none; overflow: hidden; }
+.ap-l-evhud { z-index: 10; pointer-events: none; }
+.ap-l-evfx.is-hidden, .ap-l-evhud.is-hidden, .ap-evchips.is-hidden { visibility: hidden; }
+html.ap-battle-on .ap-l-evfx, html.ap-battle-on .ap-l-evhud, html.ap-battle-on .ap-evchips { visibility: hidden; }
+
+/* Ambience overlays */
+.ap-evfx {
+  position: absolute;
+  inset: -4%;
+  opacity: var(--evo, 1);
+  transition: opacity 800ms ease;
+  animation: ap-evfx-in 900ms ease-out both;
+}
+.ap-evfx.is-out { opacity: 0; }
+@keyframes ap-evfx-in { from { opacity: 0; } to { opacity: var(--evo, 1); } }
+.ap-evfx.is-pulse { animation: ap-evfx-in 900ms ease-out both, ap-evfx-pulse 3.2s ease-in-out 900ms infinite; }
+.ap-evfx.is-flicker { animation: ap-evfx-in 900ms ease-out both, ap-evfx-flicker 4.6s steps(1, end) 900ms infinite; }
+.ap-evfx.is-drift { animation: ap-evfx-in 900ms ease-out both, ap-evfx-drift 9s ease-in-out 900ms infinite alternate; }
+.ap-evfx.is-scan { animation: ap-evfx-in 900ms ease-out both, ap-evfx-scan 2.4s linear 900ms infinite; }
+.ap-evfx.is-hue { animation: ap-evfx-in 900ms ease-out both, ap-evfx-hue 6s linear 900ms infinite; }
+.ap-evfx.is-glitch { animation: ap-evfx-in 900ms ease-out both, ap-evfx-glitch 1.9s steps(1, end) 900ms infinite; }
+.ap-evfx.is-alarm { animation: ap-evfx-in 900ms ease-out both, ap-evfx-alarm 1.2s ease-in-out 900ms infinite; }
+.ap-evfx.is-thunder { animation: ap-evfx-in 900ms ease-out both, ap-evfx-thunder 7s linear 900ms infinite; }
+.ap-evfx.is-heat { animation: ap-evfx-in 900ms ease-out both, ap-evfx-heat 2.8s ease-in-out 900ms infinite alternate; }
+.ap-evfx.is-flash { animation: ap-evfx-in 900ms ease-out both, ap-evfx-flash 1.6s ease-out 900ms infinite; }
+@keyframes ap-evfx-pulse { 0%, 100% { opacity: calc(var(--evo, 1) * 0.6); } 50% { opacity: var(--evo, 1); } }
+@keyframes ap-evfx-flicker { 0%, 100% { opacity: var(--evo, 1); } 7% { opacity: calc(var(--evo, 1) * 0.35); } 9% { opacity: var(--evo, 1); } 62% { opacity: calc(var(--evo, 1) * 0.55); } 64% { opacity: var(--evo, 1); } }
+@keyframes ap-evfx-drift { from { transform: translate3d(-2%, -1%, 0); } to { transform: translate3d(2%, 1%, 0); } }
+@keyframes ap-evfx-scan { from { background-position: 0 0; } to { background-position: 0 calc(var(--u) * 64); } }
+@keyframes ap-evfx-hue { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+@keyframes ap-evfx-glitch { 0%, 100% { transform: none; } 12% { transform: translate3d(1.5%, 0, 0); } 14% { transform: translate3d(-1%, 0.5%, 0); } 16% { transform: none; } 71% { transform: translate3d(-1.5%, 0, 0); } 73% { transform: none; } }
+@keyframes ap-evfx-alarm { 0%, 100% { opacity: 0.15; } 50% { opacity: var(--evo, 1); } }
+@keyframes ap-evfx-thunder { 0%, 92%, 100% { opacity: calc(var(--evo, 1) * 0.3); } 93% { opacity: 1; } 94% { opacity: 0.2; } 95% { opacity: 1; } }
+@keyframes ap-evfx-heat { from { transform: scaleY(1); } to { transform: scaleY(1.04) translate3d(0, -1%, 0); } }
+@keyframes ap-evfx-flash { 0% { opacity: var(--evo, 1); } 60%, 100% { opacity: calc(var(--evo, 1) * 0.25); } }
+
+/* Active event chips (under the quest tracker) */
+.ap-evchips { display: flex; flex-direction: column; gap: calc(var(--u) * 2); margin-top: calc(var(--u) * 3); pointer-events: none; }
+.ap-evchips[hidden] { display: none; }
+.ap-evchips.is-standalone { position: absolute; left: calc(var(--u) * 8); top: calc(var(--u) * 64); }
+.ap-evchip {
+  display: flex;
+  flex-direction: column;
+  max-width: calc(var(--u) * 168);
+  padding: calc(var(--u) * 2) calc(var(--u) * 10) calc(var(--u) * 3) calc(var(--u) * 7);
+  background: linear-gradient(90deg, rgba(8, 11, 22, 0.84) 0%, rgba(14, 20, 36, 0.6) 70%, rgba(14, 20, 36, 0) 100%);
+  border-left: var(--u) solid var(--evc, var(--ap-gold));
+  animation: ap-rise 220ms ease-out both;
+}
+.ap-evchip-title { color: #fffaf0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ap-evchip-sub { color: var(--ap-gold-hi); font-size: calc(var(--u) * 7); line-height: calc(var(--u) * 9); white-space: nowrap; }
+html.ap-compact .ap-evchip { max-width: calc(var(--u) * 120); }
+
+/* Roaming-legend sense pill */
+.ap-evsense {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--u) * 10 + env(safe-area-inset-top, 0px));
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 5);
+  padding: calc(var(--u) * 3) calc(var(--u) * 10);
+  background: rgba(8, 11, 22, 0.82);
+  border: var(--u) solid var(--evc, var(--ap-gold));
+  box-shadow: 0 0 calc(var(--u) * 6) var(--evc, var(--ap-gold));
+  color: #fffaf0;
+  white-space: nowrap;
+  animation: ap-evsense-glow 1.6s ease-in-out infinite;
+}
+.ap-evsense[hidden] { display: none; }
+.ap-evsense-arrow {
+  width: calc(var(--u) * 9);
+  height: calc(var(--u) * 9);
+  background: var(--evc, var(--ap-gold));
+  clip-path: polygon(0 30%, 55% 30%, 55% 0, 100% 50%, 55% 100%, 55% 70%, 0 70%);
+  transition: transform 300ms ease;
+}
+@keyframes ap-evsense-glow { 0%, 100% { box-shadow: 0 0 calc(var(--u) * 2) var(--evc, var(--ap-gold)); } 50% { box-shadow: 0 0 calc(var(--u) * 8) var(--evc, var(--ap-gold)); } }

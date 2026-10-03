@@ -1,0 +1,489 @@
+{
+ "missing": [
+  {
+   "name": "ChatGPT (app / desktop superapp)",
+   "suggestedFamily": "chatgpt (or the stage after gpt-35)",
+   "why": "This is the most-used AI product in the world: about 930M MAU in Jan 2026 per a WeChat AI产品榜 roundup. In July 2026 OpenAI folded the Codex app (and Atlas) into a ChatGPT desktop superapp (HN 48890384; Neowin 2026-03-21). The roster has the models but not the product, even though it does include Doubao App and Qwen App."
+  },
+  {
+   "name": "GPT-5.6 Sol / Terra / Luna",
+   "suggestedFamily": "gpt-frontier (between GPT-5.5 and GPT-6)",
+   "why": "Released 2026-07-09 (openai.com/index/gpt-5-6), with a preview on 2026-06-26 where US-government vetting controlled access. Terra (max) scores 42 on the AA Intelligence Index. Without it the roster jumps straight from GPT-5.5 to GPT-6."
+  },
+  {
+   "name": "GPT-5.4 (and GPT-5.3-Codex)",
+   "suggestedFamily": "gpt-frontier / codex",
+   "why": "GPT-5.4 came out 2026-03-05, and Epoch confirmed GPT-5.4 Pro solved a FrontierMath open problem (2026-03-24). GPT-5.3-Codex (Feb 2026) is listed on the AA leaderboard. Both are notable middle generations."
+  },
+  {
+   "name": "o3",
+   "suggestedFamily": "gpt-frontier (between o1 and GPT-5)",
+   "why": "Iconic 2025 reasoning model (Apr 2025; o3-pro 2025-06-10). Without it the chain goes straight from o1 to GPT-5."
+  },
+  {
+   "name": "GPT Image 1.5 and GPT Image 2",
+   "suggestedFamily": "gpt-image (between GPT Image 1 and 2.5)",
+   "why": "GPT Image 1.5 is from Dec 2025. GPT Image 2 launched 2026-04-21 and is still #3 on AA Text-to-Image, behind only GPT Image 2.5 Sunburst and Flare."
+  },
+  {
+   "name": "Sora (original, 2024)",
+   "suggestedFamily": "sora (stage 1 before Sora 2)",
+   "why": "Previewed Feb 2024 and released Dec 2024. A natural first stage before Sora 2, which shut down on 2026-03-24 (Variety, Deadline)."
+  },
+  {
+   "name": "ChatGPT Atlas (browser agent)",
+   "suggestedFamily": "chatgpt-agent (pre-evolution of Dots)",
+   "why": "Launched 2025-10-21 (chatgpt.com/atlas, 771 points on HN). It is OpenAI's agentic browser and was later merged into the superapp."
+  },
+  {
+   "name": "Claude Opus 4.5 / 4.6 / 4.7 / 4.8 and Claude Opus 5",
+   "suggestedFamily": "claude-legacy -> claude (to link 3.5 Sonnet to Opus 5.5)",
+   "why": "Verified dates: Opus 4.5 2025-11-24, 4.6 2026-02-05, 4.7 2026-04-16, 4.8 2026-05-28 (AA: 'the new #1 AI model'), Opus 5 2026-07-24. Right now the Claude line jumps from 3.5 Sonnet (2024) to the 5.5 generation."
+  },
+  {
+   "name": "Claude Sonnet 5 and Claude Fable 5",
+   "suggestedFamily": "claude / claude-fable",
+   "why": "Fable 5 came out 2026-06-09; AA called it 'the first public Mythos-class model' and it debuted at #1. Sonnet 5 came out 2026-06-30. These are the direct pre-evolutions of Fable 5.1 and Sonnet 5.5."
+  },
+  {
+   "name": "Claude Mythos Preview",
+   "suggestedFamily": "claude-mythos (stage 1)",
+   "why": "Released 2026-04-07 with a system card, red.anthropic.com cyber writeup, a UK AISI evaluation and Firefox hardening work. This is where the Mythos legend starts."
+  },
+  {
+   "name": "Claude Design",
+   "suggestedFamily": "claude-agent",
+   "why": "Anthropic Labs product launched 2026-04-17 (1235 points on HN; 'Figma's woes compound with Claude Design')."
+  },
+  {
+   "name": "Gemini 2.5 Pro and Gemini 3 Pro",
+   "suggestedFamily": "gemini-pro (between 1.5 Pro and 3.1 Pro)",
+   "why": "Gemini 3 Pro launched 2025-11-18 with its model card. 2.5 Pro (2025) was Google's breakout model. The Pro chain currently skips two flagship generations."
+  },
+  {
+   "name": "Gemini 3.5 / 3.6 / 3.7 Flash and Gemini 3.5 Flash-Lite",
+   "suggestedFamily": "gemini (Flash line)",
+   "why": "Dates: 3.5 Flash 2026-05-19 (I/O), 3.6 Flash and 3.5 Flash-Lite 2026-07-21, 3.7 Flash 2026-08-13. Per AA, 3.8 Flash is Google's 'fourth Flash model in under four months'."
+  },
+  {
+   "name": "Gemini 3.8 Live (audio-to-audio, Live Avatar)",
+   "suggestedFamily": "gemini / sound",
+   "why": "Released 2026-09-15 with an Extended Thinking variant; Live Avatar went GA on 2026-09-24/25. This is Google's flagship voice model, so the sound type has a hole without it."
+  },
+  {
+   "name": "Nano Banana Pro and Nano Banana 2 Lite",
+   "suggestedFamily": "nano-banana",
+   "why": "Nano Banana Pro (Gemini 3 Pro Image) came out 2025-11-20 (1275 points on HN). NB2 Lite came out 2026-06-30. Both are on the AA image top 13."
+  },
+  {
+   "name": "Veo 3.1",
+   "suggestedFamily": "veo (between Veo 3 and Gemini Omni)",
+   "why": "Released 2025-10-15 and still on the AA video board (Veo 3.1, Fast, Lite)."
+  },
+  {
+   "name": "Lyria 3 / Lyria 3.5",
+   "suggestedFamily": "new: lyria (sound)",
+   "why": "Lyria 3 launched 2026-02-18 and Lyria 3.5 launched 2026-07-30 in Flow Music. Google's music model is missing entirely."
+  },
+  {
+   "name": "Gemini Robotics 2",
+   "suggestedFamily": "new: gemini-robotics (agent/motion)",
+   "why": "Released 2026-07-30 (620 points on HN), after Gemini Robotics-ER 1.6 (2026-04-15)."
+  },
+  {
+   "name": "Grok Build and Grok Bot",
+   "suggestedFamily": "new: grok-agent",
+   "why": "Grok Build CLI came out 2026-05-14 and was open-sourced 2026-07-15. Paired with Grok 4.7 it ranks #4 on the AA Coding Agent Index. Grok Bot (SpaceXAI x Cursor) came out 2026-08-11."
+  },
+  {
+   "name": "Grok Imagine Image 2.0",
+   "suggestedFamily": "grok-imagine",
+   "why": "Released 2026-08-08; #4 on AA Text-to-Image (Elo 1155)."
+  },
+  {
+   "name": "Grok 3 / 4.20 / 4.3 / 4.5 / 4.6",
+   "suggestedFamily": "grok (intermediates)",
+   "why": "Dates: Grok 4.20 Beta 2026-02-17, 4.3 2026-04-30, 4.5 2026-07-08, 4.6 2026-08-12 (AA). Grok 3 (Feb 2025) bridges Grok-1 and Grok 4."
+  },
+  {
+   "name": "Grok 'Ani' anime companion",
+   "suggestedFamily": "grok (chat/chaos)",
+   "why": "Viral goth anime companion from 2025-07-14 (TechCrunch, Wired). It fits the user's ask for cute 二次元 characters and comes with a ready-made official design."
+  },
+  {
+   "name": "Meta Muse Image, Muse Code and Muse Glimmer",
+   "suggestedFamily": "muse",
+   "why": "Muse Image is from Jul 2026 and is #7 on AA image. Muse Code came out 2026-08-05. Muse Glimmer (30B open-weight edge model) came out 2026-08-10."
+  },
+  {
+   "name": "MAI-Image-2.6 and Microsoft Copilot app",
+   "suggestedFamily": "mai / copilot",
+   "why": "MAI-Image-2.6 came out 2026-09-05 and is #5 on AA Text-to-Image, ahead of Nano Banana 2. In Sept 2026 Microsoft shipped a new Copilot app combining Chat, Cowork and Code (WeChat AI热点汇总, 2026-09-26)."
+  },
+  {
+   "name": "Mistral Vibe / Devstral 2 and Le Chat",
+   "suggestedFamily": "mistral",
+   "why": "Devstral 2 and the Vibe CLI came out 2025-12-09, and Vibe 2.0 on 2026-01-27. Mistral's coding agent and consumer app are both absent."
+  },
+  {
+   "name": "Amazon Kiro and Nova 2",
+   "suggestedFamily": "new: amazon",
+   "why": "Kiro agentic IDE launched Jul 2025 and was later blamed for a 13-hour AWS outage (Feb 2026). Nova 2 came out 2025-12-02. Amazon is not represented at all."
+  },
+  {
+   "name": "Cursor Composer 2.5",
+   "suggestedFamily": "cursor (model form)",
+   "why": "Released 2026-05-20; #3 on the AA Coding Agent Index at roughly 10-60x lower cost. Cursor's in-house model became central after OpenAI pulled its models from Cursor on 2026-08-29."
+  },
+  {
+   "name": "Perplexity Comet (browser)",
+   "suggestedFamily": "perplexity",
+   "why": "Released 2025-07-09. It is the step between Perplexity search and Perplexity Computer."
+  },
+  {
+   "name": "Physical Intelligence π0 -> π0.7",
+   "suggestedFamily": "new: pi (robotics)",
+   "why": "π0 came out 2024-10-31 and π0.7 in Apr 2026. It is the leading robot foundation model."
+  },
+  {
+   "name": "Lightricks LTX-2.5",
+   "suggestedFamily": "new: ltx (motion/open)",
+   "why": "Released Aug 2026. Among open-weight video models it ranks second, behind MiniMax H3, on AA T2V."
+  },
+  {
+   "name": "Ideogram 4.5 / Krea 2 / Recraft V4.1",
+   "suggestedFamily": "image singles (N-R)",
+   "why": "All are active 2026 image models on the AA board: Ideogram 4.5 (Sep 2026), Krea 2 (May 2026), Recraft V4.1 (May 2026)."
+  },
+  {
+   "name": "Neuro-sama (AI VTuber)",
+   "suggestedFamily": "new: vtuber (chat/chaos)",
+   "why": "Popular AI VTuber since Dec 2022 with an existing anime persona, directly matching the 二次元 request."
+  },
+  {
+   "name": "AlphaGo / AlphaFold",
+   "suggestedFamily": "new: alpha (ruins legend)",
+   "why": "Historical DeepMind milestones (2016, and AlphaFold's 2024 Nobel). A better MYTHIC or legendary candidate than Genie 3."
+  },
+  {
+   "name": "GPT-2 / GPT-3, ELIZA, Deep Blue (fossils)",
+   "suggestedFamily": "gpt baby stage; ruins N",
+   "why": "Gives the GPT line a stage 0, and ELIZA (1966) and Deep Blue (1997) make good ruins-biome fossils."
+  },
+  {
+   "name": "蚂蚁阿福 Ant AQ",
+   "suggestedFamily": "new: ant-afu (chat/safety)",
+   "why": "Top-5 Chinese AI app in QuestMobile's 2025 ranking (豆包, DeepSeek, 元宝, 阿福, 千问), with over 100M users by Feb 2026. Ant's 灵光 LingGuang is a possible sibling."
+  },
+  {
+   "name": "豆包手机助手 (nubia NaviX Ultra)",
+   "suggestedFamily": "doubao-app",
+   "why": "Trending in Sept 2026. Logging into 王者荣耀 got users kicked offline, followed by an official apology on 2026-09-25. It is the leading example of an AI phone agent."
+  },
+  {
+   "name": "夸克 Quark AI",
+   "suggestedFamily": "new: quark",
+   "why": "Major Alibaba consumer AI app in the 千问+夸克+灵光+钉钉 lineup (WeChat 2026-03-29). [unverified current MAU]"
+  },
+  {
+   "name": "Kimi K2.5 / K2.6 / K2.8 Preview and Kimi Claw",
+   "suggestedFamily": "kimi (between K2 and K3)",
+   "why": "K2.5 came out 2026-01-27 (Agent Swarm, ARR past ¥100M within a month). K2.6 came out 2026-04-20 and was the leading open model. K2.8 Preview came out Sept 2026. Kimi Claw launched 2026-02-16. Kimi K3.1 is rumored for Oct 2026 [unreleased]."
+  },
+  {
+   "name": "GLM-5 / GLM-5.2",
+   "suggestedFamily": "glm (between 4.5 and 5.3)",
+   "why": "GLM-5.2 came out 2026-06-16 and was AA's leading open-weights model ('We have Mythos at home', Semgrep). The roster jumps from 4.5 to 5.3."
+  },
+  {
+   "name": "Qwen3 / Qwen3.5",
+   "suggestedFamily": "qwen (between 2.5 and 3.8)",
+   "why": "Qwen3 came out Apr 2025 and Qwen3.5 (397B-A17B) in Feb 2026, both on the AA list. Qwen 4 (Alibaba plans 5-10T parameters) is [rumored]."
+  },
+  {
+   "name": "Seedream 4.0 / 4.5",
+   "suggestedFamily": "seedream (between 3.0 and 5.0)",
+   "why": "Seedream 4.0 came out in Sept 2025 and was a major hit ('King of Image Models' on HN); 4.5 came out Dec 2025. Both are on the AA board."
+  },
+  {
+   "name": "HappyOyster 快乐生蚝 and HappyShrimp 快乐虾米",
+   "suggestedFamily": "happyhorse (Alibaba ATH 'Happy' family)",
+   "why": "HappyOyster world model: 1.0 on 2026-06-17, 2.0 Preview at 云栖 2026-09-22. HappyShrimp music model: 1.0 in Aug 2026, 1.1 in Sept. Together with HappyHorse they form a ready-made cute animal trio."
+  },
+  {
+   "name": "Wan 2.5 / 2.6 / 2.7",
+   "suggestedFamily": "wan (between 2.1 and 3.0)",
+   "why": "Wan 2.7 (Jun 2026) is still on AA T2V at #13. The chain jumps from 2.1 to 3.0."
+  },
+  {
+   "name": "MiniMax M2.5 / M2.7 and M3.1",
+   "suggestedFamily": "minimax",
+   "why": "M2.7 came out 2026-03-18 with open weights in April. M3.1 and M3.1-Flash-Preview surfaced in late Sept 2026."
+  },
+  {
+   "name": "LongCat 2.0",
+   "suggestedFamily": "longcat (between Flash and 2.5)",
+   "why": "Open-sourced at the end of June 2026; scores 19 on AA. 2.5-Preview is an upgrade of it."
+  },
+  {
+   "name": "DeepSeek V4.1 Flash",
+   "suggestedFamily": "deepseek",
+   "why": "Released 2026-09-10 (1016 points on HN). At 39 on AA it now outscores V4 Pro 0813 (36) and is DeepSeek's strongest current model."
+  },
+  {
+   "name": "Huawei 小艺 Work",
+   "suggestedFamily": "pangu / new: xiaoyi",
+   "why": "Launched 2026-09-25 in the 'Work' agent wave (Kimi Work, WorkBuddy, Claude Cowork)."
+  },
+  {
+   "name": "Unitree GD01 载人变形机甲",
+   "suggestedFamily": "unitree (boss form)",
+   "why": "Launched 2026-05-12 at ¥3.9M; a 2.7-3m transformable mecha that was trending in Sept 2026. Unitree also listed in Shanghai in Aug 2026. An ideal volcano or highland boss."
+  },
+  {
+   "name": "China Mobile 九天 JT-4.1",
+   "suggestedFamily": "new: jiutian (compute/safety)",
+   "why": "Scores 34 on AA, higher than DeepSeek V4 Flash Vision (35 is close) and above Hy3 (25). The state-operator lab is absent."
+  }
+ ],
+ "factErrors": [
+  {
+   "id": "deepseek-v4",
+   "problem": "DeepSeek V4 (Pro and Flash) was first released 2026-04-24 (api-docs.deepseek.com/news/news260424; AA 2026-04-24). 2026-08-13 is the 'V4-Pro-0813' refresh. V4 Pro 0813 scores only 36 on AA, below V4.1 Flash (39, released 2026-09-10).",
+   "fix": "Set releaseDate to 2026-04-24, or rename to 'DeepSeek-V4-Pro-0813'. Consider making V4.1 Flash the current form, and lower to SSR."
+  },
+  {
+   "id": "gpt-6-luna / gpt-6-sol",
+   "problem": "GPT-6 Sol and Luna launched together on 2026-09-22 as parallel price tiers (openai.com/index/introducing-gpt-6-sol-and-luna). GPT-6.1 Sol replaced GPT-6 Sol on 2026-09-29. Luna is not an earlier generation of Sol, and Astra is the top tier.",
+   "fix": "Use one gpt-6 chain: GPT-6 Luna -> GPT-6.1 Sol -> GPT-6 Astra. Move GPT-5.5 (and GPT-5.6) into gpt-frontier as o1 -> GPT-5 -> GPT-5.5 -> GPT-5.6 -> GPT-6 Astra."
+  },
+  {
+   "id": "gpt-6-astra",
+   "problem": "Launch date is 2026-09-03 (openai.com/index/gpt-6-astra; CNBC 2026-09-03), not 09-04.",
+   "fix": "releaseDate 2026-09-03"
+  },
+  {
+   "id": "gpt-5-5",
+   "problem": "It sits alone in its own 'gpt-5-5' family, but it is GPT-5's direct successor. The 'Spud' codename is confirmed (Brockman interview, 2026-04-24) and the date 2026-04-23 is correct.",
+   "fix": "Put it in gpt-frontier between GPT-5 and GPT-5.6."
+  },
+  {
+   "id": "claude-cowork",
+   "problem": "Claude Cowork stopped being a separate product on 2026-09-16 ('Claude Cowork and chat are now one Claude', claude.com/blog/cowork-is-now-claude).",
+   "fix": "Mark it as merged, or turn it into a 'Claude (app)' species; keep 2026-01-12 as the origin date."
+  },
+  {
+   "id": "claude-mythos",
+   "problem": "Mythos 5.1 is the same model as Fable 5.1 with reduced safeguards, available only through trusted-access cyber and life-science programs (anthropic.com/claude-fable-and-mythos-5-1). It is not a stronger model. Claude Mythos Preview (2026-04-07) is missing as its first stage.",
+   "fix": "Make it an alternate 'unsealed' form of Fable 5.1, or a chain Mythos Preview -> Mythos 5.1. Base stats should equal Fable's, with chaos and attack trading off against defense."
+  },
+  {
+   "id": "claude-opus",
+   "problem": "Opus 5.5 is #1 on the AA Intelligence Index at 58 (max), above Fable 5.1 (53) and GPT-6 Astra (53). The roster's Anthropic top end implies Fable or Mythos is stronger.",
+   "fix": "Give Opus 5.5 the highest BST among non-MYTHIC species; Fable 5.1 can stay UR."
+  },
+  {
+   "id": "gemini-flash-lite",
+   "problem": "Outdated. The latest Flash-Lite is Gemini 3.5 Flash-Lite (2026-07-21, AA).",
+   "fix": "Rename to Gemini 3.5 Flash-Lite with releaseDate 2026-07-21, or keep 3.1 as the base and add 3.5."
+  },
+  {
+   "id": "gemini-omni",
+   "problem": "Outdated version. Gemini Omni launched 2026-05-19, and the current release is 'Gemini Omni 1.1 Flash' (2026-08-27).",
+   "fix": "Name it Gemini Omni 1.1 Flash, keep 2026-05-19 as the origin, and add Veo 3.1 between Veo 3 and Omni."
+  },
+  {
+   "id": "gemini-argon",
+   "problem": "Not publicly available. AA says it is being 'rolled out to selected users', and The Verge says access is restricted to 'trusted cyber defenders' (2026-09-30/10-01).",
+   "fix": "Mark it as gated or limited release; 1M context means high hp."
+  },
+  {
+   "id": "gemini-3-1-pro",
+   "problem": "It shipped only as 'Gemini 3.1 Pro Preview', scoring 30 on AA. Gemini 3.5 Pro was delayed (CNBC 2026-07-16) and Google skipped to Gemini 4.",
+   "fix": "Label it Preview, add Gemini 2.5 Pro and 3 Pro before it, and lower to SR."
+  },
+  {
+   "id": "genie-3",
+   "problem": "Genie 3 was announced 2025-08-05 but became public as Project Genie only on 2026-01-29. It is a research world model, not a frontier-of-frontier species.",
+   "fix": "Keep the dates, note Project Genie 2026-01-29, and downgrade from MYTHIC to UR."
+  },
+  {
+   "id": "grok-1 / grok-4 / grok-4-7",
+   "problem": "Company naming is inconsistent: grok-imagine says 'SpaceXAI (formerly xAI)' while the Grok chain says 'xAI'. AA, x.ai and Reuters have used SpaceXAI since about May 2026. Grok was announced on 2023-11-04 rather than 11-03.",
+   "fix": "Use 'SpaceXAI (formerly xAI)' for all Grok species. Grok-1 date can be 2023-11-04 (minor)."
+  },
+  {
+   "id": "grok-imagine",
+   "problem": "x.ai published 'Grok Imagine Video 1.5' on 2026-06-18, with a preview topping the I2V arena on 2026-05-31. 2026-06-03 is unverified. Image 2.0 (2026-08-08) is the newer flagship.",
+   "fix": "releaseDate 2026-06-18 (or 2026-05 for the preview); add Grok Imagine Image 2.0."
+  },
+  {
+   "id": "muse-spark",
+   "problem": "Muse Spark (2026-04-08) is Meta's general frontier LLM (48 on AA) that replaced Llama; Meta 'abandons open-source Llama for proprietary Muse Spark' (The New Stack, 2026-04-30). 'vision, agent' does not describe it well.",
+   "fix": "Use types logic+vision (or chat), and make it the evolution of llama-4 (Llama 4 -> Muse Spark 1.3)."
+  },
+  {
+   "id": "windsurf -> devin",
+   "problem": "The evolution runs backwards in time: Devin launched 2024-03-12, before Windsurf (2024-11-13). Cognition acquired Windsurf in July 2025.",
+   "fix": "Make Devin the base and Windsurf its evolution (or a sibling form), or drop the evolution link."
+  },
+  {
+   "id": "manus / manus-2",
+   "problem": "Meta acquired Manus on 2025-12-29. Beijing blocked the deal and ordered it unwound on 2026-04-27, and Meta moved to unwind it in June 2026 (TechCrunch 2026-06-13).",
+   "fix": "Use a company field like 'Butterfly Effect (Meta deal being unwound)'. Manus 2.0 on 2026-09-28 is correct."
+  },
+  {
+   "id": "workbuddy",
+   "problem": "QClaw shut down on 2026-09-24, with users migrated to WorkBuddy (multiple WeChat reports). WorkBuddy now runs Hy3 and Hy4 preview.",
+   "fix": "Rename to 'WorkBuddy' and mention QClaw only as a retired former form."
+  },
+  {
+   "id": "qwen-image",
+   "problem": "Outdated. Qwen-Image-3.1 launched at 云栖 on 2026-09-22. Qwen-Image-3.0 and 3.0-Pro are from Jul 2026.",
+   "fix": "Rename to Qwen-Image 3.1 with releaseDate 2026-09-22, keeping 3.0 as the earlier stage."
+  },
+  {
+   "id": "qwen-audio",
+   "problem": "The exact date is 2026-09-23 (云栖). Qwen-Audio-3.1-TTS is #1 on the Controlled Voice Arena (Elo 1177).",
+   "fix": "releaseDate 2026-09-23; raise to SSR."
+  },
+  {
+   "id": "qwen-flash-next",
+   "problem": "Released 2026-08-26 per the qwen.ai blog and HN.",
+   "fix": "releaseDate 2026-08-26 (minor)."
+  },
+  {
+   "id": "qoder",
+   "problem": "Qoder (2025-08-21) is a separate agentic IDE from Alibaba, not an evolved form of 通义灵码 (Lingma).",
+   "fix": "Change nameZh to 'Qoder', or add Lingma as a separate stage 1 if you want that chain."
+  },
+  {
+   "id": "hunyuan-image",
+   "problem": "Outdated. HunyuanImage 3.5 (Preview) came out in Sept 2026 (AA board; 腾讯混元发布 Hy Image 3.5 preview on 2026-09-24).",
+   "fix": "Add 3.5 Preview as the current form."
+  },
+  {
+   "id": "hy3 / hy4",
+   "problem": "Hy3 preview came out Jul 2026 and the Hy3 正式版 (295B/A21B, 256K context, Apache-2.0) around 2026-09-30/10-01. Hy4 preview is from 2026-08-28: 770B/A49B, 1M context, open-sourced.",
+   "fix": "Keep dates and add open to hy4's types. Hy4 Preview could go up to SSR."
+  },
+  {
+   "id": "ernie-5-1",
+   "problem": "Shipped as '文心 5.1 Preview' on 2026-05-09. ERNIE 5.0 (Nov 2025 preview, Jan 2026 GA) is missing. Claims of a '文心一言6.0' circulate only in low-quality posts.",
+   "fix": "Label it Preview and add ERNIE 5.0 between 4.5 and 5.1. Treat ERNIE 6.0 as [unverified rumor]."
+  },
+  {
+   "id": "sensenova",
+   "problem": "The 2026-05-08 date and the version are unverified. Verified 2026 releases are SenseNova V6.5 (2026-03-06) and SenseNova U1 Pro (image, Sept 2026); the original SenseNova is from Apr 2023.",
+   "fix": "Name a concrete version (V6.5 or U1 Pro) with a matching date."
+  },
+  {
+   "id": "bailing",
+   "problem": "The version is stale: 2025-10-09 is Ling-1T. Current releases are Ling 3.0 Flash (Aug 2026), Ring-2.6-1T, Ling-3.0-flash-VL, and Ling-3.0-flash-Fin (2026-09-16, AA).",
+   "fix": "Update to Ling 3.0 / Ring 2.6 with an Aug-Sept 2026 date."
+  },
+  {
+   "id": "kling-4",
+   "problem": "Kling 4.0 was only announced on 2026-09-28. The full version ships in October, and so far only Kling 4.0 Flash early access for 黑金年卡 members is live. It is not yet on any leaderboard.",
+   "fix": "Mark it partially released or [announced]; consider SSR until it ships. 'Kling AI (Kuaishou spin-off)' is correct, with independent legal entity and state AI fund investment in Sept 2026."
+  },
+  {
+   "id": "minicpm",
+   "problem": "MiniCPM5-2B was released 2026-09-07 and open-sourced 09-08 (AA article; WeChat). MiniCPM5-1B came earlier, on 2026-05-26.",
+   "fix": "releaseDate 2026-09-07"
+  },
+  {
+   "id": "intern-s2",
+   "problem": "The official 书生 Intern-S2-397B came out around 2026-09-19/22 at the 浦江创新论坛, and the S2-Preview will be retired 2026-10-31. 2026-07 likely refers to the Preview.",
+   "fix": "releaseDate 2026-09 (or label the July item S2-Preview)."
+  },
+  {
+   "id": "openpangu",
+   "problem": "openPangu-2.0-Pro (505B/A18B, 512k context) weights and tech report were open-sourced 2026-07-31 per Huawei. 2026-06-12 is unverified, possibly an HDC announcement.",
+   "fix": "releaseDate 2026-07-31 (or note June announcement / July open-source)."
+  },
+  {
+   "id": "kat-coder",
+   "problem": "KAT-Coder-Pro V2.5 is reported in Sept 2026 (PConline via WeChat weekly, 2026-09-18). V2 was Mar 2026. 2026-07-10 is unverified, and the brand is now KwaiKAT.",
+   "fix": "Verify the date, likely Sept 2026; company 'Kuaishou (KwaiKAT)'."
+  },
+  {
+   "id": "nano-ai",
+   "problem": "360 纳米AI (n.cn) has existed since 2025 under the All-in-Agent strategy, so 2026-07-28 looks like a version date presented as the product date.",
+   "fix": "Use the 2025 launch date or name the specific 2026 version."
+  },
+  {
+   "id": "minimax-music",
+   "problem": "Date conflict: a WeChat MiniMax Code CLI guide lists MiniMax Music 3.0 as 2026-08-13, not 07-16.",
+   "fix": "Re-verify against the MiniMax official changelog."
+  },
+  {
+   "id": "solar-pro",
+   "problem": "'Solar Pro 3 (2026-03-23)' could not be verified. Upstage's current models are Solar Pro 4 (2026-08-12), Solar Open 2 (2026-07-22) and Solar Mini 4 (2026-09-30), all on AA.",
+   "fix": "Replace with Solar Pro 4."
+  },
+  {
+   "id": "apple-afm",
+   "problem": "The name 'Apple Foundation Models 3' could not be verified. Apple's 2026 Siri overhaul runs on Google Gemini (deal announced 2026-01-12, CNBC/The Verge).",
+   "fix": "Reframe as 'Apple Intelligence / Siri (Gemini-powered)' or mark [unverified]."
+  },
+  {
+   "id": "midjourney-v8",
+   "problem": "The 2026-03-17 date is unverified; the only dated evidence is 'Midjourney releasing v8.2' around 2026-07-25.",
+   "fix": "Verify the V8 launch date."
+  },
+  {
+   "id": "pika",
+   "problem": "No dated source found for 'Pika 2.5 (2026-01)'. Pika is absent from the 2026 AA video board.",
+   "fix": "Verify, or downgrade to N or drop."
+  },
+  {
+   "id": "hermes-agent",
+   "problem": "The 2026-02 date is unverified. The earliest dated coverage is Apr 2026 (hermes-agent.nousresearch.com, #1 on OpenRouter 2026-04-13).",
+   "fix": "Verify, or use 2026-04."
+  },
+  {
+   "id": "clawdbot",
+   "problem": "2025-11-24 is unverified. The repo went viral around 2026-01-26 and was renamed Moltbot on 2026-01-27.",
+   "fix": "Verify the initial release date."
+  },
+  {
+   "id": "openai-codex",
+   "problem": "The status has changed. The Codex desktop app was folded into the ChatGPT superapp around 2026-07-13 (the CLI continues). OpenAI also cut Cursor's model access on 2026-08-29 after SpaceX bought Cursor.",
+   "fix": "Keep the species but note 'now in ChatGPT'; flavor text could mention the Cursor rivalry."
+  },
+  {
+   "id": "gpt-image-1",
+   "problem": "2025-03-25 is when 4o image generation reached ChatGPT; the API model gpt-image-1 came out 2025-04-23 (AA lists Apr 2025).",
+   "fix": "Fine as is if 'Ghibli storm' framing is intended; otherwise use 2025-04-23. GPT Image 1.5 and 2 are missing between 1 and 2.5."
+  },
+  {
+   "id": "step-flash",
+   "problem": "The Step 3.5 Flash weights and blog appeared around 2026-02-01/02 (HF, HN).",
+   "fix": "releaseDate 2026-02 (minor)."
+  }
+ ],
+ "balanceIssues": [
+  "Benchmark used (AA Intelligence Index v4.3, artificialanalysis.ai/leaderboards/models, fetched 2026-10-02): Opus 5.5 58, Sonnet 5.5 56, Fable 5.1 53, GPT-6 Astra 53, Gemini 4 Argon 53, GPT-6.1 Sol 52, Muse Spark 1.3 48, Grok 4.7 46, MiMo-V2.6-Pro 46, Qwen3.8-Max 45, GLM-5.3 45, Step 5 Preview 44, Kimi K3 44, GPT-5.6 Terra 42, Gemini 3.8 Flash 41, Qwen3.8-Flash-Next 40, DeepSeek V4.1 Flash 39, GPT-6 Luna 38, DeepSeek V4 Pro 0813 36, Gemini 3.1 Pro Preview 30, MiniMax-M3 29, Inkling 25, Hy3 25, Nemotron 3 Ultra 23, Claude Haiku 4.5 17, Mistral Medium 3.5 14, gpt-oss-120b 12, MiniCPM5-2B 12, Llama 4 Maverick 10.",
+  "claude-sonnet (Sonnet 5.5) is SSR but ranks #2 in the world at 56, above Astra, Argon and Fable. Raise to UR.",
+  "gpt-6-sol (GPT-6.1 Sol) is SSR but scores 52, 'near-Astra intelligence for a fifth of the price'. Raise to UR.",
+  "deepseek-v4 is UR but V4 Pro 0813 scores 36, below Kimi K3 (44), GLM-5.3 (45), MiMo-V2.6-Pro (46) and even GPT-6 Luna (38). Lower to SSR, or make V4.1 Flash the current form and keep UR only on hype grounds.",
+  "gemini-3-1-pro is SSR at 30 (Preview-only). Lower to SR.",
+  "genie-3 as MYTHIC is the weakest choice of the three MYTHICs. MYTHIC should be the gated or legendary tier: Claude Mythos 5.1 (trusted access only) and AGI. Optional third picks are Gemini 4 Argon (also gated to cyber defenders) or a historical AlphaGo/AlphaFold legend. Demote Genie 3 to UR.",
+  "gemini-omni is UR, but Gemini Omni Flash 1.1 is only #8 on AA Text-to-Video (Elo 1116), behind Wan 3.0, Utopai X, Seedance 2.5, MiniMax H3, H3 Max and FLUX 3. Lower to SSR.",
+  "minimax-h3 is SSR, but MiniMax H3 is the #1 open-weights video model (#4 overall, Elo 1137, open-sourced around end of July 2026). Raise to UR, or at least the top of SSR.",
+  "kling-4 is UR but not yet fully released (only Flash early access, full version in October) and has no leaderboard data. Hold at SSR until it ships.",
+  "eleven-v4 is UR, but Qwen-Audio-3.1-TTS currently leads the Controlled Voice Arena (Elo 1177). Either make Eleven v4 SSR or raise qwen-audio to SSR or UR for parity.",
+  "inkling is SSR but scores 25 (975B open weights; AA calls it the 'leading U.S. open weights model'). SR fits better.",
+  "mistral-medium (14) and gpt-oss (12) are both SR, at the level of ~25-30 models. Lower both to R.",
+  "step-5 (44) is SSR while kimi-k3 (44) is UR. Either raise Step 5 Preview or justify the gap with its 'Preview' status.",
+  "hy4 (Hy4 Preview) is SR, the same as Hy3 (25), even though Hy4 is 770B/A49B with 1M context, open-sourced, and powers 元宝 and WorkBuddy. Consider SSR for Hy4.",
+  "happyhorse is SSR but HappyHorse 1.0/1.1 now rank #12-14 on AA T2V, behind SkyReels V4 (SR). Lower HappyHorse to SR or raise SkyReels.",
+  "gpt-image-2-5 at UR is fine (#1 and #2 on AA T2I). Missing MAI-Image-2.6 (#5) and Grok Imagine Image 2.0 (#4) should be SR to SSR. qwen-image and seedream-5 rank #14-16, so SR to SSR is borderline.",
+  "Context (hp) cues from AA: almost all current frontier models are 1M (Opus 5.5, Sonnet 5.5, Fable 5.1, Astra, Sol, Luna, Argon, Muse Spark, MiMo, GLM-5.3, Kimi K3 1.05M, Step 5). Grok 4.7 is 500k, Qwen3.8 2.4T is 262k, Claude Haiku 4.5 is 200k. Llama 4 Scout (10M) has the largest window if you want an hp-tank N or R species.",
+  "Speed (spe) cues from AA tokens/s: Gemini 3.8 Flash 249, DeepSeek V4 Flash Vision 212, DeepSeek V4.1 Flash 209, Grok 4.7 188 for long prompts, Muse Spark 1.3 152, Sonnet 5.5 139, GPT-6 Luna 131, versus GPT-6 Astra 51. The fastest models overall are Celeris-1 and Inception Mercury 2/2.5, both diffusion LLMs and candidates for an N or R speedster species.",
+  "Atk (reasoning) ordering for URs should follow Opus 5.5 > Sonnet 5.5 > Fable 5.1 ≈ Astra ≈ Argon > 6.1 Sol > Muse Spark 1.3 > Grok 4.7 ≈ MiMo-V2.6-Pro > Qwen3.8-Max ≈ GLM-5.3 > Kimi K3. Gemini 4 Argon has the lowest hallucination rate (15% vs 51% for Astra) and so deserves the highest def among URs, which fits its 'safety' type.",
+  "Family structure: the GPT line is split across gpt, gpt-frontier, gpt-5-5 and gpt-6 with chronology gaps (o3, 5.4, 5.6 missing; Luna is not a pre-evolution of Sol). Claude jumps from 3.5 Sonnet to 5.5. Gemini Pro goes from 1.5 to 3.1. Qwen goes from 2.5 to 3.8. GLM goes from 4.5 to 5.3. Seedream goes from 3.0 to 5.0. The brief asks for older generations as evolution stages, so these gaps leave the roster short of 3-stage lines.",
+  "Character-design hooks for the user's '可爱二次元形象' request (official mascots or personas to research): OpenClaw lobster (小龙虾), Claude Code's pixel crab mascot, DeepSeek whale / Harness 虎鲸, Nano Banana banana, Alibaba ATH's HappyHorse 小马 / HappyShrimp 虾米 / HappyOyster 生蚝 trio, Grok's anime companion Ani, Neuro-sama, Moltbook 'molting' agents, and Unitree GD01 mecha as a boss. [design suggestions, not facts]"
+ ]
+}

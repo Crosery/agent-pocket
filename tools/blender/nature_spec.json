@@ -1,0 +1,578 @@
+{
+  "_doc": "Style spec for tools/blender/nature.py. Footprint/height come from content/props.json; parts are authored in Blender axes (X right, Y back, Z up, front = -Y = glTF +Z) at roughly final size and then fitted (fit: height = uniform scale to PropDef.height; box = per-axis to footprint minus margin and height; [axes] = only those axes). Shapes/texture generators are keyed by id in nature_lib.py.",
+  "propsFile": "content/props.json",
+  "modelsDir": "public/assets/models",
+  "srcDir": "assets_src/blender/nature",
+  "export": {"magFilter": 9728, "minFilter": 9728},
+  "defaults": {"fit": "height", "margin": 0.04, "texelsPerUnit": 32, "emissivePrefix": "EMIT_", "foliageMaterial": "FOLIAGE", "maxTris": 1500, "maxBytes": 204800, "heightTolerance": 0.02},
+  "preview": {"cell": 320, "cols": 8, "azimuthDeg": 28, "elevationDeg": 32, "frame": 1.22, "shiftY": -0.06, "labelSize": 0.07, "labelY": -0.42, "labelColor": "#f4f1e8", "background": "#2b2f3a", "ambient": "#8a96b0", "ambientStrength": 0.32, "sunColor": "#fff1d6", "sunEnergy": 4.0, "sunRotDeg": [48, 8, -35], "samples": 16},
+  "textures": {
+    "bark_oak": {"gen": "bark", "size": [32, 32], "palette": ["#3b2a1e", "#4f3826", "#654630", "#7a5739", "#8d6844"], "cracks": 0.35, "seed": 3},
+    "leaf_oak": {"gen": "leaves", "size": 32, "palette": ["#1f4a2a", "#2c6534", "#47893c", "#77b54c", "#b8de72"], "blob": [2.0, 3.6], "density": 0.95, "seed": 4},
+    "bark_pine": {"gen": "bark", "size": [32, 32], "palette": ["#2f2119", "#43301f", "#573f29", "#6b4f33"], "cracks": 0.4, "seed": 5},
+    "needles_pine": {"gen": "needles", "size": 32, "palette": ["#12352a", "#1b4834", "#2a6542", "#438450", "#68a45e"], "density": 0.14, "seed": 6},
+    "needles_snow": {"gen": "needles", "size": 32, "palette": ["#14332e", "#1d4538", "#2c5e48", "#457a58", "#9fc0b2"], "density": 0.14, "seed": 7},
+    "snow": {"gen": "noise", "size": 32, "palette": ["#bccbe0", "#d9e4f2", "#eef4fb", "#ffffff"], "cells": [8, 4], "weights": [0.6, 0.4], "seed": 8},
+    "pine_snow": {"gen": "atlas", "tiles": ["needles_snow", "snow"]},
+    "bark_palm": {"gen": "bark", "size": [32, 32], "palette": ["#4e3a26", "#6e5436", "#8c6c45", "#a88552", "#c09c62"], "cracks": 0.1, "rings": 5, "seed": 9},
+    "leaf_palm": {"gen": "leaves", "size": 32, "palette": ["#2a5520", "#3a7428", "#579a32", "#86c246", "#c4e57a"], "blob": [1.5, 3.0], "density": 1.0, "seed": 10},
+    "coconut": {"gen": "noise", "size": 32, "palette": ["#3e2818", "#563823", "#6e4a2d", "#84603a"], "seed": 11},
+    "palm_atlas": {"gen": "atlas", "tiles": ["leaf_palm", "coconut"]},
+    "bark_cherry": {"gen": "bark", "size": [32, 32], "palette": ["#2e1b1e", "#422729", "#583536", "#6e4545"], "cracks": 0.12, "rings": 9, "seed": 12},
+    "blossom": {"gen": "blossom", "size": 32, "palette": ["#c45a8c", "#dc7aa6", "#f0a0c2", "#ffd8e8", "#fff4c8"], "density": 0.07, "seed": 13},
+    "bark_dead": {"gen": "bark", "size": [32, 32], "palette": ["#37322d", "#4c463e", "#635b50", "#7b7264", "#948a79"], "cracks": 0.45, "seed": 14},
+    "bark_swamp": {"gen": "bark", "size": [32, 32], "palette": ["#272419", "#363224", "#47412f", "#59523b"], "cracks": 0.35, "seed": 15},
+    "leaf_swamp": {"gen": "leaves", "size": 32, "palette": ["#1c3222", "#28462b", "#3b6034", "#567b42", "#83a058"], "blob": [2.0, 3.4], "density": 0.95, "seed": 16},
+    "moss": {"gen": "noise", "size": 32, "palette": ["#4a6436", "#5f7d44", "#7d9c58", "#9cb86e"], "cells": [[8, 2], [4, 1]], "weights": [0.6, 0.4], "seed": 17},
+    "swamp_atlas": {"gen": "atlas", "tiles": ["leaf_swamp", "moss"]},
+    "leaf_bush": {"gen": "leaves", "size": 32, "palette": ["#1d4a2c", "#286436", "#3f8a3e", "#68b552", "#a6dc7c"], "blob": [1.8, 3.2], "density": 1.0, "seed": 18},
+    "cactus": {"gen": "cactus", "size": 32, "palette": ["#2c5a32", "#3b763e", "#55964c", "#f4e8b4"], "rib": 4, "ribRamp": [0, 1, 2, 1], "spines": 0.07, "seed": 19},
+    "cactus_flower": {"gen": "noise", "size": 32, "palette": ["#d8467e", "#ee6f9e", "#ffa6c6", "#ffe08a"], "cells": [4, 2], "weights": [0.6, 0.4], "seed": 20},
+    "cactus_atlas": {"gen": "atlas", "tiles": ["cactus", "cactus_flower"]},
+    "stone_gray": {"gen": "stone", "size": 32, "palette": ["#3a3d44", "#575c65", "#6f757f", "#888f99", "#a6adb6"], "cells": 6, "seed": 21},
+    "stone_light": {"gen": "stone", "size": 32, "palette": ["#5a5651", "#7d7871", "#948f87", "#aba69d", "#c4bfb5"], "cells": 7, "seed": 22},
+    "stone_dark": {"gen": "stone", "size": 32, "palette": ["#24262e", "#363945", "#474b5a", "#5a5f70", "#707689"], "cells": 6, "seed": 23},
+    "moss_top": {"gen": "noise", "size": 32, "palette": ["#3f5f30", "#527a3a", "#6b9748", "#8ab45c"], "cells": [8, 4], "weights": [0.6, 0.4], "seed": 24},
+    "stone_moss": {"gen": "atlas", "tiles": ["stone_gray", "moss_top"]},
+    "crystal": {"gen": "gradient", "size": [16, 32], "palette": ["#1a5f8c", "#2490c0", "#4cc6ea", "#9eeeff", "#f2ffff"], "facets": 4, "facetAmp": 0.14, "sparkle": 0.03, "seed": 25},
+    "mush_cap": {"gen": "spots", "size": 16, "palette": ["#5a2a92", "#7a3fbf", "#9b5fe0", "#e8cfff"], "count": 5, "spot": [1.0, 2.0], "seed": 26},
+    "mush_stem": {"gen": "noise", "size": 16, "palette": ["#cfc3ad", "#e2d8c4", "#f2ecdf"], "seed": 27},
+    "rings_wood": {"gen": "rings", "size": 32, "palette": ["#4a3221", "#b4895a", "#caa06c", "#e2c08a"], "ringW": 2.2, "seed": 28},
+    "stump_atlas": {"gen": "atlas", "tiles": ["bark_oak", "rings_wood"]},
+    "wood_planks": {"gen": "planks", "size": 32, "palette": ["#3a2617", "#6b4426", "#81532f", "#966339", "#ab7745"], "plank": 8, "seed": 29},
+    "wood_fence": {"gen": "planks", "size": 32, "palette": ["#3e2c1c", "#74573a", "#8a6a47", "#9f7d55", "#b49165"], "plank": 6, "vertical": true, "seed": 30},
+    "wood_dark": {"gen": "planks", "size": 32, "palette": ["#21140c", "#432918", "#53331e", "#633d25", "#74492c"], "plank": 8, "grain": 1.5, "seed": 31},
+    "wood_light": {"gen": "planks", "size": 32, "palette": ["#5e4630", "#a07a50", "#b48b5c", "#c69c69", "#d6ae7c"], "plank": 8, "grain": 1.5, "seed": 32},
+    "wood_counter": {"gen": "planks", "size": 32, "palette": ["#2f1e12", "#5e3c22", "#70482a", "#825432", "#93603a"], "plank": 8, "vertical": true, "seed": 33},
+    "wood_barrel": {"gen": "planks", "size": 32, "palette": ["#33210f", "#6a4321", "#7d5129", "#8f5e30", "#a26c38"], "plank": 5, "vertical": true, "seed": 34},
+    "crate": {"gen": "planks", "size": 32, "palette": ["#3a2617", "#80562f", "#94663a", "#a87645", "#c4955e"], "plank": 6, "frame": 3, "brace": true, "seed": 35},
+    "metal_dark": {"gen": "metal", "size": 32, "palette": ["#16191e", "#252a31", "#323840", "#414852", "#5f6a76"], "panels": [1, 2], "seed": 36},
+    "metal_light": {"gen": "metal", "size": 32, "palette": ["#6e7a87", "#8f9ba7", "#a9b4bf", "#c2cbd4", "#e2e8ee"], "panels": [1, 1], "seed": 37},
+    "metal_white": {"gen": "metal", "size": 32, "palette": ["#9e98a6", "#d6d2dc", "#e6e2ec", "#f3f0f6", "#ffffff"], "panels": [2, 1], "rivets": false, "seed": 38},
+    "metal_pink": {"gen": "metal", "size": 32, "palette": ["#8a2f52", "#c84a7a", "#dd5f8e", "#ee7aa4", "#ffb3cf"], "panels": [2, 1], "rivets": false, "seed": 39},
+    "metal_red": {"gen": "metal", "size": 32, "palette": ["#4e1212", "#8a2020", "#a82a2a", "#c23a3a", "#e66a6a"], "panels": [1, 1], "seed": 40},
+    "metal_yellow": {"gen": "metal", "size": 16, "palette": ["#7a5a10", "#c8961a", "#e0b028", "#f2c840", "#fff09a"], "panels": [1, 1], "rivets": false, "seed": 41},
+    "lamp_glass": {"gen": "gradient", "size": 16, "palette": ["#ff9a3c", "#ffbf5e", "#ffdb8a", "#fff3c8"], "reverse": true, "seed": 42},
+    "fire": {"gen": "gradient", "size": [16, 32], "palette": ["#b8221a", "#ec4f1e", "#ff8a2a", "#ffc64a", "#fff2a6"], "noise": 0.35, "seed": 43},
+    "ice": {"gen": "gradient", "size": [16, 32], "palette": ["#4f86bb", "#7fb2dc", "#aed6f3", "#dff2ff", "#ffffff"], "facets": 4, "facetAmp": 0.12, "sparkle": 0.04, "seed": 44},
+    "lava": {"gen": "lava", "size": 32, "palette": ["#181212", "#261b18", "#352620", "#453128"], "hot": ["#7a1c12", "#ff5a1f", "#ffd65c"], "cells": 5, "edge": 0.65, "halo": 1.9, "seed": 45},
+    "lava_emit": {"gen": "lava", "size": 32, "palette": ["#181212", "#261b18", "#352620", "#453128"], "hot": ["#3a0c06", "#ff5a1f", "#ffd65c"], "cells": 5, "edge": 0.65, "halo": 1.9, "emitOnly": true, "seed": 45},
+    "screen_cyan": {"gen": "screen", "size": [32, 24], "palette": ["#06121c", "#0d2a3d", "#3fd6ff", "#7fe3ff", "#c4ffff", "#4dff9a"], "bezel": 1, "seed": 46},
+    "screen_pink": {"gen": "screen", "size": [32, 16], "palette": ["#1a0610", "#3a1024", "#ff7aa8", "#ffb3cf", "#ffffff"], "bezel": 1, "header": 1, "seed": 47},
+    "screen_green": {"gen": "screen", "size": [32, 24], "palette": ["#04140c", "#0c2a1a", "#4dff9a", "#9dffc8", "#e0fff0"], "bezel": 1, "seed": 48},
+    "screen_tv": {"gen": "screen", "size": [32, 18], "palette": ["#0a1430", "#16244a", "#7ab8ff", "#ffd45a", "#ff7aa8", "#ffffff"], "bezel": 1, "header": 3, "lineStep": 4, "seed": 49},
+    "notice": {"gen": "screen", "size": [24, 16], "palette": ["#efe6cc", "#d8cba6", "#3a2e24", "#6a5a48", "#b03a2e"], "bezel": 1, "header": 1, "lineStep": 2, "scanline": 0, "seed": 74},
+    "leds": {"gen": "leds", "size": [16, 48], "palette": ["#0b0e12", "#252b33", "#4dff9a", "#2ecc71", "#ffd45a", "#4da6ff"], "unit": 4, "on": 0.65, "seed": 50},
+    "beacon": {"gen": "gradient", "size": 16, "palette": ["#c01818", "#ff3a3a", "#ff8a8a", "#ffd0d0"], "seed": 51},
+    "antenna_stripes": {"gen": "stripes", "size": [8, 32], "palette": ["#b02828", "#d84040", "#e2e2e2", "#f6f6f6"], "bands": [[1, 8], [3, 8]], "fleck": 0.08, "seed": 52},
+    "solar_grid": {"gen": "grid", "size": 32, "palette": ["#c8ccd4", "#1d3a70", "#2a54a0", "#7fb0ff"], "cell": 8, "seed": 53},
+    "solar_atlas": {"gen": "atlas", "tiles": ["solar_grid", "metal_light"]},
+    "terracotta": {"gen": "noise", "size": 32, "palette": ["#7a3e22", "#9a4f2c", "#b66036", "#cf7646"], "cells": [[2, 16], [1, 8]], "weights": [0.6, 0.4], "seed": 54},
+    "soil": {"gen": "noise", "size": 16, "palette": ["#24180f", "#352517", "#47331f"], "seed": 55},
+    "leaf_plant": {"gen": "leaves", "size": 16, "palette": ["#1d4a28", "#2a6a33", "#43923f", "#6fc058", "#b4e88a"], "blob": [1.4, 2.4], "density": 1.0, "seed": 56},
+    "petal_red": {"gen": "noise", "size": 16, "palette": ["#b8283a", "#e04456", "#ff7486", "#ffd1d6"], "cells": [4, 2], "weights": [0.6, 0.4], "seed": 57},
+    "petal_yellow": {"gen": "noise", "size": 16, "palette": ["#c8901a", "#f0b828", "#ffd84a", "#fff4b0"], "cells": [4, 2], "weights": [0.6, 0.4], "seed": 58},
+    "flower_atlas": {"gen": "atlas", "tiles": ["leaf_plant", "petal_red", "petal_yellow"]},
+    "books_a": {"gen": "books", "size": [64, 16], "palette": ["#140d08", "#8a2a2a", "#2a4a8a", "#2f7a3c", "#c99a2e", "#6a3a8a", "#2a7a7a", "#e8d8a8"], "gap": 4, "seed": 59},
+    "books_b": {"gen": "books", "size": [64, 16], "palette": ["#140d08", "#a03a2a", "#3a5a9a", "#4a8a3c", "#d9aa3e", "#7a4a9a", "#9a5a3a", "#e8d8a8"], "gap": 4, "seed": 60},
+    "paper": {"gen": "noise", "size": [64, 16], "palette": ["#cbbd9e", "#ddd0b2", "#ece2c8"], "cells": [[4, 1], [2, 1]], "weights": [0.6, 0.4], "seed": 61},
+    "books_atlas": {"gen": "atlas", "tiles": ["books_a", "books_b", "paper"]},
+    "goods_a": {"gen": "goods", "size": [64, 16], "palette": ["#22252c", "#e05050", "#50a0e0", "#f0c040", "#60c070", "#c070d0", "#f4f4f4"], "seed": 62},
+    "goods_b": {"gen": "goods", "size": [64, 16], "palette": ["#22252c", "#ff8a3c", "#4ad0c8", "#e8e04a", "#7a8af0", "#f06a9a", "#f4f4f4"], "seed": 63},
+    "goods_atlas": {"gen": "atlas", "tiles": ["goods_a", "goods_b"]},
+    "fabric_white": {"gen": "fabric", "size": 16, "palette": ["#9ea0b0", "#d8dae4", "#e8eaf2"], "weave": 1, "weaveIdx": [1, 2], "fleck": 0.01, "seed": 64},
+    "fabric_blanket": {"gen": "fabric", "size": 32, "palette": ["#2a3a6a", "#3a5aa0", "#4a6ab4", "#e8d8a0"], "weave": 1, "weaveIdx": [1, 2], "stripes": [[3, 2, 3], [9, 1, 0], [22, 1, 0], [27, 2, 3]], "seed": 65},
+    "fabric_red": {"gen": "fabric", "size": 16, "palette": ["#4a1420", "#a8303e", "#c03c4c"], "weave": 1, "weaveIdx": [1, 2], "seed": 66},
+    "rug": {"gen": "rug", "size": [48, 32], "palette": ["#3a1a1a", "#8a2a2a", "#b8463a", "#d8a050", "#f0d8a0", "#2a4a6a"], "bands": [[1, 0], [2, 3], [1, 0], [3, 1]], "field": 2, "diamond": [[0.95, 5], [0.7, 3], [0.45, 4], [0.2, 1]], "seed": 67},
+    "arena": {"gen": "arena", "size": [40, 56], "palette": ["#3b6a3a", "#447640", "#f2f0e2", "#d84a4a"], "stripe": 4, "inset": 2, "circle": 0.2, "dot": 0.35, "boxW": 0.5, "boxH": 0.14, "seed": 68},
+    "stairs": {"gen": "stairs", "size": 32, "palette": ["#070606", "#17110e", "#2c221b", "#433429", "#5c4a3a", "#776250"], "steps": 6, "wall": 3, "seed": 69},
+    "blocks_stone": {"gen": "blocks", "size": 32, "palette": ["#4a4a54", "#6c6c78", "#80808c", "#9494a0", "#b6b6c2"], "rowH": 8, "blockW": 16, "seed": 70},
+    "gold": {"gen": "metal", "size": 16, "palette": ["#6a4a10", "#a87a1a", "#d4a52a", "#f0c850", "#fff0a0"], "panels": [1, 1], "rivets": false, "seed": 71},
+    "heal_orb": {"gen": "gradient", "size": 16, "palette": ["#c8325e", "#ff5a8a", "#ff9ab8", "#ffe0ea"], "seed": 72},
+    "glass_tank": {"gen": "gradient", "size": [16, 32], "palette": ["#0c5446", "#168a6c", "#2fc99a", "#7ff5cf", "#e0fff4"], "noise": 0.3, "sparkle": 0.06, "seed": 73},
+    "bamboo_stalk": {"gen": "bark", "size": [32, 32], "palette": ["#2f5a22", "#4a8a33", "#5fa03d", "#7cba4c", "#a6d66a"], "cracks": 0.0, "rings": 8, "seed": 80},
+    "leaf_bamboo": {"gen": "leaves", "size": 32, "palette": ["#24521f", "#33702a", "#4f9636", "#7cbf4a", "#bfe27e"], "blob": [1.4, 2.6], "density": 0.95, "seed": 81},
+    "giant_cap": {"gen": "spots", "size": 32, "palette": ["#9c2638", "#c8384a", "#e45664", "#fff2e2"], "count": 7, "spot": [1.6, 3.0], "seed": 82},
+    "giant_stem": {"gen": "noise", "size": 32, "palette": ["#cdbfa6", "#e0d5bf", "#efe7d6", "#f8f3e8"], "cells": [[2, 8], [1, 4]], "weights": [0.6, 0.4], "seed": 83},
+    "bark_acacia": {"gen": "bark", "size": [32, 32], "palette": ["#3a2c22", "#54402f", "#6c543e", "#86694c"], "cracks": 0.3, "seed": 84},
+    "leaf_acacia": {"gen": "leaves", "size": 32, "palette": ["#3a4c1e", "#536a28", "#728c34", "#9cb24a", "#d2d878"], "blob": [1.6, 3.0], "density": 0.95, "seed": 85},
+    "bark_baobab": {"gen": "bark", "size": [32, 32], "palette": ["#5e4a44", "#7a645c", "#927a70", "#a89084", "#c0a898"], "cracks": 0.18, "seed": 86},
+    "bark_mangrove": {"gen": "bark", "size": [32, 32], "palette": ["#33201a", "#4c3022", "#64402c", "#7c5236"], "cracks": 0.3, "seed": 87},
+    "leaf_mangrove": {"gen": "leaves", "size": 32, "palette": ["#143a24", "#1d5230", "#2a6e3e", "#448e4e", "#7cbc66"], "blob": [1.8, 3.2], "density": 0.95, "seed": 88},
+    "coral_pink": {"gen": "noise", "size": 16, "palette": ["#c04a62", "#e06a80", "#f48e98", "#ffc4c0"], "cells": [4, 2], "weights": [0.6, 0.4], "seed": 89},
+    "coral_orange": {"gen": "noise", "size": 16, "palette": ["#c8602a", "#ee8a3c", "#ffb05a", "#ffe0a0"], "cells": [4, 2], "weights": [0.6, 0.4], "seed": 90},
+    "coral_teal": {"gen": "noise", "size": 16, "palette": ["#2a8a8a", "#3ab0a8", "#6ad4c4", "#b8f4e6"], "cells": [4, 2], "weights": [0.6, 0.4], "seed": 91},
+    "coral_atlas": {"gen": "atlas", "tiles": ["coral_pink", "coral_orange", "coral_teal"]},
+    "coral_rock": {"gen": "stone", "size": 32, "palette": ["#a89282", "#c4ae9c", "#d6c2b0", "#e6d6c6", "#f4e8dc"], "cells": 6, "seed": 92},
+    "glitch_screen": {"gen": "screen", "size": [32, 32], "palette": ["#150a26", "#2c1652", "#4ff0ff", "#ff6ad5", "#b28cff", "#f4f0ff"], "bezel": 1, "header": 2, "lineStep": 2, "scanline": 0.35, "seed": 93},
+    "stone_violet": {"gen": "stone", "size": 32, "palette": ["#1e1630", "#2e2248", "#3e3060", "#524278", "#6a5a94"], "cells": 6, "seed": 94},
+    "pcb": {"gen": "grid", "size": 32, "palette": ["#d4a840", "#1f4a34", "#2a6044", "#7cd4a0"], "cell": 8, "seed": 95},
+    "metal_green": {"gen": "metal", "size": 32, "palette": ["#122a20", "#1c3a2c", "#264c3a", "#33604a", "#4c8068"], "panels": [1, 2], "seed": 96},
+    "node_glow": {"gen": "gradient", "size": 16, "palette": ["#1e8a4a", "#3fe08a", "#9dffc8", "#f0fff6"], "seed": 97},
+    "bark_neural": {"gen": "bark", "size": [32, 32], "palette": ["#121a30", "#1c2846", "#283a60", "#34507a"], "cracks": 0.25, "seed": 98},
+    "leaf_neural": {"gen": "leaves", "size": 32, "palette": ["#0e2636", "#15384e", "#1f5068", "#2c6c88", "#56a4c4"], "blob": [1.8, 3.2], "density": 0.9, "seed": 99},
+    "neural_glow": {"gen": "gradient", "size": 16, "palette": ["#2a6ec0", "#56b4ff", "#a8e2ff", "#f2fbff"], "seed": 100},
+    "cloud_fluff": {"gen": "noise", "size": 32, "palette": ["#c6d2ea", "#dce5f5", "#ecf1fa", "#ffffff"], "cells": [8, 4], "weights": [0.6, 0.4], "seed": 101},
+    "redrock_strata": {"gen": "stripes", "size": [16, 32], "palette": ["#6a3018", "#8a4226", "#a85834", "#c06a40", "#d8956a", "#ecc09a"], "bands": [[2, 3], [3, 2], [4, 3], [1, 2], [3, 3], [5, 1], [2, 2], [0, 1], [4, 3], [3, 2], [1, 2], [2, 1], [5, 2], [3, 3], [2, 2], [0, 2]], "fleck": 0.1, "seed": 102},
+    "redrock_cap": {"gen": "stone", "size": 32, "palette": ["#5a4436", "#7a5e4a", "#94765e", "#ae8e72", "#c8a888"], "cells": 6, "seed": 103},
+    "salt": {"gen": "gradient", "size": [16, 32], "palette": ["#b8b2c4", "#d6d0de", "#ebe6f0", "#f8f4fa", "#ffffff"], "facets": 4, "facetAmp": 0.12, "sparkle": 0.05, "seed": 104},
+    "salt_crust": {"gen": "noise", "size": 32, "palette": ["#cfc8bc", "#e0dacf", "#eee9e0", "#faf7f0"], "seed": 105}
+  },
+  "materials": {
+    "bark_oak": {"tex": "bark_oak", "rough": 0.95},
+    "leaf_oak": {"tex": "leaf_oak", "rough": 0.85},
+    "bark_pine": {"tex": "bark_pine", "rough": 0.95},
+    "pine": {"tex": "needles_pine", "rough": 0.85},
+    "pine_snow": {"tex": "pine_snow", "rough": 0.8},
+    "bark_palm": {"tex": "bark_palm", "rough": 0.95},
+    "palm": {"tex": "palm_atlas", "rough": 0.8, "doubleSided": true},
+    "bark_cherry": {"tex": "bark_cherry", "rough": 0.95},
+    "blossom": {"tex": "blossom", "rough": 0.8},
+    "bark_dead": {"tex": "bark_dead", "rough": 0.95},
+    "bark_swamp": {"tex": "bark_swamp", "rough": 0.95},
+    "swamp": {"tex": "swamp_atlas", "rough": 0.85, "doubleSided": true},
+    "leaf_bush": {"tex": "leaf_bush", "rough": 0.85},
+    "cactus": {"tex": "cactus_atlas", "rough": 0.75},
+    "stone_gray": {"tex": "stone_gray", "rough": 0.9},
+    "stone_light": {"tex": "stone_light", "rough": 0.9},
+    "stone_dark": {"tex": "stone_dark", "rough": 0.9},
+    "stone_moss": {"tex": "stone_moss", "rough": 0.9},
+    "crystal": {"tex": "crystal", "rough": 0.2, "emit": 2.2},
+    "mush_cap": {"tex": "mush_cap", "rough": 0.6, "emit": 1.6},
+    "mush_stem": {"tex": "mush_stem", "rough": 0.8},
+    "stump": {"tex": "stump_atlas", "rough": 0.95},
+    "wood_planks": {"tex": "wood_planks", "rough": 0.85},
+    "wood_fence": {"tex": "wood_fence", "rough": 0.9},
+    "wood_dark": {"tex": "wood_dark", "rough": 0.7},
+    "wood_light": {"tex": "wood_light", "rough": 0.7},
+    "wood_counter": {"tex": "wood_counter", "rough": 0.7},
+    "wood_barrel": {"tex": "wood_barrel", "rough": 0.85},
+    "crate": {"tex": "crate", "rough": 0.9},
+    "metal_dark": {"tex": "metal_dark", "rough": 0.5, "metal": 0.4},
+    "metal_light": {"tex": "metal_light", "rough": 0.45, "metal": 0.4},
+    "metal_white": {"tex": "metal_white", "rough": 0.4, "metal": 0.1},
+    "metal_pink": {"tex": "metal_pink", "rough": 0.4, "metal": 0.1},
+    "metal_red": {"tex": "metal_red", "rough": 0.5, "metal": 0.3},
+    "metal_yellow": {"tex": "metal_yellow", "rough": 0.5, "metal": 0.3},
+    "lamp_glass": {"tex": "lamp_glass", "rough": 0.3, "emit": 3.0},
+    "fire": {"tex": "fire", "rough": 1.0, "emit": 4.0},
+    "ice": {"tex": "ice", "rough": 0.15},
+    "snow": {"tex": "snow", "rough": 0.9},
+    "lava": {"tex": "lava", "rough": 0.9, "emit": 3.0, "emitTex": "lava_emit"},
+    "screen_cyan": {"tex": "screen_cyan", "rough": 0.2, "emit": 1.8},
+    "screen_pink": {"tex": "screen_pink", "rough": 0.2, "emit": 1.8},
+    "screen_green": {"tex": "screen_green", "rough": 0.2, "emit": 1.8},
+    "screen_tv": {"tex": "screen_tv", "rough": 0.2, "emit": 1.6},
+    "notice": {"tex": "notice", "rough": 1.0},
+    "leds": {"tex": "leds", "rough": 0.4, "emit": 2.5},
+    "beacon": {"tex": "beacon", "rough": 0.3, "emit": 4.0},
+    "antenna": {"tex": "antenna_stripes", "rough": 0.6, "metal": 0.3},
+    "solar": {"tex": "solar_atlas", "rough": 0.25, "metal": 0.3},
+    "terracotta": {"tex": "terracotta", "rough": 0.9},
+    "soil": {"tex": "soil", "rough": 1.0},
+    "leaf_plant": {"tex": "leaf_plant", "rough": 0.8, "doubleSided": true},
+    "flowers": {"tex": "flower_atlas", "rough": 0.8, "doubleSided": true},
+    "books": {"tex": "books_atlas", "rough": 0.8},
+    "goods": {"tex": "goods_atlas", "rough": 0.7},
+    "fabric_white": {"tex": "fabric_white", "rough": 1.0},
+    "fabric_blanket": {"tex": "fabric_blanket", "rough": 1.0},
+    "fabric_red": {"tex": "fabric_red", "rough": 1.0},
+    "rug": {"tex": "rug", "rough": 1.0},
+    "arena": {"tex": "arena", "rough": 0.9},
+    "stairs": {"tex": "stairs", "rough": 1.0},
+    "blocks_stone": {"tex": "blocks_stone", "rough": 0.9},
+    "gold": {"tex": "gold", "rough": 0.35, "metal": 0.8},
+    "heal_orb": {"tex": "heal_orb", "rough": 0.2, "emit": 2.5},
+    "glass_tank": {"tex": "glass_tank", "rough": 0.1, "emit": 1.8},
+    "bamboo": {"tex": "bamboo_stalk", "rough": 0.6},
+    "leaf_bamboo": {"tex": "leaf_bamboo", "rough": 0.8, "doubleSided": true},
+    "giant_cap": {"tex": "giant_cap", "rough": 0.55},
+    "giant_stem": {"tex": "giant_stem", "rough": 0.8},
+    "bark_acacia": {"tex": "bark_acacia", "rough": 0.95},
+    "leaf_acacia": {"tex": "leaf_acacia", "rough": 0.85},
+    "bark_baobab": {"tex": "bark_baobab", "rough": 0.95},
+    "bark_mangrove": {"tex": "bark_mangrove", "rough": 0.95},
+    "leaf_mangrove": {"tex": "leaf_mangrove", "rough": 0.8},
+    "coral": {"tex": "coral_atlas", "rough": 0.7},
+    "coral_rock": {"tex": "coral_rock", "rough": 0.95},
+    "glitch": {"tex": "glitch_screen", "rough": 0.3, "emit": 2.0},
+    "stone_violet": {"tex": "stone_violet", "rough": 0.9},
+    "pcb": {"tex": "pcb", "rough": 0.5, "metal": 0.2},
+    "metal_green": {"tex": "metal_green", "rough": 0.45, "metal": 0.4},
+    "node_glow": {"tex": "node_glow", "rough": 0.2, "emit": 3.0},
+    "bark_neural": {"tex": "bark_neural", "rough": 0.9},
+    "leaf_neural": {"tex": "leaf_neural", "rough": 0.8},
+    "neural_glow": {"tex": "neural_glow", "rough": 0.2, "emit": 3.0},
+    "cloud": {"tex": "cloud_fluff", "rough": 1.0},
+    "redrock": {"tex": "redrock_strata", "rough": 0.95},
+    "redrock_cap": {"tex": "redrock_cap", "rough": 0.95},
+    "salt": {"tex": "salt", "rough": 0.25},
+    "salt_crust": {"tex": "salt_crust", "rough": 0.9}
+  },
+  "props": {
+    "tree_oak": {"budget": 2000, "materials": {"BARK": "bark_oak", "FOLIAGE": "leaf_oak"}, "parts": [
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 0], [0.04, 0.02, 0.6], [-0.02, 0.03, 1.1], [0, 0, 1.5]], "r": [0.22, 0.16, 0.13, 0.1], "sides": 7, "segments": 2, "jitter": 0.06, "seed": 3},
+      {"shape": "tube", "mat": "BARK", "path": [[0.1, 0, 0.28], [0.27, 0, 0.07], [0.38, 0, 0]], "r": [0.1, 0.04], "sides": 5, "capEnd": "point", "radial": {"count": 4, "start": 20}, "seed": 4},
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 0.95], [0.28, 0, 1.2], [0.45, 0, 1.5]], "r": [0.08, 0.04], "sides": 5, "radial": {"count": 3, "start": 40}, "seed": 5},
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 1.68], "count": 6, "ring": 0.5, "r": [0.42, 0.52], "squash": 0.8, "detail": 1, "jitter": 0.12, "zJitter": 0.12, "seed": 11},
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 2.16], "count": 4, "ring": 0.32, "r": [0.4, 0.48], "centerR": 0.55, "centerZ": 0.08, "squash": 0.85, "detail": 1, "jitter": 0.12, "startDeg": 45, "seed": 12},
+      {"shape": "ico", "mat": "FOLIAGE", "pos": [0.05, -0.05, 2.62], "r": 0.4, "detail": 1, "jitter": 0.12, "seed": 13}
+    ]},
+    "tree_pine": {"budget": 2000, "materials": {"BARK": "bark_pine", "FOLIAGE": "pine"}, "parts": [
+      {"shape": "cyl", "mat": "BARK", "r": 0.14, "rTop": 0.07, "h": 1.8, "sides": 6},
+      {"shape": "tube", "mat": "BARK", "path": [[0.08, 0, 0.2], [0.22, 0, 0.04], [0.28, 0, 0]], "r": [0.07, 0.03], "sides": 4, "capEnd": "point", "radial": {"count": 3, "start": 10}, "seed": 6},
+      {"shape": "cones", "mat": "FOLIAGE", "tiers": 5, "z": [0.6, 3.8], "r": [0.92, 0.3], "tierH": 1.05, "sides": 9, "notch": 0.24, "droop": 0.14, "jitter": 0.07, "seed": 7}
+    ]},
+    "tree_snowpine": {"budget": 2000, "materials": {"BARK": "bark_pine", "FOLIAGE": "pine_snow"}, "parts": [
+      {"shape": "cyl", "mat": "BARK", "r": 0.14, "rTop": 0.07, "h": 1.8, "sides": 6},
+      {"shape": "tube", "mat": "BARK", "path": [[0.08, 0, 0.2], [0.22, 0, 0.04], [0.28, 0, 0]], "r": [0.07, 0.03], "sides": 4, "capEnd": "point", "radial": {"count": 3, "start": 50}, "seed": 8},
+      {"shape": "cones", "mat": "FOLIAGE", "tiers": 5, "z": [0.6, 3.8], "r": [0.9, 0.3], "tierH": 1.05, "sides": 9, "notch": 0.2, "droop": 0.12, "jitter": 0.08, "cap": {"frac": 0.45, "tile": 1, "line": 0.62}, "seed": 9}
+    ]},
+    "tree_palm": {"budget": 2000, "materials": {"BARK": "bark_palm", "FOLIAGE": "palm"}, "parts": [
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 0], [0.1, 0, 1.0], [0.27, 0, 2.0], [0.4, 0, 2.85], [0.45, 0, 3.2]], "r": [0.2, 0.15, 0.13, 0.12, 0.13], "sides": 7, "segments": 2, "seed": 10},
+      {"shape": "fronds", "mat": "FOLIAGE", "origin": [0.45, 0, 3.22], "count": 9, "length": 1.75, "width": 0.5, "lift": 30, "droop": 0.85, "fold": 0.22, "serrate": 0.35, "segments": 6, "spreadJitter": 12, "seed": 11},
+      {"shape": "ico", "mat": "FOLIAGE", "pos": [0.45, 0, 3.2], "r": 0.17, "detail": 1, "jitter": 0.1, "seed": 12},
+      {"shape": "ico", "mat": "FOLIAGE", "tile": 1, "pos": [0.58, 0, 3.08], "r": 0.1, "detail": 1, "jitter": 0.08, "radial": {"count": 3, "start": 15, "pivot": [0.45, 0, 0]}, "seed": 13}
+    ]},
+    "tree_cherry": {"budget": 2000, "materials": {"BARK": "bark_cherry", "FOLIAGE": "blossom"}, "parts": [
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 0], [0.07, 0, 0.5], [-0.04, 0.02, 0.95], [0.02, 0, 1.35]], "r": [0.18, 0.13, 0.1, 0.08], "sides": 6, "segments": 2, "jitter": 0.05, "seed": 20},
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 0.85], [0.36, 0, 1.12], [0.62, 0, 1.4]], "r": [0.075, 0.035], "sides": 5, "radial": {"count": 4, "start": 15}, "seed": 21},
+      {"shape": "tube", "mat": "BARK", "path": [[0.08, 0, 0.22], [0.24, 0, 0.05], [0.3, 0, 0]], "r": [0.08, 0.03], "sides": 4, "capEnd": "point", "radial": {"count": 3, "start": 70}, "seed": 22},
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 1.6], "count": 7, "ring": 0.62, "r": [0.4, 0.5], "squash": 0.7, "detail": 1, "jitter": 0.14, "zJitter": 0.1, "seed": 23},
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 2.02], "count": 4, "ring": 0.34, "r": [0.4, 0.48], "centerR": 0.55, "centerZ": 0.08, "squash": 0.75, "detail": 1, "jitter": 0.14, "startDeg": 30, "seed": 24}
+    ]},
+    "tree_dead": {"budget": 2000, "materials": {"BARK": "bark_dead"}, "parts": [
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 0], [0.08, 0.02, 0.7], [-0.03, 0, 1.4], [0.05, 0.03, 2.0], [0, 0, 2.45]], "r": [0.2, 0.14, 0.1, 0.06, 0.03], "sides": 6, "segments": 2, "capEnd": "point", "jitter": 0.08, "seed": 30},
+      {"shape": "tube", "mat": "BARK", "path": [[0.03, 0, 1.1], [0.4, 0.05, 1.5], [0.62, 0, 2.05]], "r": [0.07, 0.02], "sides": 5, "segments": 2, "capEnd": "point", "seed": 31},
+      {"shape": "tube", "mat": "BARK", "path": [[-0.02, 0, 1.5], [-0.38, 0, 1.85], [-0.6, 0.08, 2.35]], "r": [0.06, 0.02], "sides": 5, "segments": 2, "capEnd": "point", "seed": 32},
+      {"shape": "tube", "mat": "BARK", "path": [[0.04, 0, 1.85], [0.12, -0.3, 2.25], [0.1, -0.42, 2.6]], "r": [0.05, 0.015], "sides": 4, "segments": 2, "capEnd": "point", "seed": 33},
+      {"shape": "tube", "mat": "BARK", "path": [[0.4, 0.05, 1.5], [0.55, 0.25, 1.62], [0.7, 0.35, 1.82]], "r": [0.035, 0.012], "sides": 4, "capEnd": "point", "seed": 34},
+      {"shape": "tube", "mat": "BARK", "path": [[-0.38, 0, 1.85], [-0.5, -0.25, 1.98], [-0.52, -0.38, 2.1]], "r": [0.035, 0.012], "sides": 4, "capEnd": "point", "seed": 35},
+      {"shape": "tube", "mat": "BARK", "path": [[0.1, 0, 0.3], [0.3, 0, 0.06], [0.42, 0, 0]], "r": [0.1, 0.03], "sides": 4, "capEnd": "point", "radial": {"count": 4, "start": 35}, "seed": 36}
+    ]},
+    "tree_swamp": {"budget": 2000, "materials": {"BARK": "bark_swamp", "FOLIAGE": "swamp"}, "parts": [
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 0.3], [0.05, 0, 1.0], [0, 0.04, 1.7], [0.03, 0, 2.15]], "r": [0.17, 0.13, 0.1, 0.09], "sides": 6, "segments": 2, "jitter": 0.06, "seed": 40},
+      {"shape": "tube", "mat": "BARK", "path": [[0.05, 0, 0.8], [0.33, 0, 0.55], [0.5, 0, 0]], "r": [0.075, 0.05], "sides": 5, "segments": 2, "radial": {"count": 5, "start": 10}, "seed": 41},
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 2.2], "count": 6, "ring": 0.58, "r": [0.42, 0.52], "squash": 0.55, "detail": 1, "jitter": 0.12, "zJitter": 0.08, "seed": 42},
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 2.5], "count": 3, "ring": 0.25, "r": [0.4, 0.48], "centerR": 0.5, "squash": 0.6, "detail": 1, "jitter": 0.12, "startDeg": 20, "seed": 43},
+      {"shape": "strands", "mat": "FOLIAGE", "tile": 1, "pos": [0, 0, 2.05], "count": 12, "ring": [0.35, 0.95], "length": [0.45, 1.0], "width": 0.13, "zJitter": 0.05, "seed": 44}
+    ]},
+    "bush": {"materials": {"FOLIAGE": "leaf_bush"}, "parts": [
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 0.42], "count": 5, "ring": 0.3, "r": [0.26, 0.34], "centerR": 0.38, "centerZ": 0.08, "squash": 0.85, "detail": 1, "jitter": 0.12, "zJitter": 0.06, "seed": 50}
+    ]},
+    "cactus": {"materials": {"CACTUS": "cactus"}, "parts": [
+      {"shape": "tube", "mat": "CACTUS", "path": [[0, 0, 0], [0, 0, 1.55]], "r": [0.2, 0.17], "sides": 8, "capEnd": "dome", "seed": 60},
+      {"shape": "tube", "mat": "CACTUS", "path": [[0.12, 0, 0.62], [0.36, 0, 0.66], [0.42, 0, 0.85], [0.42, 0, 1.15]], "r": 0.1, "sides": 6, "segments": 2, "capEnd": "dome", "seed": 61},
+      {"shape": "tube", "mat": "CACTUS", "path": [[-0.12, 0, 0.85], [-0.33, 0, 0.9], [-0.38, 0, 1.05], [-0.38, 0, 1.32]], "r": 0.09, "sides": 6, "segments": 2, "capEnd": "dome", "seed": 62},
+      {"shape": "ico", "mat": "CACTUS", "tile": 1, "pos": [0, 0, 1.72], "size": [0.1, 0.1, 0.06], "detail": 0, "seed": 63}
+    ]},
+    "rock_small": {"materials": {"STONE": "stone_gray"}, "parts": [
+      {"shape": "ico", "mat": "STONE", "pos": [0.03, 0.02, 0], "size": [0.42, 0.36, 0.4], "detail": 1, "jitter": 0.16, "cut": -0.25, "seed": 51},
+      {"shape": "ico", "mat": "STONE", "pos": [-0.32, -0.2, 0], "size": [0.16, 0.14, 0.12], "detail": 0, "jitter": 0.1, "cut": -0.2, "seed": 52}
+    ]},
+    "rock_large": {"materials": {"STONE": "stone_moss"}, "parts": [
+      {"shape": "ico", "mat": "STONE", "size": [0.92, 0.8, 1.0], "detail": 1, "jitter": 0.14, "cut": -0.3, "dirTiles": {"+z": 1}, "dirThreshold": 0.72, "seed": 61},
+      {"shape": "ico", "mat": "STONE", "pos": [0.6, -0.48, 0], "size": [0.48, 0.42, 0.52], "detail": 1, "jitter": 0.14, "cut": -0.2, "dirTiles": {"+z": 1}, "dirThreshold": 0.72, "seed": 62},
+      {"shape": "ico", "mat": "STONE", "pos": [-0.72, -0.55, 0], "size": [0.28, 0.26, 0.24], "detail": 0, "jitter": 0.12, "cut": -0.2, "seed": 63}
+    ]},
+    "crystal": {"materials": {"STONE": "stone_dark", "EMIT_CRYSTAL": "crystal"}, "parts": [
+      {"shape": "ico", "mat": "STONE", "size": [0.42, 0.36, 0.22], "detail": 1, "jitter": 0.15, "cut": -0.3, "seed": 71},
+      {"shape": "spike", "mat": "EMIT_CRYSTAL", "pos": [0, 0, 0.05], "r": 0.17, "h": 1.55, "tip": 0.28, "sides": 6, "uv": "fit", "seed": 72},
+      {"shape": "spike", "mat": "EMIT_CRYSTAL", "pos": [0.2, 0, 0], "rot": [0, 28, 0], "r": 0.11, "h": 0.95, "tip": 0.3, "sides": 6, "uv": "fit", "radial": {"count": 5, "start": 10}, "vary": {"scale": [0.65, 1.15], "rot": 30}, "seed": 73}
+    ]},
+    "mushroom": {"materials": {"STEM": "mush_stem", "EMIT_CAP": "mush_cap"}, "parts": [
+      {"shape": "cyl", "mat": "STEM", "r": 0.07, "rTop": 0.055, "h": 0.42, "sides": 6},
+      {"shape": "lathe", "mat": "EMIT_CAP", "profile": [[0, 0.36], [0.26, 0.38], [0.24, 0.48], [0.14, 0.58], [0, 0.62]], "sides": 8},
+      {"shape": "cyl", "mat": "STEM", "pos": [0.3, -0.14, 0], "scale": [0.62, 0.62, 0.62], "r": 0.07, "rTop": 0.055, "h": 0.42, "sides": 6},
+      {"shape": "lathe", "mat": "EMIT_CAP", "pos": [0.3, -0.14, 0], "scale": [0.62, 0.62, 0.62], "profile": [[0, 0.36], [0.26, 0.38], [0.24, 0.48], [0.14, 0.58], [0, 0.62]], "sides": 8},
+      {"shape": "cyl", "mat": "STEM", "pos": [-0.26, 0.12, 0], "scale": [0.5, 0.5, 0.5], "r": 0.07, "rTop": 0.055, "h": 0.42, "sides": 6},
+      {"shape": "lathe", "mat": "EMIT_CAP", "pos": [-0.26, 0.12, 0], "scale": [0.5, 0.5, 0.5], "profile": [[0, 0.36], [0.26, 0.38], [0.24, 0.48], [0.14, 0.58], [0, 0.62]], "sides": 8},
+      {"shape": "cyl", "mat": "STEM", "pos": [-0.12, -0.3, 0], "scale": [0.36, 0.36, 0.36], "r": 0.07, "rTop": 0.055, "h": 0.42, "sides": 5},
+      {"shape": "lathe", "mat": "EMIT_CAP", "pos": [-0.12, -0.3, 0], "scale": [0.36, 0.36, 0.36], "profile": [[0, 0.36], [0.26, 0.38], [0.24, 0.48], [0.14, 0.58], [0, 0.62]], "sides": 7}
+    ]},
+    "stump": {"materials": {"WOOD": "stump"}, "parts": [
+      {"shape": "cyl", "mat": "WOOD", "r": 0.32, "rTop": 0.28, "h": 0.42, "sides": 9, "capTile": 1, "jitter": 0.05, "seed": 80},
+      {"shape": "tube", "mat": "WOOD", "path": [[0.2, 0, 0.22], [0.36, 0, 0.05], [0.44, 0, 0]], "r": [0.08, 0.03], "sides": 4, "capEnd": "point", "radial": {"count": 4, "start": 25}, "seed": 81}
+    ]},
+    "log": {"materials": {"WOOD": "stump"}, "parts": [
+      {"shape": "cyl", "mat": "WOOD", "rot": [0, 90, 0], "pos": [-0.85, 0, 0.24], "r": 0.24, "h": 1.7, "sides": 8, "startDeg": 22.5, "capTile": 1, "jitter": 0.04, "seed": 82},
+      {"shape": "tube", "mat": "WOOD", "path": [[0.3, -0.05, 0.4], [0.4, -0.12, 0.56]], "r": [0.06, 0.045], "sides": 5, "capTile": 1, "seed": 83}
+    ]},
+    "fence": {"fit": ["x", "z"], "margin": 0, "materials": {"WOOD": "wood_fence"}, "parts": [
+      {"shape": "box", "mat": "WOOD", "pos": [0.42, 0, 0], "size": [0.12, 0.12, 0.7], "mirror": "x"},
+      {"shape": "box", "mat": "WOOD", "pos": [0.42, 0, 0.7], "size": [0.15, 0.15, 0.1], "taper": 0.3, "mirror": "x"},
+      {"shape": "box", "mat": "WOOD", "pos": [0, 0, 0.22], "size": [1.0, 0.05, 0.1], "grid": {"count": [1, 1, 2], "step": [0, 0, 0.28]}}
+    ]},
+    "lamp": {"materials": {"METAL": "metal_dark", "EMIT_LAMP": "lamp_glass"}, "parts": [
+      {"shape": "box", "mat": "METAL", "size": [0.32, 0.32, 0.12], "taper": 0.8},
+      {"shape": "cyl", "mat": "METAL", "pos": [0, 0, 0.12], "r": 0.055, "h": 1.8, "sides": 6},
+      {"shape": "cyl", "mat": "METAL", "pos": [0, 0, 1.9], "r": 0.1, "rTop": 0.13, "h": 0.06, "sides": 6},
+      {"shape": "box", "mat": "EMIT_LAMP", "pos": [0, 0, 1.96], "size": [0.24, 0.24, 0.3], "taper": 1.15, "uv": "face"},
+      {"shape": "box", "mat": "METAL", "pos": [0, 0, 1.96], "size": [0.29, 0.29, 0.03]},
+      {"shape": "cyl", "mat": "METAL", "pos": [0, 0, 2.26], "r": 0.27, "rTop": 0.02, "h": 0.16, "sides": 4, "startDeg": 45},
+      {"shape": "ico", "mat": "METAL", "pos": [0, 0, 2.45], "r": 0.04, "detail": 0}
+    ]},
+    "sign": {"materials": {"WOOD": "wood_planks", "PAPER": "notice"}, "parts": [
+      {"shape": "box", "mat": "WOOD", "pos": [0.33, 0, 0], "size": [0.08, 0.08, 0.92], "mirror": "x"},
+      {"shape": "box", "mat": "WOOD", "pos": [0, -0.02, 0.42], "size": [0.86, 0.07, 0.46]},
+      {"shape": "box", "mat": "WOOD", "pos": [0, -0.02, 0.92], "size": [0.96, 0.14, 0.05]},
+      {"shape": "box", "mat": "PAPER", "pos": [-0.04, -0.06, 0.5], "rot": [0, 4, 0], "size": [0.48, 0.012, 0.3], "uv": "face"}
+    ]},
+    "bench": {"materials": {"WOOD": "wood_planks", "METAL": "metal_dark"}, "parts": [
+      {"shape": "box", "mat": "WOOD", "pos": [0, -0.04, 0.4], "size": [1.8, 0.13, 0.05], "grid": {"count": [1, 3], "step": [0, 0.15]}},
+      {"shape": "box", "mat": "WOOD", "pos": [0, 0.2, 0.5], "rot": [-12, 0, 0], "size": [1.8, 0.05, 0.12], "grid": {"count": [1, 1, 2], "step": [0, 0, 0.16]}},
+      {"shape": "box", "mat": "METAL", "pos": [0.75, -0.02, 0], "size": [0.08, 0.42, 0.4], "mirror": "x"},
+      {"shape": "box", "mat": "METAL", "pos": [0.75, 0.21, 0.36], "rot": [-12, 0, 0], "size": [0.06, 0.05, 0.44], "mirror": "x"},
+      {"shape": "box", "mat": "METAL", "pos": [0.82, -0.04, 0.6], "size": [0.08, 0.42, 0.05], "mirror": "x"},
+      {"shape": "box", "mat": "METAL", "pos": [0.82, -0.2, 0.4], "size": [0.05, 0.05, 0.2], "mirror": "x"}
+    ]},
+    "crate": {"materials": {"WOOD": "crate"}, "parts": [
+      {"shape": "box", "mat": "WOOD", "size": [0.8, 0.8, 0.8], "uv": "face"}
+    ]},
+    "barrel": {"materials": {"WOOD": "wood_barrel", "METAL": "metal_dark"}, "parts": [
+      {"shape": "lathe", "mat": "WOOD", "profile": [[0.28, 0], [0.34, 0.22], [0.36, 0.45], [0.34, 0.68], [0.28, 0.9]], "sides": 10},
+      {"shape": "cyl", "mat": "METAL", "pos": [0, 0, 0.1], "r": 0.33, "h": 0.06, "sides": 10},
+      {"shape": "cyl", "mat": "METAL", "pos": [0, 0, 0.42], "r": 0.368, "h": 0.06, "sides": 10},
+      {"shape": "cyl", "mat": "METAL", "pos": [0, 0, 0.74], "r": 0.33, "h": 0.06, "sides": 10}
+    ]},
+    "mailbox": {"materials": {"WOOD": "wood_planks", "METAL": "metal_red", "FLAG": "metal_yellow"}, "parts": [
+      {"shape": "box", "mat": "WOOD", "size": [0.09, 0.09, 0.72]},
+      {"shape": "box", "mat": "METAL", "pos": [0, 0, 0.72], "size": [0.3, 0.46, 0.2]},
+      {"shape": "cyl", "mat": "METAL", "pos": [0, 0.23, 0.92], "rot": [90, 0, 0], "r": 0.15, "h": 0.46, "sides": 8, "startDeg": 22.5},
+      {"shape": "box", "mat": "FLAG", "pos": [0.17, 0.12, 0.8], "size": [0.03, 0.03, 0.26]},
+      {"shape": "box", "mat": "FLAG", "pos": [0.17, 0.07, 1.0], "size": [0.03, 0.13, 0.08]}
+    ]},
+    "flower_pot": {"materials": {"POT": "terracotta", "SOIL": "soil", "FOLIAGE": "flowers"}, "parts": [
+      {"shape": "lathe", "mat": "POT", "profile": [[0.18, 0], [0.24, 0.3], [0.28, 0.32], [0.28, 0.4], [0, 0.4]], "sides": 10},
+      {"shape": "cyl", "mat": "SOIL", "pos": [0, 0, 0.4], "r": 0.25, "h": 0.015, "sides": 10},
+      {"shape": "fronds", "mat": "FOLIAGE", "origin": [0, 0, 0.4], "count": 6, "length": 0.34, "width": 0.15, "lift": 50, "droop": 0.45, "fold": 0.2, "segments": 3, "seed": 90},
+      {"shape": "tube", "mat": "FOLIAGE", "path": [[0.02, 0, 0.4], [0.1, 0, 0.6]], "r": 0.015, "sides": 3, "radial": {"count": 3}, "seed": 91},
+      {"shape": "ico", "mat": "FOLIAGE", "tile": 1, "pos": [0.1, 0, 0.62], "size": [0.08, 0.08, 0.05], "detail": 0, "radial": {"count": 3}, "seed": 92},
+      {"shape": "tube", "mat": "FOLIAGE", "path": [[0.02, 0, 0.4], [0.13, 0, 0.53]], "r": 0.015, "sides": 3, "radial": {"count": 3, "start": 60}, "seed": 93},
+      {"shape": "ico", "mat": "FOLIAGE", "tile": 2, "pos": [0.13, 0, 0.55], "size": [0.07, 0.07, 0.045], "detail": 0, "radial": {"count": 3, "start": 60}, "seed": 94}
+    ]},
+    "server_rack": {"materials": {"METAL": "metal_dark", "EMIT_LEDS": "leds"}, "parts": [
+      {"shape": "box", "mat": "METAL", "size": [0.8, 0.75, 1.92]},
+      {"shape": "box", "mat": "EMIT_LEDS", "pos": [0, -0.38, 0.08], "size": [0.66, 0.02, 1.76], "uv": "face"},
+      {"shape": "box", "mat": "METAL", "pos": [0, 0, 1.92], "size": [0.84, 0.79, 0.06]},
+      {"shape": "box", "mat": "METAL", "pos": [0.33, -0.39, 0.08], "size": [0.04, 0.04, 1.76], "mirror": "x"}
+    ]},
+    "antenna": {"materials": {"METAL": "antenna", "BASE": "metal_light", "EMIT_BEACON": "beacon"}, "parts": [
+      {"shape": "box", "mat": "BASE", "size": [0.95, 0.95, 0.12], "taper": 0.9},
+      {"shape": "truss", "mat": "METAL", "pos": [0, 0, 0.12], "base": 0.38, "top": 0.07, "h": 3.9, "levels": 6, "bar": 0.035},
+      {"shape": "cyl", "mat": "METAL", "pos": [0, 0, 4.0], "r": 0.03, "h": 0.36, "sides": 5},
+      {"shape": "ico", "mat": "EMIT_BEACON", "pos": [0, 0, 4.42], "r": 0.08, "detail": 1},
+      {"shape": "lathe", "mat": "BASE", "pos": [0, -0.26, 3.0], "rot": [90, 0, 0], "profile": [[0, 0], [0.16, 0.04], [0.28, 0.13]], "sides": 10},
+      {"shape": "box", "mat": "BASE", "pos": [0, -0.12, 2.97], "size": [0.05, 0.22, 0.05]}
+    ]},
+    "solar_panel": {"fit": "box", "materials": {"METAL": "metal_light", "PANEL": "solar"}, "parts": [
+      {"shape": "box", "mat": "PANEL", "pos": [0, 0, 0.55], "rot": [28, 0, 0], "size": [1.9, 0.95, 0.05], "tile": 1, "dirTiles": {"+z": 0}, "dirUv": "face"},
+      {"shape": "box", "mat": "METAL", "pos": [0.8, -0.3, 0], "size": [0.06, 0.06, 0.42], "mirror": "x"},
+      {"shape": "box", "mat": "METAL", "pos": [0.8, 0.3, 0], "size": [0.06, 0.06, 0.72], "mirror": "x"},
+      {"shape": "box", "mat": "METAL", "pos": [0, 0.3, 0.3], "size": [1.66, 0.05, 0.05]}
+    ]},
+    "campfire": {"materials": {"STONE": "stone_gray", "WOOD": "bark_oak", "EMIT_FIRE": "fire"}, "parts": [
+      {"shape": "ico", "mat": "STONE", "pos": [0.36, 0, 0], "size": [0.11, 0.1, 0.09], "detail": 0, "jitter": 0.15, "cut": -0.2, "radial": {"count": 9}, "vary": {"scale": [0.8, 1.2], "rot": 30}, "seed": 100},
+      {"shape": "cyl", "mat": "STONE", "r": 0.25, "h": 0.03, "sides": 8},
+      {"shape": "cyl", "mat": "WOOD", "pos": [0.24, 0, 0.0], "rot": [0, -58, 0], "r": 0.055, "h": 0.46, "sides": 6, "radial": {"count": 3, "start": 30}, "seed": 101},
+      {"shape": "spike", "mat": "EMIT_FIRE", "pos": [0, 0, 0.02], "r": 0.13, "rTop": 0.11, "h": 0.56, "tip": 0.55, "sides": 5, "jitter": 0.15, "uv": "fit", "seed": 102},
+      {"shape": "spike", "mat": "EMIT_FIRE", "pos": [0.1, 0, 0.02], "rot": [0, 16, 0], "r": 0.08, "h": 0.34, "tip": 0.55, "sides": 5, "jitter": 0.15, "uv": "fit", "radial": {"count": 3, "start": 70}, "vary": {"scale": [0.75, 1.1], "rot": 20}, "seed": 103}
+    ]},
+    "ice_spike": {"materials": {"ICE": "ice", "SNOW": "snow"}, "parts": [
+      {"shape": "ico", "mat": "SNOW", "size": [0.44, 0.4, 0.14], "detail": 1, "jitter": 0.15, "cut": -0.2, "seed": 110},
+      {"shape": "spike", "mat": "ICE", "pos": [0, 0, 0.03], "r": 0.2, "rTop": 0.15, "h": 1.55, "tip": 0.4, "sides": 5, "uv": "fit", "seed": 111},
+      {"shape": "spike", "mat": "ICE", "pos": [0.22, 0, 0], "rot": [0, 22, 0], "r": 0.12, "h": 0.95, "tip": 0.42, "sides": 5, "uv": "fit", "radial": {"count": 4, "start": 25}, "vary": {"scale": [0.6, 1.1], "rot": 25}, "seed": 112}
+    ]},
+    "lava_rock": {"materials": {"EMIT_LAVA": "lava"}, "parts": [
+      {"shape": "ico", "mat": "EMIT_LAVA", "size": [0.48, 0.42, 0.52], "detail": 1, "jitter": 0.18, "cut": -0.3, "seed": 120},
+      {"shape": "ico", "mat": "EMIT_LAVA", "pos": [0.36, -0.26, 0], "size": [0.22, 0.2, 0.2], "detail": 1, "jitter": 0.15, "cut": -0.2, "seed": 121}
+    ]},
+    "counter": {"fit": "box", "margin": 0.02, "materials": {"WOOD": "wood_counter", "TOP": "wood_light"}, "parts": [
+      {"shape": "box", "mat": "WOOD", "size": [3.9, 0.8, 1.0]},
+      {"shape": "box", "mat": "TOP", "pos": [0, 0, 1.0], "size": [4.0, 0.95, 0.1]}
+    ]},
+    "heal_machine": {"fit": "box", "materials": {"BODY": "metal_white", "TRIM": "metal_pink", "EMIT_ORB": "heal_orb", "EMIT_SCREEN": "screen_pink"}, "parts": [
+      {"shape": "box", "mat": "BODY", "size": [1.8, 0.8, 0.85]},
+      {"shape": "box", "mat": "TRIM", "pos": [0, 0, 0.58], "size": [1.82, 0.82, 0.08]},
+      {"shape": "box", "mat": "TRIM", "pos": [0, -0.06, 0.85], "size": [1.5, 0.6, 0.06]},
+      {"shape": "ico", "mat": "EMIT_ORB", "pos": [0, -0.06, 0.91], "r": 0.11, "detail": 1, "cut": 0, "uv": "fit", "grid": {"count": [3, 2], "step": [0.42, 0.27]}},
+      {"shape": "box", "mat": "BODY", "pos": [0, 0.32, 0.85], "size": [1.4, 0.14, 0.52]},
+      {"shape": "box", "mat": "EMIT_SCREEN", "pos": [0, 0.25, 0.92], "size": [1.24, 0.02, 0.38], "uv": "face"}
+    ]},
+    "pc_terminal": {"materials": {"BODY": "metal_light", "DARK": "metal_dark", "EMIT_SCREEN": "screen_cyan"}, "parts": [
+      {"shape": "box", "mat": "BODY", "pos": [0, 0.05, 0], "size": [0.7, 0.55, 0.78]},
+      {"shape": "box", "mat": "DARK", "pos": [0, -0.25, 0.72], "rot": [8, 0, 0], "size": [0.68, 0.28, 0.06]},
+      {"shape": "box", "mat": "BODY", "pos": [0, 0.12, 0.8], "size": [0.66, 0.3, 0.55]},
+      {"shape": "box", "mat": "EMIT_SCREEN", "pos": [0, -0.035, 0.865], "size": [0.56, 0.02, 0.42], "uv": "face"},
+      {"shape": "box", "mat": "DARK", "pos": [0, 0.12, 1.35], "size": [0.3, 0.12, 0.04]}
+    ]},
+    "shelf": {"fit": "box", "materials": {"FRAME": "metal_light", "GOODS": "goods"}, "parts": [
+      {"shape": "box", "mat": "FRAME", "pos": [0.92, 0, 0], "size": [0.06, 0.75, 1.95], "mirror": "x"},
+      {"shape": "box", "mat": "FRAME", "pos": [0, 0.355, 0], "size": [1.84, 0.04, 1.95]},
+      {"shape": "box", "mat": "FRAME", "pos": [0, 0, 0.08], "size": [1.84, 0.72, 0.04], "grid": {"count": [1, 1, 4], "step": [0, 0, 0.6]}},
+      {"shape": "box", "mat": "GOODS", "pos": [0, 0.05, 0.12], "size": [1.78, 0.5, 0.42], "uv": "face", "tile": 0, "grid": {"count": [1, 1, 2], "step": [0, 0, 1.2]}},
+      {"shape": "box", "mat": "GOODS", "pos": [0, 0.05, 0.72], "size": [1.78, 0.5, 0.42], "uv": "face", "tile": 1}
+    ]},
+    "bookshelf": {"fit": "box", "materials": {"WOOD": "wood_dark", "BOOKS": "books"}, "parts": [
+      {"shape": "box", "mat": "WOOD", "pos": [0.92, 0, 0], "size": [0.08, 0.6, 2.2], "mirror": "x"},
+      {"shape": "box", "mat": "WOOD", "pos": [0, 0, 2.12], "size": [1.94, 0.62, 0.08]},
+      {"shape": "box", "mat": "WOOD", "size": [1.84, 0.6, 0.1]},
+      {"shape": "box", "mat": "WOOD", "pos": [0, 0.28, 0], "size": [1.84, 0.04, 2.15]},
+      {"shape": "box", "mat": "WOOD", "pos": [0, 0, 0.6], "size": [1.84, 0.56, 0.04], "grid": {"count": [1, 1, 3], "step": [0, 0, 0.52]}},
+      {"shape": "box", "mat": "BOOKS", "pos": [0, 0.03, 0.1], "size": [1.8, 0.42, 0.44], "uv": "face", "tile": 0, "dirTiles": {"+z": 2}, "grid": {"count": [1, 1, 2], "step": [0, 0, 1.04]}},
+      {"shape": "box", "mat": "BOOKS", "pos": [0, 0.03, 0.64], "size": [1.8, 0.42, 0.44], "uv": "face", "tile": 1, "dirTiles": {"+z": 2}, "grid": {"count": [1, 1, 2], "step": [0, 0, 1.04]}}
+    ]},
+    "table": {"fit": "box", "materials": {"WOOD": "wood_light"}, "parts": [
+      {"shape": "box", "mat": "WOOD", "pos": [0, 0, 0.8], "size": [1.9, 0.9, 0.08]},
+      {"shape": "box", "mat": "WOOD", "pos": [0, 0, 0.7], "size": [1.7, 0.7, 0.1]},
+      {"shape": "box", "mat": "WOOD", "size": [0.09, 0.09, 0.8], "grid": {"count": [2, 2], "step": [1.7, 0.7]}}
+    ]},
+    "chair": {"materials": {"WOOD": "wood_light", "SEAT": "fabric_red"}, "parts": [
+      {"shape": "box", "mat": "WOOD", "pos": [0, 0, 0.42], "size": [0.5, 0.5, 0.06]},
+      {"shape": "box", "mat": "SEAT", "pos": [0, -0.01, 0.48], "size": [0.46, 0.44, 0.04]},
+      {"shape": "box", "mat": "WOOD", "size": [0.06, 0.06, 0.42], "grid": {"count": [2, 2], "step": [0.42, 0.42]}},
+      {"shape": "box", "mat": "WOOD", "pos": [0.21, 0.21, 0.48], "size": [0.06, 0.06, 0.45], "mirror": "x"},
+      {"shape": "box", "mat": "WOOD", "pos": [0, 0.21, 0.68], "size": [0.4, 0.05, 0.22]}
+    ]},
+    "bed": {"fit": "box", "materials": {"WOOD": "wood_dark", "SHEET": "fabric_white", "BLANKET": "fabric_blanket"}, "parts": [
+      {"shape": "box", "mat": "WOOD", "size": [0.95, 1.9, 0.28]},
+      {"shape": "box", "mat": "SHEET", "pos": [0, 0, 0.28], "size": [0.88, 1.82, 0.14]},
+      {"shape": "box", "mat": "BLANKET", "pos": [0, -0.33, 0.3], "size": [0.92, 1.15, 0.16]},
+      {"shape": "box", "mat": "SHEET", "pos": [0, 0.66, 0.42], "size": [0.6, 0.3, 0.1], "taper": 0.85},
+      {"shape": "box", "mat": "WOOD", "pos": [0, 0.93, 0], "size": [0.98, 0.08, 0.8]},
+      {"shape": "box", "mat": "WOOD", "pos": [0, -0.94, 0], "size": [0.98, 0.06, 0.45]}
+    ]},
+    "plant": {"materials": {"POT": "terracotta", "SOIL": "soil", "FOLIAGE": "leaf_plant"}, "parts": [
+      {"shape": "lathe", "mat": "POT", "profile": [[0.18, 0], [0.23, 0.38], [0.26, 0.4], [0.26, 0.45], [0, 0.45]], "sides": 10},
+      {"shape": "cyl", "mat": "SOIL", "pos": [0, 0, 0.45], "r": 0.23, "h": 0.015, "sides": 10},
+      {"shape": "fronds", "mat": "FOLIAGE", "origin": [0, 0, 0.45], "count": 7, "length": 0.72, "width": 0.24, "lift": 70, "droop": 0.42, "fold": 0.25, "segments": 4, "seed": 130},
+      {"shape": "fronds", "mat": "FOLIAGE", "origin": [0, 0, 0.45], "count": 4, "length": 0.66, "width": 0.22, "lift": 84, "droop": 0.26, "fold": 0.25, "segments": 4, "startDeg": 25, "seed": 131}
+    ]},
+    "tv": {"materials": {"WOOD": "wood_dark", "BODY": "metal_dark", "EMIT_SCREEN": "screen_tv"}, "parts": [
+      {"shape": "box", "mat": "WOOD", "size": [0.9, 0.45, 0.38]},
+      {"shape": "box", "mat": "BODY", "pos": [0, 0.02, 0.38], "size": [0.26, 0.18, 0.04]},
+      {"shape": "box", "mat": "BODY", "pos": [0, 0.04, 0.42], "size": [0.06, 0.04, 0.08]},
+      {"shape": "box", "mat": "BODY", "pos": [0, 0.04, 0.48], "size": [0.86, 0.08, 0.5]},
+      {"shape": "box", "mat": "EMIT_SCREEN", "pos": [0, -0.005, 0.52], "size": [0.78, 0.02, 0.42], "uv": "face"}
+    ]},
+    "rug": {"fit": "box", "margin": 0.05, "materials": {"RUG": "rug"}, "parts": [
+      {"shape": "box", "mat": "RUG", "size": [2.9, 1.9, 0.02], "uv": "face"}
+    ]},
+    "lab_machine": {"fit": "box", "materials": {"BODY": "metal_white", "DARK": "metal_dark", "EMIT_TANK": "glass_tank", "EMIT_SCREEN": "screen_green"}, "parts": [
+      {"shape": "box", "mat": "BODY", "size": [1.8, 0.8, 0.7]},
+      {"shape": "box", "mat": "DARK", "pos": [0, 0, 0.62], "size": [1.82, 0.82, 0.06]},
+      {"shape": "cyl", "mat": "EMIT_TANK", "pos": [-0.45, 0, 0.76], "r": 0.25, "h": 0.72, "sides": 10, "uv": "fit"},
+      {"shape": "cyl", "mat": "DARK", "pos": [-0.45, 0, 0.68], "r": 0.3, "h": 0.08, "sides": 10},
+      {"shape": "cyl", "mat": "DARK", "pos": [-0.45, 0, 1.48], "r": 0.3, "h": 0.1, "sides": 10},
+      {"shape": "lathe", "mat": "BODY", "pos": [-0.45, 0, 1.58], "profile": [[0.22, 0], [0.13, 0.12], [0, 0.16]], "sides": 10},
+      {"shape": "box", "mat": "BODY", "pos": [0.42, 0.08, 0.68], "size": [0.72, 0.5, 0.86]},
+      {"shape": "box", "mat": "EMIT_SCREEN", "pos": [0.42, -0.175, 0.92], "size": [0.58, 0.02, 0.42], "uv": "face"},
+      {"shape": "tube", "mat": "DARK", "path": [[-0.2, 0, 1.25], [-0.02, 0, 1.32], [0.1, 0.05, 1.38]], "r": 0.04, "sides": 5, "segments": 2}
+    ]},
+    "gym_pillar": {"materials": {"STONE": "blocks_stone", "GOLD": "gold"}, "parts": [
+      {"shape": "box", "mat": "STONE", "size": [0.8, 0.8, 0.25], "taper": 0.9},
+      {"shape": "box", "mat": "STONE", "pos": [0, 0, 0.25], "size": [0.56, 0.56, 2.4]},
+      {"shape": "box", "mat": "GOLD", "pos": [0, 0, 0.3], "size": [0.62, 0.62, 0.08]},
+      {"shape": "box", "mat": "GOLD", "pos": [0, 0, 2.3], "size": [0.62, 0.62, 0.12]},
+      {"shape": "box", "mat": "STONE", "pos": [0, 0, 2.65], "size": [0.72, 0.72, 0.2], "taper": 1.12},
+      {"shape": "box", "mat": "STONE", "pos": [0, 0, 2.85], "size": [0.86, 0.86, 0.12]},
+      {"shape": "ico", "mat": "GOLD", "pos": [0, -0.29, 1.8], "scale": [1, 0.45, 1], "r": 0.13, "detail": 0}
+    ]},
+    "arena_mark": {"fit": "box", "margin": 0.05, "materials": {"FLOOR": "arena"}, "parts": [
+      {"shape": "box", "mat": "FLOOR", "size": [4.9, 6.9, 0.02], "uv": "face"}
+    ]},
+    "stairs_down": {"fit": "box", "margin": 0, "materials": {"RIM": "stone_light", "HOLE": "stairs"}, "parts": [
+      {"shape": "box", "mat": "RIM", "pos": [0, 0.45, 0], "size": [1.0, 0.1, 0.2]},
+      {"shape": "box", "mat": "RIM", "pos": [0.45, -0.05, 0], "size": [0.1, 0.9, 0.2], "mirror": "x"},
+      {"shape": "box", "mat": "HOLE", "pos": [0, -0.05, 0], "size": [0.8, 0.9, 0.01], "uv": "face"}
+    ]},
+    "bamboo": {"budget": 2000, "materials": {"BAMBOO": "bamboo", "FOLIAGE": "leaf_bamboo"}, "parts": [
+      {"shape": "tube", "mat": "BAMBOO", "path": [[0, 0, 0], [0.03, 0, 1.8], [0.06, 0, 3.6]], "r": [0.075, 0.065, 0.055], "sides": 6, "segments": 2, "seed": 120},
+      {"shape": "tube", "mat": "BAMBOO", "path": [[0.3, 0, 0], [0.34, 0, 1.6], [0.42, 0, 3.1]], "r": [0.065, 0.055, 0.045], "sides": 6, "segments": 2, "radial": {"count": 6, "start": 15}, "vary": {"scale": [0.78, 1.04], "rot": 12}, "seed": 121},
+      {"shape": "fronds", "mat": "FOLIAGE", "origin": [0.06, 0, 3.55], "count": 6, "length": 0.62, "width": 0.17, "lift": 18, "droop": 0.55, "fold": 0.2, "segments": 4, "spreadJitter": 18, "seed": 122},
+      {"shape": "fronds", "mat": "FOLIAGE", "origin": [0.4, 0, 2.9], "count": 4, "length": 0.55, "width": 0.16, "lift": 15, "droop": 0.6, "fold": 0.2, "segments": 4, "spreadJitter": 20, "radial": {"count": 6, "start": 15}, "seed": 123},
+      {"shape": "fronds", "mat": "FOLIAGE", "origin": [0.36, 0, 1.9], "count": 3, "length": 0.45, "width": 0.14, "lift": 12, "droop": 0.6, "fold": 0.2, "segments": 3, "spreadJitter": 25, "radial": {"count": 3, "start": 50}, "seed": 124},
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 3.15], "count": 5, "ring": 0.36, "r": [0.16, 0.22], "squash": 0.7, "detail": 1, "jitter": 0.14, "zJitter": 0.2, "seed": 125}
+    ]},
+    "mushroom_giant": {"budget": 1800, "materials": {"STEM": "giant_stem", "CAP": "giant_cap", "EMIT_CAP": "mush_cap"}, "parts": [
+      {"shape": "tube", "mat": "STEM", "path": [[0, 0, 0], [0.04, 0, 0.7], [0, 0, 1.45]], "r": [0.26, 0.19, 0.17], "sides": 8, "segments": 2, "jitter": 0.03, "seed": 130},
+      {"shape": "lathe", "mat": "STEM", "pos": [0, 0, 0.95], "profile": [[0.17, 0], [0.3, 0.04], [0.31, 0.09], [0.17, 0.1]], "sides": 9, "seed": 131},
+      {"shape": "lathe", "mat": "CAP", "profile": [[0, 1.3], [0.92, 1.32], [1.0, 1.44], [0.88, 1.74], [0.56, 2.0], [0, 2.1]], "sides": 11, "jitter": 0.02, "seed": 132},
+      {"shape": "cyl", "mat": "STEM", "pos": [0.5, -0.32, 0], "scale": [0.55, 0.55, 0.55], "r": 0.07, "rTop": 0.055, "h": 0.42, "sides": 6},
+      {"shape": "lathe", "mat": "EMIT_CAP", "pos": [0.5, -0.32, 0], "scale": [0.55, 0.55, 0.55], "profile": [[0, 0.36], [0.26, 0.38], [0.24, 0.48], [0.14, 0.58], [0, 0.62]], "sides": 8},
+      {"shape": "cyl", "mat": "STEM", "pos": [-0.42, 0.28, 0], "scale": [0.42, 0.42, 0.42], "r": 0.07, "rTop": 0.055, "h": 0.42, "sides": 5},
+      {"shape": "lathe", "mat": "EMIT_CAP", "pos": [-0.42, 0.28, 0], "scale": [0.42, 0.42, 0.42], "profile": [[0, 0.36], [0.26, 0.38], [0.24, 0.48], [0.14, 0.58], [0, 0.62]], "sides": 7}
+    ]},
+    "tree_acacia": {"budget": 2000, "materials": {"BARK": "bark_acacia", "FOLIAGE": "leaf_acacia"}, "parts": [
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 0], [0.06, 0, 0.7], [0.0, 0.02, 1.25]], "r": [0.14, 0.11, 0.09], "sides": 6, "segments": 2, "jitter": 0.05, "seed": 140},
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 1.1], [0.4, 0, 1.65], [0.82, 0, 2.05]], "r": [0.08, 0.04], "sides": 5, "segments": 2, "radial": {"count": 3, "start": 25}, "seed": 141},
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 1.2], [0.08, 0, 1.75], [0.06, 0, 2.08]], "r": [0.06, 0.035], "sides": 5, "seed": 142},
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 2.2], "count": 9, "ring": 0.95, "r": [0.34, 0.42], "squash": 0.24, "centerR": 0.6, "detail": 1, "jitter": 0.1, "zJitter": 0.03, "ringJitter": 0.12, "seed": 143},
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 2.3], "count": 5, "ring": 0.5, "r": [0.34, 0.42], "squash": 0.22, "detail": 1, "jitter": 0.1, "zJitter": 0.02, "startDeg": 30, "seed": 144}
+    ]},
+    "tree_baobab": {"budget": 2000, "materials": {"BARK": "bark_baobab", "FOLIAGE": "leaf_acacia"}, "parts": [
+      {"shape": "lathe", "mat": "BARK", "profile": [[0.44, 0], [0.48, 0.25], [0.48, 0.8], [0.42, 1.3], [0.32, 1.7], [0.24, 1.95], [0, 1.98]], "sides": 9, "jitter": 0.03, "seed": 150},
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 1.8], [0.28, 0, 2.08], [0.5, 0, 2.2], [0.6, 0, 2.36]], "r": [0.1, 0.07, 0.04], "sides": 5, "segments": 2, "radial": {"count": 6, "start": 10}, "vary": {"scale": [0.8, 1.1], "rot": 12}, "seed": 151},
+      {"shape": "ico", "mat": "FOLIAGE", "pos": [0.6, 0, 2.42], "r": 0.19, "detail": 1, "jitter": 0.14, "radial": {"count": 6, "start": 10}, "vary": {"scale": [0.8, 1.15], "rot": 12}, "seed": 152},
+      {"shape": "ico", "mat": "FOLIAGE", "pos": [0, 0, 2.18], "size": [0.3, 0.3, 0.18], "detail": 1, "jitter": 0.14, "seed": 153}
+    ]},
+    "tree_mangrove": {"budget": 2000, "materials": {"BARK": "bark_mangrove", "FOLIAGE": "leaf_mangrove"}, "parts": [
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 0.5], [0.04, 0, 1.2], [0, 0.03, 1.85]], "r": [0.13, 0.1, 0.08], "sides": 6, "segments": 2, "jitter": 0.05, "seed": 160},
+      {"shape": "tube", "mat": "BARK", "path": [[0.02, 0, 0.8], [0.3, 0, 0.72], [0.48, 0, 0.36], [0.54, 0, 0]], "r": [0.06, 0.035], "sides": 5, "segments": 2, "radial": {"count": 6, "start": 5}, "vary": {"scale": [0.85, 1.12], "rot": 10}, "seed": 161},
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 1.3], [0.3, 0, 1.62], [0.5, 0, 1.9]], "r": [0.06, 0.03], "sides": 5, "radial": {"count": 3, "start": 40}, "seed": 162},
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 2.0], "count": 7, "ring": 0.6, "r": [0.36, 0.46], "squash": 0.62, "detail": 1, "jitter": 0.12, "zJitter": 0.08, "seed": 163},
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 2.32], "count": 3, "ring": 0.26, "r": [0.36, 0.42], "centerR": 0.46, "squash": 0.66, "detail": 1, "jitter": 0.12, "startDeg": 25, "seed": 164}
+    ]},
+    "coral": {"materials": {"ROCK": "coral_rock", "CORAL": "coral"}, "parts": [
+      {"shape": "ico", "mat": "ROCK", "size": [0.4, 0.34, 0.14], "detail": 1, "jitter": 0.15, "cut": -0.25, "seed": 170},
+      {"shape": "tube", "mat": "CORAL", "path": [[0.06, 0, 0.05], [0.16, 0, 0.32], [0.1, 0, 0.55], [0.2, 0, 0.82]], "r": [0.065, 0.035], "sides": 5, "segments": 2, "capEnd": "dome", "radial": {"count": 5, "start": 0}, "vary": {"scale": [0.62, 1.08], "rot": 30}, "seed": 171},
+      {"shape": "tube", "mat": "CORAL", "tile": 1, "path": [[0.12, 0, 0.3], [0.26, 0, 0.42], [0.3, 0, 0.58]], "r": [0.04, 0.025], "sides": 4, "capEnd": "dome", "radial": {"count": 4, "start": 30}, "vary": {"scale": [0.8, 1.1], "rot": 25}, "seed": 172},
+      {"shape": "ico", "mat": "CORAL", "tile": 2, "pos": [0.28, -0.12, 0.08], "r": 0.12, "detail": 1, "jitter": 0.12, "radial": {"count": 2, "start": 200}, "seed": 173},
+      {"shape": "ico", "mat": "CORAL", "tile": 1, "pos": [-0.05, 0.3, 0.08], "size": [0.14, 0.14, 0.1], "detail": 1, "jitter": 0.1, "seed": 174}
+    ]},
+    "glitch_monolith": {"materials": {"STONE": "stone_violet", "EMIT_GLITCH": "glitch"}, "parts": [
+      {"shape": "box", "mat": "STONE", "size": [0.86, 0.86, 0.14], "taper": 0.88},
+      {"shape": "box", "mat": "EMIT_GLITCH", "pos": [0, 0, 0.14], "size": [0.48, 0.3, 1.65], "taper": 0.86, "uv": "face"},
+      {"shape": "box", "mat": "EMIT_GLITCH", "pos": [0.09, 0, 0.92], "size": [0.5, 0.33, 0.12], "uv": "face"},
+      {"shape": "box", "mat": "EMIT_GLITCH", "pos": [-0.07, 0.01, 1.3], "size": [0.46, 0.31, 0.08], "uv": "face"},
+      {"shape": "box", "mat": "STONE", "pos": [0.02, 0, 1.79], "size": [0.4, 0.26, 0.1]},
+      {"shape": "box", "mat": "EMIT_GLITCH", "pos": [0.34, -0.04, 1.98], "rot": [10, 0, 22], "size": [0.16, 0.16, 0.16], "uv": "face"},
+      {"shape": "box", "mat": "EMIT_GLITCH", "pos": [-0.3, 0.06, 2.12], "rot": [0, 15, -18], "size": [0.11, 0.11, 0.11], "uv": "face"},
+      {"shape": "box", "mat": "STONE", "pos": [0.05, -0.02, 2.28], "rot": [12, 8, 30], "size": [0.09, 0.09, 0.09]}
+    ]},
+    "circuit_pylon": {"materials": {"BASE": "pcb", "METAL": "metal_green", "EMIT_NODE": "node_glow"}, "parts": [
+      {"shape": "box", "mat": "BASE", "size": [0.92, 0.92, 0.1], "taper": 0.94},
+      {"shape": "box", "mat": "METAL", "pos": [0, 0, 0.1], "size": [0.44, 0.44, 0.18], "taper": 0.9},
+      {"shape": "truss", "mat": "METAL", "pos": [0, 0, 0.28], "base": 0.26, "top": 0.07, "h": 2.3, "levels": 5, "bar": 0.035},
+      {"shape": "cyl", "mat": "METAL", "pos": [0, 0, 2.58], "r": 0.03, "h": 0.22, "sides": 5},
+      {"shape": "ico", "mat": "EMIT_NODE", "pos": [0, 0, 2.88], "r": 0.12, "detail": 1},
+      {"shape": "ico", "mat": "EMIT_NODE", "pos": [0.2, 0, 1.25], "r": 0.055, "detail": 1, "radial": {"count": 4, "start": 45}},
+      {"shape": "ico", "mat": "EMIT_NODE", "pos": [0.13, 0, 1.95], "r": 0.045, "detail": 1, "radial": {"count": 4, "start": 0}},
+      {"shape": "box", "mat": "EMIT_NODE", "pos": [0.33, 0, 0.1], "size": [0.05, 0.05, 0.04], "radial": {"count": 4, "start": 0}}
+    ]},
+    "neural_tree": {"budget": 2000, "materials": {"BARK": "bark_neural", "FOLIAGE": "leaf_neural", "EMIT_NODE": "neural_glow"}, "parts": [
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 0], [0.05, 0, 0.7], [-0.03, 0.02, 1.3], [0, 0, 1.7]], "r": [0.16, 0.12, 0.09, 0.07], "sides": 6, "segments": 2, "jitter": 0.05, "seed": 190},
+      {"shape": "tube", "mat": "BARK", "path": [[0.08, 0, 0.22], [0.26, 0, 0.06], [0.36, 0, 0]], "r": [0.07, 0.03], "sides": 4, "capEnd": "point", "radial": {"count": 4, "start": 30}, "seed": 191},
+      {"shape": "tube", "mat": "BARK", "path": [[0, 0, 1.15], [0.34, 0, 1.55], [0.62, 0, 2.05]], "r": [0.06, 0.03], "sides": 5, "radial": {"count": 5, "start": 10}, "seed": 192},
+      {"shape": "cluster", "mat": "FOLIAGE", "pos": [0, 0, 2.05], "count": 6, "ring": 0.5, "r": [0.3, 0.38], "squash": 0.75, "centerR": 0.42, "centerZ": 0.12, "detail": 1, "jitter": 0.14, "zJitter": 0.1, "seed": 193},
+      {"shape": "ico", "mat": "EMIT_NODE", "pos": [0.64, 0, 2.08], "r": 0.085, "detail": 1, "radial": {"count": 5, "start": 10}, "seed": 194},
+      {"shape": "ico", "mat": "EMIT_NODE", "pos": [0.3, 0, 2.55], "r": 0.07, "detail": 1, "radial": {"count": 4, "start": 55}, "seed": 195},
+      {"shape": "ico", "mat": "EMIT_NODE", "pos": [0.0, 0, 2.72], "r": 0.1, "detail": 1, "seed": 196},
+      {"shape": "ico", "mat": "EMIT_NODE", "pos": [0.38, 0, 0.03], "r": 0.05, "detail": 0, "radial": {"count": 4, "start": 30}, "seed": 197}
+    ]},
+    "cloud_puff": {"materials": {"CLOUD": "cloud"}, "parts": [
+      {"shape": "cluster", "mat": "CLOUD", "pos": [0, 0, 0.3], "count": 5, "ring": 0.36, "r": [0.22, 0.3], "squash": 0.72, "centerR": 0.36, "centerZ": 0.1, "detail": 1, "jitter": 0.08, "zJitter": 0.08, "seed": 200},
+      {"shape": "ico", "mat": "CLOUD", "pos": [0.08, -0.04, 0.68], "r": 0.25, "detail": 1, "jitter": 0.08, "seed": 201}
+    ]},
+    "hoodoo": {"materials": {"ROCK": "redrock", "CAP": "redrock_cap"}, "parts": [
+      {"shape": "lathe", "mat": "ROCK", "profile": [[0.4, 0], [0.36, 0.35], [0.26, 0.75], [0.31, 1.05], [0.22, 1.45], [0.17, 1.72], [0.21, 1.9], [0, 1.94]], "sides": 8, "jitter": 0.04, "seed": 210},
+      {"shape": "ico", "mat": "CAP", "pos": [0.03, 0, 1.97], "size": [0.36, 0.31, 0.15], "detail": 1, "jitter": 0.12, "seed": 211},
+      {"shape": "ico", "mat": "ROCK", "pos": [0.32, -0.18, 0.02], "size": [0.16, 0.14, 0.12], "detail": 1, "jitter": 0.15, "cut": -0.3, "seed": 212}
+    ]},
+    "salt_crystal": {"materials": {"CRUST": "salt_crust", "SALT": "salt"}, "parts": [
+      {"shape": "ico", "mat": "CRUST", "size": [0.4, 0.36, 0.1], "detail": 1, "jitter": 0.12, "cut": -0.3, "seed": 220},
+      {"shape": "box", "mat": "SALT", "pos": [0, 0, 0.02], "rot": [6, -4, 20], "size": [0.26, 0.26, 0.62], "taper": 0.92, "uv": "face"},
+      {"shape": "box", "mat": "SALT", "pos": [0.22, 0, 0.0], "rot": [0, 24, 0], "size": [0.16, 0.16, 0.38], "taper": 0.9, "uv": "face", "radial": {"count": 4, "start": 35}, "vary": {"scale": [0.6, 1.1], "rot": 30}, "seed": 221}
+    ]}
+  }
+}

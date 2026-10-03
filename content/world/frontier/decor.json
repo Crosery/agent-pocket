@@ -1,0 +1,54 @@
+{
+  "villagers": {
+    "sprites": ["villager_old", "villager_woman", "villager_kid", "villager_man"],
+    "names": ["村民", "老爷爷", "大姐姐", "小朋友", "旅行商人", "开拓者", "守村人"],
+    "lines": [["欢迎来到{place}！这里离原点镇已经有 {distance} 格远了。"], ["越往远处走，野生智灵就越强，也越稀有。", "听说有人在很远很远的地方见过传说中的智灵……"], ["{place}附近的{region}，最近常有{biome}系的智灵出没。"], ["沿着大路走就不会迷路。路边的告示牌会告诉你下一个村子在哪。"], ["这片土地没有尽头。每走出一步，都是没人见过的风景。"], ["你看那边的地平线——据说大陆之外还有大陆。"]],
+    "perHamlet": [2, 4],
+    "wander": 2
+  },
+  "signposts": {"prop": "sign", "format": "{name}\n{desc}", "distanceFormat": "距原点 {distance} 格 · 推荐 Lv.{level}+"},
+  "items": {"perChunk": [0, 2], "hiddenChance": 0.35, "minSpacing": 10, "tries": 60},
+  "services": {
+    "nurse": {
+      "sprite": "nurse",
+      "portrait": "nurse",
+      "nameZh": "补给站护士",
+      "role": "nurse",
+      "facing": "down",
+      "script": [
+        {"op": "say", "text": "欢迎来到{place}的智灵补给站！要让你的智灵休息一下吗？"},
+        {"op": "choice", "text": "要恢复智灵吗？", "options": ["拜托了", "不用了"], "branches": [[{"op": "say", "text": "好的，请把智灵交给我。正在清理上下文缓存……"}, {"op": "heal"}, {"op": "setRespawn"}, {"op": "say", "text": "久等了！你的智灵已经全部恢复。边境路远，多保重！"}], [{"op": "say", "text": "欢迎随时再来！"}]]}
+      ]
+    },
+    "box": {
+      "sprite": "clerk",
+      "nameZh": "仓库管理员",
+      "role": "boxTerminal",
+      "facing": "down",
+      "script": [
+        {"op": "say", "text": "就算在边境，云端智灵仓库也一样连得上。"},
+        {"op": "choice", "text": "要打开智灵仓库吗？", "options": ["打开", "不用了"], "branches": [[{"op": "openBox"}], [{"op": "say", "text": "需要的时候，随时来找我。"}]]}
+      ]
+    },
+    "clerk": {"sprite": "clerk", "portrait": "clerk", "nameZh": "边境商人", "role": "clerk", "facing": "down", "script": []},
+    "shopIntro": [
+      {"op": "say", "text": "欢迎光临{place}的杂货铺！边境的货不多，但都很实用。"}
+    ],
+    "shopOutro": [
+      {"op": "say", "text": "谢谢惠顾，一路顺风！"}
+    ],
+    "shopTiers": [
+      {"minDistance": 0, "items": ["prompt-ball", "cache-potion", "antivirus", "restart-script", "speed-pack", "escape-rope"]},
+      {"minDistance": 500, "items": ["few-shot-ball", "super-cache", "cooling-patch", "unlock-tool", "repel"]},
+      {"minDistance": 1200, "items": ["reboot", "universal-patch", "super-repel", "cot-ball"]},
+      {"minDistance": 2500, "items": ["hyper-cache", "token-refill", "rare-ball"]},
+      {"minDistance": 4000, "items": ["full-cache", "max-repel", "full-restore"]}
+    ]
+  },
+  "residents": {
+    "sprites": ["villager_old", "villager_woman", "villager_kid", "villager_man"],
+    "names": ["村民", "房主", "老奶奶", "小孩"],
+    "lines": [["这里是我家，随便坐吧。"], ["边境的夜晚很安静，能听见智灵在草丛里低语。"], ["我爷爷说，世界的尽头有一座会说话的服务器。"], ["你是从核心大陆来的吗？那边的道馆很厉害吧！"]]
+  },
+  "placeDescriptions": {"hamlet": "边境村落 · {region}", "dungeon": "{name} · 共 {floors} 层 · 推荐 Lv.{level}+", "landmark": "{name} · {region}"}
+}

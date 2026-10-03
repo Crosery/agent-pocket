@@ -1,0 +1,94 @@
+{
+  "origin": [
+    {"id": "o-xiaoman", "at": "town:origin:npc-1", "sprite": "villager_kid", "nameZh": "小满", "role": "villager", "lines": ["我长大了也要当训练家！", "智灵的名字我全背下来了……虽然它们每隔几个月就出一个新版本。"], "wander": 2},
+    {"id": "o-florist", "at": "town:origin:npc-2", "sprite": "villager_woman", "nameZh": "花店阿姨", "role": "villager", "lines": ["高草丛里随时会窜出野生智灵。", "只走土路和石板路的话，就不会被打扰啦。"], "wander": 2},
+    {"id": "o-guard", "at": "town:origin:npc-4", "sprite": "villager_man", "nameZh": "保安大叔", "role": "villager", "lines": ["“图灵测试”是 1950 年提出的，用来判断机器能不能像人一样对话。", "现在的智灵嘛……天天都在通过。"]},
+    {"id": "o-azhe", "at": "town:origin:npc-5", "sprite": "villager_kid", "nameZh": "阿哲", "role": "villager", "lines": ["打不过就逃跑！逃跑不丢人。", "在对战里全军覆没才丢人——还会丢 Token 币。"], "wander": 2},
+    {"id": "o-neighbor", "at": "origin-house1:resident-1", "sprite": "villager_woman", "nameZh": "邻居阿姨", "role": "villager", "lines": ["我儿子说要做一个能帮我洗碗的智能体。", "三个月过去了，碗还是我洗。不过它学会给我写洗碗周报了。"], "wander": 1},
+    {"id": "o-localmodel", "at": "origin-house2:resident-1", "sprite": "villager_man", "nameZh": "邻居大叔", "role": "villager", "lines": ["我在电脑上跑了个本地小模型。", "风扇一转，整个屋子都暖和了，冬天正好省暖气费。"], "wander": 1},
+    {"id": "o-traveler", "at": "origin-center:npc-1", "sprite": "villager_man", "nameZh": "旅行者", "role": "villager", "lines": ["补给站的护士会免费帮智灵恢复。", "这年头，免费的算力可不多见。"], "wander": 1}
+  ],
+  "opensource": [
+    {"id": "os-maintainer", "at": "town:opensource:npc-1", "sprite": "trainer_coder", "nameZh": "维护者·小林", "role": "villager", "lines": ["这里的每一棵树，都有自己的 README。", "有些树的 README，比树还老。"], "wander": 2},
+    {"id": "os-elder", "at": "town:opensource:npc-2", "sprite": "villager_old", "nameZh": "林镇长老", "role": "villager", "lines": ["开源，就是把代码和权重公开出来，让大家一起改进。", "一棵树撑不起森林。一群人，才能种出一片林子。"], "wander": 1},
+    {"id": "os-kid", "at": "town:opensource:npc-3", "sprite": "villager_kid", "nameZh": "小树", "role": "villager", "lines": ["我给道馆馆主提了个 issue。", "她回我：“欢迎提 PR。”……PR 是什么？能吃吗？"], "wander": 2},
+    {"id": "os-fan", "at": "town:opensource:npc-5", "sprite": "villager_woman", "nameZh": "馆主的粉丝", "role": "villager", "lines": ["代码馆主·林，据说能在一夜之间重构整片森林的代码。", "{type:code}系的智灵最怕{weakTo:code}系的招式，记住了吗？"], "wander": 2},
+    {"id": "os-student", "at": "opensource-house2:resident-1", "sprite": "trainer_student", "nameZh": "大学生", "role": "villager", "lines": ["我的毕业设计是“基于大模型的毕业设计生成器”。", "导师沉默了很久，然后让我重新选题。"], "wander": 1},
+    {"id": "os-dad", "at": "opensource-house3:resident-1", "sprite": "villager_man", "nameZh": "林镇居民", "role": "villager", "lines": ["Transformer 架构出自 2017 年的论文《Attention Is All You Need》。", "注意力就是你所需要的一切……我老婆也是这么说的。"], "wander": 1},
+    {"id": "guide-code", "at": "gym-code:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "code", "town": "opensource"}}]}
+  ],
+  "pixelport": [
+    {"id": "pp-painter", "at": "town:pixelport:npc-1", "sprite": "trainer_artist", "nameZh": "街头画师", "role": "villager", "lines": ["我用扩散模型画了一张港口全景。", "仔细一数，海鸥长了三条腿。"], "wander": 2},
+    {"id": "pp-surfer", "at": "town:pixelport:npc-3", "sprite": "trainer_swimmer", "nameZh": "冲浪少年", "role": "villager", "lines": ["海上有能载着人冲浪的智灵。", "不过得先有{item:dive-protocol}才行。听说检索遗都的馆主手里就有一份。"], "wander": 2},
+    {"id": "pp-captain", "at": "town:pixelport:npc-4", "sprite": "villager_old", "nameZh": "老船长", "role": "villager", "lines": ["扩散模型生成图像，是从一片噪声开始，一步步“去噪”出来的。", "就像海雾散去，港口才慢慢露出模样。"], "wander": 1},
+    {"id": "pp-kid", "at": "town:pixelport:npc-5", "sprite": "villager_kid", "nameZh": "小渔", "role": "villager", "lines": ["视觉馆主·绘，能一眼认出一千种猫！", "还能认出哪一只是 AI 画的。"], "wander": 2},
+    {"id": "pp-shop", "at": "pixelport-house1:resident-1", "sprite": "villager_woman", "nameZh": "渔具店老板娘", "role": "villager", "lines": ["2012 年，一个叫 AlexNet 的神经网络在 ImageNet 图像识别比赛中遥遥领先。", "深度学习从那年开始火起来。我的渔具店，也是那年开的。"], "wander": 1},
+    {"id": "pp-up", "at": "pixelport-house2:resident-1", "sprite": "trainer_streamer", "nameZh": "UP 主·阿彩", "role": "villager", "lines": ["家人们，这条视频是 AI 生成的……", "评论区：“看出来了，你在视频里有三只手。”"], "wander": 1},
+    {"id": "guide-vision", "at": "gym-vision:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "vision", "town": "pixelport"}}]}
+  ],
+  "chord": [
+    {"id": "ch-singer", "at": "town:chord:npc-1", "sprite": "trainer_streamer", "nameZh": "沙漠歌手", "role": "villager", "lines": ["我用 AI 写了一首歌，旋律超好听。", "就是每段副歌都在唱“作为一个人工智能模型”。"], "wander": 2},
+    {"id": "ch-elder", "at": "town:chord:npc-2", "sprite": "villager_old", "nameZh": "驼队老人", "role": "villager", "lines": ["沙丘会唱歌，是因为沙粒在共振。", "智灵会唱歌，是因为它们把声音拆成了一帧一帧的频谱。"], "wander": 1},
+    {"id": "tutor-chord", "at": "town:chord:npc-3", "sprite": "trainer_streamer", "nameZh": "招式导师·曲", "role": "tutor", "script": [{"op": "say", "text": "我是游历四方的招式导师。付一点学费，我就把压箱底的招式芯片传给你。"}, {"op": "choice", "text": "想学哪一招？", "options": ["{item:chip-long-essay}（4500 Token 币）", "{item:chip-director-cut}（4500 Token 币）", "{item:chip-community-power}（5000 Token 币）", "算了"], "branches": [[{"op": "takeMoney", "amount": 4500, "failText": "Token 币不够哦，攒够了再来吧。"}, {"op": "giveItem", "item": "chip-long-essay", "qty": 1}, {"op": "include", "script": "tutor-thanks"}], [{"op": "takeMoney", "amount": 4500, "failText": "Token 币不够哦，攒够了再来吧。"}, {"op": "giveItem", "item": "chip-director-cut", "qty": 1}, {"op": "include", "script": "tutor-thanks"}], [{"op": "takeMoney", "amount": 5000, "failText": "Token 币不够哦，攒够了再来吧。"}, {"op": "giveItem", "item": "chip-community-power", "qty": 1}, {"op": "include", "script": "tutor-thanks"}], [{"op": "say", "text": "想学的时候，随时来找我。"}]]}]},
+    {"id": "ch-kid", "at": "town:chord:npc-4", "sprite": "villager_kid", "nameZh": "小沙", "role": "villager", "lines": ["我让智灵唱首摇篮曲。", "结果它把自己唱睡着了，我还醒着。"], "wander": 2},
+    {"id": "ch-whisper", "at": "chord-house2:resident-1", "sprite": "villager_woman", "nameZh": "沙城居民", "role": "villager", "lines": ["听说有个叫 Whisper 的语音识别模型，2022 年就开源了。", "连风沙里的悄悄话，它都能听得清清楚楚。"], "wander": 1},
+    {"id": "ch-merchant", "at": "chord-house3:resident-1", "sprite": "villager_man", "nameZh": "行脚商人", "role": "villager", "lines": ["往北穿过沙漠，就是检索遗都。", "最近那边的沼泽不太平，常有穿紫衣服的家伙出没。"], "wander": 1},
+    {"id": "ch-cave", "at": "chord-center:npc-1", "sprite": "trainer_hiker", "nameZh": "探险爱好者", "role": "villager", "lines": ["沙漠里有个回响洞窟，能直通北边的沼泽。", "洞里回声很大，说话小声点。"], "wander": 1},
+    {"id": "guide-sound", "at": "gym-sound:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "sound", "town": "chord"}}]}
+  ],
+  "retrieval": [
+    {"id": "rt-librarian", "at": "town:retrieval:npc-1", "sprite": "villager_old", "nameZh": "老图书管理员", "role": "villager", "lines": ["RAG，就是“检索增强生成”。", "先翻书找到资料，再组织语言回答——这样就不容易胡说八道了。"], "wander": 1},
+    {"id": "rt-woman", "at": "town:retrieval:npc-2", "sprite": "villager_woman", "nameZh": "遗都居民", "role": "villager", "script": [{"op": "ifFlag", "flag": "villain:swamp", "then": [{"op": "say", "text": "幻觉团被赶跑了！连空气都清新了。"}], "else": [{"op": "say", "text": "幻觉团的人说：“只要说得足够自信，错的也会变成对的。”"}, {"op": "say", "text": "真是一派胡言！"}]}], "wander": 2},
+    {"id": "rt-researcher", "at": "town:retrieval:npc-3", "sprite": "trainer_scientist", "nameZh": "索引研究员", "role": "villager", "lines": ["向量数据库会把文字变成一串数字坐标。", "意思相近的句子，在那个空间里也会挨得很近。"], "wander": 2},
+    {"id": "rt-kid", "at": "town:retrieval:npc-4", "sprite": "villager_kid", "nameZh": "小典", "role": "villager", "script": [{"op": "ifFlag", "flag": "villain:swamp", "then": [{"op": "say", "text": "馆主回道馆啦！快去挑战吧！"}], "else": [{"op": "say", "text": "道馆馆主去沼泽里抓坏人了！"}, {"op": "say", "text": "……馆主好帅。"}]}], "wander": 2},
+    {"id": "rt-man", "at": "retrieval-house2:resident-1", "sprite": "villager_man", "nameZh": "遗都居民", "role": "villager", "lines": ["我在网上搜“怎么才能不拖延”。", "搜了一下午。"], "wander": 1},
+    {"id": "rt-center", "at": "retrieval-center:npc-1", "sprite": "trainer_student", "nameZh": "图书馆志愿者", "role": "villager", "lines": ["不确定的事，就多查几个来源。", "这句话，对人和智灵都适用。"], "wander": 1},
+    {"id": "guide-search", "at": "gym-search:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "search", "town": "retrieval"}}]}
+  ],
+  "forge": [
+    {"id": "fg-miner", "at": "town:forge:npc-1", "sprite": "villager_man", "nameZh": "矿工", "role": "villager", "lines": ["以前大家挖矿，现在大家抢显卡。", "显卡还是那张显卡，价格又翻了一番。"], "wander": 2},
+    {"id": "fg-hiker", "at": "town:forge:npc-2", "sprite": "trainer_hiker", "nameZh": "登山客", "role": "villager", "lines": ["往东翻过霜脊山口，就是霜盾城。", "不过山口有守卫把守，没有{badge:badge-compute}可过不去。"], "wander": 2},
+    {"id": "fg-elder", "at": "town:forge:npc-3", "sprite": "villager_old", "nameZh": "熔炉镇老人", "role": "villager", "lines": ["GPU 原本是用来画游戏画面的。", "后来大家发现，它做矩阵乘法也特别快——深度学习就这么搭上了它。"], "wander": 1},
+    {"id": "fg-kid", "at": "town:forge:npc-4", "sprite": "villager_kid", "nameZh": "小焰", "role": "villager", "lines": ["我的智灵过热了！", "……原来是我把它放在火山口晒太阳。"], "wander": 2},
+    {"id": "fg-gamer", "at": "town:forge:npc-5", "sprite": "trainer_gamer", "nameZh": "电竞少年", "role": "villager", "lines": ["{type:compute}系的招式，打{strongVs:compute}系特别痛！", "反过来，碰上{weakTo:compute}系就得小心了。"], "wander": 2},
+    {"id": "fg-quant", "at": "forge-house2:resident-1", "sprite": "villager_woman", "nameZh": "熔炉镇居民", "role": "villager", "lines": ["量化，就是把模型的权重从 16 位压到 8 位、甚至 4 位，省下显存。", "我家冰箱也该量化一下了，实在塞不下了。"], "wander": 1},
+    {"id": "fg-scaling", "at": "forge-house3:resident-1", "sprite": "villager_man", "nameZh": "熔炉镇居民", "role": "villager", "lines": ["听说大模型训练有个“规模定律”：参数、数据和算力一起加大，效果就会稳定变好。", "我的工资可不遵循这个定律。"], "wander": 1},
+    {"id": "guide-compute", "at": "gym-compute:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "compute", "town": "forge"}}]}
+  ],
+  "frostshield": [
+    {"id": "fs-veteran", "at": "town:frostshield:npc-1", "sprite": "villager_old", "nameZh": "城门老兵", "role": "villager", "lines": ["北边是通往 AGI 圣殿的遗迹参道。", "只有集齐八枚徽章的训练家，才能通过那里的关口。"], "wander": 1},
+    {"id": "fs-mom", "at": "town:frostshield:npc-2", "sprite": "villager_woman", "nameZh": "霜盾城居民", "role": "villager", "lines": ["对齐，就是让智灵的目标和人类的价值观保持一致。", "就像教孩子：要诚实，要善良，不要瞎编作业答案。"], "wander": 2},
+    {"id": "fs-redteam", "at": "town:frostshield:npc-3", "sprite": "trainer_scientist", "nameZh": "红队研究员", "role": "villager", "lines": ["我的工作是故意诱导智灵说错话，找出漏洞再修补。", "同事都叫我“职业杠精”。"], "wander": 2},
+    {"id": "fs-kid", "at": "town:frostshield:npc-4", "sprite": "villager_kid", "nameZh": "小雪", "role": "villager", "lines": ["我堆了个雪人，问智灵这是什么。", "它说：“这是一个雪人。”好聪明！"], "wander": 2},
+    {"id": "fs-man", "at": "town:frostshield:npc-5", "sprite": "villager_man", "nameZh": "旅店老板", "role": "villager", "script": [{"op": "ifFlag", "flag": "villain:boss", "then": [{"op": "say", "text": "枢纽市的数据塔恢复正常了。听说是一位年轻的训练家干的！"}], "else": [{"op": "say", "text": "往东是枢纽市。"}, {"op": "say", "text": "听说幻觉团最近在那里频繁活动……数据塔附近尤其不太平。"}]}], "wander": 2},
+    {"id": "fs-rlhf", "at": "frostshield-house2:resident-1", "sprite": "trainer_student", "nameZh": "高中生", "role": "villager", "lines": ["RLHF，基于人类反馈的强化学习：人类给回答打分，模型照着分数调整。", "我的作文，也是这么被老师一遍遍“对齐”的。"], "wander": 1},
+    {"id": "guide-safety", "at": "gym-safety:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "safety", "town": "frostshield"}}]}
+  ],
+  "hub": [
+    {"id": "hb-fullstack", "at": "town:hub:npc-1", "sprite": "trainer_coder", "nameZh": "全栈工程师", "role": "villager", "lines": ["我写了一个智能体，它会自己订外卖、回邮件、开会……", "现在它比我还忙，我反而闲下来了。"], "wander": 2},
+    {"id": "hb-mcp", "at": "town:hub:npc-2", "sprite": "villager_woman", "nameZh": "白领", "role": "villager", "lines": ["MCP 是一种开放协议，让智灵能用统一的方式连接各种工具和数据。", "插头统一了，出门就方便了。"], "wander": 2},
+    {"id": "hb-office", "at": "town:hub:npc-3", "sprite": "villager_man", "nameZh": "上班族", "role": "villager", "lines": ["我们公司 All in AI 了，连咖啡机都接上了大模型。", "现在它会先问我：“确定要喝今天的第三杯吗？”"], "wander": 2},
+    {"id": "hb-kid", "at": "town:hub:npc-4", "sprite": "villager_kid", "nameZh": "小枢", "role": "villager", "script": [{"op": "ifFlag", "flag": "villain:boss", "then": [{"op": "say", "text": "数据塔的灯又亮了！我长大也要去那里上班！"}], "else": [{"op": "say", "text": "数据塔是全城最高的楼！"}, {"op": "say", "text": "……可是现在，被一群奇怪的人占领了。"}]}], "wander": 2},
+    {"id": "tutor-hub", "at": "town:hub:npc-5", "sprite": "trainer_coder", "nameZh": "招式导师·栈", "role": "tutor", "script": [{"op": "say", "text": "我是游历四方的招式导师。付一点学费，我就把压箱底的招式芯片传给你。"}, {"op": "choice", "text": "想学哪一招？", "options": ["{item:chip-swarm-mind}（5500 Token 币）", "{item:chip-first-principles}（5500 Token 币）", "{item:chip-kernel-panic}（5500 Token 币）", "{item:chip-weight-drop}（5000 Token 币）", "算了"], "branches": [[{"op": "takeMoney", "amount": 5500, "failText": "Token 币不够哦，攒够了再来吧。"}, {"op": "giveItem", "item": "chip-swarm-mind", "qty": 1}, {"op": "include", "script": "tutor-thanks"}], [{"op": "takeMoney", "amount": 5500, "failText": "Token 币不够哦，攒够了再来吧。"}, {"op": "giveItem", "item": "chip-first-principles", "qty": 1}, {"op": "include", "script": "tutor-thanks"}], [{"op": "takeMoney", "amount": 5500, "failText": "Token 币不够哦，攒够了再来吧。"}, {"op": "giveItem", "item": "chip-kernel-panic", "qty": 1}, {"op": "include", "script": "tutor-thanks"}], [{"op": "takeMoney", "amount": 5000, "failText": "Token 币不够哦，攒够了再来吧。"}, {"op": "giveItem", "item": "chip-weight-drop", "qty": 1}, {"op": "include", "script": "tutor-thanks"}], [{"op": "say", "text": "想学的时候，随时来找我。"}]]}]},
+    {"id": "hb-elder", "at": "town:hub:npc-6", "sprite": "villager_old", "nameZh": "老教授", "role": "villager", "lines": ["1956 年的达特茅斯会议上，“人工智能”这个词第一次被正式提出。", "那时候谁能想到，会有今天这番景象。"], "wander": 1},
+    {"id": "hb-plaza", "at": "town:hub:plaza-south", "sprite": "trainer_streamer", "nameZh": "广场主播", "role": "villager", "script": [{"op": "ifFlag", "flag": "villain:boss", "then": [{"op": "say", "text": "家人们，数据塔解放了！今天的弹幕全是“感谢路过的训练家”！"}], "else": [{"op": "say", "text": "家人们，这里是枢纽市中央广场！"}, {"op": "say", "text": "身后就是全城最高的数据塔……奇怪，今天的弹幕怎么全是“快跑”？"}]}], "wander": 1},
+    {"id": "hb-dc", "at": "hub-datacenter:npc-1", "sprite": "villager_man", "nameZh": "数据中心访客", "role": "villager", "lines": ["这里的服务器日夜不停地运转。", "据说训练一个顶级大模型，要用上万张 GPU 跑好几个月。"], "wander": 1},
+    {"id": "guide-agent", "at": "gym-agent:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "agent", "town": "hub"}}]}
+  ],
+  "balance": [
+    {"id": "bl-chess", "at": "town:balance:npc-1", "sprite": "villager_old", "nameZh": "棋社老人", "role": "villager", "lines": ["1997 年，“深蓝”战胜了国际象棋世界冠军卡斯帕罗夫；2016 年，AlphaGo 又在围棋上赢了李世石。", "我下棋输给孙子，倒是年年都发生。"], "wander": 1},
+    {"id": "bl-student", "at": "town:balance:npc-2", "sprite": "trainer_student", "nameZh": "考研党", "role": "villager", "lines": ["“思维链”提示，就是让智灵一步一步地想，推理题的正确率会明显提高。", "我也一步一步地想了……还是没想出来。"], "wander": 2},
+    {"id": "bl-woman", "at": "town:balance:npc-3", "sprite": "villager_woman", "nameZh": "衡理镇居民", "role": "villager", "lines": ["推理馆主·衡，下棋从不悔棋。", "但每盘棋，都要复盘八百遍。"], "wander": 2},
+    {"id": "bl-kid", "at": "town:balance:npc-4", "sprite": "villager_kid", "nameZh": "小衡", "role": "villager", "lines": ["我问智灵：9.11 和 9.9 哪个大？", "它想了好久……不过现在，它已经不会答错了！"], "wander": 2},
+    {"id": "bl-man", "at": "town:balance:npc-5", "sprite": "villager_man", "nameZh": "牧场主", "role": "villager", "lines": ["东边的晶核洞窟，能通到枢纽市。", "洞里亮晶晶的，小孩子可别乱跑。"], "wander": 2},
+    {"id": "bl-moe", "at": "balance-house2:resident-1", "sprite": "villager_old", "nameZh": "村长", "role": "villager", "lines": ["“混合专家”模型里有很多“专家”，每次只叫醒其中几位来干活。", "跟我们村开会一个样。"], "wander": 1},
+    {"id": "guide-logic", "at": "gym-logic:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "logic", "town": "balance"}}]}
+  ],
+  "agi": [
+    {"id": "ag-pilgrim", "at": "town:agi:npc-1", "sprite": "villager_old", "nameZh": "朝圣者", "role": "villager", "lines": ["传说 AGI 就沉睡在圣殿深处。", "见过它的人都说：它什么都没说，却好像什么都懂。"], "wander": 1},
+    {"id": "ag-scholar", "at": "town:agi:npc-2", "sprite": "trainer_scientist", "nameZh": "学者", "role": "villager", "lines": ["有人尝试给智灵写一部“宪法”，让它按照一组原则自我批评、自我修正。", "我觉得，人也可以试试。"], "wander": 2},
+    {"id": "ag-woman", "at": "town:agi:npc-3", "sprite": "villager_woman", "nameZh": "圣殿镇居民", "role": "villager", "lines": ["圣殿里的冠军，据说从来没有输过。", "也有人说，冠军一直在等一个能赢过自己的人。"], "wander": 2},
+    {"id": "ag-kid", "at": "town:agi:npc-4", "sprite": "villager_kid", "nameZh": "小启", "role": "villager", "lines": ["爷爷说，这里的石头比所有的数据中心都老。", "可是石头上刻的，明明是神经网络啊？"], "wander": 2},
+    {"id": "ag-guardian", "at": "town:agi:guardian", "sprite": "villager_man", "nameZh": "圣殿门卫", "role": "villager", "lines": ["圣殿的大门永远敞开。", "能走到这里的人，已经不需要谁的许可了。"]}
+  ]
+}

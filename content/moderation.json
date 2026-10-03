@@ -1,0 +1,14 @@
+{
+  "mask": "*",
+  "ignoreBetween": " \t._-*·~!@#$%^&|/\\,，。！？、…'\"`+=:;：；()（）[]【】{}<>《》",
+  "bannedWords": ["傻逼", "傻b", "煞笔", "沙比", "傻屌", "sb玩意", "操你", "操你妈", "草泥马", "肏", "日你妈", "你妈的", "他妈的", "去你妈", "妈了个", "尼玛", "狗日的", "王八蛋", "贱人", "婊子", "滚你妈", "脑残", "智障", "弱智", "死全家", "去死吧", "废物东西", "杂种", "畜生", "鸡巴", "屌丝", "装逼", "逼样", "fuck", "fuk", "fck", "shit", "bitch", "cunt", "asshole", "bastard", "motherfucker", "dickhead", "retard", "nigger", "nigga", "faggot", "whore", "slut"],
+  "bannedWordsWhole": ["sb", "nmsl", "cnm", "tmd", "wtf", "stfu", "kys", "dick", "cock", "pussy", "fag"],
+  "name": {
+    "minLen": 1,
+    "tagLength": 4,
+    "uniqueAttempts": 32,
+    "forbiddenChars": "<>&\"'`\\/{}[]",
+    "reserved": ["系统", "管理员", "官方", "客服", "gm", "admin", "administrator", "system", "server", "moderator", "agentpocket", "智灵口袋"]
+  },
+  "chat": {"maxRepeatRun": 10}
+}

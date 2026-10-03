@@ -1,0 +1,22 @@
+{
+  "name": "agent-pocket-promo",
+  "private": true,
+  "type": "module",
+  "description": "Code-rendered promo for Agent Pocket · 智灵口袋 (deterministic f(t) renderer, three.js + Vite, offline headless-Chrome export)",
+  "scripts": {
+    "sync": "bun scripts/sync-assets.ts",
+    "dev": "PROMO_NO_HMR= bunx vite --port 5241 --strictPort",
+    "typecheck": "bunx tsc --noEmit -p tsconfig.json",
+    "render": "bun scripts/render.ts video --samples auto --shutter 0.5 --out out/agent-pocket-promo.mp4"
+  },
+  "dependencies": {
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "0.186.0",
+    "playwright-core": "^1.63.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "@types/bun": "latest"
+  }
+}

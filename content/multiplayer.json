@@ -1,0 +1,30 @@
+{
+  "pvp": {
+    "challengeSeconds": 30,
+    "partySeconds": 45,
+    "afkForfeitAfter": 3,
+    "healParty": true,
+    "maxResolveSteps": 12,
+    "arena": {"biomes": ["city", "ruins", "highland", "meadow", "volcano", "snow"], "timeOfDay": ["day", "dusk", "night"], "weather": "none"},
+    "clientSlackSeconds": 10,
+    "challengeAbortErrors": ["not_found", "busy", "self_busy", "self_target", "rate_limited", "pvp_unavailable", "pvp_not_found", "pvp_self", "pvp_self_busy", "pvp_busy", "pvp_pending", "pvp_declined", "pvp_expired", "pvp_opponent_left", "pvp_too_far"],
+    "inviteStaleErrors": ["pvp_expired", "pvp_cancelled"],
+    "respondErrors": ["pvp_challenge_not_found", "pvp_opponent_left", "pvp_busy", "pvp_self_busy", "rate_limited", "pvp_unavailable", "pvp_too_far"],
+    "resultOutcome": {"win": "win", "disconnect": "win", "lose": "loss", "forfeit": "loss", "draw": "draw"},
+    "outcomeToast": {"win": "success", "loss": "warn", "draw": "info"},
+    "sfx": {"challenged": "exclaim", "accepted": "confirm"}
+  },
+  "trade": {
+    "ivStars": 5,
+    "cardIconSize": 48,
+    "completeAnimMs": 1400,
+    "completeHoldMs": 1400,
+    "buttons": ["pick", "withdraw", "confirm", "cancel"],
+    "sfx": {"incoming": "notify", "offer": "select", "confirm": "confirm", "complete": "evolve"},
+    "requestAbortErrors": ["not_found", "busy", "self_busy", "self_target", "trade_pending", "rate_limited", "trade_unavailable", "trade_not_found", "too_far"],
+    "sessionErrors": ["trade_invalid_creature", "trade_incomplete", "trade_not_found", "trade_unavailable", "rate_limited"]
+  },
+  "online": {"tabs": ["players", "leaderboard", "profile"], "playerActions": ["whisper", "inspect", "trade", "battle"], "visibleRows": 7, "listWidth": 300, "avatarIconSize": 16, "partyIconSize": 28, "profileAvatarSize": 64, "inspectTimeoutMs": 5000, "inspectAbortErrors": ["not_found", "rate_limited"], "leaderboardMaxAgeSeconds": 20, "statusRefreshMs": 500},
+  "emotes": ["greet", "happy", "love", "surprise", "question", "awkward", "angry", "music", "thanks", "gg"],
+  "presence": {"viewRadiusTiles": 48, "leaveMarginTiles": 6, "tradeRangeTiles": 64, "pvpRangeTiles": 64}
+}

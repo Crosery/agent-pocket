@@ -1,0 +1,639 @@
+{
+  "keepOutDefault": 1,
+  "biomes": {
+    "meadow": {
+      "ground": "grass",
+      "layers": [
+        {"terrain": "tall_grass", "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "meadow-grass"}, "min": 0.6},
+        {"terrain": "tall_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "meadow-route-grass"}, "min": 0.52, "pathDist": [2, 6]},
+        {"terrain": "flowers", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "meadow-flowers"}, "min": 0.68}
+      ],
+      "props": [
+        {"prop": "tree_oak", "density": 0.3, "noise": {"scale": 14, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "meadow-groves"}, "min": 0.64},
+        {"prop": "tree_oak", "density": 0.008},
+        {"prop": "tree_cherry", "density": 0.005},
+        {"prop": "bush", "density": 0.012},
+        {"prop": "rock_small", "density": 0.004},
+        {"prop": "stump", "density": 0.003},
+        {"prop": "flower_patch", "density": 0.05, "on": ["grass", "flowers"]},
+        {"prop": "windmill", "density": 0.0008, "avoidPath": 3},
+        {"prop": "rock_large", "density": 0.001}
+      ],
+      "border": [
+        {"prop": "tree_oak", "weight": 6},
+        {"prop": "bush", "weight": 2},
+        {"prop": "tree_cherry", "weight": 1}
+      ]
+    },
+    "forest": {
+      "ground": "forest_floor",
+      "layers": [
+        {"terrain": "grass", "noise": {"scale": 12, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "forest-clearings"}, "min": 0.58},
+        {"terrain": "dark_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "forest-dark"}, "min": 0.6},
+        {"terrain": "tall_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "forest-route-grass"}, "min": 0.54, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "tree_oak", "density": 0.32, "noise": {"scale": 10, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "forest-trees"}, "min": 0.56, "avoidPath": 2},
+        {"prop": "tree_pine", "density": 0.28, "noise": {"scale": 9, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "forest-pines"}, "min": 0.6, "avoidPath": 2},
+        {"prop": "tree_oak", "density": 0.03},
+        {"prop": "bush", "density": 0.03},
+        {"prop": "mushroom", "density": 0.012},
+        {"prop": "stump", "density": 0.006},
+        {"prop": "log", "density": 0.003},
+        {"prop": "rock_small", "density": 0.004},
+        {"prop": "flower_patch", "density": 0.02, "on": ["grass"]}
+      ],
+      "border": [
+        {"prop": "tree_pine", "weight": 4},
+        {"prop": "tree_oak", "weight": 4},
+        {"prop": "bush", "weight": 1}
+      ]
+    },
+    "coast": {
+      "ground": "grass",
+      "layers": [
+        {"terrain": "tall_grass", "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "coast-grass"}, "min": 0.6},
+        {"terrain": "tall_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "coast-route-grass"}, "min": 0.54, "pathDist": [2, 6]},
+        {"terrain": "tall_reeds", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "coast-reeds"}, "min": 0.6, "on": ["sand"]},
+        {"terrain": "flowers", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "coast-flowers"}, "min": 0.72}
+      ],
+      "props": [
+        {"prop": "tree_palm", "density": 0.03},
+        {"prop": "tree_palm", "density": 0.25, "noise": {"scale": 12, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "coast-palms"}, "min": 0.66},
+        {"prop": "bush", "density": 0.01},
+        {"prop": "rock_small", "density": 0.008},
+        {"prop": "rock_large", "density": 0.002},
+        {"prop": "reeds", "density": 0.04, "on": ["sand", "tall_reeds"]},
+        {"prop": "flower_patch", "density": 0.02, "on": ["grass", "flowers"]},
+        {"prop": "barrel", "density": 0.001, "on": ["sand"]}
+      ],
+      "border": [
+        {"prop": "tree_palm", "weight": 4},
+        {"prop": "bush", "weight": 2},
+        {"prop": "tree_oak", "weight": 2}
+      ]
+    },
+    "desert": {
+      "ground": "sand",
+      "layers": [
+        {"terrain": "desert_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "desert-grass"}, "min": 0.6},
+        {"terrain": "desert_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "desert-route-grass"}, "min": 0.54, "pathDist": [2, 6]},
+        {"terrain": "rock", "noise": {"scale": 10, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "desert-rock"}, "min": 0.66}
+      ],
+      "props": [
+        {"prop": "cactus", "density": 0.02},
+        {"prop": "rock_small", "density": 0.01},
+        {"prop": "rock_large", "density": 0.004},
+        {"prop": "tree_dead", "density": 0.004},
+        {"prop": "tree_palm", "density": 0.004},
+        {"prop": "tent", "density": 0.0006, "avoidPath": 2},
+        {"prop": "campfire", "density": 0.0005, "avoidPath": 2}
+      ],
+      "border": [
+        {"prop": "rock_small", "weight": 3},
+        {"prop": "cactus", "weight": 3},
+        {"prop": "tree_dead", "weight": 1}
+      ]
+    },
+    "swamp": {
+      "ground": "grass",
+      "layers": [
+        {"terrain": "mud", "noise": {"scale": 9, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "swamp-mud"}, "min": 0.55},
+        {"terrain": "shallow", "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "swamp-pools"}, "min": 0.68, "pathDist": [2, 9999]},
+        {"terrain": "tall_reeds", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "swamp-reeds"}, "min": 0.6},
+        {"terrain": "tall_reeds", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "swamp-route-reeds"}, "min": 0.54, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "tree_swamp", "density": 0.3, "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "swamp-trees"}, "min": 0.62, "avoidPath": 2},
+        {"prop": "tree_swamp", "density": 0.02},
+        {"prop": "reeds", "density": 0.05, "on": ["shallow", "mud", "tall_reeds"]},
+        {"prop": "mushroom", "density": 0.015},
+        {"prop": "log", "density": 0.004},
+        {"prop": "stump", "density": 0.005}
+      ],
+      "border": [
+        {"prop": "tree_swamp", "weight": 5},
+        {"prop": "bush", "weight": 2}
+      ]
+    },
+    "volcano": {
+      "ground": "ash",
+      "layers": [
+        {"terrain": "rock", "noise": {"scale": 9, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "volcano-rock"}, "min": 0.56},
+        {"terrain": "dark_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "volcano-grass"}, "min": 0.62},
+        {"terrain": "dark_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "volcano-route-grass"}, "min": 0.55, "pathDist": [2, 6]},
+        {"terrain": "lava", "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "volcano-lava"}, "min": 0.74, "pathDist": [4, 9999]}
+      ],
+      "props": [
+        {"prop": "lava_rock", "density": 0.015},
+        {"prop": "tree_dead", "density": 0.012},
+        {"prop": "rock_large", "density": 0.005},
+        {"prop": "rock_small", "density": 0.01},
+        {"prop": "crystal", "density": 0.002},
+        {"prop": "campfire", "density": 0.0005, "avoidPath": 2}
+      ],
+      "border": [
+        {"prop": "lava_rock", "weight": 3},
+        {"prop": "rock_small", "weight": 3},
+        {"prop": "tree_dead", "weight": 2}
+      ]
+    },
+    "snow": {
+      "ground": "snow",
+      "layers": [
+        {"terrain": "tall_snowgrass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "snow-grass"}, "min": 0.6},
+        {"terrain": "tall_snowgrass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "snow-route-grass"}, "min": 0.54, "pathDist": [2, 6]},
+        {"terrain": "ice", "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "snow-ice"}, "min": 0.72}
+      ],
+      "props": [
+        {"prop": "tree_snowpine", "density": 0.32, "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "snow-trees"}, "min": 0.62, "avoidPath": 2},
+        {"prop": "tree_snowpine", "density": 0.02},
+        {"prop": "ice_spike", "density": 0.008},
+        {"prop": "rock_small", "density": 0.006},
+        {"prop": "rock_large", "density": 0.002},
+        {"prop": "crystal", "density": 0.001}
+      ],
+      "border": [
+        {"prop": "tree_snowpine", "weight": 5},
+        {"prop": "ice_spike", "weight": 2},
+        {"prop": "rock_small", "weight": 1}
+      ]
+    },
+    "city": {
+      "ground": "tech",
+      "layers": [
+        {"terrain": "grass", "noise": {"scale": 12, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "city-parks"}, "min": 0.57},
+        {"terrain": "tall_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "city-tall"}, "min": 0.6, "on": ["grass"]},
+        {"terrain": "tall_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "city-route-grass"}, "min": 0.54, "pathDist": [2, 6]},
+        {"terrain": "cobble", "noise": {"scale": 6, "octaves": 1, "gain": 0.5, "lacunarity": 2, "salt": "city-plazas"}, "min": 0.7, "on": ["tech"]}
+      ],
+      "props": [
+        {"prop": "antenna", "density": 0.006},
+        {"prop": "solar_panel", "density": 0.008, "on": ["tech", "cobble"]},
+        {"prop": "server_rack", "density": 0.006, "on": ["tech"]},
+        {"prop": "lamp", "density": 0.006, "on": ["tech", "cobble"]},
+        {"prop": "tree_oak", "density": 0.03, "on": ["grass"]},
+        {"prop": "bush", "density": 0.02, "on": ["grass"]},
+        {"prop": "crate", "density": 0.003},
+        {"prop": "bench", "density": 0.002, "on": ["cobble", "tech"]}
+      ],
+      "border": [
+        {"prop": "tree_oak", "weight": 3},
+        {"prop": "server_rack", "weight": 2},
+        {"prop": "antenna", "weight": 1},
+        {"prop": "bush", "weight": 2}
+      ]
+    },
+    "highland": {
+      "ground": "grass",
+      "layers": [
+        {"terrain": "rock", "noise": {"scale": 10, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "highland-rock"}, "min": 0.57},
+        {"terrain": "tall_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "highland-grass"}, "min": 0.6},
+        {"terrain": "tall_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "highland-route-grass"}, "min": 0.54, "pathDist": [2, 6]},
+        {"terrain": "flowers", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "highland-flowers"}, "min": 0.76}
+      ],
+      "props": [
+        {"prop": "tree_pine", "density": 0.28, "noise": {"scale": 12, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "highland-pines"}, "min": 0.64, "avoidPath": 2},
+        {"prop": "tree_pine", "density": 0.012},
+        {"prop": "rock_large", "density": 0.004},
+        {"prop": "rock_small", "density": 0.01},
+        {"prop": "bush", "density": 0.01},
+        {"prop": "windmill", "density": 0.0008, "avoidPath": 3},
+        {"prop": "flower_patch", "density": 0.02, "on": ["grass", "flowers"]}
+      ],
+      "border": [
+        {"prop": "tree_pine", "weight": 5},
+        {"prop": "rock_small", "weight": 2},
+        {"prop": "bush", "weight": 1}
+      ]
+    },
+    "ruins": {
+      "ground": "ruin",
+      "layers": [
+        {"terrain": "grass", "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "ruins-grass"}, "min": 0.5},
+        {"terrain": "dark_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "ruins-dark"}, "min": 0.62},
+        {"terrain": "tall_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "ruins-route-grass"}, "min": 0.54, "pathDist": [2, 6]},
+        {"terrain": "snow", "noise": {"scale": 11, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "ruins-snow"}, "min": 0.68}
+      ],
+      "props": [
+        {"prop": "ruin_pillar", "density": 0.02},
+        {"prop": "ruin_arch", "density": 0.002, "avoidPath": 2},
+        {"prop": "statue", "density": 0.001, "avoidPath": 2},
+        {"prop": "crystal", "density": 0.006},
+        {"prop": "rock_small", "density": 0.008},
+        {"prop": "tree_snowpine", "density": 0.01},
+        {"prop": "bush", "density": 0.006}
+      ],
+      "border": [
+        {"prop": "ruin_pillar", "weight": 3},
+        {"prop": "rock_small", "weight": 2},
+        {"prop": "tree_snowpine", "weight": 2}
+      ]
+    },
+    "sakura": {
+      "ground": "sakura_grass",
+      "layers": [
+        {"terrain": "tall_sakura", "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-sakura-grass"}, "min": 0.6},
+        {"terrain": "tall_sakura", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-sakura-route"}, "min": 0.54, "pathDist": [2, 6]},
+        {"terrain": "flowers", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-sakura-flowers"}, "min": 0.7}
+      ],
+      "props": [
+        {"prop": "tree_cherry", "density": 0.32, "noise": {"scale": 13, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-sakura-groves"}, "min": 0.6, "avoidPath": 2, "scale": [0.9, 1.25]},
+        {"prop": "tree_cherry", "density": 0.02},
+        {"prop": "bush", "density": 0.01},
+        {"prop": "flower_patch", "density": 0.05, "on": ["sakura_grass", "flowers"]},
+        {"prop": "rock_small", "density": 0.003},
+        {"prop": "lamp", "density": 0.0008, "avoidPath": 1},
+        {"prop": "statue", "density": 0.0004, "avoidPath": 3}
+      ],
+      "border": [
+        {"prop": "tree_cherry", "weight": 5},
+        {"prop": "bush", "weight": 2}
+      ]
+    },
+    "bamboo": {
+      "ground": "bamboo_floor",
+      "layers": [
+        {"terrain": "tall_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-bamboo-grass"}, "min": 0.6},
+        {"terrain": "tall_fern", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-bamboo-fern"}, "min": 0.66},
+        {"terrain": "tall_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-bamboo-route"}, "min": 0.54, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "bamboo", "density": 0.36, "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-bamboo-groves"}, "min": 0.52, "avoidPath": 1, "scale": [0.85, 1.15]},
+        {"prop": "tree_pine", "density": 0.12, "noise": {"scale": 11, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-bamboo-pines"}, "min": 0.66, "avoidPath": 2, "scale": [0.8, 1.0]},
+        {"prop": "bamboo", "density": 0.03, "scale": [0.7, 0.95]},
+        {"prop": "rock_small", "density": 0.004},
+        {"prop": "mushroom", "density": 0.004},
+        {"prop": "stump", "density": 0.004}
+      ],
+      "border": [
+        {"prop": "tree_pine", "weight": 4},
+        {"prop": "bush", "weight": 2}
+      ]
+    },
+    "jungle": {
+      "ground": "jungle_floor",
+      "layers": [
+        {"terrain": "tall_fern", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-jungle-fern"}, "min": 0.56},
+        {"terrain": "mud", "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-jungle-mud"}, "min": 0.68},
+        {"terrain": "tall_fern", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-jungle-route"}, "min": 0.52, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "tree_oak", "density": 0.38, "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-jungle-canopy"}, "min": 0.54, "avoidPath": 2, "scale": [1.2, 1.55]},
+        {"prop": "tree_palm", "density": 0.2, "noise": {"scale": 12, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-jungle-palms"}, "min": 0.64, "avoidPath": 2, "scale": [1.0, 1.3]},
+        {"prop": "tree_oak", "density": 0.03, "scale": [1.1, 1.4]},
+        {"prop": "bush", "density": 0.05, "scale": [1.1, 1.5]},
+        {"prop": "mushroom", "density": 0.01},
+        {"prop": "log", "density": 0.004},
+        {"prop": "flower_patch", "density": 0.02, "on": ["jungle_floor"]}
+      ],
+      "border": [
+        {"prop": "tree_oak", "weight": 4},
+        {"prop": "bush", "weight": 3},
+        {"prop": "tree_palm", "weight": 1}
+      ]
+    },
+    "mangrove": {
+      "ground": "mud",
+      "layers": [
+        {"terrain": "shallow", "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-mangrove-pools"}, "min": 0.6, "pathDist": [2, 9999]},
+        {"terrain": "tall_reeds", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-mangrove-reeds"}, "min": 0.58},
+        {"terrain": "tall_reeds", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-mangrove-route"}, "min": 0.54, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "tree_mangrove", "density": 0.32, "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-mangrove-trees"}, "min": 0.56, "avoidPath": 2, "scale": [0.95, 1.2]},
+        {"prop": "tree_swamp", "density": 0.02},
+        {"prop": "reeds", "density": 0.06, "on": ["mud", "shallow", "tall_reeds"]},
+        {"prop": "log", "density": 0.004},
+        {"prop": "mushroom", "density": 0.006}
+      ],
+      "border": [
+        {"prop": "tree_swamp", "weight": 5},
+        {"prop": "bush", "weight": 1}
+      ]
+    },
+    "savanna": {
+      "ground": "savanna",
+      "layers": [
+        {"terrain": "tall_savanna", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-savanna-grass"}, "min": 0.58},
+        {"terrain": "sand", "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-savanna-sand"}, "min": 0.7},
+        {"terrain": "tall_savanna", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-savanna-route"}, "min": 0.54, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "tree_acacia", "density": 0.006, "scale": [0.9, 1.15]},
+        {"prop": "tree_dead", "density": 0.004},
+        {"prop": "bush", "density": 0.008},
+        {"prop": "rock_large", "density": 0.002},
+        {"prop": "rock_small", "density": 0.006},
+        {"prop": "cactus", "density": 0.002},
+        {"prop": "tent", "density": 0.0004, "avoidPath": 2},
+        {"prop": "campfire", "density": 0.0004, "avoidPath": 2},
+        {"prop": "tree_baobab", "density": 0.0015, "avoidPath": 2, "scale": [0.9, 1.15]}
+      ],
+      "border": [
+        {"prop": "bush", "weight": 3},
+        {"prop": "rock_small", "weight": 2},
+        {"prop": "tree_dead", "weight": 1}
+      ]
+    },
+    "lavender": {
+      "ground": "grass",
+      "layers": [
+        {"terrain": "lavender", "noise": {"scale": 11, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-lavender-fields"}, "min": 0.46},
+        {"terrain": "tall_lavender", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-lavender-tall"}, "min": 0.6, "on": ["lavender"]},
+        {"terrain": "tall_lavender", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-lavender-route"}, "min": 0.54, "pathDist": [2, 6]},
+        {"terrain": "flowers", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-lavender-flowers"}, "min": 0.74}
+      ],
+      "props": [
+        {"prop": "flower_patch", "density": 0.05, "on": ["grass", "lavender", "flowers"]},
+        {"prop": "windmill", "density": 0.0009, "avoidPath": 3},
+        {"prop": "bush", "density": 0.006},
+        {"prop": "tree_oak", "density": 0.004},
+        {"prop": "tree_cherry", "density": 0.002},
+        {"prop": "bench", "density": 0.0004, "avoidPath": 1},
+        {"prop": "fence", "density": 0.0015}
+      ],
+      "border": [
+        {"prop": "bush", "weight": 4},
+        {"prop": "tree_oak", "weight": 2}
+      ]
+    },
+    "mushroom": {
+      "ground": "moss",
+      "layers": [
+        {"terrain": "dark_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-mush-dark"}, "min": 0.58},
+        {"terrain": "tall_fern", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-mush-fern"}, "min": 0.66},
+        {"terrain": "dark_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-mush-route"}, "min": 0.54, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "mushroom_giant", "density": 0.26, "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-mush-giants"}, "min": 0.58, "avoidPath": 1, "scale": [0.8, 1.25]},
+        {"prop": "mushroom", "density": 0.04, "scale": [0.8, 1.3]},
+        {"prop": "tree_swamp", "density": 0.18, "noise": {"scale": 12, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-mush-trees"}, "min": 0.66, "avoidPath": 2},
+        {"prop": "log", "density": 0.005},
+        {"prop": "stump", "density": 0.005},
+        {"prop": "crystal", "density": 0.002}
+      ],
+      "border": [
+        {"prop": "tree_swamp", "weight": 4},
+        {"prop": "bush", "weight": 2}
+      ]
+    },
+    "taiga": {
+      "ground": "forest_floor",
+      "layers": [
+        {"terrain": "snow", "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-taiga-snow"}, "min": 0.6},
+        {"terrain": "tall_snowgrass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-taiga-grass"}, "min": 0.62},
+        {"terrain": "tall_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-taiga-route"}, "min": 0.54, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "tree_pine", "density": 0.34, "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-taiga-pines"}, "min": 0.55, "avoidPath": 2},
+        {"prop": "tree_snowpine", "density": 0.3, "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-taiga-snowpines"}, "min": 0.6, "avoidPath": 2},
+        {"prop": "tree_pine", "density": 0.02},
+        {"prop": "rock_small", "density": 0.006},
+        {"prop": "log", "density": 0.003},
+        {"prop": "stump", "density": 0.004}
+      ],
+      "border": [
+        {"prop": "tree_pine", "weight": 4},
+        {"prop": "tree_snowpine", "weight": 3}
+      ]
+    },
+    "tundra": {
+      "ground": "moss",
+      "layers": [
+        {"terrain": "snow", "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-tundra-snow"}, "min": 0.55},
+        {"terrain": "tall_snowgrass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-tundra-grass"}, "min": 0.6},
+        {"terrain": "rock", "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-tundra-rock"}, "min": 0.7},
+        {"terrain": "tall_snowgrass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-tundra-route"}, "min": 0.54, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "rock_small", "density": 0.012},
+        {"prop": "rock_large", "density": 0.003},
+        {"prop": "tree_snowpine", "density": 0.006, "scale": [0.7, 0.9]},
+        {"prop": "ice_spike", "density": 0.003},
+        {"prop": "bush", "density": 0.004}
+      ],
+      "border": [
+        {"prop": "rock_small", "weight": 3},
+        {"prop": "tree_snowpine", "weight": 2}
+      ]
+    },
+    "glacier": {
+      "ground": "ice",
+      "layers": [
+        {"terrain": "snow", "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-glacier-snow"}, "min": 0.45},
+        {"terrain": "tall_snowgrass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-glacier-grass"}, "min": 0.7, "on": ["snow"]},
+        {"terrain": "tall_snowgrass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-glacier-route"}, "min": 0.56, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "ice_spike", "density": 0.02},
+        {"prop": "ice_spike", "density": 0.004, "scale": [1.6, 2.4]},
+        {"prop": "rock_small", "density": 0.004},
+        {"prop": "crystal", "density": 0.002}
+      ],
+      "border": [
+        {"prop": "ice_spike", "weight": 4},
+        {"prop": "rock_small", "weight": 1}
+      ]
+    },
+    "badlands": {
+      "ground": "red_rock",
+      "layers": [
+        {"terrain": "sand", "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-bad-sand"}, "min": 0.6},
+        {"terrain": "desert_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-bad-grass"}, "min": 0.62},
+        {"terrain": "rock", "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-bad-rock"}, "min": 0.66},
+        {"terrain": "desert_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-bad-route"}, "min": 0.54, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "rock_large", "density": 0.008, "scale": [1.2, 1.8]},
+        {"prop": "rock_small", "density": 0.012},
+        {"prop": "cactus", "density": 0.006},
+        {"prop": "tree_dead", "density": 0.004},
+        {"prop": "hoodoo", "density": 0.004, "scale": [0.9, 1.4]}
+      ],
+      "border": [
+        {"prop": "rock_small", "weight": 3},
+        {"prop": "cactus", "weight": 2}
+      ]
+    },
+    "saltflat": {
+      "ground": "salt",
+      "layers": [
+        {"terrain": "sand", "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-salt-sand"}, "min": 0.62},
+        {"terrain": "shallow", "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-salt-brine"}, "min": 0.74, "pathDist": [3, 9999]},
+        {"terrain": "desert_grass", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-salt-grass"}, "min": 0.7},
+        {"terrain": "desert_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-salt-route"}, "min": 0.58, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "salt_crystal", "density": 0.006, "scale": [0.8, 1.3]},
+        {"prop": "rock_small", "density": 0.004},
+        {"prop": "tree_dead", "density": 0.002}
+      ],
+      "border": [
+        {"prop": "rock_small", "weight": 3},
+        {"prop": "tree_dead", "weight": 1}
+      ]
+    },
+    "canyon": {
+      "ground": "red_rock",
+      "layers": [
+        {"terrain": "sand", "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-canyon-sand"}, "min": 0.58},
+        {"terrain": "rock", "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-canyon-rock"}, "min": 0.6},
+        {"terrain": "desert_grass", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-canyon-grass"}, "min": 0.66},
+        {"terrain": "desert_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-canyon-route"}, "min": 0.54, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "rock_large", "density": 0.006},
+        {"prop": "rock_small", "density": 0.012},
+        {"prop": "cactus", "density": 0.004},
+        {"prop": "tree_dead", "density": 0.003},
+        {"prop": "hoodoo", "density": 0.003, "scale": [0.85, 1.3]}
+      ],
+      "border": [
+        {"prop": "rock_small", "weight": 3},
+        {"prop": "cactus", "weight": 1}
+      ]
+    },
+    "ashlands": {
+      "ground": "ash",
+      "layers": [
+        {"terrain": "rock", "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-ash-rock"}, "min": 0.58},
+        {"terrain": "dark_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-ash-grass"}, "min": 0.66},
+        {"terrain": "dark_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-ash-route"}, "min": 0.55, "pathDist": [2, 6]},
+        {"terrain": "lava", "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-ash-lava"}, "min": 0.76, "pathDist": [4, 9999]}
+      ],
+      "props": [
+        {"prop": "lava_rock", "density": 0.02},
+        {"prop": "rock_small", "density": 0.012},
+        {"prop": "tree_dead", "density": 0.01},
+        {"prop": "crystal", "density": 0.002},
+        {"prop": "rock_large", "density": 0.003}
+      ],
+      "border": [
+        {"prop": "lava_rock", "weight": 3},
+        {"prop": "rock_small", "weight": 2}
+      ]
+    },
+    "lagoon": {
+      "ground": "coral_sand",
+      "layers": [
+        {"terrain": "shallow", "noise": {"scale": 8, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-lagoon-pools"}, "min": 0.66, "pathDist": [3, 9999]},
+        {"terrain": "tall_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-lagoon-grass"}, "min": 0.64},
+        {"terrain": "tall_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-lagoon-route"}, "min": 0.55, "pathDist": [2, 6]},
+        {"terrain": "flowers", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-lagoon-flowers"}, "min": 0.75}
+      ],
+      "props": [
+        {"prop": "tree_palm", "density": 0.05},
+        {"prop": "tree_palm", "density": 0.26, "noise": {"scale": 12, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-lagoon-palms"}, "min": 0.64, "avoidPath": 2},
+        {"prop": "rock_small", "density": 0.006},
+        {"prop": "reeds", "density": 0.02, "on": ["coral_sand", "shallow"]},
+        {"prop": "barrel", "density": 0.001},
+        {"prop": "coral", "density": 0.01, "on": ["coral_sand", "shallow"], "scale": [0.8, 1.2]}
+      ],
+      "border": [
+        {"prop": "tree_palm", "weight": 4},
+        {"prop": "bush", "weight": 2}
+      ]
+    },
+    "crystal": {
+      "ground": "crystal_floor",
+      "layers": [
+        {"terrain": "rock", "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-crystal-rock"}, "min": 0.55},
+        {"terrain": "dark_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-crystal-grass"}, "min": 0.64},
+        {"terrain": "dark_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-crystal-route"}, "min": 0.55, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "crystal", "density": 0.04, "scale": [0.9, 1.6]},
+        {"prop": "crystal", "density": 0.004, "scale": [2.0, 3.0]},
+        {"prop": "rock_small", "density": 0.008},
+        {"prop": "ice_spike", "density": 0.004},
+        {"prop": "rock_large", "density": 0.002}
+      ],
+      "border": [
+        {"prop": "crystal", "weight": 3},
+        {"prop": "rock_small", "weight": 2}
+      ]
+    },
+    "cloud": {
+      "ground": "cloud",
+      "layers": [
+        {"terrain": "snow", "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-cloud-snow"}, "min": 0.6},
+        {"terrain": "tall_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-cloud-grass"}, "min": 0.64},
+        {"terrain": "tall_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-cloud-route"}, "min": 0.55, "pathDist": [2, 6]},
+        {"terrain": "flowers", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-cloud-flowers"}, "min": 0.78}
+      ],
+      "props": [
+        {"prop": "cloud_puff", "density": 0.02, "scale": [0.9, 1.5]},
+        {"prop": "tree_cherry", "density": 0.006},
+        {"prop": "rock_small", "density": 0.004},
+        {"prop": "windmill", "density": 0.0006, "avoidPath": 3},
+        {"prop": "statue", "density": 0.0004, "avoidPath": 3}
+      ],
+      "border": [
+        {"prop": "bush", "weight": 4},
+        {"prop": "rock_small", "weight": 1}
+      ]
+    },
+    "glitch": {
+      "ground": "glitch",
+      "layers": [
+        {"terrain": "tall_glitch", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-glitch-grass"}, "min": 0.58},
+        {"terrain": "tech", "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-glitch-tech"}, "min": 0.68},
+        {"terrain": "crystal_floor", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-glitch-crystal"}, "min": 0.72},
+        {"terrain": "tall_glitch", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-glitch-route"}, "min": 0.54, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "glitch_monolith", "density": 0.012},
+        {"prop": "server_rack", "density": 0.006},
+        {"prop": "antenna", "density": 0.002},
+        {"prop": "ruin_pillar", "density": 0.004},
+        {"prop": "tree_dead", "density": 0.004},
+        {"prop": "crystal", "density": 0.006}
+      ],
+      "border": [
+        {"prop": "crystal", "weight": 3},
+        {"prop": "ruin_pillar", "weight": 2}
+      ]
+    },
+    "circuit": {
+      "ground": "circuit",
+      "layers": [
+        {"terrain": "tech", "noise": {"scale": 9, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-circuit-tech"}, "min": 0.6},
+        {"terrain": "tall_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-circuit-grass"}, "min": 0.64},
+        {"terrain": "cobble", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-circuit-cobble"}, "min": 0.72, "on": ["tech"]},
+        {"terrain": "tall_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-circuit-route"}, "min": 0.55, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "server_rack", "density": 0.012, "on": ["circuit", "tech"]},
+        {"prop": "solar_panel", "density": 0.01, "on": ["circuit", "tech", "cobble"]},
+        {"prop": "circuit_pylon", "density": 0.006},
+        {"prop": "lamp", "density": 0.006, "on": ["tech", "cobble", "circuit"]},
+        {"prop": "crate", "density": 0.003},
+        {"prop": "bush", "density": 0.006, "on": ["tall_grass"]}
+      ],
+      "border": [
+        {"prop": "server_rack", "weight": 3},
+        {"prop": "bush", "weight": 2}
+      ]
+    },
+    "neural": {
+      "ground": "neural",
+      "layers": [
+        {"terrain": "dark_grass", "noise": {"scale": 7, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-neural-dark"}, "min": 0.58},
+        {"terrain": "tall_fern", "noise": {"scale": 6, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-neural-fern"}, "min": 0.66},
+        {"terrain": "dark_grass", "noise": {"scale": 5, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-neural-route"}, "min": 0.54, "pathDist": [2, 6]}
+      ],
+      "props": [
+        {"prop": "neural_tree", "density": 0.3, "noise": {"scale": 10, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "fx-neural-canopy"}, "min": 0.56, "avoidPath": 2, "scale": [0.95, 1.25]},
+        {"prop": "mushroom", "density": 0.03, "scale": [1.0, 1.6]},
+        {"prop": "crystal", "density": 0.01},
+        {"prop": "server_rack", "density": 0.002},
+        {"prop": "antenna", "density": 0.001}
+      ],
+      "border": [
+        {"prop": "tree_oak", "weight": 4},
+        {"prop": "crystal", "weight": 1}
+      ]
+    }
+  }
+}

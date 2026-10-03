@@ -1,0 +1,26 @@
+Cinematic HD-2D JRPG game trailer cue in the spirit of Octopath Traveler: a minimal, elegant teaser that grows from a single music-box note into a joyful orchestral theme with a subtle 8-bit chiptune colour, then stops dead and lands one final chord.
+
+Global Metadata
+Basic Attributes: bpm is 100. key is D major, and scale is major with a bright Lydian colour. Time signature 4/4. Cinematic orchestral trailer music, JRPG main-theme style, with light retro chiptune accents.
+Global Emotional Progression: curious and quiet at first (a single point of light in the dark), wonder grows, anticipation builds steadily, bursts into a heroic, warm, joyful theme, a sudden breath of silence, then one triumphant final chord that rings out and resolves.
+Application Scenarios & Imagery: a 60-second game trailer; a lone pixel blinking in darkness becomes a whole pixel-art world full of cute AI companion creatures; sunlight over tiny tiles, sparkles, friends meeting, a title card at the end.
+Sonics & Production Profile: polished modern trailer mix, wide stereo, warm concert-hall reverb, very clean and uncluttered arrangement with lots of space; strong clear downbeats so picture cuts can land on them; no vocals, no choir, no spoken word, no sound effects, no risers made of noise.
+Structure: one constant tempo of 100 BPM from the first bar to the last; clear section changes exactly on bar lines; a real ending (final cadence and natural ring-out), not a loop.
+
+Vocal Details
+Instrumental: no vocals of any kind. The lead melodic role is carried by a music box and celesta at first, then by French horns and strings.
+
+Arrangement
+Instrument Lifecycle Description (Primary/Secondary Layering):
+Primary: music box / celesta motif (a simple, memorable 4-note rising motif), later French horns and soaring violins.
+Secondary: felt piano, pizzicato strings, warm string pad, harp glissandi, a soft 8-bit square-wave arpeggio that doubles the motif.
+Groove & Foundation Progression: no drums in the intro; a soft low heartbeat drum enters in the build; full orchestral percussion (big low drums, snare, cymbals) and a driving pulse in the main theme; total silence for the stop; one huge hit on the final chord.
+Embellishments, Textures & Spatial FX: sparkling glockenspiel and chime accents on downbeats, harp sweeps into sections, cymbal swells only right before big downbeats.
+Section Timeline (tempo stays at 100 BPM throughout):
+[Intro] bars 1-4: solo music box plays the 4-note motif with long gaps of near silence, a faint warm pad underneath. Very sparse and intimate.
+[Build] bars 5-8: felt piano and pizzicato strings start a gentle eighth-note pulse, a soft low drum on beat one of every bar, the motif repeats with celesta and the soft chiptune arpeggio.
+[Rise] bars 9-12: strings swell, drums on every beat, the arpeggio gets brighter, a snare roll and cymbal swell build tension into the next downbeat.
+[Main Theme] bars 13-20: full orchestra bursts in on the downbeat: horns and violins sing the heroic, joyful main theme built from the motif, driving percussion, chiptune arpeggio sparkling on top.
+[Stop] bar 21: everything cuts to complete silence for two beats, then a short harp and string pickup.
+[Finale] bars 22-23: the whole ensemble hits one big triumphant D major chord on the downbeat with a timpani and cymbal hit, sustained and ringing.
+[Tail] bars 24-25: the music box plays the motif one last time alone over the fading reverb, ending on the tonic.

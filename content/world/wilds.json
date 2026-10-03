@@ -1,0 +1,60 @@
+{
+  "cell": 150,
+  "jitter": 0.9,
+  "warp": {"amplitude": 46, "noise": {"scale": 110, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "wild-cells"}},
+  "minArea": 2600,
+  "maxRegions": 150,
+  "idPattern": "wild-{zone}-{n}",
+  "dupPattern": "{name}·{n}",
+  "names": {
+    "meadow": {
+      "prefix": ["低语", "微风", "晨光", "蒲公英", "梯度", "萤火", "摇篮", "温调", "归一", "初始化"],
+      "suffix": ["草原", "原野", "牧场", "花海", "坡地"]
+    },
+    "forest": {
+      "prefix": ["低语", "千层", "参数", "缠绕", "幽光", "苔藓", "递归", "开源", "密语", "注意力"],
+      "suffix": ["林海", "密林", "树海", "古林", "林地"]
+    },
+    "coast": {
+      "prefix": ["潮汐", "像素", "珊瑚", "白浪", "回声", "采样", "贝壳", "风帆", "镜面", "浮点"],
+      "suffix": ["海岸", "沙洲", "海湾", "礁滩", "岬角"]
+    },
+    "desert": {
+      "prefix": ["量子", "灼热", "沉默", "流沙", "残差", "海市", "熵增", "风蚀", "赤铜", "回响"],
+      "suffix": ["荒原", "沙海", "戈壁", "沙丘", "旱地"]
+    },
+    "swamp": {
+      "prefix": ["迷雾", "检索", "沉没", "腐叶", "噪声", "幽绿", "索引", "泥泞", "雾隐", "缓存"],
+      "suffix": ["沼泽", "湿地", "泥潭", "雾泽", "水乡"]
+    },
+    "volcano": {
+      "prefix": ["熔岩", "算力", "超频", "赤焰", "过热", "硅晶", "余烬", "灼芯", "炼狱", "张量"],
+      "suffix": ["回廊", "火原", "焦土", "熔谷", "火脊"]
+    },
+    "snow": {
+      "prefix": ["霜冻", "冰封", "静默", "对齐", "白噪", "极光", "凛冬", "冻结", "雪线", "寒武"],
+      "suffix": ["冰原", "雪岭", "冻土", "冰谷", "雪原"]
+    },
+    "city": {
+      "prefix": ["废弃", "数据", "霓虹", "离线", "宕机", "旧版", "镜像", "边缘", "容器", "协议"],
+      "suffix": ["街区", "工业带", "废墟城", "终端区", "机房群"]
+    },
+    "highland": {
+      "prefix": ["推理", "苍茫", "长风", "逻辑", "云端", "孤峰", "思维", "高维", "鹰巢", "辽阔"],
+      "suffix": ["高原", "台地", "山脊", "坡原", "峰峦"]
+    },
+    "ruins": {
+      "prefix": ["远古", "失落", "奇点", "沉睡", "残响", "图灵", "黄昏", "遗忘", "碎片", "永恒"],
+      "suffix": ["遗迹", "废墟", "神殿群", "旧址", "石阵"]
+    }
+  },
+  "tiers": [
+    {"minDist": 0, "levelBonus": 1, "encounterRate": 0.1, "roamingDensity": 0.55, "rareBoost": 1.2},
+    {"minDist": 120, "levelBonus": 4, "encounterRate": 0.11, "roamingDensity": 0.7, "rareBoost": 1.8},
+    {"minDist": 175, "levelBonus": 8, "encounterRate": 0.12, "roamingDensity": 0.85, "rareBoost": 2.6}
+  ],
+  "levels": {"span": 6, "perTile": 0.012, "startDistance": 160, "maxOver": 12},
+  "biomeMusic": {"meadow": "route", "forest": "forest", "coast": "coast", "desert": "desert", "swamp": "swamp", "volcano": "volcano", "snow": "snow", "city": "city", "highland": "route", "ruins": "ruins"},
+  "biomeWeather": {"meadow": "clear", "forest": "clear", "coast": "clear", "desert": "sand", "swamp": "fog", "volcano": "ash", "snow": "snow", "city": "clear", "highland": "clear", "ruins": "aurora"},
+  "spots": {"total": 240, "perRegionMin": 1, "minSpacing": 16, "pathBias": 0}
+}

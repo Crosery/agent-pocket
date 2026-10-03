@@ -1,0 +1,258 @@
+{
+  "content": {
+    "items": "content/items.json",
+    "moves": "content/moves.json",
+    "types": {
+      "file": "content/types.json",
+      "path": "types"
+    }
+  },
+  "paths": {
+    "details": "assets_src/prompts/items_details.json",
+    "rawKind": "items",
+    "out": "public/assets/items/{id}.png",
+    "report": "assets_src/raw/items/_report.json",
+    "failures": "assets_src/raw/items/_failures.jsonl",
+    "contact": "assets_src/raw/items/_contact_{page}.png"
+  },
+  "generator": {
+    "quality": "high",
+    "variantByAspect": {
+      "wide": "landscape",
+      "tall": "portrait",
+      "square": "square"
+    }
+  },
+  "style": {
+    "icon": "chunky clean pixel art in the style of 16-bit SNES-era JRPG inventory icons, bold dark outline around every item, simple readable silhouette that stays clear when shrunk to 32x32 pixels, slight three-quarter top-down view, limited palette with clean highlights and darker shading",
+    "original": "original designs, no logos or symbols from existing franchises or brands",
+    "keyBg": "Solid flat pure magenta #FF00FF background filling everything around and between the items; the items themselves must not use any magenta or hot-pink #FF00FF color",
+    "noText": "no text, no letters, no numbers, no labels, no captions, no watermark, no grid lines, no cell borders, no frames, no drop shadows",
+    "world": "a cozy fantasy-tech JRPG world where cute AI spirits live"
+  },
+  "sheet": {
+    "cols": 4,
+    "rows": 4,
+    "categoryOrder": [
+      "ball",
+      "medicine",
+      "battle",
+      "evolution",
+      "key",
+      "misc",
+      "chip"
+    ],
+    "prompt": "A sprite sheet of {count} different inventory item icons for {style.world}. The items are arranged in an exact grid of {rows} rows x {cols} columns of equal cells spread evenly over the whole image. Every cell holds exactly ONE item, centered in its cell and filling about 70 percent of the cell, with wide empty gaps between items; no item touches, overlaps or crosses into another cell. Every item is clearly different from the others. Items in row-major order (left to right, then top to bottom):\n{cells}\n{empty}Style: {style.icon}, {style.original}. {style.keyBg}. {style.noText}.",
+    "cell": "Row {row}, column {col}: {text}",
+    "empty": "Cells after item {count} stay completely empty plain magenta.\n",
+    "separate": [
+      "chip"
+    ]
+  },
+  "detailFallback": "{nameZh} - {description}",
+  "categories": {
+    "ball": "a round high-tech capture orb: a smooth glossy sphere whose main shell color is {colorName} ({color}), with a large glowing hexagonal core lens in the center of its front, framed by two thin vertical metal ribs that arc from the top of the sphere to its bottom, {detail}",
+    "medicine": "a futuristic tech medicine item: {detail}",
+    "battle": "a small battle booster item: {detail}",
+    "evolution": "a precious growth item: {detail}",
+    "key": "a unique key item: {detail}",
+    "misc": "{detail}",
+    "chip": "a skill chip: {detail}"
+  },
+  "categoryFallback": "{detail}",
+  "chip": {
+    "category": "chip",
+    "unitPrefix": "chip:",
+    "motifSource": {
+      "file": "assets_src/prompts/details.json",
+      "path": "types"
+    },
+    "motifFallback": "the symbol of {nameZh} ({idWords})",
+    "template": "a small square microchip skill cartridge card whose body color is {colorName} ({color}) with lighter highlights and darker shading of the same hue, a row of gold contact pins along its bottom edge, a dark rounded border, and on its face one simple glowing emblem: {motif}"
+  },
+  "colorNames": [
+    {
+      "name": "white",
+      "hex": "#f4f4f4"
+    },
+    {
+      "name": "silver white",
+      "hex": "#e0e0e4"
+    },
+    {
+      "name": "light gray",
+      "hex": "#b8b8b8"
+    },
+    {
+      "name": "warm gray",
+      "hex": "#a8a29e"
+    },
+    {
+      "name": "slate gray",
+      "hex": "#8f9bb3"
+    },
+    {
+      "name": "charcoal",
+      "hex": "#404048"
+    },
+    {
+      "name": "black",
+      "hex": "#141418"
+    },
+    {
+      "name": "red",
+      "hex": "#e03030"
+    },
+    {
+      "name": "vermilion red",
+      "hex": "#e2513d"
+    },
+    {
+      "name": "orange",
+      "hex": "#f08a24"
+    },
+    {
+      "name": "amber orange",
+      "hex": "#ffb43c"
+    },
+    {
+      "name": "golden yellow",
+      "hex": "#f4c430"
+    },
+    {
+      "name": "lemon yellow",
+      "hex": "#f4e04d"
+    },
+    {
+      "name": "pale gold",
+      "hex": "#ffe66b"
+    },
+    {
+      "name": "mustard gold",
+      "hex": "#d6b84a"
+    },
+    {
+      "name": "lime green",
+      "hex": "#9ad94a"
+    },
+    {
+      "name": "leaf green",
+      "hex": "#7cc95a"
+    },
+    {
+      "name": "emerald green",
+      "hex": "#36c26b"
+    },
+    {
+      "name": "teal",
+      "hex": "#2ec4c4"
+    },
+    {
+      "name": "cyan",
+      "hex": "#40d8f0"
+    },
+    {
+      "name": "pale ice blue",
+      "hex": "#9fdcff"
+    },
+    {
+      "name": "sky blue",
+      "hex": "#5fb0ff"
+    },
+    {
+      "name": "periwinkle blue",
+      "hex": "#6d8cff"
+    },
+    {
+      "name": "royal blue",
+      "hex": "#2f5bd8"
+    },
+    {
+      "name": "deep indigo",
+      "hex": "#3b3f8f"
+    },
+    {
+      "name": "navy",
+      "hex": "#1f2a5a"
+    },
+    {
+      "name": "lavender violet",
+      "hex": "#b07cff"
+    },
+    {
+      "name": "bright violet",
+      "hex": "#b86bff"
+    },
+    {
+      "name": "deep purple",
+      "hex": "#6b3fa0"
+    },
+    {
+      "name": "rose pink",
+      "hex": "#ff6fae"
+    },
+    {
+      "name": "salmon pink",
+      "hex": "#ff9a8a"
+    },
+    {
+      "name": "brown",
+      "hex": "#8a5a32"
+    },
+    {
+      "name": "beige",
+      "hex": "#e0c9a0"
+    }
+  ],
+  "slice": {
+    "labelDownsample": 4,
+    "gridSnap": 0.3,
+    "minBlobFraction": 0.0004,
+    "keepRatio": 0.03,
+    "itemRatio": 0.3,
+    "overflowTolerance": 0.08,
+    "cutout": {
+      "borderTransparent": 0.9,
+      "alphaCut": 0.85,
+      "haloMaxDist": 60
+    }
+  },
+  "process": {
+    "size": 32,
+    "margin": 1,
+    "resample": "box",
+    "palette": 15,
+    "minSpeck": 3,
+    "pinhole": 4,
+    "outline": true,
+    "outlineDarken": 0.28,
+    "outlineMaxChannel": 72
+  },
+  "verify": {
+    "minOpaque": 110,
+    "minSide": 20,
+    "minColors": 5,
+    "tintDistance": 26,
+    "tintLightnessWeight": 0.35,
+    "tintMinFraction": 0.1,
+    "duplicateMaxDeltaE": 10,
+    "duplicateMissDeltaE": 100
+  },
+  "contactSheet": {
+    "cols": 8,
+    "scale": 3,
+    "thumb": 96,
+    "labelChars": 22,
+    "background": "#202028",
+    "label": "#ebebeb",
+    "warn": "#ff6060",
+    "checker": [
+      "#c8c8c8",
+      "#f0f0f0"
+    ],
+    "perPage": 48,
+    "gap": 6,
+    "lineHeight": 12,
+    "checkerCell": 4
+  }
+}

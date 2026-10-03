@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>battle stage sandbox · 智灵口袋</title>
+  <style>
+    @font-face { font-family: 'Fusion Pixel'; src: url('/assets/fonts/fusion-pixel-12px-zh_hans.woff2') format('woff2'); }
+    :root { --ap-font: 'Fusion Pixel', monospace; }
+    html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+    #c { position: fixed; left: 0; top: 0; display: block; }
+    #hud { position: fixed; left: 8px; top: 8px; color: #e9e6ff; font: 12px/1.35 var(--ap-font); background: rgba(10, 8, 24, 0.62);
+      padding: 6px 8px; border: 1px solid #4b4380; white-space: pre; pointer-events: none; z-index: 5; }
+    #hud.hidden { display: none; }
+    #errors { position: fixed; left: 8px; bottom: 8px; right: 8px; color: #ffb4b4; font: 12px/1.3 monospace; white-space: pre-wrap; z-index: 6; }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="hud"></div>
+  <div id="errors"></div>
+  <script type="module" src="./battle-stage.ts"></script>
+</body>
+</html>

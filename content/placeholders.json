@@ -1,0 +1,320 @@
+{
+  "shading": {"tones": [[-0.2, -14, 0.04], [-0.1, -7, 0.02], [0, 0, 0], [0.09, 7, -0.02], [0.17, 12, -0.06]]},
+  "skinShading": {"tones": [[-0.11, -4, -0.04], [-0.055, -2, -0.02], [0, 0, 0], [0.04, 3, 0], [0.07, 5, -0.02]]},
+  "outline": {"lightness": -0.45, "hue": -12, "dark": "#1b1325", "mix": 0.45},
+  "contour": {"lightness": -0.13, "hue": -8},
+  "stampPalette": {"o": "#2a1d3a", "w": "#ffffff", "k": "#2b2438", "y": "#ffd44a", "Y": "#d99a1e", "r": "#e8473f", "R": "#a82a2f", "g": "#cfe7f2", "G": "#7f8796", "s": "#c8ccd6", "b": "#9a6a3c", "B": "#5e3c22", "c": "#9fe6ff", "C": "#3fa3d6", "p": "#ff6fc0", "l": "#7cd65a", "L": "#3d8f3a"},
+  "stamps": {
+    "brackets": {"pivot": [3, 2], "rows": ["..X.X..", ".X...X.", "X.....X", ".X...X.", "..X.X.."]},
+    "note": {"pivot": [3, 3], "rows": ["..XXXXX", "..XhhhX", "..X...X", "..X...X", "XXX.XXX", "XXx.XXx"]},
+    "bubble": {"pivot": [4, 3], "rows": [".wwwwwww.", "wwwwwwwww", "wwkwkwkww", "wwwwwwwww", ".wwwwwww.", "..ww.....", ".w......."]},
+    "bulb": {"pivot": [3, 8], "rows": ["..yyy..", ".ywwyy.", "ywwyyyy", "ywyyyyy", "yyyyyyY", ".yyyyY.", "..sss..", "..GGG..", "...G..."]},
+    "quill": {"pivot": [1, 7], "rows": [".....hX", "....hXX", "...hXXx", "..hXXx.", ".hXXx..", ".Xx....", ".b.....", "b......"]},
+    "paintbrush": {"pivot": [1, 6], "rows": [".X.", "XhX", "XXx", ".s.", ".s.", ".b.", ".b.", ".b.", ".B."]},
+    "clapper": {"pivot": [4, 6], "rows": ["wkwkwkwk.", ".wkwkwkwk", "kkkkkkkkk", "kXXXXXXXk", "kXwwwwwXk", "kXXXXXXXk", "kkkkkkkkk"]},
+    "magnifier": {
+      "pivot": [6, 6],
+      "rows": ["..kkkk...", ".kwccck..", "kwccccck.", "kcccccck.", "kcccccck.", ".kcccck..", "..kkkkXX.", "......XXx", ".......Xx"]
+    },
+    "sprout": {"pivot": [3, 5], "rows": [".ll.ll.", "lllLlll", "lLl.lLl", ".L.L.L.", "...L...", "...L..."]},
+    "gear": {"pivot": [3, 3], "rows": [".X.X.X.", "XXXXXXX", ".XX.XX.", "XX...XX", ".XX.XX.", "XXXXXXX", ".X.X.X."]},
+    "chipBadge": {"pivot": [3, 3], "rows": ["..s.s..", ".kkkkk.", "skXXXks", ".kXhXk.", "skXXXks", ".kkkkk.", "..s.s.."]},
+    "glitch": {"pivot": [3, 2], "rows": ["X..cc..", "XX...pp", "..X.X..", "cc...XX", "...pp.X"]},
+    "shield": {"pivot": [3, 3], "rows": ["kkkkkkk", "kXXwXXk", "kXXwXXk", "kwwwwwk", "kXXwXXk", ".kXwXk.", "..kXk..", "...k..."]},
+    "star": {"pivot": [2, 2], "rows": ["..y..", ".yyy.", "yyyyy", ".yYy.", ".y.y."]},
+    "sparkle": {"pivot": [2, 2], "rows": ["..X..", "..X..", "XXwXX", "..X..", "..X.."]},
+    "heart": {"pivot": [3, 3], "rows": [".XX.XX.", "XhXXXXX", "XXXXXXx", ".XXXXx.", "..XXx..", "...x..."]},
+    "book": {"pivot": [3, 3], "rows": ["XXXXXXX.", "XhhhhhXw", "XhyyhhXw", "XhhhhhXw", "XhhhhhXw", "XXXXXXXw", ".wwwwwww"]},
+    "potion": {
+      "pivot": [4, 5],
+      "rows": ["...bbb...", "...bBb...", "..wgggw..", "...gXg...", "..gXXXg..", ".gXhXXXg.", "gXhXXXXxg", "gXXXXXXxg", "gXXXXXXxg", ".gxXXXxg.", "..ggggg.."]
+    },
+    "capsule": {"pivot": [5, 3], "rows": ["..XXXwww..", ".XhXXwwwg.", "XhXXXwwwwg", "XXXXXwwwwg", ".xXXXggwg.", "..xxxggg.."]},
+    "chip": {
+      "pivot": [5, 5],
+      "rows": ["..s.s.s.s..", ".kkkkkkkkk.", "skXXXXXXXks", ".kXhhXXXXk.", "skXhXXXXXks", ".kXXXXXxXk.", "skXXXXxxXks", ".kXXXxxxXk.", "skXXXXXXXks", ".kkkkkkkkk.", "..s.s.s.s.."]
+    },
+    "crystal": {
+      "pivot": [4, 5],
+      "rows": ["....h....", "...hXh...", "..hXXXx..", ".hXXwXXx.", "hXXwXXXxx", "XXXXXXXxx", ".XXXXXxx.", "..XXXxx..", "...Xxx...", "....x...."]
+    },
+    "box": {
+      "pivot": [5, 4],
+      "rows": ["..XXXyXXX..", ".XhhhyhhhX.", "XXXXXyXXXXX", "yyyyyyyyyyy", "XxXXXyXXXxX", "XxXXXyXXXxX", "XxXXXyXXXxX", "XxxxxyxxxxX", ".XXXXXXXXX."]
+    },
+    "bike": {
+      "pivot": [6, 4],
+      "rows": ["..kk......kk.", "...X......k..", "...XXXXXXXk..", ".kkXk...XkXk.", "k..kX..X.k..k", "k.s.kXX..ks.k", "k...k....k..k", ".kkk......kk."]
+    },
+    "surfboard": {
+      "pivot": [3, 6],
+      "rows": ["...h...", "..hXX..", "..XwX..", ".hXwXx.", ".XXwXx.", ".XXwXx.", ".XXwXx.", ".XXwXx.", ".XXwXx.", "..XwX..", "..xXx..", "...x..."]
+    },
+    "map": {
+      "pivot": [5, 4],
+      "rows": ["XXXhXXXhXXX", "XlXhXXXhXrX", "XllhlXXhrrX", "XXlhllXhXXX", "XXXhXlXhXXX", "XbXhXXlhlXX", "XXXhXXXhXlX", "xxxhxxxhxxx"]
+    },
+    "dex": {
+      "pivot": [4, 6],
+      "rows": [".XXXXXXX.", "XhhhhhhXx", "XkkkkkkXx", "XkcccckXx", "XkcwcckXx", "XkcccckXx", "XkkkkkkXx", "XXXXXXXXx", "XwXXrXyXx", "XXXXXXXXx", ".xxxxxxx."]
+    },
+    "case": {
+      "pivot": [5, 4],
+      "rows": ["...kkkkk...", "...k...k...", "XXXXXXXXXXX", "XhhhhhhhhhX", "XyYXrRXcCXX", "XyYXrRXcCXX", "XXXXXXXXXXX", "xxxxxxxxxxx"]
+    },
+    "ticket": {
+      "pivot": [5, 3],
+      "rows": ["XXXXXXXwXXX", "XhhhhhX.XhX", "XhkkkhXwXXX", "XhhhhhX.XXX", "XhkkkhXwXXX", "XXXXXXX.XXX", "xxxxxxxwxxx"]
+    },
+    "keycard": {"pivot": [5, 3], "rows": ["XXXXXXXXXXX", "XhhhhXyyyXX", "XhkkhXyYyXX", "XhhhhXXXXXX", "XwwwwwwwwXX", "xxxxxxxxxxx"]},
+    "spray": {
+      "pivot": [3, 6],
+      "rows": ["..kk...", "..ss.w.", ".XXXX..", "XhXXXx.", "XhXXXx.", "XwwwXx.", "XwkwXx.", "XwwwXx.", "XXXXXx.", ".xxxx.."]
+    },
+    "feather": {"pivot": [3, 5], "rows": ["....hX", "...hXX", "..hXXx", ".hXXx.", ".XXx..", "hXx...", "Xx....", "b....."]}
+  },
+  "face": {"blush": "#ff8aa8", "blushAlpha": 0.5, "mouth": "#7a3040", "eyeWhite": "#fff8f2", "lash": "#2a1a2e", "highlight": "#ffffff"},
+  "details": {"foxTailTip": "#f5f2ec", "robotCable": "#464c5c", "robotPlug": "#fad65a", "earInner": "#ff96aa", "earInnerMix": 0.45, "antenna": "#60687a", "mouthInner": "#e86e78", "drawstring": "#f0f0f0", "goggleBand": "#3c3c48", "visorTint": "#141e32", "visorTintMix": 0.25, "shine": "#ffffff", "shineMix": 0.6, "neutral": "#808080"},
+  "cel": {"light": [-0.55, -0.83], "bright": 0.62, "light1": 0.28, "shade1": -0.3, "shade2": -0.72},
+  "creature": {
+    "logicalSize": 64,
+    "stages": [
+      {"ground": 61, "legH": 5, "legW": 4, "legGap": 2, "shoeH": 2, "torsoH": 11, "torsoW": 15, "armW": 3, "armH": 9, "headRx": 16, "headRy": 14, "neckOverlap": 1, "eyeW": 5, "eyeH": 6, "eyeDx": 7, "eyeDy": 2},
+      {"ground": 61, "legH": 6, "legW": 4, "legGap": 2, "shoeH": 2, "torsoH": 13, "torsoW": 16, "armW": 3, "armH": 11, "headRx": 15, "headRy": 13, "neckOverlap": 1, "eyeW": 5, "eyeH": 6, "eyeDx": 7, "eyeDy": 2},
+      {"ground": 61, "legH": 7, "legW": 4, "legGap": 3, "shoeH": 2, "torsoH": 15, "torsoW": 17, "armW": 4, "armH": 12, "headRx": 15, "headRy": 13, "neckOverlap": 1, "eyeW": 5, "eyeH": 5, "eyeDx": 7, "eyeDy": 2}
+    ],
+    "skinTones": ["#ffe8d6", "#fde0c9", "#f7d2b6", "#f0c3a0", "#fff0e2"],
+    "eyeStyles": [
+      {"id": "round", "weight": 4},
+      {"id": "sparkle", "weight": 3},
+      {"id": "sharp", "weight": 2},
+      {"id": "sleepy", "weight": 1},
+      {"id": "happy", "weight": 1}
+    ],
+    "hairStyles": [
+      {"id": "short", "weight": 3},
+      {"id": "bob", "weight": 2},
+      {"id": "long", "weight": 3},
+      {"id": "twintails", "weight": 2},
+      {"id": "ponytail", "weight": 2},
+      {"id": "spiky", "weight": 2},
+      {"id": "buns", "weight": 1},
+      {"id": "messy", "weight": 2},
+      {"id": "swept", "weight": 2}
+    ],
+    "earStyles": [
+      {"id": "none", "weight": 4},
+      {"id": "cat", "weight": 2},
+      {"id": "fox", "weight": 1},
+      {"id": "bunny", "weight": 1},
+      {"id": "bear", "weight": 1},
+      {"id": "elf", "weight": 1}
+    ],
+    "tailStyles": [
+      {"id": "none", "weight": 5},
+      {"id": "cat", "weight": 2},
+      {"id": "fox", "weight": 1}
+    ],
+    "topStyles": [
+      {"id": "shirt", "weight": 2},
+      {"id": "hoodie", "weight": 2},
+      {"id": "jacket", "weight": 2},
+      {"id": "coat", "weight": 1},
+      {"id": "dress", "weight": 1},
+      {"id": "suit", "weight": 1}
+    ],
+    "bottomStyles": [
+      {"id": "shorts", "weight": 2},
+      {"id": "skirt", "weight": 2},
+      {"id": "pants", "weight": 2}
+    ],
+    "mouths": [
+      {"id": "cat", "weight": 2},
+      {"id": "smile", "weight": 3},
+      {"id": "dot", "weight": 2},
+      {"id": "open", "weight": 1}
+    ],
+    "neutralTops": ["#f4f1ea", "#2e2b3d", "#3b4f73", "#e8e2f4", "#38363f", "#f2e6cf"],
+    "bottoms": ["#2e2b3d", "#3d4a66", "#5a4636", "#f0ece4", "#454057"],
+    "shoes": ["#3a2d2a", "#2b2933", "#f2efe8", "#7a4a2e", "#c0392b"],
+    "eyeFallback": ["#4aa3ff", "#ff6f91", "#7cd67c", "#ffb347", "#b07cff"],
+    "hairJitter": {"hue": 14, "lightness": 0.06},
+    "secondaryShift": {"hue": 40, "lightness": -0.12},
+    "minEyeSaturation": 0.25,
+    "typeMotifs": {
+      "chat": [
+        {"stamp": "bubble", "anchor": "floatLeft"},
+        {"draw": "scarf", "color": "type2"}
+      ],
+      "logic": [
+        {"stamp": "bulb", "anchor": "floatTop"},
+        {"draw": "glasses", "color": "#3a3550"},
+        {"stamp": "book", "anchor": "hand", "color": "type2"}
+      ],
+      "code": [
+        {"draw": "glasses", "color": "#2b2933"},
+        {"stamp": "brackets", "anchor": "chest", "color": "type"},
+        {"set": {"topStyle": "hoodie"}}
+      ],
+      "write": [
+        {"stamp": "quill", "anchor": "hand", "color": "#fff6e6"},
+        {"draw": "scarf", "color": "type"}
+      ],
+      "vision": [
+        {"draw": "hat:beret", "color": "type2"},
+        {"stamp": "paintbrush", "anchor": "hand", "color": "type"}
+      ],
+      "motion": [
+        {"stamp": "clapper", "anchor": "hand", "color": "type"},
+        {"draw": "hat:cap", "color": "type"}
+      ],
+      "sound": [
+        {"draw": "headphones", "color": "type"},
+        {"stamp": "note", "anchor": "floatRight", "color": "type"}
+      ],
+      "search": [
+        {"stamp": "magnifier", "anchor": "hand", "color": "#9a6a3c"},
+        {"set": {"eyeStyle": "sharp"}},
+        {"draw": "scarf", "color": "type"}
+      ],
+      "agent": [
+        {"draw": "visor", "color": "type"},
+        {"stamp": "gear", "anchor": "chest", "color": "type"},
+        {"set": {"ears": "robot"}}
+      ],
+      "open": [
+        {"stamp": "sprout", "anchor": "headTop"},
+        {"stamp": "heart", "anchor": "chest", "color": "type"},
+        {"set": {"ears": "elf"}}
+      ],
+      "compute": [
+        {"draw": "hat:goggles", "color": "type"},
+        {"stamp": "chipBadge", "anchor": "chest", "color": "type"},
+        {"set": {"topStyle": "armor"}}
+      ],
+      "chaos": [
+        {"draw": "horns", "color": "type"},
+        {"stamp": "glitch", "anchor": "floatRight", "color": "type"},
+        {"set": {"eyeStyle": "sharp"}}
+      ],
+      "safety": [
+        {"draw": "halo", "color": "#ffe680"},
+        {"stamp": "shield", "anchor": "handLeft", "color": "type"},
+        {"set": {"topStyle": "armor"}}
+      ]
+    },
+    "defaultMotifs": [
+      {"stamp": "star", "anchor": "chest"}
+    ],
+    "stageMotifs": [[], [], [{"draw": "cape", "color": "trim"}]],
+    "rarityMotifs": {
+      "SSR": [
+        {"stamp": "sparkle", "anchor": "floatLeft", "color": "#fff2a0"}
+      ],
+      "UR": [
+        {"stamp": "sparkle", "anchor": "floatLeft", "color": "#ffd0d0"},
+        {"stamp": "sparkle", "anchor": "floatRight", "color": "#ffd0d0"}
+      ],
+      "MYTHIC": [
+        {"draw": "wings", "color": "#fffaf0"},
+        {"stamp": "sparkle", "anchor": "floatLeft", "color": "#fff2a0"},
+        {"stamp": "sparkle", "anchor": "floatRight", "color": "#fff2a0"}
+      ]
+    }
+  },
+  "character": {
+    "dims": {"ground": 59, "legH": 8, "legW": 3, "legGap": 2, "shoeH": 2, "torsoH": 12, "torsoW": 13, "armW": 3, "armH": 10, "headRx": 12, "headRy": 11, "neckOverlap": 3, "eyeW": 3, "eyeH": 4, "eyeDx": 5, "eyeDy": 2},
+    "skin": {"default": "#ffe2cc", "keywords": {"tan skin": "#d9a272", "tanned": "#d9a272", "pale": "#fff1e6", "dark skin": "#9a6440"}},
+    "colors": {"black": "#2b2933", "white": "#f4f2ee", "silver": "#cfd3dc", "grey": "#9b9ba6", "gray": "#9b9ba6", "red": "#d8433b", "dark red": "#8e2c2c", "blue": "#3f6fd6", "dark blue": "#26386e", "ice-blue": "#a8dcf5", "light blue": "#8ec5f2", "teal": "#2fb3a6", "cyan": "#3fd2e3", "neon cyan": "#4ff0ff", "green": "#4cae52", "dark green": "#2f6a3c", "yellow": "#f2c94c", "golden": "#e9bb4e", "gold": "#e9bb4e", "orange": "#f28a3a", "brown": "#7b4f2e", "khaki": "#b9a574", "pink": "#f38bb7", "purple": "#8b56c9", "dark purple": "#4a2a6a", "violet-black": "#3b2650", "violet": "#7a4bc0", "lavender": "#baa4ec", "pastel purple": "#c9aaf2", "pastel": "#f5c6e0", "denim": "#4b6fa6", "navy": "#2a3560", "beige": "#e3d3b0", "plaid": "#a6463d", "bronze": "#b07a3a"},
+    "hairWords": ["hair", "ponytail", "twin-tails", "twintails"],
+    "topWords": {"hoodie": "hoodie", "jacket": "jacket", "coat": "coat", "lab coat": "coat", "lab-coat": "coat", "shirt": "shirt", "t-shirt": "shirt", "uniform": "suit", "vest": "jacket", "robe": "robe", "sweater": "shirt", "armor": "armor", "smock": "coat", "suit": "suit", "bodysuit": "shirt", "apron": "dress", "swimsuit": "shirt", "overalls": "shirt", "outfit": "shirt", "dress": "dress"},
+    "bottomWords": {"pants": "pants", "trousers": "pants", "jeans": "pants", "shorts": "shorts", "skirt": "skirt"},
+    "shoeWords": ["sneakers", "boots", "shoes", "sandals"],
+    "hatWords": {"cap": "cap", "sun hat": "sunhat", "hat": "sunhat", "beret": "beret", "hood": "hood", "bandana": "bandana", "goggles": "goggles", "crown": "crown"},
+    "hairStyleWords": [["twin-tails", "twintails"], ["twintails", "twintails"], ["ponytail", "ponytail"], ["loops", "buns"], ["bun", "buns"], ["bob", "bob"], ["spiky", "spiky"], ["undercut", "short"], ["messy", "messy"], ["swept", "swept"], ["wavy", "long"], ["long", "long"], ["short", "short"], ["girl", "long"], ["woman", "bob"], ["boy", "short"], ["man", "short"]],
+    "extraWords": {"glasses": "glasses", "monocle": "glasses", "headphones": "headphones", "headset": "headphones", "backpack": "backpack", "cape": "cape", "scarf": "scarf", "beard": "beard", "visor": "visor"},
+    "extraColors": {"glasses": "#2b2933", "headphones": "#3a3550", "backpack": "#8a5a32", "cape": "#c23b3b", "scarf": "#d8433b", "beard": "#e8e4dc", "visor": "#4ff0ff"},
+    "eyeColors": ["#3d6fd6", "#6b4a2f", "#2fa36b", "#8b56c9", "#c0503a", "#3a3550"],
+    "fallback": {"hair": ["#3a2f2a", "#6b4a2f", "#2b2933", "#a0522d", "#d9b36c"], "top": ["#4a6fa6", "#d8433b", "#4cae52", "#e9bb4e", "#8b56c9"], "bottom": ["#2e2b3d", "#3d4a66", "#5a4636"], "shoes": ["#3a2d2a", "#2b2933", "#7b4f2e"]},
+    "defaultHairStyle": "short",
+    "defaultTopStyle": "shirt",
+    "defaultBottomStyle": "pants"
+  },
+  "terrain": {
+    "size": 32,
+    "fallback": {"pattern": "noise", "colors": ["#808080"]},
+    "recipes": {
+      "void": {"pattern": "void", "colors": ["#05050b", "#0b0b14", "#11111d", "#171727"], "accents": ["#3a3a5a"], "params": {"stars": 3}},
+      "grass": {"pattern": "grass", "colors": ["#3f7f2f", "#4d9637", "#5aa83f", "#6cbf4f", "#86d461"], "accents": ["#a3e06f"], "params": {"blades": 44, "flecks": 6}},
+      "tall_grass": {"pattern": "grass", "colors": ["#2c6a2a", "#357a31", "#3f8f3a", "#4ea345", "#62b955"], "params": {"blades": 60, "bladeLen": 3}},
+      "path": {"pattern": "dirt", "colors": ["#8f6c42", "#a5804f", "#b8925c", "#c9a36b", "#d8b67e"], "accents": ["#e2c896", "#b0a090"], "params": {"pebbles": 6, "specks": 24}},
+      "sand": {"pattern": "sand", "colors": ["#d2b878", "#dcc488", "#e4cf95", "#ead9a0", "#f3e6b8"], "accents": ["#c9a86a", "#fff4d0"], "params": {"ripples": 4}},
+      "snow": {"pattern": "snow", "colors": ["#c9d8ea", "#d9e5f2", "#e6eef7", "#f2f6fb", "#ffffff"], "accents": ["#ffffff", "#bcd2ee"], "params": {"sparkles": 9}},
+      "water": {"pattern": "water", "colors": ["#1f4f9a", "#265fb2", "#2e6fc5", "#3a7bd5", "#4f92e2", "#8cc4f5"], "accents": ["#e6f6ff"], "params": {"waves": 9, "glints": 3}},
+      "shallow": {"pattern": "water", "colors": ["#4a8fc8", "#58a0d6", "#6fb3e8", "#86c4ef", "#a8d8f7", "#dff3ff"], "accents": ["#ffffff"], "params": {"waves": 7, "glints": 4}},
+      "rock": {"pattern": "rock", "colors": ["#5f5a56", "#6f6a65", "#7d7873", "#8a8580", "#a29d97"], "accents": ["#b7b2ab", "#6a655f"], "params": {"cracks": 4, "pebbles": 3}},
+      "cobble": {"pattern": "cobble", "colors": ["#6c655c", "#9d958a", "#aaa296", "#b5aea3", "#c4bdb1", "#d8d2c6"], "params": {"stones": 9}},
+      "flowers": {"pattern": "flowers", "colors": ["#3f7f2f", "#4d9637", "#5aa83f", "#6cbf4f", "#86d461"], "accents": ["#ffe066", "#ff8fc1", "#ffffff", "#9fb8ff", "#ff7a6b"], "params": {"blades": 30, "flowers": 10}},
+      "mud": {"pattern": "mud", "colors": ["#3e352b", "#4a4034", "#544a3c", "#5b5140", "#6b604c"], "accents": ["#41382d", "#8a7f68"], "params": {"wet": 0.3, "pebbles": 3}},
+      "lava": {"pattern": "lava", "colors": ["#3a1410", "#a3230f", "#d23b12", "#ff5a1f", "#ff8a2a", "#ffc24a"], "accents": ["#fff2a6"], "params": {"veins": 1}},
+      "tech": {"pattern": "metal", "colors": ["#3f4858", "#5f6c80", "#6f7c91", "#7d8ca3", "#8c9bb1", "#b4c2d6"], "accents": ["#4ff0ff"], "params": {"panel": 16}},
+      "wood": {"pattern": "planks", "colors": ["#5e3e22", "#8f6337", "#9c6e3f", "#a87a4a", "#b58854", "#c99c66"], "params": {"plank": 8}},
+      "tile_floor": {"pattern": "tiles", "colors": ["#9d978c", "#cfcac0", "#d8d4cc", "#e0dcd4", "#f2efe9"], "params": {"tile": 16}},
+      "carpet": {"pattern": "carpet", "colors": ["#7a2a3a", "#9c3a4c", "#b5485c", "#c25a6c", "#f0d27a"], "accents": ["#e6b85a"], "params": {"motif": 8}},
+      "ice": {"pattern": "ice", "colors": ["#8fc9ec", "#a4d6f2", "#b4e0f8", "#bfe6ff", "#d9f2ff", "#ffffff"], "accents": ["#f2fbff"], "params": {"streaks": 3, "cracks": 2}},
+      "forest_floor": {"pattern": "leaves", "colors": ["#2f4f24", "#3a6130", "#436d35", "#4c7a3a", "#5a8a45"], "accents": ["#8a6a2f", "#a8742f", "#6f8f3a", "#5a4026"], "params": {"leaves": 16, "twigs": 3}},
+      "bridge": {"pattern": "planks", "colors": ["#3a2614", "#80562f", "#8f6337", "#9c6b3c", "#a8774a", "#c0905e"], "params": {"plank": 8, "gap": 1, "nails": 1}},
+      "cave": {"pattern": "rock", "colors": ["#2e2834", "#3e3644", "#4a4252", "#5a5160", "#6c6272"], "accents": ["#7a7088", "#3a3340"], "params": {"cracks": 5, "pebbles": 4}},
+      "ruin": {"pattern": "bricks", "colors": ["#6f6a5c", "#8d8674", "#9a937f", "#a69f8a", "#b5ae98", "#c9c3ad"], "accents": ["#5f8a4a", "#76a35a"], "params": {"brick": 8, "brickW": 16, "moss": 6, "cracks": 2}},
+      "tall_snowgrass": {"pattern": "grass", "colors": ["#a9c2cc", "#b8cfd8", "#c5d9e0", "#cfe0e6", "#e6f0f3"], "params": {"blades": 40, "bladeLen": 2}},
+      "stairs": {"pattern": "steps", "colors": ["#6f6556", "#a99d8c", "#b8ad9c", "#cbbfae", "#ece3d6"], "params": {"step": 8}},
+      "dark_grass": {"pattern": "grass", "colors": ["#2c2140", "#3a2c52", "#4a3a5c", "#5a4870", "#6f5a88"], "accents": ["#9a7fd0"], "params": {"blades": 56, "bladeLen": 3, "flecks": 4}},
+      "ash": {"pattern": "dirt", "colors": ["#3f3936", "#4a4441", "#544d4a", "#5e5552", "#6d6461"], "accents": ["#ff7a3a", "#7a706c"], "params": {"pebbles": 3, "specks": 16}},
+      "crystal_floor": {"pattern": "crystal", "colors": ["#4f8fa8", "#6fb3cc", "#7fc4dc", "#8fd3e8", "#a8e2f2", "#e6fbff"], "accents": ["#ffffff"], "params": {"facets": 9, "glints": 5}},
+      "wall": {"pattern": "bricks", "colors": ["#241f28", "#2f2a35", "#3b3540", "#46404c", "#57505e"], "params": {"brick": 8, "brickW": 16}},
+      "tall_reeds": {"pattern": "grass", "colors": ["#4f6a2e", "#5f7a38", "#6f8a42", "#7a9a4a", "#93b05c"], "params": {"blades": 50, "bladeLen": 3}},
+      "desert_grass": {"pattern": "grass", "colors": ["#a08a48", "#b09850", "#bba355", "#c2a85a", "#d6bf74"], "accents": ["#e2cf8a"], "params": {"blades": 40, "flecks": 5}},
+      "cliff_rock": {"pattern": "cliff", "colors": ["#4f4a46", "#6a645e", "#77716a", "#837d76", "#a9a39b"], "params": {"bands": 4, "warp": 6, "cracks": 4}},
+      "cliff_redrock": {"pattern": "cliff", "colors": ["#6a3018", "#8a4226", "#a85834", "#c06a40", "#d8956a"], "accents": ["#e8b48a"], "params": {"bands": 6, "warp": 4, "cracks": 3}},
+      "cliff_ice": {"pattern": "cliff", "colors": ["#4e7fa8", "#6a9cc4", "#8ab8dc", "#a8d2ee", "#d2ecfa"], "accents": ["#ffffff", "#e6f6ff"], "params": {"bands": 3, "warp": 7, "cracks": 2, "cap": 4}},
+      "cliff_dirt": {"pattern": "cliff", "colors": ["#4a3420", "#6b4c2e", "#7a5836", "#86643f", "#a8845a"], "accents": ["#4f8a3a", "#6aa84a"], "params": {"bands": 5, "warp": 5, "cracks": 3, "cap": 3, "moss": 5}},
+      "cliff_snow": {"pattern": "cliff", "colors": ["#56606e", "#6c7686", "#7a8494", "#8893a3", "#b0bccb"], "accents": ["#f2f6fb", "#c9d8ea"], "params": {"bands": 4, "warp": 6, "cracks": 3, "cap": 4}},
+      "ledge_grass": {"pattern": "grass", "colors": ["#3a7a2c", "#4a9234", "#58a33f", "#68b84c", "#80cc5c"], "accents": ["#2f5a24"], "params": {"blades": 36, "flecks": 4}},
+      "ledge_sand": {"pattern": "sand", "colors": ["#c4ab70", "#cfb67c", "#d6c08a", "#e0cc98", "#ecdcb0"], "accents": ["#b39860"], "params": {"ripples": 3}},
+      "ledge_snow": {"pattern": "snow", "colors": ["#bccbdc", "#cbd8e6", "#dce6ef", "#e9f0f6", "#fbfdff"], "accents": ["#ffffff"], "params": {"sparkles": 6}},
+      "ledge_rock": {"pattern": "rock", "colors": ["#5a554f", "#6b665f", "#7b766f", "#8a857e", "#a09b94"], "accents": ["#b0aba4"], "params": {"cracks": 5, "pebbles": 2}},
+      "ledge_dirt": {"pattern": "dirt", "colors": ["#6b4c2e", "#7a5836", "#86643f", "#94714a", "#a8845a"], "accents": ["#4f8a3a"], "params": {"pebbles": 4, "specks": 18}},
+      "sakura_grass": {"pattern": "flowers", "colors": ["#6fa84f", "#82b85c", "#94c46a", "#a8d27e", "#b8dc9c"], "accents": ["#ffc4dc", "#ffb0cf", "#ffe2ee", "#ffffff"], "params": {"blades": 28, "flowers": 14}},
+      "bamboo_floor": {"pattern": "leaves", "colors": ["#5f8a3e", "#6c9848", "#7fa65a", "#8fb468", "#a6c47c"], "accents": ["#c9c070", "#a89a4a", "#4f7a30"], "params": {"leaves": 18, "twigs": 5}},
+      "jungle_floor": {"pattern": "leaves", "colors": ["#1f4220", "#264c26", "#2f5a2a", "#386a32", "#447a3a"], "accents": ["#6a8a2a", "#8a5a2a", "#2a6a4a"], "params": {"leaves": 22, "twigs": 4}},
+      "savanna": {"pattern": "grass", "colors": ["#a88a40", "#b8994c", "#c4a656", "#cdb35e", "#dcc478"], "accents": ["#e8d48c", "#8a7a3a"], "params": {"blades": 38, "flecks": 6}},
+      "lavender": {"pattern": "flowers", "colors": ["#5f7a4a", "#6c8a54", "#7a9a5e", "#8aa86a", "#9cb87a"], "accents": ["#9f86cc", "#b49ce0", "#8a6cb8", "#d8c8f4"], "params": {"blades": 26, "flowers": 16}},
+      "moss": {"pattern": "grass", "colors": ["#4f6a42", "#5a7a4c", "#6f8a5e", "#7f9a6a", "#94ac7c"], "accents": ["#a8c08a"], "params": {"blades": 24, "bladeLen": 1, "flecks": 8}},
+      "salt": {"pattern": "ice", "colors": ["#d8d2c4", "#e2ddd0", "#ebe7dc", "#f1eee6", "#f8f6f0", "#ffffff"], "accents": ["#c8c0ae"], "params": {"streaks": 1, "cracks": 5}},
+      "red_rock": {"pattern": "rock", "colors": ["#7a3a22", "#94482a", "#a85834", "#b8673e", "#cc8058"], "accents": ["#d8a07a", "#6a3018"], "params": {"cracks": 4, "pebbles": 3}},
+      "coral_sand": {"pattern": "sand", "colors": ["#dcae98", "#e6baa6", "#ecc4b0", "#f1cbb8", "#f8dccc"], "accents": ["#ff9a8a", "#fff0e6"], "params": {"ripples": 4}},
+      "glitch": {"pattern": "crystal", "colors": ["#3a2a5c", "#4c3874", "#5c4488", "#6c4c9c", "#8a64c0", "#c8a8ff"], "accents": ["#4ff0ff", "#ff4fd8"], "params": {"facets": 11, "glints": 6}},
+      "circuit": {"pattern": "metal", "colors": ["#1f4a34", "#265a3e", "#2f6c4c", "#387c58", "#4a9068", "#7ac49a"], "accents": ["#f0c84a"], "params": {"panel": 8}},
+      "neural": {"pattern": "crystal", "colors": ["#24485e", "#2e5a74", "#3b6c8c", "#4a7ea0", "#5e94b8", "#9cd0f0"], "accents": ["#b8f0ff", "#ffffff"], "params": {"facets": 7, "glints": 4}},
+      "cloud": {"pattern": "snow", "colors": ["#d6e0ee", "#e0e8f4", "#e8eef8", "#eef3fa", "#f8fbff"], "accents": ["#ffffff", "#c8d8f0"], "params": {"sparkles": 4}},
+      "tall_lavender": {"pattern": "grass", "colors": ["#5a4a7a", "#6c5a90", "#8a6cb8", "#a084d0", "#c0a8ec"], "params": {"blades": 56, "bladeLen": 3}},
+      "tall_fern": {"pattern": "grass", "colors": ["#1f5424", "#26622c", "#2f6c34", "#3a8040", "#4f9a52"], "params": {"blades": 60, "bladeLen": 3}},
+      "tall_glitch": {"pattern": "grass", "colors": ["#4a2a7a", "#5c3890", "#8c5cc8", "#a878e0", "#4ff0ff"], "params": {"blades": 52, "bladeLen": 3}},
+      "tall_savanna": {"pattern": "grass", "colors": ["#8a7234", "#a08840", "#b89c4a", "#ccb05c", "#e2cc80"], "params": {"blades": 58, "bladeLen": 3}},
+      "tall_sakura": {"pattern": "grass", "colors": ["#5f9a48", "#74ac58", "#e4a8c2", "#f0bcd4", "#ffd8e8"], "params": {"blades": 54, "bladeLen": 3}},
+      "causeway": {"pattern": "cobble", "colors": ["#5c666c", "#7c868c", "#8a9498", "#9aa4aa", "#aab4ba", "#c4ccd0"], "params": {"stones": 7}}
+    },
+    "tuft": {"colors": ["#2c6a2a", "#3f8f3a", "#5aa83f", "#86d461"], "blades": 22, "minHeight": 7, "maxHeight": 15, "lean": 0.9, "curve": 1.6, "wideChance": 0.45, "wideUntil": 0.6, "wideShade": 0.35},
+    "tuftColors": {"tall_grass": ["#25602a", "#2f7a31", "#3f8f3a", "#55a845", "#7cc95a"], "tall_snowgrass": ["#8fa9b5", "#a9c2cc", "#c5d9e0", "#e6f0f3", "#ffffff"], "dark_grass": ["#22183a", "#33264c", "#4a3a5c", "#6a5288", "#8f74b8"], "tall_reeds": ["#4a5f28", "#5f7a38", "#7a9a4a", "#93b05c", "#c2b06a"], "desert_grass": ["#8a7238", "#a08a48", "#bba355", "#d6bf74", "#efdc9a"], "tall_lavender": ["#4a3a6a", "#6c5a90", "#8a6cb8", "#b49ce0", "#d8c8f4"], "tall_fern": ["#164a1c", "#1f5a26", "#2f6c34", "#4a8a4a", "#6aaa5e"], "tall_glitch": ["#3a2060", "#5c3890", "#8c5cc8", "#c8a8ff", "#4ff0ff"], "tall_savanna": ["#7a6430", "#9a8240", "#b89c4a", "#d6bf74", "#efdc9a"], "tall_sakura": ["#4f8a3e", "#74ac58", "#e4a8c2", "#ffc4dc", "#ffe8f2"]}
+  },
+  "items": {
+    "size": 32,
+    "logicalSize": 16,
+    "ball": {"white": "#f2f0ec", "band": "#2b2438", "button": "#ffffff"},
+    "categoryColors": {"ball": "#e8e8e8", "medicine": "#ff7fb0", "battle": "#ffb347", "key": "#6d8cff", "chip": "#36c26b", "evolution": "#b07cff", "misc": "#d6b84a"},
+    "effectColors": {"heal": "#ff7fb0", "cure": "#7cd67c", "healCure": "#ff9a5a", "revive": "#ffe066", "pp": "#6fb3ff", "levelUp": "#ffd44a", "evolve": "#b07cff", "battleBoost": "#ffb347", "repel": "#9fe3c8", "escape": "#c8a2ff", "key": "#6d8cff", "none": "#d6b84a"},
+    "keyIcons": {"bike": "bike", "surf": "surfboard", "map": "map", "dex": "dex", "badgeCase": "case", "pass": "ticket"},
+    "categoryIcons": {"medicine": "potion", "battle": "capsule", "key": "keycard", "chip": "chip", "evolution": "crystal", "misc": "box", "ball": "box"},
+    "effectIcons": {"repel": "spray", "escape": "feather"}
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "motd": "欢迎来到智灵口袋！按 T 打开聊天，和其他训练家一起探索、交换与对战吧。",
+  "system": {"name": "系统", "join": "{name} 进入了智灵世界", "leave": "{name} 离开了智灵世界"},
+  "chat": {"whisperTo": "→ {name}"},
+  "name": {"fallback": "训练家{tag}", "duplicate": "{name}#{tag}"},
+  "trade": {"declined": "{name} 拒绝了交换请求", "cancelled": "{name} 取消了交换", "timeout": "交换超时，已自动取消", "requestExpired": "交换请求已过期", "disconnected": "{name} 已断开连接，交换取消", "busy": "对方正忙，交换取消", "shutdown": "服务器正在维护，交换取消", "tooFar": "与 {name} 距离太远，交换取消"},
+  "error": {"bad_message": "消息格式错误", "not_ready": "尚未连接到服务器", "version_mismatch": "客户端版本与服务器不一致，请刷新页面", "kicked_duplicate": "你的账号已在其他地方登录", "flood": "消息发送过于频繁，连接已断开", "hello_timeout": "握手超时，请重新连接", "server_full": "服务器人数已满，请稍后再试", "slow_consumer": "网络过慢，连接已断开", "rate_limited": "操作过于频繁，请稍后再试", "chat_rate": "发言太快了，请稍等片刻", "chat_empty": "消息内容为空", "not_found": "找不到该玩家，对方可能已离线", "self_target": "不能对自己这样做", "busy": "对方正忙，请稍后再试", "self_busy": "你正在忙，暂时无法进行该操作", "trade_not_found": "交换不存在或已经结束", "trade_pending": "已经有一个等待回应的交换请求", "trade_invalid_creature": "放入的智灵数据无效", "trade_incomplete": "双方都放入智灵后才能确认", "trade_unavailable": "交换功能暂不可用", "pvp_unavailable": "对战功能暂不可用", "too_far": "对方离你太远了，走近一些再试吧"},
+  "http": {"notFound": "页面不存在", "badRequest": "错误的请求", "methodNotAllowed": "不支持的请求方法", "serverError": "服务器内部错误", "rangeNotSatisfiable": "请求的范围无效"}
+}

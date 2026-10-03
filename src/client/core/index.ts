@@ -1,0 +1,11 @@
+// Core services (events, input, audio, save, clock, assets + placeholders, document settings).
+export { createEventBus } from './events.ts'
+export { createInput } from './input.ts'
+export { createAudio } from './audio.ts'
+export { createSaveManager } from './save.ts'
+export type { SaveDeps, StorageLike } from './save.ts'
+export { createClock, formatClock } from './clock.ts'
+export { createAssetStore } from './assets.ts'
+export { applyDocumentSettings, computeUiScale, isTouchDevice } from './settings.ts'
+export { createPlaceholders, drawPlaceholder, imageToCanvas, TUFT_SUFFIX } from './placeholders.ts'
+export type { PlaceholderKind, Placeholders } from './placeholders.ts'

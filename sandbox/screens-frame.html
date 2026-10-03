@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Agent Pocket - screens sandbox (device frame)</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+    iframe { display: block; border: 0; }
+  </style>
+</head>
+<body>
+  <!-- Desktop Chrome cannot shrink a window below ~500 CSS px, so phone viewports are emulated with an iframe:
+       screens-frame.html?w=390&h=844&<screens.html params> -->
+  <script>
+    const q = new URLSearchParams(location.search)
+    const f = document.createElement('iframe')
+    f.width = q.get('w') || '390'
+    f.height = q.get('h') || '844'
+    q.delete('w'); q.delete('h')
+    f.src = './screens.html?' + q.toString()
+    document.body.append(f)
+  </script>
+</body>
+</html>

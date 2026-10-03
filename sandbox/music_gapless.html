@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>BGM gapless decode check</title>
+<style>
+  body { font: 13px/1.5 ui-monospace, monospace; background: #111; color: #ddd; padding: 16px; }
+  td, th { padding: 2px 10px; text-align: right; }
+  .ok { color: #7c7; } .bad { color: #f66; }
+</style>
+</head>
+<body>
+<h3>decodeAudioData sample count vs. pipeline loop length</h3>
+<table id="out"><tr><th>id</th><th>expected</th><th>decoded</th><th>diff</th><th>edge rms (dB)</th></tr></table>
+<pre id="summary">running…</pre>
+<script type="module">
+// Served from the repo root: paths below mirror assets_src/music/captions.json `paths`.
+const captions = await (await fetch('/assets_src/music/captions.json')).json()
+const report = await (await fetch(`/${captions.paths.report}`)).json()
+const audio = await (await fetch(`/${captions.paths.audioContent}`)).json()
+const table = document.getElementById('out')
+const rate = captions.processing.sampleRate
+let bad = 0
+let checked = 0
+const db = (a) => 10 * Math.log10(a.reduce((s, v) => s + v * v, 0) / a.length + 1e-12)
+for (const { id } of audio.bgm) {
+  const entry = report[id]
+  if (!entry) continue
+  const res = await fetch(`/${captions.paths.outDir}/${id}.mp3`)
+  if (!res.ok) continue
+  const ctx = new OfflineAudioContext(captions.processing.channels, 1, rate)
+  const buf = await ctx.decodeAudioData(await res.arrayBuffer())
+  const expected = entry.seam.expectedSamples
+  const diff = buf.length - expected
+  const ch = buf.getChannelData(0)
+  const n = Math.round(rate * captions.processing.seamWindowMs / 1000)
+  const edge = `${db(ch.subarray(ch.length - n)).toFixed(1)} / ${db(ch.subarray(0, n)).toFixed(1)}`
+  checked++
+  if (diff !== 0) bad++
+  const row = table.insertRow()
+  row.className = diff === 0 ? 'ok' : 'bad'
+  for (const v of [id, expected, buf.length, diff, edge]) row.insertCell().textContent = String(v)
+}
+document.getElementById('summary').textContent = `checked=${checked} mismatched=${bad}`
+document.body.dataset.done = '1'
+</script>
+</body>
+</html>

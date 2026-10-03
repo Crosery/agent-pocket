@@ -1,0 +1,214 @@
+{
+  "cell": 112,
+  "margin": 0.24,
+  "probe": {"radius": 12, "points": 16, "minLand": 15, "shoreFactor": 2},
+  "kinds": [
+    {"id": "hamlet", "type": "hamlet", "weight": 24, "roads": true, "place": "hamlet", "distance": [[0, 1.3], [1500, 1], [6000, 0.75]], "biomes": {"glacier": 0.3, "cloud": 0.5, "ashlands": 0.4, "volcano": 0.3, "glitch": 0.5, "canyon": 0.6, "badlands": 0.7, "saltflat": 0.6, "tundra": 0.7}},
+    {"id": "dungeon", "type": "dungeon", "weight": 9, "roads": true, "place": "landmark", "distance": [[0, 0.5], [800, 1], [4000, 1.4]], "minDistance": 150},
+    {"id": "ruins", "type": "poi", "weight": 6, "roads": false, "template": "ruins", "place": "landmark", "biomes": {"ruins": 2.5, "glitch": 2, "crystal": 1.5, "canyon": 1.5, "badlands": 1.3}},
+    {"id": "shrine", "type": "poi", "weight": 6, "roads": true, "template": "shrine", "place": "landmark", "biomes": {"sakura": 2.5, "bamboo": 2, "cloud": 2, "lavender": 1.5}},
+    {"id": "stele", "type": "poi", "weight": 5, "roads": false, "template": "stele", "place": "landmark", "distance": [[0, 0.6], [1000, 1], [5000, 1.5]]},
+    {"id": "nest", "type": "poi", "weight": 7, "roads": false, "template": "nest", "place": "landmark", "distance": [[0, 0.4], [1000, 1], [5000, 1.6]], "minDistance": 200},
+    {"id": "landmark", "type": "poi", "weight": 15, "roads": true, "template": "*", "place": "landmark"},
+    {"id": "none", "type": "none", "weight": 20, "roads": false}
+  ],
+  "landmarkPool": ["campsite", "monolith", "datacenter", "crystalfield", "oasis", "hotspring", "lighthouse", "windmill", "grove", "shipwreck", "treasure", "trainercamp", "serverfarm", "glitchrift", "neuralgrove", "sakurashrine", "skyaltar", "mangrovedock", "caldera"],
+  "templates": {
+    "stele": {
+      "names": ["远古{biome}石碑", "{deity}碑", "{biome}古碑"],
+      "biomes": "any",
+      "count": [1, 1],
+      "radius": 5,
+      "spacing": 100,
+      "wildMin": 0,
+      "ground": [
+        {"terrain": "ruin", "radius": 4.5, "noise": 0.3},
+        {"terrain": "cobble", "radius": 2, "noise": 0.1}
+      ],
+      "parts": [
+        {"prop": "statue", "count": [1, 1], "place": {"mode": "center"}},
+        {"prop": "ruin_pillar", "count": [2, 4], "place": {"mode": "ring", "radius": [3.5, 4.2]}},
+        {"prop": "flower_patch", "count": [1, 3], "place": {"mode": "scatter", "radius": 4}}
+      ],
+      "spots": 1,
+      "sign": "stele",
+      "items": {"visible": 0, "hidden": 1},
+      "landmark": true
+    },
+    "serverfarm": {
+      "names": ["{biome}服务器农场遗址", "旧时代算力农场", "离线集群·{biome}"],
+      "biomes": ["city", "ruins", "circuit", "glitch", "highland", "desert", "savanna", "saltflat"],
+      "count": [1, 1],
+      "radius": 9,
+      "spacing": 120,
+      "wildMin": 0,
+      "ground": [
+        {"terrain": "tech", "radius": 7.5, "noise": 0.2},
+        {"terrain": "circuit", "radius": 4, "noise": 0.3}
+      ],
+      "parts": [
+        {"prop": "server_rack", "count": [10, 18], "place": {"mode": "grid", "spacing": 2, "radius": 5}},
+        {"prop": "solar_panel", "count": [2, 5], "place": {"mode": "scatter", "radius": 7}},
+        {"prop": "antenna", "count": [1, 2], "place": {"mode": "ring", "radius": [6, 7]}},
+        {"prop": "lamp", "count": [2, 4], "place": {"mode": "ring", "radius": [7, 7.5]}},
+        {"prop": "crate", "count": [1, 3], "place": {"mode": "scatter", "radius": 7}}
+      ],
+      "spots": 2,
+      "sign": "serverfarm",
+      "items": {"visible": 2, "hidden": 1},
+      "landmark": true
+    },
+    "glitchrift": {
+      "names": ["{biome}故障裂隙", "数据裂缝", "溢出的缓冲区"],
+      "biomes": ["glitch", "circuit", "crystal", "ruins", "city", "neural"],
+      "count": [1, 1],
+      "radius": 7,
+      "spacing": 120,
+      "wildMin": 0,
+      "ground": [
+        {"terrain": "glitch", "radius": 6.5, "noise": 0.45},
+        {"terrain": "crystal_floor", "radius": 3.2, "noise": 0.4}
+      ],
+      "parts": [
+        {"prop": "crystal", "count": [6, 10], "place": {"mode": "ring", "radius": [3.5, 5.5]}},
+        {"prop": "ruin_pillar", "count": [2, 4], "place": {"mode": "ring", "radius": [5.5, 6.5]}},
+        {"prop": "antenna", "count": [0, 1], "place": {"mode": "scatter", "radius": 6}}
+      ],
+      "spots": 1,
+      "sign": "glitchrift",
+      "items": {"visible": 1, "hidden": 1},
+      "landmark": true
+    },
+    "neuralgrove": {
+      "names": ["{biome}神经古树", "突触之森", "权重之树"],
+      "biomes": ["neural", "forest", "jungle", "mushroom", "bamboo"],
+      "count": [1, 1],
+      "radius": 7,
+      "spacing": 120,
+      "wildMin": 0,
+      "ground": [
+        {"terrain": "neural", "radius": 6.5, "noise": 0.35},
+        {"terrain": "flowers", "radius": 3, "noise": 0.3}
+      ],
+      "parts": [
+        {"prop": "tree_oak", "count": [1, 1], "place": {"mode": "center"}},
+        {"prop": "mushroom", "count": [6, 10], "place": {"mode": "ring", "radius": [3, 5.5]}},
+        {"prop": "crystal", "count": [2, 4], "place": {"mode": "ring", "radius": [5, 6]}}
+      ],
+      "spots": 1,
+      "sign": "neuralgrove",
+      "items": {"visible": 0, "hidden": 1},
+      "landmark": true
+    },
+    "sakurashrine": {
+      "names": ["{biome}樱神社", "花见神社", "落樱之社"],
+      "biomes": ["sakura", "meadow", "lavender", "cloud", "bamboo"],
+      "count": [1, 1],
+      "radius": 7,
+      "spacing": 120,
+      "wildMin": 0,
+      "ground": [
+        {"terrain": "flowers", "radius": 6.5, "noise": 0.35},
+        {"terrain": "cobble", "radius": 2.6, "noise": 0.1}
+      ],
+      "parts": [
+        {"prop": "statue", "count": [1, 1], "place": {"mode": "center"}},
+        {"prop": "tree_cherry", "count": [5, 8], "place": {"mode": "ring", "radius": [4.5, 6]}},
+        {"prop": "lamp", "count": [2, 4], "place": {"mode": "ring", "radius": [3, 3.6]}}
+      ],
+      "spots": 1,
+      "sign": "sakurashrine",
+      "items": {"visible": 0, "hidden": 1},
+      "landmark": true
+    },
+    "skyaltar": {
+      "names": ["{biome}云上祭坛", "天空神殿遗址", "星图观测台"],
+      "biomes": ["cloud", "crystal", "highland", "snow", "glacier", "tundra"],
+      "count": [1, 1],
+      "radius": 7,
+      "spacing": 120,
+      "wildMin": 0,
+      "ground": [
+        {"terrain": "cobble", "radius": 5, "noise": 0.2},
+        {"terrain": "crystal_floor", "radius": 2.2, "noise": 0.1}
+      ],
+      "parts": [
+        {"prop": "statue", "count": [1, 1], "place": {"mode": "center"}},
+        {"prop": "ruin_pillar", "count": [6, 8], "place": {"mode": "ring", "radius": [4.5, 5.2]}},
+        {"prop": "crystal", "count": [2, 4], "place": {"mode": "scatter", "radius": 6}}
+      ],
+      "spots": 1,
+      "sign": "skyaltar",
+      "items": {"visible": 1, "hidden": 1},
+      "landmark": true
+    },
+    "mangrovedock": {
+      "names": ["{biome}渔栈", "红树林码头"],
+      "biomes": ["mangrove", "lagoon", "swamp", "coast", "jungle"],
+      "site": "shore",
+      "count": [1, 1],
+      "radius": 6,
+      "spacing": 120,
+      "wildMin": 0,
+      "ground": [
+        {"terrain": "wood", "radius": 2.6, "noise": 0.1}
+      ],
+      "parts": [
+        {"prop": "boat", "count": [1, 1], "place": {"mode": "water"}},
+        {"prop": "barrel", "count": [1, 3], "place": {"mode": "scatter", "radius": 4}},
+        {"prop": "crate", "count": [1, 2], "place": {"mode": "scatter", "radius": 4}},
+        {"prop": "lamp", "count": [1, 2], "place": {"mode": "ring", "radius": [2.5, 3.5]}}
+      ],
+      "spots": 1,
+      "sign": "dock",
+      "items": {"visible": 1, "hidden": 0},
+      "landmark": true
+    },
+    "caldera": {
+      "names": ["{biome}火山口", "沸腾的算力熔池"],
+      "biomes": ["volcano", "ashlands"],
+      "count": [1, 1],
+      "radius": 8,
+      "spacing": 140,
+      "wildMin": 0,
+      "ground": [
+        {"terrain": "rock", "radius": 7.5, "noise": 0.3},
+        {"terrain": "lava", "radius": 3.6, "noise": 0.35}
+      ],
+      "parts": [
+        {"prop": "lava_rock", "count": [6, 10], "place": {"mode": "ring", "radius": [4.5, 6.5]}},
+        {"prop": "crystal", "count": [1, 3], "place": {"mode": "ring", "radius": [6, 7]}}
+      ],
+      "spots": 1,
+      "sign": "caldera",
+      "items": {"visible": 1, "hidden": 1},
+      "landmark": true
+    }
+  },
+  "lore": {
+    "templates": {
+      "stele": ["{name}\n石面布满了{era}的刻痕：\n「{relic}」", "{name}\n碑文仍可辨认：「{relic}」\n落款：{hero}"],
+      "serverfarm": ["{name}\n成排的机柜早已沉默。\n门牌：「{notice}」", "{name}\n{era}，这里为{civ}提供算力。"],
+      "glitchrift": ["{name}\n空气里漂浮着破碎的像素。\n警告：「{notice}」", "{name}\n世界在这里出现了一行报错：\n「{glitch}」"],
+      "neuralgrove": ["{name}\n树根像突触一样连接着整片森林。\n传说{hero}曾在此{deed}。", "{name}\n树干上刻着：「{relic}」"],
+      "sakurashrine": ["{name}\n花瓣落在石阶上，像温柔的 dropout。\n「{proverb}」", "{name}\n供奉着{deity}。祈愿签上写着：「{wish}」"],
+      "skyaltar": ["{name}\n站在云海之上，能看见上下文的尽头。\n「{relic}」", "{name}\n{era}的观测台。星图上标着：「{star}」"],
+      "caldera": ["{name}\n熔岩翻涌，像一台永不停歇的训练集群。\n「{proverb}」"],
+      "gateway": ["{name}\n跨海长堤的尽头，边境旅人的第一站。\n「前方是未经标注的世界。」"],
+      "frontierHamlet": ["{name}\n{hamletDesc}", "{name}\n{frontierDesc}"]
+    },
+    "words": {
+      "glitch": ["Segmentation fault (core dumped)", "NaN NaN NaN NaN", "404: 世界未找到", "Unexpected token '}'", "context length exceeded"],
+      "wish": ["希望我的智灵不再幻觉。", "愿 loss 永远下降。", "想抓到一只 UR！", "希望明天也有好天气。"],
+      "star": ["梯度星座", "注意力环", "大模型座", "反向传播之河"],
+      "frontierDesc": ["地图边缘的小村，村民说更远的地方还没人去过。", "从核心大陆迁来的开拓者建立的村子。", "据说这附近会出现从未被收录进图鉴的智灵。", "村口的路标指向无尽的远方。"]
+    },
+    "biomeWords": {"sakura": ["樱语", "花见", "落樱", "绯樱"], "bamboo": ["竹风", "青竹", "竹影", "翠篁"], "jungle": ["雨林", "藤萝", "翠雾", "蕉叶"], "mangrove": ["红树", "潮根", "汐林", "泥滩"], "savanna": ["金草", "长风", "烈阳", "斑驳"], "lavender": ["紫苑", "薰香", "花田", "暮紫"], "mushroom": ["菌伞", "孢雾", "萤菇", "幽菌"], "taiga": ["松针", "寒林", "雪杉", "霜林"], "tundra": ["冻原", "苔痕", "寒风", "极夜"], "glacier": ["冰川", "千年冰", "寒晶", "雪原"], "badlands": ["赤岩", "台地", "风蚀", "红崖"], "saltflat": ["盐镜", "白盐", "天空之镜", "咸风"], "canyon": ["峡谷", "断崖", "深涧", "赤壁"], "ashlands": ["灰烬", "焦土", "余火", "硫烟"], "lagoon": ["珊瑚", "碧泻", "椰风", "浅湾"], "crystal": ["水晶", "晶辉", "棱镜", "晶脉"], "cloud": ["云海", "天穹", "浮岛", "星辉"], "glitch": ["故障", "噪点", "乱码", "溢出"], "circuit": ["电路", "总线", "晶体管", "主板"], "neural": ["突触", "权重", "神经", "激活"]}
+  },
+  "hamlet": {"radius": 15, "window": 8, "services": 0.6, "houses": [3, 6], "names": ["{biome}村", "{biome}屯", "{biome}庄", "{biome}小村", "{biome}里"]},
+  "gateway": {"names": ["{biome}渡口", "{biome}海堤镇", "边境驿站"], "services": 1, "exclusion": 24},
+  "dungeon": {"radius": 6, "floors": [1, 4], "mouthProp": "cave_entrance", "padTerrain": "rock", "signOffset": 2, "padRadius": 3.2, "endAt": [0.2, 0.8]},
+  "pad": {"blend": 3},
+  "poiWindow": 6,
+  "itemsMinDist": 2
+}

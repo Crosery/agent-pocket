@@ -1,0 +1,828 @@
+{
+  "version": 1,
+  "defaults": {
+    "pxPerTile": 16,
+    "roughness": 0.9,
+    "dropGroundFaces": true,
+    "vars": {"rc": 0.14},
+    "parts": {"gable": {"thick": 0.15, "fill": true}, "hip": {"thick": 0.15}, "cyl": {"seg": 8}, "tube": {"seg": 8}, "sphere": {"seg": 8, "rings": 4}, "torus": {"seg": 12, "segMinor": 4}, "loft": {"closedSection": true, "caps": true}, "arch": {"seg": 6}, "rock": {"jitter": 0.18, "seed": 1, "subdiv": 1}, "windows": {"frameW": 0.08, "depth": 0.06}, "door": {"frameW": 0.1, "depth": 0.08, "x": "DOORX", "face": "front"}, "timber": {"out": 0.03}, "awning": {"thick": 0.06}, "blades": {"spar": 0.1, "sailT": 0.04, "sailStart": 0.25, "hub": [0.25, 0.3], "hubSeg": 8, "hubEmbed": 0.05}},
+    "patterns": {"noise": {"spotSize": 1}, "planks": {"grainLines": 2, "grainLen": [3, 10], "knotChance": 0.3, "dir": "v"}, "tiles": {"accentDensity": 0.05}, "metal": {"streaks": 8, "streakLen": [2, 16], "rivets": true, "rivetInset": 2}, "grate": {"border": 2}, "circuit": {"gridStep": 8, "segs": [2, 4], "segLen": [3, 10]}, "glass": {"split": 0.5, "glints": 3, "glintLen": 4, "glintInset": 2, "glintStep": [2, 1]}, "door": {"grainLines": 2, "grainLen": [3, 10], "bands": [0.25, 0.75], "bandH": 1, "handleSize": 2}, "stripes": {"hemH": 2, "dir": "v"}, "sign": {"pad": 1}, "marble": {"lightDensity": 0.05, "veinBreak": 0.15}, "rock": {"crackW": 1.0}, "water": {"waveLen": [2, 8]}, "fan": {"bladeFill": 0.35, "hubR": 0.2, "ringR": [0.86, 1.0]}},
+    "verify": {"footprintTol": 0.35, "heightTol": 0.12, "minZ": -0.02, "maxTris": 3000, "maxBytes": 300000, "doorFacadeTol": 0.8, "doorCover": 0.3}
+  },
+  "preview": {"azimuthDeg": 32, "elevationDeg": 38, "frame": 1.12, "sunEnergy": 3.2, "sunAngleDeg": 4, "sunRotDeg": [48, 0, -38], "bg": [0.78, 0.84, 0.9], "ambient": 0.85, "ground": [0.42, 0.58, 0.33], "labelSize": 0.05, "labelColor": [0.04, 0.04, 0.07], "tilePx": 360, "samples": 16, "cols": 5},
+  "glyphs": {
+    "cross": ["...###...", "...###...", "...###...", "#########", "#########", "#########", "...###...", "...###...", "...###..."],
+    "coin": ["...ooooo...", "..o#####o..", ".o#+#####o.", "o#+sssss##o", "o##sssss##o", "o####s####o", "o####s####o", "o####s####o", ".o###s###o.", "..o#####o..", "...ooooo..."],
+    "badge": [".....#.....", "....###....", "....###....", "###########", ".#########.", "..#######..", "..#######..", ".####.####.", ".###...###.", "##.......##"],
+    "flask": ["..ooooo..", "...o.o...", "...o.o...", "...o.o...", "..o...o..", ".o.....o.", "o.ggggg.o", "oggggbggo", "oggbggggo", ".ooooooo."],
+    "chip": [".#.#.#.#.#.", "###########", ".#ooooooo#.", "##o.....o##", ".#o.ggg.o#.", "##o.ggg.o##", ".#o.ggg.o#.", "##o.....o##", ".#ooooooo#.", "###########", ".#.#.#.#.#."],
+    "core": [".....#.....", "....#o#....", "...#ooo#...", "..#oo+oo#..", ".#oo+++oo#.", "#ooo+++ooo#", ".#oo+++oo#.", "..#oo+oo#..", "...#ooo#...", "....#o#....", ".....#....."],
+    "rune": ["..#..", ".#.#.", "#.#.#", ".#.#.", "..#.."],
+    "plaque": ["#########", ".........", "#.##.###.", ".........", "###.##.##"]
+  },
+  "textures": {
+    "plaster_cream": {
+      "pattern": "noise",
+      "size": 32,
+      "seed": 11,
+      "colors": {
+        "base": "#f2e3c2",
+        "spots": [
+          {"color": "#e4d0a8", "density": 0.08},
+          {"color": "#fbf1d9", "density": 0.05},
+          {"color": "#d8c293", "density": 0.015}
+        ]
+      }
+    },
+    "plaster_white": {
+      "pattern": "noise",
+      "size": 32,
+      "seed": 12,
+      "colors": {
+        "base": "#f5f2ec",
+        "spots": [
+          {"color": "#e3ded3", "density": 0.08},
+          {"color": "#ffffff", "density": 0.05},
+          {"color": "#d3cdbf", "density": 0.01}
+        ]
+      }
+    },
+    "paint_pink": {
+      "pattern": "noise",
+      "size": 16,
+      "seed": 13,
+      "colors": {"base": "#ff8fb3", "spots": [{"color": "#f27aa1", "density": 0.08}, {"color": "#ffb0c9", "density": 0.05}]}
+    },
+    "paint_blue": {
+      "pattern": "noise",
+      "size": 16,
+      "seed": 14,
+      "colors": {"base": "#3f78d8", "spots": [{"color": "#3567c0", "density": 0.08}, {"color": "#5c90e6", "density": 0.05}]}
+    },
+    "paint_sky": {
+      "pattern": "noise",
+      "size": 16,
+      "seed": 15,
+      "colors": {"base": "#9cc8f0", "spots": [{"color": "#86b7e6", "density": 0.08}, {"color": "#b9dbf7", "density": 0.05}]}
+    },
+    "paint_green": {
+      "pattern": "noise",
+      "size": 16,
+      "seed": 16,
+      "colors": {"base": "#5aa05a", "spots": [{"color": "#4a8a4a", "density": 0.1}, {"color": "#72b86c", "density": 0.05}]}
+    },
+    "paint_cyan": {
+      "pattern": "noise",
+      "size": 16,
+      "seed": 18,
+      "colors": {"base": "#3cc6dc", "spots": [{"color": "#2fa9c0", "density": 0.08}, {"color": "#7fe3f0", "density": 0.04}]}
+    },
+    "concrete": {
+      "pattern": "noise",
+      "size": 32,
+      "seed": 19,
+      "colors": {
+        "base": "#c9c6c0",
+        "spots": [
+          {"color": "#b5b2ab", "density": 0.1},
+          {"color": "#dedbd5", "density": 0.05},
+          {"color": "#a19e97", "density": 0.02, "size": 2}
+        ]
+      }
+    },
+    "dark_solid": {"pattern": "noise", "size": 16, "seed": 20, "colors": {"base": "#2c3036", "spots": [{"color": "#363b42", "density": 0.1}]}},
+    "brick_red": {
+      "pattern": "brick",
+      "size": 32,
+      "seed": 21,
+      "colors": {"bricks": ["#b5523b", "#a5452f", "#c0634a"], "mortar": "#dccbab", "shade": "#8a3a28", "highlight": "#d6806a", "brickW": 8, "brickH": 4}
+    },
+    "stone_block": {
+      "pattern": "stone",
+      "size": 32,
+      "seed": 22,
+      "colors": {"stones": ["#9d988e", "#8b867c", "#aba59b"], "mortar": "#5d584f", "shade": "#706b62", "highlight": "#c7c1b5", "rowH": [5, 6, 7], "wMin": 5, "wMax": 11}
+    },
+    "stone_warm": {
+      "pattern": "stone",
+      "size": 32,
+      "seed": 23,
+      "colors": {"stones": ["#c2ae8c", "#b19d7b", "#cfbd9c"], "mortar": "#6d5f49", "shade": "#97846a", "highlight": "#e3d5b8", "rowH": [6, 7, 8], "wMin": 7, "wMax": 13}
+    },
+    "stone_light": {
+      "pattern": "stone",
+      "size": 32,
+      "seed": 24,
+      "colors": {"stones": ["#e9e5dc", "#dcd7cc", "#f2efe8"], "mortar": "#a9a396", "shade": "#c6c0b3", "highlight": "#ffffff", "rowH": [8], "wMin": 8, "wMax": 16}
+    },
+    "moss_stone": {
+      "pattern": "stone",
+      "size": 32,
+      "seed": 25,
+      "colors": {"stones": ["#a29d90", "#928d80", "#b0aa9d"], "mortar": "#57524a", "shade": "#78736a", "highlight": "#c9c3b5", "rowH": [6, 8], "wMin": 7, "wMax": 14},
+      "overlays": [
+        {"colors": ["#5f8f3e", "#77a84d", "#4b7432"], "blobs": 9, "blobSize": 10}
+      ]
+    },
+    "marble_white": {
+      "pattern": "marble",
+      "size": 32,
+      "seed": 26,
+      "colors": {"base": "#f4f1e9", "vein": "#d9d2c3", "light": "#ffffff", "veins": 4, "lightDensity": 0.05, "joint": "#ddd6c6", "jointStep": 16}
+    },
+    "ruin_marble": {"pattern": "marble", "size": 32, "seed": 27, "colors": {"base": "#dcd6c8", "vein": "#bdb5a3", "light": "#eeeae0", "veins": 5, "lightDensity": 0.04}, "overlays": [{"colors": ["#6a9644", "#82b257", "#557a36"], "blobs": 7, "blobSize": 9}]},
+    "temple_panel": {
+      "pattern": "circuit",
+      "size": 32,
+      "seed": 28,
+      "colors": {"base": "#f4f1e9", "trace": "#d9b44a", "node": "#f6dc7a", "grid": "#ebe5d6", "gridStep": 16, "traces": 6}
+    },
+    "gold_trim": {
+      "pattern": "trim",
+      "size": 16,
+      "seed": 29,
+      "colors": {
+        "bands": [
+          {"color": "#fff1a8", "h": 1},
+          {"color": "#f0c64a", "h": 2},
+          {"color": "#d9a832", "h": 2},
+          {"color": "#a8761e", "h": 1},
+          {"color": "#e8b83e", "h": 2}
+        ],
+        "stud": "#fff8d6",
+        "studStep": 4,
+        "studRow": 3
+      }
+    },
+    "pink_trim": {
+      "pattern": "trim",
+      "size": 16,
+      "seed": 30,
+      "colors": {
+        "bands": [
+          {"color": "#ffd0df", "h": 1},
+          {"color": "#ff8fb3", "h": 3},
+          {"color": "#d8608a", "h": 1},
+          {"color": "#ff8fb3", "h": 3}
+        ]
+      }
+    },
+    "timber_dark": {
+      "pattern": "planks",
+      "size": 32,
+      "seed": 31,
+      "colors": {"planks": ["#6b4428", "#5e3b22", "#74492b"], "seam": "#3f2715", "grain": "#4d311b", "plankW": 8, "dir": "h", "grainLines": 2}
+    },
+    "wood_planks": {
+      "pattern": "planks",
+      "size": 32,
+      "seed": 32,
+      "colors": {"planks": ["#a8723f", "#9a6837", "#b47c46"], "seam": "#5e3d1e", "grain": "#83562c", "knot": "#5e3d1e", "plankW": 8, "dir": "h", "knotChance": 0.4}
+    },
+    "wood_light": {
+      "pattern": "planks",
+      "size": 32,
+      "seed": 33,
+      "colors": {"planks": ["#d6a76e", "#c99a62", "#e0b47c"], "seam": "#8a6236", "grain": "#b8874f", "plankW": 8, "dir": "h"}
+    },
+    "hull_wood": {
+      "pattern": "planks",
+      "size": 32,
+      "seed": 34,
+      "colors": {"planks": ["#9a5f34", "#8c552e", "#a8693b"], "seam": "#4e2f17", "grain": "#7a4a26", "plankW": 4, "dir": "h", "grainLines": 1}
+    },
+    "roof_red": {
+      "pattern": "shingles",
+      "size": 32,
+      "seed": 41,
+      "colors": {"shingles": ["#c8473d", "#b83e35", "#d4574a"], "edge": "#7e2620", "gap": "#962f28", "highlight": "#e57466", "rowH": 4, "shingleW": 6}
+    },
+    "roof_blue": {
+      "pattern": "shingles",
+      "size": 32,
+      "seed": 42,
+      "colors": {"shingles": ["#3f6fc4", "#3763b3", "#4b7dd1"], "edge": "#20386e", "gap": "#2a4a8a", "highlight": "#6d9be3", "rowH": 4, "shingleW": 6}
+    },
+    "roof_brown": {
+      "pattern": "shingles",
+      "size": 32,
+      "seed": 43,
+      "colors": {"shingles": ["#8a5a34", "#7a4e2c", "#96653c"], "edge": "#4a2e18", "gap": "#5e3b20", "highlight": "#b07e50", "rowH": 4, "shingleW": 5}
+    },
+    "roof_teal": {"pattern": "tiles", "size": 32, "seed": 45, "colors": {"light": "#6fd0c0", "mid": "#43a596", "dark": "#2a766c", "edge": "#1d4f49", "tileW": 6, "tileH": 6}},
+    "roof_pink": {"pattern": "tiles", "size": 32, "seed": 46, "colors": {"light": "#ffb0c9", "mid": "#f27aa1", "dark": "#c45579", "edge": "#8e3a58", "tileW": 6, "tileH": 6}},
+    "roof_crimson": {
+      "pattern": "tiles",
+      "size": 32,
+      "seed": 47,
+      "colors": {"light": "#e8604f", "mid": "#bb3a2d", "dark": "#86241b", "edge": "#5a1812", "tileW": 6, "tileH": 7, "accent": "#d24a3c", "accentDensity": 0.05}
+    },
+    "roof_white": {"pattern": "tiles", "size": 32, "seed": 48, "colors": {"light": "#ffffff", "mid": "#ece6d6", "dark": "#cdc4ad", "edge": "#c09a36", "tileW": 8, "tileH": 8}},
+    "metal_white": {
+      "pattern": "metal",
+      "size": 32,
+      "seed": 51,
+      "colors": {"base": "#e9edf0", "seam": "#b9c1c7", "rivet": "#9ba4ab", "highlight": "#fbfdff", "streak": "#dfe5e9", "panelW": 16, "panelH": 16}
+    },
+    "metal_grey": {
+      "pattern": "metal",
+      "size": 32,
+      "seed": 52,
+      "colors": {"base": "#8f989f", "seam": "#5e666d", "rivet": "#454c52", "highlight": "#aab3ba", "streak": "#858e95", "panelW": 4, "panelH": 32, "rivets": false}
+    },
+    "metal_dark": {
+      "pattern": "metal",
+      "size": 32,
+      "seed": 53,
+      "colors": {"base": "#3d444b", "seam": "#262b30", "rivet": "#5b646c", "highlight": "#4f585f", "panelW": 16, "panelH": 16}
+    },
+    "metal_navy": {
+      "pattern": "metal",
+      "size": 32,
+      "seed": 54,
+      "colors": {"base": "#2c3652", "seam": "#1a2136", "rivet": "#4f6ea8", "highlight": "#3b4769", "streak": "#28314b", "panelW": 16, "panelH": 8}
+    },
+    "tower_panel": {
+      "pattern": "circuit",
+      "size": 32,
+      "seed": 55,
+      "colors": {"base": "#25304c", "trace": "#3a6fa8", "node": "#7fe3ff", "grid": "#1c2540", "gridStep": 16, "traces": 7}
+    },
+    "grate_vent": {"pattern": "grate", "size": 16, "seed": 56, "colors": {"frame": "#5e666d", "slat": "#a3acb3", "shadow": "#363c42", "slatH": 3, "border": 2}},
+    "fan": {
+      "pattern": "fan",
+      "size": 32,
+      "seed": 57,
+      "colors": {"bg": "#22272d", "ring": "#8f989f", "blade": "#c3ccd3", "hub": "#5e666d", "blades": 4, "bladeFill": 0.3, "hubR": 0.2}
+    },
+    "glass_day": {
+      "pattern": "glass",
+      "size": 32,
+      "seed": 61,
+      "colors": {"frame": "#5b3b22", "mullion": "#5b3b22", "paneTop": "#cfeaf5", "paneBottom": "#8fc4dc", "glint": "#ffffff", "border": 2, "cols": 2, "rows": 2, "split": 0.45, "glints": 3, "glintLen": 4}
+    },
+    "glass_night": {
+      "pattern": "glass",
+      "size": 32,
+      "seed": 62,
+      "colors": {"frame": "#1a1208", "mullion": "#1a1208", "paneTop": "#ffe9a8", "paneBottom": "#ffc25c", "glint": "#fff6d8", "border": 2, "cols": 2, "rows": 2, "split": 0.45, "glints": 0}
+    },
+    "glass_pink_day": {
+      "pattern": "glass",
+      "size": 32,
+      "seed": 63,
+      "colors": {"frame": "#ffffff", "mullion": "#ffffff", "paneTop": "#d8f0fa", "paneBottom": "#9fd2e8", "glint": "#ffffff", "border": 2, "cols": 2, "rows": 1, "split": 0.4, "glints": 3, "glintLen": 5}
+    },
+    "glass_pink_night": {
+      "pattern": "glass",
+      "size": 32,
+      "seed": 64,
+      "colors": {"frame": "#3a1a26", "mullion": "#3a1a26", "paneTop": "#ffe0ec", "paneBottom": "#ffa6c6", "glint": "#ffffff", "border": 2, "cols": 2, "rows": 1, "glints": 0}
+    },
+    "glass_cyan_day": {
+      "pattern": "glass",
+      "size": 32,
+      "seed": 65,
+      "colors": {"frame": "#2c3652", "mullion": "#2c3652", "paneTop": "#bff3ff", "paneBottom": "#5ccbe6", "glint": "#ffffff", "border": 1, "cols": 3, "rows": 1, "split": 0.5, "glints": 3, "glintLen": 6}
+    },
+    "glass_cyan_night": {
+      "pattern": "glass",
+      "size": 32,
+      "seed": 66,
+      "colors": {"frame": "#0c1222", "mullion": "#0c1222", "paneTop": "#c8f8ff", "paneBottom": "#5fe0ff", "glint": "#ffffff", "border": 1, "cols": 3, "rows": 1, "glints": 0}
+    },
+    "door_glass_day": {
+      "pattern": "glass",
+      "size": 32,
+      "seed": 67,
+      "colors": {"frame": "#c9d1d6", "mullion": "#c9d1d6", "paneTop": "#d8f0fa", "paneBottom": "#86bcd6", "glint": "#ffffff", "border": 2, "cols": 2, "rows": 1, "split": 0.35, "glints": 4, "glintLen": 6}
+    },
+    "door_glass_night": {
+      "pattern": "glass",
+      "size": 32,
+      "seed": 68,
+      "colors": {"frame": "#202428", "mullion": "#202428", "paneTop": "#fff4d6", "paneBottom": "#ffd890", "glint": "#ffffff", "border": 2, "cols": 2, "rows": 1, "glints": 0}
+    },
+    "door_wood": {
+      "pattern": "door",
+      "size": 32,
+      "seed": 71,
+      "colors": {"planks": ["#8a5a30", "#7d5029", "#966438"], "seam": "#4e3018", "grain": "#6b4422", "plankW": 6, "frame": "#5a3a1e", "border": 2, "band": "#4a4a4a", "bands": [0.22, 0.78], "handle": "#f0c64a", "handleAt": [0.72, 0.52]}
+    },
+    "door_red": {
+      "pattern": "door",
+      "size": 32,
+      "seed": 72,
+      "colors": {"planks": ["#a8302a", "#9a2a24", "#b83a32"], "seam": "#5a1812", "grain": "#86241b", "plankW": 8, "frame": "#5a1812", "border": 2, "band": "#f0c64a", "bands": [0.2, 0.5, 0.8], "handle": "#fff1a8", "handleAt": [0.44, 0.5]}
+    },
+    "door_metal": {"pattern": "grate", "size": 32, "seed": 73, "colors": {"frame": "#4b535a", "slat": "#a9b2b9", "shadow": "#6f777e", "slatH": 4, "border": 2}},
+    "door_cyber": {
+      "pattern": "sign",
+      "size": 32,
+      "seed": 74,
+      "colors": {"bg": "#16203a", "border": "#7fe3ff", "borderW": 2, "inner": "#3fd0ff", "glyph": "chip", "glyphColors": {"#": "#3a6fa8", "o": "#7fe3ff", "g": "#c8f6ff"}}
+    },
+    "door_temple": {
+      "pattern": "sign",
+      "size": 32,
+      "seed": 75,
+      "colors": {"bg": "#f4f1e9", "border": "#f0c64a", "borderW": 2, "inner": "#fff1a8", "glyph": "core", "glyphColors": {"#": "#d9a832", "o": "#7fe3ff", "+": "#ffffff"}}
+    },
+    "cave_dark": {
+      "pattern": "noise",
+      "size": 16,
+      "seed": 76,
+      "colors": {"base": "#0e0a14", "spots": [{"color": "#1b1526", "density": 0.12}, {"color": "#271e34", "density": 0.03}]}
+    },
+    "sign_cross": {
+      "pattern": "sign",
+      "size": 32,
+      "seed": 81,
+      "colors": {"bg": "#ffffff", "border": "#ff6f9c", "borderW": 3, "inner": "#ffd0df", "pad": 2, "glyph": "cross", "glyphColor": "#ff3f7c"}
+    },
+    "sign_coin": {
+      "pattern": "sign",
+      "size": 32,
+      "seed": 82,
+      "colors": {"bg": "#2f5fb8", "border": "#e9f1ff", "borderW": 2, "inner": "#5c90e6", "glyph": "coin", "glyphColors": {"o": "#7a4d0f", "#": "#ffd447", "+": "#fff4b8", "s": "#b07a14"}}
+    },
+    "sign_badge": {
+      "pattern": "sign",
+      "size": 32,
+      "seed": 83,
+      "colors": {"bg": "#7a1f1a", "border": "#f0c64a", "borderW": 2, "inner": "#ffe58a", "pad": 2, "glyph": "badge", "glyphColor": "#ffd447"}
+    },
+    "sign_flask": {
+      "pattern": "sign",
+      "size": 32,
+      "seed": 84,
+      "colors": {"bg": "#ffffff", "border": "#3aa6c8", "borderW": 2, "inner": "#bfeaf5", "glyph": "flask", "glyphColors": {"o": "#2c3652", "g": "#4fe0b0", "b": "#d0fff2"}}
+    },
+    "sign_chip": {
+      "pattern": "sign",
+      "size": 32,
+      "seed": 85,
+      "colors": {"bg": "#1d242c", "border": "#4dff9a", "borderW": 2, "glyph": "chip", "glyphColors": {"#": "#8f989f", "o": "#4dff9a", "g": "#c8ffe0"}}
+    },
+    "sign_rune": {"pattern": "sign", "size": 16, "seed": 86, "colors": {"bg": "#4a4a52", "border": "#3a3a40", "borderW": 1, "glyph": "rune", "glyphColor": "#7fe3ff"}},
+    "plaque": {
+      "pattern": "sign",
+      "size": 32,
+      "seed": 87,
+      "colors": {"bg": "#d9a832", "border": "#a8761e", "borderW": 2, "inner": "#fff1a8", "pad": 3, "glyph": "plaque", "glyphColor": "#6e4c12"}
+    },
+    "banner_badge": {
+      "pattern": "sign",
+      "size": 32,
+      "seed": 88,
+      "colors": {"bg": "#b8382c", "border": "#f0c64a", "borderW": 2, "inner": "#86241b", "pad": 3, "glyph": "badge", "glyphColor": "#ffd447"}
+    },
+    "awning_blue": {"pattern": "stripes", "size": 16, "seed": 91, "colors": {"colors": ["#3f7fe0", "#f4f8ff"], "stripeW": 4, "hem": "#2a55a0", "hemH": 2, "shade": "#2a55a0"}},
+    "awning_pink": {"pattern": "stripes", "size": 16, "seed": 92, "colors": {"colors": ["#ff7aa8", "#ffffff"], "stripeW": 4, "hem": "#d8608a", "hemH": 2}},
+    "awning_red": {"pattern": "stripes", "size": 16, "seed": 93, "colors": {"colors": ["#e0473d", "#fff2d6"], "stripeW": 4, "hem": "#a8302a", "hemH": 2}},
+    "canvas_tan": {
+      "pattern": "noise",
+      "size": 32,
+      "seed": 94,
+      "colors": {
+        "base": "#dcc392",
+        "spots": [
+          {"color": "#c9ae7a", "density": 0.1},
+          {"color": "#ead6ac", "density": 0.05},
+          {"color": "#b89a64", "density": 0.02, "size": 2}
+        ]
+      }
+    },
+    "canvas_shadow": {"pattern": "noise", "size": 16, "seed": 95, "colors": {"base": "#3a2a1c", "spots": [{"color": "#4a3624", "density": 0.1}]}},
+    "flowers": {
+      "pattern": "noise",
+      "size": 16,
+      "seed": 96,
+      "colors": {
+        "base": "#4f9a45",
+        "spots": [
+          {"color": "#3d7d36", "density": 0.2},
+          {"color": "#ff7aa8", "density": 0.08, "size": 2},
+          {"color": "#ffe066", "density": 0.05},
+          {"color": "#ffffff", "density": 0.03}
+        ]
+      }
+    },
+    "fruit": {
+      "pattern": "noise",
+      "size": 16,
+      "seed": 97,
+      "colors": {
+        "base": "#e0473d",
+        "spots": [
+          {"color": "#ff9a3c", "density": 0.25, "size": 2},
+          {"color": "#8fd14f", "density": 0.15, "size": 2},
+          {"color": "#ffe066", "density": 0.1, "size": 2},
+          {"color": "#7a2a20", "density": 0.05}
+        ]
+      }
+    },
+    "rope": {"pattern": "stripes", "size": 16, "seed": 98, "colors": {"colors": ["#c9a46a", "#a9844e"], "stripeW": 2, "dir": "h"}},
+    "rock_grey": {
+      "pattern": "rock",
+      "size": 32,
+      "seed": 101,
+      "colors": {"shades": ["#6e6a66", "#7f7a74", "#8e8982", "#9d978f"], "crack": "#3e3a36", "highlight": "#b8b2a8", "cells": 9, "crackW": 0.9}
+    },
+    "rock_brown": {
+      "pattern": "rock",
+      "size": 32,
+      "seed": 102,
+      "colors": {"shades": ["#6c5646", "#7c6452", "#8c735e", "#9b816b"], "crack": "#3b2c22", "highlight": "#b89c84", "cells": 8, "crackW": 0.9},
+      "overlays": [
+        {"colors": ["#5f8f3e", "#77a84d"], "blobs": 4, "blobSize": 7}
+      ]
+    },
+    "water": {"pattern": "water", "size": 32, "seed": 103, "colors": {"base": "#3f8fc8", "wave": "#6cb4e4", "light": "#d6f1ff", "waves": 12}},
+    "water_glow": {"pattern": "water", "size": 32, "seed": 104, "colors": {"base": "#5bbbe8", "wave": "#92daf6", "light": "#e6f8ff", "waves": 14}},
+    "glow_cyan": {"pattern": "stripes", "size": 16, "seed": 111, "colors": {"colors": ["#7fe3ff", "#c8f6ff", "#7fe3ff", "#3fd0ff"], "stripeW": 2, "dir": "h"}},
+    "glow_core": {
+      "pattern": "noise",
+      "size": 16,
+      "seed": 112,
+      "colors": {
+        "base": "#9ff0ff",
+        "spots": [
+          {"color": "#ffffff", "density": 0.15, "size": 2},
+          {"color": "#5fd8ff", "density": 0.12},
+          {"color": "#ffe9a0", "density": 0.05}
+        ]
+      }
+    },
+    "glow_gold": {
+      "pattern": "trim",
+      "size": 16,
+      "seed": 113,
+      "colors": {"bands": [{"color": "#fff6c8", "h": 1}, {"color": "#ffd84a", "h": 2}, {"color": "#ffb82a", "h": 1}]}
+    },
+    "glow_green": {"pattern": "stripes", "size": 16, "seed": 114, "colors": {"colors": ["#4dff9a", "#4dff9a", "#1d6b45"], "stripeW": 2}},
+    "glow_red": {"pattern": "noise", "size": 16, "seed": 115, "colors": {"base": "#ff4d4d", "spots": [{"color": "#ffb0a0", "density": 0.2}]}},
+    "glow_lantern": {
+      "pattern": "noise",
+      "size": 16,
+      "seed": 116,
+      "colors": {"base": "#ffd27a", "spots": [{"color": "#fff2c4", "density": 0.2, "size": 2}, {"color": "#ffb04a", "density": 0.08}]}
+    }
+  },
+  "materials": {"plaster_cream": {"tex": "plaster_cream"}, "plaster_white": {"tex": "plaster_white"}, "paint_pink": {"tex": "paint_pink"}, "paint_blue": {"tex": "paint_blue"}, "paint_sky": {"tex": "paint_sky"}, "paint_green": {"tex": "paint_green"}, "paint_cyan": {"tex": "paint_cyan", "roughness": 0.6}, "concrete": {"tex": "concrete"}, "dark_solid": {"tex": "dark_solid"}, "brick_red": {"tex": "brick_red"}, "stone_block": {"tex": "stone_block"}, "stone_warm": {"tex": "stone_warm"}, "stone_light": {"tex": "stone_light"}, "moss_stone": {"tex": "moss_stone"}, "marble_white": {"tex": "marble_white", "roughness": 0.7}, "ruin_marble": {"tex": "ruin_marble"}, "temple_panel": {"tex": "temple_panel", "roughness": 0.7}, "gold_trim": {"tex": "gold_trim", "roughness": 0.45, "metallic": 0.6}, "pink_trim": {"tex": "pink_trim"}, "timber_dark": {"tex": "timber_dark"}, "wood_planks": {"tex": "wood_planks"}, "wood_light": {"tex": "wood_light"}, "hull_wood": {"tex": "hull_wood"}, "roof_red": {"tex": "roof_red"}, "roof_blue": {"tex": "roof_blue"}, "roof_brown": {"tex": "roof_brown"}, "roof_teal": {"tex": "roof_teal"}, "roof_pink": {"tex": "roof_pink"}, "roof_crimson": {"tex": "roof_crimson"}, "roof_white": {"tex": "roof_white", "roughness": 0.7}, "metal_white": {"tex": "metal_white", "roughness": 0.6, "metallic": 0.1}, "metal_grey": {"tex": "metal_grey", "roughness": 0.65, "metallic": 0.3}, "metal_dark": {"tex": "metal_dark", "roughness": 0.6, "metallic": 0.3}, "metal_navy": {"tex": "metal_navy", "roughness": 0.6, "metallic": 0.3}, "tower_panel": {"tex": "tower_panel", "roughness": 0.6, "metallic": 0.2}, "grate_vent": {"tex": "grate_vent", "uv": "fit", "roughness": 0.7, "metallic": 0.3}, "fan": {"tex": "fan", "uv": "fit", "roughness": 0.7, "metallic": 0.3}, "door_wood": {"tex": "door_wood", "uv": "fit"}, "door_red": {"tex": "door_red", "uv": "fit"}, "door_metal": {"tex": "door_metal", "uv": "fit", "roughness": 0.7, "metallic": 0.3}, "cave_dark": {"tex": "cave_dark", "roughness": 1.0}, "canvas_tan": {"tex": "canvas_tan"}, "canvas_shadow": {"tex": "canvas_shadow", "roughness": 1.0}, "awning_blue": {"tex": "awning_blue"}, "awning_pink": {"tex": "awning_pink"}, "awning_red": {"tex": "awning_red"}, "banner_badge": {"tex": "banner_badge", "uv": "fit"}, "plaque": {"tex": "plaque", "uv": "fit", "roughness": 0.5, "metallic": 0.5}, "flowers": {"tex": "flowers"}, "fruit": {"tex": "fruit"}, "rope": {"tex": "rope"}, "rock_grey": {"tex": "rock_grey", "roughness": 1.0}, "rock_brown": {"tex": "rock_brown", "roughness": 1.0}, "water": {"tex": "water", "roughness": 0.25}, "EMIT_window_warm": {"tex": "glass_day", "emitTex": "glass_night", "uv": "fit", "roughness": 0.3, "emit": 1.0}, "EMIT_window_pink": {"tex": "glass_pink_day", "emitTex": "glass_pink_night", "uv": "fit", "roughness": 0.3, "emit": 1.0}, "EMIT_window_cyan": {"tex": "glass_cyan_day", "emitTex": "glass_cyan_night", "uv": "fit", "roughness": 0.3, "emit": 1.0}, "EMIT_door_glass": {"tex": "door_glass_day", "emitTex": "door_glass_night", "uv": "fit", "roughness": 0.3, "emit": 1.0}, "EMIT_door_cyber": {"tex": "door_cyber", "uv": "fit", "roughness": 0.4, "emit": 1.0}, "EMIT_door_temple": {"tex": "door_temple", "uv": "fit", "roughness": 0.4, "emit": 0.8}, "EMIT_sign_cross": {"tex": "sign_cross", "uv": "fit", "roughness": 0.5, "emit": 1.0}, "EMIT_sign_coin": {"tex": "sign_coin", "uv": "fit", "roughness": 0.5, "emit": 1.0}, "EMIT_sign_badge": {"tex": "sign_badge", "uv": "fit", "roughness": 0.4, "emit": 1.0}, "EMIT_sign_flask": {"tex": "sign_flask", "uv": "fit", "roughness": 0.5, "emit": 1.0}, "EMIT_sign_chip": {"tex": "sign_chip", "uv": "fit", "roughness": 0.5, "emit": 1.0}, "EMIT_rune": {"tex": "sign_rune", "uv": "fit", "roughness": 0.9, "emit": 0.8}, "EMIT_ring_cyan": {"tex": "glow_cyan", "roughness": 0.3, "emit": 1.0}, "EMIT_core": {"tex": "glow_core", "roughness": 0.2, "emit": 1.0}, "EMIT_gold_glow": {"tex": "glow_gold", "roughness": 0.3, "metallic": 0.4, "emit": 0.8}, "EMIT_strip_green": {"tex": "glow_green", "roughness": 0.4, "emit": 1.0}, "EMIT_beacon_red": {"tex": "glow_red", "roughness": 0.4, "emit": 1.0}, "EMIT_lantern": {"tex": "glow_lantern", "roughness": 0.5, "emit": 1.0}, "EMIT_water": {"tex": "water_glow", "roughness": 0.2, "emit": 0.35}},
+  "buildings": {
+    "house_small": {
+      "vars": {"bw": "W-0.4", "bd": "D-0.5", "wallTop": 1.95, "fz": 0.22},
+      "parts": [
+        {"type": "box", "size": ["bw+0.1", "bd+0.1", 0.3], "mat": "stone_block"},
+        {"type": "box", "size": ["bw", "bd", "wallTop"], "mat": "plaster_cream"},
+        {"type": "timber", "size": ["bw", "bd", "wallTop"], "beam": 0.12, "rails": [0.36, "wallTop-0.06"], "studs": {"back": [0]}, "braces": {"left": [[-1.15, 0.42, -0.2, 1.85], [1.15, 0.42, 0.2, 1.85]]}, "mat": "timber_dark"},
+        {"type": "gable", "pos": [0, 0, "wallTop"], "length": "bw", "span": "bd", "top": "H-wallTop-rc/2", "thick": 0.16, "overhang": [0.22, 0.3], "ridgeCap": {"w": 0.2, "h": "rc"}, "mat": "roof_red", "mats": {"fill": "plaster_cream", "under": "timber_dark", "edge": "timber_dark", "ridge": "timber_dark"}},
+        {"type": "box", "pos": [1.05, 0.45, "wallTop"], "size": [0.42, 0.42, "H-wallTop-0.12"], "mat": "brick_red"},
+        {"type": "box", "pos": [1.05, 0.45, "H-0.12"], "size": [0.52, 0.52, 0.12], "mat": "stone_block"},
+        {"type": "windows", "face": "front", "d": "bd/2", "xs": [-1.05], "z": 0.78, "size": [0.62, 0.62], "frameW": 0.07, "sill": [0.82, 0.16, 0.06], "shutter": [0.18, 0.04], "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark", "sill": "wood_light", "shutter": "paint_green"}},
+        {"type": "windows", "face": "left", "d": "bw/2", "xs": [0], "z": 0.8, "size": [0.55, 0.55], "frameW": 0.07, "sill": [0.7, 0.14, 0.06], "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark", "sill": "wood_light"}},
+        {"type": "windows", "face": "right", "d": "bw/2", "xs": [0], "z": 0.8, "size": [0.55, 0.55], "frameW": 0.07, "sill": [0.7, 0.14, 0.06], "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark", "sill": "wood_light"}},
+        {"type": "windows", "face": "back", "d": "bd/2", "xs": [-0.95, 0.95], "z": 0.8, "size": [0.55, 0.55], "frameW": 0.07, "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark"}},
+        {"type": "door", "d": "bd/2", "size": [1.0, 1.36], "z": "fz", "frameW": 0.1, "steps": {"n": 2, "w": 1.3, "depth": 0.36, "h": "fz"}, "mats": {"door": "door_wood", "frame": "timber_dark", "step": "stone_block"}},
+        {"type": "gable", "pos": ["DOORX", "-bd/2-0.1", "fz+1.6"], "rot": [0, 0, 90], "length": 0.45, "span": 1.4, "top": 0.4, "thick": 0.08, "overhang": [0.04, 0.06], "mat": "roof_red", "mats": {"fill": "plaster_cream", "under": "timber_dark", "edge": "timber_dark"}},
+        {"type": "box", "at": [[-1.05, "-bd/2-0.1", 0.52]], "size": [0.66, 0.18, 0.16], "mat": "wood_planks", "mats": {"top": "flowers"}},
+        {"type": "cyl", "pos": [1.45, "-bd/2-0.25", 0], "radii": [0.17, 0.19], "h": 0.5, "seg": 8, "mat": "wood_planks", "mats": {"top": "timber_dark"}}
+      ]
+    },
+    "house_large": {
+      "vars": {"bw": "W-0.6", "bd": "D-0.7", "f1": 1.7, "wallTop": 3.05, "fz": 0.24},
+      "parts": [
+        {"type": "box", "size": ["bw", "bd", "f1"], "mat": "stone_block"},
+        {"type": "box", "pos": [0, 0, "f1"], "size": ["bw+0.16", "bd+0.16", "wallTop-f1"], "mat": "plaster_cream"},
+        {"type": "box", "pos": [0, 0, "f1-0.07"], "size": ["bw+0.26", "bd+0.26", 0.14], "mat": "timber_dark"},
+        {"type": "timber", "pos": [0, 0, "f1"], "size": ["bw+0.16", "bd+0.16", "wallTop-f1"], "beam": 0.12, "rails": ["wallTop-f1-0.06"], "studs": {"front": [-1.28, 0, 1.28], "back": [-1.28, 0, 1.28], "left": [0], "right": [0]}, "mat": "timber_dark"},
+        {"type": "hip", "pos": [0, 0, "wallTop"], "length": "bw+0.16", "span": "bd+0.16", "top": "H-wallTop", "thick": 0.16, "overhang": [0.24, 0.24], "mat": "roof_teal", "mats": {"edge": "timber_dark", "under": "timber_dark", "trim": "timber_dark"}, "trim": {"w": 0.14, "h": 0.1}},
+        {"type": "box", "at": [[-1.55, "-bd/2+0.62", "wallTop-0.05"], [1.55, "-bd/2+0.62", "wallTop-0.05"]], "size": [0.95, 0.9, 0.82], "mat": "plaster_cream"},
+        {"type": "windows", "face": "front", "d": "bd/2-0.17", "xs": [-1.55, 1.55], "z": "wallTop+0.12", "size": [0.5, 0.45], "frameW": 0.06, "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark"}},
+        {"type": "gable", "at": [[-1.55, "-bd/2+0.62", "wallTop+0.77"], [1.55, "-bd/2+0.62", "wallTop+0.77"]], "rot": [0, 0, 90], "length": 0.9, "span": 0.95, "top": "H-wallTop-0.77", "thick": 0.1, "overhang": [0.12, 0.1], "mat": "roof_teal", "mats": {"fill": "plaster_cream", "under": "timber_dark", "edge": "timber_dark"}},
+        {"type": "box", "at": [[-2.2, 0.55, "wallTop"], [2.2, 0.55, "wallTop"]], "size": [0.42, 0.42, "H-wallTop-0.1"], "mat": "brick_red"},
+        {"type": "box", "at": [[-2.2, 0.55, "H-0.1"], [2.2, 0.55, "H-0.1"]], "size": [0.52, 0.52, 0.1], "mat": "stone_block"},
+        {"type": "windows", "face": "front", "d": "bd/2", "xs": [-2.1, -1.15, 1.9], "z": 0.62, "size": [0.55, 0.68], "frameW": 0.07, "sill": [0.72, 0.16, 0.06], "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark", "sill": "stone_light"}},
+        {"type": "windows", "face": "front", "d": "bd/2+0.08", "xs": [-1.9, -0.64, 0.64, 1.9], "z": "f1+0.32", "size": [0.55, 0.6], "frameW": 0.07, "sill": [0.7, 0.14, 0.06], "shutter": [0.16, 0.04], "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark", "sill": "wood_light", "shutter": "paint_blue"}},
+        {"type": "windows", "face": "left", "d": "bw/2", "xs": [-0.75, 0.75], "z": 0.62, "size": [0.5, 0.62], "frameW": 0.07, "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark"}},
+        {"type": "windows", "face": "right", "d": "bw/2", "xs": [-0.75, 0.75], "z": 0.62, "size": [0.5, 0.62], "frameW": 0.07, "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark"}},
+        {"type": "windows", "face": "left", "d": "bw/2+0.08", "xs": [-0.7, 0.7], "z": "f1+0.32", "size": [0.5, 0.58], "frameW": 0.07, "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark"}},
+        {"type": "windows", "face": "right", "d": "bw/2+0.08", "xs": [-0.7, 0.7], "z": "f1+0.32", "size": [0.5, 0.58], "frameW": 0.07, "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark"}},
+        {"type": "windows", "face": "back", "d": "bd/2", "xs": [-1.6, 1.6], "z": 0.62, "size": [0.55, 0.68], "frameW": 0.07, "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark"}},
+        {"type": "windows", "face": "back", "d": "bd/2+0.08", "xs": [-1.6, 0, 1.6], "z": "f1+0.32", "size": [0.55, 0.6], "frameW": 0.07, "mats": {"glass": "EMIT_window_warm", "frame": "timber_dark"}},
+        {"type": "door", "d": "bd/2", "size": [1.2, 1.25], "z": "fz", "frameW": 0.1, "steps": {"n": 2, "w": 1.6, "depth": 0.4, "h": "fz"}, "canopy": {"size": [1.7, 0.42, 0.08], "z": 1.62, "posts": 0.08}, "mats": {"door": "door_wood", "frame": "timber_dark", "step": "stone_light", "canopy": "timber_dark"}},
+        {"type": "box", "at": [[-1.55, "-bd/2-0.12", 0], [1.55, "-bd/2-0.12", 0]], "size": [0.5, 0.22, 0.3], "mat": "wood_planks", "mats": {"top": "flowers"}}
+      ]
+    },
+    "center": {
+      "vars": {"bw": "W-0.6", "bd": "D-0.8", "wallTop": 2.7, "pd": 0.35, "fz": 0.2},
+      "parts": [
+        {"type": "box", "size": ["bw+0.2", "bd+0.2", "fz"], "mat": "stone_light"},
+        {"type": "box", "size": ["bw", "bd", "wallTop"], "mat": "plaster_white"},
+        {"type": "box", "pos": [0, 0, "fz"], "size": ["bw+0.06", "bd+0.06", 0.36], "mat": "paint_pink"},
+        {"type": "box", "pos": [0, 0, "wallTop-0.26"], "size": ["bw+0.12", "bd+0.12", 0.26], "mat": "pink_trim"},
+        {"type": "hip", "pos": [0, 0, "wallTop"], "length": "bw", "span": "bd", "top": "H-wallTop-0.5", "thick": 0.18, "overhang": [0.28, 0.28], "mat": "roof_pink", "mats": {"edge": "plaster_white", "under": "plaster_white", "trim": "pink_trim"}, "trim": {"w": 0.16, "h": 0.12}},
+        {"type": "box", "pos": [0, "-bd/2", 0], "size": [2.8, "2*pd", 2.3], "mat": "plaster_white"},
+        {"type": "box", "pos": [0, "-bd/2", "fz"], "size": [2.86, "2*pd+0.06", 0.36], "mat": "paint_pink"},
+        {"type": "box", "pos": [0, "-bd/2-0.02", 2.3], "size": [3.1, "2*pd+0.2", 0.16], "mat": "pink_trim"},
+        {"type": "box", "pos": [0, "-bd/2-pd+0.14", 2.42], "size": [1.5, 0.16, 1.1], "mat": "pink_trim", "mats": {"front": "EMIT_sign_cross"}},
+        {"type": "door", "d": "bd/2+pd", "size": [1.8, 1.6], "z": "fz", "frameW": 0.1, "steps": {"n": 1, "w": 2.2, "depth": 0.3, "h": "fz"}, "mats": {"door": "EMIT_door_glass", "frame": "metal_white", "step": "stone_light"}, "x": 0},
+        {"type": "windows", "face": "front", "d": "bd/2", "xs": [-2.05, 2.05], "z": 0.8, "size": [0.72, 0.88], "frameW": 0.08, "sill": [0.9, 0.14, 0.06], "mats": {"glass": "EMIT_window_pink", "frame": "paint_pink", "sill": "plaster_white"}},
+        {"type": "awning", "face": "front", "d": "bd/2", "at": [[-2.05, 0, 0], [2.05, 0, 0]], "w": 0.95, "depth": 0.3, "drop": 0.18, "z": 1.95, "valance": 0.12, "mat": "awning_pink"},
+        {"type": "windows", "face": "left", "d": "bw/2", "xs": [-1.0, 1.0], "z": 0.8, "size": [0.7, 0.85], "frameW": 0.08, "mats": {"glass": "EMIT_window_pink", "frame": "paint_pink"}},
+        {"type": "windows", "face": "right", "d": "bw/2", "xs": [-1.0, 1.0], "z": 0.8, "size": [0.7, 0.85], "frameW": 0.08, "mats": {"glass": "EMIT_window_pink", "frame": "paint_pink"}},
+        {"type": "windows", "face": "back", "d": "bd/2", "xs": [-1.7, 0, 1.7], "z": 0.8, "size": [0.7, 0.85], "frameW": 0.08, "mats": {"glass": "EMIT_window_pink", "frame": "paint_pink"}},
+        {"type": "box", "at": [[-1.7, "-bd/2-0.24", 0], [1.7, "-bd/2-0.24", 0]], "size": [0.4, 0.4, 0.42], "mat": "paint_pink", "mats": {"top": "flowers"}},
+        {"type": "box", "pos": [0, 0, "H-0.7"], "size": [0.55, 0.55, 0.7], "mat": "pink_trim", "mats": {"front": "EMIT_sign_cross", "back": "EMIT_sign_cross", "left": "EMIT_sign_cross", "right": "EMIT_sign_cross"}}
+      ]
+    },
+    "shop": {
+      "vars": {"bw": "W-0.4", "bd": "D-0.7", "wallTop": 2.6, "fz": 0.22},
+      "parts": [
+        {"type": "box", "size": ["bw+0.1", "bd+0.1", 0.3], "mat": "stone_block"},
+        {"type": "box", "size": ["bw", "bd", "wallTop"], "mat": "plaster_white"},
+        {"type": "box", "pos": [0, 0, 0.3], "size": ["bw+0.05", "bd+0.05", 0.42], "mat": "paint_sky"},
+        {"type": "gable", "pos": [0, 0, "wallTop"], "length": "bw", "span": "bd", "top": "H-wallTop-rc/2", "thick": 0.16, "overhang": [0.2, 0.3], "ridgeCap": {"w": 0.2, "h": "rc"}, "mat": "roof_blue", "mats": {"fill": "plaster_white", "under": "paint_blue", "edge": "paint_blue", "ridge": "paint_blue"}},
+        {"type": "box", "pos": [-1.25, 0.55, "wallTop"], "size": [0.36, 0.36, "H-wallTop-0.15"], "mat": "brick_red"},
+        {"type": "box", "pos": [-1.25, 0.55, "H-0.15"], "size": [0.46, 0.46, 0.15], "mat": "stone_block"},
+        {"type": "box", "pos": [0, "-bd/2+0.35", "wallTop+0.32"], "size": [2.0, 0.12, 0.74], "mat": "paint_blue", "mats": {"front": "EMIT_sign_coin"}, "rot": [-14, 0, 0]},
+        {"type": "awning", "face": "front", "d": "bd/2", "w": "bw-0.1", "depth": 0.34, "drop": 0.18, "z": 2.02, "valance": 0.1, "brackets": 0.05, "mat": "awning_blue", "mats": {"bracket": "metal_dark"}},
+        {"type": "windows", "face": "front", "d": "bd/2", "xs": [-1.5, 1.5], "z": 0.66, "size": [1.05, 0.9], "frameW": 0.08, "sill": [1.25, 0.16, 0.06], "mats": {"glass": "EMIT_window_warm", "frame": "paint_blue", "sill": "plaster_white"}},
+        {"type": "windows", "face": "left", "d": "bw/2", "xs": [0], "z": 0.9, "size": [0.6, 0.62], "frameW": 0.07, "mats": {"glass": "EMIT_window_warm", "frame": "paint_blue"}},
+        {"type": "windows", "face": "right", "d": "bw/2", "xs": [0], "z": 0.9, "size": [0.6, 0.62], "frameW": 0.07, "mats": {"glass": "EMIT_window_warm", "frame": "paint_blue"}},
+        {"type": "windows", "face": "back", "d": "bd/2", "xs": [-1.2, 1.2], "z": 0.9, "size": [0.6, 0.62], "frameW": 0.07, "mats": {"glass": "EMIT_window_warm", "frame": "paint_blue"}},
+        {"type": "door", "d": "bd/2", "size": [1.0, 1.45], "z": "fz", "frameW": 0.1, "steps": {"n": 1, "w": 1.3, "depth": 0.3, "h": "fz"}, "mats": {"door": "EMIT_door_glass", "frame": "paint_blue", "step": "stone_block"}},
+        {"type": "box", "at": [[-2.05, "-bd/2-0.2", 0], [2.05, "-bd/2-0.2", 0]], "size": [0.38, 0.34, 0.36], "mat": "wood_planks", "mats": {"top": "fruit"}},
+        {"type": "box", "pos": [-2.05, "-bd/2-0.2", 0.36], "size": [0.3, 0.28, 0.26], "mat": "wood_planks", "mats": {"top": "fruit"}}
+      ]
+    },
+    "lab": {
+      "vars": {"bw": "W-0.6", "bd": "D-0.8", "wallTop": 3.3, "fz": 0.2, "ed": 0.4},
+      "parts": [
+        {"type": "box", "size": ["bw+0.2", "bd+0.2", "fz"], "mat": "concrete"},
+        {"type": "box", "size": ["bw", "bd", "wallTop"], "mat": "metal_white"},
+        {"type": "box", "pos": [0, 0, "wallTop"], "size": ["bw+0.24", "bd+0.24", 0.22], "mat": "metal_grey", "mats": {"top": "concrete"}},
+        {"type": "box", "pos": [0, 0, "wallTop+0.22"], "size": ["bw+0.26", "bd+0.26", 0.08], "mat": "paint_cyan", "mats": {"top": "concrete"}},
+        {"type": "box", "pos": [0, 0, 1.32], "size": ["bw+0.04", "bd+0.04", 0.1], "mat": "paint_cyan"},
+        {"type": "windows", "face": "front", "d": "bd/2", "xs": [-2.95, -1.75, 1.75, 2.95], "zs": [0.5, 1.75], "size": [1.0, 0.66], "frameW": 0.06, "mats": {"glass": "EMIT_window_cyan", "frame": "metal_dark"}},
+        {"type": "windows", "face": "back", "d": "bd/2", "count": 4, "span": [-2.7, 2.7], "zs": [0.5, 1.75], "size": [1.05, 0.66], "frameW": 0.06, "mats": {"glass": "EMIT_window_cyan", "frame": "metal_dark"}},
+        {"type": "windows", "face": "left", "d": "bw/2", "count": 2, "span": [-1.0, 1.0], "zs": [0.5, 1.75], "size": [1.0, 0.66], "frameW": 0.06, "mats": {"glass": "EMIT_window_cyan", "frame": "metal_dark"}},
+        {"type": "windows", "face": "right", "d": "bw/2", "count": 2, "span": [-1.0, 1.0], "zs": [0.5, 1.75], "size": [1.0, 0.66], "frameW": 0.06, "mats": {"glass": "EMIT_window_cyan", "frame": "metal_dark"}},
+        {"type": "box", "pos": [0, "-bd/2", 0], "size": [2.3, "2*ed", 2.35], "mat": "metal_white"},
+        {"type": "box", "pos": [0, "-bd/2-0.08", 2.35], "size": [2.9, "2*ed+0.3", 0.12], "mat": "paint_cyan", "mats": {"top": "metal_grey"}},
+        {"type": "door", "d": "bd/2+ed", "size": [1.8, 1.85], "z": "fz", "frameW": 0.1, "steps": {"n": 1, "w": 2.1, "depth": 0.25, "h": "fz"}, "mats": {"door": "EMIT_door_glass", "frame": "metal_dark", "step": "concrete"}, "x": 0},
+        {"type": "box", "pos": [0, "-bd/2-0.05", 2.5], "size": [1.0, 0.1, 0.72], "mat": "metal_dark", "mats": {"front": "EMIT_sign_flask"}},
+        {"type": "cyl", "pos": [2.3, 0.7, "wallTop+0.3"], "r": 0.08, "h": 0.42, "seg": 6, "mat": "metal_grey"},
+        {"type": "cyl", "pos": [2.3, 0.7, "wallTop+0.6"], "rot": [38, 0, 18], "radii": [0.14, 0.72], "h": 0.28, "seg": 10, "mat": "metal_white", "mats": {"top": "metal_grey"}},
+        {"type": "cyl", "pos": [2.3, 0.7, "wallTop+0.6"], "rot": [38, 0, 18], "r": 0.03, "h": 0.62, "seg": 4, "mat": "metal_dark"},
+        {"type": "cyl", "pos": [-2.9, 0.9, "wallTop+0.3"], "r": 0.04, "h": "H-wallTop-0.44", "seg": 4, "mat": "metal_grey"},
+        {"type": "sphere", "pos": [-2.9, 0.9, "H-0.08"], "r": 0.08, "seg": 6, "rings": 3, "mat": "EMIT_beacon_red"},
+        {"type": "box", "at": [[-1.2, 0.8, "wallTop+0.3"], [0.0, 0.8, "wallTop+0.3"]], "size": [0.7, 0.55, 0.42], "mat": "metal_grey", "mats": {"front": "grate_vent", "back": "grate_vent"}},
+        {"type": "box", "at": [[-1.7, -0.9, "wallTop+0.3"], [1.0, -0.9, "wallTop+0.3"]], "size": [1.6, 0.9, 0.24], "mat": "metal_white", "mats": {"top": "EMIT_window_cyan"}}
+      ]
+    },
+    "gym": {
+      "vars": {"bw": "W-0.6", "bd": "D-1.4", "wallTop": 3.4, "fz": 0.35, "colY": "-bd/2-0.42"},
+      "verify": {"doorFacadeTol": 0.9},
+      "parts": [
+        {"type": "box", "size": ["bw+0.3", "bd+0.3", "fz"], "mat": "stone_warm"},
+        {"type": "box", "size": ["bw", "bd", "wallTop"], "mat": "plaster_cream"},
+        {"type": "box", "at": [["-bw/2", "-bd/2", 0], ["bw/2", "-bd/2", 0], ["-bw/2", "bd/2", 0], ["bw/2", "bd/2", 0]], "size": [0.5, 0.5, "wallTop"], "mat": "stone_warm"},
+        {"type": "box", "pos": [0, 0, "fz"], "size": ["bw+0.04", "bd+0.04", 0.5], "mat": "stone_warm"},
+        {"type": "box", "pos": [0, 0, "wallTop-0.22"], "size": ["bw+0.14", "bd+0.14", 0.22], "mat": "gold_trim"},
+        {"type": "gable", "pos": [0, 0, "wallTop"], "rot": [0, 0, 90], "length": "bd", "span": "bw", "top": "H-wallTop-rc/2", "thick": 0.2, "overhang": [0.3, 0.3], "ridgeCap": {"w": 0.24, "h": "rc"}, "mat": "roof_crimson", "mats": {"fill": "plaster_cream", "under": "stone_warm", "edge": "gold_trim", "ridge": "gold_trim"}},
+        {"type": "box", "pos": [0, "-bd/2-0.05", "wallTop+0.32"], "size": [1.05, 0.1, 1.05], "mat": "gold_trim", "mats": {"front": "EMIT_sign_badge"}},
+        {"type": "cyl", "at": [[-2.7, "colY", "fz"], [-1.35, "colY", "fz"], [1.35, "colY", "fz"], [2.7, "colY", "fz"]], "r": 0.17, "h": 2.25, "seg": 8, "mat": "stone_light"},
+        {"type": "box", "at": [[-2.7, "colY", "fz"], [-1.35, "colY", "fz"], [1.35, "colY", "fz"], [2.7, "colY", "fz"]], "size": [0.44, 0.44, 0.14], "mat": "stone_warm"},
+        {"type": "box", "at": [[-2.7, "colY", "fz+2.12"], [-1.35, "colY", "fz+2.12"], [1.35, "colY", "fz+2.12"], [2.7, "colY", "fz+2.12"]], "size": [0.44, 0.44, 0.16], "mat": "gold_trim"},
+        {"type": "box", "pos": [0, "colY+0.2", "fz+2.28"], "size": [6.3, 0.95, 0.26], "mat": "stone_warm", "mats": {"top": "roof_crimson"}},
+        {"type": "box", "pos": [0, "colY+0.2", "fz+2.54"], "size": [6.36, 0.98, 0.1], "mat": "gold_trim"},
+        {"type": "door", "d": "bd/2", "size": [1.8, 1.95], "z": "fz", "frameW": 0.14, "steps": {"n": 3, "w": 2.4, "depth": 0.66, "h": "fz"}, "mats": {"door": "door_red", "frame": "gold_trim", "step": "stone_warm"}, "x": 0},
+        {"type": "box", "at": [[-2.02, "-bd/2-0.03", 0.85], [2.02, "-bd/2-0.03", 0.85]], "size": [0.6, 0.05, 1.5], "mat": "gold_trim", "mats": {"front": "banner_badge"}},
+        {"type": "windows", "face": "left", "d": "bw/2", "count": 3, "span": [-1.8, 1.8], "z": 1.2, "size": [0.6, 1.2], "frameW": 0.08, "mats": {"glass": "EMIT_window_warm", "frame": "gold_trim"}},
+        {"type": "windows", "face": "right", "d": "bw/2", "count": 3, "span": [-1.8, 1.8], "z": 1.2, "size": [0.6, 1.2], "frameW": 0.08, "mats": {"glass": "EMIT_window_warm", "frame": "gold_trim"}},
+        {"type": "windows", "face": "back", "d": "bd/2", "count": 3, "span": [-2.4, 2.4], "z": 1.2, "size": [0.6, 1.2], "frameW": 0.08, "mats": {"glass": "EMIT_window_warm", "frame": "gold_trim"}},
+        {"type": "cyl", "at": [[-1.95, "-D/2+0.22", 0], [1.95, "-D/2+0.22", 0]], "r": 0.05, "h": 1.05, "seg": 4, "mat": "metal_dark"},
+        {"type": "box", "at": [[-1.95, "-D/2+0.22", 1.05], [1.95, "-D/2+0.22", 1.05]], "size": [0.24, 0.24, 0.3], "mat": "EMIT_lantern", "mats": {"top": "metal_dark"}},
+        {"type": "sphere", "at": [[0, "-bd/2-0.3", "H-0.16"], [0, "bd/2+0.3", "H-0.16"]], "r": 0.14, "seg": 6, "rings": 3, "mat": "gold_trim"}
+      ]
+    },
+    "tower": {
+      "vars": {"tb": 4.3, "th": 1.8, "z1": 2.0, "z2": 4.7, "z3": 7.3, "z4": 9.7, "r1": 1.45, "r2": 1.3, "r3": 1.15, "r4": 1.0, "ap": 0.924},
+      "parts": [
+        {"type": "box", "size": [4.8, 4.8, 0.3], "mat": "metal_dark"},
+        {"type": "box", "size": ["tb", "tb", "th"], "taper": 0.94, "mat": "metal_navy"},
+        {"type": "box", "pos": [0, 0, "th"], "size": ["tb*0.9", "tb*0.9", 0.2], "mat": "EMIT_ring_cyan"},
+        {"type": "cyl", "pos": [0, 0, "z1"], "radii": ["r1", "r2"], "h": "z2-z1", "seg": 8, "mat": "tower_panel"},
+        {"type": "cyl", "pos": [0, 0, "z2"], "radii": ["r2", "r3"], "h": "z3-z2", "seg": 8, "mat": "tower_panel"},
+        {"type": "cyl", "pos": [0, 0, "z3"], "radii": ["r3", "r4"], "h": "z4-z3", "seg": 8, "mat": "tower_panel"},
+        {"type": "torus", "pos": [0, 0, "z2"], "R": "r2*0.98", "r": 0.11, "seg": 16, "segMinor": 4, "mat": "EMIT_ring_cyan"},
+        {"type": "torus", "pos": [0, 0, "z3"], "R": "r3*0.98", "r": 0.1, "seg": 16, "segMinor": 4, "mat": "EMIT_ring_cyan"},
+        {"type": "torus", "pos": [0, 0, "z1+0.05"], "R": "r1*0.98", "r": 0.12, "seg": 16, "segMinor": 4, "mat": "EMIT_ring_cyan"},
+        {"type": "box", "at": [[0, "-(r1+r2)/2*ap", "(z1+z2)/2-0.4"], [0, "-(r2+r3)/2*ap", "(z2+z3)/2-0.4"], [0, "-(r3+r4)/2*ap", "(z3+z4)/2-0.35"]], "size": [0.34, 0.14, 0.8], "mat": "EMIT_window_cyan", "mirror": "y"},
+        {"type": "box", "at": [["-(r1+r2)/2*ap", 0, "(z1+z2)/2-0.4"], ["-(r2+r3)/2*ap", 0, "(z2+z3)/2-0.4"], ["-(r3+r4)/2*ap", 0, "(z3+z4)/2-0.35"]], "size": [0.14, 0.34, 0.8], "mat": "EMIT_window_cyan", "mirror": "x"},
+        {"type": "cyl", "pos": [0, 0, "z4"], "radii": [1.3, 0.75], "h": 0.55, "seg": 8, "mat": "metal_navy"},
+        {"type": "torus", "pos": [0, 0, "z4+0.02"], "R": 1.25, "r": 0.09, "seg": 16, "segMinor": 4, "mat": "EMIT_ring_cyan"},
+        {"type": "sphere", "pos": [0, 0, "z4+0.5"], "r": 0.5, "seg": 8, "rings": 4, "mat": "EMIT_core"},
+        {"type": "torus", "pos": [0, 0, "z4+1.0"], "rot": [90, 0, 0], "R": 0.75, "r": 0.06, "seg": 16, "segMinor": 4, "mat": "EMIT_ring_cyan"},
+        {"type": "cyl", "pos": [0, 0, "z4+0.95"], "radii": [0.14, 0], "h": "H-z4-0.95", "seg": 6, "mat": "metal_white"},
+        {"type": "door", "d": "tb/2", "size": [1.15, 1.45], "z": 0.3, "frameW": 0.1, "steps": {"n": 1, "w": 1.6, "depth": 0.3, "h": 0.3}, "mats": {"door": "EMIT_door_cyber", "frame": "EMIT_ring_cyan", "step": "metal_dark"}},
+        {"type": "box", "at": [[-1.55, "-tb/2-0.02", 0.6], [1.55, "-tb/2-0.02", 0.6]], "size": [0.6, 0.06, 0.9], "mat": "EMIT_window_cyan"}
+      ]
+    },
+    "datacenter": {
+      "vars": {"bw": "W-0.5", "bd": "D-0.6", "wallTop": 3.55, "pz": "wallTop+0.32"},
+      "parts": [
+        {"type": "box", "size": ["bw+0.2", "bd+0.2", 0.15], "mat": "concrete"},
+        {"type": "box", "size": ["bw", "bd", "wallTop"], "mat": "metal_grey"},
+        {"type": "box", "size": ["bw+0.05", "bd+0.05", 0.55], "mat": "metal_dark"},
+        {"type": "box", "pos": [0, 0, "wallTop"], "size": ["bw+0.12", "bd+0.12", 0.32], "mat": "metal_dark", "mats": {"top": "concrete"}},
+        {"type": "box", "pos": [0, "-bd/2-0.03", 2.9], "size": ["bw-0.8", 0.05, 0.08], "mat": "EMIT_strip_green"},
+        {"type": "box", "pos": [0, "bd/2+0.03", 2.9], "size": ["bw-0.8", 0.05, 0.08], "mat": "EMIT_strip_green"},
+        {"type": "cyl", "at": [[-3.3, 0.9, "pz"], [-1.1, 0.9, "pz"], [1.1, 0.9, "pz"], [3.3, 0.9, "pz"]], "r": 0.58, "h": 0.32, "seg": 10, "mat": "metal_dark", "mats": {"top": "fan"}},
+        {"type": "box", "at": [[-3.0, -1.25, "pz"], [0, -1.25, "pz"], [3.0, -1.25, "pz"]], "size": [1.5, 0.9, 0.5], "mat": "metal_grey", "mats": {"front": "grate_vent", "back": "grate_vent", "top": "metal_dark"}},
+        {"type": "cyl", "pos": [4.1, 1.7, "pz"], "r": 0.34, "h": "H-pz", "seg": 8, "mat": "metal_grey", "mats": {"top": "dark_solid"}},
+        {"type": "tube", "pos": [4.1, 1.7, "H-0.3"], "rOuter": 0.42, "rInner": 0.3, "h": 0.12, "seg": 8, "mat": "metal_dark"},
+        {"type": "cyl", "pos": ["-bw/2+0.3", "-bd/2-0.14", 3.3], "rot": [0, 90, 0], "r": 0.1, "h": "bw-0.6", "seg": 6, "mat": "metal_dark"},
+        {"type": "cyl", "at": [["-bw/2+0.3", "-bd/2-0.14", 0], ["bw/2-0.3", "-bd/2-0.14", 0]], "r": 0.1, "h": 3.4, "seg": 6, "mat": "metal_dark"},
+        {"type": "door", "d": "bd/2", "size": [1.8, 2.1], "z": 0.15, "frameW": 0.12, "steps": {"n": 1, "w": 2.1, "depth": 0.3, "h": 0.15}, "mats": {"door": "door_metal", "frame": "paint_cyan", "step": "concrete"}, "x": 0},
+        {"type": "box", "pos": [0, "-bd/2-0.05", 2.35], "size": [1.2, 0.1, 0.8], "mat": "metal_dark", "mats": {"front": "EMIT_sign_chip"}},
+        {"type": "box", "pos": [-3.0, "-bd/2-0.02", 0.15], "size": [2.4, 0.08, 2.2], "mat": "metal_dark", "mats": {"front": "door_metal"}},
+        {"type": "windows", "face": "front", "d": "bd/2", "count": 3, "span": [1.6, 3.8], "z": 1.4, "size": [0.6, 0.5], "frameW": 0.06, "mats": {"glass": "EMIT_window_cyan", "frame": "metal_dark"}},
+        {"type": "windows", "face": "back", "d": "bd/2", "count": 6, "span": [-3.8, 3.8], "z": 1.4, "size": [0.6, 0.5], "frameW": 0.06, "mats": {"glass": "EMIT_window_cyan", "frame": "metal_dark"}},
+        {"type": "box", "at": [["-bw/2-0.03", -1.0, 1.0], ["-bw/2-0.03", 1.0, 1.0]], "size": [0.06, 1.2, 1.0], "mat": "grate_vent", "mirror": "x"}
+      ]
+    },
+    "windmill": {
+      "vars": {"rb": 1.25, "rt": 0.85, "bz": 0.4, "bh": 4.4, "ap": 0.924, "hubZ": 4.55},
+      "nodes": {"blades": {"pivot": [0, "-(rt+0.06)", "hubZ"]}},
+      "verify": {"footprintTol": 0.45},
+      "parts": [
+        {"type": "cyl", "r": 1.38, "h": "bz", "seg": 8, "mat": "stone_block"},
+        {"type": "cyl", "pos": [0, 0, "bz"], "radii": ["rb", "rt"], "h": "bh", "seg": 8, "mat": "plaster_cream"},
+        {"type": "tube", "pos": [0, 0, "bz+bh/2"], "rOuter": "(rb+rt)/2+0.05", "rInner": "(rb+rt)/2-0.1", "h": 0.12, "seg": 8, "mat": "timber_dark"},
+        {"type": "tube", "pos": [0, 0, "bz+bh-0.05"], "rOuter": "rt+0.24", "rInner": "rt-0.1", "h": 0.16, "seg": 8, "mat": "timber_dark"},
+        {"type": "cyl", "pos": [0, 0, "bz+bh+0.1"], "radii": ["rt+0.2", 0], "h": "H-bz-bh-0.34", "seg": 8, "mat": "roof_brown"},
+        {"type": "sphere", "pos": [0, 0, "H-0.22"], "r": 0.12, "seg": 6, "rings": 3, "mat": "gold_trim"},
+        {"type": "box", "pos": [0, "-rb*ap+0.1", 0], "size": [0.95, 0.5, 1.45], "mat": "plaster_cream"},
+        {"type": "gable", "pos": [0, "-rb*ap+0.08", 1.45], "rot": [0, 0, 90], "length": 0.55, "span": 0.95, "top": 0.36, "thick": 0.08, "overhang": [0.06, 0.08], "mat": "roof_brown", "mats": {"fill": "plaster_cream", "under": "timber_dark", "edge": "timber_dark"}},
+        {"type": "door", "d": "rb*ap+0.15", "size": [0.62, 1.05], "z": 0.12, "frameW": 0.08, "steps": {"n": 1, "w": 0.8, "depth": 0.2, "h": 0.12}, "mats": {"door": "door_wood", "frame": "timber_dark", "step": "stone_block"}},
+        {"type": "box", "at": [[0, "-(rb-(rb-rt)*0.55)*ap", "bz+bh*0.55"], [0, "(rb-(rb-rt)*0.4)*ap", "bz+bh*0.4"]], "rot": [-5, 0, 0], "size": [0.4, 0.16, 0.5], "mat": "EMIT_window_warm"},
+        {"type": "box", "at": [["-(rb-(rb-rt)*0.35)*ap", 0, "bz+bh*0.35"], ["(rb-(rb-rt)*0.65)*ap", 0, "bz+bh*0.65"]], "size": [0.16, 0.4, 0.5], "mat": "EMIT_window_warm"},
+        {"type": "blades", "node": "blades", "pos": [0, "-(rt+0.06)", "hubZ"], "n": 4, "len": 2.15, "sailW": 0.5, "spar": 0.1, "sailT": 0.04, "angle0": 45, "sailStart": 0.22, "hub": [0.22, 0.32], "mats": {"hub": "timber_dark", "spar": "timber_dark", "sail": "canvas_tan"}}
+      ]
+    },
+    "temple": {
+      "vars": {"pz": 1.0, "colH": 3.3, "eZ": "pz+colH", "colFY": -3.2, "cellD": 5.6, "r1Z": "eZ+0.52"},
+      "verify": {"doorFacadeTol": 1.4},
+      "parts": [
+        {"type": "box", "size": [9.8, 7.8, 0.35], "mat": "stone_light"},
+        {"type": "box", "pos": [0, 0, 0.35], "size": [9.1, 7.3, 0.35], "mat": "stone_light"},
+        {"type": "box", "pos": [0, 0, 0.7], "size": [8.4, 7.0, 0.3], "mat": "marble_white"},
+        {"type": "box", "at": [[4.45, -3.45, 0.35], [4.45, 3.45, 0.35]], "mirror": "x", "size": [0.55, 0.55, 3.0], "taper": 0.45, "mat": "marble_white"},
+        {"type": "box", "at": [[4.45, -3.45, 0.35], [4.45, 3.45, 0.35]], "mirror": "x", "size": [0.62, 0.62, 0.3], "mat": "gold_trim"},
+        {"type": "sphere", "at": [[4.45, -3.45, 3.55], [4.45, 3.45, 3.55]], "mirror": "x", "r": 0.2, "seg": 4, "rings": 2, "scale": [1, 1, 1.5], "mat": "EMIT_core"},
+        {"type": "box", "pos": [0, 0, "pz"], "size": [5.8, "cellD", "colH"], "mat": "temple_panel"},
+        {"type": "box", "pos": [0, 0, "pz"], "size": [5.86, "cellD+0.06", 0.3], "mat": "gold_trim"},
+        {"type": "cyl", "at": [[-3.7, "colFY", "pz"], [-2.5, "colFY", "pz"], [-1.3, "colFY", "pz"], [1.3, "colFY", "pz"], [2.5, "colFY", "pz"], [3.7, "colFY", "pz"], [-3.7, -1.1, "pz"], [-3.7, 1.1, "pz"], [3.7, -1.1, "pz"], [3.7, 1.1, "pz"]], "r": 0.25, "h": "colH", "seg": 8, "mat": "marble_white"},
+        {"type": "cyl", "at": [[-3.7, 3.2, "pz"], [-1.3, 3.2, "pz"], [1.3, 3.2, "pz"], [3.7, 3.2, "pz"]], "r": 0.25, "h": "colH", "seg": 8, "mat": "marble_white"},
+        {"type": "box", "at": [[-3.7, "colFY", "eZ-0.18"], [-2.5, "colFY", "eZ-0.18"], [-1.3, "colFY", "eZ-0.18"], [1.3, "colFY", "eZ-0.18"], [2.5, "colFY", "eZ-0.18"], [3.7, "colFY", "eZ-0.18"]], "size": [0.62, 0.62, 0.18], "mat": "gold_trim"},
+        {"type": "box", "at": [[-3.7, "colFY", "pz"], [-2.5, "colFY", "pz"], [-1.3, "colFY", "pz"], [1.3, "colFY", "pz"], [2.5, "colFY", "pz"], [3.7, "colFY", "pz"]], "size": [0.6, 0.6, 0.14], "mat": "marble_white"},
+        {"type": "box", "pos": [0, 0, "eZ"], "size": [8.1, 7.3, 0.4], "mat": "marble_white"},
+        {"type": "box", "pos": [0, 0, "eZ+0.4"], "size": [8.2, 7.4, 0.12], "mat": "gold_trim"},
+        {"type": "box", "pos": [0, -3.7, "eZ+0.08"], "size": [6.0, 0.06, 0.24], "mat": "EMIT_gold_glow"},
+        {"type": "hip", "pos": [0, 0, "r1Z"], "length": 8.0, "span": 7.2, "top": 1.25, "thick": 0.2, "overhang": [0.15, 0.15], "mat": "roof_white", "mats": {"edge": "gold_trim", "under": "marble_white", "trim": "gold_trim"}, "trim": {"w": 0.14, "h": 0.1}},
+        {"type": "box", "pos": [0, 0, "r1Z+0.65"], "size": [4.4, 3.4, 0.85], "mat": "marble_white"},
+        {"type": "windows", "face": "front", "d": 1.7, "count": 4, "span": [-1.5, 1.5], "z": "r1Z+0.85", "size": [0.55, 0.36], "frameW": 0.05, "mats": {"glass": "EMIT_core", "frame": "gold_trim"}},
+        {"type": "hip", "pos": [0, 0, "r1Z+1.5"], "length": 4.6, "span": 3.6, "top": 0.7, "thick": 0.14, "overhang": [0.15, 0.15], "mat": "roof_white", "mats": {"edge": "gold_trim", "under": "marble_white", "trim": "gold_trim"}, "trim": {"w": 0.14, "h": 0.1}},
+        {"type": "cyl", "pos": [0, 0, "r1Z+2.03"], "radii": [0.42, 0.3], "h": 0.25, "seg": 8, "mat": "gold_trim"},
+        {"type": "sphere", "pos": [0, 0, "H-0.9"], "r": 0.55, "seg": 4, "rings": 2, "scale": [1, 1, "0.9/0.55"], "mat": "EMIT_core"},
+        {"type": "torus", "pos": [0, 0, "H-0.9"], "R": 0.85, "r": 0.06, "seg": 16, "segMinor": 4, "mat": "EMIT_gold_glow"},
+        {"type": "torus", "pos": [0, 0, "H-0.9"], "rot": [90, 0, 0], "R": 0.78, "r": 0.05, "seg": 16, "segMinor": 4, "mat": "EMIT_gold_glow"},
+        {"type": "door", "d": "cellD/2", "size": [1.8, 2.3], "z": "pz", "frameW": 0.16, "mats": {"door": "EMIT_door_temple", "frame": "gold_trim"}, "x": 0},
+        {"type": "box", "at": [[-2.1, "-cellD/2-0.04", "pz+0.6"], [2.1, "-cellD/2-0.04", "pz+0.6"]], "size": [0.9, 0.06, 2.0], "mat": "gold_trim", "mats": {"front": "EMIT_rune"}}
+      ]
+    },
+    "cave_entrance": {
+      "verify": {"footprintTol": 0.45, "doorFacadeTol": 0.4},
+      "parts": [
+        {"type": "rock", "pos": [-0.95, 0.15, 0], "r": 0.85, "scale": [0.9, 0.95, 1.45], "seed": 3, "jitter": 0.16, "mat": "rock_brown"},
+        {"type": "rock", "pos": [0.95, 0.15, 0], "r": 0.85, "scale": [0.9, 0.95, 1.35], "seed": 5, "jitter": 0.16, "mat": "rock_brown"},
+        {"type": "rock", "pos": [0, 0.3, 1.75], "r": 0.8, "scale": [1.65, 0.95, 0.9], "seed": 7, "jitter": 0.14, "mat": "rock_brown"},
+        {"type": "rock", "pos": [0, 0.55, 0.3], "r": 0.9, "scale": [1.5, 0.55, 1.5], "seed": 9, "jitter": 0.12, "mat": "rock_grey"},
+        {"type": "rock", "pos": [0.35, 0.45, 2.25], "r": 0.42, "scale": [1.2, 1.0, 0.95], "seed": 11, "jitter": 0.2, "mat": "rock_grey"},
+        {"type": "extrude", "pos": [0, -0.52, 0], "poly": [[-0.56, 0], [0.56, 0], [0.56, 1.0], [0.4, 1.38], [0, 1.55], [-0.4, 1.38], [-0.56, 1.0]], "depth": 0.6, "mat": "cave_dark"},
+        {"type": "door", "d": 0.83, "size": [1.05, 1.32], "frameW": 0.15, "depth": 0.1, "mats": {"door": "cave_dark", "frame": "timber_dark"}},
+        {"type": "box", "pos": [0, -0.86, 1.32], "size": [1.6, 0.2, 0.2], "mat": "timber_dark"},
+        {"type": "box", "pos": [0.68, -0.98, 1.05], "size": [0.16, 0.16, 0.22], "mat": "EMIT_lantern", "mats": {"top": "metal_dark"}},
+        {"type": "rock", "pos": [1.25, -0.7, 0], "r": 0.22, "scale": [1.2, 1.0, 0.8], "seed": 13, "jitter": 0.25, "mat": "rock_grey"},
+        {"type": "rock", "pos": [-1.2, -0.75, 0], "r": 0.17, "scale": [1.1, 1.0, 0.8], "seed": 15, "jitter": 0.25, "mat": "rock_brown"}
+      ]
+    },
+    "stall": {
+      "parts": [
+        {"type": "box", "pos": [0, -0.45, 0], "size": [1.8, 0.7, 0.88], "mat": "wood_planks", "mats": {"top": "wood_light"}},
+        {"type": "box", "pos": [0, 0.6, 0], "size": [1.7, 0.5, 0.7], "mat": "wood_planks", "mats": {"top": "wood_light"}},
+        {"type": "box", "at": [[-0.86, -0.86, 0], [0.86, -0.86, 0]], "size": [0.1, 0.1, 1.58], "mat": "timber_dark"},
+        {"type": "box", "at": [[-0.86, 0.86, 0], [0.86, 0.86, 0]], "size": [0.1, 0.1, 1.93], "mat": "timber_dark"},
+        {"type": "box", "pos": [0, 0, 1.75], "rot": [10, 0, 0], "size": [2.1, 2.05, 0.07], "mat": "awning_red"},
+        {"type": "box", "pos": [0, -1.0, 1.46], "size": [2.1, 0.05, 0.24], "mat": "awning_red"},
+        {"type": "box", "at": [[-0.55, -0.45, 0.88], [0.0, -0.45, 0.88], [0.55, -0.45, 0.88]], "size": [0.42, 0.42, 0.18], "mat": "wood_light", "mats": {"top": "fruit"}},
+        {"type": "box", "at": [[-0.5, 0.6, 0.7], [0.45, 0.6, 0.7]], "size": [0.5, 0.4, 0.3], "mat": "wood_planks", "mats": {"top": "fruit"}},
+        {"type": "box", "pos": [0.72, -0.86, 1.28], "size": [0.16, 0.16, 0.2], "mat": "EMIT_lantern", "mats": {"top": "metal_dark"}}
+      ]
+    },
+    "tent": {
+      "parts": [
+        {"type": "gable", "rot": [0, 0, 90], "length": 1.8, "span": 1.75, "top": "H-0.05", "thick": 0.06, "overhang": [0.06, 0], "mat": "canvas_tan", "mats": {"fill": "canvas_tan"}},
+        {"type": "extrude", "pos": [0, -0.93, 0], "poly": [[-0.42, 0], [0.42, 0], [0, 1.15]], "depth": 0.04, "mat": "canvas_shadow"},
+        {"type": "box", "at": [[0, -0.95, 0], [0, 0.95, 0]], "size": [0.06, 0.06, "H"], "mat": "timber_dark"},
+        {"type": "box", "at": [[-0.95, -0.95, 0], [0.95, -0.95, 0], [-0.95, 0.95, 0], [0.95, 0.95, 0]], "size": [0.08, 0.08, 0.14], "mat": "wood_planks"},
+        {"type": "box", "pos": [0.5, -0.82, 0], "size": [0.36, 0.28, 0.26], "mat": "wood_planks", "mats": {"top": "wood_light"}}
+      ]
+    },
+    "well": {
+      "parts": [
+        {"type": "tube", "rOuter": 0.82, "rInner": 0.6, "h": 0.72, "seg": 10, "mat": "stone_block", "mats": {"top": "stone_light", "inner": "stone_block"}},
+        {"type": "cyl", "r": 0.62, "h": 0.46, "seg": 10, "mat": "dark_solid", "mats": {"top": "water"}},
+        {"type": "box", "at": [[-0.74, 0, 0], [0.74, 0, 0]], "size": [0.13, 0.13, 1.48], "mat": "timber_dark"},
+        {"type": "gable", "pos": [0, 0, 1.46], "length": 1.6, "span": 1.2, "top": "H-1.46", "thick": 0.08, "overhang": [0.1, 0.12], "fill": false, "mat": "roof_red", "mats": {"under": "timber_dark", "edge": "timber_dark"}},
+        {"type": "cyl", "pos": [-0.8, 0, 1.15], "rot": [0, 90, 0], "r": 0.05, "h": 1.75, "seg": 6, "mat": "wood_planks"},
+        {"type": "box", "pos": [0.96, 0, 1.0], "size": [0.06, 0.06, 0.2], "mat": "timber_dark"},
+        {"type": "cyl", "pos": [0, 0, 0.92], "r": 0.016, "h": 0.22, "seg": 4, "mat": "rope"},
+        {"type": "cyl", "pos": [0, 0, 0.74], "radii": [0.11, 0.14], "h": 0.18, "seg": 8, "mat": "wood_planks", "mats": {"top": "water"}}
+      ]
+    },
+    "fountain": {
+      "parts": [
+        {"type": "tube", "rOuter": 1.45, "rInner": 1.2, "h": 0.45, "seg": 8, "mat": "stone_block", "mats": {"top": "marble_white", "inner": "stone_block"}},
+        {"type": "cyl", "r": 1.22, "h": 0.34, "seg": 8, "mat": "stone_block", "mats": {"top": "EMIT_water"}},
+        {"type": "cyl", "r": 0.3, "h": 0.92, "seg": 8, "mat": "marble_white"},
+        {"type": "cyl", "pos": [0, 0, 0.9], "radii": [0.25, 0.62], "h": 0.24, "seg": 8, "mat": "marble_white", "mats": {"top": "marble_white"}},
+        {"type": "cyl", "pos": [0, 0, 0.92], "r": 0.56, "h": 0.23, "seg": 8, "mat": "EMIT_water"},
+        {"type": "cyl", "pos": [0, 0, 1.14], "radii": [0.12, 0.08], "h": 0.3, "seg": 6, "mat": "marble_white"},
+        {"type": "sphere", "pos": [0, 0, "H-0.14"], "r": 0.14, "seg": 6, "rings": 4, "mat": "EMIT_water"},
+        {"type": "tube", "pos": [0, 0, 0.34], "rOuter": 0.6, "rInner": 0.55, "h": 0.6, "seg": 8, "mat": "EMIT_water"}
+      ]
+    },
+    "statue": {
+      "parts": [
+        {"type": "box", "size": [1.8, 1.8, 0.24], "mat": "stone_block"},
+        {"type": "box", "pos": [0, 0, 0.24], "size": [1.36, 1.36, 0.72], "mat": "stone_warm"},
+        {"type": "box", "pos": [0, 0, 0.94], "size": [1.5, 1.5, 0.12], "mat": "stone_light"},
+        {"type": "box", "pos": [0, -0.7, 0.38], "size": [0.84, 0.05, 0.4], "mat": "plaque"},
+        {"type": "box", "pos": [0.17, 0, 1.06], "mirror": "x", "size": [0.22, 0.34, 0.14], "mat": "gold_trim"},
+        {"type": "cyl", "pos": [0, 0, 1.18], "radii": [0.3, 0.24], "h": 0.5, "seg": 8, "mat": "marble_white"},
+        {"type": "cyl", "pos": [0, 0, 1.38], "r": 0.31, "h": 0.07, "seg": 8, "mat": "gold_trim"},
+        {"type": "box", "pos": [-0.35, 0, 1.28], "size": [0.12, 0.14, 0.36], "mat": "marble_white"},
+        {"type": "box", "pos": [0.27, 0, 1.58], "rot": [0, 38, 0], "size": [0.12, 0.14, 0.42], "mat": "marble_white"},
+        {"type": "sphere", "pos": [0, 0, 2.06], "r": 0.44, "seg": 8, "rings": 4, "scale": [1.12, 1, 0.9], "mat": "marble_white"},
+        {"type": "box", "pos": [0, -0.41, 1.98], "size": [0.62, 0.08, 0.17], "mat": "EMIT_core"},
+        {"type": "cyl", "pos": [0.47, 0, 2.06], "rot": [0, 90, 0], "mirror": "x", "r": 0.1, "h": 0.1, "seg": 6, "mat": "gold_trim"},
+        {"type": "cyl", "pos": [0, 0, 2.4], "r": 0.03, "h": "H-2.5", "seg": 4, "mat": "gold_trim"},
+        {"type": "sphere", "pos": [0, 0, "H-0.07"], "r": 0.07, "seg": 6, "rings": 3, "mat": "gold_trim"}
+      ]
+    },
+    "dock": {
+      "verify": {"heightTol": 0.6, "minZ": -0.75},
+      "parts": [
+        {"type": "box", "pos": [0, 0, 0.18], "size": [1.8, 3.9, 0.12], "mat": "wood_planks"},
+        {"type": "box", "at": [[-0.7, 0, 0.06], [0.7, 0, 0.06]], "size": [0.12, 3.9, 0.12], "mat": "timber_dark"},
+        {"type": "cyl", "at": [[-0.86, -1.8, -0.7], [0.86, -1.8, -0.7], [-0.86, -0.6, -0.7], [0.86, -0.6, -0.7], [-0.86, 0.6, -0.7], [0.86, 0.6, -0.7], [-0.86, 1.8, -0.7], [0.86, 1.8, -0.7]], "r": 0.09, "h": 1.0, "seg": 6, "mat": "timber_dark"},
+        {"type": "cyl", "at": [[-0.86, 1.8, 0.3], [0.86, 1.8, 0.3]], "r": 0.08, "h": 0.14, "seg": 6, "mat": "timber_dark", "mats": {"top": "metal_dark"}},
+        {"type": "torus", "pos": [0.45, 1.45, 0.34], "R": 0.15, "r": 0.04, "seg": 8, "segMinor": 4, "mat": "rope"}
+      ]
+    },
+    "boat": {
+      "verify": {"footprintTol": 0.4},
+      "parts": [
+        {"type": "loft", "profile": [[-1, 1], [-0.86, 0.36], [0, 0], [0.86, 0.36], [1, 1], [0.86, 1], [0.72, 0.5], [0, 0.32], [-0.72, 0.5], [-0.86, 1]], "sections": [{"y": -1.48, "sx": 0.06, "sz": 0.58, "dz": 0.4}, {"y": -1.05, "sx": 0.52, "sz": 0.72, "dz": 0.16}, {"y": -0.35, "sx": 0.86, "sz": 0.74, "dz": 0.02}, {"y": 0.55, "sx": 0.88, "sz": 0.72, "dz": 0.02}, {"y": 1.42, "sx": 0.7, "sz": 0.66, "dz": 0.1}], "mat": "hull_wood", "mats": {"cap": "hull_wood"}},
+        {"type": "box", "at": [[0, -0.4, 0.42], [0, 0.65, 0.42]], "size": [1.5, 0.26, 0.06], "mat": "wood_light"},
+        {"type": "box", "pos": [0.1, 0.12, 0.49], "rot": [0, 4, 72], "size": [2.1, 0.08, 0.05], "mat": "wood_light"},
+        {"type": "box", "pos": [0, -1.2, 0.86], "size": [0.12, 0.16, 0.14], "mat": "timber_dark"},
+        {"type": "torus", "pos": [-0.35, 0.95, 0.3], "R": 0.14, "r": 0.04, "seg": 8, "segMinor": 4, "mat": "rope"}
+      ]
+    },
+    "ruin_arch": {
+      "parts": [
+        {"type": "box", "at": [[-1.08, 0, 0], [1.08, 0, 0]], "size": [0.66, 0.84, 0.3], "mat": "moss_stone"},
+        {"type": "arch", "r": 0.85, "thick": 0.46, "depth": 0.72, "legH": 1.9, "seg": 6, "skip": [1], "mat": "moss_stone"},
+        {"type": "box", "pos": [0, 0, "1.9+0.85-0.06"], "size": [0.34, 0.8, 0.72], "mat": "moss_stone", "mats": {"front": "EMIT_rune", "back": "EMIT_rune"}},
+        {"type": "box", "pos": [1.1, -0.32, 0], "rot": [0, 0, 24], "size": [0.4, 0.34, 0.28], "mat": "moss_stone"},
+        {"type": "rock", "pos": [-1.25, -0.35, 0], "r": 0.18, "seed": 4, "jitter": 0.25, "mat": "rock_grey"}
+      ]
+    },
+    "ruin_pillar": {
+      "parts": [
+        {"type": "box", "size": [0.9, 0.9, 0.3], "mat": "moss_stone"},
+        {"type": "box", "pos": [0, 0, 0.3], "size": [0.74, 0.74, 0.12], "mat": "ruin_marble"},
+        {"type": "cyl", "pos": [0, 0, 0.42], "r": 0.3, "h": 2.2, "seg": 8, "mat": "ruin_marble"},
+        {"type": "cyl", "pos": [0.02, 0, 2.6], "rot": [6, -8, 0], "radii": [0.3, 0.2], "h": 0.22, "seg": 8, "mat": "ruin_marble"},
+        {"type": "rock", "pos": [-0.06, 0.04, 2.66], "r": 0.22, "scale": [1, 1, 1.3], "seed": 6, "jitter": 0.28, "mat": "ruin_marble"},
+        {"type": "box", "pos": [0, -0.29, 1.3], "size": [0.26, 0.04, 0.32], "mat": "EMIT_rune"},
+        {"type": "box", "pos": [0.3, -0.38, 0], "rot": [0, 0, 28], "size": [0.36, 0.3, 0.2], "mat": "ruin_marble"}
+      ]
+    }
+  }
+}
