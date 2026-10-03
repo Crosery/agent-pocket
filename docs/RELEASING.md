@@ -4,12 +4,16 @@
 
 ## 环境
 
-| 环境 | 地址 | 由什么触发 | 服务器目录 / 端口 |
+| 环境 | 地址 | 由什么触发 | Arch 上的目录 / 端口 |
 |---|---|---|---|
 | 预发布 preview | https://prev.ap.crosery.com | 打在 `stage` 提交上的 `vX.Y.Z-rc.N` tag | `/srv/ap/preview`，8788 |
 | 正式 production | https://ap.crosery.com | 打在 `main` 同一提交上的 `vX.Y.Z` tag，需要审批 | `/srv/ap/production`，8787 |
 
 **推送分支永远不会触发部署。** 两个环境各有独立的数据目录（`/srv/ap/data/<env>`）和独立进程（`ap@<env>`）。
+
+游戏服务跑在家里的 Arch 上，只监听隧道地址 `10.66.0.2`。香港 VPS（156.238.244.78）只做入口：
+- Caddy 负责 HTTPS，经 SSH 隧道 `hk-tunnel` 反代到 Arch。
+- VPS 的 TCP 2222 转发到 Arch 的 sshd，CI 就从这个口部署。
 访问 `<地址>/release.json` 可以看到当前跑的是哪个环境、哪个版本、哪个提交。
 
 ## 分支
@@ -60,7 +64,7 @@
 - 正式 tag 所在的提交没有对应的 rc tag。
 - 预发布当前跑的不是这个提交。这条保证正式环境只会发预发布已经验过的版本。
 
-**tag 推送后不移动、不删除。** 发错了就打下一个号。部署也可以在 Actions 里手动运行 `deploy`，输入一个已有的 tag 重新部署。
+**tag 推送后不移动、不删除。** 发错了就打下一个号。重新部署一个已有 tag 时，要在该 tag 上手动运行：`gh workflow run deploy --ref vX.Y.Z -f tag=vX.Y.Z`。两个环境都只接受 `v*` tag 发起的部署。
 
 ## 回滚
 
@@ -68,7 +72,7 @@
 - 手动回滚：
 
   ```bash
-  ssh ap@156.238.244.78 bash /srv/ap/<env>/current/deploy/rollback.sh <env> [sha]
+  ssh -p 2222 ap@156.238.244.78 bash /srv/ap/<env>/current/deploy/rollback.sh <env> [sha]
   ```
 
   不带 sha 时，回到 `deploy-history.log` 里的上一个版本。回滚不动 tag，也不动数据。
@@ -93,6 +97,6 @@
 ## GitHub 配置一览
 
 - Secrets：`DEPLOY_SSH_KEY`（只用于部署，服务器上是受限账号 `ap`）、`STATIC_CDN_UPLOAD_TOKEN`。
-- Variables：`DEPLOY_KNOWN_HOSTS`、`STATIC_CDN_BASE`、`DEPLOY_PREVIEW_ENABLED` / `DEPLOY_PRODUCTION_ENABLED`。后两个是部署开关，值为 `enabled` 时才会部署。
+- Variables：`DEPLOY_HOST`、`DEPLOY_PORT`、`DEPLOY_KNOWN_HOSTS`（Arch 的主机密钥）、`STATIC_CDN_BASE`、`DEPLOY_PREVIEW_ENABLED` / `DEPLOY_PRODUCTION_ENABLED`。后两个是部署开关，值为 `enabled` 时才会部署。
 - Environments：`preview`；`production`（需要审批）。
 - 必需检查：`verify`（`ci.yml`）。
