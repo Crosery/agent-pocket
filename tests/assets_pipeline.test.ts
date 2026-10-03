@@ -199,9 +199,10 @@ test('creature prompts: every (stage, family size) in the roster has its own sta
     assert.ok(j.prompt.includes(design), `${j.id}: prompt must embed its design`)
     assert.equal(j.out, `public/assets/creatures/${j.id}.png`)
     // reference images: the style anchor always, plus the family identity sheet when one exists
-    // (refs are private and absent from public checkouts, where jobs.json keeps the full list)
+    // (refs are private and absent from other checkouts; there only check jobs.json names a subset, in order)
     const fam = roster.find((r) => r.id === j.id)!.family
-    const want = ['assets_src/refs/creature/_style.png', `assets_src/refs/creature/${fam}.png`].filter((p) => !existsSync(join(ROOT, 'assets_src/refs')) || existsSync(join(ROOT, p)))
+    const cand = ['assets_src/refs/creature/_style.png', `assets_src/refs/creature/${fam}.png`]
+    const want = existsSync(join(ROOT, 'assets_src/refs')) ? cand.filter((p) => existsSync(join(ROOT, p))) : cand.filter((p) => j.images.includes(p))
     assert.deepEqual(j.images, want, `${j.id}: reference images`)
     assert.ok(j.prompt.startsWith('REFERENCE IMAGES: Image 1 '), `${j.id}: prompt must explain its reference images`)
   }
