@@ -12,6 +12,7 @@ import { CONTENT } from '../src/shared/content/index.ts'
 import pipelineJson from '../assets_src/pipeline.json' with { type: 'json' }
 import templatesJson from '../assets_src/prompts/templates.json' with { type: 'json' }
 import jobsJson from '../assets_src/prompts/jobs.json' with { type: 'json' }
+import { buildCharacterIdleAtlas, type CharacterPixels } from '../src/client/render/character-idle.ts'
 
 interface SourceSpec { file: string; id: string; path?: string; where?: Record<string, unknown>; exclude?: string[]; fields?: Record<string, string>; groupCount?: Record<string, string> }
 interface LookupSpec { key: string; values: Record<string, string>; default?: string }
@@ -226,7 +227,7 @@ test('process_creature.py turns the reference render into a spec sprite', { skip
 })
 
 test('processed assets match their specs', (t) => {
-  const { sheetCell, sheetFrames, sheetRows } = CONTENT.config.sprites
+  const { sheetCell, sheetFrames, sheetWalkFrames, sheetRows } = CONTENT.config.sprites
   const rows = Object.keys(sheetRows).length
   let present = 0
   const missing: string[] = []
@@ -242,10 +243,12 @@ test('processed assets match their specs', (t) => {
     const tag = `${j.kind}/${j.id}`
     if (sprite) assert.equal(png.colorType, 6, `${tag}: must be RGBA`)
     if (j.process === 'sheet') {
-      assert.deepEqual([png.width, png.height], [sheetCell * sheetFrames, sheetCell * rows], `${tag}: sheet size`)
+      const cols = png.width / sheetCell
+      assert.ok(cols === sheetFrames || cols === sheetWalkFrames + 1, `${tag}: unsupported sheet columns`)
+      assert.equal(png.height, sheetCell * rows, `${tag}: sheet rows`)
       const rgba = png.rgba!
       for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < sheetFrames; c++) {
+        for (let c = 0; c < cols; c++) {
           let lowest = -1
           for (let y = 0; y < sheetCell; y++) {
             for (let x = 0; x < sheetCell; x++) {
@@ -287,4 +290,74 @@ test('processed assets match their specs', (t) => {
   for (const m of missing) byKind.set(m.split('/')[0], [...(byKind.get(m.split('/')[0]) ?? []), m])
   const list = [...byKind].map(([k, ids]) => (ids.length > 12 ? `${k}: ${ids.length} missing` : ids.join(', ')))
   t.diagnostic(`${present}/${jobs.length} pipeline assets present${missing.length ? `; missing: ${list.join(', ')}` : ''}`)
+})
+
+test('every character has four articulated idle loops with planted shoes and unchanged walk poses', () => {
+  const sprites = CONTENT.config.sprites
+  const cell = sprites.sheetCell
+  for (const character of CONTENT.characters) {
+    const path = join(ROOT, 'public/assets/characters', `${character.id}.png`)
+    const png = readPng(path, true)
+    const source = { width: png.width, height: png.height, data: png.rgba! }
+    const original = source.data.slice()
+    const atlas = buildCharacterIdleAtlas(source, sprites)
+    assert.deepEqual(source.data, original, `${character.id}: source pixels were mutated`)
+    assert.equal(buildCharacterIdleAtlas(atlas, sprites), atlas, `${character.id}: an expanded atlas must not expand twice`)
+    assert.equal(atlas.width, 1024, `${character.id}: eight idles + eight walks`)
+    assert.equal(atlas.height, 256)
+    const crop = (image: CharacterPixels, col: number, row: number) => {
+      const pixels = new Uint8Array(cell * cell * 4)
+      for (let y = 0; y < cell; y++) {
+        const offset = ((row * cell + y) * image.width + col * cell) * 4
+        pixels.set(image.data.subarray(offset, offset + cell * 4), y * cell * 4)
+      }
+      return pixels
+    }
+    const detached = (pixels: Uint8Array) => {
+      const seen = new Uint8Array(cell * cell)
+      const sizes: number[] = []
+      for (let start = 0; start < seen.length; start++) {
+        if (seen[start] || !pixels[start * 4 + 3]) continue
+        const todo = [start]
+        seen[start] = 1
+        for (let i = 0; i < todo.length; i++) {
+          const x = todo[i] % cell, y = Math.floor(todo[i] / cell)
+          for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+            const nx = x + dx, ny = y + dy
+            if (nx < 0 || nx >= cell || ny < 0 || ny >= cell) continue
+            const p = ny * cell + nx
+            if (!seen[p] && pixels[p * 4 + 3]) { seen[p] = 1; todo.push(p) }
+          }
+        }
+        sizes.push(todo.length)
+      }
+      return sizes.reduce((sum, size) => sum + size, 0) - Math.max(0, ...sizes)
+    }
+    for (const [dir, row] of Object.entries(sprites.sheetRows)) {
+      const tag = `${character.id}/${dir}`
+      const neutral = crop(source, 0, row)
+      const top = Math.floor(neutral.findIndex((value, i) => i % 4 === 3 && value === 255) / (cell * 4))
+      const bodyStart = Math.ceil(top + (62 - top) * 0.48)
+      let bodyMotion = 0
+      assert.deepEqual(crop(atlas, 0, row), neutral, `${tag}: preserve the identity anchor`)
+      const poses = new Set<string>()
+      for (let col = 0; col < sprites.sheetIdleFrames; col++) {
+        const idle = crop(atlas, col, row)
+        poses.add(Buffer.from(idle).toString('base64'))
+        assert.deepEqual(idle.subarray(56 * cell * 4), neutral.subarray(56 * cell * 4), `${tag}/${col}: both soles must stay planted`)
+        assert.ok(detached(idle) <= detached(neutral), `${tag}/${col}: idle disconnected a body part`)
+        let changed = 0
+        for (let i = bodyStart * cell * 4; i < 56 * cell * 4; i += 4) {
+          if (idle[i] !== neutral[i] || idle[i + 1] !== neutral[i + 1] || idle[i + 2] !== neutral[i + 2] || idle[i + 3] !== neutral[i + 3]) changed++
+        }
+        bodyMotion = Math.max(bodyMotion, changed)
+        for (let i = 3; i < idle.length; i += 4) assert.ok(idle[i] === 0 || idle[i] === 255, `${tag}: preserve pixel alpha`)
+      }
+      assert.ok(poses.size >= 4, `${tag}: only ${poses.size} distinct idle poses`)
+      assert.ok(bodyMotion >= 6, `${tag}: shoulders/body/arms still frozen (${bodyMotion} changing pixels)`)
+      for (let col = 0; col < sprites.sheetWalkFrames; col++) {
+        assert.deepEqual(crop(atlas, col + sprites.sheetIdleFrames, row), crop(source, col + 1, row), `${tag}: walk pose ${col} changed`)
+      }
+    }
+  }
 })

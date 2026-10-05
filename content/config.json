@@ -12,7 +12,7 @@
       {"id": "night", "from": 1200, "to": 300}
     ]
   },
-  "sprites": {"sheetCell": 64, "sheetFrames": 4, "sheetRows": {"down": 0, "left": 1, "right": 2, "up": 3}, "creatureSize": 128},
+  "sprites": {"sheetCell": 64, "sheetFrames": 4, "sheetWalkFrames": 8, "sheetIdleFrames": 8, "idleFps": 3.2, "idleSettleMs": 250, "sheetRows": {"down": 0, "left": 1, "right": 2, "up": 3}, "creatureSize": 128},
   "net": {"tickHz": 10, "viewRadius": 48, "protocolVersion": 1, "chatMaxLen": 120, "chatRate": {"count": 5, "perSeconds": 5}, "localChatRadius": 24, "pvpLevelCap": 50, "pvpTurnSeconds": 60, "tradeTimeoutSeconds": 180, "nameMaxLen": 16},
   "battle": {"stab": 1.5, "critMultiplier": 1.5, "critChanceByStage": [0.0417, 0.125, 0.5, 1], "randomMin": 0.85, "randomMax": 1.0, "statStageLimit": 6, "struggle": {"power": 50, "recoilFraction": 0.25}, "confusionSelfHitPower": 40, "runBase": 128, "runAttemptBonus": 30, "protectChainDecay": 0.5, "weatherTurns": 5, "trainerExpMultiplier": 1.5, "expDivisor": 7, "shinyRate": 0.00390625},
   "catch": {

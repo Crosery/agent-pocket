@@ -165,6 +165,7 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
 
   for (const def of cfg.buttons) {
     const size = def.size === 'large' ? cfg.buttonSize : cfg.smallButtonSize
+    const onRelease = def.action === 'menu'
     const btn = document.createElement('button')
     btn.type = 'button'
     btn.className = `ap-touch__btn ap-touch__btn--${def.size}`
@@ -195,13 +196,15 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
       btn.setPointerCapture(e.pointerId)
       btn.classList.add('is-down')
       held.push({ action: def.action, btn, pointer: e.pointerId })
-      cb.onButton(def.action, true)
+      if (!onRelease) cb.onButton(def.action, true)
     })
     const up = (e: PointerEvent) => {
       const i = held.findIndex((h) => h.pointer === e.pointerId && h.btn === btn)
       if (i < 0) return
       held.splice(i, 1)
       btn.classList.remove('is-down')
+      // A modal must not reflow beneath the touch gesture that opens it.
+      if (onRelease && e.type === 'pointerup') cb.onButton(def.action, true)
       if (!held.some((h) => h.action === def.action)) cb.onButton(def.action, false)
     }
     btn.addEventListener('pointerup', up)

@@ -2,6 +2,7 @@
 import type { World } from '../../shared/types.ts'
 import { CONTENT } from '../../shared/content/index.ts'
 import tutorialJson from '../../../content/tutorial.json' with { type: 'json' }
+import type { NavigationRules } from '../world/quest-navigation.ts'
 
 export interface Cond {
   flag?: string[]
@@ -49,7 +50,9 @@ export interface TipDef {
 export interface TutorialConfig {
   objective: {
     refreshSec: number
+    collapseSec: number
     arrow: { minDistance: number; stepsPerTile: number }
+    navigation: NavigationRules
     markers: { flag: string; on: 'region:entered'; region: string }[]
     rules: ObjectiveRule[]
   }
@@ -73,13 +76,23 @@ export function validateTutorial(world: World, anchors: Record<string, unknown>,
   }
   text('tutorial.objective.title', 'objective')
   text('tutorial.objective.distance', 'objective')
+  for (const [key, value] of Object.entries(cfg.objective.navigation)) {
+    if (!Number.isFinite(value) || value <= 0) errs.push(`objective.navigation.${key}: must be positive`)
+  }
+  for (const [where, value] of [
+    ['objective.collapseSec', cfg.objective.collapseSec],
+    ['tips.layer.ttlSec', cfg.tips.layer.ttlSec],
+    ['tips.layer.fadeMs', cfg.tips.layer.fadeMs],
+  ] as const) if (!Number.isFinite(value) || value <= 0) errs.push(`${where}: must be positive`)
   const ids = new Set<string>()
   for (const r of cfg.objective.rules) {
     const where = `objective rule ${r.id}`
     if (ids.has(r.id)) errs.push(`${where}: duplicate id`)
     ids.add(r.id)
     text(r.text, where)
+    text(r.text.replace('tutorial.objective.', 'tutorial.objective.short.'), where)
     if (r.textDone) text(r.textDone, where)
+    if (r.textDone) text(r.textDone.replace('tutorial.objective.', 'tutorial.objective.short.'), where)
     cond(r.when, where)
     for (const a of r.target ?? []) if (!anchors[a]) errs.push(`${where}: unknown anchor "${a}"`)
     if (r.fromQuest && !world.quests.some((q) => q.id === r.fromQuest)) errs.push(`${where}: unknown quest "${r.fromQuest}"`)
@@ -104,5 +117,6 @@ export function validateTutorial(world: World, anchors: Record<string, unknown>,
   for (const d of ['keyboard', 'gamepad', 'touch']) text(`tutorial.device.${d}.move`, 'device')
   text('tutorial.tip.skip', 'tips')
   text('tutorial.tip.skipTouch', 'tips')
+  text('tutorial.tip.close', 'tips')
   return errs
 }

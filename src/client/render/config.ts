@@ -67,6 +67,10 @@ export interface PostConfig {
 
 export interface CameraRenderConfig {
   near: number; far: number; edgeMargin: number; zoomDamping: number; lookAheadDamping: number
+  /** Damping while the focus slows down (stops): faster than lookAheadDamping so the lead does not outlive the walk. */
+  lookAheadReleaseDamping: number
+  /** Speed (tiles/s) at which the full config.camera.lookAhead lead applies; slower movement leads proportionally less. */
+  lookAheadFullSpeed: number
   lookAheadMinSpeed: number; interiorMargin: number; snapDistance: number
   /** Furthest the focus may sit from the screen centre (fraction of the half height up / down, half width sideways), overriding map-edge clamping. */
   focusSafe: { north: number; south: number; side: number }
@@ -237,26 +241,50 @@ export interface ParticleKindDef {
   worldSize?: boolean
 }
 
+/** Per actor kind: player, other characters, creatures. */
+export interface ActorKinds<T> { player: T; npc: T; remote: T; creature: T }
 export interface ActorsConfig {
-  height: number; width: number; alphaTest: number; walkFps: number; runFps: number; grassCut: number
+  height: number; width: number; alphaTest: number; walkFps: number; runFps: number
+  /** Tall grass hides the body up to this fraction of `height` above the soles (eased in/out over grassCutMs;
+   * a hop lifts the body out of it). */
+  grassCut: number; grassCutMs: number
+  /** Empty texel rows under the soles in every sheet cell (of config.sprites.sheetCell): the card pivot sits on the soles. */
+  footInset: number
+  /** Two cards on the same row share a depth: renderOrder draws the higher kind later and depthBias (world units
+   * away from the camera, negative = toward it) settles what is left of the per-band depth error, so the player is
+   * never painted over by a follower or NPC standing level with it. cardSegments = horizontal bands per card. */
+  renderOrder: ActorKinds<number>
+  depthBias: ActorKinds<number>
+  cardSegments: number
   normalTilt: number; hop: { height: number; ms: number }; blob: { size: number; opacity: number }
   bubbleMs: number; remoteAlpha: number; nameColor: string
-  /** Walk frames follow the distance covered: one stride (contact + legs-together frame) per `stride` tiles,
-   * at most maxFps; jumps >= teleportTiles are ignored; walkFps/runFps apply when moving without covering ground. */
+  /** One footstep per `stride` tiles, with two footsteps per complete cycle. Rates are specified for the
+   * legacy four-pose cycle and scaled to the loaded walk-pose count. Jumps >= teleportTiles are ignored. */
   walkCycle: { stride: { walk: number; run: number }; maxFps: number; teleportTiles: number }
-  /** Chibi motion: step bounce height (world units, x runBounceMul when running) and squash per walk step
-   * (stepsPerCycle steps per sheet cycle), idle breathing (scale amplitude, Hz), landing squash after a hop. */
+  /** Chibi motion on top of the sheet (which already bakes a 1-texel step bob): extra step bounce (world units,
+   * x runBounceMul when running) and squash per walk step (stepsPerCycle steps per sheet cycle), idle breathing
+   * (scale amplitude, Hz), landing squash after a hop. snapTexels rounds every scale to whole sheet texels so the
+   * pixel art never re-samples a fraction of a row (shimmer). */
   motion: {
     stepBounce: number; runBounceMul: number; stepSquash: number; stepsPerCycle: number
-    breathe: number; breatheHz: number; landSquash: number; landMs: number
+    breathe: number; breatheHz: number; landSquash: number; landMs: number; snapTexels: boolean
   }
 }
 export interface CreaturesConfig {
   height: number; alphaTest: number
   /** Source creature art faces left (setFacingLeft(true) shows it unflipped). */
   artFacesLeft: boolean
+  /** Empty texel rows under the feet in the creature art (of config.sprites.creatureSize). */
+  footInset: number
+  /** A requested mirror flip must persist this long before it shows (no flicker on corner-slip nudges). */
+  flipHoldMs: number
+  /** Coverage kept (0..1) where a creature stands between the camera and the player (render.json occlusion
+   * ellipse, screen-door dither); 1 = never dithered. */
+  occlusionKeep: number
   bob: { amp: number; hz: number; squash: number }
-  move: { hopHeight: number; hz: number }
+  /** Hopping gait: one hop per hopStride tiles travelled (minHz..maxHz); a stop finishes the current hop;
+   * bob and hop cross-fade over blendMs. */
+  move: { hopHeight: number; hopStride: number; minHz: number; maxHz: number; blendMs: number }
   shiny: { hue: number; saturation: number; sparkles: number; sparkleColor: string; sparkleGlow: number; sparkleSize: number; twinkleSpeed: number }
   aura: { radius: number; intensity: number; pulseHz: number; motes: number; moteHeight: number; ringInner: number; moteSpeed: number; moteSize: number }
 }
@@ -787,6 +815,31 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
     if (!(typeof v === 'number' && v >= 0 && v <= 1)) errs.push(`camera.billboard.${k}: must be a number in 0..1`)
   }
   if (!(c.config.camera.pitchDeg > 0 && c.config.camera.pitchDeg <= 60)) errs.push('config.camera.pitchDeg: billboard pose supports 0 < pitch <= 60')
+  if (!(r.camera.lookAheadReleaseDamping > 0)) errs.push('camera.lookAheadReleaseDamping: must be > 0')
+  if (!(r.camera.lookAheadFullSpeed > r.camera.lookAheadMinSpeed)) errs.push('camera.lookAheadFullSpeed: must be > lookAheadMinSpeed')
+  {
+    const A = r.actors, C = r.creatures, nonNeg = (where: string, v: unknown) => { if (!(typeof v === 'number' && v >= 0)) errs.push(`${where}: must be a number >= 0`) }
+    if (!(A.grassCut >= 0 && A.grassCut < 1)) errs.push('actors.grassCut: must be a fraction of the height in 0..1')
+    nonNeg('actors.grassCutMs', A.grassCutMs)
+    if (!(A.footInset >= 0 && A.footInset < c.config.sprites.sheetCell / 2)) errs.push('actors.footInset: texels in 0..sheetCell/2')
+    for (const k of ['player', 'npc', 'remote', 'creature'] as const) {
+      if (!Number.isInteger(A.renderOrder?.[k])) errs.push(`actors.renderOrder.${k}: must be an integer`)
+      if (!(typeof A.depthBias?.[k] === 'number' && Math.abs(A.depthBias[k]) < 0.1)) errs.push(`actors.depthBias.${k}: world units, |bias| < 0.1 (more sinks feet into the ground)`)
+    }
+    if (!(Number.isInteger(A.cardSegments) && A.cardSegments >= 1 && A.cardSegments <= 16)) errs.push('actors.cardSegments: integer 1..16')
+    for (const k of ['stepBounce', 'runBounceMul', 'stepSquash', 'breathe', 'breatheHz', 'landSquash', 'landMs'] as const) nonNeg(`actors.motion.${k}`, A.motion[k])
+    if (!(A.motion.stepsPerCycle >= 1)) errs.push('actors.motion.stepsPerCycle: must be >= 1')
+    if (typeof A.motion.snapTexels !== 'boolean') errs.push('actors.motion.snapTexels: must be a boolean')
+    if (!(A.walkCycle.stride.walk > 0 && A.walkCycle.stride.run > 0 && A.walkCycle.maxFps > 0)) errs.push('actors.walkCycle: stride and maxFps must be > 0')
+    if (!(C.footInset >= 0 && C.footInset < c.config.sprites.creatureSize / 2)) errs.push('creatures.footInset: texels in 0..creatureSize/2')
+    nonNeg('creatures.flipHoldMs', C.flipHoldMs)
+    if (!(C.occlusionKeep >= 0 && C.occlusionKeep <= 1)) errs.push('creatures.occlusionKeep: must be in 0..1')
+    const M = C.move
+    if (!(M.hopStride > 0)) errs.push('creatures.move.hopStride: must be > 0')
+    if (!(M.minHz > 0 && M.maxHz >= M.minHz)) errs.push('creatures.move: need 0 < minHz <= maxHz')
+    nonNeg('creatures.move.hopHeight', M.hopHeight)
+    nonNeg('creatures.move.blendMs', M.blendMs)
+  }
   const keys = r.timeOfDay
   if (!keys.length) errs.push('timeOfDay: needs at least one key')
   keys.forEach((k, i) => {

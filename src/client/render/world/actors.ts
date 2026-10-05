@@ -4,9 +4,12 @@ import { CONTENT } from '../../../shared/content/index.ts'
 import type { Dir } from '../../../shared/types.ts'
 import type { Actor, ActorOptions, AssetStore, CreatureActor } from '../../contracts.ts'
 import { RENDER, hexToRgb } from '../config.ts'
+import { createCharacterAnimation } from '../character-animation.ts'
 import {
-  createBillboardGeometry, createBlobShadow, createSpriteMaterial, setGeometryFrame, sheetLayout, spriteDepthMaterial,
+  billboardPointToWorld, createBillboardGeometry, createBlobShadow, createSpriteMaterial, setGeometryFrame, sheetLayout, spriteDepthMaterial, spriteOpaqueTop,
+  type SpriteMaterial,
 } from '../sprite-utils.ts'
+import { applyOcclusion } from './occlusion.ts'
 import type { OverlayLayer, OverlayTag } from './overlay.ts'
 
 /** What the world view needs from every live actor each frame. */
@@ -14,7 +17,7 @@ export interface ActorEntry {
   readonly object: THREE.Object3D
   readonly tag: OverlayTag
   /** World position of the name-tag anchor (above the head). */
-  head(out: THREE.Vector3): THREE.Vector3
+  head(out: THREE.Vector3, pitch?: number): THREE.Vector3
   /** Grass bend radius (world units) or 0. */
   readonly bendRadius: number
   isVisible(): boolean
@@ -30,16 +33,40 @@ export interface ActorContext {
   inGrassAt(x: number, y: number): boolean
 }
 
+/** Same-row tie-break against other sprites (render.json actors.renderOrder / depthBias). */
+function layer(mesh: THREE.Mesh, sprite: SpriteMaterial, kind: keyof typeof RENDER.actors.renderOrder): void {
+  mesh.renderOrder = RENDER.actors.renderOrder[kind]
+  sprite.uniforms.uDepthBias.value = RENDER.actors.depthBias[kind]
+}
+
+/** Rounds a scale factor to whole texels of a `texels`-tall image (nearest-sampled pixel art never shimmers). */
+function snapScale(s: number, texels: number): number {
+  return 1 + Math.round((s - 1) * texels) / texels
+}
+
+/** Moves `v` toward `to` by at most `step`. */
+function approach(v: number, to: number, step: number): number {
+  return v < to ? Math.min(to, v + step) : Math.max(to, v - step)
+}
+
+/** Grass cut (local card units above the pivot) for a body lifted `lift` above the ground, scaled by `sy`. */
+function cutUniform(cutH: number, lift: number, sy: number): number {
+  const c = (cutH - lift) / Math.max(sy, 1e-3)
+  return c > 1e-4 ? c : -1e6
+}
+
 export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
   const A = RENDER.actors
-  const layout = sheetLayout()
-  const geo = createBillboardGeometry(A.width, A.height, A.normalTilt)
+  let layout = sheetLayout()
+  const cell = CONTENT.config.sprites.sheetCell
+  const geo = createBillboardGeometry(A.width, A.height, A.normalTilt, (A.footInset * A.height) / cell, A.cardSegments)
   const sprite = createSpriteMaterial(ctx.assets.characterTexture(opts.sheet), { alphaTest: A.alphaTest, opacity: opts.kind === 'remote' ? A.remoteAlpha : 1, billboard: RENDER.camera.billboard })
   const mesh = new THREE.Mesh(geo, sprite.material)
   mesh.castShadow = true
   mesh.receiveShadow = false
   mesh.customDepthMaterial = spriteDepthMaterial()
   mesh.name = `actor:${opts.sheet}`
+  layer(mesh, sprite, opts.kind)
   const blob = createBlobShadow(A.blob.size, A.blob.opacity)
   const object = new THREE.Group()
   object.add(mesh, blob)
@@ -49,13 +76,25 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
 
   let facing: Dir = 'down'
   let moving = false, running = false, visible = true, grassManual = false
-  let frameT = 0, frame = 0, hopT = -1, landT = -1
+  const animation = () => createCharacterAnimation(layout.walkFrames, layout.walkStart, {
+    frames: layout.idleFrames, fps: CONTENT.config.sprites.idleFps, settleMs: CONTENT.config.sprites.idleSettleMs,
+    phase: (mesh.id * 0.618 + opts.sheet.length * 0.37) % layout.idleFrames,
+  })
+  let gait = animation()
+  let frame = 0, hopT = -1, landT = -1, hopMs = A.hop.ms, hopHeight = A.hop.height, cutH = 0
   // per-actor phase so a crowd never breathes in sync
   let lifeT = (opts.sheet.length * 0.37 + (opts.name?.length ?? 0) * 0.61) % 3
   let lastFrame = -1, lastRow = -1
-  let lastX = Number.NaN, lastY = 0, wasMoving = false, lastContact = 3
+  let lastX = Number.NaN, lastY = 0
 
   const applyFrame = () => {
+    const next = sheetLayout(CONTENT, sprite.material.map)
+    if (next.cols !== layout.cols) {
+      layout = next
+      gait = animation()
+      frame = 0
+      lastFrame = -1
+    }
     const row = layout.rowOf[facing] ?? 0
     if (frame === lastFrame && row === lastRow) return
     setGeometryFrame(geo, frame, row, layout.cols, layout.rows)
@@ -73,60 +112,64 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
       actor.x = x; actor.y = y; actor.elev = elev
       object.position.set(x, elev, y)
     },
-    setFacing(d) { facing = d; applyFrame() },
-    setMoving(m, r) { moving = m; running = r },
+    setFacing(d) {
+      if (facing !== d && !moving) { gait.reset(); frame = 0 }
+      facing = d
+      applyFrame()
+    },
+    setMoving(m, r) {
+      moving = m; running = r
+      if (!m) { gait.update(0, false, 0); frame = gait.frame; applyFrame() }
+    },
     setName(text, color) { tag.setName(text, color ?? opts.nameColor ?? A.nameColor) },
-    setSheet(sheet) { sprite.setMap(ctx.assets.characterTexture(sheet)) },
+    setSheet(sheet) { sprite.setMap(ctx.assets.characterTexture(sheet)); gait.reset(); frame = 0; lastFrame = -1; applyFrame() },
     setVisible(v) { visible = v; object.visible = v },
     setInGrass(v) { grassManual = v },
     bubble(text, ms) { tag.bubble(text, ms ?? A.bubbleMs) },
-    hop() { hopT = 0 },
+    hop(o) { hopT = 0; landT = -1; hopMs = o?.ms ?? A.hop.ms; hopHeight = o?.height ?? A.hop.height },
     update(dt) {
       lifeT += dt
-      // sheet frames: even = legs together (0 doubles as idle), odd = contact. The phase follows the distance
-      // covered so feet don't slide; each walk starts mid contact frame, leading with the other foot than last time.
       const W = A.walkCycle
       const travelled = Number.isNaN(lastX) ? 0 : Math.hypot(actor.x - lastX, actor.y - lastY)
       lastX = actor.x
       lastY = actor.y
-      if (moving) {
-        if (!wasMoving) frameT = (lastContact === 1 ? 3 : 1) + 0.5
-        const advance = travelled > 0 && travelled < W.teleportTiles
-          ? travelled * 2 / (running ? W.stride.run : W.stride.walk)
-          : dt * (running ? A.runFps : A.walkFps)
-        frameT += Math.min(advance, dt * W.maxFps)
-        frame = Math.floor(frameT) % layout.cols
-        if (frame % 2 === 1) lastContact = frame
-      } else { frameT = 0; frame = 0 }
-      wasMoving = moving
+      applyFrame()
+      const rate = layout.walkFrames / CONTENT.config.sprites.sheetFrames
+      gait.update(dt, moving, (running ? A.runFps : A.walkFps) * rate, travelled, running ? W.stride.run : W.stride.walk, W.teleportTiles, W.maxFps * rate)
+      frame = gait.frame
       applyFrame()
       let lift = 0
       if (hopT >= 0) {
-        hopT += dt / (A.hop.ms / 1000)
+        hopT += dt / (hopMs / 1000)
         if (hopT >= 1) { hopT = -1; landT = 0 }
-        else lift = 4 * A.hop.height * hopT * (1 - hopT)
+        else lift = 4 * hopHeight * hopT * (1 - hopT)
       }
-      // chibi motion: a soft bounce on every step, idle breathing, a squash when landing from a hop
+      // Authored idle poses stay grounded; only legacy sheets use whole-card breathing.
       const M = A.motion
       let sy = 1
       if (moving) {
-        const stepFrames = layout.cols / Math.max(1, M.stepsPerCycle)
+        const stepFrames = layout.walkFrames / Math.max(1, M.stepsPerCycle)
         // peaks mid legs-together frame, 0 mid contact frame (the planted foot stays on the ground)
-        const step = Math.abs(Math.cos((frameT - 0.5) * Math.PI / stepFrames))
+        const step = Math.abs(Math.cos((gait.phase - 0.5) * Math.PI / stepFrames))
         lift += step * M.stepBounce * (running ? M.runBounceMul : 1)
         sy += (step - 0.5) * M.stepSquash
-      } else sy += Math.sin(lifeT * M.breatheHz * Math.PI * 2) * M.breathe
+      } else if (layout.idleFrames === 1) sy += Math.sin(lifeT * M.breatheHz * Math.PI * 2) * M.breathe
       if (landT >= 0) {
         landT += dt / (M.landMs / 1000)
         if (landT >= 1) landT = -1
         else sy -= Math.sin(landT * Math.PI) * M.landSquash
       }
-      mesh.scale.set(1 / Math.sqrt(sy), sy, 1)
+      let sx = 1 / Math.sqrt(sy)
+      if (M.snapTexels) { sy = snapScale(sy, cell); sx = snapScale(sx, cell) }
+      mesh.scale.set(sx, sy, 1)
       mesh.position.y = lift
       mesh.rotation.y = ctx.yaw.value
       blob.scale.setScalar(1 - Math.min(0.5, lift))
-      const inGrass = grassManual || (lift < 0.05 && ctx.inGrassAt(actor.x, actor.y))
-      sprite.uniforms.uCutY.value = inGrass ? A.grassCut * A.height : -1e6
+      // tall grass: the cut sinks in / rises out over grassCutMs; a hop (also one the controller lifts) clears it
+      const cutFull = A.grassCut * A.height
+      const cutTo = grassManual || (hopT < 0 && ctx.inGrassAt(actor.x, actor.y)) ? cutFull : 0
+      cutH = approach(cutH, cutTo, A.grassCutMs > 0 ? (dt * cutFull * 1000) / A.grassCutMs : Infinity)
+      sprite.uniforms.uCutY.value = cutUniform(cutH, lift, sy)
       tag.update(dt)
     },
     dispose() {
@@ -141,7 +184,11 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
   }
   const entry: ActorEntry = {
     object, tag,
-    head(out) { return out.set(actor.x, actor.elev + mesh.position.y + A.height, actor.y) },
+    head(out, pitch = 0) {
+      const top = spriteOpaqueTop(sprite.material.map, frame, layout.rowOf[facing], layout.cols, layout.rows, A.alphaTest)
+      out.set(0, A.height * (top - A.footInset / cell), 0)
+      return billboardPointToWorld(out, mesh, pitch, RENDER.camera.billboard)
+    },
     bendRadius: 1,
     isVisible: () => visible,
   }
@@ -153,12 +200,24 @@ export function createCreatureActorImpl(ctx: ActorContext, speciesId: string, sh
   const A = RENDER.actors, C = RENDER.creatures
   const species = CONTENT.species[speciesId]
   const h = (species?.size ?? 1) * A.height * C.height
-  const geo = createBillboardGeometry(h, h, A.normalTilt)
+  const geo = createBillboardGeometry(h, h, A.normalTilt, (C.footInset * h) / CONTENT.config.sprites.creatureSize, A.cardSegments)
   const sprite = createSpriteMaterial(ctx.assets.creatureTexture(speciesId), { alphaTest: C.alphaTest, billboard: RENDER.camera.billboard })
+  // a creature between the camera and the player (the follower walking north of it) is screen-door thinned around
+  // the player like occluding props, but keeps occlusionKeep of its coverage
+  const occShape = { value: new THREE.Vector2(RENDER.occlusion.soft, C.occlusionKeep) }
+  if (C.occlusionKeep < 1) {
+    applyOcclusion(sprite.material)
+    const compile = sprite.material.onBeforeCompile
+    sprite.material.onBeforeCompile = (shader, renderer) => {
+      compile.call(sprite.material, shader, renderer)
+      shader.uniforms.uApOccShape = occShape
+    }
+  }
   const mesh = new THREE.Mesh(geo, sprite.material)
   mesh.castShadow = true
   mesh.customDepthMaterial = spriteDepthMaterial()
   mesh.name = `creature:${speciesId}`
+  layer(mesh, sprite, 'creature')
   const blob = createBlobShadow(A.blob.size * Math.max(0.6, h / A.height), A.blob.opacity)
   const object = new THREE.Group()
   const body = new THREE.Group()
@@ -242,7 +301,9 @@ void main() {
   object.add(aura)
 
   let t = Math.random() * 10
-  let moving = false, visible = true, facingLeft = true
+  let moving = false, visible = true, facingLeft = true, wantLeft = true, flipT = 0, started = false
+  // hop gait: phase 0 = feet on the ground; advanced by distance travelled
+  let hopPh = 0, hopHz = C.move.minHz, gait = 0, cutH = 0, lastX = Number.NaN, lastY = 0
 
   const flip = () => setGeometryFrame(geo, 0, 0, 1, 1, facingLeft !== C.artFacesLeft)
   flip()
@@ -255,7 +316,11 @@ void main() {
       actor.x = x; actor.y = y; actor.elev = elev
       object.position.set(x, elev, y)
     },
-    setFacingLeft(left) { if (left !== facingLeft) { facingLeft = left; flip() } },
+    setFacingLeft(left) {
+      wantLeft = left
+      // before the first frame (spawn) the facing applies at once
+      if (!started && left !== facingLeft) { facingLeft = left; flip() }
+    },
     setMoving(m) { moving = m },
     setVisible(v) { visible = v; object.visible = v },
     setShiny(s) {
@@ -270,14 +335,29 @@ void main() {
     bubble(text, ms) { tag.bubble(text, ms ?? A.bubbleMs) },
     update(dt) {
       t += dt
-      const B = C.bob
-      let lift = Math.sin(t * B.hz * Math.PI * 2) * B.amp + B.amp
-      let sy = 1 + Math.sin(t * B.hz * Math.PI * 2) * B.squash
+      started = true
+      if (wantLeft !== facingLeft) {
+        flipT += dt * 1000
+        if (flipT >= C.flipHoldMs) { facingLeft = wantLeft; flip(); flipT = 0 }
+      } else flipT = 0
+      const B = C.bob, M = C.move
+      let travelled = Number.isNaN(lastX) ? 0 : Math.hypot(actor.x - lastX, actor.y - lastY)
+      if (travelled >= A.walkCycle.teleportTiles) travelled = 0
+      lastX = actor.x
+      lastY = actor.y
       if (moving) {
-        const ph = Math.abs(Math.sin(t * C.move.hz * Math.PI))
-        lift = ph * C.move.hopHeight
-        sy = 1 + (ph - 0.5) * B.squash * 2
+        if (dt > 0) hopHz = Math.min(M.maxHz, Math.max(M.minHz, travelled / M.hopStride / dt))
+        hopPh = (hopPh + hopHz * dt) % 1
+      } else if (hopPh > 0) {
+        // stopping finishes the hop in the air instead of dropping to the ground
+        hopPh += hopHz * dt
+        if (hopPh >= 1) hopPh = 0
       }
+      gait = approach(gait, moving || hopPh > 0 ? 1 : 0, M.blendMs > 0 ? (dt * 1000) / M.blendMs : 1)
+      const bob = Math.sin(t * B.hz * Math.PI * 2)
+      const hopS = Math.sin(hopPh * Math.PI)
+      const lift = (bob * B.amp + B.amp) * (1 - gait) + hopS * M.hopHeight * gait
+      const sy = (1 + bob * B.squash) * (1 - gait) + (1 + (hopS - 0.5) * B.squash * 2) * gait
       body.position.y = lift
       mesh.scale.set(1 / Math.sqrt(sy), sy, 1)
       mesh.rotation.y = ctx.yaw.value
@@ -288,7 +368,11 @@ void main() {
       ring.scale.setScalar(0.9 + 0.1 * pulse)
       sparkleMat.uniforms.uTime.value = t
       moteMat.uniforms.uTime.value = t
-      sprite.uniforms.uCutY.value = !moving && ctx.inGrassAt(actor.x, actor.y) ? A.grassCut * h : -1e6
+      // same ground-level grass as characters: a hop lifts the body out of it smoothly
+      const cutFull = A.grassCut * A.height
+      cutH = approach(cutH, ctx.inGrassAt(actor.x, actor.y) ? cutFull : 0, A.grassCutMs > 0 ? (dt * cutFull * 1000) / A.grassCutMs : Infinity)
+      sprite.uniforms.uCutY.value = cutUniform(cutH, lift, sy)
+      occShape.value.set(RENDER.occlusion.soft, C.occlusionKeep)
       tag.update(dt)
     },
     dispose() {
@@ -304,7 +388,11 @@ void main() {
   actor.setShiny(shiny)
   const entry: ActorEntry = {
     object, tag,
-    head(out) { return out.set(actor.x, actor.elev + body.position.y + h, actor.y) },
+    head(out, pitch = 0) {
+      const top = spriteOpaqueTop(sprite.material.map, 0, 0, 1, 1, C.alphaTest)
+      out.set(0, h * (top - C.footInset / CONTENT.config.sprites.creatureSize), 0)
+      return billboardPointToWorld(out, mesh, pitch, RENDER.camera.billboard)
+    },
     bendRadius: Math.max(0.5, h / A.height),
     isVisible: () => visible,
   }

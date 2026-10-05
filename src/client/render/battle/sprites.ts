@@ -12,6 +12,7 @@ import {
   spriteShadowUniforms, textureImageReady, textureSize, type SpriteMaterial,
 } from '../sprite-utils.ts'
 import { STAGE, type BreathDef } from './config.ts'
+import { createCharacterAnimation } from '../character-animation.ts'
 
 /** Transient per-frame animation state written by effects. */
 export interface SpriteFx {
@@ -150,7 +151,12 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
   let flip = false
   let row = 0
   let shadows = true
-  const layout = sheetLayout()
+  let layout = sheetLayout()
+  const idleAnimation = () => createCharacterAnimation(layout.walkFrames, layout.walkStart, {
+    frames: layout.idleFrames, fps: CONTENT.config.sprites.idleFps, settleMs: CONTENT.config.sprites.idleSettleMs, phase,
+  })
+  let idle = idleAnimation()
+  let idleFrame = -1
   const shinyCfg = RENDER.creatures.shiny
 
   function rebuild(): void {
@@ -158,7 +164,10 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
     geo = createBillboardGeometry(width, height, cfg.tilt)
     mesh.geometry = geo
     if (kind === 'creature') setGeometryFrame(geo, 0, 0, 1, 1, flip)
-    else setGeometryFrame(geo, T.frame, row, layout.cols, layout.rows)
+    else {
+      idleFrame = layout.idleFrames > 1 ? idle.frame : T.frame
+      setGeometryFrame(geo, idleFrame, row, layout.cols, layout.rows)
+    }
   }
 
   function syncAspect(): void {
@@ -166,8 +175,15 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
     if (!t || !textureImageReady(t)) return
     const { w, h } = textureSize(t)
     if (!w || !h) return
+    let layoutChanged = false
+    if (kind === 'trainer') {
+      const next = sheetLayout(CONTENT, t)
+      layoutChanged = next.cols !== layout.cols
+      layout = next
+      if (layoutChanged) idle = idleAnimation()
+    }
     const a = kind === 'creature' ? w / h : (w / layout.cols) / (h / layout.rows)
-    if (Math.abs(a - aspect) < 1e-4) return
+    if (Math.abs(a - aspect) < 1e-4 && !layoutChanged) return
     aspect = a
     width = height * a
     rebuild()
@@ -201,6 +217,7 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
       if (!sheet) { tex = null; return }
       height = T.height
       width = height
+      idle.reset()
       row = layout.rowOf[dir] ?? 0
       tex = assets.characterTexture(sheet)
       sm.setMap(tex)
@@ -229,16 +246,23 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
       fx.dissolve = 0
       fx.hue = 0
     },
-    update(_dt, time, yaw) {
-      if (aspect < 0) syncAspect()
+    update(dt, time, yaw) {
+      if (aspect < 0 || kind === 'trainer') syncAspect()
       const has = !!(override ?? tex)
       const visible = sprite.present && has && fx.scale > 1e-3 && fx.dissolve < 0.999
       mesh.visible = visible
       blob.visible = visible
       if (!visible) return
+      if (kind === 'trainer' && layout.idleFrames > 1) {
+        idle.update(dt, false, 0)
+        if (idle.frame !== idleFrame) {
+          idleFrame = idle.frame
+          setGeometryFrame(geo, idleFrame, row, layout.cols, layout.rows)
+        }
+      }
       const b = cfg.breath
       const P = STAGE.sprite
-      const breath = Math.sin(time * b.hz * Math.PI * 2 + phase)
+      const breath = kind === 'trainer' && layout.idleFrames > 1 ? 0 : Math.sin(time * b.hz * Math.PI * 2 + phase)
       const sq = fx.squash + breath * b.squash
       const s = fx.scale
       mesh.scale.set(s * (1 - sq * P.squashWiden), s * (1 + sq), s)

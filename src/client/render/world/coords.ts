@@ -132,10 +132,11 @@ export function footprintCenter(p: PropPlacement, def: PropDef): { x: number; z:
   return { x: r.x0 + r.w / 2, z: r.y0 + r.d / 2 }
 }
 
-/** Door x offset (world units, rot-0 frame) from the footprint centre, or null when the prop has no door. */
+/** Opening centre (world units, rot-0 frame) relative to the footprint centre. */
 export function doorOffsetX(def: PropDef): number | null {
   if (!def.door) return null
-  return Math.floor(def.footprint[0] / 2) + def.door[0] + 0.5 - def.footprint[0] / 2
+  const [lo, hi] = def.doorSpan ?? [0, 0]
+  return Math.floor(def.footprint[0] / 2) + def.door[0] + 0.5 - def.footprint[0] / 2 + (lo + hi) / 2
 }
 
 /** Yaw (radians) for a placement rotation; rot 1 turns the +Z facade toward +X. */

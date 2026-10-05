@@ -9,7 +9,8 @@ Each row is rebuilt from its most typical drawn frame (medoid) by moving only le
               side rows show the drawn stride
 
 - front/back rows: leg band = bottom `legFrac` of the figure, split at the band's own pixel mass snapped to the
-  gap between the feet; a foot the drawn pose left in the air is first put back on the ground (`maxPlant`)
+  gap between the feet; a foot the drawn pose left in the air is first put back on the ground (`maxPlant`); when one
+  half still does not reach the ground (legs drawn crossed or hidden) the contact frames only get the bob
 - side rows: the drawn stride is the contact frame; the passing frame shears both legs toward each other
   (`tuck` of the foot distance, 0 at the crotch growing to full at the feet), darker (far) leg drawn first.
   Strides drawn without a gap between the legs only get the bob
@@ -147,6 +148,17 @@ def _plant(
     return out
 
 
+def plant_idle(f: np.ndarray, cfg: dict) -> np.ndarray:
+    """Plant only the lowest leg band; long hair, sleeves and skirts above it are not moved."""
+    op = _opaque(f)
+    top, foot = _extent(op)
+    h = foot - top + 1
+    legs = min(max(cfg["minLegRows"], round(cfg["legFrac"] * h)), h // 2)
+    hip = foot - legs + 1
+    split = _front_split(op, hip, foot, cfg)
+    return _plant(f, hip, foot, split, min(legs - 1, cfg["maxPlant"] + cfg["lift"]))
+
+
 def _front_step(
     f: np.ndarray, hip: int, split: int, lift_left: bool, bob: int, lift: int
 ) -> np.ndarray:
@@ -175,16 +187,20 @@ def front_row(cells: list[np.ndarray], cfg: dict) -> tuple[list[np.ndarray], dic
     hip = foot - legs + 1
     split = _front_split(op, hip, foot, cfg)
     stand = _ground(_plant(base, hip, foot, split, cfg["maxPlant"]), foot)
+    sop = _opaque(stand)
+    # both halves must stand on the baseline, else lifting the other one would drop the whole figure (a limp):
+    # legs drawn crossed or hidden only get the bob
+    two_feet = all(sop[foot, xs].any() for xs in (slice(0, split), slice(split, None)))
+    lift = cfg["lift"] if two_feet else 0
     contact = [
-        _ground(
-            _front_step(stand, hip, split, lift_left, cfg["bob"], cfg["lift"]), foot
-        )
+        _ground(_front_step(stand, hip, split, lift_left, cfg["bob"], lift), foot)
         for lift_left in (True, False)
     ]
     return [stand, contact[0], stand, contact[1]], {
         "base": i,
         "legRows": legs,
         "split": split,
+        "twoFeet": two_feet,
     }
 
 

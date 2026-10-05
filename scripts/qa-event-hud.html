@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Event HUD QA Fixture</title>
+  </head>
+  <body style="margin:0; background:#05070d">
+    <div id="qa-root" style="position:fixed; inset:0"></div>
+    <script type="module">
+      import { createHUD } from '/src/client/ui/hud.ts'
+      import { createEventHud } from '/src/client/ui/event-hud.ts'
+      import { GAMEPLAY } from '/src/shared/gameplay/data.ts'
+      import { eventTitle } from '/src/shared/gameplay/events.ts'
+      import { t } from '/src/shared/content/index.ts'
+      import { GPC } from '/src/client/world/gameplay-config.ts'
+
+      const root = document.querySelector('#qa-root')
+      const hud = createHUD(root)
+      hud.setRegion('原点镇')
+      hud.setClock('13:11', 'day')
+      hud.setMoney(3390)
+      hud.setQuest('沿镇子西边的 1 号道路前往开源林镇，挑战代码道馆。', '智灵之路')
+      const chips = ['national-day', 'gpu-shortage', 'token-rain'].map((id, i) => {
+        const def = GAMEPLAY.eventById[id]
+        return { id, title: eventTitle(def), sub: t('events.ui.endsIn', { minutes: [545, 403, 112][i] }),
+          tag: def.tag, color: GPC.hud.tagColors[def.tag] ?? GPC.hud.defaultColor }
+      })
+      const events = createEventHud(root)
+      events.setVisible(true)
+      events.setChips(chips)
+      window.__eventQA = { hud, events, chips }
+    </script>
+  </body>
+</html>

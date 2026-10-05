@@ -1,7 +1,7 @@
 /* World-event HUD (src/client/ui/event-hud.ts). Colours of overlays come from content/events/client.json. */
 .ap-l-evfx { z-index: 7; pointer-events: none; overflow: hidden; }
 .ap-l-evhud { z-index: 10; pointer-events: none; }
-.ap-l-evfx.is-hidden, .ap-l-evhud.is-hidden, .ap-evchips.is-hidden { visibility: hidden; }
+.ap-l-evfx.is-hidden, .ap-l-evhud.is-hidden, .ap-evchips.is-hidden, .ap-evsense.is-hidden { visibility: hidden; }
 html.ap-battle-on .ap-l-evfx, html.ap-battle-on .ap-l-evhud, html.ap-battle-on .ap-evchips { visibility: hidden; }
 
 /* Ambience overlays */
@@ -35,22 +35,128 @@ html.ap-battle-on .ap-l-evfx, html.ap-battle-on .ap-l-evhud, html.ap-battle-on .
 @keyframes ap-evfx-heat { from { transform: scaleY(1); } to { transform: scaleY(1.04) translate3d(0, -1%, 0); } }
 @keyframes ap-evfx-flash { 0% { opacity: var(--evo, 1); } 60%, 100% { opacity: calc(var(--evo, 1) * 0.25); } }
 
-/* Active event chips (under the quest tracker) */
-.ap-evchips { display: flex; flex-direction: column; gap: calc(var(--u) * 2); margin-top: calc(var(--u) * 3); pointer-events: none; }
+/* One compact activity entry; complete names and timers are available on demand. */
+.ap-evchips {
+  width: min(100%, calc(var(--u) * 112));
+  max-width: calc(var(--u) * 176);
+  min-width: 0;
+  background: none;
+  border: 0;
+  pointer-events: auto;
+}
+.ap-evchips.is-collapsed { width: min(100%, calc(var(--u) * 112)); }
 .ap-evchips[hidden] { display: none; }
-.ap-evchips.is-standalone { position: absolute; left: calc(var(--u) * 8); top: calc(var(--u) * 64); }
-.ap-evchip {
+.ap-evchips.is-standalone { position: absolute; left: calc(var(--u) * 8 + env(safe-area-inset-left, 0px)); top: calc(var(--u) * 64 + env(safe-area-inset-top, 0px)); max-width: min(calc(var(--u) * 176), calc(100% - var(--u) * 16 - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px))); }
+.ap-evtoggle {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 5);
+  width: 100%;
+  min-height: max(28px, calc(var(--u) * 22));
+  padding: calc(var(--u) * 3) calc(var(--u) * 7);
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: calc(var(--u) * 10);
+  line-height: calc(var(--u) * 14);
+  text-shadow: inherit;
+  text-align: left;
+  color: var(--ap-gold-hi);
+  cursor: pointer;
+}
+.ap-evtoggle:hover, .ap-evtoggle:active { background: var(--ap-sel); }
+.ap-evtoggle:focus-visible, .ap-evdetails:focus-visible { outline: var(--u) solid var(--ap-gold-hi); outline-offset: calc(var(--u) * -1); }
+.ap-evtoggle > .ap-glyph, .ap-evlabel, .ap-evcount { flex: none; }
+.ap-evcount { min-width: calc(var(--u) * 10); color: var(--ap-text); text-align: center; font-variant-numeric: tabular-nums; }
+.ap-evpips { display: inline-flex; align-items: center; gap: calc(var(--u) * 3); min-width: 0; overflow: hidden; }
+.ap-evpip { flex: none; display: inline-block; width: calc(var(--u) * 4); height: calc(var(--u) * 4); background: var(--evc, var(--ap-gold)); }
+.ap-evchevron { flex: none; margin-left: auto; transform: rotate(180deg); }
+.ap-evchips.is-collapsed .ap-evchevron { transform: rotate(-90deg); }
+.ap-evdetails {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  transform: none;
   display: flex;
   flex-direction: column;
-  max-width: calc(var(--u) * 168);
-  padding: calc(var(--u) * 2) calc(var(--u) * 10) calc(var(--u) * 3) calc(var(--u) * 7);
-  background: linear-gradient(90deg, rgba(8, 11, 22, 0.84) 0%, rgba(14, 20, 36, 0.6) 70%, rgba(14, 20, 36, 0) 100%);
-  border-left: var(--u) solid var(--evc, var(--ap-gold));
-  animation: ap-rise 220ms ease-out both;
+  gap: calc(var(--u) * 7);
+  width: min(calc(var(--u) * 340), calc(100dvw - var(--u) * 16 - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+  height: fit-content;
+  max-width: none;
+  max-height: min(calc(var(--u) * 288), calc(100dvh - var(--u) * 20 - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)));
+  overflow: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  padding: calc(var(--u) * 5) calc(var(--u) * 6);
+  border: calc(var(--u) * 6) solid transparent;
+  border-image: var(--ap-hud-frame) 32 / calc(var(--u) * 6) / 0 stretch;
+  background: var(--ap-hud-bg);
+  background-clip: padding-box;
+  font-family: var(--ap-font);
+  font-size: calc(var(--u) * 10);
+  line-height: calc(var(--u) * 15);
+  color: var(--ap-text);
+  text-shadow: inherit;
+  pointer-events: auto;
+  box-sizing: border-box;
 }
-.ap-evchip-title { color: #fffaf0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ap-evchip-sub { color: var(--ap-gold-hi); font-size: calc(var(--u) * 7); line-height: calc(var(--u) * 9); white-space: nowrap; }
-html.ap-compact .ap-evchip { max-width: calc(var(--u) * 120); }
+.ap-evdetails::backdrop { background: rgba(6, 9, 7, 0.65); }
+.ap-evdetails.ap-pushed { position: fixed; }
+.ap-evdetails::before, .ap-evdetails::after { display: none; }
+.ap-evdetails[hidden] { display: none; }
+.ap-evheading { display: flex; align-items: center; flex: none; gap: calc(var(--u) * 5); padding-bottom: calc(var(--u) * 5); border-bottom: var(--u) solid var(--ap-line); color: var(--ap-gold-hi); }
+.ap-evheading h2 { margin: 0; min-width: 0; font: inherit; font-size: calc(var(--u) * 12); overflow-wrap: anywhere; }
+.ap-evclose { display: grid; place-items: center; flex: none; margin-left: auto; min-width: max(24px, calc(var(--u) * 16)); min-height: max(24px, calc(var(--u) * 16)); padding: 0; border: 0; background: none; cursor: pointer; }
+.ap-evclose:focus-visible, .ap-evdone:focus-visible { outline: var(--u) solid var(--ap-gold-hi); }
+.ap-evclose:hover { background: var(--ap-sel); }
+.ap-evdone { display: block; margin: calc(var(--u) * 5) auto 0; min-width: calc(var(--u) * 88); min-height: max(28px, calc(var(--u) * 22)); padding: calc(var(--u) * 3) calc(var(--u) * 8); font: inherit; color: var(--ap-gold-hi); cursor: pointer; }
+.ap-evdone:hover::after { background: var(--ap-surface-raised); }
+.ap-evbody { display: grid; grid-template-columns: minmax(0, 98fr) minmax(0, 220fr); gap: calc(var(--u) * 10); min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.ap-evbody:focus-visible { outline: var(--u) solid var(--ap-gold-hi); outline-offset: calc(var(--u) * -1); }
+.ap-evnav, .ap-evdetail { min-width: 0; }
+.ap-evnav { border-right: var(--u) solid var(--ap-line); padding-right: calc(var(--u) * 7); }
+.ap-evlist { margin: 0; padding: 0; list-style: none; }
+.ap-evchip + .ap-evchip { margin-top: calc(var(--u) * 3); }
+.ap-evselect {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 5);
+  width: 100%;
+  min-width: 0;
+  min-height: max(36px, calc(var(--u) * 30));
+  padding: calc(var(--u) * 5) calc(var(--u) * 3);
+  border: 0;
+  border-left: var(--u) solid transparent;
+  background: none;
+  color: var(--ap-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.ap-evselect:hover, .ap-evselect:focus-visible { background: var(--ap-sel); }
+.ap-evselect:focus-visible { outline: var(--u) solid var(--ap-gold-hi); outline-offset: calc(var(--u) * -1); }
+.ap-evchip.is-selected .ap-evselect { border-left-color: var(--ap-gold-hi); background: var(--ap-sel); }
+.ap-evselect > .ap-glyph { flex: none; margin-left: auto; }
+.ap-evrow-copy { display: flex; flex-direction: column; min-width: 0; gap: calc(var(--u) * 2); }
+.ap-evchip-title { min-width: 0; color: var(--ap-text); white-space: normal; overflow-wrap: anywhere; text-wrap: balance; }
+.ap-evchip-sub { min-width: 0; color: var(--ap-text-dim); font-size: calc(var(--u) * 9); line-height: calc(var(--u) * 12); white-space: normal; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.ap-evdetail-title { margin: 0 0 calc(var(--u) * 3); font: inherit; font-size: calc(var(--u) * 15); line-height: calc(var(--u) * 20); color: var(--ap-gold-hi); overflow-wrap: anywhere; }
+.ap-evmeta { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 3) calc(var(--u) * 10); font-size: calc(var(--u) * 9); color: var(--ap-text-dim); }
+.ap-evdescription { margin: calc(var(--u) * 7) 0; overflow-wrap: anywhere; }
+.ap-evbenefits-title { margin: calc(var(--u) * 8) 0 calc(var(--u) * 3); font: inherit; color: var(--ap-gold-hi); }
+.ap-evbenefits { list-style: none; margin: 0; padding: 0; }
+.ap-evbenefit { display: flex; flex-wrap: wrap; justify-content: space-between; gap: calc(var(--u) * 2) calc(var(--u) * 6); padding: calc(var(--u) * 4) 0; border-bottom: var(--u) solid var(--ap-line); }
+.ap-evbenefit-label { min-width: 0; overflow-wrap: anywhere; }
+.ap-evbenefit-value { margin-left: auto; font-weight: normal; color: var(--ap-gold-hi); overflow-wrap: anywhere; text-align: right; }
+.ap-evbenefit.is-cost .ap-evbenefit-value { color: var(--ap-danger, #ff9a84); }
+.ap-evnote { margin: calc(var(--u) * 7) 0 0; font-size: calc(var(--u) * 9); line-height: calc(var(--u) * 13); color: var(--ap-text-dim); overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .ap-evbody { grid-template-columns: minmax(0, 1fr); gap: calc(var(--u) * 6); }
+  .ap-evnav { border-right: 0; border-bottom: var(--u) solid var(--ap-line); padding: 0 0 calc(var(--u) * 4); }
+  .ap-evlist { display: flex; gap: calc(var(--u) * 4); overflow-x: auto; scrollbar-width: thin; }
+  .ap-evchip { flex: 0 0 min(78%, calc(var(--u) * 126)); }
+  .ap-evchip + .ap-evchip { margin-top: 0; }
+}
 
 /* Roaming-legend sense pill */
 .ap-evsense {
@@ -70,7 +176,10 @@ html.ap-compact .ap-evchip { max-width: calc(var(--u) * 120); }
   animation: ap-evsense-glow 1.6s ease-in-out infinite;
 }
 .ap-evsense[hidden] { display: none; }
+.ap-hud-tl .ap-evsense { position: relative; left: auto; top: auto; transform: none; width: 100%; min-width: 0; padding: calc(var(--u) * 3) calc(var(--u) * 6); font-size: calc(var(--u) * 10); line-height: calc(var(--u) * 14); white-space: normal; animation: none; box-shadow: none; }
+.ap-evsense-text { min-width: 0; overflow-wrap: anywhere; }
 .ap-evsense-arrow {
+  flex: none;
   width: calc(var(--u) * 9);
   height: calc(var(--u) * 9);
   background: var(--evc, var(--ap-gold));

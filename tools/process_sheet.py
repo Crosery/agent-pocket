@@ -269,6 +269,7 @@ def process_sheet(
     video = None
     if cfg["walkVideo"]["enabled"]:
         frames, video = apply_walk_video(sheet_id, frames, rows)
+    ncols = len(frames[0])
     pal = build_palette([c for row in frames for c in row], scfg["palette"])
     sheet = np.zeros((cell * nrows, cell * ncols, 4), np.float32)
     for r, row in enumerate(frames):

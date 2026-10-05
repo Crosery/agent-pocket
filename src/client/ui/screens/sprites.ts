@@ -5,17 +5,20 @@ import type { AssetStore } from '../../contracts.ts'
 import { CONTENT } from '../../../shared/content/index.ts'
 import { el } from '../widgets.ts'
 import { SCREENS } from './config.ts'
+import { characterFrames, createCharacterAnimation } from '../../render/character-animation.ts'
+import { prepareCharacterSheet, type CharacterSheet } from '../../render/character-idle.ts'
 
-const sheets = new Map<string, Promise<HTMLImageElement | null>>()
+const sheets = new Map<string, Promise<CharacterSheet | null>>()
 
-function loadSheet(assets: AssetStore, sheetId: string): Promise<HTMLImageElement | null> {
+function loadSheet(assets: AssetStore, sheetId: string): Promise<CharacterSheet | null> {
   const url = assets.characterImageUrl(sheetId)
   let p = sheets.get(url)
   if (!p) {
     p = new Promise((resolve) => {
       const img = new Image()
       img.decoding = 'async'
-      img.onload = () => resolve(img)
+      img.crossOrigin = 'anonymous'
+      img.onload = () => resolve(prepareCharacterSheet(img))
       img.onerror = () => resolve(null)
       img.src = url
     })
@@ -39,9 +42,13 @@ export function createWalker(assets: AssetStore, sheetId: string, opts?: { dirs?
   cv.width = cell
   cv.height = cell
   const dirs = opts?.dirs?.length ? opts.dirs : SCREENS.newGame.previewDirs
-  let sheet: HTMLImageElement | null = null
+  let sheet: CharacterSheet | null = null
   let walking = opts?.walking ?? true
-  let frameT = 0
+  let layout = characterFrames(0, sp)
+  const animation = () => createCharacterAnimation(layout.walkFrames, layout.walkStart, {
+    frames: layout.idleFrames, fps: sp.idleFps, settleMs: sp.idleSettleMs,
+  })
+  let gait = animation()
   let turnT = 0
   let dirIndex = 0
   let fixedDir: Dir | null = null
@@ -49,7 +56,7 @@ export function createWalker(assets: AssetStore, sheetId: string, opts?: { dirs?
   const draw = () => {
     if (!sheet) return
     const dir = fixedDir ?? dirs[dirIndex % dirs.length]
-    const frame = walking ? Math.floor(frameT * SCREENS.anim.walkFps) % sp.sheetFrames : 0
+    const frame = gait.frame
     const key = `${dir}|${frame}`
     if (key === lastKey) return
     lastKey = key
@@ -58,18 +65,41 @@ export function createWalker(assets: AssetStore, sheetId: string, opts?: { dirs?
     ctx.clearRect(0, 0, cell, cell)
     ctx.drawImage(sheet, frame * cell, sp.sheetRows[dir] * cell, cell, cell, 0, 0, cell, cell)
   }
-  void loadSheet(assets, sheetId).then((img) => { sheet = img; lastKey = ''; draw() })
+  void loadSheet(assets, sheetId).then((img) => {
+    sheet = img
+    layout = characterFrames(img?.width ?? 0, sp)
+    gait = animation()
+    lastKey = ''
+    draw()
+  })
   return {
     el: cv,
     update(dt) {
-      if (!walking) { draw(); return }
-      frameT += dt
-      turnT += dt * 1000
-      if (!fixedDir && turnT >= SCREENS.anim.walkTurnMs) { turnT = 0; dirIndex++ }
+      const previousPhase = gait.phase
+      gait.update(dt, walking, SCREENS.anim.walkFps * layout.walkFrames / sp.sheetFrames)
+      if (walking) turnT += dt * 1000
+      if (walking && !fixedDir && turnT >= SCREENS.anim.walkTurnMs && gait.phase < previousPhase) {
+        turnT %= SCREENS.anim.walkTurnMs
+        dirIndex++
+      }
       draw()
     },
-    setWalking(on) { walking = on; frameT = 0; lastKey = '' },
-    setDir(dir) { fixedDir = dir; lastKey = '' },
+    setWalking(on) {
+      if (walking === on) return
+      walking = on
+      gait.reset()
+      if (!on && !fixedDir) { dirIndex = 0; turnT = 0 }
+      lastKey = ''
+      draw()
+    },
+    setDir(dir) {
+      if (fixedDir === dir) return
+      fixedDir = dir
+      gait.reset()
+      turnT = 0
+      lastKey = ''
+      draw()
+    },
   }
 }
 

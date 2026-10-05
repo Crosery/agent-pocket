@@ -2,15 +2,26 @@
    Looks come from the ui-kit theme; this file only places things. */
 .ap-objective {
   position: relative;
-  max-width: calc(var(--u) * 176);
-  padding: calc(var(--u) * 3) calc(var(--u) * 10) calc(var(--u) * 4) calc(var(--u) * 7);
-  background: linear-gradient(90deg, rgba(8, 11, 22, 0.86) 0%, rgba(14, 20, 36, 0.66) 70%, rgba(14, 20, 36, 0) 100%);
-  border-left: var(--u) solid var(--ap-info);
-  pointer-events: none;
+  width: 100%;
+  max-width: 100%;
+  background: none;
+  border: 0;
+  pointer-events: auto;
 }
 .ap-objective[hidden] { display: none; }
-.ap-objective.is-new { animation: ap-rise 220ms ease-out both; }
-.ap-objective-title { display: flex; align-items: center; gap: calc(var(--u) * 4); color: var(--ap-info); }
+.ap-objective.is-new { animation: ap-hud-reveal 220ms ease-out both; }
+.ap-objective-toggle { display: flex; align-items: center; gap: calc(var(--u) * 5); width: 100%; min-height: max(28px, calc(var(--u) * 24)); padding: calc(var(--u) * 4) calc(var(--u) * 8); border: 0; background: none; font: inherit; text-shadow: inherit; text-align: left; color: var(--ap-text); cursor: pointer; }
+.ap-objective-toggle:focus-visible { outline: var(--u) solid var(--ap-gold-hi); outline-offset: var(--u); }
+.ap-objective-toggle:hover { background: var(--ap-sel); }
+.ap-objective-summary { display: none; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ap-objective-chevron { margin-left: auto; flex: none; transform: rotate(180deg); }
+.ap-objective-details { max-height: min(calc(var(--u) * 112), 30dvh); overflow-y: auto; padding: 0 calc(var(--u) * 7) calc(var(--u) * 6); }
+.ap-objective-details:focus-visible { outline: var(--u) solid var(--ap-gold-hi); outline-offset: calc(var(--u) * -1); }
+.ap-objective-toggle > .ap-glyph { flex: none; }
+.ap-objective-details[hidden] { display: none; }
+.ap-objective.is-collapsed .ap-objective-title { display: none; }
+.ap-objective.is-collapsed .ap-objective-summary { display: inline; }
+.ap-objective.is-collapsed .ap-objective-chevron { transform: rotate(-90deg); }
 .ap-objective-text { white-space: normal; overflow-wrap: anywhere; color: var(--ap-text); }
 .ap-objective-text .ap-key { color: inherit; }
 .ap-objective-text .ap-key kbd { min-width: calc(var(--u) * 12); height: calc(var(--u) * 12); line-height: calc(var(--u) * 10); }
@@ -28,27 +39,58 @@
 }
 html.ap-battle-on .ap-objective { display: none; }
 
-/* index.html sets `#ap-ui > * { pointer-events: auto }`; the full-screen layer must stay click-through, only the card takes input. */
-#ap-ui > .ap-l-tips, .ap-l-tips { pointer-events: none; }
-.ap-l-tips { z-index: 30; display: flex; justify-content: center; align-items: flex-end; }
+/* The full-screen layer stays click-through; only the card takes input. */
+.ap-l-tips { pointer-events: none; }
+.ap-l-tips { z-index: 30; display: flex; justify-content: flex-end; align-items: flex-end; }
 .ap-layer.ap-l-tips[hidden] { display: none; }
 .ap-l-tips.is-top { align-items: flex-start; }
 .ap-l-tips.is-right { justify-content: flex-end; }
-.ap-l-tips.is-right .ap-tip { width: calc(var(--u) * 176); margin: 0 calc(var(--u) * 12) calc(var(--u) * 86) 0; }
+.ap-l-tips.is-right .ap-tip { width: calc(var(--u) * 176); margin: 0 calc(var(--u) * 8 + env(safe-area-inset-right, 0px)) max(calc(var(--u) * 86), calc(var(--ap-bottom-inset, 0px) + var(--u) * 8 + env(safe-area-inset-bottom, 0px))) 0; }
 .ap-tip {
   position: relative;
-  margin: calc(var(--u) * 22 + env(safe-area-inset-top, 0px)) 0 calc(var(--u) * 14 + var(--ap-bottom-inset, 0px) + env(safe-area-inset-bottom, 0px));
-  width: calc(var(--u) * 240);
-  max-width: calc(100% - var(--u) * 24);
+  margin: calc(var(--u) * 8 + env(safe-area-inset-top, 0px)) calc(var(--u) * 8 + env(safe-area-inset-right, 0px)) calc(var(--u) * 8 + var(--ap-bottom-inset, 0px) + env(safe-area-inset-bottom, 0px)) calc(var(--u) * 8 + env(safe-area-inset-left, 0px));
+  width: calc(var(--u) * 208);
+  max-width: calc(100% - var(--u) * 16 - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+  padding: calc(var(--u) * 4) calc(var(--u) * 6);
+  background: none;
+  font-size: calc(var(--u) * 10);
+  line-height: calc(var(--u) * 14);
   pointer-events: auto !important;
   cursor: pointer;
   opacity: 0;
 }
 .ap-tip[hidden] { display: none; }
-.ap-tip.is-in { animation: ap-rise 260ms ease-out both; opacity: 1; }
-.ap-tip.is-out { opacity: 0; transition: opacity 260ms; }
-.ap-tip-title { display: flex; align-items: center; gap: calc(var(--u) * 5); color: var(--ap-gold-hi); margin-bottom: calc(var(--u) * 4); }
-.ap-tip-body { white-space: normal; overflow-wrap: anywhere; line-height: calc(var(--u) * 17); }
+.ap-root:has(.ap-evdetails:not([hidden]), .ap-chat.is-open) .ap-tip:not(.is-inline) { visibility: hidden; pointer-events: none !important; }
+.ap-tip.is-in { animation: ap-rise var(--ap-tip-fade) ease-out both; opacity: 1; }
+.ap-tip.is-out { opacity: 0; transition: opacity var(--ap-tip-fade); pointer-events: none !important; }
+.ap-tip.is-inline { width: 100%; max-width: none; margin: 0 0 calc(var(--u) * 6); padding: 0 0 calc(var(--u) * 4); background: none; border: 0; border-bottom: var(--u) solid var(--ap-line); box-shadow: none; }
+.ap-tip.is-inline::before { display: none; }
+.ap-tip.is-inline::after { display: none; }
+.ap-tip.is-inline.is-in { animation: none; }
+.aps-pause-detail:has(.ap-tip.is-inline) { min-height: 0; overflow-y: auto; }
+html.ap-compact .aps-pause-detail:has(.ap-tip.is-inline:not([hidden])) { display: block; flex: none; }
+html.ap-compact .aps-pause-detail > :not(.ap-tip) { display: none; }
+html.ap-compact .ap-tip.is-inline { margin-bottom: 0; border-bottom: 0; }
+.ap-tip-title { display: flex; align-items: center; gap: calc(var(--u) * 4); color: var(--ap-gold-hi); margin-bottom: calc(var(--u) * 2); }
+.ap-tip-close { display: grid; place-items: center; margin-left: auto; min-width: max(24px, calc(var(--u) * 16)); min-height: max(24px, calc(var(--u) * 16)); border: 0; background: var(--ap-surface); cursor: pointer; }
+.ap-tip-close:focus-visible { outline: var(--u) solid var(--ap-gold-hi); }
+.ap-tip-close .ap-glyph { width: calc(var(--u) * 7) !important; height: calc(var(--u) * 7) !important; background-size: contain; }
+.ap-tip-progress { height: var(--u); margin: calc(var(--u) * 4) 0 calc(var(--u) * -3); background: var(--ap-gold); transform-origin: left; }
+.ap-tip.is-in .ap-tip-progress { animation: ap-tip-countdown var(--ap-tip-duration) linear forwards; }
+@keyframes ap-tip-countdown { to { transform: scaleX(0); } }
+.ap-tip-body { white-space: normal; overflow-wrap: anywhere; line-height: calc(var(--u) * 14); }
 .ap-tip-body .ap-key, .ap-tip-foot .ap-key { color: inherit; vertical-align: baseline; }
-.ap-tip-body .ap-key kbd, .ap-tip-foot .ap-key kbd { height: calc(var(--u) * 13); line-height: calc(var(--u) * 11); }
-.ap-tip-foot { margin-top: calc(var(--u) * 5); color: var(--ap-text-dim); font-size: calc(var(--u) * 9); text-align: right; }
+.ap-tip-body .ap-key kbd, .ap-tip-foot .ap-key kbd { height: calc(var(--u) * 12); line-height: calc(var(--u) * 10); }
+.ap-tip-foot { margin-top: calc(var(--u) * 3); color: var(--ap-text-dim); font-size: calc(var(--u) * 9); text-align: right; }
+html:not(.ap-portrait)[data-touch-controls='on'] .ap-l-tips:not(.is-top):not(.is-right) {
+  justify-content: center;
+  padding-left: calc(var(--ap-touch-left-inset, 0px) + env(safe-area-inset-left, 0px));
+  padding-right: calc(var(--ap-touch-right-inset, 0px) + env(safe-area-inset-right, 0px));
+}
+html:not(.ap-portrait)[data-touch-controls='on'] .ap-l-tips:not(.is-top):not(.is-right) .ap-tip {
+  margin-bottom: calc(var(--u) * 8 + env(safe-area-inset-bottom, 0px));
+}
+@media (prefers-reduced-motion: reduce) {
+  .ap-tip.is-in, .ap-objective.is-new, .ap-tip.is-in .ap-tip-progress { animation: none; }
+  .ap-objective-arrow { transition: none; }
+}

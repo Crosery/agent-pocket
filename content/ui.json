@@ -12,9 +12,9 @@
   "radar": {"size": 88, "rings": 4, "labelGap": 4, "padX": 46, "padY": 14, "minRatio": 0.04, "labelAnchor": 0.3},
   "hud": {"bannerMs": 3200, "bannerFadeMs": 600, "regionFadeMs": 280, "moneyTweenMs": 520, "todGlyph": {"dawn": "todDawn", "day": "todDay", "dusk": "todDusk", "night": "todNight"}},
   "minimap": {
-    "size": 104,
-    "compactSize": 76,
-    "ring": 4,
+    "size": 88,
+    "compactSize": 68,
+    "ring": 2,
     "ringShade": {"highlightAbove": 0.35, "shadowBelow": -0.45, "innerShadowAlpha": 150},
     "tilesVisible": 44,
     "followRate": 10,
@@ -61,7 +61,8 @@
     "scrollUp": {"rows": ["...o...", "..oho..", ".ohggo.", "ooooooo"]},
     "scrollDown": {"rows": ["ooooooo", ".ohggo.", "..ogo..", "...o..."]},
     "diamond": {"rows": ["..o..", ".oho.", "ohhgo", ".ogo.", "..o.."]},
-    "coin": {"rows": ["..ooo..", ".ohhgo.", "ohgogdo", "ohgogdo", "ohgogdo", ".ogddo.", "..ooo.."]},
+    "coin": {"rows": ["..ooooo..", ".ohhhggo.", "ohgggggdo", "ohgwwwgdo", "ohggwggdo", "ohggwggdo", "ogggggddo", ".ogddddo.", "..ooooo.."]},
+    "location": {"rows": ["...hhh...", "..hgggh..", ".hgkkkgh.", ".hgkhkgh.", ".hgggggh.", "..hgggh..", "...hgh...", "....h....", "........."]},
     "todDawn": {
       "rows": [".........", "....n....", ".n.....n.", "...yyy...", "..yhhyy..", ".yhyyyyy.", "sssssssss", ".........", "..s...s.."]
     },
@@ -75,7 +76,12 @@
       "rows": ["...m...w.", "..mm.....", ".mm......", "mmm...w..", "mmm......", "mmmm.....", ".mmmm..w.", "..mmmmm..", "...mmm..."]
     },
     "shine": {"rows": ["..w..", "..y..", "wyhyw", "..y..", "..w.."]},
-    "quest": {"rows": [".ooo.", "oyyyo", "oyyyo", ".oyo.", ".oyo.", ".ooo.", ".oyo.", ".ooo."]},
+    "quest": {"rows": [".hhhhhhh.", ".hgggggh.", ".hgkkkgh.", ".hgggggh.", ".hgkkggh.", ".hgggggh.", ".hgggggh.", ".hdddddh.", ".hhhhhhh."]},
+    "objective": {"rows": [".....h.....", "....hgh....", "...hgkgh...", "..hgkkkgh..", ".hgkkhkkgh.", "hgkkhhhkkgh", ".hgkkhkkgh.", "..hgkkkgh..", "...hgkgh...", "....hgh....", ".....h....."]},
+    "home": {"rows": [".....h.....", "....hgh....", "...hgggh.h.", "..hggggghh.", ".hgggggggh.", "hhhhhhhhhhh", "..hgggggh..", "..hgkkggh..", "..hgkkggh..", "..hgkkggh..", "..hhhhhhh.."]},
+    "event": {"rows": ["..h...h..", ".hhhhhhh.", ".hgggggh.", ".hhhhhhh.", ".hkghgkh.", ".hkkkkkh.", ".hkhgkkh.", ".hkkkkkh.", ".hhhhhhh."]},
+    "chat": {"rows": [".hhhhhhhhh.", "hgggggggggh", "hgkkkkkkkgh", "hgkssssskgh", "hgkkkkkkkgh", "hgksssskkgh", "hgkkkkkkkgh", "hgggggggggh", ".hhhghhhhh.", "..hgh......", "..hh......."]},
+    "close": {"rows": ["h.....h", "hh...hh", ".hh.hh.", "..hhh..", ".hh.hh.", "hh...hh", "h.....h"]},
     "mPlayer": {"rows": ["...o...", "..oyo..", ".oyhyo.", "oyhhhyo", "oyyoyyo", "oyo.oyo", "oo...oo"]},
     "mOther": {"rows": [".ooo.", "obbbo", "obcbo", "obbbo", ".ooo."]},
     "mNpc": {"rows": [".ooo.", "owwso", "owsso", "ossSo", ".ooo."]},

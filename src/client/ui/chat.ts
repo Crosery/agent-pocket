@@ -6,7 +6,7 @@ import { CONTENT, t } from '../../shared/content/index.ts'
 import { UI_CONFIG, type ChatTab, type SendChannel } from './config.ts'
 import { ensureUIEnvironment, getUIScale, onUIScaleChange, prepareRoot } from './scale.ts'
 import { clampCodePoints, clockParts, codePointLength, createRateLimiter, parseChatInput } from './textflow.ts'
-import { button, el, tabs } from './widgets.ts'
+import { button, el, glyphEl, tabs } from './widgets.ts'
 
 export interface ChatUIHandle extends ChatUI {
   readonly el: HTMLElement
@@ -46,8 +46,12 @@ export function createChatUI(
   // ---- passive view
   const passiveLog = el('div', { class: 'ap-chat-log', attrs: { 'aria-hidden': 'true' } })
   const unreadEl = el('span', 'ap-chat-unread')
-  const openBtn = button(t('ui.chat.open'), () => api.focus())
-  const collapseBtn = button('', () => api.setCollapsed(!collapsed))
+  const openBtn = button('', () => api.focus(), { className: 'ap-chat-open ap-hud-frame' })
+  openBtn.append(glyphEl('chat'))
+  openBtn.setAttribute('aria-label', t('ui.chat.open'))
+  openBtn.setAttribute('aria-controls', 'ap-chat-box')
+  openBtn.title = t('ui.chat.open')
+  const collapseBtn = button('', () => api.setCollapsed(!collapsed), { className: 'ap-chat-collapse' })
   const bar = el('div', 'ap-chat-bar', [openBtn, collapseBtn, unreadEl])
 
   // ---- open view
@@ -68,7 +72,7 @@ export function createChatUI(
   })
   const count = el('span', 'ap-field-count')
   const sendBtn = button(t('ui.chat.send'), () => submit(), { primary: true })
-  const box = el('div', 'ap-panel ap-chat-box', [
+  const box = el('div', { class: 'ap-panel ap-chat-box ap-hud-frame', attrs: { id: 'ap-chat-box' } }, [
     tabStrip.el,
     openLog,
     el('div', 'ap-chat-input-row', [chanBtn, field, count, sendBtn]),
@@ -106,7 +110,12 @@ export function createChatUI(
     openLog.scrollTop = openLog.scrollHeight
   }
   const renderBar = () => {
-    collapseBtn.textContent = collapsed ? t('ui.chat.expand') : t('ui.chat.collapse')
+    const label = collapsed ? t('ui.chat.expand') : t('ui.chat.collapse')
+    collapseBtn.replaceChildren(glyphEl(collapsed ? 'scrollUp' : 'scrollDown'))
+    collapseBtn.setAttribute('aria-label', label)
+    collapseBtn.title = label
+    collapseBtn.hidden = entries.length === 0
+    openBtn.setAttribute('aria-expanded', String(open))
     unreadEl.textContent = collapsed && unread > 0 ? t('ui.chat.unread', { n: unread }) : ''
     wrap.classList.toggle('is-collapsed', collapsed)
   }
@@ -187,6 +196,18 @@ export function createChatUI(
   })
   field.addEventListener('focus', () => setTextActive(true))
   field.addEventListener('blur', () => setTextActive(false))
+  // Native button activation must not reach the game's preventDefault keyboard handler.
+  wrap.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (!open) {
+        if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
+        return
+      }
+      e.preventDefault()
+      api.close()
+    }
+    e.stopPropagation()
+  })
   wrap.addEventListener('pointerenter', () => { hovering = true; wrap.classList.remove('is-idle') })
   wrap.addEventListener('pointerleave', () => { hovering = false; wake() })
 
@@ -216,6 +237,7 @@ export function createChatUI(
         wrap.classList.remove('is-idle')
         renderOpen()
         renderBar()
+        wrap.dispatchEvent(new CustomEvent('ap-hud-expand', { bubbles: true }))
       }
       setSendChannel(sendChannel)
       recount()
@@ -223,11 +245,14 @@ export function createChatUI(
     },
     close() {
       if (!open) return
+      const restoreFocus = wrap.contains(document.activeElement)
       open = false
       wrap.classList.remove('is-open')
       field.blur()
       setTextActive(false)
+      if (restoreFocus && !layer.hidden) openBtn.focus({ preventScroll: true })
       renderPassive()
+      renderBar()
       wake()
     },
     setVisible(v: boolean) {

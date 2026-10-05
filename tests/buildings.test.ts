@@ -141,6 +141,11 @@ for (const key of keys) {
       const tileX = Math.floor(w / 2) + prop.door[0] - (w - 1) / 2
       assert.ok(doorBox.min[0] <= tileX - limits.doorCover && doorBox.max[0] >= tileX + limits.doorCover,
         `${key}: door x [${doorBox.min[0]}, ${doorBox.max[0]}] must cover door tile centre ${tileX}`)
+      const [lo, hi] = prop.doorSpan ?? [0, 0]
+      for (let lane = lo; lane <= hi; lane++) {
+        assert.ok(doorBox.min[0] <= tileX + lane - limits.doorCover && doorBox.max[0] >= tileX + lane + limits.doorCover,
+          `${key}: exported opening does not cover entry lane ${lane}`)
+      }
     }
   })
 }

@@ -177,7 +177,8 @@ export function createRoamingLayer(deps: RoamingDeps) {
           r.target = null
           r.idle = range(rng, R.idleSec)
         } else {
-          if (Math.abs(res.x - r.x) > 1e-3) r.actor.setFacingLeft(res.x < r.x)
+          // face where it is heading, not the per-frame nudge (corner slips push sideways against the travel)
+          if (Math.abs(dx) > 1e-3) r.actor.setFacingLeft(dx < 0)
           r.x = res.x
           r.y = res.y
           moving = true

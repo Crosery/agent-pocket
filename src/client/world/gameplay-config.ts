@@ -53,7 +53,7 @@ export interface GameplayClientConfig {
   /** Scripted wildBattle of these rarities first materialises the creature in front of the player. */
   presentation: { arriveHoldMs: number; arriveDistance: number; rarities: Rarity[] }
   research: { claimFlag: string; toastGains: boolean; toastKind: ToastKind; visibleRows: number; compactVisibleRows: number }
-  /** overlayFadeMs: ambience overlays are removed this long after fading out (matches event-hud.css). */
+  /** maxChips limits collapsed colour pips, not the complete activity list. overlayFadeMs matches event-hud.css. */
   hud: { maxChips: number; refreshSec: number; overlayFadeMs: number; chipTags: string[]; tagColors: Record<string, string>; defaultColor: string }
   intel: { calendarDays: number; maxNews: number; maxRumors: number; visibleRows: number; compactVisibleRows: number }
   markers: { legendRoamer: MinimapMarker['kind']; eventRoamer: MinimapMarker['kind']; revealPin: MinimapMarker['kind']; senseClampTiles: number }

@@ -32,8 +32,25 @@ export interface GameTuning {
     terrain: Record<string, FootstepDef>
   }
   follower: {
-    distance: number; trailSpacing: number; maxTrail: number; indoorMaxSize: number; followRate: number
-    teleportDistance: number; moveEpsilon: number; mapKinds: MapKind[]; interactRadius: number; fx: WorldFx; cryPitch: number
+    /** Trail distance behind the player (tiles), + distancePerSize per unit of species size above 1. */
+    distance: number; distancePerSize: number
+    /** Personal space (tiles, + the same size extra): a follower in the player's way walks round its side at up to
+     * sidestepSpeed (tiles/s along the circle) instead of being walked through. */
+    minGap: number; sidestepSpeed: number
+    /** Sideways gap (tiles) kept from the player while trailing on the camera side: base + perSize * species size.
+     * sideDeadzone: lateral offset (tiles) below which the follower keeps its current side; blendPerSec: how fast the
+     * swing aside eases in / out (full swings per second); tries: swing shares tested (1, 1 - 1/tries, ...) when the
+     * full swing would put it in a wall; dropBack: extra trail distance (base + perSize * size) taken when walls leave
+     * no room to swing aside, so it hangs back instead of covering the player. */
+    cameraClear: { base: number; perSize: number; sideDeadzone: number; blendPerSec: number; tries: number; dropBack: { base: number; perSize: number } }
+    /** Speed cap (tiles/s): maxSpeed, or catchUpMul x the player's speed when that is higher. */
+    maxSpeed: number; catchUpMul: number
+    /** |sin| of the angle off the player's path above which the follower keeps its current side when pushed aside. */
+    sideBias: number
+    trailSpacing: number; maxTrail: number; indoorMaxSize: number; followRate: number
+    /** Hop gait below moveMinSpeed (tiles/s); mirror flips need flipMinSpeed sideways (tiles/s). */
+    teleportDistance: number; moveMinSpeed: number; flipMinSpeed: number
+    mapKinds: MapKind[]; interactRadius: number; fx: WorldFx; cryPitch: number
     tiredBelow: number
     /** Map kinds where indoorMaxSize applies. */
     sizeCapMapKinds: MapKind[]
@@ -76,6 +93,9 @@ export interface GameTuning {
   presence: {
     chatBubbleMs: number; emoteBubbleMs: number; bubbleMaxChars: number; interactRadius: number
     followerDistance: number; followerRate: number; leadDebounceSec: number; inspectTimeoutMs: number
+    /** Remote players walk while their interpolated position moves faster than moveMinSpeed (tiles/s), held
+     * moveHoldMs through short snapshot stalls. */
+    moveMinSpeed: number; moveHoldMs: number
   }
   markers: { refreshSec: number; trainers: boolean; quest: boolean; others: boolean; rares: boolean; wild: boolean; items: boolean }
   fog: { mapKinds: MapKind[] }
@@ -142,6 +162,23 @@ export function validateGameContent(g: GameTuning = GAME, c: Content = CONTENT):
     checkStep(`footsteps.terrain.${key}`, f)
   }
   checkKinds('follower.mapKinds', g.follower.mapKinds)
+  {
+    const F = g.follower
+    for (const k of ['distance', 'distancePerSize', 'minGap', 'sidestepSpeed', 'sideBias', 'moveMinSpeed', 'flipMinSpeed'] as const) {
+      if (!(typeof F[k] === 'number' && F[k] >= 0)) errs.push(`game.json follower.${k}: must be a number >= 0`)
+    }
+    if (!(F.minGap < F.distance)) errs.push('game.json follower.minGap must be < follower.distance (it would shove the follower off its trail)')
+    for (const k of ['base', 'perSize', 'sideDeadzone', 'blendPerSec'] as const) {
+      if (!(typeof F.cameraClear?.[k] === 'number' && F.cameraClear[k] >= 0)) errs.push(`game.json follower.cameraClear.${k}: must be a number >= 0`)
+    }
+    if (!(F.sidestepSpeed > 0)) errs.push('game.json follower.sidestepSpeed must be > 0 (a follower in the way would never step aside)')
+    if (!(F.cameraClear?.blendPerSec > 0)) errs.push('game.json follower.cameraClear.blendPerSec must be > 0')
+    if (!(Number.isInteger(F.cameraClear?.tries) && F.cameraClear.tries >= 1)) errs.push('game.json follower.cameraClear.tries must be an integer >= 1')
+    for (const k of ['base', 'perSize'] as const) {
+      if (!(typeof F.cameraClear?.dropBack?.[k] === 'number' && F.cameraClear.dropBack[k] >= 0)) errs.push(`game.json follower.cameraClear.dropBack.${k}: must be a number >= 0`)
+    }
+    if (!(F.maxSpeed > 0 && F.catchUpMul >= 1)) errs.push('game.json follower: maxSpeed must be > 0 and catchUpMul >= 1 (it could never keep up)')
+  }
   checkFx('follower.fx', g.follower.fx)
   checkSfx('interact.sfx', g.interact.sfx)
   for (const key of g.interact.reachAcrossProps) if (!c.props[key]) errs.push(`game.json interact.reachAcrossProps: unknown prop "${key}"`)
