@@ -15,6 +15,7 @@ import { STORY_CONTENT } from '../../shared/world/story.ts'
 import { frontierTrainer, registerFrontierRefs } from '../../shared/world/frontier/content/index.ts'
 import { decodeExplored, encodeExplored, type MinimapHandle } from '../ui/minimap.ts'
 import { UI_CONFIG } from '../ui/config.ts'
+import { TUTORIAL } from '../onboarding/config.ts'
 import { GAME, textOrKey } from './config.ts'
 import { EXPLORE } from './explore-config.ts'
 import { createExplorer, fogPagesFor, regionSubtitle, storeFogPages } from './explore.ts'
@@ -25,7 +26,8 @@ import { createGameplayRuntime } from './events-runtime.ts'
 import { createLedgeGuard } from './ledge-guard.ts'
 import { createFollower } from './follower.ts'
 import { collectMarkers } from './markers.ts'
-import { DIR_VEC, dirTowards, facingFromAxis, moveBody, type MotionGrid } from './motion.ts'
+import { createQuestNavigator, type QuestNavigation } from './quest-navigation.ts'
+import { DIR_VEC, dirTowards, facingFromAxis, moveBody, tilePassable, type MotionGrid } from './motion.ts'
 import { createNpcLayer, type NpcRuntime } from './npcs.ts'
 import { createPresence, type MultiplayerHooks } from './presence.ts'
 import { createRoamingLayer, type Roamer } from './roaming.ts'
@@ -54,6 +56,7 @@ export interface OverworldExt extends OverworldController {
   readonly terrainName: string
   readonly roamerCount: number
   readonly weather: FieldWeatherKind
+  readonly questNavigation: QuestNavigation | null
   setWeatherOverride(kind: FieldWeatherKind | null): void
   startWildBattle(speciesId: string, level: number): Promise<void>
   startTrainerBattle(trainerId: string): Promise<void>
@@ -71,13 +74,15 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
   const rng = new Rng((Date.now() ^ Math.floor(Math.random() * 0x7fffffff)) >>> 0)
   const locks = new Set<Lock>()
   const stream = createObjectStream()
+  const navigator = createQuestNavigator(ctx.data.world, TUTORIAL.objective.navigation)
+  let trailKey = ''
   const explorer = createExplorer(ctx.data.world, () => ctx.save, {
     toast: (text, kind) => ctx.ui.toast(text, kind),
     banner: (title, sub) => ctx.hud.showBanner(title, sub),
     sfx: (id) => ctx.audio.playSfx(id),
   })
   /** Ledge jump in progress (input frozen, position tweened, hop arc added to the elevation). */
-  let hop: { fx: number; fy: number; tx: number; ty: number; t: number; dur: number; lift: number } | null = null
+  let hop: { fx: number; fy: number; tx: number; ty: number; t: number; dur: number; lift: number; e0: number; e1: number } | null = null
 
   let map: GameMap | null = null
   let grid: MotionGrid | null = null
@@ -136,7 +141,20 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
   // ---------------------------------------------------------------- sub-systems
 
   const npcs = createNpcLayer({ ctx, playerTile, field: () => grid?.field ?? null, rng })
-  const follower = createFollower(ctx)
+  const follower = createFollower(ctx, {
+    // walkable from the player's tile one tile step at a time (the spot can be two tiles off)
+    canStand: (x, y) => {
+      if (!grid) return false
+      let cx = Math.floor(player.x), cy = Math.floor(player.y)
+      const tx = Math.floor(x), ty = Math.floor(y)
+      while (cx !== tx || cy !== ty) {
+        const nx = cx + Math.sign(tx - cx), ny = cy + Math.sign(ty - cy)
+        if (!tilePassable(grid, cx, cy, nx, ny, false)) return false
+        cx = nx; cy = ny
+      }
+      return true
+    },
+  })
   const presence = createPresence(ctx, { mapId: () => map?.id ?? null, hooks: () => opts.multiplayer?.() ?? null })
   const roaming = createRoamingLayer({
     ctx, rng,
@@ -280,6 +298,9 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       }
       if (disposed) return
       map = next
+      navigator.clear()
+      trailKey = ''
+      ctx.world.setQuestPath([])
       hop = null
       const field = collisionField(next)
       ledgeGuard.reset()
@@ -378,12 +399,15 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     applyWeather()
   }
 
-  function questLine(): string | null {
+  function questLine(): { text: string; title: string } | null {
     const id = ctx.save.trackedQuest
     const q = id ? ctx.data.world.quests.find((x) => x.id === id) : undefined
     const st = q ? ctx.save.quests[q.id] : undefined
     if (!q || !st || st.done) return null
-    return opts.questText ? opts.questText(q, st.stage) : t('world.quest.hud', { quest: q.nameZh, stage: q.stages[Math.min(st.stage, q.stages.length - 1)]?.text ?? '' })
+    return {
+      text: opts.questText ? opts.questText(q, st.stage) : t('world.quest.hud', { quest: q.nameZh, stage: q.stages[Math.min(st.stage, q.stages.length - 1)]?.text ?? '' }),
+      title: q.nameZh,
+    }
   }
 
   function updateHud(dt: number): void {
@@ -395,7 +419,11 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       ctx.hud.setMoney(ctx.save.money)
       const st = ctx.save.trackedQuest ? ctx.save.quests[ctx.save.trackedQuest] : undefined
       const key = `${ctx.save.trackedQuest ?? ''}|${st?.stage ?? ''}|${st?.done ?? ''}`
-      if (key !== questKey) { questKey = key; ctx.hud.setQuest(questLine()) }
+      if (key !== questKey) {
+        questKey = key
+        const line = questLine()
+        ctx.hud.setQuest(line?.text ?? null, line?.title)
+      }
     }
     ambienceT -= dt
     if (ambienceT <= 0) { ambienceT = GAME.region.recheckSec; applyMusic() }
@@ -460,9 +488,11 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     // Land past the lower tile's near edge so the body ends fully on the lower level.
     const lx = dx ? to.x + 0.5 - dx * (0.5 - L.landingOffset) : player.x
     const ly = dy ? to.y + 0.5 - dy * (0.5 - L.landingOffset) : player.y
-    hop = { fx: player.x, fy: player.y, tx: lx, ty: ly, t: 0, dur: L.hopMs / 1000, lift: 0 }
+    // one arc from the upper ground to the lower: the base elevation slides linearly under the arc (no smoothing
+    // dip at take-off); the actor only adds the landing squash, timed to this hop
+    hop = { fx: player.x, fy: player.y, tx: lx, ty: ly, t: 0, dur: L.hopMs / 1000, lift: 0, e0: player.elev, e1: ctx.world.elevationAt(lx, ly) }
     player.moving = false
-    actor?.hop()
+    actor?.hop({ ms: L.hopMs, height: 0 })
     ctx.audio.playSfx(L.sfx, { volume: L.volume, pitch: L.pitch })
   }
 
@@ -506,6 +536,10 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       radius: P.radius, surf, cornerSlip: P.cornerSlip, cornerSlipRate: P.cornerSlipRate, substep: P.substepTiles,
     })
     const moved = Math.hypot(res.x - player.x, res.y - player.y)
+    // diagonal input sliding along a wall: face the way the body actually goes (no moonwalking into the wall)
+    if (res.blocked && moved > speed * dt * P.movingRatio && Math.abs(axis.x) > P.axisDeadzone && Math.abs(axis.y) > P.axisDeadzone) {
+      player.facing = facingFromAxis((res.x - player.x) / moved, (res.y - player.y) / moved, player.facing, P.facingHysteresis)
+    }
     player.x = res.x
     player.y = res.y
     player.moving = moved > speed * dt * P.movingRatio
@@ -540,7 +574,8 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
   function syncActor(dt: number): void {
     if (!actor) return
     const target = ctx.world.elevationAt(player.x, player.y) + (surf ? P.surf.rideLift : 0)
-    player.elev = dt > 0 ? player.elev + (target - player.elev) * (1 - Math.exp(-dt * P.elevSmoothing)) : target
+    if (hop) player.elev = hop.e0 + (hop.e1 - hop.e0) * (hop.t / hop.dur)
+    else player.elev = dt > 0 ? player.elev + (target - player.elev) * (1 - Math.exp(-dt * P.elevSmoothing)) : target
     actor.setPosition(player.x, player.y, player.elev + (hop?.lift ?? 0))
     actor.setFacing(player.facing)
     actor.setMoving(player.moving && !surf, player.running || bike)
@@ -898,6 +933,21 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       else if (ctx.input.pressed('bike')) { ctx.input.consume('bike'); toggleBike() }
     }
     npcs.update(dt, { allowWander: !locks.has('script'), focus: player })
+    if (grid) {
+      navigator.update(dt, grid, player, ctx.save, surf || (!!ownedKeyItem(ctx.save, 'surf', ctx.data) && !!lead()), target => {
+        const npc = npcs.list.find(n => n.visible && n.def.x === target.x && n.def.y === target.y)
+        return npc ? { x: npc.x, y: npc.y } : null
+      })
+      const route = navigator.state
+      const path = route && (route.status === 'ready' || route.status === 'arrived')
+        ? route.path.slice(0, TUTORIAL.objective.navigation.trailTiles) : []
+      const nextTrailKey = path.map(p => `${p.x},${p.y}`).join('|')
+      if (trailKey !== nextTrailKey) {
+        trailKey = nextTrailKey
+        ctx.world.setQuestPath(path)
+        markerT = 0
+      }
+    }
     const touched = roaming.update(dt, player, free && !!lead())
     if (touched && isFree()) void wildEncounter(touched.creature, touched)
     gameplay.update(dt, { free: isFree(), canBattle: !!lead() })
@@ -910,10 +960,10 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     markerT -= dt
     if (markerT <= 0) {
       markerT = GAME.markers.refreshSec
-      markers = collectMarkers({ map, world: ctx.data.world, save: ctx.save, npcs: npcs.list, remotes: presence.views.values(), roamers: roaming.list, items: liveItems() })
+      markers = collectMarkers({ map, world: ctx.data.world, save: ctx.save, npcs: npcs.list, remotes: presence.views.values(), roamers: roaming.list, items: liveItems(), navigation: navigator.state })
       markers.push(...gameplay.markers())
     }
-    ctx.minimap.update(player.x, player.y, player.facing, markers)
+    ctx.minimap.update(player.x, player.y, player.facing, markers, navigator.state?.path)
     updateHud(dt)
     ctx.net.reportPosition({ map: map.id, x: player.x, y: player.y, facing: player.facing, moving: player.moving, running: player.running || bike })
   }
@@ -939,6 +989,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     get terrainName() { return terrainAtTile(tile.x, tile.y)?.nameZh ?? '' },
     get roamerCount() { return roaming.list.length },
     get weather() { return weatherKind },
+    get questNavigation() { return navigator.state },
     setWeatherOverride(kind) { weatherOverride = kind; applyWeather() },
     async startWildBattle(speciesId, level) {
       if (!ctx.data.species[speciesId]) return
@@ -963,6 +1014,8 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       offParty()
       offMoney()
       gameplay.dispose()
+      navigator.clear()
+      ctx.world.setQuestPath([])
       npcs.clear()
       roaming.clear()
       presence.dispose()

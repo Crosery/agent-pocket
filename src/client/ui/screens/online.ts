@@ -91,7 +91,7 @@ function avatarUrl(ctx: GameContext, id: string): Promise<string> {
       img.onload = () => {
         const sp = CONTENT.config.sprites
         const rows = Object.keys(sp.sheetRows).length
-        const cw = Math.max(1, Math.floor(img.naturalWidth / sp.sheetFrames))
+        const cw = sp.sheetCell
         const ch = Math.max(1, Math.floor(img.naturalHeight / rows))
         const c = document.createElement('canvas')
         c.width = cw

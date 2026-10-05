@@ -576,6 +576,8 @@
     "battle_bg_taiga",
     "battle_bg_tundra",
     "battle_bg_volcano",
+    "hud-frame",
+    "hud-ribbon",
     "logo",
     "title.webp",
     "type_agent",

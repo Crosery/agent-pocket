@@ -1,38 +1,19 @@
 #!/usr/bin/env python3
-"""Walk-cycle rows from MiniMax H3 image-to-video renders (xiaochui-video MCP).
+"""Complete-body walk atlases from H3 clips: separate idle + eight chronological walk poses.
 
-  prep <id>    for every sheet row: the row's idle frame (frame 0 of public/assets/characters/<id>.png), padded
-               by `pad` px and NEAREST-scaled by `scale` onto the key colour -> <rawDir>/<id>/<dir>.png, plus
-               <dir>.json with the filled prompt (assets_src/prompts/templates.json `walkVideo`) and the task
-               parameters. The image is both first and last frame so the clip loops on the idle pose. Existing
-               seed images are kept (a downloaded clip belongs to its seed) unless --force; the .json is always
-               refreshed from the current template. `prompt` is for firstFrame = lastFrame; a rejected clip is
-               resubmitted with `promptFirstFrame` and only the first frame (no loop constraint: H3 tends to
-               morph the background while steering back to an identical last frame).
-  frames <id>  for every <rawDir>/<id>/<dir>.mp4: every video frame keyed and medoid-sampled back onto the
-               sheet pixel grid -> <dir>_frames.png (one cell per video frame, for QA)
-  cycle <id> <out.png>  the 4-frame rows picked from the videos, one row per video (QA preview)
+prep <id>: padded nearest-scaled directional seeds and filled prompts.
+frames <id>: keyed native-resolution contact strips.
+cycle <id> <out.png>: an atlas, only when all four directions pass.
 
-Submitting the tasks and downloading <dir>.mp4 is done through the MCP tools (create_asset_upload ->
-complete_asset_upload -> create_video_task -> get_video_result). Numbers: assets_src/pipeline.json `walkVideo`.
-
-Picking one stride cycle (`cycle`): the clip's body bob gives the phase. The head top (full video resolution, first
-row with >= `topMinPx` opaque px) is lowest on a contact and highest while the legs pass. Frames outside the
-first/last `edgeFrames` are split at the bob's mid level into contact/passing runs; each run's extreme frame (middle
-one on a plateau) represents it. Frames with more than `maxStray` px beyond the seed's silhouette grown by `reach`
-px (the clip drew a floor, shadow or prop, or its background drifted off the key colour) or whose head top is more
-than `maxBob` px off the seed's are unusable; runs cut by the window or by unusable frames are dropped. Of every
-consecutive passing-contact-passing-contact quadruple whose contacts differ by >= `minAlternate` px in the bottom
-`legFrac` (different feet forward) the one whose heads differ least from the seed wins and becomes [legs together,
-contact A, legs together, contact B]. Each frame keeps the video's body, arms and legs; the head (everything above
-the seed's narrowest row within `neckBand` of its height) is the seed's own head raised by the frame's bob
-(0..`maxLift` px), so faces never flicker. Frames are aligned to the seed (+-`maxShift` px, head band), put on the
-seed's baseline, mapped to the seed's colours and speck-cleaned.
+No body parts are grafted or erased. A whole-frame translation corrects camera drift
+and grounds the supporting sole. Cycle selection uses pose recurrence, leg
+alternation, body motion and the wrap seam, not a mandatory head bounce.
 """
 
 from __future__ import annotations
 
 import argparse
+from collections import deque
 import json
 import pathlib
 import subprocess
@@ -40,6 +21,7 @@ import sys
 import tempfile
 
 import numpy as np
+from walk_cycle import plant_idle
 from assetlib import (
     ROOT,
     TEMPLATES_PATH,
@@ -53,14 +35,10 @@ from assetlib import (
     load_src,
     medoid_resample,
     pipeline_cfg,
-    remove_specks,
     save_png,
     to_image,
     write_json,
 )
-
-FRAMES = 4
-
 
 def _cfg() -> tuple[dict, dict, dict]:
     cfg = pipeline_cfg()
@@ -91,7 +69,8 @@ def prep(sheet_id: str, force: bool = False) -> list[dict]:
         if force or not img.exists():
             save_png(to_image(big), img)
         task = dict(wv["task"])
-        fill = {"{facing}": tpl["facing"][d], "{endSec}": f"{task['duration']:.2f}"}
+        appearance = next((c["desc"] for c in content_json("content/characters.json") if c["id"] == sheet_id), sheet_id)
+        fill = {"{facing}": tpl["facing"][d], "{endSec}": f"{task['duration']:.2f}", "{appearance}": appearance}
         prompts = {}
         for key in ("prompt", "promptFirstFrame"):
             prompts[key] = tpl[key]
@@ -110,11 +89,11 @@ def prep(sheet_id: str, force: bool = False) -> list[dict]:
     return jobs
 
 
-def seed(sheet_id: str, d: str) -> np.ndarray:
+def seed(sheet_id: str, d: str, image: pathlib.Path | None = None) -> np.ndarray:
     """The exact cell `prep` sent as first/last frame, read back from <dir>.png."""
     _, wv, sprites = _cfg()
     cell, pad, scale = sprites["sheetCell"], wv["pad"], wv["scale"]
-    big = load_rgb(_dir_of(sheet_id) / f"{d}.png")
+    big = load_rgb(image or _dir_of(sheet_id) / f"{d}.png")
     small = big[scale // 2 :: scale, scale // 2 :: scale][
         pad : pad + cell, pad : pad + cell
     ]
@@ -146,6 +125,8 @@ def to_cell(rgb: np.ndarray) -> tuple[np.ndarray, float]:
     small = binarize_alpha(
         medoid_resample(keyed, g, g, 0.0, 0.0, cell + 2 * pad, cell + 2 * pad)
     )
+    # Relative island-size filters can delete tiny hands. Validate connectivity instead.
+    small = clean_specks(small, wv["atlas"]["minSpeck"])
     return small[pad : pad + cell, pad : pad + cell], float(rows.min()) / g if len(
         rows
     ) else 0.0
@@ -192,125 +173,134 @@ def _align(
     return best
 
 
-def _runs(
-    bob: list[float], clean: list[bool], lo: int, hi: int
-) -> list[list[tuple[bool, int]]]:
-    """Complete bob runs inside [lo, hi) as (is contact, representative frame), one list per stretch of clean frames
-    split at the stretch's mid bob level (a run touching the window edge or an unusable frame is cut, so it is
-    dropped)."""
-    stretches: list[list[int]] = [[]]
-    for t in range(lo, hi):
-        if clean[t]:
-            stretches[-1].append(t)
-        elif stretches[-1]:
-            stretches.append([])
-    out = []
-    for ts_all in stretches:
-        if not ts_all:
-            continue
-        mid = (max(bob[t] for t in ts_all) + min(bob[t] for t in ts_all)) / 2
-        runs: list[tuple[bool, list[int]]] = []
-        for t in ts_all:
-            low = bob[t] > mid  # larger row = head lower = contact
-            if runs and runs[-1][0] == low:
-                runs[-1][1].append(t)
-            else:
-                runs.append((low, [t]))
-        reps = []
-        for low, ts in runs[1:-1]:
-            ext = (max if low else min)(bob[t] for t in ts)
-            at = [t for t in ts if bob[t] == ext]
-            reps.append((low, at[len(at) // 2]))
-        if reps:
-            out.append(reps)
-    return out
+def _islands(f: np.ndarray) -> tuple[np.ndarray, list[int]]:
+    """8-connected pixel clusters, retaining legitimate diagonal wrist/outline joins."""
+    op = _opaque(f)
+    h, w = op.shape
+    mask = op.tolist()
+    labels = [[-1] * w for _ in range(h)]
+    sizes = []
+    for y in range(h):
+        for x in range(w):
+            if not mask[y][x] or labels[y][x] >= 0:
+                continue
+            label, size = len(sizes), 0
+            todo = deque([(y, x)])
+            labels[y][x] = label
+            while todo:
+                cy, cx = todo.popleft()
+                size += 1
+                for ny in range(max(0, cy - 1), min(h, cy + 2)):
+                    for nx in range(max(0, cx - 1), min(w, cx + 2)):
+                        if mask[ny][nx] and labels[ny][nx] < 0:
+                            labels[ny][nx] = label
+                            todo.append((ny, nx))
+            sizes.append(size)
+    return np.array(labels, np.int32), sizes
 
 
-def _compose(
-    f: np.ndarray, ref: np.ndarray, neck: int, dy: int, palette: np.ndarray
-) -> np.ndarray:
-    """Video body below the neck, ref's head raised by dy above it, on ref's colours."""
+def clean_specks(f: np.ndarray, minimum: int) -> np.ndarray:
+    labels, sizes = _islands(f)
     out = f.copy()
-    rows = neck - dy
-    out[: max(rows, 0)] = 0
-    src = np.arange(max(rows, 0)) + dy
-    ok = src >= 0
-    out[: max(rows, 0)][ok] = ref[src[ok]]
-    op = _opaque(out)
-    idx = ((out[..., :3][op][:, None, :] - palette[None]) ** 2).sum(-1).argmin(axis=1)
-    out[op, :3] = palette[idx]
-    out[~op] = 0
+    for i, size in enumerate(sizes):
+        if size < minimum:
+            out[labels == i] = 0
     return out
+
+
+def detached_pixels(f: np.ndarray, ref: np.ndarray) -> int:
+    labels, sizes = _islands(f)
+    if not sizes:
+        return f.shape[0] * f.shape[1]
+    ref_labels, ref_sizes = _islands(ref)
+    allowed = np.zeros(ref.shape[:2], bool)
+    if ref_sizes:
+        main = int(np.argmax(ref_sizes))
+        allowed = dilate((ref_labels >= 0) & (ref_labels != main), 3)
+    main = int(np.argmax(sizes))
+    return int(((_opaque(f) & (labels != main)) & ~allowed).sum())
 
 
 def cycle(
     cells: list[np.ndarray], bob: list[float], ref: np.ndarray, cfg: dict, scfg: dict
 ) -> tuple[list[np.ndarray], dict]:
-    """4-frame walk row from one clip's cells (see module doc); bob[0] is the seed frame.
-
-    Raises ValueError when the clip does not start on the seed (more than `seedMaxDiff` px differ) or holds no
-    full cycle."""
+    """Separate standing frame and a temporally ordered, complete-body cycle."""
     c = cfg["cycle"]
+    a = cfg["atlas"]
+    count = a["frames"]
+    if len(cells) != len(bob) or len(cells) < count + 1:
+        raise ValueError("clip too short for a complete cycle")
     start = _head_diff(cells[0], ref, slice(None))
     if start > c["seedMaxDiff"]:
         raise ValueError(f"clip does not start on its seed ({start} px differ)")
     op = _opaque(ref)
     top, foot = _extent(op)
     h = foot - top + 1
-    band = range(top + round(c["neckBand"][0] * h), top + round(c["neckBand"][1] * h))
-    neck = min(band, key=lambda y: (int(op[y].sum()), y))
+    neck = top + round(c["neckBand"][0] * h)
     head = slice(0, neck)
-    legs = slice(foot + 1 - round(c["legFrac"] * h), foot + 1)
+    joint = foot + 1 - round(c["legFrac"] * h)
+    legs = slice(joint, foot + 1)
     palette = np.unique(ref[..., :3][op], axis=0)
     # frames where the clip grew a floor, shadow or prop or lost the key colour: too many pixels beyond the seed's
     # silhouette
     near = dilate(op, c["reach"])
-    clean = [
-        int((_opaque(f) & ~near).sum()) <= c["maxStray"]
-        and abs(b - bob[0]) <= c["maxBob"]
-        for f, b in zip(cells, bob, strict=True)
-    ]
-    stretches = _runs(bob, clean, c["edgeFrames"], len(bob) - c["edgeFrames"])
-
-    def prepared(t: int) -> tuple[np.ndarray, int]:
-        _, dx, _ = _align(cells[t], ref, head, c["maxShift"])
-        f = _shift(cells[t], 0, dx)
-        f = _shift(f, foot - _extent(_opaque(f))[1], 0)
-        return f, _align(f, ref, head, c["maxShift"])[2]
+    clean, prepared, identity = [], [], []
+    baseline = ref.shape[0] - 1 - scfg["bottomMargin"]
+    for f, b in zip(cells, bob, strict=True):
+        if not _opaque(f).any():
+            prepared.append(f)
+            identity.append(1e6)
+            clean.append(False)
+            continue
+        _, dx, diff = _align(f, ref, head, c["maxShift"])
+        g = _shift(f, baseline - _extent(_opaque(f))[1], dx)
+        visible = _opaque(g)
+        idx = ((g[..., :3][visible][:, None] - palette[None]) ** 2).sum(-1).argmin(axis=1)
+        g[visible, :3] = palette[idx]
+        g[~visible] = 0
+        prepared.append(g)
+        identity.append(diff)
+        clean.append(
+            int((_opaque(f) & ~near).sum()) <= c["maxStray"]
+            and abs(b - bob[0]) <= c["maxBob"]
+            and detached_pixels(g, ref) <= a["maxDetached"]
+            and int(visible.sum()) == int(_opaque(f).sum())
+        )
 
     best = None
-    quads = [
-        runs[i : i + FRAMES]
-        for runs in stretches
-        for i in range(len(runs) - FRAMES + 1)
-    ]
-    for quad in quads:
-        if [low for low, _ in quad] != [False, True, False, True]:
-            continue
-        ts = [t for _, t in quad]
-        # the two contacts must put different feet forward (some clips only step with one leg)
-        if _head_diff(prepared(ts[1])[0], prepared(ts[3])[0], legs) < c["minAlternate"]:
-            continue
-        score = sum(prepared(t)[1] for t in ts)
-        if best is None or score < best[0]:
-            best = (score, ts)
+    lo, hi = c["edgeFrames"], len(cells) - c["edgeFrames"]
+    for period in range(max(count, a["minPeriod"]), min(a["maxPeriod"], hi - lo - 1) + 1):
+        for first in range(lo, hi - period):
+            if not all(clean[first : first + period + 1]):
+                continue
+            ts = [first + int(i * period / count) for i in range(count)]
+            row = [prepared[t] for t in ts]
+            if len({f.tobytes() for f in row}) < a["minUnique"]:
+                continue
+            leg_motion = max(_head_diff(row[i], row[(i + count // 2) % count], legs) for i in range(count))
+            body_motion = max(_head_diff(row[0], f, slice(neck, joint)) for f in row[1:])
+            if leg_motion < c["minAlternate"] or body_motion < a["minBodyMotion"]:
+                continue
+            changes = [_head_diff(row[i], row[(i + 1) % count], slice(None)) for i in range(count)]
+            mean_change = max(float(np.mean(changes)), 1.0)
+            seam_ratio = changes[-1] / mean_change
+            if seam_ratio > a["maxSeamRatio"]:
+                continue
+            recurrence = _head_diff(prepared[first], prepared[first + period], slice(None))
+            # Prefer a true recurring pose, a quiet wrap seam and little identity drift.
+            score = 4 * recurrence / mean_change + max(changes) / mean_change + np.mean([identity[t] for t in ts]) / max(int(op[:neck].sum()), 1)
+            if best is None or score < best[0]:
+                best = (score, ts, row, period, seam_ratio, body_motion, leg_motion)
     if best is None:
-        raise ValueError(
-            f"no clean alternating stride cycle in the clip ({sum(clean)}/{len(cells)} clean frames, runs: {stretches})"
-        )
-    row = []
-    lifts = []
-    for t in best[1]:
-        f, _ = prepared(t)
-        # the head top tracks the bob even when the video redraws the head a little larger or turned
-        lift = min(max(round(bob[0] - bob[t]), 0), c["maxLift"])
-        g = _compose(f, ref, neck, lift, palette)
-        g = binarize_alpha(remove_specks(g, scfg["minSpeck"], scfg["speckRatio"]))
-        # a dropped speck may have been the lowest pixel
-        g = _shift(g, foot - _extent(_opaque(g))[1], 0)
-        row.append(g)
-        lifts.append(lift)
-    return row, {"frames": best[1], "headDiff": best[0], "lift": lifts}
+        raise ValueError(f"no connected, moving, continuous cycle ({sum(clean)}/{len(clean)} usable frames)")
+    _, ts, row, period, seam_ratio, body_motion, leg_motion = best
+    stand = plant_idle(ref, scfg["walkCycle"])
+    stand = _shift(stand, baseline - _extent(_opaque(stand))[1], 0)
+    return [stand, *row], {
+        "frames": ts, "period": period, "unique": len({f.tobytes() for f in row}),
+        "seamRatio": round(seam_ratio, 3), "bodyMotionPixels": body_motion,
+        "legMotionPixels": leg_motion, "completeBody": True,
+    }
 
 
 def clip_cells(video: pathlib.Path) -> tuple[list[np.ndarray], list[float]]:
@@ -319,15 +309,23 @@ def clip_cells(video: pathlib.Path) -> tuple[list[np.ndarray], list[float]]:
 
 
 def rows(sheet_id: str) -> dict[str, tuple[list[np.ndarray] | None, dict]]:
-    """{direction: (4 cells or None, report)} for every direction with a downloaded clip."""
+    """Prefer regenerated clips; retain source provenance for each direction."""
     cfg, wv, _ = _cfg()
     out: dict[str, tuple[list[np.ndarray] | None, dict]] = {}
-    for video in sorted(_dir_of(sheet_id).glob("*.mp4")):
+    current = ROOT / wv["rawDirV2"] / sheet_id
+    videos = {p.stem: p for p in sorted(_dir_of(sheet_id).glob("*.mp4"))}
+    videos.update({p.stem: p for p in sorted(current.glob("*.mp4"))})
+    for direction, video in videos.items():
         try:
             cells, bob = clip_cells(video)
-            out[video.stem] = cycle(
-                cells, bob, seed(sheet_id, video.stem), wv, cfg["sheet"]
+            cycle_cfg = wv
+            if video.parent == current:
+                lower, upper = wv["atlas"]["regeneratedPeriod"]
+                cycle_cfg = {**wv, "atlas": {**wv["atlas"], "minPeriod": lower, "maxPeriod": upper}}
+            row, report = cycle(
+                cells, bob, seed(sheet_id, direction, video.with_suffix(".png")), cycle_cfg, cfg["sheet"]
             )
+            out[direction] = row, {**report, "source": str(video.relative_to(ROOT)), "regenerated": video.parent == current}
         except (ValueError, OSError, subprocess.CalledProcessError) as e:
             out[video.stem] = None, {"fallback": str(e)}
     return out
@@ -393,9 +391,14 @@ def main() -> int:
             ap.error("cycle needs an output png")
         cell = _cfg()[2]["sheetCell"]
         got = rows(a.id)
-        sheet = np.zeros((cell * len(got), cell * FRAMES, 4), np.float32)
-        for r, (cells, _) in enumerate(got.values()):
-            for c, f in enumerate(cells or []):
+        order = sorted(_cfg()[2]["sheetRows"].items(), key=lambda kv: kv[1])
+        if any(d not in got or got[d][0] is None for d, _ in order):
+            print(json.dumps({d: rep for d, (_, rep) in got.items()}))
+            return 1
+        ncols = _cfg()[1]["atlas"]["frames"] + 1
+        sheet = np.zeros((cell * len(order), cell * ncols, 4), np.float32)
+        for direction, r in order:
+            for c, f in enumerate(got[direction][0]):
                 sheet[r * cell : (r + 1) * cell, c * cell : (c + 1) * cell] = f
         save_png(to_image(sheet), a.out)
         print(json.dumps({d: rep for d, (_, rep) in got.items()}))

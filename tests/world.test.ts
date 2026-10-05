@@ -4,7 +4,7 @@ import { CONTENT } from '../src/shared/content/index.ts'
 import type { GameMap, World } from '../src/shared/types.ts'
 import { WORLD_CONTENT, buildWorld, validateWorldContent, worldAnchors, worldBuildInfo, worldStats } from '../src/shared/world/index.ts'
 import {
-  buildCollision, canStep, elevationAt, propDoor, propRect, propSize, regionAt, stairsDir, terrainAt,
+  buildCollision, canStep, elevationAt, propDoor, propDoors, propRect, propSize, regionAt, stairsDir, terrainAt,
 } from '../src/shared/world/collision.ts'
 import { floodReach } from '../src/shared/world/reach.ts'
 import { createNoise, fbm, fbm01, perlin, ridged, simplex, upsample, sampleField, worley } from '../src/shared/noise.ts'
@@ -168,8 +168,7 @@ test('no prop sits on a warp tile except the building that owns the door', () =>
       const r = propRect(p)
       for (let y = r.y; y < r.y + r.h; y++) for (let x = r.x; x < r.x + r.w; x++) {
         if (!warpAt.has(y * m.width + x)) continue
-        const door = propDoor(p)
-        const ownsDoor = door && door.x === x && door.y === y
+        const ownsDoor = propDoors(p).some(door => door.x === x && door.y === y)
         const passable = !CONTENT.props[p.prop]?.collide
         assert.ok(ownsDoor || passable, `${m.id}: ${p.prop} covers warp at ${x},${y}`)
       }

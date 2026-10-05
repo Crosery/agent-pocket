@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { CONTENT, type Content } from '../../shared/content/index.ts'
 import type { Dir } from '../../shared/types.ts'
 import type { BillboardConfig } from './config.ts'
+import { characterFrames } from './character-animation.ts'
 
 /** Nearest-filtered, mip-less sRGB texture (pixel art). Returns the same texture. */
 export function configurePixelTexture<T extends THREE.Texture>(tex: T): T {
@@ -35,22 +36,64 @@ export interface SheetLayout {
   cols: number
   rows: number
   rowOf: Record<Dir, number>
+  walkFrames: number
+  walkStart: number
+  idleFrames: number
 }
 
 /** Character sheet layout from config.sprites (rows per direction, frames per row). */
-export function sheetLayout(c: Content = CONTENT): SheetLayout {
+export function sheetLayout(c: Content = CONTENT, texture?: THREE.Texture | null): SheetLayout {
   const s = c.config.sprites
   const rows = Math.max(...Object.values(s.sheetRows)) + 1
-  return { cols: s.sheetFrames, rows, rowOf: s.sheetRows }
+  return { ...characterFrames(texture ? textureSize(texture).w : 0, s), rows, rowOf: s.sheetRows }
+}
+
+const opaqueTops = new WeakMap<object, { key: string; tops: Float32Array }>()
+
+/** Top opaque texel of a cell, measured as a fraction above the card bottom. Read each loaded atlas only once. */
+export function spriteOpaqueTop(texture: THREE.Texture | null, col = 0, row = 0, cols = 1, rows = 1, alphaTest = 0.5): number {
+  const image = texture?.image as HTMLCanvasElement | undefined
+  if (!image || !(image.width > 0 && image.height > 0)) return 1
+  const key = `${image.width}/${image.height}/${cols}/${rows}/${alphaTest}`
+  let cached = opaqueTops.get(image)
+  if (!cached || cached.key !== key) {
+    const tops = new Float32Array(cols * rows).fill(1)
+    try {
+      const canvas = typeof image.getContext === 'function' ? image : createCanvas(image.width, image.height)
+      const g = canvas.getContext('2d', { willReadFrequently: true })!
+      if (canvas !== image) g.drawImage(image, 0, 0)
+      const { data } = g.getImageData(0, 0, image.width, image.height)
+      const w = image.width / cols, h = image.height / rows
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          scan: for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+              if (data[((r * h + y) * image.width + c * w + x) * 4 + 3] < alphaTest * 255) continue
+              tops[r * cols + c] = 1 - y / h
+              break scan
+            }
+          }
+        }
+      }
+    } catch {
+      // A loading placeholder or unreadable cross-origin image keeps the full-card fallback.
+    }
+    cached = { key, tops }
+    opaqueTops.set(image, cached)
+  }
+  return cached.tops[row * cols + col] ?? 1
 }
 
 /**
- * Upright quad with its pivot at the bottom centre. Normals lean from "facing the camera" toward "up" so
- * sprites are lit by sun elevation instead of going dark when the light is behind the camera.
+ * Upright quad with its pivot at the bottom centre (raised by `pivotY`, e.g. onto the soles above empty texel rows).
+ * Normals lean from "facing the camera" toward "up" so sprites are lit by sun elevation instead of going dark when
+ * the light is behind the camera. `segments` horizontal bands keep the upright-card depth the shader writes close
+ * to exact (depth is interpolated linearly per band; one band on a tall card is off by several hundredths of a tile,
+ * enough to let a big sprite beside the player paint over it).
  */
-export function createBillboardGeometry(width: number, height: number, normalTilt: number): THREE.BufferGeometry {
-  const geo = new THREE.PlaneGeometry(width, height)
-  geo.translate(0, height / 2, 0)
+export function createBillboardGeometry(width: number, height: number, normalTilt: number, pivotY = 0, segments = 1): THREE.BufferGeometry {
+  const geo = new THREE.PlaneGeometry(width, height, 1, Math.max(1, Math.round(segments)))
+  geo.translate(0, height / 2 - pivotY, 0)
   const n = geo.getAttribute('normal') as THREE.BufferAttribute
   const v = new THREE.Vector3(0, normalTilt, 1 - normalTilt).normalize()
   for (let i = 0; i < n.count; i++) n.setXYZ(i, v.x, v.y, v.z)
@@ -67,11 +110,13 @@ export function setGeometryFrame(geo: THREE.BufferGeometry, col: number, row: nu
   let u0 = col / cols, u1 = (col + 1) / cols
   if (flipX) [u0, u1] = [u1, u0]
   const v1 = 1 - row / rows, v0 = 1 - (row + 1) / rows
-  // PlaneGeometry vertex order: top-left, top-right, bottom-left, bottom-right.
-  uv.setXY(0, u0, v1)
-  uv.setXY(1, u1, v1)
-  uv.setXY(2, u0, v0)
-  uv.setXY(3, u1, v0)
+  // PlaneGeometry (1 column) vertex order: rows top to bottom, each left then right.
+  const bands = uv.count / 2 - 1
+  for (let i = 0; i <= bands; i++) {
+    const v = v1 + (v0 - v1) * (i / bands)
+    uv.setXY(i * 2, u0, v)
+    uv.setXY(i * 2 + 1, u1, v)
+  }
   uv.needsUpdate = true
 }
 
@@ -92,6 +137,8 @@ export interface SpriteUniforms {
   uLean: { value: number }
   /** Fraction of the remaining pitch foreshortening undone by stretching the card (1 = art proportions on screen). */
   uCompensate: { value: number }
+  /** Billboard pose only: written depth pushed this far (world units) away from the camera; negative = toward it. */
+  uDepthBias: { value: number }
 }
 
 export interface SpriteMaterial {
@@ -114,6 +161,7 @@ export function createSpriteMaterial(map: THREE.Texture, opts: { alphaTest: numb
     uFlashColor: { value: new THREE.Color(1, 1, 1) },
     uLean: { value: opts.billboard?.lean ?? 0 },
     uCompensate: { value: opts.billboard?.compensate ?? 0 },
+    uDepthBias: { value: 0 },
   }
   const material = new THREE.MeshLambertMaterial({
     map,
@@ -125,7 +173,7 @@ export function createSpriteMaterial(map: THREE.Texture, opts: { alphaTest: numb
   material.onBeforeCompile = (shader) => {
     Object.assign(shader.uniforms, uniforms)
     shader.vertexShader = shader.vertexShader
-      .replace('#include <common>', '#include <common>\nvarying float vSpriteY;\nuniform float uLean;\nuniform float uCompensate;')
+      .replace('#include <common>', '#include <common>\nvarying float vSpriteY;\nuniform float uLean;\nuniform float uCompensate;\nuniform float uDepthBias;')
       .replace('#include <begin_vertex>', `#include <begin_vertex>
 vSpriteY = position.y;
 vec3 apUpright = transformed;
@@ -145,7 +193,9 @@ if (apPose) {
 }`)
       .replace('#include <project_vertex>', `#include <project_vertex>
 if (apPose) {
-  vec4 apClip = projectionMatrix * modelViewMatrix * vec4(apUpright, 1.0);
+  vec4 apMv = modelViewMatrix * vec4(apUpright, 1.0);
+  apMv.z -= uDepthBias;
+  vec4 apClip = projectionMatrix * apMv;
   gl_Position.z = apClip.z / apClip.w * gl_Position.w;
 }`)
     shader.fragmentShader = shader.fragmentShader
@@ -173,7 +223,7 @@ if (uHue != 0.0 || uSaturation != 1.0) {
 }`)
       .replace('#include <opaque_fragment>', 'outgoingLight = mix(outgoingLight, uFlashColor, uFlash);\n#include <opaque_fragment>')
   }
-  material.customProgramCacheKey = () => 'ap-sprite-v2'
+  material.customProgramCacheKey = () => 'ap-sprite-v3'
   return {
     material,
     uniforms,
@@ -247,6 +297,23 @@ export function billboardAnchorScale(pitch: number, b: BillboardConfig): number 
   const rest = Math.max(Math.cos(pitch - pitch * b.lean), 0.05)
   const stretch = 1 + (1 / rest - 1) * b.compensate
   return (stretch * rest) / Math.max(Math.cos(pitch), 0.05)
+}
+
+const _scaleY = new THREE.Vector3(), _scaleZ = new THREE.Vector3()
+
+/** Project a local anchor with the same lean, compensation and model scale as the sprite vertex shader. */
+export function billboardPointToWorld(out: THREE.Vector3, mesh: THREE.Mesh, pitch: number, b: BillboardConfig): THREE.Vector3 {
+  mesh.updateWorldMatrix(true, false)
+  if (b.lean > 0 || b.compensate > 0) {
+    const lean = pitch * b.lean
+    const rest = Math.max(Math.cos(pitch - lean), 0.05)
+    const y = out.y * (1 + (1 / rest - 1) * b.compensate)
+    const sy = _scaleY.setFromMatrixColumn(mesh.matrixWorld, 1).length()
+    const sz = _scaleZ.setFromMatrixColumn(mesh.matrixWorld, 2).length()
+    out.y = y * Math.cos(lean)
+    out.z = -y * Math.sin(lean) * sy / Math.max(sz, 1e-4)
+  }
+  return out.applyMatrix4(mesh.matrixWorld)
 }
 
 let blobTex: THREE.Texture | null = null

@@ -30,7 +30,7 @@
     "shake": {"frequency": 26, "rollDeg": 0.6},
     "transition": {"fadeColor": "#000000", "swirlPortion": 0.45, "swirlTurns": 2.2, "shardCells": 6, "shardSpin": 1.6, "shardStagger": 0.55, "battleFlash": 0.9, "irisSoftPx": 1.5, "irisMaxRadius": 1.25}
   },
-  "camera": {"near": 0.5, "far": 180, "edgeMargin": 1.5, "zoomDamping": 5, "lookAheadDamping": 2.2, "lookAheadMinSpeed": 0.4, "interiorMargin": 1.2, "snapDistance": 12, "focusSafe": {"north": 0.36, "south": 0.6, "side": 0.35}, "billboard": {"lean": 1, "compensate": 1}},
+  "camera": {"near": 0.5, "far": 180, "edgeMargin": 1.5, "zoomDamping": 5, "lookAheadDamping": 2.2, "lookAheadReleaseDamping": 7, "lookAheadMinSpeed": 0.4, "lookAheadFullSpeed": 3.2, "interiorMargin": 1.2, "snapDistance": 12, "focusSafe": {"north": 0.36, "south": 0.6, "side": 0.35}, "billboard": {"lean": 1, "compensate": 1}},
   "sun": {"distance": 60, "shadowExtent": 20, "shadowNear": 1, "shadowFar": 160, "bias": -0.0006, "normalBias": 0.035, "sunrise": 330, "sunset": 1170, "switchFadeMinutes": 28, "switchFloor": 0.12, "minElevationDeg": 16, "maxElevationDeg": 60, "azimuthRiseDeg": 72, "azimuthSetDeg": -72, "moonElevationDeg": 52, "moonAzimuthDeg": -28, "extentPerDistance": 1.15},
   "timeOfDay": [
     {"minute": 0, "skyTop": "#050920", "skyHorizon": "#172150", "skyBottom": "#0a0f28", "sun": "#8ea6ec", "sunIntensity": 0.8, "hemiSky": "#4a5ea8", "hemiGround": "#1c1832", "hemiIntensity": 1.05, "fog": "#111a3c", "fogNear": 10, "fogFar": 58, "exposure": 1.05, "saturation": 0.86, "contrast": 1.08, "warmth": -0.4, "bloomStrength": 0.55, "vignette": 0.52, "lamps": 1, "stars": 1},
@@ -180,21 +180,29 @@
     "alphaTest": 0.5,
     "walkFps": 7,
     "runFps": 11,
-    "grassCut": 0.3,
+    "grassCut": 0.14,
+    "grassCutMs": 140,
+    "footInset": 2,
+    "renderOrder": {"player": 3, "remote": 2, "npc": 2, "creature": 1},
+    "depthBias": {"player": -0.012, "remote": 0, "npc": 0, "creature": 0.02},
+    "cardSegments": 8,
     "normalTilt": 0.6,
     "hop": {"height": 0.34, "ms": 300},
     "blob": {"size": 0.72, "opacity": 0.36},
     "bubbleMs": 1800,
     "remoteAlpha": 1,
     "nameColor": "#ffffff",
-    "walkCycle": {"stride": {"walk": 0.9, "run": 1.2}, "maxFps": 12, "teleportTiles": 2},
-    "motion": {"stepBounce": 0.045, "runBounceMul": 1.3, "stepSquash": 0.05, "stepsPerCycle": 2, "breathe": 0.018, "breatheHz": 0.55, "landSquash": 0.14, "landMs": 160}
+    "walkCycle": {"stride": {"walk": 0.72, "run": 1.0}, "maxFps": 13, "teleportTiles": 2},
+    "motion": {"stepBounce": 0, "runBounceMul": 1, "stepSquash": 0, "stepsPerCycle": 2, "breathe": 0.006, "breatheHz": 0.55, "landSquash": 0.06, "landMs": 180, "snapTexels": true}
   },
   "creatures": {
     "height": 1.0,
     "alphaTest": 0.45,
+    "footInset": 2,
+    "flipHoldMs": 110,
+    "occlusionKeep": 1,
     "bob": {"amp": 0.045, "hz": 1.5, "squash": 0.045},
-    "move": {"hopHeight": 0.16, "hz": 3.2},
+    "move": {"hopHeight": 0.16, "hopStride": 1.1, "minHz": 2.4, "maxHz": 6, "blendMs": 140},
     "shiny": {"hue": 2.2, "saturation": 1.18, "sparkles": 10, "sparkleColor": "#fff6b0", "sparkleGlow": 3, "sparkleSize": 4, "twinkleSpeed": 4},
     "aura": {"radius": 0.62, "intensity": 2.2, "pulseHz": 1.1, "motes": 12, "moteHeight": 1.4, "ringInner": 0.7, "moteSpeed": 0.4, "moteSize": 2},
     "artFacesLeft": true

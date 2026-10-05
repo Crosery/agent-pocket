@@ -6,7 +6,7 @@ import type { Actor, CreatureActor, GameContext, ListItem } from '../contracts.t
 import { t } from '../../shared/content/index.ts'
 import { GAME } from './config.ts'
 import { createTrail, type Trail } from './trail.ts'
-import { DIR_VEC } from './motion.ts'
+import { DIR_VEC, facingFromAxis } from './motion.ts'
 
 /** Optional multiplayer flows (src/client/net/trade-flow.ts, pvp-channel.ts), injected when they load. */
 export interface MultiplayerHooks {
@@ -26,6 +26,9 @@ interface RemoteView {
   ly: number
   x: number
   y: number
+  /** Facing / walk state taken from the interpolated (delayed) motion so the legs match the body. */
+  facing: Dir
+  stillMs: number
 }
 
 const leadKeyOf = (l: { speciesId: string; shiny: boolean } | null) => (l ? `${l.speciesId}|${l.shiny ? 1 : 0}` : '')
@@ -83,17 +86,25 @@ export function createPresence(ctx: GameContext, deps: { mapId(): string | null;
         // Lead starts behind the player (opposite its facing) instead of on top of it.
         const back = DIR_VEC[p.facing as Dir] ?? DIR_VEC.down
         const bx = p.rx - back.x * GAME.presence.followerDistance, by = p.ry - back.y * GAME.presence.followerDistance
-        v = { id: p.id, name: p.name, actor, avatar: p.avatar, lead: null, leadKey: '', trail: createTrail(GAME.follower.trailSpacing, GAME.follower.maxTrail), lx: bx, ly: by, x: p.rx, y: p.ry }
+        v = { id: p.id, name: p.name, actor, avatar: p.avatar, lead: null, leadKey: '', trail: createTrail(GAME.follower.trailSpacing, GAME.follower.maxTrail), lx: bx, ly: by, x: p.rx, y: p.ry, facing: p.facing as Dir, stillMs: Infinity }
         v.trail.reset({ x: p.rx, y: p.ry, elev: 0 }, { x: bx, y: by, elev: 0 })
         views.set(p.id, v)
       }
       if (v.name !== p.name) { v.name = p.name; v.actor.setName(p.name) }
+      // the snapshot flags are newer than the interpolated position: walk/face by the rendered motion instead
+      const mvx = p.rx - v.x, mvy = p.ry - v.y, step = Math.hypot(mvx, mvy)
+      if (dt > 0 && step / dt > GAME.presence.moveMinSpeed) {
+        v.stillMs = 0
+        v.facing = facingFromAxis(mvx / step, mvy / step, v.facing, GAME.player.facingHysteresis)
+      } else v.stillMs += dt * 1000
+      const walking = v.stillMs < GAME.presence.moveHoldMs
+      if (!walking) v.facing = p.facing as Dir
       v.x = p.rx
       v.y = p.ry
       const elev = ctx.world.elevationAt(v.x, v.y)
       v.actor.setPosition(v.x, v.y, elev)
-      v.actor.setFacing(p.facing as Dir)
-      v.actor.setMoving(p.moving, p.running)
+      v.actor.setFacing(v.facing)
+      v.actor.setMoving(walking, p.running)
       v.actor.update(dt)
       syncLead(v, p.lead)
       if (v.lead) {
@@ -103,8 +114,8 @@ export function createPresence(ctx: GameContext, deps: { mapId(): string | null;
           const k = 1 - Math.exp(-dt * GAME.presence.followerRate)
           const nx = v.lx + (target.x - v.lx) * k, ny = v.ly + (target.y - v.ly) * k
           const moved = Math.hypot(nx - v.lx, ny - v.ly)
-          if (moved > 1e-3 && Math.abs(nx - v.lx) > 1e-3) v.lead.setFacingLeft(nx < v.lx)
-          v.lead.setMoving(moved > GAME.follower.moveEpsilon * dt * 60)
+          if (Math.abs(nx - v.lx) > GAME.follower.flipMinSpeed * dt) v.lead.setFacingLeft(nx < v.lx)
+          v.lead.setMoving(dt > 0 && moved / dt > GAME.follower.moveMinSpeed)
           v.lx = nx
           v.ly = ny
         }

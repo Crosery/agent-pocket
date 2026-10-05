@@ -4,7 +4,7 @@ import { UI_CONFIG } from './config.ts'
 import { rasterizeGlyph } from './pixel.ts'
 
 /** Glyph role ids the UI code draws directly (art lives in content/ui.json). */
-export const UI_GLYPHS = ['cursor', 'advance', 'end', 'scrollUp', 'scrollDown', 'diamond', 'coin', 'shine', 'quest'] as const
+export const UI_GLYPHS = ['cursor', 'advance', 'end', 'scrollUp', 'scrollDown', 'diamond', 'coin', 'shine', 'quest', 'objective', 'event', 'home', 'location', 'chat', 'close'] as const
 
 export interface GlyphOptions { palette?: Record<string, string>; rotate?: number }
 

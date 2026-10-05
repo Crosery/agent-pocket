@@ -415,7 +415,8 @@ function houseParts(s: HouseStyle, ctx: Ctx): PartDef[] {
 
   // door: PropDef.door is the tile in front of the facade relative to the anchor tile
   const doorX = doorOffsetX(def)
-  const doorW = (s.doorWidth ?? B.doorWidth / W) * W
+  const [doorLo, doorHi] = def.doorSpan ?? [0, 0]
+  const doorW = Math.max((s.doorWidth ?? B.doorWidth / W) * W, B.doorWidth + doorHi - doorLo)
   const doorH = (s.doorHeight ?? B.doorHeight) * top
   if (doorX !== null) {
     const [fw, fh, fd] = B.doorFrame

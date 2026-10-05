@@ -4,7 +4,7 @@ import { CONTENT } from '../src/shared/content/index.ts'
 import type { GameMap, TerrainDef, WeatherId } from '../src/shared/types.ts'
 import type { WorldFx } from '../src/client/contracts.ts'
 import { RENDER, propStyle, sampleLighting, sunState, validateRenderContent, type LightingState } from '../src/client/render/config.ts'
-import { footprintCenter, footprintRect, stairsRamp, tileOf, walkHeight } from '../src/client/render/world/coords.ts'
+import { doorOffsetX, footprintCenter, footprintRect, stairsRamp, tileOf, walkHeight } from '../src/client/render/world/coords.ts'
 import { buildChunk, createTerrainSampler } from '../src/client/render/world/terrain.ts'
 import { createCameraRig } from '../src/client/render/world/camera.ts'
 import { billboardAnchorScale, cameraPitch } from '../src/client/render/sprite-utils.ts'
@@ -87,6 +87,13 @@ test('footprint convention: odd/even sizes and door in front of the facade', () 
   assert.equal(c.x, r.x0 + r.w / 2)
   const r1 = footprintRect({ prop: def.key, x: 10, y: 10, rot: 1 }, def)
   assert.equal(r1.w, def.footprint[1])
+})
+
+test('procedural doors centre on every entry lane, matching the double-door GLBs', () => {
+  for (const key of ['lab', 'center', 'gym', 'datacenter', 'temple']) assert.equal(doorOffsetX(CONTENT.props[key]), 0, key)
+  assert.equal(doorOffsetX(CONTENT.props.house_small), 0.5)
+  assert.equal(doorOffsetX(CONTENT.props.shop), 0)
+  assert.equal(doorOffsetX(CONTENT.props.tree_oak), null)
 })
 
 test('terrain chunk builds tops, cliffs and water with sane bounds', () => {

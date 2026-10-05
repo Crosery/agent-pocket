@@ -2,7 +2,7 @@
 
 Numbers in the spec may be literals or strings such as "W-0.3" / "max(H*0.5, wallH)".
 Names resolve against the building scope: W, D, H (PropDef footprint/height), DX, DY (PropDef door
-offsets, 0 when absent), DOORX (door tile centre x), HAS_DOOR, then spec-level defaults.vars and per-building vars in order.
+offsets, 0 when absent), DOORX (complete door opening centre x), HAS_DOOR, then spec-level defaults.vars and per-building vars in order.
 """
 
 import ast
@@ -148,6 +148,7 @@ def building_scope(spec, prop, bspec):
     """Variables visible to a building's expressions, derived from PropDef + spec vars (in order)."""
     w, d = prop["footprint"]
     door = prop.get("door")
+    door_span = prop.get("doorSpan", [0, 0])
     scope = {
         "W": float(w),
         "D": float(d),
@@ -155,9 +156,8 @@ def building_scope(spec, prop, bspec):
         "DX": float(door[0]) if door else 0.0,
         "DY": float(door[1]) if door else 0.0,
         "HAS_DOOR": 1 if door else 0,
-        # door tile = column floor(W/2)+DX of the footprint (src/shared/world/collision.ts propDoor),
-        # expressed relative to the footprint centre: +0.5 for even widths when DX = 0
-        "DOORX": (math.floor(w / 2) + float(door[0]) - (w - 1) / 2) if door else 0.0,
+        # Match the centre of all entry lanes, not just the primary return tile.
+        "DOORX": (math.floor(w / 2) + float(door[0]) - (w - 1) / 2 + sum(door_span) / 2) if door else 0.0,
     }
     for src in (spec.get("defaults", {}).get("vars", {}), bspec.get("vars", {})):
         for k, v in src.items():

@@ -238,6 +238,7 @@ export function createMinimap(root: HTMLElement): MinimapHandle {
   let lastTime = 0
   let player = { x: 0, y: 0, facing: 'down' as Dir }
   let markers: MinimapMarker[] = []
+  let route: readonly { x: number; y: number }[] = []
   let expanded = false
   let visible = true
   let legendKey = ''
@@ -394,6 +395,22 @@ export function createMinimap(root: HTMLElement): MinimapHandle {
   const glyphFor = (m: MinimapMarker, s: MarkerStyle) =>
     glyphSource(s.glyph, { palette: s.palette, rotate: s.rotate && m.facing ? ROTATION[m.facing] : 0 })
 
+  const drawRoute = (ctx: CanvasRenderingContext2D, sx: number, sy: number, ppt: number) => {
+    if (route.length < 2) return
+    ctx.save()
+    ctx.strokeStyle = UI_CONFIG.glyphPalette.h
+    ctx.lineWidth = Math.max(1, Math.round(ppt * 0.45))
+    ctx.setLineDash([Math.max(2, ppt), Math.max(1, ppt * 0.7)])
+    ctx.beginPath()
+    route.forEach((p, i) => {
+      const x = (p.x + 0.5 - sx) * ppt, y = (p.y + 0.5 - sy) * ppt
+      if (i === 0) ctx.moveTo(x, y)
+      else ctx.lineTo(x, y)
+    })
+    ctx.stroke()
+    ctx.restore()
+  }
+
   const draw = () => {
     if (!size) return
     const ctx = mapCv.getContext('2d')!
@@ -415,6 +432,7 @@ export function createMinimap(root: HTMLElement): MinimapHandle {
         if (fogCv) ctx.drawImage(fogCv, sx, sy, span, span, 0, 0, size, size)
       }
       const half = size / 2
+      drawRoute(ctx, sx, sy, ppt)
       for (const { m, s } of collect()) {
         const src = glyphFor(m, s)
         let px = (m.x + off - cx) * ppt + half
@@ -540,6 +558,7 @@ export function createMinimap(root: HTMLElement): MinimapHandle {
       if (fogCv) ctx.drawImage(fogCv, 0, 0, w, h)
     }
     const g = getUIScale().deviceScale
+    drawRoute(ctx, viewOrigin.x, viewOrigin.y, viewK)
     const off = CFG.tileCenterOffset
     const kinds: string[] = []
     for (const { m, s } of collect()) {
@@ -565,6 +584,7 @@ export function createMinimap(root: HTMLElement): MinimapHandle {
     get expanded() { return expanded },
     setMap(next: GameMap, explored: Uint8Array | null) {
       map = next
+      route = []
       inf = next.infinite ?? null
       chunkTiles.clear()
       fogTiles.clear()
@@ -594,12 +614,13 @@ export function createMinimap(root: HTMLElement): MinimapHandle {
       if (expanded) layoutView()
       draw()
     },
-    update(playerX: number, playerY: number, facing: Dir, next: MinimapMarker[]) {
+    update(playerX: number, playerY: number, facing: Dir, next: MinimapMarker[], nextRoute: readonly { x: number; y: number }[] = []) {
       const now = performance.now()
       const dt = lastTime ? Math.min(0.25, (now - lastTime) / 1000) : 0
       lastTime = now
       player = { x: playerX, y: playerY, facing }
       markers = next
+      route = nextRoute
       bakedThisFrame = 0
       refreshStatics(playerX, playerY)
       if (inf && expanded && Math.max(Math.abs(playerX - viewOrigin.x - viewTiles / 2), Math.abs(playerY - viewOrigin.y - viewTiles / 2)) > viewTiles / 4) layoutView()
@@ -648,4 +669,3 @@ export function createMinimap(root: HTMLElement): MinimapHandle {
   }
   return api
 }
-

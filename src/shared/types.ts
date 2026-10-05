@@ -323,6 +323,8 @@ export interface PropDef {
   height: number
   collide: boolean
   door?: [number, number]
+  /** Inclusive local-X tile offsets from the primary door; defaults to [0, 0]. */
+  doorSpan?: [number, number]
   billboard?: boolean
   light?: PropLight
   minimapIcon?: 'center' | 'shop' | 'gym' | 'lab' | 'house' | 'tower' | 'none'
@@ -349,7 +351,7 @@ export interface GameConfig {
   movement: { walkSpeed: number; runSpeed: number; bikeSpeed: number; surfSpeed: number }
   party: { maxParty: number; boxCount: number; boxSize: number; maxLevel: number; maxMoves: number }
   time: { dayRealSeconds: number; startMinutes: number; phases: { id: TimeOfDay; from: number; to: number }[] }
-  sprites: { sheetCell: number; sheetFrames: number; sheetRows: Record<Dir, number>; creatureSize: number }
+  sprites: { sheetCell: number; sheetFrames: number; sheetWalkFrames: number; sheetIdleFrames: number; idleFps: number; idleSettleMs: number; sheetRows: Record<Dir, number>; creatureSize: number }
   net: {
     tickHz: number; viewRadius: number; protocolVersion: number; chatMaxLen: number
     chatRate: { count: number; perSeconds: number }; localChatRadius: number

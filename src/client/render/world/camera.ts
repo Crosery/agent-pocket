@@ -129,12 +129,16 @@ export function createCameraRig(): CameraRig {
       if (dt > 0) {
         const inst = new THREE.Vector3().subVectors(focus, lastFocus).divideScalar(dt)
         inst.y = 0
-        vel.lerp(inst, 1 - Math.exp(-R.lookAheadDamping * dt))
+        // slowing down releases the lead fast: a stopped player must not keep the camera drifting ahead
+        const damping = inst.lengthSq() < vel.lengthSq() ? R.lookAheadReleaseDamping : R.lookAheadDamping
+        vel.lerp(inst, 1 - Math.exp(-damping * dt))
       }
       lastFocus.copy(focus)
       const speed = vel.length()
       look.copy(focus)
-      if (speed > R.lookAheadMinSpeed) look.addScaledVector(vel, (C.lookAhead / speed) * Math.min(1, (speed - R.lookAheadMinSpeed) / Math.max(R.lookAheadMinSpeed, 1e-3)))
+      // the lead grows with speed up to lookAheadFullSpeed, so it shrinks as soon as the player slows down
+      const ramp = (speed - R.lookAheadMinSpeed) / Math.max(R.lookAheadFullSpeed - R.lookAheadMinSpeed, 1e-3)
+      if (speed > R.lookAheadMinSpeed) look.addScaledVector(vel, (C.lookAhead / speed) * Math.min(1, ramp))
       clampTarget(look, distance, focus)
       target.lerp(look, 1 - Math.exp(-C.followDamping * dt))
       place()

@@ -103,8 +103,8 @@ export interface InputBindings {
   keyboard: Partial<Record<InputAction, string[]>>
   gamepad: { buttons: Partial<Record<InputAction, number[]>> }
   touch: {
-    buttons: { action: InputAction; label: string; size: 'large' | 'small'; bottom: number }[]
-    stickRadius: number; margin: number; buttonSize: number; smallButtonSize: number
+    buttons: { action: InputAction; label: string; size: 'large' | 'small'; bottom: number; right: number }[]
+    stickRadius: number; margin: number; buttonSize: number; smallButtonSize: number; zoneWidthFraction: number
   }
 }
 export const INPUT_BINDINGS: InputBindings = inputJson as unknown as InputBindings

@@ -465,9 +465,21 @@
   "walkVideo": {
     "enabled": true,
     "rawDir": "assets_src/raw/walk_video",
+    "rawDirV2": "assets_src/raw/walk_video_v2",
     "pad": 8,
     "scale": 8,
     "background": "#FF00FF",
+    "atlas": {
+      "frames": 8,
+      "minPeriod": 12,
+      "maxPeriod": 36,
+      "regeneratedPeriod": [20, 28],
+      "minUnique": 6,
+      "maxSeamRatio": 2.25,
+      "minBodyMotion": 12,
+      "maxDetached": 8,
+      "minSpeck": 2
+    },
     "cycle": {
       "topMinPx": 20,
       "edgeFrames": 4,
@@ -476,7 +488,7 @@
         0.65
       ],
       "maxShift": 2,
-      "maxLift": 1,
+      "bob": 1,
       "seedMaxDiff": 40,
       "reach": 6,
       "maxStray": 12,

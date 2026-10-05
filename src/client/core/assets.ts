@@ -4,6 +4,7 @@ import { CONTENT } from '../../shared/content/index.ts'
 import { createPlaceholders, TUFT_SUFFIX } from './placeholders.ts'
 import { PH } from './placeholders-data.ts'
 import type { PlaceholderKind } from './placeholders.ts'
+import { prepareCharacterSheet } from '../render/character-idle.ts'
 
 type Kind = keyof AssetManifest
 
@@ -80,17 +81,29 @@ export function createAssetStore(): AssetStore {
     if (hit) return hit
     let tex: THREE.Texture
     if (src) {
-      tex = new THREE.Texture(blankCanvas(size[0], size[1]))
+      let currentImage: HTMLCanvasElement | HTMLImageElement = blankCanvas(size[0], size[1])
+      tex = new THREE.Texture(currentImage)
+      const replaceImage = (image: HTMLImageElement | HTMLCanvasElement) => {
+        if (ph.kind === 'character') image = prepareCharacterSheet(image)
+        if (currentImage.width !== image.width || currentImage.height !== image.height) {
+          // WebGL2 storage is immutable; reallocate without changing the Texture held by live materials.
+          tex.dispose()
+        }
+        currentImage = image
+        tex.image = currentImage
+        tex.needsUpdate = true
+      }
       const img = new Image()
       img.decoding = 'async'
       img.crossOrigin = 'anonymous'   // CDN-hosted textures must be CORS-clean for WebGL
-      img.onload = () => { tex.image = img; tex.needsUpdate = true }
-      img.onerror = () => { tex.image = placeholders.canvas(ph.kind, ph.id); setup(tex, false); tex.needsUpdate = true }
+      img.onload = () => replaceImage(img)
+      img.onerror = () => { setup(tex, false); replaceImage(placeholders.canvas(ph.kind, ph.id)) }
       img.src = src
       configurePixelTexture(tex)
       setup(tex, true)
     } else {
-      tex = new THREE.CanvasTexture(placeholders.canvas(ph.kind, ph.id))
+      const image = placeholders.canvas(ph.kind, ph.id)
+      tex = new THREE.CanvasTexture(ph.kind === 'character' ? prepareCharacterSheet(image) : image)
       configurePixelTexture(tex)
       setup(tex, false)
     }

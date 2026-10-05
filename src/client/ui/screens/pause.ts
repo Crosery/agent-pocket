@@ -4,7 +4,8 @@ import type { BadgeDef } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
 import { getMap, regionAt } from '../../../shared/world/worldapi.ts'
 import { parseColor, shade } from '../pixel.ts'
-import { createGridNav, el, typeChip } from '../widgets.ts'
+import { createGridNav, el, keyHint, typeChip } from '../widgets.ts'
+import { onUIScaleChange } from '../scale.ts'
 import { backPressed, frame, H, icon, infoRow, isCompact, moneyEl, openScreen, pressed, sfx, uiSfx, type ScreenEnv } from './base.ts'
 import { SCREENS } from './config.ts'
 import { dexCounts, playTimeParts } from './logic.ts'
@@ -57,33 +58,46 @@ export function pauseScreen(env: ScreenEnv): Promise<void> {
   const entries = SCREENS.pause.entries
   ctx.audio.setMuffled(true)
   return openScreen<void>(env, 'aps-pause', (api) => {
-    const f = frame(env, { title: t('screens.pause.heading'), onClose: api.guard(() => api.close()), hints: [H.select(), H.back()] })
+    const f = frame(env, { title: t('screens.pause.heading'), onClose: api.guard(() => api.close()), hints: ctx.input.lastDevice === 'touch' ? [] : [H.select(), H.back()] })
     const clock = el('div', 'aps-pause-clock')
     f.right.append(clock)
     const cardSlot = el('div', 'aps-pause-cardslot')
+    const detailTitle = el('div', 'aps-pause-detail-title')
+    const detailText = el('p', 'aps-pause-detail-text')
+    const detailHint = el('div', 'aps-pause-detail-hint', [keyHint('confirm', { label: t('screens.hint.select'), device: ctx.input.lastDevice })])
+    const detail = el('section', { class: 'aps-pause-detail', attrs: { 'aria-live': 'polite' } }, [detailTitle, detailText, detailHint])
     const enabled = (i: number) => entries[i].requires !== 'party' || ctx.save.party.length > 0
     const rowsEl = entries.map((e, i) => {
-      const r = el('button', { class: 'aps-pause-row ap-row ap-cursor-host', attrs: { type: 'button', role: 'menuitem' } }, [
+      const r = el('button', { class: 'aps-pause-row ap-row ap-cursor-host', attrs: { type: 'button' } }, [
         e.glyph ? icon(e.glyph, { className: 'aps-pause-icon' }) : null,
         el('span', { class: 'ap-row-label', text: t(e.label) }),
       ])
       r.addEventListener('mouseenter', api.guard(() => { if (nav.index !== i) { nav.index = i; uiSfx(env, 'move'); paint() } }))
+      r.addEventListener('focus', api.guard(() => { nav.index = i; paint() }))
       r.addEventListener('click', api.guard(() => { nav.index = i; paint(); void activate(i) }))
       return r
     })
-    const menu = el('nav', { class: 'aps-pause-menu ap-panel', attrs: { role: 'menu', 'aria-label': t('screens.pause.heading') } }, rowsEl)
+    const menu = el('nav', { class: 'aps-pause-menu ap-panel', attrs: { 'aria-label': t('screens.pause.heading') } }, rowsEl)
     f.body.append(el('div', 'aps-pause-layout', [cardSlot, menu]))
     api.root.append(f.el)
 
-    const nav = createGridNav({ count: entries.length, cols: 1, audio: ctx.audio, onChange: () => paint() })
+    const makeNav = (initial = 0) => createGridNav({ count: entries.length, cols: isCompact() ? 2 : 1, initial, audio: ctx.audio, onChange: () => paint() })
+    let nav = makeNav()
     const paint = () => {
       rowsEl.forEach((r, i) => {
         r.classList.toggle('is-active', i === nav.index)
         r.classList.toggle('is-disabled', !enabled(i))
+        r.setAttribute('aria-disabled', String(!enabled(i)))
+        if (i === nav.index) r.setAttribute('aria-current', 'true')
+        else r.removeAttribute('aria-current')
       })
+      const e = entries[nav.index]
+      detailTitle.replaceChildren(...(e.glyph ? [icon(e.glyph)] : []), t(e.label))
+      detailText.textContent = enabled(nav.index) ? t(`screens.pause.description.${e.action}`) : t('screens.pause.noParty')
+      detailHint.hidden = !enabled(nav.index) || ctx.input.lastDevice === 'touch'
     }
     const refresh = () => {
-      cardSlot.replaceChildren(playerCard(env))
+      cardSlot.replaceChildren(playerCard(env), detail)
       clock.textContent = t('screens.pause.clock', { time: ctx.clock.label(), tod: t(`hud.tod.${ctx.clock.timeOfDay}`) })
       paint()
     }
@@ -121,16 +135,25 @@ export function pauseScreen(env: ScreenEnv): Promise<void> {
     })
 
     refresh()
+    const offScale = onUIScaleChange(() => {
+      const cols = isCompact() ? 2 : 1
+      if (nav.cols !== cols) nav = makeNav(nav.index)
+    })
     return {
       onInput(input) {
         if (backPressed(input)) { api.close(); return }
-        if (pressed(input, 'confirm')) { void activate(nav.index); return }
-        nav.handle(input)
+        if (pressed(input, 'confirm')) {
+          const focused = document.activeElement
+          if (focused instanceof HTMLButtonElement && api.root.contains(focused) && focused.matches('.aps-close')) focused.click()
+          else void activate(nav.index)
+          return
+        }
+        if (nav.handle(input) === 'move') rowsEl[nav.index]?.focus({ preventScroll: true })
       },
       update() {
         clock.textContent = t('screens.pause.clock', { time: ctx.clock.label(), tod: t(`hud.tod.${ctx.clock.timeOfDay}`) })
       },
-      dispose() { ctx.audio.setMuffled(false) },
+      dispose() { offScale(); ctx.audio.setMuffled(false) },
     }
   }, () => undefined)
 }

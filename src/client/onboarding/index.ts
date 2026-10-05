@@ -6,9 +6,8 @@ import type { OverworldExt } from '../world/controller.ts'
 import { CONTENT } from '../../shared/content/index.ts'
 import { maxHp } from '../../shared/creature.ts'
 import { TUTORIAL, type TipDef } from './config.ts'
-import { bearing, condHolds, nearestTarget, pickObjective, tipFlag, tipLive, type Place } from './logic.ts'
+import { condHolds, tipFlag, tipLive, type Place } from './logic.ts'
 import { createObjectiveView, createTipView } from './view.ts'
-import { worldAnchors } from '../../shared/world/index.ts'
 
 export interface Onboarding {
   update(dt: number): void
@@ -23,7 +22,6 @@ export interface Onboarding {
 
 export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRoot: HTMLElement): Onboarding {
   const cfg = TUTORIAL
-  const anchors = worldAnchors(ctx.data.world)
   const objective = createObjectiveView(uiRoot)
   const tips = createTipView(uiRoot, ctx.input)
   const tipById = new Map(cfg.tips.list.map((x) => [x.id, x]))
@@ -48,19 +46,20 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
 
   // -- objective -------------------------------------------------------------------------------------------
   function refreshObjective(): void {
-    const on = visible && settings().showObjective && overworld.mapId !== null
+    const route = overworld.questNavigation
+    const on = visible && settings().showObjective && overworld.mapId !== null && route !== null
     objective.setVisible(on)
-    if (!on) return
-    const view = pickObjective(ctx.data.world, ctx.save, cfg)
-    objectiveRule = view.ruleId
-    const candidates: Place[] = view.questTarget ? [view.questTarget] : view.targets.flatMap((a) => (anchors[a] ? [anchors[a]] : []))
+    if (!on) { objectiveRule = ''; return }
+    if (!route) return
+    objectiveRule = route.questId
     const from = here()
-    const target = nearestTarget(ctx.data.world, from, candidates)
-    const arrow = target ? bearing(from, target) : null
+    const next = route.path[1]
+    const angle = next ? Math.atan2(next.y + 0.5 - from.y, next.x + 0.5 - from.x) : 0
     objective.set({
-      textKey: view.textKey,
-      params: view.params,
-      arrow: arrow && arrow.tiles >= cfg.objective.arrow.minDistance ? { angle: arrow.angle, steps: arrow.tiles * cfg.objective.arrow.stepsPerTile } : null,
+      textKey: 'tutorial.objective.next',
+      params: { stage: route.text },
+      arrow: next ? { angle, steps: route.steps } : null,
+      note: route.status === 'ready' ? undefined : `tutorial.objective.navigation.${route.status}`,
       device: ctx.input.lastDevice,
     })
   }
@@ -99,7 +98,7 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
     shownThisSession.add(tip.id)
     ctx.save.flags[tipFlag(tip.id)] = true
     showing = { tip, ...(tip.doneOn ? { doneOn: tip.doneOn } : {}), startPos: here(), until: clock + cfg.tips.layer.ttlSec }
-    tips.show({ textKey: tip.text, device: ctx.input.lastDevice, place: tip.place ?? 'bottom' })
+    tips.show({ textKey: tip.text, device: ctx.input.lastDevice, place: tip.trigger.kind === 'menu' ? 'menu' : tip.place ?? 'bottom' })
     ctx.audio.playSfx('select', { volume: 0.4 })
   }
 

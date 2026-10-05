@@ -99,6 +99,23 @@ export function createNpcLayer(deps: NpcLayerDeps) {
     return true
   }
 
+  /** Advances the current step; returns the time left over when it completes (carried into the next step so a
+   * multi-tile walk keeps an even pace across tile boundaries). */
+  const advanceStep = (n: NpcRuntime, dt: number): number => {
+    const mv = n.moving
+    if (!mv) return 0
+    const t = mv.t + dt
+    mv.t = Math.min(mv.dur, t)
+    const k = mv.t / mv.dur
+    n.x = mv.fx + (n.tx + 0.5 - mv.fx) * k
+    n.y = mv.fy + (n.ty + 0.5 - mv.fy) * k
+    if (mv.t < mv.dur) return 0
+    n.moving = null
+    n.x = n.tx + 0.5
+    n.y = n.ty + 0.5
+    return t - mv.dur
+  }
+
   const finishSteps = (n: NpcRuntime) => {
     const waiters = n.stepWaiters
     n.stepWaiters = []
@@ -180,16 +197,9 @@ export function createNpcLayer(deps: NpcLayerDeps) {
         if (n.steps.length || n.stepWaiters.length) { n.steps = []; n.moving = null; finishSteps(n) }
         continue
       }
-      if (n.moving) {
-        const mv = n.moving
-        mv.t = Math.min(mv.dur, mv.t + dt)
-        const k = mv.t / mv.dur
-        n.x = mv.fx + (n.tx + 0.5 - mv.fx) * k
-        n.y = mv.fy + (n.ty + 0.5 - mv.fy) * k
-        if (mv.t >= mv.dur) { n.moving = null; n.x = n.tx + 0.5; n.y = n.ty + 0.5 }
-      }
+      const carry = advanceStep(n, dt)
       if (!n.moving && n.steps.length) {
-        if (startStep(n, n.steps[0], n.stepSpeed)) { n.steps.shift(); n.blockedFor = 0 }
+        if (startStep(n, n.steps[0], n.stepSpeed)) { n.steps.shift(); n.blockedFor = 0; advanceStep(n, carry) }
         else {
           n.blockedFor += dt
           if (n.blockedFor > GAME.npc.blockedRetrySec) { n.steps.shift(); n.blockedFor = 0 }
