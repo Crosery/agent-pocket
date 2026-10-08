@@ -54,7 +54,7 @@
       "high": {"fieldLights": 12, "cloudShadows": true, "shafts": 24, "spriteRim": true, "spriteShadow": true, "wetGround": true, "splitTone": true},
       "ultra": {"fieldLights": 16, "cloudShadows": true, "shafts": 40, "spriteRim": true, "spriteShadow": true, "wetGround": true, "splitTone": true}
     },
-    "cloud": {"size": 128, "octaves": 4, "scale": 26, "speed": 0.9, "coverage": 0.5, "softness": 0.2, "strength": 0.75, "ambient": 0.12, "drift": 0.1, "driftSeconds": 420, "detail": 0.35, "detailScale": 2.7, "pixels": 0},
+    "cloud": {"size": 128, "octaves": 4, "scale": 26, "speed": 0.9, "coverage": 0.56, "softness": 0.2, "strength": 0.55, "ambient": 0.12, "drift": 0.1, "driftSeconds": 420, "detail": 0.35, "detailScale": 2.7, "pixels": 0},
     "shafts": {"props": ["tree_oak", "tree_cherry", "tree_pine", "tree_swamp"], "density": 0.5, "jitter": 1.4, "perChunk": 8, "radius": 15, "fade": 4, "reselectSeconds": 0.5, "width": [0.5, 0.95], "length": 0, "maxLength": 10, "intensity": 0.42, "tipFade": 0.55, "footFade": 0.35, "shimmer": 0.35, "shimmerSpeed": 0.7, "dust": 0.8, "moon": 0.6, "minElevationDeg": 6, "steepDeg": 38},
     "sprite": {"rimPixels": 1.0, "rimStrength": 0.9, "rimMin": 0.15, "shadowRadius": 0.35, "shadowLift": 0.25, "shadowStrength": 0.85, "shadowOffset": 0.18},
     "wet": {"darken": 0.3, "sheen": 1.0, "sheenPower": 2.0, "puddleScale": 0.13, "puddleCoverage": 0.62, "puddleSoftness": 0.1, "reflect": 0.5, "sheenBase": 0.4, "propSheen": 0.18}
@@ -138,7 +138,7 @@
     "emissiveDay": 0.06,
     "emissiveAlways": 1.25,
     "frontOffset": 0.4,
-    "field": {"max": 16, "intensity": 4.2, "radiusMul": 1.3, "falloff": 1.8, "wrap": 0.4, "selectRadius": 26, "reassignSeconds": 0.2, "fadeSpeed": 3.0, "lampsPower": 2, "dayShare": 0.35, "core": 0.3},
+    "field": {"max": 16, "intensity": 4.2, "radiusMul": 1.3, "falloff": 1.8, "wrap": 0.4, "selectRadius": 26, "reassignSeconds": 0.2, "fadeSpeed": 3.0, "lampsPower": 2, "dayShare": 0.35, "core": 0.3, "kindScale": {"center": 0.3, "shop": 0.35, "gym": 0.3, "tower": 0.3, "fountain": 0.6, "house_large": 0.8}},
     "flicker": {"default": {"amount": 0.05, "speed": 9}, "campfire": {"amount": 0.28, "speed": 13}, "lava_rock": {"amount": 0.18, "speed": 7}, "lamp": {"amount": 0.035, "speed": 6}, "crystal": {"amount": 0.06, "speed": 3}, "tower": {"amount": 0.04, "speed": 2.5}},
     "windowLights": {"house_small": {"color": "#ffcf7a", "intensity": 0.9, "radius": 4.5, "h": 1.3, "nightOnly": true}, "house_large": {"color": "#ffcf7a", "intensity": 1.1, "radius": 5.5, "h": 1.6, "nightOnly": true}, "lab": {"color": "#bff8f0", "intensity": 1.0, "radius": 6, "h": 1.8, "nightOnly": true}}
   },

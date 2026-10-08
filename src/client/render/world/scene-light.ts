@@ -282,7 +282,7 @@ export function createSceneLight(): SceneLight {
         if (count >= LF.max || lvl <= 0.004) return
         const fl = flick[s.kind ?? 'default'] ?? flick.default
         const w = f.time * fl.speed + s.phase
-        const m = lvl * LF.intensity * (1 + fl.amount * (Math.sin(w) * 0.6 + Math.sin(w * 2.7 + 1.3) * 0.4))
+        const m = lvl * LF.intensity * (LF.kindScale[s.kind ?? ''] ?? 1) * (1 + fl.amount * (Math.sin(w) * 0.6 + Math.sin(w * 2.7 + 1.3) * 0.4))
         U.uApLfPos.value[count].set(s.x, s.y, s.z, s.radius * LF.radiusMul)
         U.uApLfCol.value[count].set(s.color.r * m, s.color.g * m, s.color.b * m)
         count++

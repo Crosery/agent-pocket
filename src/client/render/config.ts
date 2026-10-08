@@ -217,6 +217,8 @@ export interface LightsConfig {
     lampsPower: number; dayShare: number
     /** Fraction of the reach inside which the falloff stays flat (no hot spot at the source). */
     core: number
+    /** Intensity multiplier per light kind (prop key): lights hung right in front of a facade would blow it out. */
+    kindScale: Record<string, number>
   }
   /** Flicker per light kind (prop key, or "map" for map.lights); `default` for the rest. Amount = fraction of the intensity. */
   flicker: Record<string, { amount: number; speed: number }>
@@ -943,6 +945,7 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
     const F = r.lights.field
     for (const k of ['max', 'intensity', 'radiusMul', 'falloff', 'wrap', 'selectRadius', 'reassignSeconds', 'fadeSpeed', 'lampsPower', 'dayShare', 'core'] as const) if (!(typeof F?.[k] === 'number' && F[k] >= 0)) errs.push(`lights.field.${k}: must be a number >= 0`)
     if (!(F.max >= 1 && F.max <= 32)) errs.push('lights.field.max: 1..32 (uniform array size)')
+    for (const [k, v] of Object.entries(F.kindScale ?? {})) if (!(v >= 0)) errs.push(`lights.field.kindScale.${k}: must be a number >= 0`)
     if (!(F.wrap >= 0 && F.wrap <= 1)) errs.push('lights.field.wrap: 0..1')
     if (!r.lights.flicker?.default) errs.push('lights.flicker: needs a "default" entry')
     for (const [k, f] of Object.entries(r.lights.flicker ?? {})) if (!(f.amount >= 0 && f.speed >= 0)) errs.push(`lights.flicker.${k}: amount and speed must be >= 0`)
