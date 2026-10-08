@@ -326,13 +326,13 @@ test('trainer replaces fainted creature immediately and pays money on defeat', (
 test('exp is split among participants; level up learns moves and flags evolution', () => {
   const sa = mon(C, 'sa', 15, ['tackle'])
   const sa2 = mon(C, 'sa', 15, ['tackle', 'growl', 'swords', 'harden'])
-  const foe = mon(C, 'rich', 30, ['growl'])
+  const foe = mon(C, 'rich', 32, ['growl'])
   const e = battle(C, [sa, sa2], [foe], { expGain: true, isWild: false, foeSide: { aiLevel: 0 } })
   turn(e, { kind: 'switch', partyIndex: 1 }, M(0))
   turn(e, { kind: 'switch', partyIndex: 0 }, M(0))
   e.party(1)[0].hp = 1
   const evs = turn(e, M(0), M(0))
-  const share = Math.floor(Math.floor((255 * 30) / C.config.battle.expDivisor * C.config.battle.trainerExpMultiplier) / 2)
+  const share = Math.floor(Math.floor((255 * 32) / C.config.battle.expDivisor * C.config.battle.trainerExpMultiplier) / 2)
   const exps = evs.filter((x) => x.t === 'exp')
   assert.deepEqual(exps.map((x) => (x.t === 'exp' ? [x.partyIndex, x.amount] : [])), [[0, share], [1, share]])
   assert.ok(has(evs, (x) => x.t === 'levelUp' && x.partyIndex === 0 && x.level === 16))

@@ -5,7 +5,7 @@
   "distance": [40, 260],
   "levelSlack": 4,
   "reward": {
-    "moneyPerLevel": 60,
+    "moneyPerLevel": 50,
     "round": 50,
     "items": [
       {"maxLevel": 15, "pool": [{"few-shot-ball": 3}, {"super-cache": 3}, {"x-speed": 2}, {"repel": 3}]},

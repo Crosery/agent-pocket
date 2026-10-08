@@ -56,7 +56,8 @@ export async function playEvolution(ctx: GameContext, scene: BattleScene, cr: Cr
   ctx.audio.playSfx(S.evolveDone)
   if (markCaught(ctx, toSpeciesId)) ctx.ui.toast(t('battleui.evolve.newDexToast', { name: to.nameZh }), 'success')
   ctx.events.emit('party:changed', {})
-  await view.message.show(t('battleui.evolve.done', { name, to: to.nameZh }))
+  const kind = to.evolvesFrom ? CONTENT.species[to.evolvesFrom]?.evolvesTo?.kind : undefined
+  await view.message.show(t(kind === 'post-training' ? 'battleui.evolve.donePostTraining' : 'battleui.evolve.done', { name, to: to.nameZh }))
   for (const moveId of pending) if (!cr.moves.some((m) => m.id === moveId)) await learnWithScreen(ctx, view, cr, moveId)
   await scene.wait(BATTLE_UI.evolve.endHoldMs)
   return true

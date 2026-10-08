@@ -490,6 +490,28 @@ export function buildMacro(inp: MacroInput): Macro {
       }
     }
   }
+  // Keep the first playable area legible and easy to traverse. The cap is applied to the
+  // continuous height field before sea/pad locks and the slope envelope, so it creates a
+  // broad flat basin with a gradual edge instead of a hard artificial cliff.
+  const startTown = inp.towns.find(({ town }) => town.start)?.town
+  const startFlat = spec.startFlat
+  if (startTown && startFlat) {
+    const flatRadius = Math.max(0, startFlat.radius)
+    const transition = Math.max(0, startFlat.transition)
+    const flatLevel = Math.max(0, Math.min(spec.maxLevel, startFlat.level))
+    const innerCap = flatLevel + 0.5
+    const outerCap = spec.maxLevel + 0.5
+    const limit = flatRadius + transition
+    for (let y = Math.max(0, Math.floor(startTown.y - limit)); y <= Math.min(H - 1, Math.ceil(startTown.y + limit)); y++) {
+      for (let x = Math.max(0, Math.floor(startTown.x - limit)); x <= Math.min(W - 1, Math.ceil(startTown.x + limit)); x++) {
+        const dx = x - startTown.x, dy = y - startTown.y
+        const d = Math.sqrt(dx * dx + dy * dy)
+        if (d > limit) continue
+        const t = transition > 0 ? smoothstep(0, 1, Math.max(0, (d - flatRadius) / transition)) : d > flatRadius ? 1 : 0
+        hf[y * W + x] = Math.min(hf[y * W + x], innerCap + (outerCap - innerCap) * t)
+      }
+    }
+  }
 
   // --- sea: authored water zone + ocean ring, one continent ------------------------------------------
   const seaH = spec.seaLevel + 0.5

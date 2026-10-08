@@ -3,7 +3,7 @@
 import type { Dir, PropPlacement } from '../types.ts'
 import { CONTENT } from '../content/index.ts'
 import { mirrorTownTemplate } from './data.ts'
-import { DIR_DX, DIR_DY, opposite, propDoors, propSize } from './collision.ts'
+import { DIR_DX, DIR_DY, opposite, propDoors, propRect, propSize } from './collision.ts'
 import { F_KEEP, F_PATH, F_RESERVED, F_TOWN, addFlag, canPlace, fmt, idx, inside, placeProp } from './grid.ts'
 import { townRect, type TownPad } from './macro.ts'
 import type { InteriorTemplate, TownSpec, TownTemplate } from './schema.ts'

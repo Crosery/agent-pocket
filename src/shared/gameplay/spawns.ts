@@ -74,6 +74,20 @@ export function speciesBehavior(speciesId: string, c: Content = CONTENT): Resolv
   return behaviorOf(c.species[speciesId]?.rarity ?? '', c)
 }
 
+export type RoamingDisposition = 'neutral' | 'chase' | 'flee'
+
+/**
+ * Country-facing overworld attitude. CN creatures stay neutral; US creatures chase until the player's
+ * strongest party member outlevels them; every other country is neutral until that same level advantage
+ * makes the creature flee.
+ */
+export function roamingDisposition(country: string | undefined, wildLevel: number, playerMaxLevel: number): RoamingDisposition {
+  const code = country?.trim().toUpperCase() ?? ''
+  if (code === 'CN') return 'neutral'
+  if (playerMaxLevel > wildLevel) return 'flee'
+  return code === 'US' ? 'chase' : 'neutral'
+}
+
 // ---------------------------------------------------------------------------------------------- conditions
 
 /** Spawn conditions of a species (any one suffices): per-species override, else the union of its types' lists. */

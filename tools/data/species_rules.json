@@ -144,6 +144,10 @@
     "byRarity": {"N": ["fast", "fast"], "R": ["fast", "medium"], "SR": "medium", "SSR": "slow", "UR": "slow", "MYTHIC": "slow"},
     "split": 0.5
   },
+  "evolution": {
+    "_doc": "Gameplay rule: a researched family-tree successor becomes an attainable post-training evolution instead of a dead-end catalog entry.",
+    "defaultKind": "post-training"
+  },
   "size": {
     "_doc": "size = categoryBase + stageAdd + rarityAdd, clamped and rounded",
     "categoryBase": {"llm": 0.85, "reasoning": 0.85, "code": 0.8, "agent": 0.9, "multimodal": 0.9, "image": 0.8, "video": 0.95, "music": 0.8, "audio": 0.75, "search": 0.85, "embodied": 1.25, "other": 0.9},

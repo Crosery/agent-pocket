@@ -72,8 +72,11 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number): 
       exp.set(prog.into, prog.need)
       setChildren(left, [
         el('div', 'aps-sum-stage', [el('div', 'aps-sum-pedestal'), creatureImg(ctx.assets, c.speciesId, { shiny: c.shiny, className: 'aps-sum-sprite' }), c.shiny ? icon('shine', { className: 'aps-sum-shine' }) : null]),
-        el('div', 'aps-sum-name', [el('span', { text: creatureName(c) }), el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) })]),
-        c.nickname && sp ? el('div', { class: 'ap-dim aps-sum-species', text: sp.nameZh }) : null,
+        el('div', 'aps-sum-name', [
+          el('span', { class: 'ap-model-name', text: creatureName(c), title: creatureName(c), attrs: { 'aria-label': creatureName(c) } }),
+          el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) }),
+        ]),
+        c.nickname && sp ? el('div', { class: 'ap-dim ap-model-name aps-sum-species', text: sp.nameZh, title: sp.nameZh }) : null,
         el('div', 'aps-chips', [...(sp?.types ?? []).map((ty) => typeChip(ty)), sp ? rarityBadge(sp.rarity, { label: 'name' }) : null, c.status ? statusChip(c.status) : null]),
         hp.el,
         exp.el,

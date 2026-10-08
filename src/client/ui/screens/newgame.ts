@@ -61,7 +61,7 @@ export function newGameScreen(env: ScreenEnv): Promise<{ name: string; avatar: s
       walkers.push(w)
       const card = el('button', { class: 'aps-ng-card aps-card', attrs: { type: 'button', 'aria-label': c.nameZh } }, [
         el('div', 'aps-ng-stage', [w.el]),
-        el('div', { class: 'aps-ng-card-name', text: c.nameZh }),
+        el('div', { class: 'aps-ng-card-name ap-model-name', text: c.nameZh, title: c.nameZh }),
       ])
       card.addEventListener('mouseenter', api.guard(() => nav.index !== i && select(i, true)))
       card.addEventListener('focus', api.guard(() => select(i, false)))

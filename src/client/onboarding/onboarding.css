@@ -78,7 +78,7 @@ html.ap-compact .ap-tip.is-inline { margin-bottom: 0; border-bottom: 0; }
 .ap-tip-progress { height: var(--u); margin: calc(var(--u) * 4) 0 calc(var(--u) * -3); background: var(--ap-gold); transform-origin: left; }
 .ap-tip.is-in .ap-tip-progress { animation: ap-tip-countdown var(--ap-tip-duration) linear forwards; }
 @keyframes ap-tip-countdown { to { transform: scaleX(0); } }
-.ap-tip-body { white-space: normal; overflow-wrap: anywhere; line-height: calc(var(--u) * 14); }
+.ap-tip-body { white-space: pre-wrap; overflow-wrap: break-word; word-break: normal; line-height: calc(var(--u) * 14); }
 .ap-tip-body .ap-key, .ap-tip-foot .ap-key { color: inherit; vertical-align: baseline; }
 .ap-tip-body .ap-key kbd, .ap-tip-foot .ap-key kbd { height: calc(var(--u) * 12); line-height: calc(var(--u) * 10); }
 .ap-tip-foot { margin-top: calc(var(--u) * 3); color: var(--ap-text-dim); font-size: calc(var(--u) * 9); text-align: right; }

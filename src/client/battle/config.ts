@@ -51,7 +51,7 @@ export interface BattleUiConfig {
   cry: { onSendOut: boolean; onFaint: boolean; faintPitch: number; evolvePitch: number }
   hud: {
     hpBarWidth: number; expBarWidth: number; foeHpNumbers: boolean; ownHpNumbers: boolean
-    showTypes: boolean; showStages: boolean; maxVolatileTags: number
+    showTypes: boolean; showStages: boolean; maxVolatileTags: number; maxEffectTags: number
   }
   commands: { normal: CommandId[]; pvp: CommandId[]; columns: number }
   moves: { columns: number; hintRequiresSeen: boolean; categoryColors: Record<MoveCategory, string> }
@@ -106,6 +106,7 @@ export function validateBattleUi(c: Content, cfg: BattleUiConfig = BATTLE_UI): s
   num('hud.hpBarWidth', cfg.hud.hpBarWidth, 4)
   num('hud.expBarWidth', cfg.hud.expBarWidth, 4)
   num('hud.maxVolatileTags', cfg.hud.maxVolatileTags)
+  num('hud.maxEffectTags', cfg.hud.maxEffectTags)
   for (const list of [cfg.commands.normal, cfg.commands.pvp]) {
     for (const id of list) if (!COMMAND_IDS.includes(id)) errs.push(`battle-ui commands: unknown command "${id}"`)
     if (!list.includes('fight')) errs.push('battle-ui commands: every command list needs "fight"')

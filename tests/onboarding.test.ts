@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { CONTENT, t } from '../src/shared/content/index.ts'
+import { CONTENT, t, typeEffectiveness } from '../src/shared/content/index.ts'
 import { buildWorld, worldAnchors } from '../src/shared/world/index.ts'
 import { createCreature } from '../src/shared/creature.ts'
 import { Rng } from '../src/shared/rng.ts'
@@ -67,10 +67,21 @@ test('tips: each shows once, expires with the lesson, conditions are data-driven
   assert.ok(!tipLive(move, progress({ flags: { 'tip:move': true } })), 'already shown')
   assert.ok(!tipLive(move, progress({ flags: { starter: 'o1' } })), 'moving was learnt long ago')
   assert.ok(condHolds({ minStat: { battlesWon: 1 } }, progress({ stats: { ...p.stats, battlesWon: 2 } })))
-  for (const id of ['move', 'talk', 'grass', 'battle', 'catch', 'menu']) assert.ok(TUTORIAL.tips.list.some((x) => x.id === id), id)
+  for (const id of ['move', 'talk', 'grass', 'battle', 'battleEffects', 'statGlossary', 'typeMatchup', 'catch', 'menu']) {
+    assert.ok(TUTORIAL.tips.list.some((x) => x.id === id), id)
+  }
   for (const tip of TUTORIAL.tips.list) {
     assert.ok(t(`${tip.text}.body`).length > 4, `${tip.id} body`)
   }
+  assert.match(t('tutorial.tip.statGlossary.body'), /上下文/)
+  assert.match(t('tutorial.tip.statGlossary.body'), /推理/)
+  assert.match(t('tutorial.tip.battleEffects.body'), /状态详情/)
+  assert.match(t('tutorial.tip.typeMatchup.body'), /×2/)
+  assert.match(t('tutorial.tip.typeMatchup.body'), /×0\.5/)
+  assert.match(t('tutorial.tip.typeMatchup.body'), /×0/)
+  assert.equal(typeEffectiveness('code', ['logic']), 2, 'code should beat logic')
+  assert.equal(typeEffectiveness('logic', ['chat']), 2, 'logic should beat chat')
+  assert.equal(typeEffectiveness('chat', ['compute']), 0, 'chat should not affect compute')
 })
 
 test('settings: objective and tips default on and can be switched off', () => {

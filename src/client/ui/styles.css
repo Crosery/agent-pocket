@@ -120,6 +120,17 @@ html[data-touch-controls='on']:not(.ap-ui-blocking) .ap-l-chat { z-index: 62; }
 .ap-gold { color: var(--ap-gold-hi); }
 .ap-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
+/* Model/species names should break at readable word boundaries instead of clipping or splitting every glyph. */
+.ap-model-name {
+  min-width: 0;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+  line-break: auto;
+  text-wrap: balance;
+}
+
 /* ------------------------------------------------------------------ panel */
 
 .ap-panel {

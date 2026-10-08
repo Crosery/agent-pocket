@@ -33,7 +33,7 @@ import {
 import { distanceFromOrigin, regionAt, worldOrigin } from '../../shared/world/worldapi.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
 import { createEventHud } from '../ui/event-hud.ts'
-import { textOrKey } from './config.ts'
+import { grassEncounterRate, textOrKey } from './config.ts'
 import { auraCueColor, cueDef, GPC, pingColor } from './gameplay-config.ts'
 import { placeById, placesNear, realPlaceId, revealedPlaces } from './places.ts'
 import {
@@ -605,7 +605,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
   /** Tall-grass step encounter (replaces encounters.rollEncounter): rate x event modifier, rarity weighting, flee. */
   function rollGrass(region: RegionDef, o: { repelActive: boolean; leadLevel: number }): WildPick | null {
     if (!(region.encounterRate > 0) || !region.encounters.length) return null
-    if (!rng.chance(Math.min(1, region.encounterRate * modifierValue(mods, 'encounterRate')))) return null
+    if (!rng.chance(grassEncounterRate(region.encounterRate, modifierValue(mods, 'encounterRate')))) return null
     const p = deps.place()
     const ectx = p ? contextAt(p, region) : lastCtx
     if (!ectx) return null

@@ -54,7 +54,7 @@ export function partyScreen(env: ScreenEnv, mode: PartyMode, opts?: PartyOptions
         el('div', 'aps-party-icon', [creatureIcon(ctx.assets.creatureImageUrl(c.speciesId), c.shiny, cfg.iconSize)]),
         el('div', 'aps-party-main', [
           el('div', 'aps-party-line', [
-            el('span', { class: 'aps-party-name', text: creatureName(c) }),
+            el('span', { class: 'aps-party-name ap-model-name', text: creatureName(c), title: creatureName(c), attrs: { 'aria-label': creatureName(c) } }),
             el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) }),
           ]),
           el('div', 'aps-party-line', [

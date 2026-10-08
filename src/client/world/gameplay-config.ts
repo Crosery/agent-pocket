@@ -45,7 +45,7 @@ export interface GameplayClientConfig {
   rumors: { townEnterChance: number; cooldownMinutes: number; ambientEveryMinutes: number; ambientChance: number; toastKind: ToastKind }
   items: { pickupRadius: number; glintEverySec: number; hiddenGlintRadius: number; visibleFx: WorldFx; hiddenFx: WorldFx; sfx: string; snapRadius: number }
   special: {
-    mapKinds: MapKind[]; speed: number; wanderRadius: number; idleSec: [number, number]; fleeSpeedMul: number; touchRadius: number
+    mapKinds: MapKind[]; speed: number; wanderRadius: number; idleSec: [number, number]; fleeSpeedMul: number; chaseSpeedMul: number; noticeRange: number; touchRadius: number
     cullDistance: number; despawnDistance: number; snapRadius: number; arriveEpsilon: number; shinyCue: string
   }
   legends: { checkSec: number; mapKinds: MapKind[]; senseToastCooldownSec: number; despawnBeyondMul: number; senseAmbience: boolean }
@@ -126,6 +126,8 @@ export function validateGameplayClient(cfg: GameplayClientConfig = GPC, c: Conte
   needSfx('start.startSfx', cfg.start.startSfx)
   for (const [k, cue] of Object.entries(cfg.pings)) if (!cfg.cues[cue]?.color) errs.push(`pings.${k}: cue "${cue}" has no color`)
   if (!cfg.cues[cfg.special.shinyCue]) errs.push(`special.shinyCue: unknown cue "${cfg.special.shinyCue}"`)
+  if (!(cfg.special.noticeRange > 0)) errs.push('special.noticeRange: must be > 0')
+  if (!(cfg.special.chaseSpeedMul > 0)) errs.push('special.chaseSpeedMul: must be > 0')
   for (const r of cfg.presentation.rarities) if (!c.rarityById[r]) errs.push(`presentation.rarities: unknown rarity "${r}"`)
   const prefixes = [cfg.flags.news, cfg.flags.spawnTaken, cfg.flags.itemTaken, cfg.flags.revealed, g.spawn.rumor.flagPrefix]
   if (new Set(prefixes).size !== prefixes.length) errs.push('flags: prefixes must be distinct')

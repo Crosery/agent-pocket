@@ -113,6 +113,8 @@ export interface OverworldSpec {
   hydrology: HydrologySpec
   /** Wall props on walkable sea tiles (shallows) inside a zone border band. */
   shallowBorder: { prop: string; weight: number }[]
+  /** Broad, low-elevation onboarding area around the start town; meaningful highlands begin outside the transition band. */
+  startFlat?: { radius: number; transition: number; level: number }
   maxLevel: number; seaLevel: number; seaTerrain: string; seaShallowTerrain: string; seaShallowWidth: number
   outOfBounds: string
   edgeBand: number; borderRadius: number; townMargin: number; slope: number; caveSearch: number; routeRegionRadius: number

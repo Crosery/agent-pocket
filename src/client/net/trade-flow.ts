@@ -239,7 +239,7 @@ const STYLE = `
 .mp-trade-col .mp-card { flex: 1 1 auto; }
 .mp-card.is-empty { display: flex; align-items: center; justify-content: center; color: var(--ap-text-dim); border-style: dashed; }
 .mp-card-art { grid-row: span 4; display: flex; align-items: center; justify-content: center; }
-.mp-card-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mp-card-name { line-height: 1.1; }
 .mp-card-row { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 2); align-items: center; }
 .mp-card-stars { color: var(--ap-gold-hi); letter-spacing: calc(var(--u) * 1); }
 .mp-card-ot { color: var(--ap-text-dim); grid-column: 1 / -1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -264,7 +264,7 @@ export function creatureCard(w: Widgets, ctx: Pick<GameContext, 'assets'>, cr: C
   const stars = ivStars(cr)
   return w.el('div', 'mp-card', [
     w.el('div', 'mp-card-art', [w.creatureIcon(ctx.assets.creatureImageUrl(cr.speciesId), cr.shiny, iconSize)]),
-    w.el('div', { class: 'mp-card-name ap-big', text: creatureName(cr) }),
+    w.el('div', { class: 'mp-card-name ap-big ap-model-name', text: creatureName(cr), title: creatureName(cr) }),
     w.el('div', 'mp-card-row', [
       w.el('span', { text: t('multiplayer.card.level', { level: cr.level }) }),
       sp ? w.rarityBadge(sp.rarity) : null,

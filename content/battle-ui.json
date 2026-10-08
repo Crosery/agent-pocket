@@ -8,7 +8,7 @@
   "channel": {"maxAutoSteps": 64},
   "sfx": {"hit": {"immune": "hit_weak", "weak": "hit_weak", "normal": "hit", "super": "hit_super"}, "crit": "hit_super", "miss": "cancel", "faint": "faint", "throwBall": "ball_throw", "catch": "catch", "catchFail": "cancel", "heal": "heal", "levelUp": "levelup", "item": "item", "money": "money", "evolveStart": "evolve", "evolveDone": "levelup", "evolveCancel": "cancel", "run": "run", "statUp": "stat_up", "statDown": "stat_down", "status": "status", "learn": "levelup", "ability": "notify", "select": "select", "confirm": "confirm", "cancel": "cancel", "error": "error", "advance": "select"},
   "cry": {"onSendOut": true, "onFaint": true, "faintPitch": 0.72, "evolvePitch": 1.12},
-  "hud": {"hpBarWidth": 92, "expBarWidth": 128, "foeHpNumbers": false, "ownHpNumbers": true, "showTypes": true, "showStages": true, "maxVolatileTags": 3},
+  "hud": {"hpBarWidth": 92, "expBarWidth": 128, "foeHpNumbers": false, "ownHpNumbers": true, "showTypes": true, "showStages": true, "maxVolatileTags": 3, "maxEffectTags": 4},
   "commands": {"normal": ["fight", "bag", "party", "run"], "pvp": ["fight", "bag", "party", "forfeit"], "columns": 2},
   "moves": {"columns": 2, "hintRequiresSeen": true, "categoryColors": {"physical": "#e8823a", "special": "#5aa0f0", "status": "#a0a6b8"}},
   "catch": {"nicknamePrompt": true},

@@ -263,6 +263,8 @@ export interface ItemDef {
 
 export interface LearnsetEntry { level: number; move: string }
 
+export type EvolutionKind = 'post-training' | 'version'
+
 export interface SpeciesDef {
   id: string                 // ascii kebab-case; sprite file name
   dexNo: number
@@ -273,7 +275,7 @@ export interface SpeciesDef {
   category: string
   family: string
   stage: number
-  evolvesTo?: { id: string; level: number }
+  evolvesTo?: { id: string; level: number; kind?: EvolutionKind }
   evolvesFrom?: string
   types: TypeId[]            // 1..2
   rarity: Rarity
@@ -291,6 +293,18 @@ export interface SpeciesDef {
   size: number               // world sprite scale (1 = player height)
   starter?: boolean
   designPrompt?: string      // sprite generation prompt (tools only)
+}
+
+/** Curated research metadata derived from the local model-lineage and event dossiers. */
+export interface DexResearchEntry {
+  officialName: string
+  family: string
+  generation: string
+  kind: string
+  access: string
+  evidence: string
+  release: string | null
+  eventTitles: string[]
 }
 
 // ---------------------------------------------------------------------------

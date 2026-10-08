@@ -62,7 +62,7 @@ export interface GameTuning {
     trainer: { exclaimMs: number; approachSpeed: number; sfx: string; fx: WorldFx; bubble: string; cooldownSec: number }
   }
   encounters: {
-    requireConsciousParty: boolean; surfEncounters: boolean; graceSteps: number
+    requireConsciousParty: boolean; surfEncounters: boolean; grassRateMultiplier: number; graceSteps: number
     transition: { kind: 'fade' | 'battle' | 'iris'; inMs: number; flashColor: string; flashMs: number; sfx: string; fx: WorldFx }
     legendRarityOrder: number; scriptedCanRun: boolean; repelOfferRefill: boolean
   }
@@ -192,6 +192,9 @@ export function validateGameContent(g: GameTuning = GAME, c: Content = CONTENT):
   checkFx('npc.trainer.fx', g.npc.trainer.fx)
   checkSfx('encounters.transition.sfx', g.encounters.transition.sfx)
   checkFx('encounters.transition.fx', g.encounters.transition.fx)
+  if (!(g.encounters.grassRateMultiplier > 0 && g.encounters.grassRateMultiplier <= 1)) {
+    errs.push('game.json encounters.grassRateMultiplier must be in (0, 1]')
+  }
   checkKinds('roaming.mapKinds', g.roaming.mapKinds)
   checkRange('roaming.lifetimeSec', g.roaming.lifetimeSec)
   checkRange('roaming.idleSec', g.roaming.idleSec)
@@ -219,4 +222,10 @@ export function validateGameContent(g: GameTuning = GAME, c: Content = CONTENT):
     if (step.op === 'sfx') checkSfx('newGame.introScript', step.id)
   }
   return errs
+}
+
+/** Final tall-grass roll rate after the global comfort multiplier and active event modifiers. */
+export function grassEncounterRate(base: number, eventMultiplier = 1, g: GameTuning = GAME): number {
+  const rate = Math.max(0, base) * Math.max(0, g.encounters.grassRateMultiplier) * Math.max(0, eventMultiplier)
+  return Math.min(1, rate)
 }

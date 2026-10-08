@@ -83,7 +83,7 @@ export function createPresenter(env: PresenterEnv): Presenter {
       panel.setAway(true)
     }
     applyEvent(model, e)
-    panel.setCreature(e.creature)
+    panel.setCreature(e.creature, env.init.sides[e.side].party[e.partyIndex]?.abilityId)
     syncSlots(e.side)
     if (e.side === 1) {
       markSeen(ctx, e.creature.speciesId)

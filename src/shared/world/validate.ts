@@ -46,6 +46,14 @@ export function validateWorldContent(wc: WorldContent = WORLD_CONTENT, c: Conten
   collider1('world.overworld.hydrology.rapidsProp', ow.hydrology.rapidsProp)
   for (const k of [ow.hydrology.riverTerrain, ow.hydrology.bankTerrain, ow.hydrology.lakeTerrain, ow.hydrology.lakeRimTerrain]) terrain('world.overworld.hydrology', k)
   if (!(ow.coarse >= 1)) errs.push('world.overworld: coarse must be >= 1')
+  if (ow.startFlat) {
+    if (!(ow.startFlat.radius >= 0) || !(ow.startFlat.transition >= 0) || !Number.isFinite(ow.startFlat.radius) || !Number.isFinite(ow.startFlat.transition)) {
+      errs.push('world.overworld.startFlat: radius and transition must be finite and >= 0')
+    }
+    if (!Number.isFinite(ow.startFlat.level) || ow.startFlat.level < 0 || ow.startFlat.level > ow.maxLevel) {
+      errs.push('world.overworld.startFlat: level must be within maxLevel')
+    }
+  }
   if (!wc.world.text.dungeonSign) errs.push('world.text: missing dungeonSign')
   for (const k of [ow.seaTerrain, ow.seaShallowTerrain, ow.outOfBounds, ow.beach.terrain, ow.exitStubTerrain, ow.bridgeTerrain, ow.stairsTerrain]) terrain('world.overworld', k)
   if (c.terrainByKey[ow.stairsTerrain] && !c.terrainByKey[ow.stairsTerrain].stairs) errs.push(`world.overworld: stairsTerrain "${ow.stairsTerrain}" lacks the stairs flag`)

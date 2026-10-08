@@ -75,6 +75,9 @@ test('every battleui text key used by the client exists, and every defined key i
     'battleui.cmd.': [...new Set([...BATTLE_UI.commands.normal, ...BATTLE_UI.commands.pvp])],
     'battleui.move.category.': ['physical', 'special', 'status'],
     'battleui.eff.': ['immune', 'weak', 'normal', 'super', 'unknown'],
+    'battleui.effects.status.': Object.keys(CONTENT.statusById),
+    'battleui.effects.volatile.': Object.keys(CONTENT.volatileById),
+    'battleui.effects.': ['buff', 'debuff', 'neutral', 'ability', 'statusTitle', 'volatileTitle', 'stageTitle'],
   }
   for (const prefix of Object.keys(dynamic)) assert.ok(all.includes(`\`${prefix}\${`), `dynamic prefix ${prefix} is used`)
   const used = new Set([...literal, ...Object.entries(dynamic).flatMap(([p, xs]) => xs.map((x) => p + x))])

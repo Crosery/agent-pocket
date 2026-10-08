@@ -166,7 +166,7 @@ export function dexScreen(env: ScreenEnv): Promise<void> {
         side.replaceChildren(
           el('div', 'aps-dex-pv-stage', [el('span', { class: 'aps-dex-unknown is-big', text: t('screens.dex.unknownMark') })]),
           el('div', { class: 'aps-dex-pv-no ap-gold', text: t('screens.common.dexNo', { n: pad3(sp.dexNo) }) }),
-          el('div', { class: 'aps-dex-pv-name', text: t('screens.dex.unknownName') }),
+          el('div', { class: 'aps-dex-pv-name ap-model-name', text: t('screens.dex.unknownName'), title: t('screens.dex.unknownName') }),
           el('p', { class: 'ap-dim aps-dex-pv-note', text: t('screens.dex.unseenNote') }),
         )
         return
@@ -174,8 +174,8 @@ export function dexScreen(env: ScreenEnv): Promise<void> {
       side.replaceChildren(
         el('div', 'aps-dex-pv-stage', [el('div', 'aps-sum-pedestal'), creatureImg(ctx.assets, sp.id, { silhouette: st === 'seen', className: 'aps-dex-pv-sprite' })]),
         el('div', { class: 'aps-dex-pv-no ap-gold', text: t('screens.common.dexNo', { n: pad3(sp.dexNo) }) }),
-        el('div', { class: 'aps-dex-pv-name', text: sp.nameZh }),
-        el('div', { class: 'ap-dim aps-dex-pv-en', text: sp.nameEn }),
+        el('div', { class: 'aps-dex-pv-name ap-model-name', text: sp.nameZh, title: sp.nameZh, attrs: { 'aria-label': sp.nameZh } }),
+        el('div', { class: 'ap-dim aps-dex-pv-en ap-model-name', text: sp.nameEn, title: sp.nameEn, attrs: { 'aria-label': sp.nameEn } }),
         el('div', 'aps-chips', [...sp.types.map((ty) => typeChip(ty)), rarityBadge(sp.rarity)]),
         el('div', { class: `aps-dex-pv-state is-${st}`, text: t(`screens.dex.state.${st}`) }),
       )
