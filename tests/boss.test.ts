@@ -14,7 +14,7 @@ import legendsJson from '../content/events/legends.json' with { type: 'json' }
 import mythicJson from '../content/events/mythic.json' with { type: 'json' }
 import populationJson from '../content/world/story/population.json' with { type: 'json' }
 import servicesJson from '../content/world/story/services.json' with { type: 'json' }
-import { applyEvent, bossPanelInfo, createBattleModel } from '../src/client/battle/model.ts'
+import { applyEvent, bossOpeningHud, bossPanelInfo, createBattleModel } from '../src/client/battle/model.ts'
 import { COUNTERS } from './boss-counters.ts'
 import { makeParty, SIM_PARTY, simulate, type SimOpts, type SimResult } from './boss-sim.ts'
 
@@ -416,4 +416,12 @@ test('client model: the boss HUD folds from events (phase pips, meters, charge w
   for (const e of engine.step()) applyEvent(model, e)
   assert.equal(model.sides[1].view?.speciesId, 'gpt-4o', 'the sprite and window follow the form event')
   assert.equal(bossPanelInfo(model.boss!)?.phase, 2, 'the sauce phase lights the second pip')
+})
+
+test('client model: the opening boss HUD equals the first snapshot the engine sends', () => {
+  for (const b of BOSSES) {
+    const { intro } = startBossBattle(b.id, makeParty(SIM_PARTY, b.level - 2, 1), { seed: 5, expGain: false })
+    const first = intro.find((e): e is Extract<BattleEvent, { t: 'boss' }> => e.t === 'boss')
+    assert.deepEqual(bossOpeningHud(b.id), first?.hud, b.id)
+  }
 })

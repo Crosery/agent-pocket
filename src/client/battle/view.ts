@@ -28,7 +28,7 @@ export interface BattleView {
   levelUp(title: string, deltas: StatDelta[]): Promise<void>
   /** Hides status windows (evolution, end of battle). */
   setHudVisible(on: boolean): void
-  /** Hides the bottom bar (message, menus, own status) while screens / kit dialogues are on top. */
+  /** Hides the bottom bar (message, menus, own status) and the foe window while screens / kit dialogues are on top. */
   setBarVisible(on: boolean): void
   /** Extra handler that sees input first (e.g. evolution cancel). */
   setInterceptor(fn: ((inp: Input) => boolean) | null): void
@@ -114,7 +114,10 @@ export function createBattleView(audio: AudioManager, settings: () => Settings):
       })
     },
     setHudVisible(on) { root.classList.toggle('is-hud-hidden', !on) },
-    setBarVisible(on) { bar.style.visibility = on ? '' : 'hidden' },
+    setBarVisible(on) {
+      bar.style.visibility = on ? '' : 'hidden'
+      root.classList.toggle('is-covered', !on)
+    },
     setInterceptor(fn) { interceptor = fn },
     input(inp) {
       if (interceptor?.(inp)) return true

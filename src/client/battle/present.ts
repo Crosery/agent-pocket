@@ -7,7 +7,7 @@ import type { BattleEngine } from '../../shared/battle/engine.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { calcStats, creatureName } from '../../shared/creature.ts'
 import { BATTLE_UI } from './config.ts'
-import { applyEvent, bossPanelInfo, effCategory, expRatio, expSegments, levelUpStats, type BattleModel, type ExpSegment } from './model.ts'
+import { applyEvent, bossOpeningHud, bossPanelInfo, effCategory, expRatio, expSegments, levelUpStats, type BattleModel, type ExpSegment } from './model.ts'
 import type { BattleScene } from './scene.ts'
 import { addBagItem, changeMoney, consumeItem, markSeen } from './saveops.ts'
 import { learnWithScreen } from './learn.ts'
@@ -87,6 +87,9 @@ export function createPresenter(env: PresenterEnv): Presenter {
     syncSlots(e.side)
     if (e.side === 1) {
       markSeen(ctx, e.creature.speciesId)
+      const bossId = env.init.sides[1].boss
+      const opening = bossId && !model.boss ? bossOpeningHud(bossId) : null
+      if (opening) { model.boss = opening; view.setBoss(bossPanelInfo(opening)) }
     } else {
       const p = model.progress[e.partyIndex]
       void panel.setExp(p ? expRatio(growthOf(e.partyIndex), p.level, p.exp) : 0, false)

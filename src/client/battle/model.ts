@@ -259,6 +259,15 @@ export type BossChipTone = 'neutral' | 'good' | 'warn' | 'bad'
 export interface BossChip { id: string; text: string; tone: BossChipTone; /** Fill ratio for counter-like meters, null for state / alert chips. */ fill: number | null; alert: boolean }
 export interface BossPanelInfo { bossId: string; title: string; phase: number; phases: number; chips: BossChip[] }
 
+/** The boss HUD before the first engine snapshot (shown the moment the boss appears). */
+export function bossOpeningHud(bossId: string, c: Content = CONTENT): BossHud | null {
+  const def = c.bosses[bossId]
+  if (!def) return null
+  const meters: Record<string, number> = {}
+  for (const m of def.meters) if (m.show) meters[m.id] = m.start ?? 0
+  return { bossId, form: def.initialForm, phase: 1, phases: 1 + def.triggers.filter((x) => x.phase).length, meters, charge: null, enrage: 0 }
+}
+
 /** What the foe status window shows for a boss snapshot: title, phase pips and the few chips worth reading mid-fight. */
 export function bossPanelInfo(hud: BossHud, c: Content = CONTENT): BossPanelInfo | null {
   const def = c.bosses[hud.bossId]

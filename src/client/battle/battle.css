@@ -18,6 +18,8 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
   inset: 0;
   pointer-events: auto;
 }
+.apb-root.is-covered .apb-status.is-foe,
+.apb-root.is-covered .apb-banner,
 .apb-root.is-hud-hidden .apb-status,
 .apb-root.is-hud-hidden .apb-weather,
 .apb-root.is-hud-hidden .apb-banner { visibility: hidden; }
@@ -344,7 +346,7 @@ html.ap-portrait .apb-banner.is-own { bottom: auto; top: calc(var(--u) * 60); }
 }
 .apb-st-boss[hidden] { display: none; }
 .apb-boss-head { display: flex; align-items: center; gap: calc(var(--u) * 4); min-width: 0; }
-.apb-boss-tag { flex: none; padding: 0 calc(var(--u) * 3); color: var(--ap-ink); background: #e25b4a; }
+.apb-boss-tag { flex: none; padding: 0 calc(var(--u) * 3); color: #fff; background: #b8392b; }
 .apb-boss-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ap-gold-hi); }
 .apb-boss-pips { display: flex; flex: none; gap: calc(var(--u) * 2); }
 .apb-pip { width: calc(var(--u) * 7); height: calc(var(--u) * 7); background: rgba(5, 7, 13, 0.8); border: var(--u) solid rgba(255, 107, 91, 0.7); }
