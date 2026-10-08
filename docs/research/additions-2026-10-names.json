@@ -1,0 +1,7 @@
+{
+  "species": [],
+  "patches": [
+    {"id": "nemotron-super-49b", "set": {"nameZh": "Nemotron-Super-49B"}},
+    {"id": "nemotron-ultra-253b", "set": {"nameZh": "Nemotron-Ultra-253B"}}
+  ]
+}

@@ -15539,7 +15539,7 @@
  },
  {
   "id": "nemotron-super-49b",
-  "nameZh": "Llama-3.3-Nemotron-Super-49B",
+  "nameZh": "Nemotron-Super-49B",
   "nameEn": "Llama-3.3-Nemotron-Super-49B",
   "company": "NVIDIA",
   "country": "US",
@@ -15574,7 +15574,7 @@
  },
  {
   "id": "nemotron-ultra-253b",
-  "nameZh": "Llama-3.1-Nemotron-Ultra-253B",
+  "nameZh": "Nemotron-Ultra-253B",
   "nameEn": "Llama-3.1-Nemotron-Ultra-253B",
   "company": "NVIDIA",
   "country": "US",

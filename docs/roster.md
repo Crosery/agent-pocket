@@ -480,8 +480,8 @@
 | 441 | Sonar | Perplexity AI | US | 检索/对话 | R | 368 | → Sonar Pro Lv31 |
 | 442 | Sonar Pro | Perplexity AI | US | 检索/对话 | SR | 441 | ← Sonar；→ Sonar Pro Search Lv38 |
 | 443 | Sonar Pro Search | Perplexity AI | US | 检索/智能体 | SR | 452 | ← Sonar Pro |
-| 444 | Llama-3.1-Nemotron-70B | NVIDIA | US | 开源/算力 | R | 364 | → Llama-3.3-Nemotron-Super-49B Lv24 |
-| 445 | Llama-3.3-Nemotron-Super-49B | NVIDIA | US | 开源/算力 | R | 386 | ← Llama-3.1-Nemotron-70B；→ Llama-3.1-Nemotron-Ultra-253B Lv31 |
-| 446 | Llama-3.1-Nemotron-Ultra-253B | NVIDIA | US | 开源/推理 | SR | 452 | ← Llama-3.3-Nemotron-Super-49B |
+| 444 | Llama-3.1-Nemotron-70B | NVIDIA | US | 开源/算力 | R | 364 | → Nemotron-Super-49B Lv24 |
+| 445 | Nemotron-Super-49B | NVIDIA | US | 开源/算力 | R | 386 | ← Llama-3.1-Nemotron-70B；→ Nemotron-Ultra-253B Lv31 |
+| 446 | Nemotron-Ultra-253B | NVIDIA | US | 开源/推理 | SR | 452 | ← Nemotron-Super-49B |
 | 447 | Hermes 3 405B | Nous Research | US | 开源/对话 | R | 375 | → Hermes 4 405B Lv31 |
 | 448 | Hermes 4 405B | Nous Research | US | 开源/推理 | SR | 447 | ← Hermes 3 405B |
