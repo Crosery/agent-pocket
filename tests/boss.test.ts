@@ -16,6 +16,7 @@ import populationJson from '../content/world/story/population.json' with { type:
 import servicesJson from '../content/world/story/services.json' with { type: 'json' }
 import { applyEvent, bossOpeningHud, bossPanelInfo, createBattleModel } from '../src/client/battle/model.ts'
 import { COUNTERS } from './boss-counters.ts'
+import { DEFS } from '../tools/balance/teams.ts'
 import { makeParty, SIM_PARTY, simulate, type SimOpts, type SimResult } from './boss-sim.ts'
 
 const BOSSES = CONTENT.bossList
@@ -139,9 +140,9 @@ test('mechanics: each boss has its own counterplay', () => {
   assert.ok(formsIn(P('mythos')).has('unbound'))
   assert.ok(firedIn(C('mythos')).has('seal-item'))
 
-  // AlphaGo: a surprising move (a type it has not read yet) breaks its reading.
-  assert.ok(formsIn(P('alpha')).has('dazed'))
-  assert.ok(firedIn(P('alpha')).has('novel'))
+  // AlphaGo: changing the move type every turn (a surprise it has not read) breaks its reading.
+  assert.ok(formsIn(C('alpha')).has('dazed'))
+  assert.ok(firedIn(C('alpha')).has('shift') && firedIn(P('alpha')).has('repeat'))
 })
 
 // ---------------------------------------------------------------------------------------------------- counter items
@@ -367,14 +368,24 @@ test('rewards: a defeated boss pays out money and items to the winner only', () 
 
 test(`balance: ${SEEDS} seeded fights per boss — hard without the counter, clearly easier with it`, () => {
   const table: string[] = []
+  const roles = DEFS.roles.length
+  /** Win rate per team archetype: the seed picks the archetype (tests/boss-sim.ts sensibleParty). */
+  const perArchetype = (rs: SimResult[]) => Array.from({ length: roles }, (_, k) => rate(rs.filter((r) => r.seed % roles === k)))
   for (const b of BOSSES) {
-    const plain = rate(fights(b.id, false, SEEDS))
-    const counter = rate(fights(b.id, true, SEEDS))
-    table.push(`${b.id.padEnd(12)} plain ${(plain * 100).toFixed(1)}%  counter ${(counter * 100).toFixed(1)}%`)
+    const plainRuns = fights(b.id, false, SEEDS)
+    const counterRuns = fights(b.id, true, SEEDS)
+    const plain = rate(plainRuns)
+    const counter = rate(counterRuns)
+    const plainBy = perArchetype(plainRuns)
+    const counterBy = perArchetype(counterRuns)
+    table.push(`${b.id.padEnd(12)} plain ${(plain * 100).toFixed(1)}% [${plainBy.map((x) => Math.round(x * 100)).join(' ')}]  counter ${(counter * 100).toFixed(1)}% [${counterBy.map((x) => Math.round(x * 100)).join(' ')}]`)
     assert.ok(plain > 0.05, `${b.id}: unbeatable without the counter (${plain})`)
     assert.ok(plain < 0.75, `${b.id}: the counter would not matter (${plain})`)
     assert.ok(counter >= 0.7, `${b.id}: the counter is not reliable enough (${counter})`)
     assert.ok(counter - plain >= 0.25, `${b.id}: the counter does not help enough (${plain} -> ${counter})`)
+    // Soloable: several of the seven archetype teams beat it plain; with the counter almost all of them do.
+    assert.ok(plainBy.filter((x) => x >= 0.1).length >= 4, `${b.id}: only a few team styles can beat it without the counter (${plainBy})`)
+    assert.ok(counterBy.filter((x) => x >= 0.7).length >= 5, `${b.id}: the counter leaves most team styles behind (${counterBy})`)
   }
   if (process.env.BOSS_TABLE) console.log(table.join('\n'))
 })

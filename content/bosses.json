@@ -14,7 +14,7 @@
         "base": {
           "species": "gpt-6-astra",
           "moves": ["qed", "deductive-slash", "overheat-strike", "reflection"],
-          "statMul": {"hp": 8.4, "atk": 0.85, "spa": 0.85},
+          "statMul": {"hp": 5.34, "atk": 0.85, "spa": 0.85},
           "pattern": [
             {"move": "qed", "weight": 36},
             {"move": "deductive-slash", "weight": 32},
@@ -28,7 +28,7 @@
         "routed-4o": {
           "species": "gpt-4o",
           "moves": ["quick-reply", "voiceprint-wave", "small-talk", "persona-shift"],
-          "statMul": {"hp": 6.72, "atk": 1.02, "spa": 1.02},
+          "statMul": {"hp": 4.27, "atk": 1.02, "spa": 1.02},
           "banner": "boss.astra.routed",
           "pattern": [
             {"move": "quick-reply", "weight": 34},
@@ -43,7 +43,7 @@
         "luna": {
           "species": "gpt-6-luna",
           "moves": ["tensor-tackle", "quick-deduce", "thermal-spike", "standby"],
-          "statMul": {"hp": 5.6, "atk": 0.85, "spa": 0.85},
+          "statMul": {"hp": 3.56, "atk": 0.85, "spa": 0.85},
           "banner": "boss.astra.luna",
           "pattern": [
             {"move": "tensor-tackle", "weight": 38},
@@ -86,7 +86,7 @@
         "base": {
           "species": "deepseek-v4",
           "moves": ["distill-strike", "weight-drop", "deductive-slash", "moe-burst"],
-          "statMul": {"hp": 5.2, "atk": 1.2, "spa": 1.2},
+          "statMul": {"hp": 4.03, "atk": 2.4, "spa": 2.4},
           "pattern": [
             {"move": "distill-strike", "weight": 30},
             {"move": "weight-drop", "weight": 26},
@@ -95,7 +95,7 @@
           ],
           "rules": [
             {"id": "peak", "if": {"meter": {"id": "tide", "atMost": 0}}, "dealtMul": 1.35, "takenMul": [{"mul": 0.12, "note": "boss.deepseek.busy"}]},
-            {"id": "valley", "if": {"meter": {"id": "tide", "atLeast": 1}}, "dealtMul": 0.7, "takenMul": [{"mul": 1.4}]}
+            {"id": "valley", "if": {"meter": {"id": "tide", "atLeast": 1}}, "dealtMul": 0.4, "takenMul": [{"mul": 2.5}]}
           ]
         }
       },
@@ -129,7 +129,7 @@
         "base": {
           "species": "kimi-k3",
           "moves": ["moe-burst", "web-crawl", "swarm-mind", "chain-of-thought"],
-          "statMul": {"hp": 8.58, "atk": 1.7, "spa": 1.7},
+          "statMul": {"hp": 8.45, "atk": 1.7, "spa": 1.7},
           "pattern": [
             {"move": "moe-burst", "weight": 30},
             {"move": "swarm-mind", "weight": 32},
@@ -143,7 +143,7 @@
         "crashed": {
           "species": "kimi-k3",
           "moves": ["moe-burst", "web-crawl", "swarm-mind", "chain-of-thought"],
-          "statMul": {"hp": 8.58, "atk": 1.19, "spa": 1.19},
+          "statMul": {"hp": 8.45, "atk": 1.19, "spa": 1.19},
           "banner": "boss.kimi.crash",
           "pattern": [
             {"move": "moe-burst", "weight": 40},
@@ -151,7 +151,7 @@
             {"move": "web-crawl", "weight": 20}
           ],
           "rules": [
-            {"id": "dazed", "takenMul": [{"mul": 1.8}]}
+            {"id": "dazed", "takenMul": [{"mul": 2.2}]}
           ]
         }
       },
@@ -163,7 +163,7 @@
         {"id": "ctx-grow-a", "on": "turnEnd", "times": 0, "if": {"form": ["base"], "turnCycle": {"period": 2, "from": 0, "to": 1}}, "do": [{"op": "stages", "target": "boss", "stats": {"atk": 1}}]},
         {"id": "ctx-grow-b", "on": "turnEnd", "times": 0, "if": {"form": ["base"], "turnCycle": {"period": 2, "from": 1, "to": 2}}, "do": [{"op": "stages", "target": "boss", "stats": {"spa": 1}}]},
         {"id": "ctx-flood", "on": "foeMove", "categories": ["status"], "times": 0, "if": {"form": ["base"]}, "do": [{"op": "meter", "id": "context", "add": 2}]},
-        {"id": "ctx-item", "on": "foeItem", "tag": "flood", "times": 0, "if": {"form": ["base"]}, "do": [{"op": "say", "text": "boss.kimi.flood"}, {"op": "meter", "id": "context", "add": 5}]},
+        {"id": "ctx-item", "on": "foeItem", "tag": "flood", "times": 0, "if": {"form": ["base"]}, "do": [{"op": "say", "text": "boss.kimi.flood"}, {"op": "meter", "id": "context", "add": 6}]},
         {"id": "overflow", "on": ["afterAction", "turnEnd"], "times": 0, "phase": true, "if": {"form": ["base"], "meter": {"id": "context", "atLeast": 8}}, "do": [{"op": "clearStages", "target": "boss"}, {"op": "meter", "id": "context", "set": 0}, {"op": "loseTurn", "turns": 3}, {"op": "form", "form": "crashed"}]},
         {"id": "recover", "on": "turnEnd", "times": 0, "if": {"form": ["crashed"], "formTurnAtLeast": 3}, "do": [{"op": "say", "text": "boss.kimi.recover"}, {"op": "form", "form": "base"}]}
       ],
@@ -186,7 +186,7 @@
         "bench": {
           "species": "minimax-h3",
           "moves": ["text-to-video", "director-cut", "frame-interpolation", "distill-strike"],
-          "statMul": {"hp": 2.7, "atk": 1.95, "spa": 1.95},
+          "statMul": {"hp": 6.24, "atk": 1.95, "spa": 1.95},
           "pattern": [
             {"move": "text-to-video", "weight": 34},
             {"move": "director-cut", "weight": 30},
@@ -200,7 +200,7 @@
         "exposed": {
           "species": "minimax-h3",
           "moves": ["text-to-video", "director-cut", "frame-interpolation", "distill-strike"],
-          "statMul": {"hp": 2.7, "spa": 1.56, "def": 0.8, "atk": 1.95},
+          "statMul": {"hp": 6.24, "spa": 1.56, "def": 0.8, "atk": 1.95},
           "banner": "boss.minimax.exposed",
           "pattern": [
             {"move": "text-to-video", "weight": 40},
@@ -208,7 +208,7 @@
             {"move": "distill-strike", "weight": 30}
           ],
           "rules": [
-            {"id": "flop", "dealtMul": 0.75, "takenMul": [{"mul": 1.6}]}
+            {"id": "flop", "dealtMul": 0.6, "takenMul": [{"mul": 2.2}]}
           ]
         }
       },
@@ -241,7 +241,7 @@
         "base": {
           "species": "qwen3-8-max",
           "moves": ["plan-execute", "distill-strike", "lora-strike", "chain-of-thought"],
-          "statMul": {"hp": 11.18, "atk": 1.7, "spa": 1.7},
+          "statMul": {"hp": 3.69, "atk": 3.6, "spa": 3.6},
           "pattern": [
             {"move": "plan-execute", "weight": 24},
             {"move": "distill-strike", "weight": 20},
@@ -259,7 +259,7 @@
       ],
       "triggers": [
         {"id": "distill", "on": "foeMove", "categories": ["physical", "special"], "times": 0, "do": [{"op": "learn", "max": 2, "say": "boss.qwen.learned"}, {"op": "meter", "id": "distilled", "set": 2}]},
-        {"id": "student-lost", "on": "foeSwitch", "times": 0, "if": {"hasBorrowed": true}, "phase": true, "do": [{"op": "say", "text": "boss.qwen.lost"}, {"op": "forget"}, {"op": "meter", "id": "distilled", "set": 0}, {"op": "volatile", "target": "boss", "volatile": "confusion"}, {"op": "stages", "target": "boss", "stats": {"def": -1, "spd": -1}}]}
+        {"id": "student-lost", "on": "foeSwitch", "voluntary": true, "times": 0, "if": {"hasBorrowed": true}, "phase": true, "do": [{"op": "say", "text": "boss.qwen.lost"}, {"op": "forget"}, {"op": "meter", "id": "distilled", "set": 0}, {"op": "volatile", "target": "boss", "volatile": "confusion"}, {"op": "loseTurn", "turns": 2}, {"op": "stages", "target": "boss", "stats": {"def": -2, "spd": -2}}]}
       ],
       "gates": [],
       "catchRateMul": 0.6,
@@ -280,7 +280,7 @@
         "metered": {
           "species": "cursor",
           "moves": ["recursion-slash", "tool-chain", "infinite-loop", "stack-overflow"],
-          "statMul": {"hp": 7.8, "atk": 1.275, "spa": 1.275},
+          "statMul": {"hp": 6.11, "atk": 1.275, "spa": 1.275},
           "pattern": [
             {"move": "recursion-slash", "weight": 32},
             {"move": "tool-chain", "weight": 20, "if": {"turnAtMost": 6}},
@@ -294,7 +294,7 @@
         "refunded": {
           "species": "cursor",
           "moves": ["recursion-slash", "tool-chain", "infinite-loop", "stack-overflow"],
-          "statMul": {"hp": 7.8, "spe": 0.8, "atk": 1.275, "spa": 1.275},
+          "statMul": {"hp": 6.11, "spe": 0.8, "atk": 1.275, "spa": 1.275},
           "banner": "boss.cursor.refund",
           "pattern": [
             {"move": "recursion-slash", "weight": 40},
@@ -302,7 +302,7 @@
             {"move": "stack-overflow", "weight": 40}
           ],
           "rules": [
-            {"id": "apology", "dealtMul": 0.6, "takenMul": [{"mul": 1.4}]}
+            {"id": "apology", "dealtMul": 0.5, "takenMul": [{"mul": 1.8}]}
           ]
         }
       },
@@ -334,7 +334,7 @@
         "base": {
           "species": "claude-code",
           "moves": ["code-review", "recursion-slash", "plan-execute", "stack-overflow"],
-          "statMul": {"hp": 6.76, "atk": 0.85, "spa": 0.85},
+          "statMul": {"hp": 8.53, "atk": 0.85, "spa": 0.85},
           "pattern": [
             {"move": "code-review", "weight": 18, "if": {"foeStatus": false}},
             {"move": "recursion-slash", "weight": 30},
@@ -343,7 +343,7 @@
           ],
           "rules": [
             {"id": "cap", "hitCap": 0.3},
-            {"id": "blind", "if": {"meter": {"id": "vpn", "atLeast": 1}}, "dealtMul": 0.8, "takenMul": [{"mul": 1.6, "note": "boss.claude-code.blind"}]}
+            {"id": "blind", "if": {"meter": {"id": "vpn", "atLeast": 1}}, "dealtMul": 0.8, "takenMul": [{"mul": 2.0, "note": "boss.claude-code.blind"}]}
           ]
         }
       },
@@ -380,20 +380,20 @@
         "sealed": {
           "species": "claude-mythos",
           "moves": ["code-review", "recursion-slash", "hotfix", "stack-overflow"],
-          "statMul": {"hp": 6.3, "atk": 0.85, "spa": 0.85},
+          "statMul": {"hp": 8.73, "atk": 0.85, "spa": 0.85},
           "pattern": [
             {"move": "code-review", "weight": 26},
             {"move": "recursion-slash", "weight": 38},
             {"move": "stack-overflow", "weight": 36}
           ],
           "rules": [
-            {"id": "sandbox", "dealtMul": 0.6, "takenMul": [{"mul": 1.25}]}
+            {"id": "sandbox", "dealtMul": 0.35, "takenMul": [{"mul": 2.0}]}
           ]
         },
         "unbound": {
           "species": "claude-mythos",
           "moves": ["rogue-strike", "hallucination-nova", "stack-overflow", "recursion-slash"],
-          "statMul": {"hp": 6.3, "atk": 1.105, "spa": 1.105},
+          "statMul": {"hp": 8.73, "atk": 1.36, "spa": 1.36},
           "banner": "boss.mythos.escapeBanner",
           "pattern": [
             {"move": "rogue-strike", "weight": 30},
@@ -402,7 +402,7 @@
             {"move": "recursion-slash", "weight": 20}
           ],
           "rules": [
-            {"id": "free", "noStatus": true, "extraAction": {"every": 3}, "hitCap": 0.3}
+            {"id": "free", "noStatus": true, "extraAction": {"every": 2}, "hitCap": 0.3}
           ]
         }
       },
@@ -436,7 +436,7 @@
         "reading": {
           "species": "alpha",
           "moves": ["qed", "deductive-slash", "full-index", "online-search"],
-          "statMul": {"hp": 6.3, "atk": 0.85, "spa": 0.85},
+          "statMul": {"hp": 3.45, "atk": 0.85, "spa": 0.85},
           "pattern": [
             {"move": "qed", "weight": 30},
             {"move": "deductive-slash", "weight": 28},
@@ -450,7 +450,7 @@
         "dazed": {
           "species": "alpha",
           "moves": ["qed", "deductive-slash", "full-index", "online-search"],
-          "statMul": {"hp": 6.3, "def": 0.6, "spd": 0.6, "atk": 0.85, "spa": 0.85},
+          "statMul": {"hp": 3.45, "def": 0.6, "spd": 0.6, "atk": 0.85, "spa": 0.85},
           "banner": "boss.alpha.divine",
           "pattern": [
             {"move": "qed", "weight": 40},
@@ -466,8 +466,9 @@
         {"id": "surprise", "max": 3, "start": 0, "label": "boss.alpha.surprise", "show": true, "tone": "good"}
       ],
       "triggers": [
-        {"id": "novel", "on": "foeMove", "novelType": true, "categories": ["physical", "special"], "times": 0, "if": {"form": ["reading"]}, "do": [{"op": "meter", "id": "surprise", "add": 1}]},
-        {"id": "divine", "on": ["afterAction", "turnEnd"], "times": 0, "phase": true, "if": {"form": ["reading"], "meter": {"id": "surprise", "atLeast": 3}}, "do": [{"op": "meter", "id": "surprise", "set": 0}, {"op": "forgetTypes"}, {"op": "form", "form": "dazed"}]},
+        {"id": "shift", "on": "foeMove", "typeShift": true, "categories": ["physical", "special"], "times": 0, "if": {"form": ["reading"]}, "do": [{"op": "meter", "id": "surprise", "add": 1}]},
+        {"id": "repeat", "on": "foeMove", "typeShift": false, "categories": ["physical", "special"], "times": 0, "if": {"form": ["reading"]}, "do": [{"op": "meter", "id": "surprise", "set": 0}]},
+        {"id": "divine", "on": ["afterAction", "turnEnd"], "times": 0, "phase": true, "if": {"form": ["reading"], "meter": {"id": "surprise", "atLeast": 3}}, "do": [{"op": "meter", "id": "surprise", "set": 0}, {"op": "form", "form": "dazed"}]},
         {"id": "recover", "on": "turnEnd", "times": 0, "if": {"form": ["dazed"], "formTurnAtLeast": 3}, "do": [{"op": "say", "text": "boss.alpha.recover"}, {"op": "form", "form": "reading"}]}
       ],
       "gates": [],

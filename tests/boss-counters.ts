@@ -62,12 +62,6 @@ export const COUNTERS: Record<string, Counter> = {
   // Patch the sandbox before it gives; the alignment moves the AI happens to pick help on top.
   mythos: { bag: { 'sandbox-patch': 4 }, policy: (h) => (h.state.form === 'sealed' && h.state.meters.escape >= 5 ? h.bait('sandbox-patch') : null) },
 
-  // Never repeat the previous type; prefer types it has not seen.
-  alpha: {
-    policy: (h) => {
-      const seen = new Set(h.state.seenTypes)
-      return pickAttack(h, (m) => !seen.has(m.type) && m.type !== h.state.lastFoeType)
-        ?? pickAttack(h, (m) => m.type !== h.state.lastFoeType)
-    },
-  },
+  // Never repeat the previous type: every damaging move changes the type it has just read.
+  alpha: { policy: (h) => pickAttack(h, (m) => m.type !== h.state.lastFoeType) },
 }

@@ -8,8 +8,13 @@ import { BattleEngine } from '../src/shared/battle/engine.ts'
 import { chooseAiAction } from '../src/shared/battle/ai.ts'
 import { estimateDamage, isDamaging, toStages, type Fighter } from '../src/shared/battle/formulas.ts'
 import { startBossBattle } from '../src/shared/battle/boss-battle.ts'
+import { buildTeam } from '../tools/balance/sim.ts'
+import { DEFS, buildArchetype, type RoleDef } from '../tools/balance/teams.ts'
+import type { TeamSpec } from '../tools/balance/sim.ts'
+import { pilot } from '../tools/balance/pilot.ts'
 
 export interface SimResult {
+  seed: number
   won: boolean
   result: string | null
   turns: number
@@ -27,6 +32,33 @@ export interface SimResult {
 
 /** A "reasonable" late-game team: four 4-star creatures with mixed types, countries and coverage. */
 export const SIM_PARTY = ['gpt-5-6', 'kling-4', 'google-antigravity', 'qwen-audio']
+/**
+ * A level-appropriate team from the balance toolkit (tools/balance, docs/balance.md): six SR/SSR creatures built to
+ * one of the seven archetypes (law: BST 3150-3230, <= 2 per type, 8+ types), IVs rolled like in the game, lead order
+ * shuffled per seed. The seed picks archetype and variant, so a run of seeds covers every archetype evenly.
+ */
+export function sensibleParty(level: number, seed: number): Creature[] {
+  const roles: RoleDef[] = DEFS.roles
+  const role = roles[seed % roles.length]
+  const variant = Math.floor(seed / roles.length) % 24
+  const key = `${role.id}#${variant}`
+  let spec = specs.get(key)
+  if (!spec) {
+    spec = buildArchetype(role, variant) ?? buildArchetype(role, 0)!
+    specs.set(key, spec)
+  }
+  const rng = new Rng(seed ^ 0x51ed270b)
+  const party = buildTeam(spec, level, variant * 131 + 7)
+  for (let i = party.length - 1; i > 0; i--) {
+    const j = rng.int(0, i)
+    ;[party[i], party[j]] = [party[j], party[i]]
+  }
+  const lead = spec.lead ? party.findIndex((c) => c.speciesId === spec!.lead) : -1
+  if (lead > 0) party.unshift(...party.splice(lead, 1))
+  return party
+}
+const specs = new Map<string, TeamSpec>()
+
 /** Medicine every simulated player carries (the AI heals when low). */
 export const SIM_BAG: Record<string, number> = { 'hyper-cache': 5, 'full-cache': 2, 'full-restore': 2 }
 
@@ -94,6 +126,7 @@ function helpers(engine: BattleEngine, rng: Rng, req: Extract<BattleRequest, { k
 export interface SimOpts {
   bossId: string
   seed: number
+  /** Species of a hand-picked team; default = a level-appropriate archetype team (sensibleParty). */
   partyIds?: readonly string[]
   level?: number
   bossLevel?: number
@@ -112,7 +145,7 @@ export function simulate(o: SimOpts): SimResult {
   const c = o.c ?? CONTENT
   const def = c.bosses[o.bossId]
   const level = o.level ?? (o.bossLevel ?? def.level) - 2
-  const party = makeParty(o.partyIds ?? SIM_PARTY, level, o.seed, c)
+  const party = o.partyIds ? makeParty(o.partyIds, level, o.seed, c) : sensibleParty(level, o.seed)
   const bag = { ...SIM_BAG, ...(o.bag ?? {}) }
   const { engine, intro } = startBossBattle(o.bossId, party, { seed: o.seed, autoPlayer: true, items: SIM_BAG, expGain: false, c, ...(o.bossLevel ? { level: o.bossLevel } : {}) })
   const rng = new Rng(o.seed ^ 0x2545f491)
@@ -154,7 +187,7 @@ export function simulate(o: SimOpts): SimResult {
       action = o.policy(helpers(engine, rng, req, bag, c))
       if (action?.kind === 'item') baits += 1
     }
-    action ??= chooseAiAction(engine, SIDE, rng, c)
+    action ??= pilot(engine, SIDE, rng)
     if (engine.choose(SIDE, action) !== null) engine.choose(SIDE, chooseAiAction(engine, SIDE, rng, c))
     const evs = engine.step()
     observe(evs)
@@ -163,18 +196,19 @@ export function simulate(o: SimOpts): SimResult {
     if (f && forms[forms.length - 1] !== f) forms.push(f)
     if (engine.turn >= (o.maxTurns ?? 120)) break
   }
-  return { won: engine.result === 'win', result: engine.result, turns: engine.turn, baits, bossForms: forms, fired, meterMax, maxEnrage, telegraphs, events }
+  return { seed: o.seed, won: engine.result === 'win', result: engine.result, turns: engine.turn, baits, bossForms: forms, fired, meterMax, maxEnrage, telegraphs, events }
 }
 
-export function winRate(o: Omit<SimOpts, 'seed'>, seeds: number, from = 1): { rate: number; turns: number; wins: number; baits: number } {
+export function winRate(o: Omit<SimOpts, 'seed'>, seeds: number, from = 1): { rate: number; turns: number; winTurns: number; wins: number; baits: number } {
   let wins = 0
   let turns = 0
+  let winTurns = 0
   let baits = 0
   for (let i = 0; i < seeds; i++) {
     const r = simulate({ ...o, seed: from + i * 7919 })
-    if (r.won) wins += 1
+    if (r.won) { wins += 1; winTurns += r.turns }
     turns += r.turns
     baits += r.baits
   }
-  return { rate: wins / seeds, turns: turns / seeds, wins, baits: baits / seeds }
+  return { rate: wins / seeds, turns: turns / seeds, winTurns: wins ? winTurns / wins : 0, wins, baits: baits / seeds }
 }

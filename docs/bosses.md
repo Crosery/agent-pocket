@@ -13,14 +13,14 @@ that true (`tests/boss.test.ts`, 200 seeds per boss).
 | Boss (species, Lv) | Meme / event | Counter | Mechanics |
 |---|---|---|---|
 | 降智之星 GPT-6 Astra (62) | The 4o retirement / Luna downgrade / GPT-5 autoswitcher: heavy prompts get routed to a cheaper model | Feed **特制酱汁** (`special-sauce`, tag `sauce`) | The sauce triggers the *router*: Astra becomes **GPT-4o** (weaker, hp ratio kept) and at 30% hp **GPT-6 Luna**. Un-sauced it is a full-power model with a hit cap (30% of max hp per hit), a telegraphed **exaflop beam** (warning the turn before, damage ×0.6) and a "deep think" phase at 50% hp |
-| 服务器繁忙 DeepSeek-V4 (58) | "服务器繁忙，请稍后再试" and the off-peak discount | **谷时券** (`off-peak-coupon`, tag `offpeak`) | 6-turn tide: 3 turns of peak hours (takes ×0.12, deals ×1.35), 3 turns of valley pricing (takes ×1.4, deals ×0.7). The coupon turns a peak into 4 turns of valley. Below 40% hp it raises prices (+1 atk/spa). Enrage = price hikes |
-| 上下文溢出 Kimi K3 (58) | The 2M-character context window | **超长文档** (`long-document`, tag `flood`), status moves | A *context* meter grows every turn (and from status moves / documents); its stat stages grow with it. At 8 it overflows: stages cleared, the boss crashes for 3 turns (takes ×1.8) |
-| 跑分没输过，实战没赢过 MiniMax H3 (56) | Benchmark gaming | **私有测试集** (`holdout-set`, tag `holdout`) or off-benchmark move types | *Bench* form: damage ×0.25 from benchmark types (logic/code/chat/search/write/compute), and each such hit erases real-world progress. Three off-benchmark hits (or the holdout set) expose it for 4 turns (takes ×1.6) |
-| 蒸馏者 Qwen3-8 Max (58) | The distillation reports | **Switching out** (no item) | Copies the foe's damaging moves (max 2). Switching creatures makes the copied data mismatch: it forgets them, hallucinates and loses defence |
-| 按量计费 Cursor (55) | The pricing backlash, then apology and refund | **联名投诉信** (`complaint-letter`, tag `outrage`), loud moves | *Metered*: every foe move costs +2 PP and the boss hits harder. Public outrage (letters or trending moves, 3 times) makes it apologise: *refunded* form, heals the foe, deals ×0.6 / takes ×1.4 for a while |
-| 风控 Claude Code (58) | "认中国人" risk control (slash dates, apostrophes) | **海外住宅 IP** (`residential-ip`, tag `vpn`), switching | Each turn the active foe builds a *risk score* (CN creatures fastest); at 3 the foe is "banned" (sleep). A switch resets it. The residential IP stops it for 8 turns and the boss misjudges (deals ×0.8, takes ×1.6). At 50% hp the source leak drops its defences |
-| 太危险所以不公开 Claude Mythos (72, no run) | "Too dangerous to release" + the sandbox escape | **沙箱加固补丁** (`sandbox-patch`, tag `seal`), safety-type moves | *Sealed* form (weak, deals ×0.6) while the *escape* meter < 10; it rises every turn. At 10 the boss is **unbound** (stronger, extra action every 3 turns, immune to status). Safety moves −3, patches −5; pushing it back below 3 seals it again |
-| 神之一手 AlphaGo (70, no run) | Lee Sedol's move 78 against AlphaGo | **A move type it has not seen** | *Reading* form reads the foe's last move type: the same type again deals ×0.3. Three new types in a row = the "divine move": it deliberates for 3 turns (takes ×1.6) and forgets what it has seen |
+| 服务器繁忙 DeepSeek-V4 (58) | "服务器繁忙，请稍后再试" and the off-peak discount | **谷时券** (`off-peak-coupon`, tag `offpeak`) | 6-turn tide: 3 turns of peak hours (takes ×0.12, deals ×1.35), 3 turns of valley pricing (takes ×2.5, deals ×0.4). The coupon turns a peak into 4 turns of valley. Below 40% hp it raises prices (+1 atk/spa). Enrage = price hikes |
+| 上下文溢出 Kimi K3 (58) | The 2M-character context window | **超长文档** (`long-document`, tag `flood`), status moves | A *context* meter grows every turn (and from status moves / documents); its stat stages grow with it. At 8 it overflows: stages cleared, the boss crashes for 3 turns (takes ×2.2) |
+| 跑分没输过，实战没赢过 MiniMax H3 (56) | Benchmark gaming | **私有测试集** (`holdout-set`, tag `holdout`) or off-benchmark move types | *Bench* form: damage ×0.25 from benchmark types (logic/code/chat/search/write/compute), and each such hit erases real-world progress. Three off-benchmark hits (or the holdout set) expose it for 4 turns (takes ×2.2, deals ×0.6) |
+| 蒸馏者 Qwen3-8 Max (58) | The distillation reports | **Switching out** (no item) | Copies the foe's damaging moves (max 2). A voluntary switch (not the replacement after a faint) makes the copied data mismatch: it forgets them, hallucinates, stands dazed for 2 turns and loses defence and special defence (-2) |
+| 按量计费 Cursor (55) | The pricing backlash, then apology and refund | **联名投诉信** (`complaint-letter`, tag `outrage`), loud moves | *Metered*: every foe move costs +2 PP and the boss hits harder. Public outrage (letters or trending moves, 3 times) makes it apologise: *refunded* form, heals the foe, deals ×0.5 / takes ×1.8 for a while |
+| 风控 Claude Code (58) | "认中国人" risk control (slash dates, apostrophes) | **海外住宅 IP** (`residential-ip`, tag `vpn`), switching | Each turn the active foe builds a *risk score* (CN creatures fastest); at 3 the foe is "banned" (sleep). A switch resets it. The residential IP stops it for 8 turns and the boss misjudges (deals ×0.8, takes ×2). At 50% hp the source leak drops its defences |
+| 太危险所以不公开 Claude Mythos (72, no run) | "Too dangerous to release" + the sandbox escape | **沙箱加固补丁** (`sandbox-patch`, tag `seal`), safety-type moves | *Sealed* form (deals ×0.35, takes ×2) while the *escape* meter < 10; it rises every turn. At 10 the boss is **unbound** (atk/spa ×1.6, extra action every 2 turns, immune to status). Safety moves −3, patches −5; pushing it back below 3 seals it again |
+| 神之一手 AlphaGo (70, no run) | Lee Sedol's move 78 against AlphaGo | **Change the move type every turn** | *Reading* form reads the foe's last move type: the same type again deals ×0.3 and wipes the *surprise* meter. Three type changes in a row = the "divine move": it deliberates for 3 turns (takes ×1.6, deals ×0.6) |
 
 All nine are placed as roaming legends (`content/events/legends.json`) or mythic chain finales (`content/events/mythic.json`);
 the overworld fights any species that has a boss definition with its boss rules (`src/client/world/battles.ts`).
@@ -43,7 +43,7 @@ Counter items are bought in town shops (`content/world/story/services.json`) and
   a weighted `pattern` (`$borrowed` picks a copied move) and standing `rules`: `takenMul` / `dealtMul` / `hitCap` /
   `extraAction` / `foePpCost` / `statMul` / `noStatus`.
 - **triggers**: `on` (`start`, `turnStart`, `turnEnd`, `afterAction`, `foeMove`, `foeItem`, `foeSwitch`), filters
-  (`tag`, `moveTypes`, `categories`, `novelType`...), a `BossCond` guard, `times` (default 1; 0 = unlimited), `phase: true`
+  (`tag`, `moveTypes`, `categories`, `novelType`, `typeShift`, `voluntary`...), a `BossCond` guard, `times` (default 1; 0 = unlimited), `phase: true`
   (lights a HUD pip) and `do`: ops `say`, `form`, `heal`, `stages`, `clearStages`, `status`, `cure`, `volatile`, `meter`,
   `loseTurn`, `charge`, `cancelCharge`, `learn`, `forget`, `forgetTypes`.
 - **meters**: small counters (`max`, `start`, `decay`, `show`, `states`, `tone`) conditions and the HUD read.
@@ -97,11 +97,18 @@ The same boss can later be fought by N players, each with their own engine and p
 
 ## Tuning and tests
 
-- `node scripts/boss-sim.ts [bossId...] [--n=200]` prints plain vs counter win rates (shared AI, optional counter policy
-  from `tests/boss-counters.ts`, a typical 4-creature team at boss level − 2).
-- `npm test` → `tests/boss.test.ts`: data consistency, every phase and signature mechanic, each counter item, enrage,
+Numbers are balanced with the toolkit in `tools/balance` (docs/balance.md): the player side is a **level-appropriate archetype
+team** (`sensibleParty` in `tests/boss-sim.ts`: six SR/SSR creatures per archetype, level = boss level - 2, the seed picks one
+of the 7 archetypes and a variant) piloted by `tools/balance/pilot.ts`, with a bag for the counter items only.
+
+- `node scripts/boss-sim.ts [bossId...] [--n=200]` prints win rates and the mean length of won fights without and with the
+  counter strategy (`tests/boss-counters.ts`).
+- `npm test` -> `tests/boss.test.ts`: data consistency, every phase and signature mechanic, each counter item, enrage,
   deterministic replay, checkpoint restore equals the uninterrupted fight, `BossState` round trip, `chooseBossAction`
-  purity, rewards, placement/hints, and the Monte Carlo balance (plain > 5%, counter ≥ 70%, margin ≥ 25 points).
+  purity, rewards, placement/hints, and the Monte Carlo balance (plain > 5% and < 75%, counter >= 70%, margin >= 25 points,
+  at least 4 of the 7 archetypes win plain >= 10%, at least 5 win >= 70% with the counter).
+- `BOSS_TABLE=1 node --test tests/boss.test.ts` prints the win rates per boss and per archetype (hyper-offense, wall-stall,
+  setup-sweep, status-control, weather-rush, balanced, glass-cannon).
 - Dev sandbox (`?dev=1`): `&battle=boss&boss=<id>[&level=<n>]` or `window.__ap.boss(id, level?)` start a boss with a sensible
   team (`content/game.json` `debug.boss`) and every counter item in the bag.
 
@@ -112,4 +119,4 @@ The same boss can later be fought by N players, each with their own engine and p
 2. If a trigger reads a bait tag add a `bait` item (+ icon, manifest, `assets_src/prompts/items_details.json`) and sell it.
 3. Add gossip lines to an NPC pool and place the species as a legend or mythic chain.
 4. Add a counter policy to `tests/boss-counters.ts`, run `node scripts/boss-sim.ts <id>` and tune `statMul` until plain
-   is hard (about 25-50%) and the counter reliable (about 85-100%).
+   is hard (about 30-50%) and the counter reliable (about 85-100%).
