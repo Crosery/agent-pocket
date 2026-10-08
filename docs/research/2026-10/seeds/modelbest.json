@@ -1,0 +1,26 @@
+{
+ "vendor": "modelbest",
+ "count": 1,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "minicpm52b",
+   "names": [
+    "MiniCPM5-2B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:amd": "2026-09-06"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:amd": [
+     "MiniCPM5-2B"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

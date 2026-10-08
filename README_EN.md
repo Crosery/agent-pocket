@@ -6,7 +6,7 @@
 
 ### Catch today's hottest AIs, in your browser
 
-<p>Agent Pocket is an HD-2D pixel creature-collecting RPG that runs entirely on the web. Each of its 190 creatures is a real AI model, Chinese or international, drawn as a cute anime chibi. Each creature's rarity and stats follow that model's real capability.</p>
+<p>Agent Pocket is an HD-2D pixel creature-collecting RPG that runs entirely on the web. Each of its 255 creatures is a real AI model, Chinese or international, drawn as a cute anime chibi. Each creature's rarity and stats follow that model's real capability.</p>
 
 <p>
   <a href="README.md"><b>中文</b></a>
@@ -28,7 +28,7 @@
 
 ## Features
 
-- **190 creatures in 121 evolution families.**
+- **255 creatures in 139 evolution families.**
   - Six rarity tiers: N, R, SR, SSR, UR and MYTHIC.
   - A custom type chart.
   - Moves and abilities defined in a declarative DSL.

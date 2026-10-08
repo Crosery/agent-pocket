@@ -17,6 +17,8 @@ import traceback
 from assetlib import (
     JOBS_PATH,
     RAW_DIR,
+    ROOT,
+    load_json,
     load_jobs,
     out_path,
     pipeline_cfg,
@@ -62,12 +64,15 @@ def main() -> int:
     report_path = RAW_DIR / "_process_report.json"
     report = json.loads(report_path.read_text()) if report_path.exists() else {}
     done = failed = missing = 0
+    chibi = {c["id"] for c in load_json(ROOT / "assets_src/chibi/cast.json")["characters"]}
     for job in load_jobs(a.jobs):
         tag = f"{job['kind']}/{job['id']}"
         if (a.kind and job["kind"] not in a.kind) or (
             only and job["id"] not in only and tag not in only
         ):
             continue
+        if job["process"] == "sheet" and job["id"] in chibi:
+            continue  # built by tools/blender/chibi.py + tools/chibi_post.py, never from the old AI render
         src, dst = raw_path(job), out_path(job)
         if not src.exists():
             missing += 1

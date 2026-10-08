@@ -1,0 +1,3037 @@
+{
+ "vendor": "google",
+ "count": 51,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "gemma227bit",
+   "names": [
+    "Google: Gemma 2 27B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-07-13"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemma-2-27b-it"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemma312bit",
+   "names": [
+    "Google: Gemma 3 12B",
+    "Gemma 3 12B IT",
+    "Gemma 3 12B",
+    "Gemma 3 12B IT (Deep Infra)",
+    "Gemma 3 12B IT (Amazon Bedrock)",
+    "Gemma 3 12B IT (Amazon Bedrock, US)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-03-13",
+    "modelsdev:deepinfra": "2025-03-12",
+    "modelsdev:kilo": "2025-03-12",
+    "modelsdev:openrouter": "2025-03-12",
+    "modelsdev:huggingface": "2025-03-12",
+    "modelsdev:merge-gateway": "2025-03-12",
+    "modelsdev:edenai": "2025-03-12",
+    "modelsdev:amazon-bedrock": "2025-03-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemma-3-12b-it"
+    ],
+    "modelsdev:deepinfra": [
+     "google/gemma-3-12b-it"
+    ],
+    "modelsdev:kilo": [
+     "google/gemma-3-12b-it"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemma-3-12b-it"
+    ],
+    "modelsdev:huggingface": [
+     "google/gemma-3-12b-it"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemma-3-12b-it"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/google/gemma-3-12b-it",
+     "amazon/google.gemma-3-12b-it",
+     "amazon/google.gemma-3-12b-it@us"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "google.gemma-3-12b-it"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemma327bit",
+   "names": [
+    "Google: Gemma 3 27B",
+    "Gemma 3 27B IT",
+    "Gemma 3 27B",
+    "Google Gemma 3 27B Instruct",
+    "Gemma 3 27B IT (Deep Infra)",
+    "Gemma 3 27B IT (Nebius)",
+    "Gemma 3 27B IT (Scaleway)",
+    "Gemma 3 27B IT (Amazon Bedrock)",
+    "Gemma 3 27B IT (Amazon Bedrock, US)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-03-12",
+    "modelsdev:deepinfra": "2025-03-12",
+    "modelsdev:empiriolabs": "2025-03-12",
+    "modelsdev:kilo": "2025-03-12",
+    "modelsdev:venice": "2025-11-04",
+    "modelsdev:openrouter": "2025-03-12",
+    "modelsdev:huggingface": "2025-03-12",
+    "modelsdev:merge-gateway": "2025-03-12",
+    "modelsdev:edenai": "2025-03-12",
+    "modelsdev:amazon-bedrock": "2025-03-12",
+    "modelsdev:cortecs": "2025-03-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemma-3-27b-it"
+    ],
+    "modelsdev:deepinfra": [
+     "google/gemma-3-27b-it"
+    ],
+    "modelsdev:empiriolabs": [
+     "gemma-3-27b"
+    ],
+    "modelsdev:kilo": [
+     "google/gemma-3-27b-it"
+    ],
+    "modelsdev:venice": [
+     "google-gemma-3-27b-it"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemma-3-27b-it"
+    ],
+    "modelsdev:huggingface": [
+     "google/gemma-3-27b-it"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemma-3-27b-it"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/google/gemma-3-27b-it",
+     "nebius/google/gemma-3-27b-it",
+     "scaleway/gemma-3-27b-it",
+     "amazon/google.gemma-3-27b-it",
+     "amazon/google.gemma-3-27b-it@us"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "google.gemma-3-27b-it"
+    ],
+    "modelsdev:cortecs": [
+     "gemma-3-27b-it"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemma34bit",
+   "names": [
+    "Google: Gemma 3 4B",
+    "Gemma 3 4B IT",
+    "Gemma 3 4B",
+    "Gemma 3 4B IT (Deep Infra)",
+    "Gemma 3 4B IT (Amazon Bedrock)",
+    "Gemma 3 4B IT (Amazon Bedrock, US)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-03-13",
+    "modelsdev:deepinfra": "2025-03-12",
+    "modelsdev:kilo": "2025-03-12",
+    "modelsdev:openrouter": "2025-03-12",
+    "modelsdev:huggingface": "2025-03-12",
+    "modelsdev:merge-gateway": "2025-03-12",
+    "modelsdev:edenai": "2025-03-12",
+    "modelsdev:amazon-bedrock": "2025-03-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemma-3-4b-it"
+    ],
+    "modelsdev:deepinfra": [
+     "google/gemma-3-4b-it"
+    ],
+    "modelsdev:kilo": [
+     "google/gemma-3-4b-it"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemma-3-4b-it"
+    ],
+    "modelsdev:huggingface": [
+     "google/gemma-3-4b-it"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemma-3-4b-it"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/google/gemma-3-4b-it",
+     "amazon/google.gemma-3-4b-it",
+     "amazon/google.gemma-3-4b-it@us"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "google.gemma-3-4b-it"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini25pro",
+   "names": [
+    "Google: Gemini 2.5 Pro",
+    "Gemini 2.5 Pro",
+    "Gemini 2.5 Pro (Google AI Studio)",
+    "Gemini 2.5 Pro (Google Vertex AI)",
+    "Gemini 2.5 Pro (EU)",
+    "gemini-2.5-pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-06-17",
+    "modelsdev:nano-gpt": "2025-06-17",
+    "modelsdev:nearai": "2025-06-17",
+    "modelsdev:databricks": "2025-06-17",
+    "modelsdev:llmgateway-providers": "2025-06-17",
+    "modelsdev:kilo": "2025-06-17",
+    "modelsdev:abacus": "2025-06-17",
+    "modelsdev:openrouter": "2025-06-17",
+    "modelsdev:auriko": "2025-06-17",
+    "modelsdev:impossibl": "2025-06-17",
+    "modelsdev:google": "2025-06-17",
+    "modelsdev:anyapi": "2025-06-17",
+    "modelsdev:vercel": "2025-06-17",
+    "modelsdev:orcarouter": "2025-06-17",
+    "modelsdev:ofox": "2025-06-17",
+    "modelsdev:merge-gateway": "2025-06-17",
+    "modelsdev:modelis": "2025-06-17",
+    "modelsdev:requesty": "2025-06-17",
+    "modelsdev:llmgateway": "2025-06-17",
+    "modelsdev:sap-ai-core": "2025-03-25",
+    "modelsdev:google-vertex": "2025-06-17",
+    "modelsdev:cortecs": "2025-06-17",
+    "modelsdev:crossmodel": "2025-06-17"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file+audio+video->text",
+    "text,image,video,audio->text",
+    "text,image,audio,video,pdf->text",
+    "text,image,audio->text",
+    "text,image,audio,pdf->text",
+    "text,image,audio,video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-2.5-pro"
+    ],
+    "modelsdev:nano-gpt": [
+     "gemini-2.5-pro"
+    ],
+    "modelsdev:nearai": [
+     "google/gemini-2.5-pro"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gemini-2-5-pro"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "google-ai-studio/gemini-2.5-pro",
+     "google-vertex/gemini-2.5-pro"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-2.5-pro"
+    ],
+    "modelsdev:abacus": [
+     "gemini-2.5-pro"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-2.5-pro"
+    ],
+    "modelsdev:auriko": [
+     "gemini-2.5-pro"
+    ],
+    "modelsdev:impossibl": [
+     "google/gemini-2.5-pro"
+    ],
+    "modelsdev:google": [
+     "gemini-2.5-pro"
+    ],
+    "modelsdev:anyapi": [
+     "google/gemini-2.5-pro"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-2.5-pro"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemini-2.5-pro"
+    ],
+    "modelsdev:ofox": [
+     "google/gemini-2.5-pro"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-2.5-pro"
+    ],
+    "modelsdev:modelis": [
+     "gemini-2.5-pro"
+    ],
+    "modelsdev:requesty": [
+     "gemini-2.5-pro@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "gemini-2.5-pro"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gemini-2.5-pro"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-2.5-pro"
+    ],
+    "modelsdev:cortecs": [
+     "gemini-2.5-pro"
+    ],
+    "modelsdev:crossmodel": [
+     "gemini/gemini-2.5-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini25flash",
+   "names": [
+    "Google: Gemini 2.5 Flash",
+    "Gemini 2.5 Flash",
+    "Gemini 2.5 Flash (Google AI Studio)",
+    "Gemini 2.5 Flash (Google Vertex AI)",
+    "Gemini 2.5 Flash (EU)",
+    "gemini-2.5-flash"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-06-17",
+    "modelsdev:nano-gpt": "2025-06-17",
+    "modelsdev:nearai": "2025-06-17",
+    "modelsdev:databricks": "2025-06-17",
+    "modelsdev:llmgateway-providers": "2025-06-17",
+    "modelsdev:kilo": "2025-06-17",
+    "modelsdev:abacus": "2025-06-17",
+    "modelsdev:openrouter": "2025-06-17",
+    "modelsdev:auriko": "2025-06-17",
+    "modelsdev:impossibl": "2025-06-17",
+    "modelsdev:google": "2025-06-17",
+    "modelsdev:anyapi": "2025-06-17",
+    "modelsdev:vercel": "2025-06-17",
+    "modelsdev:orcarouter": "2025-06-17",
+    "modelsdev:ofox": "2025-06-17",
+    "modelsdev:merge-gateway": "2025-06-17",
+    "modelsdev:modelis": "2025-06-17",
+    "modelsdev:kenari": "2025-06-17",
+    "modelsdev:requesty": "2025-06-17",
+    "modelsdev:llmgateway": "2025-06-17",
+    "modelsdev:sap-ai-core": "2025-04-17",
+    "modelsdev:cortecs": "2025-06-17",
+    "modelsdev:crossmodel": "2025-06-17"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text+audio+video->text",
+    "text,image,video,audio->text",
+    "text,image,audio,video,pdf->text",
+    "text,image,audio->text",
+    "text,image,audio,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-2.5-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "gemini-2.5-flash"
+    ],
+    "modelsdev:nearai": [
+     "google/gemini-2.5-flash"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gemini-2-5-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "google-ai-studio/gemini-2.5-flash",
+     "google-vertex/gemini-2.5-flash"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-2.5-flash"
+    ],
+    "modelsdev:abacus": [
+     "gemini-2.5-flash"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-2.5-flash"
+    ],
+    "modelsdev:auriko": [
+     "gemini-2.5-flash"
+    ],
+    "modelsdev:impossibl": [
+     "google/gemini-2.5-flash"
+    ],
+    "modelsdev:google": [
+     "gemini-2.5-flash"
+    ],
+    "modelsdev:anyapi": [
+     "google/gemini-2.5-flash"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-2.5-flash"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemini-2.5-flash"
+    ],
+    "modelsdev:ofox": [
+     "google/gemini-2.5-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-2.5-flash"
+    ],
+    "modelsdev:modelis": [
+     "gemini-2.5-flash"
+    ],
+    "modelsdev:kenari": [
+     "gemini-2-5-flash"
+    ],
+    "modelsdev:requesty": [
+     "gemini-2.5-flash@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "gemini-2.5-flash"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gemini-2.5-flash"
+    ],
+    "modelsdev:cortecs": [
+     "gemini-2.5-flash"
+    ],
+    "modelsdev:crossmodel": [
+     "gemini/gemini-2.5-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini25flashpreviewtts",
+   "names": [
+    "Gemini 2.5 Flash Preview TTS"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2025-05-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->audio"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "gemini-2.5-flash-preview-tts"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini25propreviewtts",
+   "names": [
+    "Gemini 2.5 Pro Preview TTS"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2025-05-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->audio"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "gemini-2.5-pro-preview-tts"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "geminiembedding001",
+   "names": [
+    "Gemini Embedding 001"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2025-05-20",
+    "modelsdev:vercel": "2025-05-20",
+    "modelsdev:merge-gateway": "2025-05-20",
+    "modelsdev:tempr": "2025-05-20",
+    "modelsdev:sap-ai-core": "2025-05-20",
+    "modelsdev:google-vertex": "2025-05-20"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "gemini-embedding-001"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-embedding-001"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-embedding-001"
+    ],
+    "modelsdev:tempr": [
+     "google/gemini-embedding-001"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gemini-embedding"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-embedding-001"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini25propreview",
+   "names": [
+    "Google: Gemini 2.5 Pro Preview 06-05"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-06-05"
+   },
+   "openWeights": null,
+   "modalities": [
+    "file+image+text+audio->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-2.5-pro-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini25flashlite",
+   "names": [
+    "Google: Gemini 2.5 Flash Lite",
+    "Gemini 2.5 Flash Lite",
+    "Gemini 2.5 Flash-Lite",
+    "Gemini 2.5 Flash Lite (Google AI Studio)",
+    "Gemini 2.5 Flash Lite (Google Vertex AI)",
+    "Gemini 2.5 Flash-Lite (EU)",
+    "gemini-2.5-flash-lite"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-07-22",
+    "modelsdev:nano-gpt": "2025-06-17",
+    "modelsdev:nearai": "2025-06-17",
+    "modelsdev:llmgateway-providers": "2025-06-17",
+    "modelsdev:kilo": "2025-06-17",
+    "modelsdev:openrouter": "2025-06-17",
+    "modelsdev:llmtr": "2025-06-17",
+    "modelsdev:impossibl": "2025-06-17",
+    "modelsdev:google": "2025-06-17",
+    "modelsdev:anyapi": "2025-06-17",
+    "modelsdev:vercel": "2025-06-17",
+    "modelsdev:orcarouter": "2025-06-17",
+    "modelsdev:ofox": "2025-06-17",
+    "modelsdev:aihubmix": "2025-06-17",
+    "modelsdev:merge-gateway": "2025-06-17",
+    "modelsdev:kenari": "2025-06-17",
+    "modelsdev:requesty": "2025-06-17",
+    "modelsdev:llmgateway": "2025-06-17",
+    "modelsdev:sap-ai-core": "2025-06-17",
+    "modelsdev:google-vertex": "2025-06-17",
+    "modelsdev:crossmodel": "2025-06-17"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file+audio+video->text",
+    "text,image,video,audio->text",
+    "text,image,audio,video,pdf->text",
+    "text,image,pdf->text",
+    "text,image,audio,pdf->text",
+    "text,image,audio,video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-2.5-flash-lite"
+    ],
+    "modelsdev:nano-gpt": [
+     "gemini-2.5-flash-lite"
+    ],
+    "modelsdev:nearai": [
+     "google/gemini-2.5-flash-lite"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "google-ai-studio/gemini-2.5-flash-lite",
+     "google-vertex/gemini-2.5-flash-lite"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-2.5-flash-lite"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-2.5-flash-lite"
+    ],
+    "modelsdev:llmtr": [
+     "google/gemini-2.5-flash-lite"
+    ],
+    "modelsdev:impossibl": [
+     "google/gemini-2.5-flash-lite"
+    ],
+    "modelsdev:google": [
+     "gemini-2.5-flash-lite"
+    ],
+    "modelsdev:anyapi": [
+     "google/gemini-2.5-flash-lite"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-2.5-flash-lite"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemini-2.5-flash-lite"
+    ],
+    "modelsdev:ofox": [
+     "google/gemini-2.5-flash-lite"
+    ],
+    "modelsdev:aihubmix": [
+     "gemini-2.5-flash-lite"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-2.5-flash-lite"
+    ],
+    "modelsdev:kenari": [
+     "gemini-2-5-flash-lite"
+    ],
+    "modelsdev:requesty": [
+     "gemini-2.5-flash-lite@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "gemini-2.5-flash-lite"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gemini-2.5-flash-lite"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-2.5-flash-lite"
+    ],
+    "modelsdev:crossmodel": [
+     "gemini/gemini-2.5-flash-lite"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini25flashimage",
+   "names": [
+    "Google: Nano Banana (Gemini 2.5 Flash Image)",
+    "Nano Banana",
+    "Nano Banana (Gemini 2.5 Flash Image)",
+    "Gemini 2.5 Flash Image",
+    "Nano Banana (Vertex AI)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-07",
+    "modelsdev:kilo": "2025-08-26",
+    "modelsdev:abacus": "2025-08-26",
+    "modelsdev:openrouter": "2025-08-26",
+    "modelsdev:google": "2025-08-26",
+    "modelsdev:vercel": "2025-08-26",
+    "modelsdev:aihubmix": "2025-08-26",
+    "modelsdev:merge-gateway": "2025-08-26",
+    "modelsdev:edenai": "2025-08-26",
+    "modelsdev:google-vertex": "2025-08-26"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text->image+text",
+    "image,text,pdf->text,image",
+    "text,image->text,image",
+    "audio,image,text,video->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-2.5-flash-image"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-2.5-flash-image"
+    ],
+    "modelsdev:abacus": [
+     "gemini-2.5-flash-image"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-2.5-flash-image"
+    ],
+    "modelsdev:google": [
+     "gemini-2.5-flash-image"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-2.5-flash-image"
+    ],
+    "modelsdev:aihubmix": [
+     "gemini-2.5-flash-image"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-2.5-flash-image"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-2.5-flash-image",
+     "vertex/gemini-2.5-flash-image"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-2.5-flash-image"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini25flashtts",
+   "names": [
+    "Gemini 2.5 Flash TTS"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google-vertex": "2025-09-30"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->audio"
+   ],
+   "catalogIds": {
+    "modelsdev:google-vertex": [
+     "gemini-2.5-flash-tts"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini25protts",
+   "names": [
+    "Gemini 2.5 Pro TTS"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google-vertex": "2025-09-30"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->audio"
+   ],
+   "catalogIds": {
+    "modelsdev:google-vertex": [
+     "gemini-2.5-pro-tts"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini25computerusepreview",
+   "names": [
+    "Gemini 2.5 Computer Use Preview 10-2025",
+    "Gemini 2.5 Computer Use Preview (10-2025)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2025-10-07",
+    "modelsdev:merge-gateway": "2025-10-07"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "gemini-2.5-computer-use-preview-10-2025"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-2.5-computer-use-preview-10-2025"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "veo31fastgeneratepreview",
+   "names": [
+    "Veo 3.1 fast"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2025-10-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video->video"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "veo-3.1-fast-generate-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "veo31generatepreview",
+   "names": [
+    "Veo 3.1"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2025-10-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->video"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "veo-3.1-generate-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini3propreview",
+   "names": [
+    "Gemini 3 Pro Preview"
+   ],
+   "releaseDateHints": {
+    "modelsdev:databricks": "2025-11-18",
+    "modelsdev:anyapi": "2025-11-18",
+    "modelsdev:merge-gateway": "2025-11-18"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video,audio,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:databricks": [
+     "databricks-gemini-3-pro"
+    ],
+    "modelsdev:anyapi": [
+     "google/gemini-3-pro-preview"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3-pro-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini3proimagepreview",
+   "names": [
+    "Google: Nano Banana Pro (Gemini 3 Pro Image Preview)",
+    "Gemini 3 Pro Image",
+    "Nano Banana Pro Preview",
+    "Nano Banana Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-11-20",
+    "modelsdev:nano-gpt": "2025-11-20",
+    "modelsdev:kilo": "2025-11-20",
+    "modelsdev:abacus": "2025-11-20",
+    "modelsdev:openrouter": "2025-11-20",
+    "modelsdev:google": "2025-11-20",
+    "modelsdev:fastrouter": "2025-11-20",
+    "modelsdev:edenai": "2025-11-20"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text->image+text",
+    "text,image->text",
+    "image,text,pdf->text,image",
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3-pro-image-preview"
+    ],
+    "modelsdev:nano-gpt": [
+     "gemini-3-pro-image-preview"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3-pro-image-preview"
+    ],
+    "modelsdev:abacus": [
+     "gemini-3-pro-image-preview"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3-pro-image-preview"
+    ],
+    "modelsdev:google": [
+     "gemini-3-pro-image-preview"
+    ],
+    "modelsdev:fastrouter": [
+     "google/gemini-3-pro-image-preview"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3-pro-image-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini3flashpreview",
+   "names": [
+    "Google: Gemini 3 Flash Preview",
+    "Gemini 3 Flash (Preview)",
+    "Gemini 3 Flash Thinking",
+    "Gemini 3 Flash Preview",
+    "Gemini 3 Flash (Preview) (Google AI Studio)",
+    "Gemini 3 Flash (Preview) (Google Vertex AI)",
+    "Gemini 3 Flash Preview (Vertex AI)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-17",
+    "modelsdev:nano-gpt": "2025-12-17",
+    "modelsdev:databricks": "2025-12-17",
+    "modelsdev:llmgateway-providers": "2025-12-17",
+    "modelsdev:kilo": "2025-12-17",
+    "modelsdev:venice": "2025-12-19",
+    "modelsdev:abacus": "2025-12-17",
+    "modelsdev:openrouter": "2025-12-17",
+    "modelsdev:google": "2025-12-17",
+    "modelsdev:anyapi": "2025-12-17",
+    "modelsdev:orcarouter": "2025-12-17",
+    "modelsdev:ofox": "2025-12-17",
+    "modelsdev:neon": "2025-12-17",
+    "modelsdev:merge-gateway": "2025-12-17",
+    "modelsdev:opper": "2025-12-17",
+    "modelsdev:pioneer": "2025-12-17",
+    "modelsdev:edenai": "2025-12-17",
+    "modelsdev:tempr": "2025-12-17",
+    "modelsdev:llmgateway": "2025-12-17",
+    "modelsdev:google-vertex": "2025-12-17",
+    "modelsdev:crossmodel": "2025-12-17"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file+audio+video->text",
+    "text,image,video,audio->text",
+    "text,image,video,audio,pdf->text",
+    "text,image,audio->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3-flash-preview"
+    ],
+    "modelsdev:nano-gpt": [
+     "google/gemini-3-flash-preview",
+     "google/gemini-3-flash-preview-thinking"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gemini-3-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "google-ai-studio/gemini-3-flash-preview",
+     "google-vertex/gemini-3-flash-preview"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3-flash-preview"
+    ],
+    "modelsdev:venice": [
+     "gemini-3-flash-preview"
+    ],
+    "modelsdev:abacus": [
+     "gemini-3-flash-preview"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3-flash-preview"
+    ],
+    "modelsdev:google": [
+     "gemini-3-flash-preview"
+    ],
+    "modelsdev:anyapi": [
+     "google/gemini-3-flash-preview"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemini-3-flash-preview"
+    ],
+    "modelsdev:ofox": [
+     "google/gemini-3-flash-preview"
+    ],
+    "modelsdev:neon": [
+     "gemini-3-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3-flash-preview"
+    ],
+    "modelsdev:opper": [
+     "gemini-3-flash-preview"
+    ],
+    "modelsdev:pioneer": [
+     "gemini-3-flash"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3-flash-preview",
+     "vertex/gemini-3-flash-preview"
+    ],
+    "modelsdev:tempr": [
+     "google/gemini-3-flash-preview"
+    ],
+    "modelsdev:llmgateway": [
+     "gemini-3-flash-preview"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-3-flash-preview"
+    ],
+    "modelsdev:crossmodel": [
+     "gemini/gemini-3-flash-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini31propreview",
+   "names": [
+    "Google: Gemini 3.1 Pro Preview",
+    "Gemini 3.1 Pro (Preview)",
+    "Gemini 3.1 Pro (Preview) (Google AI Studio)",
+    "Gemini 3.1 Pro (Preview) (Quartz)",
+    "Gemini 3.1 Pro (Preview) (Google Vertex AI)",
+    "Gemini 3.1 Pro Preview",
+    "Gemini 3.1 Pro Preview (Vertex AI)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-19",
+    "modelsdev:nano-gpt": "2026-02-19",
+    "modelsdev:llmgateway-providers": "2026-02-19",
+    "modelsdev:kilo": "2026-02-19",
+    "modelsdev:venice": "2026-02-19",
+    "modelsdev:snowflake-cortex": "2026-02-19",
+    "modelsdev:abacus": "2026-02-19",
+    "modelsdev:302ai": "2026-02-19",
+    "modelsdev:openrouter": "2026-02-19",
+    "modelsdev:auriko": "2026-02-19",
+    "modelsdev:impossibl": "2026-02-19",
+    "modelsdev:google": "2026-02-19",
+    "modelsdev:vercel": "2026-02-19",
+    "modelsdev:fastrouter": "2026-02-19",
+    "modelsdev:orcarouter": "2026-02-19",
+    "modelsdev:ofox": "2026-02-19",
+    "modelsdev:merge-gateway": "2026-02-19",
+    "modelsdev:opper": "2026-02-19",
+    "modelsdev:pioneer": "2026-02-19",
+    "modelsdev:edenai": "2026-02-19",
+    "modelsdev:tempr": "2026-02-19",
+    "modelsdev:kenari": "2026-02-19",
+    "modelsdev:requesty": "2026-02-19",
+    "modelsdev:llmgateway": "2026-02-19",
+    "modelsdev:google-vertex": "2026-02-19",
+    "modelsdev:daoxe": "2026-02-19",
+    "modelsdev:crossmodel": "2026-02-19"
+   },
+   "openWeights": false,
+   "modalities": [
+    "audio+file+image+text+video->text",
+    "text,image,video,audio->text",
+    "text,image,video,audio,pdf->text",
+    "text,image,audio,video->text",
+    "text,image,audio->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:nano-gpt": [
+     "google/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "google-ai-studio/gemini-3.1-pro-preview",
+     "quartz/gemini-3.1-pro-preview",
+     "google-vertex/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:venice": [
+     "gemini-3-1-pro-preview"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "gemini-3.1-pro"
+    ],
+    "modelsdev:abacus": [
+     "gemini-3.1-pro-preview"
+    ],
+    "modelsdev:302ai": [
+     "gemini-3.1-pro-preview"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:auriko": [
+     "gemini-3.1-pro-preview"
+    ],
+    "modelsdev:impossibl": [
+     "google/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:google": [
+     "gemini-3.1-pro-preview"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:fastrouter": [
+     "google/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:ofox": [
+     "google/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:opper": [
+     "gemini-3.1-pro-preview"
+    ],
+    "modelsdev:pioneer": [
+     "gemini-3.1-pro"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3.1-pro-preview",
+     "vertex/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:tempr": [
+     "google/gemini-3.1-pro-preview"
+    ],
+    "modelsdev:kenari": [
+     "gemini-3-1-pro"
+    ],
+    "modelsdev:requesty": [
+     "gemini-3.1-pro-preview"
+    ],
+    "modelsdev:llmgateway": [
+     "gemini-3.1-pro-preview"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-3.1-pro-preview"
+    ],
+    "modelsdev:daoxe": [
+     "gemini-3.1-pro-preview"
+    ],
+    "modelsdev:crossmodel": [
+     "gemini/gemini-3.1-pro-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini31propreviewcustomtools",
+   "names": [
+    "Google: Gemini 3.1 Pro Preview Custom Tools",
+    "Gemini 3.1 Pro (Preview Custom Tools)",
+    "Gemini 3.1 Pro Preview Custom Tools"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-25",
+    "modelsdev:nano-gpt": "2026-02-19",
+    "modelsdev:databricks": "2026-02-19",
+    "modelsdev:kilo": "2026-02-19",
+    "modelsdev:openrouter": "2026-02-19",
+    "modelsdev:google": "2026-02-19",
+    "modelsdev:orcarouter": "2026-02-19",
+    "modelsdev:neon": "2026-02-19",
+    "modelsdev:merge-gateway": "2026-02-19",
+    "modelsdev:edenai": "2026-02-19",
+    "modelsdev:tempr": "2026-02-19",
+    "modelsdev:google-vertex": "2026-02-19"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+audio+image+video+file->text",
+    "text,image,video,audio->text",
+    "text,image,video,audio,pdf->text",
+    "text,image,audio,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3.1-pro-preview-customtools"
+    ],
+    "modelsdev:nano-gpt": [
+     "google/gemini-3.1-pro-preview-customtools"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gemini-3-1-pro"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3.1-pro-preview-customtools"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3.1-pro-preview-customtools"
+    ],
+    "modelsdev:google": [
+     "gemini-3.1-pro-preview-customtools"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemini-3.1-pro-preview-customtools"
+    ],
+    "modelsdev:neon": [
+     "gemini-3-1-pro"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3.1-pro-preview-customtools"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3.1-pro-preview-customtools"
+    ],
+    "modelsdev:tempr": [
+     "google/gemini-3.1-pro-preview-customtools"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-3.1-pro-preview-customtools"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini31flashimagepreview",
+   "names": [
+    "Google: Nano Banana 2 (Gemini 3.1 Flash Image Preview)",
+    "Nano Banana 2 Preview",
+    "Nano Banana 2",
+    "Gemini 3.1 Flash Image Preview (Nano Banana 2)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-26",
+    "modelsdev:kilo": "2026-02-26",
+    "modelsdev:abacus": "2026-02-26",
+    "modelsdev:openrouter": "2026-02-26",
+    "modelsdev:google": "2026-02-26",
+    "modelsdev:vercel": "2026-02-26",
+    "modelsdev:fastrouter": "2026-02-26",
+    "modelsdev:edenai": "2026-02-26"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text->image+text",
+    "text,image,pdf->text,image",
+    "text,image->text,image",
+    "image,text->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3.1-flash-image-preview"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3.1-flash-image-preview"
+    ],
+    "modelsdev:abacus": [
+     "gemini-3.1-flash-image-preview"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3.1-flash-image-preview"
+    ],
+    "modelsdev:google": [
+     "gemini-3.1-flash-image-preview"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-3.1-flash-image-preview"
+    ],
+    "modelsdev:fastrouter": [
+     "google/gemini-3.1-flash-image-preview"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3.1-flash-image-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini31flashlitepreview",
+   "names": [
+    "Google: Gemini 3.1 Flash Lite Preview",
+    "Gemini 3.1 Flash Lite Preview"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-03",
+    "modelsdev:databricks": "2026-03-03",
+    "modelsdev:kilo": "2026-03-03",
+    "modelsdev:302ai": "2026-03-03",
+    "modelsdev:openrouter": "2026-03-03",
+    "modelsdev:google": "2026-03-03",
+    "modelsdev:orcarouter": "2026-03-03",
+    "modelsdev:neon": "2026-03-03",
+    "modelsdev:merge-gateway": "2026-03-03",
+    "modelsdev:edenai": "2026-03-03",
+    "modelsdev:google-vertex": "2026-03-03"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video+file+audio->text",
+    "text,image,video,audio,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3.1-flash-lite-preview"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gemini-3-1-flash-lite"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3.1-flash-lite-preview"
+    ],
+    "modelsdev:302ai": [
+     "gemini-3.1-flash-lite-preview"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3.1-flash-lite-preview"
+    ],
+    "modelsdev:google": [
+     "gemini-3.1-flash-lite-preview"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemini-3.1-flash-lite-preview"
+    ],
+    "modelsdev:neon": [
+     "gemini-3-1-flash-lite"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3.1-flash-lite-preview"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3.1-flash-lite-preview"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-3.1-flash-lite-preview"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "lyria3clippreview",
+   "names": [
+    "Google: Lyria 3 Clip Preview",
+    "Lyria 3 Clip Preview"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-30",
+    "modelsdev:kilo": "2026-03-25",
+    "modelsdev:openrouter": "2026-03-25",
+    "modelsdev:google": "2026-03-25"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image->text+audio",
+    "text,image->text,audio"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/lyria-3-clip-preview"
+    ],
+    "modelsdev:kilo": [
+     "google/lyria-3-clip-preview"
+    ],
+    "modelsdev:openrouter": [
+     "google/lyria-3-clip-preview"
+    ],
+    "modelsdev:google": [
+     "lyria-3-clip-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "lyria3propreview",
+   "names": [
+    "Google: Lyria 3 Pro Preview",
+    "Lyria 3 Pro Preview"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-30",
+    "modelsdev:kilo": "2026-03-25",
+    "modelsdev:openrouter": "2026-03-25",
+    "modelsdev:google": "2026-03-25"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image->text+audio",
+    "text,image->text,audio"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/lyria-3-pro-preview"
+    ],
+    "modelsdev:kilo": [
+     "google/lyria-3-pro-preview"
+    ],
+    "modelsdev:openrouter": [
+     "google/lyria-3-pro-preview"
+    ],
+    "modelsdev:google": [
+     "lyria-3-pro-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini31flashlivepreview",
+   "names": [
+    "Gemini 3.1 Flash Live Preview"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2026-03-26"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video,audio->text,audio"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "gemini-3.1-flash-live-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "veo31litegeneratepreview",
+   "names": [
+    "Veo 3.1 lite"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2026-03-31"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->video"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "veo-3.1-lite-generate-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemma426ba4bit",
+   "names": [
+    "Google: Gemma 4 26B A4B ",
+    "Gemma 4 26B A4B IT",
+    "Gemma 4 26B-A4B",
+    "Gemma 4 26B A4B",
+    "Gemma 4 26B A4B IT (DeepInfra)",
+    "Gemma 4 26B A4B IT (NovitaAI)",
+    "Google Gemma 4 26B A4B Instruct",
+    "gemma4"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-03",
+    "modelsdev:deepinfra": "2026-04-02",
+    "modelsdev:empiriolabs": "2026-04-02",
+    "modelsdev:cloudflare-workers-ai": "2026-04-02",
+    "modelsdev:nano-gpt": "2026-04-02",
+    "modelsdev:nan": "2026-04-02",
+    "modelsdev:wandb": "2026-04-02",
+    "modelsdev:siliconflow": "2026-04-02",
+    "modelsdev:llmgateway-providers": "2026-04-02",
+    "modelsdev:kilo": "2026-04-02",
+    "modelsdev:venice": "2026-04-02",
+    "modelsdev:openrouter": "2026-04-02",
+    "modelsdev:huggingface": "2026-04-02",
+    "modelsdev:google": "2026-04-02",
+    "modelsdev:scaleway": "2026-04-01",
+    "modelsdev:vercel": "2026-04-02",
+    "modelsdev:greenpt": "2026-04-02",
+    "modelsdev:hyper": "2026-04-30",
+    "modelsdev:orcarouter": "2026-04-02",
+    "modelsdev:merge-gateway": "2026-04-02",
+    "modelsdev:aki-io": "2026-04-02",
+    "modelsdev:tempr": "2026-04-02",
+    "modelsdev:requesty": "2026-04-02",
+    "modelsdev:amazon-bedrock": "2026-04-02",
+    "modelsdev:llmgateway": "2026-04-02",
+    "modelsdev:evroc": "2026-04-02",
+    "modelsdev:cortecs": "2026-04-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "image+text+video->text",
+    "text,image->text",
+    "text,image,video->text",
+    "text->text",
+    "image,text,video->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:deepinfra": [
+     "google/gemma-4-26B-A4B-it"
+    ],
+    "modelsdev:empiriolabs": [
+     "gemma-4-26b-a4b"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/google/gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:nano-gpt": [
+     "google/gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:nan": [
+     "gemma4"
+    ],
+    "modelsdev:wandb": [
+     "google/gemma-4-26B-A4B-it"
+    ],
+    "modelsdev:siliconflow": [
+     "google/gemma-4-26B-A4B-it"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "deepinfra/gemma-4-26b-a4b-it",
+     "novita/gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:kilo": [
+     "google/gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:venice": [
+     "google-gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:huggingface": [
+     "google/gemma-4-26B-A4B-it"
+    ],
+    "modelsdev:google": [
+     "gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:scaleway": [
+     "gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:vercel": [
+     "google/gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:greenpt": [
+     "gemma4"
+    ],
+    "modelsdev:hyper": [
+     "gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:aki-io": [
+     "gemma4-26b"
+    ],
+    "modelsdev:tempr": [
+     "google/gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:requesty": [
+     "gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "google.gemma-4-26b-a4b"
+    ],
+    "modelsdev:llmgateway": [
+     "gemma-4-26b-a4b-it"
+    ],
+    "modelsdev:evroc": [
+     "google/gemma-4-26B-A4B-it"
+    ],
+    "modelsdev:cortecs": [
+     "gemma-4-26b-a4b-it"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemma431bit",
+   "names": [
+    "Google: Gemma 4 31B",
+    "Gemma 4 31B IT",
+    "Gemma 4 31B",
+    "Gemma 4 31B IT (Consensus Protocol)",
+    "Gemma 4 31B IT (DeepInfra)",
+    "Gemma 4 31B IT (Cerebras)",
+    "Gemma 4 31B IT (Runware)",
+    "Gemma 4 31B IT (NovitaAI)",
+    "Gemma 4 31B IT (SCX.ai (Turbo))",
+    "Google Gemma 4 31B Instruct",
+    "Gemma 4",
+    "Gemma 4 31B It"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-02",
+    "modelsdev:deepinfra": "2026-04-02",
+    "modelsdev:nano-gpt": "2026-04-02",
+    "modelsdev:crof": "2026-04-02",
+    "modelsdev:tinfoil": "2026-04-02",
+    "modelsdev:wandb": "2026-04-02",
+    "modelsdev:siliconflow": "2026-04-02",
+    "modelsdev:lilac": "2026-04-02",
+    "modelsdev:llmgateway-providers": "2026-04-02",
+    "modelsdev:kilo": "2026-04-02",
+    "modelsdev:venice": "2026-04-03",
+    "modelsdev:abacus": "2026-04-02",
+    "modelsdev:openrouter": "2026-04-02",
+    "modelsdev:neuralwatt": "2026-04-02",
+    "modelsdev:llmtr": "2026-04-02",
+    "modelsdev:regolo-ai": "2026-04-02",
+    "modelsdev:huggingface": "2026-04-02",
+    "modelsdev:google": "2026-04-02",
+    "modelsdev:aiand": "2026-04-02",
+    "modelsdev:crusoe": "2026-04-02",
+    "modelsdev:vercel": "2026-04-02",
+    "modelsdev:fastrouter": "2026-04-02",
+    "modelsdev:orcarouter": "2026-04-02",
+    "modelsdev:friendli": "2026-04-02",
+    "modelsdev:merge-gateway": "2026-04-02",
+    "modelsdev:opper": "2026-04-02",
+    "modelsdev:pioneer": "2026-04-02",
+    "modelsdev:tempr": "2026-04-02",
+    "modelsdev:kenari": "2026-04-02",
+    "modelsdev:requesty": "2026-04-02",
+    "modelsdev:amazon-bedrock": "2026-04-02",
+    "modelsdev:llmgateway": "2026-04-02",
+    "modelsdev:cortecs": "2026-04-02",
+    "modelsdev:infomaniak": "2026-04-02",
+    "modelsdev:qvac": "2026-04-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "image+text+video->text",
+    "text,image,video->text",
+    "text,image->text",
+    "text->text",
+    "image,text,video->text",
+    "text,image,video,pdf->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:deepinfra": [
+     "google/gemma-4-31B-it"
+    ],
+    "modelsdev:nano-gpt": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:crof": [
+     "gemma-4-31b-it"
+    ],
+    "modelsdev:tinfoil": [
+     "gemma4-31b"
+    ],
+    "modelsdev:wandb": [
+     "google/gemma-4-31B-it"
+    ],
+    "modelsdev:siliconflow": [
+     "google/gemma-4-31B-it"
+    ],
+    "modelsdev:lilac": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "consensusprotocol/gemma-4-31b-it",
+     "deepinfra/gemma-4-31b-it",
+     "cerebras/gemma-4-31b-it",
+     "runware/gemma-4-31b-it",
+     "novita/gemma-4-31b-it",
+     "scx-ai/gemma-4-31b-it"
+    ],
+    "modelsdev:kilo": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:venice": [
+     "google-gemma-4-31b-it"
+    ],
+    "modelsdev:abacus": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:neuralwatt": [
+     "gemma-4-31b"
+    ],
+    "modelsdev:llmtr": [
+     "gemma-4"
+    ],
+    "modelsdev:regolo-ai": [
+     "gemma4-31b"
+    ],
+    "modelsdev:huggingface": [
+     "google/gemma-4-31B-it"
+    ],
+    "modelsdev:google": [
+     "gemma-4-31b-it"
+    ],
+    "modelsdev:aiand": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:crusoe": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:vercel": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:fastrouter": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:friendli": [
+     "google/gemma-4-31B-it"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:opper": [
+     "gemma-4-31b-it"
+    ],
+    "modelsdev:pioneer": [
+     "google/gemma-4-31B-it"
+    ],
+    "modelsdev:tempr": [
+     "google/gemma-4-31b-it"
+    ],
+    "modelsdev:kenari": [
+     "gemma-4-31b-it"
+    ],
+    "modelsdev:requesty": [
+     "gemma-4-31b-it"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "google.gemma-4-31b"
+    ],
+    "modelsdev:llmgateway": [
+     "gemma-4-31b-it"
+    ],
+    "modelsdev:cortecs": [
+     "gemma-4-31b-it"
+    ],
+    "modelsdev:infomaniak": [
+     "google/gemma-4-31B-it"
+    ],
+    "modelsdev:qvac": [
+     "gemma4-31b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemma4e2bit",
+   "names": [
+    "Gemma 4 E2B IT"
+   ],
+   "releaseDateHints": {
+    "modelsdev:pioneer": "2026-04-02",
+    "modelsdev:amazon-bedrock": "2026-04-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image,audio->text",
+    "text,image,audio,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:pioneer": [
+     "google/gemma-4-E2B-it"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "google.gemma-4-e2b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemma4e4bit",
+   "names": [
+    "Gemma 4 E4B IT"
+   ],
+   "releaseDateHints": {
+    "modelsdev:deepinfra": "2026-04-02",
+    "modelsdev:pioneer": "2026-04-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image,audio->text"
+   ],
+   "catalogIds": {
+    "modelsdev:deepinfra": [
+     "google/gemma-4-E4B-it"
+    ],
+    "modelsdev:pioneer": [
+     "google/gemma-4-E4B-it"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "geminiroboticser16preview",
+   "names": [
+    "Gemini Robotics-ER 1.6 Preview"
+   ],
+   "releaseDateHints": {
+    "modelsdev:orcarouter": "2026-04-14"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video,audio->text"
+   ],
+   "catalogIds": {
+    "modelsdev:orcarouter": [
+     "google/gemini-robotics-er-1.6-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini31flashttspreview",
+   "names": [
+    "Gemini 3.1 Flash TTS Preview"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2026-04-15",
+    "modelsdev:kenari": "2026-04-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->audio"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "gemini-3.1-flash-tts-preview"
+    ],
+    "modelsdev:kenari": [
+     "gemini-3-1-flash-tts"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepresearchmaxpreview",
+   "names": [
+    "Deep Research Max Preview (Apr-21-2026)",
+    "Deep Research Max Preview"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2026-04-21",
+    "modelsdev:edenai": "2026-04-21"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video,audio,pdf->text,image",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "deep-research-max-preview-04-2026"
+    ],
+    "modelsdev:edenai": [
+     "google/deep-research-max-preview-04-2026"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepresearchpreview",
+   "names": [
+    "Deep Research Preview (Apr-21-2026)",
+    "Gemini Deep Research Preview"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2026-04-21",
+    "modelsdev:edenai": "2026-04-21"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video,audio,pdf->text,image",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "deep-research-preview-04-2026"
+    ],
+    "modelsdev:edenai": [
+     "google/deep-research-preview-04-2026"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "geminiembedding2",
+   "names": [
+    "Gemini Embedding 2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2026-04-22",
+    "modelsdev:vercel": "2026-04-22",
+    "modelsdev:tempr": "2026-04-22",
+    "modelsdev:sap-ai-core": "2026-04-22"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,audio,video,pdf->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "gemini-embedding-2"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-embedding-2"
+    ],
+    "modelsdev:tempr": [
+     "google/gemini-embedding-2"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gemini-embedding-2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini31flashlite",
+   "names": [
+    "Google: Gemini 3.1 Flash Lite",
+    "Gemini 3.1 Flash Lite",
+    "Gemini 3.1 Flash Lite (Google AI Studio)",
+    "Gemini 3.1 Flash Lite (Google Vertex AI)",
+    "Gemini 3.1 Flash-Lite",
+    "Gemini 3.1 Flash Lite (Vertex AI, EU)",
+    "Gemini 3.1 Flash Lite (Vertex AI, US)",
+    "Gemini 3.1 Flash Lite (Vertex AI)",
+    "Gemini 3.1 Flash Lite (EU)",
+    "gemini-3.1-flash-lite"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-05-07",
+    "modelsdev:nano-gpt": "2026-05-07",
+    "modelsdev:nearai": "2026-05-07",
+    "modelsdev:llmgateway-providers": "2026-05-07",
+    "modelsdev:kilo": "2026-05-07",
+    "modelsdev:abacus": "2026-05-07",
+    "modelsdev:302ai": "2026-05-07",
+    "modelsdev:openrouter": "2026-05-07",
+    "modelsdev:zenmux": "2026-05-07",
+    "modelsdev:impossibl": "2026-05-07",
+    "modelsdev:google": "2026-05-07",
+    "modelsdev:vercel": "2026-05-07",
+    "modelsdev:orcarouter": "2026-05-07",
+    "modelsdev:ofox": "2026-05-07",
+    "modelsdev:merge-gateway": "2026-05-07",
+    "modelsdev:pioneer": "2026-05-07",
+    "modelsdev:edenai": "2026-05-07",
+    "modelsdev:tempr": "2026-05-07",
+    "modelsdev:kenari": "2026-05-07",
+    "modelsdev:requesty": "2026-05-07",
+    "modelsdev:llmgateway": "2026-05-07",
+    "modelsdev:sap-ai-core": "2026-05-07",
+    "modelsdev:google-vertex": "2026-05-07",
+    "modelsdev:cortecs": "2026-05-07"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video+file+audio->text",
+    "text,image,video,audio,pdf->text",
+    "text,image,audio->text",
+    "text,image,pdf->text",
+    "text,image,audio,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:nano-gpt": [
+     "google/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:nearai": [
+     "google/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "google-ai-studio/gemini-3.1-flash-lite",
+     "google-vertex/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:abacus": [
+     "gemini-3.1-flash-lite"
+    ],
+    "modelsdev:302ai": [
+     "gemini-3.1-flash-lite"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:zenmux": [
+     "google/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:impossibl": [
+     "google/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:google": [
+     "gemini-3.1-flash-lite"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:ofox": [
+     "google/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:pioneer": [
+     "gemini-3.1-flash-lite"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3.1-flash-lite",
+     "vertex/gemini-3.1-flash-lite@eu",
+     "vertex/gemini-3.1-flash-lite@us",
+     "vertex/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:tempr": [
+     "google/gemini-3.1-flash-lite"
+    ],
+    "modelsdev:kenari": [
+     "gemini-3-1-flash-lite"
+    ],
+    "modelsdev:requesty": [
+     "gemini-3.1-flash-lite@eu",
+     "gemini-3.1-flash-lite"
+    ],
+    "modelsdev:llmgateway": [
+     "gemini-3.1-flash-lite"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gemini-3.1-flash-lite"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-3.1-flash-lite"
+    ],
+    "modelsdev:cortecs": [
+     "gemini-3.1-flash-lite"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini35flash",
+   "names": [
+    "Google: Gemini 3.5 Flash",
+    "Gemini-3.5-Flash",
+    "Gemini 3.5 Flash Thinking",
+    "Gemini 3.5 Flash",
+    "Gemini 3.5 Flash (Google AI Studio)",
+    "Gemini 3.5 Flash (Google Vertex AI)",
+    "gemini-3.5-flash-thinking",
+    "Gemini 3.5 Flash (Vertex AI)",
+    "Gemini 3.5 Flash (Vertex AI, EU)",
+    "Gemini 3.5 Flash (Vertex AI, US)",
+    "Gemini 3.5 Flash (EU)",
+    "gemini-3.5-flash"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-05-19",
+    "modelsdev:poe": "2026-05-19",
+    "modelsdev:nano-gpt": "2026-05-19",
+    "modelsdev:nearai": "2026-05-19",
+    "modelsdev:llmgateway-providers": "2026-05-19",
+    "modelsdev:kilo": "2026-05-19",
+    "modelsdev:venice": "2026-05-22",
+    "modelsdev:abacus": "2026-05-19",
+    "modelsdev:302ai": "2026-05-19",
+    "modelsdev:openrouter": "2026-05-19",
+    "modelsdev:zenmux": "2026-05-19",
+    "modelsdev:unorouter": "2026-05-19",
+    "modelsdev:impossibl": "2026-05-19",
+    "modelsdev:xpersona": "2026-05-19",
+    "modelsdev:google": "2026-05-19",
+    "modelsdev:vercel": "2026-05-19",
+    "modelsdev:fastrouter": "2026-05-19",
+    "modelsdev:orcarouter": "2026-05-19",
+    "modelsdev:ofox": "2026-05-19",
+    "modelsdev:neon": "2026-05-19",
+    "modelsdev:aihubmix": "2026-05-19",
+    "modelsdev:merge-gateway": "2026-05-19",
+    "modelsdev:opper": "2026-05-19",
+    "modelsdev:pioneer": "2026-05-19",
+    "modelsdev:github-copilot": "2026-05-19",
+    "modelsdev:edenai": "2026-05-19",
+    "modelsdev:tempr": "2026-05-19",
+    "modelsdev:kenari": "2026-05-19",
+    "modelsdev:requesty": "2026-05-19",
+    "modelsdev:llmgateway": "2026-05-19",
+    "modelsdev:sap-ai-core": "2026-05-19",
+    "modelsdev:google-vertex": "2026-05-19",
+    "modelsdev:cortecs": "2026-05-19",
+    "modelsdev:crossmodel": "2026-05-19"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video+file+audio->text",
+    "text,image,audio->text",
+    "text,image,video,audio->text",
+    "text,image,video,audio,pdf->text",
+    "text,image,audio,video->text",
+    "text,image->text",
+    "text,image,pdf->text",
+    "text,image,audio,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:poe": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "google/gemini-3.5-flash-thinking",
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:nearai": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "google-ai-studio/gemini-3.5-flash",
+     "google-vertex/gemini-3.5-flash"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:venice": [
+     "gemini-3-5-flash"
+    ],
+    "modelsdev:abacus": [
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:302ai": [
+     "gemini-3.5-flash-thinking",
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:zenmux": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:unorouter": [
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:impossibl": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:xpersona": [
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:google": [
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:fastrouter": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:ofox": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:neon": [
+     "gemini-3-5-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:opper": [
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:pioneer": [
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:github-copilot": [
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3.5-flash",
+     "vertex/gemini-3.5-flash",
+     "vertex/gemini-3.5-flash@eu",
+     "vertex/gemini-3.5-flash@us"
+    ],
+    "modelsdev:tempr": [
+     "google/gemini-3.5-flash"
+    ],
+    "modelsdev:kenari": [
+     "gemini-3-5-flash"
+    ],
+    "modelsdev:requesty": [
+     "gemini-3.5-flash",
+     "gemini-3.5-flash@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:cortecs": [
+     "gemini-3.5-flash"
+    ],
+    "modelsdev:crossmodel": [
+     "gemini/gemini-3.5-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini31flashimage",
+   "names": [
+    "Google: Nano Banana 2 (Gemini 3.1 Flash Image)",
+    "Nano Banana 2",
+    "Gemini 3.1 Flash Image",
+    "Nano Banana 2 (Vertex AI)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-06-18",
+    "modelsdev:kilo": "2026-05-28",
+    "modelsdev:abacus": "2026-05-28",
+    "modelsdev:openrouter": "2026-05-28",
+    "modelsdev:google": "2026-05-28",
+    "modelsdev:vercel": "2026-05-28",
+    "modelsdev:aihubmix": "2026-05-28",
+    "modelsdev:merge-gateway": "2026-05-28",
+    "modelsdev:edenai": "2026-05-28",
+    "modelsdev:requesty": "2026-05-28",
+    "modelsdev:google-vertex": "2026-05-28"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text->image+text",
+    "image,text,pdf->text,image",
+    "text,image->text,image",
+    "image,text->text,image",
+    "text,image,video,pdf->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3.1-flash-image"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3.1-flash-image"
+    ],
+    "modelsdev:abacus": [
+     "gemini-3.1-flash-image"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3.1-flash-image"
+    ],
+    "modelsdev:google": [
+     "gemini-3.1-flash-image"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-3.1-flash-image"
+    ],
+    "modelsdev:aihubmix": [
+     "gemini-3.1-flash-image"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3.1-flash-image"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3.1-flash-image",
+     "vertex/gemini-3.1-flash-image"
+    ],
+    "modelsdev:requesty": [
+     "gemini-3.1-flash-image"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-3.1-flash-image"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini3proimage",
+   "names": [
+    "Google: Nano Banana Pro (Gemini 3 Pro Image)",
+    "Nano Banana Pro",
+    "Gemini 3 Pro Image",
+    "Nano Banana Pro (Vertex AI)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-06-18",
+    "modelsdev:kilo": "2026-05-28",
+    "modelsdev:abacus": "2026-05-28",
+    "modelsdev:openrouter": "2026-05-28",
+    "modelsdev:google": "2026-05-28",
+    "modelsdev:vercel": "2026-05-28",
+    "modelsdev:aihubmix": "2026-05-28",
+    "modelsdev:merge-gateway": "2026-05-28",
+    "modelsdev:edenai": "2026-05-28",
+    "modelsdev:requesty": "2026-05-28",
+    "modelsdev:google-vertex": "2026-05-28"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text->image+text",
+    "image,text,pdf->text,image",
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3-pro-image"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3-pro-image"
+    ],
+    "modelsdev:abacus": [
+     "gemini-3-pro-image"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3-pro-image"
+    ],
+    "modelsdev:google": [
+     "gemini-3-pro-image"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-3-pro-image"
+    ],
+    "modelsdev:aihubmix": [
+     "gemini-3-pro-image"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3-pro-image"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3-pro-image",
+     "vertex/gemini-3-pro-image"
+    ],
+    "modelsdev:requesty": [
+     "gemini-3-pro-image"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-3-pro-image"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini35livetranslatepreview",
+   "names": [
+    "Gemini 3.5 Live Translate Preview"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2026-06-09"
+   },
+   "openWeights": false,
+   "modalities": [
+    "audio->audio,text"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "gemini-3.5-live-translate-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemma412bit",
+   "names": [
+    "Gemma 4 12B Instruct",
+    "Gemma 4 12B IT"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nano-gpt": "2026-06-09",
+    "modelsdev:siliconflow": "2026-06-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image,video,audio->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nano-gpt": [
+     "gemma-4-12b-it"
+    ],
+    "modelsdev:siliconflow": [
+     "google/gemma-4-12B-it"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini31flashliteimage",
+   "names": [
+    "Google: Nano Banana 2 Lite (Gemini 3.1 Flash Lite Image)",
+    "Nano Banana 2 Lite",
+    "Gemini 3.1 Flash Lite Image (Nano Banana 2 Lite)",
+    "Nano Banana 2 Lite (Vertex AI)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-06-30",
+    "modelsdev:kilo": "2026-06-30",
+    "modelsdev:openrouter": "2026-06-30",
+    "modelsdev:google": "2026-06-30",
+    "modelsdev:vercel": "2026-06-30",
+    "modelsdev:aihubmix": "2026-06-30",
+    "modelsdev:edenai": "2026-06-30"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text->image+text",
+    "image,text,pdf->text,image",
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3.1-flash-lite-image"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3.1-flash-lite-image"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3.1-flash-lite-image"
+    ],
+    "modelsdev:google": [
+     "gemini-3.1-flash-lite-image"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-3.1-flash-lite-image"
+    ],
+    "modelsdev:aihubmix": [
+     "gemini-3.1-flash-lite-image"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3.1-flash-lite-image",
+     "vertex/gemini-3.1-flash-lite-image"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "geminiomniflashpreview",
+   "names": [
+    "Gemini Omni Flash Preview"
+   ],
+   "releaseDateHints": {
+    "modelsdev:google": "2026-06-30",
+    "modelsdev:vercel": "2026-06-30"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video->video",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:google": [
+     "gemini-omni-flash-preview"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-omni-flash-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini35flashlite",
+   "names": [
+    "Google: Gemini 3.5 Flash Lite",
+    "Gemini 3.5 Flash Lite",
+    "Gemini 3.5 Flash Lite (Google AI Studio)",
+    "Gemini 3.5 Flash Lite (Google Vertex AI)",
+    "Gemini 3.5 Flash-Lite",
+    "Gemini 3.5 Flash Lite (Vertex AI, EU)",
+    "Gemini 3.5 Flash Lite (Vertex AI)",
+    "Gemini 3.5 Flash Lite (Vertex AI, US)",
+    "Gemini 3.5 Flash Lite (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-21",
+    "modelsdev:nano-gpt": "2026-07-21",
+    "modelsdev:llmgateway-providers": "2026-07-21",
+    "modelsdev:kilo": "2026-07-21",
+    "modelsdev:venice": "2026-07-09",
+    "modelsdev:abacus": "2026-07-21",
+    "modelsdev:302ai": "2026-07-21",
+    "modelsdev:openrouter": "2026-07-21",
+    "modelsdev:impossibl": "2026-07-21",
+    "modelsdev:google": "2026-07-21",
+    "modelsdev:vercel": "2026-07-21",
+    "modelsdev:orcarouter": "2026-07-21",
+    "modelsdev:ofox": "2026-07-21",
+    "modelsdev:neon": "2026-07-21",
+    "modelsdev:aihubmix": "2026-07-21",
+    "modelsdev:merge-gateway": "2026-07-21",
+    "modelsdev:opper": "2026-07-21",
+    "modelsdev:pioneer": "2026-07-21",
+    "modelsdev:edenai": "2026-07-21",
+    "modelsdev:tempr": "2026-07-21",
+    "modelsdev:opencode": "2026-07-21",
+    "modelsdev:requesty": "2026-07-21",
+    "modelsdev:llmgateway": "2026-07-21",
+    "modelsdev:sap-ai-core": "2026-07-21",
+    "modelsdev:google-vertex": "2026-07-21",
+    "modelsdev:cortecs": "2026-07-21",
+    "modelsdev:crossmodel": "2026-07-21"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video+file+audio->text",
+    "text,image,video,audio,pdf->text",
+    "text,image,audio,video->text",
+    "text,image,audio->text",
+    "text,image,pdf->text",
+    "text,image,audio,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3.5-flash-lite"
+    ],
+    "modelsdev:nano-gpt": [
+     "google/gemini-3.5-flash-lite"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "google-ai-studio/gemini-3.5-flash-lite",
+     "google-vertex/gemini-3.5-flash-lite"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3.5-flash-lite"
+    ],
+    "modelsdev:venice": [
+     "gemini-3-5-flash-lite"
+    ],
+    "modelsdev:abacus": [
+     "gemini-3.5-flash-lite"
+    ],
+    "modelsdev:302ai": [
+     "gemini-3.5-flash-lite"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3.5-flash-lite"
+    ],
+    "modelsdev:impossibl": [
+     "google/gemini-3.5-flash-lite"
+    ],
+    "modelsdev:google": [
+     "gemini-3.5-flash-lite"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-3.5-flash-lite"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemini-3.5-flash-lite"
+    ],
+    "modelsdev:ofox": [
+     "google/gemini-3.5-flash-lite"
+    ],
+    "modelsdev:neon": [
+     "gemini-3-5-flash-lite"
+    ],
+    "modelsdev:aihubmix": [
+     "gemini-3.5-flash-lite"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3.5-flash-lite"
+    ],
+    "modelsdev:opper": [
+     "gemini-3.5-flash-lite"
+    ],
+    "modelsdev:pioneer": [
+     "gemini-3.5-flash-lite"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3.5-flash-lite",
+     "vertex/gemini-3.5-flash-lite@eu",
+     "vertex/gemini-3.5-flash-lite",
+     "vertex/gemini-3.5-flash-lite@us"
+    ],
+    "modelsdev:tempr": [
+     "google/gemini-3.5-flash-lite"
+    ],
+    "modelsdev:opencode": [
+     "gemini-3.5-flash-lite"
+    ],
+    "modelsdev:requesty": [
+     "gemini-3.5-flash-lite@eu",
+     "gemini-3.5-flash-lite"
+    ],
+    "modelsdev:llmgateway": [
+     "gemini-3.5-flash-lite"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gemini-3.5-flash-lite"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-3.5-flash-lite"
+    ],
+    "modelsdev:cortecs": [
+     "gemini-3.5-flash-lite"
+    ],
+    "modelsdev:crossmodel": [
+     "gemini/gemini-3.5-flash-lite"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini36flash",
+   "names": [
+    "Google: Gemini 3.6 Flash",
+    "Gemini 3.6 Flash",
+    "Gemini 3.6 Flash (Google AI Studio)",
+    "Gemini 3.6 Flash (Google Vertex AI)",
+    "Gemini 3.6 Flash (Vertex AI, EU)",
+    "Gemini 3.6 Flash (Vertex AI)",
+    "Gemini 3.6 Flash (Vertex AI, US)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-21",
+    "modelsdev:nano-gpt": "2026-07-21",
+    "modelsdev:llmgateway-providers": "2026-07-21",
+    "modelsdev:kilo": "2026-07-21",
+    "modelsdev:venice": "2026-07-09",
+    "modelsdev:abacus": "2026-07-21",
+    "modelsdev:302ai": "2026-07-21",
+    "modelsdev:openrouter": "2026-07-21",
+    "modelsdev:impossibl": "2026-07-21",
+    "modelsdev:google": "2026-07-21",
+    "modelsdev:vercel": "2026-07-21",
+    "modelsdev:orcarouter": "2026-07-21",
+    "modelsdev:ofox": "2026-07-21",
+    "modelsdev:neon": "2026-07-21",
+    "modelsdev:aihubmix": "2026-07-21",
+    "modelsdev:merge-gateway": "2026-07-21",
+    "modelsdev:pioneer": "2026-07-21",
+    "modelsdev:github-copilot": "2026-07-21",
+    "modelsdev:edenai": "2026-07-21",
+    "modelsdev:tempr": "2026-07-21",
+    "modelsdev:opencode": "2026-07-21",
+    "modelsdev:kenari": "2026-07-21",
+    "modelsdev:requesty": "2026-07-21",
+    "modelsdev:llmgateway": "2026-07-21",
+    "modelsdev:google-vertex": "2026-07-21",
+    "modelsdev:cortecs": "2026-07-21",
+    "modelsdev:crossmodel": "2026-07-21"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video+file+audio->text",
+    "text,image,video,audio,pdf->text",
+    "text,image,audio,video->text",
+    "text,image,audio->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3.6-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "google/gemini-3.6-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "google-ai-studio/gemini-3.6-flash",
+     "google-vertex/gemini-3.6-flash"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3.6-flash"
+    ],
+    "modelsdev:venice": [
+     "gemini-3-6-flash"
+    ],
+    "modelsdev:abacus": [
+     "gemini-3.6-flash"
+    ],
+    "modelsdev:302ai": [
+     "gemini-3.6-flash"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3.6-flash"
+    ],
+    "modelsdev:impossibl": [
+     "google/gemini-3.6-flash"
+    ],
+    "modelsdev:google": [
+     "gemini-3.6-flash"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-3.6-flash"
+    ],
+    "modelsdev:orcarouter": [
+     "google/gemini-3.6-flash"
+    ],
+    "modelsdev:ofox": [
+     "google/gemini-3.6-flash"
+    ],
+    "modelsdev:neon": [
+     "gemini-3-6-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "gemini-3.6-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3.6-flash"
+    ],
+    "modelsdev:pioneer": [
+     "gemini-3.6-flash"
+    ],
+    "modelsdev:github-copilot": [
+     "gemini-3.6-flash"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3.6-flash",
+     "vertex/gemini-3.6-flash@eu",
+     "vertex/gemini-3.6-flash",
+     "vertex/gemini-3.6-flash@us"
+    ],
+    "modelsdev:tempr": [
+     "google/gemini-3.6-flash"
+    ],
+    "modelsdev:opencode": [
+     "gemini-3.6-flash"
+    ],
+    "modelsdev:kenari": [
+     "gemini-3-6-flash"
+    ],
+    "modelsdev:requesty": [
+     "gemini-3.6-flash"
+    ],
+    "modelsdev:llmgateway": [
+     "gemini-3.6-flash"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-3.6-flash"
+    ],
+    "modelsdev:cortecs": [
+     "gemini-3.6-flash"
+    ],
+    "modelsdev:crossmodel": [
+     "gemini/gemini-3.6-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini37flash",
+   "names": [
+    "Google: Gemini 3.7 Flash",
+    "Gemini 3.7 Flash",
+    "Gemini 3.7 Flash (Google AI Studio)",
+    "Gemini 3.7 Flash (Google Vertex AI)",
+    "Gemini 3.7 Flash (Vertex AI, US)",
+    "Gemini 3.7 Flash (Vertex AI, EU)",
+    "Gemini 3.7 Flash (Vertex AI)",
+    "Gemini 3.7 Flash (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-13",
+    "modelsdev:nano-gpt": "2026-08-13",
+    "modelsdev:llmgateway-providers": "2026-08-13",
+    "modelsdev:kilo": "2026-08-13",
+    "modelsdev:venice": "2026-08-14",
+    "modelsdev:abacus": "2026-08-13",
+    "modelsdev:302ai": "2026-08-13",
+    "modelsdev:openrouter": "2026-08-13",
+    "modelsdev:google": "2026-08-13",
+    "modelsdev:vercel": "2026-08-13",
+    "modelsdev:ofox": "2026-08-13",
+    "modelsdev:aihubmix": "2026-08-13",
+    "modelsdev:merge-gateway": "2026-08-13",
+    "modelsdev:opper": "2026-08-13",
+    "modelsdev:github-copilot": "2026-08-13",
+    "modelsdev:edenai": "2026-08-13",
+    "modelsdev:tempr": "2026-08-13",
+    "modelsdev:opencode": "2026-08-13",
+    "modelsdev:kenari": "2026-08-13",
+    "modelsdev:requesty": "2026-08-13",
+    "modelsdev:llmgateway": "2026-08-13",
+    "modelsdev:vivgrid": "2026-08-13",
+    "modelsdev:google-vertex": "2026-08-13",
+    "modelsdev:cortecs": "2026-08-13",
+    "modelsdev:crossmodel": "2026-08-13"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video+file+audio->text",
+    "text,image,video,audio,pdf->text",
+    "text,image,audio,video->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text,image,audio,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3.7-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "google/gemini-3.7-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "google-ai-studio/gemini-3.7-flash",
+     "google-vertex/gemini-3.7-flash"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3.7-flash"
+    ],
+    "modelsdev:venice": [
+     "gemini-3-7-flash"
+    ],
+    "modelsdev:abacus": [
+     "gemini-3.7-flash"
+    ],
+    "modelsdev:302ai": [
+     "gemini-3.7-flash"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3.7-flash"
+    ],
+    "modelsdev:google": [
+     "gemini-3.7-flash"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-3.7-flash"
+    ],
+    "modelsdev:ofox": [
+     "google/gemini-3.7-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "gemini-3.7-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3.7-flash"
+    ],
+    "modelsdev:opper": [
+     "gemini-3.7-flash"
+    ],
+    "modelsdev:github-copilot": [
+     "gemini-3.7-flash"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3.7-flash",
+     "vertex/gemini-3.7-flash@us",
+     "vertex/gemini-3.7-flash@eu",
+     "vertex/gemini-3.7-flash"
+    ],
+    "modelsdev:tempr": [
+     "google/gemini-3.7-flash"
+    ],
+    "modelsdev:opencode": [
+     "gemini-3.7-flash"
+    ],
+    "modelsdev:kenari": [
+     "gemini-3-7-flash"
+    ],
+    "modelsdev:requesty": [
+     "gemini-3.7-flash@eu",
+     "gemini-3.7-flash"
+    ],
+    "modelsdev:llmgateway": [
+     "gemini-3.7-flash"
+    ],
+    "modelsdev:vivgrid": [
+     "gemini-3.7-flash"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-3.7-flash"
+    ],
+    "modelsdev:cortecs": [
+     "gemini-3.7-flash"
+    ],
+    "modelsdev:crossmodel": [
+     "gemini/gemini-3.7-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini35transcribelive",
+   "names": [
+    "Gemini 3.5 Transcribe Live"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2026-08-26"
+   },
+   "openWeights": false,
+   "modalities": [
+    "audio->text"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "google/gemini-3.5-transcribe-live"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemini38flash",
+   "names": [
+    "Google: Gemini 3.8 Flash",
+    "Gemini 3.8 Flash",
+    "Gemini 3.8 Flash (Google AI Studio)",
+    "Gemini 3.8 Flash (Vertex AI, EU)",
+    "Gemini 3.8 Flash (Vertex AI)",
+    "Gemini 3.8 Flash (Vertex AI, US)",
+    "Gemini 3.8 Flash (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-02",
+    "modelsdev:nano-gpt": "2026-09-02",
+    "modelsdev:llmgateway-providers": "2026-09-02",
+    "modelsdev:kilo": "2026-09-02",
+    "modelsdev:venice": "2026-09-02",
+    "modelsdev:302ai": "2026-09-02",
+    "modelsdev:openrouter": "2026-09-02",
+    "modelsdev:google": "2026-09-02",
+    "modelsdev:vercel": "2026-09-02",
+    "modelsdev:ofox": "2026-09-02",
+    "modelsdev:aihubmix": "2026-09-02",
+    "modelsdev:merge-gateway": "2026-09-02",
+    "modelsdev:opper": "2026-09-02",
+    "modelsdev:github-copilot": "2026-09-02",
+    "modelsdev:edenai": "2026-09-02",
+    "modelsdev:tempr": "2026-09-02",
+    "modelsdev:opencode": "2026-09-02",
+    "modelsdev:requesty": "2026-09-02",
+    "modelsdev:sap-ai-core": "2026-09-02",
+    "modelsdev:vivgrid": "2026-09-02",
+    "modelsdev:google-vertex": "2026-09-02",
+    "modelsdev:cortecs": "2026-09-02",
+    "modelsdev:crossmodel": "2026-09-02"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video+file+audio->text",
+    "text,image,video,audio,pdf->text",
+    "text,image,audio,video->text",
+    "text,image,pdf->text",
+    "text,image,audio,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-3.8-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "google/gemini-3.8-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "google-ai-studio/gemini-3.8-flash"
+    ],
+    "modelsdev:kilo": [
+     "google/gemini-3.8-flash"
+    ],
+    "modelsdev:venice": [
+     "gemini-3-8-flash"
+    ],
+    "modelsdev:302ai": [
+     "gemini-3.8-flash"
+    ],
+    "modelsdev:openrouter": [
+     "google/gemini-3.8-flash"
+    ],
+    "modelsdev:google": [
+     "gemini-3.8-flash"
+    ],
+    "modelsdev:vercel": [
+     "google/gemini-3.8-flash"
+    ],
+    "modelsdev:ofox": [
+     "google/gemini-3.8-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "gemini-3.8-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "google/gemini-3.8-flash"
+    ],
+    "modelsdev:opper": [
+     "gemini-3.8-flash"
+    ],
+    "modelsdev:github-copilot": [
+     "gemini-3.8-flash"
+    ],
+    "modelsdev:edenai": [
+     "google/gemini-3.8-flash",
+     "vertex/gemini-3.8-flash@eu",
+     "vertex/gemini-3.8-flash",
+     "vertex/gemini-3.8-flash@us"
+    ],
+    "modelsdev:tempr": [
+     "google/gemini-3.8-flash"
+    ],
+    "modelsdev:opencode": [
+     "gemini-3.8-flash"
+    ],
+    "modelsdev:requesty": [
+     "gemini-3.8-flash@eu",
+     "gemini-3.8-flash"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gemini-3.8-flash"
+    ],
+    "modelsdev:vivgrid": [
+     "gemini-3.8-flash"
+    ],
+    "modelsdev:google-vertex": [
+     "gemini-3.8-flash"
+    ],
+    "modelsdev:cortecs": [
+     "gemini-3.8-flash"
+    ],
+    "modelsdev:crossmodel": [
+     "gemini/gemini-3.8-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gemininanobanana21",
+   "names": [
+    "Google: Nano Banana 2.1"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-10-06"
+   },
+   "openWeights": null,
+   "modalities": [
+    "image+text->image+text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "google/gemini-nano-banana-2.1"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

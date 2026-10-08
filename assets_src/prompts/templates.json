@@ -40,7 +40,7 @@
       "source": {
         "file": "assets_src/prompts/creatures.json",
         "id": "id",
-        "fields": {"design": "design", "nameEn": "nameEn", "nameZh": "nameZh", "family": "family", "stage": "stage", "rarity": "rarity"},
+        "fields": {"design": "design", "nameEn": "nameEn", "nameZh": "nameZh", "family": "family", "stage": "stage", "rarity": "rarity", "lineRef": "lineRef"},
         "groupCount": {"familySize": "family"}
       },
       "lookups": {
@@ -52,7 +52,8 @@
       },
       "references": [
         {"path": "assets_src/refs/creature/_style.png", "note": "REFERENCE IMAGES: Image {n} is the ART STYLE reference for this whole creature roster. Match its drawing style closely: about 2.5 heads tall with a big round head, a soft round face, very large glossy anime eyes with two white highlights, light blush, a clean dark outline, soft cel shading and a tidy, polished, cute gacha-chibi finish. Use Image {n} for STYLE ONLY: do not copy its hair colour, outfit, maid headband, whale tail or accessories, unless a later reference image is this character's own identity reference."},
-        {"path": "assets_src/refs/creature/{family}.png", "optional": true, "note": "Image {n} is the canonical identity of this character's evolution line: keep its hair colour and hairstyle, eye colour, outfit colour scheme and signature accessory, adapted to the evolution stage described below."}
+        {"path": "assets_src/refs/creature/{family}.png", "optional": true, "note": "Image {n} is the canonical identity of this character's evolution line: keep its hair colour and hairstyle, eye colour, outfit colour scheme and signature accessory, adapted to the evolution stage described below."},
+        {"path": "assets_src/raw/creature/{lineRef}.png", "optional": true, "note": "Image {n} shows another evolution stage of this exact same character (the neighbouring form in her evolution line): keep the same face, eye colour, hair colour and hairstyle, colour scheme and signature accessory, so the new form clearly reads as the same character; change only its age and maturity, the richness of the outfit, the size and the pose to match the stage described below."}
       ],
       "variant": "square",
       "quality": "high",

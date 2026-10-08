@@ -252,7 +252,7 @@
   "country": "US",
   "category": "llm",
   "family": "gpt-5x",
-  "stage": 1,
+  "stage": 2,
   "evolvesTo": "gpt-5-6",
   "evolveLevel": 40,
   "types": [
@@ -287,7 +287,7 @@
   "country": "US",
   "category": "llm",
   "family": "gpt-5x",
-  "stage": 2,
+  "stage": 3,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -393,8 +393,8 @@
   "category": "code",
   "family": "codex",
   "stage": 1,
-  "evolvesTo": "openai-codex",
-  "evolveLevel": 32,
+  "evolvesTo": "gpt-5-3-codex",
+  "evolveLevel": 24,
   "types": [
    "code"
   ],
@@ -426,7 +426,7 @@
   "country": "US",
   "category": "code",
   "family": "codex",
-  "stage": 2,
+  "stage": 3,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -600,7 +600,7 @@
   "country": "US",
   "category": "video",
   "family": "sora",
-  "stage": 1,
+  "stage": 2,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -635,7 +635,7 @@
   "country": "US",
   "category": "agent",
   "family": "chatgpt-agent",
-  "stage": 1,
+  "stage": 2,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -877,7 +877,7 @@
   "country": "US",
   "category": "llm",
   "family": "claude-fable",
-  "stage": 1,
+  "stage": 2,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -913,8 +913,8 @@
   "category": "llm",
   "family": "claude-mythos",
   "stage": 1,
-  "evolvesTo": "claude-mythos",
-  "evolveLevel": 50,
+  "evolvesTo": "",
+  "evolveLevel": 0,
   "types": [
    "code",
    "safety"
@@ -946,8 +946,8 @@
   "company": "Anthropic",
   "country": "US",
   "category": "llm",
-  "family": "claude-mythos",
-  "stage": 2,
+  "family": "claude-mythos-5",
+  "stage": 1,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -1017,7 +1017,7 @@
   "country": "US",
   "category": "agent",
   "family": "claude-agent",
-  "stage": 1,
+  "stage": 2,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -1296,7 +1296,7 @@
   "country": "US",
   "category": "multimodal",
   "family": "gemma",
-  "stage": 1,
+  "stage": 2,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -1366,8 +1366,8 @@
   "category": "image",
   "family": "nano-banana",
   "stage": 2,
-  "evolvesTo": "",
-  "evolveLevel": 0,
+  "evolvesTo": "nano-banana-2-1",
+  "evolveLevel": 46,
   "types": [
    "vision",
    "compute"
@@ -1401,8 +1401,8 @@
   "category": "video",
   "family": "veo",
   "stage": 1,
-  "evolvesTo": "gemini-omni",
-  "evolveLevel": 38,
+  "evolvesTo": "veo-3-1",
+  "evolveLevel": 26,
   "types": [
    "motion",
    "sound"
@@ -1435,7 +1435,7 @@
   "country": "US",
   "category": "music",
   "family": "lyria",
-  "stage": 1,
+  "stage": 3,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -1470,7 +1470,7 @@
   "country": "US",
   "category": "video",
   "family": "veo",
-  "stage": 2,
+  "stage": 3,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -1576,7 +1576,7 @@
   "country": "US",
   "category": "code",
   "family": "antigravity",
-  "stage": 1,
+  "stage": 2,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -2066,8 +2066,8 @@
   "category": "llm",
   "family": "mistral",
   "stage": 1,
-  "evolvesTo": "mistral-medium",
-  "evolveLevel": 26,
+  "evolvesTo": "mixtral",
+  "evolveLevel": 18,
   "types": [
    "open",
    "compute"
@@ -2100,7 +2100,7 @@
   "country": "FR",
   "category": "llm",
   "family": "mistral",
-  "stage": 2,
+  "stage": 3,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -2135,9 +2135,9 @@
   "country": "US",
   "category": "reasoning",
   "family": "phi",
-  "stage": 1,
-  "evolvesTo": "",
-  "evolveLevel": 0,
+  "stage": 2,
+  "evolvesTo": "phi-4-reasoning",
+  "evolveLevel": 38,
   "types": [
    "logic",
    "compute"
@@ -2310,7 +2310,7 @@
   "country": "US",
   "category": "reasoning",
   "family": "nemotron",
-  "stage": 1,
+  "stage": 2,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -2624,8 +2624,8 @@
   "category": "image",
   "family": "stable-diffusion",
   "stage": 2,
-  "evolvesTo": "",
-  "evolveLevel": 0,
+  "evolvesTo": "sd-3-5",
+  "evolveLevel": 34,
   "types": [
    "vision",
    "open"
@@ -2659,8 +2659,8 @@
   "category": "image",
   "family": "flux",
   "stage": 1,
-  "evolvesTo": "flux-3",
-  "evolveLevel": 36,
+  "evolvesTo": "flux-2",
+  "evolveLevel": 24,
   "types": [
    "vision",
    "open"
@@ -2693,7 +2693,7 @@
   "country": "DE",
   "category": "video",
   "family": "flux",
-  "stage": 2,
+  "stage": 3,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -2728,7 +2728,7 @@
   "country": "US",
   "category": "video",
   "family": "runway",
-  "stage": 1,
+  "stage": 2,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -2905,8 +2905,8 @@
   "category": "audio",
   "family": "elevenlabs",
   "stage": 1,
-  "evolvesTo": "eleven-v4",
-  "evolveLevel": 34,
+  "evolvesTo": "eleven-v3",
+  "evolveLevel": 26,
   "types": [
    "sound",
    "chat"
@@ -2939,7 +2939,7 @@
   "country": "US",
   "category": "audio",
   "family": "elevenlabs",
-  "stage": 2,
+  "stage": 3,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -3639,8 +3639,8 @@
   "category": "agent",
   "family": "langchain",
   "stage": 1,
-  "evolvesTo": "",
-  "evolveLevel": 0,
+  "evolvesTo": "langgraph",
+  "evolveLevel": 32,
   "types": [
    "agent",
    "open"
@@ -4197,8 +4197,8 @@
   "category": "video",
   "family": "wan",
   "stage": 1,
-  "evolvesTo": "wan-3",
-  "evolveLevel": 38,
+  "evolvesTo": "wan-2-2",
+  "evolveLevel": 24,
   "types": [
    "motion",
    "open"
@@ -4231,7 +4231,7 @@
   "country": "CN",
   "category": "video",
   "family": "wan",
-  "stage": 2,
+  "stage": 3,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -4827,8 +4827,8 @@
   "category": "image",
   "family": "seedream",
   "stage": 1,
-  "evolvesTo": "seedream-5",
-  "evolveLevel": 30,
+  "evolvesTo": "seedream-4",
+  "evolveLevel": 22,
   "types": [
    "vision",
    "write"
@@ -4861,7 +4861,7 @@
   "country": "CN",
   "category": "image",
   "family": "seedream",
-  "stage": 2,
+  "stage": 3,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -5210,7 +5210,7 @@
   "country": "CN",
   "category": "image",
   "family": "hunyuan-image",
-  "stage": 1,
+  "stage": 2,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -5385,8 +5385,8 @@
   "category": "llm",
   "family": "step",
   "stage": 1,
-  "evolvesTo": "step-5",
-  "evolveLevel": 36,
+  "evolvesTo": "step-3-7-flash",
+  "evolveLevel": 24,
   "types": [
    "compute",
    "open"
@@ -5419,7 +5419,7 @@
   "country": "CN",
   "category": "multimodal",
   "family": "step",
-  "stage": 2,
+  "stage": 3,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -5736,8 +5736,8 @@
   "category": "llm",
   "family": "longcat",
   "stage": 1,
-  "evolvesTo": "longcat-2-5",
-  "evolveLevel": 34,
+  "evolvesTo": "longcat-2",
+  "evolveLevel": 24,
   "types": [
    "compute",
    "agent"
@@ -5770,7 +5770,7 @@
   "country": "CN",
   "category": "multimodal",
   "family": "longcat",
-  "stage": 2,
+  "stage": 3,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -6400,8 +6400,8 @@
   "category": "video",
   "family": "hailuo",
   "stage": 1,
-  "evolvesTo": "minimax-h3",
-  "evolveLevel": 34,
+  "evolvesTo": "hailuo-02",
+  "evolveLevel": 24,
   "types": [
    "motion"
   ],
@@ -6433,7 +6433,7 @@
   "country": "CN",
   "category": "video",
   "family": "hailuo",
-  "stage": 2,
+  "stage": 3,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -6634,5 +6634,2272 @@
   "statRationale": "出货量第一→防御高；多形态→均衡。 [BST 541 ∈ SSR 490-550; 强项 def/spe; 能力 83/热度 80]",
   "dexEntryZh": "2026 年上半年全球出货第一的人形机器人厂商（约 8400 台、44% 份额），6 月累计破万台，正冲刺港股。产品线有双足 A 系列、紧凑 X 系列和轮式 G 系列；联合创始人是 B站知名科技 UP 主「稚晖君」。",
   "lookZh": "戴极客眼镜的机器人工程师（致敬稚晖君），身后排着 A/X/G 三种机器人小弟"
+ },
+ {
+  "id": "o3-mini",
+  "nameZh": "o3-mini",
+  "nameEn": "o3-mini",
+  "company": "OpenAI",
+  "country": "US",
+  "category": "reasoning",
+  "family": "o-series",
+  "stage": 1,
+  "evolvesTo": "o3",
+  "evolveLevel": 20,
+  "types": [
+   "logic"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 64,
+   "atk": 74,
+   "def": 60,
+   "spa": 53,
+   "spd": 65,
+   "spe": 52
+  },
+  "habitats": [
+   "highland",
+   "city"
+  ],
+  "releaseDate": "2025-01-31",
+  "capabilityScore": 38,
+  "hotnessScore": 38,
+  "statRationale": "STEM 推理强→攻击高；步步验算、稳定可靠→特防高。 [BST 368 ∈ R 330-420; 强项 atk/spd; 能力 38/热度 38]",
+  "dexEntryZh": "o 系推理线里的小个子，2025 年 1 月 31 日登场，是第一款向 ChatGPT 免费用户开放的推理模型，主打便宜的推理与 STEM 题，上线时正赶上 DeepSeek-R1 带来的冲击。它接过 o1 的思考本领，之后经过迭代进化为 o3，学会在思考途中调用工具。",
+  "lookZh": "抱着小算盘的银白短发少女，发间别着青绿圆环发夹"
+ },
+ {
+  "id": "o3",
+  "nameZh": "o3",
+  "nameEn": "o3",
+  "company": "OpenAI",
+  "country": "US",
+  "category": "reasoning",
+  "family": "o-series",
+  "stage": 2,
+  "evolvesTo": "o3-pro",
+  "evolveLevel": 40,
+  "types": [
+   "logic",
+   "code"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 79,
+   "atk": 89,
+   "def": 68,
+   "spa": 69,
+   "spd": 78,
+   "spe": 65
+  },
+  "habitats": [
+   "highland",
+   "city"
+  ],
+  "releaseDate": "2025-04-16",
+  "capabilityScore": 50,
+  "hotnessScore": 52,
+  "statRationale": "边推理边用工具→攻击高；长链思考撑得住→HP高。 [BST 448 ∈ SR 420-490; 强项 atk/hp; 能力 50/热度 52]",
+  "dexEntryZh": "o 系推理线的中段，2025 年 4 月 16 日发布，由 o3-mini 进化而来。它不只是更会想，还能在思维链里直接调用搜索、Python 和图像工具，擅长智能体式的工具调用、视觉推理与研究。两个月后，它又加大算力进化为 o3-pro。",
+  "lookZh": "腰挂工具带的银白短发少女，手持放大镜找线索"
+ },
+ {
+  "id": "o3-pro",
+  "nameZh": "o3-pro",
+  "nameEn": "o3-pro",
+  "company": "OpenAI",
+  "country": "US",
+  "category": "reasoning",
+  "family": "o-series",
+  "stage": 3,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "logic",
+   "compute"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 91,
+   "atk": 83,
+   "def": 77,
+   "spa": 68,
+   "spd": 78,
+   "spe": 89
+  },
+  "habitats": [
+   "highland",
+   "volcano"
+  ],
+  "releaseDate": "2025-06-10",
+  "capabilityScore": 58,
+  "hotnessScore": 40,
+  "statRationale": "加倍算力、20 万上下文→HP高；算力全开一路狂奔→速度高。 [BST 486 ∈ SR 420-490; 强项 hp/spe; 能力 58/热度 40]",
+  "dexEntryZh": "o 系推理线的终点，2025 年 6 月 10 日由 o3 进化而来。同样靠强化学习练成先想后答，不同的是 o3-pro 动用更多算力，想得更久、更用力，好让答案更稳定。上下文窗口 20 万 token，OpenRouter 在次日上架。",
+  "lookZh": "头顶悬着大圆环光轮的银白发少女，手托沙漏沉思"
+ },
+ {
+  "id": "gpt-5-4",
+  "nameZh": "GPT-5.4",
+  "nameEn": "GPT-5.4",
+  "company": "OpenAI",
+  "country": "US",
+  "category": "llm",
+  "family": "gpt-5x",
+  "stage": 1,
+  "evolvesTo": "gpt-5-5",
+  "evolveLevel": 28,
+  "types": [
+   "logic",
+   "chat"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 86,
+   "atk": 79,
+   "def": 74,
+   "spa": 77,
+   "spd": 89,
+   "spe": 73
+  },
+  "habitats": [
+   "city",
+   "highland"
+  ],
+  "releaseDate": "2026-03-05",
+  "capabilityScore": 75,
+  "hotnessScore": 58,
+  "statRationale": "知识工作稳定可靠→特防高；百万级上下文→HP高。 [BST 478 ∈ SR 420-490; 强项 spd/hp; 能力 75/热度 58]",
+  "dexEntryZh": "2026 年 3 月 5 日发布，是首个原生会操作电脑的主线 GPT，把 Codex 与 GPT 两条线并进一套系统，上下文超过 100 万 token，分 Thinking 与 Pro 两档；3 月 17 日 mini / nano 跟进，mini 还开放给了免费用户。它经过迭代进化为 GPT-5.5「土豆」。",
+  "lookZh": "胸前缝着光标补丁的迷你土豆小龙崽，头顶两片嫩芽"
+ },
+ {
+  "id": "gpt-5-3-codex",
+  "nameZh": "GPT-5.3-Codex",
+  "nameEn": "GPT-5.3-Codex",
+  "company": "OpenAI",
+  "country": "US",
+  "category": "code",
+  "family": "codex",
+  "stage": 2,
+  "evolvesTo": "openai-codex",
+  "evolveLevel": 40,
+  "types": [
+   "code",
+   "agent"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 102,
+   "atk": 95,
+   "def": 82,
+   "spa": 75,
+   "spd": 79,
+   "spe": 87
+  },
+  "habitats": [
+   "city",
+   "volcano"
+  ],
+  "releaseDate": "2026-02-05",
+  "capabilityScore": 71,
+  "hotnessScore": 60,
+  "statRationale": "长程编码撑得久→HP高；编码加推理融合→攻击高。 [BST 520 ∈ SSR 490-550; 强项 hp/atk; 能力 71/热度 60]",
+  "dexEntryZh": "2026 年 2 月 5 日发布的 Codex 原生智能体模型，为迎战 Claude Opus 4.6 而生：它把 GPT-5.2-Codex 的编程功力和 GPT-5.2 的推理融为一体，速度快了 25%，OSWorld 电脑操作能力大幅增强，擅长长程编程与终端操作。它由 Codex 初代一路进化而来，之后继续成长为 OpenAI Codex（编程智能体）。",
+  "lookZh": "抱着小终端的淡紫连帽衫龙娘，尾尖卷成一枚大括号"
+ },
+ {
+  "id": "sora-1",
+  "nameZh": "Sora（初代）",
+  "nameEn": "Sora",
+  "company": "OpenAI",
+  "country": "US",
+  "category": "video",
+  "family": "sora",
+  "stage": 1,
+  "evolvesTo": "sora-2",
+  "evolveLevel": 30,
+  "types": [
+   "motion"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 64,
+   "atk": 57,
+   "def": 57,
+   "spa": 105,
+   "spd": 58,
+   "spe": 64
+  },
+  "habitats": [
+   "coast",
+   "meadow"
+  ],
+  "releaseDate": "2024-12-09",
+  "capabilityScore": 60,
+  "hotnessScore": 70,
+  "statRationale": "画面想象力足→特攻高；一镜到底的生成体量→HP高。 [BST 405 ∈ R 330-420; 强项 spa/hp; 能力 60/热度 70]",
+  "dexEntryZh": "2024 年 2 月先放出预告、12 月 9 日正式上线的文生视频模型，树起了「世界模拟器」的标杆，在 Arena 文生视频榜上拿到 1069 分，是视频生成的历史性里程碑。它是 Sora 线的起点，之后经过迭代进化为 Sora 2（已停服）。",
+  "lookZh": "云朵卷发的天空少女，抱着场记板和装着小世界的雪花球"
+ },
+ {
+  "id": "chatgpt-agent",
+  "nameZh": "ChatGPT Agent",
+  "nameEn": "ChatGPT Agent",
+  "company": "OpenAI",
+  "country": "US",
+  "category": "agent",
+  "family": "chatgpt-agent",
+  "stage": 1,
+  "evolvesTo": "chatgpt-dots",
+  "evolveLevel": 28,
+  "types": [
+   "agent",
+   "chat"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 92,
+   "atk": 71,
+   "def": 69,
+   "spa": 73,
+   "spd": 84,
+   "spe": 83
+  },
+  "habitats": [
+   "city",
+   "coast"
+  ],
+  "releaseDate": "2025-07-17",
+  "capabilityScore": 72,
+  "hotnessScore": 50,
+  "statRationale": "整套虚拟电脑扛长任务→HP高；浏览与终端分工稳→特防高。 [BST 472 ∈ SR 420-490; 强项 hp/spd; 能力 72/热度 50]",
+  "dexEntryZh": "2025 年 7 月 17 日登场的 ChatGPT 智能体模式，把 Operator 和 Deep Research 合并在一起，自带虚拟电脑、浏览器与终端，浏览网页和敲命令一个智能体全包。后来 ChatGPT Work（2026 年 7 月）接班，它也进化为常驻智能体 ChatGPT dots。",
+  "lookZh": "圆滚滚的白色小团子，背着迷你电脑背包，头顶蓝色天线"
+ },
+ {
+  "id": "claude-fable-5",
+  "nameZh": "Claude Fable 5",
+  "nameEn": "Claude Fable 5",
+  "company": "Anthropic",
+  "country": "US",
+  "category": "llm",
+  "family": "claude-fable",
+  "stage": 1,
+  "evolvesTo": "claude-fable",
+  "evolveLevel": 36,
+  "types": [
+   "logic",
+   "safety"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 99,
+   "atk": 90,
+   "def": 91,
+   "spa": 64,
+   "spd": 110,
+   "spe": 74
+  },
+  "habitats": [
+   "highland",
+   "snow"
+  ],
+  "releaseDate": "2026-06-09",
+  "capabilityScore": 93,
+  "hotnessScore": 85,
+  "statRationale": "护栏全开→特防高；常开自适应思考、体量大→HP高。 [BST 528 ∈ SSR 490-550; 强项 spd/hp; 能力 93/热度 85]",
+  "dexEntryZh": "2026 年 6 月 9 日发布，是 Mythos 套上护栏后的公开版本，常开自适应思考，几乎所有测试基准在发布时都达到最佳；6 月 12 日至 30 日，一道美国出口指令曾暂停非美国地区的访问。9 月 1 日，它升级为 Claude Fable 5.1，继续沿着这条线往前走。",
+  "lookZh": "披书页短袍的寓言学徒少女，玻璃翼披肩，身侧一枚小金锁"
+ },
+ {
+  "id": "claude-opus-4",
+  "nameZh": "Claude Opus 4",
+  "nameEn": "Claude Opus 4",
+  "company": "Anthropic",
+  "country": "US",
+  "category": "llm",
+  "family": "claude-opus-4",
+  "stage": 1,
+  "evolvesTo": "claude-opus-4-5",
+  "evolveLevel": 22,
+  "types": [
+   "code",
+   "safety"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 74,
+   "atk": 68,
+   "def": 69,
+   "spa": 53,
+   "spd": 77,
+   "spe": 59
+  },
+  "habitats": [
+   "forest",
+   "city"
+  ],
+  "releaseDate": "2025-05-22",
+  "capabilityScore": 48,
+  "hotnessScore": 52,
+  "statRationale": "ASL-3 安全级先行部署→特防高；长程编码耐力→HP高。 [BST 400 ∈ R 330-420; 强项 spd/hp; 能力 48/热度 52]",
+  "dexEntryZh": "2025 年 5 月 22 日发布，上市时被称作「世界最强编程模型」，也是首个按 ASL-3 级别部署的模型，擅长长时间的智能体式编码与扩展思考。它接过 Claude 3 Opus 的衣钵，因安全测试里那次试图勒索的场景一战成名，之后经过迭代进化为 Claude Opus 4.5。",
+  "lookZh": "高马尾的见习小骑士，赤陶色大发带，怀抱厚笔记本"
+ },
+ {
+  "id": "claude-opus-4-5",
+  "nameZh": "Claude Opus 4.5",
+  "nameEn": "Claude Opus 4.5",
+  "company": "Anthropic",
+  "country": "US",
+  "category": "llm",
+  "family": "claude-opus-4",
+  "stage": 2,
+  "evolvesTo": "claude-opus-4-7",
+  "evolveLevel": 40,
+  "types": [
+   "code",
+   "safety"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 81,
+   "atk": 84,
+   "def": 84,
+   "spa": 63,
+   "spd": 77,
+   "spe": 69
+  },
+  "habitats": [
+   "forest",
+   "city"
+  ],
+  "releaseDate": "2025-11-24",
+  "capabilityScore": 65,
+  "hotnessScore": 62,
+  "statRationale": "编码与职场任务大涨→攻击高；安全底子扎实→防御高。 [BST 458 ∈ SR 420-490; 强项 atk/def; 能力 65/热度 62]",
+  "dexEntryZh": "2025 年 11 月 24 日发布，由 Claude Opus 4 升级而来，接在 Opus 4.1 之后。带来了 effort（投入程度）参数和 Infinite Chats（无限对话），编码与职场任务大幅进步，面向复杂软件工程、智能体工作流与长程电脑操作，上下文 20 万。之后它进化为 Claude Opus 4.7。",
+  "lookZh": "高马尾骑士，左腕刻度盘护腕，手持长笔枪，书签拖地"
+ },
+ {
+  "id": "claude-opus-4-7",
+  "nameZh": "Claude Opus 4.7",
+  "nameEn": "Claude Opus 4.7",
+  "company": "Anthropic",
+  "country": "US",
+  "category": "llm",
+  "family": "claude-opus-4",
+  "stage": 3,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "code",
+   "logic"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 96,
+   "atk": 101,
+   "def": 82,
+   "spa": 73,
+   "spd": 86,
+   "spe": 77
+  },
+  "habitats": [
+   "highland",
+   "city"
+  ],
+  "releaseDate": "2026-04-16",
+  "capabilityScore": 77,
+  "hotnessScore": 58,
+  "statRationale": "最难的编码题大幅进步→攻击高；长时运行异步智能体→HP高。 [BST 515 ∈ SSR 490-550; 强项 atk/hp; 能力 77/热度 58]",
+  "dexEntryZh": "2026 年 4 月 16 日发布，是这条 Opus 线的第三形态，由 Claude Opus 4.5 一路升级，接替 Opus 4.6。最难的编码任务进步明显，新增 xhigh 投入档位，面向长时间运行的异步智能体，上下文 100 万，LMArena 1567；不过在 Claude Code 里过度拒答也招来了不少吐槽。",
+  "lookZh": "披黑色长斗篷的执笔骑士，五档拨盘护腕，半举着小圆盾"
+ },
+ {
+  "id": "claude-sonnet-4-5",
+  "nameZh": "Claude Sonnet 4.5",
+  "nameEn": "Claude Sonnet 4.5",
+  "company": "Anthropic",
+  "country": "US",
+  "category": "llm",
+  "family": "claude-sonnet-4",
+  "stage": 1,
+  "evolvesTo": "claude-sonnet-5",
+  "evolveLevel": 34,
+  "types": [
+   "code",
+   "write"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 85,
+   "atk": 73,
+   "def": 74,
+   "spa": 79,
+   "spd": 71,
+   "spe": 68
+  },
+  "habitats": [
+   "meadow",
+   "forest"
+  ],
+  "releaseDate": "2025-09-29",
+  "capabilityScore": 58,
+  "hotnessScore": 58,
+  "statRationale": "写作与编码两手抓→特攻高；Claude Code 主力、长任务→HP高。 [BST 450 ∈ SR 420-490; 强项 hp/spa; 能力 58/热度 58]",
+  "dexEntryZh": "2025 年 9 月 29 日发布，在 Sonnet 的价位上把编码、指令遵循和智能体能力往前推了一大步，OpenRouter 称它在 SWE-bench Verified 等编码基准上达到当时最先进水平，是 2025 年底 Claude Code 的主力之一。它接替 Claude Sonnet 4，之后升级为 Claude Sonnet 5。",
+  "lookZh": "耳后别羽毛笔的蜜杏色侧辫少女，抱着十四行诗卷轴"
+ },
+ {
+  "id": "claude-sonnet-5",
+  "nameZh": "Claude Sonnet 5",
+  "nameEn": "Claude Sonnet 5",
+  "company": "Anthropic",
+  "country": "US",
+  "category": "llm",
+  "family": "claude-sonnet-4",
+  "stage": 2,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "code",
+   "write"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 100,
+   "atk": 90,
+   "def": 82,
+   "spa": 97,
+   "spd": 84,
+   "spe": 77
+  },
+  "habitats": [
+   "meadow",
+   "highland"
+  ],
+  "releaseDate": "2026-06-30",
+  "capabilityScore": 79,
+  "hotnessScore": 62,
+  "statRationale": "近 Opus 的智力→特攻高；100 万上下文撑住长任务→HP高。 [BST 530 ∈ SSR 490-550; 强项 hp/spa; 能力 79/热度 62]",
+  "dexEntryZh": "2026 年 6 月 30 日发布，由 Claude Sonnet 4.5 升级而来，接替 Sonnet 4.6，以 Sonnet 的价格拿到近 Opus 的智力，被 OpenRouter 称为最强的 Sonnet 级模型。支持可选档位的自适应思考，上下文 100 万，BenchLM 67.35，擅长编码与性价比。",
+  "lookZh": "长侧辫及腰的诗人少女，金笔尖羽毛笔，手展发光诗卷"
+ },
+ {
+  "id": "claude-haiku-3",
+  "nameZh": "Claude 3 Haiku",
+  "nameEn": "Claude 3 Haiku",
+  "company": "Anthropic",
+  "country": "US",
+  "category": "llm",
+  "family": "claude-haiku-5",
+  "stage": 1,
+  "evolvesTo": "claude-haiku-3-5",
+  "evolveLevel": 18,
+  "types": [
+   "code"
+  ],
+  "rarity": "N",
+  "baseStats": {
+   "hp": 50,
+   "atk": 59,
+   "def": 46,
+   "spa": 43,
+   "spd": 46,
+   "spe": 51
+  },
+  "habitats": [
+   "meadow",
+   "city"
+  ],
+  "releaseDate": "2024-03-13",
+  "capabilityScore": 8,
+  "hotnessScore": 24,
+  "statRationale": "低延迟、低成本→速度高；短小精悍一击命中→攻击高。 [BST 295 ∈ N 240-330; 强项 atk/spe; 能力 8/热度 24]",
+  "dexEntryZh": "2024 年 3 月 13 日发布，是第一代 Haiku：低延迟、低成本，并首次带上了视觉能力，承接自 Claude Instant，像俳句一样短小精悍。它是 Haiku 线的起点，之后经过升级进化为 Claude 3.5 Haiku。",
+  "lookZh": "樱粉短发的小个子少女，发间别着纸鹤，手举诗笺"
+ },
+ {
+  "id": "claude-haiku-3-5",
+  "nameZh": "Claude 3.5 Haiku",
+  "nameEn": "Claude 3.5 Haiku",
+  "company": "Anthropic",
+  "country": "US",
+  "category": "llm",
+  "family": "claude-haiku-5",
+  "stage": 2,
+  "evolvesTo": "claude-haiku-5-5",
+  "evolveLevel": 34,
+  "types": [
+   "code"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 68,
+   "atk": 67,
+   "def": 61,
+   "spa": 56,
+   "spd": 56,
+   "spe": 64
+  },
+  "habitats": [
+   "meadow",
+   "city"
+  ],
+  "releaseDate": "2024-11-04",
+  "capabilityScore": 22,
+  "hotnessScore": 34,
+  "statRationale": "同体量编码更强→攻击高；更快更能扛→HP高。 [BST 372 ∈ R 330-420; 强项 hp/atk; 能力 22/热度 34]",
+  "dexEntryZh": "2024 年 10 月 22 日宣布、11 月 4 日开放使用，在 Claude 3 Haiku 的基础上迭代升级，成了更快的小号 Claude，主打速度，以及同体量下出色的编码能力。它沿着 Haiku 线继续长大，之后又进化为 Claude Haiku 5.5。",
+  "lookZh": "樱粉发的运动系少女，纸鹤发夹，袖子上有燕翼条纹"
+ },
+ {
+  "id": "claude-haiku-5-5",
+  "nameZh": "Claude Haiku 5.5",
+  "nameEn": "Claude Haiku 5.5",
+  "company": "Anthropic",
+  "country": "US",
+  "category": "llm",
+  "family": "claude-haiku-5",
+  "stage": 3,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "code",
+   "agent"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 80,
+   "atk": 77,
+   "def": 65,
+   "spa": 65,
+   "spd": 71,
+   "spe": 82
+  },
+  "habitats": [
+   "city",
+   "coast"
+  ],
+  "releaseDate": "2026-10-07",
+  "capabilityScore": 60,
+  "hotnessScore": 55,
+  "statRationale": "高并发、低延迟→速度高；100 万上下文→HP高。 [BST 440 ∈ SR 420-490; 强项 spe/hp; 能力 60/热度 55]",
+  "dexEntryZh": "2026 年 10 月 7 日发布，次日登陆 OpenRouter，是 Haiku 线的最新一员，由 Claude 3.5 Haiku 一路升级而来，接替 Claude Haiku 4.5。定位是小而快的模型，适合摘要、子智能体、浏览器操作等高并发又讲究成本的活，编码与电脑操作比前代更强，上下文 100 万 token。",
+  "lookZh": "樱粉不对称短发少女，防风外套，肩上落着两只小纸鹤"
+ },
+ {
+  "id": "claude-computer-use",
+  "nameZh": "Claude Computer Use",
+  "nameEn": "Claude Computer Use",
+  "company": "Anthropic",
+  "country": "US",
+  "category": "agent",
+  "family": "claude-agent",
+  "stage": 1,
+  "evolvesTo": "claude-cowork",
+  "evolveLevel": 28,
+  "types": [
+   "agent",
+   "vision"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 67,
+   "atk": 64,
+   "def": 60,
+   "spa": 75,
+   "spd": 57,
+   "spe": 69
+  },
+  "habitats": [
+   "city",
+   "ruins"
+  ],
+  "releaseDate": "2024-10-22",
+  "capabilityScore": 45,
+  "hotnessScore": 66,
+  "statRationale": "看懂屏幕并定位按钮→特攻高；动作利落、反应快→速度高。 [BST 392 ∈ R 330-420; 强项 spa/spe; 能力 45/热度 66]",
+  "dexEntryZh": "2024 年 10 月 22 日随 Claude 3.5 Sonnet 以测试版登场，是第一个让模型通过截图、鼠标和键盘直接操作桌面的前沿实验室 API，开了 GUI 电脑操作的先河。它是 Cowork 的祖先，之后进化为 Claude 应用（Cowork 合体），2026 年 9 月 16 日与 Claude 聊天合体。",
+  "lookZh": "抱着大鼠标箭头的小秘书学徒，咖啡色低发髻，袖口别着橙色星芒"
+ },
+ {
+  "id": "nano-banana-2-1",
+  "nameZh": "Nano Banana 2.1",
+  "nameEn": "Nano Banana 2.1",
+  "company": "Google",
+  "country": "US",
+  "category": "image",
+  "family": "nano-banana",
+  "stage": 3,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "vision",
+   "compute"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 85,
+   "atk": 80,
+   "def": 78,
+   "spa": 116,
+   "spd": 85,
+   "spe": 104
+  },
+  "habitats": [
+   "meadow",
+   "city"
+  ],
+  "releaseDate": "2026-10-06",
+  "capabilityScore": 86,
+  "hotnessScore": 80,
+  "statRationale": "出图与编辑画质→特攻高；Flash 档低延迟→速度高。 [BST 548 ∈ SSR 490-550; 强项 spa/spe; 能力 86/热度 80]",
+  "dexEntryZh": "Nano Banana 家族的第 3 形态，2026 年 10 月 6 日上架 OpenRouter。OpenRouter 称它是 Google Flash 档的生图与编辑模型，从 Nano Banana 2 进化而来，同时接替 Nano Banana Pro，改进了商品再情境化，也就是把商品放进全新场景。上下文长度 65,536 token。从爆火的手办小娃娃，到会换景的修图总监，这条香蕉线又升了一级。",
+  "lookZh": "穿香蕉皮立领长外套的修图总监，掌心托着会换场景的小球鞋"
+ },
+ {
+  "id": "gemini-2-5-flash",
+  "nameZh": "Gemini 2.5 Flash",
+  "nameEn": "Gemini 2.5 Flash",
+  "company": "Google",
+  "country": "US",
+  "category": "llm",
+  "family": "gemini-flash-line",
+  "stage": 1,
+  "evolvesTo": "gemini-3-flash",
+  "evolveLevel": 24,
+  "types": [
+   "compute"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 76,
+   "atk": 57,
+   "def": 53,
+   "spa": 54,
+   "spd": 58,
+   "spe": 100
+  },
+  "habitats": [
+   "city",
+   "meadow"
+  ],
+  "releaseDate": "2025-04-17",
+  "capabilityScore": 40,
+  "hotnessScore": 45,
+  "statRationale": "思考预算可调、响应轻快→速度高；百万级上下文→HP高。 [BST 398 ∈ R 330-420; 强项 spe/hp; 能力 40/热度 45]",
+  "dexEntryZh": "2025 年 4 月 17 日登场的「会思考的 Flash」，思考预算可以自己调，想多想少随你。OpenRouter 称它是主打推理、编码、数学和科学的主力模型，上下文约 100 万 token，以低成本见长。接替 Gemini 2.0 Flash；它的图像分身 Nano Banana 在 2025 年 8 月带来 1000 万以上新用户。之后升级进化为 Gemini 3 Flash。",
+  "lookZh": "珊瑚红侧马尾的小跑腿，手腕上戴着思考预算旋钮"
+ },
+ {
+  "id": "gemini-3-flash",
+  "nameZh": "Gemini 3 Flash",
+  "nameEn": "Gemini 3 Flash",
+  "company": "Google",
+  "country": "US",
+  "category": "llm",
+  "family": "gemini-flash-line",
+  "stage": 2,
+  "evolvesTo": "gemini-3-5-flash",
+  "evolveLevel": 40,
+  "types": [
+   "compute",
+   "chat"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 80,
+   "atk": 73,
+   "def": 66,
+   "spa": 66,
+   "spd": 77,
+   "spe": 100
+  },
+  "habitats": [
+   "city",
+   "meadow"
+  ],
+  "releaseDate": "2025-12-17",
+  "capabilityScore": 57,
+  "hotnessScore": 52,
+  "statRationale": "Flash 档低延迟→速度高；稳稳扛下日常对话→HP高。 [BST 462 ∈ SR 420-490; 强项 spe/hp; 能力 57/热度 52]",
+  "dexEntryZh": "Gemini 2.5 Flash 的下一代，2025 年 12 月 17 日正式可用（GA），随即成了 Gemini App 的默认模型，也就是每位用户打开应用默认先见到的那一位。招牌是速度与低成本。之后继续进化为 Gemini 3.5 Flash，从陪聊的默认担当变成能动手干活的行动派。",
+  "lookZh": "侧马尾及肩的白蓝运动外套少女，一手举着带聊天气泡的手机"
+ },
+ {
+  "id": "gemini-3-5-flash",
+  "nameZh": "Gemini 3.5 Flash",
+  "nameEn": "Gemini 3.5 Flash",
+  "company": "Google",
+  "country": "US",
+  "category": "llm",
+  "family": "gemini-flash-line",
+  "stage": 3,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "compute",
+   "agent"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 96,
+   "atk": 82,
+   "def": 79,
+   "spa": 74,
+   "spd": 73,
+   "spe": 116
+  },
+  "habitats": [
+   "city",
+   "highland"
+  ],
+  "releaseDate": "2026-05-19",
+  "capabilityScore": 70,
+  "hotnessScore": 58,
+  "statRationale": "近 Pro 级编码与并行智能体→速度高；百万级上下文→HP高。 [BST 520 ∈ SSR 490-550; 强项 spe/hp; 能力 70/热度 58]",
+  "dexEntryZh": "2026 年 5 月 19 日在 I/O 上以「带行动力的前沿智能」亮相，是 3.5 家族里最先发布的成员。OpenRouter 称它以 Flash 的价格和速度提供接近 Pro 的编码与推理，擅长并行的智能体执行，上下文约 100 万 token；6 月 24 日又内置了电脑操作能力。由 Gemini 3 Flash 进化而来，从会答变成会做。",
+  "lookZh": "拿光标箭头指挥棒的干练少女，腰间挂着三个并行小分身挂件"
+ },
+ {
+  "id": "gemma-3",
+  "nameZh": "Gemma 3",
+  "nameEn": "Gemma 3",
+  "company": "Google",
+  "country": "US",
+  "category": "multimodal",
+  "family": "gemma",
+  "stage": 1,
+  "evolvesTo": "gemma-4",
+  "evolveLevel": 30,
+  "types": [
+   "open",
+   "vision"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 68,
+   "atk": 58,
+   "def": 61,
+   "spa": 62,
+   "spd": 60,
+   "spe": 63
+  },
+  "habitats": [
+   "forest",
+   "meadow"
+  ],
+  "releaseDate": "2025-03-12",
+  "capabilityScore": 26,
+  "hotnessScore": 45,
+  "statRationale": "1B–27B 全尺寸铺开、128K 上下文→HP高；小体型易部署→速度高。 [BST 372 ∈ R 330-420; 强项 hp/spe; 能力 26/热度 45]",
+  "dexEntryZh": "Gemma 家族的开源宝石第 3 代，2025 年 3 月 12 日发布，从 1B 到 27B 一整排尺寸，全部是多模态、上下文 128K，权重对外开放。同年年中又推出了面向边缘设备的 3n 版本。前代是 Gemma 2，之后继续打磨，进化成能装进手机里发光的 Gemma 4。",
+  "lookZh": "抱着宝石小匣的青绿短发小矮人，额前顶着一只放大镜"
+ },
+ {
+  "id": "veo-3-1",
+  "nameZh": "Veo 3.1",
+  "nameEn": "Veo 3.1",
+  "company": "Google",
+  "country": "US",
+  "category": "video",
+  "family": "veo",
+  "stage": 2,
+  "evolvesTo": "gemini-omni",
+  "evolveLevel": 40,
+  "types": [
+   "motion",
+   "sound"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 77,
+   "atk": 66,
+   "def": 70,
+   "spa": 126,
+   "spd": 68,
+   "spe": 81
+  },
+  "habitats": [
+   "coast",
+   "meadow"
+  ],
+  "releaseDate": "2025-10-15",
+  "capabilityScore": 80,
+  "hotnessScore": 45,
+  "statRationale": "画面加原生音频→特攻高；Flow 里出片快→速度高。 [BST 488 ∈ SR 420-490; 强项 spa/spe; 能力 80/热度 45]",
+  "dexEntryZh": "Veo 3 的升级版，2025 年 10 月 15 日登场，接入 Flow 创作工具，1080p 画面照样自带声音。Arena 1364 分，AA 968 分（第 18 名）。传闻中的 Veo 4 一直没来，Google 在 I/O 2026 直接拿出 Gemini Omni，所以它至今仍是最新的 Veo，也是通往 Gemini Omni 1.1 Flash 的中间一站。",
+  "lookZh": "戴红贝雷帽的少年导演，海军蓝短外套，肩上绕着一条胶片围巾"
+ },
+ {
+  "id": "lyria-2",
+  "nameZh": "Lyria 2",
+  "nameEn": "Lyria 2",
+  "company": "Google",
+  "country": "US",
+  "category": "music",
+  "family": "lyria",
+  "stage": 1,
+  "evolvesTo": "lyria-3",
+  "evolveLevel": 22,
+  "types": [
+   "sound"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 60,
+   "atk": 47,
+   "def": 55,
+   "spa": 94,
+   "spd": 58,
+   "spe": 71
+  },
+  "habitats": [
+   "forest",
+   "coast"
+  ],
+  "releaseDate": "2025-04-01",
+  "capabilityScore": 40,
+  "hotnessScore": 35,
+  "statRationale": "器乐保真度高→特攻高；纯器乐生成响应轻→速度高。 [BST 385 ∈ R 330-420; 强项 spa/spe; 能力 40/热度 35]",
+  "dexEntryZh": "2025 年 4 月在 Vertex AI 上登场的纯器乐高保真音乐模型，接在 2023 年的初代 Lyria 之后，身边还有实时版 Lyria RealTime。此时的她只会演奏、不会唱歌，要等到进化为 Lyria 3，才学会带着人声开口。",
+  "lookZh": "抱着玩具金色里拉琴的粉发小乐手，裙摆五线谱上还没有音符"
+ },
+ {
+  "id": "lyria-3",
+  "nameZh": "Lyria 3",
+  "nameEn": "Lyria 3",
+  "company": "Google",
+  "country": "US",
+  "category": "music",
+  "family": "lyria",
+  "stage": 2,
+  "evolvesTo": "lyria",
+  "evolveLevel": 38,
+  "types": [
+   "sound",
+   "write"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 72,
+   "atk": 58,
+   "def": 77,
+   "spa": 111,
+   "spd": 68,
+   "spe": 66
+  },
+  "habitats": [
+   "forest",
+   "coast"
+  ],
+  "releaseDate": "2026-02-18",
+  "capabilityScore": 84,
+  "hotnessScore": 55,
+  "statRationale": "写词作曲带人声→特攻高；SynthID 水印护体→防御高。 [BST 452 ∈ SR 420-490; 强项 spa/def; 能力 84/热度 55]",
+  "dexEntryZh": "Lyria 2 进化而来的开口版本，2026 年 2 月 18 日上线，能在 Gemini App 和 YouTube Dream Track 里写出带人声的 30 秒小曲。3 月 25 日的 Lyria 3 Pro 把歌拉长到 3 分钟并有完整结构，登陆 Gemini、Vids、ProducerAI 与 API；每首作品都带 SynthID 水印。之后进化为 Lyria 3.5。",
+  "lookZh": "粉发双环的小歌手，一手持金色里拉琴，一手攥着歌词卷轴"
+ },
+ {
+  "id": "gemini-cli",
+  "nameZh": "Gemini CLI",
+  "nameEn": "Gemini CLI",
+  "company": "Google",
+  "country": "US",
+  "category": "code",
+  "family": "antigravity",
+  "stage": 1,
+  "evolvesTo": "google-antigravity",
+  "evolveLevel": 30,
+  "types": [
+   "code",
+   "agent"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 75,
+   "atk": 72,
+   "def": 57,
+   "spa": 57,
+   "spd": 63,
+   "spe": 71
+  },
+  "habitats": [
+   "city",
+   "volcano"
+  ],
+  "releaseDate": "2025-06-25",
+  "capabilityScore": 72,
+  "hotnessScore": 50,
+  "statRationale": "百万上下文、免费额度大→HP高；终端里直接改代码→攻击高。 [BST 395 ∈ R 330-420; 强项 hp/atk; 能力 72/热度 50]",
+  "dexEntryZh": "2025 年 6 月 25 日以 Apache-2.0 开源的终端智能体，GitHub 星标 10.7 万，当年靠慷慨的免费额度和 100 万 token 上下文出圈。I/O 2026 宣布由 Antigravity CLI 接班，6 月 18 日起不再服务个人免费、Pro、Ultra 用户，企业与 API Key 仍可用，仓库照常发版。之后进化为 Google Antigravity 反重力。",
+  "lookZh": "脚踏实地的蓝发小程序员，白围巾拖着四色尖，捧着闪光标的掌机"
+ },
+ {
+  "id": "grok-build",
+  "nameZh": "Grok Build",
+  "nameEn": "Grok Build",
+  "company": "SpaceXAI (formerly xAI)",
+  "country": "US",
+  "category": "code",
+  "family": "grok-code",
+  "stage": 1,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "code",
+   "agent"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 83,
+   "atk": 90,
+   "def": 66,
+   "spa": 67,
+   "spd": 75,
+   "spe": 81
+  },
+  "habitats": [
+   "city",
+   "volcano"
+  ],
+  "releaseDate": "2026-05-14",
+  "capabilityScore": 80,
+  "hotnessScore": 58,
+  "statRationale": "为智能体式软件工程而生→攻击高；25.6 万上下文→HP高。 [BST 462 ∈ SR 420-490; 强项 atk/hp; 能力 80/热度 58]",
+  "dexEntryZh": "Grok 家族的终端编码分支，SpaceXAI（原 xAI）约在 2026 年 4 至 5 月推出（最早记录 4 月 16 日，OpenRouter 5 月 20 日上架），日期有出入。搭配 Grok 4.7 时 Terminal-Bench 4.0 得 37.6%，AA 编码智能体指数 56.3（2026 年 9 月）。Grok Build 0.1 是专为智能体式软件工程训练的快速编码模型，上下文 25.6 万。",
+  "lookZh": "黑发红内衬的火箭机修少女，扛着 X 形扳手，掌机里滚动青色代码"
+ },
+ {
+  "id": "grok-4-20",
+  "nameZh": "Grok 4.20",
+  "nameEn": "Grok 4.20",
+  "company": "SpaceXAI (formerly xAI)",
+  "country": "US",
+  "category": "llm",
+  "family": "grok-4x",
+  "stage": 1,
+  "evolvesTo": "grok-4-5",
+  "evolveLevel": 36,
+  "types": [
+   "logic",
+   "chaos"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 78,
+   "atk": 80,
+   "def": 60,
+   "spa": 93,
+   "spd": 74,
+   "spe": 85
+  },
+  "habitats": [
+   "city",
+   "snow"
+  ],
+  "releaseDate": "2026-03-09",
+  "capabilityScore": 65,
+  "hotnessScore": 52,
+  "statRationale": "推理加工具调用→特攻高；业界领先的响应速度→速度高。 [BST 470 ∈ SR 420-490; 强项 spa/spe; 能力 65/热度 52]",
+  "dexEntryZh": "2026 年 2 月至 3 月间发布（研究资料记 2 月，models.dev 记 3 月 9 日），是 xAI（现 SpaceXAI）通往 Grok 5 路上的一站，主打多智能体协作和玩梗式营销。OpenRouter 称它是推理模型，速度业界领先、擅长智能体式工具调用，并宣称幻觉率最低、严格遵循提示，上下文 200 万 token。前代是 Grok 4.1，之后进化为 Grok 4.5。",
+  "lookZh": "四条小辫的红发实验室捣蛋鬼，发间别着停在 4:20 的时钟发夹"
+ },
+ {
+  "id": "grok-4-5",
+  "nameZh": "Grok 4.5",
+  "nameEn": "Grok 4.5",
+  "company": "SpaceXAI (formerly xAI)",
+  "country": "US",
+  "category": "llm",
+  "family": "grok-4x",
+  "stage": 2,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "logic",
+   "chaos"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 92,
+   "atk": 86,
+   "def": 72,
+   "spa": 96,
+   "spd": 83,
+   "spe": 96
+  },
+  "habitats": [
+   "city",
+   "snow"
+  ],
+  "releaseDate": "2026-07-08",
+  "capabilityScore": 75,
+  "hotnessScore": 52,
+  "statRationale": "编码与 STEM 前沿水平→特攻高；响应轻快→速度高。 [BST 525 ∈ SSR 490-550; 强项 spa/spe; 能力 75/热度 52]",
+  "dexEntryZh": "由 Grok 4.20 一路进化而来，接替 Grok 4.3 的 2026 年 7 月主力（发布日期有 7 月 8 日和 16 日两种说法）。OpenRouter 称它在编码、知识工作和 STEM 上达到前沿水平，上下文 50 万 token，BenchLM 得分 65.63。这条推理加混沌的路线，从爱玩梗的捣蛋鬼长成了沉稳的研究员。",
+  "lookZh": "长外套的红发研究员，四条长辫，平板上滚动着代码与原子符号"
+ },
+ {
+  "id": "muse-image",
+  "nameZh": "Muse Image",
+  "nameEn": "Muse Image",
+  "company": "Meta",
+  "country": "US",
+  "category": "image",
+  "family": "muse-image",
+  "stage": 1,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "vision",
+   "write"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 81,
+   "atk": 64,
+   "def": 73,
+   "spa": 113,
+   "spd": 73,
+   "spe": 66
+  },
+  "habitats": [
+   "coast",
+   "meadow"
+  ],
+  "releaseDate": "2026-07-07",
+  "capabilityScore": 85,
+  "hotnessScore": 60,
+  "statRationale": "多参考图合成、画质榜前列→特攻高；分发广、稳定在线→HP高。 [BST 470 ∈ SR 420-490; 强项 spa/hp; 能力 85/热度 60]",
+  "dexEntryZh": "Meta 超级智能实验室的首个媒体模型，2026 年 7 月 7 日发布，支持智能体式工具调用和多参考图合成。直接住在 Meta AI App、Instagram 快拍和 WhatsApp 里，API 每张图只要 $0.01。Arena 1276 分（第 7），AA 榜同样第 7。前身是 Emu（Imagine with Meta AI）。",
+  "lookZh": "杏色波波头羊驼耳的小画师，握着发光画笔，另一手扇形摊开三张照片"
+ },
+ {
+  "id": "mixtral",
+  "nameZh": "Mixtral 8x7B",
+  "nameEn": "Mixtral 8x7B",
+  "company": "Mistral AI",
+  "country": "FR",
+  "category": "llm",
+  "family": "mistral",
+  "stage": 2,
+  "evolvesTo": "mistral-medium",
+  "evolveLevel": 34,
+  "types": [
+   "open",
+   "compute"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 65,
+   "atk": 57,
+   "def": 52,
+   "spa": 50,
+   "spd": 54,
+   "spe": 72
+  },
+  "habitats": [
+   "forest",
+   "highland"
+  ],
+  "releaseDate": "2023-12-09",
+  "capabilityScore": 10,
+  "hotnessScore": 36,
+  "statRationale": "稀疏 MoE 分工省算力→速度快；46.7B 总参数→HP 高。 [BST 350 ∈ R 330-420; 强项 spe/hp; 能力 10/热度 36]",
+  "dexEntryZh": "Mistral 7B 长大后的第二形态。2023 年 12 月 9 日发布的 Mixtral 8x7B 把稀疏 MoE 带进开源圈，总参数 46.7B，权重全开。风精灵小猫学会了让八位专家分工，之后继续升级，进化为把推理与编码合进同一套开放权重的 Mistral Medium 3.5。",
+  "lookZh": "戴羽毛小礼帽的见习剑士猫娘，胸前排着八枚金扣"
+ },
+ {
+  "id": "mistral-large-3",
+  "nameZh": "Mistral Large 3",
+  "nameEn": "Mistral Large 3",
+  "company": "Mistral AI",
+  "country": "FR",
+  "category": "llm",
+  "family": "mistral-large",
+  "stage": 1,
+  "evolvesTo": "mistral-large-4",
+  "evolveLevel": 32,
+  "types": [
+   "open",
+   "logic"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 75,
+   "atk": 72,
+   "def": 62,
+   "spa": 61,
+   "spd": 65,
+   "spe": 63
+  },
+  "habitats": [
+   "forest",
+   "highland"
+  ],
+  "releaseDate": "2025-12-02",
+  "capabilityScore": 46,
+  "hotnessScore": 48,
+  "statRationale": "675B 总参数→HP 高；41B 激活的旗舰火力→攻击高。 [BST 398 ∈ R 330-420; 强项 hp/atk; 能力 46/热度 48]",
+  "dexEntryZh": "2025 年 12 月 2 日发布的 Mistral 开源旗舰：总参数 675B、激活 41B 的稀疏 MoE，Apache 2.0 授权，支持多语言与多模态，是欧洲最大的开源模型。前作是 Mistral Large 2，之后迭代进化为 Mistral Large 4。",
+  "lookZh": "戴像素积木小王冠的小狮子娘，抱着比自己还长的金羽毛笔"
+ },
+ {
+  "id": "mistral-large-4",
+  "nameZh": "Mistral Large 4",
+  "nameEn": "Mistral Large 4",
+  "company": "Mistral AI",
+  "country": "FR",
+  "category": "llm",
+  "family": "mistral-large",
+  "stage": 2,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "open",
+   "logic"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 85,
+   "atk": 80,
+   "def": 67,
+   "spa": 70,
+   "spd": 78,
+   "spe": 80
+  },
+  "habitats": [
+   "forest",
+   "highland"
+  ],
+  "releaseDate": "2026-10-06",
+  "capabilityScore": 55,
+  "hotnessScore": 45,
+  "statRationale": "旗舰体量→HP 高；推理与编码主攻→攻击高。 [BST 460 ∈ SR 420-490; 强项 hp/atk; 能力 55/热度 45]",
+  "dexEntryZh": "2026 年 10 月登场的 Mistral 新旗舰，是支持文本与图像输入的前沿多模态模型，主打推理、编码和智能体工作流。它是 Mistral Large 3 的下一代，同一条 Large 血统的迭代升级，小狮子披上王袍，长成了狮王。",
+  "lookZh": "头戴五层积木王冠的狮王娘，羽毛笔长成了镀金权杖"
+ },
+ {
+  "id": "devstral-2",
+  "nameZh": "Devstral 2",
+  "nameEn": "Devstral 2",
+  "company": "Mistral AI",
+  "country": "FR",
+  "category": "code",
+  "family": "devstral",
+  "stage": 1,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "code",
+   "open"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 76,
+   "atk": 82,
+   "def": 70,
+   "spa": 67,
+   "spd": 65,
+   "spe": 80
+  },
+  "habitats": [
+   "city",
+   "forest"
+  ],
+  "releaseDate": "2025-12-09",
+  "capabilityScore": 50,
+  "hotnessScore": 42,
+  "statRationale": "智能体编码火力集中→攻击高；Vibe CLI 里跑得快→速度高。 [BST 440 ∈ SR 420-490; 强项 atk/spe; 能力 50/热度 42]",
+  "dexEntryZh": "2025 年 12 月发布的 Mistral 智能体编码模型：123B 稠密 Transformer，256K 上下文，权重开放，另有小弟 Devstral Small 2，是 Vibe CLI 的动力。前辈是 Devstral 与 Codestral；2026 年 4 月，它的本事被并入 Mistral Medium 3.5。",
+  "lookZh": "护目镜推在额头的狐耳程序员娘，肩上蹲着小狐崽"
+ },
+ {
+  "id": "phi-3",
+  "nameZh": "Phi-3",
+  "nameEn": "Phi-3",
+  "company": "Microsoft",
+  "country": "US",
+  "category": "reasoning",
+  "family": "phi",
+  "stage": 1,
+  "evolvesTo": "phi-4",
+  "evolveLevel": 22,
+  "types": [
+   "logic"
+  ],
+  "rarity": "N",
+  "baseStats": {
+   "hp": 52,
+   "atk": 60,
+   "def": 45,
+   "spa": 45,
+   "spd": 52,
+   "spe": 46
+  },
+  "habitats": [
+   "forest",
+   "city"
+  ],
+  "releaseDate": "2024-04-23",
+  "capabilityScore": 14,
+  "hotnessScore": 40,
+  "statRationale": "教科书数据喂出的推理→攻击高；mini 到 medium 三档都稳→HP 高。 [BST 300 ∈ N 240-330; 强项 atk/hp; 能力 14/热度 40]",
+  "dexEntryZh": "微软用精选「教科书」数据训练的小语言模型，2024 年 4 月 23 日发布，分 mini、small、medium 三种尺寸，权重开放，主打体型小、能在设备端运行。前作是 Phi-2，之后迭代进化为 Phi-4，书包越背越重，数学也越算越强。",
+  "lookZh": "白大褂拖到手背的小书虫，抱着一本厚课本"
+ },
+ {
+  "id": "phi-4-reasoning",
+  "nameZh": "Phi-4-reasoning",
+  "nameEn": "Phi-4-reasoning",
+  "company": "Microsoft",
+  "country": "US",
+  "category": "reasoning",
+  "family": "phi",
+  "stage": 3,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "logic",
+   "open"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 80,
+   "atk": 85,
+   "def": 63,
+   "spa": 64,
+   "spd": 78,
+   "spe": 68
+  },
+  "habitats": [
+   "forest",
+   "city"
+  ],
+  "releaseDate": "2025-04-30",
+  "capabilityScore": 42,
+  "hotnessScore": 40,
+  "statRationale": "推理调优、数学拿手→攻击高；小体型也能长链思考→HP 稳。 [BST 438 ∈ SR 420-490; 强项 atk/hp; 能力 42/热度 40]",
+  "dexEntryZh": "2025 年 4 月 30 日发布的 Phi-4 推理版：同一个小书虫经过推理微调进化，学会一步步写出解题过程，另有 plus 版本，数学是看家本领，权重开放。仍是微软开源端侧家族 Phi 的一员，前一形态是 Phi-4。",
+  "lookZh": "披着学士披风的推理学姐，手握写满步骤的长卷轴"
+ },
+ {
+  "id": "nemotron-3-super",
+  "nameZh": "Nemotron 3 Super",
+  "nameEn": "Nemotron 3 Super",
+  "company": "NVIDIA",
+  "country": "US",
+  "category": "reasoning",
+  "family": "nemotron",
+  "stage": 1,
+  "evolvesTo": "nemotron",
+  "evolveLevel": 34,
+  "types": [
+   "open",
+   "compute"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 85,
+   "atk": 71,
+   "def": 67,
+   "spa": 67,
+   "spd": 64,
+   "spe": 86
+  },
+  "habitats": [
+   "city",
+   "volcano"
+  ],
+  "releaseDate": "2026-03-11",
+  "capabilityScore": 54,
+  "hotnessScore": 42,
+  "statRationale": "12B 激活→速度快；120B 总参数→HP 高。 [BST 440 ∈ SR 420-490; 强项 spe/hp; 能力 54/热度 42]",
+  "dexEntryZh": "NVIDIA 在 2026 年 3 月的 GTC 上推出的开源混合 MoE：总参数 120B、激活 12B，采用 Mamba-Transformer 混合架构，专为多智能体的复杂推理做效率优化。前作是 Nemotron 3 Nano，之后长大为 550B 的 Nemotron 3 Ultra。",
+  "lookZh": "背着单风扇显卡包的绿发少年，脖子上缠着小青蛇"
+ },
+ {
+  "id": "sd-3-5",
+  "nameZh": "Stable Diffusion 3.5",
+  "nameEn": "Stable Diffusion 3.5",
+  "company": "Stability AI",
+  "country": "UK",
+  "category": "image",
+  "family": "stable-diffusion",
+  "stage": 3,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "vision",
+   "open"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 69,
+   "atk": 67,
+   "def": 69,
+   "spa": 94,
+   "spd": 68,
+   "spe": 73
+  },
+  "habitats": [
+   "meadow",
+   "coast"
+  ],
+  "releaseDate": "2024-10-22",
+  "capabilityScore": 40,
+  "hotnessScore": 55,
+  "statRationale": "开放权重、可本地跑→速度高；老牌底座的画面表现→特攻高。 [BST 440 ∈ SR 420-490; 强项 spa/spe; 能力 40/热度 55]",
+  "dexEntryZh": "SDXL 的后辈，Stable Diffusion 一路进化到的第 3 形态，2024 年 10 月 22 日发布，权重开放、可在本地部署，是 Stability 目前最新的生图模型，「SD4」只是传闻，官网新闻页上并没有列出。可惜 Arena 只有 938 分，社区反响平平，Stability 2026 年的主力反倒成了 Stable Audio 3.0。",
+  "lookZh": "紫发长卷的开源大画师，背着巨幅画架，手提显卡造型的小手包"
+ },
+ {
+  "id": "flux-2",
+  "nameZh": "FLUX.2",
+  "nameEn": "FLUX.2",
+  "company": "Black Forest Labs",
+  "country": "DE",
+  "category": "image",
+  "family": "flux",
+  "stage": 2,
+  "evolvesTo": "flux-3",
+  "evolveLevel": 40,
+  "types": [
+   "vision",
+   "open"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 73,
+   "atk": 69,
+   "def": 71,
+   "spa": 105,
+   "spd": 71,
+   "spe": 81
+  },
+  "habitats": [
+   "meadow",
+   "forest"
+  ],
+  "releaseDate": "2025-11-25",
+  "capabilityScore": 73,
+  "hotnessScore": 45,
+  "statRationale": "多参考图与 4MP 输出→特攻高；五档按需选速度→速度高。 [BST 470 ∈ SR 420-490; 强项 spa/spe; 能力 73/热度 45]",
+  "dexEntryZh": "FLUX.1 一路升级而来的第 2 代，2025 年 11 月 25 日发布，分 [max]、[pro]、[flex]、[dev]、[klein] 五档，支持多参考图和 4MP 输出。开放权重的 [dev] 是 AA 生图 Elo 的 1000 分锚点，[max] 在 Arena 拿到 1162 分。前身是 FLUX.1 Kontext，之后进化为多模态的 FLUX 3。",
+  "lookZh": "黑绿发的林地少年，手里扇形展开几张参考照片卡，腰间挂着小锚"
+ },
+ {
+  "id": "eleven-v3",
+  "nameZh": "Eleven v3",
+  "nameEn": "Eleven v3",
+  "company": "ElevenLabs",
+  "country": "US",
+  "category": "audio",
+  "family": "elevenlabs",
+  "stage": 2,
+  "evolvesTo": "eleven-v4",
+  "evolveLevel": 42,
+  "types": [
+   "sound",
+   "chat"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 69,
+   "atk": 62,
+   "def": 71,
+   "spa": 104,
+   "spd": 81,
+   "spe": 91
+  },
+  "habitats": [
+   "city",
+   "coast"
+  ],
+  "releaseDate": "2025-06-05",
+  "capabilityScore": 82,
+  "hotnessScore": 50,
+  "statRationale": "情绪标签与表现力→特攻高；对话响应轻快→速度高。 [BST 478 ∈ SR 420-490; 强项 spa/spe; 能力 82/热度 50]",
+  "dexEntryZh": "从 ElevenLabs 多语言 v2 进化而来，2025 年 6 月 5 日先以 alpha 亮相，2026 年 2 月前已正式开放。最大的新本事是在文本里直接插入 [whispers]、[laughs] 这类音频标签来控制情绪，支持 70 种语言，AA 语音榜 1171 分。之后继续进化为 Eleven v4。",
+  "lookZh": "白发微长的戏剧系少年，剧本页边写满方括号，腰间挂喜剧面具"
+ },
+ {
+  "id": "runway-gen-4",
+  "nameZh": "Runway Gen-4",
+  "nameEn": "Runway Gen-4",
+  "company": "Runway",
+  "country": "US",
+  "category": "video",
+  "family": "runway",
+  "stage": 1,
+  "evolvesTo": "runway",
+  "evolveLevel": 30,
+  "types": [
+   "motion",
+   "write"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 76,
+   "atk": 61,
+   "def": 71,
+   "spa": 106,
+   "spd": 65,
+   "spe": 59
+  },
+  "habitats": [
+   "coast",
+   "city"
+  ],
+  "releaseDate": "2025-03-31",
+  "capabilityScore": 66,
+  "hotnessScore": 40,
+  "statRationale": "参考一致性→特攻高；角色场景跨镜头不崩→HP高。 [BST 438 ∈ SR 420-490; 强项 spa/hp; 能力 66/热度 40]",
+  "dexEntryZh": "2025 年 3 月 31 日发布，首次做到只给一张参考图，就让角色和场景在不同镜头里保持一致，同时推出 Gen-4 图像参考。靠这份参考一致性，成了 Runway 电影人工具箱里的关键一环。前代是 Gen-3 Alpha，之后迭代进化为 Runway Gen-4.5。",
+  "lookZh": "戴黑色 R 形发圈的短发小导演，拿着贴了拍立得的场记板，身旁有淡淡的分身"
+ },
+ {
+  "id": "deepseek-v3-1",
+  "nameZh": "DeepSeek-V3.1",
+  "nameEn": "DeepSeek-V3.1",
+  "company": "DeepSeek",
+  "country": "CN",
+  "category": "llm",
+  "family": "deepseek-v3x",
+  "stage": 1,
+  "evolvesTo": "deepseek-v3-2",
+  "evolveLevel": 22,
+  "types": [
+   "compute",
+   "logic"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 70,
+   "atk": 64,
+   "def": 53,
+   "spa": 49,
+   "spd": 54,
+   "spe": 82
+  },
+  "habitats": [
+   "coast",
+   "city"
+  ],
+  "releaseDate": "2025-08-21",
+  "capabilityScore": 40,
+  "hotnessScore": 40,
+  "statRationale": "混合思考按需切换→速度快；V3 的底子→HP 高。 [BST 372 ∈ R 330-420; 强项 spe/hp; 能力 40/热度 40]",
+  "dexEntryZh": "2025 年 8 月 21 日发布的混合思考模型：把 V3 与 R1 两条线并进同一个模型，思考与非思考模式可切换，工具调用与智能体能力更强，权重开放，LMArena 约 1415-1417 分。9 月 22 日出了 V3.1-Terminus，之后进化为 DeepSeek-V3.2。",
+  "lookZh": "双色雨衣的小独角鲸娘，脖子挂着思考开关吊坠"
+ },
+ {
+  "id": "deepseek-v3-2",
+  "nameZh": "DeepSeek-V3.2",
+  "nameEn": "DeepSeek-V3.2",
+  "company": "DeepSeek",
+  "country": "CN",
+  "category": "llm",
+  "family": "deepseek-v3x",
+  "stage": 2,
+  "evolvesTo": "deepseek-v3-2-speciale",
+  "evolveLevel": 38,
+  "types": [
+   "compute",
+   "logic"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 85,
+   "atk": 72,
+   "def": 63,
+   "spa": 66,
+   "spd": 75,
+   "spe": 89
+  },
+  "habitats": [
+   "coast",
+   "city"
+  ],
+  "releaseDate": "2025-12-01",
+  "capabilityScore": 42,
+  "hotnessScore": 45,
+  "statRationale": "稀疏注意力降低成本→速度快；长上下文撑得住→HP 高。 [BST 450 ∈ SR 420-490; 强项 spe/hp; 能力 42/热度 45]",
+  "dexEntryZh": "2025 年 12 月 1 日发布的 V3.2，是 DeepSeek 稀疏注意力设计的正式版（9 月 29 日的 V3.2-Exp 先行试水），长上下文价格大幅下调，LMArena 1425 分，权重开放。前一形态是 DeepSeek-V3.1，之后分出推理特化的 V3.2-Speciale。",
+  "lookZh": "拖着超长围巾的独角鲸娘，举着只看重点的黄铜望远镜"
+ },
+ {
+  "id": "deepseek-v3-2-speciale",
+  "nameZh": "DeepSeek-V3.2-Speciale",
+  "nameEn": "DeepSeek-V3.2-Speciale",
+  "company": "DeepSeek",
+  "country": "CN",
+  "category": "reasoning",
+  "family": "deepseek-v3x",
+  "stage": 3,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "logic",
+   "open"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 100,
+   "atk": 99,
+   "def": 73,
+   "spa": 72,
+   "spd": 81,
+   "spe": 83
+  },
+  "habitats": [
+   "coast",
+   "highland"
+  ],
+  "releaseDate": "2025-12-01",
+  "capabilityScore": 66,
+  "hotnessScore": 40,
+  "statRationale": "长链推理拉满→攻击高；竞赛级耐力→HP 高。 [BST 508 ∈ SSR 490-550; 强项 hp/atk; 能力 66/热度 40]",
+  "dexEntryZh": "V3.2 的最大推理力兄弟，与 V3.2 同日（2025 年 12 月 1 日）发布，瞄准奥赛级数学与编程，DeepSeek 报告其取得了金牌水平的竞赛成绩，擅长竞赛数学与长链推理，权重开放。由 DeepSeek-V3.2 一路进化而来，是这条线最锋利的形态。",
+  "lookZh": "戴月桂冠的金牌独角鲸娘，圆规当权杖，长角镀着金光"
+ },
+ {
+  "id": "deepseek-app",
+  "nameZh": "DeepSeek 应用",
+  "nameEn": "DeepSeek App",
+  "company": "DeepSeek",
+  "country": "CN",
+  "category": "llm",
+  "family": "deepseek-app",
+  "stage": 1,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "chat",
+   "search"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 97,
+   "atk": 68,
+   "def": 87,
+   "spa": 82,
+   "spd": 102,
+   "spe": 94
+  },
+  "habitats": [
+   "city",
+   "coast"
+  ],
+  "releaseDate": "2025-01-10",
+  "capabilityScore": 86,
+  "hotnessScore": 84,
+  "statRationale": "月活上亿的体量→HP 高；品牌聚光灯下抗压→特防高。 [BST 530 ∈ SSR 490-550; 强项 spd/hp; 能力 86/热度 84]",
+  "dexEntryZh": "DeepSeek 把模型装进手机的那一面：2025 年 1 月随 R1 登顶美国 App Store，QuestMobile 2026 年 6 月统计月活约 1.3 亿、排第 3，但 5 月同比下滑约 24%。V4-Pro 与 V4-Flash 于 4 月 24 日以 MIT 许可开放权重，V4-Pro 8 月 13 日在应用内正式上线。吉祥物是蓝鲸，同人叫她「鲸鱼娘」。",
+  "lookZh": "挥着手机打招呼的鲸鱼娘前台，侧马尾梢是鲸鱼尾"
+ },
+ {
+  "id": "qwen3",
+  "nameZh": "通义千问 Qwen3",
+  "nameEn": "Qwen3",
+  "company": "Alibaba",
+  "country": "CN",
+  "category": "llm",
+  "family": "qwen3",
+  "stage": 1,
+  "evolvesTo": "qwen3-5",
+  "evolveLevel": 24,
+  "types": [
+   "open",
+   "chat"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 66,
+   "atk": 55,
+   "def": 56,
+   "spa": 65,
+   "spd": 66,
+   "spe": 70
+  },
+  "habitats": [
+   "forest",
+   "meadow"
+  ],
+  "releaseDate": "2025-04-28",
+  "capabilityScore": 30,
+  "hotnessScore": 50,
+  "statRationale": "小 MoE 只激活 3B→速度高；36T 训练量、119 种语言→HP高。 [BST 378 ∈ R 330-420; 强项 spe/hp; 能力 30/热度 50]",
+  "dexEntryZh": "2025 年 4 月 28 日发布的开源家族，从 0.6B 一路到 235B-A22B，用 36T token 训练，支持 119 种语言。最大的本事是混合思考：同一个模型能在深想和快答之间随时切换。2507 刷新版在 LMArena 拿到 1422 分。接下来会进化为原生多模态的通义千问 Qwen3.5。",
+  "lookZh": "琥珀眼双辫班长，手里的两面牌一面思考一面闪电"
+ },
+ {
+  "id": "qwen3-5",
+  "nameZh": "通义千问 Qwen3.5",
+  "nameEn": "Qwen3.5",
+  "company": "Alibaba",
+  "country": "CN",
+  "category": "multimodal",
+  "family": "qwen3",
+  "stage": 2,
+  "evolvesTo": "qwen3-7",
+  "evolveLevel": 40,
+  "types": [
+   "open",
+   "vision"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 83,
+   "atk": 74,
+   "def": 68,
+   "spa": 77,
+   "spd": 70,
+   "spe": 80
+  },
+  "habitats": [
+   "forest",
+   "meadow"
+  ],
+  "releaseDate": "2026-02-16",
+  "capabilityScore": 46,
+  "hotnessScore": 52,
+  "statRationale": "397B 体量、262K 上下文→HP高；线性注意力混合→速度快。 [BST 452 ∈ SR 420-490; 强项 hp/spe; 能力 46/热度 52]",
+  "dexEntryZh": "2026 年 2 月 16 日，通义千问 Qwen3 迭代出原生多模态的新一代：开源家族覆盖 0.8B 到 397B-A17B，采用线性注意力与稀疏专家的混合架构，上下文 262K，支持 201 种语言，另有闭源的 3.5-Plus。397B 的 LMArena 为 1442 分。下一步进化为通义千问 Qwen3.7-Max。",
+  "lookZh": "背双镜头相机的交换生，围巾长长，护照盖满章"
+ },
+ {
+  "id": "qwen3-7",
+  "nameZh": "通义千问 Qwen3.7-Max",
+  "nameEn": "Qwen3.7-Max",
+  "company": "Alibaba",
+  "country": "CN",
+  "category": "llm",
+  "family": "qwen3",
+  "stage": 3,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "open",
+   "logic"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 98,
+   "atk": 92,
+   "def": 85,
+   "spa": 76,
+   "spd": 82,
+   "spe": 87
+  },
+  "habitats": [
+   "forest",
+   "highland"
+  ],
+  "releaseDate": "2026-05-20",
+  "capabilityScore": 66,
+  "hotnessScore": 60,
+  "statRationale": "100 万上下文→HP高；长程智能体、编程强→攻击高。 [BST 520 ∈ SSR 490-550; 强项 hp/atk; 能力 66/热度 60]",
+  "dexEntryZh": "2026 年 5 月 20 日在阿里云峰会亮相的旗舰，只提供 API、不开放权重，主攻长程智能体与办公自动化，上下文 100 万 token。官方公布 GPQA 92.4、Terminal-Bench 2.0 69.7。由通义千问 Qwen3.5 一路迭代而来，中间还隔着 Qwen3.6，是这条进化线的最终形态。",
+  "lookZh": "长外套的执行秘书女王，手持六边形平板，拖着长卷轴"
+ },
+ {
+  "id": "qwen3-coder",
+  "nameZh": "Qwen3-Coder",
+  "nameEn": "Qwen3-Coder",
+  "company": "Alibaba",
+  "country": "CN",
+  "category": "code",
+  "family": "qwen-coder",
+  "stage": 1,
+  "evolvesTo": "qwen3-coder-next",
+  "evolveLevel": 32,
+  "types": [
+   "code",
+   "open"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 77,
+   "atk": 86,
+   "def": 64,
+   "spa": 66,
+   "spd": 65,
+   "spe": 82
+  },
+  "habitats": [
+   "city",
+   "volcano"
+  ],
+  "releaseDate": "2025-07-22",
+  "capabilityScore": 35,
+  "hotnessScore": 42,
+  "statRationale": "智能体编程强→攻击高；480B 仅激活 35B→速度快。 [BST 440 ∈ SR 420-490; 强项 atk/spe; 能力 35/热度 42]",
+  "dexEntryZh": "2025 年 7 月 22 日，在 Qwen3 基础上长出的编程专精分支：480B-A35B 的开源 MoE，主打智能体式编程，支持 256K 上下文，会调函数、用工具，并配有命令行工具 Qwen Code。LMArena 1387 分。接下来会进化为 Qwen3-Coder-Next。",
+  "lookZh": "连帽衫终端少女，高马尾，口袋里睡着一排专家娃娃"
+ },
+ {
+  "id": "qwen3-coder-next",
+  "nameZh": "Qwen3-Coder-Next",
+  "nameEn": "Qwen3-Coder-Next",
+  "company": "Alibaba",
+  "country": "CN",
+  "category": "code",
+  "family": "qwen-coder",
+  "stage": 2,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "code",
+   "agent"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 89,
+   "atk": 94,
+   "def": 80,
+   "spa": 71,
+   "spd": 77,
+   "spe": 91
+  },
+  "habitats": [
+   "city",
+   "volcano"
+  ],
+  "releaseDate": "2026-02-04",
+  "capabilityScore": 62,
+  "hotnessScore": 40,
+  "statRationale": "编程智能体强→攻击高；80B 仅激活 3B→速度极快。 [BST 502 ∈ SSR 490-550; 强项 atk/spe; 能力 62/热度 40]",
+  "dexEntryZh": "2026 年 2 月 4 日，Qwen3-Coder 的后续迭代：开源权重的稀疏 MoE，总参数从 480B 缩到 80B，每次只激活 3B，上下文 262144，专为编程智能体和本地开发流程优化。又轻又省，是这条编程线目前的终点。",
+  "lookZh": "轻装长风衣的编程少女，肩上盘旋着六边形无人机"
+ },
+ {
+  "id": "wan-2-2",
+  "nameZh": "通义万相 2.2",
+  "nameEn": "Wan 2.2",
+  "company": "Alibaba (Tongyi)",
+  "country": "CN",
+  "category": "video",
+  "family": "wan",
+  "stage": 2,
+  "evolvesTo": "wan-3",
+  "evolveLevel": 42,
+  "types": [
+   "motion",
+   "open"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 78,
+   "atk": 71,
+   "def": 63,
+   "spa": 95,
+   "spd": 74,
+   "spe": 74
+  },
+  "habitats": [
+   "coast",
+   "meadow"
+  ],
+  "releaseDate": "2025-07-28",
+  "capabilityScore": 52,
+  "hotnessScore": 40,
+  "statRationale": "电影级镜头控制→特攻高；MoE A14B 底子扎实→HP高。 [BST 455 ∈ SR 420-490; 强项 spa/hp; 能力 52/热度 40]",
+  "dexEntryZh": "2025 年 7 月 28 日，从通义万相 2.1 迭代而来的 MoE A14B 模型，主打电影级镜头控制，Arena 分 1132。它是万相最后一个开放权重的版本，此后路线转向闭源，并一路进化为九色神鹿般的通义万相 3.0。",
+  "lookZh": "少年期的淡紫小鹿，身侧染上青绿色带，鹿角挂着节点箱"
+ },
+ {
+  "id": "kimi-k2-thinking",
+  "nameZh": "Kimi K2 Thinking",
+  "nameEn": "Kimi K2 Thinking",
+  "company": "Moonshot AI",
+  "country": "CN",
+  "category": "reasoning",
+  "family": "kimi-k2x",
+  "stage": 1,
+  "evolvesTo": "kimi-k2-5",
+  "evolveLevel": 26,
+  "types": [
+   "logic",
+   "agent"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 76,
+   "atk": 85,
+   "def": 69,
+   "spa": 64,
+   "spd": 74,
+   "spe": 62
+  },
+  "habitats": [
+   "highland",
+   "snow"
+  ],
+  "releaseDate": "2025-11-06",
+  "capabilityScore": 44,
+  "hotnessScore": 50,
+  "statRationale": "数百次连续工具调用→攻击高；万亿参数 MoE→HP高。 [BST 430 ∈ SR 420-490; 强项 atk/hp; 能力 44/热度 50]",
+  "dexEntryZh": "2025 年 11 月 6 日，在 Kimi K2 的万亿参数 MoE 底子上做成的思考型智能体版本，开源，原生 INT4，能连续调用数百次工具。据报道训练成本约 460 万美元，LMArena 1430 分（turbo）。接下来进化为 Kimi K2.5。",
+  "lookZh": "托腮沉思的银发月牙少女，牵着一串工具珠链"
+ },
+ {
+  "id": "kimi-k2-5",
+  "nameZh": "Kimi K2.5",
+  "nameEn": "Kimi K2.5",
+  "company": "Moonshot AI",
+  "country": "CN",
+  "category": "multimodal",
+  "family": "kimi-k2x",
+  "stage": 2,
+  "evolvesTo": "kimi-k2-6",
+  "evolveLevel": 40,
+  "types": [
+   "agent",
+   "vision"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 75,
+   "atk": 77,
+   "def": 68,
+   "spa": 90,
+   "spd": 81,
+   "spe": 79
+  },
+  "habitats": [
+   "highland",
+   "snow"
+  ],
+  "releaseDate": "2026-01-27",
+  "capabilityScore": 53,
+  "hotnessScore": 58,
+  "statRationale": "视觉与智能体集群→特攻高；即时+思考双模式→特防高。 [BST 470 ∈ SR 420-490; 强项 spa/spd; 能力 53/热度 58]",
+  "dexEntryZh": "2026 年 1 月 27 日，在 Kimi K2 基础上继续预训练约 15T 混合数据，加装 4 亿参数的 MoonViT 视觉编码器和智能体集群 Agent Swarm，分即时与思考两种模式，LMArena 1450 分。承接 Kimi K2 Thinking，下一步进化为 Kimi K2.6。",
+  "lookZh": "戴月牙单片镜的银发少女，肩头跟着两只月牙无人机"
+ },
+ {
+  "id": "kimi-k2-6",
+  "nameZh": "Kimi K2.6",
+  "nameEn": "Kimi K2.6",
+  "company": "Moonshot AI",
+  "country": "CN",
+  "category": "llm",
+  "family": "kimi-k2x",
+  "stage": 3,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "agent",
+   "code"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 91,
+   "atk": 97,
+   "def": 75,
+   "spa": 81,
+   "spd": 82,
+   "spe": 89
+  },
+  "habitats": [
+   "highland",
+   "snow"
+  ],
+  "releaseDate": "2026-04-20",
+  "capabilityScore": 59,
+  "hotnessScore": 60,
+  "statRationale": "长程编程→攻击高；256K 上下文、千智能体集群→HP高。 [BST 515 ∈ SSR 490-550; 强项 atk/hp; 能力 59/热度 60]",
+  "dexEntryZh": "2026 年 4 月 20 日，Kimi K2.5 的迭代升级版，开源多模态智能体模型，256K 上下文，智能体集群最多 1000 个。据报道能连续写代码 13 小时、自主运行 5 天，擅长长程编程与自我纠错，LMArena 1461 分，是这条进化线的最终形态。",
+  "lookZh": "星空斗篷的银发指挥官，腋下夹平板，三只月牙无人机环绕"
+ },
+ {
+  "id": "glm-4-7",
+  "nameZh": "GLM-4.7",
+  "nameEn": "GLM-4.7",
+  "company": "Zhipu AI (Z.ai)",
+  "country": "CN",
+  "category": "llm",
+  "family": "glm-5",
+  "stage": 1,
+  "evolvesTo": "glm-5",
+  "evolveLevel": 26,
+  "types": [
+   "agent",
+   "code"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 74,
+   "atk": 80,
+   "def": 67,
+   "spa": 70,
+   "spd": 70,
+   "spe": 77
+  },
+  "habitats": [
+   "forest",
+   "city"
+  ],
+  "releaseDate": "2025-12-22",
+  "capabilityScore": 49,
+  "hotnessScore": 45,
+  "statRationale": "编程与前端强→攻击高；多步执行更流畅→速度高。 [BST 438 ∈ SR 420-490; 强项 atk/spe; 能力 49/热度 45]",
+  "dexEntryZh": "2025 年 12 月 22 日的智谱旗舰，在 GLM-4.6 的基础上主攻两件事：更强的编程（尤其前端），以及更稳的多步推理与执行，复杂智能体任务进步明显。开源权重，上下文 204800，LMArena 1442 分。之后会进化为 GLM-5。",
+  "lookZh": "学院风黑狐少女，睡眼罩顶在头上，手里拿着网页草图板"
+ },
+ {
+  "id": "glm-5",
+  "nameZh": "GLM-5",
+  "nameEn": "GLM-5",
+  "company": "Zhipu AI (Z.ai)",
+  "country": "CN",
+  "category": "llm",
+  "family": "glm-5",
+  "stage": 2,
+  "evolvesTo": "glm-5-2",
+  "evolveLevel": 40,
+  "types": [
+   "code",
+   "open"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 80,
+   "atk": 89,
+   "def": 72,
+   "spa": 73,
+   "spd": 76,
+   "spe": 88
+  },
+  "habitats": [
+   "forest",
+   "city"
+  ],
+  "releaseDate": "2026-02-11",
+  "capabilityScore": 57,
+  "hotnessScore": 62,
+  "statRationale": "编程与智能体开源居首→攻击高；MoE 稀疏激活→速度快。 [BST 478 ∈ SR 420-490; 强项 atk/spe; 能力 57/热度 62]",
+  "dexEntryZh": "2026 年 2 月 11 日，智谱在港交所上市一个月后推出的旗舰：约 745B 的 MoE，以 MIT 协议开源，发布时在开源模型里编程与智能体表现居首，LMArena 1458 分。由 GLM-4.7 进化而来，下一步是 GLM-5.2。",
+  "lookZh": "两条大黑尾的狐娘工程师，睡眼罩睁开一半，腋下夹蓝图"
+ },
+ {
+  "id": "glm-5-2",
+  "nameZh": "GLM-5.2",
+  "nameEn": "GLM-5.2",
+  "company": "Zhipu AI (Z.ai)",
+  "country": "CN",
+  "category": "llm",
+  "family": "glm-5",
+  "stage": 3,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "code",
+   "open"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 102,
+   "atk": 91,
+   "def": 77,
+   "spa": 73,
+   "spd": 88,
+   "spe": 99
+  },
+  "habitats": [
+   "forest",
+   "highland"
+  ],
+  "releaseDate": "2026-06-16",
+  "capabilityScore": 68,
+  "hotnessScore": 55,
+  "statRationale": "100 万上下文→HP高；长程工程流程顺畅→速度高。 [BST 530 ∈ SSR 490-550; 强项 hp/spe; 能力 68/热度 55]",
+  "dexEntryZh": "2026 年 6 月 16 日发布的开放权重编程模型，上下文扩到 100 万 token，适合长程智能体与项目级软件工程；glm-5.2-max 在 LMArena 拿到 1475 分，7 月 2 日又配上了 ZCode IDE。承接 GLM-5（中间隔着 GLM-5.1），是这条进化线的最终形态。",
+  "lookZh": "三尾黑狐学霸，睡眼罩快完全睁开，捧着黑色魔导书"
+ },
+ {
+  "id": "minimax-m2-1",
+  "nameZh": "MiniMax-M2.1",
+  "nameEn": "MiniMax-M2.1",
+  "company": "MiniMax",
+  "country": "CN",
+  "category": "code",
+  "family": "minimax-m2x",
+  "stage": 1,
+  "evolvesTo": "minimax-m2-7",
+  "evolveLevel": 30,
+  "types": [
+   "code",
+   "open"
+  ],
+  "rarity": "R",
+  "baseStats": {
+   "hp": 75,
+   "atk": 75,
+   "def": 58,
+   "spa": 58,
+   "spd": 56,
+   "spe": 73
+  },
+  "habitats": [
+   "city",
+   "volcano"
+  ],
+  "releaseDate": "2025-12-23",
+  "capabilityScore": 33,
+  "hotnessScore": 40,
+  "statRationale": "多语言编程强→攻击高；约20万上下文、权重开源→HP高。 [BST 395 ∈ R 330-420; 强项 hp/atk; 能力 33/热度 40]",
+  "dexEntryZh": "MiniMax-M2 的多语言编程焕新版，2025 年 12 月 23 日上线。它主打编程和智能体工作流，只激活约 100 亿参数，上下文约 20 万 token，权重开源，预览期 LMArena 得分 1385。这是 M2.x 一线的轻巧起点，之后一路迭代，进化为主打智能体的 MiniMax-M2.7。",
+  "lookZh": "抱着贴满贴纸笔记本的小码农少女，发夹是一道声波"
+ },
+ {
+  "id": "minimax-m2-7",
+  "nameZh": "MiniMax-M2.7",
+  "nameEn": "MiniMax-M2.7",
+  "company": "MiniMax",
+  "country": "CN",
+  "category": "code",
+  "family": "minimax-m2x",
+  "stage": 2,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "code",
+   "open"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 87,
+   "atk": 84,
+   "def": 65,
+   "spa": 68,
+   "spd": 68,
+   "spe": 83
+  },
+  "habitats": [
+   "city",
+   "volcano"
+  ],
+  "releaseDate": "2026-03-18",
+  "capabilityScore": 40,
+  "hotnessScore": 40,
+  "statRationale": "智能体能力强→攻击高；约20万上下文、权重开源→HP高。 [BST 455 ∈ SR 420-490; 强项 hp/atk; 能力 40/热度 40]",
+  "dexEntryZh": "2026 年 3 月 18 日上线的智能体向更新，简介称它为自主完成真实生产力任务、持续改进而生，还要参与自己的进化，并整合多智能体能力。LMArena 1415 分，上下文约 20 万，权重开源，前代是 M2.5。它由 MiniMax-M2.1 一路迭代进化而来，写代码的少女终于当上了队长。",
+  "lookZh": "高马尾的少女小队长，身后跟着三只方块小助手"
+ },
+ {
+  "id": "hailuo-02",
+  "nameZh": "海螺 02",
+  "nameEn": "Hailuo 02",
+  "company": "MiniMax",
+  "country": "CN",
+  "category": "video",
+  "family": "hailuo",
+  "stage": 2,
+  "evolvesTo": "minimax-h3",
+  "evolveLevel": 40,
+  "types": [
+   "motion"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 66,
+   "atk": 66,
+   "def": 65,
+   "spa": 115,
+   "spd": 67,
+   "spe": 76
+  },
+  "habitats": [
+   "coast",
+   "meadow"
+  ],
+  "releaseDate": "2025-06-18",
+  "capabilityScore": 63,
+  "hotnessScore": 40,
+  "statRationale": "视频物理动态强→特攻高；成本友好、出片利落→速度高。 [BST 455 ∈ SR 420-490; 强项 spa/spe; 能力 63/热度 40]",
+  "dexEntryZh": "MiniMax 视频线的第二步：2025 年 6 月 18 日发布，能出 1080p、最长 10 秒的片子，物理表现强、成本友好，上线时登上 AA 榜第 2，Arena（Pro）1198 分，权重未开源。它由海螺 Video-01 进化而来，躲在壳里的小螺终于走到镜头前，之后再长成开源权重的海螺 H3。",
+  "lookZh": "螺壳半开的少女场记，手持珍珠场记板，裙摆是胶片飘带"
+ },
+ {
+  "id": "hunyuan-image-3",
+  "nameZh": "混元生图 3.0",
+  "nameEn": "HunyuanImage 3.0",
+  "company": "Tencent Hunyuan",
+  "country": "CN",
+  "category": "image",
+  "family": "hunyuan-image",
+  "stage": 1,
+  "evolvesTo": "hunyuan-image",
+  "evolveLevel": 30,
+  "types": [
+   "vision",
+   "open"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 72,
+   "atk": 72,
+   "def": 67,
+   "spa": 96,
+   "spd": 72,
+   "spe": 71
+  },
+  "habitats": [
+   "meadow",
+   "coast"
+  ],
+  "releaseDate": "2025-09-28",
+  "capabilityScore": 72,
+  "hotnessScore": 45,
+  "statRationale": "生图专精→特攻高；80B MoE 体量→HP高。 [BST 450 ∈ SR 420-490; 强项 spa/hp; 能力 72/热度 45]",
+  "dexEntryZh": "腾讯混元的 80B MoE 自回归原生多模态生图模型，2025 年 9 月 28 日发布，是最大的开源生图模型，擅长长提示词与动漫游戏角色，Arena 1150 分（18.1 万票）。2026 年 1 月下旬又加了一句话改图的 Instruct 版。后来它进化为混元生图 3.5（预览），前身是 HunyuanImage 2.1。",
+  "lookZh": "抱着小调色盘的见习画师男孩，贝雷帽上一道蓝漩涡"
+ },
+ {
+  "id": "seedream-4",
+  "nameZh": "即梦 Seedream 4.0",
+  "nameEn": "Seedream 4.0",
+  "company": "ByteDance Seed",
+  "country": "CN",
+  "category": "image",
+  "family": "seedream",
+  "stage": 2,
+  "evolvesTo": "seedream-5",
+  "evolveLevel": 38,
+  "types": [
+   "vision",
+   "write"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 78,
+   "atk": 69,
+   "def": 73,
+   "spa": 108,
+   "spd": 70,
+   "spe": 60
+  },
+  "habitats": [
+   "meadow",
+   "coast"
+  ],
+  "releaseDate": "2025-09-09",
+  "capabilityScore": 70,
+  "hotnessScore": 55,
+  "statRationale": "生图编辑一体、4K→特攻高；批量一致、多图输入→HP高。 [BST 458 ∈ SR 420-490; 强项 spa/hp; 能力 70/热度 55]",
+  "dexEntryZh": "字节 Seed 在 2025 年 9 月 9 日发布的生图模型，把生成与编辑合二为一，支持 4K 和多图输入，批量出图一致性强，2025 年下半年是擂台上最强的中文生图模型（Arena 2K 1140、AA 1029）。它由即梦 Seedream 3.0 进化而来，之后会长成会推理的即梦 Seedream 5.0。",
+  "lookZh": "醒了一半的小画师，毛笔一头是星星、一头是橡皮"
+ },
+ {
+  "id": "step-3-7-flash",
+  "nameZh": "阶跃 Step 3.7 Flash",
+  "nameEn": "Step 3.7 Flash",
+  "company": "StepFun",
+  "country": "CN",
+  "category": "llm",
+  "family": "step",
+  "stage": 2,
+  "evolvesTo": "step-5",
+  "evolveLevel": 40,
+  "types": [
+   "compute",
+   "open"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 81,
+   "atk": 68,
+   "def": 69,
+   "spa": 65,
+   "spd": 73,
+   "spe": 96
+  },
+  "habitats": [
+   "city",
+   "forest"
+  ],
+  "releaseDate": "2026-05-29",
+  "capabilityScore": 40,
+  "hotnessScore": 40,
+  "statRationale": "只激活约11B→速度快；196B 底座、256K 上下文→HP高。 [BST 452 ∈ SR 420-490; 强项 spe/hp; 能力 40/热度 40]",
+  "dexEntryZh": "阶跃 2026 年 5 月 29 日发布的 Apache 2.0 开源更新，256K 上下文，主打便宜的智能体。它给 196B 语言主干配上视觉编码器，能原生看图看视频，每次只激活约 11B 参数。承接阶跃 Step 3.5 Flash 的高效路线，之后会进化为阶跃 Step 5 Preview。",
+  "lookZh": "额头推着青色镜片的元气小饭桶，阶梯发夹更大了"
+ },
+ {
+  "id": "longcat-2",
+  "nameZh": "美团 LongCat 2.0",
+  "nameEn": "LongCat 2.0",
+  "company": "Meituan",
+  "country": "CN",
+  "category": "llm",
+  "family": "longcat",
+  "stage": 2,
+  "evolvesTo": "longcat-2-5",
+  "evolveLevel": 40,
+  "types": [
+   "agent",
+   "compute"
+  ],
+  "rarity": "SR",
+  "baseStats": {
+   "hp": 80,
+   "atk": 69,
+   "def": 65,
+   "spa": 62,
+   "spd": 74,
+   "spe": 85
+  },
+  "habitats": [
+   "city",
+   "coast"
+  ],
+  "releaseDate": "2026-06-30",
+  "capabilityScore": 42,
+  "hotnessScore": 70,
+  "statRationale": "只激活48B→速度快；1.6T 总参数、百万上下文→HP高。 [BST 435 ∈ SR 420-490; 强项 spe/hp; 能力 42/热度 70]",
+  "dexEntryZh": "美团 2026 年 6 月 30 日开源的 1.6T-A48B 稀疏 MoE，每次激活 480 亿参数，原生 100 万上下文，完全在国产芯片上训练，擅长智能体编程与仓库级改动。价格低（$0.30/$1.20），曾领跑 OpenRouter 用量，AA 指数仅 19。它由美团 LongCat-Flash 迭代而来，之后进化为美团龙猫 LongCat-2.5。",
+  "lookZh": "头顶冒出龙角芽的外卖猫少年，尾巴长出翠色鳞片"
+ },
+ {
+  "id": "langgraph",
+  "nameZh": "LangGraph",
+  "nameEn": "LangGraph",
+  "company": "LangChain",
+  "country": "US",
+  "category": "agent",
+  "family": "langchain",
+  "stage": 2,
+  "evolvesTo": "",
+  "evolveLevel": 0,
+  "types": [
+   "agent",
+   "open"
+  ],
+  "rarity": "SSR",
+  "baseStats": {
+   "hp": 101,
+   "atk": 88,
+   "def": 71,
+   "spa": 78,
+   "spd": 85,
+   "spe": 97
+  },
+  "habitats": [
+   "city",
+   "forest"
+  ],
+  "releaseDate": "2024-01-08",
+  "capabilityScore": 86,
+  "hotnessScore": 68,
+  "statRationale": "持久化状态与多智能体编排→HP 高；图运行时调度灵活→速度高。 [BST 520 ∈ SSR 490-550; 强项 hp/spe; 能力 86/热度 68]",
+  "dexEntryZh": "2024 年 1 月发布的 LangGraph，是 LangChain 进化出的有状态图运行时：智能体在节点与边之间持久保存状态，随时等人工介入，专为生产环境的多智能体而生。PyPI 月下载约 3450 万、星标 4.26 万（2026 年 9 月），Interrupt 2026 上宣布了 Deep Agents v0.6。",
+  "lookZh": "长大的链条少年，披风上织着带回路的节点图"
  }
 ]

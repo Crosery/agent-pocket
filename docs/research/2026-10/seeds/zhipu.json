@@ -1,0 +1,2461 @@
+{
+ "vendor": "zhipu",
+ "count": 20,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "glm46",
+   "names": [
+    "Z.ai: GLM 4.6",
+    "GLM-4.6",
+    "GLM 4.6",
+    "GLM-4.6 (Z AI)",
+    "GLM-4.6 (NovitaAI)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-09-30",
+    "modelsdev:zai": "2025-09-30",
+    "modelsdev:nano-gpt": "2025-09-30",
+    "modelsdev:llmgateway-providers": "2025-09-30",
+    "modelsdev:kilo": "2025-09-30",
+    "modelsdev:venice": "2024-04-01",
+    "modelsdev:abacus": "2025-09-30",
+    "modelsdev:openrouter": "2025-09-30",
+    "modelsdev:zenmux": "2025-09-30",
+    "modelsdev:huggingface": "2025-09-30",
+    "modelsdev:impossibl": "2025-09-30",
+    "modelsdev:vercel": "2025-09-30",
+    "modelsdev:orcarouter": "2025-09-30",
+    "modelsdev:ofox": "2025-09-30",
+    "modelsdev:aihubmix": "2025-09-30",
+    "modelsdev:merge-gateway": "2025-09-30",
+    "modelsdev:edenai": "2025-09-30",
+    "modelsdev:tempr": "2025-09-30",
+    "modelsdev:zhipuai": "2025-09-30",
+    "modelsdev:llmgateway": "2025-09-30"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-4.6"
+    ],
+    "modelsdev:zai": [
+     "glm-4.6"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-4.6"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "zai/glm-4.6",
+     "novita/glm-4.6"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-4.6"
+    ],
+    "modelsdev:venice": [
+     "zai-org-glm-4.6"
+    ],
+    "modelsdev:abacus": [
+     "zai-org/GLM-4.6"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-4.6"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-4.6"
+    ],
+    "modelsdev:huggingface": [
+     "zai-org/GLM-4.6"
+    ],
+    "modelsdev:impossibl": [
+     "zai/glm-4.6"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-4.6"
+    ],
+    "modelsdev:orcarouter": [
+     "z-ai/glm-4.6"
+    ],
+    "modelsdev:ofox": [
+     "z-ai/glm-4.6"
+    ],
+    "modelsdev:aihubmix": [
+     "glm-4.6"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-4.6"
+    ],
+    "modelsdev:edenai": [
+     "zai/glm-4.6"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-4.6"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-4.6"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-4.6"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm45",
+   "names": [
+    "Z.ai: GLM 4.5",
+    "GLM-4.5",
+    "GLM 4.5",
+    "GLM-4.5 (Z AI)",
+    "GLM-4.5 (EmberCloud)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-07-25",
+    "modelsdev:zai": "2025-07-28",
+    "modelsdev:nano-gpt": "2025-07-28",
+    "modelsdev:llmgateway-providers": "2025-07-28",
+    "modelsdev:kilo": "2025-07-28",
+    "modelsdev:abacus": "2025-07-28",
+    "modelsdev:openrouter": "2025-07-28",
+    "modelsdev:zenmux": "2025-07-28",
+    "modelsdev:huggingface": "2025-07-28",
+    "modelsdev:impossibl": "2025-07-28",
+    "modelsdev:vercel": "2025-07-28",
+    "modelsdev:orcarouter": "2025-07-28",
+    "modelsdev:merge-gateway": "2025-07-28",
+    "modelsdev:tempr": "2025-07-28",
+    "modelsdev:zhipuai": "2025-07-28",
+    "modelsdev:llmgateway": "2025-07-28"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-4.5"
+    ],
+    "modelsdev:zai": [
+     "glm-4.5"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-4.5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "zai/glm-4.5",
+     "embercloud/glm-4.5"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-4.5"
+    ],
+    "modelsdev:abacus": [
+     "zai-org/GLM-4.5"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-4.5"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-4.5"
+    ],
+    "modelsdev:huggingface": [
+     "zai-org/GLM-4.5"
+    ],
+    "modelsdev:impossibl": [
+     "zai/glm-4.5"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-4.5"
+    ],
+    "modelsdev:orcarouter": [
+     "z-ai/glm-4.5"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-4.5"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-4.5"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-4.5"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-4.5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm45air",
+   "names": [
+    "Z.ai: GLM 4.5 Air",
+    "GLM-4.5-Air",
+    "GLM 4.5 Air",
+    "GLM-4.5 Air (Z AI)",
+    "GLM-4.5 Air (EmberCloud)",
+    "GLM-4.5 Air"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-07-25",
+    "modelsdev:zai": "2025-07-28",
+    "modelsdev:nano-gpt": "2025-07-28",
+    "modelsdev:llmgateway-providers": "2025-07-28",
+    "modelsdev:kilo": "2025-07-28",
+    "modelsdev:openrouter": "2025-07-28",
+    "modelsdev:zenmux": "2025-07-28",
+    "modelsdev:huggingface": "2025-07-28",
+    "modelsdev:impossibl": "2025-07-28",
+    "modelsdev:vercel": "2025-07-28",
+    "modelsdev:orcarouter": "2025-07-28",
+    "modelsdev:merge-gateway": "2025-07-28",
+    "modelsdev:tempr": "2025-07-28",
+    "modelsdev:zhipuai": "2025-07-28",
+    "modelsdev:llmgateway": "2025-07-28"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-4.5-air"
+    ],
+    "modelsdev:zai": [
+     "glm-4.5-air"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/GLM-4.5-Air"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "zai/glm-4.5-air",
+     "embercloud/glm-4.5-air"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-4.5-air"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-4.5-air"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-4.5-air"
+    ],
+    "modelsdev:huggingface": [
+     "zai-org/GLM-4.5-Air"
+    ],
+    "modelsdev:impossibl": [
+     "zai/glm-4.5-air"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-4.5-air"
+    ],
+    "modelsdev:orcarouter": [
+     "z-ai/glm-4.5-air"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-4.5-air"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-4.5-air"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-4.5-air"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-4.5-air"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm45flash",
+   "names": [
+    "GLM-4.5-Flash",
+    "GLM 4.5 Flash"
+   ],
+   "releaseDateHints": {
+    "modelsdev:zai": "2025-07-28",
+    "modelsdev:empiriolabs": "2025-07-28",
+    "modelsdev:tempr": "2025-07-28",
+    "modelsdev:zhipuai": "2025-07-28"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:zai": [
+     "glm-4.5-flash"
+    ],
+    "modelsdev:empiriolabs": [
+     "glm-4-5-flash"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-4.5-flash"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-4.5-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm45v",
+   "names": [
+    "Z.ai: GLM 4.5V",
+    "GLM-4.5V",
+    "GLM 4.5V",
+    "GLM-4.5V (Z AI)",
+    "GLM-4.5V (NovitaAI)",
+    "Glm 4.5V"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-08-11",
+    "modelsdev:zai": "2025-08-11",
+    "modelsdev:nano-gpt": "2025-08-11",
+    "modelsdev:llmgateway-providers": "2025-08-11",
+    "modelsdev:kilo": "2025-08-11",
+    "modelsdev:openrouter": "2025-08-11",
+    "modelsdev:huggingface": "2025-08-11",
+    "modelsdev:vercel": "2025-08-11",
+    "modelsdev:aihubmix": "2025-08-11",
+    "modelsdev:merge-gateway": "2025-08-11",
+    "modelsdev:tempr": "2025-08-11",
+    "modelsdev:zhipuai": "2025-08-11",
+    "modelsdev:llmgateway": "2025-08-11"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image,video->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-4.5v"
+    ],
+    "modelsdev:zai": [
+     "glm-4.5v"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-4.5v"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "zai/glm-4.5v",
+     "novita/glm-4.5v"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-4.5v"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-4.5v"
+    ],
+    "modelsdev:huggingface": [
+     "zai-org/GLM-4.5V"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-4.5v"
+    ],
+    "modelsdev:aihubmix": [
+     "glm-4.5v"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-4.5v"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-4.5v"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-4.5v"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-4.5v"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm46v",
+   "names": [
+    "Z.ai: GLM 4.6V",
+    "GLM-4.6V",
+    "GLM 4.6V",
+    "GLM-4.6V (Z AI)",
+    "GLM-4.6V (NovitaAI)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-08",
+    "modelsdev:zai": "2025-12-08",
+    "modelsdev:nano-gpt": "2025-12-08",
+    "modelsdev:llmgateway-providers": "2025-12-08",
+    "modelsdev:kilo": "2025-12-08",
+    "modelsdev:openrouter": "2025-12-08",
+    "modelsdev:zenmux": "2025-12-08",
+    "modelsdev:aihubmix": "2025-12-08",
+    "modelsdev:edenai": "2025-12-08",
+    "modelsdev:tempr": "2025-12-08",
+    "modelsdev:zhipuai": "2025-12-08",
+    "modelsdev:llmgateway": "2025-12-08"
+   },
+   "openWeights": true,
+   "modalities": [
+    "image+text+video->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-4.6v"
+    ],
+    "modelsdev:zai": [
+     "glm-4.6v"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-4.6v"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "zai/glm-4.6v",
+     "novita/glm-4.6v"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-4.6v"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-4.6v"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-4.6v"
+    ],
+    "modelsdev:aihubmix": [
+     "glm-4.6v"
+    ],
+    "modelsdev:edenai": [
+     "zai/glm-4.6v"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-4.6v"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-4.6v"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-4.6v"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm46vflash",
+   "names": [
+    "GLM-4.6V-Flash",
+    "GLM 4.6V Flash",
+    "GLM 4.6V FlashX"
+   ],
+   "releaseDateHints": {
+    "modelsdev:zai": "2025-12-08",
+    "modelsdev:empiriolabs": "2025-12-08",
+    "modelsdev:zenmux": "2025-12-08",
+    "modelsdev:huggingface": "2025-12-08",
+    "modelsdev:tempr": "2025-12-08",
+    "modelsdev:zhipuai": "2025-12-08"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image,video->text",
+    "text,image,video,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:zai": [
+     "glm-4.6v-flash"
+    ],
+    "modelsdev:empiriolabs": [
+     "glm-4-6v-flash"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-4.6v-flash"
+    ],
+    "modelsdev:huggingface": [
+     "zai-org/GLM-4.6V-Flash"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-4.6v-flash"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-4.6v-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm47",
+   "names": [
+    "Z.ai: GLM 4.7",
+    "GLM-4.7",
+    "GLM 4.7",
+    "GLM-4.7 (Cerebras)",
+    "GLM-4.7 (Z AI)",
+    "GLM-4.7 (NovitaAI)",
+    "GLM-4.7 (EmberCloud)",
+    "GLM-4.7 (ByteDance)",
+    "GLM-4.7 (Together AI)",
+    "GLM-4.7 (Vertex AI (OpenAI-compatible))"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-22",
+    "modelsdev:zai": "2025-12-22",
+    "modelsdev:nano-gpt": "2025-12-22",
+    "modelsdev:llmgateway-providers": "2025-12-22",
+    "modelsdev:kilo": "2025-12-22",
+    "modelsdev:venice": "2025-12-24",
+    "modelsdev:abacus": "2025-12-22",
+    "modelsdev:openrouter": "2025-12-22",
+    "modelsdev:zenmux": "2025-12-22",
+    "modelsdev:impossibl": "2025-12-22",
+    "modelsdev:vercel": "2025-12-22",
+    "modelsdev:dinference": "2025-12-22",
+    "modelsdev:orcarouter": "2025-12-22",
+    "modelsdev:ofox": "2025-12-22",
+    "modelsdev:aihubmix": "2025-12-22",
+    "modelsdev:merge-gateway": "2025-12-22",
+    "modelsdev:edenai": "2025-12-22",
+    "modelsdev:tempr": "2025-12-22",
+    "modelsdev:zhipuai": "2025-12-22",
+    "modelsdev:amazon-bedrock": "2025-12-22",
+    "modelsdev:llmgateway": "2025-12-22",
+    "modelsdev:crossmodel": "2025-12-22"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-4.7"
+    ],
+    "modelsdev:zai": [
+     "glm-4.7"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-4.7"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "cerebras/glm-4.7",
+     "zai/glm-4.7",
+     "novita/glm-4.7",
+     "embercloud/glm-4.7",
+     "bytedance/glm-4.7",
+     "together-ai/glm-4.7",
+     "vertex-openai/glm-4.7"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-4.7"
+    ],
+    "modelsdev:venice": [
+     "zai-org-glm-4.7"
+    ],
+    "modelsdev:abacus": [
+     "zai-org/GLM-4.7"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-4.7"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-4.7"
+    ],
+    "modelsdev:impossibl": [
+     "zai/glm-4.7"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-4.7"
+    ],
+    "modelsdev:dinference": [
+     "glm-4.7"
+    ],
+    "modelsdev:orcarouter": [
+     "z-ai/glm-4.7"
+    ],
+    "modelsdev:ofox": [
+     "z-ai/glm-4.7"
+    ],
+    "modelsdev:aihubmix": [
+     "glm-4.7"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-4.7"
+    ],
+    "modelsdev:edenai": [
+     "zai/glm-4.7"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-4.7"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-4.7"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "zai.glm-4.7"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-4.7"
+    ],
+    "modelsdev:crossmodel": [
+     "z-ai/glm-4.7"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm47flash",
+   "names": [
+    "Z.ai: GLM 4.7 Flash",
+    "GLM-4.7-Flash",
+    "GLM 4.7 Flash",
+    "GLM-4.7 Flash (EmberCloud)",
+    "GLM-4.7-Flash (Deep Infra)",
+    "GLM-4.7-Flash (Cloudflare)",
+    "GLM-4.7-Flash (Amazon Bedrock, US)",
+    "GLM-4.7-Flash (Amazon Bedrock)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-01-19",
+    "modelsdev:zai": "2026-01-19",
+    "modelsdev:empiriolabs": "2026-01-19",
+    "modelsdev:cloudflare-workers-ai": "2026-01-19",
+    "modelsdev:nano-gpt": "2026-01-19",
+    "modelsdev:llmgateway-providers": "2026-01-19",
+    "modelsdev:kilo": "2026-01-19",
+    "modelsdev:venice": "2026-01-29",
+    "modelsdev:openrouter": "2026-01-19",
+    "modelsdev:pendra": "2026-01-19",
+    "modelsdev:vercel": "2026-01-19",
+    "modelsdev:merge-gateway": "2026-01-19",
+    "modelsdev:edenai": "2026-01-19",
+    "modelsdev:tempr": "2026-01-19",
+    "modelsdev:zhipuai": "2026-01-19",
+    "modelsdev:amazon-bedrock": "2026-01-19",
+    "modelsdev:synthetic": "2026-01-19",
+    "modelsdev:llmgateway": "2026-01-19",
+    "modelsdev:cortecs": "2026-01-19"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-4.7-flash"
+    ],
+    "modelsdev:zai": [
+     "glm-4.7-flash"
+    ],
+    "modelsdev:empiriolabs": [
+     "glm-4-7-flash"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/zai-org/glm-4.7-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-4.7-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "embercloud/glm-4.7-flash"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-4.7-flash"
+    ],
+    "modelsdev:venice": [
+     "zai-org-glm-4.7-flash"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-4.7-flash"
+    ],
+    "modelsdev:pendra": [
+     "glm-4.7-flash"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-4.7-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-4.7-flash"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/zai-org/GLM-4.7-Flash",
+     "cloudflare/@cf/zai-org/glm-4.7-flash",
+     "amazon/zai.glm-4.7-flash@us",
+     "amazon/zai.glm-4.7-flash"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-4.7-flash"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-4.7-flash"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "zai.glm-4.7-flash"
+    ],
+    "modelsdev:synthetic": [
+     "hf:zai-org/GLM-4.7-Flash"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-4.7-flash"
+    ],
+    "modelsdev:cortecs": [
+     "glm-4.7-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm47flashx",
+   "names": [
+    "GLM-4.7-FlashX",
+    "GLM-4.7 FlashX (Z AI)",
+    "GLM 4.7 FlashX",
+    "GLM-4.7 FlashX"
+   ],
+   "releaseDateHints": {
+    "modelsdev:zai": "2026-01-19",
+    "modelsdev:llmgateway-providers": "2026-01-19",
+    "modelsdev:zenmux": "2026-01-19",
+    "modelsdev:vercel": "2026-01-19",
+    "modelsdev:ofox": "2026-01-19",
+    "modelsdev:merge-gateway": "2026-01-19",
+    "modelsdev:tempr": "2026-01-19",
+    "modelsdev:zhipuai": "2026-01-19",
+    "modelsdev:llmgateway": "2026-01-19"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:zai": [
+     "glm-4.7-flashx"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "zai/glm-4.7-flashx"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-4.7-flashx"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-4.7-flashx"
+    ],
+    "modelsdev:ofox": [
+     "z-ai/glm-4.7-flashx"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-4.7-flashx"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-4.7-flashx"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-4.7-flashx"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-4.7-flashx"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glmimage",
+   "names": [
+    "GLM-Image"
+   ],
+   "releaseDateHints": {
+    "modelsdev:zenmux": "2026-01-19"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->image"
+   ],
+   "catalogIds": {
+    "modelsdev:zenmux": [
+     "z-ai/glm-image"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm5",
+   "names": [
+    "Z.ai: GLM 5",
+    "GLM-5",
+    "GLM 5",
+    "GLM-5 (Z AI)",
+    "GLM-5 (Tencent Cloud)",
+    "GLM-5 (NovitaAI)",
+    "GLM-5 (EmberCloud)",
+    "GLM-5 (Alibaba Cloud)",
+    "GLM-5 (Baidu)",
+    "GLM-5 (Vertex AI (OpenAI-compatible))"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-11",
+    "modelsdev:zai": "2026-02-12",
+    "modelsdev:alibaba-token-plan": "2026-02-12",
+    "modelsdev:nano-gpt": "2026-02-12",
+    "modelsdev:llmgateway-providers": "2026-02-12",
+    "modelsdev:kilo": "2026-02-12",
+    "modelsdev:venice": "2026-02-11",
+    "modelsdev:alibaba-token-plan-cn": "2026-02-12",
+    "modelsdev:melious": "2026-02-12",
+    "modelsdev:abacus": "2026-02-12",
+    "modelsdev:openrouter": "2026-02-12",
+    "modelsdev:zenmux": "2026-02-12",
+    "modelsdev:vultr": "2026-02-12",
+    "modelsdev:impossibl": "2026-02-12",
+    "modelsdev:vercel": "2026-02-12",
+    "modelsdev:dinference": "2026-02-12",
+    "modelsdev:orcarouter": "2026-02-12",
+    "modelsdev:scnet-token-plan": "2026-02-12",
+    "modelsdev:ofox": "2026-02-12",
+    "modelsdev:merge-gateway": "2026-02-12",
+    "modelsdev:tensorx": "2026-02-12",
+    "modelsdev:edenai": "2026-02-12",
+    "modelsdev:tempr": "2026-02-12",
+    "modelsdev:zhipuai": "2026-02-11",
+    "modelsdev:amazon-bedrock": "2026-02-12",
+    "modelsdev:llmgateway": "2026-02-12",
+    "modelsdev:google-vertex": "2026-02-12",
+    "modelsdev:tokengo": "2026-02-12",
+    "modelsdev:togetherai": "2026-02-11",
+    "modelsdev:crossmodel": "2026-02-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-5"
+    ],
+    "modelsdev:zai": [
+     "glm-5"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "glm-5"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "zai/glm-5",
+     "tencent/glm-5",
+     "novita/glm-5",
+     "embercloud/glm-5",
+     "alibaba/glm-5",
+     "baidu/glm-5",
+     "vertex-openai/glm-5"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-5"
+    ],
+    "modelsdev:venice": [
+     "zai-org-glm-5"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "glm-5"
+    ],
+    "modelsdev:melious": [
+     "glm-5"
+    ],
+    "modelsdev:abacus": [
+     "zai-org/GLM-5"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-5"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-5"
+    ],
+    "modelsdev:vultr": [
+     "glm-5.x-menthol"
+    ],
+    "modelsdev:impossibl": [
+     "zai/glm-5"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-5"
+    ],
+    "modelsdev:dinference": [
+     "glm-5"
+    ],
+    "modelsdev:orcarouter": [
+     "z-ai/glm-5"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "GLM-5"
+    ],
+    "modelsdev:ofox": [
+     "z-ai/glm-5"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-5"
+    ],
+    "modelsdev:tensorx": [
+     "z-ai/glm-5"
+    ],
+    "modelsdev:edenai": [
+     "zai/glm-5"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-5"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-5"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "zai.glm-5"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-5"
+    ],
+    "modelsdev:google-vertex": [
+     "zai-org/glm-5-maas"
+    ],
+    "modelsdev:tokengo": [
+     "z-ai/glm-5"
+    ],
+    "modelsdev:togetherai": [
+     "zai-org/GLM-5"
+    ],
+    "modelsdev:crossmodel": [
+     "z-ai/glm-5"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "glm5turbo",
+   "names": [
+    "Z.ai: GLM 5 Turbo",
+    "GLM-5-Turbo",
+    "GLM 5 Turbo",
+    "GLM-5 Turbo (Tencent Cloud)",
+    "GLM-5 Turbo"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-15",
+    "modelsdev:zai": "2026-03-16",
+    "modelsdev:nano-gpt": "2026-03-16",
+    "modelsdev:llmgateway-providers": "2026-03-16",
+    "modelsdev:kilo": "2026-03-16",
+    "modelsdev:venice": "2026-03-15",
+    "modelsdev:openrouter": "2026-03-16",
+    "modelsdev:zenmux": "2026-03-16",
+    "modelsdev:impossibl": "2026-03-16",
+    "modelsdev:vercel": "2026-03-16",
+    "modelsdev:ofox": "2026-03-16",
+    "modelsdev:merge-gateway": "2026-03-16",
+    "modelsdev:tensorx": "2026-03-16",
+    "modelsdev:edenai": "2026-03-16",
+    "modelsdev:tempr": "2026-03-16",
+    "modelsdev:llmgateway": "2026-03-16",
+    "modelsdev:crossmodel": "2026-03-16"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-5-turbo"
+    ],
+    "modelsdev:zai": [
+     "glm-5-turbo"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-5-turbo"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "tencent/glm-5-turbo"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-5-turbo"
+    ],
+    "modelsdev:venice": [
+     "z-ai-glm-5-turbo"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-5-turbo"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-5-turbo"
+    ],
+    "modelsdev:impossibl": [
+     "zai/glm-5-turbo"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-5-turbo"
+    ],
+    "modelsdev:ofox": [
+     "z-ai/glm-5-turbo"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-5-turbo"
+    ],
+    "modelsdev:tensorx": [
+     "z-ai/glm-5-turbo"
+    ],
+    "modelsdev:edenai": [
+     "zai/glm-5-turbo"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-5-turbo"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-5-turbo"
+    ],
+    "modelsdev:crossmodel": [
+     "z-ai/glm-5-turbo"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm51",
+   "names": [
+    "Z.ai: GLM 5.1",
+    "GLM-5.1",
+    "GLM 5.1",
+    "GLM-5.1 (Z AI)",
+    "GLM-5.1 (Tencent Cloud)",
+    "GLM-5.1 (NovitaAI)",
+    "GLM-5.1 (EmberCloud)",
+    "GLM-5.1 (Baidu)",
+    "GLM-5.1 (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-07",
+    "modelsdev:zai": "2026-04-07",
+    "modelsdev:empiriolabs": "2026-04-07",
+    "modelsdev:alibaba-token-plan": "2026-04-07",
+    "modelsdev:nano-gpt": "2026-04-07",
+    "modelsdev:crof": "2026-04-07",
+    "modelsdev:baseten": "2026-04-07",
+    "modelsdev:llmgateway-providers": "2026-04-07",
+    "modelsdev:kilo": "2026-04-07",
+    "modelsdev:venice": "2026-04-07",
+    "modelsdev:alibaba-token-plan-cn": "2026-04-07",
+    "modelsdev:melious": "2026-04-07",
+    "modelsdev:abacus": "2026-04-07",
+    "modelsdev:302ai": "2026-04-07",
+    "modelsdev:openrouter": "2026-04-07",
+    "modelsdev:auriko": "2026-04-07",
+    "modelsdev:zenmux": "2026-04-07",
+    "modelsdev:impossibl": "2026-04-07",
+    "modelsdev:crusoe": "2026-04-07",
+    "modelsdev:vercel": "2026-04-07",
+    "modelsdev:ebcloud": "2026-04-07",
+    "modelsdev:greenpt": "2026-04-07",
+    "modelsdev:jalapeno": "2026-04-07",
+    "modelsdev:dinference": "2026-04-07",
+    "modelsdev:fastrouter": "2026-04-07",
+    "modelsdev:orcarouter": "2026-04-07",
+    "modelsdev:friendli": "2026-04-07",
+    "modelsdev:scnet-token-plan": "2026-04-07",
+    "modelsdev:ofox": "2026-04-07",
+    "modelsdev:merge-gateway": "2026-04-07",
+    "modelsdev:pioneer": "2026-04-07",
+    "modelsdev:tensorx": "2026-04-07",
+    "modelsdev:edenai": "2026-04-07",
+    "modelsdev:tempr": "2026-04-07",
+    "modelsdev:kenari": "2026-04-07",
+    "modelsdev:zhipuai": "2026-03-27",
+    "modelsdev:requesty": "2026-04-07",
+    "modelsdev:llmgateway": "2026-04-07",
+    "modelsdev:tokengo": "2026-04-07",
+    "modelsdev:cortecs": "2026-04-07",
+    "modelsdev:crossmodel": "2026-04-07",
+    "modelsdev:digitalocean": "2026-04-07"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-5.1"
+    ],
+    "modelsdev:zai": [
+     "glm-5.1"
+    ],
+    "modelsdev:empiriolabs": [
+     "glm-5-1"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "glm-5.1"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-5.1"
+    ],
+    "modelsdev:crof": [
+     "glm-5.1"
+    ],
+    "modelsdev:baseten": [
+     "zai-org/GLM-5.1"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "zai/glm-5.1",
+     "tencent/glm-5.1",
+     "novita/glm-5.1",
+     "embercloud/glm-5.1",
+     "baidu/glm-5.1"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-5.1"
+    ],
+    "modelsdev:venice": [
+     "zai-org-glm-5-1"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "glm-5.1"
+    ],
+    "modelsdev:melious": [
+     "glm-5.1"
+    ],
+    "modelsdev:abacus": [
+     "zai-org/GLM-5.1"
+    ],
+    "modelsdev:302ai": [
+     "glm-5.1"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-5.1"
+    ],
+    "modelsdev:auriko": [
+     "glm-5.1"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-5.1"
+    ],
+    "modelsdev:impossibl": [
+     "zai/glm-5.1"
+    ],
+    "modelsdev:crusoe": [
+     "zai/GLM-5.1"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-5.1"
+    ],
+    "modelsdev:ebcloud": [
+     "GLM-5.1"
+    ],
+    "modelsdev:greenpt": [
+     "glm-5.1"
+    ],
+    "modelsdev:jalapeno": [
+     "GLM-5.1"
+    ],
+    "modelsdev:dinference": [
+     "glm-5.1"
+    ],
+    "modelsdev:fastrouter": [
+     "z-ai/glm-5.1"
+    ],
+    "modelsdev:orcarouter": [
+     "z-ai/glm-5.1"
+    ],
+    "modelsdev:friendli": [
+     "zai-org/GLM-5.1"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "GLM-5.1"
+    ],
+    "modelsdev:ofox": [
+     "z-ai/glm-5.1"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-5.1"
+    ],
+    "modelsdev:pioneer": [
+     "zai-org/GLM-5.1"
+    ],
+    "modelsdev:tensorx": [
+     "z-ai/glm-5.1"
+    ],
+    "modelsdev:edenai": [
+     "zai/glm-5.1"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-5.1"
+    ],
+    "modelsdev:kenari": [
+     "glm-5-1"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-5.1"
+    ],
+    "modelsdev:requesty": [
+     "glm-5.1@eu",
+     "glm-5.1"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-5.1"
+    ],
+    "modelsdev:tokengo": [
+     "z-ai/glm-5.1"
+    ],
+    "modelsdev:cortecs": [
+     "glm-5.1"
+    ],
+    "modelsdev:crossmodel": [
+     "z-ai/glm-5.1"
+    ],
+    "modelsdev:digitalocean": [
+     "glm-5.1"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "glm5vturbo",
+   "names": [
+    "Z.ai: GLM 5V Turbo",
+    "GLM-5V-Turbo",
+    "GLM 5V Turbo",
+    "GLM-5V Turbo (Tencent Cloud)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-01",
+    "modelsdev:zai": "2026-04-01",
+    "modelsdev:nano-gpt": "2026-04-01",
+    "modelsdev:llmgateway-providers": "2026-04-01",
+    "modelsdev:kilo": "2026-04-01",
+    "modelsdev:venice": "2026-04-01",
+    "modelsdev:openrouter": "2026-04-01",
+    "modelsdev:zenmux": "2026-04-01",
+    "modelsdev:vercel": "2026-04-01",
+    "modelsdev:ofox": "2026-04-01",
+    "modelsdev:tensorx": "2026-04-01",
+    "modelsdev:edenai": "2026-04-01",
+    "modelsdev:tempr": "2026-04-01",
+    "modelsdev:zhipuai": "2026-04-01",
+    "modelsdev:llmgateway": "2026-04-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+video->text",
+    "text,image,video,pdf->text",
+    "text,image,video->text",
+    "image,text,video->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-5v-turbo"
+    ],
+    "modelsdev:zai": [
+     "glm-5v-turbo"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-5v-turbo"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "tencent/glm-5v-turbo"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-5v-turbo"
+    ],
+    "modelsdev:venice": [
+     "z-ai-glm-5v-turbo"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-5v-turbo"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-5v-turbo"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-5v-turbo"
+    ],
+    "modelsdev:ofox": [
+     "z-ai/glm-5v-turbo"
+    ],
+    "modelsdev:tensorx": [
+     "z-ai/glm-5v-turbo"
+    ],
+    "modelsdev:edenai": [
+     "zai/glm-5v-turbo"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-5v-turbo"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-5v-turbo"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-5v-turbo"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm52",
+   "names": [
+    "Z.ai: GLM 5.2",
+    "GLM-5.2",
+    "GLM 5.2",
+    "Glm 5.2",
+    "GLM 5.2 Fast",
+    "GLM-5.2 Turbo (SCX.ai)",
+    "GLM-5.2 (SCX.ai)",
+    "GLM-5.2 (Z AI)",
+    "GLM-5.2 (Runware)",
+    "GLM-5.2 (Tencent Cloud)",
+    "GLM-5.2 (NovitaAI)",
+    "GLM-5.2 (EmberCloud)",
+    "GLM-5.2 (Alibaba Cloud)",
+    "GLM-5.2 (Baidu)",
+    "GLM-5.2 (ByteDance)",
+    "GLM-5.2 (CanopyWave)",
+    "GLM 5.2 Nitro",
+    "GLM 5.2 Short Fast",
+    "GLM 5.2 Short Flex",
+    "GLM 5.2 Short",
+    "GLM 5.2 Flex",
+    "GLM 5.2 Short Fast Flex",
+    "Ambient Large",
+    "GLM-5.2 Highspeed",
+    "GLM-5.2 Honey Ultra",
+    "GLM-5.2 Ponytail Lite",
+    "GLM-5.2 Honey",
+    "GLM-5.2 Ponytail Ultra",
+    "GLM-5.2 Caveman",
+    "GLM-5.2 Caveman Ultra",
+    "GLM-5.2 Ponytail",
+    "GLM-5.2 Honey Lite",
+    "GLM-5.2 Caveman Lite",
+    "GLM5.2-Fast",
+    "GLM-5.2 (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-06-16",
+    "modelsdev:deepinfra": "2026-06-13",
+    "modelsdev:zai": "2026-06-13",
+    "modelsdev:empiriolabs": "2026-06-13",
+    "modelsdev:sensenova": "2026-06-13",
+    "modelsdev:alibaba-token-plan": "2026-06-13",
+    "modelsdev:cloudflare-workers-ai": "2026-06-13",
+    "modelsdev:engy": "2026-06-13",
+    "modelsdev:nano-gpt": "2026-06-13",
+    "modelsdev:crof": "2026-06-13",
+    "modelsdev:baseten": "2026-06-13",
+    "modelsdev:wandb": "2026-06-16",
+    "modelsdev:databricks": "2026-06-13",
+    "modelsdev:siliconflow": "2026-06-13",
+    "modelsdev:lilac": "2026-06-13",
+    "modelsdev:llmgateway-providers": "2026-06-13",
+    "modelsdev:above": "2026-06-13",
+    "modelsdev:kilo": "2026-06-13",
+    "modelsdev:venice": "2026-06-16",
+    "modelsdev:alibaba-token-plan-cn": "2026-06-13",
+    "modelsdev:berget": "2026-06-13",
+    "modelsdev:abacus": "2026-06-13",
+    "modelsdev:novita-ai": "2026-06-13",
+    "modelsdev:302ai": "2026-06-13",
+    "modelsdev:openrouter": "2026-06-13",
+    "modelsdev:cline-pass": "2026-06-13",
+    "modelsdev:routing-run": "2026-06-13",
+    "modelsdev:neuralwatt": "2026-06-17",
+    "modelsdev:alibaba": "2026-06-13",
+    "modelsdev:zenmux": "2026-06-13",
+    "modelsdev:unorouter": "2026-06-13",
+    "modelsdev:siliconflow-cn": "2026-06-13",
+    "modelsdev:regolo-ai": "2026-06-13",
+    "modelsdev:inceptron": "2026-06-13",
+    "modelsdev:vultr": "2026-06-13",
+    "modelsdev:huggingface": "2026-06-13",
+    "modelsdev:volcengine": "2026-06-13",
+    "modelsdev:impossibl": "2026-06-13",
+    "modelsdev:aiand": "2026-06-13",
+    "modelsdev:crusoe": "2026-06-13",
+    "modelsdev:ollama-cloud": "2026-06-13",
+    "modelsdev:ambient": "2026-06-13",
+    "modelsdev:model-oracle-ai": "2026-06-13",
+    "modelsdev:nebius": "2026-06-13",
+    "modelsdev:scaleway": "2026-06-13",
+    "modelsdev:vercel": "2026-06-13",
+    "modelsdev:zai-coding-plan": "2026-06-13",
+    "modelsdev:greenpt": "2026-06-13",
+    "modelsdev:hyper": "2026-06-30",
+    "modelsdev:jalapeno": "2026-06-13",
+    "modelsdev:dinference": "2026-06-13",
+    "modelsdev:orcarouter": "2026-06-13",
+    "modelsdev:friendli": "2026-06-13",
+    "modelsdev:scx-ai": "2026-06-13",
+    "modelsdev:scnet-token-plan": "2026-06-13",
+    "modelsdev:ofox": "2026-06-13",
+    "modelsdev:neon": "2026-06-13",
+    "modelsdev:aihubmix": "2026-06-13",
+    "modelsdev:merge-gateway": "2026-06-13",
+    "modelsdev:opper": "2026-06-13",
+    "modelsdev:nvidia": "2026-06-13",
+    "modelsdev:pioneer": "2026-06-13",
+    "modelsdev:opencode-go": "2026-06-13",
+    "modelsdev:tensorx": "2026-06-13",
+    "modelsdev:edenai": "2026-06-13",
+    "modelsdev:hpc-ai": "2026-06-13",
+    "modelsdev:tempr": "2026-06-13",
+    "modelsdev:opencode": "2026-06-13",
+    "modelsdev:kenari": "2026-06-13",
+    "modelsdev:wafer.ai": "2026-06-13",
+    "modelsdev:zhipuai": "2026-06-13",
+    "modelsdev:requesty": "2026-06-13",
+    "modelsdev:mistral": "2026-06-13",
+    "modelsdev:synthetic": "2026-06-13",
+    "modelsdev:llmgateway": "2026-06-13",
+    "modelsdev:vivgrid": "2026-06-13",
+    "modelsdev:google-vertex": "2026-06-13",
+    "modelsdev:evroc": "2026-06-13",
+    "modelsdev:tokengo": "2026-06-13",
+    "modelsdev:togetherai": "2026-06-16",
+    "modelsdev:cortecs": "2026-06-13",
+    "modelsdev:crossmodel": "2026-06-13",
+    "modelsdev:arcee": "2026-06-13",
+    "modelsdev:digitalocean": "2026-06-13",
+    "modelsdev:alibaba-cn": "2026-06-13"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-5.2"
+    ],
+    "modelsdev:deepinfra": [
+     "zai-org/GLM-5.2"
+    ],
+    "modelsdev:zai": [
+     "glm-5.2"
+    ],
+    "modelsdev:empiriolabs": [
+     "glm-5-2"
+    ],
+    "modelsdev:sensenova": [
+     "glm-5.2"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "glm-5.2"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/zai-org/glm-5.2"
+    ],
+    "modelsdev:engy": [
+     "glm-5.2"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-5.2"
+    ],
+    "modelsdev:crof": [
+     "glm-5.2"
+    ],
+    "modelsdev:baseten": [
+     "zai-org/GLM-5.2",
+     "zai-org/GLM-5.2-Fast"
+    ],
+    "modelsdev:wandb": [
+     "zai-org/GLM-5.2"
+    ],
+    "modelsdev:databricks": [
+     "databricks-glm-5-2"
+    ],
+    "modelsdev:siliconflow": [
+     "zai-org/GLM-5.2"
+    ],
+    "modelsdev:lilac": [
+     "zai-org/glm-5.2"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "scx-ai-gp/glm-5.2-fast",
+     "scx-ai-gp/glm-5.2",
+     "zai/glm-5.2",
+     "runware/glm-5.2",
+     "tencent/glm-5.2",
+     "novita/glm-5.2",
+     "embercloud/glm-5.2",
+     "alibaba/glm-5.2",
+     "baidu/glm-5.2",
+     "bytedance/glm-5.2",
+     "canopywave/glm-5.2"
+    ],
+    "modelsdev:above": [
+     "glm-5.2-fast",
+     "glm-5.2"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-5.2"
+    ],
+    "modelsdev:venice": [
+     "zai-org-glm-5-2"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "glm-5.2"
+    ],
+    "modelsdev:berget": [
+     "zai-org/GLM-5.2"
+    ],
+    "modelsdev:abacus": [
+     "zai-org/GLM-5.2"
+    ],
+    "modelsdev:novita-ai": [
+     "zai-org/glm-5.2"
+    ],
+    "modelsdev:302ai": [
+     "glm-5.2"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-5.2"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/glm-5.2"
+    ],
+    "modelsdev:routing-run": [
+     "glm-5.2-nitro",
+     "glm-5.2"
+    ],
+    "modelsdev:neuralwatt": [
+     "glm-5.2-short-fast",
+     "glm-5.2-short-flex",
+     "glm-5.2-fast",
+     "glm-5.2-short",
+     "glm-5.2-flex",
+     "glm-5.2",
+     "glm-5.2-short-fast-flex"
+    ],
+    "modelsdev:alibaba": [
+     "glm-5.2"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-5.2"
+    ],
+    "modelsdev:unorouter": [
+     "glm-5.2"
+    ],
+    "modelsdev:siliconflow-cn": [
+     "zai-org/GLM-5.2"
+    ],
+    "modelsdev:regolo-ai": [
+     "glm5.2"
+    ],
+    "modelsdev:inceptron": [
+     "zai-org/GLM-5.2"
+    ],
+    "modelsdev:vultr": [
+     "glm-5.2"
+    ],
+    "modelsdev:huggingface": [
+     "zai-org/GLM-5.2"
+    ],
+    "modelsdev:volcengine": [
+     "glm-5-2-260617"
+    ],
+    "modelsdev:impossibl": [
+     "zai/glm-5.2",
+     "fireworks/glm-5.2"
+    ],
+    "modelsdev:aiand": [
+     "zai-org/glm-5.2"
+    ],
+    "modelsdev:crusoe": [
+     "zai/GLM-5.2"
+    ],
+    "modelsdev:ollama-cloud": [
+     "glm-5.2"
+    ],
+    "modelsdev:ambient": [
+     "z-ai/glm-5.2",
+     "ambient/large"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "glm-5.2"
+    ],
+    "modelsdev:nebius": [
+     "zai-org/GLM-5.2"
+    ],
+    "modelsdev:scaleway": [
+     "glm-5.2"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-5.2-fast",
+     "zai/glm-5.2"
+    ],
+    "modelsdev:zai-coding-plan": [
+     "glm-5.2-highspeed",
+     "glm-5.2"
+    ],
+    "modelsdev:greenpt": [
+     "glm-5.2-honey-ultra",
+     "glm-5.2-ponytail-lite",
+     "glm-5.2-honey",
+     "glm-5.2",
+     "glm-5.2-ponytail-ultra",
+     "glm-5.2-caveman",
+     "glm-5.2-caveman-ultra",
+     "glm-5.2-ponytail",
+     "glm-5.2-honey-lite",
+     "glm-5.2-caveman-lite"
+    ],
+    "modelsdev:hyper": [
+     "glm-5.2"
+    ],
+    "modelsdev:jalapeno": [
+     "GLM-5.2"
+    ],
+    "modelsdev:dinference": [
+     "glm-5.2"
+    ],
+    "modelsdev:orcarouter": [
+     "z-ai/glm-5.2"
+    ],
+    "modelsdev:friendli": [
+     "zai-org/GLM-5.2"
+    ],
+    "modelsdev:scx-ai": [
+     "GLM-5.2"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "GLM-5.2"
+    ],
+    "modelsdev:ofox": [
+     "z-ai/glm-5.2"
+    ],
+    "modelsdev:neon": [
+     "glm-5-2"
+    ],
+    "modelsdev:aihubmix": [
+     "glm-5.2"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-5.2"
+    ],
+    "modelsdev:opper": [
+     "glm-5.2"
+    ],
+    "modelsdev:nvidia": [
+     "z-ai/glm-5.2"
+    ],
+    "modelsdev:pioneer": [
+     "zai-org/GLM-5.2",
+     "zai-org/GLM-5.2-Fast"
+    ],
+    "modelsdev:opencode-go": [
+     "glm-5.2"
+    ],
+    "modelsdev:tensorx": [
+     "z-ai/glm-5.2"
+    ],
+    "modelsdev:edenai": [
+     "zai/glm-5.2"
+    ],
+    "modelsdev:hpc-ai": [
+     "zai-org/glm-5.2"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-5.2",
+     "mistral/zai-glm-5-2"
+    ],
+    "modelsdev:opencode": [
+     "glm-5.2"
+    ],
+    "modelsdev:kenari": [
+     "glm-5-2"
+    ],
+    "modelsdev:wafer.ai": [
+     "GLM-5.2",
+     "glm5.2-fast"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-5.2"
+    ],
+    "modelsdev:requesty": [
+     "glm-5.2",
+     "glm-5.2@eu"
+    ],
+    "modelsdev:mistral": [
+     "zai-glm-5-2",
+     "glm-5-2"
+    ],
+    "modelsdev:synthetic": [
+     "hf:zai-org/GLM-5.2"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-5.2-fast",
+     "glm-5.2"
+    ],
+    "modelsdev:vivgrid": [
+     "glm-5.2"
+    ],
+    "modelsdev:google-vertex": [
+     "zai-org/glm-5.2-maas"
+    ],
+    "modelsdev:evroc": [
+     "zai-org/GLM-5.2"
+    ],
+    "modelsdev:tokengo": [
+     "z-ai/glm-5.2"
+    ],
+    "modelsdev:togetherai": [
+     "zai-org/GLM-5.2"
+    ],
+    "modelsdev:cortecs": [
+     "glm-5.2"
+    ],
+    "modelsdev:crossmodel": [
+     "z-ai/glm-5.2"
+    ],
+    "modelsdev:arcee": [
+     "zai-org/glm-5.2"
+    ],
+    "modelsdev:digitalocean": [
+     "glm-5.2"
+    ],
+    "modelsdev:alibaba-cn": [
+     "glm-5.2"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "glm53",
+   "names": [
+    "Z.ai: GLM 5.3",
+    "GLM-5.3",
+    "GLM 5.3",
+    "Glm 5.3",
+    "GLM 5.3 Fast",
+    "GLM-5.3 Marathon",
+    "GLM-5.3 (SCX.ai)",
+    "GLM 5.3 Fast (SCX.ai)",
+    "GLM-5.3 (Z AI)",
+    "GLM-5.3 (Runware)",
+    "GLM-5.3 (NovitaAI)",
+    "GLM-5.3 (Alibaba Cloud)",
+    "GLM-5.3 (Baidu)",
+    "GLM-5.3 (Fireworks AI)",
+    "GLM-5.3 (Together AI)",
+    "GLM-5.3 (Inference.net)",
+    "GLM-5.3 (Mistral AI)",
+    "GLM 5.3 Flex",
+    "GLM-5.3 Highspeed",
+    "GLM-5.3 Fast",
+    "GLM-5.3 (EU)",
+    "GLM-5.3 (US)",
+    "GLM-5.3 (Global)",
+    "GLM5.3"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-18",
+    "modelsdev:deepinfra": "2026-08-14",
+    "modelsdev:zai": "2026-08-14",
+    "modelsdev:empiriolabs": "2026-08-14",
+    "modelsdev:alibaba-token-plan": "2026-08-14",
+    "modelsdev:cloudflare-workers-ai": "2026-08-14",
+    "modelsdev:engy": "2026-08-14",
+    "modelsdev:nano-gpt": "2026-08-14",
+    "modelsdev:crof": "2026-08-14",
+    "modelsdev:tinfoil": "2026-08-14",
+    "modelsdev:baseten": "2026-08-14",
+    "modelsdev:nan": "2026-08-14",
+    "modelsdev:subconscious": "2026-08-14",
+    "modelsdev:umans-ai-coding-plan": "2026-08-14",
+    "modelsdev:umans-ai": "2026-08-14",
+    "modelsdev:siliconflow": "2026-08-14",
+    "modelsdev:bothub": "2026-08-14",
+    "modelsdev:privatemode-ai": "2026-08-14",
+    "modelsdev:llmgateway-providers": "2026-08-14",
+    "modelsdev:kilo": "2026-08-14",
+    "modelsdev:venice": "2026-08-18",
+    "modelsdev:alibaba-token-plan-cn": "2026-08-14",
+    "modelsdev:melious": "2026-08-14",
+    "modelsdev:302ai": "2026-08-14",
+    "modelsdev:openrouter": "2026-08-14",
+    "modelsdev:iteracompute": "2026-08-14",
+    "modelsdev:cline-pass": "2026-08-14",
+    "modelsdev:coralbricks": "2026-08-14",
+    "modelsdev:neuralwatt": "2026-08-14",
+    "modelsdev:zenmux": "2026-08-14",
+    "modelsdev:vultr": "2026-08-14",
+    "modelsdev:huggingface": "2026-08-14",
+    "modelsdev:vancine": "2026-08-14",
+    "modelsdev:zhipuai-coding-plan": "2026-08-14",
+    "modelsdev:aiand": "2026-08-14",
+    "modelsdev:volcengine-coding-plan": "2026-08-14",
+    "modelsdev:ollama-cloud": "2026-08-14",
+    "modelsdev:agentrouter": "2026-08-14",
+    "modelsdev:nebius": "2026-08-14",
+    "modelsdev:vercel": "2026-08-14",
+    "modelsdev:zai-coding-plan": "2026-08-14",
+    "modelsdev:greenpt": "2026-08-14",
+    "modelsdev:hyper": "2026-08-28",
+    "modelsdev:fireworks-ai": "2026-08-14",
+    "modelsdev:orcarouter": "2026-08-14",
+    "modelsdev:friendli": "2026-08-14",
+    "modelsdev:inco": "2026-08-14",
+    "modelsdev:scnet-token-plan": "2026-08-14",
+    "modelsdev:ofox": "2026-08-14",
+    "modelsdev:aihubmix": "2026-08-14",
+    "modelsdev:merge-gateway": "2026-08-14",
+    "modelsdev:opper": "2026-08-14",
+    "modelsdev:nvidia": "2026-08-14",
+    "modelsdev:opencode-go": "2026-08-14",
+    "modelsdev:aki-io": "2026-08-14",
+    "modelsdev:tensorx": "2026-08-14",
+    "modelsdev:edenai": "2026-08-14",
+    "modelsdev:tempr": "2026-08-14",
+    "modelsdev:opencode": "2026-08-14",
+    "modelsdev:kenari": "2026-08-14",
+    "modelsdev:zhipuai": "2026-08-14",
+    "modelsdev:requesty": "2026-08-14",
+    "modelsdev:mistral": "2026-08-14",
+    "modelsdev:amazon-bedrock": "2026-08-14",
+    "modelsdev:synthetic": "2026-08-14",
+    "modelsdev:llmgateway": "2026-08-14",
+    "modelsdev:vivgrid": "2026-08-14",
+    "modelsdev:tokengo": "2026-08-14",
+    "modelsdev:togetherai": "2026-08-14",
+    "modelsdev:cortecs": "2026-08-14",
+    "modelsdev:crossmodel": "2026-08-14",
+    "modelsdev:digitalocean": "2026-08-14",
+    "modelsdev:alibaba-cn": "2026-08-14"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-5.3"
+    ],
+    "modelsdev:deepinfra": [
+     "zai-org/GLM-5.3"
+    ],
+    "modelsdev:zai": [
+     "glm-5.3"
+    ],
+    "modelsdev:empiriolabs": [
+     "glm-5-3"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "glm-5.3"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/zai-org/glm-5.3"
+    ],
+    "modelsdev:engy": [
+     "glm-5.3"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-5.3"
+    ],
+    "modelsdev:crof": [
+     "glm-5.3"
+    ],
+    "modelsdev:tinfoil": [
+     "glm-5-3"
+    ],
+    "modelsdev:baseten": [
+     "zai-org/GLM-5.3-Fast",
+     "zai-org/GLM-5.3"
+    ],
+    "modelsdev:nan": [
+     "glm5.3"
+    ],
+    "modelsdev:subconscious": [
+     "subconscious/glm-5.3-marathon"
+    ],
+    "modelsdev:umans-ai-coding-plan": [
+     "umans-glm-5.3"
+    ],
+    "modelsdev:umans-ai": [
+     "umans-glm-5.3"
+    ],
+    "modelsdev:siliconflow": [
+     "zai-org/GLM-5.3"
+    ],
+    "modelsdev:bothub": [
+     "glm-5.3"
+    ],
+    "modelsdev:privatemode-ai": [
+     "glm-5.3"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "scx-ai-gp/glm-5.3",
+     "scx-ai-gp/glm-5.3-fast",
+     "zai/glm-5.3",
+     "runware/glm-5.3",
+     "novita/glm-5.3",
+     "alibaba/glm-5.3",
+     "baidu/glm-5.3",
+     "fireworks/glm-5.3",
+     "together-ai/glm-5.3",
+     "inference.net/glm-5.3",
+     "mistral/glm-5.3"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-5.3"
+    ],
+    "modelsdev:venice": [
+     "z-ai-glm-5-3"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "glm-5.3"
+    ],
+    "modelsdev:melious": [
+     "glm-5.3"
+    ],
+    "modelsdev:302ai": [
+     "glm-5.3"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-5.3"
+    ],
+    "modelsdev:iteracompute": [
+     "z-ai/glm-5.3"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/glm-5.3"
+    ],
+    "modelsdev:coralbricks": [
+     "glm-5.3-fast"
+    ],
+    "modelsdev:neuralwatt": [
+     "glm-5.3-flex",
+     "glm-5.3"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-5.3"
+    ],
+    "modelsdev:vultr": [
+     "glm-5.3"
+    ],
+    "modelsdev:huggingface": [
+     "zai-org/GLM-5.3"
+    ],
+    "modelsdev:vancine": [
+     "glm-5.3"
+    ],
+    "modelsdev:zhipuai-coding-plan": [
+     "glm-5.3-highspeed",
+     "glm-5.3"
+    ],
+    "modelsdev:aiand": [
+     "zai-org/glm-5.3"
+    ],
+    "modelsdev:volcengine-coding-plan": [
+     "glm-5.3"
+    ],
+    "modelsdev:ollama-cloud": [
+     "glm-5.3"
+    ],
+    "modelsdev:agentrouter": [
+     "glm-5.3"
+    ],
+    "modelsdev:nebius": [
+     "zai-org/GLM-5.3"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-5.3",
+     "zai/glm-5.3-fast"
+    ],
+    "modelsdev:zai-coding-plan": [
+     "glm-5.3-highspeed",
+     "glm-5.3"
+    ],
+    "modelsdev:greenpt": [
+     "glm-5.3"
+    ],
+    "modelsdev:hyper": [
+     "glm-5.3"
+    ],
+    "modelsdev:fireworks-ai": [
+     "accounts/fireworks/models/glm-5p3"
+    ],
+    "modelsdev:orcarouter": [
+     "z-ai/glm-5.3"
+    ],
+    "modelsdev:friendli": [
+     "zai-org/GLM-5.3"
+    ],
+    "modelsdev:inco": [
+     "glm-5.3:fast",
+     "glm-5.3"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "GLM-5.3"
+    ],
+    "modelsdev:ofox": [
+     "z-ai/glm-5.3"
+    ],
+    "modelsdev:aihubmix": [
+     "glm-5.3"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-5.3"
+    ],
+    "modelsdev:opper": [
+     "glm-5.3"
+    ],
+    "modelsdev:nvidia": [
+     "z-ai/glm-5.3"
+    ],
+    "modelsdev:opencode-go": [
+     "glm-5.3"
+    ],
+    "modelsdev:aki-io": [
+     "glm5.3-754b"
+    ],
+    "modelsdev:tensorx": [
+     "z-ai/glm-5.3"
+    ],
+    "modelsdev:edenai": [
+     "zai/glm-5.3"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-5.3",
+     "mistral/zai-glm-5-3"
+    ],
+    "modelsdev:opencode": [
+     "glm-5.3"
+    ],
+    "modelsdev:kenari": [
+     "glm-5-3"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-5.3"
+    ],
+    "modelsdev:requesty": [
+     "glm-5.3@eu",
+     "glm-5.3"
+    ],
+    "modelsdev:mistral": [
+     "zai-glm-5-3"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.zai.glm-5.3",
+     "global.zai.glm-5.3"
+    ],
+    "modelsdev:synthetic": [
+     "hf:zai-org/GLM-5.3"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-5.3",
+     "glm-5.3-fast"
+    ],
+    "modelsdev:vivgrid": [
+     "glm-5.3"
+    ],
+    "modelsdev:tokengo": [
+     "z-ai/glm-5.3"
+    ],
+    "modelsdev:togetherai": [
+     "zai-org/GLM-5.3"
+    ],
+    "modelsdev:cortecs": [
+     "glm-5.3"
+    ],
+    "modelsdev:crossmodel": [
+     "z-ai/glm-5.3"
+    ],
+    "modelsdev:digitalocean": [
+     "glm-5.3"
+    ],
+    "modelsdev:alibaba-cn": [
+     "glm-5.3"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm53flash",
+   "names": [
+    "Z.ai: GLM 5.3 Flash",
+    "GLM-5.3-Flash",
+    "GLM-5.3-FlashX",
+    "GLM 5.3 Flash",
+    "Glm 5.3 Flash",
+    "GLM 5.3-Flash",
+    "Umans Coder",
+    "GLM-5.3 Flash (entrim)",
+    "GLM-5.3 Flash (Consensus Protocol)",
+    "GLM-5.3 Flash (SCX.ai)",
+    "GLM-5.3 Flash (Z AI)",
+    "GLM-5.3 Flash (Runware)",
+    "GLM-5.3 Flash (NovitaAI)",
+    "GLM-5.3 Flash (Gonka24)",
+    "GLM-5.3 Flash (Fireworks AI)",
+    "GLM-5.3 Flash (Together AI)",
+    "GLM-5.3 Flash (Inference.net)",
+    "GLM-5.3 Flash",
+    "GLM-5.3 Flash Flex",
+    "GLM 5.3 FlashX",
+    "Ox Alpha",
+    "GLM-5.3-Flash (EU)",
+    "GLM5.3 Flash"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-26",
+    "modelsdev:deepinfra": "2026-08-26",
+    "modelsdev:zai": "2026-09-18",
+    "modelsdev:empiriolabs": "2026-08-26",
+    "modelsdev:cloudflare-workers-ai": "2026-08-26",
+    "modelsdev:engy": "2026-08-26",
+    "modelsdev:nano-gpt": "2026-08-26",
+    "modelsdev:crof": "2026-08-26",
+    "modelsdev:tinfoil": "2026-08-26",
+    "modelsdev:baseten": "2026-08-26",
+    "modelsdev:nan": "2026-08-26",
+    "modelsdev:wandb": "2026-08-26",
+    "modelsdev:umans-ai-coding-plan": "2026-08-26",
+    "modelsdev:umans-ai": "2026-08-26",
+    "modelsdev:siliconflow": "2026-08-26",
+    "modelsdev:bothub": "2026-08-26",
+    "modelsdev:privatemode-ai": "2026-08-26",
+    "modelsdev:llmgateway-providers": "2026-08-26",
+    "modelsdev:above": "2026-08-26",
+    "modelsdev:kilo": "2026-08-26",
+    "modelsdev:venice": "2026-08-21",
+    "modelsdev:melious": "2026-08-26",
+    "modelsdev:berget": "2026-08-26",
+    "modelsdev:302ai": "2026-08-26",
+    "modelsdev:openrouter": "2026-08-26",
+    "modelsdev:iteracompute": "2026-08-26",
+    "modelsdev:modal": "2026-08-26",
+    "modelsdev:neuralwatt": "2026-08-26",
+    "modelsdev:zenmux": "2026-08-26",
+    "modelsdev:vultr": "2026-08-26",
+    "modelsdev:huggingface": "2026-08-26",
+    "modelsdev:volcengine": "2026-08-26",
+    "modelsdev:vancine": "2026-08-26",
+    "modelsdev:zhipuai-coding-plan": "2026-08-26",
+    "modelsdev:aiand": "2026-08-26",
+    "modelsdev:volcengine-coding-plan": "2026-08-26",
+    "modelsdev:ollama-cloud": "2026-08-26",
+    "modelsdev:nebius": "2026-08-26",
+    "modelsdev:vercel": "2026-08-26",
+    "modelsdev:zai-coding-plan": "2026-08-26",
+    "modelsdev:greenpt": "2026-08-26",
+    "modelsdev:hyper": "2026-08-26",
+    "modelsdev:fireworks-ai": "2026-08-26",
+    "modelsdev:orcarouter": "2026-08-26",
+    "modelsdev:friendli": "2026-08-26",
+    "modelsdev:inco": "2026-08-26",
+    "modelsdev:scnet-token-plan": "2026-08-26",
+    "modelsdev:ofox": "2026-09-18",
+    "modelsdev:neon": "2026-08-26",
+    "modelsdev:aihubmix": "2026-08-26",
+    "modelsdev:merge-gateway": "2026-08-26",
+    "modelsdev:opper": "2026-08-26",
+    "modelsdev:nvidia": "2026-08-26",
+    "modelsdev:opencode-go": "2026-08-26",
+    "modelsdev:tensorx": "2026-08-26",
+    "modelsdev:pareto": "2026-08-26",
+    "modelsdev:edenai": "2026-08-26",
+    "modelsdev:tempr": "2026-09-18",
+    "modelsdev:opencode": "2026-08-26",
+    "modelsdev:kenari": "2026-08-26",
+    "modelsdev:zhipuai": "2026-09-18",
+    "modelsdev:requesty": "2026-08-26",
+    "modelsdev:synthetic": "2026-08-26",
+    "modelsdev:llmgateway": "2026-08-26",
+    "modelsdev:vivgrid": "2026-08-26",
+    "modelsdev:tokengo": "2026-08-26",
+    "modelsdev:togetherai": "2026-08-26",
+    "modelsdev:cortecs": "2026-08-26",
+    "modelsdev:crossmodel": "2026-08-26",
+    "modelsdev:runinfra": "2026-08-26",
+    "modelsdev:digitalocean": "2026-08-26"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video,pdf->text",
+    "text,image->text",
+    "text,image,video->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-5.3-flash"
+    ],
+    "modelsdev:deepinfra": [
+     "zai-org/GLM-5.3-Flash"
+    ],
+    "modelsdev:zai": [
+     "glm-5.3-flash",
+     "glm-5.3-flashx"
+    ],
+    "modelsdev:empiriolabs": [
+     "glm-5-3-flash"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/zai-org/glm-5.3-flash"
+    ],
+    "modelsdev:engy": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "z-ai/glm-5.3-flash"
+    ],
+    "modelsdev:crof": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:tinfoil": [
+     "glm-5-3-flash"
+    ],
+    "modelsdev:baseten": [
+     "zai-org/GLM-5.3-Flash"
+    ],
+    "modelsdev:nan": [
+     "glm5.3-flash"
+    ],
+    "modelsdev:wandb": [
+     "zai-org/GLM-5.3-Flash"
+    ],
+    "modelsdev:umans-ai-coding-plan": [
+     "umans-glm-5.3-flash",
+     "umans-coder"
+    ],
+    "modelsdev:umans-ai": [
+     "umans-glm-5.3-flash",
+     "umans-coder"
+    ],
+    "modelsdev:siliconflow": [
+     "zai-org/GLM-5.3-Flash"
+    ],
+    "modelsdev:bothub": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:privatemode-ai": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "entrim/glm-5.3-flash",
+     "consensusprotocol/glm-5.3-flash",
+     "scx-ai-gp/glm-5.3-flash",
+     "zai/glm-5.3-flash",
+     "runware/glm-5.3-flash",
+     "novita/glm-5.3-flash",
+     "gonka24/glm-5.3-flash",
+     "fireworks/glm-5.3-flash",
+     "together-ai/glm-5.3-flash",
+     "inference.net/glm-5.3-flash"
+    ],
+    "modelsdev:above": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:kilo": [
+     "z-ai/glm-5.3-flash"
+    ],
+    "modelsdev:venice": [
+     "z-ai-glm-5-3-flash"
+    ],
+    "modelsdev:melious": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:berget": [
+     "zai-org/GLM-5.3-Flash"
+    ],
+    "modelsdev:302ai": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:openrouter": [
+     "z-ai/glm-5.3-flash"
+    ],
+    "modelsdev:iteracompute": [
+     "z-ai/glm-5.3-flash"
+    ],
+    "modelsdev:modal": [
+     "zai-org/GLM-5.3-Flash"
+    ],
+    "modelsdev:neuralwatt": [
+     "glm-5.3-flash",
+     "glm-5.3-flash-flex"
+    ],
+    "modelsdev:zenmux": [
+     "z-ai/glm-5.3-flash",
+     "z-ai/glm-5.3-flashx"
+    ],
+    "modelsdev:vultr": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:huggingface": [
+     "zai-org/GLM-5.3-Flash"
+    ],
+    "modelsdev:volcengine": [
+     "glm-5-3-flash-260828"
+    ],
+    "modelsdev:vancine": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:zhipuai-coding-plan": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:aiand": [
+     "zai-org/glm-5.3-flash"
+    ],
+    "modelsdev:volcengine-coding-plan": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:ollama-cloud": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:nebius": [
+     "zai-org/GLM-5.3-Flash"
+    ],
+    "modelsdev:vercel": [
+     "zai/glm-5.3-flash",
+     "zai/glm-5.3-flashx"
+    ],
+    "modelsdev:zai-coding-plan": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:greenpt": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:hyper": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:fireworks-ai": [
+     "accounts/fireworks/models/glm-5p3-flash"
+    ],
+    "modelsdev:orcarouter": [
+     "z-ai/glm-5.3-flash"
+    ],
+    "modelsdev:friendli": [
+     "zai-org/GLM-5.3-Flash"
+    ],
+    "modelsdev:inco": [
+     "glm-5.3-flash:fast"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "GLM-5.3-Flash"
+    ],
+    "modelsdev:ofox": [
+     "z-ai/glm-5.3-flash",
+     "z-ai/glm-5.3-flashx"
+    ],
+    "modelsdev:neon": [
+     "glm-5-3-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "glm-5.3-flash",
+     "ox-alpha"
+    ],
+    "modelsdev:merge-gateway": [
+     "zai/glm-5.3-flash"
+    ],
+    "modelsdev:opper": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:nvidia": [
+     "z-ai/glm-5.3-flash"
+    ],
+    "modelsdev:opencode-go": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:tensorx": [
+     "z-ai/glm-5.3-flash"
+    ],
+    "modelsdev:pareto": [
+     "z-ai/glm-5.3-flash"
+    ],
+    "modelsdev:edenai": [
+     "zai/glm-5.3-flash"
+    ],
+    "modelsdev:tempr": [
+     "zai/glm-5.3-flash",
+     "zai/glm-5.3-flashx"
+    ],
+    "modelsdev:opencode": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:kenari": [
+     "glm-5-3-flash"
+    ],
+    "modelsdev:zhipuai": [
+     "glm-5.3-flash",
+     "glm-5.3-flashx"
+    ],
+    "modelsdev:requesty": [
+     "glm-5.3-flash",
+     "glm-5.3-flash@eu"
+    ],
+    "modelsdev:synthetic": [
+     "hf:zai-org/GLM-5.3-Flash"
+    ],
+    "modelsdev:llmgateway": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:vivgrid": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:tokengo": [
+     "z-ai/glm-5.3-flash"
+    ],
+    "modelsdev:togetherai": [
+     "zai-org/GLM-5.3-Flash"
+    ],
+    "modelsdev:cortecs": [
+     "glm-5.3-flash"
+    ],
+    "modelsdev:crossmodel": [
+     "z-ai/glm-5.3-flash"
+    ],
+    "modelsdev:runinfra": [
+     "zai-org/GLM-5.3-Flash"
+    ],
+    "modelsdev:digitalocean": [
+     "glm-5.3-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm53flashx",
+   "names": [
+    "Z.ai: GLM 5.3 FlashX"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-18"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-5.3-flashx"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm53prime",
+   "names": [
+    "Z.ai: GLM 5.3 Prime"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-23"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "z-ai/glm-5.3-prime"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

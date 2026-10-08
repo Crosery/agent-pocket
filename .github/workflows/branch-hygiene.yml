@@ -1,0 +1,106 @@
+name: branch-hygiene
+
+# Two independent jobs:
+#   1. After a PR merges, delete its task/** head branch. dev/** and the long-lived branches are never deleted here.
+#      The repo setting "delete head branches on merge" may get there first; the job accepts that.
+#   2. Every Monday, list remote task/** branches with no commit for 14 days and no open PR. It only warns: deleting a
+#      branch cannot be undone, so a person decides.
+#
+# Only the delete job has contents: write; nothing reads secrets. No tags, no main/stage changes, no PR state changes.
+on:
+  pull_request:
+    types: [closed]
+  schedule:
+    # Mondays 03:17 UTC
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: branch-hygiene-${{ github.event.pull_request.number || 'weekly' }}
+  cancel-in-progress: false
+
+jobs:
+  delete-merged-task-branch:
+    if: >-
+      github.event_name == 'pull_request'
+      && github.event.pull_request.merged == true
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && startsWith(github.event.pull_request.head.ref, 'task/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Delete the remote head branch
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -eu
+          # Only task/** gets here (see `if`). The name may contain slashes and goes straight into the REST path.
+          if out="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${HEAD_REF}" 2>&1)"; then
+            gh api --method DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/${HEAD_REF}"
+            echo "已删除已合并的任务分支：${HEAD_REF}"
+          elif printf '%s' "$out" | grep -q 'HTTP 404'; then
+            echo "分支 ${HEAD_REF} 已经不在了（GitHub 合并时自动删除），无需处理。"
+          else
+            printf '%s\n' "$out" >&2
+            exit 1
+          fi
+
+  stale-task-branches:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Scan task branches idle for 14 days with no open PR
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          cutoff="$(date -u -d '14 days ago' +%Y-%m-%dT%H:%M:%SZ)"
+          list="${RUNNER_TEMP}/task-branches.txt"
+          report="${RUNNER_TEMP}/stale.txt"
+          : > "$report"
+          gh api "repos/${GITHUB_REPOSITORY}/branches?per_page=100" --paginate \
+            --jq '.[] | select(.name | startswith("task/")) | .name' > "$list"
+          total="$(wc -l < "$list" | tr -d ' ')"
+          echo "远端 task 分支数量：${total}；判定阈值：最后提交早于 ${cutoff} 且没有 open PR"
+          while IFS= read -r branch; do
+            [ -n "$branch" ] || continue
+            last="$(gh api "repos/${GITHUB_REPOSITORY}/commits?sha=${branch}&per_page=1" --jq '.[0].commit.committer.date')"
+            open_prs="$(gh api "repos/${GITHUB_REPOSITORY}/pulls?state=open&head=${GITHUB_REPOSITORY_OWNER}:${branch}" --jq 'length')"
+            if [ "$open_prs" -eq 0 ] && [ "$last" \< "$cutoff" ]; then
+              printf '%s\t%s\t%s\n' "$branch" "$last" "$open_prs" >> "$report"
+            fi
+          done < "$list"
+          if [ ! -s "$report" ]; then
+            echo "没有残留的 task 分支：全部已合并删除或有 open PR。"
+            exit 0
+          fi
+          echo "发现残留 task 分支（请人工确认后删除）："
+          cat "$report"
+          while IFS="$(printf '\t')" read -r branch last _; do
+            echo "::warning::残留任务分支 ${branch}（最后提交 ${last}，无 open PR）：确认已合并后删除 git push origin --delete ${branch}"
+          done < "$report"
+          {
+            echo "## 残留 task 分支（仅告警，未删除）"
+            echo ""
+            echo "判定：最后提交早于 \`${cutoff}\` 且没有 open PR。"
+            echo ""
+            echo "| 分支 | 最后提交 |"
+            echo "|---|---|"
+            while IFS="$(printf '\t')" read -r branch last _; do
+              echo "| \`${branch}\` | ${last} |"
+            done < "$report"
+            echo ""
+            echo "删除方式：\`git push origin --delete <branch>\`。自动化只处理已合并 PR 的 task/** head 分支。"
+          } >> "$GITHUB_STEP_SUMMARY"

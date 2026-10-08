@@ -1,0 +1,2513 @@
+{
+ "vendor": "anthropic",
+ "count": 21,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "claude3haiku",
+   "names": [
+    "Claude Haiku 3",
+    "anthropic--claude-3-haiku"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2024-03-13",
+    "modelsdev:sap-ai-core": "2024-03-13"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "anthropic/claude-3-haiku"
+    ],
+    "modelsdev:sap-ai-core": [
+     "anthropic--claude-3-haiku"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claude35sonnet",
+   "names": [
+    "anthropic--claude-3.5-sonnet"
+   ],
+   "releaseDateHints": {
+    "modelsdev:sap-ai-core": "2024-10-22"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:sap-ai-core": [
+     "anthropic--claude-3.5-sonnet"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "claudesonnet45",
+   "names": [
+    "Anthropic: Claude Sonnet 4.5",
+    "Claude Sonnet 4.5",
+    "Claude Sonnet 4.5 (AWS Bedrock)",
+    "Claude Sonnet 4.5 (2025-09-29) (AWS Bedrock)",
+    "Claude Sonnet 4.5 (Anthropic)",
+    "Claude Sonnet 4.5 (2025-09-29) (Anthropic)",
+    "Claude Sonnet 4.5 (Vertex AI (Anthropic))",
+    "Claude Sonnet 4.5 (20250929)",
+    "Claude Sonnet 4.5 (JP)",
+    "Claude Sonnet 4.5 (US)",
+    "Claude Sonnet 4.5 (Global)",
+    "Claude Sonnet 4.5 (AU)",
+    "Claude Sonnet 4.5 (EU)",
+    "anthropic--claude-4.5-sonnet"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-09-29",
+    "modelsdev:nano-gpt": "2025-09-29",
+    "modelsdev:anthropic": "2025-09-29",
+    "modelsdev:databricks": "2025-09-29",
+    "modelsdev:llmgateway-providers": "2025-09-29",
+    "modelsdev:venice": "2025-01-15",
+    "modelsdev:abacus": "2025-09-29",
+    "modelsdev:google-vertex-anthropic": "2025-09-29",
+    "modelsdev:merge-gateway": "2025-09-29",
+    "modelsdev:tempr": "2025-09-29",
+    "modelsdev:amazon-bedrock": "2025-09-29",
+    "modelsdev:llmgateway": "2025-09-29",
+    "modelsdev:sap-ai-core": "2025-09-29",
+    "modelsdev:google-vertex": "2025-09-29"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-sonnet-4.5"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-sonnet-4.5"
+    ],
+    "modelsdev:anthropic": [
+     "claude-sonnet-4-5-20250929"
+    ],
+    "modelsdev:databricks": [
+     "databricks-claude-sonnet-4"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-sonnet-4-5",
+     "aws-bedrock/claude-sonnet-4-5-20250929",
+     "anthropic/claude-sonnet-4-5",
+     "anthropic/claude-sonnet-4-5-20250929",
+     "vertex-anthropic/claude-sonnet-4-5"
+    ],
+    "modelsdev:venice": [
+     "claude-sonnet-4-5"
+    ],
+    "modelsdev:abacus": [
+     "claude-sonnet-4-5-20250929"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-sonnet-4-5@20250929"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-sonnet-4-5-20250929"
+    ],
+    "modelsdev:tempr": [
+     "anthropic/claude-sonnet-4-5-20250929"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
+     "anthropic.claude-sonnet-4-5-20250929-v1:0",
+     "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+     "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+     "au.anthropic.claude-sonnet-4-5-20250929-v1:0",
+     "eu.anthropic.claude-sonnet-4-5-20250929-v1:0"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-sonnet-4-5-20250929"
+    ],
+    "modelsdev:sap-ai-core": [
+     "anthropic--claude-4.5-sonnet"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-sonnet-4-5@20250929"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claude37sonnet",
+   "names": [
+    "Claude 3.7 Sonnet",
+    "anthropic--claude-3.7-sonnet"
+   ],
+   "releaseDateHints": {
+    "modelsdev:merge-gateway": "2025-02-19",
+    "modelsdev:sap-ai-core": "2025-02-24"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-3-7-sonnet-20250219"
+    ],
+    "modelsdev:sap-ai-core": [
+     "anthropic--claude-3.7-sonnet"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "claudeopus4",
+   "names": [
+    "Claude Opus 4",
+    "Claude Opus 4 (20250514)",
+    "anthropic--claude-4-opus"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2025-05-22",
+    "modelsdev:google-vertex-anthropic": "2025-05-22",
+    "modelsdev:merge-gateway": "2025-05-22",
+    "modelsdev:sap-ai-core": "2025-05-22",
+    "modelsdev:google-vertex": "2025-05-22"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "anthropic/claude-opus-4"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-opus-4@20250514"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-opus-4-20250514"
+    ],
+    "modelsdev:sap-ai-core": [
+     "anthropic--claude-4-opus"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-opus-4@20250514"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "claudesonnet4",
+   "names": [
+    "Anthropic: Claude Sonnet 4",
+    "Claude Sonnet 4",
+    "Claude Sonnet 4 (EU)",
+    "Claude Sonnet 4 (APAC)",
+    "Claude Sonnet 4 (US)",
+    "Claude Sonnet 4 (Global)",
+    "anthropic--claude-4-sonnet"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-05-22",
+    "modelsdev:vercel": "2025-05-22",
+    "modelsdev:fastrouter": "2025-05-22",
+    "modelsdev:google-vertex-anthropic": "2025-05-22",
+    "modelsdev:merge-gateway": "2025-05-22",
+    "modelsdev:amazon-bedrock": "2025-05-22",
+    "modelsdev:sap-ai-core": "2025-05-22",
+    "modelsdev:google-vertex": "2025-05-22"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+file->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-sonnet-4"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-sonnet-4"
+    ],
+    "modelsdev:fastrouter": [
+     "anthropic/claude-sonnet-4"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-sonnet-4@20250514"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-sonnet-4-20250514"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "eu.anthropic.claude-sonnet-4-20250514-v1:0",
+     "apac.anthropic.claude-sonnet-4-20250514-v1:0",
+     "us.anthropic.claude-sonnet-4-20250514-v1:0",
+     "global.anthropic.claude-sonnet-4-20250514-v1:0"
+    ],
+    "modelsdev:sap-ai-core": [
+     "anthropic--claude-4-sonnet"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-sonnet-4@20250514"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "claudeopus41",
+   "names": [
+    "Anthropic: Claude Opus 4.1",
+    "Claude 4.1 Opus",
+    "Claude Opus 4.1 (AWS Bedrock)",
+    "Claude Opus 4.1",
+    "Claude Opus 4.1 (20250805)",
+    "Claude Opus 4.1 (US)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-08-05",
+    "modelsdev:nano-gpt": "2025-08-05",
+    "modelsdev:llmgateway-providers": "2025-08-05",
+    "modelsdev:fastrouter": "2025-08-05",
+    "modelsdev:google-vertex-anthropic": "2025-08-05",
+    "modelsdev:merge-gateway": "2025-08-05",
+    "modelsdev:amazon-bedrock": "2025-08-05",
+    "modelsdev:llmgateway": "2025-08-05",
+    "modelsdev:google-vertex": "2025-08-05"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+file->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-opus-4.1"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-opus-4.1"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-opus-4-1-20250805"
+    ],
+    "modelsdev:fastrouter": [
+     "anthropic/claude-opus-4.1"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-opus-4-1@20250805"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-opus-4-1-20250805"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.anthropic.claude-opus-4-1-20250805-v1:0",
+     "anthropic.claude-opus-4-1-20250805-v1:0"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-opus-4-1-20250805"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-opus-4-1@20250805"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "claudehaiku45",
+   "names": [
+    "Anthropic: Claude Haiku 4.5",
+    "Claude Haiku 4.5",
+    "Claude Haiku 4.5 (AWS Bedrock)",
+    "Claude Haiku 4.5 (2025-10-01) (AWS Bedrock)",
+    "Claude Haiku 4.5 (Anthropic)",
+    "Claude Haiku 4.5 (2025-10-01) (Anthropic)",
+    "Claude Haiku 4.5 (Vertex AI (Anthropic))",
+    "Claude Haiku 4.5 (20251001)",
+    "Claude Haiku 4.5 (Global)",
+    "Claude Haiku 4.5 (EU)",
+    "Claude Haiku 4.5 (JP)",
+    "Claude Haiku 4.5 (US)",
+    "Claude Haiku 4.5 (AU)",
+    "Claude Haiku 4.5 (India)",
+    "anthropic--claude-4.5-haiku"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-15",
+    "modelsdev:nano-gpt": "2025-10-15",
+    "modelsdev:anthropic": "2025-10-15",
+    "modelsdev:llmgateway-providers": "2025-10-15",
+    "modelsdev:abacus": "2025-10-15",
+    "modelsdev:freemodel": "2025-10-15",
+    "modelsdev:unorouter": "2025-10-15",
+    "modelsdev:vercel": "2025-10-15",
+    "modelsdev:google-vertex-anthropic": "2025-10-15",
+    "modelsdev:merge-gateway": "2025-10-15",
+    "modelsdev:tempr": "2025-10-15",
+    "modelsdev:amazon-bedrock": "2025-10-15",
+    "modelsdev:llmgateway": "2025-10-15",
+    "modelsdev:sap-ai-core": "2025-10-15",
+    "modelsdev:google-vertex": "2025-10-15",
+    "modelsdev:daoxe": "2025-10-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-haiku-4.5"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-haiku-4.5"
+    ],
+    "modelsdev:anthropic": [
+     "claude-haiku-4-5-20251001"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-haiku-4-5",
+     "aws-bedrock/claude-haiku-4-5-20251001",
+     "anthropic/claude-haiku-4-5",
+     "anthropic/claude-haiku-4-5-20251001",
+     "vertex-anthropic/claude-haiku-4-5"
+    ],
+    "modelsdev:abacus": [
+     "claude-haiku-4-5-20251001"
+    ],
+    "modelsdev:freemodel": [
+     "claude-haiku-4-5-20251001"
+    ],
+    "modelsdev:unorouter": [
+     "claude-haiku-4-5-20251001"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-haiku-4.5"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-haiku-4-5@20251001"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-haiku-4-5-20251001"
+    ],
+    "modelsdev:tempr": [
+     "anthropic/claude-haiku-4-5-20251001"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+     "eu.anthropic.claude-haiku-4-5-20251001-v1:0",
+     "jp.anthropic.claude-haiku-4-5-20251001-v1:0",
+     "anthropic.claude-haiku-4-5-20251001-v1:0",
+     "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+     "au.anthropic.claude-haiku-4-5-20251001-v1:0",
+     "in.anthropic.claude-haiku-4-5-20251001-v1:0"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-haiku-4-5-20251001"
+    ],
+    "modelsdev:sap-ai-core": [
+     "anthropic--claude-4.5-haiku"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-haiku-4-5@20251001"
+    ],
+    "modelsdev:daoxe": [
+     "claude-haiku-4-5-20251001"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudeopus45",
+   "names": [
+    "Anthropic: Claude Opus 4.5",
+    "Claude 4.5 Opus",
+    "Claude Opus 4.5",
+    "Claude Opus 4.5 (AWS Bedrock)",
+    "Claude Opus 4.5 (Anthropic)",
+    "Claude Opus 4.5 (Vertex AI (Anthropic))",
+    "Claude Opus 4.5 (20251101)",
+    "Claude Opus 4.5 (EU)",
+    "Claude Opus 4.5 (Global)",
+    "Claude Opus 4.5 (US)",
+    "anthropic--claude-4.5-opus"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-11-24",
+    "modelsdev:nano-gpt": "2025-11-24",
+    "modelsdev:anthropic": "2025-11-24",
+    "modelsdev:llmgateway-providers": "2025-11-01",
+    "modelsdev:venice": "2025-12-06",
+    "modelsdev:abacus": "2025-11-01",
+    "modelsdev:vercel": "2025-11-24",
+    "modelsdev:google-vertex-anthropic": "2025-11-01",
+    "modelsdev:merge-gateway": "2025-11-01",
+    "modelsdev:edenai": "2025-11-01",
+    "modelsdev:tempr": "2025-11-01",
+    "modelsdev:amazon-bedrock": "2025-11-01",
+    "modelsdev:llmgateway": "2025-11-01",
+    "modelsdev:sap-ai-core": "2025-11-24",
+    "modelsdev:google-vertex": "2025-11-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-opus-4.5"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-opus-4.5"
+    ],
+    "modelsdev:anthropic": [
+     "claude-opus-4-5-20251101"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-opus-4-5-20251101",
+     "anthropic/claude-opus-4-5-20251101",
+     "vertex-anthropic/claude-opus-4-5-20251101"
+    ],
+    "modelsdev:venice": [
+     "claude-opus-4-5"
+    ],
+    "modelsdev:abacus": [
+     "claude-opus-4-5-20251101"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-opus-4.5"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-opus-4-5@20251101"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-opus-4-5-20251101"
+    ],
+    "modelsdev:edenai": [
+     "anthropic/claude-opus-4-5-20251101"
+    ],
+    "modelsdev:tempr": [
+     "anthropic/claude-opus-4-5-20251101"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "eu.anthropic.claude-opus-4-5-20251101-v1:0",
+     "anthropic.claude-opus-4-5-20251101-v1:0",
+     "global.anthropic.claude-opus-4-5-20251101-v1:0",
+     "us.anthropic.claude-opus-4-5-20251101-v1:0"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-opus-4-5-20251101"
+    ],
+    "modelsdev:sap-ai-core": [
+     "anthropic--claude-4.5-opus"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-opus-4-5@20251101"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudeopus46",
+   "names": [
+    "Anthropic: Claude Opus 4.6",
+    "Claude 4.6 Opus",
+    "Claude Opus 4.6",
+    "Claude Opus 4.6 (AWS Bedrock)",
+    "Claude Opus 4.6 (Anthropic)",
+    "Claude Opus 4.6 (Azure Anthropic)",
+    "Claude Opus 4.6 (Vertex AI (Anthropic))",
+    "Claude Opus 4.6 (EU)",
+    "AU Anthropic Claude Opus 4.6",
+    "Claude Opus 4.6 (US)",
+    "Claude Opus 4.6 (Global)",
+    "anthropic--claude-4.6-opus"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-04",
+    "modelsdev:nano-gpt": "2026-02-05",
+    "modelsdev:anthropic": "2026-02-04",
+    "modelsdev:nearai": "2026-02-05",
+    "modelsdev:databricks": "2026-02-05",
+    "modelsdev:llmgateway-providers": "2026-02-05",
+    "modelsdev:kilo": "2026-02-05",
+    "modelsdev:venice": "2026-02-05",
+    "modelsdev:snowflake-cortex": "2026-02-05",
+    "modelsdev:abacus": "2026-02-05",
+    "modelsdev:openrouter": "2026-02-05",
+    "modelsdev:freemodel": "2026-02-05",
+    "modelsdev:auriko": "2026-02-05",
+    "modelsdev:impossibl": "2026-02-05",
+    "modelsdev:gmicloud": "2026-02-05",
+    "modelsdev:cloudflare-ai-gateway": "2026-02-05",
+    "modelsdev:anyapi": "2026-02-05",
+    "modelsdev:vercel": "2026-02-05",
+    "modelsdev:orcarouter": "2026-02-05",
+    "modelsdev:google-vertex-anthropic": "2026-02-05",
+    "modelsdev:ofox": "2026-02-05",
+    "modelsdev:neon": "2026-02-05",
+    "modelsdev:merge-gateway": "2026-02-05",
+    "modelsdev:opper": "2026-02-05",
+    "modelsdev:pioneer": "2026-02-05",
+    "modelsdev:edenai": "2026-02-05",
+    "modelsdev:tempr": "2026-02-05",
+    "modelsdev:opencode": "2026-02-05",
+    "modelsdev:requesty": "2026-02-05",
+    "modelsdev:amazon-bedrock": "2026-02-05",
+    "modelsdev:llmgateway": "2026-02-05",
+    "modelsdev:sap-ai-core": "2026-02-05",
+    "modelsdev:google-vertex": "2026-02-05",
+    "modelsdev:cortecs": "2026-02-05"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-opus-4.6"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-opus-4.6"
+    ],
+    "modelsdev:anthropic": [
+     "claude-opus-4-6"
+    ],
+    "modelsdev:nearai": [
+     "anthropic/claude-opus-4-6"
+    ],
+    "modelsdev:databricks": [
+     "databricks-claude-opus-4-6"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-opus-4-6",
+     "anthropic/claude-opus-4-6",
+     "azure-anthropic/claude-opus-4-6",
+     "vertex-anthropic/claude-opus-4-6"
+    ],
+    "modelsdev:kilo": [
+     "anthropic/claude-opus-4.6"
+    ],
+    "modelsdev:venice": [
+     "claude-opus-4-6"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "claude-opus-4-6"
+    ],
+    "modelsdev:abacus": [
+     "claude-opus-4-6"
+    ],
+    "modelsdev:openrouter": [
+     "anthropic/claude-opus-4.6"
+    ],
+    "modelsdev:freemodel": [
+     "claude-opus-4-6"
+    ],
+    "modelsdev:auriko": [
+     "claude-opus-4-6"
+    ],
+    "modelsdev:impossibl": [
+     "anthropic/claude-opus-4-6"
+    ],
+    "modelsdev:gmicloud": [
+     "anthropic/claude-opus-4.6"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "anthropic/claude-opus-4.6"
+    ],
+    "modelsdev:anyapi": [
+     "anthropic/claude-opus-4-6"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-opus-4.6"
+    ],
+    "modelsdev:orcarouter": [
+     "anthropic/claude-opus-4.6"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-opus-4-6@default"
+    ],
+    "modelsdev:ofox": [
+     "anthropic/claude-opus-4.6"
+    ],
+    "modelsdev:neon": [
+     "claude-opus-4-6"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-opus-4-6"
+    ],
+    "modelsdev:opper": [
+     "claude-opus-4-6"
+    ],
+    "modelsdev:pioneer": [
+     "claude-opus-4-6"
+    ],
+    "modelsdev:edenai": [
+     "anthropic/claude-opus-4-6"
+    ],
+    "modelsdev:tempr": [
+     "anthropic/claude-opus-4-6"
+    ],
+    "modelsdev:opencode": [
+     "claude-opus-4-6"
+    ],
+    "modelsdev:requesty": [
+     "claude-opus-4-6",
+     "claude-opus-4-6@eu"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "anthropic.claude-opus-4-6-v1",
+     "eu.anthropic.claude-opus-4-6-v1",
+     "au.anthropic.claude-opus-4-6-v1",
+     "us.anthropic.claude-opus-4-6-v1",
+     "global.anthropic.claude-opus-4-6-v1"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-opus-4-6"
+    ],
+    "modelsdev:sap-ai-core": [
+     "anthropic--claude-4.6-opus"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-opus-4-6@default"
+    ],
+    "modelsdev:cortecs": [
+     "claude-opus4-6"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudesonnet46",
+   "names": [
+    "Anthropic: Claude Sonnet 4.6",
+    "Claude Sonnet 4.6",
+    "Claude Sonnet 4.6 (AWS Bedrock)",
+    "Claude Sonnet 4.6 (Anthropic)",
+    "Claude Sonnet 4.6 (Vertex AI (Anthropic))",
+    "Claude Sonnet 4.6 (EU)",
+    "Claude Sonnet 4.6 (Global)",
+    "Claude Sonnet 4.6 (JP)",
+    "AU Anthropic Claude Sonnet 4.6",
+    "Claude Sonnet 4.6 (US)",
+    "anthropic--claude-4.6-sonnet"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-17",
+    "modelsdev:nano-gpt": "2026-02-17",
+    "modelsdev:anthropic": "2026-02-17",
+    "modelsdev:nearai": "2026-02-17",
+    "modelsdev:databricks": "2026-02-17",
+    "modelsdev:llmgateway-providers": "2026-02-17",
+    "modelsdev:kilo": "2026-02-17",
+    "modelsdev:venice": "2026-02-17",
+    "modelsdev:snowflake-cortex": "2026-02-17",
+    "modelsdev:abacus": "2026-02-17",
+    "modelsdev:openrouter": "2026-02-17",
+    "modelsdev:routing-run": "2026-02-17",
+    "modelsdev:azure": "2026-02-17",
+    "modelsdev:freemodel": "2026-02-17",
+    "modelsdev:azure-cognitive-services": "2026-02-17",
+    "modelsdev:auriko": "2026-02-17",
+    "modelsdev:impossibl": "2026-02-17",
+    "modelsdev:xpersona": "2026-02-17",
+    "modelsdev:gmicloud": "2026-02-17",
+    "modelsdev:cloudflare-ai-gateway": "2026-02-17",
+    "modelsdev:anyapi": "2026-02-17",
+    "modelsdev:vercel": "2026-02-17",
+    "modelsdev:fastrouter": "2026-02-17",
+    "modelsdev:orcarouter": "2026-02-17",
+    "modelsdev:google-vertex-anthropic": "2026-02-17",
+    "modelsdev:ofox": "2026-02-17",
+    "modelsdev:neon": "2026-02-17",
+    "modelsdev:merge-gateway": "2026-02-17",
+    "modelsdev:opper": "2026-02-17",
+    "modelsdev:pioneer": "2026-02-17",
+    "modelsdev:github-copilot": "2026-02-17",
+    "modelsdev:edenai": "2026-02-17",
+    "modelsdev:tempr": "2026-02-17",
+    "modelsdev:modelis": "2026-02-17",
+    "modelsdev:kenari": "2026-02-17",
+    "modelsdev:requesty": "2026-02-17",
+    "modelsdev:amazon-bedrock": "2026-02-17",
+    "modelsdev:llmgateway": "2026-02-17",
+    "modelsdev:sap-ai-core": "2026-02-17",
+    "modelsdev:google-vertex": "2026-02-17",
+    "modelsdev:cortecs": "2026-02-17",
+    "modelsdev:daoxe": "2026-02-17",
+    "modelsdev:crossmodel": "2026-02-17"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-sonnet-4.6"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-sonnet-4.6"
+    ],
+    "modelsdev:anthropic": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:nearai": [
+     "anthropic/claude-sonnet-4-6"
+    ],
+    "modelsdev:databricks": [
+     "databricks-claude-sonnet-4-6"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-sonnet-4-6",
+     "anthropic/claude-sonnet-4-6",
+     "vertex-anthropic/claude-sonnet-4-6"
+    ],
+    "modelsdev:kilo": [
+     "anthropic/claude-sonnet-4.6"
+    ],
+    "modelsdev:venice": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:abacus": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:openrouter": [
+     "anthropic/claude-sonnet-4.6"
+    ],
+    "modelsdev:routing-run": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:azure": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:freemodel": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:auriko": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:impossibl": [
+     "anthropic/claude-sonnet-4-6"
+    ],
+    "modelsdev:xpersona": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:gmicloud": [
+     "anthropic/claude-sonnet-4.6"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "anthropic/claude-sonnet-4.6"
+    ],
+    "modelsdev:anyapi": [
+     "anthropic/claude-sonnet-4-6"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-sonnet-4.6"
+    ],
+    "modelsdev:fastrouter": [
+     "anthropic/claude-sonnet-4.6"
+    ],
+    "modelsdev:orcarouter": [
+     "anthropic/claude-sonnet-4.6"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-sonnet-4-6@default"
+    ],
+    "modelsdev:ofox": [
+     "anthropic/claude-sonnet-4.6"
+    ],
+    "modelsdev:neon": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-sonnet-4-6"
+    ],
+    "modelsdev:opper": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:pioneer": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:github-copilot": [
+     "claude-sonnet-4.6"
+    ],
+    "modelsdev:edenai": [
+     "anthropic/claude-sonnet-4-6"
+    ],
+    "modelsdev:tempr": [
+     "anthropic/claude-sonnet-4-6"
+    ],
+    "modelsdev:modelis": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:kenari": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:requesty": [
+     "claude-sonnet-4-6@eu",
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "anthropic.claude-sonnet-4-6",
+     "global.anthropic.claude-sonnet-4-6",
+     "jp.anthropic.claude-sonnet-4-6",
+     "au.anthropic.claude-sonnet-4-6",
+     "eu.anthropic.claude-sonnet-4-6",
+     "us.anthropic.claude-sonnet-4-6"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:sap-ai-core": [
+     "anthropic--claude-4.6-sonnet"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-sonnet-4-6@default"
+    ],
+    "modelsdev:cortecs": [
+     "claude-4-6-sonnet"
+    ],
+    "modelsdev:daoxe": [
+     "claude-sonnet-4-6"
+    ],
+    "modelsdev:crossmodel": [
+     "anthropic/claude-sonnet-4-6"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudeopus47",
+   "names": [
+    "Anthropic: Claude Opus 4.7",
+    "Claude 4.7 Opus",
+    "Claude Opus 4.7",
+    "Claude Opus 4.7 (AWS Bedrock)",
+    "Claude Opus 4.7 (Anthropic)",
+    "Claude Opus 4.7 (Azure Anthropic)",
+    "Claude Opus 4.7 (Vertex AI (Anthropic))",
+    "claude-opus-4-7-thinking",
+    "Claude Opus 4.7 (EU)",
+    "Claude Opus 4.7 (US)",
+    "Claude Opus 4.7 (Global)",
+    "Claude Opus 4.7 (AU)",
+    "Claude Opus 4.7 (JP)",
+    "anthropic--claude-4.7-opus"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-16",
+    "modelsdev:nano-gpt": "2026-04-16",
+    "modelsdev:anthropic": "2026-04-14",
+    "modelsdev:nearai": "2026-04-16",
+    "modelsdev:databricks": "2026-04-16",
+    "modelsdev:llmgateway-providers": "2026-04-16",
+    "modelsdev:kilo": "2026-04-16",
+    "modelsdev:venice": "2026-04-16",
+    "modelsdev:snowflake-cortex": "2026-04-16",
+    "modelsdev:abacus": "2026-04-16",
+    "modelsdev:302ai": "2026-04-16",
+    "modelsdev:openrouter": "2026-04-16",
+    "modelsdev:azure": "2026-04-16",
+    "modelsdev:freemodel": "2026-04-16",
+    "modelsdev:azure-cognitive-services": "2026-04-16",
+    "modelsdev:auriko": "2026-04-16",
+    "modelsdev:impossibl": "2026-04-16",
+    "modelsdev:gmicloud": "2026-04-16",
+    "modelsdev:cloudflare-ai-gateway": "2026-04-16",
+    "modelsdev:anyapi": "2026-04-16",
+    "modelsdev:vercel": "2026-04-16",
+    "modelsdev:orcarouter": "2026-04-16",
+    "modelsdev:google-vertex-anthropic": "2026-04-16",
+    "modelsdev:ofox": "2026-04-16",
+    "modelsdev:neon": "2026-04-16",
+    "modelsdev:merge-gateway": "2026-04-16",
+    "modelsdev:opper": "2026-04-16",
+    "modelsdev:pioneer": "2026-04-16",
+    "modelsdev:github-copilot": "2026-04-16",
+    "modelsdev:edenai": "2026-04-16",
+    "modelsdev:hpc-ai": "2026-04-16",
+    "modelsdev:tempr": "2026-04-16",
+    "modelsdev:kenari": "2026-04-16",
+    "modelsdev:requesty": "2026-04-16",
+    "modelsdev:amazon-bedrock": "2026-04-16",
+    "modelsdev:llmgateway": "2026-04-16",
+    "modelsdev:sap-ai-core": "2026-04-16",
+    "modelsdev:google-vertex": "2026-04-16",
+    "modelsdev:cortecs": "2026-04-16",
+    "modelsdev:crossmodel": "2026-04-16"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-opus-4.7"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-opus-4.7"
+    ],
+    "modelsdev:anthropic": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:nearai": [
+     "anthropic/claude-opus-4-7"
+    ],
+    "modelsdev:databricks": [
+     "databricks-claude-opus-4-7"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-opus-4-7",
+     "anthropic/claude-opus-4-7",
+     "azure-anthropic/claude-opus-4-7",
+     "vertex-anthropic/claude-opus-4-7"
+    ],
+    "modelsdev:kilo": [
+     "anthropic/claude-opus-4.7"
+    ],
+    "modelsdev:venice": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:abacus": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:302ai": [
+     "claude-opus-4-7-thinking"
+    ],
+    "modelsdev:openrouter": [
+     "anthropic/claude-opus-4.7"
+    ],
+    "modelsdev:azure": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:freemodel": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:auriko": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:impossibl": [
+     "anthropic/claude-opus-4-7"
+    ],
+    "modelsdev:gmicloud": [
+     "anthropic/claude-opus-4.7"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "anthropic/claude-opus-4.7"
+    ],
+    "modelsdev:anyapi": [
+     "anthropic/claude-opus-4-7"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-opus-4.7"
+    ],
+    "modelsdev:orcarouter": [
+     "anthropic/claude-opus-4.7"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-opus-4-7@default"
+    ],
+    "modelsdev:ofox": [
+     "anthropic/claude-opus-4.7"
+    ],
+    "modelsdev:neon": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-opus-4-7"
+    ],
+    "modelsdev:opper": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:pioneer": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:github-copilot": [
+     "claude-opus-4.7"
+    ],
+    "modelsdev:edenai": [
+     "anthropic/claude-opus-4-7"
+    ],
+    "modelsdev:hpc-ai": [
+     "anthropic/claude-opus-4.7"
+    ],
+    "modelsdev:tempr": [
+     "anthropic/claude-opus-4-7"
+    ],
+    "modelsdev:kenari": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:requesty": [
+     "claude-opus-4-7@eu",
+     "claude-opus-4-7"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.anthropic.claude-opus-4-7",
+     "global.anthropic.claude-opus-4-7",
+     "au.anthropic.claude-opus-4-7",
+     "jp.anthropic.claude-opus-4-7",
+     "anthropic.claude-opus-4-7",
+     "eu.anthropic.claude-opus-4-7"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-opus-4-7"
+    ],
+    "modelsdev:sap-ai-core": [
+     "anthropic--claude-4.7-opus"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-opus-4-7@default"
+    ],
+    "modelsdev:cortecs": [
+     "claude-opus4-7"
+    ],
+    "modelsdev:crossmodel": [
+     "anthropic/claude-opus-4-7"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudeopus48",
+   "names": [
+    "Anthropic: Claude Opus 4.8",
+    "Claude-Opus-4.8",
+    "Claude Opus 4.8",
+    "Claude Opus 4.8 (AWS Bedrock)",
+    "Claude Opus 4.8 (Anthropic)",
+    "Claude Opus 4.8 (Azure Anthropic)",
+    "Claude Opus 4.8 Fast",
+    "Claude Opus 4.8 (Fast)",
+    "Claude Opus 4.8 (EU)",
+    "Claude Opus 4.8 (JP)",
+    "Claude Opus 4.8 (US)",
+    "Claude Opus 4.8 (AU)",
+    "Claude Opus 4.8 (Global)",
+    "anthropic--claude-4.8-opus"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-05-27",
+    "modelsdev:poe": "2026-05-28",
+    "modelsdev:nano-gpt": "2026-05-28",
+    "modelsdev:anthropic": "2026-05-28",
+    "modelsdev:llmgateway-providers": "2026-05-28",
+    "modelsdev:kilo": "2026-05-28",
+    "modelsdev:venice": "2026-05-28",
+    "modelsdev:snowflake-cortex": "2026-05-28",
+    "modelsdev:abacus": "2026-05-28",
+    "modelsdev:302ai": "2026-05-28",
+    "modelsdev:openrouter": "2026-05-28",
+    "modelsdev:routing-run": "2026-05-28",
+    "modelsdev:azure": "2026-05-28",
+    "modelsdev:freemodel": "2026-05-28",
+    "modelsdev:azure-cognitive-services": "2026-05-28",
+    "modelsdev:zenmux": "2026-05-28",
+    "modelsdev:unorouter": "2026-05-28",
+    "modelsdev:impossibl": "2026-05-28",
+    "modelsdev:xpersona": "2026-05-28",
+    "modelsdev:gmicloud": "2026-05-28",
+    "modelsdev:cloudflare-ai-gateway": "2026-05-28",
+    "modelsdev:agentrouter": "2026-05-28",
+    "modelsdev:model-oracle-ai": "2026-05-28",
+    "modelsdev:vercel": "2026-05-28",
+    "modelsdev:fastrouter": "2026-05-28",
+    "modelsdev:orcarouter": "2026-05-28",
+    "modelsdev:google-vertex-anthropic": "2026-05-28",
+    "modelsdev:ofox": "2026-05-28",
+    "modelsdev:neon": "2026-05-28",
+    "modelsdev:aihubmix": "2026-05-28",
+    "modelsdev:merge-gateway": "2026-05-28",
+    "modelsdev:opper": "2026-05-28",
+    "modelsdev:pioneer": "2026-05-28",
+    "modelsdev:github-copilot": "2026-05-28",
+    "modelsdev:edenai": "2026-05-28",
+    "modelsdev:tempr": "2026-05-28",
+    "modelsdev:modelis": "2026-05-28",
+    "modelsdev:opencode": "2026-05-28",
+    "modelsdev:kenari": "2026-05-28",
+    "modelsdev:requesty": "2026-05-28",
+    "modelsdev:amazon-bedrock": "2026-05-28",
+    "modelsdev:llmgateway": "2026-05-28",
+    "modelsdev:sap-ai-core": "2026-05-28",
+    "modelsdev:google-vertex": "2026-05-28",
+    "modelsdev:cortecs": "2026-05-28",
+    "modelsdev:daoxe": "2026-05-28",
+    "modelsdev:crossmodel": "2026-05-28"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-opus-4.8"
+    ],
+    "modelsdev:poe": [
+     "anthropic/claude-opus-4.8"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-opus-4.8"
+    ],
+    "modelsdev:anthropic": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-opus-4-8",
+     "anthropic/claude-opus-4-8",
+     "azure-anthropic/claude-opus-4-8"
+    ],
+    "modelsdev:kilo": [
+     "anthropic/claude-opus-4.8"
+    ],
+    "modelsdev:venice": [
+     "claude-opus-4-8-fast",
+     "claude-opus-4-8"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:abacus": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:302ai": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:openrouter": [
+     "anthropic/claude-opus-4.8"
+    ],
+    "modelsdev:routing-run": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:azure": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:freemodel": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:zenmux": [
+     "anthropic/claude-opus-4.8"
+    ],
+    "modelsdev:unorouter": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:impossibl": [
+     "anthropic/claude-opus-4-8"
+    ],
+    "modelsdev:xpersona": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:gmicloud": [
+     "anthropic/claude-opus-4.8"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "anthropic/claude-opus-4.8"
+    ],
+    "modelsdev:agentrouter": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "claude-opus-4.8"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-opus-4.8",
+     "anthropic/claude-opus-4.8-fast"
+    ],
+    "modelsdev:fastrouter": [
+     "anthropic/claude-opus-4.8"
+    ],
+    "modelsdev:orcarouter": [
+     "anthropic/claude-opus-4.8"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-opus-4-8@default"
+    ],
+    "modelsdev:ofox": [
+     "anthropic/claude-opus-4.8"
+    ],
+    "modelsdev:neon": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:aihubmix": [
+     "claude-opus-4-8-think",
+     "claude-opus-4-8"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-opus-4-8"
+    ],
+    "modelsdev:opper": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:pioneer": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:github-copilot": [
+     "claude-opus-4.8"
+    ],
+    "modelsdev:edenai": [
+     "anthropic/claude-opus-4-8"
+    ],
+    "modelsdev:tempr": [
+     "anthropic/claude-opus-4-8"
+    ],
+    "modelsdev:modelis": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:opencode": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:kenari": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:requesty": [
+     "claude-opus-4-8@eu",
+     "claude-opus-4-8"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "jp.anthropic.claude-opus-4-8",
+     "eu.anthropic.claude-opus-4-8",
+     "anthropic.claude-opus-4-8",
+     "us.anthropic.claude-opus-4-8",
+     "au.anthropic.claude-opus-4-8",
+     "global.anthropic.claude-opus-4-8"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:sap-ai-core": [
+     "anthropic--claude-4.8-opus"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-opus-4-8@default"
+    ],
+    "modelsdev:cortecs": [
+     "claude-opus4-8"
+    ],
+    "modelsdev:daoxe": [
+     "claude-opus-4-8"
+    ],
+    "modelsdev:crossmodel": [
+     "anthropic/claude-opus-4-8"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudefable5",
+   "names": [
+    "Anthropic: Claude Fable 5",
+    "Claude Fable 5",
+    "Claude Fable 5 (AWS Bedrock)",
+    "Claude Fable 5 (Anthropic)",
+    "Claude Fable 5 (Azure Anthropic)",
+    "Agentic Chat (Claude Fable 5)",
+    "Claude Fable 5 (EU)",
+    "Claude Fable 5 (US)",
+    "Claude Fable 5 (Global)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-06-09",
+    "modelsdev:nano-gpt": "2026-06-09",
+    "modelsdev:anthropic": "2026-06-07",
+    "modelsdev:llmgateway-providers": "2026-06-09",
+    "modelsdev:kilo": "2026-06-09",
+    "modelsdev:venice": "2026-06-10",
+    "modelsdev:snowflake-cortex": "2026-06-09",
+    "modelsdev:abacus": "2026-06-09",
+    "modelsdev:302ai": "2026-06-09",
+    "modelsdev:openrouter": "2026-06-09",
+    "modelsdev:gitlab": "2026-06-09",
+    "modelsdev:azure": "2026-06-09",
+    "modelsdev:freemodel": "2026-06-09",
+    "modelsdev:azure-cognitive-services": "2026-06-09",
+    "modelsdev:zenmux": "2026-06-09",
+    "modelsdev:impossibl": "2026-06-09",
+    "modelsdev:xpersona": "2026-06-09",
+    "modelsdev:cloudflare-ai-gateway": "2026-06-09",
+    "modelsdev:model-oracle-ai": "2026-06-09",
+    "modelsdev:vercel": "2026-06-09",
+    "modelsdev:orcarouter": "2026-06-09",
+    "modelsdev:google-vertex-anthropic": "2026-06-09",
+    "modelsdev:ofox": "2026-06-09",
+    "modelsdev:neon": "2026-06-09",
+    "modelsdev:aihubmix": "2026-06-09",
+    "modelsdev:merge-gateway": "2026-06-09",
+    "modelsdev:opper": "2026-06-09",
+    "modelsdev:pioneer": "2026-06-09",
+    "modelsdev:github-copilot": "2026-06-09",
+    "modelsdev:edenai": "2026-06-09",
+    "modelsdev:tempr": "2026-06-09",
+    "modelsdev:modelis": "2026-06-09",
+    "modelsdev:opencode": "2026-06-09",
+    "modelsdev:kenari": "2026-06-09",
+    "modelsdev:requesty": "2026-06-09",
+    "modelsdev:amazon-bedrock": "2026-06-09",
+    "modelsdev:llmgateway": "2026-06-09",
+    "modelsdev:vivgrid": "2026-06-09",
+    "modelsdev:google-vertex": "2026-06-09",
+    "modelsdev:crossmodel": "2026-06-09"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:anthropic": [
+     "claude-fable-5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-fable-5",
+     "anthropic/claude-fable-5",
+     "azure-anthropic/claude-fable-5"
+    ],
+    "modelsdev:kilo": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:venice": [
+     "claude-fable-5"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "claude-fable-5"
+    ],
+    "modelsdev:abacus": [
+     "claude-fable-5"
+    ],
+    "modelsdev:302ai": [
+     "claude-fable-5"
+    ],
+    "modelsdev:openrouter": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-fable-5"
+    ],
+    "modelsdev:azure": [
+     "claude-fable-5"
+    ],
+    "modelsdev:freemodel": [
+     "claude-fable-5"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "claude-fable-5"
+    ],
+    "modelsdev:zenmux": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:impossibl": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:xpersona": [
+     "claude-fable-5"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "claude-fable-5"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:orcarouter": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-fable-5@default"
+    ],
+    "modelsdev:ofox": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:neon": [
+     "claude-fable-5"
+    ],
+    "modelsdev:aihubmix": [
+     "claude-fable-5"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:opper": [
+     "claude-fable-5"
+    ],
+    "modelsdev:pioneer": [
+     "claude-fable-5"
+    ],
+    "modelsdev:github-copilot": [
+     "claude-fable-5"
+    ],
+    "modelsdev:edenai": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:tempr": [
+     "anthropic/claude-fable-5"
+    ],
+    "modelsdev:modelis": [
+     "claude-fable-5"
+    ],
+    "modelsdev:opencode": [
+     "claude-fable-5"
+    ],
+    "modelsdev:kenari": [
+     "claude-fable-5"
+    ],
+    "modelsdev:requesty": [
+     "claude-fable-5@eu",
+     "claude-fable-5"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "eu.anthropic.claude-fable-5",
+     "anthropic.claude-fable-5",
+     "us.anthropic.claude-fable-5",
+     "global.anthropic.claude-fable-5"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-fable-5"
+    ],
+    "modelsdev:vivgrid": [
+     "claude-fable-5"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-fable-5@default"
+    ],
+    "modelsdev:crossmodel": [
+     "anthropic/claude-fable-5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudemythos5",
+   "names": [
+    "Claude Mythos 5"
+   ],
+   "releaseDateHints": {
+    "modelsdev:azure": "2026-06-09",
+    "modelsdev:azure-cognitive-services": "2026-06-09"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:azure": [
+     "claude-mythos-5"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "claude-mythos-5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudesonnet5",
+   "names": [
+    "Anthropic: Claude Sonnet 5",
+    "Claude Sonnet 5",
+    "Claude Sonnet 5 (AWS Bedrock)",
+    "Claude Sonnet 5 (Anthropic)",
+    "Claude Sonnet 5 (Azure Anthropic)",
+    "Claude Sonnet 5 (Vertex AI (Anthropic))",
+    "Agentic Chat (Claude Sonnet 5)",
+    "Claude Sonnet 5 (EU)",
+    "Claude Sonnet 5 (US)",
+    "Claude Sonnet 5 (JP)",
+    "Claude Sonnet 5 (AU)",
+    "Claude Sonnet 5 (Global)",
+    "Claude Sonnet 5 (India)",
+    "Anthropic Claude Sonnet 5"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-06-30",
+    "modelsdev:nano-gpt": "2026-06-30",
+    "modelsdev:anthropic": "2026-06-29",
+    "modelsdev:llmgateway-providers": "2026-06-30",
+    "modelsdev:kilo": "2026-06-30",
+    "modelsdev:venice": "2026-06-29",
+    "modelsdev:snowflake-cortex": "2026-06-30",
+    "modelsdev:abacus": "2026-06-30",
+    "modelsdev:302ai": "2026-06-30",
+    "modelsdev:openrouter": "2026-06-30",
+    "modelsdev:gitlab": "2026-06-30",
+    "modelsdev:azure": "2026-06-30",
+    "modelsdev:azure-cognitive-services": "2026-06-30",
+    "modelsdev:zenmux": "2026-06-30",
+    "modelsdev:unorouter": "2026-06-30",
+    "modelsdev:impossibl": "2026-06-30",
+    "modelsdev:cloudflare-ai-gateway": "2026-06-30",
+    "modelsdev:model-oracle-ai": "2026-06-30",
+    "modelsdev:vercel": "2026-06-30",
+    "modelsdev:orcarouter": "2026-06-30",
+    "modelsdev:google-vertex-anthropic": "2026-06-30",
+    "modelsdev:ofox": "2026-06-30",
+    "modelsdev:neon": "2026-06-30",
+    "modelsdev:aihubmix": "2026-06-30",
+    "modelsdev:merge-gateway": "2026-06-30",
+    "modelsdev:opper": "2026-06-30",
+    "modelsdev:pioneer": "2026-06-30",
+    "modelsdev:github-copilot": "2026-06-30",
+    "modelsdev:edenai": "2026-06-30",
+    "modelsdev:tempr": "2026-06-30",
+    "modelsdev:opencode": "2026-06-30",
+    "modelsdev:kenari": "2026-06-30",
+    "modelsdev:requesty": "2026-06-30",
+    "modelsdev:amazon-bedrock": "2026-06-30",
+    "modelsdev:llmgateway": "2026-06-30",
+    "modelsdev:vivgrid": "2026-06-30",
+    "modelsdev:google-vertex": "2026-06-30",
+    "modelsdev:cortecs": "2026-06-30",
+    "modelsdev:crossmodel": "2026-06-30",
+    "modelsdev:digitalocean": "2026-06-30"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:anthropic": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-sonnet-5",
+     "anthropic/claude-sonnet-5",
+     "azure-anthropic/claude-sonnet-5",
+     "vertex-anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:kilo": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:venice": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:abacus": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:302ai": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:openrouter": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-sonnet-5"
+    ],
+    "modelsdev:azure": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:zenmux": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:unorouter": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:impossibl": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:orcarouter": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-sonnet-5@default"
+    ],
+    "modelsdev:ofox": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:neon": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:aihubmix": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:opper": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:pioneer": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:github-copilot": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:edenai": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:tempr": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:opencode": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:kenari": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:requesty": [
+     "claude-sonnet-5@eu",
+     "claude-sonnet-5"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.anthropic.claude-sonnet-5",
+     "anthropic.claude-sonnet-5",
+     "jp.anthropic.claude-sonnet-5",
+     "au.anthropic.claude-sonnet-5",
+     "global.anthropic.claude-sonnet-5",
+     "in.anthropic.claude-sonnet-5",
+     "eu.anthropic.claude-sonnet-5"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:vivgrid": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-sonnet-5@default"
+    ],
+    "modelsdev:cortecs": [
+     "claude-sonnet-5"
+    ],
+    "modelsdev:crossmodel": [
+     "anthropic/claude-sonnet-5"
+    ],
+    "modelsdev:digitalocean": [
+     "anthropic-claude-5-sonnet"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudeopus5",
+   "names": [
+    "Anthropic: Claude Opus 5",
+    "Claude Opus 5",
+    "Claude Opus 5 (AWS Bedrock)",
+    "Claude Opus 5 (Anthropic)",
+    "Claude Opus 5 (Azure Anthropic)",
+    "Claude Opus 5 Fast",
+    "claude-opus-5-thinking",
+    "Agentic Chat (Claude Opus 5)",
+    "Claude Opus 5 (Fast)",
+    "Claude Opus 5 (EU)",
+    "Claude Opus 5 (India)",
+    "Claude Opus 5 (AU)",
+    "Claude Opus 5 (Global)",
+    "Claude Opus 5 (US)",
+    "Claude Opus 5 (JP)",
+    "Anthropic Claude Opus 5"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-24",
+    "modelsdev:nano-gpt": "2026-07-24",
+    "modelsdev:anthropic": "2026-07-24",
+    "modelsdev:llmgateway-providers": "2026-07-24",
+    "modelsdev:kilo": "2026-07-24",
+    "modelsdev:venice": "2026-07-23",
+    "modelsdev:snowflake-cortex": "2026-07-24",
+    "modelsdev:abacus": "2026-07-24",
+    "modelsdev:302ai": "2026-07-24",
+    "modelsdev:openrouter": "2026-07-24",
+    "modelsdev:gitlab": "2026-07-24",
+    "modelsdev:azure": "2026-07-24",
+    "modelsdev:azure-cognitive-services": "2026-07-24",
+    "modelsdev:cloudflare-ai-gateway": "2026-07-24",
+    "modelsdev:agentrouter": "2026-07-24",
+    "modelsdev:vercel": "2026-07-24",
+    "modelsdev:orcarouter": "2026-07-24",
+    "modelsdev:google-vertex-anthropic": "2026-07-24",
+    "modelsdev:ofox": "2026-07-24",
+    "modelsdev:neon": "2026-07-24",
+    "modelsdev:aihubmix": "2026-07-24",
+    "modelsdev:merge-gateway": "2026-07-24",
+    "modelsdev:opper": "2026-07-24",
+    "modelsdev:pioneer": "2026-07-24",
+    "modelsdev:github-copilot": "2026-07-24",
+    "modelsdev:edenai": "2026-07-24",
+    "modelsdev:tempr": "2026-07-24",
+    "modelsdev:opencode": "2026-07-24",
+    "modelsdev:kenari": "2026-07-24",
+    "modelsdev:requesty": "2026-07-24",
+    "modelsdev:amazon-bedrock": "2026-07-24",
+    "modelsdev:llmgateway": "2026-07-24",
+    "modelsdev:vivgrid": "2026-07-24",
+    "modelsdev:google-vertex": "2026-07-24",
+    "modelsdev:cortecs": "2026-07-24",
+    "modelsdev:crossmodel": "2026-07-24",
+    "modelsdev:digitalocean": "2026-07-24"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-opus-5"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-opus-5"
+    ],
+    "modelsdev:anthropic": [
+     "claude-opus-5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-opus-5",
+     "anthropic/claude-opus-5",
+     "azure-anthropic/claude-opus-5"
+    ],
+    "modelsdev:kilo": [
+     "anthropic/claude-opus-5"
+    ],
+    "modelsdev:venice": [
+     "claude-opus-5",
+     "claude-opus-5-fast"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "claude-opus-5"
+    ],
+    "modelsdev:abacus": [
+     "claude-opus-5"
+    ],
+    "modelsdev:302ai": [
+     "claude-opus-5-thinking",
+     "claude-opus-5"
+    ],
+    "modelsdev:openrouter": [
+     "anthropic/claude-opus-5"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-opus-5"
+    ],
+    "modelsdev:azure": [
+     "claude-opus-5"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "claude-opus-5"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "anthropic/claude-opus-5"
+    ],
+    "modelsdev:agentrouter": [
+     "claude-opus-5"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-opus-5",
+     "anthropic/claude-opus-5-fast"
+    ],
+    "modelsdev:orcarouter": [
+     "anthropic/claude-opus-5"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-opus-5@default"
+    ],
+    "modelsdev:ofox": [
+     "anthropic/claude-opus-5"
+    ],
+    "modelsdev:neon": [
+     "claude-opus-5"
+    ],
+    "modelsdev:aihubmix": [
+     "claude-opus-5"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-opus-5"
+    ],
+    "modelsdev:opper": [
+     "claude-opus-5"
+    ],
+    "modelsdev:pioneer": [
+     "claude-opus-5",
+     "claude-opus-5-fast"
+    ],
+    "modelsdev:github-copilot": [
+     "claude-opus-5"
+    ],
+    "modelsdev:edenai": [
+     "anthropic/claude-opus-5"
+    ],
+    "modelsdev:tempr": [
+     "anthropic/claude-opus-5"
+    ],
+    "modelsdev:opencode": [
+     "claude-opus-5"
+    ],
+    "modelsdev:kenari": [
+     "claude-opus-5"
+    ],
+    "modelsdev:requesty": [
+     "claude-opus-5@eu",
+     "claude-opus-5"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "in.anthropic.claude-opus-5",
+     "au.anthropic.claude-opus-5",
+     "global.anthropic.claude-opus-5",
+     "anthropic.claude-opus-5",
+     "us.anthropic.claude-opus-5",
+     "eu.anthropic.claude-opus-5",
+     "jp.anthropic.claude-opus-5"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-opus-5"
+    ],
+    "modelsdev:vivgrid": [
+     "claude-opus-5"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-opus-5@default"
+    ],
+    "modelsdev:cortecs": [
+     "claude-opus-5"
+    ],
+    "modelsdev:crossmodel": [
+     "anthropic/claude-opus-5"
+    ],
+    "modelsdev:digitalocean": [
+     "anthropic-claude-opus-5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudefable51",
+   "names": [
+    "Anthropic: Claude Fable 5.1",
+    "Claude Fable 5.1",
+    "Claude Fable 5.1 (AWS Bedrock)",
+    "Claude Fable 5.1 (Anthropic)",
+    "Claude Fable 5.1 (Azure Anthropic)",
+    "Agentic Chat (Claude Fable 5.1)",
+    "Claude Fable 5.1 (EU)",
+    "Claude Fable 5.1 (Global)",
+    "Claude Fable 5.1 (US)",
+    "Anthropic Claude Fable 5.1"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-01",
+    "modelsdev:nano-gpt": "2026-09-01",
+    "modelsdev:anthropic": "2026-09-01",
+    "modelsdev:llmgateway-providers": "2026-09-01",
+    "modelsdev:kilo": "2026-09-01",
+    "modelsdev:venice": "2026-08-29",
+    "modelsdev:302ai": "2026-09-01",
+    "modelsdev:openrouter": "2026-09-01",
+    "modelsdev:gitlab": "2026-09-01",
+    "modelsdev:azure": "2026-09-01",
+    "modelsdev:azure-cognitive-services": "2026-09-01",
+    "modelsdev:zenmux": "2026-09-01",
+    "modelsdev:cloudflare-ai-gateway": "2026-09-01",
+    "modelsdev:vercel": "2026-09-01",
+    "modelsdev:google-vertex-anthropic": "2026-09-01",
+    "modelsdev:ofox": "2026-09-01",
+    "modelsdev:neon": "2026-09-01",
+    "modelsdev:aihubmix": "2026-09-01",
+    "modelsdev:merge-gateway": "2026-09-01",
+    "modelsdev:opper": "2026-09-01",
+    "modelsdev:github-copilot": "2026-09-01",
+    "modelsdev:edenai": "2026-09-01",
+    "modelsdev:tempr": "2026-09-01",
+    "modelsdev:opencode": "2026-09-01",
+    "modelsdev:requesty": "2026-09-01",
+    "modelsdev:amazon-bedrock": "2026-09-01",
+    "modelsdev:llmgateway": "2026-09-01",
+    "modelsdev:vivgrid": "2026-09-01",
+    "modelsdev:google-vertex": "2026-09-01",
+    "modelsdev:crossmodel": "2026-09-01",
+    "modelsdev:digitalocean": "2026-09-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-fable-5.1"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-fable-5.1"
+    ],
+    "modelsdev:anthropic": [
+     "claude-fable-5-1"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-fable-5-1",
+     "anthropic/claude-fable-5-1",
+     "azure-anthropic/claude-fable-5-1"
+    ],
+    "modelsdev:kilo": [
+     "anthropic/claude-fable-5.1"
+    ],
+    "modelsdev:venice": [
+     "claude-fable-5-1"
+    ],
+    "modelsdev:302ai": [
+     "claude-fable-5-1"
+    ],
+    "modelsdev:openrouter": [
+     "anthropic/claude-fable-5.1"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-fable-5-1"
+    ],
+    "modelsdev:azure": [
+     "claude-fable-5-1"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "claude-fable-5-1"
+    ],
+    "modelsdev:zenmux": [
+     "anthropic/claude-fable-5.1"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "anthropic/claude-fable-5.1"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-fable-5.1"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-fable-5-1@default"
+    ],
+    "modelsdev:ofox": [
+     "anthropic/claude-fable-5.1"
+    ],
+    "modelsdev:neon": [
+     "claude-fable-5-1"
+    ],
+    "modelsdev:aihubmix": [
+     "claude-fable-5-1"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-fable-5-1"
+    ],
+    "modelsdev:opper": [
+     "claude-fable-5-1"
+    ],
+    "modelsdev:github-copilot": [
+     "claude-fable-5.1"
+    ],
+    "modelsdev:edenai": [
+     "anthropic/claude-fable-5-1"
+    ],
+    "modelsdev:tempr": [
+     "anthropic/claude-fable-5-1"
+    ],
+    "modelsdev:opencode": [
+     "claude-fable-5-1"
+    ],
+    "modelsdev:requesty": [
+     "claude-fable-5.1",
+     "claude-fable-5.1@eu"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "global.anthropic.claude-fable-5-1",
+     "anthropic.claude-fable-5-1",
+     "us.anthropic.claude-fable-5-1"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-fable-5-1"
+    ],
+    "modelsdev:vivgrid": [
+     "claude-fable-5-1"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-fable-5-1@default"
+    ],
+    "modelsdev:crossmodel": [
+     "anthropic/claude-fable-5-1"
+    ],
+    "modelsdev:digitalocean": [
+     "anthropic-claude-fable-5.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudeopus55",
+   "names": [
+    "Anthropic: Claude Opus 5.5",
+    "Claude Opus 5.5",
+    "Claude Opus 5.5 (AWS Bedrock)",
+    "Claude Opus 5.5 (Anthropic)",
+    "Claude Opus 5.5 (Azure Anthropic)",
+    "Claude Opus 5.5 Fast",
+    "Agentic Chat (Claude Opus 5.5)",
+    "Claude Opus 5.5 (Fast)",
+    "Claude Opus 5.5 (EU)",
+    "Claude Opus 5.5 (Global)",
+    "Claude Opus 5.5 (JP)",
+    "Claude Opus 5.5 (US)",
+    "Claude Opus 5.5 (AU)",
+    "Anthropic Claude Opus 5.5"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-22",
+    "modelsdev:nano-gpt": "2026-09-22",
+    "modelsdev:anthropic": "2026-09-22",
+    "modelsdev:llmgateway-providers": "2026-09-22",
+    "modelsdev:kilo": "2026-09-22",
+    "modelsdev:venice": "2026-09-18",
+    "modelsdev:302ai": "2026-09-22",
+    "modelsdev:openrouter": "2026-09-22",
+    "modelsdev:gitlab": "2026-09-22",
+    "modelsdev:azure": "2026-09-22",
+    "modelsdev:azure-cognitive-services": "2026-09-22",
+    "modelsdev:zenmux": "2026-09-22",
+    "modelsdev:cloudflare-ai-gateway": "2026-09-22",
+    "modelsdev:vercel": "2026-09-22",
+    "modelsdev:google-vertex-anthropic": "2026-09-22",
+    "modelsdev:ofox": "2026-09-22",
+    "modelsdev:neon": "2026-09-22",
+    "modelsdev:aihubmix": "2026-09-22",
+    "modelsdev:merge-gateway": "2026-09-22",
+    "modelsdev:github-copilot": "2026-09-22",
+    "modelsdev:edenai": "2026-09-22",
+    "modelsdev:opencode": "2026-09-22",
+    "modelsdev:requesty": "2026-09-22",
+    "modelsdev:amazon-bedrock": "2026-09-22",
+    "modelsdev:llmgateway": "2026-09-22",
+    "modelsdev:vivgrid": "2026-09-22",
+    "modelsdev:google-vertex": "2026-09-22",
+    "modelsdev:cortecs": "2026-09-22",
+    "modelsdev:crossmodel": "2026-09-22",
+    "modelsdev:digitalocean": "2026-09-22"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-opus-5.5"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-opus-5.5"
+    ],
+    "modelsdev:anthropic": [
+     "claude-opus-5-5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-opus-5-5",
+     "anthropic/claude-opus-5-5",
+     "azure-anthropic/claude-opus-5-5"
+    ],
+    "modelsdev:kilo": [
+     "anthropic/claude-opus-5.5"
+    ],
+    "modelsdev:venice": [
+     "claude-opus-5-5-fast",
+     "claude-opus-5-5"
+    ],
+    "modelsdev:302ai": [
+     "claude-opus-5-5"
+    ],
+    "modelsdev:openrouter": [
+     "anthropic/claude-opus-5.5"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-opus-5-5"
+    ],
+    "modelsdev:azure": [
+     "claude-opus-5-5"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "claude-opus-5-5"
+    ],
+    "modelsdev:zenmux": [
+     "anthropic/claude-opus-5.5"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "anthropic/claude-opus-5.5"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-opus-5.5-fast",
+     "anthropic/claude-opus-5.5"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-opus-5-5@default"
+    ],
+    "modelsdev:ofox": [
+     "anthropic/claude-opus-5.5"
+    ],
+    "modelsdev:neon": [
+     "claude-opus-5-5"
+    ],
+    "modelsdev:aihubmix": [
+     "claude-opus-5-5"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-opus-5-5"
+    ],
+    "modelsdev:github-copilot": [
+     "claude-opus-5.5"
+    ],
+    "modelsdev:edenai": [
+     "anthropic/claude-opus-5-5"
+    ],
+    "modelsdev:opencode": [
+     "claude-opus-5-5"
+    ],
+    "modelsdev:requesty": [
+     "claude-opus-5-5",
+     "claude-opus-5-5@eu"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "global.anthropic.claude-opus-5-5",
+     "anthropic.claude-opus-5-5",
+     "jp.anthropic.claude-opus-5-5",
+     "eu.anthropic.claude-opus-5-5",
+     "us.anthropic.claude-opus-5-5",
+     "au.anthropic.claude-opus-5-5"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-opus-5-5"
+    ],
+    "modelsdev:vivgrid": [
+     "claude-opus-5-5"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-opus-5-5@default"
+    ],
+    "modelsdev:cortecs": [
+     "claude-opus-5.5"
+    ],
+    "modelsdev:crossmodel": [
+     "anthropic/claude-opus-5-5"
+    ],
+    "modelsdev:digitalocean": [
+     "anthropic-claude-opus-5.5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudesonnet55",
+   "names": [
+    "Anthropic: Claude Sonnet 5.5",
+    "Claude Sonnet 5.5",
+    "Claude Sonnet 5.5 (AWS Bedrock)",
+    "Claude Sonnet 5.5 (Anthropic)",
+    "Claude Sonnet 5.5 (Azure Anthropic)",
+    "Agentic Chat (Claude Sonnet 5.5)",
+    "Claude Sonnet 5.5 (EU)",
+    "Claude Sonnet 5.5 (Global)",
+    "Claude Sonnet 5.5 (US)",
+    "Anthropic Claude Sonnet 5.5"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-28",
+    "modelsdev:nano-gpt": "2026-09-28",
+    "modelsdev:anthropic": "2026-09-28",
+    "modelsdev:llmgateway-providers": "2026-09-28",
+    "modelsdev:kilo": "2026-09-28",
+    "modelsdev:venice": "2026-09-26",
+    "modelsdev:302ai": "2026-09-28",
+    "modelsdev:openrouter": "2026-09-28",
+    "modelsdev:gitlab": "2026-09-28",
+    "modelsdev:azure": "2026-09-28",
+    "modelsdev:azure-cognitive-services": "2026-09-28",
+    "modelsdev:cloudflare-ai-gateway": "2026-09-28",
+    "modelsdev:vercel": "2026-09-28",
+    "modelsdev:google-vertex-anthropic": "2026-09-28",
+    "modelsdev:ofox": "2026-09-28",
+    "modelsdev:merge-gateway": "2026-09-28",
+    "modelsdev:github-copilot": "2026-09-28",
+    "modelsdev:edenai": "2026-09-28",
+    "modelsdev:opencode": "2026-09-28",
+    "modelsdev:requesty": "2026-09-28",
+    "modelsdev:amazon-bedrock": "2026-09-28",
+    "modelsdev:llmgateway": "2026-09-28",
+    "modelsdev:vivgrid": "2026-09-28",
+    "modelsdev:google-vertex": "2026-09-28",
+    "modelsdev:cortecs": "2026-09-28",
+    "modelsdev:crossmodel": "2026-09-28",
+    "modelsdev:digitalocean": "2026-09-28"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-sonnet-5.5"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-sonnet-5.5"
+    ],
+    "modelsdev:anthropic": [
+     "claude-sonnet-5-5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-sonnet-5-5",
+     "anthropic/claude-sonnet-5-5",
+     "azure-anthropic/claude-sonnet-5-5"
+    ],
+    "modelsdev:kilo": [
+     "anthropic/claude-sonnet-5.5"
+    ],
+    "modelsdev:venice": [
+     "claude-sonnet-5-5"
+    ],
+    "modelsdev:302ai": [
+     "claude-sonnet-5-5"
+    ],
+    "modelsdev:openrouter": [
+     "anthropic/claude-sonnet-5.5"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-sonnet-5-5"
+    ],
+    "modelsdev:azure": [
+     "claude-sonnet-5-5"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "claude-sonnet-5-5"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "anthropic/claude-sonnet-5.5"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-sonnet-5.5"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-sonnet-5-5@default"
+    ],
+    "modelsdev:ofox": [
+     "anthropic/claude-sonnet-5.5"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-sonnet-5-5"
+    ],
+    "modelsdev:github-copilot": [
+     "claude-sonnet-5.5"
+    ],
+    "modelsdev:edenai": [
+     "anthropic/claude-sonnet-5-5"
+    ],
+    "modelsdev:opencode": [
+     "claude-sonnet-5-5"
+    ],
+    "modelsdev:requesty": [
+     "claude-sonnet-5-5@eu",
+     "claude-sonnet-5-5"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "anthropic.claude-sonnet-5-5",
+     "global.anthropic.claude-sonnet-5-5",
+     "us.anthropic.claude-sonnet-5-5",
+     "eu.anthropic.claude-sonnet-5-5"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-sonnet-5-5"
+    ],
+    "modelsdev:vivgrid": [
+     "claude-sonnet-5-5"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-sonnet-5-5@default"
+    ],
+    "modelsdev:cortecs": [
+     "claude-sonnet-5.5"
+    ],
+    "modelsdev:crossmodel": [
+     "anthropic/claude-sonnet-5-5"
+    ],
+    "modelsdev:digitalocean": [
+     "anthropic-claude-sonnet-5.5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "claudehaiku55",
+   "names": [
+    "Anthropic: Claude Haiku 5.5",
+    "Claude Haiku 5.5",
+    "Claude Haiku 5.5 (AWS Bedrock)",
+    "Claude Haiku 5.5 (Anthropic)",
+    "Claude Haiku 5.5 (EU)",
+    "Claude Haiku 5.5 (JP)",
+    "Claude Haiku 5.5 (Global)",
+    "Claude Haiku 5.5 (US)",
+    "Claude Haiku 5.5 (AU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-10-07",
+    "modelsdev:nano-gpt": "2026-10-07",
+    "modelsdev:anthropic": "2026-10-07",
+    "modelsdev:llmgateway-providers": "2026-10-07",
+    "modelsdev:kilo": "2026-10-07",
+    "modelsdev:venice": "2026-10-07",
+    "modelsdev:openrouter": "2026-10-07",
+    "modelsdev:azure": "2026-10-07",
+    "modelsdev:azure-cognitive-services": "2026-10-07",
+    "modelsdev:vercel": "2026-10-07",
+    "modelsdev:google-vertex-anthropic": "2026-10-07",
+    "modelsdev:merge-gateway": "2026-10-07",
+    "modelsdev:github-copilot": "2026-10-07",
+    "modelsdev:opencode-go": "2026-10-07",
+    "modelsdev:edenai": "2026-10-07",
+    "modelsdev:opencode": "2026-10-07",
+    "modelsdev:requesty": "2026-10-07",
+    "modelsdev:amazon-bedrock": "2026-10-07",
+    "modelsdev:llmgateway": "2026-10-07",
+    "modelsdev:vivgrid": "2026-10-07",
+    "modelsdev:google-vertex": "2026-10-07",
+    "modelsdev:crossmodel": "2026-10-07"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "anthropic/claude-haiku-5.5"
+    ],
+    "modelsdev:nano-gpt": [
+     "anthropic/claude-haiku-5.5"
+    ],
+    "modelsdev:anthropic": [
+     "claude-haiku-5-5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/claude-haiku-5-5",
+     "anthropic/claude-haiku-5-5"
+    ],
+    "modelsdev:kilo": [
+     "anthropic/claude-haiku-5.5"
+    ],
+    "modelsdev:venice": [
+     "claude-haiku-5-5"
+    ],
+    "modelsdev:openrouter": [
+     "anthropic/claude-haiku-5.5"
+    ],
+    "modelsdev:azure": [
+     "claude-haiku-5-5"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "claude-haiku-5-5"
+    ],
+    "modelsdev:vercel": [
+     "anthropic/claude-haiku-5.5"
+    ],
+    "modelsdev:google-vertex-anthropic": [
+     "claude-haiku-5-5@default"
+    ],
+    "modelsdev:merge-gateway": [
+     "anthropic/claude-haiku-5-5"
+    ],
+    "modelsdev:github-copilot": [
+     "claude-haiku-5.5"
+    ],
+    "modelsdev:opencode-go": [
+     "claude-haiku-5-5"
+    ],
+    "modelsdev:edenai": [
+     "anthropic/claude-haiku-5-5"
+    ],
+    "modelsdev:opencode": [
+     "claude-haiku-5-5"
+    ],
+    "modelsdev:requesty": [
+     "claude-haiku-5-5@eu",
+     "claude-haiku-5-5"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "eu.anthropic.claude-haiku-5-5",
+     "jp.anthropic.claude-haiku-5-5",
+     "global.anthropic.claude-haiku-5-5",
+     "anthropic.claude-haiku-5-5",
+     "us.anthropic.claude-haiku-5-5",
+     "au.anthropic.claude-haiku-5-5"
+    ],
+    "modelsdev:llmgateway": [
+     "claude-haiku-5-5"
+    ],
+    "modelsdev:vivgrid": [
+     "claude-haiku-5-5"
+    ],
+    "modelsdev:google-vertex": [
+     "claude-haiku-5-5@default"
+    ],
+    "modelsdev:crossmodel": [
+     "anthropic/claude-haiku-5-5"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

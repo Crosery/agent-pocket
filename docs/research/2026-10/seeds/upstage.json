@@ -1,0 +1,130 @@
+{
+ "vendor": "upstage",
+ "count": 5,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "solarmini",
+   "names": [
+    "solar-mini"
+   ],
+   "releaseDateHints": {
+    "modelsdev:upstage": "2024-06-12"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:upstage": [
+     "solar-mini"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "solarpro2",
+   "names": [
+    "Solar Pro 2",
+    "solar-pro2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:llmtr": "2025-05-20",
+    "modelsdev:upstage": "2025-05-20"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:llmtr": [
+     "upstage/solar-pro2"
+    ],
+    "modelsdev:upstage": [
+     "solar-pro2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "solarpro3",
+   "names": [
+    "Upstage: Solar Pro 3",
+    "Solar Pro 3",
+    "solar-pro3"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-01-27",
+    "modelsdev:llmtr": "2026-01",
+    "modelsdev:upstage": "2026-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "upstage/solar-pro-3"
+    ],
+    "modelsdev:llmtr": [
+     "upstage/solar-pro3"
+    ],
+    "modelsdev:upstage": [
+     "solar-pro3"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "solarpro4",
+   "names": [
+    "Upstage: Solar Pro 4",
+    "Solar Pro 4"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-10",
+    "modelsdev:nano-gpt": "2026-08-06",
+    "modelsdev:llmtr": "2026-08-06",
+    "modelsdev:upstage": "2026-08-06"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "upstage/solar-pro4"
+    ],
+    "modelsdev:nano-gpt": [
+     "upstage/solar-pro4"
+    ],
+    "modelsdev:llmtr": [
+     "upstage/solar-pro4"
+    ],
+    "modelsdev:upstage": [
+     "solar-pro4"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "solarmini4",
+   "names": [
+    "Upstage: Solar Mini 4"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-23"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "upstage/solar-mini4"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

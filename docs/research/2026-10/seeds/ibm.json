@@ -1,0 +1,83 @@
+{
+ "vendor": "ibm",
+ "count": 4,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "granite4hmicro",
+   "names": [
+    "Granite 4.0 H Micro"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cloudflare-workers-ai": "2025-10-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/ibm-granite/granite-4.0-h-micro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "granite4hsmall",
+   "names": [
+    "Granite-4.0-H-Small"
+   ],
+   "releaseDateHints": {
+    "modelsdev:watsonx": "2025-10-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:watsonx": [
+     "ibm/granite-4-h-small"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "granite40hmicro",
+   "names": [
+    "IBM: Granite 4.0 Micro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-20"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "ibm-granite/granite-4.0-h-micro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "granite428b",
+   "names": [
+    "IBM: Granite 4.2 8B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-31"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "ibm-granite/granite-4.2-8b"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

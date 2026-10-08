@@ -1,0 +1,1048 @@
+{
+ "vendor": "mistral",
+ "count": 33,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "mistralembed",
+   "names": [
+    "Mistral Embed"
+   ],
+   "releaseDateHints": {
+    "modelsdev:tempr": "2023-12-11"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:tempr": [
+     "mistral/mistral-embed"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistrallarge",
+   "names": [
+    "Mistral: Mistral Large 3 2512",
+    "Mistral Large 2407",
+    "Mistral Large",
+    "Mistral Large 3 (Mistral AI)",
+    "Mistral Large 3",
+    "Mistral Large 2.1"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-02-26",
+    "modelsdev:llmgateway-providers": "2025-12-02",
+    "modelsdev:kilo": "2025-12-02",
+    "modelsdev:openrouter": "2025-12-02",
+    "modelsdev:anyapi": "2025-12-02",
+    "modelsdev:merge-gateway": "2025-12-02",
+    "modelsdev:opper": "2025-12-02",
+    "modelsdev:pioneer": "2025-12-02",
+    "modelsdev:edenai": "2025-12-02",
+    "modelsdev:tempr": "2025-12-02",
+    "modelsdev:mistral": "2024-11-18",
+    "modelsdev:amazon-bedrock": "2025-12-02",
+    "modelsdev:llmgateway": "2025-12-02",
+    "modelsdev:cortecs": "2025-12-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+file->text",
+    "text+file->text",
+    "text,image->text",
+    "text,image,pdf->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/mistral-large-2512",
+     "mistralai/mistral-large-2407",
+     "mistralai/mistral-large"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "mistral/mistral-large-2512"
+    ],
+    "modelsdev:kilo": [
+     "mistralai/mistral-large-2512"
+    ],
+    "modelsdev:openrouter": [
+     "mistralai/mistral-large-2512"
+    ],
+    "modelsdev:anyapi": [
+     "mistralai/mistral-large-2512"
+    ],
+    "modelsdev:merge-gateway": [
+     "mistral/mistral-large-2411",
+     "mistral/mistral-large-2512"
+    ],
+    "modelsdev:opper": [
+     "mistral-large-2512"
+    ],
+    "modelsdev:pioneer": [
+     "mistral-large-3"
+    ],
+    "modelsdev:edenai": [
+     "mistral/mistral-large-2512"
+    ],
+    "modelsdev:tempr": [
+     "mistral/mistral-large-2512"
+    ],
+    "modelsdev:mistral": [
+     "mistral-large-2411"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "mistral.mistral-large-3-675b-instruct"
+    ],
+    "modelsdev:llmgateway": [
+     "mistral-large-2512"
+    ],
+    "modelsdev:cortecs": [
+     "mistral-large-2512"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "mixtral8x22binstruct",
+   "names": [
+    "Mistral: Mixtral 8x22B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-04-17"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+file->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/mixtral-8x22b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "codestral22bv01",
+   "names": [
+    "Codestral-22B-v0.1"
+   ],
+   "releaseDateHints": {
+    "modelsdev:pioneer": "2024-05-29"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:pioneer": [
+     "mistralai/Codestral-22B-v0.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistralnemo",
+   "names": [
+    "Mistral: Mistral Nemo",
+    "Mistral Nemo"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-07-19",
+    "modelsdev:kilo": "2024-07-01",
+    "modelsdev:openrouter": "2024-07-01",
+    "modelsdev:pioneer": "2024-07-01"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/mistral-nemo"
+    ],
+    "modelsdev:kilo": [
+     "mistralai/mistral-nemo"
+    ],
+    "modelsdev:openrouter": [
+     "mistralai/mistral-nemo"
+    ],
+    "modelsdev:pioneer": [
+     "mistralai/Mistral-Nemo-Instruct-2407"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "pixtral12b",
+   "names": [
+    "Pixtral 12B 2409",
+    "Pixtral 12B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:scaleway": "2024-09-25",
+    "modelsdev:greenpt": "2024-09-01",
+    "modelsdev:pioneer": "2024-09-01"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:scaleway": [
+     "pixtral-12b-2409"
+    ],
+    "modelsdev:greenpt": [
+     "pixtral-12b-2409"
+    ],
+    "modelsdev:pioneer": [
+     "mistralai/Pixtral-12B-2409"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ministral3b",
+   "names": [
+    "Mistral: Ministral 3 3B 2512",
+    "Ministral 3B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-02",
+    "modelsdev:pioneer": "2024-10-16"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/ministral-3b-2512"
+    ],
+    "modelsdev:pioneer": [
+     "ministral-3b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ministral8binstruct",
+   "names": [
+    "Ministral 8B Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:pioneer": "2024-10-16"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:pioneer": [
+     "mistralai/Ministral-8B-Instruct-2410"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistralsmall24binstruct",
+   "names": [
+    "Mistral: Mistral Small 3"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-01-30"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/mistral-small-24b-instruct-2501"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistralsaba",
+   "names": [
+    "Mistral: Saba"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-02-17"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+file->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/mistral-saba"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistralsmall3124binstruct",
+   "names": [
+    "Mistral: Mistral Small 3.1 24B",
+    "Mistral Small 3.1 24B Instruct",
+    "Mistral Small 3.1 24B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-03-17",
+    "modelsdev:cloudflare-workers-ai": "2025-03-17",
+    "modelsdev:watsonx": "2025-03-17"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/mistral-small-3.1-24b-instruct"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/mistralai/mistral-small-3.1-24b-instruct"
+    ],
+    "modelsdev:watsonx": [
+     "mistralai/mistral-small-3-1-24b-instruct-2503"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "pixtrallarge",
+   "names": [
+    "Pixtral Large (25.02) (Amazon Bedrock)",
+    "Pixtral Large (25.02) (Amazon Bedrock, US)",
+    "Pixtral Large (25.02)",
+    "Pixtral Large (25.02) (EU)",
+    "Pixtral Large (25.02) (US)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:edenai": "2025-04-08",
+    "modelsdev:amazon-bedrock": "2025-04-08",
+    "modelsdev:cortecs": "2025-04-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:edenai": [
+     "amazon/mistral.pixtral-large-2502-v1:0",
+     "amazon/mistral.pixtral-large-2502-v1:0@us"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "mistral.pixtral-large-2502-v1:0",
+     "eu.mistral.pixtral-large-2502-v1:0",
+     "us.mistral.pixtral-large-2502-v1:0"
+    ],
+    "modelsdev:cortecs": [
+     "pixtral-large-2502"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistralmedium",
+   "names": [
+    "Mistral Medium 3.5 128B",
+    "Mistral Medium 3.5",
+    "Mistral Medium 3",
+    "mistralai--mistral-medium-instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:scaleway": "2026-04-29",
+    "modelsdev:greenpt": "2026-04-29",
+    "modelsdev:merge-gateway": "2025-05-07",
+    "modelsdev:nvidia": "2026-04-29",
+    "modelsdev:pioneer": "2025-05-07",
+    "modelsdev:edenai": "2026-04-29",
+    "modelsdev:tempr": "2026-04-29",
+    "modelsdev:sap-ai-core": "2026-04-29",
+    "modelsdev:evroc": "2026-04-29"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:scaleway": [
+     "mistral-medium-3.5-128b"
+    ],
+    "modelsdev:greenpt": [
+     "mistral-medium-3.5-128b"
+    ],
+    "modelsdev:merge-gateway": [
+     "mistral/mistral-medium-2505"
+    ],
+    "modelsdev:nvidia": [
+     "mistralai/mistral-medium-3.5-128b"
+    ],
+    "modelsdev:pioneer": [
+     "mistral-medium-3.5",
+     "mistral-medium"
+    ],
+    "modelsdev:edenai": [
+     "mistral/mistral-medium-2505",
+     "mistral/mistral-medium-2604"
+    ],
+    "modelsdev:tempr": [
+     "mistral/mistral-medium-2604"
+    ],
+    "modelsdev:sap-ai-core": [
+     "mistralai--mistral-medium-instruct",
+     "mistralai--mistral-medium"
+    ],
+    "modelsdev:evroc": [
+     "mistralai/Mistral-Medium-3.5-128B"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "mistralmedium3",
+   "names": [
+    "Mistral: Mistral Medium 3"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-05-07"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+file->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/mistral-medium-3"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "magistralsmall",
+   "names": [
+    "Magistral Small",
+    "Magistral Small 1.2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:pioneer": "2025-06-10",
+    "modelsdev:amazon-bedrock": "2025-09-18"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:pioneer": [
+     "mistralai/Magistral-Small-2506"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "mistral.magistral-small-2509"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistralsmall",
+   "names": [
+    "Mistral: Mistral Small 4",
+    "Mistral Small 4",
+    "Mistral Small 4 (Mistral AI)",
+    "Mistral Small 3.2 (Mistral AI)",
+    "Mistral Small 3.2 24B Instruct (2506)",
+    "Green L",
+    "Green L Raw",
+    "Mistral Small 3.2",
+    "Mistral Small 4 (EU)",
+    "mistralai--mistral-small"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-16",
+    "modelsdev:empiriolabs": "2026-03-16",
+    "modelsdev:llmgateway-providers": "2025-06-20",
+    "modelsdev:kilo": "2026-03-16",
+    "modelsdev:openrouter": "2026-03-16",
+    "modelsdev:scaleway": "2025-06-20",
+    "modelsdev:greenpt": "2025-06-20",
+    "modelsdev:opper": "2026-03-16",
+    "modelsdev:pioneer": "2026-03-16",
+    "modelsdev:aki-io": "2026-03-16",
+    "modelsdev:edenai": "2026-03-16",
+    "modelsdev:tempr": "2026-03-16",
+    "modelsdev:requesty": "2026-03-16",
+    "modelsdev:llmgateway": "2025-06-20",
+    "modelsdev:sap-ai-core": "2026-03-16",
+    "modelsdev:helicone": "2025-06-20",
+    "modelsdev:cortecs": "2026-03-16",
+    "modelsdev:infomaniak": "2026-03-16"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/mistral-small-2603"
+    ],
+    "modelsdev:empiriolabs": [
+     "mistral-small-4"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "mistral/mistral-small-2603",
+     "mistral/mistral-small-2506"
+    ],
+    "modelsdev:kilo": [
+     "mistralai/mistral-small-2603"
+    ],
+    "modelsdev:openrouter": [
+     "mistralai/mistral-small-2603"
+    ],
+    "modelsdev:scaleway": [
+     "mistral-small-3.2-24b-instruct-2506"
+    ],
+    "modelsdev:greenpt": [
+     "green-l",
+     "green-l-raw",
+     "mistral-small-3.2-24b-instruct-2506"
+    ],
+    "modelsdev:opper": [
+     "mistral-small-2603"
+    ],
+    "modelsdev:pioneer": [
+     "mistralai/Mistral-Small-4-119B-2603"
+    ],
+    "modelsdev:aki-io": [
+     "mistral4-119b"
+    ],
+    "modelsdev:edenai": [
+     "mistral/mistral-small-2603"
+    ],
+    "modelsdev:tempr": [
+     "mistral/mistral-small-2603"
+    ],
+    "modelsdev:requesty": [
+     "mistral-small-2603",
+     "mistral-small-2603@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "mistral-small-2603",
+     "mistral-small-2506"
+    ],
+    "modelsdev:sap-ai-core": [
+     "mistralai--mistral-small"
+    ],
+    "modelsdev:helicone": [
+     "mistral-small"
+    ],
+    "modelsdev:cortecs": [
+     "mistral-small-2603"
+    ],
+    "modelsdev:infomaniak": [
+     "mistralai/Mistral-Small-4-119B-2603"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistralsmall3224binstruct",
+   "names": [
+    "Mistral: Mistral Small 3.2 24B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-06-20"
+   },
+   "openWeights": null,
+   "modalities": [
+    "image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/mistral-small-3.2-24b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "devstralmedium",
+   "names": [
+    "Devstral Medium"
+   ],
+   "releaseDateHints": {
+    "modelsdev:merge-gateway": "2025-07-10"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:merge-gateway": [
+     "mistral/devstral-medium-2507"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "devstralsmall",
+   "names": [
+    "Devstral Small"
+   ],
+   "releaseDateHints": {
+    "modelsdev:merge-gateway": "2025-07-10"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:merge-gateway": [
+     "mistral/devstral-small-2507"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "voxtralmini3b",
+   "names": [
+    "Voxtral Mini 3B 2507 (Amazon Bedrock, US)",
+    "Voxtral Mini 3B 2507 (Amazon Bedrock)",
+    "Voxtral Mini 3B 2507"
+   ],
+   "releaseDateHints": {
+    "modelsdev:edenai": "2025-07-15",
+    "modelsdev:amazon-bedrock": "2025-07-15"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,audio->text"
+   ],
+   "catalogIds": {
+    "modelsdev:edenai": [
+     "amazon/mistral.voxtral-mini-3b-2507@us",
+     "amazon/mistral.voxtral-mini-3b-2507"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "mistral.voxtral-mini-3b-2507"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "voxtralsmall24b",
+   "names": [
+    "Mistral: Voxtral Small 24B 2507",
+    "Voxtral Small 24B 2507",
+    "Voxtral Small 24B 2507 (Amazon Bedrock)",
+    "Voxtral Small 24B 2507 (Amazon Bedrock, US)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-30",
+    "modelsdev:kilo": "2025-07-15",
+    "modelsdev:openrouter": "2025-07-15",
+    "modelsdev:edenai": "2025-07-15",
+    "modelsdev:amazon-bedrock": "2025-07-15"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+audio+file->text",
+    "text,audio,pdf->text",
+    "text,audio->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/voxtral-small-24b-2507"
+    ],
+    "modelsdev:kilo": [
+     "mistralai/voxtral-small-24b-2507"
+    ],
+    "modelsdev:openrouter": [
+     "mistralai/voxtral-small-24b-2507"
+    ],
+    "modelsdev:edenai": [
+     "amazon/mistral.voxtral-small-24b-2507",
+     "amazon/mistral.voxtral-small-24b-2507@us"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "mistral.voxtral-small-24b-2507"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "codestral",
+   "names": [
+    "Mistral: Codestral 2508",
+    "Codestral 2508",
+    "Codestral 25.08"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-08-01",
+    "modelsdev:nano-gpt": "2025-07-30",
+    "modelsdev:kilo": "2025-07-30",
+    "modelsdev:openrouter": "2025-07-30",
+    "modelsdev:edenai": "2025-07-30",
+    "modelsdev:mistral": "2025-07-30",
+    "modelsdev:cortecs": "2025-07-30"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+file->text",
+    "text->text",
+    "text,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/codestral-2508"
+    ],
+    "modelsdev:nano-gpt": [
+     "mistralai/codestral-2508"
+    ],
+    "modelsdev:kilo": [
+     "mistralai/codestral-2508"
+    ],
+    "modelsdev:openrouter": [
+     "mistralai/codestral-2508"
+    ],
+    "modelsdev:edenai": [
+     "mistral/codestral-2508"
+    ],
+    "modelsdev:mistral": [
+     "codestral-2508"
+    ],
+    "modelsdev:cortecs": [
+     "codestral-2508"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistralmedium31",
+   "names": [
+    "Mistral: Mistral Medium 3.1"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-08-13"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+file->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/mistral-medium-3.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ministral14b",
+   "names": [
+    "Mistral: Ministral 3 14B 2512",
+    "Ministral 14B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-02",
+    "modelsdev:pioneer": "2025-12-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/ministral-14b-2512"
+    ],
+    "modelsdev:pioneer": [
+     "ministral-14b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ministral314binstruct",
+   "names": [
+    "Ministral 3 14B (Infomaniak)",
+    "Ministral 3 14B",
+    "Ministral 14B 3.0"
+   ],
+   "releaseDateHints": {
+    "modelsdev:edenai": "2025-12-02",
+    "modelsdev:mistral": "2025-12-02",
+    "modelsdev:amazon-bedrock": "2025-12-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:edenai": [
+     "infomaniak/mistralai/Ministral-3-14B-Instruct-2512"
+    ],
+    "modelsdev:mistral": [
+     "ministral-14b-2512"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "mistral.ministral-3-14b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ministral33binstruct",
+   "names": [
+    "Ministral 3 3B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:mistral": "2025-12-02",
+    "modelsdev:amazon-bedrock": "2025-12-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:mistral": [
+     "ministral-3b-2512"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "mistral.ministral-3-3b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ministral38binstruct",
+   "names": [
+    "Ministral 3 8B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:mistral": "2025-12-02",
+    "modelsdev:amazon-bedrock": "2025-12-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:mistral": [
+     "ministral-8b-2512"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "mistral.ministral-3-8b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ministral8b",
+   "names": [
+    "Mistral: Ministral 3 8B 2512"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-02"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/ministral-8b-2512"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "devstral",
+   "names": [
+    "Mistral: Devstral 2 2512",
+    "Devstral 2 (Mistral AI)",
+    "Devstral 2",
+    "Devstral 2 123B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-09",
+    "modelsdev:llmgateway-providers": "2025-12-09",
+    "modelsdev:kilo": "2025-12-09",
+    "modelsdev:openrouter": "2025-12-09",
+    "modelsdev:anyapi": "2025-12-09",
+    "modelsdev:greenpt": "2025-12-09",
+    "modelsdev:merge-gateway": "2025-12-09",
+    "modelsdev:opper": "2025-12-09",
+    "modelsdev:pioneer": "2025-12-09",
+    "modelsdev:edenai": "2025-12-09",
+    "modelsdev:amazon-bedrock": "2025-12-09",
+    "modelsdev:llmgateway": "2025-12-09",
+    "modelsdev:cortecs": "2025-12-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+file->text",
+    "text->text",
+    "text,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/devstral-2512"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "mistral/devstral-2512"
+    ],
+    "modelsdev:kilo": [
+     "mistralai/devstral-2512"
+    ],
+    "modelsdev:openrouter": [
+     "mistralai/devstral-2512"
+    ],
+    "modelsdev:anyapi": [
+     "mistralai/devstral-2512"
+    ],
+    "modelsdev:greenpt": [
+     "devstral-2-123b-instruct-2512"
+    ],
+    "modelsdev:merge-gateway": [
+     "mistral/devstral-2512"
+    ],
+    "modelsdev:opper": [
+     "devstral-2512"
+    ],
+    "modelsdev:pioneer": [
+     "devstral-2"
+    ],
+    "modelsdev:edenai": [
+     "mistral/devstral-2512"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "mistral.devstral-2-123b"
+    ],
+    "modelsdev:llmgateway": [
+     "devstral-2512"
+    ],
+    "modelsdev:cortecs": [
+     "devstral-2512"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "devstralsmall2",
+   "names": [
+    "Devstral Small 2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:pioneer": "2025-12-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:pioneer": [
+     "devstral-small-2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistralmedium35",
+   "names": [
+    "Mistral: Mistral Medium 3.5"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-30"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+file->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/mistral-medium-3-5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistrallarge4",
+   "names": [
+    "Mistral Large 4",
+    "Mistral Large 4 (Mistral AI)",
+    "Mistral Large 4 (EU)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nano-gpt": "2026-10-06",
+    "modelsdev:llmgateway-providers": "2026-10-06",
+    "modelsdev:ollama-cloud": "2026-10-06",
+    "modelsdev:opencode": "2026-10-06",
+    "modelsdev:requesty": "2026-10-06",
+    "modelsdev:mistral": "2026-10-06",
+    "modelsdev:llmgateway": "2026-10-06",
+    "modelsdev:cortecs": "2026-10-06"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nano-gpt": [
+     "mistralai/mistral-large-4"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "mistral/mistral-large-4"
+    ],
+    "modelsdev:ollama-cloud": [
+     "mistral-large-4"
+    ],
+    "modelsdev:opencode": [
+     "mistral-large-4"
+    ],
+    "modelsdev:requesty": [
+     "mistral-large-4",
+     "mistral-large-4@eu"
+    ],
+    "modelsdev:mistral": [
+     "mistral-large-4"
+    ],
+    "modelsdev:llmgateway": [
+     "mistral-large-4"
+    ],
+    "modelsdev:cortecs": [
+     "mistral-large-4-0"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistrallarge40",
+   "names": [
+    "Mistral: Mistral Large 4"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-10-06"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "mistralai/mistral-large-4-0"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}
