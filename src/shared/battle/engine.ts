@@ -319,6 +319,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     return {
       c: this.c,
       turn: () => this.turnNo,
+      setTurn: (n) => { this.turnNo = n },
       active: () => this.boss !== null && this.act(BOSS_SIDE) === this.boss.cr,
       say: (key, params) => this.say(key, params),
       emit: (e) => this.emit(e),

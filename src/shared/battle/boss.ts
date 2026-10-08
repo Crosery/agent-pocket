@@ -26,6 +26,8 @@ export interface BossHost {
   readonly c: Content
   /** Battle turn number (0 before the first turn). */
   turn(): number
+  /** Adopts the boss clock of a restored BossState (a raid keeps one clock for every player's engine). */
+  setTurn(n: number): void
   /** The boss creature is the one currently fighting on its side. */
   active(): boolean
   say(key: string, params?: Record<string, string | number>): void
@@ -527,7 +529,7 @@ export class BossDirector {
     })) as BossState
   }
 
-  /** Writes a state taken with extract() back (the engine's own turn counter is not part of it). */
+  /** Writes a state taken with extract() back, including the battle turn counter the boss rules are clocked by. */
   apply(s: BossState): void {
     if (s.bossId !== this.def.id) return
     const c = JSON.parse(JSON.stringify(s)) as BossState
@@ -535,6 +537,7 @@ export class BossDirector {
       form: c.form, formTurn: c.formTurn, fired: c.fired, phase: c.phase, meters: c.meters, enrage: c.enrage, charge: c.charge,
       skip: c.skip, borrowed: c.borrowed, lastFoeType: c.lastFoeType, lastFoeMove: c.lastFoeMove, seenTypes: c.seenTypes,
     }
+    this.host.setTurn(Math.max(0, Math.floor(c.turn)))
     this.cr.speciesId = c.speciesId
     this.cr.abilityId = c.abilityId
     this.cr.moves = c.moves
