@@ -1,13 +1,21 @@
 // Pure onboarding logic: condition evaluation, objective selection, arrow target resolution, tip eligibility.
-import type { GameMap, QuestDef, SaveData, World } from '../../shared/types.ts'
-import { TIP_FLAG_PREFIX, TUTORIAL, type Cond, type ObjectiveRule, type TipDef, type TutorialConfig } from './config.ts'
+import type { BattleEvent, GameMap, QuestDef, SaveData, World } from '../../shared/types.ts'
+import { CONTENT } from '../../shared/content/index.ts'
+import { TIP_FLAG_PREFIX, TUTORIAL, type Cond, type LessonDef, type Matcher, type ObjectiveRule, type TipDef, type TutorialConfig } from './config.ts'
 
 const truthy = (v: boolean | number | string | undefined) => v !== undefined && v !== false && v !== 0 && v !== ''
 
-export type ProgressView = Pick<SaveData, 'flags' | 'badges' | 'party' | 'stats' | 'quests'>
+export type ProgressView = Pick<SaveData, 'flags' | 'badges' | 'party' | 'stats' | 'quests'> & Partial<Pick<SaveData, 'bag'>>
 
-export function condHolds(c: Cond | undefined, s: ProgressView): boolean {
+/** State that is not part of the save (the clock). */
+export interface LiveView { timeOfDay?: string }
+
+export function condHolds(c: Cond | undefined, s: ProgressView, live: LiveView = {}): boolean {
   if (!c) return true
+  const have = (id: string) => (s.bag?.[id] ?? 0) > 0
+  if (c.hasItem?.some((id) => !have(id))) return false
+  if (c.hasCategory && !c.hasCategory.some((cat) => CONTENT.itemList.some((it) => it.category === cat && have(it.id)))) return false
+  if (c.timeOfDay && !(live.timeOfDay && c.timeOfDay.includes(live.timeOfDay))) return false
   if (c.flag?.some((f) => !truthy(s.flags[f]))) return false
   if (c.noFlag?.some((f) => truthy(s.flags[f]))) return false
   if (c.minBadges !== undefined && s.badges.length < c.minBadges) return false
@@ -95,4 +103,88 @@ export function tipSeen(s: ProgressView, id: string): boolean {
 /** A tip that was never shown but whose lesson the save already moved past is not worth showing. */
 export function tipLive(tip: TipDef, s: ProgressView): boolean {
   return !tipSeen(s, tip.id) && !(tip.expires && condHolds(tip.expires, s))
+}
+
+/** Every `after` tip was shown or no longer applies (its own expiry), so teaching order holds across reloads. */
+export function afterDone(tip: TipDef, list: readonly TipDef[], s: ProgressView): boolean {
+  return (tip.after ?? []).every((id) => {
+    const prior = list.find((x) => x.id === id)
+    return !prior || tipSeen(s, id) || !tipLive(prior, s)
+  })
+}
+
+// -- `on` triggers: bus payloads and battle cues ---------------------------------------------------------------
+
+function matchOne(m: Matcher, v: unknown): boolean {
+  if (typeof m !== 'object') return v === m
+  if (typeof v === 'number') return (m.min === undefined || v >= m.min) && (m.max === undefined || v <= m.max) && (!m.in || m.in.includes(v))
+  if (typeof v !== 'string') return false
+  return (m.startsWith === undefined || v.startsWith(m.startsWith)) && (m.endsWith === undefined || v.endsWith(m.endsWith)) && (!m.in || m.in.includes(v))
+}
+
+export function matchPayload(match: Record<string, Matcher> | undefined, payload: Record<string, unknown>): boolean {
+  return Object.entries(match ?? {}).every(([k, m]) => matchOne(m, payload[k]))
+}
+
+/** Adds derived fields the data may test: rarityOrder for dex events, mapKind for map:entered. */
+export function enrich(name: string, payload: Record<string, unknown>, world: World): Record<string, unknown> {
+  if (name === 'dex:seen' || name === 'dex:caught') {
+    const rarity = CONTENT.species[String(payload.speciesId)]?.rarity
+    return { ...payload, rarityOrder: CONTENT.rarityById[rarity ?? '']?.order ?? 0 }
+  }
+  if (name === 'map:entered') return { ...payload, mapKind: world.maps[String(payload.mapId)]?.kind ?? '' }
+  return payload
+}
+
+export interface Cue { cue: string; payload: Record<string, unknown> }
+
+/** Teachable moments in a batch of battle events (side 0 = the local player). */
+export function battleCues(events: readonly BattleEvent[]): Cue[] {
+  const out: Cue[] = []
+  const immune = noEffectPattern()
+  for (const e of events) {
+    switch (e.t) {
+      case 'turn': out.push({ cue: 'turn', payload: { turn: e.turn } }); break
+      case 'damage': {
+        const side = e.side
+        const eff = e.effectiveness
+        if (eff > 1) out.push({ cue: side === 1 ? 'superEffective' : 'takenSuper', payload: { side, effectiveness: eff } })
+        if (eff >= 4) out.push({ cue: 'doubleSuper', payload: { side, effectiveness: eff } })
+        if (eff > 0 && eff < 1) out.push({ cue: 'resisted', payload: { side, effectiveness: eff } })
+        if (eff > 0 && eff <= 0.25) out.push({ cue: 'doubleResist', payload: { side, effectiveness: eff } })
+        if (e.crit) out.push({ cue: 'crit', payload: { side } })
+        break
+      }
+      case 'msg': if (immune?.test(e.text)) out.push({ cue: 'immune', payload: {} }); break
+      case 'miss': out.push({ cue: 'miss', payload: { side: e.side } }); break
+      case 'status': if (e.status) out.push({ cue: 'status', payload: { side: e.side, status: e.status } }); break
+      case 'volatile': if (e.on) out.push({ cue: 'volatile', payload: { side: e.side } }); break
+      case 'stat': out.push({ cue: 'stat', payload: { side: e.side, delta: e.delta } }); break
+      case 'weather': out.push({ cue: 'weather', payload: {} }); break
+      case 'ability': out.push({ cue: 'ability', payload: { side: e.side } }); break
+      case 'faint': out.push({ cue: e.side === 0 ? 'faintOwn' : 'faintFoe', payload: {} }); break
+      case 'levelUp': out.push({ cue: 'levelUp', payload: { level: e.level } }); break
+      case 'moveLearnable': out.push({ cue: 'moveLearnable', payload: {} }); break
+      case 'evolveReady': out.push({ cue: 'evolveReady', payload: {} }); break
+      case 'catch': out.push({ cue: e.success ? 'caught' : 'catchFail', payload: {} }); break
+      default: break
+    }
+  }
+  return out
+}
+
+let noEffectRe: RegExp | null | undefined
+/** The engine reports immunity only as a rendered message; recognise it from the same text template. */
+function noEffectPattern(): RegExp | null {
+  if (noEffectRe !== undefined) return noEffectRe
+  const tpl = CONTENT.text['battle.noEffect']
+  noEffectRe = typeof tpl === 'string' && tpl.length > 4
+    ? new RegExp(tpl.split(/\{\w+\}/).map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.+'))
+    : null
+  return noEffectRe
+}
+
+/** A lesson counts as learnt once an NPC taught it (`teach`) or one of its tips was shown. */
+export function lessonLearned(lesson: LessonDef, s: Pick<ProgressView, 'flags'>, cfg: TutorialConfig = TUTORIAL): boolean {
+  return truthy(s.flags[`${cfg.curriculum.flagPrefix}${lesson.id}`]) || (lesson.tips ?? []).some((id) => tipSeen(s as ProgressView, id))
 }

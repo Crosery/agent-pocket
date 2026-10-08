@@ -26,8 +26,9 @@ test('objective follows story progress from starter to gym 1 to the main quest',
   assert.equal(idOf(progress()), 'starter')
   assert.equal(idOf(progress({ flags: { starter: 'o1' }, party })), 'rival')
   const afterRival = { starter: 'o1', 'rival:lab': true }
-  assert.equal(idOf(progress({ flags: afterRival, party })), 'route')
-  assert.equal(idOf(progress({ flags: { ...afterRival, 'ob:route1': true }, party })), 'catch')
+  assert.equal(idOf(progress({ flags: afterRival, party })), 'typeLesson', 'the optional type lesson comes first')
+  assert.equal(idOf(progress({ flags: { ...afterRival, 'lesson:typeChart': true }, party })), 'route')
+  assert.equal(idOf(progress({ flags: { ...afterRival, 'ob:route1': true }, party })), 'catch', 'leaving town skips the optional lesson')
   const caught = progress({ flags: { ...afterRival, 'ob:route1': true }, party, stats: { ...progress().stats, caught: 1 } })
   assert.equal(idOf(caught), 'heal')
   assert.equal(idOf({ ...caught, flags: { ...caught.flags, 'ob:healed': true } }), 'gym1')

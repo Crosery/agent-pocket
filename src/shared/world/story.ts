@@ -17,6 +17,7 @@ import type {
   Dir, GameMap, NpcDef, NpcRole, QuestDef, ScriptStep, SpeciesDef, SpeciesPick, TrainerDef, TrainerPartyEntry, World,
 } from '../types.ts'
 import { CONTENT, terrainId, typeEffectiveness } from '../content/index.ts'
+import { EXCHANGE } from '../gameplay/exchange.ts'
 import { worldAnchors, worldBuildInfo } from './index.ts'
 import { WORLD_CONTENT } from './data.ts'
 import { COLLISION_FREE, COLLISION_WATER, DIR_DX, DIR_DY, DIRS, buildCollision, canStep, inBounds } from './collision.ts'
@@ -1230,6 +1231,8 @@ class StoryBuilder implements PopHost {
             case 'wait': if (typeof s.ms !== 'number' || s.ms < 0) bad('bad ms'); break
             case 'fade': if (typeof s.out !== 'boolean') bad('fade.out must be boolean'); break
             case 'unlockTown': if (!w.towns.some((t) => t.id === s.town)) bad(`unknown town "${s.town}"`); break
+            case 'exchange': if (!EXCHANGE.desks[s.desk]) bad(`unknown exchange desk "${s.desk}"`); break
+            case 'teach': if (typeof s.lesson !== 'string' || !s.lesson) bad('teach needs a lesson id'); break
             case 'chooseStarter': case 'heal': case 'openBox': case 'setRespawn': case 'end': break
             default: bad('unknown op')
           }

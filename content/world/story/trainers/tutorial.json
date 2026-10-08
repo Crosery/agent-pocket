@@ -1,1 +1,8 @@
-{}
+{
+  "tutorial": {
+    "defaults": {"aiLevel": 0, "rewardPerLevel": 0, "music": "battle_trainer"},
+    "trainers": [
+      {"id": "lesson-types", "nameZh": "陪练智灵", "classZh": "属性特训", "sprite": "trainer_scientist", "reward": 200, "party": [{"species": "phi-3", "level": 2, "moves": ["white-noise"]}, {"species": "codex-2021", "level": 2, "moves": ["white-noise"]}, {"species": "gemini-flash-lite", "level": 2, "moves": ["white-noise"]}], "introText": ["陪练一号、二号、三号，上场！", "三位各是一种属性。注意看每一招打上去的效果！"], "defeatText": ["三位陪练都练累了。属性课，毕业！"]}
+    ]
+  }
+}

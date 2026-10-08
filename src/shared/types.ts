@@ -577,6 +577,10 @@ export type ScriptStep =
   | { op: 'heal' }
   | { op: 'shop'; items: string[] }
   | { op: 'openBox' }
+  /** Opens the barter screen of a desk in content/exchange.json. */
+  | { op: 'exchange'; desk: string }
+  /** Records that this NPC delivered a curriculum lesson (content/tutorial.json): the manual marks it learnt. */
+  | { op: 'teach'; lesson: string }
   | { op: 'quest'; quest: string; stage: number; done?: boolean }
   | { op: 'warp'; map: string; x: number; y: number; facing: Dir }
   | { op: 'moveNpc'; npc: string; path: Dir[] }

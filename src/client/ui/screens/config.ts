@@ -8,7 +8,7 @@ import type { GlyphDef } from '../config.ts'
 
 export interface MenuEntry { id: string; label: string }
 
-export type PauseAction = 'dex' | 'party' | 'bag' | 'map' | 'quests' | 'research' | 'intel' | 'online' | 'save' | 'settings' | 'title'
+export type PauseAction = 'dex' | 'party' | 'bag' | 'map' | 'quests' | 'research' | 'intel' | 'manual' | 'online' | 'save' | 'settings' | 'title'
 export type TitleChoice = 'continue' | 'new' | 'import' | 'settings'
 export type SettingsKey = keyof Settings
 
@@ -156,7 +156,7 @@ export interface ScreensConfig {
 export const SCREENS: ScreensConfig = screensJson as unknown as ScreensConfig
 
 const ITEM_CATEGORIES: readonly ItemCategory[] = ['ball', 'medicine', 'battle', 'key', 'chip', 'evolution', 'misc']
-const PAUSE_ACTIONS: readonly PauseAction[] = ['dex', 'party', 'bag', 'map', 'quests', 'research', 'intel', 'online', 'save', 'settings', 'title']
+const PAUSE_ACTIONS: readonly PauseAction[] = ['dex', 'party', 'bag', 'map', 'quests', 'research', 'intel', 'manual', 'online', 'save', 'settings', 'title']
 
 /** Validates content/screens.json against the content registry. Returns human-readable problems (empty = OK). */
 export function validateScreensConfig(cfg: ScreensConfig, c: Content, ui: { glyphs: Record<string, unknown>; glyphPalette: Record<string, string> }): string[] {

@@ -1,0 +1,21 @@
+{
+  "flagPrefix": "exchange:",
+  "desks": {
+    "general": {
+      "offers": [
+        {"id": "shard-repel", "give": {"data-shard": 1}, "get": {"repel": 1}},
+        {"id": "shard-cache", "give": {"data-shard": 2}, "get": {"super-cache": 1}},
+        {"id": "shard-ball", "give": {"data-shard": 3}, "get": {"few-shot-ball": 2}},
+        {"id": "fan-patch", "give": {"server-fan": 1}, "get": {"universal-patch": 1}},
+        {"id": "ssd-ball", "give": {"broken-ssd": 1}, "get": {"cot-ball": 1}},
+        {"id": "fan-hyper", "give": {"server-fan": 2}, "get": {"hyper-cache": 1}, "atLeastBadges": 2},
+        {"id": "floppy-rare", "give": {"retro-floppy": 1}, "get": {"rare-ball": 1}, "atLeastBadges": 2},
+        {"id": "gpu-finetune", "give": {"old-gpu": 1}, "get": {"finetune-dataset": 1}, "atLeastBadges": 2},
+        {"id": "wafer-dataset", "give": {"silicon-wafer": 1}, "get": {"rare-dataset": 1}, "atLeastBadges": 4},
+        {"id": "chip-restore", "give": {"rare-chip": 1}, "get": {"full-restore": 2}, "atLeastBadges": 4},
+        {"id": "quantum-bundle", "give": {"quantum-bit": 1}, "get": {"finetune-dataset": 2, "rare-ball": 1}, "atLeastBadges": 4},
+        {"id": "gold-dataset", "give": {"gold-token": 1}, "get": {"rare-dataset": 2}, "atLeastBadges": 6}
+      ]
+    }
+  }
+}

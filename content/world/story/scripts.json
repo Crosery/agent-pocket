@@ -1,15 +1,15 @@
 {
   "nurse": [
     {"op": "say", "text": "欢迎来到{townName}智灵补给站！要让你的智灵休息一下吗？"},
-    {"op": "choice", "text": "要恢复智灵吗？", "options": ["拜托了", "不用了"], "branches": [[{"op": "say", "text": "好的，请把智灵交给我。正在清理上下文缓存……"}, {"op": "heal"}, {"op": "setFlag", "flag": "ob:healed"}, {"op": "setRespawn"}, {"op": "say", "text": "久等了！你的智灵已经全部恢复。欢迎再来！"}], [{"op": "say", "text": "欢迎随时再来！"}]]}
+    {"op": "choice", "text": "要恢复智灵吗？", "options": ["拜托了", "不用了"], "branches": [[{"op": "say", "text": "好的，请把智灵交给我。正在清理上下文缓存……"}, {"op": "heal"}, {"op": "setFlag", "flag": "ob:healed"}, {"op": "setRespawn"}, {"op": "say", "text": "久等了！你的智灵已经全部恢复。欢迎再来！"}, {"op": "teach", "lesson": "heal"}], [{"op": "say", "text": "欢迎随时再来！"}]]}
   ],
   "box": [
     {"op": "say", "text": "这台终端连着云端智灵仓库。队伍满了的话，新收服的智灵会自动存到这里。"},
-    {"op": "choice", "text": "要打开智灵仓库吗？", "options": ["打开", "不用了"], "branches": [[{"op": "openBox"}], [{"op": "say", "text": "需要的时候，随时来找我。"}]]}
+    {"op": "choice", "text": "要打开智灵仓库吗？", "options": ["打开", "不用了"], "branches": [[{"op": "teach", "lesson": "box"}, {"op": "openBox"}], [{"op": "say", "text": "需要的时候，随时来找我。"}]]}
   ],
   "clerk": [
     {"op": "say", "text": "欢迎光临{townName}商店！"},
-    {"op": "tieredShop", "town": "{town}"},
+    {"op": "choice", "text": "想做点什么？", "options": ["买卖道具", "兑换废料", "随便看看"], "branches": [[{"op": "tieredShop", "town": "{town}"}, {"op": "teach", "lesson": "shop"}], [{"op": "ifFlag", "flag": "lesson:exchange", "then": [], "else": [{"op": "say", "text": "野外捡到的数据碎片、坏硬盘、旧显卡，别当垃圾卖了——拿来柜台，我按行情给你换成好东西。"}, {"op": "say", "text": "徽章越多，能换的档位越高。材料不够的档位会灰着显示，先看看就行。"}]}, {"op": "exchange", "desk": "general"}, {"op": "teach", "lesson": "exchange"}], [{"op": "say", "text": "慢慢看，需要什么跟我说。"}]]},
     {"op": "say", "text": "谢谢惠顾，欢迎再来！"}
   ],
   "gym-guide": [
@@ -84,5 +84,14 @@
   ],
   "tutor-thanks": [
     {"op": "say", "text": "好好用它！招式芯片用过一次就会消失，记得挑一只合适的智灵。"}
+  ],
+  "type-lesson-battle": [
+    {"op": "say", "text": "规则很简单：陪练只会喊口号，不会真打你。你自己的招式，试着打出「效果拔群」和「效果不佳」。", "speaker": "阿灵"},
+    {"op": "setFlag", "flag": "ob:typeLesson"},
+    {"op": "battle", "trainer": "lesson-types", "lossContinues": true, "lossFlag": "lesson:types-lost"},
+    {"op": "heal"},
+    {"op": "say", "text": "辛苦啦！看到了吗：打到弱点，一下就倒；打到抵抗的，磨半天。", "speaker": "阿灵"},
+    {"op": "say", "text": "所以对战前先看属性，必要时换人。我把你的队伍也治好了。", "speaker": "阿灵"},
+    {"op": "ifFlag", "flag": "lesson:typeChart", "then": [], "else": [{"op": "giveItem", "item": "cache-potion", "qty": 3}, {"op": "teach", "lesson": "typeChart"}]}
   ]
 }
