@@ -7,6 +7,7 @@
 //   &screen=party|bag|dex|box|map|quests|settings|shop
 // Infinite overworld: &map=<overworld>&x/y accept any integer tile (negative included). window.__ap (dev only):
 //   pos() · tp(x, y, map?) · region() · gates() · places(radius?) · discover(id) · fly(id) · fog() · distance()
+//   clock(minutes?) sets / reads the in-game clock (load with &t=<minutes> to keep it frozen) · weather(kind|null) forces field weather
 import type { FieldWeatherKind, SaveData, World } from '../shared/types.ts'
 import type { GameContext, SaveManager, Screens } from './contracts.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
@@ -186,6 +187,11 @@ export function installDebugHooks(ctx: GameContext, ow: OverworldExt, world: Wor
     fly: (id: string) => opts.flyTo(id),
     fog: () => ({ pages: fogPagesFor(ctx.save, world).pageCount, version: fogPagesFor(ctx.save, world).version }),
     distance: () => ({ now: distanceFromOrigin(world, ow.player.x, ow.player.y), max: ctx.save.maxDistance ?? 0 }),
+    clock: (minutes?: number) => {
+      if (minutes !== undefined) ctx.clock.minutes = minutes
+      return ctx.clock.label()
+    },
+    weather: (kind: FieldWeatherKind | null) => ow.setWeatherOverride(kind),
   }
   ;(window as unknown as { __ap: typeof hooks }).__ap = hooks
 }

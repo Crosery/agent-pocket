@@ -56,6 +56,8 @@ export interface PostConfig {
   toneMapping: 'neutral' | 'aces' | 'agx' | 'none'
   lift: Vec3
   gain: Vec3
+  /** Split toning (LightingState.shadowTint / highlightTint / split): luminance window over which shadows blend into highlights. */
+  split: { lo: number; hi: number }
   minScale: number
   flash: { color: string; ms: number; strength: number }
   shake: { frequency: number; rollDeg: number }
@@ -88,7 +90,9 @@ export interface SunConfig {
   distance: number; shadowExtent: number; shadowNear: number; shadowFar: number; bias: number; normalBias: number
   sunrise: number; sunset: number; switchFadeMinutes: number; switchFloor: number
   minElevationDeg: number; maxElevationDeg: number; azimuthRiseDeg: number; azimuthSetDeg: number
-  moonElevationDeg: number; moonAzimuthDeg: number
+  /** The light acts as the moon between sunset and sunrise: it climbs from moonMinElevationDeg to moonMaxElevationDeg
+   * and back while its azimuth sweeps moonAzimuthRiseDeg -> moonAzimuthSetDeg, so night shadows keep moving. */
+  moonMinElevationDeg: number; moonMaxElevationDeg: number; moonAzimuthRiseDeg: number; moonAzimuthSetDeg: number
   /** Shadow frustum half-extent grows with camera distance by this factor. */
   extentPerDistance: number
 }
@@ -104,6 +108,12 @@ export interface LightingState {
   /** 0..1 how much night-only lights / emissive windows are on. */
   lamps: number
   stars: number
+  /** Split toning: '#rrggbb' tints (their hue only: normalised to the same luminance, so #808080 is neutral) for shadows and highlights, blended by `split` (0..1). */
+  shadowTint: string; highlightTint: string; split: number
+  /** Sprite-only ambient fill (so characters stay readable at night) and rim light strength (0..1). */
+  spriteFill: string; spriteFillIntensity: number; rim: number
+  /** 0..1 strength of cloud shadows and of light shafts at this time of day. */
+  cloud: number; shaft: number
 }
 export interface LightingKey extends LightingState { minute: number }
 export interface StaticLighting extends LightingState { sunElevationDeg: number; sunAzimuthDeg: number; ambient: string[] }
@@ -195,14 +205,31 @@ export interface GrassConfig {
 }
 export interface LightsConfig {
   pointIntensity: number; decay: number; distanceMul: number; glowSize: number; glowIntensity: number
-  glowFlicker: number; flickerSpeed: number; reassignSeconds: number; fadeSpeed: number
+  reassignSeconds: number; fadeSpeed: number
   emissiveNight: number; emissiveDay: number; emissiveAlways: number; frontOffset: number
+  /** Light field (overworld, quality tiers with lighting.quality.<tier>.fieldLights > 0): up to `max` world-space lights
+   * evaluated in the lit materials' shaders instead of PointLights. Colour * intensity * `intensity` is the radiance
+   * scale (sun-light units); `radiusMul` x a source's radius is its reach; `falloff` is the exponent of (1 - d/r);
+   * `wrap` blends Lambert toward half-Lambert (0..1) so pools light up faces turned away from the lamp. */
+  field: {
+    max: number; intensity: number; radiusMul: number; falloff: number; wrap: number; selectRadius: number; reassignSeconds: number; fadeSpeed: number
+    /** Night-only lamps follow lamps^lampsPower (they come on late and go off early); other lights keep `dayShare` by day. */
+    lampsPower: number; dayShare: number
+    /** Fraction of the reach inside which the falloff stays flat (no hot spot at the source). */
+    core: number
+  }
+  /** Flicker per light kind (prop key, or "map" for map.lights); `default` for the rest. Amount = fraction of the intensity. */
+  flicker: Record<string, { amount: number; speed: number }>
+  /** Lights for props that have none in props.json (lit windows spill light on the street): same shape as PropLight. */
+  windowLights: Record<string, { color: string; intensity: number; radius: number; h: number; nightOnly: boolean }>
 }
 
 export interface WeatherGrade {
   exposure?: number; saturation?: number; contrast?: number; warmth?: number
   fogNear?: number; fogFar?: number; sun?: number; hemi?: number; lamps?: number
   bloomStrength?: number; tint?: string; tintAmount?: number; vignette?: number
+  /** Multipliers on the time-of-day cloud-shadow / light-shaft / sprite-rim / split-tone strength; `wet` = ground wetness 0..1. */
+  cloud?: number; shaft?: number; rim?: number; split?: number; wet?: number
 }
 export interface WeatherRenderDef {
   particles: string[]; grade: WeatherGrade; wind?: number; aurora?: boolean
@@ -620,6 +647,54 @@ export interface OcclusionConfig {
   fade: number
 }
 
+/** Per quality tier switches of the lighting effects added on top of the base renderer; `low` keeps the old look. */
+export interface LightingTier {
+  /** Light-field lights (0 = off: the overworld falls back to the quality.pointLights PointLight pool). */
+  fieldLights: number
+  cloudShadows: boolean
+  /** Light shaft billboards (0 = off). */
+  shafts: number
+  spriteRim: boolean
+  /** Sprites sample the sun shadow map under their feet. */
+  spriteShadow: boolean
+  wetGround: boolean
+  splitTone: boolean
+}
+
+export interface LightingConfig {
+  quality: Record<QualityId, LightingTier>
+  /** Cloud shadows: a tileable noise map scrolled along the wind dims the sun's direct light. `scale` = world units per
+   * texture repeat, `speed` = world units / s (x wind multiplier), `coverage` / `softness` = noise threshold and edge width,
+   * `strength` = how much of the sun a cloud takes (0..1), `ambient` = how much of the sky light it takes. `drift` = slow
+   * swing of the coverage over `driftSeconds` (some stretches are cloudier). */
+  cloud: {
+    size: number; octaves: number; scale: number; speed: number; coverage: number; softness: number; strength: number
+    ambient: number; drift: number; driftSeconds: number; detail: number; detailScale: number; pixels: number
+  }
+  /** Light shafts through tree canopies. */
+  shafts: {
+    /** Tree props whose placements anchor shafts, the share of them that gets one, jitter around the trunk (tiles). */
+    props: string[]; density: number; jitter: number
+    /** Per anchor-chunk cap, how far around the focus shafts show / fade out, and the reselection period (s). */
+    perChunk: number; radius: number; fade: number; reselectSeconds: number
+    /** Beam width range (world units), longest beam, base brightness, fade fractions at the canopy end and at the ground. */
+    width: Vec2; maxLength: number; intensity: number; tipFade: number; footFade: number
+    shimmer: number; shimmerSpeed: number; dust: number
+    /** Share of the strength kept while the light is the moon, the light elevation under which beams fade out and the
+     * steepest-floor elevation the beam geometry is drawn at (stylised: low suns would otherwise lay the beam flat). */
+    moon: number; minElevationDeg: number; steepDeg: number
+  }
+  sprite: {
+    /** Rim light thickness in internal pixels, strength, how far the sun side wraps, night fill share of the moon colour. */
+    rimPixels: number; rimStrength: number; rimMin: number
+    /** Soles shadow lookup: blur radius (world units), lift above the soles, nudge toward the light, share of the sun taken. */
+    shadowRadius: number; shadowLift: number; shadowOffset: number; shadowStrength: number
+  }
+  /** Wet ground: albedo darkening, sky sheen strength, its fresnel power and head-on reflectance, puddle noise scale (1 / world
+   * units), coverage and edge softness, how much of the sky colour puddles reflect and the sheen share left on props. */
+  wet: { darken: number; sheen: number; sheenPower: number; sheenBase: number; propSheen: number; puddleScale: number; puddleCoverage: number; puddleSoftness: number; reflect: number }
+}
+
 export interface SkyConfig { domeRadius: number; starDensity: number; starColor: string; starIntensity: number; twinkleSpeed: number }
 
 export interface RenderContent {
@@ -631,6 +706,7 @@ export interface RenderContent {
   interior: StaticLighting
   cave: StaticLighting
   sky: SkyConfig
+  lighting: LightingConfig
   terrain: TerrainRenderConfig
   water: WaterConfig
   lava: LavaConfig
@@ -750,7 +826,12 @@ export function sunState(minute: number, s: SunConfig = RENDER.sun): SunState {
   const day = s.sunrise <= s.sunset ? m >= s.sunrise && m < s.sunset : m >= s.sunrise || m < s.sunset
   const fadeDist = Math.min(circDist(m, s.sunrise), circDist(m, s.sunset))
   const fade = s.switchFadeMinutes > 0 ? Math.min(1, Math.max(s.switchFloor, fadeDist / s.switchFadeMinutes)) : 1
-  if (!day) return { dir: dirFromAngles(s.moonElevationDeg, s.moonAzimuthDeg), moon: true, fade }
+  if (!day) {
+    const night = wrapMinute(s.sunrise - s.sunset) || MINUTES_PER_DAY
+    const mt = wrapMinute(m - s.sunset) / night
+    const mel = s.moonMinElevationDeg + (s.moonMaxElevationDeg - s.moonMinElevationDeg) * Math.sin(Math.PI * mt)
+    return { dir: dirFromAngles(mel, s.moonAzimuthRiseDeg + (s.moonAzimuthSetDeg - s.moonAzimuthRiseDeg) * mt), moon: true, fade }
+  }
   const span = wrapMinute(s.sunset - s.sunrise) || MINUTES_PER_DAY
   const t = wrapMinute(m - s.sunrise) / span
   const el = s.minElevationDeg + (s.maxElevationDeg - s.minElevationDeg) * Math.sin(Math.PI * t)
@@ -764,6 +845,11 @@ export function sunState(minute: number, s: SunConfig = RENDER.sun): SunState {
 
 export function qualityPreset(q: QualityId, r: RenderContent = RENDER): QualityPreset {
   return r.quality[q] ?? r.quality.high
+}
+
+/** Lighting-effect switches of a quality tier (render.json lighting.quality). */
+export function lightingTier(q: QualityId, r: RenderContent = RENDER): LightingTier {
+  return r.lighting.quality[q] ?? r.lighting.quality.high
 }
 
 /** Procedural fallback style for a prop key (render.json styles, else the generic default). */
@@ -845,10 +931,40 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
   keys.forEach((k, i) => {
     if (k.minute < 0 || k.minute >= MINUTES_PER_DAY) errs.push(`timeOfDay[${i}]: minute out of range`)
     if (i > 0 && keys[i - 1].minute >= k.minute) errs.push(`timeOfDay[${i}]: minutes must increase`)
-    for (const f of ['skyTop', 'skyHorizon', 'skyBottom', 'sun', 'hemiSky', 'hemiGround', 'fog'] as const) color(`timeOfDay[${i}].${f}`, k[f])
+    for (const f of ['skyTop', 'skyHorizon', 'skyBottom', 'sun', 'hemiSky', 'hemiGround', 'fog', 'shadowTint', 'highlightTint', 'spriteFill'] as const) color(`timeOfDay[${i}].${f}`, k[f])
+    for (const f of ['split', 'cloud', 'shaft', 'rim', 'spriteFillIntensity'] as const) if (!(typeof k[f] === 'number' && k[f] >= 0)) errs.push(`timeOfDay[${i}].${f}: must be a number >= 0`)
   })
   for (const [name, s] of [['interior', r.interior], ['cave', r.cave]] as const) {
     for (const a of s.ambient) if (!r.particles[a]) errs.push(`${name}.ambient: unknown particle kind "${a}"`)
+    for (const f of ['shadowTint', 'highlightTint', 'spriteFill'] as const) color(`${name}.${f}`, s[f])
+    for (const f of ['split', 'cloud', 'shaft', 'rim', 'spriteFillIntensity'] as const) if (!(typeof s[f] === 'number' && s[f] >= 0)) errs.push(`${name}.${f}: must be a number >= 0`)
+  }
+  {
+    const F = r.lights.field
+    for (const k of ['max', 'intensity', 'radiusMul', 'falloff', 'wrap', 'selectRadius', 'reassignSeconds', 'fadeSpeed', 'lampsPower', 'dayShare', 'core'] as const) if (!(typeof F?.[k] === 'number' && F[k] >= 0)) errs.push(`lights.field.${k}: must be a number >= 0`)
+    if (!(F.max >= 1 && F.max <= 32)) errs.push('lights.field.max: 1..32 (uniform array size)')
+    if (!(F.wrap >= 0 && F.wrap <= 1)) errs.push('lights.field.wrap: 0..1')
+    if (!r.lights.flicker?.default) errs.push('lights.flicker: needs a "default" entry')
+    for (const [k, f] of Object.entries(r.lights.flicker ?? {})) if (!(f.amount >= 0 && f.speed >= 0)) errs.push(`lights.flicker.${k}: amount and speed must be >= 0`)
+    for (const [k, l] of Object.entries(r.lights.windowLights ?? {})) {
+      if (!c.props[k]) errs.push(`lights.windowLights: unknown prop "${k}"`)
+      color(`lights.windowLights.${k}.color`, l.color)
+      for (const f of ['intensity', 'radius', 'h'] as const) if (!(typeof l[f] === 'number' && l[f] >= 0)) errs.push(`lights.windowLights.${k}.${f}: must be a number >= 0`)
+    }
+    const Lq = r.lighting.quality
+    for (const q of Object.keys(r.quality)) if (!Lq[q as QualityId]) errs.push(`lighting.quality: missing tier "${q}"`)
+    for (const [q, t] of Object.entries(Lq)) {
+      if (!(Number.isInteger(t.fieldLights) && t.fieldLights >= 0 && t.fieldLights <= F.max)) errs.push(`lighting.quality.${q}.fieldLights: integer 0..lights.field.max`)
+      if (!(Number.isInteger(t.shafts) && t.shafts >= 0)) errs.push(`lighting.quality.${q}.shafts: integer >= 0`)
+      for (const k of ['cloudShadows', 'spriteRim', 'spriteShadow', 'wetGround', 'splitTone'] as const) if (typeof t[k] !== 'boolean') errs.push(`lighting.quality.${q}.${k}: must be a boolean`)
+    }
+    const low = Lq.low
+    if (low && (low.fieldLights || low.shafts || low.cloudShadows || low.spriteRim || low.spriteShadow || low.wetGround || low.splitTone)) errs.push('lighting.quality.low: new lighting effects must be off at the lowest tier')
+    for (const k of r.lighting.shafts.props) if (!r.nature.props[k]) errs.push(`lighting.shafts.props: "${k}" is not a nature prop`)
+    const Cl = r.lighting.cloud
+    if (!(Cl.size >= 16 && Cl.size <= 512)) errs.push('lighting.cloud.size: 16..512')
+    if (!(Cl.softness > 0)) errs.push('lighting.cloud.softness: must be > 0')
+    if (!(r.lighting.shafts.width[0] > 0 && r.lighting.shafts.width[1] >= r.lighting.shafts.width[0])) errs.push('lighting.shafts.width: [min, max] > 0')
   }
   const textureKeys = new Set([...c.terrain.map((t) => t.key), ...c.biomes.map((b) => b.cliff), r.terrain.defaultCliff])
   const checkSurfaces = (where: string, list: Record<string, SurfaceDef>) => {
@@ -878,6 +994,7 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
   for (const [k, w] of Object.entries(r.weather)) {
     for (const p of w.particles) if (!r.particles[p]) errs.push(`weather.${k}: unknown particle kind "${p}"`)
     if (w.grade.tint) color(`weather.${k}.grade.tint`, w.grade.tint)
+    for (const f of ['cloud', 'shaft', 'rim', 'split', 'wet'] as const) if (w.grade[f] !== undefined && !(w.grade[f]! >= 0)) errs.push(`weather.${k}.grade.${f}: must be a number >= 0`)
   }
   for (const [k, p] of Object.entries(r.particles)) {
     if (!PARTICLE_SHAPES.includes(p.shape)) errs.push(`particles.${k}: bad shape "${p.shape}"`)
