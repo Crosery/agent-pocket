@@ -233,6 +233,8 @@ export interface LightsConfig {
     lampsPower: number; dayShare: number
     /** Fraction of the reach inside which the falloff stays flat (no hot spot at the source). */
     core: number
+    /** Surfaces that glow by themselves (lit windows) take 1 / (1 + emissive * selfLit) of the field light: they never clip. */
+    selfLit: number
     /** Intensity multiplier per light kind (prop key): lights hung right in front of a facade would blow it out. */
     kindScale: Record<string, number>
   }
@@ -972,7 +974,7 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
   }
   {
     const F = r.lights.field
-    for (const k of ['max', 'intensity', 'radiusMul', 'falloff', 'wrap', 'selectRadius', 'reassignSeconds', 'fadeSpeed', 'lampsPower', 'dayShare', 'core'] as const) if (!(typeof F?.[k] === 'number' && F[k] >= 0)) errs.push(`lights.field.${k}: must be a number >= 0`)
+    for (const k of ['max', 'intensity', 'radiusMul', 'falloff', 'wrap', 'selectRadius', 'reassignSeconds', 'fadeSpeed', 'lampsPower', 'dayShare', 'core', 'selfLit'] as const) if (!(typeof F?.[k] === 'number' && F[k] >= 0)) errs.push(`lights.field.${k}: must be a number >= 0`)
     if (!(F.max >= 1 && F.max <= 32)) errs.push('lights.field.max: 1..32 (uniform array size)')
     for (const [k, v] of Object.entries(F.kindScale ?? {})) if (!(v >= 0)) errs.push(`lights.field.kindScale.${k}: must be a number >= 0`)
     if (!(F.wrap >= 0 && F.wrap <= 1)) errs.push('lights.field.wrap: 0..1')

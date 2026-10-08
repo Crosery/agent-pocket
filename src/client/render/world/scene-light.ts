@@ -62,7 +62,7 @@ export const sceneLightUniforms = {
   uApLfCount: { value: 0 },
   uApLfPos: { value: vec4s(LF.max) },
   uApLfCol: { value: vec3s(LF.max) },
-  uApLfShape: { value: new THREE.Vector3(LF.wrap, LF.falloff, LF.core) },
+  uApLfShape: { value: new THREE.Vector4(LF.wrap, LF.falloff, LF.core, LF.selfLit) },
   uApCloudMap: { value: null as THREE.Texture | null },
   /** x strength of the sun taken by a cloud (0 = off), y 1 / scale, z coverage, w edge softness. */
   uApCloud: { value: new THREE.Vector4(0, 1 / LC.scale, LC.coverage, LC.softness) },
@@ -84,7 +84,7 @@ const PARS = /* glsl */`
 uniform int uApLfCount;
 uniform vec4 uApLfPos[AP_LF_MAX];
 uniform vec3 uApLfCol[AP_LF_MAX];
-uniform vec3 uApLfShape;
+uniform vec4 uApLfShape;
 uniform sampler2D uApCloudMap;
 uniform vec4 uApCloud;
 uniform vec4 uApCloudScroll;
@@ -135,6 +135,8 @@ const LIGHT = /* glsl */`
     #endif
     reflectedLight.indirectDiffuse += uApWetSky * uApWetShape.w * uApWet.x * uApWet.z * apFr * apUp * apPatch;
   }
+  // surfaces that glow by themselves (lit windows, signs, crystals) take little extra light: they never clip
+  float apSelf = 1.0 / (1.0 + dot(totalEmissiveRadiance, vec3(1.0 / 3.0)) * uApLfShape.w);
   for (int i = 0; i < AP_LF_MAX; i++) {
     if (i >= uApLfCount) break;
     vec4 lp = uApLfPos[i];
@@ -146,7 +148,7 @@ const LIGHT = /* glsl */`
     float att = pow(1.0 - max(d, lp.w * uApLfShape.z) / lp.w, uApLfShape.y);
     float ndl = dot(geometryNormal, lv / max(d, 1e-4));
     float lit = mix(max(ndl, 0.0), ndl * 0.5 + 0.5, uApLfShape.x);
-    reflectedLight.directDiffuse += uApLfCol[i] * (att * lit) * BRDF_Lambert(diffuseColor.rgb);
+    reflectedLight.directDiffuse += uApLfCol[i] * (att * lit) * BRDF_Lambert(diffuseColor.rgb) * apSelf;
   }
 }
 `
@@ -290,7 +292,7 @@ export function createSceneLight(): SceneLight {
       for (const [s, lvl] of levels) if (chosen.has(s)) put(s, lvl)
       for (const [s, lvl] of levels) if (!chosen.has(s)) put(s, lvl)
       U.uApLfCount.value = count
-      U.uApLfShape.value.set(LF.wrap, LF.falloff, LF.core)
+      U.uApLfShape.value.set(LF.wrap, LF.falloff, LF.core, LF.selfLit)
 
       // --- cloud shadows -----------------------------------------------------
       const cloudOn = tier.cloudShadows && f.outdoor
