@@ -547,6 +547,10 @@ export interface BossTrigger {
   categories?: MoveCategory[]
   /** foeMove: this move type has not been used against the boss before. */
   novelType?: boolean
+  /** foeMove: true = the damaging move has another type than the foe's previous one; false = the same type again. */
+  typeShift?: boolean
+  /** foeSwitch: only a switch the foe chose, not the replacement after a faint. */
+  voluntary?: boolean
   if?: BossCond
   /** Firings allowed per battle (default 1; 0 = unlimited). */
   times?: number

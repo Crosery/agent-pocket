@@ -4,7 +4,7 @@
 import type { BattleEvent, BattleInit, BattleSideInit, Creature, TimeOfDay, WeatherId } from '../types.ts'
 import { CONTENT, type Content } from '../content/index.ts'
 import { Rng } from '../rng.ts'
-import { createCreature } from '../creature.ts'
+import { createCreature, maxHp } from '../creature.ts'
 import { BattleEngine } from './engine.ts'
 
 export interface BossBattleOpts {
@@ -32,7 +32,7 @@ export function createBossCreature(bossId: string, level: number, rng: Rng, c: C
   if (!def) throw new Error(`unknown boss "${bossId}"`)
   const cr = createCreature(def.species, level, { rng, shiny: false, moves: def.forms[def.initialForm]?.moves }, c)
   for (const k of Object.keys(cr.ivs) as (keyof Creature['ivs'])[]) cr.ivs[k] = c.config.creature.ivMax
-  cr.hp = Math.max(1, cr.hp)
+  cr.hp = Math.max(1, maxHp(cr, c))
   return cr
 }
 

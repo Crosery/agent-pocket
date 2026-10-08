@@ -1144,7 +1144,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     this.sendOut(s)
     this.markFaced()
     if (abilities) this.switchInAbilities(s)
-    if (s !== BOSS_SIDE) this.boss?.onFoeSwitch()
+    if (s !== BOSS_SIDE) this.boss?.onFoeSwitch(withdraw)
   }
 
   private switchInAbilities(s: SideIndex): void {

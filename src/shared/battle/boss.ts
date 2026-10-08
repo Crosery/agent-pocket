@@ -323,11 +323,13 @@ export class BossDirector {
     if (!this.active || this.cr.hp <= 0) return
     const damaging = isDamaging(move)
     const novel = damaging && !this.core.seenTypes.includes(move.type)
+    const last = this.core.lastFoeType
+    const shift = damaging && last !== null && move.type !== last
     if (damaging) {
       this.core.lastFoeMove = move.id
       if (novel) this.core.seenTypes.push(move.type)
     }
-    this.fire('foeMove', { move, novel })
+    this.fire('foeMove', { move, novel, shift, repeat: damaging && last !== null && !shift })
     if (damaging) this.core.lastFoeType = move.type
     this.pushHud()
   }
@@ -338,9 +340,9 @@ export class BossDirector {
     this.pushHud()
   }
 
-  onFoeSwitch(): void {
+  onFoeSwitch(voluntary: boolean): void {
     if (!this.active || this.cr.hp <= 0) return
-    this.fire('foeSwitch', {})
+    this.fire('foeSwitch', { voluntary })
     this.pushHud()
   }
 
@@ -351,10 +353,11 @@ export class BossDirector {
     return times === 0 || hit(this.core.fired[tr.id]) < times
   }
 
-  private fire(event: string, info: { move?: MoveDef; novel?: boolean; tag?: string }): void {
+  private fire(event: string, info: { move?: MoveDef; novel?: boolean; shift?: boolean; repeat?: boolean; voluntary?: boolean; tag?: string }): void {
     for (const tr of this.def.triggers) {
       if (!triggerEvents(tr).includes(event) || !this.canFire(tr)) continue
       if (tr.tag !== undefined && tr.tag !== info.tag) continue
+      if (event === 'foeSwitch' && tr.voluntary && !info.voluntary) continue
       if (event === 'foeMove') {
         const mv = info.move
         if (!mv) continue
@@ -362,6 +365,7 @@ export class BossDirector {
         if (tr.moves && !tr.moves.includes(mv.id)) continue
         if (tr.categories && !tr.categories.includes(mv.category)) continue
         if (tr.novelType && !info.novel) continue
+        if (tr.typeShift !== undefined && (tr.typeShift ? !info.shift : !info.repeat)) continue
       }
       if (!bossCondHolds(tr.if, this.ctx())) continue
       this.core.fired[tr.id] = hit(this.core.fired[tr.id]) + 1
