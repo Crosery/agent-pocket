@@ -226,9 +226,13 @@ def smooth01(x: float) -> float:
 def pose_idle(t: float) -> dict:
     """t in [0,1) over one breath; returns joint -> (rx, ry, rz) degrees plus offsets."""
     i = SPEC["idle"]
+    b = SPEC["body"]
     s = math.sin(2 * math.pi * t)
+    drop = i["bob"] * 0.5 * (1 - math.cos(2 * math.pi * t))
+    # knees give exactly the hip drop, so the soles stay planted while the body sinks on the exhale
+    bend = math.degrees(math.acos(1 - drop / (b["thigh"] + b["shin"])))
     return {
-        "hips.z": i["bob"] * 0.5 * (1 - math.cos(2 * math.pi * t)) * -1,
+        "hips.z": -drop,
         "hips.x": i["weightShiftX"] * math.sin(2 * math.pi * t * 0.5 + 0.3),
         "chest": 1 + i["chestScale"] * (0.5 - 0.5 * math.cos(2 * math.pi * t)),
         "shoulder.L": (i["armSwayDeg"] * s * 0.5, 0, 4),
@@ -240,12 +244,12 @@ def pose_idle(t: float) -> dict:
             0,
             i["headTiltDeg"] * math.sin(2 * math.pi * t + 1.1),
         ),
-        "hip.L": (0, 0, 0),
-        "hip.R": (0, 0, 0),
-        "knee.L": (0, 0, 0),
-        "knee.R": (0, 0, 0),
-        "ankle.L": (0, 0, 0),
-        "ankle.R": (0, 0, 0),
+        "hip.L": (-bend, 0, 0),
+        "hip.R": (-bend, 0, 0),
+        "knee.L": (2 * bend, 0, 0),
+        "knee.R": (2 * bend, 0, 0),
+        "ankle.L": (-bend, 0, 0),
+        "ankle.R": (-bend, 0, 0),
         "torso": (0, 0, 0),
     }
 
