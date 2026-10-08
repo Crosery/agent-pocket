@@ -1,0 +1,120 @@
+name: 缺陷报告
+description: 报告一个线上或开发中的缺陷。提交前请先按 docs/conventions/ISSUES.md §1 查重。
+title: "<模块>：<用户可见的症状>"
+labels: ["bug", "P2"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **提交前必做**：按 [docs/conventions/ISSUES.md](https://github.com/Crosery/agent-pocket/blob/main/docs/conventions/ISSUES.md) §1 查重（含已关闭的 issue），确认不是同一件事。
+
+        标题格式固定为 `<模块>：<用户可见的症状>`，模块名取下方「端」的名字。受理时由维护者按下面选的端和优先级补标签。
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: 端（主端）
+      description: 需要在哪个端修复或验收。跨端时在描述里补充其它端。
+      options:
+        - client
+        - render
+        - battle
+        - world
+        - content
+        - art
+        - server
+        - deploy
+        - docs
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 优先级
+      description: |
+        P0 = 线上不可用 / 存档或数据丢失 / 阻断全员开发（线上紧急缺陷同时打 hot-fix 标签）。
+        P1 = 主要功能受损但可绕过，或已明确排期。
+        P2 = 小缺陷、体验打磨、优化。
+        不确定时宁可低一档，禁止虚高 P0。
+      options:
+        - P1
+        - P2
+        - P0
+    validations:
+      required: true
+
+  - type: textarea
+    id: symptom
+    attributes:
+      label: 现象
+      description: 实际发生了什么。附上观察到的文本、报错原文、截图或录屏（直接拖进来上传）。
+      placeholder: 进入新手村后角色走到广场东侧会卡住，按方向键没有反应，镜头还能转。
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 最小复现路径；偶发的写复现概率与已知条件。
+      value: |
+        1. 打开
+        2. 点击 / 输入
+        3. 观察到
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望
+      description: 应该是什么样。
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: 影响
+      description: 谁会遇到、多严重、有没有绕过办法。决定优先级。
+    validations:
+      required: true
+
+  - type: textarea
+    id: env
+    attributes:
+      label: 环境
+      description: |
+        必填：分支与完整 commit SHA、地址（本机 dev、预发布 https://prev.ap.crosery.com、正式 https://ap.crosery.com）、页面或 `/release.json` 显示的版本。
+        按问题类型补设备信息（docs/conventions/ISSUES.md §3）：画面与布局写视口尺寸、像素比、浏览器与版本；渲染、动画、帧率写 GPU / 机型、刷新率、是否前台真实浏览器；联机写服务端环境与存档槽，不贴令牌。与问题无关的不写。
+      placeholder: stage @ f3cb964…（完整 SHA），https://prev.ap.crosery.com，0.1.1-rc.1，Chrome 140 / macOS，1280×720 @2x
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 证据
+      description: 截图、录屏、控制台或服务端日志原文。不贴令牌、会话、完整请求头或真实数据。
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收条件
+      description: 怎样算修好：可观察的结果，以及要在哪些视口 / 设备 / 环境看。
+      placeholder: 1280×720 与 390×844 下走到广场东侧，角色正常移动，不再卡住；连续走 1 分钟无异常。
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 已按 docs/conventions/ISSUES.md §1 查重（含已关闭 issue）
+          required: true
+        - label: 标题格式为 `<模块>：<用户可见的症状>`
+          required: true
