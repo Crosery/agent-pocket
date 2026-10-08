@@ -129,7 +129,7 @@ export function createObjectiveView(uiRoot: HTMLElement) {
   }
 }
 
-export interface TipState { textKey: string; device: Device; place?: 'top' | 'bottom' | 'right' | 'menu' }
+export interface TipState { textKey: string; device: Device; place?: 'top' | 'bottom' | 'right' | 'menu' | 'battle' }
 
 export function createTipView(uiRoot: HTMLElement, input: Input) {
   const title = el('span', 'ap-tip-title-text')
@@ -176,7 +176,8 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
       if (host) host.prepend(card)
       else layer.append(card)
       layer.hidden = false
-      layer.classList.toggle('is-top', s.place === 'top')
+      layer.classList.toggle('is-top', s.place === 'top' || s.place === 'battle')
+      layer.classList.toggle('is-battle', s.place === 'battle')
       layer.classList.toggle('is-right', s.place === 'right')
       card.hidden = false
       card.classList.remove('is-out')

@@ -631,6 +631,7 @@ html.ap-compact .aps-sum-right .ap-tabs { overflow-x: auto; }
 .aps-bag-left .ap-tabs { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
 .aps-bag-left .ap-tabs::-webkit-scrollbar { display: none; }
 .aps-bag-list { flex: 1; min-height: 0; padding: calc(var(--u) * 7) calc(var(--u) * 6); }
+.aps-exchange .ap-row-label { text-overflow: ellipsis; }
 .aps-bag-list .ap-row-icon { width: calc(var(--u) * 16); height: calc(var(--u) * 16); }
 .aps-bag-list .ap-row.is-disabled .ap-row-icon { opacity: 0.5; }
 .aps-bag-detail, .aps-quest-detail { min-height: 0; overflow: auto; white-space: normal; padding: calc(var(--u) * 9) calc(var(--u) * 10); }

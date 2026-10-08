@@ -155,7 +155,7 @@
     "need": "{item} ×{n}（持有 {have}）",
     "give": "需要交出",
     "get": "可以换到",
-    "state": {"ready": "可换 {n} 次", "short": "材料不足", "locked": "需 {badges} 枚徽章"},
+    "state": {"ready": "可换", "short": "缺料", "locked": "需 {badges} 章"},
     "locked": "再拿到 {badges} 枚徽章，柜台才会开放这一档兑换。",
     "short": "材料还不够。野外的数据碎片、报废的服务器零件，都可以拿来换。",
     "ready": "材料够了，最多可以换 {n} 次。",
