@@ -12,7 +12,7 @@ import {
   applyDocumentSettings, createAssetStore, createAudio, createClock, createEventBus, createInput, createSaveManager,
 } from './core/index.ts'
 import { createRenderer, createWorldView } from './render/index.ts'
-import { createChatUI, createHUD, createMinimap, createUIKit } from './ui/index.ts'
+import { UI_CONFIG, createChatUI, createEscapeStack, createHUD, createMinimap, createUIKit, installEscapeFallback, releaseButtonFocusAfterClick } from './ui/index.ts'
 import { createNetClient } from './net/index.ts'
 import { createOnboarding } from './onboarding/index.ts'
 import { validateTutorial } from './onboarding/config.ts'
@@ -191,6 +191,13 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     const msg: ClientMsg = to ? { t: 'chat', channel, text, to } : { t: 'chat', channel, text }
     net.send(msg)
   })
+  // Focus hand-over: Esc always closes the topmost overlay, a click on the game view returns to the game,
+  // and HUD buttons let go of focus after a pointer click (see ui/focus-guard.ts).
+  const escapes = createEscapeStack(UI_CONFIG.focus.escapeOrder)
+  escapes.register({ id: 'chat', isOpen: () => chat.isOpen, dismiss: () => chat.close() })
+  installEscapeFallback(escapes)
+  releaseButtonFocusAfterClick(uiRoot, UI_CONFIG.focus.releaseClickScopes)
+  canvas.addEventListener('pointerdown', () => chat.close())
 
   const profile = (): PublicProfile => ({
     id: net.selfId ?? '',
