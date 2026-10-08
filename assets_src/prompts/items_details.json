@@ -52,7 +52,14 @@
     "silicon-wafer": "a round shiny silicon wafer disc with an iridescent rainbow grid pattern",
     "rare-chip": "a square golden processor chip with pins on all four sides and a glowing purple core",
     "quantum-bit": "a glowing sphere, left half blue and right half gold, with one thick bright cyan orbit ring tilted around it",
-    "gold-token": "a thick shiny gold coin with an embossed hexagon emblem and a sparkle"
+    "gold-token": "a thick shiny gold coin with an embossed hexagon emblem and a sparkle",
+    "special-sauce": "a red squeeze bottle of mysterious sauce with a white nozzle cap and a small cream label",
+    "long-document": "a very long cream paper scroll covered in tiny lines of text with a curled bottom edge and wooden rods",
+    "holdout-set": "a blue clipboard with a checklist of brand-new test questions, one green tick and one red question mark",
+    "residential-ip": "a small cozy house with a red roof and cyan wifi signal arcs above it",
+    "sandbox-patch": "a square sandbox full of sand with a large green plus-shaped repair patch stuck across it",
+    "complaint-letter": "a cream envelope sealed with a red wax seal stamped with a white exclamation mark",
+    "off-peak-coupon": "a golden-yellow ticket coupon with a dark blue crescent moon on the left and a perforated tear-off edge"
   },
   "chips": {}
 }

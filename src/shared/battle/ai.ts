@@ -1,6 +1,6 @@
 // Battle AI with levels 0..3. Which behaviour each level unlocks (scored moves, status moves, items, switching,
 // damage estimation) and every weight/threshold come from content/battle_rules.json (ai).
-import type { BattleAction, BattleSideInit, Creature, MoveDef, SideIndex, TypeId } from '../types.ts'
+import type { BattleAction, BattleSideInit, Creature, MoveDef, SideIndex, Stats, TypeId } from '../types.ts'
 import type { IBattleEngine, IRng } from '../contracts.ts'
 import { CONTENT, typeEffectiveness, type Content } from '../content/index.ts'
 import { calcStats } from '../creature.ts'
@@ -13,6 +13,8 @@ import {
 export interface AiIntrospection {
   itemsLeft(side: SideIndex): Readonly<Record<string, number>>
   volatiles(side: SideIndex): string[]
+  /** Battle stats of the active creature (boss multipliers included). */
+  fighterStats(side: SideIndex): Stats
 }
 
 type AiLevel = NonNullable<BattleSideInit['aiLevel']>
@@ -53,7 +55,8 @@ function fighterOf(engine: IBattleEngine, side: SideIndex, c: Content): Fighter 
   const cr = engine.party(side)[engine.activeIndex(side)]
   const cap = engine.init.levelCap
   const level = cap !== undefined && cap > 0 ? Math.min(cr.level, cap) : cr.level
-  return { creature: cr, level, stats: calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, level }, c), stages: toStages(engine.stages(side)), critStageAdd: 0 }
+  const stats = extras(engine).fighterStats?.(side) ?? calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, level }, c)
+  return { creature: cr, level, stats, stages: toStages(engine.stages(side)), critStageAdd: 0 }
 }
 
 function makeCtx(engine: IBattleEngine, side: SideIndex, c: Content): Ctx {
