@@ -1,5 +1,7 @@
 // Types of the world-physics sections of content/render.json (footsteps, leaves, physics tiers ...). Kept apart from
 // config.ts, which only references them. The data is in render.json; every number here is tunable there.
+import type { Content } from '../../shared/content/index.ts'
+import type { RenderContent } from './config.ts'
 type Vec2 = [number, number]
 
 /** Per quality id: which physics effects run and how many particles they may keep alive. */
@@ -184,4 +186,96 @@ export interface WaterFxConfig {
 
 export interface PhysicsConfig {
   tiers: Record<string, PhysicsTier>
+}
+
+type PhysicsData = Pick<RenderContent, 'wind' | 'grass' | 'water' | 'physics' | 'footsteps' | 'leaves' | 'impacts' | 'snowCover' | 'reflections' | 'particles' | 'weather' | 'fx' | 'quality'>
+
+/** Consistency of the world-physics sections of render.json (reported as messages, see validateRenderContent). */
+export function validatePhysics(r: PhysicsData, c: Content, color: (where: string, v: unknown) => void): string[] {
+  const errs: string[] = []
+  const num = (where: string, v: unknown, min = -Infinity, max = Infinity) => { if (!(typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max)) errs.push(`${where}: must be a number in ${min}..${max}`) }
+  const range = (where: string, v: unknown, min = 0) => { if (!(Array.isArray(v) && v.length === 2 && v[0] >= min && v[1] >= v[0])) errs.push(`${where}: must be [min, max] with ${min} <= min <= max`) }
+
+  const W = r.wind.field
+  num('wind.field.wavelength', W.wavelength, 1e-3); num('wind.field.speed', W.speed, 0); num('wind.field.sharp', W.sharp, 1e-3)
+  num('wind.field.calm', W.calm, 0, 1); num('wind.gustLean', r.wind.gustLean, 0); num('wind.drift.base', r.wind.drift.base, 0); num('wind.drift.gust', r.wind.drift.gust, 0, 1)
+
+  const T = r.grass.trample
+  if (!(Number.isInteger(T.cellsPerTile) && T.cellsPerTile >= 1 && T.cellsPerTile <= 8)) errs.push('grass.trample.cellsPerTile: integer 1..8')
+  num('grass.trample.window', T.window, 8); num('grass.trample.recoverSec', T.recoverSec, 0.05); num('grass.trample.edgeFade', T.edgeFade, 0, T.window / 2)
+  num('grass.trample.maxBenders', T.maxBenders, 1); num('grass.trample.strength', T.strength, 0); num('grass.trample.sink', T.sink, 0, 1); num('grass.trample.darken', T.darken, 0, 1)
+  if (T.window * T.cellsPerTile > 512) errs.push('grass.trample: window x cellsPerTile above 512 cells makes a very large texture')
+
+  const WI = r.water.interact
+  num('water.interact.ripple.speed', WI.ripple.speed, 0); num('water.interact.ripple.life', WI.ripple.life, 0.05); num('water.interact.rain.cell', WI.rain.cell, 0.1)
+  num('water.interact.wash.period', WI.wash.period, 0.1)
+
+  for (const q of Object.keys(r.quality)) {
+    const t = r.physics.tiers[q]
+    if (!t) { errs.push(`physics.tiers: missing quality "${q}"`); continue }
+    for (const k of ['trample', 'reflections', 'impacts', 'snowCover'] as const) if (typeof t[k] !== 'boolean') errs.push(`physics.tiers.${q}.${k}: must be a boolean`)
+    if (!['off', 'puffs', 'full'].includes(t.footsteps)) errs.push(`physics.tiers.${q}.footsteps: off | puffs | full`)
+    for (const k of ['ripples', 'leaves', 'puffPool', 'printPool'] as const) if (!(Number.isInteger(t[k]) && t[k] >= 0)) errs.push(`physics.tiers.${q}.${k}: integer >= 0`)
+    if (t.ripples > 24) errs.push(`physics.tiers.${q}.ripples: the water shader draws at most 24 rings`)
+  }
+
+  const F = r.footsteps
+  num('footsteps.maxDistance', F.maxDistance, 1); num('footsteps.teleportTiles', F.teleportTiles, 1); num('footsteps.runSpeed', F.runSpeed, 0)
+  for (const k of ['walk', 'run', 'hop'] as const) num(`footsteps.stride.${k}`, F.stride[k], 0.05)
+  for (const [k, p] of Object.entries(F.puffs)) {
+    const w = `footsteps.puffs.${k}`
+    p.colors.forEach((x, i) => color(`${w}.colors[${i}]`, x))
+    if (!p.colors.length) errs.push(`${w}: needs a colour`)
+    range(`${w}.speed`, p.speed, 0); range(`${w}.life`, p.life, 0.05); range(`${w}.size`, p.size, 0)
+    if (!['cloud', 'drop'].includes(p.shape)) errs.push(`${w}.shape: cloud | drop`)
+    num(`${w}.count`, p.count, 0); num(`${w}.alpha`, p.alpha, 0, 1)
+  }
+  for (const [k, p] of Object.entries(F.prints)) {
+    color(`footsteps.prints.${k}.color`, p.color); num(`footsteps.prints.${k}.alpha`, p.alpha, 0, 1)
+    num(`footsteps.prints.${k}.lifeSec`, p.lifeSec, 0); num(`footsteps.prints.${k}.fadeSec`, p.fadeSec, 0.01)
+  }
+  const puffs = (where: string, v: string | string[] | undefined) => { for (const k of v === undefined ? [] : Array.isArray(v) ? v : [v]) if (!F.puffs[k]) errs.push(`${where}: unknown puff "${k}"`) }
+  for (const [k, cl] of Object.entries(F.classes)) {
+    puffs(`footsteps.classes.${k}.puff`, cl.puff)
+    if (cl.print && !F.prints[cl.print]) errs.push(`footsteps.classes.${k}.print: unknown print "${cl.print}"`)
+  }
+  for (const [terrain, cl] of Object.entries(F.terrain)) {
+    if (!c.terrainByKey[terrain]) errs.push(`footsteps.terrain: unknown terrain "${terrain}"`)
+    if (!F.classes[cl]) errs.push(`footsteps.terrain.${terrain}: unknown class "${cl}"`)
+  }
+  if (!F.classes[F.climateSnow.class]) errs.push(`footsteps.climateSnow.class: unknown class "${F.climateSnow.class}"`)
+  for (const t of F.climateSnow.terrains) if (!c.terrainByKey[t]) errs.push(`footsteps.climateSnow.terrains: unknown terrain "${t}"`)
+  puffs('footsteps.land.puff', F.land.puff); puffs('footsteps.land.splash', F.land.splash)
+  for (const [fx, e] of Object.entries(F.fxRoute)) {
+    if (!r.fx.kinds[fx]) errs.push(`footsteps.fxRoute: unknown fx kind "${fx}"`)
+    puffs(`footsteps.fxRoute.${fx}.puff`, e.puff)
+  }
+  const pt = F.printTexture
+  if (pt.rows.length !== pt.height || pt.rows.some((row) => row.length !== pt.width)) errs.push(`footsteps.printTexture: rows must be ${pt.width} x ${pt.height}`)
+
+  const L = r.leaves
+  for (const [k, kind] of Object.entries(L.kinds)) {
+    if (!r.particles[k]) errs.push(`leaves.kinds.${k}: no particle kind of that name (it is the ambient the biomes list)`)
+    kind.colors.forEach((x, i) => color(`leaves.kinds.${k}.colors[${i}]`, x))
+    range(`leaves.kinds.${k}.size`, kind.size, 0)
+    for (const p of kind.props) if (!c.props[p]) errs.push(`leaves.kinds.${k}.props: unknown prop "${p}"`)
+  }
+  range('leaves.terminal', L.terminal, 0); range('leaves.rest', L.rest, 0); range('leaves.tumble', L.tumble, 0)
+  num('leaves.gravity', L.gravity, 0); num('leaves.fade', L.fade, 0.01); num('leaves.cull', L.cull, L.reach)
+
+  for (const [k, im] of Object.entries(r.impacts)) {
+    if (!r.particles[k]) errs.push(`impacts.${k}: unknown particle kind`)
+    color(`impacts.${k}.color`, im.color)
+    if (!['ring', 'fleck'].includes(im.style)) errs.push(`impacts.${k}.style: ring | fleck`)
+    num(`impacts.${k}.share`, im.share, 0, 1); num(`impacts.${k}.life`, im.life, 0.01)
+  }
+  if (!r.weather[r.snowCover.weather]) errs.push(`snowCover.weather: unknown weather "${r.snowCover.weather}"`)
+  num('snowCover.max', r.snowCover.max, 0, 1); num('snowCover.buildSec', r.snowCover.buildSec, 1); num('snowCover.meltSec', r.snowCover.meltSec, 1)
+
+  const R = r.reflections
+  color('reflections.tint', R.tint)
+  for (const k of ['alpha', 'darken', 'tintAmount'] as const) num(`reflections.${k}`, R[k], 0, 1)
+  num('reflections.fade', R.fade, 0.05); num('reflections.maxActors', R.maxActors, 0); num('reflections.maxDistance', R.maxDistance, 1)
+  num('reflections.reach', R.reach, 0, 6); num('reflections.tolerance', R.tolerance, 0)
+  return errs
 }

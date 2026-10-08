@@ -4,7 +4,7 @@
 import renderJson from '../../../content/render.json' with { type: 'json' }
 import { CONTENT, type Content } from '../../shared/content/index.ts'
 import type { GameMap, Settings } from '../../shared/types.ts'
-import type { FootstepsConfig, ImpactKind, LeavesConfig, PhysicsConfig, ReflectionsConfig, SnowCoverConfig, WaterFxConfig } from './physics-config.ts'
+import { validatePhysics, type FootstepsConfig, type ImpactKind, type LeavesConfig, type PhysicsConfig, type ReflectionsConfig, type SnowCoverConfig, type WaterFxConfig } from './physics-config.ts'
 
 export type Vec2 = [number, number]
 export type Vec3 = [number, number, number]
@@ -1053,5 +1053,6 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
     if (!c.props[k]) errs.push(`props.styles: unknown prop "${k}"`)
     checkStyle(`props.styles.${k}`, s)
   }
+  errs.push(...validatePhysics(r, c, color))
   return errs
 }
