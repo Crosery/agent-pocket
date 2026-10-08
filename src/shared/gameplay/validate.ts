@@ -200,6 +200,16 @@ export function validateGameplay(g: GameplayData, c: Content): string[] {
   for (const [sp, list] of Object.entries(S.speciesConditions)) { species('spawn.speciesConditions', sp); list.forEach((x, i) => cond(`spawn.speciesConditions.${sp}[${i}]`, x)) }
   for (const t of c.types) if (!S.typeConditions[t.id]) errs.push(`spawn.typeConditions: type "${t.id}" has no conditions`)
   S.pickExcludeRarities.forEach((x) => rarity('spawn.pickExcludeRarities', x))
+  const stances = ['neutral', 'chase', 'flee']
+  const knownCountries = new Set(c.speciesList.map((x) => x.country))
+  const stance = (w: string, v: { base: string; outleveled: string } | undefined) => {
+    if (!v || !stances.includes(v.base) || !stances.includes(v.outleveled)) errs.push(`${w}: base/outleveled must be one of ${stances.join('/')}`)
+  }
+  stance('spawn.roamingPolicy.default', S.roamingPolicy?.default)
+  for (const [code, v] of Object.entries(S.roamingPolicy?.countries ?? {})) {
+    stance(`spawn.roamingPolicy.countries.${code}`, v)
+    if (!knownCountries.has(code)) errs.push(`spawn.roamingPolicy.countries: no species has country "${code}"`)
+  }
   const E = S.legends.bandEdges
   if (E[0] !== 0 || E.some((x, i) => i > 0 && x <= E[i - 1])) errs.push('spawn.legends.bandEdges must start at 0 and increase')
   if (!S.legends.levelByBand.length) errs.push('spawn.legends.levelByBand is empty')

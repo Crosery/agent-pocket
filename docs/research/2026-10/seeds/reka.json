@@ -1,0 +1,45 @@
+{
+ "vendor": "reka",
+ "count": 2,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "rekaflash3",
+   "names": [
+    "Reka Flash 3"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-03-12"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "rekaai/reka-flash-3"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "rekaedge",
+   "names": [
+    "Reka Edge"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-20"
+   },
+   "openWeights": null,
+   "modalities": [
+    "image+text+video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "rekaai/reka-edge"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

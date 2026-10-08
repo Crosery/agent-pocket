@@ -1,0 +1,45 @@
+{
+ "vendor": "ai21",
+ "count": 2,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "jambalarge",
+   "names": [
+    "Jamba Large"
+   ],
+   "releaseDateHints": {
+    "modelsdev:ai21": "2025-07-01"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:ai21": [
+     "jamba-large"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "jambamini",
+   "names": [
+    "Jamba Mini"
+   ],
+   "releaseDateHints": {
+    "modelsdev:ai21": "2026-01-01"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:ai21": [
+     "jamba-mini"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

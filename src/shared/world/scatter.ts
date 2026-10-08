@@ -125,6 +125,17 @@ export function accessStairs(ctx: OwCtx): void {
         if (!stairsOk(d, i, i + step)) continue
         d.terrain[i] = stairsT
         for (const k of [i, i + step, i - step, i + 2 * step]) addFlag(d, k, F_KEEP)
+        // Markers on both flanks so the stair reads from a distance (and glows at night).
+        const marker = ctx.spec.accessStairMarker
+        if (marker) {
+          const side = Math.abs(step) === W ? 1 : W
+          for (const j of [i + side, i - side]) {
+            const jx = j % W, jy = (j - jx) / W
+            if (side === 1 && jy !== y) continue
+            const p: PropPlacement = { prop: marker, x: jx, y: jy, rot: 0 }
+            if (canPlace(d, p, { forbid: blocked | F_PATH })) placeProp(d, p)
+          }
+        }
         chosen.push(i)
       }
     }

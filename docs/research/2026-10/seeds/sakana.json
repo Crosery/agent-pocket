@@ -1,0 +1,174 @@
+{
+ "vendor": "sakana",
+ "count": 5,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "fugu",
+   "names": [
+    "Fugu"
+   ],
+   "releaseDateHints": {
+    "modelsdev:sakana": "2026-06-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:sakana": [
+     "fugu"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "fuguultra",
+   "names": [
+    "Sakana: Fugu Ultra",
+    "Fugu Ultra v1.0",
+    "Fugu Ultra v1.1",
+    "Fugu Ultra v2.0",
+    "Fugu Ultra",
+    "Fugu Ultra (Sakana AI)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-06-24",
+    "modelsdev:empiriolabs": "2026-06-15",
+    "modelsdev:nano-gpt": "2026-06-15",
+    "modelsdev:llmgateway-providers": "2026-06-15",
+    "modelsdev:kilo": "2026-06-15",
+    "modelsdev:openrouter": "2026-06-15",
+    "modelsdev:llmtr": "2026-06-15",
+    "modelsdev:vercel": "2026-06-15",
+    "modelsdev:sakana": "2026-06-15",
+    "modelsdev:merge-gateway": "2026-06-15",
+    "modelsdev:pioneer": "2026-06-15",
+    "modelsdev:requesty": "2026-06-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "sakana/fugu-ultra"
+    ],
+    "modelsdev:empiriolabs": [
+     "fugu-ultra-v1-0",
+     "fugu-ultra-v1-1",
+     "fugu-ultra-v2-0"
+    ],
+    "modelsdev:nano-gpt": [
+     "sakana/fugu-ultra"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "sakana/fugu-ultra"
+    ],
+    "modelsdev:kilo": [
+     "sakana/fugu-ultra"
+    ],
+    "modelsdev:openrouter": [
+     "sakana/fugu-ultra"
+    ],
+    "modelsdev:llmtr": [
+     "sakana/fugu-ultra"
+    ],
+    "modelsdev:vercel": [
+     "sakana/fugu-ultra"
+    ],
+    "modelsdev:sakana": [
+     "fugu-ultra",
+     "fugu-ultra-20260615"
+    ],
+    "modelsdev:merge-gateway": [
+     "sakana/fugu-ultra"
+    ],
+    "modelsdev:pioneer": [
+     "sakana/fugu-ultra"
+    ],
+    "modelsdev:requesty": [
+     "fugu-ultra"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "sakananamazu",
+   "names": [
+    "Sakana: Sakana Namazu",
+    "Sakana Namazu"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-11",
+    "modelsdev:kilo": "2026-08-03",
+    "modelsdev:openrouter": "2026-08-03",
+    "modelsdev:sakana": "2026-08-03",
+    "modelsdev:merge-gateway": "2026-08-03"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "sakana/sakana-namazu"
+    ],
+    "modelsdev:kilo": [
+     "sakana/sakana-namazu"
+    ],
+    "modelsdev:openrouter": [
+     "sakana/sakana-namazu"
+    ],
+    "modelsdev:sakana": [
+     "sakana-namazu"
+    ],
+    "modelsdev:merge-gateway": [
+     "sakana/sakana-namazu"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "fugumax",
+   "names": [
+    "Sakana: Fugu Max"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-11"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+file->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "sakana/fugu-max"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "fuguultrav2",
+   "names": [
+    "Sakana: Fugu Ultra v2"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-11"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+file->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "sakana/fugu-ultra-v2"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

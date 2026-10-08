@@ -1,0 +1,2204 @@
+[
+{
+"name": "Canopy Labs Orpheus Arabic Saudi",
+"earliest": "2025-12-16",
+"out": "audio",
+"canonical": null,
+"providers": [
+"groq"
+]
+},
+{
+"name": "Canopy Labs Orpheus V1 English",
+"earliest": "2025-12-19",
+"out": "audio",
+"canonical": null,
+"providers": [
+"groq"
+]
+},
+{
+"name": "ElevenLabs Multilingual TTS v2",
+"earliest": "2023-08-22",
+"out": "audio",
+"canonical": null,
+"providers": [
+"digitalocean"
+]
+},
+{
+"name": "ElevenLabs-Music",
+"earliest": "2025-08-29",
+"out": "audio",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "ElevenLabs-v2.5-Turbo",
+"earliest": "2024-10-28",
+"out": "audio",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "ElevenLabs-v3",
+"earliest": "2025-06-05",
+"out": "audio",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Gemini 2.5 Flash Preview TTS",
+"earliest": "2025-05-01",
+"out": "audio",
+"canonical": null,
+"providers": [
+"google"
+]
+},
+{
+"name": "Gemini 2.5 Flash TTS",
+"earliest": "2025-09-30",
+"out": "audio",
+"canonical": "google/gemini-2.5-flash-tts",
+"providers": [
+"google-vertex"
+]
+},
+{
+"name": "Gemini 2.5 Pro Preview TTS",
+"earliest": "2025-05-01",
+"out": "audio",
+"canonical": null,
+"providers": [
+"google"
+]
+},
+{
+"name": "Gemini 2.5 Pro TTS",
+"earliest": "2025-09-30",
+"out": "audio",
+"canonical": "google/gemini-2.5-pro-tts",
+"providers": [
+"google-vertex"
+]
+},
+{
+"name": "Gemini 3.1 Flash TTS Preview",
+"earliest": "2026-04-15",
+"out": "audio",
+"canonical": "google/gemini-3.1-flash-tts-preview",
+"providers": [
+"google",
+"kenari"
+]
+},
+{
+"name": "Gemini 3.8 Flash TTS",
+"earliest": "2026-09-23",
+"out": "audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Gemini 3.8 Flash-Lite TTS",
+"earliest": "2026-09-23",
+"out": "audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Grok TTS",
+"earliest": "2026-03-16",
+"out": "audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Grok Voice TTS 1.0",
+"earliest": "2026-07-31",
+"out": "audio",
+"canonical": "xai/grok-voice-tts-1.0",
+"providers": [
+"zenmux"
+]
+},
+{
+"name": "Lyria",
+"earliest": "2025-06-04",
+"out": "audio",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "MAI-Voice-2",
+"earliest": "2026-06-02",
+"out": "audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "MAI-Voice-2-Flash",
+"earliest": "2026-07-23",
+"out": "audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "MAI-Voice-2.1",
+"earliest": "2026-10-01",
+"out": "audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "MAI-Voice-2.1-Flash",
+"earliest": "2026-10-01",
+"out": "audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "MiMo-V2-TTS",
+"earliest": "2026-03-18",
+"out": "audio",
+"canonical": null,
+"providers": [
+"xiaomi-token-plan-ams",
+"xiaomi-token-plan-cn",
+"xiaomi-token-plan-sgp"
+]
+},
+{
+"name": "MiMo-V2.5-TTS",
+"earliest": "2026-04-22",
+"out": "audio",
+"canonical": null,
+"providers": [
+"xiaomi-token-plan-ams",
+"xiaomi-token-plan-cn",
+"xiaomi-token-plan-sgp"
+]
+},
+{
+"name": "MiMo-V2.5-TTS-VoiceClone",
+"earliest": "2026-04-22",
+"out": "audio",
+"canonical": null,
+"providers": [
+"xiaomi-token-plan-ams",
+"xiaomi-token-plan-cn",
+"xiaomi-token-plan-sgp"
+]
+},
+{
+"name": "MiMo-V2.5-TTS-VoiceDesign",
+"earliest": "2026-04-22",
+"out": "audio",
+"canonical": null,
+"providers": [
+"xiaomi-token-plan-ams",
+"xiaomi-token-plan-cn",
+"xiaomi-token-plan-sgp"
+]
+},
+{
+"name": "Qwen3 TTS VoiceDesign",
+"earliest": "2026-04-21",
+"out": "audio",
+"canonical": null,
+"providers": [
+"digitalocean"
+]
+},
+{
+"name": "S1",
+"earliest": "2025-10-20",
+"out": "audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "S2 Pro",
+"earliest": "2026-03-09",
+"out": "audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "S2.1 Pro",
+"earliest": "2026-07-28",
+"out": "audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Stable Audio 2.5 (Text-to-Audio)",
+"earliest": "2025-10-08",
+"out": "audio",
+"canonical": null,
+"providers": [
+"digitalocean"
+]
+},
+{
+"name": "Step TTS 2",
+"earliest": "2026-03-01",
+"out": "audio",
+"canonical": null,
+"providers": [
+"stepfun",
+"stepfun-ai"
+]
+},
+{
+"name": "StepAudio 2.5 TTS",
+"earliest": "2026-04-16",
+"out": "audio",
+"canonical": null,
+"providers": [
+"stepfun",
+"stepfun-ai"
+]
+},
+{
+"name": "TTS-1",
+"earliest": "2023-11-06",
+"out": "audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "TTS-1 HD",
+"earliest": "2023-11-06",
+"out": "audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Voxtral Mini TTS (latest)",
+"earliest": "2026-03-01",
+"out": "audio",
+"canonical": null,
+"providers": [
+"mistral"
+]
+},
+{
+"name": "magpie-tts-zeroshot",
+"earliest": "2025-05-22",
+"out": "audio",
+"canonical": null,
+"providers": [
+"nvidia"
+]
+},
+{
+"name": "Gemini 3.5 Live Translate Preview",
+"earliest": "2026-06-09",
+"out": "audio,text",
+"canonical": "google/gemini-3.5-live-translate-preview",
+"providers": [
+"google"
+]
+},
+{
+"name": "Arrow 1.1",
+"earliest": "2026-04-16",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "DALL-E-3",
+"earliest": "2023-11-06",
+"out": "image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "FLUX 3 Image",
+"earliest": "2026-10-05",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "FLUX.1 Fill [pro]",
+"earliest": "2024-10-01",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "FLUX.1 Kontext Max",
+"earliest": "2025-05-29",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "FLUX.1 Kontext Pro",
+"earliest": "2025-05-29",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "FLUX.1-Kontext-dev",
+"earliest": "2025-08-12",
+"out": "image",
+"canonical": null,
+"providers": [
+"nvidia"
+]
+},
+{
+"name": "FLUX.1-dev",
+"earliest": "2024-08-01",
+"out": "image",
+"canonical": null,
+"providers": [
+"nvidia"
+]
+},
+{
+"name": "FLUX.1-schnell",
+"earliest": "2024-08-01",
+"out": "image",
+"canonical": null,
+"providers": [
+"digitalocean",
+"nvidia"
+]
+},
+{
+"name": "FLUX.2 Klein 4B",
+"earliest": "2026-01-14",
+"out": "image",
+"canonical": null,
+"providers": [
+"nearai",
+"nvidia",
+"vercel"
+]
+},
+{
+"name": "FLUX.2 [flex]",
+"earliest": "2025-11-25",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "FLUX.2 [klein] 9B",
+"earliest": "2026-01-15",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "FLUX.2 [max]",
+"earliest": "2025-12-16",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "FLUX.2 [pro]",
+"earliest": "2025-11-25",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "FLUX1.1 [pro]",
+"earliest": "2024-10-02",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "FLUX1.1 [pro] Ultra",
+"earliest": "2024-11-01",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Fast SDXL",
+"earliest": "2023-07-26",
+"out": "image",
+"canonical": null,
+"providers": [
+"digitalocean"
+]
+},
+{
+"name": "Flux Schnell",
+"earliest": "2024-08-02",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "GLM-Image",
+"earliest": "2026-01-19",
+"out": "image",
+"canonical": "zhipuai/glm-image",
+"providers": [
+"zenmux"
+]
+},
+{
+"name": "GPT Image 2.5 Flare",
+"earliest": "2026-09-08",
+"out": "image",
+"canonical": "openai/gpt-image-2.5-flare",
+"providers": [
+"aihubmix",
+"azure",
+"azure-cognitive-services",
+"vercel"
+]
+},
+{
+"name": "GPT Image 2.5 Sunburst",
+"earliest": "2026-09-08",
+"out": "image",
+"canonical": "openai/gpt-image-2.5-sunburst",
+"providers": [
+"aihubmix",
+"azure",
+"azure-cognitive-services",
+"vercel"
+]
+},
+{
+"name": "GPT-5.4",
+"earliest": "2026-02-26",
+"out": "image",
+"canonical": null,
+"providers": [
+"neon",
+"poe"
+]
+},
+{
+"name": "GPT-5.4-Pro",
+"earliest": "2026-03-05",
+"out": "image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "GPT-Image-1",
+"earliest": "2025-03-31",
+"out": "image",
+"canonical": null,
+"providers": [
+"azure",
+"azure-cognitive-services",
+"digitalocean",
+"openai"
+]
+},
+{
+"name": "GPT-Image-1-Mini",
+"earliest": "2025-08-26",
+"out": "image",
+"canonical": null,
+"providers": [
+"openai",
+"poe",
+"vercel"
+]
+},
+{
+"name": "GPT-Image-2",
+"earliest": "2026-04-21",
+"out": "image",
+"canonical": null,
+"providers": [
+"aihubmix",
+"azure",
+"azure-cognitive-services",
+"fastrouter"
+]
+},
+{
+"name": "Grok Imagine Image 2.0",
+"earliest": "2026-08-07",
+"out": "image",
+"canonical": "xai/grok-imagine-image-2.0",
+"providers": [
+"kenari",
+"vercel",
+"zenmux"
+]
+},
+{
+"name": "Ideogram",
+"earliest": "2024-04-03",
+"out": "image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Ideogram-v2",
+"earliest": "2024-08-21",
+"out": "image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Ideogram-v2a",
+"earliest": "2025-02-27",
+"out": "image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Ideogram-v2a-Turbo",
+"earliest": "2025-02-27",
+"out": "image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Imagen-3",
+"earliest": "2024-10-15",
+"out": "image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Imagen-3-Fast",
+"earliest": "2024-10-17",
+"out": "image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Imagen-4",
+"earliest": "2025-05-22",
+"out": "image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Imagen-4-Fast",
+"earliest": "2025-05-20",
+"out": "image",
+"canonical": null,
+"providers": [
+"fastrouter",
+"poe"
+]
+},
+{
+"name": "Imagen-4-Ultra",
+"earliest": "2025-05-20",
+"out": "image",
+"canonical": null,
+"providers": [
+"fastrouter",
+"poe"
+]
+},
+{
+"name": "Lucid Origin",
+"earliest": "2025-06-01",
+"out": "image",
+"canonical": null,
+"providers": [
+"fastrouter"
+]
+},
+{
+"name": "Lucid Realism",
+"earliest": "2025-06-01",
+"out": "image",
+"canonical": null,
+"providers": [
+"fastrouter"
+]
+},
+{
+"name": "Muse Image 1.0",
+"earliest": "2026-08-26",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Nano-Banana-Pro",
+"earliest": "2025-11-19",
+"out": "image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Qwen Image 2.0",
+"earliest": "2026-03-03",
+"out": "image",
+"canonical": null,
+"providers": [
+"alibaba-token-plan",
+"alibaba-token-plan-cn"
+]
+},
+{
+"name": "Qwen Image 2.0 Pro",
+"earliest": "2026-03-03",
+"out": "image",
+"canonical": null,
+"providers": [
+"alibaba-token-plan",
+"alibaba-token-plan-cn"
+]
+},
+{
+"name": "Qwen Image Edit",
+"earliest": "2025-08-19",
+"out": "image",
+"canonical": null,
+"providers": [
+"nvidia"
+]
+},
+{
+"name": "Qwen-Image",
+"earliest": "2025-08-07",
+"out": "image",
+"canonical": null,
+"providers": [
+"nvidia",
+"regolo-ai"
+]
+},
+{
+"name": "Qwen-Image-2.1",
+"earliest": "2026-09-14",
+"out": "image",
+"canonical": "alibaba/qwen-image-2.1",
+"providers": [
+"nan"
+]
+},
+{
+"name": "Recraft V2",
+"earliest": "2024-03-13",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Recraft V3",
+"earliest": "2024-10-30",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Recraft V4",
+"earliest": "2026-02-17",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Recraft V4 Pro",
+"earliest": "2026-02-17",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Recraft V4.1",
+"earliest": "2026-05-14",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Recraft V4.1 Flash",
+"earliest": "2026-09-23",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Recraft V4.1 Pro",
+"earliest": "2026-05-14",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Recraft V4.1 Utility",
+"earliest": "2026-05-14",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Recraft V4.1 Utility Pro",
+"earliest": "2026-05-14",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Seedream 4.0",
+"earliest": "2025-09-09",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Seedream 4.5",
+"earliest": "2025-12-03",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Seedream 5.0 Lite",
+"earliest": "2026-02-13",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Seedream 5.0 Pro",
+"earliest": "2026-07-11",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Stable Diffusion 3.5 Large",
+"earliest": "2024-10-22",
+"out": "image",
+"canonical": null,
+"providers": [
+"digitalocean"
+]
+},
+{
+"name": "StableDiffusionXL",
+"earliest": "2023-07-09",
+"out": "image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "TopazLabs",
+"earliest": "2024-12-03",
+"out": "image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Wan2.7 Image",
+"earliest": "2026-05-29",
+"out": "image",
+"canonical": null,
+"providers": [
+"alibaba-token-plan",
+"alibaba-token-plan-cn"
+]
+},
+{
+"name": "Wan2.7 Image Pro",
+"earliest": "2026-05-29",
+"out": "image",
+"canonical": null,
+"providers": [
+"alibaba-token-plan",
+"alibaba-token-plan-cn"
+]
+},
+{
+"name": "Wonder 3.5",
+"earliest": "2026-10-06",
+"out": "image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "gpt-image-1.5",
+"earliest": "2025-11-25",
+"out": "image",
+"canonical": null,
+"providers": [
+"aihubmix",
+"azure",
+"azure-cognitive-services",
+"openai"
+]
+},
+{
+"name": "Grok Imagine Image",
+"earliest": "2026-01-28",
+"out": "image,pdf",
+"canonical": null,
+"providers": [
+"vercel",
+"xai"
+]
+},
+{
+"name": "Grok Imagine Image Quality",
+"earliest": "2026-04-03",
+"out": "image,pdf",
+"canonical": "xai/grok-imagine-image-quality",
+"providers": [
+"xai"
+]
+},
+{
+"name": "Auto Router",
+"earliest": "2023-11-08",
+"out": "image,text",
+"canonical": null,
+"providers": [
+"kilo",
+"openrouter"
+]
+},
+{
+"name": "GPT-5 Image",
+"earliest": "2025-10-14",
+"out": "image,text",
+"canonical": null,
+"providers": [
+"openrouter"
+]
+},
+{
+"name": "GPT-5 Image Mini",
+"earliest": "2025-10-16",
+"out": "image,text",
+"canonical": null,
+"providers": [
+"openrouter"
+]
+},
+{
+"name": "GPT-5.4 Image 2",
+"earliest": "2026-04-21",
+"out": "image,text",
+"canonical": null,
+"providers": [
+"openrouter"
+]
+},
+{
+"name": "Google: Nano Banana 2.1",
+"earliest": "2026-10-06",
+"out": "image,text",
+"canonical": null,
+"providers": [
+"kilo"
+]
+},
+{
+"name": "Nano Banana 2.1",
+"earliest": "2026-10-06",
+"out": "image,text",
+"canonical": null,
+"providers": [
+"openrouter"
+]
+},
+{
+"name": "OpenAI GPT Image 1.5",
+"earliest": "2025-11-25",
+"out": "image,text",
+"canonical": null,
+"providers": [
+"digitalocean"
+]
+},
+{
+"name": "OpenAI GPT Image 2",
+"earliest": "2025-04-24",
+"out": "image,text",
+"canonical": null,
+"providers": [
+"digitalocean"
+]
+},
+{
+"name": "OpenAI: GPT-5 Image ($$$$)",
+"earliest": "2025-10-14",
+"out": "image,text",
+"canonical": null,
+"providers": [
+"kilo"
+]
+},
+{
+"name": "OpenAI: GPT-5 Image Mini",
+"earliest": "2025-10-16",
+"out": "image,text",
+"canonical": null,
+"providers": [
+"kilo"
+]
+},
+{
+"name": "OpenAI: GPT-5.4 Image 2",
+"earliest": "2026-04-21",
+"out": "image,text",
+"canonical": null,
+"providers": [
+"kilo"
+]
+},
+{
+"name": "GPT Audio",
+"earliest": "2026-01-19",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"openrouter"
+]
+},
+{
+"name": "GPT Audio Mini",
+"earliest": "2026-01-19",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"openrouter"
+]
+},
+{
+"name": "GPT-Live 1",
+"earliest": "2026-09-10",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "GPT-Realtime mini",
+"earliest": "2025-10-10",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "GPT-Realtime-1.5",
+"earliest": "2025-06-01",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"fastrouter",
+"vercel"
+]
+},
+{
+"name": "Gemini 3.1 Flash Live Preview",
+"earliest": "2026-03-26",
+"out": "text,audio",
+"canonical": "google/gemini-3.1-flash-live-preview",
+"providers": [
+"google"
+]
+},
+{
+"name": "Gemini 3.8 Live",
+"earliest": "2026-09-15",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Gemini 3.8 Live Extended Thinking",
+"earliest": "2026-09-15",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Grok Voice Think Fast 1.0",
+"earliest": "2026-04-23",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Grok Voice Think Fast 2.0",
+"earliest": "2026-07-29",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Lyria 3 Clip Preview",
+"earliest": "2026-03-25",
+"out": "text,audio",
+"canonical": "google/lyria-3-clip-preview",
+"providers": [
+"google",
+"kilo",
+"openrouter"
+]
+},
+{
+"name": "Lyria 3 Pro Preview",
+"earliest": "2026-03-25",
+"out": "text,audio",
+"canonical": "google/lyria-3-pro-preview",
+"providers": [
+"google",
+"kilo",
+"openrouter"
+]
+},
+{
+"name": "OpenAI: GPT Audio",
+"earliest": "2026-01-19",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"kilo"
+]
+},
+{
+"name": "OpenAI: GPT Audio Mini",
+"earliest": "2026-01-19",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"kilo"
+]
+},
+{
+"name": "Qwen Omni Turbo (Alibaba Cloud)",
+"earliest": "2025-01-19",
+"out": "text,audio",
+"canonical": "alibaba/qwen-omni-turbo",
+"providers": [
+"alibaba",
+"alibaba-cn",
+"llmgateway",
+"llmgateway-providers"
+]
+},
+{
+"name": "Qwen-Omni Turbo Realtime",
+"earliest": "2025-05-08",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"alibaba",
+"alibaba-cn"
+]
+},
+{
+"name": "Qwen2.5-Omni 7B",
+"earliest": "2024-12",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"alibaba",
+"alibaba-cn"
+]
+},
+{
+"name": "Qwen3 Omni 30B A3B Instruct",
+"earliest": "2025-09-24",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"novita-ai"
+]
+},
+{
+"name": "Qwen3-LiveTranslate Flash Realtime",
+"earliest": "2025-09-22",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"alibaba"
+]
+},
+{
+"name": "Qwen3-Omni Flash",
+"earliest": "2025-09-15",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"alibaba",
+"alibaba-cn"
+]
+},
+{
+"name": "Qwen3-Omni Flash Realtime",
+"earliest": "2025-09-15",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"alibaba",
+"alibaba-cn"
+]
+},
+{
+"name": "gpt-realtime-2",
+"earliest": "2026-05-07",
+"out": "text,audio",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "gpt-realtime-2.1",
+"earliest": "2026-07-06",
+"out": "text,audio",
+"canonical": "openai/gpt-realtime-2.1",
+"providers": [
+"openai",
+"vercel"
+]
+},
+{
+"name": "Arrow 2",
+"earliest": "2026-09-16",
+"out": "text,image",
+"canonical": "quiverai/arrow-2",
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Arrow 2 Telos",
+"earliest": "2026-09-16",
+"out": "text,image",
+"canonical": "quiverai/arrow-2-telos",
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Deep Research Max Preview (Apr-21-2026)",
+"earliest": "2026-04-21",
+"out": "text,image",
+"canonical": "google/deep-research-max-preview-04-2026",
+"providers": [
+"google"
+]
+},
+{
+"name": "Deep Research Preview (Apr-21-2026)",
+"earliest": "2026-04-21",
+"out": "text,image",
+"canonical": "google/deep-research-preview-04-2026",
+"providers": [
+"google"
+]
+},
+{
+"name": "GPT-5",
+"earliest": "2025-08-07",
+"out": "text,image",
+"canonical": "openai/gpt-5",
+"providers": [
+"neon"
+]
+},
+{
+"name": "GPT-5 Mini",
+"earliest": "2025-08-07",
+"out": "text,image",
+"canonical": "openai/gpt-5-mini",
+"providers": [
+"neon"
+]
+},
+{
+"name": "GPT-5 Nano",
+"earliest": "2025-08-07",
+"out": "text,image",
+"canonical": "openai/gpt-5-nano",
+"providers": [
+"neon"
+]
+},
+{
+"name": "GPT-5.2",
+"earliest": "2025-12-11",
+"out": "text,image",
+"canonical": "openai/gpt-5.2",
+"providers": [
+"neon"
+]
+},
+{
+"name": "GPT-5.3 Codex",
+"earliest": "2026-02-05",
+"out": "text,image",
+"canonical": "openai/gpt-5.3-codex",
+"providers": [
+"neon"
+]
+},
+{
+"name": "GPT-5.4 mini",
+"earliest": "2026-03-17",
+"out": "text,image",
+"canonical": "openai/gpt-5.4-mini",
+"providers": [
+"neon"
+]
+},
+{
+"name": "GPT-5.4 nano",
+"earliest": "2026-03-17",
+"out": "text,image",
+"canonical": "openai/gpt-5.4-nano",
+"providers": [
+"neon"
+]
+},
+{
+"name": "GPT-5.5",
+"earliest": "2026-04-08",
+"out": "text,image",
+"canonical": "openai/gpt-5.5",
+"providers": [
+"neon",
+"poe"
+]
+},
+{
+"name": "GPT-5.5-Pro",
+"earliest": "2026-04-08",
+"out": "text,image",
+"canonical": "openai/gpt-5.5-pro",
+"providers": [
+"neon",
+"poe"
+]
+},
+{
+"name": "GPT-5.6 Luna",
+"earliest": "2026-07-09",
+"out": "text,image",
+"canonical": "openai/gpt-5.6-luna",
+"providers": [
+"neon"
+]
+},
+{
+"name": "GPT-5.6 Sol",
+"earliest": "2026-07-09",
+"out": "text,image",
+"canonical": "openai/gpt-5.6-sol",
+"providers": [
+"neon"
+]
+},
+{
+"name": "GPT-5.6 Terra",
+"earliest": "2026-07-09",
+"out": "text,image",
+"canonical": "openai/gpt-5.6-terra",
+"providers": [
+"neon"
+]
+},
+{
+"name": "GPT-6 Astra",
+"earliest": "2026-09-04",
+"out": "text,image",
+"canonical": "openai/gpt-6-astra",
+"providers": [
+"neon"
+]
+},
+{
+"name": "Gemini 3.0 Pro Image Preview",
+"earliest": "2025-11-20",
+"out": "text,image",
+"canonical": null,
+"providers": [
+"qiniu-ai"
+]
+},
+{
+"name": "Gemini Nano Banana 2.1",
+"earliest": "2026-10-06",
+"out": "text,image",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Nano Banana",
+"earliest": "2025-08-26",
+"out": "text,image",
+"canonical": "google/gemini-2.5-flash-image",
+"providers": [
+"abacus",
+"aihubmix",
+"edenai",
+"google"
+]
+},
+{
+"name": "Nano Banana 2",
+"earliest": "2026-05-28",
+"out": "text,image",
+"canonical": "google/gemini-3.1-flash-image",
+"providers": [
+"abacus",
+"aihubmix",
+"edenai",
+"google"
+]
+},
+{
+"name": "Nano Banana 2",
+"earliest": "2026-02-26",
+"out": "text,image",
+"canonical": null,
+"providers": [
+"google"
+]
+},
+{
+"name": "Nano Banana 2 Lite",
+"earliest": "2026-06-30",
+"out": "text,image",
+"canonical": "google/gemini-3.1-flash-lite-image",
+"providers": [
+"aihubmix",
+"edenai",
+"google",
+"kilo"
+]
+},
+{
+"name": "Nano Banana 2 Preview",
+"earliest": "2026-02-26",
+"out": "text,image",
+"canonical": "google/gemini-3.1-flash-image-preview",
+"providers": [
+"302ai",
+"abacus",
+"edenai",
+"fastrouter"
+]
+},
+{
+"name": "Nano Banana Pro",
+"earliest": "2026-05-28",
+"out": "text,image",
+"canonical": "google/gemini-3-pro-image",
+"providers": [
+"abacus",
+"aihubmix",
+"edenai",
+"google"
+]
+},
+{
+"name": "Nano Banana Pro Preview",
+"earliest": "2025-11-20",
+"out": "text,image",
+"canonical": "google/gemini-3-pro-image-preview",
+"providers": [
+"abacus",
+"edenai",
+"fastrouter",
+"google"
+]
+},
+{
+"name": "Nano-Banana",
+"earliest": "2025-08-21",
+"out": "text,image",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "OpenAI GPT-5.1",
+"earliest": "2025-01-01",
+"out": "text,image",
+"canonical": null,
+"providers": [
+"helicone"
+]
+},
+{
+"name": "OpenAI GPT-5.1 Chat",
+"earliest": "2025-01-01",
+"out": "text,image",
+"canonical": null,
+"providers": [
+"helicone"
+]
+},
+{
+"name": "OpenAI: GPT-5.1 Codex",
+"earliest": "2025-01-01",
+"out": "text,image",
+"canonical": null,
+"providers": [
+"helicone"
+]
+},
+{
+"name": "OpenAI: GPT-5.1 Codex Mini",
+"earliest": "2025-01-01",
+"out": "text,image",
+"canonical": null,
+"providers": [
+"helicone"
+]
+},
+{
+"name": "chatgpt-image-latest",
+"earliest": "2025-12-16",
+"out": "text,image",
+"canonical": null,
+"providers": [
+"openai"
+]
+},
+{
+"name": "xAI Grok 4.1 Fast Non-Reasoning",
+"earliest": "2025-11-17",
+"out": "text,image",
+"canonical": null,
+"providers": [
+"helicone"
+]
+},
+{
+"name": "GPT-5.1",
+"earliest": "2025-11-13",
+"out": "text,image,audio",
+"canonical": null,
+"providers": [
+"azure",
+"azure-cognitive-services",
+"neon"
+]
+},
+{
+"name": "GPT-5.1 Codex",
+"earliest": "2025-11-14",
+"out": "text,image,audio",
+"canonical": null,
+"providers": [
+"azure",
+"azure-cognitive-services"
+]
+},
+{
+"name": "Flux 3",
+"earliest": "2026-08-04",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Gemini Omni Flash Preview",
+"earliest": "2026-06-30",
+"out": "video",
+"canonical": "google/gemini-omni-flash-preview",
+"providers": [
+"google"
+]
+},
+{
+"name": "Grok Imagine",
+"earliest": "2026-01-28",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Grok Imagine Video",
+"earliest": "2026-01-28",
+"out": "video",
+"canonical": null,
+"providers": [
+"xai"
+]
+},
+{
+"name": "Grok Imagine Video 1.5",
+"earliest": "2026-05-30",
+"out": "video",
+"canonical": "xai/grok-imagine-video-1.5",
+"providers": [
+"vercel",
+"xai"
+]
+},
+{
+"name": "Grok Imagine Video 1.5 Lite",
+"earliest": "2026-10-01",
+"out": "video",
+"canonical": "xai/grok-imagine-video-1.5-lite",
+"providers": [
+"vercel",
+"xai"
+]
+},
+{
+"name": "HappyHorse 1.1 Image-to-Video",
+"earliest": "2026-07-17",
+"out": "video",
+"canonical": null,
+"providers": [
+"alibaba-token-plan",
+"alibaba-token-plan-cn"
+]
+},
+{
+"name": "HappyHorse 1.1 Reference-to-Video",
+"earliest": "2026-07-17",
+"out": "video",
+"canonical": null,
+"providers": [
+"alibaba-token-plan",
+"alibaba-token-plan-cn"
+]
+},
+{
+"name": "HappyHorse 1.1 Text-to-Video",
+"earliest": "2026-07-17",
+"out": "video",
+"canonical": null,
+"providers": [
+"alibaba-token-plan",
+"alibaba-token-plan-cn"
+]
+},
+{
+"name": "Kling v2.5 Turbo Image-to-Video",
+"earliest": "2025-09-23",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Kling v2.5 Turbo Text-to-Video",
+"earliest": "2025-09-23",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Kling v2.6 Image-to-Video",
+"earliest": "2025-12-03",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Kling v2.6 Motion Control",
+"earliest": "2025-12-18",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Kling v2.6 Text-to-Video",
+"earliest": "2025-12-03",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Kling v3.0 Image-to-Video",
+"earliest": "2026-02-05",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Kling v3.0 Motion Control",
+"earliest": "2026-03-04",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Kling v3.0 Text-to-Video",
+"earliest": "2026-02-05",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Kling-V2 6",
+"earliest": "2026-01-13",
+"out": "video",
+"canonical": null,
+"providers": [
+"qiniu-ai"
+]
+},
+{
+"name": "MiniMax H3",
+"earliest": "2026-07-31",
+"out": "video",
+"canonical": "minimax/MiniMax-H3",
+"providers": [
+"vercel"
+]
+},
+{
+"name": "MiniMax H3 Max",
+"earliest": "2026-08-27",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Proteus",
+"earliest": "2026-10-06",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Ray2",
+"earliest": "2025-02-20",
+"out": "video",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Runway",
+"earliest": "2024-10-11",
+"out": "video",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Runway-Gen-4-Turbo",
+"earliest": "2025-05-09",
+"out": "video",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Seedance 2",
+"earliest": "2026-04-01",
+"out": "video",
+"canonical": null,
+"providers": [
+"fastrouter"
+]
+},
+{
+"name": "Seedance 2.0",
+"earliest": "2026-04-14",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Seedance 2.0 Fast",
+"earliest": "2026-04-14",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Seedance 2.0 Mini",
+"earliest": "2026-06-22",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Seedance 2.5",
+"earliest": "2026-08-07",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Seedance v1.0 Pro",
+"earliest": "2025-06-11",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Seedance v1.0 Pro Fast",
+"earliest": "2025-10-24",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Seedance v1.5 Pro",
+"earliest": "2025-12-16",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Sora-2",
+"earliest": "2025-10-06",
+"out": "video",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Sora-2-Pro",
+"earliest": "2025-10-06",
+"out": "video",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Starlight Precise 2.6",
+"earliest": "2026-10-06",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Veo 3.0",
+"earliest": "2025-05-20",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Veo 3.0 Fast Generate",
+"earliest": "2025-07-31",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Veo 3.1",
+"earliest": "2025-10-15",
+"out": "video",
+"canonical": "google/veo-3.1-generate-preview",
+"providers": [
+"google"
+]
+},
+{
+"name": "Veo 3.1 Fast Generate",
+"earliest": "2025-10-15",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Veo 3.1 Lite",
+"earliest": "2026-05-01",
+"out": "video",
+"canonical": null,
+"providers": [
+"fastrouter"
+]
+},
+{
+"name": "Veo 3.1 Lite Generate",
+"earliest": "2026-04-02",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Veo 3.1 fast",
+"earliest": "2025-10-15",
+"out": "video",
+"canonical": "google/veo-3.1-fast-generate-preview",
+"providers": [
+"google"
+]
+},
+{
+"name": "Veo 3.1 lite",
+"earliest": "2026-03-31",
+"out": "video",
+"canonical": "google/veo-3.1-lite-generate-preview",
+"providers": [
+"google"
+]
+},
+{
+"name": "Veo-2",
+"earliest": "2024-12-02",
+"out": "video",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Veo-3",
+"earliest": "2025-05-21",
+"out": "video",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Veo-3-Fast",
+"earliest": "2025-10-13",
+"out": "video",
+"canonical": null,
+"providers": [
+"poe"
+]
+},
+{
+"name": "Veo-3.1",
+"earliest": "2025-10-15",
+"out": "video",
+"canonical": null,
+"providers": [
+"fastrouter",
+"poe",
+"vercel"
+]
+},
+{
+"name": "Veo-3.1-Fast",
+"earliest": "2025-10-15",
+"out": "video",
+"canonical": null,
+"providers": [
+"fastrouter",
+"poe"
+]
+},
+{
+"name": "Wan 2.6",
+"earliest": "2025-12-01",
+"out": "video",
+"canonical": null,
+"providers": [
+"fastrouter"
+]
+},
+{
+"name": "Wan v2.5 Text-to-Video Preview",
+"earliest": "2025-09-24",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Wan v2.6 Image-to-Video",
+"earliest": "2025-12-16",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Wan v2.6 Image-to-Video Flash",
+"earliest": "2025-12-16",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Wan v2.6 Reference-to-Video",
+"earliest": "2025-12-16",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Wan v2.6 Reference-to-Video Flash",
+"earliest": "2025-12-16",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Wan v2.6 Text-to-Video",
+"earliest": "2025-12-16",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Wan v2.7 Reference-to-Video",
+"earliest": "2026-04-07",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Wan v2.7 Text-to-Video",
+"earliest": "2026-04-07",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Wan v3.0 Video",
+"earliest": "2026-08-23",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Wan v3.0 Video Prime",
+"earliest": "2026-08-28",
+"out": "video",
+"canonical": null,
+"providers": [
+"vercel"
+]
+},
+{
+"name": "Wan2.2-T2V-A14B",
+"earliest": "2025-07-28",
+"out": "video",
+"canonical": null,
+"providers": [
+"digitalocean"
+]
+},
+{
+"name": "cosmos-predict1-5b",
+"earliest": "2025-03-18",
+"out": "video",
+"canonical": null,
+"providers": [
+"nvidia"
+]
+},
+{
+"name": "cosmos-transfer1-7b",
+"earliest": "2025-06-13",
+"out": "video",
+"canonical": null,
+"providers": [
+"nvidia"
+]
+},
+{
+"name": "cosmos-transfer2.5-2b",
+"earliest": "2026-02-26",
+"out": "video",
+"canonical": null,
+"providers": [
+"nvidia"
+]
+}
+]

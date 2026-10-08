@@ -1,0 +1,4679 @@
+{
+ "generatedAt": "2026-10-09",
+ "semantics": {
+  "chainStage": "depth in the lineage parent chain (1 = root). Replaces the old 'generation' column and maps to the game's stage.",
+  "relation": "post-train / distill need an official or reported source; successor = direct technical continuation; series-successor = next version of the same product line, no weights claim."
+ },
+ "rosterChainChecks": [
+  {
+   "from": "gpt-35",
+   "to": "gpt-4",
+   "rosterKind": "post-training",
+   "rosterLevel": 18,
+   "fromRecord": "openai/gpt-3-5",
+   "toRecord": "openai/gpt-4",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "openai/gpt-3-5",
+    "openai/gpt-4"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "gpt-4",
+   "to": "gpt-4o",
+   "rosterKind": "post-training",
+   "rosterLevel": 34,
+   "fromRecord": "openai/gpt-4",
+   "toRecord": "openai/gpt-4o",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "openai/gpt-4",
+    "openai/gpt-4-turbo",
+    "openai/gpt-4o"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "GPT-4 Turbo"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips GPT-4 Turbo); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "o1",
+   "to": "gpt-5",
+   "rosterKind": "post-training",
+   "rosterLevel": 16,
+   "fromRecord": "openai/o1",
+   "toRecord": "openai/gpt-5",
+   "dateOrderOk": true,
+   "verdict": "contradicts-lineage",
+   "comment": "o1 and GPT-5 are different lines of openai (o-series vs gpt); no ancestor path"
+  },
+  {
+   "from": "gpt-5",
+   "to": "gpt-6-astra",
+   "rosterKind": "post-training",
+   "rosterLevel": 36,
+   "fromRecord": "openai/gpt-5",
+   "toRecord": "openai/gpt-6-astra",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 6,
+   "path": [
+    "openai/gpt-5",
+    "openai/gpt-5-1",
+    "openai/gpt-5-2",
+    "openai/gpt-5-4",
+    "openai/gpt-5-5",
+    "openai/gpt-5-6-sol",
+    "openai/gpt-6-astra"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "GPT-5.1",
+    "GPT-5.2",
+    "GPT-5.4",
+    "GPT-5.5",
+    "GPT-5.6 Sol"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "6 lineage hop(s) (skips GPT-5.1, GPT-5.2, GPT-5.4, GPT-5.5, GPT-5.6 Sol); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "gpt-5-5",
+   "to": "gpt-5-6",
+   "rosterKind": "post-training",
+   "rosterLevel": 40,
+   "fromRecord": "openai/gpt-5-5",
+   "toRecord": "openai/gpt-5-6-sol",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "openai/gpt-5-5",
+    "openai/gpt-5-6-sol"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "gpt-6-luna",
+   "to": "gpt-6-sol",
+   "rosterKind": "post-training",
+   "rosterLevel": 30,
+   "fromRecord": "openai/gpt-6-luna",
+   "toRecord": "openai/gpt-6-1-sol",
+   "dateOrderOk": true,
+   "verdict": "contradicts-lineage",
+   "comment": "GPT-6 Luna and GPT-6.1 Sol are different lines of openai (gpt-luna vs gpt); no ancestor path"
+  },
+  {
+   "from": "codex-2021",
+   "to": "openai-codex",
+   "rosterKind": "post-training",
+   "rosterLevel": 32,
+   "fromRecord": "openai/openai-codex-2021",
+   "toRecord": "openai/codex-1",
+   "dateOrderOk": true,
+   "verdict": "contradicts-lineage",
+   "comment": "OpenAI Codex (2021) and codex-1 are different lines of openai (codex vs codex); no ancestor path"
+  },
+  {
+   "from": "dall-e",
+   "to": "gpt-image-1",
+   "rosterKind": "post-training",
+   "rosterLevel": 22,
+   "fromRecord": "openai/dall-e",
+   "toRecord": "openai/gpt-image-1",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 3,
+   "path": [
+    "openai/dall-e",
+    "openai/dall-e-2",
+    "openai/dall-e-3",
+    "openai/gpt-image-1"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "DALL-E 2",
+    "DALL-E 3"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "3 lineage hop(s) (skips DALL-E 2, DALL-E 3); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "gpt-image-1",
+   "to": "gpt-image-2-5",
+   "rosterKind": "post-training",
+   "rosterLevel": 44,
+   "fromRecord": "openai/gpt-image-1",
+   "toRecord": "openai/gpt-image-2-5-sunburst",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 3,
+   "path": [
+    "openai/gpt-image-1",
+    "openai/gpt-image-1-5",
+    "openai/gpt-image-2",
+    "openai/gpt-image-2-5-sunburst"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "GPT Image 1.5",
+    "GPT Image 2"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "3 lineage hop(s) (skips GPT Image 1.5, GPT Image 2); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "claude-haiku",
+   "to": "claude-opus-4-8",
+   "rosterKind": "post-training",
+   "rosterLevel": 16,
+   "fromRecord": "anthropic/claude-haiku-4-5",
+   "toRecord": "anthropic/claude-opus-4-8",
+   "dateOrderOk": true,
+   "verdict": "contradicts-lineage",
+   "comment": "Claude Haiku 4.5 and Claude Opus 4.8 are different lines of anthropic (claude-haiku vs claude-opus); no ancestor path"
+  },
+  {
+   "from": "claude-opus-4-8",
+   "to": "claude-opus",
+   "rosterKind": "post-training",
+   "rosterLevel": 36,
+   "fromRecord": "anthropic/claude-opus-4-8",
+   "toRecord": "anthropic/claude-opus-5-5",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "anthropic/claude-opus-4-8",
+    "anthropic/claude-opus-5",
+    "anthropic/claude-opus-5-5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Claude Opus 5"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips Claude Opus 5); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "claude-3-opus",
+   "to": "claude-3-5-sonnet",
+   "rosterKind": "post-training",
+   "rosterLevel": 26,
+   "fromRecord": "anthropic/claude-3-opus",
+   "toRecord": "anthropic/claude-3-5-sonnet",
+   "dateOrderOk": true,
+   "verdict": "contradicts-lineage",
+   "comment": "Claude 3 Opus and Claude 3.5 Sonnet are different lines of anthropic (claude-opus vs claude-sonnet); no ancestor path"
+  },
+  {
+   "from": "claude-3-5-sonnet",
+   "to": "claude-sonnet",
+   "rosterKind": "post-training",
+   "rosterLevel": 40,
+   "fromRecord": "anthropic/claude-3-5-sonnet",
+   "toRecord": "anthropic/claude-sonnet-5-5",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 6,
+   "path": [
+    "anthropic/claude-3-5-sonnet",
+    "anthropic/claude-3-7-sonnet",
+    "anthropic/claude-sonnet-4",
+    "anthropic/claude-sonnet-4-5",
+    "anthropic/claude-sonnet-4-6",
+    "anthropic/claude-sonnet-5",
+    "anthropic/claude-sonnet-5-5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Claude 3.7 Sonnet",
+    "Claude Sonnet 4",
+    "Claude Sonnet 4.5",
+    "Claude Sonnet 4.6",
+    "Claude Sonnet 5"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "6 lineage hop(s) (skips Claude 3.7 Sonnet, Claude Sonnet 4, Claude Sonnet 4.5, Claude Sonnet 4.6, Claude Sonnet 5); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "claude-mythos-preview",
+   "to": "claude-mythos",
+   "rosterKind": "post-training",
+   "rosterLevel": 50,
+   "fromRecord": "anthropic/claude-mythos-preview",
+   "toRecord": "anthropic/claude-mythos-5-1",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "anthropic/claude-mythos-preview",
+    "anthropic/claude-mythos-5",
+    "anthropic/claude-mythos-5-1"
+   ],
+   "relations": [
+    "successor",
+    "successor"
+   ],
+   "skipped": [
+    "Claude Mythos 5"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips Claude Mythos 5); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "gemini-flash-lite",
+   "to": "gemini-flash",
+   "rosterKind": "post-training",
+   "rosterLevel": 20,
+   "fromRecord": "google/gemini-3-5-flash-lite",
+   "toRecord": "google/gemini-3-8-flash",
+   "dateOrderOk": true,
+   "verdict": "contradicts-lineage",
+   "comment": "Gemini 3.5 Flash-Lite and Gemini 3.8 Flash are different lines of google (gemini-flash-lite vs gemini-flash); no ancestor path"
+  },
+  {
+   "from": "gemini-flash",
+   "to": "gemini-argon",
+   "rosterKind": "post-training",
+   "rosterLevel": 48,
+   "fromRecord": "google/gemini-3-8-flash",
+   "toRecord": "google/gemini-4-argon",
+   "dateOrderOk": true,
+   "verdict": "contradicts-lineage",
+   "comment": "Gemini 3.8 Flash and Gemini 4 Argon are different lines of google (gemini-flash vs gemini-argon); no ancestor path"
+  },
+  {
+   "from": "gemini-1-5-pro",
+   "to": "gemini-2-5-pro",
+   "rosterKind": "post-training",
+   "rosterLevel": 26,
+   "fromRecord": "google/gemini-1-5-pro",
+   "toRecord": "google/gemini-2-5-pro",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "google/gemini-1-5-pro",
+    "google/gemini-2-5-pro"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "gemini-2-5-pro",
+   "to": "gemini-3-1-pro",
+   "rosterKind": "post-training",
+   "rosterLevel": 40,
+   "fromRecord": "google/gemini-2-5-pro",
+   "toRecord": "google/gemini-3-1-pro",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "google/gemini-2-5-pro",
+    "google/gemini-3-pro",
+    "google/gemini-3-1-pro"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Gemini 3 Pro"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips Gemini 3 Pro); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "nano-banana",
+   "to": "nano-banana-2",
+   "rosterKind": "post-training",
+   "rosterLevel": 34,
+   "fromRecord": "google/nano-banana",
+   "toRecord": "google/nano-banana-2",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "google/nano-banana",
+    "google/nano-banana-2"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "veo-3",
+   "to": "gemini-omni",
+   "rosterKind": "post-training",
+   "rosterLevel": 38,
+   "fromRecord": "google/veo-3",
+   "toRecord": "google/gemini-omni-flash",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "google/veo-3",
+    "google/veo-3-1",
+    "google/gemini-omni-flash"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Veo 3.1"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips Veo 3.1); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "grok-1",
+   "to": "grok-4",
+   "rosterKind": "post-training",
+   "rosterLevel": 24,
+   "fromRecord": "xai/grok-1",
+   "toRecord": "xai/grok-4",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 3,
+   "path": [
+    "xai/grok-1",
+    "xai/grok-2",
+    "xai/grok-3",
+    "xai/grok-4"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Grok-2",
+    "Grok 3"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "3 lineage hop(s) (skips Grok-2, Grok 3); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "grok-4",
+   "to": "grok-4-7",
+   "rosterKind": "post-training",
+   "rosterLevel": 44,
+   "fromRecord": "xai/grok-4",
+   "toRecord": "xai/grok-4-7",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 6,
+   "path": [
+    "xai/grok-4",
+    "xai/grok-4-1-fast",
+    "xai/grok-4-20",
+    "xai/grok-4-3",
+    "xai/grok-4-5",
+    "xai/grok-4-6",
+    "xai/grok-4-7"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Grok 4.1 Fast",
+    "Grok 4.20",
+    "Grok 4.3",
+    "Grok 4.5",
+    "Grok 4.6"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "6 lineage hop(s) (skips Grok 4.1 Fast, Grok 4.20, Grok 4.3, Grok 4.5, Grok 4.6); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "llama-1",
+   "to": "llama-3-1",
+   "rosterKind": "post-training",
+   "rosterLevel": 20,
+   "fromRecord": "meta/llama",
+   "toRecord": "meta/llama-3-1",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 3,
+   "path": [
+    "meta/llama",
+    "meta/llama-2",
+    "meta/llama-3",
+    "meta/llama-3-1"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Llama 2",
+    "Llama 3"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "3 lineage hop(s) (skips Llama 2, Llama 3); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "llama-3-1",
+   "to": "llama-4",
+   "rosterKind": "post-training",
+   "rosterLevel": 38,
+   "fromRecord": "meta/llama-3-1",
+   "toRecord": "meta/llama-4",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 3,
+   "path": [
+    "meta/llama-3-1",
+    "meta/llama-3-2",
+    "meta/llama-3-3",
+    "meta/llama-4"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Llama 3.2",
+    "Llama 3.3"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "3 lineage hop(s) (skips Llama 3.2, Llama 3.3); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "mistral-7b",
+   "to": "mistral-medium",
+   "rosterKind": "post-training",
+   "rosterLevel": 26,
+   "fromRecord": "mistral/mistral-7b",
+   "toRecord": "mistral/mistral-medium-3-5",
+   "dateOrderOk": true,
+   "verdict": "contradicts-lineage",
+   "comment": "Mistral 7B and Mistral Medium 3.5 are different lines of mistral (mistral-open vs mistral-medium); no ancestor path"
+  },
+  {
+   "from": "midjourney-v5",
+   "to": "midjourney-v7",
+   "rosterKind": "post-training",
+   "rosterLevel": 24,
+   "fromRecord": "midjourney/midjourney-v5",
+   "toRecord": "midjourney/midjourney-v7",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 5,
+   "path": [
+    "midjourney/midjourney-v5",
+    "midjourney/midjourney-v5-1",
+    "midjourney/midjourney-v5-2",
+    "midjourney/midjourney-v6",
+    "midjourney/midjourney-v6-1",
+    "midjourney/midjourney-v7"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Midjourney V5.1",
+    "Midjourney V5.2",
+    "Midjourney V6",
+    "Midjourney V6.1"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "5 lineage hop(s) (skips Midjourney V5.1, Midjourney V5.2, Midjourney V6, Midjourney V6.1); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "midjourney-v7",
+   "to": "midjourney-v8",
+   "rosterKind": "post-training",
+   "rosterLevel": 42,
+   "fromRecord": "midjourney/midjourney-v7",
+   "toRecord": "midjourney/midjourney-v8",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "midjourney/midjourney-v7",
+    "midjourney/midjourney-v8"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "sd-1-5",
+   "to": "sdxl",
+   "rosterKind": "post-training",
+   "rosterLevel": 20,
+   "fromRecord": "stability/stable-diffusion-1-x",
+   "toRecord": "stability/sdxl-1-0",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "stability/stable-diffusion-1-x",
+    "stability/stable-diffusion-2-x",
+    "stability/sdxl-1-0"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Stable Diffusion 2.x"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips Stable Diffusion 2.x); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "flux-1",
+   "to": "flux-3",
+   "rosterKind": "post-training",
+   "rosterLevel": 36,
+   "fromRecord": "bfl/flux-1",
+   "toRecord": "bfl/flux-3",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 3,
+   "path": [
+    "bfl/flux-1",
+    "bfl/flux1-1-pro",
+    "bfl/flux-2",
+    "bfl/flux-3"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "FLUX1.1 [pro]",
+    "FLUX.2"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "3 lineage hop(s) (skips FLUX1.1 [pro], FLUX.2); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "suno-v3",
+   "to": "suno-v5",
+   "rosterKind": "post-training",
+   "rosterLevel": 24,
+   "fromRecord": "suno/suno-v3-5",
+   "toRecord": "suno/suno-v5",
+   "dateOrderOk": null,
+   "verdict": "consistent-skips-versions",
+   "hops": 3,
+   "path": [
+    "suno/suno-v3-5",
+    "suno/suno-v4",
+    "suno/suno-v4-5",
+    "suno/suno-v5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Suno v4",
+    "Suno v4.5"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "3 lineage hop(s) (skips Suno v4, Suno v4.5); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "suno-v5",
+   "to": "suno-v6",
+   "rosterKind": "post-training",
+   "rosterLevel": 44,
+   "fromRecord": "suno/suno-v5",
+   "toRecord": "suno/suno-v6",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "suno/suno-v5",
+    "suno/suno-v5-5",
+    "suno/suno-v6"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Suno v5.5"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips Suno v5.5); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "eleven-v2",
+   "to": "eleven-v4",
+   "rosterKind": "post-training",
+   "rosterLevel": 34,
+   "fromRecord": "elevenlabs/eleven-multilingual-v2",
+   "toRecord": "elevenlabs/eleven-v4",
+   "dateOrderOk": null,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "elevenlabs/eleven-multilingual-v2",
+    "elevenlabs/eleven-v3",
+    "elevenlabs/eleven-v4"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Eleven v3"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips Eleven v3); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "manus",
+   "to": "manus-2",
+   "rosterKind": "post-training",
+   "rosterLevel": 32,
+   "fromRecord": "manus/manus",
+   "toRecord": "manus/manus-2-0",
+   "dateOrderOk": null,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "manus/manus",
+    "manus/manus-1-6",
+    "manus/manus-2-0"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Manus 1.6"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips Manus 1.6); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "perplexity",
+   "to": "perplexity-comet",
+   "rosterKind": "post-training",
+   "rosterLevel": 28,
+   "fromRecord": "perplexity/perplexity-answer-engine",
+   "toRecord": "perplexity/perplexity-comet",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "perplexity/perplexity-answer-engine",
+    "perplexity/perplexity-comet"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "perplexity-comet",
+   "to": "perplexity-computer",
+   "rosterKind": "post-training",
+   "rosterLevel": 40,
+   "fromRecord": "perplexity/perplexity-comet",
+   "toRecord": "perplexity/perplexity-computer",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "perplexity/perplexity-comet",
+    "perplexity/perplexity-computer"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "clawdbot",
+   "to": "moltbot",
+   "rosterKind": "post-training",
+   "rosterLevel": 18,
+   "fromRecord": "openclaw/clawdbot",
+   "toRecord": "openclaw/moltbot",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "openclaw/clawdbot",
+    "openclaw/moltbot"
+   ],
+   "relations": [
+    "successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "moltbot",
+   "to": "openclaw",
+   "rosterKind": "post-training",
+   "rosterLevel": 36,
+   "fromRecord": "openclaw/moltbot",
+   "toRecord": "openclaw/openclaw",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "openclaw/moltbot",
+    "openclaw/openclaw"
+   ],
+   "relations": [
+    "successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "deepseek-v3",
+   "to": "deepseek-r1",
+   "rosterKind": "post-training",
+   "rosterLevel": 16,
+   "fromRecord": "deepseek/deepseek-v3",
+   "toRecord": "deepseek/deepseek-r1",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "deepseek/deepseek-v3",
+    "deepseek/deepseek-r1"
+   ],
+   "relations": [
+    "post-train"
+   ],
+   "skipped": [],
+   "kindEvidence": "weights-claim (post-train/distill in path)",
+   "comment": "1 lineage hop(s)"
+  },
+  {
+   "from": "deepseek-r1",
+   "to": "deepseek-v4",
+   "rosterKind": "post-training",
+   "rosterLevel": 36,
+   "fromRecord": "deepseek/deepseek-r1",
+   "toRecord": "deepseek/deepseek-v4-pro",
+   "dateOrderOk": true,
+   "verdict": "contradicts-lineage",
+   "comment": "DeepSeek-R1 and DeepSeek-V4-Pro are different lines of deepseek (deepseek-r1 vs deepseek-pro); no ancestor path"
+  },
+  {
+   "from": "qwen-1",
+   "to": "qwen2-5",
+   "rosterKind": "post-training",
+   "rosterLevel": 18,
+   "fromRecord": "alibaba/qwen",
+   "toRecord": "alibaba/qwen2-5",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 3,
+   "path": [
+    "alibaba/qwen",
+    "alibaba/qwen1-5",
+    "alibaba/qwen2",
+    "alibaba/qwen2-5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Qwen1.5",
+    "Qwen2"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "3 lineage hop(s) (skips Qwen1.5, Qwen2); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "qwen2-5",
+   "to": "qwen3-8-max",
+   "rosterKind": "post-training",
+   "rosterLevel": 38,
+   "fromRecord": "alibaba/qwen2-5",
+   "toRecord": "alibaba/qwen3-8-max",
+   "dateOrderOk": true,
+   "verdict": "contradicts-lineage",
+   "comment": "Qwen2.5 and Qwen3.8-Max are different lines of alibaba (qwen-open vs qwen-max); no ancestor path"
+  },
+  {
+   "from": "wan-2-1",
+   "to": "wan-3",
+   "rosterKind": "post-training",
+   "rosterLevel": 38,
+   "fromRecord": "alibaba/wan-2-1",
+   "toRecord": "alibaba/wan-3-0",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 4,
+   "path": [
+    "alibaba/wan-2-1",
+    "alibaba/wan-2-2",
+    "alibaba/wan-2-5",
+    "alibaba/wan-2-7",
+    "alibaba/wan-3-0"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Wan 2.2",
+    "Wan 2.5",
+    "Wan 2.7"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "4 lineage hop(s) (skips Wan 2.2, Wan 2.5, Wan 2.7); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "kimi-chat",
+   "to": "kimi-k2",
+   "rosterKind": "post-training",
+   "rosterLevel": 24,
+   "fromRecord": "moonshot/kimi-chat",
+   "toRecord": "moonshot/kimi-k2",
+   "dateOrderOk": null,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "moonshot/kimi-chat",
+    "moonshot/kimi-k1-5",
+    "moonshot/kimi-k2"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Kimi k1.5"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips Kimi k1.5); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "kimi-k2",
+   "to": "kimi-k3",
+   "rosterKind": "post-training",
+   "rosterLevel": 44,
+   "fromRecord": "moonshot/kimi-k2",
+   "toRecord": "moonshot/kimi-k3",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 4,
+   "path": [
+    "moonshot/kimi-k2",
+    "moonshot/kimi-k2-thinking",
+    "moonshot/kimi-k2-5",
+    "moonshot/kimi-k2-6",
+    "moonshot/kimi-k3"
+   ],
+   "relations": [
+    "post-train",
+    "successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Kimi K2 Thinking",
+    "Kimi K2.5",
+    "Kimi K2.6"
+   ],
+   "kindEvidence": "weights-claim (post-train/distill in path)",
+   "comment": "4 lineage hop(s) (skips Kimi K2 Thinking, Kimi K2.5, Kimi K2.6)"
+  },
+  {
+   "from": "chatglm",
+   "to": "glm-4-5",
+   "rosterKind": "post-training",
+   "rosterLevel": 22,
+   "fromRecord": "zhipu/chatglm-6b",
+   "toRecord": "zhipu/glm-4-5",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "zhipu/chatglm-6b",
+    "zhipu/glm-4",
+    "zhipu/glm-4-5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "GLM-4"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips GLM-4); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "glm-4-5",
+   "to": "glm-5-3",
+   "rosterKind": "post-training",
+   "rosterLevel": 42,
+   "fromRecord": "zhipu/glm-4-5",
+   "toRecord": "zhipu/glm-5-3",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 6,
+   "path": [
+    "zhipu/glm-4-5",
+    "zhipu/glm-4-6",
+    "zhipu/glm-4-7",
+    "zhipu/glm-5",
+    "zhipu/glm-5-1",
+    "zhipu/glm-5-2",
+    "zhipu/glm-5-3"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "post-train"
+   ],
+   "skipped": [
+    "GLM-4.6",
+    "GLM-4.7",
+    "GLM-5",
+    "GLM-5.1",
+    "GLM-5.2"
+   ],
+   "kindEvidence": "weights-claim (post-train/distill in path)",
+   "comment": "6 lineage hop(s) (skips GLM-4.6, GLM-4.7, GLM-5, GLM-5.1, GLM-5.2)"
+  },
+  {
+   "from": "doubao-pro",
+   "to": "doubao-seed-2",
+   "rosterKind": "post-training",
+   "rosterLevel": 20,
+   "fromRecord": "bytedance/doubao-pro",
+   "toRecord": "bytedance/doubao-seed-2-0-pro",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 3,
+   "path": [
+    "bytedance/doubao-pro",
+    "bytedance/doubao-seed-1-6",
+    "bytedance/doubao-seed-1-8",
+    "bytedance/doubao-seed-2-0-pro"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Doubao-Seed-1.6",
+    "Doubao-Seed-1.8"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "3 lineage hop(s) (skips Doubao-Seed-1.6, Doubao-Seed-1.8); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "doubao-seed-2",
+   "to": "doubao-seed-2-1",
+   "rosterKind": "post-training",
+   "rosterLevel": 42,
+   "fromRecord": "bytedance/doubao-seed-2-0-pro",
+   "toRecord": "bytedance/doubao-seed-2-1-pro",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "bytedance/doubao-seed-2-0-pro",
+    "bytedance/doubao-seed-2-1-pro"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "seedream-3",
+   "to": "seedream-5",
+   "rosterKind": "post-training",
+   "rosterLevel": 30,
+   "fromRecord": "bytedance/seedream-3-0",
+   "toRecord": "bytedance/seedream-5-0",
+   "dateOrderOk": null,
+   "verdict": "consistent-skips-versions",
+   "hops": 3,
+   "path": [
+    "bytedance/seedream-3-0",
+    "bytedance/seedream-4-0",
+    "bytedance/seedream-4-5",
+    "bytedance/seedream-5-0"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Seedream 4.0",
+    "Seedream 4.5"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "3 lineage hop(s) (skips Seedream 4.0, Seedream 4.5); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "seedance-1",
+   "to": "seedance-2",
+   "rosterKind": "post-training",
+   "rosterLevel": 26,
+   "fromRecord": "bytedance/seedance-1-0",
+   "toRecord": "bytedance/seedance-2-0",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "bytedance/seedance-1-0",
+    "bytedance/seedance-2-0"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "seedance-2",
+   "to": "seedance-2-5",
+   "rosterKind": "post-training",
+   "rosterLevel": 46,
+   "fromRecord": "bytedance/seedance-2-0",
+   "toRecord": "bytedance/seedance-2-5",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "bytedance/seedance-2-0",
+    "bytedance/seedance-2-5"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "hunyuan",
+   "to": "hy3",
+   "rosterKind": "post-training",
+   "rosterLevel": 24,
+   "fromRecord": "tencent/hunyuan",
+   "toRecord": "tencent/hy3",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 6,
+   "path": [
+    "tencent/hunyuan",
+    "tencent/hunyuan-large",
+    "tencent/hunyuan-turbos",
+    "tencent/hunyuan-t1",
+    "tencent/hunyuan-2-0-hy-2-0",
+    "tencent/hy3-preview",
+    "tencent/hy3"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "post-train",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Hunyuan-Large",
+    "Hunyuan-TurboS",
+    "Hunyuan-T1",
+    "Hunyuan 2.0 (HY 2.0)",
+    "Hy3-preview"
+   ],
+   "kindEvidence": "weights-claim (post-train/distill in path)",
+   "comment": "6 lineage hop(s) (skips Hunyuan-Large, Hunyuan-TurboS, Hunyuan-T1, Hunyuan 2.0 (HY 2.0), Hy3-preview)"
+  },
+  {
+   "from": "hy3",
+   "to": "hy4",
+   "rosterKind": "post-training",
+   "rosterLevel": 44,
+   "fromRecord": "tencent/hy3",
+   "toRecord": "tencent/hy4-preview",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "tencent/hy3",
+    "tencent/hy4-preview"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "ernie-bot",
+   "to": "ernie-4-5",
+   "rosterKind": "post-training",
+   "rosterLevel": 22,
+   "fromRecord": "baidu/ernie-bot-ernie-3-5",
+   "toRecord": "baidu/ernie-4-5",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "baidu/ernie-bot-ernie-3-5",
+    "baidu/ernie-4-0",
+    "baidu/ernie-4-5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "ERNIE 4.0"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips ERNIE 4.0); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "ernie-4-5",
+   "to": "ernie-5-1",
+   "rosterKind": "post-training",
+   "rosterLevel": 40,
+   "fromRecord": "baidu/ernie-4-5",
+   "toRecord": "baidu/ernie-5-1",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "baidu/ernie-4-5",
+    "baidu/ernie-5-0",
+    "baidu/ernie-5-1"
+   ],
+   "relations": [
+    "series-successor",
+    "distill"
+   ],
+   "skipped": [
+    "ERNIE 5.0"
+   ],
+   "kindEvidence": "weights-claim (post-train/distill in path)",
+   "comment": "2 lineage hop(s) (skips ERNIE 5.0)"
+  },
+  {
+   "from": "step-flash",
+   "to": "step-5",
+   "rosterKind": "post-training",
+   "rosterLevel": 36,
+   "fromRecord": "stepfun/step-3-5-flash",
+   "toRecord": "stepfun/step-5-preview",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "stepfun/step-3-5-flash",
+    "stepfun/step-3-7-flash",
+    "stepfun/step-5-preview"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Step 3.7 Flash"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips Step 3.7 Flash); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "spark-v4",
+   "to": "spark-x2-5",
+   "rosterKind": "post-training",
+   "rosterLevel": 28,
+   "fromRecord": "iflytek/spark-v4-0",
+   "toRecord": "iflytek/spark-x2-5",
+   "dateOrderOk": null,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "iflytek/spark-v4-0",
+    "iflytek/spark-x1",
+    "iflytek/spark-x2-5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Spark X1"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips Spark X1); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "baichuan-2",
+   "to": "baichuan-m3",
+   "rosterKind": "post-training",
+   "rosterLevel": 26,
+   "fromRecord": "baichuan/baichuan-2",
+   "toRecord": "baichuan/baichuan-m3",
+   "dateOrderOk": null,
+   "verdict": "contradicts-lineage",
+   "comment": "Baichuan 2 and Baichuan-M3 are different lines of baichuan (baichuan vs baichuan-m); no ancestor path"
+  },
+  {
+   "from": "mimo-7b",
+   "to": "mimo-v2-flash",
+   "rosterKind": "post-training",
+   "rosterLevel": 22,
+   "fromRecord": "xiaomi/mimo-7b",
+   "toRecord": "xiaomi/mimo-v2-flash",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "xiaomi/mimo-7b",
+    "xiaomi/mimo-v2-flash"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "mimo-v2-flash",
+   "to": "mimo-v2-6-pro",
+   "rosterKind": "post-training",
+   "rosterLevel": 44,
+   "fromRecord": "xiaomi/mimo-v2-flash",
+   "toRecord": "xiaomi/mimo-v2-6-pro",
+   "dateOrderOk": true,
+   "verdict": "contradicts-lineage",
+   "comment": "MiMo-V2-Flash and MiMo-V2.6-Pro are different lines of xiaomi (mimo-flash vs mimo-pro); no ancestor path"
+  },
+  {
+   "from": "longcat-flash",
+   "to": "longcat-2-5",
+   "rosterKind": "post-training",
+   "rosterLevel": 34,
+   "fromRecord": "meituan/longcat-flash-chat",
+   "toRecord": "meituan/longcat-2-5-preview",
+   "dateOrderOk": null,
+   "verdict": "consistent-skips-versions",
+   "hops": 2,
+   "path": [
+    "meituan/longcat-flash-chat",
+    "meituan/longcat-2-0",
+    "meituan/longcat-2-5-preview"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "LongCat 2.0"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "2 lineage hop(s) (skips LongCat 2.0); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "kling-1",
+   "to": "kling-3",
+   "rosterKind": "post-training",
+   "rosterLevel": 28,
+   "fromRecord": "kuaishou/kling-1-0",
+   "toRecord": "kuaishou/kling-3-0",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 7,
+   "path": [
+    "kuaishou/kling-1-0",
+    "kuaishou/kling-1-5",
+    "kuaishou/kling-1-6",
+    "kuaishou/kling-2-0",
+    "kuaishou/kling-2-1",
+    "kuaishou/kling-2-5-turbo",
+    "kuaishou/kling-2-6",
+    "kuaishou/kling-3-0"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Kling 1.5",
+    "Kling 1.6",
+    "Kling 2.0 (Master)",
+    "Kling 2.1 / 2.1 Master",
+    "Kling 2.5 Turbo",
+    "Kling VIDEO 2.6"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "7 lineage hop(s) (skips Kling 1.5, Kling 1.6, Kling 2.0 (Master), Kling 2.1 / 2.1 Master, Kling 2.5 Turbo, Kling VIDEO 2.6); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "kling-3",
+   "to": "kling-4",
+   "rosterKind": "post-training",
+   "rosterLevel": 48,
+   "fromRecord": "kuaishou/kling-3-0",
+   "toRecord": "kuaishou/kling-4-0",
+   "dateOrderOk": true,
+   "verdict": "consistent-direct",
+   "hops": 1,
+   "path": [
+    "kuaishou/kling-3-0",
+    "kuaishou/kling-4-0"
+   ],
+   "relations": [
+    "series-successor"
+   ],
+   "skipped": [],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "1 lineage hop(s); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "pangu",
+   "to": "openpangu",
+   "rosterKind": "post-training",
+   "rosterLevel": 30,
+   "fromRecord": "huawei/pangu-5-5",
+   "toRecord": "huawei/openpangu-2-0-pro",
+   "dateOrderOk": null,
+   "verdict": "contradicts-lineage",
+   "comment": "Pangu 5.5 and openPangu 2.0 Pro are different lines of huawei (pangu vs openpangu); no ancestor path"
+  },
+  {
+   "from": "vidu",
+   "to": "vidu-q3",
+   "rosterKind": "post-training",
+   "rosterLevel": 30,
+   "fromRecord": "shengshu/vidu-1-0",
+   "toRecord": "shengshu/vidu-q3",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 4,
+   "path": [
+    "shengshu/vidu-1-0",
+    "shengshu/vidu-2-0",
+    "shengshu/vidu-q1",
+    "shengshu/vidu-q2",
+    "shengshu/vidu-q3"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Vidu 2.0",
+    "Vidu Q1",
+    "Vidu Q2"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "4 lineage hop(s) (skips Vidu 2.0, Vidu Q1, Vidu Q2); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "abab",
+   "to": "minimax-m2",
+   "rosterKind": "post-training",
+   "rosterLevel": 24,
+   "fromRecord": "minimax/abab-6-5",
+   "toRecord": "minimax/minimax-m2",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 3,
+   "path": [
+    "minimax/abab-6-5",
+    "minimax/minimax-01",
+    "minimax/minimax-m1",
+    "minimax/minimax-m2"
+   ],
+   "relations": [
+    "series-successor",
+    "successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "MiniMax-01",
+    "MiniMax-M1"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "3 lineage hop(s) (skips MiniMax-01, MiniMax-M1); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "minimax-m2",
+   "to": "minimax-m3",
+   "rosterKind": "post-training",
+   "rosterLevel": 40,
+   "fromRecord": "minimax/minimax-m2",
+   "toRecord": "minimax/minimax-m3",
+   "dateOrderOk": true,
+   "verdict": "consistent-skips-versions",
+   "hops": 4,
+   "path": [
+    "minimax/minimax-m2",
+    "minimax/minimax-m2-1",
+    "minimax/minimax-m2-5",
+    "minimax/minimax-m2-7",
+    "minimax/minimax-m3"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "MiniMax-M2.1",
+    "MiniMax-M2.5",
+    "MiniMax-M2.7"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "4 lineage hop(s) (skips MiniMax-M2.1, MiniMax-M2.5, MiniMax-M2.7); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "hailuo",
+   "to": "minimax-h3",
+   "rosterKind": "post-training",
+   "rosterLevel": 34,
+   "fromRecord": "minimax/hailuo-video-01",
+   "toRecord": "minimax/minimax-h3-hailuo-3-0",
+   "dateOrderOk": null,
+   "verdict": "consistent-skips-versions",
+   "hops": 3,
+   "path": [
+    "minimax/hailuo-video-01",
+    "minimax/hailuo-02",
+    "minimax/hailuo-2-3",
+    "minimax/minimax-h3-hailuo-3-0"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "skipped": [
+    "Hailuo 02",
+    "Hailuo 2.3"
+   ],
+   "kindEvidence": "series-only (no weights claim)",
+   "comment": "3 lineage hop(s) (skips Hailuo 02, Hailuo 2.3); roster kind 'post-training' is stronger than the evidence"
+  },
+  {
+   "from": "unitree",
+   "to": "unitree-gd01",
+   "rosterKind": "post-training",
+   "rosterLevel": 50,
+   "fromRecord": "unitree/unitree-g1",
+   "toRecord": "unitree/unitree-gd01",
+   "dateOrderOk": null,
+   "verdict": "contradicts-lineage",
+   "comment": "Unitree G1 and Unitree GD01 are different lines of unitree (unitree-humanoid vs unitree-gd01); no ancestor path"
+  }
+ ],
+ "rosterChainSummary": {
+  "consistent-direct": 16,
+  "consistent-skips-versions": 39,
+  "contradicts-lineage": 14
+ },
+ "lineageEdgesBetweenRosterSpecies": [
+  {
+   "from": "qwen-1",
+   "to": "qwen2-5",
+   "fromRecord": "alibaba/qwen",
+   "toRecord": "alibaba/qwen2-5",
+   "hops": 3,
+   "intermediateModels": [
+    "Qwen1.5",
+    "Qwen2"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "wan-2-1",
+   "to": "wan-3",
+   "fromRecord": "alibaba/wan-2-1",
+   "toRecord": "alibaba/wan-3-0",
+   "hops": 4,
+   "intermediateModels": [
+    "Wan 2.2",
+    "Wan 2.5",
+    "Wan 2.7"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "claude-opus-4-8",
+   "to": "claude-opus",
+   "fromRecord": "anthropic/claude-opus-4-8",
+   "toRecord": "anthropic/claude-opus-5-5",
+   "hops": 2,
+   "intermediateModels": [
+    "Claude Opus 5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "claude-3-opus",
+   "to": "claude-opus-4-8",
+   "fromRecord": "anthropic/claude-3-opus",
+   "toRecord": "anthropic/claude-opus-4-8",
+   "hops": 6,
+   "intermediateModels": [
+    "Claude Opus 4",
+    "Claude Opus 4.1",
+    "Claude Opus 4.5",
+    "Claude Opus 4.6",
+    "Claude Opus 4.7"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": false
+  },
+  {
+   "from": "claude-3-5-sonnet",
+   "to": "claude-sonnet",
+   "fromRecord": "anthropic/claude-3-5-sonnet",
+   "toRecord": "anthropic/claude-sonnet-5-5",
+   "hops": 6,
+   "intermediateModels": [
+    "Claude 3.7 Sonnet",
+    "Claude Sonnet 4",
+    "Claude Sonnet 4.5",
+    "Claude Sonnet 4.6",
+    "Claude Sonnet 5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "claude-mythos-preview",
+   "to": "claude-fable",
+   "fromRecord": "anthropic/claude-mythos-preview",
+   "toRecord": "anthropic/claude-fable-5-1",
+   "hops": 2,
+   "intermediateModels": [
+    "Claude Fable 5"
+   ],
+   "relations": [
+    "successor",
+    "successor"
+   ],
+   "parentBasis": [
+    "reported",
+    "official"
+   ],
+   "confidence": "high",
+   "inRosterAlready": false
+  },
+  {
+   "from": "claude-mythos-preview",
+   "to": "claude-mythos",
+   "fromRecord": "anthropic/claude-mythos-preview",
+   "toRecord": "anthropic/claude-mythos-5-1",
+   "hops": 2,
+   "intermediateModels": [
+    "Claude Mythos 5"
+   ],
+   "relations": [
+    "successor",
+    "successor"
+   ],
+   "parentBasis": [
+    "official",
+    "official"
+   ],
+   "confidence": "high",
+   "inRosterAlready": true
+  },
+  {
+   "from": "ernie-bot",
+   "to": "ernie-4-5",
+   "fromRecord": "baidu/ernie-bot-ernie-3-5",
+   "toRecord": "baidu/ernie-4-5",
+   "hops": 2,
+   "intermediateModels": [
+    "ERNIE 4.0"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "ernie-4-5",
+   "to": "ernie-5-1",
+   "fromRecord": "baidu/ernie-4-5",
+   "toRecord": "baidu/ernie-5-1",
+   "hops": 2,
+   "intermediateModels": [
+    "ERNIE 5.0"
+   ],
+   "relations": [
+    "series-successor",
+    "distill"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "reported"
+   ],
+   "confidence": "medium",
+   "inRosterAlready": true
+  },
+  {
+   "from": "flux-1",
+   "to": "flux-3",
+   "fromRecord": "bfl/flux-1",
+   "toRecord": "bfl/flux-3",
+   "hops": 3,
+   "intermediateModels": [
+    "FLUX1.1 [pro]",
+    "FLUX.2"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "doubao-pro",
+   "to": "doubao-seed-2",
+   "fromRecord": "bytedance/doubao-pro",
+   "toRecord": "bytedance/doubao-seed-2-0-pro",
+   "hops": 3,
+   "intermediateModels": [
+    "Doubao-Seed-1.6",
+    "Doubao-Seed-1.8"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "doubao-seed-2",
+   "to": "doubao-seed-2-1",
+   "fromRecord": "bytedance/doubao-seed-2-0-pro",
+   "toRecord": "bytedance/doubao-seed-2-1-pro",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "seedream-3",
+   "to": "seedream-5",
+   "fromRecord": "bytedance/seedream-3-0",
+   "toRecord": "bytedance/seedream-5-0",
+   "hops": 3,
+   "intermediateModels": [
+    "Seedream 4.0",
+    "Seedream 4.5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "seedance-1",
+   "to": "seedance-2",
+   "fromRecord": "bytedance/seedance-1-0",
+   "toRecord": "bytedance/seedance-2-0",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "seedance-2",
+   "to": "seedance-2-5",
+   "fromRecord": "bytedance/seedance-2-0",
+   "toRecord": "bytedance/seedance-2-5",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "deepseek-v3",
+   "to": "deepseek-r1",
+   "fromRecord": "deepseek/deepseek-v3",
+   "toRecord": "deepseek/deepseek-r1",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "post-train"
+   ],
+   "parentBasis": [
+    "official"
+   ],
+   "confidence": "high",
+   "inRosterAlready": true
+  },
+  {
+   "from": "deepseek-v3",
+   "to": "deepseek-v4",
+   "fromRecord": "deepseek/deepseek-v3",
+   "toRecord": "deepseek/deepseek-v4-pro",
+   "hops": 5,
+   "intermediateModels": [
+    "DeepSeek-V3.1",
+    "DeepSeek-V3.1-Terminus",
+    "DeepSeek-V3.2-Exp",
+    "DeepSeek-V3.2"
+   ],
+   "relations": [
+    "successor",
+    "post-train",
+    "successor",
+    "successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "official",
+    "reported",
+    "official",
+    "reported",
+    "inferred-series"
+   ],
+   "confidence": "medium",
+   "inRosterAlready": false
+  },
+  {
+   "from": "eleven-v2",
+   "to": "eleven-v4",
+   "fromRecord": "elevenlabs/eleven-multilingual-v2",
+   "toRecord": "elevenlabs/eleven-v4",
+   "hops": 2,
+   "intermediateModels": [
+    "Eleven v3"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "gemini-1-5-pro",
+   "to": "gemini-2-5-pro",
+   "fromRecord": "google/gemini-1-5-pro",
+   "toRecord": "google/gemini-2-5-pro",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "gemini-1-5-pro",
+   "to": "gemini-flash-lite",
+   "fromRecord": "google/gemini-1-5-pro",
+   "toRecord": "google/gemini-3-5-flash-lite",
+   "hops": 6,
+   "intermediateModels": [
+    "Gemini 1.5 Flash",
+    "Gemini 2.0 Flash",
+    "Gemini 2.5 Flash",
+    "Gemini 2.5 Flash-Lite",
+    "Gemini 3.1 Flash-Lite"
+   ],
+   "relations": [
+    "distill",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "reported",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "medium",
+   "inRosterAlready": false
+  },
+  {
+   "from": "gemini-1-5-pro",
+   "to": "gemini-flash",
+   "fromRecord": "google/gemini-1-5-pro",
+   "toRecord": "google/gemini-3-8-flash",
+   "hops": 8,
+   "intermediateModels": [
+    "Gemini 1.5 Flash",
+    "Gemini 2.0 Flash",
+    "Gemini 2.5 Flash",
+    "Gemini 3 Flash",
+    "Gemini 3.5 Flash",
+    "Gemini 3.6 Flash",
+    "Gemini 3.7 Flash"
+   ],
+   "relations": [
+    "distill",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "reported",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "medium",
+   "inRosterAlready": false
+  },
+  {
+   "from": "gemini-2-5-pro",
+   "to": "gemini-3-1-pro",
+   "fromRecord": "google/gemini-2-5-pro",
+   "toRecord": "google/gemini-3-1-pro",
+   "hops": 2,
+   "intermediateModels": [
+    "Gemini 3 Pro"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "gemini-3-1-pro",
+   "to": "gemini-argon",
+   "fromRecord": "google/gemini-3-1-pro",
+   "toRecord": "google/gemini-4-argon",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": false
+  },
+  {
+   "from": "nano-banana",
+   "to": "nano-banana-2",
+   "fromRecord": "google/nano-banana",
+   "toRecord": "google/nano-banana-2",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "veo-3",
+   "to": "gemini-omni",
+   "fromRecord": "google/veo-3",
+   "toRecord": "google/gemini-omni-flash",
+   "hops": 2,
+   "intermediateModels": [
+    "Veo 3.1"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "reported"
+   ],
+   "confidence": "medium",
+   "inRosterAlready": true
+  },
+  {
+   "from": "spark-v4",
+   "to": "spark-x2-5",
+   "fromRecord": "iflytek/spark-v4-0",
+   "toRecord": "iflytek/spark-x2-5",
+   "hops": 2,
+   "intermediateModels": [
+    "Spark X1"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "manus",
+   "to": "manus-2",
+   "fromRecord": "manus/manus",
+   "toRecord": "manus/manus-2-0",
+   "hops": 2,
+   "intermediateModels": [
+    "Manus 1.6"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "longcat-flash",
+   "to": "longcat-2-5",
+   "fromRecord": "meituan/longcat-flash-chat",
+   "toRecord": "meituan/longcat-2-5-preview",
+   "hops": 2,
+   "intermediateModels": [
+    "LongCat 2.0"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "llama-1",
+   "to": "llama-3-1",
+   "fromRecord": "meta/llama",
+   "toRecord": "meta/llama-3-1",
+   "hops": 3,
+   "intermediateModels": [
+    "Llama 2",
+    "Llama 3"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "llama-3-1",
+   "to": "llama-4",
+   "fromRecord": "meta/llama-3-1",
+   "toRecord": "meta/llama-4",
+   "hops": 3,
+   "intermediateModels": [
+    "Llama 3.2",
+    "Llama 3.3"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "llama-4",
+   "to": "muse-spark",
+   "fromRecord": "meta/llama-4",
+   "toRecord": "meta/muse-spark-1-3",
+   "hops": 4,
+   "intermediateModels": [
+    "Muse Spark",
+    "Muse Spark 1.1",
+    "Muse Spark 1.2"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "reported",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "medium",
+   "inRosterAlready": false
+  },
+  {
+   "from": "midjourney-v5",
+   "to": "midjourney-v7",
+   "fromRecord": "midjourney/midjourney-v5",
+   "toRecord": "midjourney/midjourney-v7",
+   "hops": 5,
+   "intermediateModels": [
+    "Midjourney V5.1",
+    "Midjourney V5.2",
+    "Midjourney V6",
+    "Midjourney V6.1"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "midjourney-v7",
+   "to": "midjourney-v8",
+   "fromRecord": "midjourney/midjourney-v7",
+   "toRecord": "midjourney/midjourney-v8",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "abab",
+   "to": "minimax-m2",
+   "fromRecord": "minimax/abab-6-5",
+   "toRecord": "minimax/minimax-m2",
+   "hops": 3,
+   "intermediateModels": [
+    "MiniMax-01",
+    "MiniMax-M1"
+   ],
+   "relations": [
+    "series-successor",
+    "successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "reported",
+    "inferred-series"
+   ],
+   "confidence": "medium",
+   "inRosterAlready": true
+  },
+  {
+   "from": "minimax-m2",
+   "to": "minimax-m3",
+   "fromRecord": "minimax/minimax-m2",
+   "toRecord": "minimax/minimax-m3",
+   "hops": 4,
+   "intermediateModels": [
+    "MiniMax-M2.1",
+    "MiniMax-M2.5",
+    "MiniMax-M2.7"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "hailuo",
+   "to": "minimax-h3",
+   "fromRecord": "minimax/hailuo-video-01",
+   "toRecord": "minimax/minimax-h3-hailuo-3-0",
+   "hops": 3,
+   "intermediateModels": [
+    "Hailuo 02",
+    "Hailuo 2.3"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "kimi-chat",
+   "to": "kimi-k2",
+   "fromRecord": "moonshot/kimi-chat",
+   "toRecord": "moonshot/kimi-k2",
+   "hops": 2,
+   "intermediateModels": [
+    "Kimi k1.5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "kimi-k2",
+   "to": "kimi-k3",
+   "fromRecord": "moonshot/kimi-k2",
+   "toRecord": "moonshot/kimi-k3",
+   "hops": 4,
+   "intermediateModels": [
+    "Kimi K2 Thinking",
+    "Kimi K2.5",
+    "Kimi K2.6"
+   ],
+   "relations": [
+    "post-train",
+    "successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "reported",
+    "reported",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "medium",
+   "inRosterAlready": true
+  },
+  {
+   "from": "gpt-35",
+   "to": "gpt-4",
+   "fromRecord": "openai/gpt-3-5",
+   "toRecord": "openai/gpt-4",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "gpt-4",
+   "to": "gpt-4o",
+   "fromRecord": "openai/gpt-4",
+   "toRecord": "openai/gpt-4o",
+   "hops": 2,
+   "intermediateModels": [
+    "GPT-4 Turbo"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "gpt-4o",
+   "to": "gpt-5",
+   "fromRecord": "openai/gpt-4o",
+   "toRecord": "openai/gpt-5",
+   "hops": 2,
+   "intermediateModels": [
+    "GPT-4.1"
+   ],
+   "relations": [
+    "series-successor",
+    "successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "reported"
+   ],
+   "confidence": "medium",
+   "inRosterAlready": false
+  },
+  {
+   "from": "chatgpt",
+   "to": "chatgpt-dots",
+   "fromRecord": "openai/chatgpt",
+   "toRecord": "openai/chatgpt-dots",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": false
+  },
+  {
+   "from": "o1",
+   "to": "openai-codex",
+   "fromRecord": "openai/o1",
+   "toRecord": "openai/codex-1",
+   "hops": 3,
+   "intermediateModels": [
+    "o3-mini",
+    "o3"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "post-train"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "official"
+   ],
+   "confidence": "medium",
+   "inRosterAlready": false
+  },
+  {
+   "from": "gpt-5",
+   "to": "gpt-5-5",
+   "fromRecord": "openai/gpt-5",
+   "toRecord": "openai/gpt-5-5",
+   "hops": 4,
+   "intermediateModels": [
+    "GPT-5.1",
+    "GPT-5.2",
+    "GPT-5.4"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": false
+  },
+  {
+   "from": "gpt-5-5",
+   "to": "gpt-5-6",
+   "fromRecord": "openai/gpt-5-5",
+   "toRecord": "openai/gpt-5-6-sol",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "gpt-5-5",
+   "to": "gpt-6-luna",
+   "fromRecord": "openai/gpt-5-5",
+   "toRecord": "openai/gpt-6-luna",
+   "hops": 2,
+   "intermediateModels": [
+    "GPT-5.6 Luna"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": false
+  },
+  {
+   "from": "gpt-5-6",
+   "to": "gpt-6-astra",
+   "fromRecord": "openai/gpt-5-6-sol",
+   "toRecord": "openai/gpt-6-astra",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": false
+  },
+  {
+   "from": "gpt-5-6",
+   "to": "gpt-6-sol",
+   "fromRecord": "openai/gpt-5-6-sol",
+   "toRecord": "openai/gpt-6-1-sol",
+   "hops": 2,
+   "intermediateModels": [
+    "GPT-6 Sol"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": false
+  },
+  {
+   "from": "dall-e",
+   "to": "gpt-image-1",
+   "fromRecord": "openai/dall-e",
+   "toRecord": "openai/gpt-image-1",
+   "hops": 3,
+   "intermediateModels": [
+    "DALL-E 2",
+    "DALL-E 3"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "gpt-image-1",
+   "to": "gpt-image-2-5",
+   "fromRecord": "openai/gpt-image-1",
+   "toRecord": "openai/gpt-image-2-5-sunburst",
+   "hops": 3,
+   "intermediateModels": [
+    "GPT Image 1.5",
+    "GPT Image 2"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "clawdbot",
+   "to": "moltbot",
+   "fromRecord": "openclaw/clawdbot",
+   "toRecord": "openclaw/moltbot",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "successor"
+   ],
+   "parentBasis": [
+    "reported"
+   ],
+   "confidence": "high",
+   "inRosterAlready": true
+  },
+  {
+   "from": "moltbot",
+   "to": "openclaw",
+   "fromRecord": "openclaw/moltbot",
+   "toRecord": "openclaw/openclaw",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "successor"
+   ],
+   "parentBasis": [
+    "reported"
+   ],
+   "confidence": "high",
+   "inRosterAlready": true
+  },
+  {
+   "from": "perplexity",
+   "to": "perplexity-comet",
+   "fromRecord": "perplexity/perplexity-answer-engine",
+   "toRecord": "perplexity/perplexity-comet",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "perplexity-comet",
+   "to": "perplexity-computer",
+   "fromRecord": "perplexity/perplexity-comet",
+   "toRecord": "perplexity/perplexity-computer",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "vidu",
+   "to": "vidu-q3",
+   "fromRecord": "shengshu/vidu-1-0",
+   "toRecord": "shengshu/vidu-q3",
+   "hops": 4,
+   "intermediateModels": [
+    "Vidu 2.0",
+    "Vidu Q1",
+    "Vidu Q2"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "sd-1-5",
+   "to": "sdxl",
+   "fromRecord": "stability/stable-diffusion-1-x",
+   "toRecord": "stability/sdxl-1-0",
+   "hops": 2,
+   "intermediateModels": [
+    "Stable Diffusion 2.x"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "step-flash",
+   "to": "step-5",
+   "fromRecord": "stepfun/step-3-5-flash",
+   "toRecord": "stepfun/step-5-preview",
+   "hops": 2,
+   "intermediateModels": [
+    "Step 3.7 Flash"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "suno-v3",
+   "to": "suno-v5",
+   "fromRecord": "suno/suno-v3-5",
+   "toRecord": "suno/suno-v5",
+   "hops": 3,
+   "intermediateModels": [
+    "Suno v4",
+    "Suno v4.5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "suno-v5",
+   "to": "suno-v6",
+   "fromRecord": "suno/suno-v5",
+   "toRecord": "suno/suno-v6",
+   "hops": 2,
+   "intermediateModels": [
+    "Suno v5.5"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "hunyuan",
+   "to": "hy3",
+   "fromRecord": "tencent/hunyuan",
+   "toRecord": "tencent/hy3",
+   "hops": 6,
+   "intermediateModels": [
+    "Hunyuan-Large",
+    "Hunyuan-TurboS",
+    "Hunyuan-T1",
+    "Hunyuan 2.0 (HY 2.0)",
+    "Hy3-preview"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "post-train",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "reported",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "medium",
+   "inRosterAlready": true
+  },
+  {
+   "from": "hy3",
+   "to": "hy4",
+   "fromRecord": "tencent/hy3",
+   "toRecord": "tencent/hy4-preview",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "grok-1",
+   "to": "grok-4",
+   "fromRecord": "xai/grok-1",
+   "toRecord": "xai/grok-4",
+   "hops": 3,
+   "intermediateModels": [
+    "Grok-2",
+    "Grok 3"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "grok-4",
+   "to": "grok-4-7",
+   "fromRecord": "xai/grok-4",
+   "toRecord": "xai/grok-4-7",
+   "hops": 6,
+   "intermediateModels": [
+    "Grok 4.1 Fast",
+    "Grok 4.20",
+    "Grok 4.3",
+    "Grok 4.5",
+    "Grok 4.6"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "mimo-7b",
+   "to": "mimo-v2-flash",
+   "fromRecord": "xiaomi/mimo-7b",
+   "toRecord": "xiaomi/mimo-v2-flash",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "chatglm",
+   "to": "glm-4-5",
+   "fromRecord": "zhipu/chatglm-6b",
+   "toRecord": "zhipu/glm-4-5",
+   "hops": 2,
+   "intermediateModels": [
+    "GLM-4"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "glm-4-5",
+   "to": "glm-5-3",
+   "fromRecord": "zhipu/glm-4-5",
+   "toRecord": "zhipu/glm-5-3",
+   "hops": 6,
+   "intermediateModels": [
+    "GLM-4.6",
+    "GLM-4.7",
+    "GLM-5",
+    "GLM-5.1",
+    "GLM-5.2"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "post-train"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "reported"
+   ],
+   "confidence": "medium",
+   "inRosterAlready": true
+  },
+  {
+   "from": "kling-1",
+   "to": "kling-3",
+   "fromRecord": "kuaishou/kling-1-0",
+   "toRecord": "kuaishou/kling-3-0",
+   "hops": 7,
+   "intermediateModels": [
+    "Kling 1.5",
+    "Kling 1.6",
+    "Kling 2.0 (Master)",
+    "Kling 2.1 / 2.1 Master",
+    "Kling 2.5 Turbo",
+    "Kling VIDEO 2.6"
+   ],
+   "relations": [
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor",
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series",
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  },
+  {
+   "from": "kling-3",
+   "to": "kling-4",
+   "fromRecord": "kuaishou/kling-3-0",
+   "toRecord": "kuaishou/kling-4-0",
+   "hops": 1,
+   "intermediateModels": [],
+   "relations": [
+    "series-successor"
+   ],
+   "parentBasis": [
+    "inferred-series"
+   ],
+   "confidence": "series-only",
+   "inRosterAlready": true
+  }
+ ],
+ "lineageExtensions": [
+  {
+   "speciesId": "qwen-1",
+   "record": "alibaba/qwen",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "alibaba/qwen1-5",
+     "displayName": "Qwen1.5",
+     "releaseDate": "2024-02-04"
+    },
+    {
+     "id": "alibaba/qwen2",
+     "displayName": "Qwen2",
+     "releaseDate": "2024-06-07"
+    }
+   ]
+  },
+  {
+   "speciesId": "qwen2-5",
+   "record": "alibaba/qwen2-5",
+   "unmappedDescendants": 8,
+   "newestUnmapped": [
+    {
+     "id": "alibaba/qwen3-coder-next",
+     "displayName": "Qwen3-Coder-Next",
+     "releaseDate": "2026-02-04"
+    },
+    {
+     "id": "alibaba/qwen3-5-397b-a17b",
+     "displayName": "Qwen3.5-397B-A17B",
+     "releaseDate": "2026-02-16"
+    },
+    {
+     "id": "alibaba/qwen3-8-2-4t-a95b",
+     "displayName": "Qwen3.8-2.4T-A95B",
+     "releaseDate": "2026-08-12"
+    }
+   ]
+  },
+  {
+   "speciesId": "qwen-flash-next",
+   "record": "alibaba/qwen3-8-flash-next",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "alibaba/qwen3-8-omni-flash",
+     "displayName": "Qwen3.8-Omni-Flash",
+     "releaseDate": "2026-09-18"
+    }
+   ]
+  },
+  {
+   "speciesId": "wan-2-1",
+   "record": "alibaba/wan-2-1",
+   "unmappedDescendants": 3,
+   "newestUnmapped": [
+    {
+     "id": "alibaba/wan-2-7",
+     "displayName": "Wan 2.7",
+     "releaseDate": null
+    },
+    {
+     "id": "alibaba/wan-2-2",
+     "displayName": "Wan 2.2",
+     "releaseDate": "2025-07-28"
+    },
+    {
+     "id": "alibaba/wan-2-5",
+     "displayName": "Wan 2.5",
+     "releaseDate": "2025-09-24"
+    }
+   ]
+  },
+  {
+   "speciesId": "bailing",
+   "record": "ant/ling-3-0-flash",
+   "unmappedDescendants": 4,
+   "newestUnmapped": [
+    {
+     "id": "ant/ling-3-0-flash-sante",
+     "displayName": "Ling 3.0 Flash Sante",
+     "releaseDate": "2026-09-04"
+    },
+    {
+     "id": "ant/ling-3-0-flash-vl",
+     "displayName": "Ling 3.0 Flash VL",
+     "releaseDate": "2026-09-10"
+    },
+    {
+     "id": "ant/ling-3-1-flash",
+     "displayName": "Ling 3.1 Flash",
+     "releaseDate": "2026-09-29"
+    }
+   ]
+  },
+  {
+   "speciesId": "claude-haiku",
+   "record": "anthropic/claude-haiku-4-5",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "anthropic/claude-haiku-5-5",
+     "displayName": "Claude Haiku 5.5",
+     "releaseDate": "2026-10-07"
+    }
+   ]
+  },
+  {
+   "speciesId": "claude-opus-4-8",
+   "record": "anthropic/claude-opus-4-8",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "anthropic/claude-opus-5",
+     "displayName": "Claude Opus 5",
+     "releaseDate": "2026-07-24"
+    }
+   ]
+  },
+  {
+   "speciesId": "claude-3-opus",
+   "record": "anthropic/claude-3-opus",
+   "unmappedDescendants": 5,
+   "newestUnmapped": [
+    {
+     "id": "anthropic/claude-opus-4-5",
+     "displayName": "Claude Opus 4.5",
+     "releaseDate": "2025-11-24"
+    },
+    {
+     "id": "anthropic/claude-opus-4-6",
+     "displayName": "Claude Opus 4.6",
+     "releaseDate": "2026-02-05"
+    },
+    {
+     "id": "anthropic/claude-opus-4-7",
+     "displayName": "Claude Opus 4.7",
+     "releaseDate": "2026-04-16"
+    }
+   ]
+  },
+  {
+   "speciesId": "claude-3-5-sonnet",
+   "record": "anthropic/claude-3-5-sonnet",
+   "unmappedDescendants": 5,
+   "newestUnmapped": [
+    {
+     "id": "anthropic/claude-sonnet-4-5",
+     "displayName": "Claude Sonnet 4.5",
+     "releaseDate": "2025-09-29"
+    },
+    {
+     "id": "anthropic/claude-sonnet-4-6",
+     "displayName": "Claude Sonnet 4.6",
+     "releaseDate": "2026-02-17"
+    },
+    {
+     "id": "anthropic/claude-sonnet-5",
+     "displayName": "Claude Sonnet 5",
+     "releaseDate": "2026-06-30"
+    }
+   ]
+  },
+  {
+   "speciesId": "claude-mythos-preview",
+   "record": "anthropic/claude-mythos-preview",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "anthropic/claude-fable-5",
+     "displayName": "Claude Fable 5",
+     "releaseDate": "2026-06-09"
+    },
+    {
+     "id": "anthropic/claude-mythos-5",
+     "displayName": "Claude Mythos 5",
+     "releaseDate": "2026-06-09"
+    }
+   ]
+  },
+  {
+   "speciesId": "baichuan-2",
+   "record": "baichuan/baichuan-2",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "baichuan/baichuan-3",
+     "displayName": "Baichuan 3",
+     "releaseDate": null
+    },
+    {
+     "id": "baichuan/baichuan-4",
+     "displayName": "Baichuan 4",
+     "releaseDate": null
+    }
+   ]
+  },
+  {
+   "speciesId": "ernie-bot",
+   "record": "baidu/ernie-bot-ernie-3-5",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "baidu/ernie-4-0",
+     "displayName": "ERNIE 4.0",
+     "releaseDate": "2023-10-17"
+    }
+   ]
+  },
+  {
+   "speciesId": "ernie-4-5",
+   "record": "baidu/ernie-4-5",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "baidu/ernie-5-0",
+     "displayName": "ERNIE 5.0",
+     "releaseDate": "2026-01-22"
+    }
+   ]
+  },
+  {
+   "speciesId": "flux-1",
+   "record": "bfl/flux-1",
+   "unmappedDescendants": 4,
+   "newestUnmapped": [
+    {
+     "id": "bfl/flux-1-kontext",
+     "displayName": "FLUX.1 Kontext",
+     "releaseDate": "2025-05-29"
+    },
+    {
+     "id": "bfl/flux-2",
+     "displayName": "FLUX.2",
+     "releaseDate": "2025-11-25"
+    },
+    {
+     "id": "bfl/flux-2-klein",
+     "displayName": "FLUX.2 Klein",
+     "releaseDate": null
+    }
+   ]
+  },
+  {
+   "speciesId": "flux-3",
+   "record": "bfl/flux-3",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "bfl/flux-3-image",
+     "displayName": "FLUX 3 Image",
+     "releaseDate": "2026-10-05"
+    }
+   ]
+  },
+  {
+   "speciesId": "doubao-pro",
+   "record": "bytedance/doubao-pro",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "bytedance/doubao-seed-1-6",
+     "displayName": "Doubao-Seed-1.6",
+     "releaseDate": "2025-06-11"
+    },
+    {
+     "id": "bytedance/doubao-seed-1-8",
+     "displayName": "Doubao-Seed-1.8",
+     "releaseDate": "2025-12-28"
+    }
+   ]
+  },
+  {
+   "speciesId": "doubao-seed-2",
+   "record": "bytedance/doubao-seed-2-0-pro",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "bytedance/doubao-seed-2-0-code",
+     "displayName": "Doubao-Seed-2.0 Code",
+     "releaseDate": "2026-02-14"
+    }
+   ]
+  },
+  {
+   "speciesId": "seedream-3",
+   "record": "bytedance/seedream-3-0",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "bytedance/seedream-4-0",
+     "displayName": "Seedream 4.0",
+     "releaseDate": "2025-09-09"
+    },
+    {
+     "id": "bytedance/seedream-4-5",
+     "displayName": "Seedream 4.5",
+     "releaseDate": null
+    }
+   ]
+  },
+  {
+   "speciesId": "seedream-5",
+   "record": "bytedance/seedream-5-0",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "bytedance/seedream-5-0-pro",
+     "displayName": "Seedream 5.0 Pro",
+     "releaseDate": "2026-06-23"
+    }
+   ]
+  },
+  {
+   "speciesId": "seedance-2",
+   "record": "bytedance/seedance-2-0",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "bytedance/seedance-2-0-mini",
+     "displayName": "Seedance 2.0 Mini",
+     "releaseDate": "2026-06-22"
+    }
+   ]
+  },
+  {
+   "speciesId": "deepseek-v3",
+   "record": "deepseek/deepseek-v3",
+   "unmappedDescendants": 9,
+   "newestUnmapped": [
+    {
+     "id": "deepseek/deepseek-v4-flash-0731",
+     "displayName": "DeepSeek-V4-Flash 0731",
+     "releaseDate": "2026-07-31"
+    },
+    {
+     "id": "deepseek/deepseek-v4-flash-vision-exp",
+     "displayName": "DeepSeek-V4-Flash-Vision-Exp",
+     "releaseDate": "2026-08-21"
+    },
+    {
+     "id": "deepseek/deepseek-v4-1-flash",
+     "displayName": "DeepSeek-V4.1-Flash",
+     "releaseDate": "2026-09-10"
+    }
+   ]
+  },
+  {
+   "speciesId": "deepseek-r1",
+   "record": "deepseek/deepseek-r1",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "deepseek/deepseek-r1-0528",
+     "displayName": "DeepSeek-R1-0528",
+     "releaseDate": "2025-05-28"
+    }
+   ]
+  },
+  {
+   "speciesId": "deepseek-v4",
+   "record": "deepseek/deepseek-v4-pro",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "deepseek/deepseek-v4-pro-0813",
+     "displayName": "DeepSeek-V4-Pro 0813",
+     "releaseDate": "2026-08-13"
+    }
+   ]
+  },
+  {
+   "speciesId": "eleven-v2",
+   "record": "elevenlabs/eleven-multilingual-v2",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "elevenlabs/eleven-v3",
+     "displayName": "Eleven v3",
+     "releaseDate": "2025-06-03"
+    }
+   ]
+  },
+  {
+   "speciesId": "gemini-1-5-pro",
+   "record": "google/gemini-1-5-pro",
+   "unmappedDescendants": 9,
+   "newestUnmapped": [
+    {
+     "id": "google/gemini-3-5-flash",
+     "displayName": "Gemini 3.5 Flash",
+     "releaseDate": "2026-05-19"
+    },
+    {
+     "id": "google/gemini-3-6-flash",
+     "displayName": "Gemini 3.6 Flash",
+     "releaseDate": "2026-07-21"
+    },
+    {
+     "id": "google/gemini-3-7-flash",
+     "displayName": "Gemini 3.7 Flash",
+     "releaseDate": "2026-08-13"
+    }
+   ]
+  },
+  {
+   "speciesId": "gemini-2-5-pro",
+   "record": "google/gemini-2-5-pro",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "google/gemini-3-pro",
+     "displayName": "Gemini 3 Pro",
+     "releaseDate": "2025-11-18"
+    }
+   ]
+  },
+  {
+   "speciesId": "gemma-4",
+   "record": "google/gemma-4",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "google/diffusiongemma",
+     "displayName": "DiffusionGemma",
+     "releaseDate": "2026-06-09"
+    }
+   ]
+  },
+  {
+   "speciesId": "nano-banana",
+   "record": "google/nano-banana",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "google/nano-banana-pro",
+     "displayName": "Nano Banana Pro",
+     "releaseDate": "2025-11-20"
+    }
+   ]
+  },
+  {
+   "speciesId": "nano-banana-2",
+   "record": "google/nano-banana-2",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "google/nano-banana-2-lite",
+     "displayName": "Nano Banana 2 Lite",
+     "releaseDate": "2026-06-30"
+    },
+    {
+     "id": "google/nano-banana-2-1",
+     "displayName": "Nano Banana 2.1",
+     "releaseDate": "2026-10-06"
+    }
+   ]
+  },
+  {
+   "speciesId": "veo-3",
+   "record": "google/veo-3",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "google/veo-3-1",
+     "displayName": "Veo 3.1",
+     "releaseDate": "2025-10-15"
+    },
+    {
+     "id": "google/veo-3-1-lite",
+     "displayName": "Veo 3.1 Lite",
+     "releaseDate": "2026-03-31"
+    }
+   ]
+  },
+  {
+   "speciesId": "alpha",
+   "record": "google/alphago",
+   "unmappedDescendants": 3,
+   "newestUnmapped": [
+    {
+     "id": "google/alphago-zero",
+     "displayName": "AlphaGo Zero",
+     "releaseDate": "2017-10-18"
+    },
+    {
+     "id": "google/alphazero",
+     "displayName": "AlphaZero",
+     "releaseDate": "2017-12-05"
+    },
+    {
+     "id": "google/muzero",
+     "displayName": "MuZero",
+     "releaseDate": "2019-11-19"
+    }
+   ]
+  },
+  {
+   "speciesId": "spark-v4",
+   "record": "iflytek/spark-v4-0",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "iflytek/spark-x1",
+     "displayName": "Spark X1",
+     "releaseDate": null
+    }
+   ]
+  },
+  {
+   "speciesId": "manus",
+   "record": "manus/manus",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "manus/manus-1-6",
+     "displayName": "Manus 1.6",
+     "releaseDate": "2025-12-15"
+    }
+   ]
+  },
+  {
+   "speciesId": "longcat-flash",
+   "record": "meituan/longcat-flash-chat",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "meituan/longcat-2-0",
+     "displayName": "LongCat 2.0",
+     "releaseDate": "2026-06-30"
+    }
+   ]
+  },
+  {
+   "speciesId": "llama-1",
+   "record": "meta/llama",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "meta/llama-2",
+     "displayName": "Llama 2",
+     "releaseDate": "2023-07-18"
+    },
+    {
+     "id": "meta/llama-3",
+     "displayName": "Llama 3",
+     "releaseDate": "2024-04-18"
+    }
+   ]
+  },
+  {
+   "speciesId": "llama-3-1",
+   "record": "meta/llama-3-1",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "meta/llama-3-2",
+     "displayName": "Llama 3.2",
+     "releaseDate": "2024-09-25"
+    },
+    {
+     "id": "meta/llama-3-3",
+     "displayName": "Llama 3.3",
+     "releaseDate": "2024-12-07"
+    }
+   ]
+  },
+  {
+   "speciesId": "llama-4",
+   "record": "meta/llama-4",
+   "unmappedDescendants": 3,
+   "newestUnmapped": [
+    {
+     "id": "meta/muse-spark",
+     "displayName": "Muse Spark",
+     "releaseDate": "2026-04-08"
+    },
+    {
+     "id": "meta/muse-spark-1-1",
+     "displayName": "Muse Spark 1.1",
+     "releaseDate": "2026-07-16"
+    },
+    {
+     "id": "meta/muse-spark-1-2",
+     "displayName": "Muse Spark 1.2",
+     "releaseDate": "2026-08-05"
+    }
+   ]
+  },
+  {
+   "speciesId": "phi-4",
+   "record": "microsoft/phi-4",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "microsoft/phi-4-reasoning",
+     "displayName": "Phi-4-reasoning",
+     "releaseDate": "2025-04-30"
+    }
+   ]
+  },
+  {
+   "speciesId": "midjourney-v5",
+   "record": "midjourney/midjourney-v5",
+   "unmappedDescendants": 4,
+   "newestUnmapped": [
+    {
+     "id": "midjourney/midjourney-v5-2",
+     "displayName": "Midjourney V5.2",
+     "releaseDate": "2023-06-22"
+    },
+    {
+     "id": "midjourney/midjourney-v6",
+     "displayName": "Midjourney V6",
+     "releaseDate": "2023-12-21"
+    },
+    {
+     "id": "midjourney/midjourney-v6-1",
+     "displayName": "Midjourney V6.1",
+     "releaseDate": "2024-07-31"
+    }
+   ]
+  },
+  {
+   "speciesId": "midjourney-v8",
+   "record": "midjourney/midjourney-v8",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "midjourney/midjourney-v8-1",
+     "displayName": "Midjourney V8.1",
+     "releaseDate": "2026-04-14"
+    },
+    {
+     "id": "midjourney/midjourney-v8-2",
+     "displayName": "Midjourney V8.2",
+     "releaseDate": "2026-07-24"
+    }
+   ]
+  },
+  {
+   "speciesId": "abab",
+   "record": "minimax/abab-6-5",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "minimax/minimax-01",
+     "displayName": "MiniMax-01",
+     "releaseDate": "2025-01-15"
+    },
+    {
+     "id": "minimax/minimax-m1",
+     "displayName": "MiniMax-M1",
+     "releaseDate": "2025-06-16"
+    }
+   ]
+  },
+  {
+   "speciesId": "minimax-m2",
+   "record": "minimax/minimax-m2",
+   "unmappedDescendants": 3,
+   "newestUnmapped": [
+    {
+     "id": "minimax/minimax-m2-1",
+     "displayName": "MiniMax-M2.1",
+     "releaseDate": "2025-12-23"
+    },
+    {
+     "id": "minimax/minimax-m2-5",
+     "displayName": "MiniMax-M2.5",
+     "releaseDate": "2026-02-12"
+    },
+    {
+     "id": "minimax/minimax-m2-7",
+     "displayName": "MiniMax-M2.7",
+     "releaseDate": "2026-03-18"
+    }
+   ]
+  },
+  {
+   "speciesId": "minimax-m3",
+   "record": "minimax/minimax-m3",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "minimax/minimax-m3-1-flash-preview",
+     "displayName": "MiniMax-M3.1-Flash-Preview",
+     "releaseDate": "2026-09-27"
+    }
+   ]
+  },
+  {
+   "speciesId": "hailuo",
+   "record": "minimax/hailuo-video-01",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "minimax/hailuo-02",
+     "displayName": "Hailuo 02",
+     "releaseDate": "2025-06-18"
+    },
+    {
+     "id": "minimax/hailuo-2-3",
+     "displayName": "Hailuo 2.3",
+     "releaseDate": null
+    }
+   ]
+  },
+  {
+   "speciesId": "mistral-7b",
+   "record": "mistral/mistral-7b",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "mistral/mixtral-8x7b",
+     "displayName": "Mixtral 8x7B",
+     "releaseDate": "2023-12-11"
+    },
+    {
+     "id": "mistral/mixtral-8x22b",
+     "displayName": "Mixtral 8x22B",
+     "releaseDate": "2024-04-17"
+    }
+   ]
+  },
+  {
+   "speciesId": "kimi-chat",
+   "record": "moonshot/kimi-chat",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "moonshot/kimi-k1-5",
+     "displayName": "Kimi k1.5",
+     "releaseDate": "2025-01-20"
+    }
+   ]
+  },
+  {
+   "speciesId": "kimi-k2",
+   "record": "moonshot/kimi-k2",
+   "unmappedDescendants": 6,
+   "newestUnmapped": [
+    {
+     "id": "moonshot/kimi-k2-6",
+     "displayName": "Kimi K2.6",
+     "releaseDate": "2026-04-21"
+    },
+    {
+     "id": "moonshot/kimi-k2-7-code",
+     "displayName": "Kimi K2.7 Code",
+     "releaseDate": "2026-06-12"
+    },
+    {
+     "id": "moonshot/kimi-k2-8-preview",
+     "displayName": "Kimi K2.8 Preview",
+     "releaseDate": "2026-09-11"
+    }
+   ]
+  },
+  {
+   "speciesId": "gpt-4",
+   "record": "openai/gpt-4",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "openai/gpt-4-turbo",
+     "displayName": "GPT-4 Turbo",
+     "releaseDate": "2023-11-06"
+    }
+   ]
+  },
+  {
+   "speciesId": "gpt-4o",
+   "record": "openai/gpt-4o",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "openai/gpt-4-5",
+     "displayName": "GPT-4.5",
+     "releaseDate": "2025-02-27"
+    },
+    {
+     "id": "openai/gpt-4-1",
+     "displayName": "GPT-4.1",
+     "releaseDate": "2025-04-14"
+    }
+   ]
+  },
+  {
+   "speciesId": "o1",
+   "record": "openai/o1",
+   "unmappedDescendants": 3,
+   "newestUnmapped": [
+    {
+     "id": "openai/o3-mini",
+     "displayName": "o3-mini",
+     "releaseDate": "2025-01-31"
+    },
+    {
+     "id": "openai/o3",
+     "displayName": "o3",
+     "releaseDate": "2025-04-16"
+    },
+    {
+     "id": "openai/o4-mini",
+     "displayName": "o4-mini",
+     "releaseDate": "2025-04-16"
+    }
+   ]
+  },
+  {
+   "speciesId": "gpt-5",
+   "record": "openai/gpt-5",
+   "unmappedDescendants": 3,
+   "newestUnmapped": [
+    {
+     "id": "openai/gpt-5-1",
+     "displayName": "GPT-5.1",
+     "releaseDate": "2025-11-13"
+    },
+    {
+     "id": "openai/gpt-5-2",
+     "displayName": "GPT-5.2",
+     "releaseDate": "2025-12-11"
+    },
+    {
+     "id": "openai/gpt-5-4",
+     "displayName": "GPT-5.4",
+     "releaseDate": "2026-03-05"
+    }
+   ]
+  },
+  {
+   "speciesId": "gpt-5-5",
+   "record": "openai/gpt-5-5",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "openai/gpt-5-6-luna",
+     "displayName": "GPT-5.6 Luna",
+     "releaseDate": "2026-07-09"
+    },
+    {
+     "id": "openai/gpt-5-6-terra",
+     "displayName": "GPT-5.6 Terra",
+     "releaseDate": "2026-07-09"
+    }
+   ]
+  },
+  {
+   "speciesId": "gpt-5-6",
+   "record": "openai/gpt-5-6-sol",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "openai/gpt-6-sol",
+     "displayName": "GPT-6 Sol",
+     "releaseDate": "2026-09-22"
+    }
+   ]
+  },
+  {
+   "speciesId": "openai-codex",
+   "record": "openai/codex-1",
+   "unmappedDescendants": 7,
+   "newestUnmapped": [
+    {
+     "id": "openai/gpt-5-2-codex",
+     "displayName": "GPT-5.2-Codex",
+     "releaseDate": "2025-12-11"
+    },
+    {
+     "id": "openai/gpt-5-3-codex",
+     "displayName": "GPT-5.3-Codex",
+     "releaseDate": "2026-02-05"
+    },
+    {
+     "id": "openai/gpt-5-3-codex-spark",
+     "displayName": "GPT-5.3-Codex-Spark",
+     "releaseDate": "2026-02-05"
+    }
+   ]
+  },
+  {
+   "speciesId": "gpt-oss",
+   "record": "openai/gpt-oss-120b",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "openai/gpt-oss-safeguard-120b",
+     "displayName": "gpt-oss-safeguard-120b",
+     "releaseDate": "2025-10-29"
+    }
+   ]
+  },
+  {
+   "speciesId": "dall-e",
+   "record": "openai/dall-e",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "openai/dall-e-2",
+     "displayName": "DALL-E 2",
+     "releaseDate": "2022-04-06"
+    },
+    {
+     "id": "openai/dall-e-3",
+     "displayName": "DALL-E 3",
+     "releaseDate": "2023-09-20"
+    }
+   ]
+  },
+  {
+   "speciesId": "gpt-image-1",
+   "record": "openai/gpt-image-1",
+   "unmappedDescendants": 4,
+   "newestUnmapped": [
+    {
+     "id": "openai/gpt-image-1-5",
+     "displayName": "GPT Image 1.5",
+     "releaseDate": "2025-11-25"
+    },
+    {
+     "id": "openai/gpt-image-2",
+     "displayName": "GPT Image 2",
+     "releaseDate": "2026-04-21"
+    },
+    {
+     "id": "openai/gpt-image-2-5-flare",
+     "displayName": "GPT Image 2.5 Flare",
+     "releaseDate": "2026-09-08"
+    }
+   ]
+  },
+  {
+   "speciesId": "openclaw",
+   "record": "openclaw/openclaw",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "openclaw/openclaw-2-0",
+     "displayName": "OpenClaw 2.0",
+     "releaseDate": "2026-08-30"
+    }
+   ]
+  },
+  {
+   "speciesId": "sensenova",
+   "record": "sensetime/sensenova-6-7-flash-lite",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "sensetime/sensenova-6-8-flash-lite",
+     "displayName": "SenseNova 6.8 Flash-Lite",
+     "releaseDate": "2026-08-11"
+    }
+   ]
+  },
+  {
+   "speciesId": "vidu",
+   "record": "shengshu/vidu-1-0",
+   "unmappedDescendants": 3,
+   "newestUnmapped": [
+    {
+     "id": "shengshu/vidu-2-0",
+     "displayName": "Vidu 2.0",
+     "releaseDate": null
+    },
+    {
+     "id": "shengshu/vidu-q1",
+     "displayName": "Vidu Q1",
+     "releaseDate": null
+    },
+    {
+     "id": "shengshu/vidu-q2",
+     "displayName": "Vidu Q2",
+     "releaseDate": null
+    }
+   ]
+  },
+  {
+   "speciesId": "sd-1-5",
+   "record": "stability/stable-diffusion-1-x",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "stability/stable-diffusion-2-x",
+     "displayName": "Stable Diffusion 2.x",
+     "releaseDate": "2022-11-24"
+    }
+   ]
+  },
+  {
+   "speciesId": "sdxl",
+   "record": "stability/sdxl-1-0",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "stability/stable-diffusion-3",
+     "displayName": "Stable Diffusion 3",
+     "releaseDate": "2024-06-12"
+    },
+    {
+     "id": "stability/stable-diffusion-3-5",
+     "displayName": "Stable Diffusion 3.5",
+     "releaseDate": "2024-10-22"
+    }
+   ]
+  },
+  {
+   "speciesId": "step-flash",
+   "record": "stepfun/step-3-5-flash",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "stepfun/step-3-7-flash",
+     "displayName": "Step 3.7 Flash",
+     "releaseDate": "2026-05-29"
+    }
+   ]
+  },
+  {
+   "speciesId": "suno-v3",
+   "record": "suno/suno-v3-5",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "suno/suno-v4",
+     "displayName": "Suno v4",
+     "releaseDate": "2024-11-19"
+    },
+    {
+     "id": "suno/suno-v4-5",
+     "displayName": "Suno v4.5",
+     "releaseDate": null
+    }
+   ]
+  },
+  {
+   "speciesId": "suno-v5",
+   "record": "suno/suno-v5",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "suno/suno-v5-5",
+     "displayName": "Suno v5.5",
+     "releaseDate": "2026-03-26"
+    }
+   ]
+  },
+  {
+   "speciesId": "hunyuan",
+   "record": "tencent/hunyuan",
+   "unmappedDescendants": 6,
+   "newestUnmapped": [
+    {
+     "id": "tencent/hunyuan-a13b",
+     "displayName": "Hunyuan-A13B",
+     "releaseDate": "2025-06-27"
+    },
+    {
+     "id": "tencent/hunyuan-2-0-hy-2-0",
+     "displayName": "Hunyuan 2.0 (HY 2.0)",
+     "releaseDate": null
+    },
+    {
+     "id": "tencent/hy3-preview",
+     "displayName": "Hy3-preview",
+     "releaseDate": "2026-04-20"
+    }
+   ]
+  },
+  {
+   "speciesId": "unitree",
+   "record": "unitree/unitree-g1",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "unitree/unitree-h2",
+     "displayName": "Unitree H2",
+     "releaseDate": null
+    }
+   ]
+  },
+  {
+   "speciesId": "grok-1",
+   "record": "xai/grok-1",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "xai/grok-2",
+     "displayName": "Grok-2",
+     "releaseDate": "2024-08-13"
+    },
+    {
+     "id": "xai/grok-3",
+     "displayName": "Grok 3",
+     "releaseDate": "2025-02-17"
+    }
+   ]
+  },
+  {
+   "speciesId": "grok-4",
+   "record": "xai/grok-4",
+   "unmappedDescendants": 5,
+   "newestUnmapped": [
+    {
+     "id": "xai/grok-4-3",
+     "displayName": "Grok 4.3",
+     "releaseDate": "2026-04-17"
+    },
+    {
+     "id": "xai/grok-4-5",
+     "displayName": "Grok 4.5",
+     "releaseDate": "2026-07-08"
+    },
+    {
+     "id": "xai/grok-4-6",
+     "displayName": "Grok 4.6",
+     "releaseDate": "2026-08-12"
+    }
+   ]
+  },
+  {
+   "speciesId": "grok-imagine",
+   "record": "xai/grok-imagine-video-1-5",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "xai/grok-imagine-video-1-5-lite",
+     "displayName": "Grok Imagine Video 1.5 Lite",
+     "releaseDate": "2026-10-01"
+    }
+   ]
+  },
+  {
+   "speciesId": "mimo-v2-flash",
+   "record": "xiaomi/mimo-v2-flash",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "xiaomi/mimo-v2-6-flash",
+     "displayName": "MiMo-V2.6-Flash",
+     "releaseDate": "2026-09-22"
+    }
+   ]
+  },
+  {
+   "speciesId": "chatglm",
+   "record": "zhipu/chatglm-6b",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "zhipu/glm-4",
+     "displayName": "GLM-4",
+     "releaseDate": "2024-01-16"
+    }
+   ]
+  },
+  {
+   "speciesId": "glm-4-5",
+   "record": "zhipu/glm-4-5",
+   "unmappedDescendants": 12,
+   "newestUnmapped": [
+    {
+     "id": "zhipu/glm-5-1",
+     "displayName": "GLM-5.1",
+     "releaseDate": "2026-04-07"
+    },
+    {
+     "id": "zhipu/glm-5-2",
+     "displayName": "GLM-5.2",
+     "releaseDate": "2026-06-16"
+    },
+    {
+     "id": "zhipu/glm-5-3-flash",
+     "displayName": "GLM-5.3-Flash",
+     "releaseDate": "2026-08-26"
+    }
+   ]
+  },
+  {
+   "speciesId": "autoglm",
+   "record": "zhipu/autoglm",
+   "unmappedDescendants": 1,
+   "newestUnmapped": [
+    {
+     "id": "zhipu/autoglm-phone-multilingual",
+     "displayName": "AutoGLM-Phone-Multilingual",
+     "releaseDate": "2025-12-11"
+    }
+   ]
+  },
+  {
+   "speciesId": "kling-1",
+   "record": "kuaishou/kling-1-0",
+   "unmappedDescendants": 6,
+   "newestUnmapped": [
+    {
+     "id": "kuaishou/kling-2-1",
+     "displayName": "Kling 2.1 / 2.1 Master",
+     "releaseDate": "2025-05-29"
+    },
+    {
+     "id": "kuaishou/kling-2-5-turbo",
+     "displayName": "Kling 2.5 Turbo",
+     "releaseDate": "2025-09-23"
+    },
+    {
+     "id": "kuaishou/kling-2-6",
+     "displayName": "Kling VIDEO 2.6",
+     "releaseDate": "2025-12-03"
+    }
+   ]
+  },
+  {
+   "speciesId": "kling-3",
+   "record": "kuaishou/kling-3-0",
+   "unmappedDescendants": 2,
+   "newestUnmapped": [
+    {
+     "id": "kuaishou/kling-3-0-turbo",
+     "displayName": "Kling VIDEO 3.0 Turbo",
+     "releaseDate": "2026-06-17"
+    },
+    {
+     "id": "kuaishou/kling-4-0-flash",
+     "displayName": "Kling 4.0 Flash",
+     "releaseDate": "2026-09-28"
+    }
+   ]
+  }
+ ],
+ "rosterDiscrepancies": [
+  {
+   "species": "qwen-image",
+   "record": "alibaba/qwen-image-2-1",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-09-22",
+     "lineage": "2026-09-20",
+     "lineageRecord": "alibaba/qwen-image-2-1",
+     "daysApart": 2,
+     "severity": "minor (<=2 days: timezone/listing)",
+     "sourceCheck": "secondary"
+    }
+   ]
+  },
+  {
+   "species": "bailing",
+   "record": "ant/ling-3-0-flash",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-07-27",
+     "lineage": "2026-07-23",
+     "lineageRecord": "ant/ling-3-0-flash",
+     "daysApart": 4,
+     "severity": "major",
+     "sourceCheck": "catalog"
+    }
+   ]
+  },
+  {
+   "species": "doubao-seed-2-1",
+   "record": "bytedance/doubao-seed-2-1-pro",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-06-24",
+     "lineage": "2026-06-23",
+     "lineageRecord": "bytedance/doubao-seed-2-1-pro",
+     "daysApart": 1,
+     "severity": "minor (<=2 days: timezone/listing)",
+     "sourceCheck": "secondary"
+    }
+   ]
+  },
+  {
+   "species": "gemini-2-5-pro",
+   "record": "google/gemini-2-5-pro",
+   "flags": [
+    {
+     "field": "category",
+     "roster": "reasoning",
+     "lineage": "llm",
+     "basis": null
+    }
+   ]
+  },
+  {
+   "species": "lyria",
+   "record": "google/lyria-3-5",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-07-30",
+     "lineage": "2026-07-29",
+     "lineageRecord": "google/lyria-3-5",
+     "daysApart": 1,
+     "severity": "minor (<=2 days: timezone/listing)",
+     "sourceCheck": "official"
+    }
+   ]
+  },
+  {
+   "species": "phi-4",
+   "record": "microsoft/phi-4",
+   "flags": [
+    {
+     "field": "category",
+     "roster": "reasoning",
+     "lineage": "llm",
+     "basis": "14B general-purpose small LLM (the reasoning variants are Phi-4-reasoning)"
+    }
+   ]
+  },
+  {
+   "species": "mai-image",
+   "record": "microsoft/mai-image-2-6",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-09-04",
+     "lineage": "2026-07-31",
+     "lineageRecord": "microsoft/mai-image-2-6",
+     "daysApart": 35,
+     "severity": "major",
+     "sourceCheck": "secondary"
+    }
+   ]
+  },
+  {
+   "species": "midjourney-v7",
+   "record": "midjourney/midjourney-v7",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2025-04-03",
+     "lineage": "2025-04-04",
+     "lineageRecord": "midjourney/midjourney-v7",
+     "daysApart": 1,
+     "severity": "minor (<=2 days: timezone/listing)",
+     "sourceCheck": "secondary"
+    }
+   ]
+  },
+  {
+   "species": "minimax-m2",
+   "record": "minimax/minimax-m2",
+   "flags": [
+    {
+     "field": "category",
+     "roster": "code",
+     "lineage": "llm",
+     "basis": null
+    }
+   ]
+  },
+  {
+   "species": "mistral-medium",
+   "record": "mistral/mistral-medium-3-5",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-04-30",
+     "lineage": "2026-04-29",
+     "lineageRecord": "mistral/mistral-medium-3-5",
+     "daysApart": 1,
+     "severity": "minor (<=2 days: timezone/listing)",
+     "sourceCheck": "official"
+    }
+   ]
+  },
+  {
+   "species": "minicpm",
+   "record": "modelbest/minicpm5-2b",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-09-07",
+     "lineage": "2026-09-06",
+     "lineageRecord": "modelbest/minicpm5-2b",
+     "daysApart": 1,
+     "severity": "minor (<=2 days: timezone/listing)",
+     "sourceCheck": "catalog"
+    }
+   ]
+  },
+  {
+   "species": "nemotron",
+   "record": "nvidia/nemotron-3-ultra",
+   "flags": [
+    {
+     "field": "category",
+     "roster": "reasoning",
+     "lineage": "llm",
+     "basis": null
+    }
+   ]
+  },
+  {
+   "species": "o1",
+   "record": "openai/o1",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2024-09-12",
+     "lineage": "2024-12-05",
+     "lineageRecord": "openai/o1",
+     "daysApart": 84,
+     "severity": "major",
+     "sourceCheck": "background"
+    }
+   ]
+  },
+  {
+   "species": "gpt-6-astra",
+   "record": "openai/gpt-6-astra",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-09-03",
+     "lineage": "2026-09-04",
+     "lineageRecord": "openai/gpt-6-astra",
+     "daysApart": 1,
+     "severity": "minor (<=2 days: timezone/listing)",
+     "sourceCheck": "secondary"
+    }
+   ]
+  },
+  {
+   "species": "gpt-image-1",
+   "record": "openai/gpt-image-1",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2025-03-25",
+     "lineage": "2025-04-23",
+     "lineageRecord": "openai/gpt-image-1",
+     "daysApart": 29,
+     "severity": "major",
+     "sourceCheck": "catalog"
+    }
+   ]
+  },
+  {
+   "species": "step-flash",
+   "record": "stepfun/step-3-5-flash",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-02",
+     "lineage": "2024-07",
+     "lineageRecord": "stepfun/step-2",
+     "daysApart": 99,
+     "severity": "major",
+     "sourceCheck": "background"
+    }
+   ]
+  },
+  {
+   "species": "hunyuan-image",
+   "record": "tencent/hunyuanimage-3-5",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-09-24",
+     "lineage": "2026-09-22",
+     "lineageRecord": "tencent/hunyuanimage-3-5",
+     "daysApart": 2,
+     "severity": "minor (<=2 days: timezone/listing)",
+     "sourceCheck": "secondary"
+    }
+   ]
+  },
+  {
+   "species": "solar-pro",
+   "record": "upstage/solar-pro-4",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-08-12",
+     "lineage": "2026-08-06",
+     "lineageRecord": "upstage/solar-pro-4",
+     "daysApart": 6,
+     "severity": "major",
+     "sourceCheck": "catalog"
+    },
+    {
+     "field": "category",
+     "roster": "agent",
+     "lineage": "llm",
+     "basis": null
+    }
+   ]
+  },
+  {
+   "species": "grok-4",
+   "record": "xai/grok-4",
+   "flags": [
+    {
+     "field": "category",
+     "roster": "reasoning",
+     "lineage": "llm",
+     "basis": null
+    }
+   ]
+  },
+  {
+   "species": "grok-imagine",
+   "record": "xai/grok-imagine-video-1-5",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-06-18",
+     "lineage": "2026-05-30",
+     "lineageRecord": "xai/grok-imagine-video-1-5",
+     "daysApart": 19,
+     "severity": "major",
+     "sourceCheck": "catalog"
+    }
+   ]
+  },
+  {
+   "species": "mimo-v2-flash",
+   "record": "xiaomi/mimo-v2-flash",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2025-12-17",
+     "lineage": "2025-12-16",
+     "lineageRecord": "xiaomi/mimo-v2-flash",
+     "daysApart": 1,
+     "severity": "minor (<=2 days: timezone/listing)",
+     "sourceCheck": "catalog"
+    }
+   ]
+  },
+  {
+   "species": "mimo-v2-6-pro",
+   "record": "xiaomi/mimo-v2-6-pro",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-09-21",
+     "lineage": "2026-09-22",
+     "lineageRecord": "xiaomi/mimo-v2-6-pro",
+     "daysApart": 1,
+     "severity": "minor (<=2 days: timezone/listing)",
+     "sourceCheck": "official"
+    }
+   ]
+  },
+  {
+   "species": "glm-5-3",
+   "record": "zhipu/glm-5-3",
+   "flags": [
+    {
+     "field": "releaseDate",
+     "roster": "2026-08-14",
+     "lineage": "2026-08-18",
+     "lineageRecord": "zhipu/glm-5-3",
+     "daysApart": 4,
+     "severity": "major",
+     "sourceCheck": "official"
+    }
+   ]
+  }
+ ]
+}

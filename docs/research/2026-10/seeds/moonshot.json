@@ -1,0 +1,1193 @@
+{
+ "vendor": "moonshot",
+ "count": 8,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "kimik2",
+   "names": [
+    "MoonshotAI: Kimi K2 0905",
+    "MoonshotAI: Kimi K2 0711"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-07-11"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "moonshotai/kimi-k2-0905",
+     "moonshotai/kimi-k2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "kimik2thinking",
+   "names": [
+    "MoonshotAI: Kimi K2 Thinking",
+    "Kimi K2 Thinking",
+    "Kimi K2 Thinking (Vertex AI (OpenAI-compatible))",
+    "Kimi K2 Thinking (Amazon Bedrock)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-11-06",
+    "modelsdev:nano-gpt": "2025-11-06",
+    "modelsdev:llmgateway-providers": "2025-11-06",
+    "modelsdev:kilo": "2025-11-06",
+    "modelsdev:openrouter": "2025-11-06",
+    "modelsdev:hyper": "2026-09-02",
+    "modelsdev:merge-gateway": "2025-11-06",
+    "modelsdev:edenai": "2025-11-06",
+    "modelsdev:amazon-bedrock": "2025-11-06",
+    "modelsdev:llmgateway": "2025-11-06"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "moonshotai/kimi-k2-thinking"
+    ],
+    "modelsdev:nano-gpt": [
+     "moonshotai/kimi-k2-thinking"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "vertex-openai/kimi-k2-thinking"
+    ],
+    "modelsdev:kilo": [
+     "moonshotai/kimi-k2-thinking"
+    ],
+    "modelsdev:openrouter": [
+     "moonshotai/kimi-k2-thinking"
+    ],
+    "modelsdev:hyper": [
+     "kimi-k2-thinking"
+    ],
+    "modelsdev:merge-gateway": [
+     "moonshotai/kimi-k2-thinking"
+    ],
+    "modelsdev:edenai": [
+     "amazon/moonshot.kimi-k2-thinking"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "moonshot.kimi-k2-thinking"
+    ],
+    "modelsdev:llmgateway": [
+     "kimi-k2-thinking"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "kimik25",
+   "names": [
+    "MoonshotAI: Kimi K2.5",
+    "Kimi K2.5",
+    "Kimi K2.5 (EmberCloud)",
+    "Kimi K2.5 (Alibaba Cloud)",
+    "Kimi K2.5 (Moonshot AI)",
+    "Kimi K2.5 (Deep Infra)",
+    "Kimi K2.5 (TensorX)",
+    "Kimi K2.5 (Amazon Bedrock)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-01-27",
+    "modelsdev:alibaba-token-plan": "2026-01",
+    "modelsdev:nano-gpt": "2026-01",
+    "modelsdev:llmgateway-providers": "2026-01",
+    "modelsdev:kilo": "2026-01",
+    "modelsdev:venice": "2026-01-27",
+    "modelsdev:alibaba-token-plan-cn": "2026-01",
+    "modelsdev:melious": "2026-01",
+    "modelsdev:302ai": "2026-01",
+    "modelsdev:openrouter": "2026-01",
+    "modelsdev:azure-cognitive-services": "2026-01",
+    "modelsdev:auriko": "2026-01",
+    "modelsdev:vercel": "2026-01",
+    "modelsdev:jalapeno": "2026-01",
+    "modelsdev:orcarouter": "2026-01",
+    "modelsdev:scnet-token-plan": "2026-01",
+    "modelsdev:ofox": "2026-01",
+    "modelsdev:merge-gateway": "2026-01",
+    "modelsdev:tensorx": "2026-01",
+    "modelsdev:edenai": "2026-01",
+    "modelsdev:hpc-ai": "2026-01",
+    "modelsdev:amazon-bedrock": "2026-01-27",
+    "modelsdev:llmgateway": "2026-01",
+    "modelsdev:daoxe": "2026-01"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image,video->text",
+    "text,image->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "moonshotai/kimi-k2.5"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "kimi-k2.5"
+    ],
+    "modelsdev:nano-gpt": [
+     "moonshotai/kimi-k2.5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "embercloud/kimi-k2.5",
+     "alibaba/kimi-k2.5",
+     "moonshot/kimi-k2.5"
+    ],
+    "modelsdev:kilo": [
+     "moonshotai/kimi-k2.5"
+    ],
+    "modelsdev:venice": [
+     "kimi-k2-5"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "kimi-k2.5"
+    ],
+    "modelsdev:melious": [
+     "kimi-k2.5"
+    ],
+    "modelsdev:302ai": [
+     "kimi-k2.5"
+    ],
+    "modelsdev:openrouter": [
+     "moonshotai/kimi-k2.5"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "kimi-k2.5"
+    ],
+    "modelsdev:auriko": [
+     "kimi-k2.5"
+    ],
+    "modelsdev:vercel": [
+     "moonshotai/kimi-k2.5"
+    ],
+    "modelsdev:jalapeno": [
+     "Kimi-K2.5"
+    ],
+    "modelsdev:orcarouter": [
+     "kimi/kimi-k2.5"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "Kimi-K2.5"
+    ],
+    "modelsdev:ofox": [
+     "moonshotai/kimi-k2.5"
+    ],
+    "modelsdev:merge-gateway": [
+     "moonshot/kimi-k2.5"
+    ],
+    "modelsdev:tensorx": [
+     "moonshotai/kimi-k2.5"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/moonshotai/Kimi-K2.5",
+     "tensorx/moonshotai/kimi-k2.5",
+     "amazon/moonshotai.kimi-k2.5"
+    ],
+    "modelsdev:hpc-ai": [
+     "moonshotai/kimi-k2.5"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "moonshotai.kimi-k2.5"
+    ],
+    "modelsdev:llmgateway": [
+     "kimi-k2.5"
+    ],
+    "modelsdev:daoxe": [
+     "kimi-k2.5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "kimik26",
+   "names": [
+    "MoonshotAI: Kimi K2.6",
+    "Kimi K2.6",
+    "Kimi K2.6 (Runware)",
+    "Kimi K2.6 (Tencent Cloud)",
+    "Kimi K2.6 (NovitaAI)",
+    "Kimi K2.6 (Baidu)",
+    "Kimi K2.6 (CanopyWave)",
+    "Kimi K2.6 (Moonshot AI)",
+    "Kimi K2.6 Nitro",
+    "Kimi K2.6 Fast",
+    "Kimi K2.6 (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-20",
+    "modelsdev:empiriolabs": "2026-04-21",
+    "modelsdev:alibaba-token-plan": "2026-04-21",
+    "modelsdev:cloudflare-workers-ai": "2026-04-21",
+    "modelsdev:nano-gpt": "2026-04-21",
+    "modelsdev:crof": "2026-04-21",
+    "modelsdev:wandb": "2026-04-20",
+    "modelsdev:lilac": "2026-04-21",
+    "modelsdev:moonshotai-cn": "2026-04-21",
+    "modelsdev:privatemode-ai": "2026-04-21",
+    "modelsdev:llmgateway-providers": "2026-04-21",
+    "modelsdev:kilo": "2026-04-21",
+    "modelsdev:venice": "2026-04-20",
+    "modelsdev:alibaba-token-plan-cn": "2026-04-21",
+    "modelsdev:melious": "2026-04-21",
+    "modelsdev:abacus": "2026-04-21",
+    "modelsdev:novita-ai": "2026-04-21",
+    "modelsdev:302ai": "2026-04-21",
+    "modelsdev:openrouter": "2026-04-21",
+    "modelsdev:cline-pass": "2026-04-21",
+    "modelsdev:routing-run": "2026-04-21",
+    "modelsdev:azure-cognitive-services": "2026-04-21",
+    "modelsdev:auriko": "2026-04-21",
+    "modelsdev:unorouter": "2026-04-21",
+    "modelsdev:inceptron": "2026-04-21",
+    "modelsdev:gmicloud": "2026-04-21",
+    "modelsdev:clarifai": "2026-04-21",
+    "modelsdev:crusoe": "2026-04-21",
+    "modelsdev:ambient": "2026-04-21",
+    "modelsdev:vercel": "2026-04-21",
+    "modelsdev:ebcloud": "2026-04-21",
+    "modelsdev:greenpt": "2026-04-21",
+    "modelsdev:fastrouter": "2026-04-21",
+    "modelsdev:orcarouter": "2026-04-21",
+    "modelsdev:moonshotai": "2026-04-21",
+    "modelsdev:scnet-token-plan": "2026-04-21",
+    "modelsdev:ofox": "2026-04-21",
+    "modelsdev:merge-gateway": "2026-04-21",
+    "modelsdev:pioneer": "2026-04-21",
+    "modelsdev:tensorx": "2026-04-21",
+    "modelsdev:edenai": "2026-04-21",
+    "modelsdev:tempr": "2026-04-21",
+    "modelsdev:kenari": "2026-04-21",
+    "modelsdev:wafer.ai": "2026-04-21",
+    "modelsdev:requesty": "2026-04-21",
+    "modelsdev:llmgateway": "2026-04-21",
+    "modelsdev:evroc": "2026-04-21",
+    "modelsdev:tokengo": "2026-04-21",
+    "modelsdev:cortecs": "2026-04-21",
+    "modelsdev:infomaniak": "2026-04-21",
+    "modelsdev:crossmodel": "2026-04-21"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image,video->text",
+    "text,image->text",
+    "text->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:empiriolabs": [
+     "kimi-k2-6"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:nano-gpt": [
+     "moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:crof": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:wandb": [
+     "moonshotai/Kimi-K2.6"
+    ],
+    "modelsdev:lilac": [
+     "moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:moonshotai-cn": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:privatemode-ai": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "runware/kimi-k2.6",
+     "tencent/kimi-k2.6",
+     "novita/kimi-k2.6",
+     "baidu/kimi-k2.6",
+     "canopywave/kimi-k2.6",
+     "moonshot/kimi-k2.6"
+    ],
+    "modelsdev:kilo": [
+     "moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:venice": [
+     "kimi-k2-6"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:melious": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:abacus": [
+     "moonshotai/Kimi-K2.6"
+    ],
+    "modelsdev:novita-ai": [
+     "moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:302ai": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:openrouter": [
+     "moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/kimi-k2.6"
+    ],
+    "modelsdev:routing-run": [
+     "kimi-k2.6",
+     "kimi-k2.6-nitro"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:auriko": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:unorouter": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:inceptron": [
+     "moonshotai/Kimi-K2.6"
+    ],
+    "modelsdev:gmicloud": [
+     "moonshotai/Kimi-K2.6"
+    ],
+    "modelsdev:clarifai": [
+     "moonshotai/chat-completion/models/Kimi-K2_6"
+    ],
+    "modelsdev:crusoe": [
+     "moonshotai/Kimi-K2.6"
+    ],
+    "modelsdev:ambient": [
+     "moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:vercel": [
+     "moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:ebcloud": [
+     "Kimi-K2.6"
+    ],
+    "modelsdev:greenpt": [
+     "kimi-k2.6",
+     "kimi-k2.6-fast"
+    ],
+    "modelsdev:fastrouter": [
+     "moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:orcarouter": [
+     "kimi/kimi-k2.6"
+    ],
+    "modelsdev:moonshotai": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "Kimi-K2.6"
+    ],
+    "modelsdev:ofox": [
+     "moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:merge-gateway": [
+     "moonshot/kimi-k2.6"
+    ],
+    "modelsdev:pioneer": [
+     "moonshotai/Kimi-K2.6"
+    ],
+    "modelsdev:tensorx": [
+     "moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:edenai": [
+     "moonshot/kimi-k2.6"
+    ],
+    "modelsdev:tempr": [
+     "moonshot/kimi-k2.6"
+    ],
+    "modelsdev:kenari": [
+     "kimi-k2-6"
+    ],
+    "modelsdev:wafer.ai": [
+     "Kimi-K2.6"
+    ],
+    "modelsdev:requesty": [
+     "kimi-k2.6",
+     "kimi-k2.6@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:evroc": [
+     "moonshotai/Kimi-K2.6"
+    ],
+    "modelsdev:tokengo": [
+     "moonshotai/kimi-k2.6"
+    ],
+    "modelsdev:cortecs": [
+     "kimi-k2.6"
+    ],
+    "modelsdev:infomaniak": [
+     "moonshotai/Kimi-K2.6"
+    ],
+    "modelsdev:crossmodel": [
+     "moonshot/kimi-k2.6"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "kimik27code",
+   "names": [
+    "MoonshotAI: Kimi K2.7 Code",
+    "Kimi K2.7 Code",
+    "Kimi K2.7 Code HighSpeed",
+    "Kimi K2.7 Code (SCX.ai)",
+    "Kimi K2.7 Code (Tencent Cloud)",
+    "Kimi K2.7 Code (NovitaAI)",
+    "Kimi K2.7 Code (Moonshot AI)",
+    "Kimi K2.7 Code Nitro",
+    "Kimi K2.7 Code Fast",
+    "Kimi K2.7 Code Flex",
+    "kimi-k2.7-code",
+    "Kimi K2.7 Code (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-06-12",
+    "modelsdev:deepinfra": "2026-06-12",
+    "modelsdev:perplexity-agent": "2026-06-12",
+    "modelsdev:empiriolabs": "2026-06-12",
+    "modelsdev:alibaba-token-plan": "2026-06-12",
+    "modelsdev:cloudflare-workers-ai": "2026-06-12",
+    "modelsdev:nano-gpt": "2026-06-12",
+    "modelsdev:crof": "2026-06-12",
+    "modelsdev:baseten": "2026-06-12",
+    "modelsdev:wandb": "2026-06-12",
+    "modelsdev:databricks": "2026-06-12",
+    "modelsdev:siliconflow": "2026-06-12",
+    "modelsdev:moonshotai-cn": "2026-06-12",
+    "modelsdev:llmgateway-providers": "2026-06-12",
+    "modelsdev:kilo": "2026-06-12",
+    "modelsdev:venice": "2026-06-13",
+    "modelsdev:alibaba-token-plan-cn": "2026-06-12",
+    "modelsdev:melious": "2026-06-12",
+    "modelsdev:abacus": "2026-06-12",
+    "modelsdev:novita-ai": "2026-06-12",
+    "modelsdev:302ai": "2026-06-12",
+    "modelsdev:openrouter": "2026-06-12",
+    "modelsdev:cline-pass": "2026-06-12",
+    "modelsdev:routing-run": "2026-06-12",
+    "modelsdev:neuralwatt": "2026-06-12",
+    "modelsdev:azure": "2026-06-12",
+    "modelsdev:zenmux": "2026-06-12",
+    "modelsdev:inceptron": "2026-06-12",
+    "modelsdev:huggingface": "2026-06-12",
+    "modelsdev:aiand": "2026-06-12",
+    "modelsdev:volcengine-coding-plan": "2026-06-12",
+    "modelsdev:ollama-cloud": "2026-06-12",
+    "modelsdev:ambient": "2026-06-12",
+    "modelsdev:nebius": "2026-06-12",
+    "modelsdev:vercel": "2026-06-12",
+    "modelsdev:greenpt": "2026-06-12",
+    "modelsdev:hyper": "2026-07-03",
+    "modelsdev:jalapeno": "2026-06-12",
+    "modelsdev:orcarouter": "2026-06-12",
+    "modelsdev:moonshotai": "2026-06-12",
+    "modelsdev:scnet-token-plan": "2026-06-12",
+    "modelsdev:ofox": "2026-06-12",
+    "modelsdev:aihubmix": "2026-06-12",
+    "modelsdev:merge-gateway": "2026-06-12",
+    "modelsdev:pioneer": "2026-06-12",
+    "modelsdev:github-copilot": "2026-06-12",
+    "modelsdev:opencode-go": "2026-06-12",
+    "modelsdev:openreason": "2026-06-12",
+    "modelsdev:tensorx": "2026-06-12",
+    "modelsdev:edenai": "2026-06-12",
+    "modelsdev:hpc-ai": "2026-06-12",
+    "modelsdev:tempr": "2026-06-12",
+    "modelsdev:opencode": "2026-06-12",
+    "modelsdev:kenari": "2026-06-12",
+    "modelsdev:requesty": "2026-06-12",
+    "modelsdev:synthetic": "2026-06-12",
+    "modelsdev:llmgateway": "2026-06-12",
+    "modelsdev:cortecs": "2026-06-12",
+    "modelsdev:crossmodel": "2026-06-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image,video->text",
+    "text,image->text",
+    "text,image,pdf->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:deepinfra": [
+     "moonshotai/Kimi-K2.7-Code"
+    ],
+    "modelsdev:perplexity-agent": [
+     "moonshot-ai/kimi-k2.7-code"
+    ],
+    "modelsdev:empiriolabs": [
+     "kimi-k2-7-code"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:nano-gpt": [
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:crof": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:baseten": [
+     "moonshotai/Kimi-K2.7-Code"
+    ],
+    "modelsdev:wandb": [
+     "moonshotai/Kimi-K2.7-Code"
+    ],
+    "modelsdev:databricks": [
+     "databricks-kimi-k2-7-code"
+    ],
+    "modelsdev:siliconflow": [
+     "moonshotai/Kimi-K2.7-Code"
+    ],
+    "modelsdev:moonshotai-cn": [
+     "kimi-k2.7-code",
+     "kimi-k2.7-code-highspeed"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "scx-ai-gp/kimi-k2.7-code",
+     "tencent/kimi-k2.7-code",
+     "novita/kimi-k2.7-code",
+     "moonshot/kimi-k2.7-code"
+    ],
+    "modelsdev:kilo": [
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:venice": [
+     "kimi-k2-7-code"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:melious": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:abacus": [
+     "moonshotai/Kimi-K2.7-Code"
+    ],
+    "modelsdev:novita-ai": [
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:302ai": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:openrouter": [
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/kimi-k2.7-code"
+    ],
+    "modelsdev:routing-run": [
+     "kimi-k2.7-code-nitro",
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:neuralwatt": [
+     "kimi-k2.7-code-fast",
+     "kimi-k2.7-code-flex",
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:azure": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:zenmux": [
+     "moonshotai/kimi-k2.7-code-highspeed",
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:inceptron": [
+     "moonshotai/Kimi-K2.7-Code"
+    ],
+    "modelsdev:huggingface": [
+     "moonshotai/Kimi-K2.7-Code"
+    ],
+    "modelsdev:aiand": [
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:volcengine-coding-plan": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:ollama-cloud": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:ambient": [
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:nebius": [
+     "moonshotai/Kimi-K2.7-Code"
+    ],
+    "modelsdev:vercel": [
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:greenpt": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:hyper": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:jalapeno": [
+     "Kimi-K2.7-Code"
+    ],
+    "modelsdev:orcarouter": [
+     "kimi/kimi-k2.7-code"
+    ],
+    "modelsdev:moonshotai": [
+     "kimi-k2.7-code-highspeed",
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "Kimi-K2.7-Code"
+    ],
+    "modelsdev:ofox": [
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:aihubmix": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:merge-gateway": [
+     "moonshot/kimi-k2.7-code"
+    ],
+    "modelsdev:pioneer": [
+     "moonshotai/Kimi-K2.7-Code"
+    ],
+    "modelsdev:github-copilot": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:opencode-go": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:openreason": [
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:tensorx": [
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:edenai": [
+     "moonshot/kimi-k2.7-code"
+    ],
+    "modelsdev:hpc-ai": [
+     "moonshotai/kimi-k2.7-code"
+    ],
+    "modelsdev:tempr": [
+     "moonshot/kimi-k2.7-code"
+    ],
+    "modelsdev:opencode": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:kenari": [
+     "kimi-k2-7-code"
+    ],
+    "modelsdev:requesty": [
+     "kimi-k2.7-code@eu",
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:synthetic": [
+     "hf:moonshotai/Kimi-K2.7-Code"
+    ],
+    "modelsdev:llmgateway": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:cortecs": [
+     "kimi-k2.7-code"
+    ],
+    "modelsdev:crossmodel": [
+     "moonshot/kimi-k2.7-code"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "kimik27codehighspeed",
+   "names": [
+    "Kimi K2.7 Code Highspeed",
+    "Kimi K2.7 Code High-Speed",
+    "Kimi K2.7 Code Highspeed (Tencent Cloud)",
+    "Kimi K2.7 Code Highspeed (Moonshot AI)",
+    "Kimi K2.7 Code High Speed",
+    "Kimi For Coding HighSpeed"
+   ],
+   "releaseDateHints": {
+    "modelsdev:empiriolabs": "2026-06-12",
+    "modelsdev:nano-gpt": "2026-06-12",
+    "modelsdev:llmgateway-providers": "2026-06-12",
+    "modelsdev:gmicloud": "2026-06-12",
+    "modelsdev:vercel": "2026-06-12",
+    "modelsdev:kimi-code-plan-cn": "2026-06-12",
+    "modelsdev:ofox": "2026-06-12",
+    "modelsdev:aihubmix": "2026-06-12",
+    "modelsdev:merge-gateway": "2026-06-12",
+    "modelsdev:edenai": "2026-06-12",
+    "modelsdev:tempr": "2026-06-12",
+    "modelsdev:kimi-code-plan-global": "2026-06-12",
+    "modelsdev:llmgateway": "2026-06-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image,video->text",
+    "text,image->text",
+    "text->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:empiriolabs": [
+     "kimi-k2-7-code-highspeed"
+    ],
+    "modelsdev:nano-gpt": [
+     "moonshotai/kimi-k2.7-code-highspeed"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "tencent/kimi-k2.7-code-highspeed",
+     "moonshot/kimi-k2.7-code-highspeed"
+    ],
+    "modelsdev:gmicloud": [
+     "moonshotai/kimi-k2.7-code-highspeed"
+    ],
+    "modelsdev:vercel": [
+     "moonshotai/kimi-k2.7-code-highspeed"
+    ],
+    "modelsdev:kimi-code-plan-cn": [
+     "kimi-for-coding-highspeed"
+    ],
+    "modelsdev:ofox": [
+     "moonshotai/kimi-k2.7-code-highspeed"
+    ],
+    "modelsdev:aihubmix": [
+     "kimi-k2.7-code-highspeed"
+    ],
+    "modelsdev:merge-gateway": [
+     "moonshot/kimi-k2.7-code-highspeed"
+    ],
+    "modelsdev:edenai": [
+     "moonshot/kimi-k2.7-code-highspeed"
+    ],
+    "modelsdev:tempr": [
+     "moonshot/kimi-k2.7-code-highspeed"
+    ],
+    "modelsdev:kimi-code-plan-global": [
+     "kimi-for-coding-highspeed"
+    ],
+    "modelsdev:llmgateway": [
+     "kimi-k2.7-code-highspeed"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "kimik3",
+   "names": [
+    "MoonshotAI: Kimi K3",
+    "Kimi K3",
+    "Kimi K3 Eco",
+    "Kimi K3 (SCX.ai)",
+    "Kimi K3 (AWS Bedrock)",
+    "Kimi K3 (Runpod)",
+    "Kimi K3 (Runware)",
+    "Kimi K3 (Tencent Cloud)",
+    "Kimi K3 (NovitaAI)",
+    "Kimi K3 (Alibaba Cloud)",
+    "Kimi K3 (CanopyWave)",
+    "Kimi K3 (Fireworks AI)",
+    "Kimi K3 Fast (Fireworks AI)",
+    "Kimi K3 (Together AI)",
+    "Kimi K3 (Moonshot AI)",
+    "Kimi K3 Fast",
+    "Kimi K3 Flex",
+    "kimi-k3",
+    "Kimi K3-256K",
+    "Kimi K3 (EU)",
+    "Kimi K3 (US)",
+    "Kimi K3 (Global)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-16",
+    "modelsdev:deepinfra": "2026-07-16",
+    "modelsdev:perplexity-agent": "2026-07-16",
+    "modelsdev:empiriolabs": "2026-07-16",
+    "modelsdev:sensenova": "2026-07-16",
+    "modelsdev:engy": "2026-07-16",
+    "modelsdev:nano-gpt": "2026-07-16",
+    "modelsdev:crof": "2026-07-16",
+    "modelsdev:tinfoil": "2026-07-16",
+    "modelsdev:baseten": "2026-07-16",
+    "modelsdev:umans-ai-coding-plan": "2026-07-16",
+    "modelsdev:umans-ai": "2026-07-16",
+    "modelsdev:siliconflow": "2026-07-16",
+    "modelsdev:moonshotai-cn": "2026-07-16",
+    "modelsdev:llmgateway-providers": "2026-07-16",
+    "modelsdev:kilo": "2026-07-16",
+    "modelsdev:venice": "2026-07-16",
+    "modelsdev:melious": "2026-07-16",
+    "modelsdev:berget": "2026-07-27",
+    "modelsdev:abacus": "2026-07-16",
+    "modelsdev:novita-ai": "2026-07-16",
+    "modelsdev:302ai": "2026-07-16",
+    "modelsdev:openrouter": "2026-07-16",
+    "modelsdev:iteracompute": "2026-07-16",
+    "modelsdev:cline-pass": "2026-07-16",
+    "modelsdev:modal": "2026-07-16",
+    "modelsdev:neuralwatt": "2026-07-16",
+    "modelsdev:alibaba": "2026-07-16",
+    "modelsdev:zenmux": "2026-07-16",
+    "modelsdev:huggingface": "2026-07-16",
+    "modelsdev:impossibl": "2026-07-16",
+    "modelsdev:vancine": "2026-07-16",
+    "modelsdev:cloudflare-ai-gateway": "2026-07-16",
+    "modelsdev:aiand": "2026-07-16",
+    "modelsdev:volcengine-coding-plan": "2026-07-16",
+    "modelsdev:ollama-cloud": "2026-07-16",
+    "modelsdev:nebius": "2026-07-16",
+    "modelsdev:vercel": "2026-07-16",
+    "modelsdev:greenpt": "2026-07-16",
+    "modelsdev:hyper": "2026-07-27",
+    "modelsdev:jalapeno": "2026-07-16",
+    "modelsdev:fireworks-ai": "2026-07-27",
+    "modelsdev:orcarouter": "2026-07-16",
+    "modelsdev:kimi-code-plan-cn": "2026-07-16",
+    "modelsdev:inco": "2026-07-16",
+    "modelsdev:moonshotai": "2026-07-16",
+    "modelsdev:ainetcafe": "2026-07-16",
+    "modelsdev:wallaby": "2026-07-16",
+    "modelsdev:scnet-token-plan": "2026-07-16",
+    "modelsdev:ofox": "2026-07-16",
+    "modelsdev:neon": "2026-07-16",
+    "modelsdev:aihubmix": "2026-07-16",
+    "modelsdev:merge-gateway": "2026-07-16",
+    "modelsdev:opper": "2026-07-16",
+    "modelsdev:nvidia": "2026-07-16",
+    "modelsdev:pioneer": "2026-07-16",
+    "modelsdev:github-copilot": "2026-07-16",
+    "modelsdev:opencode-go": "2026-07-16",
+    "modelsdev:tensorx": "2026-07-16",
+    "modelsdev:edenai": "2026-07-16",
+    "modelsdev:tempr": "2026-07-16",
+    "modelsdev:opencode": "2026-07-16",
+    "modelsdev:kenari": "2026-07-16",
+    "modelsdev:kimi-code-plan-global": "2026-07-16",
+    "modelsdev:requesty": "2026-07-16",
+    "modelsdev:amazon-bedrock": "2026-07-16",
+    "modelsdev:synthetic": "2026-07-16",
+    "modelsdev:llmgateway": "2026-07-16",
+    "modelsdev:vivgrid": "2026-07-16",
+    "modelsdev:tokengo": "2026-07-16",
+    "modelsdev:togetherai": "2026-07-16",
+    "modelsdev:cortecs": "2026-07-16",
+    "modelsdev:crossmodel": "2026-07-16",
+    "modelsdev:arcee": "2026-07-16",
+    "modelsdev:digitalocean": "2026-07-16",
+    "modelsdev:alibaba-cn": "2026-07-16"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video->text",
+    "text,image->text",
+    "text,image,video->text",
+    "text,image,pdf->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:deepinfra": [
+     "moonshotai/Kimi-K3"
+    ],
+    "modelsdev:perplexity-agent": [
+     "moonshot-ai/kimi-k3"
+    ],
+    "modelsdev:empiriolabs": [
+     "kimi-k3"
+    ],
+    "modelsdev:sensenova": [
+     "kimi-k3"
+    ],
+    "modelsdev:engy": [
+     "kimi-k3"
+    ],
+    "modelsdev:nano-gpt": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:crof": [
+     "kimi-k3-eco",
+     "kimi-k3"
+    ],
+    "modelsdev:tinfoil": [
+     "kimi-k3"
+    ],
+    "modelsdev:baseten": [
+     "moonshotai/Kimi-K3"
+    ],
+    "modelsdev:umans-ai-coding-plan": [
+     "umans-kimi-k3"
+    ],
+    "modelsdev:umans-ai": [
+     "umans-kimi-k3"
+    ],
+    "modelsdev:siliconflow": [
+     "moonshotai/Kimi-K3"
+    ],
+    "modelsdev:moonshotai-cn": [
+     "kimi-k3"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "scx-ai-gp/kimi-k3",
+     "aws-bedrock/kimi-k3",
+     "runpod/kimi-k3",
+     "runware/kimi-k3",
+     "tencent/kimi-k3",
+     "novita/kimi-k3",
+     "alibaba/kimi-k3",
+     "canopywave/kimi-k3",
+     "fireworks/kimi-k3",
+     "fireworks/kimi-k3-fast",
+     "together-ai/kimi-k3",
+     "moonshot/kimi-k3"
+    ],
+    "modelsdev:kilo": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:venice": [
+     "kimi-k3-fast-api",
+     "kimi-k3"
+    ],
+    "modelsdev:melious": [
+     "kimi-k3"
+    ],
+    "modelsdev:berget": [
+     "moonshotai/Kimi-K3"
+    ],
+    "modelsdev:abacus": [
+     "moonshotai/Kimi-K3"
+    ],
+    "modelsdev:novita-ai": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:302ai": [
+     "kimi-k3"
+    ],
+    "modelsdev:openrouter": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:iteracompute": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/kimi-k3"
+    ],
+    "modelsdev:modal": [
+     "moonshotai/Kimi-K3"
+    ],
+    "modelsdev:neuralwatt": [
+     "kimi-k3-flex",
+     "kimi-k3",
+     "kimi-k3-fast"
+    ],
+    "modelsdev:alibaba": [
+     "kimi-k3"
+    ],
+    "modelsdev:zenmux": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:huggingface": [
+     "moonshotai/Kimi-K3"
+    ],
+    "modelsdev:impossibl": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:vancine": [
+     "kimi-k3"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:aiand": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:volcengine-coding-plan": [
+     "kimi-k3"
+    ],
+    "modelsdev:ollama-cloud": [
+     "kimi-k3"
+    ],
+    "modelsdev:nebius": [
+     "moonshotai/Kimi-K3"
+    ],
+    "modelsdev:vercel": [
+     "moonshotai/kimi-k3",
+     "moonshotai/kimi-k3-fast"
+    ],
+    "modelsdev:greenpt": [
+     "kimi-k3"
+    ],
+    "modelsdev:hyper": [
+     "kimi-k3"
+    ],
+    "modelsdev:jalapeno": [
+     "Kimi-K3"
+    ],
+    "modelsdev:fireworks-ai": [
+     "accounts/fireworks/models/kimi-k3"
+    ],
+    "modelsdev:orcarouter": [
+     "kimi/kimi-k3"
+    ],
+    "modelsdev:kimi-code-plan-cn": [
+     "k3-256k",
+     "k3"
+    ],
+    "modelsdev:inco": [
+     "kimi-k3:fast"
+    ],
+    "modelsdev:moonshotai": [
+     "kimi-k3"
+    ],
+    "modelsdev:ainetcafe": [
+     "Kimi-K3"
+    ],
+    "modelsdev:wallaby": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "Kimi-K3"
+    ],
+    "modelsdev:ofox": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:neon": [
+     "kimi-k3"
+    ],
+    "modelsdev:aihubmix": [
+     "kimi-k3"
+    ],
+    "modelsdev:merge-gateway": [
+     "moonshot/kimi-k3"
+    ],
+    "modelsdev:opper": [
+     "kimi-k3"
+    ],
+    "modelsdev:nvidia": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:pioneer": [
+     "moonshotai/Kimi-K3",
+     "moonshotai/Kimi-K3-Fast"
+    ],
+    "modelsdev:github-copilot": [
+     "kimi-k3"
+    ],
+    "modelsdev:opencode-go": [
+     "kimi-k3"
+    ],
+    "modelsdev:tensorx": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:edenai": [
+     "moonshot/kimi-k3"
+    ],
+    "modelsdev:tempr": [
+     "moonshot/kimi-k3"
+    ],
+    "modelsdev:opencode": [
+     "kimi-k3"
+    ],
+    "modelsdev:kenari": [
+     "kimi-k3"
+    ],
+    "modelsdev:kimi-code-plan-global": [
+     "k3-256k",
+     "k3"
+    ],
+    "modelsdev:requesty": [
+     "kimi-k3@eu",
+     "kimi-k3"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.moonshotai.kimi-k3",
+     "global.moonshotai.kimi-k3"
+    ],
+    "modelsdev:synthetic": [
+     "hf:moonshotai/Kimi-K3"
+    ],
+    "modelsdev:llmgateway": [
+     "kimi-k3",
+     "kimi-k3-fast"
+    ],
+    "modelsdev:vivgrid": [
+     "kimi-k3"
+    ],
+    "modelsdev:tokengo": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:togetherai": [
+     "moonshotai/Kimi-K3"
+    ],
+    "modelsdev:cortecs": [
+     "kimi-k3"
+    ],
+    "modelsdev:crossmodel": [
+     "moonshot/kimi-k3"
+    ],
+    "modelsdev:arcee": [
+     "moonshotai/kimi-k3"
+    ],
+    "modelsdev:digitalocean": [
+     "kimi-k3"
+    ],
+    "modelsdev:alibaba-cn": [
+     "kimi-k3"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "kimik28preview",
+   "names": [
+    "kimi-for-coding"
+   ],
+   "releaseDateHints": {
+    "modelsdev:kimi-code-plan-cn": "2026-09-11",
+    "modelsdev:kimi-code-plan-global": "2026-09-11"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:kimi-code-plan-cn": [
+     "kimi-for-coding"
+    ],
+    "modelsdev:kimi-code-plan-global": [
+     "kimi-for-coding"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

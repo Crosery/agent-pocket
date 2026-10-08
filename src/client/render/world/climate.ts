@@ -194,7 +194,12 @@ export const climateUniforms = {
   uApDustSlope: { value: new THREE.Vector2(...(D.slope as Vec2)) },
   uApDither: { value: D.pixels },
   uApClump: { value: new THREE.Vector2(D.clump, D.clumpMix) },
+  /** Snow from the weather (render.json snowCover): extra coverage 0..1 on every up-facing surface. */
+  uApWeather: { value: 0 },
 }
+
+/** Sets the weather snow coverage (0 = none). */
+export function setSnowCover(level: number): void { climateUniforms.uApWeather.value = level }
 
 /** Points the shared uniforms at a map's climate texture (null = no snow anywhere). */
 export function bindClimate(grid: ClimateGrid | null, enabled: boolean): void {
@@ -237,7 +242,7 @@ varying vec3 vApW;`)
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <common>', `#include <common>
 uniform vec3 uApDustColor;
-uniform float uApDust, uApDither;
+uniform float uApDust, uApDither, uApWeather;
 uniform vec2 uApDustSlope, uApClump;
 float apHash(vec3 p) { return fract(sin(dot(p, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }
 varying float vApSnow;
@@ -245,7 +250,7 @@ varying float vApUp;
 varying vec3 vApW;`)
       .replace('#include <color_fragment>', `#include <color_fragment>
 {
-  float apCover = vApSnow * uApDust * smoothstep(uApDustSlope.x, uApDustSlope.y, vApUp);
+  float apCover = max(vApSnow * uApDust, uApWeather) * smoothstep(uApDustSlope.x, uApDustSlope.y, vApUp);
   vec3 apCell = floor(vApW * uApDither);
   // clumpy coverage: smooth value noise over pixel-snapped xz, roughened by a per-pixel hash
   vec2 apP = (apCell.xz + 0.5) / uApDither * uApClump.x;

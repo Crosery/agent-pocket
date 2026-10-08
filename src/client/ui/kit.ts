@@ -13,6 +13,7 @@ import type { AudioManager, DialogueLine, Input, ListItem, UIKit, UIPanel } from
 import { t } from '../../shared/content/index.ts'
 import { UI_CONFIG, type ToastKind } from './config.ts'
 import { createDialogueBox, type PortraitResolver } from './dialogue.ts'
+import { bindTextField } from './focus.ts'
 import { createRowMenu } from './menu.ts'
 import { ensureUIEnvironment, getUIScale, prepareRoot } from './scale.ts'
 import { codePointLength, clampCodePoints } from './textflow.ts'
@@ -226,11 +227,7 @@ export function createUIKit(root: HTMLElement, input: Input, audio: AudioManager
     let done = false
 
     const recount = () => { counter.textContent = t('ui.prompt.count', { n: codePointLength(field.value), max: limit }) }
-    const setTextActive = (on: boolean) => {
-      // Deactivate after the key event has been seen by Input, so Enter/Esc can't leak into gameplay.
-      if (on) input.setTextInputActive(true)
-      else requestAnimationFrame(() => requestAnimationFrame(() => { if (document.activeElement !== field) input.setTextInputActive(false) }))
-    }
+    const textMode = bindTextField(input, field)
     const submit = () => {
       const v = field.value.trim()
       if (!v) {
@@ -250,7 +247,7 @@ export function createUIKit(root: HTMLElement, input: Input, audio: AudioManager
       sfx(v === null ? 'cancel' : 'confirm')
       pull(layer)
       field.blur()
-      setTextActive(false)
+      textMode.release()
       removeAnimated(center, 'ap-anim-out', UI_CONFIG.anim.panelCloseMs)
       resolve(v)
     }
@@ -266,8 +263,6 @@ export function createUIKit(root: HTMLElement, input: Input, audio: AudioManager
       if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); submit() }
       else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); finish(null) }
     })
-    field.addEventListener('focus', () => setTextActive(true))
-    field.addEventListener('blur', () => { if (!done) setTextActive(false) })
     win.el.addEventListener('animationend', () => win.el.classList.remove('ap-shake'))
 
     const layer: Layer = {
@@ -275,7 +270,8 @@ export function createUIKit(root: HTMLElement, input: Input, audio: AudioManager
       fresh: true,
       input(inp) {
         if (inp.pressed('confirm')) { inp.consume('confirm'); submit() }
-        else if (inp.pressed('cancel')) { inp.consume('cancel'); finish(null) }
+        // Esc (menu) cancels too: once the field has lost focus it is the only cancel key the hint promises.
+        else if (inp.pressed('cancel') || inp.pressed('menu')) { inp.consume('cancel'); inp.consume('menu'); finish(null) }
       },
       pointerCancel: () => finish(null),
     }

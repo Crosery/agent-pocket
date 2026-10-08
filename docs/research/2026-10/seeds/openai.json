@@ -1,0 +1,5582 @@
+{
+ "vendor": "openai",
+ "count": 77,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "textembeddingada002",
+   "names": [
+    "text-embedding-ada-002"
+   ],
+   "releaseDateHints": {
+    "modelsdev:openai": "2022-12-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:openai": [
+     "text-embedding-ada-002"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt35turbo",
+   "names": [
+    "OpenAI: GPT-3.5 Turbo (older v0613)",
+    "OpenAI: GPT-3.5 Turbo",
+    "GPT-3.5 Turbo",
+    "GPT-3.5 Turbo (OpenAI)",
+    "GPT-3.5-turbo"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2023-05-28",
+    "modelsdev:nano-gpt": "2023-03-01",
+    "modelsdev:llmgateway-providers": "2023-03-01",
+    "modelsdev:kilo": "2023-03-01",
+    "modelsdev:openrouter": "2023-03-01",
+    "modelsdev:impossibl": "2023-03-01",
+    "modelsdev:vercel": "2023-03-01",
+    "modelsdev:orcarouter": "2023-03-01",
+    "modelsdev:merge-gateway": "2023-03-01",
+    "modelsdev:edenai": "2023-03-01",
+    "modelsdev:llmgateway": "2023-03-01",
+    "modelsdev:openai": "2023-03-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text",
+    "text,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-3.5-turbo-0613",
+     "openai/gpt-3.5-turbo"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-3.5-turbo"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "openai/gpt-3.5-turbo"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-3.5-turbo"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-3.5-turbo"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-3.5-turbo"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-3.5-turbo"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-3.5-turbo"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-3.5-turbo"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-3.5-turbo"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-3.5-turbo"
+    ],
+    "modelsdev:openai": [
+     "gpt-3.5-turbo"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "gpt4",
+   "names": [
+    "OpenAI: GPT-4",
+    "GPT-4 (OpenAI)",
+    "GPT-4"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2023-05-28",
+    "modelsdev:llmgateway-providers": "2023-11-06",
+    "modelsdev:kilo": "2023-11-06",
+    "modelsdev:openrouter": "2023-11-06",
+    "modelsdev:orcarouter": "2023-11-06",
+    "modelsdev:merge-gateway": "2023-11-06",
+    "modelsdev:edenai": "2023-11-06",
+    "modelsdev:llmgateway": "2023-11-06",
+    "modelsdev:openai": "2023-11-06"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text",
+    "text,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-4"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "openai/gpt-4"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-4"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-4"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-4"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-4"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-4"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-4"
+    ],
+    "modelsdev:openai": [
+     "gpt-4"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "gpt35turbo16k",
+   "names": [
+    "OpenAI: GPT-3.5 Turbo 16k"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2023-08-28"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-3.5-turbo-16k"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt35turboinstruct",
+   "names": [
+    "OpenAI: GPT-3.5 Turbo Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2023-09-28"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-3.5-turbo-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt4turbo",
+   "names": [
+    "OpenAI: GPT-4 Turbo",
+    "GPT-4 Turbo",
+    "GPT-4 Turbo (OpenAI)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-04-09",
+    "modelsdev:nano-gpt": "2023-11-06",
+    "modelsdev:llmgateway-providers": "2023-11-06",
+    "modelsdev:kilo": "2023-11-06",
+    "modelsdev:openrouter": "2023-11-06",
+    "modelsdev:azure": "2023-11-06",
+    "modelsdev:azure-cognitive-services": "2023-11-06",
+    "modelsdev:impossibl": "2023-11-06",
+    "modelsdev:orcarouter": "2023-11-06",
+    "modelsdev:merge-gateway": "2023-11-06",
+    "modelsdev:edenai": "2023-11-06",
+    "modelsdev:llmgateway": "2023-11-06",
+    "modelsdev:openai": "2023-11-06"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-4-turbo"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-4-turbo"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "openai/gpt-4-turbo"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-4-turbo"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-4-turbo"
+    ],
+    "modelsdev:azure": [
+     "gpt-4-turbo"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-4-turbo"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-4-turbo"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-4-turbo"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-4-turbo"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-4-turbo"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-4-turbo"
+    ],
+    "modelsdev:openai": [
+     "gpt-4-turbo"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "textembedding3large",
+   "names": [
+    "text-embedding-3-large"
+   ],
+   "releaseDateHints": {
+    "modelsdev:openai": "2024-01-25"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:openai": [
+     "text-embedding-3-large"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "textembedding3small",
+   "names": [
+    "text-embedding-3-small"
+   ],
+   "releaseDateHints": {
+    "modelsdev:openai": "2024-01-25"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:openai": [
+     "text-embedding-3-small"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt4o",
+   "names": [
+    "OpenAI: GPT-4o (2024-11-20)",
+    "OpenAI: GPT-4o (2024-08-06)",
+    "OpenAI: GPT-4o",
+    "OpenAI: GPT-4o (2024-05-13)",
+    "GPT-4o",
+    "GPT-4o (2024-08-06)",
+    "GPT-4o (2024-11-20)",
+    "GPT-4o (Azure)",
+    "GPT-4o (OpenAI)",
+    "GPT-4o (2024-05-13)",
+    "GPT-4o (Fast)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-05-13",
+    "modelsdev:nano-gpt": "2024-11-20",
+    "modelsdev:llmgateway-providers": "2024-05-13",
+    "modelsdev:kilo": "2024-11-20",
+    "modelsdev:venice": "2026-02-28",
+    "modelsdev:abacus": "2024-05-13",
+    "modelsdev:openrouter": "2024-11-20",
+    "modelsdev:azure": "2024-05-13",
+    "modelsdev:azure-cognitive-services": "2024-05-13",
+    "modelsdev:impossibl": "2024-05-13",
+    "modelsdev:cloudflare-ai-gateway": "2024-05-13",
+    "modelsdev:vercel": "2024-05-13",
+    "modelsdev:orcarouter": "2024-11-20",
+    "modelsdev:ofox": "2024-05-13",
+    "modelsdev:merge-gateway": "2024-11-20",
+    "modelsdev:pioneer": "2024-05-13",
+    "modelsdev:edenai": "2024-11-20",
+    "modelsdev:llmgateway": "2024-05-13",
+    "modelsdev:cortecs": "2024-05-13",
+    "modelsdev:openai": "2024-11-20"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-4o-2024-11-20",
+     "openai/gpt-4o-2024-08-06",
+     "openai/gpt-4o",
+     "openai/gpt-4o-2024-05-13"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-4o",
+     "openai/gpt-4o-2024-08-06",
+     "openai/gpt-4o-2024-11-20"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-4o",
+     "openai/gpt-4o"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-4o-2024-05-13",
+     "openai/gpt-4o",
+     "openai/gpt-4o-2024-08-06",
+     "openai/gpt-4o-2024-11-20"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-4o-2024-11-20"
+    ],
+    "modelsdev:abacus": [
+     "gpt-4o"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-4o-2024-05-13",
+     "openai/gpt-4o",
+     "openai/gpt-4o-2024-08-06",
+     "openai/gpt-4o-2024-11-20"
+    ],
+    "modelsdev:azure": [
+     "gpt-4o"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-4o"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-4o"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-4o"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-4o-fast"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-4o-2024-05-13",
+     "openai/gpt-4o",
+     "openai/gpt-4o-2024-08-06",
+     "openai/gpt-4o-2024-11-20"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-4o"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-4o-2024-05-13",
+     "openai/gpt-4o",
+     "openai/gpt-4o-2024-08-06",
+     "openai/gpt-4o-2024-11-20"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-4o"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-4o",
+     "openai/gpt-4o-2024-08-06",
+     "openai/gpt-4o-2024-11-20"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-4o"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-4o"
+    ],
+    "modelsdev:openai": [
+     "gpt-4o-2024-05-13",
+     "gpt-4o",
+     "gpt-4o-2024-08-06",
+     "gpt-4o-2024-11-20"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "gpt4omini",
+   "names": [
+    "OpenAI: GPT-4o-mini",
+    "OpenAI: GPT-4o-mini (2024-07-18)",
+    "GPT-4o mini",
+    "GPT-4o Mini (OpenAI)",
+    "GPT-4o Mini",
+    "GPT-4o mini (Fast)",
+    "GPT-4o mini (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-07-18",
+    "modelsdev:nano-gpt": "2024-07-18",
+    "modelsdev:llmgateway-providers": "2024-07-18",
+    "modelsdev:kilo": "2024-07-18",
+    "modelsdev:venice": "2026-02-28",
+    "modelsdev:abacus": "2024-07-18",
+    "modelsdev:openrouter": "2024-07-18",
+    "modelsdev:azure": "2024-07-18",
+    "modelsdev:azure-cognitive-services": "2024-07-18",
+    "modelsdev:impossibl": "2024-07-18",
+    "modelsdev:cloudflare-ai-gateway": "2024-07-18",
+    "modelsdev:vercel": "2024-07-18",
+    "modelsdev:orcarouter": "2024-07-18",
+    "modelsdev:ofox": "2024-07-18",
+    "modelsdev:merge-gateway": "2024-07-18",
+    "modelsdev:pioneer": "2024-07-18",
+    "modelsdev:edenai": "2024-07-18",
+    "modelsdev:requesty": "2024-07-18",
+    "modelsdev:llmgateway": "2024-07-18",
+    "modelsdev:cortecs": "2024-07-18",
+    "modelsdev:openai": "2024-07-18",
+    "modelsdev:crossmodel": "2024-07-18"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-4o-mini",
+     "openai/gpt-4o-mini-2024-07-18"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-4o-mini"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "openai/gpt-4o-mini"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-4o-mini"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-4o-mini-2024-07-18"
+    ],
+    "modelsdev:abacus": [
+     "gpt-4o-mini"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-4o-mini"
+    ],
+    "modelsdev:azure": [
+     "gpt-4o-mini"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-4o-mini"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-4o-mini"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-4o-mini"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-4o-mini-fast"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-4o-mini"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-4o-mini"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-4o-mini"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-4o-mini"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-4o-mini"
+    ],
+    "modelsdev:requesty": [
+     "gpt-4o-mini@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-4o-mini"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-4o-mini"
+    ],
+    "modelsdev:openai": [
+     "gpt-4o-mini"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-4o-mini"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "whisperlargev3",
+   "names": [
+    "Whisper large-v3",
+    "Faster Whisper Large v3",
+    "Whisper 3 Large"
+   ],
+   "releaseDateHints": {
+    "modelsdev:privatemode-ai": "2024-10-01",
+    "modelsdev:regolo-ai": "2024-10-01",
+    "modelsdev:evroc": "2024-10-01"
+   },
+   "openWeights": true,
+   "modalities": [
+    "audio->text"
+   ],
+   "catalogIds": {
+    "modelsdev:privatemode-ai": [
+     "whisper-large-v3"
+    ],
+    "modelsdev:regolo-ai": [
+     "faster-whisper-large-v3"
+    ],
+    "modelsdev:evroc": [
+     "openai/whisper-large-v3"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "whisperlargev3turbo",
+   "names": [
+    "Whisper Large v3 Turbo"
+   ],
+   "releaseDateHints": {
+    "modelsdev:kenari": "2024-10-01",
+    "modelsdev:evroc": "2024-10-01"
+   },
+   "openWeights": true,
+   "modalities": [
+    "audio->text"
+   ],
+   "catalogIds": {
+    "modelsdev:kenari": [
+     "whisper-large-v3-turbo"
+    ],
+    "modelsdev:evroc": [
+     "openai/whisper-large-v3-turbo"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "o1",
+   "names": [
+    "OpenAI: o1",
+    "OpenAI o1",
+    "o1 (OpenAI)",
+    "o1"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-12-17",
+    "modelsdev:nano-gpt": "2024-12-05",
+    "modelsdev:llmgateway-providers": "2024-12-05",
+    "modelsdev:kilo": "2024-12-05",
+    "modelsdev:openrouter": "2024-12-05",
+    "modelsdev:impossibl": "2024-12-05",
+    "modelsdev:merge-gateway": "2024-12-05",
+    "modelsdev:edenai": "2024-12-05",
+    "modelsdev:llmgateway": "2024-12-05",
+    "modelsdev:openai": "2024-12-05"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/o1"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/o1"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "openai/o1"
+    ],
+    "modelsdev:kilo": [
+     "openai/o1"
+    ],
+    "modelsdev:openrouter": [
+     "openai/o1"
+    ],
+    "modelsdev:impossibl": [
+     "openai/o1"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/o1"
+    ],
+    "modelsdev:edenai": [
+     "openai/o1"
+    ],
+    "modelsdev:llmgateway": [
+     "o1"
+    ],
+    "modelsdev:openai": [
+     "o1"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "o3mini",
+   "names": [
+    "OpenAI: o3 Mini",
+    "OpenAI o3-mini",
+    "o3-mini",
+    "o3 Mini (OpenAI)",
+    "o3 Mini"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-01-31",
+    "modelsdev:nano-gpt": "2024-12-20",
+    "modelsdev:nearai": "2024-12-20",
+    "modelsdev:llmgateway-providers": "2024-12-20",
+    "modelsdev:kilo": "2024-12-20",
+    "modelsdev:abacus": "2024-12-20",
+    "modelsdev:openrouter": "2024-12-20",
+    "modelsdev:azure": "2024-12-20",
+    "modelsdev:azure-cognitive-services": "2024-12-20",
+    "modelsdev:impossibl": "2024-12-20",
+    "modelsdev:cloudflare-ai-gateway": "2024-12-20",
+    "modelsdev:anyapi": "2024-12-20",
+    "modelsdev:merge-gateway": "2024-12-20",
+    "modelsdev:edenai": "2024-12-20",
+    "modelsdev:llmgateway": "2024-12-20",
+    "modelsdev:openai": "2024-12-20"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+file->text",
+    "text->text",
+    "text,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/o3-mini"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/o3-mini"
+    ],
+    "modelsdev:nearai": [
+     "openai/o3-mini"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "openai/o3-mini"
+    ],
+    "modelsdev:kilo": [
+     "openai/o3-mini"
+    ],
+    "modelsdev:abacus": [
+     "o3-mini"
+    ],
+    "modelsdev:openrouter": [
+     "openai/o3-mini"
+    ],
+    "modelsdev:azure": [
+     "o3-mini"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "o3-mini"
+    ],
+    "modelsdev:impossibl": [
+     "openai/o3-mini"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/o3-mini"
+    ],
+    "modelsdev:anyapi": [
+     "openai/o3-mini"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/o3-mini"
+    ],
+    "modelsdev:edenai": [
+     "openai/o3-mini"
+    ],
+    "modelsdev:llmgateway": [
+     "o3-mini"
+    ],
+    "modelsdev:openai": [
+     "o3-mini"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "o3minihigh",
+   "names": [
+    "OpenAI: o3 Mini High"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-02-12"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+file->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/o3-mini-high"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "o1pro",
+   "names": [
+    "OpenAI: o1-pro",
+    "OpenAI o1 Pro",
+    "o1-pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-03-19",
+    "modelsdev:nano-gpt": "2025-03-19",
+    "modelsdev:kilo": "2025-03-19",
+    "modelsdev:openrouter": "2025-03-19",
+    "modelsdev:edenai": "2025-03-19",
+    "modelsdev:openai": "2025-03-19"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/o1-pro"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/o1-pro"
+    ],
+    "modelsdev:kilo": [
+     "openai/o1-pro"
+    ],
+    "modelsdev:openrouter": [
+     "openai/o1-pro"
+    ],
+    "modelsdev:edenai": [
+     "openai/o1-pro"
+    ],
+    "modelsdev:openai": [
+     "o1-pro"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "gpt41",
+   "names": [
+    "OpenAI: GPT-4.1",
+    "GPT 4.1",
+    "GPT-4.1",
+    "GPT-4.1 (Azure)",
+    "GPT-4.1 (OpenAI)",
+    "GPT-4.1 (Fast)",
+    "GPT-4.1 (EU)",
+    "gpt-4.1"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-14",
+    "modelsdev:nano-gpt": "2025-04-14",
+    "modelsdev:nearai": "2025-04-14",
+    "modelsdev:llmgateway-providers": "2025-04-14",
+    "modelsdev:kilo": "2025-04-14",
+    "modelsdev:snowflake-cortex": "2025-04-14",
+    "modelsdev:abacus": "2025-04-14",
+    "modelsdev:openrouter": "2025-04-14",
+    "modelsdev:azure": "2025-04-14",
+    "modelsdev:azure-cognitive-services": "2025-04-14",
+    "modelsdev:impossibl": "2025-04-14",
+    "modelsdev:cloudflare-ai-gateway": "2025-04-14",
+    "modelsdev:anyapi": "2025-04-14",
+    "modelsdev:model-oracle-ai": "2025-04-14",
+    "modelsdev:vercel": "2025-04-14",
+    "modelsdev:fastrouter": "2025-04-14",
+    "modelsdev:orcarouter": "2025-04-14",
+    "modelsdev:ofox": "2025-04-14",
+    "modelsdev:merge-gateway": "2025-04-14",
+    "modelsdev:pioneer": "2025-04-14",
+    "modelsdev:edenai": "2025-04-14",
+    "modelsdev:requesty": "2025-04-14",
+    "modelsdev:llmgateway": "2025-04-14",
+    "modelsdev:sap-ai-core": "2025-04-14",
+    "modelsdev:cortecs": "2025-04-14",
+    "modelsdev:openai": "2025-04-14"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+file->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:nearai": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-4.1",
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "openai-gpt-4.1"
+    ],
+    "modelsdev:abacus": [
+     "gpt-4.1"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:azure": [
+     "gpt-4.1"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-4.1"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:anyapi": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "gpt-4.1"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-4.1-fast"
+    ],
+    "modelsdev:fastrouter": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-4.1"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-4.1"
+    ],
+    "modelsdev:requesty": [
+     "gpt-4.1@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-4.1"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gpt-4.1"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-4.1"
+    ],
+    "modelsdev:openai": [
+     "gpt-4.1"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "gpt41mini",
+   "names": [
+    "OpenAI: GPT-4.1 Mini",
+    "GPT 4.1 Mini",
+    "GPT-4.1 mini",
+    "GPT-4.1 Mini (Azure)",
+    "GPT-4.1 Mini (OpenAI)",
+    "GPT-4.1 mini (Fast)",
+    "GPT-4.1 Mini",
+    "GPT-4.1 mini (EU)",
+    "gpt-4.1-mini"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-14",
+    "modelsdev:nano-gpt": "2025-04-14",
+    "modelsdev:nearai": "2025-04-14",
+    "modelsdev:llmgateway-providers": "2025-04-14",
+    "modelsdev:kilo": "2025-04-14",
+    "modelsdev:abacus": "2025-04-14",
+    "modelsdev:openrouter": "2025-04-14",
+    "modelsdev:azure": "2025-04-14",
+    "modelsdev:azure-cognitive-services": "2025-04-14",
+    "modelsdev:impossibl": "2025-04-14",
+    "modelsdev:cloudflare-ai-gateway": "2025-04-14",
+    "modelsdev:anyapi": "2025-04-14",
+    "modelsdev:model-oracle-ai": "2025-04-14",
+    "modelsdev:vercel": "2025-04-14",
+    "modelsdev:orcarouter": "2025-04-14",
+    "modelsdev:ofox": "2025-04-14",
+    "modelsdev:merge-gateway": "2025-04-14",
+    "modelsdev:pioneer": "2025-04-14",
+    "modelsdev:edenai": "2025-04-14",
+    "modelsdev:requesty": "2025-04-14",
+    "modelsdev:llmgateway": "2025-04-14",
+    "modelsdev:sap-ai-core": "2025-04-14",
+    "modelsdev:cortecs": "2025-04-14",
+    "modelsdev:openai": "2025-04-14",
+    "modelsdev:aixy": "2025-04-14"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+file->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:nearai": [
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-4.1-mini",
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:abacus": [
+     "gpt-4.1-mini"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:azure": [
+     "gpt-4.1-mini"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-4.1-mini"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:anyapi": [
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "gpt-4.1-mini"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-4.1-mini-fast"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-4.1-mini"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-4.1-mini"
+    ],
+    "modelsdev:requesty": [
+     "gpt-4.1-mini@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-4.1-mini"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gpt-4.1-mini"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-4.1-mini"
+    ],
+    "modelsdev:openai": [
+     "gpt-4.1-mini"
+    ],
+    "modelsdev:aixy": [
+     "openai/gpt-4.1-mini"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "gpt41nano",
+   "names": [
+    "OpenAI: GPT-4.1 Nano",
+    "GPT 4.1 Nano",
+    "GPT-4.1 nano",
+    "GPT-4.1 Nano (Azure)",
+    "GPT-4.1 Nano (OpenAI)",
+    "GPT-4.1 nano (Fast)",
+    "GPT-4.1 Nano",
+    "GPT-4.1 nano (EU)",
+    "gpt-4.1-nano"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-14",
+    "modelsdev:nano-gpt": "2025-04-14",
+    "modelsdev:nearai": "2025-04-14",
+    "modelsdev:llmgateway-providers": "2025-04-14",
+    "modelsdev:kilo": "2025-04-14",
+    "modelsdev:abacus": "2025-04-14",
+    "modelsdev:openrouter": "2025-04-14",
+    "modelsdev:azure": "2025-04-14",
+    "modelsdev:azure-cognitive-services": "2025-04-14",
+    "modelsdev:impossibl": "2025-04-14",
+    "modelsdev:cloudflare-ai-gateway": "2025-04-14",
+    "modelsdev:vercel": "2025-04-14",
+    "modelsdev:orcarouter": "2025-04-14",
+    "modelsdev:merge-gateway": "2025-04-14",
+    "modelsdev:pioneer": "2025-04-14",
+    "modelsdev:edenai": "2025-04-14",
+    "modelsdev:requesty": "2025-04-14",
+    "modelsdev:llmgateway": "2025-04-14",
+    "modelsdev:sap-ai-core": "2025-04-14",
+    "modelsdev:cortecs": "2025-04-14",
+    "modelsdev:openai": "2025-04-14"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+file->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "image,text,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-4.1-nano"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-4.1-nano"
+    ],
+    "modelsdev:nearai": [
+     "openai/gpt-4.1-nano"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-4.1-nano",
+     "openai/gpt-4.1-nano"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-4.1-nano"
+    ],
+    "modelsdev:abacus": [
+     "gpt-4.1-nano"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-4.1-nano"
+    ],
+    "modelsdev:azure": [
+     "gpt-4.1-nano"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-4.1-nano"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-4.1-nano"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-4.1-nano"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-4.1-nano-fast"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-4.1-nano"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-4.1-nano"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-4.1-nano"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-4.1-nano"
+    ],
+    "modelsdev:requesty": [
+     "gpt-4.1-nano@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-4.1-nano"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gpt-4.1-nano"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-4.1-nano"
+    ],
+    "modelsdev:openai": [
+     "gpt-4.1-nano"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "o3",
+   "names": [
+    "OpenAI: o3",
+    "OpenAI o3",
+    "o3",
+    "o3 (OpenAI)",
+    "o3 (Fast)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-16",
+    "modelsdev:nano-gpt": "2025-04-16",
+    "modelsdev:nearai": "2025-04-16",
+    "modelsdev:llmgateway-providers": "2025-04-16",
+    "modelsdev:kilo": "2025-04-16",
+    "modelsdev:abacus": "2025-04-16",
+    "modelsdev:302ai": "2025-04-16",
+    "modelsdev:openrouter": "2025-04-16",
+    "modelsdev:azure": "2025-04-16",
+    "modelsdev:azure-cognitive-services": "2025-04-16",
+    "modelsdev:impossibl": "2025-04-16",
+    "modelsdev:cloudflare-ai-gateway": "2025-04-16",
+    "modelsdev:anyapi": "2025-04-16",
+    "modelsdev:vercel": "2025-04-16",
+    "modelsdev:aihubmix": "2025-04-16",
+    "modelsdev:merge-gateway": "2025-04-16",
+    "modelsdev:edenai": "2025-04-16",
+    "modelsdev:llmgateway": "2025-04-16",
+    "modelsdev:openai": "2025-04-16"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+file->text",
+    "text->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/o3"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/o3"
+    ],
+    "modelsdev:nearai": [
+     "openai/o3"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "openai/o3"
+    ],
+    "modelsdev:kilo": [
+     "openai/o3"
+    ],
+    "modelsdev:abacus": [
+     "o3"
+    ],
+    "modelsdev:302ai": [
+     "o3"
+    ],
+    "modelsdev:openrouter": [
+     "openai/o3"
+    ],
+    "modelsdev:azure": [
+     "o3"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "o3"
+    ],
+    "modelsdev:impossibl": [
+     "openai/o3"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/o3"
+    ],
+    "modelsdev:anyapi": [
+     "openai/o3"
+    ],
+    "modelsdev:vercel": [
+     "openai/o3-fast"
+    ],
+    "modelsdev:aihubmix": [
+     "o3"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/o3"
+    ],
+    "modelsdev:edenai": [
+     "openai/o3"
+    ],
+    "modelsdev:llmgateway": [
+     "o3"
+    ],
+    "modelsdev:openai": [
+     "o3"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "o4mini",
+   "names": [
+    "OpenAI: o4 Mini",
+    "OpenAI o4-mini",
+    "o4-mini",
+    "o4 Mini (OpenAI)",
+    "o4-mini (Fast)",
+    "o4 Mini",
+    "o4-mini (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-16",
+    "modelsdev:nano-gpt": "2025-04-16",
+    "modelsdev:nearai": "2025-04-16",
+    "modelsdev:llmgateway-providers": "2025-04-16",
+    "modelsdev:kilo": "2025-04-16",
+    "modelsdev:abacus": "2025-04-16",
+    "modelsdev:openrouter": "2025-04-16",
+    "modelsdev:azure": "2025-04-16",
+    "modelsdev:azure-cognitive-services": "2025-04-16",
+    "modelsdev:impossibl": "2025-04-16",
+    "modelsdev:cloudflare-ai-gateway": "2025-04-16",
+    "modelsdev:anyapi": "2025-04-16",
+    "modelsdev:model-oracle-ai": "2025-04-16",
+    "modelsdev:vercel": "2025-04-16",
+    "modelsdev:aihubmix": "2025-04-16",
+    "modelsdev:merge-gateway": "2025-04-16",
+    "modelsdev:edenai": "2025-04-16",
+    "modelsdev:requesty": "2025-04-16",
+    "modelsdev:llmgateway": "2025-04-16",
+    "modelsdev:openai": "2025-04-16"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+file->text",
+    "text->text",
+    "text,image->text",
+    "image,text,pdf->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/o4-mini"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/o4-mini"
+    ],
+    "modelsdev:nearai": [
+     "openai/o4-mini"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "openai/o4-mini"
+    ],
+    "modelsdev:kilo": [
+     "openai/o4-mini"
+    ],
+    "modelsdev:abacus": [
+     "o4-mini"
+    ],
+    "modelsdev:openrouter": [
+     "openai/o4-mini"
+    ],
+    "modelsdev:azure": [
+     "o4-mini"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "o4-mini"
+    ],
+    "modelsdev:impossibl": [
+     "openai/o4-mini"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/o4-mini"
+    ],
+    "modelsdev:anyapi": [
+     "openai/o4-mini"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "o4-mini"
+    ],
+    "modelsdev:vercel": [
+     "openai/o4-mini-fast"
+    ],
+    "modelsdev:aihubmix": [
+     "o4-mini"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/o4-mini"
+    ],
+    "modelsdev:edenai": [
+     "openai/o4-mini"
+    ],
+    "modelsdev:requesty": [
+     "o4-mini@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "o4-mini"
+    ],
+    "modelsdev:openai": [
+     "o4-mini"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "o4minihigh",
+   "names": [
+    "OpenAI: o4 Mini High"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-16"
+   },
+   "openWeights": null,
+   "modalities": [
+    "image+text+file->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/o4-mini-high"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptimage1",
+   "names": [
+    "GPT-Image-1",
+    "GPT Image 1",
+    "gpt-image-1"
+   ],
+   "releaseDateHints": {
+    "modelsdev:azure": "2025-04-24",
+    "modelsdev:azure-cognitive-services": "2025-04-24",
+    "modelsdev:vercel": "2025-04-24",
+    "modelsdev:openai": "2025-04-24"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->image",
+    "text->image"
+   ],
+   "catalogIds": {
+    "modelsdev:azure": [
+     "gpt-image-1"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-image-1"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-image-1"
+    ],
+    "modelsdev:openai": [
+     "gpt-image-1"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "o3pro",
+   "names": [
+    "OpenAI: o3 Pro",
+    "o3-pro",
+    "o3 Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-06-10",
+    "modelsdev:kilo": "2025-06-10",
+    "modelsdev:abacus": "2025-06-10",
+    "modelsdev:openrouter": "2025-06-10",
+    "modelsdev:vercel": "2025-06-10",
+    "modelsdev:edenai": "2025-06-10",
+    "modelsdev:openai": "2025-06-10"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+file+image->text",
+    "text,pdf,image->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/o3-pro"
+    ],
+    "modelsdev:kilo": [
+     "openai/o3-pro"
+    ],
+    "modelsdev:abacus": [
+     "o3-pro"
+    ],
+    "modelsdev:openrouter": [
+     "openai/o3-pro"
+    ],
+    "modelsdev:vercel": [
+     "openai/o3-pro"
+    ],
+    "modelsdev:edenai": [
+     "openai/o3-pro"
+    ],
+    "modelsdev:openai": [
+     "o3-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptoss120b",
+   "names": [
+    "OpenAI: gpt-oss-120b",
+    "GPT OSS 120B",
+    "OpenAI GPT OSS 120B",
+    "gpt-oss-120b",
+    "GPT OSS 120B (Cerebras)",
+    "GPT OSS 120B (Groq)",
+    "GPT OSS 120B (Runware)",
+    "GPT OSS 120B (Azure)",
+    "GPT OSS 120B (ByteDance)",
+    "GPT OSS 120B (SCX.ai (Turbo))",
+    "GPT OSS 120B (Together AI)",
+    "Green R Raw",
+    "Green R",
+    "GPT-OSS 120B",
+    "GPT OSS 120B (Deep Infra)",
+    "GPT OSS 120B (Databricks, EU)",
+    "GPT OSS 120B (Databricks)",
+    "GPT OSS 120B (FlexAI)",
+    "GPT OSS 120B (Nebius)",
+    "GPT OSS 120B (Scaleway)",
+    "GPT OSS 120B (IONOS)",
+    "GPT OSS 120B (Cloudflare)",
+    "GPT OSS 120B (OVHcloud)",
+    "GPT OSS 120B (Fireworks AI)",
+    "gpt-oss-120b (GovCloud)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-08-05",
+    "modelsdev:cerebras": "2025-08-05",
+    "modelsdev:groq": "2025-08-05",
+    "modelsdev:cloudflare-workers-ai": "2025-08-05",
+    "modelsdev:nano-gpt": "2025-08-05",
+    "modelsdev:cloudferro-sherlock": "2025-08-28",
+    "modelsdev:tinfoil": "2025-08-05",
+    "modelsdev:wandb": "2025-08-05",
+    "modelsdev:privatemode-ai": "2025-08-05",
+    "modelsdev:llmgateway-providers": "2025-08-05",
+    "modelsdev:kilo": "2025-08-05",
+    "modelsdev:venice": "2025-11-06",
+    "modelsdev:abacus": "2025-08-05",
+    "modelsdev:openrouter": "2025-08-05",
+    "modelsdev:pendra": "2025-08-05",
+    "modelsdev:huggingface": "2025-08-05",
+    "modelsdev:impossibl": "2025-08-05",
+    "modelsdev:oci": "2025-08-05",
+    "modelsdev:aiand": "2025-08-05",
+    "modelsdev:stackit": "2025-08-05",
+    "modelsdev:crusoe": "2025-08-05",
+    "modelsdev:watsonx": "2025-08-05",
+    "modelsdev:vercel": "2025-08-05",
+    "modelsdev:greenpt": "2025-08-05",
+    "modelsdev:hyper": "2026-04-13",
+    "modelsdev:orcarouter": "2025-08-05",
+    "modelsdev:scx-ai": "2025-08-05",
+    "modelsdev:neon": "2025-08-05",
+    "modelsdev:merge-gateway": "2025-08-05",
+    "modelsdev:opper": "2025-08-05",
+    "modelsdev:pioneer": "2025-08-05",
+    "modelsdev:openreason": "2025-08-05",
+    "modelsdev:aki-io": "2025-08-05",
+    "modelsdev:edenai": "2025-08-05",
+    "modelsdev:tempr": "2025-08-05",
+    "modelsdev:kenari": "2025-08-05",
+    "modelsdev:amazon-bedrock": "2025-08-05",
+    "modelsdev:google-vertex": "2025-08-05",
+    "modelsdev:cortecs": "2025-08-05",
+    "modelsdev:qvac": "2025-08-05"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:cerebras": [
+     "gpt-oss-120b"
+    ],
+    "modelsdev:groq": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/openai/gpt-oss-120b"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:cloudferro-sherlock": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:tinfoil": [
+     "gpt-oss-120b"
+    ],
+    "modelsdev:wandb": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:privatemode-ai": [
+     "gpt-oss-120b"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "cerebras/gpt-oss-120b",
+     "groq/gpt-oss-120b",
+     "runware/gpt-oss-120b",
+     "azure/gpt-oss-120b",
+     "bytedance/gpt-oss-120b",
+     "scx-ai/gpt-oss-120b",
+     "together-ai/gpt-oss-120b"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-oss-120b"
+    ],
+    "modelsdev:abacus": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:pendra": [
+     "gpt-oss:120b"
+    ],
+    "modelsdev:huggingface": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:impossibl": [
+     "cerebras/gpt-oss-120b",
+     "groq/gpt-oss-120b",
+     "fireworks/gpt-oss-120b"
+    ],
+    "modelsdev:oci": [
+     "openai.gpt-oss-120b"
+    ],
+    "modelsdev:aiand": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:stackit": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:crusoe": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:watsonx": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:greenpt": [
+     "green-r-raw",
+     "green-r",
+     "gpt-oss-120b"
+    ],
+    "modelsdev:hyper": [
+     "gpt-oss-120b"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:scx-ai": [
+     "gpt-oss-120b"
+    ],
+    "modelsdev:neon": [
+     "gpt-oss-120b"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:opper": [
+     "gpt-oss-120b"
+    ],
+    "modelsdev:pioneer": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:openreason": [
+     "openai/gpt-oss-120b"
+    ],
+    "modelsdev:aki-io": [
+     "gpt-oss-120b"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/openai/gpt-oss-120b",
+     "cerebras/gpt-oss-120b",
+     "groq/openai/gpt-oss-120b",
+     "databricks/databricks-gpt-oss-120b@eu",
+     "databricks/databricks-gpt-oss-120b",
+     "together_ai/openai/gpt-oss-120b",
+     "flexai/gpt-oss-120b",
+     "nebius/openai/gpt-oss-120b",
+     "scaleway/gpt-oss-120b",
+     "ionos/openai/gpt-oss-120b",
+     "cloudflare/@cf/openai/gpt-oss-120b",
+     "ovhcloud/gpt-oss-120b",
+     "fireworks_ai/gpt-oss-120b",
+     "fireworks_ai/accounts/fireworks/models/gpt-oss-120b"
+    ],
+    "modelsdev:tempr": [
+     "cerebras/gpt-oss-120b",
+     "groq/openai/gpt-oss-120b"
+    ],
+    "modelsdev:kenari": [
+     "gpt-oss-120b"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "openai.gpt-oss-120b",
+     "us-gov.openai.gpt-oss-120b-1:0",
+     "openai.gpt-oss-120b-1:0"
+    ],
+    "modelsdev:google-vertex": [
+     "openai/gpt-oss-120b-maas"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-oss-120b"
+    ],
+    "modelsdev:qvac": [
+     "gpt-oss-120b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptoss20b",
+   "names": [
+    "OpenAI: gpt-oss-20b",
+    "GPT OSS 20B",
+    "gpt-oss-20b",
+    "GPT OSS 20B (Consensus Protocol)",
+    "GPT OSS 20B (Groq)",
+    "GPT-OSS 20B",
+    "GPT OSS 20B (Deep Infra)",
+    "GPT OSS 20B (Databricks)",
+    "GPT OSS 20B (Databricks, EU)",
+    "GPT OSS 20B (FlexAI)",
+    "GPT OSS 20B (Greenference)",
+    "GPT OSS 20B (Cloudflare)",
+    "GPT OSS 20B (OVHcloud)",
+    "gpt-oss-20b (GovCloud)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-08-05",
+    "modelsdev:cloudflare-workers-ai": "2025-08-05",
+    "modelsdev:nano-gpt": "2025-08-05",
+    "modelsdev:wandb": "2025-08-05",
+    "modelsdev:llmgateway-providers": "2025-08-05",
+    "modelsdev:kilo": "2025-08-05",
+    "modelsdev:openrouter": "2025-08-05",
+    "modelsdev:huggingface": "2025-08-05",
+    "modelsdev:impossibl": "2025-08-05",
+    "modelsdev:oci": "2025-08-05",
+    "modelsdev:stackit": "2025-08-05",
+    "modelsdev:vercel": "2025-08-05",
+    "modelsdev:merge-gateway": "2025-08-05",
+    "modelsdev:opper": "2025-08-05",
+    "modelsdev:pioneer": "2025-08-05",
+    "modelsdev:edenai": "2025-08-05",
+    "modelsdev:tempr": "2025-08-05",
+    "modelsdev:amazon-bedrock": "2025-08-05",
+    "modelsdev:cortecs": "2025-08-05",
+    "modelsdev:qvac": "2025-08-05"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-oss-20b"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/openai/gpt-oss-20b"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-oss-20b"
+    ],
+    "modelsdev:wandb": [
+     "openai/gpt-oss-20b"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "consensusprotocol/gpt-oss-20b",
+     "groq/gpt-oss-20b"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-oss-20b"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-oss-20b"
+    ],
+    "modelsdev:huggingface": [
+     "openai/gpt-oss-20b"
+    ],
+    "modelsdev:impossibl": [
+     "groq/gpt-oss-20b",
+     "fireworks/gpt-oss-20b"
+    ],
+    "modelsdev:oci": [
+     "openai.gpt-oss-20b"
+    ],
+    "modelsdev:stackit": [
+     "openai/gpt-oss-20b"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-oss-20b"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-oss-20b"
+    ],
+    "modelsdev:opper": [
+     "gpt-oss-20b"
+    ],
+    "modelsdev:pioneer": [
+     "openai/gpt-oss-20b"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/openai/gpt-oss-20b",
+     "groq/openai/gpt-oss-20b",
+     "databricks/databricks-gpt-oss-20b",
+     "databricks/databricks-gpt-oss-20b@eu",
+     "flexai/gpt-oss-20b",
+     "greenference/gpt-oss-20b",
+     "cloudflare/@cf/openai/gpt-oss-20b",
+     "ovhcloud/gpt-oss-20b"
+    ],
+    "modelsdev:tempr": [
+     "groq/openai/gpt-oss-20b"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "openai.gpt-oss-20b-1:0",
+     "us-gov.openai.gpt-oss-20b-1:0",
+     "openai.gpt-oss-20b"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-oss-20b"
+    ],
+    "modelsdev:qvac": [
+     "gpt-oss-20b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt5",
+   "names": [
+    "OpenAI: GPT-5",
+    "GPT 5",
+    "GPT-5",
+    "GPT-5 (Azure)",
+    "GPT-5 (OpenAI)",
+    "GPT-5 (Fast)",
+    "GPT-5 (EU)",
+    "gpt-5"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-08-07",
+    "modelsdev:nano-gpt": "2025-08-07",
+    "modelsdev:nearai": "2025-08-07",
+    "modelsdev:databricks": "2025-08-07",
+    "modelsdev:llmgateway-providers": "2025-08-07",
+    "modelsdev:kilo": "2025-08-07",
+    "modelsdev:snowflake-cortex": "2025-08-07",
+    "modelsdev:abacus": "2025-08-07",
+    "modelsdev:openrouter": "2025-08-07",
+    "modelsdev:impossibl": "2025-08-07",
+    "modelsdev:cloudflare-ai-gateway": "2025-08-07",
+    "modelsdev:anyapi": "2025-08-07",
+    "modelsdev:model-oracle-ai": "2025-08-07",
+    "modelsdev:vercel": "2025-08-07",
+    "modelsdev:orcarouter": "2025-08-07",
+    "modelsdev:ofox": "2025-08-07",
+    "modelsdev:neon": "2025-08-07",
+    "modelsdev:aihubmix": "2025-08-07",
+    "modelsdev:merge-gateway": "2025-08-07",
+    "modelsdev:edenai": "2025-08-07",
+    "modelsdev:requesty": "2025-08-07",
+    "modelsdev:llmgateway": "2025-08-07",
+    "modelsdev:sap-ai-core": "2025-08-07",
+    "modelsdev:cortecs": "2025-08-07",
+    "modelsdev:openai": "2025-08-07"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5"
+    ],
+    "modelsdev:nearai": [
+     "openai/gpt-5"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gpt-5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5",
+     "openai/gpt-5"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "openai-gpt-5"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5"
+    ],
+    "modelsdev:anyapi": [
+     "openai/gpt-5"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "gpt-5"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5-fast",
+     "openai/gpt-5"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5"
+    ],
+    "modelsdev:neon": [
+     "gpt-5"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-5"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-5"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gpt-5"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-5"
+    ],
+    "modelsdev:openai": [
+     "gpt-5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt5mini",
+   "names": [
+    "OpenAI: GPT-5 Mini",
+    "GPT 5 Mini",
+    "GPT-5 Mini",
+    "GPT-5 Mini (Azure)",
+    "GPT-5 Mini (OpenAI)",
+    "GPT-5 mini (Fast)",
+    "GPT-5 Mini (EU)",
+    "gpt-5-mini"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-08-07",
+    "modelsdev:nano-gpt": "2025-08-07",
+    "modelsdev:nearai": "2025-08-07",
+    "modelsdev:databricks": "2025-08-07",
+    "modelsdev:llmgateway-providers": "2025-08-07",
+    "modelsdev:kilo": "2025-08-07",
+    "modelsdev:snowflake-cortex": "2025-08-07",
+    "modelsdev:abacus": "2025-08-07",
+    "modelsdev:openrouter": "2025-08-07",
+    "modelsdev:impossibl": "2025-08-07",
+    "modelsdev:cloudflare-ai-gateway": "2025-08-07",
+    "modelsdev:anyapi": "2025-08-07",
+    "modelsdev:vercel": "2025-08-07",
+    "modelsdev:orcarouter": "2025-08-07",
+    "modelsdev:ofox": "2025-08-07",
+    "modelsdev:neon": "2025-08-07",
+    "modelsdev:merge-gateway": "2025-08-07",
+    "modelsdev:pioneer": "2025-08-07",
+    "modelsdev:github-copilot": "2025-08-07",
+    "modelsdev:edenai": "2025-08-07",
+    "modelsdev:requesty": "2025-08-07",
+    "modelsdev:llmgateway": "2025-08-07",
+    "modelsdev:sap-ai-core": "2025-08-07",
+    "modelsdev:cortecs": "2025-08-07",
+    "modelsdev:openai": "2025-08-07"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image->text",
+    "text,image,pdf->text",
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:nearai": [
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gpt-5-mini"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5-mini",
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "openai-gpt-5-mini"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5-mini"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:anyapi": [
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5-mini-fast"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-mini"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-5-mini"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-5-mini"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5-mini"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5-mini@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5-mini"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gpt-5-mini"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-5-mini"
+    ],
+    "modelsdev:openai": [
+     "gpt-5-mini"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt5nano",
+   "names": [
+    "OpenAI: GPT-5 Nano",
+    "GPT 5 Nano",
+    "GPT-5 Nano",
+    "GPT-5 Nano (Azure)",
+    "GPT-5 Nano (OpenAI)",
+    "GPT-5 Nano (EU)",
+    "gpt-5-nano"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-08-07",
+    "modelsdev:nano-gpt": "2025-08-07",
+    "modelsdev:nearai": "2025-08-07",
+    "modelsdev:databricks": "2025-08-07",
+    "modelsdev:llmgateway-providers": "2025-08-07",
+    "modelsdev:kilo": "2025-08-07",
+    "modelsdev:snowflake-cortex": "2025-08-07",
+    "modelsdev:abacus": "2025-08-07",
+    "modelsdev:openrouter": "2025-08-07",
+    "modelsdev:impossibl": "2025-08-07",
+    "modelsdev:cloudflare-ai-gateway": "2025-08-07",
+    "modelsdev:orcarouter": "2025-08-07",
+    "modelsdev:ofox": "2025-08-07",
+    "modelsdev:neon": "2025-08-07",
+    "modelsdev:merge-gateway": "2025-08-07",
+    "modelsdev:pioneer": "2025-08-07",
+    "modelsdev:edenai": "2025-08-07",
+    "modelsdev:requesty": "2025-08-07",
+    "modelsdev:llmgateway": "2025-08-07",
+    "modelsdev:sap-ai-core": "2025-08-07",
+    "modelsdev:cortecs": "2025-08-07",
+    "modelsdev:openai": "2025-08-07"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image->text",
+    "text->text",
+    "text,image,pdf->text",
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5-nano"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5-nano"
+    ],
+    "modelsdev:nearai": [
+     "openai/gpt-5-nano"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gpt-5-nano"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5-nano",
+     "openai/gpt-5-nano"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5-nano"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "openai-gpt-5-nano"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5-nano"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5-nano"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5-nano"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5-nano"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5-nano"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5-nano"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-nano"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-5-nano"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-5-nano"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5-nano"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5-nano@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5-nano"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gpt-5-nano"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-5-nano"
+    ],
+    "modelsdev:openai": [
+     "gpt-5-nano"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt5codex",
+   "names": [
+    "GPT-5-Codex"
+   ],
+   "releaseDateHints": {
+    "modelsdev:abacus": "2025-09-15",
+    "modelsdev:impossibl": "2025-09-15",
+    "modelsdev:vercel": "2025-09-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:abacus": [
+     "gpt-5-codex"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5-codex"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5-codex"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptimage1mini",
+   "names": [
+    "gpt-image-1-mini"
+   ],
+   "releaseDateHints": {
+    "modelsdev:openai": "2025-09-26"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "modelsdev:openai": [
+     "gpt-image-1-mini"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt5pro",
+   "names": [
+    "OpenAI: GPT-5 Pro",
+    "GPT 5 Pro",
+    "GPT-5 Pro (OpenAI)",
+    "GPT-5 Pro",
+    "GPT-5 pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-06",
+    "modelsdev:nano-gpt": "2025-10-06",
+    "modelsdev:llmgateway-providers": "2025-10-06",
+    "modelsdev:kilo": "2025-10-06",
+    "modelsdev:openrouter": "2025-10-06",
+    "modelsdev:azure": "2025-10-06",
+    "modelsdev:azure-cognitive-services": "2025-10-06",
+    "modelsdev:impossibl": "2025-10-06",
+    "modelsdev:vercel": "2025-10-06",
+    "modelsdev:orcarouter": "2025-10-06",
+    "modelsdev:edenai": "2025-10-06",
+    "modelsdev:llmgateway": "2025-10-06",
+    "modelsdev:openai": "2025-10-06"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+file->text",
+    "text,image->text",
+    "image,text,pdf->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5-pro"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5-pro"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "openai/gpt-5-pro"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5-pro"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5-pro"
+    ],
+    "modelsdev:azure": [
+     "gpt-5-pro"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-5-pro"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5-pro"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5-pro"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5-pro"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5-pro"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5-pro"
+    ],
+    "modelsdev:openai": [
+     "gpt-5-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt5image",
+   "names": [
+    "OpenAI: GPT-5 Image"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-14"
+   },
+   "openWeights": null,
+   "modalities": [
+    "image+text+file->image+text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5-image"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt5imagemini",
+   "names": [
+    "OpenAI: GPT-5 Image Mini"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-16"
+   },
+   "openWeights": null,
+   "modalities": [
+    "file+image+text->image+text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5-image-mini"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptosssafeguard120b",
+   "names": [
+    "gpt-oss-safeguard-120b",
+    "GPT OSS Safeguard 120B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:tinfoil": "2025-10-29",
+    "modelsdev:vercel": "2025-10-29",
+    "modelsdev:merge-gateway": "2025-10-29",
+    "modelsdev:amazon-bedrock": "2025-10-29",
+    "modelsdev:cortecs": "2025-10-29"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:tinfoil": [
+     "gpt-oss-safeguard-120b"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-oss-safeguard-120b"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-oss-safeguard-120b"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "openai.gpt-oss-safeguard-120b"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-oss-safeguard-120b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptosssafeguard20b",
+   "names": [
+    "OpenAI: gpt-oss-safeguard-20b",
+    "GPT OSS Safeguard 20B",
+    "gpt-oss-safeguard-20b",
+    "GPT OSS Safeguard 20B (Groq)",
+    "GPT OSS Safeguard 20B (Amazon Bedrock, US)",
+    "GPT OSS Safeguard 20B (Amazon Bedrock)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-29",
+    "modelsdev:nano-gpt": "2025-10-29",
+    "modelsdev:kilo": "2025-10-29",
+    "modelsdev:openrouter": "2025-10-29",
+    "modelsdev:vercel": "2025-10-29",
+    "modelsdev:merge-gateway": "2025-10-29",
+    "modelsdev:edenai": "2025-10-29",
+    "modelsdev:amazon-bedrock": "2025-10-29"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-oss-safeguard-20b"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-oss-safeguard-20b"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-oss-safeguard-20b"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-oss-safeguard-20b"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-oss-safeguard-20b"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-oss-safeguard-20b"
+    ],
+    "modelsdev:edenai": [
+     "groq/openai/gpt-oss-safeguard-20b",
+     "amazon/openai.gpt-oss-safeguard-20b@us",
+     "amazon/openai.gpt-oss-safeguard-20b"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "openai.gpt-oss-safeguard-20b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt51",
+   "names": [
+    "OpenAI: GPT-5.1",
+    "GPT 5.1",
+    "GPT-5.1",
+    "GPT-5.1 (Azure)",
+    "GPT-5.1 (OpenAI)",
+    "GPT-5.1 (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-11-13",
+    "modelsdev:nano-gpt": "2025-11-13",
+    "modelsdev:nearai": "2025-11-13",
+    "modelsdev:databricks": "2025-11-13",
+    "modelsdev:llmgateway-providers": "2025-11-13",
+    "modelsdev:kilo": "2025-11-13",
+    "modelsdev:snowflake-cortex": "2025-11-13",
+    "modelsdev:abacus": "2025-11-13",
+    "modelsdev:openrouter": "2025-11-13",
+    "modelsdev:impossibl": "2025-11-13",
+    "modelsdev:cloudflare-ai-gateway": "2025-11-13",
+    "modelsdev:anyapi": "2025-11-13",
+    "modelsdev:orcarouter": "2025-11-13",
+    "modelsdev:ofox": "2025-11-13",
+    "modelsdev:neon": "2025-11-13",
+    "modelsdev:merge-gateway": "2025-11-13",
+    "modelsdev:pioneer": "2025-11-13",
+    "modelsdev:edenai": "2025-11-13",
+    "modelsdev:requesty": "2025-11-13",
+    "modelsdev:llmgateway": "2025-11-13",
+    "modelsdev:cortecs": "2025-11-13",
+    "modelsdev:openai": "2025-11-13"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+file->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "image,text,pdf->text",
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:nearai": [
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gpt-5-1"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.1",
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "openai-gpt-5.1"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5.1"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:anyapi": [
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-1"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-5.1"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.1"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5.1@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.1"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-5.1"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt51codex",
+   "names": [
+    "OpenAI: GPT-5.1-Codex",
+    "GPT 5.1 Codex",
+    "GPT-5.1 Codex (Azure)",
+    "GPT-5.1 Codex",
+    "GPT-5.1-Codex"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-11-13",
+    "modelsdev:nano-gpt": "2025-11-13",
+    "modelsdev:llmgateway-providers": "2025-11-13",
+    "modelsdev:kilo": "2025-11-13",
+    "modelsdev:abacus": "2025-11-13",
+    "modelsdev:openrouter": "2025-11-13",
+    "modelsdev:impossibl": "2025-11-13",
+    "modelsdev:vercel": "2025-11-13",
+    "modelsdev:orcarouter": "2025-11-13",
+    "modelsdev:edenai": "2025-11-13",
+    "modelsdev:llmgateway": "2025-11-13"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.1-codex"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.1-codex"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.1-codex"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.1-codex"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5.1-codex"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.1-codex"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.1-codex"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.1-codex"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.1-codex"
+    ],
+    "modelsdev:edenai": [
+     "azure/gpt-5.1-codex"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.1-codex"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt51codexmax",
+   "names": [
+    "OpenAI: GPT-5.1-Codex-Max",
+    "GPT 5.1 Codex Max",
+    "GPT-5.1 Codex Max",
+    "GPT-5.1 Codex Max (Azure)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-04",
+    "modelsdev:nano-gpt": "2025-11-13",
+    "modelsdev:kilo": "2025-11-13",
+    "modelsdev:openrouter": "2025-11-13",
+    "modelsdev:azure": "2025-11-13",
+    "modelsdev:azure-cognitive-services": "2025-11-13",
+    "modelsdev:vercel": "2025-11-13",
+    "modelsdev:ofox": "2025-11-13",
+    "modelsdev:edenai": "2025-11-13"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.1-codex-max"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.1-codex-max"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.1-codex-max"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.1-codex-max"
+    ],
+    "modelsdev:azure": [
+     "gpt-5.1-codex-max"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-5.1-codex-max"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.1-codex-max"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.1-codex-max"
+    ],
+    "modelsdev:edenai": [
+     "azure/gpt-5.1-codex-max"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt51codexmini",
+   "names": [
+    "OpenAI: GPT-5.1-Codex-Mini",
+    "GPT 5.1 Codex Mini",
+    "GPT-5.1 Codex mini (Azure)",
+    "GPT-5.1 Codex mini"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-11-13",
+    "modelsdev:nano-gpt": "2025-11-13",
+    "modelsdev:llmgateway-providers": "2025-11-13",
+    "modelsdev:kilo": "2025-11-13",
+    "modelsdev:openrouter": "2025-11-13",
+    "modelsdev:impossibl": "2025-11-13",
+    "modelsdev:vercel": "2025-11-13",
+    "modelsdev:orcarouter": "2025-11-13",
+    "modelsdev:ofox": "2025-11-13",
+    "modelsdev:edenai": "2025-11-13",
+    "modelsdev:llmgateway": "2025-11-13"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text->text",
+    "text,image->text",
+    "image,text,pdf->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.1-codex-mini"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.1-codex-mini"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.1-codex-mini"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.1-codex-mini"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.1-codex-mini"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.1-codex-mini"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.1-codex-mini"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.1-codex-mini"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.1-codex-mini"
+    ],
+    "modelsdev:edenai": [
+     "azure/gpt-5.1-codex-mini"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.1-codex-mini"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptimage15",
+   "names": [
+    "GPT-Image-1.5",
+    "GPT Image 1.5",
+    "gpt-image-1.5"
+   ],
+   "releaseDateHints": {
+    "modelsdev:azure": "2025-11-25",
+    "modelsdev:azure-cognitive-services": "2025-11-25",
+    "modelsdev:vercel": "2025-11-25",
+    "modelsdev:aihubmix": "2025-11-25",
+    "modelsdev:openai": "2025-11-25"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text,image",
+    "text->image"
+   ],
+   "catalogIds": {
+    "modelsdev:azure": [
+     "gpt-image-1.5"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-image-1.5"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-image-1.5"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-image-1.5"
+    ],
+    "modelsdev:openai": [
+     "gpt-image-1.5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt52",
+   "names": [
+    "OpenAI: GPT-5.2",
+    "GPT 5.2",
+    "GPT-5.2",
+    "GPT-5.2 (Azure)",
+    "GPT-5.2 (OpenAI)",
+    "GPT 5.2 (Fast)",
+    "gpt-5.2"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-10",
+    "modelsdev:nano-gpt": "2025-12-11",
+    "modelsdev:nearai": "2025-12-11",
+    "modelsdev:databricks": "2025-12-11",
+    "modelsdev:llmgateway-providers": "2025-12-11",
+    "modelsdev:kilo": "2025-12-11",
+    "modelsdev:venice": "2025-12-13",
+    "modelsdev:snowflake-cortex": "2025-12-11",
+    "modelsdev:abacus": "2025-12-11",
+    "modelsdev:openrouter": "2025-12-11",
+    "modelsdev:unorouter": "2025-12-11",
+    "modelsdev:impossibl": "2025-12-11",
+    "modelsdev:anyapi": "2025-12-11",
+    "modelsdev:vercel": "2025-12-11",
+    "modelsdev:orcarouter": "2025-12-11",
+    "modelsdev:ofox": "2025-12-11",
+    "modelsdev:neon": "2025-12-11",
+    "modelsdev:merge-gateway": "2025-12-11",
+    "modelsdev:edenai": "2025-12-11",
+    "modelsdev:llmgateway": "2025-12-11",
+    "modelsdev:sap-ai-core": "2025-12-11",
+    "modelsdev:openai": "2025-12-11"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "pdf,image,text->text",
+    "text->text",
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:nearai": [
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gpt-5-2"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.2",
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-52"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "openai-gpt-5.2"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5.2"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:unorouter": [
+     "gpt-5.2"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:anyapi": [
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.2-fast",
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-2"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.2"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.2"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gpt-5.2"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt52chat",
+   "names": [
+    "OpenAI: GPT-5.2 Chat"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-10"
+   },
+   "openWeights": null,
+   "modalities": [
+    "file+image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.2-chat"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt52pro",
+   "names": [
+    "OpenAI: GPT-5.2 Pro",
+    "GPT-5.2 Pro (OpenAI)",
+    "GPT-5.2 Pro",
+    "GPT 5.2 "
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-10",
+    "modelsdev:llmgateway-providers": "2025-12-11",
+    "modelsdev:kilo": "2025-12-11",
+    "modelsdev:openrouter": "2025-12-11",
+    "modelsdev:vercel": "2025-12-11",
+    "modelsdev:orcarouter": "2025-12-11",
+    "modelsdev:edenai": "2025-12-11",
+    "modelsdev:llmgateway": "2025-12-11",
+    "modelsdev:openai": "2025-12-11"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+file->text",
+    "text,image->text",
+    "image,text,pdf->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.2-pro"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "openai/gpt-5.2-pro"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.2-pro"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.2-pro"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.2-pro"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.2-pro"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.2-pro"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.2-pro"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.2-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt52codex",
+   "names": [
+    "OpenAI: GPT-5.2-Codex",
+    "GPT 5.2 Codex",
+    "GPT-5.2 Codex (Azure)",
+    "GPT-5.2 Codex",
+    "GPT-5.2-Codex"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-01-14",
+    "modelsdev:nano-gpt": "2025-12-11",
+    "modelsdev:llmgateway-providers": "2025-12-11",
+    "modelsdev:kilo": "2025-12-11",
+    "modelsdev:abacus": "2025-12-11",
+    "modelsdev:openrouter": "2025-12-11",
+    "modelsdev:impossibl": "2025-12-11",
+    "modelsdev:vercel": "2025-12-11",
+    "modelsdev:orcarouter": "2025-12-11",
+    "modelsdev:ofox": "2025-12-11",
+    "modelsdev:edenai": "2025-12-11",
+    "modelsdev:llmgateway": "2025-12-11"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.2-codex"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.2-codex"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.2-codex"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.2-codex"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5.2-codex"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.2-codex"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.2-codex"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.2-codex"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.2-codex"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.2-codex"
+    ],
+    "modelsdev:edenai": [
+     "azure/gpt-5.2-codex"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.2-codex"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptaudio",
+   "names": [
+    "OpenAI: GPT Audio"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-01-19"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+audio->text+audio"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-audio"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptaudiomini",
+   "names": [
+    "OpenAI: GPT Audio Mini"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-01-19"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+audio->text+audio"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-audio-mini"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt53codex",
+   "names": [
+    "OpenAI: GPT-5.3-Codex",
+    "GPT 5.3 Codex",
+    "GPT-5.3 Codex (Azure)",
+    "GPT-5.3 Codex (OpenAI)",
+    "GPT-5.3 Codex",
+    "GPT 5.3 Codex (Fast)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-24",
+    "modelsdev:nano-gpt": "2026-02-05",
+    "modelsdev:llmgateway-providers": "2026-02-05",
+    "modelsdev:kilo": "2026-02-05",
+    "modelsdev:venice": "2026-02-24",
+    "modelsdev:abacus": "2026-02-05",
+    "modelsdev:openrouter": "2026-02-05",
+    "modelsdev:freemodel": "2026-02-05",
+    "modelsdev:impossibl": "2026-02-05",
+    "modelsdev:vercel": "2026-02-05",
+    "modelsdev:fastrouter": "2026-02-05",
+    "modelsdev:orcarouter": "2026-02-05",
+    "modelsdev:ofox": "2026-02-05",
+    "modelsdev:neon": "2026-02-05",
+    "modelsdev:opper": "2026-02-05",
+    "modelsdev:pioneer": "2026-02-05",
+    "modelsdev:github-copilot": "2026-02-05",
+    "modelsdev:edenai": "2026-02-05",
+    "modelsdev:requesty": "2026-02-05",
+    "modelsdev:llmgateway": "2026-02-05",
+    "modelsdev:openai": "2026-02-05"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text,image,pdf->text,image",
+    "text,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.3-codex"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.3-codex"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.3-codex",
+     "openai/gpt-5.3-codex"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.3-codex"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-53-codex"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5.3-codex"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.3-codex"
+    ],
+    "modelsdev:freemodel": [
+     "gpt-5.3-codex"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.3-codex"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.3-codex",
+     "openai/gpt-5.3-codex-fast"
+    ],
+    "modelsdev:fastrouter": [
+     "openai/gpt-5.3-codex"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.3-codex"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.3-codex"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-3-codex"
+    ],
+    "modelsdev:opper": [
+     "gpt-5.3-codex"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-5.3-codex"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-5.3-codex"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.3-codex"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5.3-codex"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.3-codex"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.3-codex"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt53codexspark",
+   "names": [
+    "GPT-5.3 Codex Spark"
+   ],
+   "releaseDateHints": {
+    "modelsdev:openai": "2026-02-05"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:openai": [
+     "gpt-5.3-codex-spark"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt54",
+   "names": [
+    "OpenAI: GPT-5.4",
+    "GPT 5.4",
+    "GPT-5.4",
+    "GPT-5.4 (Azure)",
+    "GPT-5.4 (OpenAI)",
+    "GPT 5.4 (Fast)",
+    "GPT-5.4 (EU)",
+    "gpt-5.4"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-05",
+    "modelsdev:nano-gpt": "2026-03-05",
+    "modelsdev:nearai": "2026-03-05",
+    "modelsdev:databricks": "2026-03-05",
+    "modelsdev:llmgateway-providers": "2026-03-05",
+    "modelsdev:kilo": "2026-03-05",
+    "modelsdev:venice": "2026-03-05",
+    "modelsdev:snowflake-cortex": "2026-03-05",
+    "modelsdev:abacus": "2026-03-05",
+    "modelsdev:openrouter": "2026-03-05",
+    "modelsdev:azure": "2026-03-05",
+    "modelsdev:freemodel": "2026-03-05",
+    "modelsdev:azure-cognitive-services": "2026-03-05",
+    "modelsdev:ai-router": "2026-03-05",
+    "modelsdev:unorouter": "2026-03-05",
+    "modelsdev:impossibl": "2026-03-05",
+    "modelsdev:xpersona": "2026-03-05",
+    "modelsdev:cloudflare-ai-gateway": "2026-03-05",
+    "modelsdev:anyapi": "2026-03-05",
+    "modelsdev:model-oracle-ai": "2026-03-05",
+    "modelsdev:vercel": "2026-03-05",
+    "modelsdev:orcarouter": "2026-03-05",
+    "modelsdev:ofox": "2026-03-05",
+    "modelsdev:neon": "2026-03-05",
+    "modelsdev:merge-gateway": "2026-03-05",
+    "modelsdev:opper": "2026-03-05",
+    "modelsdev:pioneer": "2026-03-05",
+    "modelsdev:github-copilot": "2026-03-05",
+    "modelsdev:edenai": "2026-03-05",
+    "modelsdev:opencode": "2026-03-05",
+    "modelsdev:requesty": "2026-03-05",
+    "modelsdev:amazon-bedrock": "2026-03-05",
+    "modelsdev:llmgateway": "2026-03-05",
+    "modelsdev:sap-ai-core": "2026-03-05",
+    "modelsdev:cortecs": "2026-03-05",
+    "modelsdev:daoxe": "2026-03-05",
+    "modelsdev:openai": "2026-03-05",
+    "modelsdev:crossmodel": "2026-03-05"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text,image,pdf->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:nearai": [
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gpt-5-4"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.4",
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-54"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "openai-gpt-5.4"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5.4"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:azure": [
+     "gpt-5.4"
+    ],
+    "modelsdev:freemodel": [
+     "gpt-5.4"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-5.4"
+    ],
+    "modelsdev:ai-router": [
+     "gpt-5.4"
+    ],
+    "modelsdev:unorouter": [
+     "gpt-5.4"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:xpersona": [
+     "gpt-5.4"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:anyapi": [
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "gpt-5.4"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.4",
+     "openai/gpt-5.4-fast"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-4"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:opper": [
+     "gpt-5.4"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-5.4"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-5.4"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.4"
+    ],
+    "modelsdev:opencode": [
+     "gpt-5.4"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5.4",
+     "gpt-5.4@eu"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "openai.gpt-5.4"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.4"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gpt-5.4"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-5.4"
+    ],
+    "modelsdev:daoxe": [
+     "gpt-5.4"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.4"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-5.4"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt54pro",
+   "names": [
+    "OpenAI: GPT-5.4 Pro",
+    "GPT-5.4 Pro (Azure)",
+    "GPT-5.4 Pro (OpenAI)",
+    "GPT-5.4 Pro",
+    "GPT 5.4 Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-05",
+    "modelsdev:llmgateway-providers": "2026-03-05",
+    "modelsdev:kilo": "2026-03-05",
+    "modelsdev:venice": "2026-03-05",
+    "modelsdev:openrouter": "2026-03-05",
+    "modelsdev:azure": "2026-03-05",
+    "modelsdev:azure-cognitive-services": "2026-03-05",
+    "modelsdev:impossibl": "2026-03-05",
+    "modelsdev:cloudflare-ai-gateway": "2026-03-05",
+    "modelsdev:vercel": "2026-03-05",
+    "modelsdev:orcarouter": "2026-03-05",
+    "modelsdev:ofox": "2026-03-05",
+    "modelsdev:opper": "2026-03-05",
+    "modelsdev:edenai": "2026-03-05",
+    "modelsdev:requesty": "2026-03-05",
+    "modelsdev:llmgateway": "2026-03-05",
+    "modelsdev:openai": "2026-03-05"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.4-pro"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.4-pro",
+     "openai/gpt-5.4-pro"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.4-pro"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-54-pro"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.4-pro"
+    ],
+    "modelsdev:azure": [
+     "gpt-5.4-pro"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-5.4-pro"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.4-pro"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5.4-pro"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.4-pro"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.4-pro"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.4-pro"
+    ],
+    "modelsdev:opper": [
+     "gpt-5.4-pro"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.4-pro"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5.4-pro"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.4-pro"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.4-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt54mini",
+   "names": [
+    "OpenAI: GPT-5.4 Mini",
+    "GPT 5.4 Mini",
+    "GPT-5.4 mini",
+    "GPT-5.4 Mini (Azure)",
+    "GPT-5.4 Mini (OpenAI)",
+    "GPT-5.4 Mini",
+    "GPT 5.4 Mini (Fast)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-17",
+    "modelsdev:nano-gpt": "2026-03-17",
+    "modelsdev:nearai": "2026-03-17",
+    "modelsdev:databricks": "2026-03-17",
+    "modelsdev:llmgateway-providers": "2026-03-17",
+    "modelsdev:kilo": "2026-03-17",
+    "modelsdev:venice": "2026-03-27",
+    "modelsdev:abacus": "2026-03-17",
+    "modelsdev:openrouter": "2026-03-17",
+    "modelsdev:azure": "2026-03-17",
+    "modelsdev:freemodel": "2026-03-17",
+    "modelsdev:azure-cognitive-services": "2026-03-17",
+    "modelsdev:impossibl": "2026-03-17",
+    "modelsdev:xpersona": "2026-03-17",
+    "modelsdev:cloudflare-ai-gateway": "2026-03-17",
+    "modelsdev:model-oracle-ai": "2026-03-17",
+    "modelsdev:vercel": "2026-03-17",
+    "modelsdev:fastrouter": "2026-03-17",
+    "modelsdev:orcarouter": "2026-03-17",
+    "modelsdev:ofox": "2026-03-17",
+    "modelsdev:neon": "2026-03-17",
+    "modelsdev:merge-gateway": "2026-03-17",
+    "modelsdev:opper": "2026-03-17",
+    "modelsdev:pioneer": "2026-03-17",
+    "modelsdev:github-copilot": "2026-03-17",
+    "modelsdev:edenai": "2026-03-17",
+    "modelsdev:kenari": "2026-03-17",
+    "modelsdev:requesty": "2026-03-17",
+    "modelsdev:llmgateway": "2026-03-17",
+    "modelsdev:openai": "2026-03-17",
+    "modelsdev:crossmodel": "2026-03-17"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "pdf,image,text->text",
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:nearai": [
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gpt-5-4-mini"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.4-mini",
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-54-mini"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5.4-mini"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:azure": [
+     "gpt-5.4-mini"
+    ],
+    "modelsdev:freemodel": [
+     "gpt-5.4-mini"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-5.4-mini"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:xpersona": [
+     "gpt-5.4-mini"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "gpt-5.4-mini"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.4-mini-fast",
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:fastrouter": [
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-4-mini"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:opper": [
+     "gpt-5.4-mini"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-5.4-mini"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-5.4-mini"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.4-mini"
+    ],
+    "modelsdev:kenari": [
+     "gpt-5-4-mini"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5.4-mini"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.4-mini"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.4-mini"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-5.4-mini"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt54nano",
+   "names": [
+    "OpenAI: GPT-5.4 Nano",
+    "GPT 5.4 Nano",
+    "GPT-5.4 nano",
+    "GPT-5.4 Nano (Azure)",
+    "GPT-5.4 Nano (OpenAI)",
+    "GPT-5.4 Nano"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-17",
+    "modelsdev:nano-gpt": "2026-03-17",
+    "modelsdev:nearai": "2026-03-17",
+    "modelsdev:databricks": "2026-03-17",
+    "modelsdev:llmgateway-providers": "2026-03-17",
+    "modelsdev:kilo": "2026-03-17",
+    "modelsdev:abacus": "2026-03-17",
+    "modelsdev:openrouter": "2026-03-17",
+    "modelsdev:azure": "2026-03-17",
+    "modelsdev:azure-cognitive-services": "2026-03-17",
+    "modelsdev:impossibl": "2026-03-17",
+    "modelsdev:cloudflare-ai-gateway": "2026-03-17",
+    "modelsdev:model-oracle-ai": "2026-03-17",
+    "modelsdev:vercel": "2026-03-17",
+    "modelsdev:fastrouter": "2026-03-17",
+    "modelsdev:orcarouter": "2026-03-17",
+    "modelsdev:ofox": "2026-03-17",
+    "modelsdev:neon": "2026-03-17",
+    "modelsdev:aihubmix": "2026-03-17",
+    "modelsdev:merge-gateway": "2026-03-17",
+    "modelsdev:opper": "2026-03-17",
+    "modelsdev:pioneer": "2026-03-17",
+    "modelsdev:github-copilot": "2026-03-17",
+    "modelsdev:edenai": "2026-03-17",
+    "modelsdev:requesty": "2026-03-17",
+    "modelsdev:llmgateway": "2026-03-17",
+    "modelsdev:openai": "2026-03-17",
+    "modelsdev:crossmodel": "2026-03-17"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "pdf,image,text->text",
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:nearai": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gpt-5-4-nano"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.4-nano",
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5.4-nano"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:azure": [
+     "gpt-5.4-nano"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-5.4-nano"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "gpt-5.4-nano"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:fastrouter": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-4-nano"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-5.4-nano"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:opper": [
+     "gpt-5.4-nano"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-5.4-nano"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-5.4-nano"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.4-nano"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5.4-nano"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.4-nano"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.4-nano"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-5.4-nano"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt55",
+   "names": [
+    "OpenAI: GPT-5.5",
+    "GPT-5.5",
+    "GPT 5.5",
+    "GPT-5.5 (Azure)",
+    "GPT-5.5 (OpenAI)",
+    "GPT 5.5 (Fast)",
+    "GPT-5.5 (EU)",
+    "gpt-5.5"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-24",
+    "modelsdev:poe": "2026-04-08",
+    "modelsdev:nano-gpt": "2026-04-23",
+    "modelsdev:nearai": "2026-04-23",
+    "modelsdev:databricks": "2026-04-23",
+    "modelsdev:llmgateway-providers": "2026-04-23",
+    "modelsdev:kilo": "2026-04-23",
+    "modelsdev:venice": "2026-04-23",
+    "modelsdev:snowflake-cortex": "2026-04-23",
+    "modelsdev:abacus": "2026-04-23",
+    "modelsdev:302ai": "2026-04-23",
+    "modelsdev:openrouter": "2026-04-23",
+    "modelsdev:azure": "2026-04-24",
+    "modelsdev:freemodel": "2026-04-23",
+    "modelsdev:azure-cognitive-services": "2026-04-24",
+    "modelsdev:ai-router": "2026-04-23",
+    "modelsdev:zenmux": "2026-04-23",
+    "modelsdev:unorouter": "2026-04-23",
+    "modelsdev:impossibl": "2026-04-23",
+    "modelsdev:xpersona": "2026-04-23",
+    "modelsdev:gmicloud": "2026-04-23",
+    "modelsdev:cloudflare-ai-gateway": "2026-04-23",
+    "modelsdev:model-oracle-ai": "2026-04-23",
+    "modelsdev:vercel": "2026-04-23",
+    "modelsdev:fastrouter": "2026-04-23",
+    "modelsdev:orcarouter": "2026-04-23",
+    "modelsdev:ofox": "2026-04-23",
+    "modelsdev:neon": "2026-04-23",
+    "modelsdev:merge-gateway": "2026-04-23",
+    "modelsdev:opper": "2026-04-23",
+    "modelsdev:pioneer": "2026-04-23",
+    "modelsdev:github-copilot": "2026-04-23",
+    "modelsdev:edenai": "2026-04-23",
+    "modelsdev:hpc-ai": "2026-04-23",
+    "modelsdev:opencode": "2026-04-23",
+    "modelsdev:kenari": "2026-04-23",
+    "modelsdev:requesty": "2026-04-23",
+    "modelsdev:amazon-bedrock": "2026-04-23",
+    "modelsdev:llmgateway": "2026-04-23",
+    "modelsdev:sap-ai-core": "2026-04-23",
+    "modelsdev:vivgrid": "2026-04-23",
+    "modelsdev:daoxe": "2026-04-23",
+    "modelsdev:openai": "2026-04-23",
+    "modelsdev:crossmodel": "2026-04-23"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image->text,image",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text,image,pdf->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:poe": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:nearai": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gpt-5-5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.5",
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-55"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "openai-gpt-5.5"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5.5"
+    ],
+    "modelsdev:302ai": [
+     "gpt-5.5"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:azure": [
+     "gpt-5.5"
+    ],
+    "modelsdev:freemodel": [
+     "gpt-5.5"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-5.5"
+    ],
+    "modelsdev:ai-router": [
+     "gpt-5.5"
+    ],
+    "modelsdev:zenmux": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:unorouter": [
+     "gpt-5.5"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:xpersona": [
+     "xpersona-gpt-5.5",
+     "gpt-5.5"
+    ],
+    "modelsdev:gmicloud": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "gpt-5.5"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.5-fast",
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:fastrouter": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-5"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:opper": [
+     "gpt-5.5"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-5.5"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-5.5"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:hpc-ai": [
+     "openai/gpt-5.5"
+    ],
+    "modelsdev:opencode": [
+     "gpt-5.5"
+    ],
+    "modelsdev:kenari": [
+     "gpt-5-5"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5.5@eu",
+     "gpt-5.5"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "openai.gpt-5.5"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.5"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gpt-5.5"
+    ],
+    "modelsdev:vivgrid": [
+     "gpt-5.5"
+    ],
+    "modelsdev:daoxe": [
+     "gpt-5.5"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.5"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-5.5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt55pro",
+   "names": [
+    "OpenAI: GPT-5.5 Pro",
+    "GPT-5.5-Pro",
+    "GPT-5.5 Pro (OpenAI)",
+    "GPT-5.5 Pro",
+    "GPT 5.5 Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-24",
+    "modelsdev:poe": "2026-04-08",
+    "modelsdev:llmgateway-providers": "2026-04-23",
+    "modelsdev:kilo": "2026-04-23",
+    "modelsdev:venice": "2026-04-24",
+    "modelsdev:openrouter": "2026-04-23",
+    "modelsdev:zenmux": "2026-04-23",
+    "modelsdev:impossibl": "2026-04-23",
+    "modelsdev:cloudflare-ai-gateway": "2026-04-23",
+    "modelsdev:vercel": "2026-04-23",
+    "modelsdev:fastrouter": "2026-04-23",
+    "modelsdev:orcarouter": "2026-04-23",
+    "modelsdev:neon": "2026-04-23",
+    "modelsdev:aihubmix": "2026-04-23",
+    "modelsdev:opper": "2026-04-23",
+    "modelsdev:edenai": "2026-04-23",
+    "modelsdev:requesty": "2026-04-23",
+    "modelsdev:llmgateway": "2026-04-23",
+    "modelsdev:openai": "2026-04-23",
+    "modelsdev:crossmodel": "2026-04-23"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image->text,image",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text,image,pdf->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.5-pro"
+    ],
+    "modelsdev:poe": [
+     "openai/gpt-5.5-pro"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "openai/gpt-5.5-pro"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.5-pro"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-55-pro"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.5-pro"
+    ],
+    "modelsdev:zenmux": [
+     "openai/gpt-5.5-pro"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.5-pro"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5.5-pro"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.5-pro"
+    ],
+    "modelsdev:fastrouter": [
+     "openai/gpt-5.5-pro"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.5-pro"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-5-pro"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-5.5-pro"
+    ],
+    "modelsdev:opper": [
+     "gpt-5.5-pro"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.5-pro"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5.5-pro"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.5-pro"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.5-pro"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-5.5-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt54image2",
+   "names": [
+    "OpenAI: GPT-5.4 Image 2"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-21"
+   },
+   "openWeights": null,
+   "modalities": [
+    "image+text+file->image+text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.4-image-2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptimage2",
+   "names": [
+    "GPT-Image-2",
+    "GPT Image 2",
+    "gpt-image-2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:azure": "2026-04-21",
+    "modelsdev:azure-cognitive-services": "2026-04-21",
+    "modelsdev:vercel": "2026-04-21",
+    "modelsdev:aihubmix": "2026-04-21",
+    "modelsdev:kenari": "2026-04-21",
+    "modelsdev:openai": "2026-04-21"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->image",
+    "text->image"
+   ],
+   "catalogIds": {
+    "modelsdev:azure": [
+     "gpt-image-2"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-image-2"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-image-2"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-image-2"
+    ],
+    "modelsdev:kenari": [
+     "gpt-image-2"
+    ],
+    "modelsdev:openai": [
+     "gpt-image-2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt55instant",
+   "names": [
+    "GPT-5.5 Instant"
+   ],
+   "releaseDateHints": {
+    "modelsdev:zenmux": "2026-05-05"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:zenmux": [
+     "openai/gpt-5.5-instant"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptrealtimewhisper",
+   "names": [
+    "gpt-realtime-whisper"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2026-05-07"
+   },
+   "openWeights": false,
+   "modalities": [
+    "audio->text"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "openai/gpt-realtime-whisper"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptrealtime21",
+   "names": [
+    "gpt-realtime-2.1",
+    "GPT-Realtime-2.1"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2026-07-06",
+    "modelsdev:openai": "2026-07-06"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,audio->text,audio",
+    "text,audio,image->text,audio"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "openai/gpt-realtime-2.1"
+    ],
+    "modelsdev:openai": [
+     "gpt-realtime-2.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt56luna",
+   "names": [
+    "OpenAI: GPT-5.6 Luna",
+    "GPT 5.6 Luna Pro",
+    "GPT 5.6 Luna",
+    "GPT-5.6 Luna",
+    "GPT-5.6 Luna (Azure)",
+    "GPT-5.6 Luna (AWS Mantle)",
+    "GPT-5.6 Luna (OpenAI)",
+    "GPT-5.6 Luna Pro",
+    "gpt-5.6-luna-pro",
+    "Agentic Chat (GPT-5.6 Luna)",
+    "GPT 5.6 Luna (Fast)",
+    "GPT-5.6 Luna (EU)",
+    "GPT-5.6 Luna (US)",
+    "GPT-5.6 Luna (India)",
+    "GPT-5.6 Luna (Global)",
+    "gpt-5.6-luna",
+    "OpenAI GPT-5.6 Luna"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-09",
+    "modelsdev:nano-gpt": "2026-07-09",
+    "modelsdev:databricks": "2026-07-09",
+    "modelsdev:bothub": "2026-07-09",
+    "modelsdev:llmgateway-providers": "2026-07-09",
+    "modelsdev:kilo": "2026-07-09",
+    "modelsdev:venice": "2026-07-09",
+    "modelsdev:snowflake-cortex": "2026-07-09",
+    "modelsdev:abacus": "2026-07-09",
+    "modelsdev:302ai": "2026-07-09",
+    "modelsdev:openrouter": "2026-07-09",
+    "modelsdev:routing-run": "2026-07-09",
+    "modelsdev:gitlab": "2026-07-09",
+    "modelsdev:azure": "2026-07-09",
+    "modelsdev:azure-cognitive-services": "2026-07-09",
+    "modelsdev:ai-router": "2026-07-09",
+    "modelsdev:zenmux": "2026-07-09",
+    "modelsdev:impossibl": "2026-07-09",
+    "modelsdev:cloudflare-ai-gateway": "2026-07-09",
+    "modelsdev:vercel": "2026-07-09",
+    "modelsdev:orcarouter": "2026-07-09",
+    "modelsdev:ofox": "2026-07-09",
+    "modelsdev:neon": "2026-07-09",
+    "modelsdev:aihubmix": "2026-07-09",
+    "modelsdev:merge-gateway": "2026-07-09",
+    "modelsdev:opper": "2026-07-09",
+    "modelsdev:pioneer": "2026-07-09",
+    "modelsdev:github-copilot": "2026-07-09",
+    "modelsdev:opencode-go": "2026-07-09",
+    "modelsdev:edenai": "2026-07-09",
+    "modelsdev:opencode": "2026-07-09",
+    "modelsdev:kenari": "2026-07-09",
+    "modelsdev:requesty": "2026-07-09",
+    "modelsdev:amazon-bedrock": "2026-07-09",
+    "modelsdev:llmgateway": "2026-07-09",
+    "modelsdev:sap-ai-core": "2026-07-09",
+    "modelsdev:vivgrid": "2026-07-09",
+    "modelsdev:cortecs": "2026-07-09",
+    "modelsdev:openai": "2026-07-09",
+    "modelsdev:crossmodel": "2026-07-09",
+    "modelsdev:digitalocean": "2026-07-09"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text,image,pdf->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.6-luna-pro",
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gpt-5-6-luna"
+    ],
+    "modelsdev:bothub": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.6-luna",
+     "aws-mantle/gpt-5.6-luna",
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.6-luna-pro",
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-56-luna",
+     "openai-gpt-56-luna-pro"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "openai-gpt-5.6-luna"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:302ai": [
+     "gpt-5.6-luna-pro",
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.6-luna-pro",
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:routing-run": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-gpt-5-6-luna"
+    ],
+    "modelsdev:azure": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:ai-router": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:zenmux": [
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.6-luna-fast",
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-6-luna"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:opper": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:opencode-go": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:opencode": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:kenari": [
+     "gpt-5-6-luna"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5.6-luna",
+     "gpt-5.6-luna@eu"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "openai.gpt-5.6-luna",
+     "us.openai.gpt-5.6-luna",
+     "in.openai.gpt-5.6-luna",
+     "global.openai.gpt-5.6-luna"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:vivgrid": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.6-luna"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-5.6-luna"
+    ],
+    "modelsdev:digitalocean": [
+     "openai-gpt-5.6-luna"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt56lunapro",
+   "names": [
+    "OpenAI: GPT-5.6 Luna Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-09"
+   },
+   "openWeights": null,
+   "modalities": [
+    "file+image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.6-luna-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt56sol",
+   "names": [
+    "OpenAI: GPT-5.6 Sol",
+    "GPT 5.6 Sol Pro",
+    "GPT 5.6 Sol",
+    "GPT-5.6 Sol",
+    "GPT-5.6 Sol (Azure)",
+    "GPT-5.6 Sol (AWS Mantle)",
+    "GPT-5.6 Sol (OpenAI)",
+    "GPT-5.6 Sol Pro",
+    "gpt-5.6-sol-pro",
+    "Agentic Chat (GPT-5.6 Sol)",
+    "GPT-5.6 Sol (Official API)",
+    "GPT-5.6",
+    "GPT 5.6 Sol (Fast)",
+    "GPT-5.6 Sol (EU)",
+    "GPT-5.6 Sol (US)",
+    "GPT-5.6 Sol (Global)",
+    "gpt-5.6-sol",
+    "OpenAI GPT-5.6 Sol"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-09",
+    "modelsdev:nano-gpt": "2026-07-09",
+    "modelsdev:databricks": "2026-07-09",
+    "modelsdev:llmgateway-providers": "2026-07-09",
+    "modelsdev:kilo": "2026-07-09",
+    "modelsdev:venice": "2026-07-09",
+    "modelsdev:snowflake-cortex": "2026-07-09",
+    "modelsdev:abacus": "2026-07-09",
+    "modelsdev:302ai": "2026-07-09",
+    "modelsdev:openrouter": "2026-07-09",
+    "modelsdev:routing-run": "2026-07-09",
+    "modelsdev:gitlab": "2026-07-09",
+    "modelsdev:infer": "2026-07-09",
+    "modelsdev:azure": "2026-07-09",
+    "modelsdev:azure-cognitive-services": "2026-07-09",
+    "modelsdev:ai-router": "2026-07-09",
+    "modelsdev:zenmux": "2026-07-09",
+    "modelsdev:impossibl": "2026-07-09",
+    "modelsdev:xpersona": "2026-07-09",
+    "modelsdev:cloudflare-ai-gateway": "2026-07-09",
+    "modelsdev:agentrouter": "2026-07-09",
+    "modelsdev:vercel": "2026-07-09",
+    "modelsdev:orcarouter": "2026-07-09",
+    "modelsdev:ofox": "2026-07-09",
+    "modelsdev:neon": "2026-07-09",
+    "modelsdev:aihubmix": "2026-07-09",
+    "modelsdev:merge-gateway": "2026-07-09",
+    "modelsdev:opper": "2026-07-09",
+    "modelsdev:pioneer": "2026-07-09",
+    "modelsdev:github-copilot": "2026-07-09",
+    "modelsdev:edenai": "2026-07-09",
+    "modelsdev:opencode": "2026-07-09",
+    "modelsdev:kenari": "2026-07-09",
+    "modelsdev:requesty": "2026-07-09",
+    "modelsdev:amazon-bedrock": "2026-07-09",
+    "modelsdev:llmgateway": "2026-07-09",
+    "modelsdev:sap-ai-core": "2026-07-09",
+    "modelsdev:vivgrid": "2026-07-09",
+    "modelsdev:cortecs": "2026-07-09",
+    "modelsdev:openai": "2026-07-09",
+    "modelsdev:crossmodel": "2026-07-09",
+    "modelsdev:digitalocean": "2026-07-09"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text,image,pdf->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.6-sol-pro",
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gpt-5-6-sol"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.6-sol",
+     "aws-mantle/gpt-5.6-sol",
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.6-sol-pro",
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-56-sol-pro",
+     "openai-gpt-56-sol"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "openai-gpt-5.6-sol"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:302ai": [
+     "gpt-5.6-sol-pro",
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.6-sol-pro",
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:routing-run": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-gpt-5-6-sol"
+    ],
+    "modelsdev:infer": [
+     "infer/gpt-5.6-sol:official"
+    ],
+    "modelsdev:azure": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:ai-router": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:zenmux": [
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:xpersona": [
+     "gpt-5.6",
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:agentrouter": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.6-sol-fast",
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-6-sol"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:opper": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:opencode": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:kenari": [
+     "gpt-5-6-sol"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5.6-sol@eu",
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.openai.gpt-5.6-sol",
+     "global.openai.gpt-5.6-sol",
+     "openai.gpt-5.6-sol"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:vivgrid": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.6",
+     "gpt-5.6-sol"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-5.6-sol"
+    ],
+    "modelsdev:digitalocean": [
+     "openai-gpt-5.6-sol"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt56solpro",
+   "names": [
+    "OpenAI: GPT-5.6 Sol Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-09"
+   },
+   "openWeights": null,
+   "modalities": [
+    "file+image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.6-sol-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt56terra",
+   "names": [
+    "OpenAI: GPT-5.6 Terra",
+    "GPT 5.6 Terra Pro",
+    "GPT 5.6 Terra",
+    "GPT-5.6 Terra",
+    "GPT-5.6 Terra (Azure)",
+    "GPT-5.6 Terra (AWS Mantle)",
+    "GPT-5.6 Terra (OpenAI)",
+    "GPT-5.6 Terra Pro",
+    "gpt-5.6-terra-pro",
+    "Agentic Chat (GPT-5.6 Terra)",
+    "GPT 5.6 Terra (Fast)",
+    "GPT-5.6 Terra (EU)",
+    "GPT-5.6 Terra (US)",
+    "GPT-5.6 Terra (Global)",
+    "GPT-5.6 Terra (India)",
+    "gpt-5.6-terra",
+    "OpenAI GPT-5.6 Terra"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-09",
+    "modelsdev:nano-gpt": "2026-07-09",
+    "modelsdev:databricks": "2026-07-09",
+    "modelsdev:llmgateway-providers": "2026-07-09",
+    "modelsdev:kilo": "2026-07-09",
+    "modelsdev:venice": "2026-07-09",
+    "modelsdev:snowflake-cortex": "2026-07-09",
+    "modelsdev:abacus": "2026-07-09",
+    "modelsdev:302ai": "2026-07-09",
+    "modelsdev:openrouter": "2026-07-09",
+    "modelsdev:routing-run": "2026-07-09",
+    "modelsdev:gitlab": "2026-07-09",
+    "modelsdev:azure": "2026-07-09",
+    "modelsdev:azure-cognitive-services": "2026-07-09",
+    "modelsdev:ai-router": "2026-07-09",
+    "modelsdev:zenmux": "2026-07-09",
+    "modelsdev:impossibl": "2026-07-09",
+    "modelsdev:xpersona": "2026-07-09",
+    "modelsdev:cloudflare-ai-gateway": "2026-07-09",
+    "modelsdev:vercel": "2026-07-09",
+    "modelsdev:orcarouter": "2026-07-09",
+    "modelsdev:ofox": "2026-07-09",
+    "modelsdev:neon": "2026-07-09",
+    "modelsdev:aihubmix": "2026-07-09",
+    "modelsdev:merge-gateway": "2026-07-09",
+    "modelsdev:opper": "2026-07-09",
+    "modelsdev:pioneer": "2026-07-09",
+    "modelsdev:github-copilot": "2026-07-09",
+    "modelsdev:edenai": "2026-07-09",
+    "modelsdev:opencode": "2026-07-09",
+    "modelsdev:kenari": "2026-07-09",
+    "modelsdev:requesty": "2026-07-09",
+    "modelsdev:amazon-bedrock": "2026-07-09",
+    "modelsdev:llmgateway": "2026-07-09",
+    "modelsdev:sap-ai-core": "2026-07-09",
+    "modelsdev:vivgrid": "2026-07-09",
+    "modelsdev:cortecs": "2026-07-09",
+    "modelsdev:openai": "2026-07-09",
+    "modelsdev:crossmodel": "2026-07-09",
+    "modelsdev:digitalocean": "2026-07-09"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text,image,pdf->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-5.6-terra-pro",
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:databricks": [
+     "databricks-gpt-5-6-terra"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-5.6-terra",
+     "aws-mantle/gpt-5.6-terra",
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-5.6-terra-pro",
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-56-terra",
+     "openai-gpt-56-terra-pro"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "openai-gpt-5.6-terra"
+    ],
+    "modelsdev:abacus": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:302ai": [
+     "gpt-5.6-terra-pro",
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-5.6-terra-pro",
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:routing-run": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-gpt-5-6-terra"
+    ],
+    "modelsdev:azure": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:ai-router": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:zenmux": [
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:impossibl": [
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:xpersona": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-5.6-terra-fast",
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:orcarouter": [
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:neon": [
+     "gpt-5-6-terra"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:opper": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:pioneer": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:opencode": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:kenari": [
+     "gpt-5-6-terra"
+    ],
+    "modelsdev:requesty": [
+     "gpt-5.6-terra@eu",
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.openai.gpt-5.6-terra",
+     "openai.gpt-5.6-terra",
+     "global.openai.gpt-5.6-terra",
+     "in.openai.gpt-5.6-terra"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:sap-ai-core": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:vivgrid": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:openai": [
+     "gpt-5.6-terra"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-5.6-terra"
+    ],
+    "modelsdev:digitalocean": [
+     "openai-gpt-5.6-terra"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt56terrapro",
+   "names": [
+    "OpenAI: GPT-5.6 Terra Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-09"
+   },
+   "openWeights": null,
+   "modalities": [
+    "file+image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-5.6-terra-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt6astra",
+   "names": [
+    "OpenAI: GPT-6 Astra",
+    "GPT 6 Astra",
+    "GPT-6 Astra (Azure)",
+    "GPT-6 Astra (AWS Mantle)",
+    "GPT-6 Astra",
+    "Agentic Chat (GPT-6 Astra)",
+    "GPT-6 Astra (Official API)",
+    "GPT-6 Astra (Global)",
+    "GPT-6 Astra (US)",
+    "OpenAI GPT-6 Astra"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-04",
+    "modelsdev:nano-gpt": "2026-09-04",
+    "modelsdev:llmgateway-providers": "2026-09-04",
+    "modelsdev:kilo": "2026-09-04",
+    "modelsdev:venice": "2026-09-05",
+    "modelsdev:302ai": "2026-09-04",
+    "modelsdev:openrouter": "2026-09-04",
+    "modelsdev:gitlab": "2026-09-04",
+    "modelsdev:infer": "2026-09-04",
+    "modelsdev:azure": "2026-09-04",
+    "modelsdev:azure-cognitive-services": "2026-09-04",
+    "modelsdev:zenmux": "2026-09-04",
+    "modelsdev:cloudflare-ai-gateway": "2026-09-04",
+    "modelsdev:vercel": "2026-09-04",
+    "modelsdev:ofox": "2026-09-04",
+    "modelsdev:neon": "2026-09-04",
+    "modelsdev:aihubmix": "2026-09-04",
+    "modelsdev:merge-gateway": "2026-09-04",
+    "modelsdev:opper": "2026-09-04",
+    "modelsdev:github-copilot": "2026-09-04",
+    "modelsdev:edenai": "2026-09-04",
+    "modelsdev:opencode": "2026-09-04",
+    "modelsdev:requesty": "2026-09-04",
+    "modelsdev:amazon-bedrock": "2026-09-04",
+    "modelsdev:vivgrid": "2026-09-04",
+    "modelsdev:openai": "2026-09-04",
+    "modelsdev:crossmodel": "2026-09-04",
+    "modelsdev:digitalocean": "2026-09-04"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text,image,pdf->text,image"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-6-astra"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-6-astra"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-6-astra",
+     "aws-mantle/gpt-6-astra"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-6-astra"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-6-astra"
+    ],
+    "modelsdev:302ai": [
+     "gpt-6-astra"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-6-astra"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-gpt-6-astra"
+    ],
+    "modelsdev:infer": [
+     "infer/gpt-6-astra:official"
+    ],
+    "modelsdev:azure": [
+     "gpt-6-astra"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-6-astra"
+    ],
+    "modelsdev:zenmux": [
+     "openai/gpt-6-astra"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-6-astra"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-6-astra"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-6-astra"
+    ],
+    "modelsdev:neon": [
+     "gpt-6-astra"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-6-astra"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-6-astra"
+    ],
+    "modelsdev:opper": [
+     "gpt-6-astra"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-6-astra"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-6-astra"
+    ],
+    "modelsdev:opencode": [
+     "gpt-6-astra"
+    ],
+    "modelsdev:requesty": [
+     "gpt-6-astra"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "global.openai.gpt-6-astra",
+     "us.openai.gpt-6-astra",
+     "openai.gpt-6-astra"
+    ],
+    "modelsdev:vivgrid": [
+     "gpt-6-astra"
+    ],
+    "modelsdev:openai": [
+     "gpt-6-astra"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-6-astra"
+    ],
+    "modelsdev:digitalocean": [
+     "openai-gpt-6-astra"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt6astrafast",
+   "names": [
+    "GPT-6 Astra (Fast)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2026-09-04"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "openai/gpt-6-astra-fast"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt6astrapro",
+   "names": [
+    "OpenAI: GPT-6 Astra Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-04"
+   },
+   "openWeights": null,
+   "modalities": [
+    "file+image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-6-astra-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptimage25flare",
+   "names": [
+    "GPT Image 2.5 Flare"
+   ],
+   "releaseDateHints": {
+    "modelsdev:azure": "2026-09-08",
+    "modelsdev:azure-cognitive-services": "2026-09-08",
+    "modelsdev:vercel": "2026-09-08",
+    "modelsdev:aihubmix": "2026-09-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->image",
+    "text->image"
+   ],
+   "catalogIds": {
+    "modelsdev:azure": [
+     "gpt-image-2.5-flare"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-image-2.5-flare"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-image-2.5-flare"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-image-2.5-flare"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gptimage25sunburst",
+   "names": [
+    "GPT Image 2.5 Sunburst"
+   ],
+   "releaseDateHints": {
+    "modelsdev:azure": "2026-09-08",
+    "modelsdev:azure-cognitive-services": "2026-09-08",
+    "modelsdev:vercel": "2026-09-08",
+    "modelsdev:aihubmix": "2026-09-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->image",
+    "text->image"
+   ],
+   "catalogIds": {
+    "modelsdev:azure": [
+     "gpt-image-2.5-sunburst"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-image-2.5-sunburst"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-image-2.5-sunburst"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-image-2.5-sunburst"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt6luna",
+   "names": [
+    "OpenAI: GPT-6 Luna",
+    "GPT 6 Luna",
+    "GPT-6 Luna (Azure)",
+    "GPT-6 Luna (OpenAI)",
+    "GPT-6 Luna",
+    "Agentic Chat (GPT-6 Luna)",
+    "GPT-6 Luna (Fast)",
+    "GPT-6 Luna (EU)",
+    "GPT-6 Luna (US)",
+    "GPT-6 Luna (Global)",
+    "OpenAI GPT-6 Luna"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-22",
+    "modelsdev:nano-gpt": "2026-09-22",
+    "modelsdev:llmgateway-providers": "2026-09-22",
+    "modelsdev:kilo": "2026-09-22",
+    "modelsdev:venice": "2026-09-22",
+    "modelsdev:302ai": "2026-09-22",
+    "modelsdev:openrouter": "2026-09-22",
+    "modelsdev:gitlab": "2026-09-22",
+    "modelsdev:azure": "2026-09-22",
+    "modelsdev:azure-cognitive-services": "2026-09-22",
+    "modelsdev:cloudflare-ai-gateway": "2026-09-22",
+    "modelsdev:vercel": "2026-09-22",
+    "modelsdev:ofox": "2026-09-22",
+    "modelsdev:aihubmix": "2026-09-22",
+    "modelsdev:merge-gateway": "2026-09-22",
+    "modelsdev:github-copilot": "2026-09-22",
+    "modelsdev:opencode-go": "2026-09-22",
+    "modelsdev:edenai": "2026-09-22",
+    "modelsdev:opencode": "2026-09-22",
+    "modelsdev:requesty": "2026-09-22",
+    "modelsdev:amazon-bedrock": "2026-09-22",
+    "modelsdev:llmgateway": "2026-09-22",
+    "modelsdev:vivgrid": "2026-09-22",
+    "modelsdev:cortecs": "2026-09-22",
+    "modelsdev:openai": "2026-09-22",
+    "modelsdev:crossmodel": "2026-09-22",
+    "modelsdev:digitalocean": "2026-09-22"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-6-luna"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-6-luna"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-6-luna",
+     "openai/gpt-6-luna"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-6-luna"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-6-luna"
+    ],
+    "modelsdev:302ai": [
+     "gpt-6-luna"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-6-luna"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-gpt-6-luna"
+    ],
+    "modelsdev:azure": [
+     "gpt-6-luna"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-6-luna"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-6-luna"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-6-luna-fast",
+     "openai/gpt-6-luna"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-6-luna"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-6-luna"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-6-luna"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-6-luna"
+    ],
+    "modelsdev:opencode-go": [
+     "gpt-6-luna"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-6-luna"
+    ],
+    "modelsdev:opencode": [
+     "gpt-6-luna"
+    ],
+    "modelsdev:requesty": [
+     "gpt-6-luna",
+     "gpt-6-luna@eu"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.openai.gpt-6-luna",
+     "global.openai.gpt-6-luna",
+     "openai.gpt-6-luna"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-6-luna"
+    ],
+    "modelsdev:vivgrid": [
+     "gpt-6-luna"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-6-luna"
+    ],
+    "modelsdev:openai": [
+     "gpt-6-luna"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-6-luna"
+    ],
+    "modelsdev:digitalocean": [
+     "openai-gpt-6-luna"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt6lunapro",
+   "names": [
+    "OpenAI: GPT-6 Luna Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-22"
+   },
+   "openWeights": null,
+   "modalities": [
+    "file+image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-6-luna-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt6sol",
+   "names": [
+    "OpenAI: GPT-6 Sol",
+    "GPT 6 Sol",
+    "GPT-6 Sol (Azure)",
+    "GPT-6 Sol (OpenAI)",
+    "GPT-6 Sol",
+    "Agentic Chat (GPT-6 Sol)",
+    "GPT-6 Sol (Fast)",
+    "GPT-6 Sol (EU)",
+    "GPT-6 Sol (Global)",
+    "GPT-6 Sol (US)",
+    "OpenAI GPT-6 Sol"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-22",
+    "modelsdev:nano-gpt": "2026-09-22",
+    "modelsdev:llmgateway-providers": "2026-09-22",
+    "modelsdev:kilo": "2026-09-22",
+    "modelsdev:venice": "2026-09-22",
+    "modelsdev:302ai": "2026-09-22",
+    "modelsdev:openrouter": "2026-09-22",
+    "modelsdev:gitlab": "2026-09-22",
+    "modelsdev:azure": "2026-09-22",
+    "modelsdev:azure-cognitive-services": "2026-09-22",
+    "modelsdev:zenmux": "2026-09-22",
+    "modelsdev:cloudflare-ai-gateway": "2026-09-22",
+    "modelsdev:vercel": "2026-09-22",
+    "modelsdev:ofox": "2026-09-22",
+    "modelsdev:aihubmix": "2026-09-22",
+    "modelsdev:merge-gateway": "2026-09-22",
+    "modelsdev:github-copilot": "2026-09-22",
+    "modelsdev:edenai": "2026-09-22",
+    "modelsdev:opencode": "2026-09-22",
+    "modelsdev:requesty": "2026-09-22",
+    "modelsdev:amazon-bedrock": "2026-09-22",
+    "modelsdev:llmgateway": "2026-09-22",
+    "modelsdev:vivgrid": "2026-09-22",
+    "modelsdev:cortecs": "2026-09-22",
+    "modelsdev:openai": "2026-09-22",
+    "modelsdev:crossmodel": "2026-09-22",
+    "modelsdev:digitalocean": "2026-09-22"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-6-sol"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-6-sol"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-6-sol",
+     "openai/gpt-6-sol"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-6-sol"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-6-sol"
+    ],
+    "modelsdev:302ai": [
+     "gpt-6-sol"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-6-sol"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-gpt-6-sol"
+    ],
+    "modelsdev:azure": [
+     "gpt-6-sol"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-6-sol"
+    ],
+    "modelsdev:zenmux": [
+     "openai/gpt-6-sol"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-6-sol"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-6-sol-fast",
+     "openai/gpt-6-sol"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-6-sol"
+    ],
+    "modelsdev:aihubmix": [
+     "gpt-6-sol"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-6-sol"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-6-sol"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-6-sol"
+    ],
+    "modelsdev:opencode": [
+     "gpt-6-sol"
+    ],
+    "modelsdev:requesty": [
+     "gpt-6-sol@eu",
+     "gpt-6-sol"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "global.openai.gpt-6-sol",
+     "openai.gpt-6-sol",
+     "us.openai.gpt-6-sol"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-6-sol"
+    ],
+    "modelsdev:vivgrid": [
+     "gpt-6-sol"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-6-sol"
+    ],
+    "modelsdev:openai": [
+     "gpt-6-sol"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-6-sol"
+    ],
+    "modelsdev:digitalocean": [
+     "openai-gpt-6-sol"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt6solpro",
+   "names": [
+    "OpenAI: GPT-6 Sol Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-22"
+   },
+   "openWeights": null,
+   "modalities": [
+    "file+image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-6-sol-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt61sol",
+   "names": [
+    "OpenAI: GPT-6.1 Sol",
+    "GPT 6.1 Sol",
+    "GPT-6.1 Sol (Azure)",
+    "GPT-6.1 Sol (OpenAI)",
+    "GPT-6.1 Sol",
+    "Agentic Chat (GPT-6.1 Sol)",
+    "GPT-6.1 Sol (Fast)",
+    "GPT-6.1 Sol (EU)",
+    "GPT-6.1 Sol (US)",
+    "GPT-6.1 Sol (Global)",
+    "OpenAI GPT-6.1 Sol"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-29",
+    "modelsdev:nano-gpt": "2026-09-29",
+    "modelsdev:llmgateway-providers": "2026-09-29",
+    "modelsdev:kilo": "2026-09-29",
+    "modelsdev:venice": "2026-09-29",
+    "modelsdev:openrouter": "2026-09-29",
+    "modelsdev:gitlab": "2026-09-29",
+    "modelsdev:azure": "2026-09-29",
+    "modelsdev:azure-cognitive-services": "2026-09-29",
+    "modelsdev:cloudflare-ai-gateway": "2026-09-29",
+    "modelsdev:vercel": "2026-09-29",
+    "modelsdev:ofox": "2026-09-29",
+    "modelsdev:merge-gateway": "2026-09-29",
+    "modelsdev:github-copilot": "2026-09-29",
+    "modelsdev:edenai": "2026-09-29",
+    "modelsdev:opencode": "2026-09-29",
+    "modelsdev:requesty": "2026-09-29",
+    "modelsdev:amazon-bedrock": "2026-09-29",
+    "modelsdev:llmgateway": "2026-09-29",
+    "modelsdev:vivgrid": "2026-09-29",
+    "modelsdev:cortecs": "2026-09-29",
+    "modelsdev:openai": "2026-09-29",
+    "modelsdev:crossmodel": "2026-09-29",
+    "modelsdev:digitalocean": "2026-09-29"
+   },
+   "openWeights": false,
+   "modalities": [
+    "file+image+text->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-6.1-sol"
+    ],
+    "modelsdev:nano-gpt": [
+     "openai/gpt-6.1-sol"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "azure/gpt-6.1-sol",
+     "openai/gpt-6.1-sol"
+    ],
+    "modelsdev:kilo": [
+     "openai/gpt-6.1-sol"
+    ],
+    "modelsdev:venice": [
+     "openai-gpt-61-sol"
+    ],
+    "modelsdev:openrouter": [
+     "openai/gpt-6.1-sol"
+    ],
+    "modelsdev:gitlab": [
+     "duo-chat-gpt-6-1-sol"
+    ],
+    "modelsdev:azure": [
+     "gpt-6.1-sol"
+    ],
+    "modelsdev:azure-cognitive-services": [
+     "gpt-6.1-sol"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "openai/gpt-6.1-sol"
+    ],
+    "modelsdev:vercel": [
+     "openai/gpt-6.1-sol-fast",
+     "openai/gpt-6.1-sol"
+    ],
+    "modelsdev:ofox": [
+     "openai/gpt-6.1-sol"
+    ],
+    "modelsdev:merge-gateway": [
+     "openai/gpt-6.1-sol"
+    ],
+    "modelsdev:github-copilot": [
+     "gpt-6.1-sol"
+    ],
+    "modelsdev:edenai": [
+     "openai/gpt-6.1-sol"
+    ],
+    "modelsdev:opencode": [
+     "gpt-6.1-sol"
+    ],
+    "modelsdev:requesty": [
+     "gpt-6.1-sol@eu",
+     "gpt-6.1-sol"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.openai.gpt-6.1-sol",
+     "openai.gpt-6.1-sol",
+     "global.openai.gpt-6.1-sol"
+    ],
+    "modelsdev:llmgateway": [
+     "gpt-6.1-sol"
+    ],
+    "modelsdev:vivgrid": [
+     "gpt-6.1-sol"
+    ],
+    "modelsdev:cortecs": [
+     "gpt-6.1-sol"
+    ],
+    "modelsdev:openai": [
+     "gpt-6.1-sol"
+    ],
+    "modelsdev:crossmodel": [
+     "openai/gpt-6.1-sol"
+    ],
+    "modelsdev:digitalocean": [
+     "openai-gpt-6-1-sol"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "gpt61solpro",
+   "names": [
+    "OpenAI: GPT-6.1 Sol Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-29"
+   },
+   "openWeights": null,
+   "modalities": [
+    "file+image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "openai/gpt-6.1-sol-pro"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

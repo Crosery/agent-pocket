@@ -6,7 +6,7 @@
 //   &battle=wild|trainer [&species=<id>&level=<n> | &trainer=<id>]
 //   &screen=party|bag|dex|box|map|quests|settings|shop
 // Infinite overworld: &map=<overworld>&x/y accept any integer tile (negative included). window.__ap (dev only):
-//   pos() · tp(x, y, map?) · region() · gates() · places(radius?) · discover(id) · fly(id) · fog() · distance()
+//   pos() · tp(x, y, map?) · region() · gates() · places(radius?) · discover(id) · fly(id) · fog() · distance() · roamers()
 //   clock(minutes?) sets / reads the in-game clock (load with &t=<minutes> to keep it frozen) · weather(kind|null) forces field weather
 import type { FieldWeatherKind, SaveData, World } from '../shared/types.ts'
 import type { GameContext, SaveManager, Screens } from './contracts.ts'
@@ -192,6 +192,8 @@ export function installDebugHooks(ctx: GameContext, ow: OverworldExt, world: Wor
       return ctx.clock.label()
     },
     weather: (kind: FieldWeatherKind | null) => ow.setWeatherOverride(kind),
+    /** Visible roamers with their species country and distance to the player. */
+    roamers: () => ow.roamerInfo().map((r) => ({ ...r, country: CONTENT.species[r.speciesId]?.country ?? '', dist: Math.hypot(r.x - ow.player.x, r.y - ow.player.y) })),
   }
   ;(window as unknown as { __ap: typeof hooks }).__ap = hooks
 }

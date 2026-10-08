@@ -1,0 +1,230 @@
+{
+ "openai/dall-e-3": {
+  "bonus": 7,
+  "why": "ChatGPT-integrated image model that defined 2023 image generation"
+ },
+ "openai/sora": {
+  "bonus": 7,
+  "why": "first widely seen text-to-video model; retired, so a good 'fainted' lore entry"
+ },
+ "openai/whisper-large-v3": {
+  "bonus": 7,
+  "why": "reference open speech-recognition model"
+ },
+ "openai/gpt-5-codex": {
+  "bonus": 5,
+  "why": "start of the Codex-for-agents line"
+ },
+ "openai/gpt-4-turbo": {
+  "bonus": 3,
+  "why": "long-context GPT-4 refresh, vision in the API"
+ },
+ "openai/gpt-image-1-5": {
+  "bonus": 4,
+  "why": "ChatGPT Images successor"
+ },
+ "openai/gpt-image-2": {
+  "bonus": 5,
+  "why": "gpt-image-2 family (2026-04)"
+ },
+ "openai/gpt-realtime-2-1": {
+  "bonus": 3,
+  "why": "realtime voice line leading to GPT-Live"
+ },
+ "anthropic/claude-1": {
+  "bonus": 5,
+  "why": "first Claude (2023-03), root of the whole Claude lineage"
+ },
+ "anthropic/claude-2": {
+  "bonus": 4,
+  "why": "first widely used Claude"
+ },
+ "anthropic/claude-3-sonnet": {
+  "bonus": 5,
+  "why": "Claude 3 launch family"
+ },
+ "anthropic/claude-3-7-sonnet": {
+  "bonus": 7,
+  "why": "first hybrid-reasoning Claude and the Claude Code launch model"
+ },
+ "anthropic/claude-opus-4": {
+  "bonus": 6,
+  "why": "Claude 4 generation launch"
+ },
+ "anthropic/claude-sonnet-4": {
+  "bonus": 5,
+  "why": "Claude 4 generation launch"
+ },
+ "anthropic/claude-mythos-5": {
+  "bonus": 7,
+  "why": "Mythos-class tier above Opus, restricted release"
+ },
+ "anthropic/claude-3-haiku": {
+  "bonus": 3,
+  "why": "small-tier landmark"
+ },
+ "google/gemini-1-0": {
+  "bonus": 6,
+  "why": "Gemini debut (2023-12), root of the Gemini line"
+ },
+ "google/gemini-2-5-flash": {
+  "bonus": 5,
+  "why": "workhorse Flash model of 2025"
+ },
+ "google/gemini-3-pro": {
+  "bonus": 7,
+  "why": "Gemini 3 generation launch (2025-11)"
+ },
+ "google/alphago-zero": {
+  "bonus": 5,
+  "why": "landmark self-play Go system (2017)"
+ },
+ "google/alphazero": {
+  "bonus": 5,
+  "why": "landmark general self-play system (2017)"
+ },
+ "google/nano-banana-pro": {
+  "bonus": 7,
+  "why": "viral image-editing model family"
+ },
+ "google/gemma-3": {
+  "bonus": 5,
+  "why": "most-used open Gemma generation"
+ },
+ "google/gemma": {
+  "bonus": 3,
+  "why": "first open Gemma"
+ },
+ "google/imagen-4": {
+  "bonus": 4,
+  "why": "Imagen line flagship"
+ },
+ "google/genie-2": {
+  "bonus": 4,
+  "why": "interactive world model line"
+ },
+ "google/veo-2": {
+  "bonus": 4,
+  "why": "Veo generation before native audio"
+ },
+ "meta/llama-2": {
+  "bonus": 7,
+  "why": "made open-weights LLMs mainstream"
+ },
+ "meta/llama-3": {
+  "bonus": 7,
+  "why": "Llama generation that matched frontier models in its class"
+ },
+ "meta/llama-3-3": {
+  "bonus": 4,
+  "why": "most-deployed 70B Llama"
+ },
+ "meta/muse-spark": {
+  "bonus": 7,
+  "why": "first Meta Superintelligence Labs model, replaced Llama in Meta products"
+ },
+ "xai/grok-2": {
+  "bonus": 3,
+  "why": "Grok 2 (2024-08) with image generation"
+ },
+ "xai/grok-3": {
+  "bonus": 6,
+  "why": "Grok 3 reasoning generation (2025-02)"
+ },
+ "xai/grok-imagine-video": {
+  "bonus": 4,
+  "why": "Grok video generator"
+ },
+ "deepseek/deepseek-v2": {
+  "bonus": 4,
+  "why": "MLA/MoE architecture that DeepSeek built on"
+ },
+ "alibaba/qwen3": {
+  "bonus": 7,
+  "why": "open Qwen3 generation (2025-04) that dominated open-weights usage"
+ },
+ "alibaba/qwen2-5-max": {
+  "bonus": 4,
+  "why": "Qwen flagship that matched DeepSeek V3 (2025-01)"
+ },
+ "alibaba/qwq-32b": {
+  "bonus": 5,
+  "why": "open reasoning model that followed R1"
+ },
+ "alibaba/qwen-image": {
+  "bonus": 5,
+  "why": "Qwen image generation/editing line root"
+ },
+ "alibaba/wan-2-2": {
+  "bonus": 5,
+  "why": "open-weights video model (MoE)"
+ },
+ "alibaba/wan-2-5": {
+  "bonus": 4,
+  "why": "Wan with native audio"
+ },
+ "alibaba/qwen3-coder": {
+  "bonus": 5,
+  "why": "open agentic coding model"
+ },
+ "alibaba/qwen2-5-vl": {
+  "bonus": 4,
+  "why": "Qwen VL generation"
+ },
+ "minimax/hailuo-02": {
+  "bonus": 5,
+  "why": "Hailuo video generation 02"
+ },
+ "minimax/minimax-m1": {
+  "bonus": 4,
+  "why": "open hybrid-attention reasoning model"
+ },
+ "minimax/minimax-01": {
+  "bonus": 4,
+  "why": "1M-context Lightning-attention model"
+ },
+ "moonshot/kimi-k1-5": {
+  "bonus": 5,
+  "why": "Moonshot reasoning model, same week as R1"
+ },
+ "moonshot/kimi-k2-thinking": {
+  "bonus": 6,
+  "why": "open agentic thinking model"
+ },
+ "moonshot/kimi-k2-5": {
+  "bonus": 6,
+  "why": "native multimodal Kimi; base for Cursor Composer 2"
+ },
+ "zhipu/glm-4": {
+  "bonus": 4,
+  "why": "GLM-4 generation (2024-01)"
+ },
+ "zhipu/glm-5": {
+  "bonus": 6,
+  "why": "GLM-5 generation (2026-02)"
+ },
+ "tencent/hunyuan-large": {
+  "bonus": 4,
+  "why": "largest open MoE at its release (2024-11)"
+ },
+ "tencent/hunyuanimage-3-0": {
+  "bonus": 5,
+  "why": "open native-multimodal image model"
+ },
+ "tencent/hunyuanvideo": {
+  "bonus": 5,
+  "why": "open video model root"
+ },
+ "tencent/hunyuan3d-2-0": {
+  "bonus": 4,
+  "why": "open image-to-3D model"
+ },
+ "tencent/hunyuanworld-1-0": {
+  "bonus": 4,
+  "why": "open world-generation model"
+ },
+ "tencent/hy3-preview": {
+  "bonus": 5,
+  "why": "first Hy3 (HY) generation"
+ }
+}

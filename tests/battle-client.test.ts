@@ -146,7 +146,9 @@ test('local channel plays a full AI-vs-AI battle and reports engine errors as me
     for (const side of [0, 1] as const) {
       const s = model.sides[side]
       assert.equal(s.active, engine.activeIndex(side))
-      assert.equal(s.view?.hp, engine.party(side)[s.active].hp)
+      // A level-up raises the engine's hp after the last damage event; the folded view only follows damage/heal events.
+      const leveled = side === 0 && events.some((e) => e.t === 'levelUp' && e.partyIndex === s.active)
+      if (!leveled) assert.equal(s.view?.hp, engine.party(side)[s.active].hp)
       engine.party(side).forEach((cr, i) => { if (cr.hp <= 0) assert.equal(s.slots[i]?.state, 'fainted') })
     }
     engine.party(0).forEach((cr, i) => assert.deepEqual(model.progress[i], { level: cr.level, exp: cr.exp }))

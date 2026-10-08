@@ -409,7 +409,7 @@ html.ap-compact .aps-newgame .aps-title, html.ap-compact .aps-pause .aps-title {
 
 .aps-starter-layout { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 6); }
 .aps-starter-intro { margin: 0; text-align: center; color: var(--ap-text-dim); white-space: normal; }
-.aps-starter-cards { flex: 1; min-height: 0; display: flex; justify-content: center; align-items: center; gap: calc(var(--u) * 16); }
+.aps-starter-cards { flex: 1; min-height: 0; display: flex; justify-content: center; align-items: stretch; gap: calc(var(--u) * 16); }
 .aps-starter-card {
   flex-direction: column;
   align-items: center;
@@ -419,7 +419,7 @@ html.ap-compact .aps-newgame .aps-title, html.ap-compact .aps-pause .aps-title {
   animation: ap-rise 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
   animation-delay: calc(var(--i, 0) * var(--stagger, 45ms));
 }
-.aps-starter-stage { position: relative; width: calc(var(--u) * 104); height: calc(var(--u) * 100); display: flex; align-items: flex-end; justify-content: center; }
+.aps-starter-stage { position: relative; width: calc(var(--u) * 104); flex: 1 1 0; min-height: calc(var(--u) * 44); max-height: calc(var(--u) * 100); display: flex; align-items: flex-end; justify-content: center; }
 .aps-starter-stage::before {
   content: '';
   position: absolute;
@@ -429,7 +429,7 @@ html.ap-compact .aps-newgame .aps-title, html.ap-compact .aps-pause .aps-title {
   transition: opacity 200ms;
 }
 .aps-starter-card.is-active .aps-starter-stage::before { opacity: 1; animation: aps-glow 1.6s ease-in-out infinite; }
-.aps-starter-sprite { position: relative; width: calc(var(--u) * 96); height: calc(var(--u) * 96); }
+.aps-starter-sprite { position: relative; height: 96%; max-height: calc(var(--u) * 96); width: auto; aspect-ratio: 1 / 1; }
 .aps-starter-card.is-active .aps-starter-sprite { animation: aps-hop 700ms steps(4) infinite; }
 .aps-starter-pedestal {
   position: absolute;
@@ -452,8 +452,8 @@ html.ap-compact .aps-newgame .aps-title, html.ap-compact .aps-pause .aps-title {
 .aps-starter-persona .ap-gold { margin-right: calc(var(--u) * 6); }
 html.ap-compact .aps-starter-cards { gap: calc(var(--u) * 6); align-items: stretch; flex: none; }
 html.ap-compact .aps-starter-card { width: auto; flex: 1 1 0; min-width: 0; padding: calc(var(--u) * 4) calc(var(--u) * 2); }
-html.ap-compact .aps-starter-stage { width: calc(var(--u) * 72); height: calc(var(--u) * 68); }
-html.ap-compact .aps-starter-sprite { width: calc(var(--u) * 64); height: calc(var(--u) * 64); }
+html.ap-compact .aps-starter-stage { width: calc(var(--u) * 72); height: calc(var(--u) * 68); flex: none; min-height: 0; max-height: none; }
+html.ap-compact .aps-starter-sprite { width: calc(var(--u) * 64); height: calc(var(--u) * 64); max-height: none; }
 html.ap-compact .aps-starter-en { display: none; }
 html.ap-compact .aps-starter-card.is-active::after { display: none; }
 html.ap-compact .aps-starter-layout { justify-content: center; }
@@ -826,9 +826,9 @@ html.ap-compact .aps-dexd-left, html.ap-compact .aps-dexd-mid, html.ap-compact .
 /* ------------------------------------------------------------------ box */
 
 .aps-box-total { color: var(--ap-text-dim); }
-.aps-box-layout { flex: 1; min-height: 0; display: grid; grid-template-columns: calc(var(--u) * 124) auto calc(var(--u) * 152); justify-content: center; align-items: start; gap: calc(var(--u) * 10); }
-.aps-box-party { padding: calc(var(--u) * 7) calc(var(--u) * 6); }
-.aps-box-plist { display: flex; flex-direction: column; gap: calc(var(--u) * 3); }
+.aps-box-layout { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(calc(var(--u) * 124), calc(var(--u) * 150)) auto calc(var(--u) * 152); justify-content: center; align-items: start; gap: calc(var(--u) * 10); }
+.aps-box-party { padding: calc(var(--u) * 5) calc(var(--u) * 6); }
+.aps-box-plist { display: flex; flex-direction: column; gap: calc(var(--u) * 2); }
 .aps-box-pslot, .aps-box-cell {
   position: relative;
   padding: 0;
@@ -841,8 +841,9 @@ html.ap-compact .aps-dexd-left, html.ap-compact .aps-dexd-mid, html.ap-compact .
   pointer-events: auto;
   outline: none;
 }
-.aps-box-pslot { min-height: calc(var(--u) * 32); height: auto; gap: calc(var(--u) * 4); padding: calc(var(--u) * 2) calc(var(--u) * 4); }
-.aps-box-pinfo { display: flex; flex-direction: column; min-width: 0; line-height: 1.05; }
+.aps-box-pslot { min-height: calc(var(--u) * 32); height: auto; gap: calc(var(--u) * 3); padding: var(--u) calc(var(--u) * 3); }
+.aps-box-pico { display: flex; flex-direction: column; align-items: center; flex: none; }
+.aps-box-pinfo { display: flex; flex-direction: column; flex: 1; min-width: 0; line-height: 1.05; text-align: center; }
 .aps-box-pname { line-height: 1.05; }
 .aps-box-pslot:hover, .aps-box-cell:hover { border-color: var(--ap-gold); }
 .aps-box-pslot.is-active, .aps-box-cell.is-active { border-color: var(--ap-gold-hi); background: rgba(90, 74, 38, 0.65); box-shadow: 0 0 0 var(--u) var(--ap-ink), 0 0 calc(var(--u) * 6) rgba(243, 220, 160, 0.5); z-index: 1; }

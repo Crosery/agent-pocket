@@ -1,0 +1,786 @@
+{
+ "vendor": "nvidia",
+ "count": 21,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "nemotronmini4binstruct",
+   "names": [
+    "nemotron-mini-4b-instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nvidia": "2024-08-21"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nvidia": [
+     "nvidia/nemotron-mini-4b-instruct"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "nemotron3nano30ba3b",
+   "names": [
+    "NVIDIA: Nemotron 3 Nano 30B A3B",
+    "Nemotron 3 Nano 30B A3B",
+    "Nvidia Nemotron 3 Nano 30B",
+    "NVIDIA Nemotron 3 Nano 30B",
+    "nemotron-3-nano:30b",
+    "nemotron-3-nano-30b-a3b",
+    "Nemotron 3 Nano 30B A3B (Deep Infra)",
+    "NVIDIA Nemotron Nano 3 30B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-14",
+    "modelsdev:deepinfra": "2025-12-15",
+    "modelsdev:nano-gpt": "2025-12-15",
+    "modelsdev:kilo": "2025-12-15",
+    "modelsdev:venice": "2026-01-27",
+    "modelsdev:openrouter": "2025-12-15",
+    "modelsdev:crusoe": "2025-12-15",
+    "modelsdev:ollama-cloud": "2025-12-15",
+    "modelsdev:vercel": "2025-12-15",
+    "modelsdev:merge-gateway": "2025-12-15",
+    "modelsdev:nvidia": "2024-12",
+    "modelsdev:pioneer": "2025-12-15",
+    "modelsdev:edenai": "2025-12-15",
+    "modelsdev:kenari": "2025-12-15",
+    "modelsdev:amazon-bedrock": "2025-12-15",
+    "modelsdev:digitalocean": "2025-04-14"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "nvidia/nemotron-3-nano-30b-a3b"
+    ],
+    "modelsdev:deepinfra": [
+     "nvidia/Nemotron-3-Nano-30B-A3B"
+    ],
+    "modelsdev:nano-gpt": [
+     "nvidia/nemotron-3-nano-30b-a3b"
+    ],
+    "modelsdev:kilo": [
+     "nvidia/nemotron-3-nano-30b-a3b"
+    ],
+    "modelsdev:venice": [
+     "nvidia-nemotron-3-nano-30b-a3b"
+    ],
+    "modelsdev:openrouter": [
+     "nvidia/nemotron-3-nano-30b-a3b"
+    ],
+    "modelsdev:crusoe": [
+     "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+    ],
+    "modelsdev:ollama-cloud": [
+     "nemotron-3-nano:30b"
+    ],
+    "modelsdev:vercel": [
+     "nvidia/nemotron-3-nano-30b-a3b"
+    ],
+    "modelsdev:merge-gateway": [
+     "nvidia/nemotron-3-nano-30b-a3b"
+    ],
+    "modelsdev:nvidia": [
+     "nvidia/nemotron-3-nano-30b-a3b"
+    ],
+    "modelsdev:pioneer": [
+     "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/nvidia/Nemotron-3-Nano-30B-A3B"
+    ],
+    "modelsdev:kenari": [
+     "nemotron-3-nano-30b-a3b"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "nvidia.nemotron-nano-3-30b"
+    ],
+    "modelsdev:digitalocean": [
+     "nemotron-3-nano-30b"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "llama31nemotronultra253b",
+   "names": [
+    "Llama 3.1 Nemotron Ultra 253B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nvidia": "2025-04-07"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nvidia": [
+     "nvidia/llama-3.1-nemotron-ultra-253b-v1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama33nemotronsuper49bv1",
+   "names": [
+    "Nvidia Nemotron Super 49B",
+    "Llama 3.3 Nemotron Super 49B v1"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nano-gpt": "2025-08-08",
+    "modelsdev:nvidia": "2025-04-07"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nano-gpt": [
+     "nvidia/Llama-3.3-Nemotron-Super-49B-v1"
+    ],
+    "modelsdev:nvidia": [
+     "nvidia/llama-3.3-nemotron-super-49b-v1"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "llama31nemotron70binstruct",
+   "names": [
+    "Nvidia Nemotron 70b",
+    "Llama 3.1 Nemotron 70B Instruct",
+    "Llama 3.1 Nemotron 70B Instruct (Deep Infra)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nano-gpt": "2025-04-15",
+    "modelsdev:nvidia": "2025-04-15",
+    "modelsdev:edenai": "2025-04-15"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nano-gpt": [
+     "nvidia/Llama-3.1-Nemotron-70B-Instruct-HF"
+    ],
+    "modelsdev:nvidia": [
+     "nvidia/llama-3.1-nemotron-70b-instruct"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/nvidia/Llama-3.1-Nemotron-70B-Instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mistralnemotron",
+   "names": [
+    "mistral-nemotron"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nvidia": "2025-06-11"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nvidia": [
+     "mistralai/mistral-nemotron"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "llama33nemotronsuper49bv15",
+   "names": [
+    "Llama 3.3 Nemotron Super 49B v1.5"
+   ],
+   "releaseDateHints": {
+    "modelsdev:deepinfra": "2025-07-25",
+    "modelsdev:nvidia": "2025-07-25"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:deepinfra": [
+     "nvidia/Llama-3.3-Nemotron-Super-49B-v1.5"
+    ],
+    "modelsdev:nvidia": [
+     "nvidia/llama-3.3-nemotron-super-49b-v1.5"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "nemotronnano9bv2",
+   "names": [
+    "Nvidia Nemotron Nano 9B V2",
+    "Nemotron Nano 9B",
+    "nvidia-nemotron-nano-9b-v2",
+    "NVIDIA Nemotron Nano 9B v2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2025-08-18",
+    "modelsdev:merge-gateway": "2025-08-18",
+    "modelsdev:nvidia": "2025-08-18",
+    "modelsdev:amazon-bedrock": "2025-08-18"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "nvidia/nemotron-nano-9b-v2"
+    ],
+    "modelsdev:merge-gateway": [
+     "nvidia/nemotron-nano-9b-v2"
+    ],
+    "modelsdev:nvidia": [
+     "nvidia/nvidia-nemotron-nano-9b-v2"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "nvidia.nemotron-nano-9b-v2"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "llama31nemotronsafetyguard8bv3",
+   "names": [
+    "llama-3.1-nemotron-safety-guard-8b-v3"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nvidia": "2025-10-28"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nvidia": [
+     "nvidia/llama-3.1-nemotron-safety-guard-8b-v3"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "nemotronnano12bv2vl",
+   "names": [
+    "Nvidia Nemotron Nano 12B V2 VL",
+    "Nemotron Nano 12B v2 VL",
+    "NVIDIA Nemotron Nano 12B v2 VL BF16",
+    "Nemotron-nano 12b v2-vl"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2025-10-28",
+    "modelsdev:nvidia": "2025-10-28",
+    "modelsdev:amazon-bedrock": "2025-10-28",
+    "modelsdev:digitalocean": "2025-10-28"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "nvidia/nemotron-nano-12b-v2-vl"
+    ],
+    "modelsdev:nvidia": [
+     "nvidia/nemotron-nano-12b-v2-vl"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "nvidia.nemotron-nano-12b-v2"
+    ],
+    "modelsdev:digitalocean": [
+     "nemotron-nano-12b-v2-vl"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "nemotroncontentsafetyreasoning4b",
+   "names": [
+    "nemotron-content-safety-reasoning-4b"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nvidia": "2026-01-22"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nvidia": [
+     "nvidia/nemotron-content-safety-reasoning-4b"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "llamanemotronembedvl1bv2",
+   "names": [
+    "llama-nemotron-embed-vl-1b-v2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nvidia": "2026-02-10"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nvidia": [
+     "nvidia/llama-nemotron-embed-vl-1b-v2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "nemotron3super120ba12b",
+   "names": [
+    "NVIDIA: Nemotron 3 Super",
+    "Nemotron 3 Super 120B",
+    "Nvidia Nemotron 3 Super 120B",
+    "Nemotron Super",
+    "Nemotron 3 Super 120B A12B",
+    "nemotron-3-super",
+    "Nemotron-3-Super-120B-A12B",
+    "NVIDIA Nemotron 3 Super 120B A12B",
+    "Nemotron 3 Super",
+    "Nemotron 3 Super 120B A12B (Nebius)",
+    "Nemotron 3 Super Free",
+    "NVIDIA Nemotron 3 Super 120B  (Public Preview)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-11",
+    "modelsdev:perplexity-agent": "2026-03-11",
+    "modelsdev:cloudflare-workers-ai": "2026-03-11",
+    "modelsdev:nano-gpt": "2026-03-01",
+    "modelsdev:baseten": "2026-03-11",
+    "modelsdev:kilo": "2026-03-11",
+    "modelsdev:openrouter": "2026-03-11",
+    "modelsdev:crusoe": "2026-03-11",
+    "modelsdev:ollama-cloud": "2026-03-11",
+    "modelsdev:nebius": "2026-03-11",
+    "modelsdev:vercel": "2026-03-11",
+    "modelsdev:nvidia": "2026-03-11",
+    "modelsdev:edenai": "2026-03-11",
+    "modelsdev:opencode": "2026-03-11",
+    "modelsdev:kenari": "2026-03-11",
+    "modelsdev:requesty": "2026-03-11",
+    "modelsdev:amazon-bedrock": "2026-03-11",
+    "modelsdev:digitalocean": "2026-03-11"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "nvidia/nemotron-3-super-120b-a12b"
+    ],
+    "modelsdev:perplexity-agent": [
+     "nvidia/nemotron-3-super-120b-a12b"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/nvidia/nemotron-3-120b-a12b"
+    ],
+    "modelsdev:nano-gpt": [
+     "nvidia/nemotron-3-super-120b-a12b"
+    ],
+    "modelsdev:baseten": [
+     "nvidia/Nemotron-120B-A12B"
+    ],
+    "modelsdev:kilo": [
+     "nvidia/nemotron-3-super-120b-a12b"
+    ],
+    "modelsdev:openrouter": [
+     "nvidia/nemotron-3-super-120b-a12b"
+    ],
+    "modelsdev:crusoe": [
+     "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B"
+    ],
+    "modelsdev:ollama-cloud": [
+     "nemotron-3-super"
+    ],
+    "modelsdev:nebius": [
+     "nvidia/nemotron-3-super-120b-a12b"
+    ],
+    "modelsdev:vercel": [
+     "nvidia/nemotron-3-super-120b-a12b"
+    ],
+    "modelsdev:nvidia": [
+     "nvidia/nemotron-3-super-120b-a12b"
+    ],
+    "modelsdev:edenai": [
+     "nebius/nvidia/nemotron-3-super-120b-a12b"
+    ],
+    "modelsdev:opencode": [
+     "nemotron-3-super-free"
+    ],
+    "modelsdev:kenari": [
+     "nemotron-3-super-120b-a12b"
+    ],
+    "modelsdev:requesty": [
+     "nemotron-3-super-120b-a12b"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "nvidia.nemotron-super-3-120b"
+    ],
+    "modelsdev:digitalocean": [
+     "nvidia-nemotron-3-super-120b"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "nemotronvoicechat",
+   "names": [
+    "nemotron-voicechat"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nvidia": "2026-03-16"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,audio->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nvidia": [
+     "nvidia/nemotron-voicechat"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llamanemotronrerankvl1bv2",
+   "names": [
+    "llama-nemotron-rerank-vl-1b-v2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nvidia": "2026-03-31"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nvidia": [
+     "nvidia/llama-nemotron-rerank-vl-1b-v2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "nemotron3contentsafety",
+   "names": [
+    "nemotron-3-content-safety"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nvidia": "2026-04-16"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nvidia": [
+     "nvidia/nemotron-3-content-safety"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "nemotron3nanoomni30ba3breasoning",
+   "names": [
+    "Nemotron 3 Nano Omni 30B A3B Reasoning",
+    "Nemotron 3 Nano Omni"
+   ],
+   "releaseDateHints": {
+    "modelsdev:deepinfra": "2026-04-28",
+    "modelsdev:vultr": "2026-04-28",
+    "modelsdev:crusoe": "2026-04-28",
+    "modelsdev:nvidia": "2026-04-28",
+    "modelsdev:requesty": "2026-04-28",
+    "modelsdev:digitalocean": "2026-04-28"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image,video,audio->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:deepinfra": [
+     "nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning"
+    ],
+    "modelsdev:vultr": [
+     "nemotron-3-nano-omni-30b-a3b-reasoning"
+    ],
+    "modelsdev:crusoe": [
+     "nvidia/Nemotron-3-Nano-Omni-Reasoning-30B-A3B"
+    ],
+    "modelsdev:nvidia": [
+     "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning"
+    ],
+    "modelsdev:requesty": [
+     "nemotron-3-nano-omni-30b-a3b-reasoning"
+    ],
+    "modelsdev:digitalocean": [
+     "nemotron-3-nano-omni"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "nemotron35contentsafety",
+   "names": [
+    "NVIDIA: Nemotron 3.5 Content Safety",
+    "Nemotron 3.5 Content Safety"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-06-04",
+    "modelsdev:nano-gpt": "2026-06-04",
+    "modelsdev:kilo": "2026-06-04",
+    "modelsdev:openrouter": "2026-06-04",
+    "modelsdev:vultr": "2026-06-04",
+    "modelsdev:nvidia": "2026-06-04",
+    "modelsdev:requesty": "2026-06-04"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "nvidia/nemotron-3.5-content-safety"
+    ],
+    "modelsdev:nano-gpt": [
+     "nvidia/nemotron-3.5-content-safety"
+    ],
+    "modelsdev:kilo": [
+     "nvidia/nemotron-3.5-content-safety"
+    ],
+    "modelsdev:openrouter": [
+     "nvidia/nemotron-3.5-content-safety"
+    ],
+    "modelsdev:vultr": [
+     "nemotron-3.5-content-safety"
+    ],
+    "modelsdev:nvidia": [
+     "nvidia/nemotron-3.5-content-safety"
+    ],
+    "modelsdev:requesty": [
+     "nemotron-3.5-content-safety"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "nemotron3ultra550ba55b",
+   "names": [
+    "NVIDIA: Nemotron 3 Ultra",
+    "Nvidia Nemotron 3 Ultra 550B",
+    "Nemotron Ultra",
+    "Nemotron 3 Ultra",
+    "Nemotron 3 Ultra 550B A55B",
+    "NVIDIA Nemotron 3 Ultra",
+    "nemotron-3-ultra",
+    "Nemotron 3 Ultra 550B A55B (Deep Infra)",
+    "Nemotron 3 Ultra 550B A55B (Nebius)",
+    "Nemotron 3 Ultra Free"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-06-04",
+    "modelsdev:nano-gpt": "2026-06-04",
+    "modelsdev:baseten": "2026-06-04",
+    "modelsdev:wandb": "2026-06-04",
+    "modelsdev:kilo": "2026-06-04",
+    "modelsdev:venice": "2026-06-04",
+    "modelsdev:openrouter": "2026-06-04",
+    "modelsdev:routing-run": "2026-06-04",
+    "modelsdev:ollama-cloud": "2026-06-04",
+    "modelsdev:nebius": "2026-06-04",
+    "modelsdev:vercel": "2026-06-04",
+    "modelsdev:nvidia": "2026-06-04",
+    "modelsdev:pioneer": "2026-06-04",
+    "modelsdev:edenai": "2026-06-04",
+    "modelsdev:opencode": "2026-06-04",
+    "modelsdev:kenari": "2026-06-04",
+    "modelsdev:requesty": "2026-06-04",
+    "modelsdev:llmgateway": "2026-06-04",
+    "modelsdev:togetherai": "2026-06-04"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "nvidia/nemotron-3-ultra-550b-a55b"
+    ],
+    "modelsdev:nano-gpt": [
+     "nvidia/nemotron-3-ultra-550b-a55b"
+    ],
+    "modelsdev:baseten": [
+     "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B"
+    ],
+    "modelsdev:wandb": [
+     "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B"
+    ],
+    "modelsdev:kilo": [
+     "nvidia/nemotron-3-ultra-550b-a55b"
+    ],
+    "modelsdev:venice": [
+     "nvidia-nemotron-3-ultra-550b-a55b"
+    ],
+    "modelsdev:openrouter": [
+     "nvidia/nemotron-3-ultra-550b-a55b"
+    ],
+    "modelsdev:routing-run": [
+     "nemotron-3-ultra"
+    ],
+    "modelsdev:ollama-cloud": [
+     "nemotron-3-ultra"
+    ],
+    "modelsdev:nebius": [
+     "nvidia/Nemotron-3-Ultra-550b-a55b"
+    ],
+    "modelsdev:vercel": [
+     "nvidia/nemotron-3-ultra-550b-a55b"
+    ],
+    "modelsdev:nvidia": [
+     "nvidia/nemotron-3-ultra-550b-a55b"
+    ],
+    "modelsdev:pioneer": [
+     "nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/nemotron-3-ultra-550b-a55b",
+     "nebius/nvidia/Nemotron-3-Ultra-550b-a55b"
+    ],
+    "modelsdev:opencode": [
+     "nemotron-3-ultra-free"
+    ],
+    "modelsdev:kenari": [
+     "nemotron-3-ultra-550b-a55b"
+    ],
+    "modelsdev:requesty": [
+     "nemotron-3-ultra-550b-a55b"
+    ],
+    "modelsdev:llmgateway": [
+     "nemotron-3-ultra-550b"
+    ],
+    "modelsdev:togetherai": [
+     "nvidia/nemotron-3-ultra-550b-a55b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "nemotron35lightning",
+   "names": [
+    "NVIDIA: Nemotron 3.5 Lightning",
+    "Nvidia Nemotron 3.5 Lightning",
+    "Nemotron 3.5 Lightning",
+    "Nemotron 3.5 Lightning 30B A3B",
+    "Nemotron 3.5 Lightning 30B",
+    "Nemotron 3.5 Lightning Free"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-11",
+    "modelsdev:nano-gpt": "2026-08-11",
+    "modelsdev:wandb": "2026-08-11",
+    "modelsdev:kilo": "2026-08-11",
+    "modelsdev:openrouter": "2026-08-11",
+    "modelsdev:nebius": "2026-08-11",
+    "modelsdev:vercel": "2026-08-11",
+    "modelsdev:fireworks-ai": "2026-08-11",
+    "modelsdev:merge-gateway": "2026-08-11",
+    "modelsdev:nvidia": "2026-08-11",
+    "modelsdev:pioneer": "2026-08-11",
+    "modelsdev:opencode": "2026-08-11",
+    "modelsdev:runinfra": "2026-08-11"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "nvidia/nemotron-3.5-lightning"
+    ],
+    "modelsdev:nano-gpt": [
+     "nvidia/nemotron-3.5-lightning"
+    ],
+    "modelsdev:wandb": [
+     "nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B"
+    ],
+    "modelsdev:kilo": [
+     "nvidia/nemotron-3.5-lightning"
+    ],
+    "modelsdev:openrouter": [
+     "nvidia/nemotron-3.5-lightning"
+    ],
+    "modelsdev:nebius": [
+     "nvidia/Nemotron-3_5-Lightning"
+    ],
+    "modelsdev:vercel": [
+     "nvidia/nemotron-3.5-lightning"
+    ],
+    "modelsdev:fireworks-ai": [
+     "accounts/fireworks/models/nemotron-lightning-3p5-30b-a3b"
+    ],
+    "modelsdev:merge-gateway": [
+     "nvidia/nemotron-3.5-lightning-30b-a3b"
+    ],
+    "modelsdev:nvidia": [
+     "nvidia/nemotron-3.5-lightning-30b-a3b"
+    ],
+    "modelsdev:pioneer": [
+     "nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16"
+    ],
+    "modelsdev:opencode": [
+     "nemotron-3.5-lightning-free"
+    ],
+    "modelsdev:runinfra": [
+     "nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "switchyard",
+   "names": [
+    "NVIDIA: Switchyard"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-21"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "nvidia/switchyard"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

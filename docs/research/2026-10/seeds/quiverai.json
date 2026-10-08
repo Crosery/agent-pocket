@@ -1,0 +1,45 @@
+{
+ "vendor": "quiverai",
+ "count": 2,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "arrow2",
+   "names": [
+    "Arrow 2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2026-09-16"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "quiverai/arrow-2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "arrow2telos",
+   "names": [
+    "Arrow 2 Telos"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2026-09-16"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text,image"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "quiverai/arrow-2-telos"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

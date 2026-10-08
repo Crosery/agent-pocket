@@ -1,0 +1,125 @@
+{
+ "vendor": "perplexity",
+ "count": 5,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "sonar",
+   "names": [
+    "Perplexity: Sonar",
+    "Sonar"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-01-27",
+    "modelsdev:perplexity": "2024-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "perplexity/sonar"
+    ],
+    "modelsdev:perplexity": [
+     "sonar"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "sonarpro",
+   "names": [
+    "Perplexity: Sonar Pro",
+    "Sonar Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-03-07",
+    "modelsdev:perplexity": "2024-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "perplexity/sonar-pro"
+    ],
+    "modelsdev:perplexity": [
+     "sonar-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "sonarreasoningpro",
+   "names": [
+    "Perplexity: Sonar Reasoning Pro",
+    "Sonar Reasoning Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-03-07",
+    "modelsdev:perplexity": "2024-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "perplexity/sonar-reasoning-pro"
+    ],
+    "modelsdev:perplexity": [
+     "sonar-reasoning-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "sonardeepresearch",
+   "names": [
+    "Perplexity: Sonar Deep Research",
+    "Perplexity Sonar Deep Research"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-03-07",
+    "modelsdev:perplexity": "2025-02-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "perplexity/sonar-deep-research"
+    ],
+    "modelsdev:perplexity": [
+     "sonar-deep-research"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "sonarprosearch",
+   "names": [
+    "Perplexity: Sonar Pro Search"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-30"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "perplexity/sonar-pro-search"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

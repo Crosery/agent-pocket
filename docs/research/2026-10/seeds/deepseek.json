@@ -1,0 +1,1629 @@
+{
+ "vendor": "deepseek",
+ "count": 15,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "deepseekchat",
+   "names": [
+    "DeepSeek: DeepSeek V3",
+    "DeepSeek V3/Deepseek Chat",
+    "DeepSeek Chat"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-12-26",
+    "modelsdev:nano-gpt": "2025-12-01",
+    "modelsdev:kilo": "2025-12-01",
+    "modelsdev:openrouter": "2025-12-01",
+    "modelsdev:anyapi": "2025-12-01",
+    "modelsdev:orcarouter": "2025-12-01",
+    "modelsdev:edenai": "2025-12-01"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text",
+    "text,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "deepseek/deepseek-chat"
+    ],
+    "modelsdev:nano-gpt": [
+     "deepseek-chat"
+    ],
+    "modelsdev:kilo": [
+     "deepseek/deepseek-chat"
+    ],
+    "modelsdev:openrouter": [
+     "deepseek/deepseek-chat"
+    ],
+    "modelsdev:anyapi": [
+     "deepseek/deepseek-chat"
+    ],
+    "modelsdev:orcarouter": [
+     "deepseek/deepseek-chat"
+    ],
+    "modelsdev:edenai": [
+     "deepseek/deepseek-chat"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekv3",
+   "names": [
+    "DeepSeek-V3",
+    "DeepSeek V3 0324",
+    "DeepSeek Chat 0324",
+    "DeepSeek V3",
+    "DeepSeek-V3 (Deep Infra)",
+    "DeepSeek V3 0324 (Deep Infra)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:deepinfra": "2025-03-24",
+    "modelsdev:nano-gpt": "2025-03-24",
+    "modelsdev:huggingface": "2025-03-24",
+    "modelsdev:crusoe": "2025-03-24",
+    "modelsdev:merge-gateway": "2024-12-26",
+    "modelsdev:pioneer": "2024-12-26",
+    "modelsdev:edenai": "2025-03-24"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:deepinfra": [
+     "deepseek-ai/DeepSeek-V3",
+     "deepseek-ai/DeepSeek-V3-0324"
+    ],
+    "modelsdev:nano-gpt": [
+     "deepseek-v3-0324"
+    ],
+    "modelsdev:huggingface": [
+     "deepseek-ai/DeepSeek-V3",
+     "deepseek-ai/DeepSeek-V3-0324"
+    ],
+    "modelsdev:crusoe": [
+     "deepseek-ai/DeepSeek-V3-0324"
+    ],
+    "modelsdev:merge-gateway": [
+     "deepseek/deepseek-v3"
+    ],
+    "modelsdev:pioneer": [
+     "deepseek-ai/DeepSeek-V3"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/deepseek-ai/DeepSeek-V3",
+     "deepinfra/deepseek-ai/DeepSeek-V3-0324"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "deepseekr1",
+   "names": [
+    "DeepSeek: R1 0528",
+    "DeepSeek: R1",
+    "Deepseek R1 Distill Qwen 32B",
+    "DeepSeek R1",
+    "DeepSeek-R1",
+    "DeepSeek R1-0528",
+    "DeepSeek-R1 (Deep Infra)",
+    "DeepSeek-R1 (US)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-01-20",
+    "modelsdev:cloudflare-workers-ai": "2025-01-20",
+    "modelsdev:nano-gpt": "2025-01-20",
+    "modelsdev:kilo": "2025-01-20",
+    "modelsdev:melious": "2025-01-20",
+    "modelsdev:snowflake-cortex": "2025-01-20",
+    "modelsdev:openrouter": "2025-01-20",
+    "modelsdev:huggingface": "2025-01-20",
+    "modelsdev:vercel": "2025-01-20",
+    "modelsdev:merge-gateway": "2025-01-20",
+    "modelsdev:tensorx": "2025-05-28",
+    "modelsdev:edenai": "2025-01-20",
+    "modelsdev:amazon-bedrock": "2025-01-20"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "deepseek/deepseek-r1-0528",
+     "deepseek/deepseek-r1"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/deepseek-ai/deepseek-r1-distill-qwen-32b"
+    ],
+    "modelsdev:nano-gpt": [
+     "deepseek-r1"
+    ],
+    "modelsdev:kilo": [
+     "deepseek/deepseek-r1"
+    ],
+    "modelsdev:melious": [
+     "deepseek-r1-0528"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "deepseek-r1"
+    ],
+    "modelsdev:openrouter": [
+     "deepseek/deepseek-r1"
+    ],
+    "modelsdev:huggingface": [
+     "deepseek-ai/DeepSeek-R1"
+    ],
+    "modelsdev:vercel": [
+     "deepseek/deepseek-r1"
+    ],
+    "modelsdev:merge-gateway": [
+     "deepseek/deepseek-r1"
+    ],
+    "modelsdev:tensorx": [
+     "deepseek/deepseek-r1-0528"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/deepseek-ai/DeepSeek-R1"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "deepseek.r1-v1:0",
+     "us.deepseek.r1-v1:0"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekchatv3",
+   "names": [
+    "DeepSeek: DeepSeek V3 0324"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-03-24"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "deepseek/deepseek-chat-v3-0324"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekchatv31",
+   "names": [
+    "DeepSeek: DeepSeek V3.1"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-08-21"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "deepseek/deepseek-chat-v3.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekv31",
+   "names": [
+    "DeepSeek-V3.1",
+    "DeepSeek V3.1"
+   ],
+   "releaseDateHints": {
+    "modelsdev:deepinfra": "2025-08-21",
+    "modelsdev:wandb": "2025-08-21",
+    "modelsdev:huggingface": "2025-08-21",
+    "modelsdev:vercel": "2025-08-21",
+    "modelsdev:merge-gateway": "2025-08-21",
+    "modelsdev:pioneer": "2025-08-21",
+    "modelsdev:amazon-bedrock": "2025-08-21",
+    "modelsdev:tokengo": "2025-08-21"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:deepinfra": [
+     "deepseek-ai/DeepSeek-V3.1"
+    ],
+    "modelsdev:wandb": [
+     "deepseek-ai/DeepSeek-V3.1"
+    ],
+    "modelsdev:huggingface": [
+     "deepseek-ai/DeepSeek-V3.1"
+    ],
+    "modelsdev:vercel": [
+     "deepseek/deepseek-v3.1"
+    ],
+    "modelsdev:merge-gateway": [
+     "deepseek/deepseek-v3.1"
+    ],
+    "modelsdev:pioneer": [
+     "deepseek-ai/DeepSeek-V3.1"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "deepseek.v3-v1:0"
+    ],
+    "modelsdev:tokengo": [
+     "deepseek/deepseek-v3.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekv31terminus",
+   "names": [
+    "DeepSeek: DeepSeek V3.1 Terminus"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-09-22"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "deepseek/deepseek-v3.1-terminus"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekv32exp",
+   "names": [
+    "DeepSeek: DeepSeek V3.2 Exp"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-09-29"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "deepseek/deepseek-v3.2-exp"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekreasoner",
+   "names": [
+    "DeepSeek Reasoner"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nano-gpt": "2025-12-01",
+    "modelsdev:anyapi": "2025-12-01",
+    "modelsdev:orcarouter": "2025-12-01"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nano-gpt": [
+     "deepseek-reasoner"
+    ],
+    "modelsdev:anyapi": [
+     "deepseek/deepseek-r1"
+    ],
+    "modelsdev:orcarouter": [
+     "deepseek/deepseek-reasoner"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekv32",
+   "names": [
+    "DeepSeek: DeepSeek V3.2",
+    "DeepSeek V3.2",
+    "DeepSeek V3.2 (DeepInfra)",
+    "DeepSeek V3.2 (NovitaAI)",
+    "DeepSeek V3.2 (ByteDance)",
+    "DeepSeek V3.2 (Vertex AI (OpenAI-compatible))"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-01",
+    "modelsdev:empiriolabs": "2025-12-01",
+    "modelsdev:nano-gpt": "2025-12-01",
+    "modelsdev:llmgateway-providers": "2025-12-01",
+    "modelsdev:kilo": "2025-12-01",
+    "modelsdev:venice": "2025-12-04",
+    "modelsdev:melious": "2025-12-01",
+    "modelsdev:openrouter": "2025-12-01",
+    "modelsdev:vercel": "2025-12-01",
+    "modelsdev:friendli": "2025-12-01",
+    "modelsdev:ofox": "2025-12-01",
+    "modelsdev:merge-gateway": "2025-12-01",
+    "modelsdev:amazon-bedrock": "2025-12-01",
+    "modelsdev:tokengo": "2025-12-01",
+    "modelsdev:cortecs": "2025-12-01"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text",
+    "text,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "deepseek/deepseek-v3.2"
+    ],
+    "modelsdev:empiriolabs": [
+     "deepseek-v3-2"
+    ],
+    "modelsdev:nano-gpt": [
+     "deepseek/deepseek-v3.2"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "deepinfra/deepseek-v3.2",
+     "novita/deepseek-v3.2",
+     "bytedance/deepseek-v3.2",
+     "vertex-openai/deepseek-v3.2"
+    ],
+    "modelsdev:kilo": [
+     "deepseek/deepseek-v3.2"
+    ],
+    "modelsdev:venice": [
+     "deepseek-v3.2"
+    ],
+    "modelsdev:melious": [
+     "deepseek-v3.2"
+    ],
+    "modelsdev:openrouter": [
+     "deepseek/deepseek-v3.2"
+    ],
+    "modelsdev:vercel": [
+     "deepseek/deepseek-v3.2"
+    ],
+    "modelsdev:friendli": [
+     "deepseek-ai/DeepSeek-V3.2"
+    ],
+    "modelsdev:ofox": [
+     "deepseek/deepseek-v3.2"
+    ],
+    "modelsdev:merge-gateway": [
+     "deepseek/deepseek-v3.2"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "deepseek.v3.2"
+    ],
+    "modelsdev:tokengo": [
+     "deepseek/deepseek-v3.2"
+    ],
+    "modelsdev:cortecs": [
+     "deepseek-v3.2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekocr2",
+   "names": [
+    "DeepSeek OCR 2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:privatemode-ai": "2026-01-27",
+    "modelsdev:regolo-ai": "2026-01-27"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:privatemode-ai": [
+     "deepseek-ocr-2"
+    ],
+    "modelsdev:regolo-ai": [
+     "deepseek-ocr-2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekv4flash",
+   "names": [
+    "DeepSeek: DeepSeek V4 Flash 0731",
+    "DeepSeek: DeepSeek V4 Flash 0423",
+    "DeepSeek V4 Flash 0731",
+    "DeepSeek V4 Flash",
+    "DeepSeek V4 Flash 0423",
+    "DeepSeek V4 Flash (New)",
+    "DeepSeek V4 Flash (Consensus Protocol)",
+    "DeepSeek V4 Flash (DeepInfra)",
+    "DeepSeek V4 Flash (Runware)",
+    "DeepSeek V4 Flash (Tencent Cloud)",
+    "DeepSeek V4 Flash (NovitaAI)",
+    "DeepSeek V4 Flash (Alibaba Cloud)",
+    "DeepSeek V4 Flash (Baidu)",
+    "DeepSeek V4 Flash (Gonka24)",
+    "DeepSeek V4 Flash (ByteDance)",
+    "DeepSeek V4 Flash (RanoAI)",
+    "DeepSeek V4 Flash (CanopyWave)",
+    "DeepSeek V4 Flash (Fireworks AI)",
+    "DeepSeek V4 Flash (Together AI)",
+    "DeepSeek V4 Flash 0731 Fast",
+    "DeepSeek V4 Flash Flex",
+    "DeepSeek V4 Flash (Speed)",
+    "DeepSeek-V4-Flash",
+    "deepseek-v4-flash",
+    "DeepSeek V4 Flash 0731 (Deep Infra)",
+    "DeepSeek V4 Flash 0731 (Databricks)",
+    "DeepSeek V4 Flash 0731 (Together AI)",
+    "DeepSeek V4 Flash 0731 (FlexAI)",
+    "DeepSeek V4 Flash 0731 (Nebius)",
+    "DeepSeek V4 Flash 0731 (Scaleway)",
+    "DeepSeek V4 Flash 0731 (Cloudflare)",
+    "DeepSeek V4 Flash 0731 (TensorX)",
+    "DeepSeek V4 Flash 0731 (Alibaba)",
+    "DeepSeek V4 Flash Free",
+    "DeepSeek V4 Flash 0731 (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-24",
+    "modelsdev:deepinfra": "2026-04-24",
+    "modelsdev:perplexity-agent": "2026-07-31",
+    "modelsdev:empiriolabs": "2026-04-24",
+    "modelsdev:sensenova": "2026-04-24",
+    "modelsdev:alibaba-token-plan": "2026-04-24",
+    "modelsdev:cloudflare-workers-ai": "2026-07-31",
+    "modelsdev:engy": "2026-07-31",
+    "modelsdev:nano-gpt": "2026-04-24",
+    "modelsdev:crof": "2026-04-24",
+    "modelsdev:baseten": "2026-07-31",
+    "modelsdev:wandb": "2026-07-31",
+    "modelsdev:umans-ai-coding-plan": "2026-07-31",
+    "modelsdev:umans-ai": "2026-07-31",
+    "modelsdev:siliconflow": "2026-04-24",
+    "modelsdev:bothub": "2026-07-31",
+    "modelsdev:llmgateway-providers": "2026-04-24",
+    "modelsdev:kilo": "2026-04-24",
+    "modelsdev:venice": "2026-04-24",
+    "modelsdev:alibaba-token-plan-cn": "2026-04-24",
+    "modelsdev:melious": "2026-07-31",
+    "modelsdev:abacus": "2026-04-24",
+    "modelsdev:novita-ai": "2026-04-24",
+    "modelsdev:openrouter": "2026-04-24",
+    "modelsdev:iteracompute": "2026-07-31",
+    "modelsdev:cline-pass": "2026-04-24",
+    "modelsdev:routing-run": "2026-04-24",
+    "modelsdev:neuralwatt": "2026-04-24",
+    "modelsdev:azure": "2026-04-24",
+    "modelsdev:pendra": "2026-04-24",
+    "modelsdev:alibaba": "2026-07-31",
+    "modelsdev:auriko": "2026-04-24",
+    "modelsdev:zenmux": "2026-04-24",
+    "modelsdev:unorouter": "2026-04-24",
+    "modelsdev:siliconflow-cn": "2026-04-24",
+    "modelsdev:inceptron": "2026-07-31",
+    "modelsdev:vultr": "2026-07-31",
+    "modelsdev:huggingface": "2026-04-24",
+    "modelsdev:volcengine": "2026-07-31",
+    "modelsdev:impossibl": "2026-04-24",
+    "modelsdev:gmicloud": "2026-04-24",
+    "modelsdev:aiand": "2026-04-24",
+    "modelsdev:anyapi": "2026-04-24",
+    "modelsdev:volcengine-coding-plan": "2026-04-24",
+    "modelsdev:ollama-cloud": "2026-07-31",
+    "modelsdev:agentrouter": "2026-04-24",
+    "modelsdev:ambient": "2026-04-24",
+    "modelsdev:nebius": "2026-07-31",
+    "modelsdev:scaleway": "2026-07-31",
+    "modelsdev:vercel": "2026-04-24",
+    "modelsdev:ebcloud": "2026-04-24",
+    "modelsdev:greenpt": "2026-07-31",
+    "modelsdev:hyper": "2026-07-06",
+    "modelsdev:jalapeno": "2026-04-24",
+    "modelsdev:orcarouter": "2026-04-24",
+    "modelsdev:scnet-token-plan": "2026-04-24",
+    "modelsdev:ofox": "2026-04-24",
+    "modelsdev:aihubmix": "2026-07-31",
+    "modelsdev:merge-gateway": "2026-04-24",
+    "modelsdev:opper": "2026-04-24",
+    "modelsdev:nvidia": "2026-04-24",
+    "modelsdev:pioneer": "2026-04-24",
+    "modelsdev:inferx": "2026-04-24",
+    "modelsdev:opencode-go": "2026-07-31",
+    "modelsdev:openreason": "2026-07-31",
+    "modelsdev:tensorx": "2026-07-31",
+    "modelsdev:edenai": "2026-07-31",
+    "modelsdev:hpc-ai": "2026-04-24",
+    "modelsdev:modelis": "2026-04-24",
+    "modelsdev:opencode": "2026-07-31",
+    "modelsdev:kenari": "2026-04-24",
+    "modelsdev:requesty": "2026-04-24",
+    "modelsdev:llmgateway": "2026-04-24",
+    "modelsdev:vivgrid": "2026-07-31",
+    "modelsdev:tokengo": "2026-04-24",
+    "modelsdev:togetherai": "2026-07-31",
+    "modelsdev:cortecs": "2026-07-31",
+    "modelsdev:crossmodel": "2026-04-24",
+    "modelsdev:amd": "2026-07-31",
+    "modelsdev:runinfra": "2026-07-31",
+    "modelsdev:digitalocean": "2026-07-31",
+    "modelsdev:alibaba-cn": "2026-04-24"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "deepseek/deepseek-v4-flash-0731",
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:deepinfra": [
+     "deepseek-ai/DeepSeek-V4-Flash-0731",
+     "deepseek-ai/DeepSeek-V4-Flash"
+    ],
+    "modelsdev:perplexity-agent": [
+     "deepseek/deepseek-v4-flash-0731"
+    ],
+    "modelsdev:empiriolabs": [
+     "deepseek-v4-flash-0731",
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:sensenova": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "deepseek-v4-flash-0731",
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/deepseek-ai/deepseek-v4-flash-0731"
+    ],
+    "modelsdev:engy": [
+     "deepseek-v4-flash-0731"
+    ],
+    "modelsdev:nano-gpt": [
+     "deepseek/deepseek-v4-flash-0731",
+     "deepseek/deepseek-v4-flash-0423",
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:crof": [
+     "deepseek-v4-flash-0731",
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:baseten": [
+     "deepseek-ai/DeepSeek-V4-Flash-0731"
+    ],
+    "modelsdev:wandb": [
+     "deepseek-ai/DeepSeek-V4-Flash-0731"
+    ],
+    "modelsdev:umans-ai-coding-plan": [
+     "umans-deepseek-v4-flash-0731"
+    ],
+    "modelsdev:umans-ai": [
+     "umans-deepseek-v4-flash-0731"
+    ],
+    "modelsdev:siliconflow": [
+     "deepseek-ai/DeepSeek-V4-Flash-0731",
+     "deepseek-ai/DeepSeek-V4-Flash"
+    ],
+    "modelsdev:bothub": [
+     "deepseek-v4-flash-0731"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "consensusprotocol/deepseek-v4-flash",
+     "deepinfra/deepseek-v4-flash",
+     "runware/deepseek-v4-flash",
+     "tencent/deepseek-v4-flash",
+     "novita/deepseek-v4-flash",
+     "alibaba/deepseek-v4-flash",
+     "baidu/deepseek-v4-flash",
+     "gonka24/deepseek-v4-flash",
+     "bytedance/deepseek-v4-flash",
+     "ranoai/deepseek-v4-flash",
+     "canopywave/deepseek-v4-flash",
+     "fireworks/deepseek-v4-flash",
+     "together-ai/deepseek-v4-flash"
+    ],
+    "modelsdev:kilo": [
+     "deepseek/deepseek-v4-flash-0731",
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:venice": [
+     "deepseek-v4-flash-0731",
+     "deepseek-v4-flash-0731-fast",
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "deepseek-v4-flash-0731",
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:melious": [
+     "deepseek-v4-flash-0731"
+    ],
+    "modelsdev:abacus": [
+     "deepseek-ai/DeepSeek-V4-Flash"
+    ],
+    "modelsdev:novita-ai": [
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:openrouter": [
+     "deepseek/deepseek-v4-flash-0731",
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:iteracompute": [
+     "deepseek/deepseek-v4-flash-0731"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/deepseek-v4-flash"
+    ],
+    "modelsdev:routing-run": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:neuralwatt": [
+     "deepseek-v4-flash-flex",
+     "deepseek-v4-flash-speed",
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:azure": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:pendra": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:alibaba": [
+     "deepseek-v4-flash-0731"
+    ],
+    "modelsdev:auriko": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:zenmux": [
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:unorouter": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:siliconflow-cn": [
+     "deepseek-ai/DeepSeek-V4-Flash"
+    ],
+    "modelsdev:inceptron": [
+     "deepseek-ai/DeepSeek-V4-Flash-0731"
+    ],
+    "modelsdev:vultr": [
+     "deepseek-v4-flash-0731"
+    ],
+    "modelsdev:huggingface": [
+     "deepseek-ai/DeepSeek-V4-Flash-0731",
+     "deepseek-ai/DeepSeek-V4-Flash"
+    ],
+    "modelsdev:volcengine": [
+     "deepseek-v4-flash-ga-260731"
+    ],
+    "modelsdev:impossibl": [
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:gmicloud": [
+     "deepseek-ai/DeepSeek-V4-Flash"
+    ],
+    "modelsdev:aiand": [
+     "deepseek-ai/deepseek-v4-flash"
+    ],
+    "modelsdev:anyapi": [
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:volcengine-coding-plan": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:ollama-cloud": [
+     "deepseek-v4-flash:0731"
+    ],
+    "modelsdev:agentrouter": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:ambient": [
+     "deepseek/deepseek-v4-flash-0731",
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:nebius": [
+     "deepseek-ai/DeepSeek-V4-Flash-0731"
+    ],
+    "modelsdev:scaleway": [
+     "deepseek-v4-flash-0731"
+    ],
+    "modelsdev:vercel": [
+     "deepseek/deepseek-v4-flash-0731",
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:ebcloud": [
+     "DeepSeek-V4-Flash"
+    ],
+    "modelsdev:greenpt": [
+     "deepseek-v4-flash-0731"
+    ],
+    "modelsdev:hyper": [
+     "deepseek-v4-flash-0731",
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:jalapeno": [
+     "DeepSeek-V4-Flash"
+    ],
+    "modelsdev:orcarouter": [
+     "deepseek/deepseek-v4-flash-0731",
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "DeepSeek-V4-Flash-0731",
+     "DeepSeek-V4-Flash"
+    ],
+    "modelsdev:ofox": [
+     "deepseek/deepseek-v4-flash-0731",
+     "deepseek/deepseek-v4-flash-0423",
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "deepseek-v4-flash-0731",
+     "deepseek-v4-flash-0731-fast"
+    ],
+    "modelsdev:merge-gateway": [
+     "deepseek/deepseek-v4-flash-0731",
+     "deepseek/deepseek-v4-flash-0423",
+     "deepseek/deepseek-v4-flash-0731-fast",
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:opper": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:nvidia": [
+     "deepseek-ai/deepseek-v4-flash-0731",
+     "deepseek-ai/deepseek-v4-flash"
+    ],
+    "modelsdev:pioneer": [
+     "deepseek-ai/DeepSeek-V4-Flash"
+    ],
+    "modelsdev:inferx": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:opencode-go": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:openreason": [
+     "deepseek-ai/deepseek-v4-flash-0731"
+    ],
+    "modelsdev:tensorx": [
+     "deepseek/deepseek-v4-flash-0731"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/deepseek-ai/DeepSeek-V4-Flash-0731",
+     "deepseek/deepseek-v4-flash",
+     "databricks/databricks-deepseek-v4-flash-0731",
+     "together_ai/deepseek-ai/DeepSeek-V4-Flash-0731",
+     "flexai/DeepSeek-V4-Flash-0731",
+     "nebius/deepseek-ai/DeepSeek-V4-Flash-0731",
+     "scaleway/deepseek-v4-flash-0731",
+     "cloudflare/@cf/deepseek-ai/deepseek-v4-flash-0731",
+     "tensorx/deepseek/deepseek-v4-flash-0731",
+     "qwen/deepseek-v4-flash-0731"
+    ],
+    "modelsdev:hpc-ai": [
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:modelis": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:opencode": [
+     "deepseek-v4-flash-free",
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:kenari": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:requesty": [
+     "deepseek-v4-flash-0731@eu",
+     "deepseek-v4-flash-0731",
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:llmgateway": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:vivgrid": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:tokengo": [
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:togetherai": [
+     "deepseek-ai/DeepSeek-V4-Flash-0731"
+    ],
+    "modelsdev:cortecs": [
+     "deepseek-v4-flash-0731"
+    ],
+    "modelsdev:crossmodel": [
+     "deepseek/deepseek-v4-flash"
+    ],
+    "modelsdev:amd": [
+     "DeepSeek-V4-Flash"
+    ],
+    "modelsdev:runinfra": [
+     "deepseek-ai/DeepSeek-V4-Flash-0731"
+    ],
+    "modelsdev:digitalocean": [
+     "deepseek-v4-flash-0731"
+    ],
+    "modelsdev:alibaba-cn": [
+     "deepseek-v4-flash"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "deepseekv4pro",
+   "names": [
+    "DeepSeek: DeepSeek V4 Pro 0813",
+    "DeepSeek: DeepSeek V4 Pro 0423",
+    "DeepSeek V4 Pro 0813",
+    "DeepSeek V4 Pro",
+    "DeepSeek V4 Pro (0813)",
+    "DeepSeek V4 Pro (DeepInfra)",
+    "DeepSeek V4 Pro (DeepSeek)",
+    "DeepSeek V4 Pro (Runware)",
+    "DeepSeek V4 Pro (Tencent Cloud)",
+    "DeepSeek V4 Pro (Alibaba Cloud)",
+    "DeepSeek V4 Pro (Baidu)",
+    "DeepSeek V4 Pro (ByteDance)",
+    "DeepSeek V4 Pro (CanopyWave)",
+    "DeepSeek V4 Pro (Fireworks AI)",
+    "DeepSeek V4 Pro (Together AI)",
+    "DeepSeek-V4-Pro",
+    "DeepSeek V4 Pro 0423",
+    "DeepSeek V4 Pro 0813 (Deep Infra)",
+    "DeepSeek V4 Pro 0813 (Databricks)",
+    "DeepSeek V4 Pro 0813 (Tencent)",
+    "DeepSeek V4 Pro 0813 (Together AI)",
+    "DeepSeek V4 Pro 0813 (Nebius)",
+    "DeepSeek V4 Pro 0813 (Cloudflare)",
+    "DeepSeek V4 Pro 0813 (TensorX)",
+    "DeepSeek V4 Pro 0813 (Alibaba)",
+    "DeepSeek V4 Pro 0813 (EU)",
+    "DeepSeek V4 Pro (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-24",
+    "modelsdev:deepinfra": "2026-04-24",
+    "modelsdev:empiriolabs": "2026-04-24",
+    "modelsdev:sensenova": "2026-08-12",
+    "modelsdev:alibaba-token-plan": "2026-04-24",
+    "modelsdev:cloudflare-workers-ai": "2026-08-12",
+    "modelsdev:nano-gpt": "2026-04-24",
+    "modelsdev:crof": "2026-04-24",
+    "modelsdev:deepseek": "2026-08-12",
+    "modelsdev:baseten": "2026-04-24",
+    "modelsdev:wandb": "2026-08-13",
+    "modelsdev:siliconflow": "2026-04-24",
+    "modelsdev:bothub": "2026-08-12",
+    "modelsdev:llmgateway-providers": "2026-04-24",
+    "modelsdev:above": "2026-08-12",
+    "modelsdev:kilo": "2026-04-24",
+    "modelsdev:venice": "2026-04-24",
+    "modelsdev:alibaba-token-plan-cn": "2026-04-24",
+    "modelsdev:abacus": "2026-04-24",
+    "modelsdev:novita-ai": "2026-04-24",
+    "modelsdev:openrouter": "2026-04-24",
+    "modelsdev:iteracompute": "2026-08-12",
+    "modelsdev:cline-pass": "2026-04-24",
+    "modelsdev:routing-run": "2026-04-24",
+    "modelsdev:neuralwatt": "2026-04-24",
+    "modelsdev:azure": "2026-04-24",
+    "modelsdev:auriko": "2026-04-24",
+    "modelsdev:zenmux": "2026-04-24",
+    "modelsdev:unorouter": "2026-04-24",
+    "modelsdev:huggingface": "2026-04-24",
+    "modelsdev:volcengine": "2026-08-12",
+    "modelsdev:impossibl": "2026-04-24",
+    "modelsdev:gmicloud": "2026-04-24",
+    "modelsdev:cloudflare-ai-gateway": "2026-04-24",
+    "modelsdev:aiand": "2026-04-24",
+    "modelsdev:anyapi": "2026-04-24",
+    "modelsdev:volcengine-coding-plan": "2026-04-24",
+    "modelsdev:ollama-cloud": "2026-08-12",
+    "modelsdev:model-oracle-ai": "2026-04-24",
+    "modelsdev:nebius": "2026-04-24",
+    "modelsdev:vercel": "2026-04-24",
+    "modelsdev:ebcloud": "2026-04-24",
+    "modelsdev:hyper": "2026-07-06",
+    "modelsdev:jalapeno": "2026-04-24",
+    "modelsdev:fastrouter": "2026-04-24",
+    "modelsdev:orcarouter": "2026-04-24",
+    "modelsdev:scnet-token-plan": "2026-04-24",
+    "modelsdev:ofox": "2026-04-24",
+    "modelsdev:aihubmix": "2026-08-12",
+    "modelsdev:merge-gateway": "2026-04-24",
+    "modelsdev:opper": "2026-04-24",
+    "modelsdev:nvidia": "2026-04-24",
+    "modelsdev:pioneer": "2026-04-24",
+    "modelsdev:tensorx": "2026-04-24",
+    "modelsdev:edenai": "2026-08-12",
+    "modelsdev:hpc-ai": "2026-04-24",
+    "modelsdev:tempr": "2026-08-12",
+    "modelsdev:modelis": "2026-04-24",
+    "modelsdev:opencode": "2026-04-24",
+    "modelsdev:kenari": "2026-04-24",
+    "modelsdev:requesty": "2026-04-24",
+    "modelsdev:llmgateway": "2026-04-24",
+    "modelsdev:vivgrid": "2026-04-24",
+    "modelsdev:tokengo": "2026-04-24",
+    "modelsdev:togetherai": "2026-08-12",
+    "modelsdev:cortecs": "2026-04-24",
+    "modelsdev:crossmodel": "2026-04-24",
+    "modelsdev:arcee": "2026-04-24",
+    "modelsdev:runinfra": "2026-08-12",
+    "modelsdev:digitalocean": "2026-08-12",
+    "modelsdev:alibaba-cn": "2026-04-24"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "deepseek/deepseek-v4-pro-0813",
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:deepinfra": [
+     "deepseek-ai/DeepSeek-V4-Pro-0813",
+     "deepseek-ai/DeepSeek-V4-Pro"
+    ],
+    "modelsdev:empiriolabs": [
+     "deepseek-v4-pro-0813",
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:sensenova": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "deepseek-v4-pro-0813",
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/deepseek-ai/deepseek-v4-pro-0813"
+    ],
+    "modelsdev:nano-gpt": [
+     "deepseek/deepseek-v4-pro-0813",
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:crof": [
+     "deepseek-v4-pro-0813",
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:deepseek": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:baseten": [
+     "deepseek-ai/DeepSeek-V4-Pro-0813",
+     "deepseek-ai/DeepSeek-V4-Pro"
+    ],
+    "modelsdev:wandb": [
+     "deepseek-ai/DeepSeek-V4-Pro-0813"
+    ],
+    "modelsdev:siliconflow": [
+     "deepseek-ai/DeepSeek-V4-Pro-0813",
+     "deepseek-ai/DeepSeek-V4-Pro"
+    ],
+    "modelsdev:bothub": [
+     "deepseek-v4-pro-0813"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "deepinfra/deepseek-v4-pro",
+     "deepseek/deepseek-v4-pro",
+     "runware/deepseek-v4-pro",
+     "tencent/deepseek-v4-pro",
+     "alibaba/deepseek-v4-pro",
+     "baidu/deepseek-v4-pro",
+     "bytedance/deepseek-v4-pro",
+     "canopywave/deepseek-v4-pro",
+     "fireworks/deepseek-v4-pro",
+     "together-ai/deepseek-v4-pro"
+    ],
+    "modelsdev:above": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:kilo": [
+     "deepseek/deepseek-v4-pro-0813",
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:venice": [
+     "deepseek-v4-pro-0813",
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "deepseek-v4-pro-0813",
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:abacus": [
+     "deepseek-ai/DeepSeek-V4-Pro"
+    ],
+    "modelsdev:novita-ai": [
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:openrouter": [
+     "deepseek/deepseek-v4-pro-0813",
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:iteracompute": [
+     "deepseek/deepseek-v4-pro-0813"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/deepseek-v4-pro"
+    ],
+    "modelsdev:routing-run": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:neuralwatt": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:azure": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:auriko": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:zenmux": [
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:unorouter": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:huggingface": [
+     "deepseek-ai/DeepSeek-V4-Pro-0813",
+     "deepseek-ai/DeepSeek-V4-Pro"
+    ],
+    "modelsdev:volcengine": [
+     "deepseek-v4-pro-ga-260813"
+    ],
+    "modelsdev:impossibl": [
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:gmicloud": [
+     "deepseek-ai/DeepSeek-V4-Pro"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:aiand": [
+     "deepseek-ai/deepseek-v4-pro"
+    ],
+    "modelsdev:anyapi": [
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:volcengine-coding-plan": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:ollama-cloud": [
+     "deepseek-v4-pro:0813"
+    ],
+    "modelsdev:model-oracle-ai": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:nebius": [
+     "deepseek-ai/DeepSeek-V4-Pro-0813",
+     "deepseek-ai/DeepSeek-V4-Pro"
+    ],
+    "modelsdev:vercel": [
+     "deepseek/deepseek-v4-pro-0813",
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:ebcloud": [
+     "DeepSeek-V4-Pro"
+    ],
+    "modelsdev:hyper": [
+     "deepseek-v4-pro-0813",
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:jalapeno": [
+     "DeepSeek-V4-Pro"
+    ],
+    "modelsdev:fastrouter": [
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:orcarouter": [
+     "deepseek/deepseek-v4-pro-0813",
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "DeepSeek-V4-Pro-0813",
+     "DeepSeek-V4-Pro"
+    ],
+    "modelsdev:ofox": [
+     "deepseek/deepseek-v4-pro-0813",
+     "deepseek/deepseek-v4-pro-0423",
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:aihubmix": [
+     "deepseek-v4-pro-0813"
+    ],
+    "modelsdev:merge-gateway": [
+     "deepseek/deepseek-v4-pro-0813",
+     "deepseek/deepseek-v4-pro-0423",
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:opper": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:nvidia": [
+     "deepseek-ai/deepseek-v4-pro-0813",
+     "deepseek-ai/deepseek-v4-pro"
+    ],
+    "modelsdev:pioneer": [
+     "deepseek-ai/DeepSeek-V4-Pro"
+    ],
+    "modelsdev:tensorx": [
+     "deepseek/deepseek-v4-pro-0813",
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/deepseek-ai/DeepSeek-V4-Pro-0813",
+     "deepseek/deepseek-v4-pro",
+     "databricks/databricks-deepseek-v4-pro-0813",
+     "tencent/deepseek-v4-pro-0813",
+     "together_ai/deepseek-ai/DeepSeek-V4-Pro-0813",
+     "nebius/deepseek-ai/DeepSeek-V4-Pro-0813",
+     "cloudflare/@cf/deepseek-ai/deepseek-v4-pro-0813",
+     "tensorx/deepseek/deepseek-v4-pro-0813",
+     "qwen/deepseek-v4-pro-0813"
+    ],
+    "modelsdev:hpc-ai": [
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:tempr": [
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:modelis": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:opencode": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:kenari": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:requesty": [
+     "deepseek-v4-pro-0813@eu",
+     "deepseek-v4-pro-0813",
+     "deepseek-v4-pro@eu",
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:llmgateway": [
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:vivgrid": [
+     "deepseek-v4-pro-0813",
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:tokengo": [
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:togetherai": [
+     "deepseek-ai/DeepSeek-V4-Pro-0813"
+    ],
+    "modelsdev:cortecs": [
+     "deepseek-v4-pro-0813",
+     "deepseek-v4-pro"
+    ],
+    "modelsdev:crossmodel": [
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:arcee": [
+     "deepseek/deepseek-v4-pro-0813",
+     "deepseek/deepseek-v4-pro"
+    ],
+    "modelsdev:runinfra": [
+     "deepseek-ai/DeepSeek-V4-Pro-0813"
+    ],
+    "modelsdev:digitalocean": [
+     "deepseek-v4-pro-0813"
+    ],
+    "modelsdev:alibaba-cn": [
+     "deepseek-v4-pro"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "deepseekv4flashvisionexp",
+   "names": [
+    "DeepSeek: DeepSeek V4 Flash Vision Exp",
+    "DeepSeek V4 Flash Vision Exp"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-21",
+    "modelsdev:deepinfra": "2026-08-21",
+    "modelsdev:nano-gpt": "2026-08-21",
+    "modelsdev:crof": "2026-08-21",
+    "modelsdev:siliconflow": "2026-08-21",
+    "modelsdev:kilo": "2026-08-21",
+    "modelsdev:openrouter": "2026-08-21",
+    "modelsdev:huggingface": "2026-08-21",
+    "modelsdev:vercel": "2026-08-21",
+    "modelsdev:orcarouter": "2026-08-21",
+    "modelsdev:ofox": "2026-08-21",
+    "modelsdev:aihubmix": "2026-08-21",
+    "modelsdev:opencode-go": "2026-08-21",
+    "modelsdev:edenai": "2026-08-21",
+    "modelsdev:opencode": "2026-08-21",
+    "modelsdev:crossmodel": "2026-08-21",
+    "modelsdev:amd": "2026-08-21"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "deepseek/deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:deepinfra": [
+     "deepseek-ai/DeepSeek-V4-Flash-Vision-Exp"
+    ],
+    "modelsdev:nano-gpt": [
+     "deepseek/deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:crof": [
+     "deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:siliconflow": [
+     "deepseek-ai/DeepSeek-V4-Flash-Vision-Exp"
+    ],
+    "modelsdev:kilo": [
+     "deepseek/deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:openrouter": [
+     "deepseek/deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:huggingface": [
+     "deepseek-ai/DeepSeek-V4-Flash-Vision-Exp"
+    ],
+    "modelsdev:vercel": [
+     "deepseek/deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:orcarouter": [
+     "deepseek/deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:ofox": [
+     "deepseek/deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:aihubmix": [
+     "deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:opencode-go": [
+     "deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:edenai": [
+     "deepseek/deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:opencode": [
+     "deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:crossmodel": [
+     "deepseek/deepseek-v4-flash-vision-exp"
+    ],
+    "modelsdev:amd": [
+     "DeepSeek-V4-Flash-Vision-Exp"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekv41flash",
+   "names": [
+    "DeepSeek: DeepSeek V4.1 Flash",
+    "DeepSeek V4.1 Flash",
+    "DeepSeek V4 Flash Vision Exp",
+    "DeepSeek V4 Flash",
+    "DeepSeek V4.1 Flash (FAST)",
+    "DeepSeek V4.1 Flash Marathon",
+    "DeepSeek V4.1 Flash (entrim)",
+    "DeepSeek V4.1 Flash (Consensus Protocol)",
+    "DeepSeek V4.1 Flash (DeepInfra)",
+    "DeepSeek V4.1 Flash (SCX.ai)",
+    "DeepSeek V4.1 Flash (luminal)",
+    "DeepSeek V4.1 Flash (DeepSeek)",
+    "DeepSeek V4.1 Flash (Runware)",
+    "DeepSeek V4.1 Flash (NovitaAI)",
+    "DeepSeek V4.1 Flash (Alibaba Cloud)",
+    "DeepSeek V4.1 Flash (Baidu)",
+    "DeepSeek V4.1 Flash (sciforium)",
+    "DeepSeek V4.1 Flash (Fireworks AI)",
+    "DeepSeek V4.1 Flash (Together AI)",
+    "DeepSeek V4.1 Flash Flex",
+    "DeepSeek V4.1 Flash (Deep Infra)",
+    "DeepSeek V4.1 Flash (FlexAI)",
+    "DeepSeek V4.1 Flash (Nebius)",
+    "DeepSeek V4.1 Flash (Greenference)",
+    "DeepSeek V4.1 Flash (TensorX)",
+    "DeepSeek V4.1 Flash (Alibaba)",
+    "DeepSeek V4.1 Flash (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-10",
+    "modelsdev:deepinfra": "2026-09-10",
+    "modelsdev:empiriolabs": "2026-09-10",
+    "modelsdev:alibaba-token-plan": "2026-09-10",
+    "modelsdev:engy": "2026-09-10",
+    "modelsdev:nano-gpt": "2026-09-10",
+    "modelsdev:tinfoil": "2026-09-10",
+    "modelsdev:deepseek": "2026-09-10",
+    "modelsdev:baseten": "2026-09-10",
+    "modelsdev:nan": "2026-09-10",
+    "modelsdev:wandb": "2026-09-10",
+    "modelsdev:subconscious": "2026-09-10",
+    "modelsdev:umans-ai-coding-plan": "2026-09-10",
+    "modelsdev:umans-ai": "2026-09-10",
+    "modelsdev:llmgateway-providers": "2026-09-10",
+    "modelsdev:above": "2026-09-10",
+    "modelsdev:kilo": "2026-09-10",
+    "modelsdev:venice": "2026-09-10",
+    "modelsdev:alibaba-token-plan-cn": "2026-09-10",
+    "modelsdev:melious": "2026-09-10",
+    "modelsdev:302ai": "2026-09-10",
+    "modelsdev:openrouter": "2026-09-10",
+    "modelsdev:cline-pass": "2026-09-10",
+    "modelsdev:coralbricks": "2026-09-10",
+    "modelsdev:neuralwatt": "2026-09-10",
+    "modelsdev:zenmux": "2026-09-10",
+    "modelsdev:vultr": "2026-09-10",
+    "modelsdev:huggingface": "2026-09-10",
+    "modelsdev:vancine": "2026-09-10",
+    "modelsdev:aiand": "2026-09-10",
+    "modelsdev:ollama-cloud": "2026-09-10",
+    "modelsdev:nebius": "2026-09-10",
+    "modelsdev:vercel": "2026-09-10",
+    "modelsdev:greenpt": "2026-09-10",
+    "modelsdev:hyper": "2026-09-10",
+    "modelsdev:fireworks-ai": "2026-09-10",
+    "modelsdev:inco": "2026-09-10",
+    "modelsdev:scnet-token-plan": "2026-09-10",
+    "modelsdev:ofox": "2026-09-10",
+    "modelsdev:aihubmix": "2026-09-10",
+    "modelsdev:merge-gateway": "2026-09-10",
+    "modelsdev:nvidia": "2026-09-10",
+    "modelsdev:opencode-go": "2026-09-10",
+    "modelsdev:aki-io": "2026-09-10",
+    "modelsdev:tensorx": "2026-09-10",
+    "modelsdev:edenai": "2026-09-10",
+    "modelsdev:tempr": "2026-09-10",
+    "modelsdev:opencode": "2026-09-10",
+    "modelsdev:kenari": "2026-09-10",
+    "modelsdev:requesty": "2026-09-10",
+    "modelsdev:synthetic": "2026-09-10",
+    "modelsdev:llmgateway": "2026-09-10",
+    "modelsdev:vivgrid": "2026-09-10",
+    "modelsdev:togetherai": "2026-09-10",
+    "modelsdev:cortecs": "2026-09-10",
+    "modelsdev:crossmodel": "2026-09-10",
+    "modelsdev:amd": "2026-09-10",
+    "modelsdev:digitalocean": "2026-09-10",
+    "modelsdev:alibaba-cn": "2026-09-10"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image->text",
+    "text->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "deepseek/deepseek-v4.1-flash"
+    ],
+    "modelsdev:deepinfra": [
+     "deepseek-ai/DeepSeek-V4.1-Flash"
+    ],
+    "modelsdev:empiriolabs": [
+     "deepseek-v4-1-flash"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:engy": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "deepseek/deepseek-v4.1-flash"
+    ],
+    "modelsdev:tinfoil": [
+     "deepseek-v4-1-flash"
+    ],
+    "modelsdev:deepseek": [
+     "deepseek-v4-flash-vision-exp",
+     "deepseek-flash",
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:baseten": [
+     "deepseek-ai/DeepSeek-V4.1-Flash",
+     "deepseek-ai/DeepSeek-V4.1-Flash-Fast"
+    ],
+    "modelsdev:nan": [
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:wandb": [
+     "deepseek-ai/DeepSeek-V4.1-Flash"
+    ],
+    "modelsdev:subconscious": [
+     "subconscious/deepseek-v4.1-flash-marathon"
+    ],
+    "modelsdev:umans-ai-coding-plan": [
+     "umans-deepseek-v4.1-flash"
+    ],
+    "modelsdev:umans-ai": [
+     "umans-deepseek-v4.1-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "entrim/deepseek-v4.1-flash",
+     "consensusprotocol/deepseek-v4.1-flash",
+     "deepinfra/deepseek-v4.1-flash",
+     "scx-ai-gp/deepseek-v4.1-flash",
+     "luminal/deepseek-v4.1-flash",
+     "deepseek/deepseek-v4.1-flash",
+     "runware/deepseek-v4.1-flash",
+     "novita/deepseek-v4.1-flash",
+     "alibaba/deepseek-v4.1-flash",
+     "baidu/deepseek-v4.1-flash",
+     "sciforium/deepseek-v4.1-flash",
+     "fireworks/deepseek-v4.1-flash",
+     "together-ai/deepseek-v4.1-flash"
+    ],
+    "modelsdev:above": [
+     "deepseek-v4.1-flash",
+     "deepseek-v4-flash"
+    ],
+    "modelsdev:kilo": [
+     "deepseek/deepseek-v4.1-flash"
+    ],
+    "modelsdev:venice": [
+     "deepseek-v4-1-flash"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:melious": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:302ai": [
+     "deepseek-flash"
+    ],
+    "modelsdev:openrouter": [
+     "deepseek/deepseek-v4.1-flash"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/deepseek-v4.1-flash"
+    ],
+    "modelsdev:coralbricks": [
+     "deepseek-v4.1-flash-fast"
+    ],
+    "modelsdev:neuralwatt": [
+     "deepseek-v4.1-flash",
+     "deepseek-v4.1-flash-flex"
+    ],
+    "modelsdev:zenmux": [
+     "deepseek/deepseek-v4.1-flash"
+    ],
+    "modelsdev:vultr": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:huggingface": [
+     "deepseek-ai/DeepSeek-V4.1-Flash"
+    ],
+    "modelsdev:vancine": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:aiand": [
+     "deepseek-ai/deepseek-v4.1-flash"
+    ],
+    "modelsdev:ollama-cloud": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:nebius": [
+     "deepseek-ai/DeepSeek-V4.1-Flash"
+    ],
+    "modelsdev:vercel": [
+     "deepseek/deepseek-v4.1-flash"
+    ],
+    "modelsdev:greenpt": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:hyper": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:fireworks-ai": [
+     "accounts/fireworks/models/deepseek-v4p1-flash"
+    ],
+    "modelsdev:inco": [
+     "deepseek-v4.1-flash:fast"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "DeepSeek-V4.1-Flash"
+    ],
+    "modelsdev:ofox": [
+     "deepseek/deepseek-v4.1-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "deepseek/deepseek-v4.1-flash"
+    ],
+    "modelsdev:nvidia": [
+     "deepseek-ai/deepseek-v4.1-flash"
+    ],
+    "modelsdev:opencode-go": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:aki-io": [
+     "deepseek-v4.1-flash-552b"
+    ],
+    "modelsdev:tensorx": [
+     "deepseek/deepseek-v4.1-flash"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/deepseek-ai/DeepSeek-V4.1-Flash",
+     "together_ai/deepseek-ai/DeepSeek-V4.1-Flash",
+     "flexai/DeepSeek-V4.1-Flash",
+     "nebius/deepseek-ai/DeepSeek-V4.1-Flash",
+     "greenference/deepseek-v4.1-flash",
+     "tensorx/deepseek/deepseek-v4.1-flash",
+     "qwen/deepseek-v4.1-flash"
+    ],
+    "modelsdev:tempr": [
+     "deepseek/deepseek-flash"
+    ],
+    "modelsdev:opencode": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:kenari": [
+     "deepseek-v4-1-flash"
+    ],
+    "modelsdev:requesty": [
+     "deepseek-v4.1-flash",
+     "deepseek-v4.1-flash@eu"
+    ],
+    "modelsdev:synthetic": [
+     "hf:deepseek-ai/DeepSeek-V4.1-Flash"
+    ],
+    "modelsdev:llmgateway": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:vivgrid": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:togetherai": [
+     "deepseek-ai/DeepSeek-V4.1-Flash"
+    ],
+    "modelsdev:cortecs": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:crossmodel": [
+     "deepseek/deepseek-v4.1-flash"
+    ],
+    "modelsdev:amd": [
+     "DeepSeek-V4.1-Flash"
+    ],
+    "modelsdev:digitalocean": [
+     "deepseek-v4.1-flash"
+    ],
+    "modelsdev:alibaba-cn": [
+     "deepseek-v4.1-flash"
+    ]
+   },
+   "deprecated": true
+  }
+ ]
+}
