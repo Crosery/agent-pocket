@@ -7,7 +7,7 @@ import { CONTENT, t } from '../../shared/content/index.ts'
 import { maxHp } from '../../shared/creature.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
 import { ON_EVENTS, TUTORIAL, type TipDef } from './config.ts'
-import { afterDone, battleCues, condHolds, enrich, matchPayload, tipFlag, tipLive, type LiveView, type Place } from './logic.ts'
+import { afterDone, battleCues, condHolds, enrich, isTallGrassName, matchPayload, tipFlag, tipLive, type LiveView, type Place } from './logic.ts'
 import { createObjectiveView, createTipView } from './view.ts'
 
 export interface Onboarding {
@@ -161,7 +161,7 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
           break
         }
         case 'tallGrass':
-          hold(tip, !!CONTENT.terrainByKey[overworld.terrainName]?.tallGrass)
+          hold(tip, isTallGrassName(overworld.terrainName))
           break
         case 'hurt':
           hold(tip, ctx.save.party.some((c) => c.hp < maxHp(c, ctx.data) * tr.hpBelow), tr.delaySec ?? 0)

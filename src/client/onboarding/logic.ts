@@ -96,6 +96,11 @@ export function bearing(from: Place, to: Place): { angle: number; tiles: number 
 
 export const tipFlag = (id: string) => `${TIP_FLAG_PREFIX}${id}`
 
+/** The overworld reports the terrain by its display name (nameZh), not its key. */
+export function isTallGrassName(nameZh: string): boolean {
+  return CONTENT.terrain.some((t) => t.nameZh === nameZh && !!t.tallGrass)
+}
+
 export function tipSeen(s: ProgressView, id: string): boolean {
   return truthy(s.flags[tipFlag(id)])
 }

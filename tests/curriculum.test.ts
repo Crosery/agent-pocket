@@ -7,7 +7,7 @@ import { buildWorld } from '../src/shared/world/index.ts'
 import { starterSpecies, walkSteps } from '../src/shared/world/story.ts'
 import { EXCHANGE, offersOf, takeOffer, timesAffordable, validateExchange } from '../src/shared/gameplay/exchange.ts'
 import { BATTLE_CUES, ON_EVENTS, TUTORIAL, validateCurriculum } from '../src/client/onboarding/config.ts'
-import { battleCues, condHolds, enrich, lessonLearned, matchPayload, tipLive, type ProgressView } from '../src/client/onboarding/logic.ts'
+import { battleCues, condHolds, enrich, isTallGrassName, lessonLearned, matchPayload, tipLive, type ProgressView } from '../src/client/onboarding/logic.ts'
 import type { BattleEvent, ScriptStep } from '../src/shared/types.ts'
 
 const world = buildWorld()
@@ -148,4 +148,12 @@ test('exchange: data is sound, unlocks by badges, takes materials and counts wha
   const rich = { bag: Object.fromEntries(Object.keys(gated.give).map((k) => [k, 9])), badges: [] as string[], flags: {} }
   assert.equal(timesAffordable(gated, rich), 0, 'locked without badges')
   assert.ok(timesAffordable(gated, { ...rich, badges: ['1', '2', '3', '4'] }) > 0)
+})
+
+test('the tall-grass tip fires for the terrain name the overworld reports', () => {
+  const grass = CONTENT.terrain.filter((x) => x.tallGrass)
+  assert.ok(grass.length > 0)
+  for (const g of grass) assert.ok(isTallGrassName(g.nameZh), g.nameZh)
+  const plain = CONTENT.terrain.find((x) => !x.tallGrass && x.walkable)!
+  assert.ok(!isTallGrassName(plain.nameZh), plain.nameZh)
 })
