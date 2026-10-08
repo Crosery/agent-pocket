@@ -6,8 +6,8 @@ import { BattleEngine } from '../../src/shared/battle/engine.ts'
 import { chooseAiAction } from '../../src/shared/battle/ai.ts'
 import { Rng } from '../../src/shared/rng.ts'
 import { createCreature, healFull } from '../../src/shared/creature.ts'
+import { pilot } from './pilot.ts'
 import { C, RULES, STATS, bst } from './lib.ts'
-import archetypesJson from './archetypes.json' with { type: 'json' }
 
 export interface MemberSpec {
   species: string
@@ -24,32 +24,38 @@ export interface TeamSpec {
   /** One-line plan: how the team is meant to win (shown in reports and docs). */
   plan: string
   members: MemberSpec[]
+  /** Species that always leads (a weather setter opens the battle); the rest of the roster is shuffled. */
+  lead?: string
 }
-
-export interface ArchetypeFile {
-  /** Team-building law (checked by the framework tests): a shared BST budget keeps the comparison fair. */
-  budget: { members: [number, number]; maxTeamBst: number; maxMemberBst: number; maxRarityOrder: number }
-  teams: TeamSpec[]
-}
-
-export const ARCHETYPES: ArchetypeFile = archetypesJson as unknown as ArchetypeFile
 
 export type Policy = (engine: BattleEngine, side: SideIndex, rng: Rng) => BattleAction
 
 /** The in-game trainer AI at its top level. */
 export const gameAi: Policy = (engine, side, rng) => chooseAiAction(engine, side, rng)
+/** Default policy of the matrix: a competent player (tools/balance/pilot.ts). */
+export const pilotPolicy: Policy = pilot
 
-export function buildTeam(spec: TeamSpec, level = RULES.sim.level, iv = RULES.sim.iv): Creature[] {
-  const rng = new Rng(1)
+export function buildTeam(spec: TeamSpec, level = RULES.sim.level, seed = 1): Creature[] {
+  const rng = new Rng(seed)
   return spec.members.map((m) => {
     const lv = m.level ?? level
     const cr = createCreature(m.species, lv, { rng, shiny: false, ...(m.moves ? { moves: m.moves } : {}) }, C)
     const sp = C.species[m.species]
     cr.abilityId = sp.abilities[m.ability ?? 0] ?? sp.abilities[0] ?? ''
-    for (const k of STATS) cr.ivs[k] = iv
+    // IVs are rolled like in the game (uniform 0..ivMax) so speed ties and near-ties are genuinely random.
+    for (const k of STATS) cr.ivs[k] = rng.int(0, C.config.creature.ivMax)
     healFull(cr, C)
     return cr
   })
+}
+
+function shuffled<T>(xs: T[], rng: Rng): T[] {
+  const out = [...xs]
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = rng.int(0, i)
+    ;[out[i], out[j]] = [out[j], out[i]]
+  }
+  return out
 }
 
 const cloneParty = (p: Creature[]): Creature[] => p.map((c) => structuredClone(c))
@@ -63,7 +69,7 @@ export interface BattleOutcome {
   capped: boolean
 }
 
-export function playBattle(a: Creature[], b: Creature[], seed: number, policy: Policy = gameAi): BattleOutcome {
+export function playBattle(a: Creature[], b: Creature[], seed: number, policy: Policy = pilotPolicy): BattleOutcome {
   const init: BattleInit = {
     seed,
     sides: [
@@ -110,17 +116,42 @@ export interface PairResult {
   capped: number
 }
 
-/** Plays `n` battles; sides swap each game so neither team gets a fixed first-slot advantage (there is none, but the pairing stays symmetric). */
-export function playPair(a: TeamSpec, b: TeamSpec, n: number, seed: number, policy: Policy = gameAi, level = RULES.sim.level): PairResult {
-  const ta = buildTeam(a, level)
-  const tb = buildTeam(b, level)
+/** Source of concrete team instances: archetype id + variant number -> team (variant 0 is the canonical team). */
+export type TeamSource = (id: string, variant: number) => TeamSpec
+
+const built = new Map<string, { party: Creature[]; lead?: string }>()
+function partyOf(src: TeamSource, id: string, variant: number, level: number): { party: Creature[]; lead?: string } {
+  const key = `${id}#${variant}@${level}`
+  let p = built.get(key)
+  if (!p) { const spec = src(id, variant); p = { party: buildTeam(spec, level, variant * 131 + 7), lead: spec.lead }; built.set(key, p) }
+  return p
+}
+
+/** Shuffles a roster; a designated lead species is moved to the front. */
+function arrange(t: { party: Creature[]; lead?: string }, rng: Rng): Creature[] {
+  const out = shuffled(t.party, rng)
+  const i = t.lead ? out.findIndex((c) => c.speciesId === t.lead) : -1
+  if (i > 0) out.unshift(...out.splice(i, 1))
+  return out
+}
+
+/**
+ * Plays `n` battles between two archetypes. Game i fields variant i of each archetype (a fresh, legal team instance),
+ * shuffles both rosters (lead order is part of play) and swaps seats on odd games.
+ */
+export function playPair(src: TeamSource, a: string, b: string, n: number, seed: number, policy: Policy = pilotPolicy, level = RULES.sim.level, variants = RULES.sim.variants): PairResult {
   const w: [number, number, number] = [0, 0, 0]
   let turns = 0
   let capped = 0
   for (let i = 0; i < n; i++) {
     const s = seed * 100003 + i * 7919 + 13
+    const ta = partyOf(src, a, i % variants, level)
+    const tb = partyOf(src, b, (i + 1 + Math.floor(i / variants)) % variants, level)
     const flip = i % 2 === 1
-    const r = flip ? playBattle(tb, ta, s, policy) : playBattle(ta, tb, s, policy)
+    const sh = new Rng(s ^ 0x5bd1e995)
+    const xa = arrange(ta, sh)
+    const xb = arrange(tb, sh)
+    const r = flip ? playBattle(xb, xa, s, policy) : playBattle(xa, xb, s, policy)
     turns += r.turns
     if (r.capped) capped += 1
     const aWon = flip ? r.winner === 1 : r.winner === 0
@@ -129,27 +160,26 @@ export function playPair(a: TeamSpec, b: TeamSpec, n: number, seed: number, poli
     else if (bWon) w[1] += 1
     else w[2] += 1
   }
-  return { a: a.id, b: b.id, n, w, rate: (w[0] + w[2] / 2) / n, meanTurns: turns / n, capped }
+  return { a, b, n, w, rate: (w[0] + w[2] / 2) / n, meanTurns: turns / n, capped }
 }
 
 export interface Matrix {
   ids: string[]
-  /** rate[i][j] = score of team i against team j. */
+  /** rate[i][j] = score of archetype i against archetype j. */
   rate: number[][]
   draws: number[][]
   meanTurns: number
   n: number
 }
 
-export function runMatrix(teams: TeamSpec[], n: number, seed: number, policy: Policy = gameAi, level = RULES.sim.level): Matrix {
-  const ids = teams.map((t) => t.id)
+export function runMatrix(src: TeamSource, ids: string[], n: number, seed: number, policy: Policy = pilotPolicy, level = RULES.sim.level, variants = RULES.sim.variants): Matrix {
   const rate = ids.map(() => ids.map(() => 0.5))
   const draws = ids.map(() => ids.map(() => 0))
   let turns = 0
   let games = 0
-  for (let i = 0; i < teams.length; i++) {
-    for (let j = i + 1; j < teams.length; j++) {
-      const r = playPair(teams[i], teams[j], n, seed + i * 31 + j * 17, policy, level)
+  for (let i = 0; i < ids.length; i++) {
+    for (let j = i + 1; j < ids.length; j++) {
+      const r = playPair(src, ids[i], ids[j], n, seed + i * 31 + j * 17, policy, level, variants)
       rate[i][j] = r.rate
       rate[j][i] = 1 - r.rate
       draws[i][j] = draws[j][i] = r.w[2] / n
@@ -202,31 +232,4 @@ export function judgeMatrix(m: Matrix): MatrixVerdict {
   return { fieldWin, dominant, noPrey, noCounter, offBand, maxDraw, cycle, ok }
 }
 
-export const teamBst = (t: TeamSpec): number => t.members.reduce((a, m) => a + bst(C.species[m.species]), 0)
 
-/** Team-building law: legal movesets, unique members, shared BST budget. Returns problems (empty = valid). */
-export function validateArchetypes(file: ArchetypeFile = ARCHETYPES, legal: (speciesId: string, level: number) => Set<string>): string[] {
-  const out: string[] = []
-  const b = file.budget
-  const ids = new Set<string>()
-  for (const t of file.teams) {
-    if (ids.has(t.id)) out.push(`${t.id}: duplicate team id`)
-    ids.add(t.id)
-    if (t.members.length < b.members[0] || t.members.length > b.members[1]) out.push(`${t.id}: ${t.members.length} members (allowed ${b.members})`)
-    const seen = new Set<string>()
-    for (const m of t.members) {
-      const sp = C.species[m.species]
-      if (!sp) { out.push(`${t.id}: unknown species ${m.species}`); continue }
-      if (seen.has(m.species)) out.push(`${t.id}: ${m.species} twice`)
-      seen.add(m.species)
-      if (bst(sp) > b.maxMemberBst) out.push(`${t.id}: ${m.species} BST ${bst(sp)} above member cap ${b.maxMemberBst}`)
-      if ((C.rarityById[sp.rarity]?.order ?? 99) > b.maxRarityOrder) out.push(`${t.id}: ${m.species} rarity ${sp.rarity} above the cap`)
-      const pool = legal(m.species, m.level ?? RULES.sim.level)
-      for (const mv of m.moves ?? []) if (!pool.has(mv)) out.push(`${t.id}: ${m.species} cannot learn ${mv}`)
-      if ((m.moves ?? []).length > C.config.party.maxMoves) out.push(`${t.id}: ${m.species} has more than ${C.config.party.maxMoves} moves`)
-    }
-    const total = teamBst(t)
-    if (total > b.maxTeamBst || total < b.minTeamBst) out.push(`${t.id}: team BST ${total} outside [${b.minTeamBst}, ${b.maxTeamBst}]`)
-  }
-  return out
-}

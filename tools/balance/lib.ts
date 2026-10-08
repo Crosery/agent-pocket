@@ -10,17 +10,14 @@ export const STATS: readonly StatKey[] = ['hp', 'atk', 'def', 'spa', 'spd', 'spe
 /** Shape of tools/balance/rules.json (the machine-readable half of docs/balance.md). */
 export interface BalanceRules {
   stats: {
-    /** Allowed BST window per rarity id; mirrors content/rarities.json and is cross-checked against it. */
-    rarityBst: Record<string, [number, number]>
     /** Evolution step: the evolved form's BST must rise by a ratio inside this window. */
     evolutionBstRatio: [number, number]
-    /** One stat may not exceed this share of the BST, nor any stat fall below `minStat`. */
+    /** One stat may not exceed this share of the BST, nor fall below `minStat` / exceed `maxStat`. */
     maxStatShare: number
     minStat: number
     maxStat: number
     /** |z| beyond this inside one rarity band flags an outlier. */
     outlierZ: number
-    /** Maximum stdev of BST inside one rarity (stage 1 only), as a fraction of the band width. */
     maxStdevOfBand: number
   }
   types: {
@@ -28,53 +25,55 @@ export interface BalanceRules {
     maxSuperEffective: number
     minResisted: number
     maxWeaknesses: number
-    /** Offense / defense index of a type must stay within this many stdevs of the mean. */
-    indexSpread: number
-    /** No type may be both best-in-class offensively and defensively (combined index ceiling). */
+    /** Mean multiplier dealt / taken per type must sit inside this window. */
+    indexRange: [number, number]
     maxCombinedIndex: number
-    /** Share of species allowed to have a 4x weakness. */
     maxQuadWeakShare: number
   }
   moves: {
-    /** power-equivalent value of one percentage point of secondary-effect chance, per effect class. */
+    /** Power-equivalent value of effects (status:*, volatile:*, stat:*, heal, drain, weather, cureStatus, highCrit). */
     effectValue: Record<string, number>
-    /** Expected PP window for a given effective power (rows: upTo power, pp [min,max]). */
+    /** PP window for a given value (rows ascending by `upTo`). */
     ppTiers: { upTo: number; pp: [number, number] }[]
-    /** Outlier tolerance, in effective power points over/under the tier curve. */
+    /** PP window per status-move class. */
+    statusPp: Record<string, [number, number]>
+    maxSuicidePower: number
     valueTolerance: number
-    /** Priority price: effective power multiplier per priority step. */
     priorityMul: number
     rechargeMul: number
     recoilMul: number
     selfFaintMul: number
-    /** Highest allowed effective power per rarity-free tier (hard ceiling for any damaging move). */
     maxPower: number
+  }
+  ttk: {
+    movePower: [number, number]
+    levels: number[]
+    band: Record<'neutral' | 'superEffective' | 'resisted', [number, number]>
   }
   sim: {
     level: number
-    iv: number
     battles: number
     seed: number
+    variants: number
     maxTurns: number
-    /** Archetype acceptance. */
-    maxFieldWin: number
     minFieldWin: number
+    maxFieldWin: number
     maxAllOpponentsWin: number
     favourableWin: number
     unfavourableWin: number
     maxDrawRate: number
-    maxTeamBstSpread: number
   }
   curve: {
-    /** Battles needed to gain a level (same-level wild fight of an average species) per level bracket. */
+    expLevels: number[]
     battlesPerLevel: { upTo: number; range: [number, number] }[]
-    /** Gym leader progression: level step between consecutive gyms and the party size for each. */
-    gymLevelStep: [number, number]
+    gymCount: number
     gymFirstLeaderLevel: [number, number]
-    /** Leader team power relative to the previous leader's. */
+    gymLevelStep: [number, number]
     gymPowerRatio: [number, number]
-    /** Gym trainers (underlings) stay this many levels under their leader at most. */
+    /** Gym 1 is a deliberately light tutorial leader, so the step to gym 2 is allowed a wider jump. */
+    gymFirstStepPowerRatio: [number, number]
     underlingMaxLevelBelow: number
+    startMoneyInPotions: number
   }
 }
 

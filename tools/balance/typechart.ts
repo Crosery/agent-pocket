@@ -1,7 +1,7 @@
 // Type chart health: offensive/defensive coverage of every type, dual-type extremes, species usage.
 import { typeEffectiveness } from '../../src/shared/content/index.ts'
 import type { TypeId } from '../../src/shared/types.ts'
-import { C, RULES, mean, r2, stdev, table } from './lib.ts'
+import { C, RULES, mean, r2, table } from './lib.ts'
 
 export interface TypeRow {
   id: TypeId
@@ -103,17 +103,15 @@ export function typeViolations(): TypeViolation[] {
   const R = RULES.types
   const rows = typeRows()
   const out: TypeViolation[] = []
-  const offs = rows.map((r) => r.offense)
-  const defs = rows.map((r) => r.defense)
-  const [mo, so, md, sd] = [mean(offs), stdev(offs), mean(defs), stdev(defs)]
+  const [lo, hi] = R.indexRange
   for (const r of rows) {
     if (r.se < R.minSuperEffective || r.se > R.maxSuperEffective) out.push({ id: r.id, why: `hits ${r.se} types super effectively (allowed ${R.minSuperEffective}-${R.maxSuperEffective})` })
     if (r.resists < R.minResisted) out.push({ id: r.id, why: `resists only ${r.resists} types (min ${R.minResisted})` })
     if (r.weak > R.maxWeaknesses) out.push({ id: r.id, why: `${r.weak} types hit it super effectively (max ${R.maxWeaknesses})` })
     if (r.weak === 0) out.push({ id: r.id, why: 'has no weakness' })
     if (r.se === 0) out.push({ id: r.id, why: 'hits nothing super effectively' })
-    if (so > 0 && Math.abs(r.offense - mo) / so > R.indexSpread) out.push({ id: r.id, why: `offense index ${r.offense} is ${r2((r.offense - mo) / so)} sd from the mean ${r2(mo)}` })
-    if (sd > 0 && Math.abs(r.defense - md) / sd > R.indexSpread) out.push({ id: r.id, why: `defense index ${r.defense} is ${r2((r.defense - md) / sd)} sd from the mean ${r2(md)}` })
+    if (r.offense < lo || r.offense > hi) out.push({ id: r.id, why: `offense index ${r.offense} outside [${lo}, ${hi}]` })
+    if (r.defense < lo || r.defense > hi) out.push({ id: r.id, why: `defense index ${r.defense} outside [${lo}, ${hi}]` })
     if (r.index > R.maxCombinedIndex) out.push({ id: r.id, why: `combined index ${r.index} above ${R.maxCombinedIndex}` })
   }
   const d = dualStats()

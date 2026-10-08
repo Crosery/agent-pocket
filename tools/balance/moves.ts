@@ -50,7 +50,7 @@ export interface MoveRow {
   value: number
   pp: number
   priority: number
-  /** PP window expected for this value, from the tier table. */
+  /** PP window expected for this move: damaging moves by value tier, status moves by class. */
   ppWindow: [number, number]
   /** Value points over (+) or under (-) what the PP would buy at the tier midpoint. */
   slack: number
@@ -77,6 +77,18 @@ export function damageValue(m: MoveDef): number {
   return v
 }
 
+/** Class of a status move for the PP table (heal / weather / protect / boost / inflict / drop / other). */
+export function statusClass(m: MoveDef): string {
+  const has = (k: string) => m.effects.some((e) => e.kind === k)
+  if (has('weather')) return 'weather'
+  if (has('heal')) return 'heal'
+  if (m.effects.some((e) => e.kind === 'volatile' && e.volatile === 'protect')) return 'protect'
+  if (m.effects.some((e) => (e.kind === 'status' || e.kind === 'volatile') && e.target === 'enemy')) return 'inflict'
+  if (m.effects.some((e) => e.kind === 'stat' && e.target === 'self')) return 'boost'
+  if (m.effects.some((e) => e.kind === 'stat' && e.target === 'enemy')) return 'drop'
+  return 'other'
+}
+
 export function ppWindowFor(value: number): [number, number] {
   for (const t of RULES.moves.ppTiers) if (value <= t.upTo) return t.pp
   const last = RULES.moves.ppTiers[RULES.moves.ppTiers.length - 1]
@@ -88,7 +100,7 @@ export function moveRows(): MoveRow[] {
     const dv = damageValue(m)
     const ev = m.effects.reduce((a, e) => a + effectValue(e, movePowerPoints(m)), 0)
     const value = dv + ev
-    const win = ppWindowFor(value)
+    const win = dv > 0 ? ppWindowFor(value) : (RULES.moves.statusPp[statusClass(m)] ?? RULES.moves.statusPp.other)
     const mid = (win[0] + win[1]) / 2
     return { id: m.id, type: m.type, category: m.category, damageValue: r1(dv), effectValue: r1(ev), value: r1(value), pp: m.pp, priority: m.priority, ppWindow: win, slack: r1(mid - m.pp) }
   })
@@ -99,12 +111,16 @@ export interface MoveViolation { id: string; why: string }
 export function moveViolations(): MoveViolation[] {
   const R = RULES.moves
   const out: MoveViolation[] = []
+  const rows = moveRows()
   for (const m of C.moveList) {
-    const row = moveRows().find((r) => r.id === m.id)!
-    if (isDamagingMove(m) && movePowerPoints(m) > R.maxPower) out.push({ id: m.id, why: `power ${movePowerPoints(m)} above ceiling ${R.maxPower}` })
-    if (m.pp < row.ppWindow[0] || m.pp > row.ppWindow[1]) out.push({ id: m.id, why: `PP ${m.pp} outside window [${row.ppWindow}] for value ${row.value}` })
+    const row = rows.find((r) => r.id === m.id)!
+    const suicide = m.effects.some((e) => e.kind === 'selfFaint')
+    if (isDamagingMove(m) && !suicide && movePowerPoints(m) > R.maxPower) out.push({ id: m.id, why: `power ${movePowerPoints(m)} above ceiling ${R.maxPower}` })
+    if (suicide && m.power > R.maxSuicidePower) out.push({ id: m.id, why: `self-faint power ${m.power} above ${R.maxSuicidePower}` })
+    // Too much PP is an exploit; too little only makes a move weak (recharge nukes), so only the ceiling is enforced.
+    if (m.pp > row.ppWindow[1]) out.push({ id: m.id, why: `PP ${m.pp} above window [${row.ppWindow}] for value ${row.value}` })
     if (!isDamagingMove(m) && m.power !== 0) out.push({ id: m.id, why: 'status move with non-zero power' })
-    if (isDamagingMove(m) && m.category !== 'status' && m.power <= 0) out.push({ id: m.id, why: 'damaging move without power' })
+    if (m.category !== 'status' && m.power <= 0 && !m.effects.some((e) => e.kind === 'fixedDamage')) out.push({ id: m.id, why: 'damaging move without power' })
   }
   return out
 }

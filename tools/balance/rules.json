@@ -1,7 +1,26 @@
 {
-  "stats": {"rarityBst": {}, "evolutionBstRatio": [1.1, 1.5], "maxStatShare": 0.34, "minStat": 15, "maxStat": 150, "outlierZ": 2.2, "maxStdevOfBand": 0.3},
-  "types": {"minSuperEffective": 2, "maxSuperEffective": 4, "minResisted": 2, "maxWeaknesses": 4, "indexSpread": 1.6, "maxCombinedIndex": 1.5, "maxQuadWeakShare": 0.2},
-  "moves": {"effectValue": {}, "ppTiers": [], "valueTolerance": 25, "priorityMul": 1.1, "rechargeMul": 0.55, "recoilMul": 0.7, "selfFaintMul": 0.5, "maxPower": 160},
-  "sim": {"level": 50, "iv": 20, "battles": 200, "seed": 1, "maxTurns": 150, "maxFieldWin": 0.62, "minFieldWin": 0.38, "maxAllOpponentsWin": 0.65, "favourableWin": 0.56, "unfavourableWin": 0.44, "maxDrawRate": 0.08, "maxTeamBstSpread": 0.05},
-  "curve": {"battlesPerLevel": [], "gymLevelStep": [4, 9], "gymFirstLeaderLevel": [8, 12], "gymPowerRatio": [1.1, 1.6], "underlingMaxLevelBelow": 6}
+  "stats": {"evolutionBstRatio": [1.04, 1.6], "maxStatShare": 0.34, "minStat": 15, "maxStat": 160, "outlierZ": 2.6, "maxStdevOfBand": 0.3},
+  "types": {"minSuperEffective": 2, "maxSuperEffective": 4, "minResisted": 2, "maxWeaknesses": 4, "maxCombinedIndex": 1.5, "maxQuadWeakShare": 0.25, "indexRange": [0.95, 1.2]},
+  "moves": {
+    "effectValue": {"status:sleep": 55, "status:freeze": 55, "status:paralysis": 40, "status:burn": 30, "status:poison": 30, "status:default": 30, "volatile:confusion": 28, "volatile:flinch": 10, "volatile:leech": 30, "volatile:taunt": 12, "volatile:focus": 15, "volatile:protect": 0, "volatile:default": 10, "stat:atk": 14, "stat:spa": 14, "stat:def": 10, "stat:spd": 10, "stat:spe": 14, "stat:acc": 4, "stat:eva": 6, "stat:default": 8, "heal": 40, "drain": 0.3, "weather": 30, "cureStatus": 12, "highCrit": 6},
+    "ppTiers": [
+      {"upTo": 30, "pp": [25, 40]},
+      {"upTo": 50, "pp": [20, 40]},
+      {"upTo": 70, "pp": [15, 30]},
+      {"upTo": 90, "pp": [10, 25]},
+      {"upTo": 115, "pp": [5, 20]},
+      {"upTo": 400, "pp": [5, 15]}
+    ],
+    "valueTolerance": 30,
+    "priorityMul": 1.1,
+    "rechargeMul": 0.55,
+    "recoilMul": 0.7,
+    "selfFaintMul": 0.5,
+    "maxPower": 160,
+    "statusPp": {"heal": [5, 15], "weather": [5, 10], "protect": [5, 15], "boost": [15, 30], "inflict": [10, 30], "drop": [15, 30], "other": [10, 30]},
+    "maxSuicidePower": 220
+  },
+  "ttk": {"movePower": [70, 100], "levels": [10, 30, 50, 70], "band": {"neutral": [2.4, 4.6], "superEffective": [1.3, 2.8], "resisted": [4.5, 14]}},
+  "sim": {"level": 50, "battles": 400, "seed": 1, "variants": 24, "maxTurns": 150, "minFieldWin": 0.33, "maxFieldWin": 0.68, "maxAllOpponentsWin": 0.65, "favourableWin": 0.55, "unfavourableWin": 0.5, "maxDrawRate": 0.08},
+  "curve": {"expLevels": [5, 10, 20, 30, 40, 50, 60, 80, 99], "battlesPerLevel": [{"upTo": 20, "range": [1, 6]}, {"upTo": 50, "range": [2, 12]}, {"upTo": 100, "range": [4, 24]}], "gymCount": 8, "gymFirstLeaderLevel": [8, 14], "gymLevelStep": [3, 12], "gymPowerRatio": [1.05, 1.8], "gymFirstStepPowerRatio": [1.05, 2.0], "underlingMaxLevelBelow": 6, "startMoneyInPotions": 8}
 }
