@@ -4,6 +4,8 @@
 // Every parameter comes from render.json "particles".
 import * as THREE from 'three'
 import { RENDER, PARTICLE_SHAPES, hexToRgb, type ParticleKindDef } from '../config.ts'
+import type { ImpactKind } from '../physics-config.ts'
+import { WIND_DRIFT_GLSL, windUniforms } from './wind.ts'
 
 export interface ParticleField {
   readonly points: THREE.Points
@@ -11,6 +13,8 @@ export interface ParticleField {
   /** Visible amount 0..1 (fade in/out). */
   level: number
   target: number
+  /** Splashes where the drops land (render.json impacts[kind]); off by quality tier. */
+  impactOn: boolean
   update(dt: number, time: number, focus: THREE.Vector3, wind: THREE.Vector2, light: THREE.Color, timeFactor: number, pxScale: number): void
   dispose(): void
 }
@@ -42,6 +46,9 @@ export function createParticleField(kind: string, def: ParticleKindDef, heightTe
       uY: { value: new THREE.Vector2(...def.y) },
       uVel: { value: new THREE.Vector3(...def.velocity) },
       uWind: { value: new THREE.Vector2() },
+      uWindDir: windUniforms.uWindDir,
+      uGustWave: windUniforms.uGustWave,
+      uGustDrift: { value: def.windFactor > 0 ? RENDER.wind.drift.gust : 0 },
       uSwirl: { value: def.swirl },
       uSwirlSpeed: { value: def.swirlSpeed },
       uSize: { value: def.size },
@@ -57,7 +64,7 @@ export function createParticleField(kind: string, def: ParticleKindDef, heightTe
       uMapSize: { value: mapSize },
     },
     vertexShader: /* glsl */`
-uniform float uTime, uSwirl, uSwirlSpeed, uSize, uWorldSize, uScale, uTwinkle, uLife;
+uniform float uTime, uSwirl, uSwirlSpeed, uSize, uWorldSize, uScale, uTwinkle, uLife, uGustDrift;
 uniform vec3 uFocus, uBox, uVel;
 uniform vec2 uY, uWind, uMapSize;
 #if HAS_HEIGHT
@@ -69,6 +76,7 @@ varying vec3 vColor;
 varying float vFade;
 varying float vSpin;
 varying float vPhase;
+${WIND_DRIFT_GLSL}
 float h1(float n) { return fract(sin(n) * 43758.5453123); }
 void main() {
   vec3 vel = uVel + vec3(uWind.x, 0.0, uWind.y);
@@ -85,6 +93,9 @@ void main() {
   vec2 swirl = vec2(sin(uTime * uSwirlSpeed + sw), cos(uTime * uSwirlSpeed * 0.83 + sw * 1.3)) * uSwirl;
   vec2 xz = seedXZ * uBox.xz + vel.xz * uTime + swirl;
   xz = mod(xz - boxMin, uBox.xz) + boxMin;
+  // gust fronts push the particle along the wind (same field as the grass sway); the edge fade ignores it
+  vec2 xzBase = xz;
+  xz += apGustDrift(xz, uWind, uTime, uGustDrift);
   float range = uY.y - uY.x;
   float yf = range > 0.0 ? fract(aSeed.y + vel.y * uTime / range + sin(uTime * uSwirlSpeed + sw) * uSwirl * 0.05) : 0.0;
   float ground = uFocus.y;
@@ -98,7 +109,7 @@ void main() {
 #endif
   vec3 wp = vec3(xz.x, ground + uY.x + yf * range, xz.y);
   vec4 mv = viewMatrix * vec4(wp, 1.0);
-  vec2 edge = min(xz - boxMin, boxMin + uBox.xz - xz);
+  vec2 edge = min(xzBase - boxMin, boxMin + uBox.xz - xzBase);
   vFade = smoothstep(0.0, 2.0, min(edge.x, edge.y));
   if (range > 0.0) vFade *= smoothstep(0.0, 0.08, yf) * smoothstep(1.0, 0.85, yf);
   float tw = uTwinkle > 0.0 ? 0.55 + 0.45 * sin(uTime * uTwinkle * 6.0 + aSeed.w * 40.0) : 1.0;
@@ -163,9 +174,12 @@ void main() {
   points.frustumCulled = false
   points.renderOrder = 10
   points.name = `particles:${kind}`
+  const impactDef: ImpactKind | undefined = RENDER.impacts[kind]
+  const impact = impactDef && def.life === undefined && def.velocity[1] < 0 ? createImpact(geo, mat, def, impactDef, additive) : null
+  if (impact) points.add(impact.points)
 
   const field: ParticleField = {
-    points, kind, level: 0, target: 1,
+    points, kind, level: 0, target: 1, impactOn: false,
     update(dt, time, focus, wind, light, timeFactor, pxScale) {
       const k = 1 - Math.exp(-dt / Math.max(0.05, RENDER.ambientFadeSeconds / 3))
       field.level += (field.target - field.level) * k
@@ -177,10 +191,121 @@ void main() {
       u.uAlpha.value = def.alpha * field.level * timeFactor
       u.uScale.value = pxScale
       points.visible = u.uAlpha.value > 0.003
+      if (impact) {
+        impact.points.visible = field.impactOn
+        impact.material.uniforms.uImpAlpha.value = impactDef!.alpha * field.level * timeFactor
+      }
     },
-    dispose() { geo.dispose(); mat.dispose() },
+    dispose() { geo.dispose(); mat.dispose(); impact?.material.dispose() },
   }
   return field
+}
+
+/**
+ * Splashes for a falling field: a second Points object over the same drop buffers. Each drop's landing spot and the
+ * time since it landed follow from its closed-form path (the fall wraps from the ground back to the top), so the
+ * splash appears exactly where and when the visible drop hits, on the ground or on the water surface (the height
+ * field holds the liquid surface).
+ */
+function createImpact(geo: THREE.BufferGeometry, main: THREE.ShaderMaterial, def: ParticleKindDef, imp: ImpactKind, additive: boolean): { points: THREE.Points; material: THREE.ShaderMaterial } {
+  const color = new THREE.Color().setRGB(...hexToRgb(imp.color), THREE.SRGBColorSpace)
+  const material = new THREE.ShaderMaterial({
+    defines: { ...main.defines, FLECK: imp.style === 'fleck' ? 1 : 0 },
+    uniforms: {
+      // the drops' own state, shared with the main material
+      uTime: main.uniforms.uTime, uFocus: main.uniforms.uFocus, uBox: main.uniforms.uBox, uY: main.uniforms.uY,
+      uVel: main.uniforms.uVel, uWind: main.uniforms.uWind, uWindDir: main.uniforms.uWindDir, uGustWave: main.uniforms.uGustWave,
+      uGustDrift: main.uniforms.uGustDrift, uSwirl: main.uniforms.uSwirl, uSwirlSpeed: main.uniforms.uSwirlSpeed,
+      uScale: main.uniforms.uScale, uHeight: main.uniforms.uHeight, uMapSize: main.uniforms.uMapSize, uLight: main.uniforms.uLight,
+      uLit: main.uniforms.uLit,
+      uImpAlpha: { value: imp.alpha },
+      uImpLife: { value: imp.life },
+      uImpSize: { value: imp.size },
+      uImpShare: { value: imp.share },
+      uImpColor: { value: color },
+    },
+    vertexShader: /* glsl */`
+uniform float uTime, uSwirl, uSwirlSpeed, uScale, uGustDrift, uImpLife, uImpSize, uImpShare, uImpAlpha;
+uniform vec3 uFocus, uBox, uVel;
+uniform vec2 uY, uWind, uMapSize;
+#if HAS_HEIGHT
+uniform sampler2D uHeight;
+#endif
+attribute vec4 aSeed;
+varying float vPhase;
+varying float vA;
+${WIND_DRIFT_GLSL}
+float h1(float n) { return fract(sin(n) * 43758.5453123); }
+vec2 dropXZ(float t) {
+  vec3 vel = uVel + vec3(uWind.x, 0.0, uWind.y);
+  vec2 boxMin = uFocus.xz - uBox.xz * 0.5;
+  float sw = aSeed.w * 6.2831853;
+  vec2 swirl = vec2(sin(t * uSwirlSpeed + sw), cos(t * uSwirlSpeed * 0.83 + sw * 1.3)) * uSwirl;
+  vec2 xz = aSeed.xz * uBox.xz + vel.xz * t + swirl;
+  xz = mod(xz - boxMin, uBox.xz) + boxMin;
+  return xz + apGustDrift(xz, uWind, t, uGustDrift);
+}
+void main() {
+  float range = uY.y - uY.x;
+  float sw = aSeed.w * 6.2831853;
+  float yf = fract(aSeed.y + uVel.y * uTime / range + sin(uTime * uSwirlSpeed + sw) * uSwirl * 0.05);
+  // seconds since this drop reached the ground (yf runs 1 -> 0 and wraps)
+  float since = (1.0 - yf) * range / max(1e-3, -uVel.y);
+  float phase = since / uImpLife;
+  vA = 0.0; vPhase = phase;
+  if (phase >= 1.0 || h1(aSeed.w * 97.13 + aSeed.x * 13.7) > uImpShare) { gl_PointSize = 0.0; gl_Position = vec4(2.0, 2.0, 2.0, 1.0); return; }
+  vec2 xz = dropXZ(uTime - since);
+  float ground = uFocus.y;
+#if HAS_HEIGHT
+  vec2 huv = (floor(xz) + 0.5) / uMapSize;
+#if HEIGHT_WRAP
+  ground = texture2D(uHeight, fract(huv)).r;
+#else
+  if (huv.x > 0.0 && huv.y > 0.0 && huv.x < 1.0 && huv.y < 1.0) ground = texture2D(uHeight, huv).r;
+#endif
+#endif
+  vec4 mv = viewMatrix * vec4(xz.x, ground + uY.x + 0.03, xz.y, 1.0);
+  vec2 boxMin = uFocus.xz - uBox.xz * 0.5;
+  vec2 edge = min(xz - boxMin, boxMin + uBox.xz - xz);
+  vA = (1.0 - phase) * smoothstep(0.0, 2.0, min(edge.x, edge.y));
+#if FLECK
+  float size = uImpSize;
+#else
+  float size = uImpSize * (0.2 + 0.8 * phase);
+#endif
+  gl_PointSize = max(2.0, size * uScale / -mv.z);
+  gl_Position = projectionMatrix * mv;
+}`,
+    fragmentShader: /* glsl */`
+uniform vec3 uImpColor, uLight;
+uniform float uImpAlpha, uLit;
+varying float vPhase;
+varying float vA;
+void main() {
+  vec2 p = gl_PointCoord - 0.5;
+  float r = length(p) * 2.0;
+#if FLECK
+  if (r > 1.0) discard;
+  float a = 1.0;
+#else
+  // widening ring, with a bright spot in the first third (the drop itself)
+  float ring = step(abs(r - 0.78), 0.2);
+  float dot = step(r, 0.34) * step(vPhase, 0.3);
+  float a = max(ring, dot);
+  if (a <= 0.0) discard;
+#endif
+  gl_FragColor = vec4(uImpColor * mix(vec3(1.0), uLight, uLit), a * vA * uImpAlpha);
+}`,
+    transparent: true,
+    depthWrite: false,
+    blending: additive ? THREE.AdditiveBlending : THREE.NormalBlending,
+  })
+  const points = new THREE.Points(geo, material)
+  points.frustumCulled = false
+  points.renderOrder = 10
+  points.name = 'impacts'
+  points.visible = false
+  return { points, material }
 }
 
 /** Night-sky aurora curtains drawn as a camera-facing band across the top of the view. */

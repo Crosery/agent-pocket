@@ -20,11 +20,19 @@ export interface LiquidMaterials {
   lava: THREE.ShaderMaterial
   /** Per-frame: time, scene light color multiplier, sparkle toggle. */
   update(time: number, light: THREE.Color, sparkles: boolean): void
+  /** Expanding ring on the water surface at (x, z); `amp` scales its strength (a footstep is 1). */
+  ripple(x: number, z: number, amp: number): void
+  /** Live ring cap (0 = none, also drops the live ones); rain rings follow `rain` (0..1 weather level). */
+  setRipples(max: number, rain: number): void
   dispose(): void
 }
 
+/** Rings the water shader draws at once (uniform array size); a quality tier lowers the live cap. */
+const RIPPLE_MAX = 24
+
 export function createLiquidMaterials(): LiquidMaterials {
-  const W = RENDER.water, L = RENDER.lava
+  const W = RENDER.water, L = RENDER.lava, WI = W.interact
+  let ringCursor = 0, ringMax = 0, now = 0
   const water = new THREE.ShaderMaterial({
     uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
       uTime: { value: 0 },
@@ -53,6 +61,13 @@ export function createLiquidMaterials(): LiquidMaterials {
       uTroughShade: { value: W.troughShade },
       uCrestLevel: { value: W.crestLevel },
       uCrestAmount: { value: W.crestAmount },
+      uRing: { value: Array.from({ length: RIPPLE_MAX }, () => new THREE.Vector4(0, 0, -1e4, 0)) },
+      uRingN: { value: 0 },
+      uRingCfg: { value: new THREE.Vector4(WI.ripple.speed, WI.ripple.life, WI.ripple.width, WI.ripple.strength) },
+      uRain: { value: 0 },
+      uRainCfg: { value: new THREE.Vector4(WI.rain.cell, WI.rain.life, WI.rain.radius, WI.rain.width) },
+      uRainStrength: { value: WI.rain.strength },
+      uWash: { value: new THREE.Vector3(WI.wash.period, WI.wash.width, WI.wash.strength) },
     }]),
     vertexShader: /* glsl */`
 #include <common>
@@ -79,6 +94,12 @@ void main() {
 uniform float uTime, uSparkleI, uSparkleDensity, uSparkleOn, uAlphaDeep, uAlphaShallow, uPixel, uWaveSpeed, uWaveScale, uFoamWidth, uFoamSpeed, uFoamNoise;
 uniform float uRippleScale, uRippleSpeed, uTroughLevel, uTroughShade, uCrestLevel, uCrestAmount, uLightMin;
 uniform vec3 uDeep, uMid, uShallow, uFoam, uSparkle, uLight;
+#define RING_MAX ${RIPPLE_MAX}
+uniform vec4 uRing[RING_MAX];
+uniform int uRingN;
+uniform vec4 uRingCfg, uRainCfg;
+uniform float uRain, uRainStrength;
+uniform vec3 uWash;
 varying vec3 vWorld;
 varying float vShore;
 varying float vDeep;
@@ -102,13 +123,48 @@ void main() {
   float foam = step(1.0 - uFoamWidth, edge);
   float foamCore = step(1.0 - uFoamWidth * 0.5, edge);
   col = mix(col, uFoam, foam * 0.45 + foamCore * 0.4);
+  // foam lines washing up the shore and back: one line per period travelling across the shore gradient
+  float washPos = fract(uTime / uWash.x + apNoise(p * 0.7) * 0.35);
+  float wash = (1.0 - smoothstep(0.0, uWash.y, abs(edge - washPos * 0.95 - 0.04))) * sin(washPos * 3.14159) * step(0.12, vShore) * uWash.z;
+  col = mix(col, uFoam, wash);
+  // rings from feet and landings: pixel-snapped circles that widen and fade
+  float ring = 0.0, trough = 0.0;
+  for (int i = 0; i < RING_MAX; i++) {
+    if (i >= uRingN) break;
+    vec4 r = uRing[i];
+    float age = uTime - r.z;
+    if (age < 0.0 || age > uRingCfg.y) continue;
+    float k = age / uRingCfg.y;
+    float w = uRingCfg.z * (1.0 + 0.9 * k);
+    float fade = (1.0 - k) * (1.0 - k) * r.w;
+    float d = distance(p, r.xy) - age * uRingCfg.x;
+    ring += (1.0 - smoothstep(w * 0.45, w, abs(d))) * fade;
+    // a darker band just inside the crest reads as the dip behind the wave
+    trough += (1.0 - smoothstep(w * 0.45, w, abs(d + w * 1.9))) * fade;
+  }
+  // raindrops: each cell restarts a ring at a random spot every cycle
+  if (uRain > 0.01) {
+    vec2 q = p / uRainCfg.x;
+    vec2 ci = floor(q);
+    float h = apHash(ci);
+    float cyc = uTime / uRainCfg.y + h * 7.0;
+    float cid = floor(cyc), ph = fract(cyc);
+    vec2 seed = ci + cid * vec2(1.7, 2.3);
+    float on = step(apHash(seed + 3.1), uRain * 0.6);
+    vec2 ctr = (ci + 0.5 + (vec2(apHash(seed + 7.7), apHash(seed + 9.3)) - 0.5) * 0.45) * uRainCfg.x;
+    float rr = ph * uRainCfg.z;
+    ring += on * (1.0 - smoothstep(uRainCfg.w * 0.45, uRainCfg.w, abs(distance(p, ctr) - rr))) * (1.0 - ph) * (1.0 - ph) * uRainStrength;
+  }
+  ring = clamp(ring, 0.0, 1.0);
+  col *= 1.0 - clamp(trough, 0.0, 1.0) * uRingCfg.w * 0.22;
+  col = mix(col, uFoam, ring * uRingCfg.w);
   col *= max(uLight, vec3(uLightMin));
   float h = apHash(cell);
   float tw = sin(uTime * 3.0 + h * 61.0);
   float spark = step(1.0 - uSparkleDensity, h) * step(0.9, tw) * uSparkleOn * (1.0 - foam);
   col += uSparkle * uSparkleI * spark * max(dot(uLight, vec3(0.333)), 0.25);
   float alpha = mix(uAlphaShallow, uAlphaDeep, vDeep);
-  alpha = max(alpha, foam * 0.92);
+  alpha = max(alpha, max(foam * 0.92, ring * 0.9));
   gl_FragColor = vec4(col, alpha);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
@@ -118,6 +174,9 @@ void main() {
     transparent: true,
     depthWrite: false,
   })
+
+  // the merged uniform set copies arrays, so the ring slots are read back from the material itself
+  const rings = water.uniforms.uRing.value as THREE.Vector4[]
 
   const lava = new THREE.ShaderMaterial({
     uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
@@ -239,6 +298,18 @@ void main() {
       ;(water.uniforms.uLight.value as THREE.Color).copy(light)
       ;(falls.uniforms.uLight.value as THREE.Color).copy(light)
       water.uniforms.uSparkleOn.value = sparkles ? 1 : 0
+      now = time
+    },
+    ripple(x, z, amp) {
+      if (ringMax <= 0) return
+      rings[ringCursor % ringMax].set(x, z, now, amp)
+      ringCursor = (ringCursor + 1) % ringMax
+    },
+    setRipples(max, rain) {
+      const n = Math.max(0, Math.min(RIPPLE_MAX, Math.round(max)))
+      if (n !== ringMax) { ringMax = n; ringCursor = 0; for (const r of rings) r.set(0, 0, -1e4, 0) }
+      water.uniforms.uRingN.value = n
+      water.uniforms.uRain.value = n > 0 ? rain : 0
     },
     dispose() { water.dispose(); falls.dispose(); lava.dispose() },
   }

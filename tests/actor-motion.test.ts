@@ -133,3 +133,41 @@ test('follower: in a 1-tile lane it hangs back along the trail instead of coveri
   assert.ok(aside < 0.5, `swung ${(aside * 100).toFixed(0)}% aside in a 1-tile lane`)
   assert.ok(f.y - py > 0.9 * want, `only ${(f.y - py).toFixed(2)} tiles behind (want ~${want.toFixed(2)})`)
 })
+
+test('follower: arriving facing north (teleport, door) the lead starts beside the player, never over them', () => {
+  const C = GAME.follower.cameraClear
+  for (const size of [0.75, 1, 1.85]) {
+    const { f, size: s } = followerRig(size)
+    f.reset(10.5, 10.5, 0, 'up')
+    assert.ok(Math.abs(f.x - 10.5) >= C.base + C.perSize * s - 1e-6, `size ${size}: spawned only ${Math.abs(f.x - 10.5).toFixed(2)} tiles aside`)
+    assert.ok(f.y >= 10.5 - 1e-6, 'and not ahead of the player')
+  }
+})
+
+test('follower: critically damped spring, it neither overshoots when the player stops nor jolts when it starts', () => {
+  const { f } = followerRig(1)
+  let px = 10.5
+  f.reset(px, 10.5, 0, 'right')
+  const speed = CONTENT.config.movement.walkSpeed
+  let lastV = 0, maxJump = 0, lx = f.x
+  for (let i = 0; i < 120; i++) {
+    px += speed * DT
+    f.update(DT, px, 10.5, 0, 'right', false)
+    const v = (f.x - lx) / DT
+    maxJump = Math.max(maxJump, Math.abs(v - lastV))
+    lastV = v; lx = f.x
+  }
+  // accelerations stay bounded: no single frame changes the follower's speed by more than a quarter of the walk speed
+  assert.ok(maxJump < speed * 0.25, `speed jumped by ${maxJump.toFixed(2)} tiles/s in one frame`)
+  // the trail is sampled every trailSpacing tiles, so its target carries that much grain
+  const grain = GAME.follower.trailSpacing * 0.3
+  let prev = f.x, overshoot = 0
+  for (let i = 0; i < 180; i++) {
+    f.update(DT, px, 10.5, 0, 'right', false)
+    assert.ok(f.x >= prev - grain, 'follower never moves back towards where it came from')
+    overshoot = Math.max(overshoot, f.x - (px - GAME.follower.distance))
+    prev = f.x
+  }
+  assert.ok(overshoot < grain, `overshot its rest spot by ${overshoot.toFixed(3)} tiles`)
+  assert.ok(Math.abs(f.x - (px - GAME.follower.distance)) < 0.05, 'settles on the trail target')
+})
