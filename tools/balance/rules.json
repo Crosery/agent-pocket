@@ -1,0 +1,7 @@
+{
+  "stats": {"rarityBst": {}, "evolutionBstRatio": [1.1, 1.5], "maxStatShare": 0.34, "minStat": 15, "maxStat": 150, "outlierZ": 2.2, "maxStdevOfBand": 0.3},
+  "types": {"minSuperEffective": 2, "maxSuperEffective": 4, "minResisted": 2, "maxWeaknesses": 4, "indexSpread": 1.6, "maxCombinedIndex": 1.5, "maxQuadWeakShare": 0.2},
+  "moves": {"effectValue": {}, "ppTiers": [], "valueTolerance": 25, "priorityMul": 1.1, "rechargeMul": 0.55, "recoilMul": 0.7, "selfFaintMul": 0.5, "maxPower": 160},
+  "sim": {"level": 50, "iv": 20, "battles": 200, "seed": 1, "maxTurns": 150, "maxFieldWin": 0.62, "minFieldWin": 0.38, "maxAllOpponentsWin": 0.65, "favourableWin": 0.56, "unfavourableWin": 0.44, "maxDrawRate": 0.08, "maxTeamBstSpread": 0.05},
+  "curve": {"battlesPerLevel": [], "gymLevelStep": [4, 9], "gymFirstLeaderLevel": [8, 12], "gymPowerRatio": [1.1, 1.6], "underlingMaxLevelBelow": 6}
+}

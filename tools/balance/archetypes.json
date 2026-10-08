@@ -1,0 +1,89 @@
+{
+  "budget": {"members": [6, 6], "minTeamBst": 3100, "maxTeamBst": 3260, "maxMemberBst": 550, "maxRarityOrder": 3},
+  "teams": [
+    {
+      "id": "hyper-offense", "nameZh": "速攻队",
+      "plan": "先手压制：高速度的输出手加优先招式，在对手展开战术前接连击倒。",
+      "members": [
+        {"species": "grok-imagine", "moves": ["long-take", "symphony-finale", "hfr-blaze", "ray-trace"]},
+        {"species": "meta-muse", "moves": ["million-token-rush", "plan-execute", "kernel-panic", "quick-reply"]},
+        {"species": "qwen-audio", "moves": ["symphony-finale", "voiceprint-wave", "director-cut", "synth-chord"]},
+        {"species": "workbuddy", "moves": ["computer-use", "kernel-panic", "compile-cannon", "cache-hit"]},
+        {"species": "lovable", "moves": ["compile-cannon", "long-reasoning", "inspiration-drain", "power-surge"]},
+        {"species": "opencode", "moves": ["full-auto", "weight-drop", "kernel-panic", "regex-slash"]}
+      ]
+    },
+    {
+      "id": "wall-stall", "nameZh": "铜墙铁壁",
+      "plan": "耐久消耗：高双防加回复，用持续伤害和麻痹把对手慢慢耗死。",
+      "members": [
+        {"species": "ant-afu", "moves": ["constitution", "alignment-shield", "oversight-beam", "prompt-growl"]},
+        {"species": "hy4", "moves": ["community-support", "infinite-loop", "weight-drop", "knowledge-graph"]},
+        {"species": "chatgpt-dots", "moves": ["auto-retry", "seo-spam", "web-crawl", "swarm-mind"]},
+        {"species": "yuanbao", "moves": ["inpaint", "rag-recall", "soul-question", "seo-spam"]},
+        {"species": "hermes-agent", "moves": ["auto-retry", "infinite-loop", "deep-research", "weight-drop"]},
+        {"species": "notebooklm", "moves": ["web-crawl", "seo-spam", "fact-check", "rag-recall"]}
+      ]
+    },
+    {
+      "id": "setup-sweep", "nameZh": "强化流",
+      "plan": "积累强化：用耐久型强化手安全地叠到 +2，再一路横扫。",
+      "members": [
+        {"species": "figure-03", "moves": ["keyframe", "explosion-vfx", "cluster-crush", "auto-retry"]},
+        {"species": "gemini-robotics", "moves": ["bullet-time", "keyframe", "explosion-vfx", "standby"]},
+        {"species": "devin", "moves": ["refactor", "cluster-crush", "kernel-panic", "hotfix"]},
+        {"species": "pi-zero", "moves": ["quantize", "keyframe", "weight-drop", "explosion-vfx"]},
+        {"species": "kling-4", "moves": ["auto-tune", "uhd-cannon", "long-take", "inpaint"]},
+        {"species": "agibot", "moves": ["keyframe", "explosion-vfx", "cluster-crush", "inpaint"]}
+      ]
+    },
+    {
+      "id": "status-control", "nameZh": "控场队",
+      "plan": "异常状态：限流、宕机、幻觉轮番上，夺走对手的回合再用中等火力收割。",
+      "members": [
+        {"species": "gemini-live", "moves": ["voice-clone", "lullaby", "sarcasm", "symphony-finale"]},
+        {"species": "perplexity-computer", "moves": ["infinite-loop", "seo-spam", "web-crawl", "long-reasoning"]},
+        {"species": "claude-cowork", "moves": ["flattery", "infinite-loop", "kernel-panic", "grand-finale"]},
+        {"species": "step-5", "moves": ["lullaby", "dependency-hell", "weight-drop", "power-surge"]},
+        {"species": "coze", "moves": ["infinite-loop", "flattery", "swarm-mind", "kernel-panic"]},
+        {"species": "qwen-app", "moves": ["small-talk", "infinite-loop", "system-prompt", "ray-trace"]}
+      ]
+    },
+    {
+      "id": "weather-rush", "nameZh": "超频队",
+      "plan": "天气加成：先开算力过载，算力与代码属性招式威力 ×1.5，同时拖累对面。",
+      "members": [
+        {"species": "qwen-flash-next", "moves": ["gpu-overload", "cluster-crush", "overheat-strike", "weight-drop"]},
+        {"species": "manus-2", "moves": ["power-surge", "kernel-panic", "compile-cannon", "cluster-crush"]},
+        {"species": "github-copilot", "moves": ["force-push", "cluster-crush", "tensor-core", "full-auto"]},
+        {"species": "google-antigravity", "moves": ["force-push", "cluster-crush", "tensor-core", "first-principles"]},
+        {"species": "nano-banana-2", "moves": ["power-surge", "coolant-leak", "ray-trace", "gpu-overload"]},
+        {"species": "happyhorse", "moves": ["power-surge", "coolant-leak", "long-take", "standby"]}
+      ]
+    },
+    {
+      "id": "balanced", "nameZh": "均衡队",
+      "plan": "没有专精：每只都有可靠的本系输出、一两个覆盖招式和一点回复，靠属性覆盖应对一切。",
+      "members": [
+        {"species": "gpt-5-6", "moves": ["long-reasoning", "superalignment", "qed", "memory-recall"]},
+        {"species": "kimi-work", "moves": ["swarm-mind", "kernel-panic", "compile-cannon", "unit-test"]},
+        {"species": "deepseek-harness", "moves": ["kernel-panic", "weight-drop", "rag-recall", "mcp-link"]},
+        {"species": "doubao-seed-2-1", "moves": ["ray-trace", "full-auto", "tensor-core", "inpaint"]},
+        {"species": "seedream-5", "moves": ["long-reasoning", "ray-trace", "long-take", "inpaint"]},
+        {"species": "mai-image", "moves": ["ray-trace", "director-cut", "rag-recall", "muse"]}
+      ]
+    },
+    {
+      "id": "glass-cannon", "nameZh": "重炮队",
+      "plan": "一击必杀：特攻极高的脆皮，靠最大威力的招式一发定胜负，拼的是谁先开火。",
+      "members": [
+        {"species": "flux-3", "moves": ["uhd-cannon", "explosion-vfx", "long-take", "symphony-finale"]},
+        {"species": "midjourney-v8", "moves": ["director-cut", "long-essay", "ray-trace", "hallucination-nova"]},
+        {"species": "marble", "moves": ["exaflop-beam", "uhd-cannon", "hfr-blaze", "explosion-vfx"]},
+        {"species": "sora-2", "moves": ["hallucination-nova", "uhd-cannon", "long-take", "feedback-howl"]},
+        {"species": "gemini-omni", "moves": ["uhd-cannon", "symphony-finale", "long-take", "hfr-blaze"]},
+        {"species": "mureka", "moves": ["wall-of-text", "grand-finale", "director-cut", "voiceprint-wave"]}
+      ]
+    }
+  ]
+}
