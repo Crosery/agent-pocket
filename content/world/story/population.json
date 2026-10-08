@@ -51,7 +51,14 @@
       {"sprite": "villager_woman", "biomes": ["meadow", "coast", "forest", "highland"], "names": ["种田的大姐", "放风筝的姑娘"], "dialogues": [["今年用上了智能灌溉，智灵帮我看天、看土、看庄稼。", "就是它总爱写报告，一亩地能给我写三千字。"], ["风大的时候，{place}的风车转得飞快。", "村里的小电站就靠它，给智灵充电刚刚好。"]]},
       {"sprite": "villager_old", "biomes": ["ruins", "desert"], "names": ["拾荒者", "古物贩子"], "dialogues": [["这些废墟里埋着旧时代的硬盘。", "据说里面存着某个模型最初的权重，谁找到就能看见它“小时候”的样子。"]]},
       {"sprite": "trainer_student", "names": ["放假回村的大学生", "研究生小米"], "dialogues": [["放假回村，第一件事就是陪智灵散步。论文？明天再说吧。"], ["我在做一个课题：智灵晒太阳的时候，会不会多长一点参数？"], ["我们老师说，会提问的人，才会得到好答案。我觉得对智灵也一样。"]]},
-      {"sprite": "trainer_coder", "names": ["远程办公的码农", "程序员阿哲"], "dialogues": [["我在村里远程上班，网速慢是慢了点，可是空气好啊。"], ["昨天我写的代码跑通了，我和智灵一起跳了支舞。"], ["在这里写 bug……不对，写代码，灵感特别多。"]]}
+      {"sprite": "trainer_coder", "names": ["远程办公的码农", "程序员阿哲"], "dialogues": [["我在村里远程上班，网速慢是慢了点，可是空气好啊。"], ["昨天我写的代码跑通了，我和智灵一起跳了支舞。"], ["在这里写 bug……不对，写代码，灵感特别多。"]]},
+      {"sprite": "villager_man", "names": ["车行销售"], "dialogues": [["events.egg.n-chevy.d0l0", "events.egg.n-chevy.d0l1"]], "egg": true},
+      {"sprite": "villager_old", "names": ["看新闻的大爷"], "dialogues": [["events.egg.n-coup.d0l0", "events.egg.n-coup.d0l1"]], "egg": true},
+      {"sprite": "villager_old", "names": ["旁听过庭审的大叔"], "dialogues": [["events.egg.n-fake-cases.d0l0", "events.egg.n-fake-cases.d0l1"]], "egg": true},
+      {"sprite": "villager_woman", "names": ["动漫迷"], "dialogues": [["events.egg.n-ghibli.d0l0", "events.egg.n-ghibli.d0l1"]], "egg": true},
+      {"sprite": "villager_woman", "names": ["烘焙学徒"], "dialogues": [["events.egg.n-glue.d0l0", "events.egg.n-glue.d0l1"]], "egg": true},
+      {"sprite": "villager_woman", "names": ["奶茶爱好者"], "dialogues": [["events.egg.n-milk-tea.d0l0", "events.egg.n-milk-tea.d0l1"]], "egg": true},
+      {"sprite": "clerk", "names": ["开源版店员"], "dialogues": [["events.egg.n-open-source-clerk.d0l0", "events.egg.n-open-source-clerk.d0l1"]], "egg": true}
     ],
     "resident": [
       {"sprite": "villager_kid", "names": ["宅家的大学生"], "dialogues": [["我在写毕业论文。", "智灵帮我列了参考文献，我一查——有一半根本不存在。"], ["期末周到了，我的智灵比我还累：它要同时扮演我的老师、同学和心理医生。"]]},
@@ -67,28 +74,41 @@
       {"sprite": "villager_man", "names": ["程序员爸爸"], "dialogues": [["我的代码有个 Bug，问智灵，它说“这段代码看起来没有问题”。", "我又问了一遍，它说“抱歉，您说得对，这里确实有问题”。"]]},
       {"sprite": "villager_old", "names": ["听收音机的大爷"], "dialogues": [["六十年代有个叫 ELIZA 的程序，只会把你的话换个说法问回来：“你为什么觉得……”", "就这样，还是有人对着它掏心窝子。人呐，就是需要有人听。"]]},
       {"sprite": "villager_woman", "names": ["烘焙爱好者"], "dialogues": [["我让智灵帮我改良蛋糕配方。", "它建议把糖换成“适量的爱”。我照做了，蛋糕一点都不甜。"]]},
-      {"sprite": "villager_woman", "names": ["翻译"], "dialogues": [["以前大家说机器翻译不靠谱，现在大家问我：“机器翻得这么好，你还有什么用？”", "我说：我负责检查它有没有一本正经地胡说。"]]}
+      {"sprite": "villager_woman", "names": ["翻译"], "dialogues": [["以前大家说机器翻译不靠谱，现在大家问我：“机器翻得这么好，你还有什么用？”", "我说：我负责检查它有没有一本正经地胡说。"]]},
+      {"sprite": "villager_kid", "names": ["数字母的小孩"], "dialogues": [["events.egg.n-blueberry.d0l0", "events.egg.n-blueberry.d0l1"]], "egg": true},
+      {"sprite": "villager_woman", "names": ["写离别信的网友"], "dialogues": [["events.egg.n-keep4o.d0l0", "events.egg.n-keep4o.d0l1"]], "egg": true}
     ],
     "camper": [
       {"sprite": "villager_woman", "names": ["露营的阿玲", "露营的小雨"], "dialogues": [["我们出来露营，约好了谁都不带手机。", "结果他偷偷带了个离线智灵，半夜问它“星星为什么会眨眼”。"], ["篝火边讲鬼故事最好玩。", "最吓人的一个是：“你的训练数据，昨晚被删了。”"]]},
       {"sprite": "villager_man", "names": ["野营老手·老K", "徒步达人·阿山"], "dialogues": [["在野外过夜，要先找平地，再看风向。", "还有——别把吃的放帐篷里，野生智灵鼻子灵得很。"], ["我背包里永远装着三样东西：{item:cache-potion}、{item:escape-rope}，还有备用电池。"]]},
-      {"sprite": "villager_kid", "names": ["观星少年", "画星图的小星"], "dialogues": [["你知道吗？阳光从太阳跑到地球，要八分多钟。", "比我等智灵画一张高清图还快一点。"]]}
+      {"sprite": "villager_kid", "names": ["观星少年", "画星图的小星"], "dialogues": [["你知道吗？阳光从太阳跑到地球，要八分多钟。", "比我等智灵画一张高清图还快一点。"]]},
+      {"sprite": "trainer_gamer", "names": ["直播观众"], "dialogues": [["events.egg.n-claude-pokemon.d0l0", "events.egg.n-claude-pokemon.d0l1"]], "egg": true},
+      {"sprite": "villager_woman", "names": ["露营的大学生"], "dialogues": [["events.egg.n-good-bing.d0l0", "events.egg.n-good-bing.d0l1"]], "egg": true},
+      {"sprite": "trainer_coder", "names": ["额度焦虑的开发者"], "dialogues": [["events.egg.n-quota-anxiety.d0l0", "events.egg.n-quota-anxiety.d0l1"]], "egg": true}
     ],
     "scholar": [
       {"sprite": "trainer_scientist", "names": ["考古学者·陈", "铭文研究员", "碑文拓印师"], "dialogues": [["{siteName}的石头上刻着一行字：“Attention Is All You Need”。", "2017 年那篇论文提出了 Transformer。如今的大模型，几乎都是它的后代。"], ["碑文记载：1997 年，名为“深蓝”的机器赢下了与国际象棋世界冠军卡斯帕罗夫的六局对抗赛。", "那是机器第一次在正式对抗赛里赢下卫冕世界冠军。"], ["这里记载着两次“AI 寒冬”。", "期望太高，成果太少，资金一夜退潮。可每次寒冬过去，都有新的种子发芽。"]]},
       {"sprite": "villager_old", "names": ["朝圣者", "白袍的旅人"], "dialogues": [["传说在{siteName}许愿，智灵就不会再幻觉。", "我许了十年愿……它们还是会。"], ["1950 年，图灵写下了那个问题：“机器能思考吗？”", "我走过很多遗迹，还没找到答案。"]]},
       {"sprite": "villager_kid", "names": ["考古学徒", "背着拓本的少年"], "dialogues": [["老师让我抄碑文。上面写着：1958 年，罗森布拉特造出了感知机。", "一个神经元就能学东西！虽然它连“异或”都学不会。"], ["1986 年，反向传播让多层神经网络真正学会了“从错误中学习”。", "老师说，我也该学学。"]]},
-      {"sprite": "villager_old", "names": ["守碑人"], "dialogues": [["2016 年，AlphaGo 在围棋上以 4 比 1 战胜了李世石。", "第二局的第 37 手，至今让棋手们反复揣摩。"], ["2012 年，AlexNet 在 ImageNet 图像识别比赛上把错误率大幅拉低。", "深度学习从那一年起，一路狂奔到了今天。"]]}
+      {"sprite": "villager_old", "names": ["守碑人"], "dialogues": [["2016 年，AlphaGo 在围棋上以 4 比 1 战胜了李世石。", "第二局的第 37 手，至今让棋手们反复揣摩。"], ["2012 年，AlexNet 在 ImageNet 图像识别比赛上把错误率大幅拉低。", "深度学习从那一年起，一路狂奔到了今天。"]]},
+      {"sprite": "trainer_scientist", "names": ["开源爱好者"], "dialogues": [["events.egg.n-iq-tax.d0l0", "events.egg.n-iq-tax.d0l1"]], "egg": true},
+      {"sprite": "trainer_scientist", "names": ["提示词收藏家"], "dialogues": [["events.egg.n-katakana.d0l0", "events.egg.n-katakana.d0l1"]], "egg": true},
+      {"sprite": "trainer_scientist", "names": ["论坛管理员"], "dialogues": [["events.egg.n-moltbook.d0l0", "events.egg.n-moltbook.d0l1"]], "egg": true}
     ],
     "engineer": [
       {"sprite": "trainer_coder", "names": ["值班运维", "机房巡检员", "网络工程师"], "dialogues": [["衡量数据中心有个指标叫 PUE：总耗电除以 IT 设备耗电。", "越接近 1 越好。我们这儿……就别问了。"], ["这里的服务器 24 小时不停，就像训练中的大模型。", "唯一的区别是：模型训练完能歇着，我不能。"]]},
       {"sprite": "villager_man", "names": ["散热工程师", "液冷师傅"], "dialogues": [["算力越强，发热越大。现在高端机房都开始用液冷了。", "我的工作，就是别让这些机器像火山一样喷发。"]]},
-      {"sprite": "villager_kid", "names": ["机房实习生"], "dialogues": [["前辈说，训练一个大模型要用成千上万张显卡连续跑好几个月。", "我负责盯着指示灯：绿的就好，红的就喊人。"]]}
+      {"sprite": "villager_kid", "names": ["机房实习生"], "dialogues": [["前辈说，训练一个大模型要用成千上万张显卡连续跑好几个月。", "我负责盯着指示灯：绿的就好，红的就喊人。"]]},
+      {"sprite": "trainer_coder", "names": ["值班运维"], "dialogues": [["events.egg.n-freeze.d0l0", "events.egg.n-freeze.d0l1"]], "egg": true},
+      {"sprite": "trainer_coder", "names": ["发布工程师"], "dialogues": [["events.egg.n-map-leak.d0l0", "events.egg.n-map-leak.d0l1"]], "egg": true},
+      {"sprite": "trainer_coder", "names": ["夜班运维"], "dialogues": [["events.egg.n-peak-valley-1.d0l0", "events.egg.n-peak-valley-1.d0l1"]], "egg": true}
     ],
     "sailor": [
       {"sprite": "villager_old", "names": ["灯塔看守", "老舵手"], "dialogues": [["灯塔的光，要照得够远，还要一闪一闪，让船知道这是哪一座。", "注意力机制也差不多：在一整片海里，找到最该看的那一点。"], ["起雾的晚上，我就守着这盏灯。", "有些智灵也是这样，默默在后台跑着，没人注意。"]]},
       {"sprite": "villager_man", "names": ["码头水手", "跑船的阿海", "渔船船长"], "dialogues": [["想去海上的小岛，就得学会冲浪。", "有了{item:dive-protocol}，海就是你的路。"], ["海上的野生智灵和陆地上的不一样。", "有的一辈子都没见过岸，只在数据之海里漂着。"]]},
-      {"sprite": "trainer_swimmer", "names": ["沉船打捞员", "潜水员阿蓝"], "dialogues": [["这艘船沉的时候，据说装满了旧时代的硬盘。", "我捞上来一块，读出来全是猫的照片。"]]}
+      {"sprite": "trainer_swimmer", "names": ["沉船打捞员", "潜水员阿蓝"], "dialogues": [["这艘船沉的时候，据说装满了旧时代的硬盘。", "我捞上来一块，读出来全是猫的照片。"]]},
+      {"sprite": "villager_man", "names": ["为旧模型送行的人"], "dialogues": [["events.egg.n-funeral.d0l0", "events.egg.n-funeral.d0l1"]], "egg": true},
+      {"sprite": "villager_man", "names": ["渔船船长"], "dialogues": [["events.egg.n-lobster.d0l0", "events.egg.n-lobster.d0l1"]], "egg": true}
     ],
     "naturalist": [
       {"sprite": "trainer_scientist", "names": ["生态观察员", "智灵行为学家", "野外记录员"], "dialogues": [["{siteName}附近常有稀有智灵出没。", "它们比周围的智灵等级高，带够球，也带够药。"], ["我在记录野生智灵的作息。", "有些只在夜里出现——就像凌晨三点还在线的程序员。"]]},

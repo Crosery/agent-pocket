@@ -87,7 +87,8 @@
     "matchWeak": "弱点 ×{mul}",
     "matchResist": "抵抗 ×{mul}",
     "matchImmune": "无效 ×0",
-    "hint": {"moves": "选择招式", "creatures": "切换智灵", "reorder": "调整顺序", "swapHere": "交换到这里"}
+    "hint": {"moves": "选择招式", "creatures": "切换智灵", "reorder": "调整顺序", "swapHere": "交换到这里"},
+    "statHelp": "{name}：{desc}"
   },
   "move": {"power": "威力", "accuracy": "命中", "pp": "PP", "priority": "优先度", "ppValue": "{pp}/{max}", "never": "必中", "none": "—", "priorityUp": "+{n}", "priorityDown": "-{n}", "category": {"physical": "物理", "special": "特殊", "status": "变化"}},
   "bag": {

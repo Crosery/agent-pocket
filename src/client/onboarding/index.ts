@@ -122,7 +122,7 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
     shownThisSession.add(tip.id)
     ctx.save.flags[tipFlag(tip.id)] = true
     showing = { tip, ...(tip.doneOn ? { doneOn: tip.doneOn } : {}), startPos: here(), until: clock + cfg.tips.layer.ttlSec }
-    tips.show({ textKey: tip.text, device: ctx.input.lastDevice, place: tip.trigger.kind === 'menu' ? 'menu' : tip.place ?? (phaseOf(tip) === 'battle' ? 'right' : 'bottom') })
+    tips.show({ textKey: tip.text, device: ctx.input.lastDevice, place: tip.trigger.kind === 'menu' ? 'menu' : tip.place ?? (phaseOf(tip) === 'battle' ? 'top' : 'bottom') })
     ctx.audio.playSfx('select', { volume: 0.4 })
   }
 

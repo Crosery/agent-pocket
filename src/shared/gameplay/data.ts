@@ -9,6 +9,7 @@ import spawnJson from '../../../content/events/spawn.json' with { type: 'json' }
 import festivalsJson from '../../../content/events/festivals.json' with { type: 'json' }
 import cultureJson from '../../../content/events/culture.json' with { type: 'json' }
 import hiddenJson from '../../../content/events/hidden.json' with { type: 'json' }
+import buzzJson from '../../../content/events/buzz.json' with { type: 'json' }
 import mythicJson from '../../../content/events/mythic.json' with { type: 'json' }
 import legendsJson from '../../../content/events/legends.json' with { type: 'json' }
 import researchJson from '../../../content/research.json' with { type: 'json' }
@@ -56,7 +57,7 @@ export function buildGameplay(): GameplayData {
   const { text, ...spawn } = spawnFile
   const legendFile = legendsJson as unknown as LegendFile & { eventTemplate: LegendTemplate }
   const mythic = mythicJson as unknown as MythicFile
-  const authored = [festivalsJson, cultureJson, hiddenJson].flatMap((f) => (f as unknown as EventFile).events as RawEvent[])
+  const authored = [festivalsJson, cultureJson, hiddenJson, buzzJson].flatMap((f) => (f as unknown as EventFile).events as RawEvent[])
   const events: WorldEventDef[] = [
     ...authored.map((e) => finish(e, text)),
     ...(mythic.events as RawEvent[]).map((e) => finish(e, text)),
