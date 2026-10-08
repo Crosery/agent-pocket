@@ -1,0 +1,3 @@
+# GitHub reserves this file for the template chooser; the three issue forms are bug.yml, feature.yml and repo-config.yml.
+# Blank issues stay off so every issue starts from a template (docs/conventions/ISSUES.md).
+blank_issues_enabled: false

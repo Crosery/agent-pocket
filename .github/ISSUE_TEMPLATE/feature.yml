@@ -1,0 +1,95 @@
+name: 需求 / 改进
+description: 提一个功能需求或改进。提交前请先按 docs/conventions/ISSUES.md §1 查重。
+title: "<模块>：<用户可见的诉求>"
+labels: ["enhancement", "P2"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **提交前必做**：按 [docs/conventions/ISSUES.md](https://github.com/Crosery/agent-pocket/blob/main/docs/conventions/ISSUES.md) §1 查重（含已关闭的 issue），确认不是同一件事。
+
+        标题格式固定为 `<模块>：<用户可见的诉求>`。**描述问题与期望，不要写实现方案**，方案放 PR 的「解决链路」。受理时由维护者按下面选的端和优先级补标签。
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: 端（主端）
+      description: 需要在哪个端实施或验收。跨端时在描述里补充其它端。
+      options:
+        - client
+        - render
+        - battle
+        - world
+        - content
+        - art
+        - server
+        - deploy
+        - docs
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 优先级
+      description: |
+        P0 = 阻断全员开发。
+        P1 = 已明确排期的重要功能。
+        P2 = 常规需求与优化。
+        不确定时宁可低一档。
+      options:
+        - P2
+        - P1
+        - P0
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 现状与问题
+      description: 现在是什么样，为什么不够用。不要写实现方案。
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望的结果
+      description: 玩家能看到 / 能做什么。
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: 范围与不做什么
+      description: 这次包括什么、明确不包括什么；涉及的数据表、协议、存档格式。
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收条件
+      description: 怎样算完成：可观察的结果，以及要在哪些视口 / 环境看。
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 已考虑过的替代方案
+      description: 可选。说明为什么不采用。
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 已按 docs/conventions/ISSUES.md §1 查重（含已关闭 issue）
+          required: true
+        - label: 描述的是问题与期望，不是实现方案
+          required: true
