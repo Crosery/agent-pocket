@@ -88,7 +88,7 @@ fix, walk cycle synthesis, H3 clip cycle pick, end-to-end sheet on `assets_src/w
 
 ## Creatures
 
-Roster source: `assets_src/prompts/creatures.json` (190 records: `id`, `nameEn`, `nameZh`, `family`, `stage`, `types`,
+Roster source: `assets_src/prompts/creatures.json` (255 records: `id`, `nameEn`, `nameZh`, `family`, `stage`, `types`,
 `rarity`, `design`, `lookZh`, `personality`). The `creature` template wraps each `design` in a shared kawaii wrapper:
 a single full-body moe chibi mascot personification (gacha/mascot chibi look) whose **cuteness rules override any
 proportion, age or mood wording in the design** — ~2 heads tall with an oversized round head, huge sparkly eyes,
@@ -109,11 +109,20 @@ persona lines: claude, deepseek, gemini, glm, gpt, grok, kimi, minimax, qwen; co
 set, flattened onto white). Jobs with `images` go to the AIGW `/v1/images/edits` endpoint. To give another family a
 canon look, drop `<family>.png` into that folder and re-run its ids with `--force`.
 
+A third, optional reference is the neighbouring evolution form: a `creatures.json` record may carry `lineRef`
+(the id of the earlier form when drawing a later one, or of the later form when drawing a new earlier one); its raw
+render `assets_src/raw/creature/<lineRef>.png` is attached with a "same character, other evolution stage" note so
+the new form reads as the same character grown up. Draw forms in chain order (the reference must exist first); the
+raw renders are gitignored, so `tests/assets_pipeline.test.ts` only demands the path when the file exists or
+`jobs.json` already names it.
+
 ```bash
 python3 tools/run_pipeline.py --kind creature --only gpt-35,deepseek-v3,kling-1,suno-v3   # a batch of ids
 python3 tools/run_pipeline.py --kind creature                                              # every missing creature
 python3 tools/run_pipeline.py --kind creature --only kling-1 --force kling-1              # re-roll one render
 python3 tools/contact_sheet.py public/assets/creatures --scale 2 --cols 6 --out /tmp/creatures.png   # QA
+python3 tools/roster_sheets.py --out docs/previews/creatures                              # numbered 8x6 sheets of every species
+python3 tools/roster_sheets.py --ids a,b,c --out output/18/new-creatures                  # only these ids (dex order)
 ```
 
 `process_creature.py` (parameters in `pipeline.json` `creature`, canvas = `content/config.json` `sprites.creatureSize`):
