@@ -846,6 +846,16 @@ export function buildMacro(inp: MacroInput): Macro {
     biome[i] = biomeAt(i, level[i], wb)
   }
 
+  // --- terrace compression: fewer, lower highlands without moving anything ----------------------------------------
+  // Biomes above were read from the full-height field, and the map is monotone with steps of at most one, so slopes
+  // stay legal, flat pads stay flat and every feature keeps its place; only the number of terraces above the plains drops.
+  if (spec.levelMap) {
+    const lm = spec.levelMap
+    for (let i = 0; i < N; i++) level[i] = lm[level[i]]
+    for (const pad of pads) pad.level = lm[pad.level]
+    for (const site of sites) site.level = lm[site.level]
+  }
+
   return {
     w: W, h: H, wild, zoneRaw, wildness, coreDist, core, biome, temp, moist, weird, level, sea, seaDist, island, islands,
     lake, lakeRim, lakeTerrains, crater, craterTerrains, beach, locked, river: hydro.river, pads, sites, hydro,

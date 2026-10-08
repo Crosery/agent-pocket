@@ -46,6 +46,15 @@ export function validateWorldContent(wc: WorldContent = WORLD_CONTENT, c: Conten
   collider1('world.overworld.hydrology.rapidsProp', ow.hydrology.rapidsProp)
   for (const k of [ow.hydrology.riverTerrain, ow.hydrology.bankTerrain, ow.hydrology.lakeTerrain, ow.hydrology.lakeRimTerrain]) terrain('world.overworld.hydrology', k)
   if (!(ow.coarse >= 1)) errs.push('world.overworld: coarse must be >= 1')
+  if (ow.levelMap) {
+    const lm = ow.levelMap
+    if (lm.length !== ow.maxLevel + 1 || lm.some((v) => !Number.isInteger(v)) || lm[0] !== 0) {
+      errs.push('world.overworld.levelMap: needs maxLevel + 1 integers starting at 0')
+    } else {
+      for (let i = 1; i < lm.length; i++) if (lm[i] < lm[i - 1] || lm[i] - lm[i - 1] > 1) errs.push(`world.overworld.levelMap: step ${i - 1} -> ${i} must rise by 0 or 1`)
+      if (ow.seaLevel + 1 <= ow.maxLevel && lm[ow.seaLevel + 1] !== ow.seaLevel + 1) errs.push('world.overworld.levelMap: the first level above the sea is kept (coast cliffs and islands stand on it)')
+    }
+  }
   if (ow.startFlat) {
     const sf = ow.startFlat
     const finite = [sf.radius, sf.transition, sf.level, sf.jitter, sf.minPatch, sf.noise?.scale].every((v) => Number.isFinite(v))

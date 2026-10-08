@@ -115,6 +115,9 @@ test('world shape: maps, towns, badges and story slots', () => {
   assert.ok(typeof stats.buildMs === 'number')
 })
 
+// Dungeon mouths pick the spot with a cliff behind them, so they follow the terraces; towns, hamlets and landmarks never move.
+const MOUTH_SLACK = 45
+
 test('start basin: flat near the start town, relief returns outside it, layout unchanged', () => {
   const flat = WORLD_CONTENT.world.overworld.startFlat
   assert.ok(flat)
@@ -152,7 +155,7 @@ test('start basin: flat near the start town, relief returns outside it, layout u
   assert.equal(places(world), places(open), 'town, hamlet and landmark positions are untouched by the start basin')
   for (const t of world.towns.filter((x) => mouths.has(x.id))) {
     const o = open.towns.find((x) => x.id === t.id)
-    assert.ok(o && Math.hypot(o.x - t.x, o.y - t.y) <= 8, `dungeon mouth ${t.id} stays near its uncapped spot (it re-seats on level ground)`)
+    assert.ok(o && Math.hypot(o.x - t.x, o.y - t.y) <= MOUTH_SLACK, `dungeon mouth ${t.id} stays near its uncapped spot (it re-seats against the nearest cliff)`)
   }
   // Water bodies stay put; only a route may cross a river a few tiles away (water <-> bridge).
   const openMap = open.maps[open.startMap]
@@ -166,6 +169,56 @@ test('start basin: flat near the start town, relief returns outside it, layout u
   assert.ok(moved < 200, `only a bridge crossing moved (${moved} tiles)`)
   const fences = (m: GameMap) => m.props.filter((p) => p.prop === 'fence').map((p) => `${p.x},${p.y}`).join('|')
   assert.equal(fences(ow), fences(openMap), 'fences stay exactly where they were')
+})
+
+test('terrace compression: fewer and lower highlands, same layout', () => {
+  const lm = WORLD_CONTENT.world.overworld.levelMap
+  assert.ok(lm, 'content/world/world.json carries a levelMap')
+  const share = (m: GameMap, from: number) => {
+    let land = 0, high = 0, top = 0
+    for (let i = 0; i < m.elevation.length; i++) {
+      if (CONTENT.terrain[m.terrain[i]].swim) continue
+      land++
+      if (m.elevation[i] >= from) high++
+      top = Math.max(top, m.elevation[i])
+    }
+    return { high: high / land, top }
+  }
+  const packed = share(ow, 2)
+  WORLD_CONTENT.world.overworld.levelMap = undefined
+  let full: World
+  try { full = buildWorld() } finally { WORLD_CONTENT.world.overworld.levelMap = lm }
+  const fullMap = full.maps[full.startMap]
+  const raw = share(fullMap, 2)
+  assert.ok(raw.high > 0.5 && raw.top >= 10, 'the uncompressed field is the highland-heavy one')
+  assert.ok(packed.high < 0.3, `levels >= 2 cover ${(packed.high * 100).toFixed(1)}% of the land (was ${(raw.high * 100).toFixed(1)}%)`)
+  assert.ok(packed.top >= 6, `real mountains remain (top level ${packed.top})`)
+  assert.ok(share(ow, 5).high > 0.005, 'mountain massifs still exist for climbs and boss areas')
+  const mouths = new Set(info.features.dungeons.map((d) => d.id))
+  const places = (w: World) => w.towns.filter((t) => !mouths.has(t.id)).map((t) => `${t.id}@${t.x},${t.y}`).join('|')
+  assert.equal(places(world), places(full), 'towns, hamlets and landmarks stay on the same tiles')
+  assert.equal(world.towns.length, full.towns.length)
+  const fences = (m: GameMap) => m.props.filter((p) => p.prop === 'fence').map((p) => `${p.x},${p.y}`).join('|')
+  assert.equal(fences(ow), fences(fullMap), 'fences stay where they were')
+  // Slopes only got gentler: no neighbouring tiles differ by more than before.
+  const w = ow.width
+  for (let i = 0; i + w + 1 < ow.elevation.length; i += 7) {
+    const a = ow.elevation[i], b = ow.elevation[i + 1], c = ow.elevation[i + w]
+    assert.ok(Math.abs(a - b) <= 1 && Math.abs(a - c) <= 1, `step at ${i % w},${Math.floor(i / w)}`)
+  }
+})
+
+test('levelMap validation: starts at 0, rises by at most one, keeps the first level above the sea', () => {
+  const lm = WORLD_CONTENT.world.overworld.levelMap!
+  const problems = (map: number[]) => {
+    WORLD_CONTENT.world.overworld.levelMap = map
+    try { return validateWorldContent().filter((e) => e.includes('levelMap')) } finally { WORLD_CONTENT.world.overworld.levelMap = lm }
+  }
+  assert.deepEqual(problems(lm), [])
+  assert.equal(problems(lm.slice(1)).length, 1, 'wrong length')
+  assert.ok(problems(lm.map((v, i) => (i === 5 ? v + 2 : v))).length > 0, 'a jump of two levels')
+  assert.ok(problems(lm.map((v, i) => (i === 3 ? 0 : v))).length > 0, 'a decreasing step')
+  assert.ok(problems([0, 0, ...lm.slice(2)]).length > 0, 'the first level above the sea is dropped')
 })
 
 test('every warp lands on a walkable, non-warp tile and is itself enterable', () => {
