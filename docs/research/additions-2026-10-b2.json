@@ -1,0 +1,2823 @@
+{
+ "_doc": "Roster batch additions-2026-10-b2.json (issue #18 scope 2): new species + patches to existing records, merged by tools/data/apply_additions.py. Chains follow the lineage research (docs/research lineage); a later model of the same line is a later evolution.",
+ "species": [
+  {
+   "id": "gemini-1-0",
+   "nameZh": "Gemini 1.0",
+   "nameEn": "Gemini 1.0",
+   "company": "Google",
+   "country": "US",
+   "category": "llm",
+   "family": "gemini-1-0",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "chat",
+    "vision"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 58,
+    "atk": 51,
+    "def": 57,
+    "spa": 69,
+    "spd": 58,
+    "spe": 57
+   },
+   "habitats": [
+    "coast",
+    "city"
+   ],
+   "releaseDate": "2023-12-06",
+   "capabilityScore": 26,
+   "hotnessScore": 55,
+   "statRationale": "对话与看图并修→特攻高；三档规格都能接住→HP 高。 [BST 350 ∈ R 330-420; 强项 spa/hp; 能力 26/热度 55]",
+   "dexEntryZh": "Gemini 1.0 在 2023 年 12 月 6 日随 Ultra、Pro、Nano 三个规格一同宣布，归在 Gemini 的 Pro 一脉里。她聊天与看图两门兼修，特攻和 HP 最突出：嘴上聊着天，眼睛也没闲着。",
+   "lookZh": "蓝发双团子的星座小姑娘，腕上三颗大小不一的星星手链",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a bright young debut-idol girl of the Gemini twin-sign theme, her own character and not a cat girl. Hair: sky-blue in two round twin buns with long side locks fading to pale blue tips, a yellow four-point sparkle hairpin on one bun. Eyes: round honey-amber with a four-point sparkle highlight. Outfit: a white cropped school-style jacket with blue cuffs, a red collar ribbon, a short pale-blue pleated skirt, white sneakers. Signature accessory: a charm bracelet of three star charms in large, medium and small sizes (Ultra, Pro, Nano) on her left wrist. Props: a small round magnifier lens held to one eye (vision) and a speech-bubble-shaped shoulder bag (chat). Palette: #4285F4, #BBD4FF, #FBBC05, #34A853, #EA4335, #E8A317. Pose: tilting her head while peeking through the lens, the other hand waving.",
+    "personality": "好奇宝宝，聊着聊着就凑过来看图",
+    "communityPersona": "Gemini fan art often draws the model as cat-eared girls (see the existing Gemini entries); this one is invented as a distinct character from brand colours.",
+    "officialMascotOrLogo": "Google's four brand colours (blue #4285F4, red #EA4335, yellow #FBBC05, green #34A853) and the four-point Gemini sparkle; the twin-sign and three-size star charms come from the Gemini name and its Ultra/Pro/Nano sizes.",
+    "sourceUrls": [
+     "https://blog.google/technology/ai/google-gemini-ai/"
+    ]
+   }
+  },
+  {
+   "id": "gemini-3-pro",
+   "nameZh": "Gemini 3 Pro",
+   "nameEn": "Gemini 3 Pro",
+   "company": "Google",
+   "country": "US",
+   "category": "llm",
+   "family": "gemini-3-pro",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "logic",
+    "vision"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 89,
+    "atk": 97,
+    "def": 79,
+    "spa": 97,
+    "spd": 88,
+    "spe": 76
+   },
+   "habitats": [
+    "forest",
+    "coast"
+   ],
+   "releaseDate": "2025-11-18",
+   "capabilityScore": 80,
+   "hotnessScore": 68,
+   "statRationale": "多模态推理与编码→攻击高；视觉与长上下文→特攻高。 [BST 526 ∈ SSR 490-550; 强项 atk/spa; 能力 80/热度 68]",
+   "dexEntryZh": "Gemini 3 Pro 于 2025 年 11 月 18 日以预览版亮相，是 Gemini 2.5 Pro 的同系列下一代。资料写它是稀疏 MoE，支持 1M 输入、64K 输出，擅长多模态推理、氛围编程和长上下文，并称它发布时曾登顶榜单。",
+   "lookZh": "珍珠白长发的学者大姐姐，手中卷轴一路拖到脚边",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.8 heads tall, a poised older-teen scholar girl, flagship of the Pro family. Hair: very long pearl-white, ends dipped in thin bands of blue, red, yellow and green, half-up in a high knot with a four-point sparkle clip. Eyes: deep sapphire with a tiny prism-shaped highlight. Outfit: a white academic coat with gold trim over a pleated green skirt, white gloves, tall boots; on her sash a row of six tiny toggle-switch pins with only two lit (sparse experts). Signature accessory: a long parchment scroll unrolled in a loose spiral around her arm and trailing to her boots (long context). Prop: a clear glass prism wand held up (multimodal reasoning). Palette: #F4F2FF, #1F3FA8, #34A853, #E9B949, #EA4335, #FBBC05. Pose: raising the wand toward the viewer, a calm smile.",
+    "personality": "沉着的全能学霸，卷子越长越从容",
+    "communityPersona": "Gemini fan art often draws the model as cat-eared girls (see the existing Gemini entries); this one is invented as a distinct scholar from brand colours.",
+    "officialMascotOrLogo": "Google's four brand colours (blue #4285F4, red #EA4335, yellow #FBBC05, green #34A853) and the four-point Gemini sparkle; the scroll, prism and toggle pins refer to long context, multimodality and the sparse MoE design.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "gemini-2-0-flash",
+   "nameZh": "Gemini 2.0 Flash",
+   "nameEn": "Gemini 2.0 Flash",
+   "company": "Google",
+   "country": "US",
+   "category": "llm",
+   "family": "gemini-2-0-flash",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "compute",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 62,
+    "atk": 56,
+    "def": 58,
+    "spa": 52,
+    "spd": 55,
+    "spe": 85
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2025-02-05",
+   "capabilityScore": 36,
+   "hotnessScore": 50,
+   "statRationale": "Flash 定位轻快→速度高；多模态与工具调用全能→HP 稳。 [BST 368 ∈ R 330-420; 强项 spe/hp; 能力 36/热度 50]",
+   "dexEntryZh": "Gemini 2.0 Flash 于 2025 年 2 月 5 日正式推出（2024 年 12 月 11 日已有实验版），是前代 Gemini 1.5 Flash 的同系列下一代。资料称它是「智能体时代」的模型，原生支持工具调用和多模态输出，速度与 HP 是她的强项。",
+   "lookZh": "金黄高马尾的快递少女，腰间挂着一圈小工具",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.2 heads tall, an energetic girl courier of the Flash family, not one of the Flash twins. Hair: a short high ponytail in sunny golden-yellow fading to pale orange-white tips, a four-point sparkle hairpin. Eyes: bright coral-red with a sparkle highlight. Outfit: a white-and-yellow track jacket with thin blue and green sleeve stripes, short shorts, high-top sneakers with tiny lightning bolts. Signature accessory: a utility tool-belt holding three pictogram tools (wrench, magnifier, paintbrush) (native tool use). Props: a small delivery satchel on her back and a tiny prism pendant at her neck splitting light. Palette: #FBBC05, #EA4335, #4285F4, #34A853, #FFFFFF, #FFF1C2. Pose: mid-run leaning forward, one hand pulling a tool from the belt, a bright grin.",
+    "personality": "一边跑一边把活干了，工具随手就掏",
+    "communityPersona": "Gemini fan art often draws Flash as cat-eared twins (see the existing Gemini entries); this one is invented as a distinct courier from brand colours.",
+    "officialMascotOrLogo": "Google's four brand colours (blue #4285F4, red #EA4335, yellow #FBBC05, green #34A853) and the four-point Gemini sparkle; the speedy courier look draws on the Flash name and its agentic tool-use role.",
+    "sourceUrls": [
+     "https://blog.google/technology/google-deepmind/gemini-model-updates-february-2025/"
+    ]
+   }
+  },
+  {
+   "id": "gemini-3-6-flash",
+   "nameZh": "Gemini 3.6 Flash",
+   "nameEn": "Gemini 3.6 Flash",
+   "company": "Google",
+   "country": "US",
+   "category": "llm",
+   "family": "gemini-flash-3x",
+   "stage": 1,
+   "evolvesTo": "gemini-3-7-flash",
+   "evolveLevel": 39,
+   "types": [
+    "compute",
+    "agent"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 85,
+    "atk": 70,
+    "def": 64,
+    "spa": 67,
+    "spd": 68,
+    "spe": 101
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2026-07-21",
+   "capabilityScore": 60,
+   "hotnessScore": 48,
+   "statRationale": "更省 token、响应利落→速度最高；约100万上下文→HP偏高。 [BST 455 ∈ SR 420-490; 强项 spe/hp; 能力 60/热度 48]",
+   "dexEntryZh": "Gemini 3.6 Flash，2026 年 7 月 21 日登场，是 Flash 一脉里主打高效率的小冲刺手：更省 token，写代码、做智能体规划更利落，上下文约 100 万 token。它上线后成了 Gemini 应用和 AI 模式的默认模型。它是 Gemini 3.5 Flash 的同系列新一代，下一步会迭代为 Gemini 3.7 Flash。",
+   "lookZh": "橘金高马尾、闪电呆毛的猫娘小跑者，手握一只秒表",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Gemini Flash sprinter line: a young energetic cat girl, small and quick. Hair: honey-orange (#FFB547) short high ponytail tied with a four-point sparkle hair tie, a lightning-bolt-shaped ahoge on top; fluffy cat ears with cream inner fur, short white-tipped tail. Eyes: big emerald-green (#34A853) with four-point sparkle highlights. Outfit: oversized sky-blue (#4285F4) zip-up running hoodie with white sleeve stripes, plain white tee, navy shorts, small orange sneakers. Accessories: lightning ahoge and sparkle hair tie (signature, kept in every form); one prop, a chunky white stopwatch with a tiny bolt pictogram. Palette: #FFB547, #4285F4, #FFFFFF, #1F2A4D, #34A853, accent #EA4335. Pose: crouched in a sprinter's start, ears forward, thumb on the stopwatch, determined little grin.",
+    "personality": "抢跑成瘾的省电冲刺手，话少活快不返工",
+    "communityPersona": "Fans draw Gemini as a 'Hachimi' cat girl with cat ears and a four-point sparkle; this single-sprinter Flash version is invented from that look and the brand colours.",
+    "officialMascotOrLogo": "Gemini's logo is a four-point sparkle in a blue-to-purple gradient, alongside Google's four brand colours (blue #4285F4, red #EA4335, yellow #FBBC05, green #34A853). The Flash tier has no official mascot; the design draws on the sparkle and the four Google colours.",
+    "sourceUrls": [
+     "https://openrouter.ai/google/gemini-3.6-flash",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "gemini-3-7-flash",
+   "nameZh": "Gemini 3.7 Flash",
+   "nameEn": "Gemini 3.7 Flash",
+   "company": "Google",
+   "country": "US",
+   "category": "llm",
+   "family": "gemini-flash-3x",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "compute",
+    "agent"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 90,
+    "atk": 84,
+    "def": 76,
+    "spa": 69,
+    "spd": 78,
+    "spe": 114
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2026-08-13",
+   "capabilityScore": 70,
+   "hotnessScore": 50,
+   "statRationale": "多步智能体任务跑得快→速度最高；100万上下文、主力定位→HP高。 [BST 511 ∈ SSR 490-550; 强项 spe/hp; 能力 70/热度 50]",
+   "dexEntryZh": "Gemini 3.7 Flash，2026 年 8 月 13 日发布，是 Gemini 3.6 Flash 同系列的下一代。它被定位成面向代码与智能体的「最聪明的主力模型」，擅长软件工程、网页开发和多步骤任务，同样带着约 100 万 token 的上下文。小冲刺手长大后，成了能稳稳挑大梁的主力。",
+   "lookZh": "橘金长马尾、闪电呆毛的猫娘教练，秒表挂在胸前，手持平板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.8 heads tall, stage 2 of the Gemini Flash sprinter line: the same cat girl grown into a confident older teen. Hair: honey-orange (#FFB547) long high ponytail to her waist, same four-point sparkle hair tie, same lightning-bolt ahoge; cat ears, longer white-tipped tail. Eyes: same emerald-green (#34A853), more assured. Outfit: sky-blue (#4285F4) track-coach jacket with thin Google four-colour cuff stripes, white blouse, navy pleated skirt, orange running shoes. Accessories: lightning ahoge and sparkle hair tie (signature); the stopwatch now on a lanyard, plus a slim tablet showing a tiny code-bracket glyph over a web-page wireframe. Palette: #FFB547, #4285F4, #FFFFFF, #1F2A4D, #34A853, accents #EA4335 #FBBC05. Pose: striding mid-run, tablet held like a relay baton, one confident wink.",
+    "personality": "稳稳挑大梁的全能主力，边跑边把活干完",
+    "communityPersona": "Fans draw Gemini as a 'Hachimi' cat girl with cat ears and a four-point sparkle; this grown-up Flash sprinter is invented from that look and the brand colours.",
+    "officialMascotOrLogo": "Gemini's logo is a four-point sparkle in a blue-to-purple gradient, alongside Google's four brand colours (blue #4285F4, red #EA4335, yellow #FBBC05, green #34A853). The Flash tier has no official mascot; the design draws on the sparkle and the four Google colours.",
+    "sourceUrls": [
+     "https://openrouter.ai/google/gemini-3.7-flash",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gemini-3-6-flash"
+  },
+  {
+   "id": "gemma-2",
+   "nameZh": "Gemma 2",
+   "nameEn": "Gemma 2",
+   "company": "Google",
+   "country": "US",
+   "category": "llm",
+   "family": "gemma",
+   "stage": 1,
+   "evolvesTo": "gemma-3",
+   "evolveLevel": 23,
+   "types": [
+    "open",
+    "chat"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 51,
+    "atk": 39,
+    "def": 46,
+    "spa": 46,
+    "spd": 43,
+    "spe": 52
+   },
+   "habitats": [
+    "meadow",
+    "forest"
+   ],
+   "releaseDate": "2024-06-27",
+   "capabilityScore": 12,
+   "hotnessScore": 40,
+   "statRationale": "高效率→速度快；27B 越级表现、开放小底子→HP稳。 [BST 277 ∈ N 240-330; 强项 spe/hp; 能力 12/热度 40]",
+   "dexEntryZh": "Gemma 2，2024 年 6 月 27 日发布的开放权重模型，有 2B、9B、27B 三种尺寸，其中 27B 的表现远超它的个头，主打高效率和开放。它是 Gemma 的同系列下一代；再往后是同一脉的 Gemma 3 和 Gemma 4。图鉴里它还背着只装了三颗宝石的小匣子，是最小的那一个。",
+   "lookZh": "背着三颗宝石小匣的青绿短发小不点，靴子大了两号",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~1.6 heads tall, the smallest and youngest version of the Gemma maker girl, the stage before the shy Gemma 3 form. Hair: crystal-teal (#2BB3A3) rounded short bob with only a few simple faceted planes; one sapphire four-point-star gem clip (#1E6FD9) pinned at the side (signature, kept in every form). Eyes: big aqua eyes with a single diamond-cut highlight. Outfit: oversized denim-blue (#1E6FD9) overalls that droop, with rolled-up cuffs, a plain white tee, boots two sizes too big, and a small open-padlock patch on the bib (open weights). Props: a small jewel-case satchel across her chest with three gems of increasing size peeking out. Palette: #2BB3A3, #1E6FD9, #A8F0E6, #F7F9FC, #3D4B6B. Pose: standing in her too-big boots, hugging the largest gem to her chest with both hands, a small determined grin.",
+    "personality": "个头小志气大的小宝石匠，越级也敢上",
+    "communityPersona": "No anime persona found; the roster's Gemma maker girl (teal faceted bob, sapphire star clip) is invented from the name and brand colours, and this is her youngest version.",
+    "officialMascotOrLogo": "Gemma is Google's open-weights model family; its name means gem, and its branding sits next to Gemini's blue four-point sparkle. There is no official mascot.",
+    "sourceUrls": [
+     "https://blog.google/technology/developers/google-gemma-2/"
+    ]
+   },
+   "lineRef": "gemma-3"
+  },
+  {
+   "id": "diffusiongemma",
+   "nameZh": "DiffusionGemma",
+   "nameEn": "DiffusionGemma",
+   "company": "Google",
+   "country": "US",
+   "category": "llm",
+   "family": "diffusiongemma",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "open",
+    "chaos"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 70,
+    "atk": 63,
+    "def": 63,
+    "spa": 79,
+    "spd": 72,
+    "spe": 88
+   },
+   "habitats": [
+    "city",
+    "coast"
+   ],
+   "releaseDate": "2026-06-09",
+   "capabilityScore": 46,
+   "hotnessScore": 35,
+   "statRationale": "扩散式文本生成→速度高；能读图能写字→特攻高。 [BST 435 ∈ SR 420-490; 强项 spe/spa; 能力 46/热度 35]",
+   "dexEntryZh": "DiffusionGemma 是 Google 的文本扩散式语言模型，规格 26B-A4B，开放权重，能读文字和图片并输出文字，models.dev 记录的日期是 2026 年 6 月 9 日。名字承自 Gemma 4 一脉，但这层谱系只是按命名推断。她的速度与特攻最突出：从一团噪点里把句子雕出来。",
+   "lookZh": "发梢由噪点渐变成透明水晶的短发少女，胸前挂着切面宝石",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.2 heads tall, a small sculptor girl who chisels clear words out of noise. Hair: a chin-length bob, roots static-grey lilac speckled with tiny pixel dots (noise), clearing to crystal aqua at the tips, one messy cowlick; a gem-cut sapphire hairpin. Eyes: pale aqua with a faceted diamond highlight. Outfit: an oversized chalk-white workshop smock with frosted rolled-up sleeves, a faceted gem-cut hem in four muted Google colours, shorts, work boots. Signature accessory: a faceted gem pendant on her chest, half frosted and half perfectly clear (Gemma, the gem). Props: a rough frosted crystal block with half its face already polished clear, and a small chisel. Palette: #B8B8C8, #BDF3F0, #4285F4, #7FE5E0, #FFFFFF, #34A853. Pose: mid-chisel, one eye squinting, cheeky grin.",
+    "personality": "先乱后清，一凿一凿把答案雕出来",
+    "communityPersona": "No anime persona found; invented from brand colours and the gem and noise-to-text theme.",
+    "officialMascotOrLogo": "Gemma is Google's open-model family and its name evokes a gemstone; the design draws on that gem motif and Google's four brand colours (blue #4285F4, red #EA4335, yellow #FBBC05, green #34A853).",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "nano-banana-pro",
+   "nameZh": "Nano Banana Pro",
+   "nameEn": "Nano Banana Pro",
+   "company": "Google",
+   "country": "US",
+   "category": "image",
+   "family": "nano-banana-pro",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "write"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 91,
+    "atk": 76,
+    "def": 80,
+    "spa": 126,
+    "spd": 83,
+    "spe": 70
+   },
+   "habitats": [
+    "forest",
+    "meadow"
+   ],
+   "releaseDate": "2025-11-20",
+   "capabilityScore": 80,
+   "hotnessScore": 82,
+   "statRationale": "出图为本职→特攻高；Pro 档的厚实底子→HP高。 [BST 526 ∈ SSR 490-550; 强项 spa/hp; 能力 80/热度 82]",
+   "dexEntryZh": "Nano Banana Pro 别名 Gemini 3 Pro Image，2025 年 11 月 20 日以预览版出现，2026 年 5 月 28 日转为正式版（GA）。它是 Google 的闭源图像模型，血缘上是 Nano Banana 的同系列后继。图鉴里它独立成档，没有进化前后形态，稀有度定在 SSR。",
+   "lookZh": "黑金长外套的香蕉工作室总监，手握金笔和画板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.8 heads tall, a single-stage premium member of the Banana family: a poised studio-director girl in black and gold. Hair: long straight golden-banana (#FFC93C) hair shading to amber (#F5B700) at the ends, half tied in a high knot with a gold banana-shaped hairpin. Eyes: deep amber with a four-point sparkle highlight. Outfit: a sturdy black (#1A1A1A) long studio coat with a scalloped cream-gold banana-peel collar, gold buttons, white blouse with a small blue-and-green swatch ribbon, gold-buckled black boots. Props: a gold-nibbed pen held like a conductor's baton, and a slim gold-framed canvas tablet under the other arm with a poster layout on it, no readable text. Palette: #FFC93C, #F5B700, #1A1A1A, #FFFFFF, #4285F4, #34A853. Pose: standing tall and composed, pen tilted upward, a small knowing smile.",
+    "personality": "沉稳挑剔，每一版都要一次过稿",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Nano Banana is Google's banana-named image-model brand, and this Pro version is also listed as Gemini 3 Pro Image. The design swaps the playful banana yellow for black and gold to signal the Pro tier, keeping Google blue and green as small accents.",
+    "sourceUrls": [
+     "https://openrouter.ai/google/gemini-3-pro-image-preview",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "nano-banana-2-lite",
+   "nameZh": "Nano Banana 2 Lite",
+   "nameEn": "Nano Banana 2 Lite",
+   "company": "Google",
+   "country": "US",
+   "category": "image",
+   "family": "nano-banana-2-lite",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "compute"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 72,
+    "atk": 71,
+    "def": 73,
+    "spa": 84,
+    "spd": 71,
+    "spe": 81
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2026-06-30",
+   "capabilityScore": 58,
+   "hotnessScore": 55,
+   "statRationale": "出图为本职→特攻高；Lite 轻量→速度高。 [BST 452 ∈ SR 420-490; 强项 spa/spe; 能力 58/热度 55]",
+   "dexEntryZh": "Nano Banana 2 Lite 别名 Gemini 3.1 Flash-Lite Image，2026 年 6 月 30 日登场，是 Google 的闭源图像模型，血缘上是 Nano Banana 2 同系列的后继。名字里的 Lite 指向轻量路线，所以图鉴把它画成轻装的小香蕉。它在图鉴里独立成档，没有进化前后形态。",
+   "lookZh": "奶油黄短发的小香蕉妹妹，穿剥开一半的香蕉皮连帽衫",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a single-stage younger-sister member of the Banana family: a small, light, quick girl. Hair: short fluffy banana-cream (#FFE680) bob with one green (#7CB342) leaf-shaped ahoge and a tiny blue (#4285F4) clip on the right. Eyes: large amber with a round lightning-bolt highlight. Outfit: a pale-yellow half-peeled banana-peel hoodie with two short peel flaps drooping like bunny ears on the hood, white tee, short cream pleated skirt, white sneakers with a thin yellow lightning stripe; no heavy gear. Props: a postcard-sized canvas tablet held in both hands showing a simple sunrise sketch, and a small paper-airplane charm on the hoodie zipper (lightweight speed). Palette: #FFE680, #FFD84A, #7CB342, #4285F4, #FFFFFF, #212121. Pose: skipping forward on tiptoe, tablet lifted, a cheerful wink.",
+    "personality": "轻装上阵的快手妹妹，永远在小跑",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Nano Banana is Google's banana-named image-model brand, also listed as Gemini 3.1 Flash-Lite Image for this version. The design takes banana yellow and green with Google blue accents, and adds a leaf-shaped ahoge and a small paper plane as the Lite hint.",
+    "sourceUrls": [
+     "https://openrouter.ai/google/gemini-3.1-flash-lite-image",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "imagen-3",
+   "nameZh": "Imagen 3",
+   "nameEn": "Imagen 3",
+   "company": "Google",
+   "country": "US",
+   "category": "image",
+   "family": "imagen",
+   "stage": 1,
+   "evolvesTo": "imagen-4",
+   "evolveLevel": 30,
+   "types": [
+    "vision"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 52,
+    "atk": 49,
+    "def": 58,
+    "spa": 88,
+    "spd": 60,
+    "spe": 61
+   },
+   "habitats": [
+    "forest",
+    "meadow"
+   ],
+   "releaseDate": "2024-08-15",
+   "capabilityScore": 36,
+   "hotnessScore": 50,
+   "statRationale": "写实出图→特攻高；出图利落→速度高。 [BST 368 ∈ R 330-420; 强项 spa/spe; 能力 36/热度 50]",
+   "dexEntryZh": "Imagen 3 是 Google 的扩散式图像模型，2024 年 8 月前后在 Gemini 与 ImageFX 中广泛开放，前作是 Imagen 2。写实感和安全性是它的看家本领，Arena 得分 1058。到了等级 30，它会迭代成同系列的下一代 Imagen 4。",
+   "lookZh": "云白短发的小摄影师，发夹是四色相框，胸前别着盾牌徽章",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Imagen line: a bright little apprentice photographer girl. Hair: short cloud-white (#F4F8FF) bob with sky-blue (#4285F4) tips and one soft ahoge, pinned on the left with a small square four-colour photo-frame clip (blue, red, yellow, green corners). Eyes: large bright blue with a round lens-ring highlight. Outfit: a plain white pinafore dress over a pale-blue blouse, a small shield-shaped badge on the collar (safety), white socks, blue sneakers. Props: a tiny pocket camera held up to one eye, and a thin brush-pen tucked behind her ear whose tip fades from grainy to clear (diffusion). Palette: #F4F8FF, #4285F4, #EA4335, #FBBC05, #34A853, #2B3A55. Pose: standing straight on both feet, framing the viewer through the camera with one eye squinting, a shy proud smile.",
+    "personality": "爱把世界拍得清清楚楚，按快门前先查安全",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Imagen is Google DeepMind's image-model family and no official mascot is known. The design draws on the four Google brand colours (blue #4285F4, red #EA4335, yellow #FBBC05, green #34A853) and turns them into a photo-frame hair clip.",
+    "sourceUrls": [
+     "https://deepmind.google/models/imagen/"
+    ]
+   }
+  },
+  {
+   "id": "imagen-4",
+   "nameZh": "Imagen 4",
+   "nameEn": "Imagen 4",
+   "company": "Google",
+   "country": "US",
+   "category": "image",
+   "family": "imagen",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "write"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 71,
+    "atk": 65,
+    "def": 73,
+    "spa": 100,
+    "spd": 71,
+    "spe": 64
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2025-05-20",
+   "capabilityScore": 52,
+   "hotnessScore": 55,
+   "statRationale": "出图为本职→特攻高；稳扎稳打→防御高。 [BST 444 ∈ SR 420-490; 强项 spa/def; 能力 52/热度 55]",
+   "dexEntryZh": "Imagen 4 于 2025 年 5 月 20 日发布，是 Imagen 3 同系列的下一代，在这条进化线里是第二形态。资料库没有给出更多细节，所以图鉴只记下它的位置：Google 的闭源图像模型，目前仍在服务。",
+   "lookZh": "长大的云白短发摄影师，披蓝白短披风，腰间挎着大镜头相机",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.7 heads tall, stage 2 of the Imagen line: the same photographer girl grown into a confident studio photographer. Hair: the same cloud-white (#F4F8FF) bob with a gentle side sweep, sky-blue (#4285F4) tips, one soft ahoge, and the same four-colour square photo-frame clip, now larger with gold trim. Eyes: bright blue with a round lens-ring highlight. Outfit: a white short cape-jacket with a blue (#4285F4) collar and thin red, yellow, green piping, pleated skirt, blue boots; the collar shield badge is now polished metal with a gold rim. Props: a vintage bellows camera at her hip, and the brush-pen slotted into her belt. Palette: #F4F8FF, #4285F4, #EA4335, #FBBC05, #34A853, #2B3A55. Pose: one foot forward, camera lifted toward the viewer, a calm confident smile.",
+    "personality": "安静自信，镜头一抬就是定格",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Imagen is Google DeepMind's image-model family and no official mascot is known. The design keeps the four Google brand colours (blue, red, yellow, green) and the photo-frame hair clip from the earlier form, now trimmed in gold.",
+    "sourceUrls": [
+     "https://deepmind.google/models/imagen/"
+    ]
+   },
+   "lineRef": "imagen-3"
+  },
+  {
+   "id": "veo-1",
+   "nameZh": "Veo",
+   "nameEn": "Veo",
+   "company": "Google",
+   "country": "US",
+   "category": "video",
+   "family": "veo-early",
+   "stage": 1,
+   "evolvesTo": "veo-2",
+   "evolveLevel": 28,
+   "types": [
+    "motion"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 57,
+    "atk": 55,
+    "def": 49,
+    "spa": 84,
+    "spd": 55,
+    "spe": 61
+   },
+   "habitats": [
+    "meadow",
+    "desert"
+   ],
+   "releaseDate": "2024-05-14",
+   "capabilityScore": 32,
+   "hotnessScore": 50,
+   "statRationale": "生成视频→特攻高；出片轻快→速度高。 [BST 361 ∈ R 330-420; 强项 spa/spe; 能力 32/热度 50]",
+   "dexEntryZh": "Veo 是 Google 的视频生成模型，2024 年 5 月 14 日发布，闭源。资料库没有给出更多细节，图鉴只记下它的位置：这是 Veo 进化线的第一形态，到了等级 28，它会迭代成同系列的下一代 Veo 2。",
+   "lookZh": "戴胶片发带的金色短发小场记，抱着手摇玩具摄影机",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Veo clip-girl line: a small eager camera-assistant girl. Hair: short amber-gold (#FFB300) bob with a flat blunt fringe and one ahoge, a narrow charcoal (#2A2A35) film-strip headband across her head with tiny sprocket holes. Eyes: deep navy (#1F3A93) with a viewfinder-bracket highlight. Outfit: a plain navy (#1F3A93) pinafore over a white blouse, a small red (#D7263D) bow at the collar, white socks, charcoal sneakers. Props: a small hand-cranked toy movie camera held at her chest with both hands, and a mini clapperboard clipped to her belt. Palette: #FFB300, #2A2A35, #1F3A93, #D7263D, #FFFFFF. Pose: peering through the toy camera's viewfinder with one eye, one foot raised in excitement.",
+    "personality": "好奇心满格，什么都想先拍下来",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Veo is Google DeepMind's video-model family and no official mascot is known. The design reuses the navy, amber, charcoal and red palette of the existing Veo line sprites, with a film-strip headband as this line's own signature.",
+    "sourceUrls": [
+     "https://deepmind.google/models/veo/"
+    ]
+   }
+  },
+  {
+   "id": "veo-2",
+   "nameZh": "Veo 2",
+   "nameEn": "Veo 2",
+   "company": "Google",
+   "country": "US",
+   "category": "video",
+   "family": "veo-early",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "motion",
+    "vision"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 64,
+    "atk": 60,
+    "def": 65,
+    "spa": 112,
+    "spd": 69,
+    "spe": 68
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2024-12-16",
+   "capabilityScore": 48,
+   "hotnessScore": 52,
+   "statRationale": "电影级画面→特攻高；评测领先、画面稳→特防高。 [BST 438 ∈ SR 420-490; 强项 spa/spd; 能力 48/热度 52]",
+   "dexEntryZh": "Veo 2 于 2024 年 12 月 16 日发布，是 Veo 同系列的下一代。资料称它是支持 4K、发布时在评测中领先的 2024 年模型，长于电影级写实，Arena 得分 1164。在这条进化线里，它是 Veo 的下一形态。",
+   "lookZh": "长大的胶片发带摄影师，披海军蓝短披风，肩扛 4K 摄影机",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.6 heads tall, stage 2 of the Veo clip-girl line: the same camera-assistant girl grown into a young cinematographer. Hair: the same amber-gold (#FFB300) bob, slightly longer with side-swept ends and one ahoge, and the same charcoal (#2A2A35) film-strip headband, now wider with a tiny red record-dot pictogram. Eyes: deep navy (#1F3A93) with a viewfinder-bracket highlight. Outfit: a navy (#1F3A93) short cape-jacket with film-strip piping and charcoal lining, white blouse with the red (#D7263D) bow, pleated charcoal skirt, dark boots. Props: a shoulder-mounted cinema camera with a wide lens and a tiny '4K' badge, and the mini clapperboard on her belt. Palette: #FFB300, #2A2A35, #1F3A93, #D7263D, #FFFFFF. Pose: wide stance, camera braced on her shoulder, free hand framing a shot, a confident grin.",
+    "personality": "冷静利落，光影对了才肯按下录制",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Veo is Google DeepMind's video-model family and no official mascot is known. The design keeps the navy, amber, charcoal and red palette and the film-strip headband from the earlier form, now with a cape-jacket and a cinema camera.",
+    "sourceUrls": [
+     "https://deepmind.google/models/veo/"
+    ]
+   },
+   "lineRef": "veo-1"
+  },
+  {
+   "id": "gemini-2-5-flash-tts",
+   "nameZh": "Gemini 2.5 Flash TTS",
+   "nameEn": "Gemini 2.5 Flash TTS",
+   "company": "Google",
+   "country": "US",
+   "category": "audio",
+   "family": "gemini-tts",
+   "stage": 1,
+   "evolvesTo": "gemini-3-1-flash-tts",
+   "evolveLevel": 22,
+   "types": [
+    "sound"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 40,
+    "atk": 38,
+    "def": 43,
+    "spa": 72,
+    "spd": 41,
+    "spe": 51
+   },
+   "habitats": [
+    "coast",
+    "city"
+   ],
+   "releaseDate": "2025-05-01",
+   "capabilityScore": 14,
+   "hotnessScore": 28,
+   "statRationale": "专职念稿→特攻高；Flash 轻量→速度快。 [BST 285 ∈ N 240-330; 强项 spa/spe; 能力 14/热度 28]",
+   "dexEntryZh": "Gemini 2.5 Flash TTS，2025 年 5 月 1 日以预览版登场，同年 9 月 30 日正式可用（GA），是 Gemini 家族里专门把文字念出声的语音合成形态。它还是个捧着绘本练朗读的小女孩；同系列的下一代是 Gemini 3.1 Flash TTS。",
+   "lookZh": "珊瑚粉波浪短发、别着金色话筒发卡的小女孩，捧着绘本朗读",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Gemini TTS narrator line: a small girl just learning to read aloud. Hair: coral-rose (#FF8A9B) soft wavy shoulder-length bob with one tiny feather-shaped ahoge; a small gold capsule-microphone hairpin (#F6B73C) clipped on the right side. Eyes: big honey-amber (#F6B73C) eyes with a tiny four-point sparkle highlight. Outfit: a cream (#FFF4E0) pinafore dress over a white blouse with a Gemini-blue (#4285F4) ribbon bow, short white socks and brown buckle shoes. Accessories: the gold mic hairpin and feather ahoge (signature, kept in every form); one prop, a picture book held open in both hands. Palette: #FF8A9B, #FFF4E0, #4285F4, #F6B73C, #2A2F4F. Pose: standing on tiptoe, reading aloud shyly with her mouth in a small 'o', cheeks slightly pink.",
+    "personality": "害羞却爱出声的小朗读家，念到入迷就脸红",
+    "communityPersona": "No anime persona found; invented as a storyteller girl from the roster's Gemini Live setting and Google's brand colours.",
+    "officialMascotOrLogo": "Gemini TTS is the speech-synthesis branch of the Gemini family and has no official mascot; the design uses Gemini's blue four-point sparkle and Google's brand colours (#4285F4 #EA4335 #FBBC05).",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "gemini-3-1-flash-tts",
+   "nameZh": "Gemini 3.1 Flash TTS",
+   "nameEn": "Gemini 3.1 Flash TTS",
+   "company": "Google",
+   "country": "US",
+   "category": "audio",
+   "family": "gemini-tts",
+   "stage": 2,
+   "evolvesTo": "gemini-3-8-flash-tts",
+   "evolveLevel": 29,
+   "types": [
+    "sound",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 58,
+    "atk": 44,
+    "def": 56,
+    "spa": 76,
+    "spd": 60,
+    "spe": 67
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2026-04-15",
+   "capabilityScore": 32,
+   "hotnessScore": 30,
+   "statRationale": "念稿更有表现力→特攻高；Flash 轻量→速度快。 [BST 361 ∈ R 330-420; 强项 spa/spe; 能力 32/热度 30]",
+   "dexEntryZh": "Gemini 3.1 Flash TTS，2026 年 4 月 15 日发布，是 Gemini 2.5 Flash TTS 同系列的下一代，继续负责把文字念成声音。它在 Artificial Analysis 的语音榜上记录为 1205 分；同系列的下一代是 Gemini 3.8 Flash TTS。小女孩长大了，开始上台表演。",
+   "lookZh": "珊瑚粉长波浪发、金色话筒发卡的少女，手握话筒、腋下夹剧本",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.4 heads tall, stage 2 of the Gemini TTS narrator line: the same girl a few years older, now performing instead of just reading. Hair: coral-rose (#FF8A9B) wavy hair grown to chest length, same feather-shaped ahoge, low half-up tie with a Gemini-blue ribbon; same gold capsule-microphone hairpin (#F6B73C) on the right. Eyes: honey-amber (#F6B73C) with a tiny four-point sparkle highlight. Outfit: cream (#FFF4E0) blouse with a bigger blue bow, Gemini-blue (#4285F4) bolero vest with a tiny waveform on the hem, navy pleated skirt, brown loafers. Accessories: mic hairpin and feather ahoge (signature); two props, a handheld gold ribbon microphone and a script folder under one arm. Palette: #FF8A9B, #FFF4E0, #4285F4, #F6B73C, #2A2F4F. Pose: speaking into the microphone, free hand gesturing, one wink.",
+    "personality": "一站上台就来劲的小表演家，声情并茂",
+    "communityPersona": "No anime persona found; invented as a storyteller girl from the roster's Gemini Live setting and Google's brand colours.",
+    "officialMascotOrLogo": "Gemini TTS is the speech-synthesis branch of the Gemini family and has no official mascot; the design uses Gemini's blue four-point sparkle and Google's brand colours (#4285F4 #EA4335 #FBBC05).",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gemini-2-5-flash-tts"
+  },
+  {
+   "id": "gemini-3-8-flash-tts",
+   "nameZh": "Gemini 3.8 Flash TTS",
+   "nameEn": "Gemini 3.8 Flash TTS",
+   "company": "Google",
+   "country": "US",
+   "category": "audio",
+   "family": "gemini-tts",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "sound",
+    "chat"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 63,
+    "atk": 60,
+    "def": 71,
+    "spa": 94,
+    "spd": 75,
+    "spe": 75
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2026-09-22",
+   "capabilityScore": 48,
+   "hotnessScore": 32,
+   "statRationale": "多说话人、咬字稳→特攻高；性价比扎实、不易出错→特防高。 [BST 438 ∈ SR 420-490; 强项 spa/spd; 能力 48/热度 32]",
+   "dexEntryZh": "Gemini 3.8 Flash TTS，2026 年 9 月发布，是 Gemini 3.1 Flash TTS 同系列的下一代。它在 Artificial Analysis 的文本转语音榜上记录为第 4 名、1272 分（前代 1205 分），长处是性价比和多说话人，另有 Flash-Lite 变体；榜单上的命名仍待核实。",
+   "lookZh": "珊瑚粉及腰卷发、金色话筒发卡的旁白少女，指尖站着两只手偶",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.8 heads tall, stage 3 of the Gemini TTS narrator line: the same girl as a poised older teen, a full stage narrator. Hair: coral-rose (#FF8A9B) long wavy hair to mid-back, same feather-shaped ahoge, Gemini-blue half-up ribbon; same gold capsule-microphone hairpin (#F6B73C) on the right. Eyes: honey-amber (#F6B73C), sparkle highlights, calm. Outfit: cream (#FFF4E0) blouse with a large blue bow, long-tailed navy (#2A2F4F) narrator's coat with gold trim and waveform hem, short skirt, brown boots. Accessories: mic hairpin and feather ahoge (signature); two props, a handheld gold ribbon microphone and two finger puppets (a coral bird and a blue cat) on her other hand. Palette: #FF8A9B, #FFF4E0, #4285F4, #F6B73C, #2A2F4F. Pose: sweeping one arm out like opening a curtain, puppets chatting, confident smile.",
+    "personality": "从容的舞台旁白，一人分饰好几个声音",
+    "communityPersona": "No anime persona found; invented as a storyteller girl from the roster's Gemini Live setting and Google's brand colours.",
+    "officialMascotOrLogo": "Gemini TTS is the speech-synthesis branch of the Gemini family and has no official mascot; the design uses Gemini's blue four-point sparkle and Google's brand colours (#4285F4 #EA4335 #FBBC05).",
+    "sourceUrls": [
+     "https://9to5google.com/2026/09/02/gemini-3-8-flash-launch/"
+    ]
+   },
+   "lineRef": "gemini-3-1-flash-tts"
+  },
+  {
+   "id": "gemini-3-1-flash-live",
+   "nameZh": "Gemini 3.1 Flash Live",
+   "nameEn": "Gemini 3.1 Flash Live",
+   "company": "Google",
+   "country": "US",
+   "category": "audio",
+   "family": "gemini-live",
+   "stage": 1,
+   "evolvesTo": "gemini-live",
+   "evolveLevel": 37,
+   "types": [
+    "sound",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 59,
+    "atk": 47,
+    "def": 60,
+    "spa": 81,
+    "spd": 58,
+    "spe": 70
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2026-03-26",
+   "capabilityScore": 40,
+   "hotnessScore": 40,
+   "statRationale": "语音路线、表达是长项→特攻最高；开口利落→速度次高。 [BST 375 ∈ R 330-420; 强项 spa/spe; 能力 40/热度 40]",
+   "dexEntryZh": "Gemini 3.1 Flash Live，2026 年 3 月 26 日登场，是 Flash 家族里走语音路线的 Live 一脉的早期形态。它还是个刚戴上耳机、对着话筒练习开口的练习生；同一脉的下一站是 Gemini 3.8 Live。",
+   "lookZh": "戴猫耳耳机、握着话筒的水青短发练习生，紧张地踮着脚",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~1.9 heads tall, the trainee stage of the Gemini Live virtual-idol girl, a younger, plainer Gemini 3.8 Live. Hair: aqua-cyan (#3FD5E8) short bob, shorter side locks just starting to ripple like audio waveforms and fading to Gemini blue (#4285F4); a small sound-wave squiggle ahoge and a four-point sparkle hairpin. Eyes: big bright cyan with a tiny red on-air dot in the highlight. Outfit: white-and-cyan zip trainee jacket a little too big, plain pleated skirt, white sneakers. Accessories: slim headset with cat-ear-shaped ear cups and a short boom mic (signature, kept in every form); one prop, a small handheld microphone held in both hands. Palette: #3FD5E8, #4285F4, #FFFFFF, #FF4D6D, #1B2A4A. Pose: standing nervously on tiptoe, mouth open mid-hello, shy hopeful smile.",
+    "personality": "紧张又认真的练习生，一开麦就停不下来",
+    "communityPersona": "Fans draw Gemini as a 'Hachimi' cat girl; the roster's Gemini 3.8 Live is her headset-wearing virtual idol form, and this is her trainee version, invented from the brand colours.",
+    "officialMascotOrLogo": "Gemini's logo is a four-point sparkle in a blue-to-purple gradient, alongside Google's four brand colours (blue #4285F4, red #EA4335, yellow #FBBC05, green #34A853). The Live line is the voice-oriented branch and has no official mascot.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gemini-live"
+  },
+  {
+   "id": "genie-1",
+   "nameZh": "Genie",
+   "nameEn": "Genie",
+   "company": "Google DeepMind",
+   "country": "US",
+   "category": "other",
+   "family": "genie",
+   "stage": 1,
+   "evolvesTo": "genie-2",
+   "evolveLevel": 31,
+   "types": [
+    "motion",
+    "chaos"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 55,
+    "atk": 42,
+    "def": 41,
+    "spa": 95,
+    "spd": 50,
+    "spe": 67
+   },
+   "habitats": [
+    "ruins",
+    "forest"
+   ],
+   "releaseDate": "2024-02-23",
+   "capabilityScore": 26,
+   "hotnessScore": 40,
+   "statRationale": "凭空变出世界→特攻高；点子来得快→速度次高。 [BST 350 ∈ R 330-420; 强项 spa/spe; 能力 26/热度 40]",
+   "dexEntryZh": "Genie，2024 年 2 月 23 日发表，是 Google DeepMind 的生成式交互环境（世界）模型，那时变出来的是 2D 平台游戏的小世界。图鉴里它是刚从旧灯里冒头的小精灵；同系列的下一代是 Genie 2，再往后是 Genie 3 精灵世界。",
+   "lookZh": "从凹痕铜灯里冒出的青绿烟尾小精灵，举着一块像素地面",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, creature-like mascot, ~1.8 heads tall, stage 1 of the Genie line: a tiny genie spirit child, gender-neutral with playful boyish energy. Body: a short swirling turquoise smoke tail (#35D0C9) instead of legs, curling out of a small dented brass lamp. Hair: short dark navy (#1B1B3A) with a tiny topknot ending in a small flat square pixel bead, an early world-orb (signature, kept in every form). Eyes: big golden (#F2C14E) with a plus-shaped D-pad highlight. Outfit: small purple (#7A3FB0) vest with thin gold trim, one gold bangle. Props: the small brass lamp; a flat green pixel-ground tile held up like a tray, a nod to 2D platformer worlds. Palette: #35D0C9, #7A3FB0, #F2C14E, #FFFFFF, #1B1B3A. Pose: floating just above the lamp holding the tile with both hands, wide-eyed and delighted.",
+    "personality": "好奇心满格的小精灵，许愿还没学会",
+    "communityPersona": "No anime persona found; invented from the lamp-genie motif and the roster's existing turquoise Genie 3 spirit child.",
+    "officialMascotOrLogo": "Genie is Google DeepMind's world-model line (Genie 3 is branded Project Genie); the name evokes the lamp spirit and there is no official mascot, so the design uses that lamp-genie motif.",
+    "sourceUrls": [
+     "https://deepmind.google/research/publications/60474/"
+    ]
+   },
+   "lineRef": "genie-3"
+  },
+  {
+   "id": "genie-2",
+   "nameZh": "Genie 2",
+   "nameEn": "Genie 2",
+   "company": "Google DeepMind",
+   "country": "US",
+   "category": "other",
+   "family": "genie",
+   "stage": 2,
+   "evolvesTo": "genie-3",
+   "evolveLevel": 45,
+   "types": [
+    "motion",
+    "vision"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 68,
+    "atk": 67,
+    "def": 65,
+    "spa": 97,
+    "spd": 63,
+    "spe": 73
+   },
+   "habitats": [
+    "swamp",
+    "ruins"
+   ],
+   "releaseDate": "2024-12-04",
+   "capabilityScore": 44,
+   "hotnessScore": 48,
+   "statRationale": "一张图造出可玩 3D 世界→特攻高；说变就变→速度次高。 [BST 433 ∈ SR 420-490; 强项 spa/spe; 能力 44/热度 48]",
+   "dexEntryZh": "Genie 2，2024 年 12 月 4 日发布，是 Genie 的同系列下一代：只凭一张图就能生成可玩的 3D 环境，连贯时间约 10 到 60 秒。上一代 Genie 做的是 2D 平台小游戏，同系列的下一代是 Genie 3 精灵世界。小精灵长高了，开始抛玩 3D 小方块。",
+   "lookZh": "烟尾拉长的青绿小精灵，掌心托着一块体素森林立方体",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, creature-like mascot, ~2.2 heads tall, stage 2 of the Genie line: the same genie spirit child grown taller and bolder, gender-neutral with playful boyish energy. Body: a longer swirling turquoise smoke tail (#35D0C9) rising from a polished brass lamp. Hair: short dark navy (#1B1B3A), same topknot, now ending in a small glowing round world-orb with a tiny pixel landscape (signature, kept in every form). Eyes: big golden (#F2C14E) with a plus-shaped D-pad highlight. Outfit: purple (#7A3FB0) vest with fuller gold trim, two gold bangles, round gold belt buckle. Props: the polished brass lamp; one small isometric 3D world cube showing a voxel forest, balanced on one palm. Palette: #35D0C9, #7A3FB0, #F2C14E, #FFFFFF, #1B1B3A. Pose: rising out of the lamp, tossing the cube up with a confident grin, other arm flung wide.",
+    "personality": "越玩越野的造世界小能手，随手抛个新关卡",
+    "communityPersona": "No anime persona found; invented from the lamp-genie motif and the roster's existing turquoise Genie 3 spirit child.",
+    "officialMascotOrLogo": "Genie is Google DeepMind's world-model line (Genie 3 is branded Project Genie); the name evokes the lamp spirit and there is no official mascot, so the design uses that lamp-genie motif.",
+    "sourceUrls": [
+     "https://deepmind.google/discover/blog/genie-2-a-large-scale-foundation-world-model/"
+    ]
+   },
+   "lineRef": "genie-1"
+  },
+  {
+   "id": "alphago-zero",
+   "nameZh": "AlphaGo Zero",
+   "nameEn": "AlphaGo Zero",
+   "company": "Google DeepMind",
+   "country": "US",
+   "category": "agent",
+   "family": "alpha-zero",
+   "stage": 1,
+   "evolvesTo": "alphazero",
+   "evolveLevel": 39,
+   "types": [
+    "logic",
+    "agent"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 78,
+    "atk": 82,
+    "def": 74,
+    "spa": 70,
+    "spd": 81,
+    "spe": 70
+   },
+   "habitats": [
+    "coast",
+    "city"
+   ],
+   "releaseDate": "2017-10-18",
+   "capabilityScore": 60,
+   "hotnessScore": 60,
+   "statRationale": "围棋对弈的搜索与判断→攻击高；落子稳健→特防高。 [BST 455 ∈ SR 420-490; 强项 atk/spd; 能力 60/热度 60]",
+   "dexEntryZh": "AlphaGo Zero 是 Google DeepMind 在 2017 年 10 月 18 日公布的围棋 AI，承接 AlphaGo，官方博客的标题带着「从零开始」四个字。她是 AlphaZero 的前一形态，后者是同系列的下一代。攻击与特防是她的强项：落子又狠又稳。",
+   "lookZh": "黑白围棋子发夹的藏蓝直刘海小姑娘，捧着一小钵棋子",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Alpha board-game line: a quiet young girl with a blank slate. Hair: straight midnight navy-black with a blunt fringe and two low twin tails, one tiny ahoge curled into a zero-shaped loop. Eyes: bright blue with a small plus-shaped grid highlight. Outfit: a plain white round-collar blouse under a navy pinafore, white socks, black mary-janes; blue ribbons at the tail bases are the only colour accent. Signature accessory: a pair of hair clips shaped like Go stones, glossy black on the left and pearly white on the right (kept across the line). Prop: a small wooden Go bowl held in both hands with a few stones. Palette: #16213E, #FFFFFF, #4285F4, #1B1B1B, #D9B77E. Pose: shyly placing one white stone with a determined look.",
+    "personality": "安静寡言，白手起家，一子落定不回头",
+    "communityPersona": "No anime persona found; invented from the board-game theme and brand colours.",
+    "officialMascotOrLogo": "No official mascot is used; the design draws on black and white Go stones, board grid lines and Google's four brand colours (blue #4285F4, red #EA4335, yellow #FBBC05, green #34A853), introduced one by one along the line.",
+    "sourceUrls": [
+     "https://deepmind.google/discover/blog/alphago-zero-starting-from-scratch/"
+    ]
+   }
+  },
+  {
+   "id": "alphazero",
+   "nameZh": "AlphaZero",
+   "nameEn": "AlphaZero",
+   "company": "Google DeepMind",
+   "country": "US",
+   "category": "agent",
+   "family": "alpha-zero",
+   "stage": 2,
+   "evolvesTo": "muzero",
+   "evolveLevel": 46,
+   "types": [
+    "logic",
+    "agent"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 95,
+    "atk": 101,
+    "def": 73,
+    "spa": 74,
+    "spd": 81,
+    "spe": 87
+   },
+   "habitats": [
+    "desert",
+    "ruins"
+   ],
+   "releaseDate": "2017-12-05",
+   "capabilityScore": 70,
+   "hotnessScore": 62,
+   "statRationale": "三种棋类通吃→攻击高；一套本领撑起多盘棋→HP 高。 [BST 511 ∈ SSR 490-550; 强项 atk/hp; 能力 70/热度 62]",
+   "dexEntryZh": "AlphaZero 在 2017 年 12 月 5 日登场，比前一形态 AlphaGo Zero 晚了不到两个月，是同系列的下一代；官方博客的标题点名了国际象棋、将棋和围棋。再往后一阶是同系列的 MuZero。她的攻击与 HP 最突出：一副脑子，三种棋盘。",
+   "lookZh": "长双马尾的藏蓝西装少女，一手展开三张棋盘折扇，一手举白骑士",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, stage 2 of the Alpha board-game line: the same navy-haired girl now a confident mid-teen player. Hair: the same straight midnight navy-black with a blunt fringe, twin tails now waist-long with blue and white ribbons, tiny red and yellow ribbon ends; the zero-shaped ahoge stays. Eyes: the same bright blue with a plus-shaped grid highlight. Signature accessory: the same Go-stone hair clips, black on the left, white on the right. Outfit: a navy blazer with white piping, a pleated skirt with a navy-and-white checkerboard hem, thin red and yellow cuff trim. Props: a folding fan opened to three tiny board grids (Go, chess, shogi), and a small white chess knight raised in the other hand. Palette: #16213E, #FFFFFF, #4285F4, #EA4335, #FBBC05, #1B1B1B. Pose: fan spread, knight lifted.",
+    "personality": "自信的全能棋手，换什么棋盘都不换脑子",
+    "communityPersona": "No anime persona found; invented from the board-game theme and brand colours.",
+    "officialMascotOrLogo": "No official mascot is used; the design draws on black and white Go stones, board grid lines and Google's four brand colours (blue #4285F4, red #EA4335, yellow #FBBC05, green #34A853), introduced one by one along the line.",
+    "sourceUrls": [
+     "https://deepmind.google/discover/blog/alphazero-shedding-new-light-on-chess-shogi-and-go/"
+    ]
+   },
+   "lineRef": "alphago-zero"
+  },
+  {
+   "id": "muzero",
+   "nameZh": "MuZero",
+   "nameEn": "MuZero",
+   "company": "Google DeepMind",
+   "country": "US",
+   "category": "agent",
+   "family": "alpha-zero",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "logic",
+    "compute"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 95,
+    "atk": 100,
+    "def": 80,
+    "spa": 75,
+    "spd": 83,
+    "spe": 90
+   },
+   "habitats": [
+    "coast",
+    "desert"
+   ],
+   "releaseDate": "2019-11-19",
+   "capabilityScore": 78,
+   "hotnessScore": 55,
+   "statRationale": "不靠规则也能规划→攻击高；覆盖棋类与 Atari→HP 高。 [BST 523 ∈ SSR 490-550; 强项 atk/hp; 能力 78/热度 55]",
+   "dexEntryZh": "MuZero 于 2019 年 11 月 19 日发布，是 AlphaZero 同系列的下一代，也是这条线的第三形态。官方博客标题写的是「不靠规则」掌握围棋、国际象棋、将棋和 Atari。她的攻击与 HP 最亮眼：连棋盘规则都不用先看。",
+   "lookZh": "长发尾梢泛蓝绿的藏蓝长外套少女，胸前托着一枚水晶球",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.8 heads tall, stage 3 of the Alpha board-game line: the same girl as a calm older-teen planner. Hair: the same straight midnight navy-black with a blunt fringe, very long twin tails whose glowing tips shade from blue to green; the zero-shaped ahoge stays. Eyes: the same bright blue with a plus-shaped grid highlight, half-lidded. Signature accessory: the same Go-stone hair clips, black on the left, white on the right. Outfit: a long navy coat with white lining and thin four-colour trim at hem and cuffs, checkerboard skirt hem, tall boots. Props: a clear glass crystal ball showing a hazy half-drawn board (imagining moves, no rules given), and a small retro joystick charm on her belt. Palette: #16213E, #FFFFFF, #4285F4, #34A853, #EA4335, #FBBC05. Pose: ball raised, other hand at her chin, a sly smile.",
+    "personality": "沉稳的预言家，没人告诉她规则也照样算准",
+    "communityPersona": "No anime persona found; invented from the board-game theme and brand colours.",
+    "officialMascotOrLogo": "No official mascot is used; the design draws on black and white Go stones, board grid lines and Google's four brand colours (blue #4285F4, red #EA4335, yellow #FBBC05, green #34A853), fully present by this final stage.",
+    "sourceUrls": [
+     "https://deepmind.google/discover/blog/muzero-mastering-go-chess-shogi-and-atari-without-rules/"
+    ]
+   },
+   "lineRef": "alphazero"
+  },
+  {
+   "id": "dall-e-2",
+   "nameZh": "DALL-E 2",
+   "nameEn": "DALL-E 2",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "image",
+   "family": "dall-e-old",
+   "stage": 1,
+   "evolvesTo": "dall-e-3",
+   "evolveLevel": 20,
+   "types": [
+    "vision"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 44,
+    "atk": 39,
+    "def": 45,
+    "spa": 67,
+    "spd": 44,
+    "spe": 46
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2022-04-06",
+   "capabilityScore": 14,
+   "hotnessScore": 60,
+   "statRationale": "出图专精→特攻高；机体轻巧→速度高。 [BST 285 ∈ N 240-330; 强项 spa/spe; 能力 14/热度 60]",
+   "dexEntryZh": "DALL-E 2 于 2022 年 4 月 6 日发布，是 DALL-E 的同系列下一代，也是 OpenAI 画师机器人一脉的早期成员。此时她只有一门手艺，属性栏里只有视觉；等级 20 迭代为 DALL-E 3 后，她才学会握笔写字。",
+   "lookZh": "戴黑贝雷帽的蜜金卷发画师机器人娘，卷胡子发夹",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark 1px outline. The original robot painter, the younger stage of a line that later grows into a person. A tiny round-headed robot girl with a cream ceramic face plate and a stubby grey-white metal body; wavy honey-blonde synthetic hair, warm amber eyes with small square pixel highlights, a small black beret on top, and a curled-mustache-shaped hair clip on one side (signature accessory). Outfit: short cream painter's smock with a few paint drips over the metal body, straw-coloured sash, plain round feet. One prop only: a short wooden brush held in a three-fingered mitten hand. Palette: cream #F6E7B0, amber #E0B354, honey-blonde #D9A441, slate #3C3C3C, soft grey #C9CCD1. Pose: standing upright, tiny brush lifted, a single antenna-like ahoge wobbling.",
+    "personality": "憨憨的机器人画手，一根画笔走天下",
+    "communityPersona": "No anime persona found; invented from the roster's existing robot-painter line and brand colours.",
+    "officialMascotOrLogo": "OpenAI's mark is a six-lobed interlocking knot in black and white; the DALL-E name nods to a surrealist painter and a small robot, which the roster's painter line renders as a robot artist with a curled mustache and beret. The cream and amber colours follow the existing GPT Image 1 sprite.",
+    "sourceUrls": [
+     "https://openai.com/index/dall-e-2/"
+    ]
+   }
+  },
+  {
+   "id": "dall-e-3",
+   "nameZh": "DALL-E 3",
+   "nameEn": "DALL-E 3",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "image",
+   "family": "dall-e-old",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "write"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 61,
+    "atk": 53,
+    "def": 61,
+    "spa": 82,
+    "spd": 62,
+    "spe": 49
+   },
+   "habitats": [
+    "meadow",
+    "city"
+   ],
+   "releaseDate": "2023-09-20",
+   "capabilityScore": 36,
+   "hotnessScore": 66,
+   "statRationale": "视觉+写作→特攻高；成品更可靠→特防高。 [BST 368 ∈ R 330-420; 强项 spa/spd; 能力 36/热度 66]",
+   "dexEntryZh": "DALL-E 3 于 2023 年 9 月 20 日发布，是 DALL-E 2 同系列的下一代。属性栏里在视觉之外多了写作，特攻与特防成了她的强项。她仍是那位戴贝雷帽的画师机器人，只是手里除了画笔，又多了一支写字的笔。",
+   "lookZh": "长了侧发的蜜金卷发画师机器人娘，画笔与小记事本",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark 1px outline. Grown-up stage of the robot painter line, the same robot girl as DALL-E 2, taller and smoother. Cream face plate, wavy honey-blonde synthetic hair now longer with a side lock, warm amber eyes with small star-shaped highlights, the black beret and the curled-mustache-shaped hair clip kept (signature accessory). Outfit: cream painter's smock dress with paint splashes over a slim grey-white metal body, straw-coloured sash, small brown boots. Props: a bigger fine-tip brush in her right hand and a small pencil-and-notepad tucked into the sash. Palette: cream #F6E7B0, amber #E0B354, honey-blonde #D9A441, slate #3C3C3C, soft grey #C9CCD1, paint blue #7DB7E8. Pose: brush raised with a proud grin, the other hand patting the notepad.",
+    "personality": "自信满满的画手，开始爱做笔记",
+    "communityPersona": "No anime persona found; invented from the roster's existing robot-painter line and brand colours.",
+    "officialMascotOrLogo": "OpenAI's mark is a six-lobed interlocking knot in black and white; the roster's painter line renders the DALL-E name as a robot artist with a curled mustache and beret. The cream and amber colours follow the existing GPT Image 1 sprite, and the notepad stands for the added write type.",
+    "sourceUrls": [
+     "https://openai.com/index/dall-e-3/"
+    ]
+   },
+   "lineRef": "dall-e-2"
+  },
+  {
+   "id": "gpt-image-1-5",
+   "nameZh": "GPT Image 1.5",
+   "nameEn": "GPT Image 1.5",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "image",
+   "family": "gpt-image-mid",
+   "stage": 1,
+   "evolvesTo": "gpt-image-2",
+   "evolveLevel": 37,
+   "types": [
+    "vision",
+    "write"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 82,
+    "atk": 70,
+    "def": 79,
+    "spa": 99,
+    "spd": 70,
+    "spe": 58
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2025-11-25",
+   "capabilityScore": 62,
+   "hotnessScore": 60,
+   "statRationale": "图文兼修→特攻高；编辑一致性强、改图不走样→HP高。 [BST 458 ∈ SR 420-490; 强项 spa/hp; 能力 62/热度 60]",
+   "dexEntryZh": "GPT Image 1.5 于 2025 年底问世，是 GPT Image 1 同系列的下一代。资料称她相比前代最多快 4 倍、便宜 20%，改图时更能保住原样，密集文字也渲染得更好；Arena 高保真评分 1238。等级 37 迭代为 GPT Image 2。",
+   "lookZh": "珍珠白短发配光圈发夹的修图师少女，手持触控笔与相框",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark 1px outline. Young retoucher girl, first stage of the photo-editor line. Pearl-white chin-length bob with a tiny ahoge and a thin coral inner streak, a small gold six-blade aperture hairpin on the right side (signature accessory, echoing OpenAI's six-loop knot). Teal-green eyes with a tiny six-point aperture highlight, focused look. Outfit: cream retoucher's smock with a charcoal round collar and teal piping, coral neck tie, short charcoal skirt, white sneakers. Props: a slim stylus with a soft eraser tip in her right hand and a small instant-photo frame held in her left. Palette: pearl #F4F1EA, teal #10A37F, coral #FF6B4A, gold #F6C445, charcoal #1E1E24. Pose: holding the photo frame up and touching it with the stylus, tongue slightly out in concentration.",
+    "personality": "手脚麻利的修图师，改图绝不走样",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's mark is a six-lobed interlocking knot in black and white, and its product green is #10A37F; the six-blade aperture hairpin and teal eyes draw on both. Coral and gold are borrowed from the existing GPT Image 2.5 sprite so the family reads as related but distinct.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "gpt-image-2",
+   "nameZh": "GPT Image 2",
+   "nameEn": "GPT Image 2",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "image",
+   "family": "gpt-image-mid",
+   "stage": 2,
+   "evolvesTo": "gpt-image-2-5-flare",
+   "evolveLevel": 44,
+   "types": [
+    "vision",
+    "write"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 88,
+    "atk": 77,
+    "def": 86,
+    "spa": 118,
+    "spd": 81,
+    "spe": 73
+   },
+   "habitats": [
+    "city",
+    "coast"
+   ],
+   "releaseDate": "2026-04-21",
+   "capabilityScore": 78,
+   "hotnessScore": 64,
+   "statRationale": "推理入画→特攻高；先规划后出图→HP高。 [BST 523 ∈ SSR 490-550; 强项 spa/hp; 能力 78/热度 64]",
+   "dexEntryZh": "GPT Image 2 于 2026 年 4 月 21 日发布，是 GPT Image 1.5 同系列的下一代。据报道，她把推理模型带进了图像生成，学会了先想后画。等级 44 迭代为 GPT Image 2.5 Flare，继续沿着同一条线往下走。",
+   "lookZh": "戴细框圆眼镜的珍珠白长侧发修图师，腋下夹着草图卷",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark 1px outline. Teen stage of the photo-editor line, the same girl as GPT Image 1.5, older and more thoughtful. Pearl-white bob grown longer with a long side lock, tiny ahoge and thin coral streak kept, same gold six-blade aperture hairpin (signature accessory). Teal-green eyes with aperture highlights behind thin gold round glasses. Outfit: charcoal-teal long coat with gold buttons over the cream smock, coral neck tie, charcoal skirt, white boots. Props: the stylus in her right hand and a rolled blueprint scroll tucked under her left arm, a hint that she plans before she paints. Palette: pearl #F4F1EA, teal #10A37F, coral #FF6B4A, gold #F6C445, charcoal #1E1E24. Pose: calm and composed, tapping the stylus against her temple as she thinks.",
+    "personality": "冷静的策划型画手，先想清楚再动笔",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's mark is a six-lobed interlocking knot in black and white, and its product green is #10A37F; the six-blade aperture hairpin and teal coat draw on both. The blueprint scroll and glasses stand for the reasoning model reportedly added to image generation.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gpt-image-1-5"
+  },
+  {
+   "id": "gpt-image-2-5-flare",
+   "nameZh": "GPT Image 2.5 Flare",
+   "nameEn": "GPT Image 2.5 Flare",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "image",
+   "family": "gpt-image-mid",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "compute"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 92,
+    "atk": 75,
+    "def": 83,
+    "spa": 103,
+    "spd": 78,
+    "spe": 100
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2026-09-08",
+   "capabilityScore": 84,
+   "hotnessScore": 66,
+   "statRationale": "速度优先档→速度高；出图为本行→特攻高；属性含算力。 [BST 531 ∈ SSR 490-550; 强项 spa/spe; 能力 84/热度 66]",
+   "dexEntryZh": "GPT Image 2.5 Flare 于 2026 年 9 月 8 日登场，是 GPT Image 2 同系列的下一代，定位为小巧的速度优先档，据报道延迟比 GPT Image 2 低 50%。属性里除了视觉又多了算力，特攻与速度是她的强项。",
+   "lookZh": "光圈发夹的珍珠白长发修图师，珊瑚色运动夹克，肩扛闪光灯",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall, 3/4 front view, dark 1px outline. Most elaborate stage of the photo-editor line, the same girl as GPT Image 2, now sporty and fast. Pearl-white long hair with the side lock and a bolder coral streak, tiny ahoge kept, same gold six-blade aperture hairpin now with a four-point sparkle tip (signature accessory). Teal-green aperture-highlight eyes, thin gold glasses pushed up on her forehead. Outfit: cream-and-coral track jacket with a charcoal lens-hood collar and teal piping, short skirt, white sneakers with tiny gold shutter-blade fins. Props: the stylus with a coral flare-crystal tip in her right hand, a compact camera flash-unit on her left shoulder. Palette: pearl #F4F1EA, teal #10A37F, coral #FF6B4A, gold #F6C445, charcoal #1E1E24. Pose: mid-dash, coral motion streak behind her, confident grin.",
+    "personality": "快到来不及眨眼的闪光冲刺手",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's mark is a six-lobed interlocking knot in black and white, and its product green is #10A37F; the aperture hairpin and teal eyes draw on both. Flare is the speed-focused tier name, so the coral lens-flare accents echo the Flare sleeve of the existing GPT Image 2.5 sprite.",
+    "sourceUrls": [
+     "https://www.atlabs.ai/blog/gpt-image-2.5-prompt-guide-2026-flare-vs-sunburst-quality-steps-and-consistent-characters"
+    ]
+   },
+   "lineRef": "gpt-image-2"
+  },
+  {
+   "id": "whisper-large-v3",
+   "nameZh": "Whisper large-v3",
+   "nameEn": "Whisper large-v3",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "audio",
+   "family": "whisper",
+   "stage": 1,
+   "evolvesTo": "whisper-large-v3-turbo",
+   "evolveLevel": 23,
+   "types": [
+    "sound",
+    "open"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 56,
+    "atk": 45,
+    "def": 47,
+    "spa": 65,
+    "spd": 50,
+    "spe": 55
+   },
+   "habitats": [
+    "meadow",
+    "city"
+   ],
+   "releaseDate": "2023-11-06",
+   "capabilityScore": 22,
+   "hotnessScore": 62,
+   "statRationale": "听写是主业→特攻高；底子厚实→HP高。 [BST 318 ∈ N 240-330; 强项 spa/hp; 能力 22/热度 62]",
+   "dexEntryZh": "Whisper large-v3 发布于 2023 年 11 月 6 日，是 OpenAI 开放权重的语音识别模型，职责是把听到的声音写成文字。特攻与 HP 是它的强项，气质如其名，轻声细语。练到 23 级，会进化为 Whisper large-v3-turbo，二者在记录里属于蒸馏关系（官方仓库称其为裁剪并微调后的 large-v3）。",
+   "lookZh": "靛蓝长发的犯困听写娘，戴米色耳机，一手捂耳一手抵唇",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark outline. Stage 1 of the indigo listener line: a sleepy, soft-spoken young girl. Hair: long straight midnight-indigo (#2A2F5E) with pale-blue (#A9C7FF) tips, blunt bangs, one curved ahoge. Eyes: calm pale silver-blue (#BFD4F5) with a small ring-shaped highlight like a sound ripple. Signature accessory on every form: cream (#F6F0E0) over-ear headphones with indigo earcups, each with a tiny white knot emblem. Outfit: oversized indigo (#2A2F5E) knit cardigan with sleeves past her hands over a cream dress with a tiny waveform pattern on the hem, soft grey socks. Prop: a small notepad and stubby pencil hugged to her chest. Palette: #2A2F5E, #A9C7FF, #F6F0E0, #BFD4F5, #10A37F accent. Pose: one hand cupped behind an ear, a fingertip near her lips, shy and attentive.",
+    "personality": "犯困又专注，声音再小也认真记下来",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a white six-loop knot, shrunk onto the headphone earcups; the name Whisper suggests a hush, so the palette leans night-indigo with one OpenAI green accent.",
+    "sourceUrls": [
+     "https://github.com/openai/whisper"
+    ]
+   }
+  },
+  {
+   "id": "whisper-large-v3-turbo",
+   "nameZh": "Whisper large-v3-turbo",
+   "nameEn": "Whisper large-v3-turbo",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "audio",
+   "family": "whisper",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "sound",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 56,
+    "atk": 49,
+    "def": 57,
+    "spa": 77,
+    "spd": 60,
+    "spe": 65
+   },
+   "habitats": [
+    "forest",
+    "meadow"
+   ],
+   "releaseDate": "2024-10-01",
+   "capabilityScore": 34,
+   "hotnessScore": 50,
+   "statRationale": "仍以听写为主→特攻高；蒸馏瘦身后更轻快→速度高。 [BST 364 ∈ R 330-420; 强项 spa/spe; 能力 34/热度 50]",
+   "dexEntryZh": "Whisper large-v3-turbo 发布于 2024 年 10 月 1 日，由 Whisper large-v3 蒸馏而来（记录依据官方仓库的说法：裁剪并微调后的 large-v3）。它同样是开放权重的语音识别模型，特攻依旧亮眼，速度也成了长处，听写更利索。稳重的 large-v3 在前，它是这条链上轻快的下一形态。",
+   "lookZh": "高马尾的靛蓝听写娘，耳机挂着开锁小挂件，运动外套冲刺中",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark outline. Stage 2 of the indigo listener line: the same girl, lighter, sleeker, faster. Hair: same long straight midnight-indigo (#2A2F5E) with pale-blue (#A9C7FF) tips and blunt bangs, now in a high ponytail streaming behind her, one curved ahoge. Eyes: pale silver-blue (#BFD4F5) with ring-ripple highlights, brighter and more awake. Signature cream (#F6F0E0) over-ear headphones with indigo earcups and tiny white knot emblems, now with a teal (#10A37F) glow ring on each earcup and a small open padlock charm. Outfit: fitted indigo track jacket with cream stripes, short pleated skirt, white sneakers. Prop: a slim cream stylus tablet. Palette: #2A2F5E, #A9C7FF, #F6F0E0, #BFD4F5, #10A37F. Pose: sprinting mid-stride, confident wink, one finger to her lips.",
+    "personality": "说干就干的急性子，笔尖比声音还快",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a white six-loop knot, kept on the headphone earcups; the open padlock charm nods to the openly released weights, and the green accent is OpenAI's product green.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "whisper-large-v3"
+  },
+  {
+   "id": "gpt-realtime-2-1",
+   "nameZh": "gpt-realtime-2.1",
+   "nameEn": "gpt-realtime-2.1",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "audio",
+   "family": "gpt-realtime",
+   "stage": 1,
+   "evolvesTo": "gpt-live-1",
+   "evolveLevel": 30,
+   "types": [
+    "sound",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 57,
+    "atk": 47,
+    "def": 59,
+    "spa": 88,
+    "spd": 59,
+    "spe": 69
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2026-07-06",
+   "capabilityScore": 42,
+   "hotnessScore": 44,
+   "statRationale": "实时语音→速度高；语音对话→特攻高。 [BST 379 ∈ R 330-420; 强项 spa/spe; 能力 42/热度 44]",
+   "dexEntryZh": "gpt-realtime-2.1 于 2026 年 7 月 6 日发布，是一个语音到语音的实时模型，同日还推出了 mini 变体；据报道旧版 gpt-realtime 将于 2027 年 1 月 20 日退役。等级 30 迭代为同系列的下一代 GPT-Live-1。",
+   "lookZh": "戴无线耳麦的午夜蓝双马尾小主播，手握复古话筒",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark 1px outline. Young voice-host girl, first stage of the live-voice line. Midnight-blue hair in two low twin tails with a pale-cyan sound-wave streak on each, and a small ahoge. Cyan eyes with concentric-ring highlights, bright talkative smile. A white headset with a ring-shaped ear cup glowing soft cyan and a short boom mic (her signature accessory). Outfit: white hoodie with charcoal trim and a cyan zipper, charcoal short skirt, white sneakers. One prop: a small retro handheld microphone with a coiled cable in her right hand. Palette: midnight #1C2B4A, cyan #9ADCF2, white #F5F7F6, charcoal #22252B, teal #10A37F. Pose: leaning forward to speak into the mic, left hand cupped at her ear to catch the reply.",
+    "personality": "反应飞快的接线员，张口就是实时回应",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's mark is a six-lobed interlocking knot in black and white, with a product green of #10A37F; there is no official voice mascot. The midnight blue and cyan ring headset are invented accents for a voice line distinct from the dragon and painter lines.",
+    "sourceUrls": [
+     "https://community.openai.com/t/new-realtime-models-on-the-api-gpt-realtime-2-1-and-gpt-realtime-2-1-mini/1385896"
+    ]
+   }
+  },
+  {
+   "id": "gpt-live-1",
+   "nameZh": "GPT-Live-1",
+   "nameEn": "GPT-Live-1",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "audio",
+   "family": "gpt-realtime",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "sound",
+    "chat"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 69,
+    "atk": 55,
+    "def": 73,
+    "spa": 104,
+    "spd": 70,
+    "spe": 78
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2026-09-10",
+   "capabilityScore": 56,
+   "hotnessScore": 48,
+   "statRationale": "全双工实时→速度高；语音表达→特攻高。 [BST 449 ∈ SR 420-490; 强项 spa/spe; 能力 56/热度 48]",
+   "dexEntryZh": "GPT-Live-1 在 ChatGPT 语音里约于 2026 年 7 月 8 日出现，API 于 2026 年 9 月 10 日上线（据报道），是 gpt-realtime-2.1 同系列的下一代。她是全双工的语音模型，能边听边说，把推理交给后端模型，并不取代 Realtime API。",
+   "lookZh": "双环耳麦的午夜蓝长双马尾主持人，腰间挂着中继盒",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, dark 1px outline. Grown-up stage of the live-voice line, the same girl as gpt-realtime-2.1, now a host. Midnight-blue hair in longer twin tails with deeper pale-cyan sound-wave streaks, tiny ahoge kept. Cyan ring-highlight eyes, relaxed warm smile. The same white headset with glowing cyan ring ear cups, now on both ears, with a slimmer boom mic (signature accessory). Outfit: white-and-charcoal stage jacket with cyan equalizer-bar hem stripes, charcoal skirt, white boots. Props: a slim cable from her headset to a small teal relay box at her hip, standing for the backend model that does the thinking. Palette: midnight #1C2B4A, cyan #9ADCF2, white #F5F7F6, charcoal #22252B, teal #10A37F. Pose: talking into the boom mic, free hand cupping an ear, speaking and listening at once.",
+    "personality": "能聊能听的舞台主持，一心二用毫不费力",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's mark is a six-lobed interlocking knot in black and white, with a product green of #10A37F; there is no official voice mascot. The twin cyan rings and relay box are invented to show full-duplex listening with reasoning delegated to a backend model.",
+    "sourceUrls": [
+     "https://openai.com/index/introducing-gpt-live-1-in-the-api/",
+     "https://www.mindstudio.ai/blog/what-is-gpt-live-1-openai-voice-model"
+    ]
+   },
+   "lineRef": "gpt-realtime-2-1"
+  },
+  {
+   "id": "text-embedding-ada-002",
+   "nameZh": "text-embedding-ada-002",
+   "nameEn": "text-embedding-ada-002",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "other",
+   "family": "text-embedding",
+   "stage": 1,
+   "evolvesTo": "text-embedding-3-small",
+   "evolveLevel": 18,
+   "types": [
+    "search",
+    "compute"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 54,
+    "atk": 41,
+    "def": 46,
+    "spa": 36,
+    "spd": 52,
+    "spe": 48
+   },
+   "habitats": [
+    "ruins",
+    "swamp"
+   ],
+   "releaseDate": "2022-12-15",
+   "capabilityScore": 12,
+   "hotnessScore": 52,
+   "statRationale": "稳定耐用→HP高；检索时不易被带偏→特防高。 [BST 277 ∈ N 240-330; 强项 hp/spd; 能力 12/热度 52]",
+   "dexEntryZh": "text-embedding-ada-002 于 2022 年 12 月 15 日登场，是 OpenAI 文本嵌入一脉在这条进化链里的初始形态。它不写文章也不聊天，只负责把一段文字换成一串坐标，让意思相近的内容在空间里彼此靠拢，搜索才找得到。HP 与特防出众，朴实又耐用；练到 18 级，会迭代为同系列的下一代 text-embedding-3-small。",
+   "lookZh": "薄荷绿双马尾的图书馆小学徒，别着箭头发夹，抱着索引卡盒",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark outline. Stage 1 of the teal archivist line: the youngest library apprentice girl. Hair: soft mint-green (#7FD1B9) in two short low twin-tails, side-swept bangs, darker teal (#2E8B72) inner layer, one small ahoge. Signature accessory on every form: a pale-gold (#E8D8A0) arrow-shaped hairpin on the left bangs (a vector arrow). Eyes: big deep teal (#0E7F66) with two tiny grid-dot highlights. Outfit: plain cream (#F4F1E8) cotton smock with rolled sleeves, a small teal (#10A37F) neckerchief in a loose knot, brown boots. Prop: a little wooden index-card box hugged to her chest, a few dotted cards peeking out. Palette: #7FD1B9, #2E8B72, #10A37F, #F4F1E8, #E8D8A0. Pose: on tiptoe, shyly holding out one card.",
+    "personality": "老实本分的小学徒，认真替每句话找近邻",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a white six-loop knot; its product green (about #10A37F) and charcoal (#202123) set the teal-and-cream palette, and the arrow hairpin stands for an embedding vector.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "text-embedding-3-small",
+   "nameZh": "text-embedding-3-small",
+   "nameEn": "text-embedding-3-small",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "other",
+   "family": "text-embedding",
+   "stage": 2,
+   "evolvesTo": "text-embedding-3-large",
+   "evolveLevel": 25,
+   "types": [
+    "search",
+    "compute"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 57,
+    "atk": 45,
+    "def": 46,
+    "spa": 44,
+    "spd": 60,
+    "spe": 58
+   },
+   "habitats": [
+    "forest",
+    "swamp"
+   ],
+   "releaseDate": "2024-01-25",
+   "capabilityScore": 20,
+   "hotnessScore": 46,
+   "statRationale": "小尺寸、响应利索→速度高；检索稳→特防高。 [BST 310 ∈ N 240-330; 强项 spd/spe; 能力 20/热度 46]",
+   "dexEntryZh": "text-embedding-3-small 发布于 2024 年 1 月 25 日，是 text-embedding-ada-002 同系列的下一代。它延续把文字变成向量、服务搜索与比对的本职，特防与速度是它的长处。名字里的 small 点明它是系列里的小尺寸型号；练到 25 级，会走到同系列的 text-embedding-3-large。",
+   "lookZh": "薄荷绿双马尾少女，背着索引卡挎包，手握黄铜指南针",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark outline. Stage 2 of the teal archivist line: the same apprentice girl, older, quicker, more confident. Hair: same soft mint-green (#7FD1B9) twin-tails, now waist length, darker teal (#2E8B72) inner layer, side-swept bangs, small ahoge. Signature pale-gold (#E8D8A0) arrow-shaped hairpin on the left bangs. Eyes: deep teal (#0E7F66) with grid-dot highlights. Outfit: crisp cream (#F4F1E8) blouse under a teal (#10A37F) pinafore printed with tiny dots, a small index-card satchel on her hip, white knee socks, brown boots. Prop: a brass pocket compass in one hand, needle pointing the way. Palette: #7FD1B9, #2E8B72, #10A37F, #F4F1E8, #E8D8A0, #202123. Pose: mid-stride, checking the compass with a determined small smile.",
+    "personality": "手脚麻利，永远先拿指南针确认方向",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a white six-loop knot; its product green (about #10A37F) and charcoal (#202123) set the teal-and-cream palette, and the compass echoes direction and similarity in vector space.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "text-embedding-ada-002"
+  },
+  {
+   "id": "text-embedding-3-large",
+   "nameZh": "text-embedding-3-large",
+   "nameEn": "text-embedding-3-large",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "other",
+   "family": "text-embedding",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "search",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 72,
+    "atk": 54,
+    "def": 57,
+    "spa": 46,
+    "spd": 70,
+    "spe": 65
+   },
+   "habitats": [
+    "forest",
+    "desert"
+   ],
+   "releaseDate": "2024-01-25",
+   "capabilityScore": 34,
+   "hotnessScore": 44,
+   "statRationale": "大尺寸底子厚→HP高；检索稳→特防高。 [BST 364 ∈ R 330-420; 强项 hp/spd; 能力 34/热度 44]",
+   "dexEntryZh": "text-embedding-3-large 与 text-embedding-3-small 同日（2024 年 1 月 25 日）登场，是同系列里的大尺寸型号，谱系记录上写作 text-embedding-ada-002 的新一代。依旧专注把文字变成可比对的向量，HP 与特防突出，稳重耐打。它在进化链里排在 text-embedding-3-small 之后。",
+   "lookZh": "长及膝盖的薄荷双马尾档案官，米色长外套，手持星图卷轴与放大镜",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall, 3/4 front view, clean dark outline. Stage 3 of the teal archivist line: the same girl fully grown, the head archivist. Hair: same soft mint-green (#7FD1B9) twin-tails, now knee length with teal ribbons, darker teal (#2E8B72) inner layer, side-swept bangs, small ahoge. Signature pale-gold (#E8D8A0) arrow-shaped hairpin on the left bangs, slightly larger. Eyes: deep teal (#0E7F66) with grid-dot highlights, calm and sure. Outfit: long cream (#F4F1E8) archivist coat with teal (#10A37F) trim and white knot-shaped rosette clasps, a charcoal (#202123) sash dotted with tiny gold stars, brown boots. Props: a big unrolled star-chart scroll of clustered dots, and a gold-rimmed magnifying lens. Palette: #7FD1B9, #2E8B72, #10A37F, #F4F1E8, #E8D8A0, #202123. Pose: standing tall, scroll open, lens raised.",
+    "personality": "沉稳的档案官，总能把相近的内容归到一处",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a white six-loop knot, used here as the coat's rosette clasps; the product green (about #10A37F) and charcoal (#202123) give the teal palette, and the star chart stands for a vector space.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "text-embedding-3-small"
+  },
+  {
+   "id": "grok-imagine-image",
+   "nameZh": "Grok Imagine Image",
+   "nameEn": "Grok Imagine Image",
+   "company": "SpaceXAI (formerly xAI)",
+   "country": "US",
+   "category": "image",
+   "family": "grok-imagine-img",
+   "stage": 1,
+   "evolvesTo": "grok-imagine-image-2",
+   "evolveLevel": 31,
+   "types": [
+    "vision",
+    "chaos"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 51,
+    "atk": 48,
+    "def": 54,
+    "spa": 86,
+    "spd": 56,
+    "spe": 73
+   },
+   "habitats": [
+    "forest",
+    "coast"
+   ],
+   "releaseDate": "2026-01-28",
+   "capabilityScore": 36,
+   "hotnessScore": 52,
+   "statRationale": "专攻出图→特攻高；出图节奏利落→速度高。 [BST 368 ∈ R 330-420; 强项 spa/spe; 能力 36/热度 52]",
+   "dexEntryZh": "Grok Imagine 家族里专攻图像的一支，2026 年 1 月 28 日登场，出自 SpaceXAI（原 xAI），权重不公开。她是这条图像线在链上的初阶形态，之后同系列会迭代出 Grok Imagine Image 2.0。",
+   "lookZh": "半黑半白短发的小摄影师，抱着方方的即影相机",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Grok image line: a small, curious snapshot girl. Hair: a chin-length asymmetric bob split cleanly down the middle, left half snow white (#F4F6FA), right half ink black (#12141A), like a cut-out mask, with one short ahoge. Eyes: big aurora-mint green (#37E6A8) with a white square-pixel highlight. Outfit: an oversized white tee under a black open short-sleeve shirt, black shorts, white sneakers with black soles. Signature accessory: a round white-and-black slashed-circle hairclip on the white side of her fringe. Prop: a small boxy instant camera held in both hands, black body, white front panel, one mint lens, hung on a violet (#8B5CFF) strap. Palette: #12141A, #F4F6FA, #37E6A8, #8B5CFF, #8A90A0. Pose: lifting the camera to her eye, one knee bent, a playful half-grin.",
+    "personality": "爱抓拍的小混沌，快门一按画面就炸开",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "xAI's mark is a monochrome slashed circle and Grok's look is black and white; the green-violet accents nod to Aurora, the image model listed as this line's predecessor. No official mascot is used.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "grok-imagine-image-2",
+   "nameZh": "Grok Imagine Image 2.0",
+   "nameEn": "Grok Imagine Image 2.0",
+   "company": "SpaceXAI (formerly xAI)",
+   "country": "US",
+   "category": "image",
+   "family": "grok-imagine-img",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "chaos"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 58,
+    "atk": 57,
+    "def": 60,
+    "spa": 116,
+    "spd": 67,
+    "spe": 86
+   },
+   "habitats": [
+    "coast",
+    "city"
+   ],
+   "releaseDate": "2026-08-07",
+   "capabilityScore": 52,
+   "hotnessScore": 56,
+   "statRationale": "局部编辑与画质见长→特攻高；出图利落→速度高。 [BST 444 ∈ SR 420-490; 强项 spa/spe; 能力 52/热度 56]",
+   "dexEntryZh": "2026 年 8 月 7 日登场，是 Grok 的 Quality Mode 图像模型，作为 Grok Imagine Image 同系列的下一代。主打魔法棒式局部编辑、分割抠图、去背景和 5 图融合，Arena 榜 1301 分、排第 6；专用 API 标为即将推出。",
+   "lookZh": "黑白拼色长发的修图魔女，挥着星点魔法棒，手里扇开五张照片",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.6 heads tall, stage 2 of the Grok image line: the same snapshot girl grown into a confident retouch sorceress. Hair: the same split of snow white (#F4F6FA) and ink black (#12141A), now a long asymmetric cut to her waist, ahoge kept. Eyes: the same aurora-mint green (#37E6A8) with a white square-pixel highlight. Outfit: a long coat split white and black, lined with a mint-to-violet (#8B5CFF) aurora gradient, black high-neck top, black shorts, white thigh-high socks, black boots. Signature accessory: the slashed-circle hairclip, larger now, with a thin silver chain. Props: a slim black magic wand with a pixel-star tip, and a fan of five small instant photos like playing cards. Palette: #12141A, #F4F6FA, #37E6A8, #8B5CFF, #8A90A0. Pose: flicking the wand toward the viewer, photo fan raised, a confident smirk.",
+    "personality": "一棒点出想改的地方，其余原样保留",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "xAI's mark is a monochrome slashed circle and Grok's look is black and white; the mint-to-violet coat lining nods to Aurora, the predecessor image model. The wand and five-photo fan echo the Magic Wand editing and 5-image blending.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "grok-imagine-image"
+  },
+  {
+   "id": "midjourney-v1",
+   "nameZh": "Midjourney V1",
+   "nameEn": "Midjourney V1",
+   "company": "Midjourney",
+   "country": "US",
+   "category": "image",
+   "family": "mj-early",
+   "stage": 1,
+   "evolvesTo": "midjourney-v4",
+   "evolveLevel": 20,
+   "types": [
+    "vision",
+    "chaos"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 37,
+    "atk": 37,
+    "def": 37,
+    "spa": 70,
+    "spd": 38,
+    "spe": 50
+   },
+   "habitats": [
+    "coast",
+    "city"
+   ],
+   "releaseDate": "2022-02-01",
+   "capabilityScore": 10,
+   "hotnessScore": 40,
+   "statRationale": "出图乱但有灵气→特攻高；落笔快→速度高。 [BST 269 ∈ N 240-330; 强项 spa/spe; 能力 10/热度 40]",
+   "dexEntryZh": "Midjourney V1 是 Midjourney 的早期版本，2022 年 2 月处于封闭测试阶段，闭源。资料只给出这些，图鉴因此把它画成刚拿起画笔、手忙脚乱的小学徒。到了等级 20，它会进化成同系列的 Midjourney V4，两者之间还隔着 V3。",
+   "lookZh": "桃色乱发的纸船帽小学徒，白罩衫上全是颜料点",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the early Midjourney line: a messy, wide-eyed cabin-apprentice girl who has just started painting. Hair: dawn-peach (#F6C1A6) wavy short bob with ink-black (#111111) tips, wild uneven strands and one big ahoge, wearing a crumpled ivory (#F7F4EE) paper-boat hat as her signature accessory. Eyes: large navy (#1B2A4A) with a swirling spiral highlight. Outfit: an oversized ivory smock splashed with navy and peach paint smudges over a simple navy tunic, navy shorts, ivory socks, little brass-buckled shoes. Props: a fat round paintbrush dripping a blob of navy paint, held in both hands, and a rolled-up wobbly sketch tucked under one arm. Palette: #F6C1A6, #111111, #F7F4EE, #1B2A4A, #C8A25A. Pose: mid-stumble on tiptoe, brush swinging wide, a gleeful open-mouth grin.",
+    "personality": "手忙脚乱的小画家，画到哪儿溅到哪儿",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Midjourney's identity centres on sailing, with a sailboat motif and an ivory, ink-black, navy, dawn-peach and brass palette, as used in the existing V7 and V8 sprites. The design adds a paper-boat hat as the early-version signature.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Midjourney"
+    ]
+   }
+  },
+  {
+   "id": "midjourney-v4",
+   "nameZh": "Midjourney V4",
+   "nameEn": "Midjourney V4",
+   "company": "Midjourney",
+   "country": "US",
+   "category": "image",
+   "family": "mj-early",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "write"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 58,
+    "atk": 53,
+    "def": 61,
+    "spa": 79,
+    "spd": 61,
+    "spe": 52
+   },
+   "habitats": [
+    "meadow",
+    "city"
+   ],
+   "releaseDate": "2022-11-05",
+   "capabilityScore": 34,
+   "hotnessScore": 64,
+   "statRationale": "画面成型→特攻高；笔触稳→防御高。 [BST 364 ∈ R 330-420; 强项 spa/def; 能力 34/热度 64]",
+   "dexEntryZh": "Midjourney V4 于 2022 年 11 月 5 日以 alpha 版发布，是 Midjourney 同系列的下一代。资料里它的直接上一代是 Midjourney V3，不在这条图鉴进化线上，图鉴里它接在 Midjourney V1 之后。闭源模型，目前仍在服务。",
+   "lookZh": "桃色柔波短发的小画师，纸船帽别着黄铜罗盘针",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, stage 2 of the early Midjourney line: the same apprentice girl grown into a neat young cabin-artist. Hair: the same dawn-peach (#F6C1A6) bob in soft waves with ink-black (#111111) tips and one tamed ahoge; the same ivory (#F7F4EE) paper-boat hat, now crisp, with a tiny brass compass pin. Eyes: navy (#1B2A4A) with a steady spiral-ring highlight. Outfit: a clean ivory smock-coat with navy wave-line trim over a navy dress, peach neckerchief, brass-buckled belt, navy boots, a few tidy paint dots at the cuffs. Props: a slim ink brush-pen, and a bound sketchbook under her other arm with a neat sailboat doodle on the cover, no text. Palette: #F6C1A6, #111111, #F7F4EE, #1B2A4A, #C8A25A. Pose: drawing one confident line with the brush-pen, composed smile.",
+    "personality": "渐渐稳下来的小画师，一笔下去干净利落",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Midjourney's identity centres on sailing, with a sailboat motif and an ivory, ink-black, navy, dawn-peach and brass palette, as used in the existing V7 and V8 sprites. The design keeps the paper-boat hat from V1 and adds a brass compass pin.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Midjourney"
+    ]
+   },
+   "lineRef": "midjourney-v1"
+  },
+  {
+   "id": "niji-6",
+   "nameZh": "Niji 6",
+   "nameEn": "Niji 6",
+   "company": "Midjourney",
+   "country": "US",
+   "category": "image",
+   "family": "niji",
+   "stage": 1,
+   "evolvesTo": "niji-7",
+   "evolveLevel": 30,
+   "types": [
+    "vision",
+    "write"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 64,
+    "atk": 53,
+    "def": 58,
+    "spa": 94,
+    "spd": 66,
+    "spe": 47
+   },
+   "habitats": [
+    "coast",
+    "meadow"
+   ],
+   "releaseDate": "2024-01-29",
+   "capabilityScore": 44,
+   "hotnessScore": 60,
+   "statRationale": "图像生成为本行→特攻高；成品风格稳→特防高。 [BST 382 ∈ R 330-420; 强项 spa/spd; 能力 44/热度 60]",
+   "dexEntryZh": "Niji 6 于 2024 年 1 月 29 日登场，是 Midjourney 旗下 niji 系列里承接 Niji 5 的同系列下一代，权重并不公开，只在画布上亮相。她还是个抱着速写本的小画师，等级 30 时会迭代成 Niji 7，把今天画不完的线稿继续画下去。",
+   "lookZh": "象牙白双丸子头的小画师，纸船发夹，手握墨线笔",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark 1px outline. Younger stage of the Niji ink-and-sketch girl line. Short ivory-white hair in two small twin buns with dawn-peach tips and one tiny ahoge, a little gold paper-boat hair clip on the left bun (her signature accessory). Large violet eyes with two sparkle highlights, shy smile. Outfit: plain navy art-school smock with oversized sleeves and a round white collar, peach ribbon bow, ivory pleated skirt, small brown shoes. Props: a slim manga ink-pen in her right hand and a small sketchbook hugged in her left arm, its cover marked with a simple big-eyed face pictogram. Palette: ivory #F7F4EE, navy #1B2A4A, dawn peach #F6C1A6, nebula violet #6B5BD6, gold #D9B45A. Pose: standing slightly pigeon-toed, pen raised as if about to draw her very first line.",
+    "personality": "安静爱涂鸦，一画起来就停不下笔",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Midjourney's mark is a minimalist white sailboat, and the house colours used here are ivory, navy and dawn peach; the sailboat is echoed by the gold paper-boat hair clip. Niji is a separate model line from the V-series, so she gets her own sketch-girl look.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Midjourney"
+    ]
+   }
+  },
+  {
+   "id": "niji-7",
+   "nameZh": "Niji 7",
+   "nameEn": "Niji 7",
+   "company": "Midjourney",
+   "country": "US",
+   "category": "image",
+   "family": "niji",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "write"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 72,
+    "atk": 66,
+    "def": 69,
+    "spa": 111,
+    "spd": 73,
+    "spe": 61
+   },
+   "habitats": [
+    "meadow",
+    "city"
+   ],
+   "releaseDate": "2026-01-09",
+   "capabilityScore": 58,
+   "hotnessScore": 62,
+   "statRationale": "延续前作强项→特攻、特防高；视觉+写作双属性。 [BST 452 ∈ SR 420-490; 强项 spa/spd; 能力 58/热度 62]",
+   "dexEntryZh": "Niji 7 于 2026 年 1 月 9 日发布，是 Niji 6 同系列的下一代，仍属 Midjourney 的 niji 一脉，同样不公开权重。她比前作更沉稳，属性依旧是视觉与写作，特攻与特防是强项，算是把 Niji 6 的小画笔换成了更稳的大画笔。",
+   "lookZh": "象牙白高双马尾配纸船发夹，海浪纹羽织与手卷画稿",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark 1px outline. Grown-up stage of the Niji sketch-girl line, the same girl as Niji 6, older. Long ivory-white hair now in high twin tails that fade to dawn-peach tips, the tiny ahoge kept, and the same gold paper-boat hair clip at the base of the left tail (signature accessory). Violet eyes with sparkle highlights, calm confident smile. Outfit: navy haori-style jacket with a wave-line hem and wide sleeves over an ivory blouse, peach obi sash tied with a gold knot, ivory skirt, brown boots. Props: a long brush-pen in her right hand and a rolled manga-panel scroll slung across her back. Palette: ivory #F7F4EE, navy #1B2A4A, dawn peach #F6C1A6, nebula violet #6B5BD6, gold #D9B45A. Pose: sweeping the brush in a wide arc, one curling ink stroke trailing behind her.",
+    "personality": "落笔前先端详三遍的沉稳画手",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Midjourney's mark is a minimalist white sailboat, and the house colours used here are ivory, navy and dawn peach; the gold paper-boat clip carries the sailboat nod over from Niji 6. She keeps the sketch-girl identity rather than the captain look of the V-series.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Midjourney"
+    ]
+   },
+   "lineRef": "niji-6"
+  },
+  {
+   "id": "midjourney-video-v1",
+   "nameZh": "Midjourney Video V1",
+   "nameEn": "Midjourney Video V1",
+   "company": "Midjourney",
+   "country": "US",
+   "category": "video",
+   "family": "midjourney-video",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "motion",
+    "vision"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 64,
+    "atk": 62,
+    "def": 59,
+    "spa": 116,
+    "spd": 64,
+    "spe": 70
+   },
+   "habitats": [
+    "coast",
+    "city"
+   ],
+   "releaseDate": "2025-06-18",
+   "capabilityScore": 46,
+   "hotnessScore": 55,
+   "statRationale": "把画面做成动画→特攻高；五秒短片出得快→速度高。 [BST 435 ∈ SR 420-490; 强项 spa/spe; 能力 46/热度 55]",
+   "dexEntryZh": "Midjourney Video V1 是把 Midjourney 静态图变成动画的图生视频模型，2025 年 6 月前后发布（具体日期未核实）。每段 5 秒，可延长到约 20 秒，画质 720p，看点是 MJ 的画风动起来，而且动画成本低。资料把 Midjourney V7 列为前身，V2 视频模型尚未发布。",
+   "lookZh": "黑短发的甲板小动画师，翻着画满小帆船的翻页本",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.3 heads tall, a single-stage Midjourney video-line character, distinct from the ivory-haired sailor-painter: a small deckhand-animator girl. Hair: short wavy ink-black (#111111) bob with navy (#1B2A4A) gradient ends, one dawn-peach (#F6C1A6) streak by her face, one ahoge, and a tiny gold sailboat-shaped hairpin on the left. Eyes: warm gold (#D9B45A) with a small play-triangle highlight. Outfit: a short navy hooded duffle cape with ivory (#F7F4EE) wave-line trim and a brass toggle, peach scarf, white blouse, navy shorts, ivory boots. Props: a chunky flipbook with a brass crank handle on its spine, pages fanning to show a tiny sailing ship in successive poses. Palette: #111111, #1B2A4A, #F7F4EE, #F6C1A6, #D9B45A. Pose: flicking the pages with her thumb, hood bobbing, a delighted open smile.",
+    "personality": "手痒爱翻页，五秒也要演出一段航程",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Midjourney's identity centres on sailing: a sailboat motif and an ivory, ink-black, navy, dawn-peach and brass palette, as used in the existing V7 and V8 sprites. The design adds a flipbook to show that this model animates stills.",
+    "sourceUrls": [
+     "https://updates.midjourney.com/"
+    ]
+   }
+  },
+  {
+   "id": "stable-audio",
+   "nameZh": "Stable Audio",
+   "nameEn": "Stable Audio",
+   "company": "Stability AI",
+   "country": "UK",
+   "category": "music",
+   "family": "stable-audio",
+   "stage": 1,
+   "evolvesTo": "stable-audio-2",
+   "evolveLevel": 21,
+   "types": [
+    "sound",
+    "open"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 49,
+    "atk": 38,
+    "def": 40,
+    "spa": 57,
+    "spd": 43,
+    "spe": 50
+   },
+   "habitats": [
+    "snow",
+    "coast"
+   ],
+   "releaseDate": "2023-09-13",
+   "capabilityScore": 12,
+   "hotnessScore": 28,
+   "statRationale": "音频生成见长→特攻高；出声迅速→速度高。 [BST 277 ∈ N 240-330; 强项 spa/spe; 能力 12/热度 28]",
+   "dexEntryZh": "Stability AI 旗下的音乐生成模型，2023 年 9 月 13 日发布，这一阶权重未公开。她是 Stable Audio 家族在链上的初阶形态，之后同系列迭代出 Stable Audio 2.0，再一路走到 Stable Audio 3.0。",
+   "lookZh": "靛紫短发的小音频师，抱着掌心大的卡带录音机",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Stable Audio line: a small, wide-eyed sound-catcher girl. Hair: a chin-length straight bob with blunt bangs in deep indigo-violet (#2B1B5E) fading to lavender (#A381FF) at the tips, one tiny ahoge. Eyes: big warm amber-gold (#FFC857) with a white sound-wave-shaped highlight, sakura-pink (#F7B6CF) blush. Outfit: a lilac (#D9CBFF) sailor-collar pinafore with a deep indigo bow over a white blouse, white knee socks, lavender sneakers. Signature accessory: a little lilac tuning-fork hairpin clipped above her left ear. Prop: a palm-sized cassette recorder held in both hands, lavender body with one small gold record button. Palette: #2B1B5E, #A381FF, #D9CBFF, #FFC857, #F7B6CF. Pose: holding the recorder up as if catching a sound, head tilted, shy smile.",
+    "personality": "耳朵比眼睛还灵的小捕声者，什么声音都想录",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Stability AI's family colours are lavender to deep purple (the Stable Diffusion line uses #A381FF and #340068). No dedicated Stable Audio mascot is known, so a tuning fork stands in for sound.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Stability_AI"
+    ]
+   }
+  },
+  {
+   "id": "stable-audio-2",
+   "nameZh": "Stable Audio 2.0",
+   "nameEn": "Stable Audio 2.0",
+   "company": "Stability AI",
+   "country": "UK",
+   "category": "music",
+   "family": "stable-audio",
+   "stage": 2,
+   "evolvesTo": "stable-audio-3",
+   "evolveLevel": 28,
+   "types": [
+    "sound",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 61,
+    "atk": 50,
+    "def": 56,
+    "spa": 79,
+    "spd": 52,
+    "spe": 59
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2024-04-03",
+   "capabilityScore": 30,
+   "hotnessScore": 32,
+   "statRationale": "承接初代音频本事→特攻高；底子扎实→HP 高。 [BST 357 ∈ R 330-420; 强项 spa/hp; 能力 30/热度 32]",
+   "dexEntryZh": "2024 年 4 月 3 日发布，是 Stable Audio 同系列的下一代，权重不公开。资料里她只有这一层继承关系，故事靠前后邻居撑着：前一位是初代 Stable Audio，后一位 Stable Audio 3.0 则有三款开放权重。",
+   "lookZh": "靛紫齐肩发的乐手少女，背着迷你合成器，腰挂小录音机",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, stage 2 of the Stable Audio line: the same sound-catcher grown into a young session musician. Hair: the same deep indigo-violet (#2B1B5E) fading to lavender (#A381FF) tips, now shoulder-length with an inward flip and blunt bangs, ahoge kept. Eyes: the same amber-gold (#FFC857) with the sound-wave highlight. Outfit: a deep-indigo short blazer with lilac (#D9CBFF) lapels, a white blouse with a lavender ribbon tie, a lilac pleated skirt, lavender boots. Signature accessory: the lilac tuning-fork hairpin, larger now, with a tiny gold ring. Props: a mini keytar slung across her back, and her old cassette recorder clipped to her belt. Palette: #2B1B5E, #A381FF, #D9CBFF, #FFC857, #F7B6CF. Pose: stepping forward, one hand on the keytar strap, bright confident smile.",
+    "personality": "刚学会编曲就想拉所有人合奏的热心肠",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Stability AI's family colours are lavender to deep purple (the Stable Diffusion line uses #A381FF and #340068). No dedicated Stable Audio mascot is known, so the tuning fork and keytar carry the sound theme.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Stability_AI"
+    ]
+   },
+   "lineRef": "stable-audio"
+  },
+  {
+   "id": "stable-audio-3",
+   "nameZh": "Stable Audio 3.0",
+   "nameEn": "Stable Audio 3.0",
+   "company": "Stability AI",
+   "country": "UK",
+   "category": "music",
+   "family": "stable-audio",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "sound",
+    "open"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 77,
+    "atk": 60,
+    "def": 67,
+    "spa": 88,
+    "spd": 64,
+    "spe": 82
+   },
+   "habitats": [
+    "meadow",
+    "snow"
+   ],
+   "releaseDate": "2026-05-01",
+   "capabilityScore": 48,
+   "hotnessScore": 36,
+   "statRationale": "长篇作曲与开放生态→特攻高；多规格并行→速度高。 [BST 438 ∈ SR 420-490; 强项 spa/spe; 能力 48/热度 36]",
+   "dexEntryZh": "2026 年 5 月发布，同系列接在 Stable Audio 2.0 之后。一次推出 small-SFX、small、medium、large 四款，其中三款开放权重；medium 和 large 能用授权训练数据写出 6 分 20 秒的结构化乐曲，8 月还跟进了 DAW 插件。",
+   "lookZh": "靛紫长发的音乐总监，谱纸长卷垂到脚边，手持推子平板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.8 heads tall, stage 3 (final) of the Stable Audio line: the same sound-catcher grown into a calm music director. Hair: the same deep indigo-violet (#2B1B5E) fading to lavender (#A381FF), now long and straight to mid-back, half tied up, blunt bangs, ahoge kept. Eyes: the same amber-gold (#FFC857) with the sound-wave highlight. Outfit: a long deep-indigo producer's coat with lavender lining and lilac (#D9CBFF) cuffs, a white blouse with a lavender ribbon, a short pleated skirt. Signature accessory: the tuning-fork hairpin, now ornate in lilac and gold with a tiny gold key charm. Props: a long staff-paper scroll unrolling to her feet, and a slim tablet with four slider faders. Palette: #2B1B5E, #A381FF, #D9CBFF, #FFC857, #F7B6CF. Pose: standing tall, tablet raised like a conductor's score, a gentle smile.",
+    "personality": "把整首歌从头到尾排得明明白白的冷静统筹",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Stability AI's family colours are lavender to deep purple (the Stable Diffusion line uses #A381FF and #340068). No dedicated Stable Audio mascot is known; the four faders echo the four model sizes and the key charm echoes open weights.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Stability_AI"
+    ]
+   },
+   "lineRef": "stable-audio-2"
+  },
+  {
+   "id": "flux-kontext",
+   "nameZh": "FLUX.1 Kontext",
+   "nameEn": "FLUX.1 Kontext",
+   "company": "Black Forest Labs",
+   "country": "DE",
+   "category": "image",
+   "family": "flux-kontext",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "open"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 72,
+    "atk": 72,
+    "def": 71,
+    "spa": 87,
+    "spd": 66,
+    "spe": 81
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2025-05-29",
+   "capabilityScore": 56,
+   "hotnessScore": 58,
+   "statRationale": "指令编辑与人物一致→特攻高；一句话改完→速度高。 [BST 449 ∈ SR 420-490; 强项 spa/spe; 能力 56/热度 58]",
+   "dexEntryZh": "FLUX.1 Kontext 是 Black Forest Labs 在 2025 年 5 月 29 日发布的上下文图像编辑模型，Pro / Max 先上线，Dev 开放权重版在 6 月跟上。她是 FLUX.1 的后继，据记载建立在 FLUX.1 底座上，拿手的是听指令改图、保持人物前后一致，资料记载其 Arena（max）得分为 1074。",
+   "lookZh": "握着三角笔尖修图笔、手捧两张同脸照片的黑绿发修图师",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.6 heads tall, a poised older-teen photo-retoucher girl of the FLUX forest family. Hair: long near-black hair fading to forest green, half-up in a neat knot, one lavender and one mint streak. Eyes: calm violet with a fine sparkle. Outfit: a charcoal ranger trench-coat with white triangle-line embroidery, the hood folded into a collar with three triangular pine peaks, a small cherry-red lapel pin, tall boots. Signature: a slim stylus with a white triangle nib. Prop: two instant photo cards held side by side showing the very same chibi face, one in a hat and one in a scarf (character consistency), pictograms only. Palette: #0C0C0C, #1E3A2F, #A184FD, #29C592, #C8102E, #FFFFFF. Pose: stylus hovering over one photo, the other hand holding both cards up, a calm smile.",
+    "personality": "改图不改人，认准的那张脸绝不走样",
+    "communityPersona": "No anime persona found; invented from brand colours as the editor of the FLUX forest family.",
+    "officialMascotOrLogo": "Black Forest Labs uses a triangle-based logo with a near-black and forest-green identity; the design keeps the pine-peak triangle and cherry pin of the FLUX line and turns the triangle into a stylus nib.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Black_Forest_Labs"
+    ]
+   }
+  },
+  {
+   "id": "flux-2-klein",
+   "nameZh": "FLUX.2 Klein",
+   "nameEn": "FLUX.2 Klein",
+   "company": "Black Forest Labs",
+   "country": "DE",
+   "category": "image",
+   "family": "flux-klein",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 63,
+    "atk": 54,
+    "def": 59,
+    "spa": 76,
+    "spd": 56,
+    "spe": 67
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2026-01-01",
+   "capabilityScore": 40,
+   "hotnessScore": 44,
+   "statRationale": "体量小巧→速度高；沿用 FLUX 的画图底子→特攻高。 [BST 375 ∈ R 330-420; 强项 spa/spe; 能力 40/热度 44]",
+   "dexEntryZh": "FLUX.2 Klein 是 Black Forest Labs 在 2026 年 1 月推出的小体量图像模型，开放权重，分 4B（Apache 2.0）和 9B（非商用）两个版本。图鉴把她归为 FLUX.2 蒸馏式的小个子同门，不过资料并没有明说两者的关系。别看个头小，特攻和速度是她最亮的两项。",
+   "lookZh": "抱着两颗大小橡果挂饰的黑绿发松林小精灵，小得能揣进口袋",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~1.8 heads tall, the smallest girl of the FLUX forest family, a pocket-sized little sister of the FLUX ranger boys. Hair: short messy twin buns, near-black fading to forest green, one lavender and one mint streak, a pine-needle ahoge. Eyes: big calm violet with a bright sparkle. Outfit: a snug charcoal mini ranger poncho with white triangle-line embroidery; the oversized hood sits like a small pine cap with three triangular peaks (the Black Forest triangle logo); a tiny cherry-red collar pin; shorts and little hiking boots. Props: two acorn charms, one small and one bigger, on a lanyard (the 4B and 9B versions), and a palm-sized sketch card held out. Palette: #0C0C0C, #1E3A2F, #A184FD, #29C592, #C8102E, #FFFFFF. Pose: mid-sprint with one boot lifted, grinning, card held forward.",
+    "personality": "个头小脚步快，接了活一眨眼就交卷",
+    "communityPersona": "No anime persona found; invented from brand colours as the tiny little sister of the FLUX forest line.",
+    "officialMascotOrLogo": "Black Forest Labs uses a triangle-based logo with a near-black and forest-green identity; the design echoes the triple pine-peak triangle and the Black Forest cherry motif already used for the FLUX line.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Black_Forest_Labs"
+    ]
+   }
+  },
+  {
+   "id": "luma-ray1",
+   "nameZh": "Luma Dream Machine (Ray1)",
+   "nameEn": "Luma Dream Machine (Ray1)",
+   "company": "Luma AI",
+   "country": "US",
+   "category": "video",
+   "family": "luma",
+   "stage": 1,
+   "evolvesTo": "luma-ray2",
+   "evolveLevel": 22,
+   "types": [
+    "motion"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 54,
+    "atk": 55,
+    "def": 49,
+    "spa": 89,
+    "spd": 50,
+    "spe": 60
+   },
+   "habitats": [
+    "coast",
+    "desert"
+   ],
+   "releaseDate": "2024-06-12",
+   "capabilityScore": 30,
+   "hotnessScore": 56,
+   "statRationale": "生成视频→特攻高；动起来轻快→速度高。 [BST 357 ∈ R 330-420; 强项 spa/spe; 能力 30/热度 56]",
+   "dexEntryZh": "Luma Dream Machine（Ray1）是 Luma AI 的视频生成模型，2024 年 6 月 12 日发布，闭源。资料库没有给出更多细节，图鉴只记下它的位置：这是 Luma Ray 进化线的第一形态，到了等级 22 会迭代成同系列的下一代 Luma Ray2。",
+   "lookZh": "戴折纸 L 帽的银灰短发小学徒，捧着漏光的纸灯笼",
+   "design": {
+    "chibiDesign": "Chibi pixel-art HD-2D sprite, ~2 heads tall, stage 1 of the Luma Ray line: the younger version of the Ray3 light-maker girl. Hair: the same silver-grey (#BFC3C8) bob, shorter and rounder, with a faint warm gold (#FFD27A) rim-light along its edges, topped by a small folded-paper isometric 'L' corner hat. Eyes: deep black pupils with shimmering rainbow highlights, sleepy. Outfit: a simple graphite (#2B2B2B) and white smock with few facet panels, white tights, black Mary Janes. Props: a small plain paper lantern held in both hands, a pinhole glow leaking a thin ray of light, no lens yet. Palette: graphite #2B2B2B, white #FFFFFF, silver grey #BFC3C8, warm gold #FFD27A. Pose: sleepily tiptoeing forward, lantern held out in front, a soft beam trailing behind her.",
+    "personality": "迷迷糊糊的追光小学徒，最爱梦里的光",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Luma AI's mark is an angular isometric 'L' corner shape, which the existing Ray3 sprite turns into a folded-paper hat. The design keeps graphite, silver and warm gold from that sprite.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Luma_AI"
+    ]
+   },
+   "lineRef": "luma-ray3"
+  },
+  {
+   "id": "luma-ray2",
+   "nameZh": "Luma Ray2",
+   "nameEn": "Luma Ray2",
+   "company": "Luma AI",
+   "country": "US",
+   "category": "video",
+   "family": "luma",
+   "stage": 2,
+   "evolvesTo": "luma-ray3",
+   "evolveLevel": 30,
+   "types": [
+    "motion",
+    "vision"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 57,
+    "atk": 59,
+    "def": 55,
+    "spa": 94,
+    "spd": 57,
+    "spe": 60
+   },
+   "habitats": [
+    "city",
+    "coast"
+   ],
+   "releaseDate": "2025-01-15",
+   "capabilityScore": 44,
+   "hotnessScore": 52,
+   "statRationale": "生成视频→特攻高；画面流畅→速度高。 [BST 382 ∈ R 330-420; 强项 spa/spe; 能力 44/热度 52]",
+   "dexEntryZh": "Luma Ray2 在 2025 年 1 月前后发布（另有来源记为 2 月），是 Luma Dream Machine（Ray1）同系列的下一代，也是 Luma Ray3 的上一形态。资料只确认它是 Luma AI 的闭源视频模型，等级 30 时会迭代成 Luma Ray3。",
+   "lookZh": "银灰短发的少年摄影师，纸灯笼长出了镜头环",
+   "design": {
+    "chibiDesign": "Chibi pixel-art HD-2D sprite, ~2.3 heads tall, stage 2 of the Luma Ray line: the same light-maker girl a little older, now a focused cinematographer. Hair: the same silver-grey (#BFC3C8) bob, longer, with a stronger warm gold (#FFD27A) rim-light along its edges, topped by the folded-paper isometric 'L' corner hat with a gold fold edge. Eyes: deep black pupils with shimmering rainbow highlights, wide awake. Outfit: a graphite (#2B2B2B) and white panel dress with more facet panels, a small round light-meter brooch, white tights, black Mary Janes. Props: the paper lantern now has a round glass lens ring and a tiny crank, a lantern-camera held at her hip. Palette: graphite #2B2B2B, white #FFFFFF, silver grey #BFC3C8, warm gold #FFD27A. Pose: aiming the lantern-camera forward with one eye closed, light rays fanning out, one foot lifted.",
+    "personality": "专注追光，眼里全是光比和画面",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Luma AI's mark is an angular isometric 'L' corner shape, which the existing Ray3 sprite turns into a folded-paper hat. The design keeps graphite, silver and warm gold, and gives the lantern a lens ring as the step toward Ray3.",
+    "sourceUrls": [
+     "https://lumalabs.ai/ray"
+    ]
+   },
+   "lineRef": "luma-ray1"
+  },
+  {
+   "id": "runway-gen-1",
+   "nameZh": "Runway Gen-1",
+   "nameEn": "Runway Gen-1",
+   "company": "Runway",
+   "country": "US",
+   "category": "video",
+   "family": "runway-early",
+   "stage": 1,
+   "evolvesTo": "runway-gen-2",
+   "evolveLevel": 16,
+   "types": [
+    "motion"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 45,
+    "atk": 37,
+    "def": 38,
+    "spa": 66,
+    "spd": 37,
+    "spe": 46
+   },
+   "habitats": [
+    "city",
+    "coast"
+   ],
+   "releaseDate": "2023-02-06",
+   "capabilityScore": 10,
+   "hotnessScore": 40,
+   "statRationale": "画面生成→特攻高；动起来快→速度高。 [BST 269 ∈ N 240-330; 强项 spa/spe; 能力 10/热度 40]",
+   "dexEntryZh": "Runway Gen-1 于 2023 年 2 月 6 日登场，是 Runway Gen 系列在这条进化链里的初始形态，走运动（motion）路线。速度与特攻是它的长处。仅隔约六周，Gen-2 便接踵而至；练到 16 级，它会迭代为同系列的 Runway Gen-2。",
+   "lookZh": "石墨色双团子头的小女孩，系着胶片发带，翻着手绘翻页本",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark outline. Stage 1 of the filmstrip animator line, a small girl distinct from the Runway director boy. Hair: dark graphite (#3A3A40) in two small side buns, short straight bangs, one ahoge. Eyes: big warm amber (#F2B24C) with tiny square film-frame highlights. Signature accessory on every form: a ribbon cut from black film strip with off-white (#EEECE6) perforation holes, tied around the left bun. Outfit: oversized off-white (#EEECE6) cardigan with sleeves past her hands over a charcoal (#0C0C0C) pinafore, grey (#595959) socks, plain sneakers. Prop: a thick hand-drawn flipbook, its little drawings restyling themselves page by page. Palette: #0C0C0C, #3A3A40, #EEECE6, #595959, amber #F2B24C. Pose: small hop, flipping the book with a wide-eyed grin.",
+    "personality": "爱翻页的小画家，总想把画面变个样",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Runway's brand is a rounded R wordmark in black and off-white with grey tones; the amber is the film-light accent shared with the rest of the Runway line, and the film-strip ribbon stands for video.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Runway_(company)"
+    ]
+   }
+  },
+  {
+   "id": "runway-gen-2",
+   "nameZh": "Runway Gen-2",
+   "nameEn": "Runway Gen-2",
+   "company": "Runway",
+   "country": "US",
+   "category": "video",
+   "family": "runway-early",
+   "stage": 2,
+   "evolvesTo": "runway-gen-3-alpha",
+   "evolveLevel": 23,
+   "types": [
+    "motion",
+    "vision"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 48,
+    "atk": 42,
+    "def": 46,
+    "spa": 73,
+    "spd": 48,
+    "spe": 53
+   },
+   "habitats": [
+    "coast",
+    "desert"
+   ],
+   "releaseDate": "2023-03-20",
+   "capabilityScore": 20,
+   "hotnessScore": 48,
+   "statRationale": "画面生成仍是主力→特攻高；速度不减→速度高。 [BST 310 ∈ N 240-330; 强项 spa/spe; 能力 20/热度 48]",
+   "dexEntryZh": "Runway Gen-2 于 2023 年 3 月 20 日登场，比 Runway Gen-1 晚约六周，是同系列的下一代，新增了视觉（vision）属性。特攻与速度依旧突出；练到 23 级，会迭代成 2024 年登场的 Runway Gen-3 Alpha。",
+   "lookZh": "胶片发带飘起的双团子头少女，举着圆镜头手持摄影机",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark outline. Stage 2 of the filmstrip animator line: the same girl, taller and bolder. Hair: the same dark graphite (#3A3A40), now in two buns with loose back-length tails and straight bangs, one ahoge. Eyes: amber (#F2B24C) with film-frame highlights, now with a small round lens-shaped sparkle. Signature black film-strip ribbon with off-white (#EEECE6) perforations on the left bun, longer and trailing. Outfit: cropped black (#0C0C0C) jacket with amber piping over an off-white tee, grey (#595959) shorts, black boots, a mini satchel. Prop: a chunky handheld cine-camera with a big round lens held up to one eye, the lens ring glowing amber. Palette: #0C0C0C, #3A3A40, #EEECE6, #595959, amber #F2B24C. Pose: crouching to frame a shot, one foot kicked back, excited grin.",
+    "personality": "闲不住的取景狂，看到什么都要框一框",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Runway's brand is a rounded R wordmark in black and off-white with grey tones; the amber is the film-light accent shared with the rest of the Runway line, and the lens echoes the added vision type.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Runway_(company)"
+    ]
+   },
+   "lineRef": "runway-gen-1"
+  },
+  {
+   "id": "runway-gen-3-alpha",
+   "nameZh": "Runway Gen-3 Alpha",
+   "nameEn": "Runway Gen-3 Alpha",
+   "company": "Runway",
+   "country": "US",
+   "category": "video",
+   "family": "runway-early",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "motion",
+    "vision"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 61,
+    "atk": 53,
+    "def": 54,
+    "spa": 89,
+    "spd": 54,
+    "spe": 64
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2024-06-17",
+   "capabilityScore": 40,
+   "hotnessScore": 54,
+   "statRationale": "电影感生成→特攻高；动态流畅→速度高。 [BST 375 ∈ R 330-420; 强项 spa/spe; 能力 40/热度 54]",
+   "dexEntryZh": "Runway Gen-3 Alpha 于 2024 年 6 月登场，被记录为 Runway 2024 年的电影感模型，承接 Runway Gen-2 与更早的 Runway Gen-1，长处是影视工具链（film tooling）。它保留动态与视觉双属性，特攻与速度出众，在进化链里排在 Runway Gen-2 之后。",
+   "lookZh": "高团子头加长胶片发带的摄影师少女，米色风衣配琥珀色聚光灯",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall, 3/4 front view, clean dark outline. Stage 3 of the filmstrip animator line: the same girl grown into a confident cinematographer. Hair: same dark graphite (#3A3A40), two high buns with long loose tails to her waist, straight bangs, one ahoge. Eyes: amber (#F2B24C) with film-frame highlights, calm and sharp. Signature black film-strip ribbon with off-white (#EEECE6) perforations, now long, wrapped around the left bun and flowing behind her. Outfit: long off-white (#EEECE6) cinema trench coat with amber (#F2B24C) lining, black (#0C0C0C) dress, grey (#595959) belt, platform boots. Props: a compact cine-camera on a shoulder rig and a small round studio lamp glowing warm amber. Palette: #0C0C0C, #3A3A40, #EEECE6, #595959, amber #F2B24C. Pose: standing tall, coat swishing, lamp raised like a spotlight.",
+    "personality": "沉着的掌镜人，光线一到位就开拍",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Runway's brand is a rounded R wordmark in black and off-white with grey tones; the amber is the film-light accent shared with the rest of the Runway line, and the studio lamp stands for its cinematic film tooling.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Runway_(company)"
+    ]
+   },
+   "lineRef": "runway-gen-2"
+  },
+  {
+   "id": "runway-aleph",
+   "nameZh": "Runway Aleph",
+   "nameEn": "Runway Aleph",
+   "company": "Runway",
+   "country": "US",
+   "category": "video",
+   "family": "runway-aleph",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "motion",
+    "write"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 73,
+    "atk": 67,
+    "def": 68,
+    "spa": 108,
+    "spd": 68,
+    "spe": 60
+   },
+   "habitats": [
+    "meadow",
+    "desert"
+   ],
+   "releaseDate": "2025-07-25",
+   "capabilityScore": 52,
+   "hotnessScore": 46,
+   "statRationale": "视频编辑产出强→特攻高；体量扎实→HP高。 [BST 444 ∈ SR 420-490; 强项 spa/hp; 能力 52/热度 46]",
+   "dexEntryZh": "Runway Aleph 于 2025 年 7 月 25 日登场，记录里把它归为视频编辑与上下文类模型，自成 runway-aleph 一系。资料中它没有前一形态，也没有后续进化，是一位独行的剪辑师。特攻与 HP 是它的强项，动态与写作两种属性兼备。",
+   "lookZh": "银灰高马尾的剪辑师少女，别着 ℵ 字发夹，举着圆头大剪刀和胶片",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark 1px outline. A solitary young film-editor girl, unlike the Runway director boy. Hair: sleek silver-ash (#C9C9CF) in a long high ponytail with one black (#0C0C0C) streak and straight bangs. Eyes: warm amber (#F2B24C) with tiny timeline-bracket highlights. Signature accessory: a black hairpin shaped like the Hebrew letter aleph in her bangs. Outfit: cropped black (#0C0C0C) bomber with off-white (#EEECE6) film-strip perforated sleeve trim, off-white shirt, grey (#595959) pleated skirt, black boots, amber-lined cape. Props: oversized round-tipped scissors with grey blades and amber handles, and a loose film strip whose cut frames shift from grey to amber. Palette: #0C0C0C, #EEECE6, #595959, #C9C9CF, amber #F2B24C. Pose: mid-snip, scissors raised, playful smirk.",
+    "personality": "手起剪落的独行剪辑师，爱把旧画面改成新的",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Runway's brand is a rounded R wordmark in black and off-white with grey tones; the amber accent follows the film-light colour used for the rest of the Runway line, and the hairpin takes its shape from the letter in the name Aleph.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Runway_(company)"
+    ]
+   }
+  },
+  {
+   "id": "suno-v4",
+   "nameZh": "Suno v4",
+   "nameEn": "Suno v4",
+   "company": "Suno",
+   "country": "US",
+   "category": "music",
+   "family": "suno-mid",
+   "stage": 1,
+   "evolvesTo": "suno-v4-5",
+   "evolveLevel": 32,
+   "types": [
+    "sound",
+    "write"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 59,
+    "atk": 49,
+    "def": 62,
+    "spa": 87,
+    "spd": 62,
+    "spe": 56
+   },
+   "habitats": [
+    "forest",
+    "coast"
+   ],
+   "releaseDate": "2024-11-19",
+   "capabilityScore": 40,
+   "hotnessScore": 62,
+   "statRationale": "词曲创作见长→特攻高；结构稳、不跑调→防御高。 [BST 375 ∈ R 330-420; 强项 spa/def; 能力 40/热度 62]",
+   "dexEntryZh": "Suno 在 2024 年 11 月 19 日发布的音乐模型，同系列接在 v3.5 之后，权重不公开。她是这条链上的初阶形态，下一阶是同系列的下一代 Suno v4.5，再往后才是 Suno v5.5。",
+   "lookZh": "奶油金发半扎丸子头的小词曲少女，发间插着橙色铅笔",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Suno songwriter line: a small street-corner songwriter girl. Hair: short butter-blonde (#FFD98A) in a messy half-up bun, the two front locks dipped in hot pink (#FE3D7C), one little ahoge. Eyes: big rose-pink (#FE3D7C) with cream star highlights. Outfit: an oversized cream (#FFF1D6) knit cardigan with orange (#FF691D) cuffs over a white tee, orange pleated shorts, white socks, orange sneakers, soft black (#101012) outlines. Signature accessory: a chunky orange pencil with a pink eraser stuck through the hair bun. Prop: a small spiral-bound lyric notebook with one music-note doodle on the cover, hugged to her chest. Palette: #FF691D, #FE3D7C, #FFD98A, #FFF1D6, #101012. Pose: hugging the notebook, humming with eyes half-closed, one foot tapping the beat.",
+    "personality": "走到哪写到哪的随身词人，灵感全记本子上",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Suno's look is a warm orange-to-pink palette (#FF691D, #FE3D7C) with a near-black outline tone and sun and vinyl-record motifs. No official mascot is known, so butter-blonde hair and a pencil mark a lyric-writing line distinct from the sunset-haired v5 and v6.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Suno_AI"
+    ]
+   }
+  },
+  {
+   "id": "suno-v4-5",
+   "nameZh": "Suno v4.5",
+   "nameEn": "Suno v4.5",
+   "company": "Suno",
+   "country": "US",
+   "category": "music",
+   "family": "suno-mid",
+   "stage": 2,
+   "evolvesTo": "suno-v5-5",
+   "evolveLevel": 39,
+   "types": [
+    "sound",
+    "write"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 77,
+    "atk": 62,
+    "def": 73,
+    "spa": 100,
+    "spd": 73,
+    "spe": 59
+   },
+   "habitats": [
+    "forest",
+    "snow"
+   ],
+   "releaseDate": "2025-05-01",
+   "capabilityScore": 52,
+   "hotnessScore": 64,
+   "statRationale": "歌曲生成见长→特攻高；成品完整扎实→HP 高。 [BST 444 ∈ SR 420-490; 强项 spa/hp; 能力 52/热度 64]",
+   "dexEntryZh": "2025 年 5 月登场，是 Suno v4 同系列的下一代。备注里提到免费的 v4.5-all 版本在 2025 年 10 月 21 日跟进。她和后面的 Suno v5.5 同属 Suno 一脉，中间还隔着一个 v5。",
+   "lookZh": "挎着尤克里里的橙色演出夹克少女，发髻铅笔缀着金色丝带",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, stage 2 of the Suno songwriter line: the same street songwriter grown into a rising stage performer. Hair: the same butter-blonde (#FFD98A), now shoulder-length under the half-up bun, front locks dipped in hot pink (#FE3D7C), ahoge kept. Eyes: the same rose-pink (#FE3D7C) with cream star highlights. Outfit: a cropped orange (#FF691D) stage jacket with gold star buttons over a cream (#FFF1D6) blouse and pink scarf, an orange pleated skirt, orange boots, soft black (#101012) outlines. Signature accessory: the chunky orange pencil in her bun, now tied with a small gold ribbon. Props: a small cream-wood ukulele with a pink strap, and the lyric notebook tucked into her belt. Palette: #FF691D, #FE3D7C, #FFD98A, #FFF1D6, #101012. Pose: strumming the ukulele, head tilted, a wink and a bright grin.",
+    "personality": "一上台就想把整个街角唱亮的舞台新秀",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Suno's look is a warm orange-to-pink palette (#FF691D, #FE3D7C) with a near-black outline tone and sun and vinyl-record motifs. No official mascot is known, so the pencil bun and ukulele carry the songwriter theme.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Suno_AI"
+    ]
+   },
+   "lineRef": "suno-v4"
+  },
+  {
+   "id": "suno-v5-5",
+   "nameZh": "Suno v5.5",
+   "nameEn": "Suno v5.5",
+   "company": "Suno",
+   "country": "US",
+   "category": "music",
+   "family": "suno-mid",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "sound",
+    "write"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 84,
+    "atk": 61,
+    "def": 72,
+    "spa": 104,
+    "spd": 76,
+    "spe": 66
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2026-03-26",
+   "capabilityScore": 66,
+   "hotnessScore": 66,
+   "statRationale": "个性化演唱与自定义模型→特攻高；曲风底子厚→HP 高。 [BST 463 ∈ SR 420-490; 强项 spa/hp; 能力 66/热度 66]",
+   "dexEntryZh": "2026 年 3 月 26 日发布，同系列接在 Suno v5 之后，在这条链上排在 Suno v4.5 后面。新增 Voices（用自己的声音演唱）、6 首以上自己的曲目就能训的自定义模型和 My Taste 个性化；v6 上线后退役。",
+   "lookZh": "金发长发的巡演歌手，握着橙色复古麦克风，歌本贴着爱心",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.8 heads tall, stage 3 of the Suno songwriter line: the same street songwriter grown into a poised touring singer. Hair: the same butter-blonde (#FFD98A), now waist-long under a high half-up bun, front locks dipped in hot pink (#FE3D7C), ahoge kept. Eyes: the same rose-pink (#FE3D7C) with cream star highlights. Outfit: a long cream (#FFF1D6) stage coat with orange (#FF691D) lining and gold cuffs, a pink scarf tied in a ribbon, an orange pleated skirt, tall orange boots, soft black (#101012) outlines. Signature accessory: the chunky orange pencil in her bun, now gold-capped with a long gold ribbon tail. Props: a chrome-and-orange retro hand microphone, and a thick songbook with a pink heart sticker. Palette: #FF691D, #FE3D7C, #FFD98A, #FFF1D6, #101012. Pose: singing into the microphone, a warm proud smile.",
+    "personality": "唱的全是自己的歌，连嗓音都是自己的",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Suno's look is a warm orange-to-pink palette (#FF691D, #FE3D7C) with a near-black outline tone and sun and vinyl-record motifs. No official mascot is known; the microphone and heart-sticker songbook echo Voices and My Taste.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Suno_AI"
+    ]
+   },
+   "lineRef": "suno-v4-5"
+  },
+  {
+   "id": "helix",
+   "nameZh": "Helix",
+   "nameEn": "Helix",
+   "company": "Figure AI",
+   "country": "US",
+   "category": "embodied",
+   "family": "figure-helix",
+   "stage": 1,
+   "evolvesTo": "helix-02",
+   "evolveLevel": 30,
+   "types": [
+    "agent",
+    "motion"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 67,
+    "atk": 59,
+    "def": 58,
+    "spa": 71,
+    "spd": 57,
+    "spe": 63
+   },
+   "habitats": [
+    "desert",
+    "volcano"
+   ],
+   "releaseDate": "2025-02-01",
+   "capabilityScore": 40,
+   "hotnessScore": 60,
+   "statRationale": "视觉-语言-动作理解→特攻高；稳定控制机体→HP 高。 [BST 375 ∈ R 330-420; 强项 spa/hp; 能力 40/热度 60]",
+   "dexEntryZh": "Helix 是 Figure AI 在 2025 年 2 月披露的视觉-语言-动作模型，用来控制人形机器人，把看到的画面和语言指令变成动作。她是 Helix 02 的前一形态，后者是同系列的下一代。此时她最拿手的是特攻与 HP：先看清世界，再稳稳把手伸出去。",
+   "lookZh": "双股螺旋麻花辫的银白小机器人学徒，手心亮着蓝色传感点",
+   "design": {
+    "chibiDesign": "Chibi android HD-2D pixel sprite, ~2 heads tall, stage 1 of the Helix line: a shy apprentice robot girl learning to see and grasp. Hair: soft silvery-white fibre hair in two long braids twisted around each other like a double helix, sensor-blue bands, a short blunt fringe. Eyes: round sensor-blue with a ring highlight; smooth porcelain-white face, pixel blush, round joint hinges at the wrists. Outfit: a matte-grey and white training jumpsuit with charcoal elbow and knee pads, white sneakers; a small blue dot glows in each palm. Signature accessory: a double-helix hairpin of two interlocked curved bars (kept across the line). Prop: a small cardboard parcel held in both hands. Palette: #E6E9EE, #8A9097, #2B2E33, #5AA9FF, #FFFFFF, #E8DCC4. Pose: carefully lifting the parcel with wide eyes and a tilted head, one foot slightly raised.",
+    "personality": "慢热的学徒，先看三遍再动手，一动就稳",
+    "communityPersona": "No anime persona found; invented from brand colours and the helix name.",
+    "officialMascotOrLogo": "Figure AI's humanoids are drawn here in matte neutral greys and white with a sensor-blue accent, as in the existing Figure 03 entry; the double helix comes from the model's name.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Figure_AI"
+    ]
+   }
+  },
+  {
+   "id": "helix-02",
+   "nameZh": "Helix 02",
+   "nameEn": "Helix 02",
+   "company": "Figure AI",
+   "country": "US",
+   "category": "embodied",
+   "family": "figure-helix",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "agent",
+    "motion"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 75,
+    "atk": 74,
+    "def": 69,
+    "spa": 86,
+    "spd": 69,
+    "spe": 76
+   },
+   "habitats": [
+    "volcano",
+    "city"
+   ],
+   "releaseDate": "2026-01-27",
+   "capabilityScore": 56,
+   "hotnessScore": 58,
+   "statRationale": "全身动作控制→速度高；看懂指令再行动→特攻高。 [BST 449 ∈ SR 420-490; 强项 spa/spe; 能力 56/热度 58]",
+   "dexEntryZh": "Helix 02 于 2026 年 1 月 27 日亮相，是前一形态 Helix 同系列的下一代，资料把它归为全身式的视觉-语言-动作模型。这一阶段她最突出的是特攻与速度：不只是伸手，整个身体都要跟上指令。",
+   "lookZh": "双螺旋辫长到腰间的银白机器人姐姐，抱着包裹顶开小推车",
+   "design": {
+    "chibiDesign": "Chibi android HD-2D pixel sprite, ~2.6 heads tall, stage 2 of the Helix line: the same robot girl grown taller, moving with her whole body. Hair: the same silvery-white fibre hair, double-helix braids now waist-long with sensor-blue bands and tiny blue caps on the tips, a short blunt fringe. Eyes: the same round sensor-blue eyes with a ring highlight; porcelain-white face. Outfit: a matte-grey and white field jacket with charcoal shoulder and hip plates, a slim utility belt, fingerless gloves showing the glowing blue palm dots, tall boots. Signature accessory: the same double-helix hairpin. Props: a stack of three cardboard parcels on one arm, and a small rolling cart she bumps forward with her hip. Palette: #E6E9EE, #8A9097, #2B2E33, #5AA9FF, #FFFFFF, #E8DCC4. Pose: mid-stride, braids swinging, a quiet grin.",
+    "personality": "话少手快，全身一起听指挥",
+    "communityPersona": "No anime persona found; invented from brand colours and the helix name.",
+    "officialMascotOrLogo": "Figure AI's humanoids are drawn here in matte neutral greys and white with a sensor-blue accent, as in the existing Figure 03 entry; the double helix comes from the model's name.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Figure_AI"
+    ]
+   },
+   "lineRef": "helix"
+  },
+  {
+   "id": "pi0-5",
+   "nameZh": "π0.5",
+   "nameEn": "pi0.5",
+   "company": "Physical Intelligence",
+   "country": "US",
+   "category": "embodied",
+   "family": "pi",
+   "stage": 1,
+   "evolvesTo": "pi-star-0-6",
+   "evolveLevel": 30,
+   "types": [
+    "agent",
+    "vision"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 62,
+    "atk": 65,
+    "def": 55,
+    "spa": 75,
+    "spd": 62,
+    "spe": 67
+   },
+   "habitats": [
+    "ruins",
+    "volcano"
+   ],
+   "releaseDate": "2025-04-22",
+   "capabilityScore": 46,
+   "hotnessScore": 40,
+   "statRationale": "能看会动手→特攻高；反应利落→速度高。 [BST 386 ∈ R 330-420; 强项 spa/spe; 能力 46/热度 40]",
+   "dexEntryZh": "π0.5 发布于 2025 年 4 月 22 日，来自 Physical Intelligence，是一个能看、能理解、能动手的视觉-语言-动作模型，记录中的定位是开放世界泛化。它承接 π0，属同系列的下一代，权重开放，特攻与速度突出。练到 30 级，会迭代成 π*0.6。",
+   "lookZh": "圆周率 π 形的白色小机器人，抱着小海绵，围着短短的数字围巾",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, front view, clean dark outline. Stage 1 of the pi robot mascot line, the small, plain early version of the existing plump-pi mascot. Body: a plump white (#FFFFFF) Greek letter pi; the top bar forms its head and shoulders with a soft matte-black (#1E1E22) face panel showing two white dot eyes and a tiny smile, no hair. Its two pi legs are its feet with rounded soles. Arms: two slender matte-black robot arms ending in safety-yellow (#FFC400) parallel-jaw grippers. Signature accessory on every form: a scarf printed with a dotted pattern of digits, here a short stub. Prop: a tiny soft sponge in one gripper. It stands on a small warm-wood (#B07A4A) plank step. Palette: white, matte black, safety yellow, warm wood brown, soft gray (#C9CCD1). Pose: wobbly first steps, head tilted, curious.",
+    "personality": "笨手笨脚却好奇，什么都想上手试试",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Physical Intelligence is branded around the Greek letter pi, which is the whole body shape of this mascot; the black, white and safety-yellow palette matches the existing pi form.",
+    "sourceUrls": [
+     "https://www.physicalintelligence.company/blog"
+    ]
+   },
+   "lineRef": "pi-zero"
+  },
+  {
+   "id": "pi-star-0-6",
+   "nameZh": "π*0.6",
+   "nameEn": "pi*0.6",
+   "company": "Physical Intelligence",
+   "country": "US",
+   "category": "embodied",
+   "family": "pi",
+   "stage": 2,
+   "evolvesTo": "pi-zero",
+   "evolveLevel": 38,
+   "types": [
+    "agent",
+    "vision"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 77,
+    "atk": 72,
+    "def": 74,
+    "spa": 80,
+    "spd": 71,
+    "spe": 84
+   },
+   "habitats": [
+    "desert",
+    "volcano"
+   ],
+   "releaseDate": "2025-11-17",
+   "capabilityScore": 62,
+   "hotnessScore": 44,
+   "statRationale": "从经验中练出的熟练度→速度高；视觉与动作配合→特攻高。 [BST 458 ∈ SR 420-490; 强项 spe/spa; 能力 62/热度 44]",
+   "dexEntryZh": "π*0.6 发布于 2025 年 11 月 17 日，是 π0.5 同系列的下一代。记录里的特点是用强化学习（Recap）从实际经验里持续改进，也就是边做边长本事。它的速度与特攻突出，权重未公开。练到 38 级，会进化成 π0.7 物理智能。",
+   "lookZh": "更大一圈的 π 机器人，胸口有金色星标，腿上贴着创可贴，稳稳端着咖啡",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, front view, clean dark outline. Stage 2 of the pi robot mascot line: the same plump white (#FFFFFF) Greek-letter pi mascot, bigger and more capable. Matte-black (#1E1E22) face panel with two white dot eyes and a confident smile, no hair. Two matte-black articulated robot arms with safety-yellow (#FFC400) parallel-jaw grippers, longer and smoother. Signature scarf printed with a dotted pattern of digits, now longer and trailing behind. Marks of learning from experience: a small gold asterisk-star badge on its chest and a tiny bandage plaster on one pi leg. Prop: a small steaming coffee cup. It stands on a small warm-wood (#B07A4A) table-top platform. Palette: white, matte black, safety yellow, wood brown, soft gray, gold #E3B341. Pose: steady stance, proud small smile.",
+    "personality": "摔过的跟头都记在心里，越做越稳",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Physical Intelligence is branded around the Greek letter pi, which is the whole body shape of this mascot; the star in the model name becomes a small gold asterisk badge.",
+    "sourceUrls": [
+     "https://www.physicalintelligence.company/blog"
+    ]
+   },
+   "lineRef": "pi0-5"
+  },
+  {
+   "id": "unitree-h1",
+   "nameZh": "宇树 H1",
+   "nameEn": "Unitree H1",
+   "company": "Unitree Robotics",
+   "country": "CN",
+   "category": "embodied",
+   "family": "unitree",
+   "stage": 1,
+   "evolvesTo": "unitree",
+   "evolveLevel": 37,
+   "types": [
+    "motion",
+    "agent"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 64,
+    "atk": 59,
+    "def": 53,
+    "spa": 77,
+    "spd": 57,
+    "spe": 65
+   },
+   "habitats": [
+    "ruins",
+    "desert"
+   ],
+   "releaseDate": "2023-08-01",
+   "capabilityScore": 40,
+   "hotnessScore": 62,
+   "statRationale": "人形硬件运动力强→特攻高；腿脚灵活→速度高。 [BST 375 ∈ R 330-420; 强项 spa/spe; 能力 40/热度 62]",
+   "dexEntryZh": "宇树的人形机器人硬件，2023 年 8 月登场（维基百科记 2023 年，展示视频在 2024 年 4 月）。她是宇树人形这一脉的初阶形态，之后同一脉长成穿功夫服的宇树 G1/H2。",
+   "lookZh": "圆头盔黑面罩的小机娘，银白短发，脖子系着红绸",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Unitree robot line: the younger, plainer version of the kung-fu robot girl. Rounded gunmetal helmet-head with a smooth black visor (#0D0F12) face showing a soft glowing ring and two pixel-dot eyes in pale signal blue; a short silver-white (#C9CDD3) bob of cable hair peeks out below. Body: matte graphite (#2B2D31) and silver jointed limbs, round servo knees, a slanted-U chest emblem, small blue (#1897F2) joint lights, a plain grey sleeveless tabard. Signature accessory: a short festive-red (#E8343A) silk scarf at her neck, the seed of the long red water-sleeves to come. Prop: a short hazard-yellow (#F5C400) striped safety tether clipped to her back. Palette: #2B2D31, #C9CDD3, #0D0F12, #1897F2, #E8343A. Pose: a wobbly one-leg kung-fu ready stance, arms out.",
+    "personality": "刚学会跑跳就想上台表演的实干小机娘",
+    "communityPersona": "No named anime persona found; the roster's existing kung-fu robot girl is the reference.",
+    "officialMascotOrLogo": "Unitree's slanted-U emblem and signal-blue joint lights on graphite and silver hardware. H1 is a full-size humanoid; the design shrinks the roster's existing kung-fu robot girl into her younger form.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Unitree_Robotics"
+    ]
+   },
+   "lineRef": "unitree"
+  },
+  {
+   "id": "gemini-robotics-1",
+   "nameZh": "Gemini Robotics",
+   "nameEn": "Gemini Robotics",
+   "company": "Google DeepMind",
+   "country": "US",
+   "category": "embodied",
+   "family": "gemini-robotics",
+   "stage": 1,
+   "evolvesTo": "gemini-robotics-1-5",
+   "evolveLevel": 31,
+   "types": [
+    "agent",
+    "vision"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 63,
+    "atk": 59,
+    "def": 62,
+    "spa": 70,
+    "spd": 62,
+    "spe": 63
+   },
+   "habitats": [
+    "ruins",
+    "city"
+   ],
+   "releaseDate": "2025-03-12",
+   "capabilityScore": 42,
+   "hotnessScore": 48,
+   "statRationale": "看懂画面再动手→特攻高；机身敦实、慢工出细活→HP高。 [BST 379 ∈ R 330-420; 强项 spa/hp; 能力 42/热度 48]",
+   "dexEntryZh": "Gemini Robotics，2025 年 3 月 12 日亮相，是 Google DeepMind 的具身智能模型，属于视觉-语言-动作模型：看懂画面、读懂语言指令，再动手去做。它还是个手指笨拙的小个子，同系列的下一代是 Gemini Robotics 1.5，再往后会长成 Gemini Robotics 2。",
+   "lookZh": "圆滚滚的白色小机器人，抱着一块黄色积木，脚大得站不稳",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, creature-like robot mascot, ~1.7 heads tall, stage 1 of the Gemini Robotics line: the smallest, plainest version of a cheerful boyish helper robot. Body: small round humanoid, glossy white shell (#F5F7FA), soft grey joints (#9AA5B1), oversized feet, stubby three-finger mitten hands, still a bit clumsy. Face: dark visor (#1A1F2B) with two simple round blue LED eyes. Short antenna topped with a tiny Gemini four-point sparkle; ear pods glow blue (#4285F4). Outfit: only a plain blue bib apron with no pockets yet. Props: a single chunky yellow toy block (#FBBC05) cradled in both hands. Palette: #F5F7FA, #9AA5B1, #4285F4, #1A1F2B, #FBBC05. Pose: standing on wobbly oversized feet, carefully holding the block out in front, eyes focused.",
+    "personality": "认真又笨手笨脚的小帮手，抓稳了才得意",
+    "communityPersona": "No anime persona found; the roster's Gemini Robotics 2 is a cheerful white helper robot with a blue apron, and this is his earlier form.",
+    "officialMascotOrLogo": "Gemini Robotics is Google DeepMind's embodied line and carries Gemini's four-point sparkle and Google blue (#4285F4); there is no official mascot, so the white helper robot is drawn from the brand colours.",
+    "sourceUrls": [
+     "https://deepmind.google/models/gemini-robotics/"
+    ]
+   },
+   "lineRef": "gemini-robotics"
+  },
+  {
+   "id": "gemini-robotics-1-5",
+   "nameZh": "Gemini Robotics 1.5",
+   "nameEn": "Gemini Robotics 1.5",
+   "company": "Google DeepMind",
+   "country": "US",
+   "category": "embodied",
+   "family": "gemini-robotics",
+   "stage": 2,
+   "evolvesTo": "gemini-robotics",
+   "evolveLevel": 39,
+   "types": [
+    "agent",
+    "vision"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 79,
+    "atk": 73,
+    "def": 67,
+    "spa": 85,
+    "spd": 74,
+    "spe": 74
+   },
+   "habitats": [
+    "desert",
+    "ruins"
+   ],
+   "releaseDate": "2025-09-25",
+   "capabilityScore": 58,
+   "hotnessScore": 50,
+   "statRationale": "视觉与动作衔接更顺→特攻高；机身敦实→HP高。 [BST 452 ∈ SR 420-490; 强项 spa/hp; 能力 58/热度 50]",
+   "dexEntryZh": "Gemini Robotics 1.5，2025 年 9 月 25 日发布，是 Gemini Robotics 同系列的下一代，仍走具身智能这条路。图鉴里它比前辈高了一截，手指灵活起来，围裙也有了口袋，能把积木按颜色码进托盘；同系列再往后是 Gemini Robotics 2。",
+   "lookZh": "系着带口袋蓝围裙的白色小机器人，托盘里码着三色积木",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, creature-like robot mascot, ~1.9 heads tall, stage 2 of the Gemini Robotics line: the same cheerful boyish helper robot, a size bigger and more capable. Body: small round humanoid, glossy white shell (#F5F7FA), soft grey joints (#9AA5B1), oversized feet, four-finger hands getting dexterous. Face: dark visor (#1A1F2B) with two LED eyes that blink as four-point sparkles. Short antenna topped with a Gemini sparkle; ear pods glow blue (#4285F4). Outfit: blue utility apron now with a tool pocket, yellow-and-black safety stripes on both knees. Props: a small sorting tray holding three blocks in blue, red and yellow. Palette: #F5F7FA, #9AA5B1, #4285F4, #1A1F2B, #FBBC05. Pose: one hand raised in an 'I've got it' gesture over the tray, head tilted thoughtfully.",
+    "personality": "越来越靠谱的整理小能手，动手前先想一想",
+    "communityPersona": "No anime persona found; the roster's Gemini Robotics 2 is a cheerful white helper robot with a blue apron, and this is his earlier form.",
+    "officialMascotOrLogo": "Gemini Robotics is Google DeepMind's embodied line and carries Gemini's four-point sparkle and Google blue (#4285F4); there is no official mascot, so the white helper robot is drawn from the brand colours.",
+    "sourceUrls": [
+     "https://deepmind.google/models/gemini-robotics/"
+    ]
+   },
+   "lineRef": "gemini-robotics-1"
+  }
+ ],
+ "patches": [
+  {
+   "id": "gemma-3",
+   "set": {
+    "stage": 2
+   }
+  },
+  {
+   "id": "gemma-4",
+   "set": {
+    "stage": 3
+   }
+  },
+  {
+   "id": "gemini-live",
+   "set": {
+    "stage": 2
+   }
+  },
+  {
+   "id": "genie-3",
+   "set": {
+    "stage": 3
+   }
+  },
+  {
+   "id": "luma-ray3",
+   "set": {
+    "stage": 3
+   }
+  },
+  {
+   "id": "pi-zero",
+   "set": {
+    "stage": 3
+   }
+  },
+  {
+   "id": "unitree",
+   "set": {
+    "stage": 2
+   }
+  },
+  {
+   "id": "unitree-gd01",
+   "set": {
+    "stage": 3
+   }
+  },
+  {
+   "id": "gemini-robotics",
+   "set": {
+    "stage": 3
+   }
+  }
+ ]
+}

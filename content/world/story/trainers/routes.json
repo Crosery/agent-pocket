@@ -3,10 +3,10 @@
     "defaults": {"aiLevel": 0, "rewardPerLevel": 30, "sightRange": 3},
     "trainers": [
       {"id": "r1-xin", "nameZh": "小新", "classZh": "学生", "sprite": "trainer_student", "at": "route:route-1:1", "party": [{"pick": {"types": ["chat"], "rarities": ["N", "R"], "salt": "r1a"}, "level": 3}], "introText": ["我昨天刚装好图鉴 App！第一场对战就是你了！"], "defeatText": ["原来对战不是比谁打字快……"], "after": "我要回去把新手教程再读一遍。"},
-      {"id": "r1-jie", "nameZh": "阿杰", "classZh": "实习程序员", "sprite": "trainer_coder", "at": "route:route-1:2", "party": [{"pick": {"types": ["code"], "rarities": ["N", "R"], "salt": "r1b"}, "level": 4}, {"pick": {"types": ["chat"], "rarities": ["N", "R"], "salt": "r1c"}, "level": 3}], "introText": ["我的智灵今天刚通过单元测试，状态满分！"], "defeatText": ["测试全绿，上线就挂……这很合理。"], "after": "测试环境和生产环境，果然是两个世界。"},
-      {"id": "r1-xiong", "nameZh": "大雄", "classZh": "游戏玩家", "sprite": "trainer_gamer", "at": "route:route-1:3", "party": [{"pick": {"types": ["motion", "vision"], "rarities": ["N", "R"], "salt": "r1d"}, "level": 5}], "introText": ["看好了，我的连招：上上下下左右左右 BA！"], "defeatText": ["这游戏……不能读档的吗？"], "after": "下次对战前，我一定先存档。"},
+      {"id": "r1-jie", "nameZh": "阿杰", "classZh": "实习程序员", "sprite": "trainer_coder", "at": "route:route-1:2", "party": [{"pick": {"types": ["code"], "rarities": ["N", "R"], "salt": "r1b7"}, "level": 4}, {"pick": {"types": ["chat"], "rarities": ["N", "R"], "salt": "r1c7"}, "level": 3}], "introText": ["我的智灵今天刚通过单元测试，状态满分！"], "defeatText": ["测试全绿，上线就挂……这很合理。"], "after": "测试环境和生产环境，果然是两个世界。"},
+      {"id": "r1-xiong", "nameZh": "大雄", "classZh": "游戏玩家", "sprite": "trainer_gamer", "at": "route:route-1:3", "party": [{"pick": {"types": ["motion", "vision"], "rarities": ["N", "R"], "salt": "r1d4"}, "level": 5}], "introText": ["看好了，我的连招：上上下下左右左右 BA！"], "defeatText": ["这游戏……不能读档的吗？"], "after": "下次对战前，我一定先存档。"},
       {"id": "r1-mei", "nameZh": "小美", "classZh": "画师", "sprite": "trainer_artist", "at": "route:route-1:4", "party": [{"species": "abab", "level": 3}, {"species": "dall-e", "level": 4}], "introText": ["我的智灵画画超好看，就是手指老是画成六根。"], "defeatText": ["下次让它少画一根……不，是少画两根。"], "after": "画手是千古难题，人类画师也一样。"},
-      {"id": "r1-zhou", "nameZh": "老周", "classZh": "登山客", "sprite": "trainer_hiker", "at": "route:route-1:5", "party": [{"pick": {"types": ["open"], "rarities": ["N", "R"], "salt": "r1h"}, "level": 6}], "introText": ["年轻人，爬山要稳，对战也要稳！"], "defeatText": ["稳是稳了，就是慢了点。"], "after": "前面就是开源林镇，记得去补给站歇歇脚。"}
+      {"id": "r1-zhou", "nameZh": "老周", "classZh": "登山客", "sprite": "trainer_hiker", "at": "route:route-1:5", "party": [{"pick": {"types": ["open"], "rarities": ["N", "R"], "salt": "r1h20"}, "level": 6}], "introText": ["年轻人，爬山要稳，对战也要稳！"], "defeatText": ["稳是稳了，就是慢了点。"], "after": "前面就是开源林镇，记得去补给站歇歇脚。"}
     ]
   },
   "route-2": {
