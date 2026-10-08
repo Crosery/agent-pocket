@@ -3,10 +3,10 @@
 // plus the small calculations the presenter needs (exp bar segments, level-up stat deltas, effectiveness hints,
 // catch placement). No DOM, no three — unit-tested under Node.
 import type {
-  BattleEvent, BattleInit, BattleResult, BattleSideKind, BattleStatKey, Creature, CreatureView, MoveDef, SaveData,
+  BattleEvent, BattleInit, BattleResult, BattleSideKind, BattleStatKey, BossHud, Creature, CreatureView, MoveDef, SaveData,
   SideIndex, StatKey, TypeId,
 } from '../../shared/types.ts'
-import { CONTENT, typeEffectiveness, type Content } from '../../shared/content/index.ts'
+import { CONTENT, t, typeEffectiveness, type Content } from '../../shared/content/index.ts'
 import { STAT_KEYS, calcStats, expForLevel } from '../../shared/creature.ts'
 import type { EffCategory } from './config.ts'
 
@@ -38,6 +38,8 @@ export interface BattleModel {
   readonly evolutions: Map<number, string>
   end: { result: BattleResult; winner: SideIndex | -1 } | null
   money: number
+  /** Latest boss HUD snapshot (null outside boss fights). */
+  boss: BossHud | null
 }
 
 const slotOf = (cr: Pick<Creature, 'hp' | 'status'>): SlotInfo =>
@@ -61,6 +63,7 @@ export function createBattleModel(init: BattleInit, clear: string): BattleModel 
     evolutions: new Map(),
     end: null,
     money: 0,
+    boss: null,
   }
 }
 
@@ -120,6 +123,17 @@ export function applyEvent(m: BattleModel, e: BattleEvent): void {
     case 'weather':
       m.weather = e.weather
       break
+    case 'boss':
+      m.boss = e.hud
+      break
+    case 'form': {
+      // Same battler, new body: stat stages and volatiles are announced by their own events.
+      const s = m.sides[e.side]
+      s.view = { ...e.creature }
+      s.onField = e.creature.hp > 0
+      refreshSlot(s)
+      break
+    }
     case 'catch':
       if (e.success) m.sides[1].onField = false
       break
@@ -235,4 +249,30 @@ export function evolutionMoves(cr: Pick<Creature, 'level' | 'moves'>, toSpeciesI
     out.push(e.move)
   }
   return out
+}
+
+// ---------------------------------------------------------------------------
+// Boss HUD
+// ---------------------------------------------------------------------------
+
+export type BossChipTone = 'neutral' | 'good' | 'warn' | 'bad'
+export interface BossChip { id: string; text: string; tone: BossChipTone; /** Fill ratio for counter-like meters, null for state / alert chips. */ fill: number | null; alert: boolean }
+export interface BossPanelInfo { bossId: string; title: string; phase: number; phases: number; chips: BossChip[] }
+
+/** What the foe status window shows for a boss snapshot: title, phase pips and the few chips worth reading mid-fight. */
+export function bossPanelInfo(hud: BossHud, c: Content = CONTENT): BossPanelInfo | null {
+  const def = c.bosses[hud.bossId]
+  if (!def) return null
+  const chips: BossChip[] = []
+  for (const m of def.meters) {
+    if (!m.show) continue
+    const value = Math.min(m.max, Math.max(0, Math.round(hud.meters[m.id] ?? 0)))
+    const label = t(m.label)
+    chips.push(m.states
+      ? { id: m.id, text: `${label} ${t(m.states[value] ?? '')}`, tone: m.tone ?? 'neutral', fill: null, alert: false }
+      : { id: m.id, text: t('battleui.boss.meter', { label, value, max: m.max }), tone: m.tone ?? 'neutral', fill: value / m.max, alert: false })
+  }
+  if (hud.charge) chips.push({ id: 'charge', text: t('battleui.boss.charge', { move: c.moves[hud.charge]?.nameZh ?? hud.charge }), tone: 'bad', fill: null, alert: true })
+  if (hud.enrage > 0) chips.push({ id: 'enrage', text: t('battleui.boss.enrage', { n: hud.enrage }), tone: 'bad', fill: null, alert: false })
+  return { bossId: hud.bossId, title: t(def.title), phase: hud.phase, phases: hud.phases, chips }
 }

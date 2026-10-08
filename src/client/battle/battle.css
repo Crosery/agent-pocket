@@ -330,3 +330,46 @@ html.ap-portrait .apb-glossary-grid { grid-template-columns: 1fr; }
 html.ap-portrait .apb-bar.is-moves .apb-status.is-own { display: none; }
 html.ap-portrait .apb-levelup { bottom: auto; top: calc(var(--u) * 84); }
 html.ap-portrait .apb-banner.is-own { bottom: auto; top: calc(var(--u) * 60); }
+
+/* ------------------------------------------------------------------ boss strip (foe window) */
+
+.apb-st-boss {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+  margin: calc(var(--u) * 2) 0 calc(var(--u) * 3);
+  padding: calc(var(--u) * 2) calc(var(--u) * 3);
+  background: linear-gradient(90deg, rgba(86, 28, 28, 0.55), rgba(8, 11, 22, 0));
+  border-left: calc(var(--u) * 2) solid #e25b4a;
+}
+.apb-st-boss[hidden] { display: none; }
+.apb-boss-head { display: flex; align-items: center; gap: calc(var(--u) * 4); min-width: 0; }
+.apb-boss-tag { flex: none; padding: 0 calc(var(--u) * 3); color: var(--ap-ink); background: #e25b4a; }
+.apb-boss-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ap-gold-hi); }
+.apb-boss-pips { display: flex; flex: none; gap: calc(var(--u) * 2); }
+.apb-pip { width: calc(var(--u) * 7); height: calc(var(--u) * 7); background: rgba(5, 7, 13, 0.8); border: var(--u) solid rgba(255, 107, 91, 0.7); }
+.apb-pip.is-on { background: #e25b4a; border-color: var(--ap-ink); }
+.apb-boss-chips { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 2); }
+.apb-bchip {
+  --fill: 0%;
+  --tone: rgba(201, 164, 92, 0.6);
+  display: inline-flex;
+  align-items: center;
+  height: calc(var(--u) * 13);
+  padding: 0 calc(var(--u) * 4);
+  color: var(--ap-text);
+  white-space: nowrap;
+  background: linear-gradient(90deg, rgba(201, 164, 92, 0.32) var(--fill), rgba(5, 7, 13, 0.78) var(--fill));
+  border: var(--u) solid var(--tone);
+}
+.apb-bchip.is-good { --tone: rgba(130, 224, 140, 0.7); }
+.apb-bchip.is-warn { --tone: rgba(255, 206, 99, 0.8); }
+.apb-bchip.is-bad { --tone: rgba(255, 107, 91, 0.8); }
+.apb-bchip.is-alert { color: #fff; background: rgba(150, 30, 30, 0.9); animation: apb-blink 700ms steps(2) infinite; }
+.apb-st-boss.is-pulse { animation: apb-boss-pulse 600ms ease-out; }
+.apb-root.has-boss .apb-banner.is-foe { top: calc(var(--u) * 126); }
+@keyframes apb-blink { 50% { background: rgba(60, 12, 12, 0.9); } }
+@keyframes apb-boss-pulse { from { filter: brightness(2.2); transform: translateX(calc(var(--u) * 3)); } to { filter: none; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .apb-bchip.is-alert, .apb-st-boss.is-pulse { animation: none; }
+}

@@ -9,7 +9,7 @@ import { BATTLE_UI } from './config.ts'
 import { createBattleEffectsPanel } from './effects-panel.ts'
 import { createMenus, type Menus } from './menus.ts'
 import { createMessageBox, type MessageBox } from './message.ts'
-import type { StatDelta } from './model.ts'
+import type { BossPanelInfo, StatDelta } from './model.ts'
 import { createStatusPanel, type StatusPanel } from './status-panel.ts'
 import './battle.css'
 
@@ -22,6 +22,8 @@ export interface BattleView {
   /** PvP decision countdown (seconds left) or null to hide. */
   setTimer(secondsLeft: number | null): void
   banner(side: SideIndex, text: string): void
+  /** Boss strip of the foe window (null when it is not a boss fight). */
+  setBoss(info: BossPanelInfo | null): void
   /** Level-up stat window; resolves on confirm or after the configured time. */
   levelUp(title: string, deltas: StatDelta[]): Promise<void>
   /** Hides status windows (evolution, end of battle). */
@@ -84,6 +86,10 @@ export function createBattleView(audio: AudioManager, settings: () => Settings):
       const node = el('div', { class: `apb-banner ${side === 0 ? 'is-own' : 'is-foe'}`, text })
       root.append(node)
       banners.push({ node, left: T.abilityBannerMs })
+    },
+    setBoss(info) {
+      status[1].setBoss(info)
+      root.classList.toggle('has-boss', info !== null)
     },
     levelUp(title, deltas) {
       const p = panel(title, { className: 'apb-levelup ap-anim-in' })

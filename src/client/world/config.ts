@@ -101,10 +101,12 @@ export interface GameTuning {
   fog: { mapKinds: MapKind[] }
   autosave: { events: string[]; minIntervalSec: number; onHidden: boolean }
   hud: { moneyCheckSec: number }
-  flags: { badgePrefix: string }
+  flags: { badgePrefix: string; bossWonPrefix: string }
   debug: {
     partySize: number; partyLevel: number; money: number; keyItemKinds: string[]
     categoryQty: Record<string, number>; freezeClockWithTime: boolean; overlayRefreshMs: number; battleLevel: number
+    /** ?dev=1 boss sandbox: a sensible team (party level = boss level + levelOffset) and counter items in the bag. */
+    boss: { party: string[]; levelOffset: number; counterQty: number }
   }
 }
 
@@ -217,6 +219,7 @@ export function validateGameContent(g: GameTuning = GAME, c: Content = CONTENT):
   if (!(g.region.defaultWeather in g.region.weatherIntensity)) errs.push(`game.json region.defaultWeather: "${g.region.defaultWeather}" has no weatherIntensity`)
   for (const e of g.autosave.events) if (!GAME_EVENTS.includes(e)) errs.push(`game.json autosave.events: unknown event "${e}"`)
   for (const cat of Object.keys(g.debug.categoryQty)) if (!c.itemList.some((it) => it.category === cat)) errs.push(`game.json debug.categoryQty: no items in category "${cat}"`)
+  for (const id of g.debug.boss.party) if (!c.species[id]) errs.push(`game.json debug.boss.party: unknown species "${id}"`)
   for (const step of g.newGame.introScript) {
     if (step.op === 'say' && !(step.text in c.text)) errs.push(`game.json newGame.introScript: missing text key "${step.text}"`)
     if (step.op === 'sfx') checkSfx('newGame.introScript', step.id)
