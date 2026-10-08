@@ -7,7 +7,7 @@ import { CONTENT, typeEffectiveness, validateContent } from '../src/shared/conte
 import type { SpeciesDef, StatKey } from '../src/shared/types.ts'
 import rules from '../tools/data/species_rules.json' with { type: 'json' }
 
-const ROSTER_SIZE = 255
+const ROSTER_SIZE = 310
 const STARTER_COUNT = 3
 const LEARNSET_SIZE: [number, number] = [10, 16]
 const LEVEL1_MOVES = 2
