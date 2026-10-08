@@ -117,6 +117,8 @@ export interface OverworldSpec {
    * Level basin around the start town: nothing above `level` within `radius` tiles (radius wobbled by `jitter` tiles of
    * Perlin noise), then the cap rises smoothly to the world's own relief over `transition` tiles. Isolated terraces under `minPatch` tiles inside that reach are levelled too.
    */
+  /** Post-pass terrace compression: level `i` becomes `levelMap[i]` (non-decreasing, steps of at most one). */
+  levelMap?: number[]
   startFlat?: { radius: number; transition: number; level: number; jitter: number; noise: NoiseSpec; minPatch: number }
   maxLevel: number; seaLevel: number; seaTerrain: string; seaShallowTerrain: string; seaShallowWidth: number
   outOfBounds: string
