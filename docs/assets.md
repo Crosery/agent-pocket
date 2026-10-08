@@ -88,7 +88,7 @@ fix, walk cycle synthesis, H3 clip cycle pick, end-to-end sheet on `assets_src/w
 
 ## Creatures
 
-Roster source: `assets_src/prompts/creatures.json` (190 records: `id`, `nameEn`, `nameZh`, `family`, `stage`, `types`,
+Roster source: `assets_src/prompts/creatures.json` (255 records: `id`, `nameEn`, `nameZh`, `family`, `stage`, `types`,
 `rarity`, `design`, `lookZh`, `personality`). The `creature` template wraps each `design` in a shared kawaii wrapper:
 a single full-body moe chibi mascot personification (gacha/mascot chibi look) whose **cuteness rules override any
 proportion, age or mood wording in the design** — ~2 heads tall with an oversized round head, huge sparkly eyes,
