@@ -10,10 +10,11 @@ import { CONTENT } from '../../shared/content/index.ts'
 import type { GameMap } from '../../shared/types.ts'
 import type { ActorOptions, AssetStore, HD2DRenderer, PostParams, RenderView, WorldView, WorldWeather } from '../contracts.ts'
 import {
-  RENDER, dirFromAngles, hexToRgb, lerpHex, qualityPreset, sampleLighting, sunState,
+  RENDER, dirFromAngles, hexToRgb, lerpHex, lightingTier, qualityPreset, sampleLighting, sunState,
   type LightingState, type QualityPreset, type StaticLighting, type Vec3,
 } from './config.ts'
 import { isHD2DRendererExt } from './hd2d.ts'
+import { updateSpriteLighting } from './sprite-lighting.ts'
 import { cameraPitch, cameraYaw } from './sprite-utils.ts'
 import { createActorImpl, createCreatureActorImpl, type ActorContext, type ActorEntry } from './world/actors.ts'
 import { createTerrainAtlas, terrainAtlasKeys } from './world/atlas.ts'
@@ -32,8 +33,10 @@ import { createLiquidMaterials } from './world/liquids.ts'
 import { applyOcclusion, bindOcclusion, setOcclusionView } from './world/occlusion.ts'
 import { createOverlayLayer } from './world/overlay.ts'
 import { createAurora, createParticleField, type ParticleField } from './world/particles.ts'
-import { createPropLayer, type Canopy, type PropChunk } from './world/props.ts'
+import { createPropLayer, type Canopy, type PropChunk, type ShaftAnchor } from './world/props.ts'
 import { createQuestTrail } from './world/quest-trail.ts'
+import { applySceneLight, createSceneLight, patchSceneLight, sceneLightUniforms } from './world/scene-light.ts'
+import { createShafts } from './world/shafts.ts'
 import { createSkyRig } from './world/sky.ts'
 import { createStreamer, type ChunkSlot, type StreamFrame, type Streamer, type StreamStats } from './world/streamer.ts'
 import { buildChunk, createHeightField, createTerrainSampler, sampleWalkHeight, type HeightField, type TerrainSampler } from './world/terrain.ts'
@@ -47,6 +50,8 @@ interface ChunkData {
   decor: THREE.InstancedMesh[]
   props: PropChunk | null
   lights: LightSource[]
+  /** Tree gaps where light shafts can fall (from the prop stage). */
+  anchors: ShaftAnchor[]
   /** Shader programs of the finished chunk are linked (compileAsync): shown only then, so a material seen for the
    * first time never stalls a frame on a synchronous compile. */
   ready: boolean
@@ -64,6 +69,8 @@ export interface WorldViewExt extends WorldView {
   readonly worldGen: { prefetched: number; ensured: number; lastMs: number; maxMs: number; retainMs: number } | null
   /** Chunks shown by the compile timeout before their programs were linked (should stay 0). */
   readonly compileTimeouts: number
+  /** Lighting diagnostics (automation / dev overlay): light-field lights in use, cloud shadow strength, wetness, light shafts shown. */
+  readonly lightDebug: { fieldLights: number; sources: number; cloud: number; wet: number; shafts: number; lamps: number }
   /** Re-reads tiles / objects of the loaded map (after runtime edits such as an opened gate) and rebuilds chunks. */
   invalidateMap(): void
 }
@@ -87,17 +94,19 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   const sky = createSkyRig(scene)
   const atlas = createTerrainAtlas(assets, terrainAtlasKeys())
   // terrain takes the occlusion cutaway too: cave wall masses and cliffs south of the player would hide it
-  const matte = applyOcclusion(applySnowDust(new THREE.MeshLambertMaterial({ map: atlas.texture, vertexColors: true }), false))
-  const glossy = applyOcclusion(applySnowDust(new THREE.MeshPhongMaterial({
+  const matte = applySceneLight(applyOcclusion(applySnowDust(new THREE.MeshLambertMaterial({ map: atlas.texture, vertexColors: true }), false)), true)
+  const glossy = applySceneLight(applyOcclusion(applySnowDust(new THREE.MeshPhongMaterial({
     map: atlas.texture, vertexColors: true, shininess: RENDER.terrain.glossy.shininess,
     specular: new THREE.Color().setRGB(...hexToRgb(RENDER.terrain.glossy.specular), THREE.SRGBColorSpace),
-  }), false))
+  }), false)), true)
   const liquids = createLiquidMaterials()
   const grass = createGrassLayer(assets, atlas, { trample: true })
   const props = createPropLayer(assets, { occlusion: true })
   const decor = createDecorLayer()
   const fringe = createFringeLayer(atlas.texture)
   const lights = createLightRig()
+  const sceneLight = createSceneLight()
+  const shafts = createShafts()
   const fx = createFxSystem()
   const leaves = createLeafSystem(Math.max(...Object.values(RENDER.physics.tiers).map((t) => t.leaves)))
   const footsteps = createFootsteps((x, z, _y, amp) => liquids.ripple(x, z, amp))
@@ -109,7 +118,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   chunkRoot.name = 'chunks'
   const actorsGroup = new THREE.Group()
   actorsGroup.name = 'actors'
-  scene.add(chunkRoot, lights.group, fx.group, footsteps.group, leaves.mesh, actorsGroup, aurora.mesh, questTrail.glow, questTrail.mesh)
+  scene.add(chunkRoot, lights.group, shafts.mesh, fx.group, footsteps.group, leaves.mesh, actorsGroup, aurora.mesh, questTrail.glow, questTrail.mesh)
   bindOcclusion(scene)
 
   const registry = new Set<ActorEntry>()
@@ -144,6 +153,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   /** First update after a map load: weather and ambient particles start at full level instead of fading in. */
   let snapAmbience = false
   let shadowsCast = true
+  let debugLamps = 0
   let physicsTier = ''
   /** Snow built up by the weather, 0..1 of render.json snowCover.max. */
   let snowLevel = 0
@@ -198,7 +208,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
         chunkRoot.add(group)
         // infinite maps: lights are read in the props stage (after the world chunks exist)
         if (!infinite) lightsDirty = true
-        return { group, terrain: [], grass: [], decor: [], props: null, lights: infinite ? [] : props.lightsOf(cx, cy), ready: false, compiling: false, disposed: false }
+        return { group, terrain: [], grass: [], decor: [], props: null, lights: infinite ? [] : props.lightsOf(cx, cy), anchors: [], ready: false, compiling: false, disposed: false }
       },
       stages: [
         // world chunks this render chunk reads (neighbour tiles, prop footprints, lights); generation is budgeted
@@ -234,11 +244,13 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
           }
           for (const mesh of meshes) { mesh.name = 'terrain'; slot.data.group.add(mesh) }
           slot.data.terrain = meshes
+          patchSceneLight(slot.data.group)
           return true
         },
         (slot) => {
           slot.data.grass = grass.buildChunk(s, slot.cx, slot.cy, chunkSize, builtGrassPerTile, climate)
           for (const mesh of slot.data.grass) slot.data.group.add(mesh)
+          patchSceneLight(slot.data.group)
           return true
         },
         (slot, deadline) => {
@@ -247,12 +259,16 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
           slot.data.props = c
           props.applyShadows(c)
           for (const mesh of c.meshes) slot.data.group.add(mesh)
-          if (infinite) { slot.data.lights = props.lightsOf(slot.cx, slot.cy); lightsDirty = true }
+          patchSceneLight(slot.data.group)
+          slot.data.anchors = c.anchors
+          if (infinite) slot.data.lights = props.lightsOf(slot.cx, slot.cy)
+          lightsDirty = true
           return true
         },
         (slot) => {
           slot.data.decor = decor.build(s, slot.cx, slot.cy, chunkSize, climate, props.blockedIn(slot.cx, slot.cy), builtDecor, (k) => atlas.averageColor(k))
           for (const mesh of slot.data.decor) slot.data.group.add(mesh)
+          patchSceneLight(slot.data.group)
           return true
         },
       ],
@@ -299,9 +315,14 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   function updateLights(): void {
     if (!streamer || !lightsDirty) return
     lightsDirty = false
-    const list: LightSource[] = []
-    for (const slot of streamer.slots.values()) for (const l of slot.data.lights) list.push(l)
+    const list: LightSource[] = [], anchors: ShaftAnchor[] = []
+    for (const slot of streamer.slots.values()) {
+      for (const l of slot.data.lights) list.push(l)
+      for (const a of slot.data.anchors) anchors.push(a)
+    }
     lights.setSources(list)
+    sceneLight.setSources(list)
+    shafts.setAnchors(anchors)
   }
 
   /** Infinite maps, per frame after streaming: world-chunk prefetch ring ahead of the player (only when nothing
@@ -345,6 +366,8 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
     climate = null
     bindClimate(null, false)
     lights.setSources([])
+    sceneLight.setSources([])
+    shafts.setAnchors([])
   }
 
   function roomBounds(m: GameMap, s: TerrainSampler): CameraBounds {
@@ -379,7 +402,8 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
 
   function applySettingsChange(): void {
     const q = quality()
-    const pool = Math.min(CONTENT.config.render.maxPointLights, q.pointLights)
+    // the light field replaces the PointLight pool on the tiers that have it
+    const pool = lightingTier(settings().quality).fieldLights > 0 ? 0 : Math.min(CONTENT.config.render.maxPointLights, q.pointLights)
     if (pool !== poolSize) { poolSize = pool; lights.setPoolSize(pool); lightsDirty = true }
     let rebuild = props.setNatureVariants(q.natureVariants)
     if (Math.round(q.grassPerTile) !== builtGrassPerTile) { builtGrassPerTile = Math.round(q.grassPerTile); rebuild = true }
@@ -398,16 +422,16 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   applySettingsChange()
 
   // --- lighting composition -------------------------------------------------
-  const lightState = (): { s: LightingState; dir: Vec3; fade: number } => {
+  const lightState = (): { s: LightingState; dir: Vec3; fade: number; moon: boolean } => {
     const preset = staticPreset()
-    if (preset) return { s: { ...preset }, dir: dirFromAngles(preset.sunElevationDeg, preset.sunAzimuthDeg), fade: 1 }
+    if (preset) return { s: { ...preset }, dir: dirFromAngles(preset.sunElevationDeg, preset.sunAzimuthDeg), fade: 1, moon: false }
     const sun = sunState(minutes)
-    return { s: sampleLighting(minutes), dir: sun.dir, fade: sun.fade }
+    return { s: sampleLighting(minutes), dir: sun.dir, fade: sun.fade, moon: sun.moon }
   }
 
   /** Applies active weather grades (blended by their fade levels) onto a lighting state. */
-  function applyWeather(s: LightingState): { sunMul: number; wind: number; aurora: number; ambient: number } {
-    let sunMul = 1, wind = 1, auroraLevel = 0, ambient = 1
+  function applyWeather(s: LightingState): { sunMul: number; wind: number; aurora: number; ambient: number; wet: number } {
+    let sunMul = 1, wind = 1, auroraLevel = 0, ambient = 1, wet = 0
     for (const [kind, level] of weatherLevels) {
       const def = RENDER.weather[kind]
       if (!def || level <= 0.001) continue
@@ -421,6 +445,11 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       s.fogFar = mix(s.fogFar, g.fogFar)
       s.hemiIntensity = mix(s.hemiIntensity, g.hemi)
       s.bloomStrength = mix(s.bloomStrength, g.bloomStrength)
+      s.cloud = mix(s.cloud, g.cloud)
+      s.shaft = mix(s.shaft, g.shaft)
+      s.rim = mix(s.rim, g.rim)
+      s.split = mix(s.split, g.split)
+      if (g.wet !== undefined) wet = Math.max(wet, g.wet * w)
       if (g.warmth !== undefined) s.warmth += g.warmth * w
       if (g.vignette !== undefined) s.vignette += g.vignette * w
       if (g.lamps !== undefined) s.lamps = Math.max(s.lamps, g.lamps * w)
@@ -436,11 +465,18 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       if (def.aurora) auroraLevel = Math.max(auroraLevel, w)
       ambient *= 1 + ((def.ambientScale ?? 1) - 1) * w
     }
-    return { sunMul, wind, aurora: auroraLevel, ambient }
+    return { sunMul, wind, aurora: auroraLevel, ambient, wet }
   }
 
   const _v = new THREE.Vector3()
   const _head = new THREE.Vector3()
+  /** '#rrggbb' split-tone colour -> luminance-neutral RGB multipliers (#808080 = no tint): the tint shifts hue only. */
+  const tint = (hex: string, out: Vec3 = [1, 1, 1]): Vec3 => {
+    const c = hexToRgb(hex)
+    const luma = Math.max(1e-3, 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2])
+    out[0] = c[0] / luma; out[1] = c[1] / luma; out[2] = c[2] / luma
+    return out
+  }
 
   const view: WorldViewExt = {
     scene,
@@ -450,6 +486,12 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
     get loadMs() { return loadMs },
     get worldGen() { return map?.infinite ? { ...gen } : null },
     get compileTimeouts() { return compileTimeouts },
+    get lightDebug() {
+      return {
+        fieldLights: sceneLightUniforms.uApLfCount.value, sources: sceneLight.sourceCount, cloud: sceneLightUniforms.uApCloud.value.x,
+        wet: sceneLightUniforms.uApWet.value.x, shafts: shafts.shown, lamps: debugLamps,
+      }
+    },
 
     invalidateMap() {
       if (!map || !sampler) return
@@ -552,9 +594,10 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
         else weatherLevels.set(k, next)
       }
 
-      const { s, dir, fade: sunFade } = lightState()
+      const { s, dir, fade: sunFade, moon } = lightState()
       // time-of-day night factor before weather raises the lamps (night-only particles follow the clock, not the clouds)
       const night = s.lamps
+      debugLamps = s.lamps
       const wx = applyWeather(s)
       sky.apply(s, dir, sunFade * wx.sunMul, rig.target, camera, rig.distance, time)
       const shadowsOn = st.shadows && q.shadows
@@ -569,6 +612,17 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
 
       const pxPerUnit = (ext?.internal.height ?? renderer.canvas.height) / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2))
       lights.update(dt, time, focus, s.lamps, q.glowSprites, pxPerUnit)
+      // light field (lamps, windows, fires), cloud shadows and wet ground: shared uniforms of every lit material
+      const lightTier = lightingTier(st.quality)
+      sceneLight.update({ dt, time, focus, quality: st.quality, state: s, wet: wx.wet, wind: wx.wind, sky: sky.hemi.color, outdoor })
+      updateSpriteLighting({
+        dir, sunColor: sky.sun.color, sunMul: sunFade, state: s, rim: 1, quality: st.quality, camera,
+        shadowUv: 1 / (sky.sun.shadow.camera.right - sky.sun.shadow.camera.left), shadows: shadowsOn, outdoor,
+      })
+      shafts.update({
+        dt, time, focus, count: outdoor ? lightTier.shafts : 0, dir, color: sky.sun.color, moon,
+        strength: s.shaft * (moon ? RENDER.lighting.shafts.moon : 1) * sunFade,
+      })
       liquids.update(time, sky.ambientLight, q.waterSparkles)
       updateWind(time, wx.wind)
 
@@ -673,6 +727,9 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       post.warmth = s.warmth
       post.bloomStrength = s.bloomStrength
       post.vignette = s.vignette
+      post.split = lightTier.splitTone ? s.split : 0
+      post.shadowTint = tint(s.shadowTint, post.shadowTint)
+      post.highlightTint = tint(s.highlightTint, post.highlightTint)
     },
 
     setWeather(w) {
@@ -726,7 +783,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       clearMap()
       for (const e of [...registry]) e.object.removeFromParent()
       registry.clear()
-      grass.dispose(); props.dispose(); decor.dispose(); fringe.dispose(); lights.dispose(); fx.dispose(); questTrail.dispose(); aurora.dispose(); sky.dispose()
+      grass.dispose(); props.dispose(); decor.dispose(); fringe.dispose(); lights.dispose(); sceneLight.dispose(); shafts.dispose(); fx.dispose(); questTrail.dispose(); aurora.dispose(); sky.dispose()
       liquids.dispose(); footsteps.dispose(); leaves.dispose(); atlas.dispose(); matte.dispose(); glossy.dispose(); overlayLayer.dispose()
       map = null
       sampler = null

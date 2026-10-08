@@ -5,6 +5,7 @@ import type { Dir } from '../../../shared/types.ts'
 import type { Actor, ActorOptions, AssetStore, CreatureActor } from '../../contracts.ts'
 import { RENDER, hexToRgb } from '../config.ts'
 import { createCharacterAnimation } from '../character-animation.ts'
+import { applySpriteLighting } from '../sprite-lighting.ts'
 import {
   billboardPointToWorld, createBillboardGeometry, createBlobShadow, createSpriteMaterial, setGeometryFrame, sheetLayout, spriteDepthMaterial, spriteOpaqueTop,
   type SpriteMaterial,
@@ -67,6 +68,7 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
   const cell = CONTENT.config.sprites.sheetCell
   const geo = createBillboardGeometry(A.width, A.height, A.normalTilt, (A.footInset * A.height) / cell, A.cardSegments)
   const sprite = createSpriteMaterial(ctx.assets.characterTexture(opts.sheet), { alphaTest: A.alphaTest, opacity: opts.kind === 'remote' ? A.remoteAlpha : 1, billboard: RENDER.camera.billboard })
+  applySpriteLighting(sprite.material)
   const mesh = new THREE.Mesh(geo, sprite.material)
   mesh.castShadow = true
   mesh.receiveShadow = false
@@ -215,6 +217,7 @@ export function createCreatureActorImpl(ctx: ActorContext, speciesId: string, sh
   const h = (species?.size ?? 1) * A.height * C.height
   const geo = createBillboardGeometry(h, h, A.normalTilt, (C.footInset * h) / CONTENT.config.sprites.creatureSize, A.cardSegments)
   const sprite = createSpriteMaterial(ctx.assets.creatureTexture(speciesId), { alphaTest: C.alphaTest, billboard: RENDER.camera.billboard })
+  applySpriteLighting(sprite.material)
   // a creature between the camera and the player (the follower walking north of it) is screen-door thinned around
   // the player like occluding props, but keeps occlusionKeep of its coverage
   const occShape = { value: new THREE.Vector2(RENDER.occlusion.soft, C.occlusionKeep) }

@@ -55,6 +55,9 @@ function basePost(settings: Settings, q: QualityPreset): PostParams {
     exposure: p.exposure,
     pixelScale: settings.pixelScale,
     flash: 0,
+    shadowTint: [1, 1, 1],
+    highlightTint: [1, 1, 1],
+    split: 0,
   }
 }
 
@@ -116,6 +119,7 @@ export function createRenderer(canvas: HTMLCanvasElement, settings: Settings): H
   g.uVignetteSoft.value = P.vignetteSoftness
   g.uLift.value.set(...P.lift)
   g.uGain.value.set(...P.gain)
+  g.uSplitRange.value.set(P.split.lo, P.split.hi)
   ;(g.uTransColor.value as THREE.Color).setRGB(...hexToRgb(tr.fadeColor), THREE.SRGBColorSpace)
 
   const post: PostParams = basePost(current, quality)
@@ -244,6 +248,9 @@ export function createRenderer(canvas: HTMLCanvasElement, settings: Settings): H
       g.uContrast.value = eff.contrast
       g.uWarmth.value = eff.warmth
       g.uVignette.value = eff.vignette
+      g.uSplit.value = eff.split ?? 0
+      g.uShadowTint.value.set(...(eff.shadowTint ?? [1, 1, 1]))
+      g.uHighlightTint.value.set(...(eff.highlightTint ?? [1, 1, 1]))
       g.uFlash.value = THREE.MathUtils.clamp(eff.flash, 0, 1)
       ;(g.uFlashColor.value as THREE.Color).copy(flashState.color).multiplyScalar(P.flash.strength)
       g.uTransKind.value = TRANSITION_KIND[transKind]

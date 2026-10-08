@@ -21,7 +21,10 @@ import { sampleWalkHeight, type TerrainSampler, type TileRect } from './terrain.
 /** A swaying canopy of a chunk (leaves fall from it): world position of its base, radius and height in tiles. */
 export interface Canopy { x: number; y: number; z: number; r: number; h: number; key: string }
 
-export interface PropChunk { meshes: THREE.InstancedMesh[]; count: number; canopies: Canopy[] }
+/** A tree gap where a light shaft can fall: ground point, canopy height above it, stable seed. */
+export interface ShaftAnchor { x: number; y: number; z: number; h: number; seed: number }
+
+export interface PropChunk { meshes: THREE.InstancedMesh[]; count: number; canopies: Canopy[]; anchors: ShaftAnchor[] }
 
 export interface PropLayer {
   /** Whole-map mode (battle dioramas): every chunk built by load() lives here. */
@@ -54,6 +57,9 @@ export interface PropLayer {
   clear(): void
   dispose(): void
 }
+
+/** The light a prop emits: its props.json light, else the lit-window light render.json lights.windowLights gives it. */
+const lightOf = (def: PropDef): PropDef['light'] => def.light ?? RENDER.lights.windowLights[def.key]
 
 /** Half-tile grid key used to match map.lights against prop light positions. */
 export const lightKey = (x: number, z: number) => `${Math.round(x * 2)},${Math.round(z * 2)}`
@@ -150,6 +156,8 @@ export function createPropLayer(assets: AssetStore, opts?: { occlusion?: boolean
   const legacyChunks: { c: PropChunk; x: number; z: number }[] = []
 
   const N = RENDER.nature
+  const SH = RENDER.lighting.shafts
+  const shaftProps = new Set(SH.props)
   const natureOf = (key: string): NatureProp | undefined => N.props[key]
   /** Biome of a placement's anchor tile when the biome re-models that prop (render.json nature.biomeVariants). */
   const variantBiome = (def: PropDef, p: PropPlacement): string | null => {
@@ -173,17 +181,17 @@ export function createPropLayer(assets: AssetStore, opts?: { occlusion?: boolean
     const yaw = rotYaw(p.rot)
     const fwd = def.door ? def.footprint[1] / 2 + RENDER.lights.frontOffset : 0
     const lx = c.x + Math.sin(yaw) * fwd, lz = c.z + Math.cos(yaw) * fwd
-    const L = def.light!
+    const L = lightOf(def)!
     return {
       x: lx, y: groundY(m, p.x, p.y) + L.h, z: lz,
       color: new THREE.Color().setRGB(...hexToRgb(L.color), THREE.SRGBColorSpace),
-      intensity: L.intensity, radius: L.radius, nightOnly: L.nightOnly, phase: hash2(p.x, p.y, 5) * 6.283,
+      intensity: L.intensity, radius: L.radius, nightOnly: L.nightOnly, phase: hash2(p.x, p.y, 5) * 6.283, kind: def.key,
     }
   }
   const mapLight = (m: GameMap, l: GameMap['lights'][number], phase: number): LightSource => ({
     x: l.x, y: groundY(m, l.x, l.y) + l.h, z: l.y,
     color: new THREE.Color().setRGB(...hexToRgb(l.color), THREE.SRGBColorSpace),
-    intensity: l.intensity, radius: l.radius, nightOnly: l.nightOnly, phase,
+    intensity: l.intensity, radius: l.radius, nightOnly: l.nightOnly, phase, kind: 'map',
   })
   const chunkRect = (cx: number, cy: number): TileRect => ({ x0: cx * chunk, y0: cy * chunk, x1: (cx + 1) * chunk, y1: (cy + 1) * chunk })
   const grow = (r: TileRect, w: number, n: number, e: number, s: number): TileRect => ({ x0: r.x0 - w, y0: r.y0 - n, x1: r.x1 + e, y1: r.y1 + s })
@@ -284,7 +292,7 @@ export function createPropLayer(assets: AssetStore, opts?: { occlusion?: boolean
         let list = byChunk.get(k)
         if (!list) { list = []; byChunk.set(k, list) }
         list.push(p)
-        if (def.light) {
+        if (lightOf(def)) {
           const c = footprintCenter(p, def)
           lightCenters.add(lightKey(c.x, c.z))
           const src = propLight(m, p, def)
@@ -312,7 +320,7 @@ export function createPropLayer(assets: AssetStore, opts?: { occlusion?: boolean
       const centers = new Set<string>()
       for (const p of near.props) {
         const def = CONTENT.props[p.prop]
-        if (!def?.light) continue
+        if (!def || !lightOf(def)) continue
         const c = footprintCenter(p, def)
         centers.add(lightKey(c.x, c.z))
         const src = propLight(map, p, def)
@@ -343,7 +351,7 @@ export function createPropLayer(assets: AssetStore, opts?: { occlusion?: boolean
     },
 
     buildChunk(cx, cy, deadline) {
-      const out: PropChunk = { meshes: [], count: 0, canopies: [] }
+      const out: PropChunk = { meshes: [], count: 0, canopies: [], anchors: [] }
       const list = source ? source.objects(chunkRect(cx, cy)).props : byChunk.get(cy * cols + cx)
       if (!list || !map) return out
       const m = map
@@ -362,6 +370,7 @@ export function createPropLayer(assets: AssetStore, opts?: { occlusion?: boolean
         if (performance.now() > deadline) return null
         templates.set(key, buildTemplate(b.def, key))
       }
+      const candidates: { hv: number; a: ShaftAnchor }[] = []
       for (const [key, b] of buckets) {
         const t = templates.get(key)!
         const nat = natureOfKey(b.def, key)
@@ -422,7 +431,16 @@ export function createPropLayer(assets: AssetStore, opts?: { occlusion?: boolean
           out.meshes.push(mesh)
         })
         out.count += n
+        if (shaftProps.has(b.def.key)) for (const p of b.items) {
+          const hv = hash2(p.x, p.y, 77)
+          if (hv >= SH.density) continue
+          const c = footprintCenter(p, b.def)
+          const a = hash2(p.x, p.y, 78) * Math.PI * 2, r = SH.jitter * (0.5 + 0.5 * hash2(p.x, p.y, 79))
+          candidates.push({ hv, a: { x: c.x + Math.cos(a) * r, y: groundY(m, p.x, p.y), z: c.z + Math.sin(a) * r, h: b.def.height * 0.85 * (p.scale ?? 1), seed: hash2(p.x, p.y, 80) } })
+        }
       }
+      candidates.sort((u, v) => u.hv - v.hv)
+      for (const c of candidates.slice(0, SH.perChunk)) out.anchors.push(c.a)
       return out
     },
 
