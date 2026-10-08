@@ -83,6 +83,10 @@ export const GradeShader = {
     uVignetteSoft: { value: 0.6 },
     uLift: { value: new THREE.Vector3() },
     uGain: { value: new THREE.Vector3(1, 1, 1) },
+    uShadowTint: { value: new THREE.Vector3(1, 1, 1) },
+    uHighlightTint: { value: new THREE.Vector3(1, 1, 1) },
+    uSplit: { value: 0 },
+    uSplitRange: { value: new THREE.Vector2(0.04, 0.7) },
     uFlash: { value: 0 },
     uFlashColor: { value: new THREE.Color(1, 1, 1) },
     uTransKind: { value: 0 },
@@ -103,7 +107,9 @@ export const GradeShader = {
 uniform sampler2D tDiffuse;
 uniform vec2 uResolution;
 uniform float uSaturation, uContrast, uPivot, uWarmth, uWarmthScale, uVignette, uVignetteSoft;
-uniform vec3 uLift, uGain;
+uniform vec3 uLift, uGain, uShadowTint, uHighlightTint;
+uniform float uSplit;
+uniform vec2 uSplitRange;
 uniform float uFlash;
 uniform vec3 uFlashColor;
 uniform int uTransKind;
@@ -125,6 +131,9 @@ vec3 grade(vec3 col) {
   col = col * uGain + uLift;
   float w = uWarmth * uWarmthScale;
   col *= vec3(1.0 + w, 1.0 + w * 0.15, 1.0 - w);
+  // split toning: cool/warm (or any) tint by luminance, so shadows and highlights take different hues
+  float lum = dot(col, vec3(0.2126, 0.7152, 0.0722));
+  col *= mix(vec3(1.0), mix(uShadowTint, uHighlightTint, smoothstep(uSplitRange.x, uSplitRange.y, lum)), uSplit);
   float l = dot(col, vec3(0.2126, 0.7152, 0.0722));
   col = max(mix(vec3(l), col, uSaturation), 0.0);
   col = uPivot * pow(max(col, 0.0) / uPivot, vec3(uContrast));

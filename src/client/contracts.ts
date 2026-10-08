@@ -166,6 +166,10 @@ export interface PostParams {
   exposure: number
   pixelScale: number          // internal res divisor
   flash: number               // 0..1 white flash overlay (animated by flash())
+  /** Split toning: RGB multipliers for shadows / highlights blended by `split` (0 = off, 1 = full). */
+  shadowTint?: [number, number, number]
+  highlightTint?: [number, number, number]
+  split?: number
 }
 
 export interface RenderView {

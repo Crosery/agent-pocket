@@ -2,7 +2,7 @@
 // Statuses, volatiles, weathers and abilities are interpreted generically from their content definitions;
 // there is no per-id logic. Every message is a t('battle.*') template from content/text/zh-CN/battle.json.
 import type {
-  BattleAction, BattleEvent, BattleInit, BattleRequest, BattleResult, BattleSideInit, Creature, CreatureView, ItemDef,
+  BattleAction, BattleEvent, BattleInit, BattleRequest, BattleResult, BattleSideInit, BossState, Creature, CreatureView, ItemDef,
   MoveDef, SideIndex, StatChanges, Stats, WeatherId,
 } from '../types.ts'
 import type { IBattleEngine } from '../contracts.ts'
@@ -16,6 +16,7 @@ import {
 } from './formulas.ts'
 import { fill, msgEvent, perspective, type Render } from './messages.ts'
 import { chooseAiAction, chooseAiReplacement, type AiIntrospection } from './ai.ts'
+import { BOSS_SIDE, BossDirector, type BossHost } from './boss.ts'
 
 export { perspective }
 
@@ -25,7 +26,7 @@ const CLEAR: WeatherId = 'none'
 const INDEFINITE = -1
 
 type Queued =
-  | { kind: 'move'; moveIndex: number; struggle: boolean }
+  | { kind: 'move'; moveIndex: number; struggle: boolean; forced?: string }
   | { kind: 'switch'; partyIndex: number }
   | { kind: 'item'; itemId: string; partyIndex: number }
   | { kind: 'run' }
@@ -81,6 +82,8 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
   private weatherId: WeatherId = CLEAR
   private weatherLeft = INDEFINITE
   private caughtCr: Creature | null = null
+  /** Boss rules of the enemy side's boss creature (BattleSideInit.boss), if any. */
+  private boss: BossDirector | null = null
   /** side-1 party index -> side-0 party indices that battled it (exp split). */
   private readonly faced = new Map<number, Set<number>>()
   private readonly leveled = new Set<number>()
@@ -101,6 +104,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     }
     this.sides = [mk(0), mk(1)]
     this.applyLevelCap()
+    this.attachBoss()
   }
 
   // ------------------------------------------------------------------ public state
@@ -117,6 +121,11 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
   stages(side: SideIndex): Record<string, number> { return { ...this.sides[side].b.stages } }
   volatiles(side: SideIndex): string[] { return [...this.sides[side].b.volatiles.keys()] }
   itemsLeft(side: SideIndex): Readonly<Record<string, number>> { return { ...this.sides[side].items } }
+  /** Stats of a side's active creature in this battle (boss multipliers included). */
+  fighterStats(side: SideIndex): Stats { return this.statsOf(this.act(side)) }
+  /** Boss contract (docs/bosses.md): everything that makes the boss fight resumable, or null without a boss. */
+  extractBossState(): BossState | null { return this.boss ? this.boss.extract() : null }
+  applyBossState(state: BossState): void { this.boss?.apply(state) }
   /** Max hp of a party member at the battle level. */
   battleMaxHp(side: SideIndex, partyIndex: number): number { return this.maxHpOf(this.sides[side].party[partyIndex]) }
 
@@ -133,6 +142,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     const w = this.init.weather
     if (w && w !== CLEAR && this.c.weatherById[w]) this.setWeather(w, INDEFINITE)
     for (const s of this.speedOrder()) this.switchInAbilities(s)
+    this.boss?.start()
     return this.flush()
   }
 
@@ -233,7 +243,11 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     const cap = this.init.levelCap
     return cap !== undefined && cap > 0 ? Math.min(cr.level, cap) : cr.level
   }
-  private statsOf(cr: Creature): Stats { return calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, level: this.lvl(cr) }, this.c) }
+  private plainStats(cr: Creature): Stats { return calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, level: this.lvl(cr) }, this.c) }
+  private statsOf(cr: Creature): Stats {
+    const base = this.plainStats(cr)
+    return this.boss ? this.boss.adjustStats(cr, base) : base
+  }
   private maxHpOf(cr: Creature): number { return this.statsOf(cr).hp }
 
   private fighter(s: SideIndex): Fighter {
@@ -287,6 +301,95 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     const s1 = speedOf(this.fighter(1), this.c)
     if (s0 !== s1) return s0 > s1 ? [0, 1] : [1, 0]
     return this.rng.chance(0.5) ? [0, 1] : [1, 0]
+  }
+
+  // ------------------------------------------------------------------ boss hooks (rules live in boss.ts)
+
+  private attachBoss(): void {
+    const id = this.sides[BOSS_SIDE].init.boss
+    const def = id ? this.c.bosses[id] : undefined
+    const cr = def ? this.sides[BOSS_SIDE].party.find((x) => x.speciesId === def.species) : undefined
+    if (!def || !cr) return
+    this.boss = new BossDirector(def, cr, this.bossHost())
+    this.boss.begin()
+  }
+
+  private bossHost(): BossHost {
+    const stageOf = (side: SideIndex) => this.sides[side].b
+    return {
+      c: this.c,
+      turn: () => this.turnNo,
+      setTurn: (n) => { this.turnNo = n },
+      active: () => this.boss !== null && this.act(BOSS_SIDE) === this.boss.cr,
+      say: (key, params) => this.say(key, params),
+      emit: (e) => this.emit(e),
+      view: (cr) => this.viewOf(cr),
+      maxHp: (cr) => this.maxHpOf(cr),
+      plainMaxHp: (cr) => this.plainStats(cr).hp,
+      foe: () => this.act(other(BOSS_SIDE)),
+      heal: (side, amount) => { if (this.heal(side, amount) > 0) this.say('battle.healed', { name: this.nameRef(side) }) },
+      stages: (side, changes) => { this.applyStats(side, changes, BOSS_SIDE, true) },
+      clearStages: (side) => {
+        const b = stageOf(side)
+        for (const k of BATTLE_STAT_KEYS) {
+          if (!b.stages[k]) continue
+          this.emit({ t: 'stat', side, stat: k, delta: -b.stages[k] })
+          b.stages[k] = 0
+        }
+      },
+      status: (side, id) => { this.applyStatus(side, id, BOSS_SIDE, true) },
+      cure: (side) => { if (this.act(side).status) this.cureStatus(side) },
+      volatile: (side, id) => { this.applyVolatile(side, id, BOSS_SIDE, true) },
+      battler: () => {
+        const b = stageOf(BOSS_SIDE)
+        return { stages: { ...b.stages }, volatiles: Object.fromEntries(b.volatiles), recharging: b.recharging }
+      },
+      setBattler: (st) => {
+        const b = stageOf(BOSS_SIDE)
+        b.stages = { ...emptyStages(), ...st.stages }
+        b.volatiles = new Map(Object.entries(st.volatiles))
+        b.recharging = st.recharging
+      },
+    }
+  }
+
+  /** Queues the boss's action from its pattern (or a pending charged attack); false = use the ordinary AI. */
+  private bossAction(): boolean {
+    const b = this.boss
+    if (!b || !b.active || this.request(BOSS_SIDE).kind !== 'action') return false
+    const d = b.decide(this.rng)
+    if (!d) return false
+    if (d.forced) {
+      this.sides[BOSS_SIDE].action = { kind: 'move', moveIndex: -1, struggle: false, forced: d.moveId }
+      return true
+    }
+    const i = this.act(BOSS_SIDE).moves.findIndex((m) => m.id === d.moveId && m.pp > 0)
+    return i >= 0 && this.choose(BOSS_SIDE, { kind: 'move', moveIndex: i }) === null
+  }
+
+  /** Bosses with an extraAction rule act a second time at the end of the turn. */
+  private bossExtraAction(): void {
+    const b = this.boss
+    if (!b || !b.extraActionDue(this.turnNo) || this.act(BOSS_SIDE).hp <= 0 || this.act(other(BOSS_SIDE)).hp <= 0) return
+    const d = b.decide(this.rng)
+    const i = d && !d.forced ? this.act(BOSS_SIDE).moves.findIndex((m) => m.id === d.moveId && m.pp > 0) : -1
+    if (i < 0) return
+    this.say('battle.bossExtraAction', { name: this.nameRef(BOSS_SIDE) })
+    this.executeMove(BOSS_SIDE, { kind: 'move', moveIndex: i, struggle: false })
+    this.resolveFaints([other(BOSS_SIDE), BOSS_SIDE])
+    if (!this.done) b.afterAction()
+  }
+
+  private bossLoot(b: BossDirector): void {
+    const r = b.def.reward
+    if (r.money && r.money > 0) {
+      this.emit({ t: 'money', amount: r.money })
+      this.say('battle.moneyWon', { amount: r.money, currency: t('common.money', undefined, this.c) })
+    }
+    for (const [itemId, qty] of Object.entries(r.items ?? {})) {
+      this.emit({ t: 'loot', itemId, qty })
+      this.say('battle.lootGot', { item: this.c.items[itemId]?.nameZh ?? itemId, qty })
+    }
   }
 
   // ------------------------------------------------------------------ helpers: text
@@ -414,6 +517,8 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
         return cr.moves.some((m) => m.pp < m.ppMax) ? null : bad
       case 'battleBoost':
         return idx === sd.active ? null : bad
+      case 'bait':
+        return s !== BOSS_SIDE && this.boss?.acceptsBait(e.tag) ? null : this.err('baitNoEffect')
       case 'escape':
         return this.init.isWild ? null : this.err('cantRun')
       default:
@@ -426,6 +531,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
   private fillAiActions(): void {
     for (const s of SIDES) {
       if (!this.isAi(s) || this.request(s).kind === 'wait') continue
+      if (s === BOSS_SIDE && this.bossAction()) continue
       const pick = chooseAiAction(this, s, this.rng, this.c)
       if (this.choose(s, pick) === null) continue
       // AI produced something invalid for the current state: fall back to the first legal option.
@@ -440,6 +546,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
   private runTurn(): void {
     this.turnNo += 1
     this.emit({ t: 'turn', turn: this.turnNo })
+    this.boss?.turnStart()
     for (const sd of this.sides) {
       sd.b.acted = false
       sd.b.protectedThisTurn = false
@@ -456,7 +563,9 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
       else if ((a.kind === 'move' || a.kind === 'recharge') && this.act(s).hp > 0) this.executeMove(s, a)
       sd.b.acted = true
       if (!this.done) this.resolveFaints([other(s), s])
+      if (!this.done) this.boss?.afterAction()
     }
+    if (!this.done) this.bossExtraAction()
     if (!this.done) this.endOfTurn()
     if (!this.done) this.wildFlee()
     for (const sd of this.sides) sd.action = null
@@ -523,11 +632,20 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
       b.protectChain = 0
       return
     }
-    const slot = a.struggle ? undefined : me.moves[a.moveIndex]
+    if (s === BOSS_SIDE && this.boss?.takeSkip()) {
+      this.say('battle.bossIdle', { name: this.nameRef(s) })
+      b.protectChain = 0
+      return
+    }
+    const forcedDef = a.forced ? this.c.moves[a.forced] : undefined
+    const slot = a.struggle || forcedDef ? undefined : me.moves[a.moveIndex]
     const def = slot && slot.pp > 0 ? this.c.moves[slot.id] : undefined
-    const struggle = !slot || !def
+    const struggle = !forcedDef && (!slot || !def)
     let move: MoveDef
-    if (!slot || !def) {
+    if (forcedDef) {
+      move = forcedDef
+      this.boss?.clearCharge()
+    } else if (!slot || !def) {
       this.say('battle.noMovesLeft', { name: this.nameRef(s) })
       move = this.struggleMove()
     } else {
@@ -540,11 +658,13 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
         return
       }
       slot.pp -= 1
+      if (s !== BOSS_SIDE && this.boss) slot.pp = Math.max(0, slot.pp - this.boss.foePpCost())
       move = def
     }
     this.say('battle.usedMove', { name: this.nameRef(s), move: move.nameZh })
     this.emit({ t: 'move', side: s, moveId: move.id, anim: move.anim, type: move.type })
     const hit = this.runMove(s, move, struggle)
+    if (s !== BOSS_SIDE) this.boss?.onFoeMove(move)
     if (hit && move.effects.some((e) => e.kind === 'recharge')) b.recharging = true
     if (move.effects.some((e) => e.kind === 'selfFaint') && me.hp > 0) this.hurt(s, me.hp)
     b.protectChain = b.protectedThisTurn ? b.protectChain + 1 : 0
@@ -721,6 +841,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
           this.abilityTriggered(tr.by === 'attacker' ? s : f)
         }
       }
+      if (this.boss) dmg = this.boss.filterHit(s, move, dmg)
       dealt += this.hurt(f, dmg, fixed ? 1 : eff, crit)
       landed += 1
       if (crit) this.say('battle.crit')
@@ -848,6 +969,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
   }
 
   private statusImmune(cr: Creature, id: string): 'type' | 'ability' | null {
+    if (this.boss?.cr === cr && this.boss.blocksStatus()) return 'type'
     const types = speciesTypes(cr, this.c)
     if ((this.c.statusImmunities[id] ?? []).some((ty) => types.includes(ty))) return 'type'
     if (effectsOn(cr, 'immune', this.c).some((e) => e.statuses?.includes(id))) return 'ability'
@@ -1022,6 +1144,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     this.sendOut(s)
     this.markFaced()
     if (abilities) this.switchInAbilities(s)
+    if (s !== BOSS_SIDE) this.boss?.onFoeSwitch(withdraw)
   }
 
   private switchInAbilities(s: SideIndex): void {
@@ -1159,6 +1282,10 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
       case 'battleBoost':
         worked = isActive && this.applyStats(s, { [e.stat]: e.stages }, s, true)
         break
+      case 'bait':
+        worked = true
+        this.boss?.onFoeItem(e.tag)
+        break
       case 'escape':
         if (this.init.isWild) {
           this.say('battle.ranAway')
@@ -1195,7 +1322,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     const shakes = e.bonus === 'master' ? checks : catchShakes({
       maxHp: this.maxHpOf(target),
       hp: target.hp,
-      catchRate: (this.c.species[target.speciesId]?.catchRate ?? 0) * (this.init.mods?.catchRate ?? 1),
+      catchRate: (this.c.species[target.speciesId]?.catchRate ?? 0) * (this.init.mods?.catchRate ?? 1) * (this.boss?.cr === target ? this.boss.def.catchRateMul : 1),
       ballMul: this.ballMultiplier(e, target),
       statusBonus: target.status ? (this.c.statusById[target.status]?.catchBonus ?? 1) : 1,
       checks,
@@ -1290,6 +1417,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
         }
       }
     }
+    this.boss?.turnEnd()
     this.resolveFaints()
   }
 
@@ -1372,7 +1500,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     const defeated = this.sides[1].party[foeIdx]
     const parts = [...(this.faced.get(foeIdx) ?? [])].filter((i) => me.party[i]?.hp > 0 && me.party[i].level < this.c.config.party.maxLevel)
     if (!defeated || parts.length === 0) return
-    const total = expYield(defeated, this.sides[1].init.kind === 'trainer', this.c)
+    const total = Math.floor(expYield(defeated, this.sides[1].init.kind === 'trainer', this.c) * (this.boss?.cr === defeated ? this.boss.expMul() : 1))
     const each = Math.max(1, Math.floor(total / parts.length))
     const mods = this.init.mods
     for (const i of parts.sort((a, b) => a - b)) {
@@ -1431,6 +1559,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
       this.emit({ t: 'money', amount })
       this.say('battle.moneyWon', { amount, currency: t('common.money', undefined, this.c) })
     }
+    if (result === 'win' && this.boss) this.bossLoot(this.boss)
     if (result !== 'lose' && result !== 'forfeit' && result !== 'draw' && this.sides[0].init.kind === 'player') {
       for (const i of [...this.leveled].sort((a, b) => a - b)) {
         const cr = this.sides[0].party[i]
@@ -1438,6 +1567,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
         if (to) this.emit({ t: 'evolveReady', partyIndex: i, toSpeciesId: to })
       }
     }
+    this.boss?.restore()
     this.restoreLevelCap()
     this.done = true
     this.outcome = result

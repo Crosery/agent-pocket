@@ -6,7 +6,7 @@ import { creatureName } from '../../shared/creature.ts'
 import { effectBalance, hudEffects, type BattleStatusSnapshot } from './effect-details.ts'
 import { actionKeyLabel, append, el, expBar, hpBar, panel, rarityBadge, statusChip, typeChip, type BarHandle } from '../ui/widgets.ts'
 import { BATTLE_UI } from './config.ts'
-import type { SlotInfo } from './model.ts'
+import type { BossPanelInfo, SlotInfo } from './model.ts'
 
 export interface StatusPanel {
   readonly el: HTMLElement
@@ -21,6 +21,10 @@ export interface StatusPanel {
   setExp(ratio: number, animate: boolean): Promise<void>
   setSlots(slots: readonly SlotInfo[] | null, size: number): void
   setAway(away: boolean): void
+  /** Foe window only: boss title, phase pips and mechanic chips (null clears them). */
+  setBoss(info: BossPanelInfo | null): void
+  /** Draws the eye to the boss strip (telegraphed attack, phase change). */
+  pulseBoss(): void
 }
 
 export function createStatusPanel(own: boolean, onInspect: () => void): StatusPanel {
@@ -48,8 +52,11 @@ export function createStatusPanel(own: boolean, onInspect: () => void): StatusPa
     onInspect()
   })
   const tagRow = el('div', 'apb-st-tags', [tags, balls, inspect])
+  const bossBox = el('div', 'apb-st-boss')
+  bossBox.hidden = true
   append(p.body, [
     el('div', 'apb-st-head', [name, shiny, rarity, lv]),
+    bossBox,
     tagRow,
     effects,
     el('div', 'apb-st-hp', [el('span', { class: 'apb-st-label', text: t('battleui.hud.hp') }), hp.el]),
@@ -173,5 +180,24 @@ export function createStatusPanel(own: boolean, onInspect: () => void): StatusPa
       balls.replaceChildren(...nodes)
     },
     setAway(away) { p.el.classList.toggle('is-away', away) },
+    setBoss(info) {
+      p.el.classList.toggle('is-boss', info !== null)
+      bossBox.hidden = info === null
+      if (!info) { bossBox.replaceChildren(); return }
+      const pips = el('span', 'apb-boss-pips', Array.from({ length: info.phases }, (_, i) => el('span', `apb-pip${i < info.phase ? ' is-on' : ''}`)))
+      pips.title = t('battleui.boss.phase', { n: info.phase })
+      const head = el('div', 'apb-boss-head', [el('span', { class: 'apb-boss-tag', text: t('battleui.boss.tag') }), el('span', { class: 'apb-boss-title', text: info.title }), pips])
+      const chips = info.chips.map((c) => {
+        const chip = el('span', { class: `apb-bchip is-${c.tone}${c.alert ? ' is-alert' : ''}`, text: c.text })
+        if (c.fill !== null) chip.style.setProperty('--fill', `${Math.round(c.fill * 100)}%`)
+        return chip
+      })
+      bossBox.replaceChildren(head, ...(chips.length ? [el('div', 'apb-boss-chips', chips)] : []))
+    },
+    pulseBoss() {
+      bossBox.classList.remove('is-pulse')
+      void bossBox.offsetWidth
+      bossBox.classList.add('is-pulse')
+    },
   }
 }

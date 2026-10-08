@@ -23,7 +23,7 @@ export function fill(template: string, params: Record<string, string | number>):
 
 const FLIPPED_RESULT: Partial<Record<BattleResult, BattleResult>> = { win: 'lose', lose: 'win' }
 /** Events describing side 0's own party progression; meaningless to the other viewer. */
-const SIDE0_PRIVATE: ReadonlySet<BattleEvent['t']> = new Set<BattleEvent['t']>(['exp', 'levelUp', 'learnMove', 'moveLearnable', 'evolveReady', 'money'])
+const SIDE0_PRIVATE: ReadonlySet<BattleEvent['t']> = new Set<BattleEvent['t']>(['exp', 'levelUp', 'learnMove', 'moveLearnable', 'evolveReady', 'money', 'loot'])
 
 const other = (s: SideIndex): SideIndex => (s === 0 ? 1 : 0)
 
