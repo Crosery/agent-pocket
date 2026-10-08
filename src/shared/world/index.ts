@@ -6,7 +6,7 @@ import { CONTENT } from '../content/index.ts'
 import { WORLD_CONTENT, scaleLayout } from './data.ts'
 import { buildCollision } from './collision.ts'
 import { buildCave, caveAnchors } from './caves.ts'
-import { computeEncounters } from './encounters.ts'
+import { computeEncounters, ensureEncounterCoverage } from './encounters.ts'
 import { F_KEEP, F_PATH, F_RESERVED, draftView, finalizeDraft, type MapDraft } from './grid.ts'
 import { buildInteriors } from './interiors.ts'
 import { placeGroundItems } from './items.ts'
@@ -133,6 +133,11 @@ export function buildWorld(seed: number = CONTENT.config.world.seed): World {
   for (const c of caves) add(finalizeDraft(c.draft))
   for (const dn of ow.dungeons) for (const f of dn.floors) add(finalizeDraft(f.draft))
   for (const d of interiors) add(finalizeDraft(d))
+  const unplaced = ensureEncounterCoverage(
+    Object.values(maps).flatMap((m) => m.regions.map((r) => ({ key: `${m.id}/${r.id}`, biome: r.biome, encounters: r.encounters, levelRange: r.levelRange }))),
+    wc.world.encounters, seed,
+  )
+  for (const id of unplaced) problems.push(`encounter coverage: no wild table can hold base form "${id}"`)
 
   const levelAt = (x: number, y: number): Vec2 | undefined => owDraft.regions[owDraft.region[y * owDraft.w + x]]?.levelRange
   const towns: TownDef[] = ow.towns.map((t) => ({

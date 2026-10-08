@@ -52,6 +52,10 @@ step carry resolved species ids.
    level allows); forms that lost the requested type are dropped when others remain. If every form lost the type and
    the pick had `habitats`, the habitat preference is dropped instead (an on-type species from elsewhere beats an
    off-type local one). With `stages` set, species are used as-is (legend chains use `stages: [1,2,3]` to keep UR forms).
+   A pick with `earlyCaps: true` (story only) also obeys `world.json encounters.rarityLevelCaps` for the member's level
+   (rarity order and type list, the caps wild tables follow); the cap is never relaxed, the theme (`types`) gives way.
+   `tests/opening_balance.test.ts` simulates every species the first cap allows, so the first route's random members
+   (`r1-*`) stay fair whatever species are added.
 4. Choose by `hashString(seedKey | salt) % n` over the dex-sorted forms. Trainer parties use
    `seed:trainerId:index` and avoid repeating a species inside one party (first widening `rarities` by
    `pick.avoidRarityWiden` orders, then repeating); script steps use `seed:script:<pick JSON>`,

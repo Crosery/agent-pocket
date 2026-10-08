@@ -35,6 +35,7 @@ const item = (id: string, effect: ItemDef['effect']): ItemDef => ({
 const TYPES: TypeDef[] = ['n', 'a', 'b', 'g'].map((id) => ({ id, nameZh: `${id}系`, color: '#fff' }))
 const MOVES: MoveDef[] = [
   mv('tackle'),
+  mv('tackle2x', { power: 80 }),
   mv('zap', { type: 'a', category: 'special', power: 60 }),
   mv('hydro', { type: 'b', category: 'special', power: 60 }),
   mv('ghostly', { type: 'g', power: 40 }),
@@ -727,7 +728,9 @@ test('ability: powerMul (conditional, announced) and damageTakenMul', () => {
   e.party(0)[0].hp = 1
   const pinch = turn(e, M(0), M(0))
   assert.ok(abilityFired(pinch, 0, 'pinch'))
-  assert.ok(Math.abs(damageTo(pinch, 1) - base * 2) <= 2)
+  // powerMul scales the move's power before the integer chain, so it equals a move of double power exactly (no tolerance).
+  const doubled = damageTo(turn(duel(C, 'none', 'none', ['tackle2x'], ['growl']), M(0), M(0)), 1)
+  assert.equal(damageTo(pinch, 1), doubled)
   const full = duel(C, 'pinch', 'none', ['tackle'], ['growl'])
   assert.equal(damageTo(turn(full, M(0), M(0)), 1), base)
   const scaled = turn(duel(C, 'none', 'scale', ['tackle'], ['growl']), M(0), M(0))

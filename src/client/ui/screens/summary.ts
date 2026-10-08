@@ -8,7 +8,7 @@ import { getMap } from '../../../shared/world/worldapi.ts'
 import { button, el, expBar, hpBar, rarityBadge, statRadar, statusChip, tabs, typeChip } from '../widgets.ts'
 import { backPressed, frame, icon, infoRow, meterIcons, openScreen, pressed, sectionTitle, sfx, textOrKey, uiSfx, type ScreenEnv, setChildren , arrowButton } from './base.ts'
 import { SCREENS } from './config.ts'
-import { defensiveProfile, expProgress, ivStars, statKeys } from './logic.ts'
+import { defensiveProfile, expProgress, extraEnglishName, ivStars, statKeys } from './logic.ts'
 import { creatureImg } from './sprites.ts'
 
 export function moveDetail(m: MoveDef | undefined, pp?: { pp: number; ppMax: number }): HTMLElement {
@@ -93,7 +93,7 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number): 
       const hearts = Math.round((Math.min(fs.friendshipMax, c.friendship) / fs.friendshipMax) * fs.friendshipHearts)
       return [
         infoRow(t('screens.summary.dexNo'), sp ? t('screens.common.dexNo', { n: String(sp.dexNo).padStart(3, '0') }) : t('screens.common.dash')),
-        infoRow(t('screens.summary.species'), sp ? t('screens.common.nameBoth', { zh: sp.nameZh, en: sp.nameEn }) : c.speciesId),
+        infoRow(t('screens.summary.species'), sp ? (extraEnglishName(sp) ? t('screens.common.nameBoth', { zh: sp.nameZh, en: sp.nameEn }) : sp.nameZh) : c.speciesId),
         infoRow(t('screens.summary.company'), sp ? t('screens.common.companyCountry', { company: sp.company, country: textOrKey(`screens.country.${sp.country}`) }) : t('screens.common.dash')),
         infoRow(t('screens.summary.ot'), t('screens.summary.otValue', { name: c.otName || t('screens.common.dash'), id: (c.otId || '').slice(0, 6).toUpperCase() || t('screens.common.dash') })),
         infoRow(t('screens.summary.caughtAt'), caught ?? t('screens.summary.unknownPlace')),

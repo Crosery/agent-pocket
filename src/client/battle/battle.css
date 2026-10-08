@@ -47,8 +47,8 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 .apb-st-shiny { color: var(--ap-gold-hi); }
 .apb-st-lv { color: var(--ap-gold-hi); flex: none; }
 .apb-st-tags { display: flex; align-items: center; gap: calc(var(--u) * 4); height: calc(var(--u) * 13); margin: calc(var(--u) * 2) 0; }
-.apb-st-tags .ap-chip { height: calc(var(--u) * 13); min-width: calc(var(--u) * 26); }
-.apb-st-tags .ap-chip--status { min-width: calc(var(--u) * 14); }
+.apb-st-tags .ap-chip, .apb-st-effects .ap-chip { height: calc(var(--u) * 13); min-width: calc(var(--u) * 26); }
+.apb-st-tags .ap-chip--status, .apb-st-effects .ap-chip--status { min-width: calc(var(--u) * 14); }
 .apb-st-details-btn {
   flex: none;
   min-width: calc(var(--u) * 27);
@@ -63,6 +63,11 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
   cursor: pointer;
 }
 .apb-st-details-btn:hover, .apb-st-details-btn:focus-visible { color: var(--ap-text); border-color: var(--ap-gold-hi); outline: none; }
+.apb-st-details-btn > span + span { margin-left: calc(var(--u) * 2); }
+.apb-st-up { color: #9be7a1; }
+.apb-st-down { color: #ff9f8f; }
+/* Tags that did not fit are folded whole into the "+N" tag (status-panel.ts fold). */
+.apb-tag.is-folded, .apb-st-effects > .is-folded { display: none; }
 .apb-tag {
   display: inline-flex;
   align-items: center;
@@ -88,9 +93,16 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 .apb-status.is-foe .apb-st-tags { height: auto; min-height: calc(var(--u) * 13); align-items: flex-start; }
 .apb-status.is-foe .apb-st-taglist { flex-wrap: wrap; row-gap: calc(var(--u) * 2); }
 .apb-status.is-foe .apb-balls { margin-top: calc(var(--u) * 3); }
+/* Active effects get a row of their own under the types (one row, two on the foe window); whatever does not fit
+   folds whole into a "+N" tag (status-panel.ts). Only present while there are effects, so the window grows then:
+   the own window is bottom-aligned in the bar and grows upwards. */
+.apb-st-effects { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--u) * 2) calc(var(--u) * 3); max-height: calc(var(--u) * 13); margin: calc(var(--u) * 2) 0; overflow: hidden; }
+.apb-st-effects:empty { display: none; }
+.apb-st-effects > * { flex: none; }
+.apb-status.is-foe .apb-st-effects { max-height: calc(var(--u) * 28); }
+.apb-status.is-own { align-self: flex-end; min-height: var(--apb-bar-h); }
 .apb-balls { display: flex; flex: none; gap: calc(var(--u) * 2); margin-left: auto; }
 .apb-balls:empty { display: none; }
-.apb-status.is-foe .apb-st-tags { max-height: calc(var(--u) * 29); overflow: hidden; }
 .apb-ball {
   --ball-c: var(--ap-gold-hi);
   width: calc(var(--u) * 6);
@@ -140,21 +152,36 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 .apb-effects-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--u) * 8); }
 .apb-effects-side { min-width: 0; padding: calc(var(--u) * 5); background: rgba(5, 7, 13, 0.4); border: var(--u) solid rgba(201, 164, 92, 0.35); }
 .apb-effects-side.is-focused { border-color: var(--ap-gold-hi); box-shadow: inset 0 0 0 var(--u) rgba(242, 217, 142, 0.2); }
-.apb-effects-side-head { display: flex; align-items: baseline; gap: calc(var(--u) * 4); margin-bottom: calc(var(--u) * 4); }
-.apb-effects-side-label, .apb-effects-section-label, .apb-effects-group-title { color: var(--ap-gold-hi); }
-.apb-effects-side-name { min-width: 0; color: var(--ap-text); }
+.apb-effects-side-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 calc(var(--u) * 4); margin-bottom: calc(var(--u) * 3); }
+.apb-effects-side-label, .apb-effects-section-label, .apb-effects-group-title { color: var(--ap-gold-hi); white-space: nowrap; }
+.apb-effects-side-name { flex: 1 1 calc(var(--u) * 60); min-width: 0; color: var(--ap-text); line-height: 1.1; }
+.apb-effects-balance { display: flex; gap: calc(var(--u) * 4); margin-bottom: calc(var(--u) * 3); }
+.apb-balance { padding: 0 calc(var(--u) * 4); border: var(--u) solid; white-space: nowrap; }
+.apb-balance.is-buff { color: #9be7a1; border-color: rgba(130, 224, 140, 0.6); }
+.apb-balance.is-debuff { color: #ff9f8f; border-color: rgba(255, 107, 91, 0.6); }
+.apb-balance.is-zero { opacity: 0.45; }
 .apb-effects-types { display: flex; align-items: center; gap: calc(var(--u) * 4); margin-bottom: calc(var(--u) * 4); }
 .apb-effects-type-list { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 2); min-width: 0; }
 .apb-effects-type-list .ap-chip { height: calc(var(--u) * 13); min-width: calc(var(--u) * 24); }
-.apb-effects-group-title { margin-top: calc(var(--u) * 6); padding-bottom: calc(var(--u) * 2); border-bottom: var(--u) solid var(--ap-line); }
-.apb-effect-row { margin-top: calc(var(--u) * 4); padding: calc(var(--u) * 4); background: rgba(5, 7, 13, 0.45); border-left: calc(var(--u) * 2) solid var(--ap-gold-dk); }
+.apb-effects-group-title { margin-top: calc(var(--u) * 5); padding-bottom: calc(var(--u) * 1); border-bottom: var(--u) solid var(--ap-line); }
+/* Stat stages: one compact chip each, two to a row, instead of a described row per stat. */
+.apb-stage-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--u) * 3); margin-top: calc(var(--u) * 3); }
+.apb-stage { display: flex; align-items: baseline; gap: calc(var(--u) * 3); min-width: 0; padding: calc(var(--u) * 2) calc(var(--u) * 4); background: rgba(5, 7, 13, 0.45); border-left: calc(var(--u) * 2) solid var(--ap-gold-dk); white-space: nowrap; }
+.apb-stage.is-buff { border-left-color: var(--ap-success); }
+.apb-stage.is-debuff { border-left-color: var(--ap-error); }
+.apb-stage-label { flex: 1 1 auto; min-width: 0; color: var(--ap-text); }
+.apb-stage-delta { flex: none; font-weight: bold; }
+.apb-stage.is-buff .apb-stage-delta { color: #9be7a1; }
+.apb-stage.is-debuff .apb-stage-delta { color: #ff9f8f; }
+.apb-stage-factor { flex: none; color: var(--ap-text-dim); }
+.apb-effect-row { margin-top: calc(var(--u) * 3); padding: calc(var(--u) * 3) calc(var(--u) * 4); background: rgba(5, 7, 13, 0.45); border-left: calc(var(--u) * 2) solid var(--ap-gold-dk); }
 .apb-effect-row.is-buff { border-left-color: var(--ap-success); }
 .apb-effect-row.is-debuff { border-left-color: var(--ap-error); }
 .apb-effect-row-head { display: flex; align-items: baseline; gap: calc(var(--u) * 4); }
 .apb-effect-label { color: var(--ap-text); flex: 1 1 auto; min-width: 0; }
 .apb-effect-kind { flex: none; color: var(--ap-text-dim); font-size: calc(var(--u) * 9); }
 .apb-effect-value { flex: none; color: var(--ap-gold-hi); }
-.apb-effect-description, .apb-effects-empty { margin-top: calc(var(--u) * 2); color: var(--ap-text-dim); white-space: normal; overflow-wrap: anywhere; }
+.apb-effect-description, .apb-effects-empty { margin-top: calc(var(--u) * 1); color: var(--ap-text-dim); white-space: normal; overflow-wrap: anywhere; }
 .apb-effects-glossary { margin-top: calc(var(--u) * 8); padding-top: calc(var(--u) * 4); border-top: var(--u) solid var(--ap-line); }
 .apb-glossary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--u) * 2) calc(var(--u) * 8); }
 .apb-glossary-row { display: grid; grid-template-columns: auto 1fr; gap: calc(var(--u) * 4); min-width: 0; padding-top: calc(var(--u) * 3); }
@@ -320,13 +347,14 @@ html.ap-compact .apb-status.is-own { width: calc(var(--u) * 168); }
 html.ap-compact .apb-cmd { width: calc(var(--u) * 112); }
 
 html.ap-portrait .apb-bar { flex-wrap: wrap; height: auto; align-content: flex-end; }
-html.ap-portrait .apb-status.is-own { order: -1; width: 100%; }
+html.ap-portrait .apb-status.is-own { order: -1; width: 100%; min-height: 0; }
 html.ap-portrait .apb-msg { min-height: var(--apb-bar-h); flex-basis: 100%; order: 1; }
 html.ap-portrait .apb-menu-wrap { width: 100%; order: 0; }
 html.ap-portrait .apb-cmd { width: 100%; }
 html.ap-portrait .apb-detail { width: 100%; }
 html.ap-portrait .apb-effects-dialog { width: calc(100% - var(--u) * 12); max-height: calc(100% - var(--u) * 12); }
 html.ap-portrait .apb-effects-columns { grid-template-columns: 1fr; }
+html.ap-portrait .apb-effects-side.is-focused { order: -1; }
 html.ap-portrait .apb-glossary-grid { grid-template-columns: 1fr; }
 /* Stacked layout: the move detail takes the own window's place instead of half-covering it. */
 html.ap-portrait .apb-bar.is-moves .apb-status.is-own { display: none; }

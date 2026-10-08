@@ -3196,10 +3196,10 @@
    "company": "NVIDIA",
    "country": "US",
    "category": "llm",
-   "family": "nemotron-llama",
+   "family": "nemotron-70b",
    "stage": 1,
-   "evolvesTo": "nemotron-super-49b",
-   "evolveLevel": 24,
+   "evolvesTo": "",
+   "evolveLevel": 0,
    "types": [
     "open",
     "compute"
@@ -3221,7 +3221,7 @@
    "capabilityScore": 34,
    "hotnessScore": 46,
    "statRationale": "70B 底座扎实→HP高；RLHF 调教后响应利落→速度高。 [BST 364 ∈ R 330-420; 强项 spe/hp; 能力 34/热度 46]",
-   "dexEntryZh": "Llama-3.1-Nemotron-70B-Instruct 是 NVIDIA 在 Llama 3.1 70B 上做 RLHF（REINFORCE）微调得到的开放权重模型，2024 年 10 月 15 日发布，速度与 HP 最亮眼。它排在 Llama-Nemotron 这条线的最前面；谱系里下一步是 Llama-3.3-Nemotron-Super-49B，这一步标作「蒸馏」。",
+   "dexEntryZh": "Llama-3.1-Nemotron-70B-Instruct 是 NVIDIA 在 Llama 3.1 70B 上做 RLHF（REINFORCE）微调得到的开放权重模型，2024 年 10 月 15 日发布，速度与 HP 最亮眼。她在图鉴里自成一支，没有前后形态。",
    "lookZh": "戴羊驼耳发箍的黑发小姑娘，胸口别着绿金奖章",
    "design": {
     "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the youngest stage of the Llama-Nemotron girl, a cheerful llama-eared helper. Hair: jet-black (#111111) hair in a short low ponytail with NVIDIA-green (#76B900) gradient ends and blunt bangs. Eyes: bright green with a tiny spiral swirl iris echoing the NVIDIA eye logo. Outfit: oversized cream (#F3EAD3) wool sweater with a green stripe at the hem, black shorts, green sneakers with gunmetal soles. Signature accessory: a cream llama-ear headband with green inner ears. Props: a gold-and-green star medal pinned to her chest (the reward signal of RLHF) and a small card with a green tick held in one hand. Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: proud little stance, tick card held up, ears perked.",
@@ -3240,10 +3240,10 @@
    "company": "NVIDIA",
    "country": "US",
    "category": "llm",
-   "family": "nemotron-llama",
-   "stage": 2,
-   "evolvesTo": "nemotron-ultra-253b",
-   "evolveLevel": 31,
+   "family": "nemotron-super-49b",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
    "types": [
     "open",
     "compute"
@@ -3265,7 +3265,7 @@
    "capabilityScore": 46,
    "hotnessScore": 44,
    "statRationale": "剪枝蒸馏后依然扎实→HP高；体量更轻→速度高。 [BST 386 ∈ R 330-420; 强项 spe/hp; 能力 46/热度 44]",
-   "dexEntryZh": "Llama-3.3-Nemotron-Super-49B 在 2025 年 3 月 18 日的 GTC 上宣布，卡片说明它是 Llama 3.3 70B 经 NAS 剪枝与蒸馏的衍生版，开放权重。从 Llama-3.1-Nemotron-70B 到它，谱系里标作「蒸馏」；再往后是 Llama-3.1-Nemotron-Ultra-253B。体量瘦了一圈，速度与 HP 依旧突出。",
+   "dexEntryZh": "Llama-3.3-Nemotron-Super-49B 在 2025 年 3 月 18 日的 GTC 上宣布，卡片说明它是 Llama 3.3 70B 经 NAS 剪枝与蒸馏的衍生版，开放权重。体量比 70B 瘦了一圈，速度与 HP 依旧突出。她在图鉴里自成一支，没有前后形态。",
    "lookZh": "一身利落黑绿夹克的羊驼耳少女，手里拿着小修枝剪",
    "design": {
     "chibiDesign": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same Llama-Nemotron girl, now slimmer and sharper after a trim. Hair: jet-black (#111111) ponytail grown longer with NVIDIA-green (#76B900) gradient ends, blunt bangs. Eyes: bright green with the tiny spiral swirl iris. Outfit: fitted black varsity jacket with green sleeves over a cream (#F3EAD3) knit vest, pleated black skirt, gunmetal (#4A4F55) boots; the star medal still pinned on the jacket. Signature accessory: the same cream llama-ear headband with green inner ears, neater and tighter. Prop: a pair of tiny green-handled pruning shears in one hand (a pruned and distilled build). Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: snipping the air with the shears, cheeky confident grin, ponytail swinging.",
@@ -3275,8 +3275,7 @@
     "sourceUrls": [
      "https://huggingface.co/nvidia/Llama-3_3-Nemotron-Super-49B-v1"
     ]
-   },
-   "lineRef": "nemotron-70b"
+   }
   },
   {
    "id": "nemotron-ultra-253b",
@@ -3285,8 +3284,8 @@
    "company": "NVIDIA",
    "country": "US",
    "category": "reasoning",
-   "family": "nemotron-llama",
-   "stage": 3,
+   "family": "nemotron-ultra-253b",
+   "stage": 1,
    "evolvesTo": "",
    "evolveLevel": 0,
    "types": [
@@ -3310,7 +3309,7 @@
    "capabilityScore": 58,
    "hotnessScore": 46,
    "statRationale": "推理版→逻辑系；大底座→HP高；深度推理→攻击高。 [BST 452 ∈ SR 420-490; 强项 hp/atk; 能力 58/热度 46]",
-   "dexEntryZh": "Llama-3.1-Nemotron-Ultra-253B 于 2025 年 4 月发布，卡片说明它是 Llama 3.1 405B 经 NAS 剪枝的推理衍生版，开放权重。上一形态 Llama-3.3-Nemotron-Super-49B 到它，谱系里同样标作「蒸馏」。类型由算力系转向逻辑系，HP 与攻击最亮眼。",
+   "dexEntryZh": "Llama-3.1-Nemotron-Ultra-253B 于 2025 年 4 月发布，卡片说明它是 Llama 3.1 405B 经 NAS 剪枝的推理衍生版，开放权重。类型由算力系转向逻辑系，HP 与攻击最亮眼。她在图鉴里自成一支，没有前后形态。",
    "lookZh": "长马尾及腰的羊驼耳少女，托着一枚发绿光的思考球",
    "design": {
     "chibiDesign": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the grown-up Llama-Nemotron girl, a calm reasoning strategist. Hair: jet-black (#111111) ponytail now waist-length with NVIDIA-green (#76B900) gradient ends, blunt bangs. Eyes: bright green with the spiral swirl iris, thoughtful and sharp. Outfit: long black coat with a cream (#F3EAD3) wool collar and glowing green circuit-vein lining, green-sleeved varsity top, gunmetal (#4A4F55) boots; the star medal pinned to the collar. Signature accessory: the same cream llama-ear headband with green inner ears, now with thin gunmetal heatsink-fin trim. Props: a softly glowing green thinking orb in one hand, and the tiny pruning shears at her belt. Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: orb raised in one palm, coat swept back, composed half-smile.",
@@ -3320,8 +3319,7 @@
     "sourceUrls": [
      "https://models.dev/"
     ]
-   },
-   "lineRef": "nemotron-super-49b"
+   }
   },
   {
    "id": "hermes-3-405b",

@@ -232,6 +232,8 @@ export interface CreatureActor {
   setShiny(s: boolean): void
   /** Rarity aura (glow ring/particles) for SR+ wild creatures. */
   setAura(color: string | null): void
+  /** The player's follower: drawn after everything but the player and never over them, however close or large. */
+  setCompanion?(on: boolean): void
   bubble(text: string, ms?: number): void
   update(dtSec: number): void
   dispose(): void

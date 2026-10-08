@@ -2325,7 +2325,7 @@
   "country": "US",
   "category": "reasoning",
   "family": "nemotron",
-  "stage": 2,
+  "stage": 1,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -7925,10 +7925,10 @@
   "company": "NVIDIA",
   "country": "US",
   "category": "reasoning",
-  "family": "nemotron",
+  "family": "nemotron-3-super",
   "stage": 1,
-  "evolvesTo": "nemotron",
-  "evolveLevel": 34,
+  "evolvesTo": "",
+  "evolveLevel": 0,
   "types": [
    "open",
    "compute"
@@ -7950,7 +7950,7 @@
   "capabilityScore": 54,
   "hotnessScore": 42,
   "statRationale": "12B 激活→速度快；120B 总参数→HP 高。 [BST 440 ∈ SR 420-490; 强项 spe/hp; 能力 54/热度 42]",
-  "dexEntryZh": "NVIDIA 在 2026 年 3 月的 GTC 上推出的开源混合 MoE：总参数 120B、激活 12B，采用 Mamba-Transformer 混合架构，专为多智能体的复杂推理做效率优化。前作是 Nemotron 3 Nano，之后长大为 550B 的 Nemotron 3 Ultra。",
+  "dexEntryZh": "NVIDIA 在 2026 年 3 月的 GTC 上推出的开源混合 MoE：总参数 120B、激活 12B，采用 Mamba-Transformer 混合架构，专为多智能体的复杂推理做效率优化。前作是 Nemotron 3 Nano；同代更大的 Nemotron 3 Ultra 在图鉴里另成一支。",
   "lookZh": "背着单风扇显卡包的绿发少年，脖子上缠着小青蛇"
  },
  {
@@ -9639,8 +9639,8 @@
   "category": "llm",
   "family": "claude-classic",
   "stage": 2,
-  "evolvesTo": "claude-3-sonnet",
-  "evolveLevel": 29,
+  "evolvesTo": "",
+  "evolveLevel": 0,
   "types": [
    "chat",
    "write"
@@ -9662,7 +9662,7 @@
   "capabilityScore": 20,
   "hotnessScore": 38,
   "statRationale": "长文写作→特攻高；200K 上下文→HP高。 [BST 339 ∈ R 330-420; 强项 spa/hp; 能力 20/热度 38]",
-  "dexEntryZh": "Claude 2 于 2023 年 7 月 11 日上线，是 claude.ai 上首个向公众开放的 Claude，由 Claude 1 迭代而来，擅长长文档。据记载，之后的 Claude 2.1（2023 年 11 月）带来 200K 上下文，并把幻觉减少了 50%。再往后一步，就是同属 Claude 一脉的 Claude 3 Sonnet。",
+  "dexEntryZh": "Claude 2 于 2023 年 7 月 11 日上线，是 claude.ai 上首个向公众开放的 Claude，由 Claude 1 迭代而来，擅长长文档。据记载，之后的 Claude 2.1（2023 年 11 月）带来 200K 上下文，并把幻觉减少了 50%。她是图鉴里这条经典线的第 2 阶形态。",
   "lookZh": "拖着长卷轴的蜜金波波头少女，珊瑚色开衫配书签发夹"
  },
  {
@@ -9672,8 +9672,8 @@
   "company": "Anthropic",
   "country": "US",
   "category": "llm",
-  "family": "claude-classic",
-  "stage": 3,
+  "family": "claude-3-sonnet",
+  "stage": 1,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -9697,7 +9697,7 @@
   "capabilityScore": 36,
   "hotnessScore": 44,
   "statRationale": "安全属性延续→防御、特防最高。 [BST 368 ∈ R 330-420; 强项 def/spd; 能力 36/热度 44]",
-  "dexEntryZh": "Claude 3 Sonnet 发布于 2024 年 3 月 4 日，属于 Sonnet 家族，是 Claude 2 之后的下一形态，两者同属 Claude 一脉。资料里对她的记载不多，只能确认她延续了对话与安全两条属性，防御和特防最高，如今已经退役。",
+  "dexEntryZh": "Claude 3 Sonnet 发布于 2024 年 3 月 4 日，是 Claude 3 一代里的 Sonnet 型号。资料里对她的记载不多，只能确认她延续了对话与安全两条属性，防御和特防最高，如今已经退役。她在图鉴里自成一支，没有前后形态。",
   "lookZh": "穿奶油色学院西装、抱着盾徽书本的蜜金编发少女"
  },
  {
@@ -15509,10 +15509,10 @@
   "company": "NVIDIA",
   "country": "US",
   "category": "llm",
-  "family": "nemotron-llama",
+  "family": "nemotron-70b",
   "stage": 1,
-  "evolvesTo": "nemotron-super-49b",
-  "evolveLevel": 24,
+  "evolvesTo": "",
+  "evolveLevel": 0,
   "types": [
    "open",
    "compute"
@@ -15534,20 +15534,20 @@
   "capabilityScore": 34,
   "hotnessScore": 46,
   "statRationale": "70B 底座扎实→HP高；RLHF 调教后响应利落→速度高。 [BST 364 ∈ R 330-420; 强项 spe/hp; 能力 34/热度 46]",
-  "dexEntryZh": "Llama-3.1-Nemotron-70B-Instruct 是 NVIDIA 在 Llama 3.1 70B 上做 RLHF（REINFORCE）微调得到的开放权重模型，2024 年 10 月 15 日发布，速度与 HP 最亮眼。它排在 Llama-Nemotron 这条线的最前面；谱系里下一步是 Llama-3.3-Nemotron-Super-49B，这一步标作「蒸馏」。",
+  "dexEntryZh": "Llama-3.1-Nemotron-70B-Instruct 是 NVIDIA 在 Llama 3.1 70B 上做 RLHF（REINFORCE）微调得到的开放权重模型，2024 年 10 月 15 日发布，速度与 HP 最亮眼。她在图鉴里自成一支，没有前后形态。",
   "lookZh": "戴羊驼耳发箍的黑发小姑娘，胸口别着绿金奖章"
  },
  {
   "id": "nemotron-super-49b",
-  "nameZh": "Llama-3.3-Nemotron-Super-49B",
+  "nameZh": "Nemotron-Super-49B",
   "nameEn": "Llama-3.3-Nemotron-Super-49B",
   "company": "NVIDIA",
   "country": "US",
   "category": "llm",
-  "family": "nemotron-llama",
-  "stage": 2,
-  "evolvesTo": "nemotron-ultra-253b",
-  "evolveLevel": 31,
+  "family": "nemotron-super-49b",
+  "stage": 1,
+  "evolvesTo": "",
+  "evolveLevel": 0,
   "types": [
    "open",
    "compute"
@@ -15569,18 +15569,18 @@
   "capabilityScore": 46,
   "hotnessScore": 44,
   "statRationale": "剪枝蒸馏后依然扎实→HP高；体量更轻→速度高。 [BST 386 ∈ R 330-420; 强项 spe/hp; 能力 46/热度 44]",
-  "dexEntryZh": "Llama-3.3-Nemotron-Super-49B 在 2025 年 3 月 18 日的 GTC 上宣布，卡片说明它是 Llama 3.3 70B 经 NAS 剪枝与蒸馏的衍生版，开放权重。从 Llama-3.1-Nemotron-70B 到它，谱系里标作「蒸馏」；再往后是 Llama-3.1-Nemotron-Ultra-253B。体量瘦了一圈，速度与 HP 依旧突出。",
+  "dexEntryZh": "Llama-3.3-Nemotron-Super-49B 在 2025 年 3 月 18 日的 GTC 上宣布，卡片说明它是 Llama 3.3 70B 经 NAS 剪枝与蒸馏的衍生版，开放权重。体量比 70B 瘦了一圈，速度与 HP 依旧突出。她在图鉴里自成一支，没有前后形态。",
   "lookZh": "一身利落黑绿夹克的羊驼耳少女，手里拿着小修枝剪"
  },
  {
   "id": "nemotron-ultra-253b",
-  "nameZh": "Llama-3.1-Nemotron-Ultra-253B",
+  "nameZh": "Nemotron-Ultra-253B",
   "nameEn": "Llama-3.1-Nemotron-Ultra-253B",
   "company": "NVIDIA",
   "country": "US",
   "category": "reasoning",
-  "family": "nemotron-llama",
-  "stage": 3,
+  "family": "nemotron-ultra-253b",
+  "stage": 1,
   "evolvesTo": "",
   "evolveLevel": 0,
   "types": [
@@ -15604,7 +15604,7 @@
   "capabilityScore": 58,
   "hotnessScore": 46,
   "statRationale": "推理版→逻辑系；大底座→HP高；深度推理→攻击高。 [BST 452 ∈ SR 420-490; 强项 hp/atk; 能力 58/热度 46]",
-  "dexEntryZh": "Llama-3.1-Nemotron-Ultra-253B 于 2025 年 4 月发布，卡片说明它是 Llama 3.1 405B 经 NAS 剪枝的推理衍生版，开放权重。上一形态 Llama-3.3-Nemotron-Super-49B 到它，谱系里同样标作「蒸馏」。类型由算力系转向逻辑系，HP 与攻击最亮眼。",
+  "dexEntryZh": "Llama-3.1-Nemotron-Ultra-253B 于 2025 年 4 月发布，卡片说明它是 Llama 3.1 405B 经 NAS 剪枝的推理衍生版，开放权重。类型由算力系转向逻辑系，HP 与攻击最亮眼。她在图鉴里自成一支，没有前后形态。",
   "lookZh": "长马尾及腰的羊驼耳少女，托着一枚发绿光的思考球"
  },
  {

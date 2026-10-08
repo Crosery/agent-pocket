@@ -7,7 +7,7 @@
 //   &battle=boss&boss=<bossId> [&level=<n>]   boss sandbox: sensible team + counter items, boss at its recommended level
 //   &screen=party|bag|dex|box|map|quests|settings|shop
 // Infinite overworld: &map=<overworld>&x/y accept any integer tile (negative included). window.__ap (dev only):
-//   boss(id, level?) · pos() · tp(x, y, map?) · region() · gates() · places(radius?) · discover(id) · fly(id) · fog() · distance()
+//   boss(id, level?) · pos() · tp(x, y, map?) · region() · gates() · places(radius?) · discover(id) · fly(id) · fog() · distance() · roamers()
 import type { FieldWeatherKind, SaveData, World } from '../shared/types.ts'
 import type { GameContext, SaveManager, Screens } from './contracts.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
@@ -213,6 +213,8 @@ export function installDebugHooks(ctx: GameContext, ow: OverworldExt, world: Wor
     /** Starts a boss fight (sandbox team and counter items; level defaults to the boss's recommended level). */
     boss: (id: string, level?: number) => startBossSandbox(ctx, ow, id, level ?? null),
     distance: () => ({ now: distanceFromOrigin(world, ow.player.x, ow.player.y), max: ctx.save.maxDistance ?? 0 }),
+    /** Visible roamers with their species country and distance to the player. */
+    roamers: () => ow.roamerInfo().map((r) => ({ ...r, country: CONTENT.species[r.speciesId]?.country ?? '', dist: Math.hypot(r.x - ow.player.x, r.y - ow.player.y) })),
   }
   ;(window as unknown as { __ap: typeof hooks }).__ap = hooks
 }

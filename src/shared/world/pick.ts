@@ -6,6 +6,7 @@ import type { SpeciesDef, SpeciesPick } from '../types.ts'
 import { CONTENT, type Content } from '../content/index.ts'
 import { hashString } from './random.ts'
 import storyJson from '../../../content/world/story/story.json' with { type: 'json' }
+import { WORLD_CONTENT } from './data.ts'
 
 export type PickConstraint = 'types' | 'rarities' | 'stages' | 'families' | 'countries' | 'excludeStarters' | 'habitats'
 
@@ -13,7 +14,20 @@ export type PickConstraint = 'types' | 'rarities' | 'stages' | 'families' | 'cou
 export interface StoryPick extends SpeciesPick {
   /** Any of these biomes in SpeciesDef.habitats. */
   habitats?: string[]
+  /**
+   * Opening fairness: obey content/world/world.json encounters.rarityLevelCaps for the member's level (rarity order
+   * and type list), the same caps wild tables follow. Never relaxed; the theme (`types`) gives way instead.
+   */
+  earlyCaps?: boolean
 }
+
+type LevelCap = NonNullable<typeof WORLD_CONTENT.world.encounters.rarityLevelCaps>[number]
+
+const capFor = (p: StoryPick, level: number): LevelCap | undefined =>
+  p.earlyCaps ? WORLD_CONTENT.world.encounters.rarityLevelCaps?.find((x) => level <= x.maxLevel) : undefined
+
+const withinCap = (s: SpeciesDef, cap: LevelCap | undefined, c: Content): boolean =>
+  !cap || ((c.rarityById[s.rarity]?.order ?? 0) <= cap.maxOrder && (!cap.onlyTypes || s.types.every((t) => cap.onlyTypes!.includes(t))))
 
 export interface PickRules {
   /** Constraints dropped one at a time (rarities widen to neighbouring rarity orders first) until something matches. */
@@ -69,7 +83,8 @@ interface Active {
   rarityWiden: number
 }
 
-function matches(s: SpeciesDef, p: StoryPick, a: Active, rules: PickRules, starters: Set<string>, c: Content): boolean {
+function matches(s: SpeciesDef, p: StoryPick, a: Active, rules: PickRules, starters: Set<string>, c: Content, cap: LevelCap | undefined): boolean {
+  if (!withinCap(s, cap, c)) return false
   if (a.types && p.types?.length && !s.types.some((t) => p.types!.includes(t))) return false
   if (a.stages && p.stages?.length && !p.stages.includes(s.stage)) return false
   if (a.families && p.families?.length && !p.families.includes(s.family)) return false
@@ -86,10 +101,10 @@ function matches(s: SpeciesDef, p: StoryPick, a: Active, rules: PickRules, start
   return true
 }
 
-function candidates(p: StoryPick, rules: PickRules, c: Content, minWiden: number): SpeciesDef[] {
+function candidates(p: StoryPick, rules: PickRules, c: Content, minWiden: number, cap: LevelCap | undefined): SpeciesDef[] {
   const starters = starterFamilies(c)
   const a: Active = { types: true, stages: true, families: true, countries: true, excludeStarters: true, habitats: true, rarityWiden: minWiden }
-  const run = () => c.speciesList.filter((s) => matches(s, p, a, rules, starters, c))
+  const run = () => c.speciesList.filter((s) => matches(s, p, a, rules, starters, c, cap))
   let found = run()
   const maxOrder = c.rarities.reduce((m, r) => Math.max(m, r.order), 0)
   for (const step of rules.relaxOrder) {
@@ -111,8 +126,9 @@ function candidates(p: StoryPick, rules: PickRules, c: Content, minWiden: number
  */
 export function resolvePickAvoiding(pick: StoryPick, level: number, seedKey: string, avoid: ReadonlySet<string>, c: Content = CONTENT, rules: PickRules = PICK_RULES): string {
   if (!c.speciesList.length) throw new Error('resolvePick: species roster is empty')
+  const cap = capFor(pick, level)
   const formsFor = (widen: number, p: StoryPick = pick): SpeciesDef[] => {
-    const base = candidates(p, rules, c, widen)
+    const base = candidates(p, rules, c, widen, cap)
     let forms: SpeciesDef[]
     if (p.stages?.length) {
       const fits = base.filter((s) => minLevelOf(s, c) <= level)
@@ -124,6 +140,8 @@ export function resolvePickAvoiding(pick: StoryPick, level: number, seedKey: str
       if (!typed.length && p.types?.length && p.habitats?.length) return formsFor(widen, { ...p, habitats: undefined })
       forms = typed.length ? typed : evolved
     }
+    const capped = forms.filter((s) => withinCap(s, cap, c))
+    if (capped.length) forms = capped
     return forms.sort((x, y) => x.dexNo - y.dexNo || (x.id < y.id ? -1 : x.id > y.id ? 1 : 0))
   }
   const forms = formsFor(0)

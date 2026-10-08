@@ -122,6 +122,11 @@ export function createBattleView(audio: AudioManager, settings: () => Settings):
     input(inp) {
       if (interceptor?.(inp)) return true
       if (effects.input(inp)) return true
+      if (inp.pressed('menu')) {
+        inp.consume('menu')
+        effects.show(0)
+        return true
+      }
       if (levelWait) {
         if (inp.pressed('confirm') || inp.pressed('cancel')) {
           inp.consume('confirm')
@@ -135,6 +140,7 @@ export function createBattleView(audio: AudioManager, settings: () => Settings):
       return message.input(inp)
     },
     update(dt) {
+      effects.sync()
       message.update(dt)
       syncMenuClass()
       if (levelWait) {

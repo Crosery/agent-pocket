@@ -7,7 +7,7 @@ import { button, el, rarityBadge, statRadar, typeChip } from '../widgets.ts'
 import { backPressed, frame, infoRow, openScreen, pressed, sectionTitle, sfx, textOrKey, uiSfx, type ScreenEnv, setChildren , arrowButton } from './base.ts'
 import { GAME } from '../../world/config.ts'
 import { SCREENS } from './config.ts'
-import { dexState, evolutionChain, statKeys } from './logic.ts'
+import { dexState, evolutionChain, extraEnglishName, statKeys } from './logic.ts'
 import { creatureImg } from './sprites.ts'
 
 const pad3 = (n: number) => String(n).padStart(3, '0')
@@ -40,7 +40,7 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
       left.replaceChildren(
         el('div', 'aps-dexd-stage', [el('div', 'aps-sum-pedestal'), creatureImg(ctx.assets, sp.id, { shiny, silhouette: !caught, className: 'aps-dexd-sprite' })]),
         el('div', { class: 'aps-dexd-name ap-model-name', text: sp.nameZh, title: sp.nameZh, attrs: { 'aria-label': sp.nameZh } }),
-        el('div', { class: 'ap-dim aps-dexd-en ap-model-name', text: sp.nameEn, title: sp.nameEn, attrs: { 'aria-label': sp.nameEn } }),
+        ...(extraEnglishName(sp) ? [el('div', { class: 'ap-dim aps-dexd-en ap-model-name', text: sp.nameEn, title: sp.nameEn, attrs: { 'aria-label': sp.nameEn } })] : []),
         el('div', 'aps-chips', [...sp.types.map((ty) => typeChip(ty)), rarityBadge(sp.rarity, { label: 'name' })]),
         el('div', 'aps-dexd-btns', [cryBtn, shinyBtn]),
       )

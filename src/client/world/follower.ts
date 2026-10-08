@@ -28,6 +28,8 @@ export function createFollower(ctx: GameContext, deps: FollowerDeps = {}) {
   // further back and further aside)
   let spacing = F.distance, minGap = F.minGap, clear = 0, dropBack = 0
   let lastPx = Number.NaN, lastPy = 0, side = 1, camSide = 1, camK = 0, backK = 0
+  // spring velocity (tiles/s)
+  let vx = 0, vy = 0
 
   /** Whether the lead may be shown on this map. */
   function allowedOn(map: GameMap | null, lead: Creature | null): boolean {
@@ -51,6 +53,7 @@ export function createFollower(ctx: GameContext, deps: FollowerDeps = {}) {
     dropBack = F.cameraClear.dropBack.base + F.cameraClear.dropBack.perSize * size
     if (lead && k) {
       actor = ctx.world.createCreatureActor(lead.speciesId, lead.shiny)
+      actor.setCompanion?.(true)
       actor.setPosition(x, y, ctx.world.elevationAt(x, y))
     }
   }
@@ -62,6 +65,11 @@ export function createFollower(ctx: GameContext, deps: FollowerDeps = {}) {
     lastPx = Number.NaN
     camK = 0
     backK = 0
+    vx = 0
+    vy = 0
+    // a spawn on the camera side (arriving facing north) starts already swung aside: easing in from straight in
+    // front of the player would show the whole lead over them for the first frames
+    ;({ x, y } = clearOfCamera(x, y, px, py, 1e3))
     trail.reset({ x: px, y: py, elev }, { x, y, elev })
     actor?.setPosition(x, y, ctx.world.elevationAt(x, y))
   }
@@ -124,11 +132,14 @@ export function createFollower(ctx: GameContext, deps: FollowerDeps = {}) {
     const C = F.cameraClear
     const rx = tx - px, ry = ty - py
     const d = Math.hypot(rx, ry)
+    // a lead wider than the trail distance stands abreast at `clear` instead of being pulled in towards the player
+    const radius = Math.max(d, clear)
     const swung = (s: number, k: number) => {
-      const need = Math.asin(Math.min(1, clear / d)), now = Math.atan2(rx * s, ry)
+      const need = Math.asin(Math.min(1, clear / radius)), now = Math.atan2(rx * s, ry)
       if (now >= need) return { x: tx, y: ty }
       const a = now + (need - now) * k
-      return { x: px + Math.sin(a) * d * s, y: py + Math.cos(a) * d }
+      const r = d + (radius - d) * k
+      return { x: px + Math.sin(a) * r * s, y: py + Math.cos(a) * r }
     }
     // largest swing share on side s whose spot the follower may stand on (walls, water, other levels)
     const reach = (s: number) => {
@@ -165,15 +176,26 @@ export function createFollower(ctx: GameContext, deps: FollowerDeps = {}) {
       const s = trail.sample(spacing + backK * dropBack)
       ;({ x: tx, y: ty } = clearOfCamera(s?.x ?? px, s?.y ?? py, px, py, dt))
     }
-    if (Math.hypot(tx - x, ty - y) > F.teleportDistance) { x = tx; y = ty }
-    const k = mount ? 1 : 1 - Math.exp(-dt * F.followRate)
-    let nx = x + (tx - x) * k, ny = y + (ty - y) * k
+    if (Math.hypot(tx - x, ty - y) > F.teleportDistance) { x = tx; y = ty; vx = 0; vy = 0 }
+    let nx = tx, ny = ty
+    if (!mount && dt > 0) {
+      // exact step of a critically damped spring (no overshoot, no velocity jump at start / stop)
+      const w = F.springOmega, e = Math.exp(-w * dt)
+      const ex = x - tx, ey = y - ty
+      const jx = vx + w * ex, jy = vy + w * ey
+      nx = tx + (ex + jx * dt) * e
+      ny = ty + (ey + jy * dt) * e
+      vx = (vx - w * jx * dt) * e
+      vy = (vy - w * jy * dt) * e
+    }
     if (!mount && dt > 0) {
       // never dashes: at most maxSpeed, or catchUpMul x the player's own speed when that is faster (bike)
       const step = Math.hypot(nx - x, ny - y), cap = Math.max(F.maxSpeed * dt, Math.hypot(mvx, mvy) * F.catchUpMul)
       if (step > cap) { nx = x + ((nx - x) * cap) / step; ny = y + ((ny - y) * cap) / step }
     }
     if (!mount) ({ x: nx, y: ny } = keepClear(nx, ny, px, py, mvx, mvy, dt))
+    // caps and personal space bend the path: the spring continues from where the follower really went
+    if (dt > 0) { vx = mount ? 0 : (nx - x) / dt; vy = mount ? 0 : (ny - y) / dt }
     const moved = Math.hypot(nx - x, ny - y)
     if (Math.abs(nx - x) > F.flipMinSpeed * dt) actor.setFacingLeft(nx < x)
     else if (mount && (facing === 'left' || facing === 'right')) actor.setFacingLeft(facing === 'left')
