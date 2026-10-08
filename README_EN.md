@@ -28,7 +28,7 @@
 
 ## Features
 
-- **448 creatures in 215 evolution families.**
+- **448 creatures in 219 evolution families.**
   - Six rarity tiers: N, R, SR, SSR, UR and MYTHIC.
   - A custom type chart.
   - Moves and abilities defined in a declarative DSL.

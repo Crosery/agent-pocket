@@ -48,49 +48,49 @@
 | 88 | `mai-1-preview` | MAI-1-preview | Microsoft | 对话/算力 | R | 368 | → MAI-Thinking-1 Lv30 | 2025-08-28 | <https://innfactory.ai/en/ai-models/microsoft-phi/> |
 | 90 | `mai-image-1` | MAI-Image-1 | Microsoft | 视觉 | R | 375 | → MAI-Image-2 Lv32 | 2025-10-01 | <https://microsoft.ai/news/> |
 | 91 | `mai-image-2` | MAI-Image-2 | Microsoft | 视觉/创作 | SR | 449 | ← MAI-Image-1；→ MAI-Image-2.6 Lv39 | 2026-03-19 | <https://innfactory.ai/en/ai-models/microsoft-phi/> |
-| 95 | `nemotron-3-super` | Nemotron 3 Super | NVIDIA | 开源/算力 | SR | 440 | → Nemotron 3 Ultra Lv34 | 2026-03-11 | <https://en.wikipedia.org/wiki/Nemotron> |
-| 106 | `sd-3-5` | Stable Diffusion 3.5 | Stability AI | 视觉/开源 | SR | 440 | ← SDXL | 2024-10-22 | <https://arena.ai/leaderboard/text-to-image> |
-| 108 | `flux-2` | FLUX.2 | Black Forest Labs | 视觉/开源 | SR | 470 | ← FLUX.1；→ FLUX 3 Lv40 | 2025-11-25 | <https://artificialanalysis.ai/image/leaderboard/text-to-image> |
-| 110 | `runway-gen-4` | Runway Gen-4 | Runway | 影像/创作 | SR | 438 | → Runway Gen-4.5 Lv30 | 2025-03-31 | <https://en.wikipedia.org/wiki/Runway_(company)> |
-| 112 | `luma-ray1` | Luma Dream Machine (Ray1) | Luma AI | 影像 | R | 357 | → Luma Ray2 Lv22 | 2024-06-12 | <https://en.wikipedia.org/wiki/Luma_AI> |
-| 113 | `luma-ray2` | Luma Ray2 | Luma AI | 影像/视觉 | R | 382 | ← Luma Dream Machine (Ray1)；→ Luma Ray3 Lv30 | 2025-01-15 | <https://lumalabs.ai/ray> |
-| 119 | `eleven-v3` | Eleven v3 | ElevenLabs | 音律/对话 | SR | 478 | ← ElevenLabs 多语言 v2；→ Eleven v4 Lv42 | 2025-06-05 | <https://artificialanalysis.ai/text-to-speech/leaderboard> |
-| 141 | `langgraph` | LangGraph | LangChain | 智能体/开源 | SSR | 520 | ← LangChain | 2024-01-08 | <https://github.com/langchain-ai/langgraph> |
-| 144 | `pi0-5` | π0.5 | Physical Intelligence | 智能体/视觉 | R | 386 | → π*0.6 Lv30 | 2025-04-22 | <https://www.physicalintelligence.company/blog> |
-| 145 | `pi-star-0-6` | π*0.6 | Physical Intelligence | 智能体/视觉 | SR | 458 | ← π0.5；→ π0.7 物理智能 Lv38 | 2025-11-17 | <https://www.physicalintelligence.company/blog> |
-| 160 | `wan-2-2` | 通义万相 2.2 | Alibaba (Tongyi) | 影像/开源 | SR | 455 | ← 通义万相 2.1；→ 通义万相 3.0 Lv42 | 2025-07-28 | <https://technode.com/2026/08/24/alibaba-launches-wan3-0-video-model-with-30-second-generation-and-document-input/> |
-| 179 | `seedream-4` | 即梦 Seedream 4.0 | ByteDance Seed | 视觉/创作 | SR | 458 | ← 即梦 Seedream 3.0；→ 即梦 Seedream 5.0 Lv38 | 2025-09-09 | <https://artificialanalysis.ai/image/leaderboard/text-to-image> |
-| 190 | `hunyuan-image-3` | 混元生图 3.0 | Tencent Hunyuan | 视觉/开源 | SR | 450 | → 混元生图 3.5（预览） Lv30 | 2025-09-28 | <https://github.com/Tencent-Hunyuan/HunyuanImage-3.0> |
-| 197 | `step-3-7-flash` | 阶跃 Step 3.7 Flash | StepFun | 算力/开源 | SR | 452 | ← 阶跃 Step 3.5 Flash；→ 阶跃 Step 5 Preview Lv40 | 2026-05-29 | <https://en.wikipedia.org/wiki/StepFun> |
-| 208 | `longcat-2` | 美团 LongCat 2.0 | Meituan | 智能体/算力 | SR | 435 | ← 美团 LongCat-Flash；→ 美团龙猫 LongCat-2.5 Lv40 | 2026-06-30 | <https://www.marktechpost.com/2026/07/05/meituan-releases-longcat-2-0-a-1-6t-parameter-open-moe-model-with-native-1m-context-and-longcat-sparse-attention/> |
-| 217 | `skyreels-v2` | SkyReels V2 | Skywork AI (Kunlun Tech) | 影像/开源 | SR | 435 | → SkyReels V3 Lv32 | 2025-04-21 | <https://github.com/SkyworkAI/SkyReels-V2> |
-| 218 | `skyreels-v3` | SkyReels V3 | Skywork AI (Kunlun Tech) | 影像/开源 | SR | 449 | ← SkyReels V2；→ 天工 SkyReels V4 Lv39 | 2026-01-29 | <https://github.com/SkyworkAI/SkyReels-V2> |
-| 230 | `hailuo-02` | 海螺 02 | MiniMax | 影像 | SR | 455 | ← 海螺 Video-01；→ 海螺 H3 Lv40 | 2025-06-18 | <https://platform.minimax.io/docs/release-notes/models> |
-| 234 | `unitree-h1` | 宇树 H1 | Unitree Robotics | 影像/智能体 | R | 375 | → 宇树 G1/H2 Lv37 | 2023-08-01 | <https://en.wikipedia.org/wiki/Unitree_Robotics> |
-| 238 | `o3-mini` | o3-mini | OpenAI | 推理 | R | 368 | → o3 Lv20 | 2025-01-31 | <https://hidekazu-konishi.com/entry/openai_gpt_model_release_timeline.html> |
-| 239 | `o3` | o3 | OpenAI | 推理/代码 | SR | 448 | ← o3-mini；→ o3-pro Lv40 | 2025-04-16 | <https://en.wikipedia.org/wiki/OpenAI_o3> |
-| 240 | `o3-pro` | o3-pro | OpenAI | 推理/算力 | SR | 486 | ← o3 | 2025-06-10 | <https://openrouter.ai/openai/o3-pro> |
-| 241 | `claude-opus-4` | Claude Opus 4 | Anthropic | 代码/对齐 | R | 400 | → Claude Opus 4.5 Lv22 | 2025-05-22 | <https://en.wikipedia.org/wiki/Claude_(language_model)> |
-| 242 | `claude-opus-4-5` | Claude Opus 4.5 | Anthropic | 代码/对齐 | SR | 458 | ← Claude Opus 4；→ Claude Opus 4.7 Lv40 | 2025-11-24 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
-| 243 | `claude-opus-4-7` | Claude Opus 4.7 | Anthropic | 代码/推理 | SSR | 515 | ← Claude Opus 4.5 | 2026-04-16 | <https://en.wikipedia.org/wiki/Claude_(language_model)> |
-| 244 | `claude-sonnet-4-5` | Claude Sonnet 4.5 | Anthropic | 代码/创作 | SR | 450 | → Claude Sonnet 5 Lv34 | 2025-09-29 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
-| 245 | `claude-sonnet-5` | Claude Sonnet 5 | Anthropic | 代码/创作 | SSR | 530 | ← Claude Sonnet 4.5 | 2026-06-30 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
-| 246 | `claude-haiku-3` | Claude 3 Haiku | Anthropic | 代码 | N | 295 | → Claude 3.5 Haiku Lv18 | 2024-03-13 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
-| 247 | `claude-haiku-3-5` | Claude 3.5 Haiku | Anthropic | 代码 | R | 372 | ← Claude 3 Haiku；→ Claude Haiku 5.5 Lv34 | 2024-11-04 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
-| 248 | `claude-haiku-5-5` | Claude Haiku 5.5 | Anthropic | 代码/智能体 | SR | 440 | ← Claude 3.5 Haiku | 2026-10-07 | <https://openrouter.ai/anthropic/claude-haiku-5.5> |
-| 249 | `gemini-2-5-flash` | Gemini 2.5 Flash | Google | 算力 | R | 398 | → Gemini 3 Flash Lv24 | 2025-04-17 | <https://hidekazu-konishi.com/entry/google_gemini_model_release_timeline.html> |
-| 250 | `gemini-3-flash` | Gemini 3 Flash | Google | 算力/对话 | SR | 462 | ← Gemini 2.5 Flash；→ Gemini 3.5 Flash Lv40 | 2025-12-17 | <https://hidekazu-konishi.com/entry/google_gemini_model_release_timeline.html> |
-| 251 | `gemini-3-5-flash` | Gemini 3.5 Flash | Google | 算力/智能体 | SSR | 520 | ← Gemini 3 Flash | 2026-05-19 | <https://hidekazu-konishi.com/entry/google_gemini_model_release_timeline.html> |
-| 252 | `grok-build` | Grok Build | SpaceXAI (formerly xAI) | 代码/智能体 | SR | 462 | — | 2026-05-14 | <https://abz.global/technology/xai-just-launched-grok-build-ai-coding-agents-are-moving-into-the-terminal> |
-| 253 | `grok-4-20` | Grok 4.20 | SpaceXAI (formerly xAI) | 推理/幻觉 | SR | 470 | → Grok 4.5 Lv36 | 2026-03-09 | <https://en.wikipedia.org/wiki/Grok_(chatbot)> |
-| 254 | `grok-4-5` | Grok 4.5 | SpaceXAI (formerly xAI) | 推理/幻觉 | SSR | 525 | ← Grok 4.20 | 2026-07-08 | <https://en.wikipedia.org/wiki/Grok_(chatbot)> |
-| 255 | `muse-image` | Muse Image | Meta | 视觉/创作 | SR | 470 | — | 2026-07-07 | <https://ai.meta.com/blog/introducing-muse-image-muse-video-msl/> |
-| 256 | `mistral-large-2` | Mistral Large 2 | Mistral AI | 开源/对话 | R | 339 | → Mistral Large 3 Lv22 | 2024-07-24 | <https://mistral.ai/news/mistral-large-2407/> |
-| 257 | `mistral-large-3` | Mistral Large 3 | Mistral AI | 开源/推理 | R | 398 | ← Mistral Large 2；→ Mistral Large 4 Lv32 | 2025-12-02 | <https://en.wikipedia.org/wiki/Mistral_AI> |
-| 258 | `mistral-large-4` | Mistral Large 4 | Mistral AI | 开源/推理 | SR | 460 | ← Mistral Large 3 | 2026-10-06 | <https://openrouter.ai/mistralai/mistral-large-4-0> |
-| 259 | `devstral-small` | Devstral Small | Mistral AI | 代码/开源 | R | 353 | → Devstral Medium Lv21 | 2025-05-21 | <https://mistral.ai/news/devstral> |
-| 260 | `devstral-medium` | Devstral Medium | Mistral AI | 代码/开源 | R | 389 | ← Devstral Small；→ Devstral 2 Lv28 | 2025-07-10 | <https://models.dev/> |
-| 261 | `devstral-2` | Devstral 2 | Mistral AI | 代码/开源 | SR | 440 | ← Devstral Medium | 2025-12-09 | <https://en.wikipedia.org/wiki/Mistral_AI> |
+| 105 | `sd-3-5` | Stable Diffusion 3.5 | Stability AI | 视觉/开源 | SR | 440 | ← SDXL | 2024-10-22 | <https://arena.ai/leaderboard/text-to-image> |
+| 107 | `flux-2` | FLUX.2 | Black Forest Labs | 视觉/开源 | SR | 470 | ← FLUX.1；→ FLUX 3 Lv40 | 2025-11-25 | <https://artificialanalysis.ai/image/leaderboard/text-to-image> |
+| 109 | `runway-gen-4` | Runway Gen-4 | Runway | 影像/创作 | SR | 438 | → Runway Gen-4.5 Lv30 | 2025-03-31 | <https://en.wikipedia.org/wiki/Runway_(company)> |
+| 111 | `luma-ray1` | Luma Dream Machine (Ray1) | Luma AI | 影像 | R | 357 | → Luma Ray2 Lv22 | 2024-06-12 | <https://en.wikipedia.org/wiki/Luma_AI> |
+| 112 | `luma-ray2` | Luma Ray2 | Luma AI | 影像/视觉 | R | 382 | ← Luma Dream Machine (Ray1)；→ Luma Ray3 Lv30 | 2025-01-15 | <https://lumalabs.ai/ray> |
+| 118 | `eleven-v3` | Eleven v3 | ElevenLabs | 音律/对话 | SR | 478 | ← ElevenLabs 多语言 v2；→ Eleven v4 Lv42 | 2025-06-05 | <https://artificialanalysis.ai/text-to-speech/leaderboard> |
+| 140 | `langgraph` | LangGraph | LangChain | 智能体/开源 | SSR | 520 | ← LangChain | 2024-01-08 | <https://github.com/langchain-ai/langgraph> |
+| 143 | `pi0-5` | π0.5 | Physical Intelligence | 智能体/视觉 | R | 386 | → π*0.6 Lv30 | 2025-04-22 | <https://www.physicalintelligence.company/blog> |
+| 144 | `pi-star-0-6` | π*0.6 | Physical Intelligence | 智能体/视觉 | SR | 458 | ← π0.5；→ π0.7 物理智能 Lv38 | 2025-11-17 | <https://www.physicalintelligence.company/blog> |
+| 159 | `wan-2-2` | 通义万相 2.2 | Alibaba (Tongyi) | 影像/开源 | SR | 455 | ← 通义万相 2.1；→ 通义万相 3.0 Lv42 | 2025-07-28 | <https://technode.com/2026/08/24/alibaba-launches-wan3-0-video-model-with-30-second-generation-and-document-input/> |
+| 178 | `seedream-4` | 即梦 Seedream 4.0 | ByteDance Seed | 视觉/创作 | SR | 458 | ← 即梦 Seedream 3.0；→ 即梦 Seedream 5.0 Lv38 | 2025-09-09 | <https://artificialanalysis.ai/image/leaderboard/text-to-image> |
+| 189 | `hunyuan-image-3` | 混元生图 3.0 | Tencent Hunyuan | 视觉/开源 | SR | 450 | → 混元生图 3.5（预览） Lv30 | 2025-09-28 | <https://github.com/Tencent-Hunyuan/HunyuanImage-3.0> |
+| 196 | `step-3-7-flash` | 阶跃 Step 3.7 Flash | StepFun | 算力/开源 | SR | 452 | ← 阶跃 Step 3.5 Flash；→ 阶跃 Step 5 Preview Lv40 | 2026-05-29 | <https://en.wikipedia.org/wiki/StepFun> |
+| 207 | `longcat-2` | 美团 LongCat 2.0 | Meituan | 智能体/算力 | SR | 435 | ← 美团 LongCat-Flash；→ 美团龙猫 LongCat-2.5 Lv40 | 2026-06-30 | <https://www.marktechpost.com/2026/07/05/meituan-releases-longcat-2-0-a-1-6t-parameter-open-moe-model-with-native-1m-context-and-longcat-sparse-attention/> |
+| 216 | `skyreels-v2` | SkyReels V2 | Skywork AI (Kunlun Tech) | 影像/开源 | SR | 435 | → SkyReels V3 Lv32 | 2025-04-21 | <https://github.com/SkyworkAI/SkyReels-V2> |
+| 217 | `skyreels-v3` | SkyReels V3 | Skywork AI (Kunlun Tech) | 影像/开源 | SR | 449 | ← SkyReels V2；→ 天工 SkyReels V4 Lv39 | 2026-01-29 | <https://github.com/SkyworkAI/SkyReels-V2> |
+| 229 | `hailuo-02` | 海螺 02 | MiniMax | 影像 | SR | 455 | ← 海螺 Video-01；→ 海螺 H3 Lv40 | 2025-06-18 | <https://platform.minimax.io/docs/release-notes/models> |
+| 233 | `unitree-h1` | 宇树 H1 | Unitree Robotics | 影像/智能体 | R | 375 | → 宇树 G1/H2 Lv37 | 2023-08-01 | <https://en.wikipedia.org/wiki/Unitree_Robotics> |
+| 237 | `o3-mini` | o3-mini | OpenAI | 推理 | R | 368 | → o3 Lv20 | 2025-01-31 | <https://hidekazu-konishi.com/entry/openai_gpt_model_release_timeline.html> |
+| 238 | `o3` | o3 | OpenAI | 推理/代码 | SR | 448 | ← o3-mini；→ o3-pro Lv40 | 2025-04-16 | <https://en.wikipedia.org/wiki/OpenAI_o3> |
+| 239 | `o3-pro` | o3-pro | OpenAI | 推理/算力 | SR | 486 | ← o3 | 2025-06-10 | <https://openrouter.ai/openai/o3-pro> |
+| 240 | `claude-opus-4` | Claude Opus 4 | Anthropic | 代码/对齐 | R | 400 | → Claude Opus 4.5 Lv22 | 2025-05-22 | <https://en.wikipedia.org/wiki/Claude_(language_model)> |
+| 241 | `claude-opus-4-5` | Claude Opus 4.5 | Anthropic | 代码/对齐 | SR | 458 | ← Claude Opus 4；→ Claude Opus 4.7 Lv40 | 2025-11-24 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
+| 242 | `claude-opus-4-7` | Claude Opus 4.7 | Anthropic | 代码/推理 | SSR | 515 | ← Claude Opus 4.5 | 2026-04-16 | <https://en.wikipedia.org/wiki/Claude_(language_model)> |
+| 243 | `claude-sonnet-4-5` | Claude Sonnet 4.5 | Anthropic | 代码/创作 | SR | 450 | → Claude Sonnet 5 Lv34 | 2025-09-29 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
+| 244 | `claude-sonnet-5` | Claude Sonnet 5 | Anthropic | 代码/创作 | SSR | 530 | ← Claude Sonnet 4.5 | 2026-06-30 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
+| 245 | `claude-haiku-3` | Claude 3 Haiku | Anthropic | 代码 | N | 295 | → Claude 3.5 Haiku Lv18 | 2024-03-13 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
+| 246 | `claude-haiku-3-5` | Claude 3.5 Haiku | Anthropic | 代码 | R | 372 | ← Claude 3 Haiku；→ Claude Haiku 5.5 Lv34 | 2024-11-04 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
+| 247 | `claude-haiku-5-5` | Claude Haiku 5.5 | Anthropic | 代码/智能体 | SR | 440 | ← Claude 3.5 Haiku | 2026-10-07 | <https://openrouter.ai/anthropic/claude-haiku-5.5> |
+| 248 | `gemini-2-5-flash` | Gemini 2.5 Flash | Google | 算力 | R | 398 | → Gemini 3 Flash Lv24 | 2025-04-17 | <https://hidekazu-konishi.com/entry/google_gemini_model_release_timeline.html> |
+| 249 | `gemini-3-flash` | Gemini 3 Flash | Google | 算力/对话 | SR | 462 | ← Gemini 2.5 Flash；→ Gemini 3.5 Flash Lv40 | 2025-12-17 | <https://hidekazu-konishi.com/entry/google_gemini_model_release_timeline.html> |
+| 250 | `gemini-3-5-flash` | Gemini 3.5 Flash | Google | 算力/智能体 | SSR | 520 | ← Gemini 3 Flash | 2026-05-19 | <https://hidekazu-konishi.com/entry/google_gemini_model_release_timeline.html> |
+| 251 | `grok-build` | Grok Build | SpaceXAI (formerly xAI) | 代码/智能体 | SR | 462 | — | 2026-05-14 | <https://abz.global/technology/xai-just-launched-grok-build-ai-coding-agents-are-moving-into-the-terminal> |
+| 252 | `grok-4-20` | Grok 4.20 | SpaceXAI (formerly xAI) | 推理/幻觉 | SR | 470 | → Grok 4.5 Lv36 | 2026-03-09 | <https://en.wikipedia.org/wiki/Grok_(chatbot)> |
+| 253 | `grok-4-5` | Grok 4.5 | SpaceXAI (formerly xAI) | 推理/幻觉 | SSR | 525 | ← Grok 4.20 | 2026-07-08 | <https://en.wikipedia.org/wiki/Grok_(chatbot)> |
+| 254 | `muse-image` | Muse Image | Meta | 视觉/创作 | SR | 470 | — | 2026-07-07 | <https://ai.meta.com/blog/introducing-muse-image-muse-video-msl/> |
+| 255 | `mistral-large-2` | Mistral Large 2 | Mistral AI | 开源/对话 | R | 339 | → Mistral Large 3 Lv22 | 2024-07-24 | <https://mistral.ai/news/mistral-large-2407/> |
+| 256 | `mistral-large-3` | Mistral Large 3 | Mistral AI | 开源/推理 | R | 398 | ← Mistral Large 2；→ Mistral Large 4 Lv32 | 2025-12-02 | <https://en.wikipedia.org/wiki/Mistral_AI> |
+| 257 | `mistral-large-4` | Mistral Large 4 | Mistral AI | 开源/推理 | SR | 460 | ← Mistral Large 3 | 2026-10-06 | <https://openrouter.ai/mistralai/mistral-large-4-0> |
+| 258 | `devstral-small` | Devstral Small | Mistral AI | 代码/开源 | R | 353 | → Devstral Medium Lv21 | 2025-05-21 | <https://mistral.ai/news/devstral> |
+| 259 | `devstral-medium` | Devstral Medium | Mistral AI | 代码/开源 | R | 389 | ← Devstral Small；→ Devstral 2 Lv28 | 2025-07-10 | <https://models.dev/> |
+| 260 | `devstral-2` | Devstral 2 | Mistral AI | 代码/开源 | SR | 440 | ← Devstral Medium | 2025-12-09 | <https://en.wikipedia.org/wiki/Mistral_AI> |
+| 261 | `nemotron-3-super` | Nemotron 3 Super | NVIDIA | 开源/算力 | SR | 440 | — | 2026-03-11 | <https://en.wikipedia.org/wiki/Nemotron> |
 | 262 | `deepseek-v3-1` | DeepSeek-V3.1 | DeepSeek | 算力/推理 | R | 372 | → DeepSeek-V3.2 Lv22 | 2025-08-21 | <https://en.wikipedia.org/wiki/DeepSeek> |
 | 263 | `deepseek-v3-2` | DeepSeek-V3.2 | DeepSeek | 算力/推理 | SR | 450 | ← DeepSeek-V3.1；→ DeepSeek-V3.2-Speciale Lv38 | 2025-12-01 | <https://en.wikipedia.org/wiki/DeepSeek> |
 | 264 | `deepseek-v3-2-speciale` | DeepSeek-V3.2-Speciale | DeepSeek | 推理/开源 | SSR | 508 | ← DeepSeek-V3.2 | 2025-12-01 | <https://en.wikipedia.org/wiki/DeepSeek> |
@@ -126,8 +126,8 @@
 | 294 | `gpt-oss-safeguard-20b` | gpt-oss-safeguard-20b | OpenAI | 开源/对齐 | R | 375 | ← gpt-oss-20b | 2025-10-29 | <https://openrouter.ai/openai/gpt-oss-safeguard-20b> |
 | 295 | `gpt-5-6-terra` | GPT-5.6 Terra | OpenAI | 推理/创作 | SR | 463 | — | 2026-07-09 | <https://openrouter.ai/openai/gpt-5.6-terra> |
 | 296 | `claude-1` | Claude 1 | Anthropic | 对话/对齐 | N | 252 | → Claude 2 Lv22 | 2023-03-14 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
-| 297 | `claude-2` | Claude 2 | Anthropic | 对话/创作 | R | 339 | ← Claude 1；→ Claude 3 Sonnet Lv29 | 2023-07-11 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
-| 298 | `claude-3-sonnet` | Claude 3 Sonnet | Anthropic | 对话/对齐 | R | 368 | ← Claude 2 | 2024-03-04 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
+| 297 | `claude-2` | Claude 2 | Anthropic | 对话/创作 | R | 339 | ← Claude 1 | 2023-07-11 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
+| 298 | `claude-3-sonnet` | Claude 3 Sonnet | Anthropic | 对话/对齐 | R | 368 | — | 2024-03-04 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
 | 299 | `claude-3-7-sonnet` | Claude 3.7 Sonnet | Anthropic | 代码/创作 | R | 379 | → Claude Sonnet 4 Lv28 | 2025-02-24 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
 | 300 | `claude-sonnet-4` | Claude Sonnet 4 | Anthropic | 代码/创作 | SR | 444 | ← Claude 3.7 Sonnet；→ Claude Sonnet 4.6 Lv35 | 2025-05-22 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
 | 301 | `claude-sonnet-4-6` | Claude Sonnet 4.6 | Anthropic | 代码/智能体 | SR | 466 | ← Claude Sonnet 4 | 2026-02-17 | <https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html> |
@@ -273,9 +273,9 @@
 | 441 | `sonar` | Sonar | Perplexity AI | 检索/对话 | R | 368 | → Sonar Pro Lv31 | 2025-01-21 | <https://en.wikipedia.org/wiki/Perplexity_AI> |
 | 442 | `sonar-pro` | Sonar Pro | Perplexity AI | 检索/对话 | SR | 441 | ← Sonar；→ Sonar Pro Search Lv38 | 2025-01-21 | <https://docs.perplexity.ai/guides/models> |
 | 443 | `sonar-pro-search` | Sonar Pro Search | Perplexity AI | 检索/智能体 | SR | 452 | ← Sonar Pro | 2025-10-30 | <https://openrouter.ai/perplexity/sonar-pro-search> |
-| 444 | `nemotron-70b` | Llama-3.1-Nemotron-70B | NVIDIA | 开源/算力 | R | 364 | → Llama-3.3-Nemotron-Super-49B Lv24 | 2024-10-15 | <https://huggingface.co/nvidia/Llama-3.1-Nemotron-70B-Instruct-HF> |
-| 445 | `nemotron-super-49b` | Llama-3.3-Nemotron-Super-49B | NVIDIA | 开源/算力 | R | 386 | ← Llama-3.1-Nemotron-70B；→ Llama-3.1-Nemotron-Ultra-253B Lv31 | 2025-03-18 | <https://huggingface.co/nvidia/Llama-3_3-Nemotron-Super-49B-v1> |
-| 446 | `nemotron-ultra-253b` | Llama-3.1-Nemotron-Ultra-253B | NVIDIA | 开源/推理 | SR | 452 | ← Llama-3.3-Nemotron-Super-49B | 2025-04-07 | <https://models.dev/> |
+| 444 | `nemotron-70b` | Llama-3.1-Nemotron-70B | NVIDIA | 开源/算力 | R | 364 | — | 2024-10-15 | <https://huggingface.co/nvidia/Llama-3.1-Nemotron-70B-Instruct-HF> |
+| 445 | `nemotron-super-49b` | Llama-3.3-Nemotron-Super-49B | NVIDIA | 开源/算力 | R | 386 | — | 2025-03-18 | <https://huggingface.co/nvidia/Llama-3_3-Nemotron-Super-49B-v1> |
+| 446 | `nemotron-ultra-253b` | Llama-3.1-Nemotron-Ultra-253B | NVIDIA | 开源/推理 | SR | 452 | — | 2025-04-07 | <https://models.dev/> |
 | 447 | `hermes-3-405b` | Hermes 3 405B | Nous Research | 开源/对话 | R | 375 | → Hermes 4 405B Lv31 | 2024-08-16 | <https://openrouter.ai/nousresearch/hermes-3-llama-3.1-405b> |
 | 448 | `hermes-4-405b` | Hermes 4 405B | Nous Research | 开源/推理 | SR | 447 | ← Hermes 3 405B | 2025-08-26 | <https://openrouter.ai/nousresearch/hermes-4-405b> |
 
@@ -314,7 +314,6 @@
 | MAI-1-preview → MAI-Thinking-1 | 30 | 新增形态的进化 |
 | MAI-Image-1 → MAI-Image-2 | 32 | 新增形态的进化 |
 | MAI-Image-2 → MAI-Image-2.6 | 39 | 新增形态的进化 |
-| Nemotron 3 Super → Nemotron 3 Ultra | 34 | 新增形态的进化 |
 | SDXL → Stable Diffusion 3.5 | 34 | 新增形态的进化 |
 | FLUX.1 → FLUX.2 | 24 | 原：→ FLUX 3 Lv36 |
 | FLUX.2 → FLUX 3 | 40 | 新增形态的进化 |
@@ -374,7 +373,6 @@
 | GPT-5.1-Codex-Max → GPT-5.2-Codex | 44 | 新增形态的进化 |
 | gpt-oss-20b → gpt-oss-safeguard-20b | 22 | 新增形态的进化 |
 | Claude 1 → Claude 2 | 22 | 新增形态的进化 |
-| Claude 2 → Claude 3 Sonnet | 29 | 新增形态的进化 |
 | Claude 3.7 Sonnet → Claude Sonnet 4 | 28 | 新增形态的进化 |
 | Claude Sonnet 4 → Claude Sonnet 4.6 | 35 | 新增形态的进化 |
 | Claude Opus 4.1 → Claude Opus 4.6 | 30 | 新增形态的进化 |
@@ -455,15 +453,13 @@
 | Command A → Command A+ | 30 | 新增形态的进化 |
 | Sonar → Sonar Pro | 31 | 新增形态的进化 |
 | Sonar Pro → Sonar Pro Search | 38 | 新增形态的进化 |
-| Llama-3.1-Nemotron-70B → Llama-3.3-Nemotron-Super-49B | 24 | 新增形态的进化 |
-| Llama-3.3-Nemotron-Super-49B → Llama-3.1-Nemotron-Ultra-253B | 31 | 新增形态的进化 |
 | Hermes 3 405B → Hermes 4 405B | 31 | 新增形态的进化 |
 
 ## 因进化链变化而重算的既有智灵
 
 阶数变化的既有智灵（末形态顺延）会重新生成 `learnset` / `teachable` / `catchRate` / `baseExp` / `size`，种族值、特性、栖息地、文案不变；家族最高稀有度变化的家族，`growth` 随之重算。
 
-`gpt-5-5`、`gpt-5-6`、`gpt-6-luna`、`gpt-6-sol`、`openai-codex`、`sora-2`、`chatgpt-dots`、`claude-fable`、`claude-mythos`、`claude-cowork`、`gemini-live`、`gemma-4`、`gemini-omni`、`lyria`、`genie-3`、`google-antigravity`、`gemini-robotics`、`muse-spark`、`mistral-medium`、`phi-4`、`mai-thinking`、`mai-image`、`nemotron`、`sd-1-5`、`sdxl`、`flux-3`、`runway`、`luma-ray3`、`eleven-v4`、`langchain`、`pi-zero`、`wan-3`、`seedream-5`、`hunyuan-image`、`step-5`、`longcat-2-5`、`skyreels`、`minimax-h3`、`unitree`、`unitree-gd01`（共 40 只）。
+`gpt-5-5`、`gpt-5-6`、`gpt-6-luna`、`gpt-6-sol`、`openai-codex`、`sora-2`、`chatgpt-dots`、`claude-fable`、`claude-mythos`、`claude-cowork`、`gemini-live`、`gemma-4`、`gemini-omni`、`lyria`、`genie-3`、`google-antigravity`、`gemini-robotics`、`muse-spark`、`mistral-medium`、`phi-4`、`mai-thinking`、`mai-image`、`sd-1-5`、`sdxl`、`flux-3`、`runway`、`luma-ray3`、`eleven-v4`、`langchain`、`pi-zero`、`wan-3`、`seedream-5`、`hunyuan-image`、`step-5`、`longcat-2-5`、`skyreels`、`minimax-h3`、`unitree`、`unitree-gd01`（共 39 只）。
 
 ## 现有“进化为 UR”的链条（保留，仅列出）
 
