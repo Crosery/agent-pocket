@@ -244,7 +244,8 @@ test('processed assets match their specs', (t) => {
     if (sprite) assert.equal(png.colorType, 6, `${tag}: must be RGBA`)
     if (j.process === 'sheet') {
       const cols = png.width / sheetCell
-      assert.ok(cols === sheetFrames || cols === sheetWalkFrames + 1, `${tag}: unsupported sheet columns`)
+      const { sheetIdleFrames } = CONTENT.config.sprites
+      assert.ok(cols === sheetFrames || cols === sheetWalkFrames + 1 || cols === sheetIdleFrames + sheetWalkFrames, `${tag}: unsupported sheet columns`)
       assert.equal(png.height, sheetCell * rows, `${tag}: sheet rows`)
       const rgba = png.rgba!
       for (let r = 0; r < rows; r++) {
@@ -333,9 +334,25 @@ test('every character has four articulated idle loops with planted shoes and unc
       }
       return sizes.reduce((sum, size) => sum + size, 0) - Math.max(0, ...sizes)
     }
+    const authored = source.width === cell * (sprites.sheetIdleFrames + sprites.sheetWalkFrames)
     for (const [dir, row] of Object.entries(sprites.sheetRows)) {
       const tag = `${character.id}/${dir}`
       const neutral = crop(source, 0, row)
+      if (authored) {
+        // Motion-transfer atlases (tools/motion_transfer.py) ship real idle and walk poses; only the contract applies.
+        const poses = new Set<string>()
+        for (let col = 0; col < sprites.sheetIdleFrames + sprites.sheetWalkFrames; col++) {
+          const pose = crop(atlas, col, row)
+          if (col < sprites.sheetIdleFrames) poses.add(Buffer.from(pose).toString('base64'))
+          assert.ok(detached(pose) <= Math.max(2, detached(neutral)), `${tag}/${col}: disconnected body part`)
+          for (let i = 3; i < pose.length; i += 4) assert.ok(pose[i] === 0 || pose[i] === 255, `${tag}: preserve pixel alpha`)
+        }
+        assert.ok(poses.size >= 4, `${tag}: only ${poses.size} distinct idle poses`)
+        const walk = new Set<string>()
+        for (let col = 0; col < sprites.sheetWalkFrames; col++) walk.add(Buffer.from(crop(atlas, col + sprites.sheetIdleFrames, row)).toString('base64'))
+        assert.ok(walk.size >= 6, `${tag}: walk cycle has only ${walk.size} distinct poses`)
+        continue
+      }
       const top = Math.floor(neutral.findIndex((value, i) => i % 4 === 3 && value === 255) / (cell * 4))
       const bodyStart = Math.ceil(top + (62 - top) * 0.48)
       let bodyMotion = 0
