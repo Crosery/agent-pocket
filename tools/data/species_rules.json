@@ -4,6 +4,12 @@
   "output": "content/species.json",
   "rosterDoc": "docs/roster.md",
   "statKeys": ["hp", "atk", "def", "spa", "spd", "spe"],
+  "statShape": {
+    "_doc": "Balance rules (docs/balance.md section 2): bandFloor lifts weak outliers inside their rarity band, evolutionStep bounds the BST gain of an evolution, speedBand tames speed. Applied after the rarity-band fit (docs/balance.md section 2). Speed is ordinal (only who is faster matters), so the researched speed spread is compressed toward a pivot and the points taken from fast species are refunded to hp/def/spd (slow species give theirs back); BST is preserved exactly. Species never leave their rarity band.",
+    "bandFloor": 0.2,
+    "evolutionStep": {"min": 1.08, "max": 1.6},
+    "speedBand": {"pivot": 80, "keep": 0.4, "refund": ["hp", "def", "spd"]}
+  },
   "starters": ["o1", "claude-haiku", "deepseek-v3"],
   "attackPreference": {"_doc": "physical if atk >= spa*(1+margin), special if spa >= atk*(1+margin), else mixed", "margin": 0.1},
   "keywordFields": ["id", "family", "company", "nameEn"],

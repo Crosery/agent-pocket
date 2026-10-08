@@ -14,9 +14,9 @@
 
 | 初始伙伴 | 公司 | 属性 | 稀有度 | BST | 进化链 |
 |---|---|---|---|---|---|
-| o1 | OpenAI | 推理 | R | 340 | o1 (Lv16) → GPT-5 (Lv36) → GPT-6 Astra（星） |
-| Claude Haiku 4.5 | Anthropic | 代码 | R | 340 | Claude Haiku 4.5 (Lv16) → Claude Opus 4.8 (Lv36) → Claude Opus 5.5 |
-| DeepSeek-V3 | DeepSeek | 算力 | R | 340 | DeepSeek-V3 (Lv16) → DeepSeek-R1 深度思考 (Lv36) → DeepSeek-V4 / V4.1 |
+| o1 | OpenAI | 推理 | R | 348 | o1 (Lv16) → GPT-5 (Lv36) → GPT-6 Astra（星） |
+| Claude Haiku 4.5 | Anthropic | 代码 | R | 348 | Claude Haiku 4.5 (Lv16) → Claude Opus 4.8 (Lv36) → Claude Opus 5.5 |
+| DeepSeek-V3 | DeepSeek | 算力 | R | 348 | DeepSeek-V3 (Lv16) → DeepSeek-R1 深度思考 (Lv36) → DeepSeek-V4 / V4.1 |
 
 ## 稀有度分布
 
@@ -31,7 +31,50 @@
 
 ## BST 校正
 
-全部研究数据的 BST 均在稀有度区间内，未做缩放。
+- o1: BST 340 outside R [348,420] -> scaled to 348
+- claude-haiku: BST 340 outside R [348,420] -> scaled to 348
+- claude-mythos: BST 642 outside MYTHIC [656,720] -> scaled to 656
+- eleven-v4: BST 572 outside UR [574,630] -> scaled to 574
+- deepseek-v3: BST 340 outside R [348,420] -> scaled to 348
+- qwen-1: BST 247 outside N [258,330] -> scaled to 258
+- qwen3-8-max: BST 564 outside UR [574,630] -> scaled to 574
+- kimi-k3: BST 570 outside UR [574,630] -> scaled to 574
+- chatglm: BST 255 outside N [258,330] -> scaled to 258
+- glm-5-3: BST 565 outside UR [574,630] -> scaled to 574
+- hunyuan: BST 251 outside N [258,330] -> scaled to 258
+- baichuan-2: BST 249 outside N [258,330] -> scaled to 258
+- minimax-h3: BST 565 outside UR [574,630] -> scaled to 574
+- unitree-gd01: BST 570 outside UR [574,630] -> scaled to 574
+- kimi-k2-thinking: BST 430 outside SR [434,490] -> scaled to 434
+- gpt-5-5 -> gpt-5-6: evolution step set to BST 509 -> 550
+- codex-2021 -> gpt-5-3-codex: evolution step set to BST 325 -> 520
+- gemini-2-5-pro -> gemini-3-1-pro: evolution step set to BST 440 -> 476
+- nano-banana-2 -> nano-banana-2-1: evolution step set to BST 509 -> 550
+- veo-3 -> veo-3-1: evolution step set to BST 453 -> 490
+- grok-1 -> grok-4: evolution step set to BST 290 -> 464
+- llama-3-1 -> llama-4: evolution step set to BST 367 -> 397
+- perplexity -> perplexity-comet: evolution step set to BST 453 -> 490
+- langchain -> langgraph: evolution step set to BST 485 -> 524
+- qwen2-5 -> qwen3-8-max: evolution step set to BST 359 -> 574
+- chatglm -> glm-4-5: evolution step set to BST 277 -> 442
+- doubao-pro -> doubao-seed-2: evolution step set to BST 294 -> 469
+- hunyuan -> hy3: evolution step set to BST 285 -> 456
+- mimo-7b -> mimo-v2-flash: evolution step set to BST 272 -> 434
+- kling-3 -> kling-4: evolution step set to BST 509 -> 550
+- unitree -> unitree-gd01: evolution step set to BST 543 -> 587
+- gpt-5-4 -> gpt-5-5: evolution step set to BST 478 -> 517
+- lyria-3 -> lyria: evolution step set to BST 452 -> 489
+- runway-gen-4 -> runway: evolution step set to BST 438 -> 474
+- hunyuan-image-3 -> hunyuan-image: evolution step set to BST 450 -> 487
+- longcat-2 -> longcat-2-5: evolution step set to BST 435 -> 470
+- gpt-5-5 -> gpt-5-6: evolution step set to BST 509 -> 550
+- nano-banana -> nano-banana-2: evolution step set to BST 485 -> 524
+- nano-banana-2 -> nano-banana-2-1: evolution step set to BST 509 -> 550
+- gpt-5-4 -> gpt-5-5: evolution step set to BST 478 -> 517
+- gpt-5-5 -> gpt-5-6: evolution step set to BST 509 -> 550
+- nano-banana -> nano-banana-2: evolution step set to BST 485 -> 524
+- nano-banana-2 -> nano-banana-2-1: evolution step set to BST 509 -> 550
+- gpt-5-4 -> gpt-5-5: evolution step set to BST 478 -> 517
 
 ## 全图鉴
 
@@ -41,15 +84,15 @@
 | 2 | GPT-4 | OpenAI | US | 对话/推理 | R | 370 | ← GPT-3.5；→ GPT-4o Lv34 |
 | 3 | GPT-4o | OpenAI | US | 对话/音律 | SR | 443 | ← GPT-4 |
 | 4 | ChatGPT（超级应用） | OpenAI | US | 对话/智能体 | UR | 615 | — |
-| 5 | o1 | OpenAI | US | 推理 | R | 340 | → GPT-5 Lv16 |
+| 5 | o1 | OpenAI | US | 推理 | R | 348 | → GPT-5 Lv16 |
 | 6 | GPT-5 | OpenAI | US | 推理/对话 | SSR | 512 | ← o1；→ GPT-6 Astra（星） Lv36 |
 | 7 | GPT-6 Astra（星） | OpenAI | US | 推理/算力 | UR | 612 | ← GPT-5 |
 | 8 | GPT-5.4 | OpenAI | US | 推理/对话 | SR | 478 | → GPT-5.5「土豆」 Lv28 |
-| 9 | GPT-5.5「土豆」 | OpenAI | US | 推理/幻觉 | SSR | 520 | ← GPT-5.4；→ GPT-5.6（日 / 地 / 月） Lv40 |
-| 10 | GPT-5.6（日 / 地 / 月） | OpenAI | US | 推理/对齐 | SSR | 545 | ← GPT-5.5「土豆」 |
+| 9 | GPT-5.5「土豆」 | OpenAI | US | 推理/幻觉 | SSR | 517 | ← GPT-5.4；→ GPT-5.6（日 / 地 / 月） Lv40 |
+| 10 | GPT-5.6（日 / 地 / 月） | OpenAI | US | 推理/对齐 | SSR | 550 | ← GPT-5.5「土豆」 |
 | 11 | GPT-6 Luna（月） | OpenAI | US | 算力/对话 | SR | 485 | → GPT-6.1 Sol（日） Lv30 |
 | 12 | GPT-6.1 Sol（日） | OpenAI | US | 代码/推理 | UR | 600 | ← GPT-6 Luna（月） |
-| 13 | Codex 初代 | OpenAI | US | 代码 | N | 268 | → GPT-5.3-Codex Lv24 |
+| 13 | Codex 初代 | OpenAI | US | 代码 | N | 325 | → GPT-5.3-Codex Lv24 |
 | 14 | GPT-5.3-Codex | OpenAI | US | 代码/智能体 | SSR | 520 | ← Codex 初代；→ OpenAI Codex（编程智能体） Lv40 |
 | 15 | OpenAI Codex（编程智能体） | OpenAI | US | 代码/智能体 | UR | 623 | ← GPT-5.3-Codex |
 | 16 | gpt-oss-120b | OpenAI | US | 开源/推理 | R | 395 | — |
@@ -60,7 +103,7 @@
 | 21 | Sora 2（已停服） | OpenAI | US | 影像/幻觉 | SSR | 527 | ← Sora（初代） |
 | 22 | ChatGPT Agent | OpenAI | US | 智能体/对话 | SR | 472 | → ChatGPT dots（常驻智能体） Lv28 |
 | 23 | ChatGPT dots（常驻智能体） | OpenAI | US | 智能体 | SSR | 545 | ← ChatGPT Agent |
-| 24 | Claude Haiku 4.5 | Anthropic | US | 代码 | R | 340 | → Claude Opus 4.8 Lv16 |
+| 24 | Claude Haiku 4.5 | Anthropic | US | 代码 | R | 348 | → Claude Opus 4.8 Lv16 |
 | 25 | Claude Opus 4.8 | Anthropic | US | 代码/对齐 | SSR | 512 | ← Claude Haiku 4.5；→ Claude Opus 5.5 Lv36 |
 | 26 | Claude Opus 5.5 | Anthropic | US | 代码/推理 | UR | 630 | ← Claude Opus 4.8 |
 | 27 | Claude 3 Opus | Anthropic | US | 创作/对齐 | R | 365 | → Claude 3.5 Sonnet Lv26 |
@@ -69,7 +112,7 @@
 | 30 | Claude Fable 5 | Anthropic | US | 推理/对齐 | SSR | 528 | → Claude Fable 5.1 Lv36 |
 | 31 | Claude Fable 5.1 | Anthropic | US | 推理/对齐 | UR | 612 | ← Claude Fable 5 |
 | 32 | Claude Mythos Preview | Anthropic | US | 代码/对齐 | SSR | 548 | — |
-| 33 | Claude Mythos 5.1 | Anthropic | US | 代码/幻觉 | MYTHIC | 642 | — |
+| 33 | Claude Mythos 5.1 | Anthropic | US | 代码/幻觉 | MYTHIC | 656 | — |
 | 34 | Claude Code | Anthropic | US | 代码/智能体 | UR | 625 | — |
 | 35 | Claude Computer Use | Anthropic | US | 智能体/视觉 | R | 392 | → Claude 应用（Cowork 合体） Lv28 |
 | 36 | Claude 应用（Cowork 合体） | Anthropic | US | 智能体/创作 | SSR | 545 | ← Claude Computer Use |
@@ -79,32 +122,32 @@
 | 40 | Gemini 3.8 Live | Google | US | 音律/对话 | SSR | 535 | — |
 | 41 | Gemini 1.5 Pro | Google | US | 检索/视觉 | R | 366 | → Gemini 2.5 Pro Lv26 |
 | 42 | Gemini 2.5 Pro | Google | US | 推理/代码 | SR | 440 | ← Gemini 1.5 Pro；→ Gemini 3.1 Pro Preview Lv40 |
-| 43 | Gemini 3.1 Pro Preview | Google | US | 推理/视觉 | SR | 470 | ← Gemini 2.5 Pro |
+| 43 | Gemini 3.1 Pro Preview | Google | US | 推理/视觉 | SR | 476 | ← Gemini 2.5 Pro |
 | 44 | Gemma 3 | Google | US | 开源/视觉 | R | 372 | → Gemma 4 Lv30 |
 | 45 | Gemma 4 | Google | US | 开源/视觉 | SR | 470 | ← Gemma 3 |
 | 46 | Nano Banana 纳米香蕉 | Google | US | 视觉 | SR | 485 | → Nano Banana 2 Lv34 |
-| 47 | Nano Banana 2 | Google | US | 视觉/算力 | SSR | 535 | ← Nano Banana 纳米香蕉；→ Nano Banana 2.1 Lv46 |
-| 48 | Nano Banana 2.1 | Google | US | 视觉/算力 | SSR | 548 | ← Nano Banana 2 |
-| 49 | Veo 3 | Google | US | 影像/音律 | SR | 480 | → Veo 3.1 Lv26 |
-| 50 | Veo 3.1 | Google | US | 影像/音律 | SR | 488 | ← Veo 3；→ Gemini Omni 1.1 Flash Lv40 |
+| 47 | Nano Banana 2 | Google | US | 视觉/算力 | SSR | 509 | ← Nano Banana 纳米香蕉；→ Nano Banana 2.1 Lv46 |
+| 48 | Nano Banana 2.1 | Google | US | 视觉/算力 | SSR | 550 | ← Nano Banana 2 |
+| 49 | Veo 3 | Google | US | 影像/音律 | SR | 453 | → Veo 3.1 Lv26 |
+| 50 | Veo 3.1 | Google | US | 影像/音律 | SR | 490 | ← Veo 3；→ Gemini Omni 1.1 Flash Lv40 |
 | 51 | Gemini Omni 1.1 Flash | Google | US | 影像/视觉 | SSR | 545 | ← Veo 3.1 |
 | 52 | Lyria 2 | Google | US | 音律 | R | 385 | → Lyria 3 Lv22 |
 | 53 | Lyria 3 | Google | US | 音律/创作 | SR | 452 | ← Lyria 2；→ Lyria 3.5 Lv38 |
-| 54 | Lyria 3.5 | Google | US | 音律/创作 | SR | 470 | ← Lyria 3 |
+| 54 | Lyria 3.5 | Google | US | 音律/创作 | SR | 489 | ← Lyria 3 |
 | 55 | Genie 3 精灵世界 | Google | US | 影像/智能体 | UR | 600 | — |
 | 56 | NotebookLM | Google | US | 检索/创作 | SSR | 545 | — |
 | 57 | Gemini CLI | Google | US | 代码/智能体 | R | 395 | → Google Antigravity 反重力 Lv30 |
 | 58 | Google Antigravity 反重力 | Google | US | 代码/智能体 | SSR | 545 | ← Gemini CLI |
 | 59 | Gemini Robotics 2 | Google | US | 智能体/影像 | SSR | 530 | — |
 | 60 | 阿尔法（AlphaGo / AlphaFold） | Google DeepMind | UK | 推理/检索 | MYTHIC | 665 | — |
-| 61 | Grok-1 | SpaceXAI (formerly xAI) | US | 对话/幻觉 | N | 267 | → Grok 4 Lv24 |
+| 61 | Grok-1 | SpaceXAI (formerly xAI) | US | 对话/幻觉 | N | 290 | → Grok 4 Lv24 |
 | 62 | Grok 4 | SpaceXAI (formerly xAI) | US | 推理/幻觉 | SR | 464 | ← Grok-1；→ Grok 4.7 Lv44 |
 | 63 | Grok 4.7 | SpaceXAI (formerly xAI) | US | 推理/代码 | UR | 583 | ← Grok 4 |
 | 64 | Ani（Grok 陪伴） | SpaceXAI (formerly xAI) | US | 对话/幻觉 | R | 400 | — |
 | 65 | Grok Imagine | SpaceXAI (formerly xAI) | US | 影像/音律 | SSR | 545 | — |
 | 66 | LLaMA 初代 | Meta | US | 开源 | N | 260 | → Llama 3.1 405B Lv20 |
 | 67 | Llama 3.1 405B | Meta | US | 开源/推理 | R | 367 | ← LLaMA 初代；→ Llama 4（Scout / Maverick） Lv38 |
-| 68 | Llama 4（Scout / Maverick） | Meta | US | 开源/幻觉 | R | 385 | ← Llama 3.1 405B |
+| 68 | Llama 4（Scout / Maverick） | Meta | US | 开源/幻觉 | R | 397 | ← Llama 3.1 405B |
 | 69 | Muse Spark 灵感火花 | Meta | US | 推理/视觉 | UR | 592 | — |
 | 70 | Meta Muse 个人智能体 | Meta | US | 智能体/对话 | SSR | 545 | — |
 | 71 | Moltbook 智能体论坛 | Meta (acquired) | US | 幻觉/对话 | R | 387 | — |
@@ -134,14 +177,14 @@
 | 95 | FLUX.2 | Black Forest Labs | DE | 视觉/开源 | SR | 470 | ← FLUX.1；→ FLUX 3 Lv40 |
 | 96 | FLUX 3 | Black Forest Labs | DE | 影像/视觉 | SSR | 545 | ← FLUX.2 |
 | 97 | Runway Gen-4 | Runway | US | 影像/创作 | SR | 438 | → Runway Gen-4.5 Lv30 |
-| 98 | Runway Gen-4.5 | Runway | US | 影像/创作 | SR | 468 | ← Runway Gen-4 |
+| 98 | Runway Gen-4.5 | Runway | US | 影像/创作 | SR | 474 | ← Runway Gen-4 |
 | 99 | Luma Ray3 | Luma AI | US | 影像/视觉 | SR | 465 | — |
 | 100 | Suno v3 | Suno | US | 音律/创作 | R | 379 | → Suno v5 Lv24 |
 | 101 | Suno v5 | Suno | US | 音律/创作 | SR | 485 | ← Suno v3；→ Suno v6 Lv44 |
 | 102 | Suno v6 | Suno | US | 音律/创作 | UR | 615 | ← Suno v5 |
 | 103 | ElevenLabs 多语言 v2 | ElevenLabs | US | 音律/对话 | R | 415 | → Eleven v3 Lv26 |
 | 104 | Eleven v3 | ElevenLabs | US | 音律/对话 | SR | 478 | ← ElevenLabs 多语言 v2；→ Eleven v4 Lv42 |
-| 105 | Eleven v4 | ElevenLabs | US | 音律/对话 | UR | 572 | ← Eleven v3 |
+| 105 | Eleven v4 | ElevenLabs | US | 音律/对话 | UR | 574 | ← Eleven v3 |
 | 106 | Marble 世界大理石 | World Labs | US | 视觉/影像 | SSR | 537 | — |
 | 107 | Cursor | Anysphere (SpaceX / SpaceXAI) | US | 代码/智能体 | UR | 608 | — |
 | 108 | Windsurf 风帆 | Codeium -> Cognition | US | 代码/智能体 | SR | 472 | — |
@@ -151,8 +194,8 @@
 | 112 | OpenCode | Anomaly (formerly SST) | US | 开源/代码 | SSR | 544 | — |
 | 113 | Manus | Butterfly Effect (Meta deal being unwound) | SG | 智能体 | SR | 485 | → Manus 2.0（Manus Studio） Lv32 |
 | 114 | Manus 2.0（Manus Studio） | Butterfly Effect (Meta deal being unwound) | SG | 智能体/算力 | SSR | 545 | ← Manus |
-| 115 | Perplexity | Perplexity AI | US | 检索 | SR | 470 | → Comet 彗星浏览器 Lv28 |
-| 116 | Comet 彗星浏览器 | Perplexity AI | US | 检索/智能体 | SR | 488 | ← Perplexity；→ Perplexity Computer Lv40 |
+| 115 | Perplexity | Perplexity AI | US | 检索 | SR | 453 | → Comet 彗星浏览器 Lv28 |
+| 116 | Comet 彗星浏览器 | Perplexity AI | US | 检索/智能体 | SR | 490 | ← Perplexity；→ Perplexity Computer Lv40 |
 | 117 | Perplexity Computer | Perplexity AI | US | 检索/智能体 | SSR | 542 | ← Comet 彗星浏览器 |
 | 118 | Character.AI | Character Technologies | US | 对话/创作 | R | 415 | — |
 | 119 | Neuro-sama（牛肉） | Vedal (independent) | UK | 对话/幻觉 | SR | 470 | — |
@@ -162,18 +205,18 @@
 | 123 | Hermes Agent 爱马仕智能体 | Nous Research | US | 智能体/开源 | SSR | 545 | — |
 | 124 | AutoGPT | Significant Gravitas | UK | 智能体/幻觉 | R | 391 | — |
 | 125 | LangChain | LangChain | US | 智能体/开源 | SR | 485 | → LangGraph Lv32 |
-| 126 | LangGraph | LangChain | US | 智能体/开源 | SSR | 520 | ← LangChain |
+| 126 | LangGraph | LangChain | US | 智能体/开源 | SSR | 524 | ← LangChain |
 | 127 | Figure 03 | Figure AI | US | 智能体/视觉 | SSR | 545 | — |
 | 128 | 特斯拉 Optimus | Tesla | US | 智能体/算力 | SR | 485 | — |
 | 129 | π0.7 物理智能 | Physical Intelligence | US | 智能体/开源 | SSR | 530 | — |
 | 130 | AGI 奇点 | Unknown (all labs) | INTL | 推理/对齐 | MYTHIC | 715 | — |
-| 131 | DeepSeek-V3 | DeepSeek | CN | 算力 | R | 340 | → DeepSeek-R1 深度思考 Lv16 |
+| 131 | DeepSeek-V3 | DeepSeek | CN | 算力 | R | 348 | → DeepSeek-R1 深度思考 Lv16 |
 | 132 | DeepSeek-R1 深度思考 | DeepSeek | CN | 推理/开源 | SSR | 512 | ← DeepSeek-V3；→ DeepSeek-V4 / V4.1 Lv36 |
 | 133 | DeepSeek-V4 / V4.1 | DeepSeek | CN | 开源/推理 | UR | 585 | ← DeepSeek-R1 深度思考 |
 | 134 | DeepSeek Harness 虎鲸 | DeepSeek | CN | 智能体/开源 | SSR | 531 | — |
-| 135 | 通义千问 1.0 | Alibaba | CN | 对话/开源 | N | 247 | → 通义千问 2.5 Lv18 |
-| 136 | 通义千问 2.5 | Alibaba | CN | 开源 | R | 352 | ← 通义千问 1.0；→ 通义千问 3.8-Max Lv38 |
-| 137 | 通义千问 3.8-Max | Alibaba | CN | 推理/智能体 | UR | 564 | ← 通义千问 2.5 |
+| 135 | 通义千问 1.0 | Alibaba | CN | 对话/开源 | N | 258 | → 通义千问 2.5 Lv18 |
+| 136 | 通义千问 2.5 | Alibaba | CN | 开源 | R | 359 | ← 通义千问 1.0；→ 通义千问 3.8-Max Lv38 |
+| 137 | 通义千问 3.8-Max | Alibaba | CN | 推理/智能体 | UR | 574 | ← 通义千问 2.5 |
 | 138 | Qwen3.8-Flash-Next | Alibaba | CN | 算力/开源 | SSR | 521 | — |
 | 139 | 千问 App | Alibaba | CN | 对话/智能体 | SSR | 545 | — |
 | 140 | 千问图像 3.1 | Alibaba (Qwen) | CN | 视觉/创作 | SR | 488 | — |
@@ -187,13 +230,13 @@
 | 148 | Qoder | Alibaba | CN | 代码/智能体 | SR | 485 | — |
 | 149 | Kimi 智能助手 | Moonshot AI | CN | 对话/检索 | R | 357 | → Kimi K2 Lv24 |
 | 150 | Kimi K2 | Moonshot AI | CN | 智能体/开源 | SR | 448 | ← Kimi 智能助手；→ Kimi K3 Lv44 |
-| 151 | Kimi K3 | Moonshot AI | CN | 开源/智能体 | UR | 570 | ← Kimi K2 |
+| 151 | Kimi K3 | Moonshot AI | CN | 开源/智能体 | UR | 574 | ← Kimi K2 |
 | 152 | Kimi Work | Moonshot AI | CN | 智能体 | SSR | 539 | — |
-| 153 | ChatGLM-6B | Zhipu AI (Z.ai) | CN | 对话/开源 | N | 255 | → GLM-4.5 Lv22 |
+| 153 | ChatGLM-6B | Zhipu AI (Z.ai) | CN | 对话/开源 | N | 277 | → GLM-4.5 Lv22 |
 | 154 | GLM-4.5 | Zhipu AI (Z.ai) | CN | 智能体/开源 | SR | 442 | ← ChatGLM-6B；→ GLM-5.3 Lv42 |
-| 155 | GLM-5.3 | Zhipu AI (Z.ai) | CN | 代码/开源 | UR | 565 | ← GLM-4.5 |
+| 155 | GLM-5.3 | Zhipu AI (Z.ai) | CN | 代码/开源 | UR | 574 | ← GLM-4.5 |
 | 156 | AutoGLM | Zhipu AI (Z.ai) | CN | 智能体/视觉 | SR | 484 | — |
-| 157 | 豆包大模型 Pro | ByteDance | CN | 对话/算力 | N | 278 | → 豆包 Seed 2.0 Lv20 |
+| 157 | 豆包大模型 Pro | ByteDance | CN | 对话/算力 | N | 294 | → 豆包 Seed 2.0 Lv20 |
 | 158 | 豆包 Seed 2.0 | ByteDance | CN | 智能体/算力 | SR | 469 | ← 豆包大模型 Pro；→ 豆包 Seed 2.1 Pro Lv42 |
 | 159 | 豆包 Seed 2.1 Pro | ByteDance | CN | 智能体/视觉 | SSR | 526 | ← 豆包 Seed 2.0 |
 | 160 | 豆包 | ByteDance | CN | 对话/音律 | UR | 590 | — |
@@ -205,12 +248,12 @@
 | 166 | 即梦 Seedance 2.5 | ByteDance Seed | CN | 影像/音律 | UR | 612 | ← 即梦 Seedance 2.0 |
 | 167 | Trae | ByteDance | CN | 代码/智能体 | SR | 485 | — |
 | 168 | 扣子 Coze | ByteDance | CN | 智能体/创作 | SSR | 537 | — |
-| 169 | 腾讯混元 | Tencent | CN | 对话 | N | 251 | → 混元 Hy3 Lv24 |
+| 169 | 腾讯混元 | Tencent | CN | 对话 | N | 285 | → 混元 Hy3 Lv24 |
 | 170 | 混元 Hy3 | Tencent | CN | 推理/开源 | SR | 456 | ← 腾讯混元；→ 混元 Hy4 Preview Lv44 |
 | 171 | 混元 Hy4 Preview | Tencent | CN | 智能体/开源 | SSR | 525 | ← 混元 Hy3 |
 | 172 | 腾讯元宝 | Tencent | CN | 对话/检索 | SSR | 528 | — |
 | 173 | 混元生图 3.0 | Tencent Hunyuan | CN | 视觉/开源 | SR | 450 | → 混元生图 3.5（预览） Lv30 |
-| 174 | 混元生图 3.5（预览） | Tencent Hunyuan | CN | 视觉/开源 | SR | 476 | ← 混元生图 3.0 |
+| 174 | 混元生图 3.5（预览） | Tencent Hunyuan | CN | 视觉/开源 | SR | 487 | ← 混元生图 3.0 |
 | 175 | WorkBuddy | Tencent | CN | 智能体/对话 | SSR | 538 | — |
 | 176 | 文心一言 3.5 | Baidu | CN | 对话/检索 | N | 265 | → 文心 4.5 Lv22 |
 | 177 | 文心 4.5 | Baidu | CN | 视觉/开源 | R | 362 | ← 文心一言 3.5；→ 文心 5.1 Preview Lv40 |
@@ -221,19 +264,19 @@
 | 182 | 讯飞星火 V4.0 | iFlytek | CN | 音律/对话 | N | 266 | → 讯飞星火 X2.5 Lv28 |
 | 183 | 讯飞星火 X2.5 | iFlytek | CN | 推理/算力 | R | 390 | ← 讯飞星火 V4.0 |
 | 184 | 商汤日日新 6.7 Flash-Lite | SenseTime | CN | 视觉/创作 | R | 370 | — |
-| 185 | 百川 2 | Baichuan AI | CN | 对话/开源 | N | 249 | → 百川 M3 Lv26 |
+| 185 | 百川 2 | Baichuan AI | CN | 对话/开源 | N | 258 | → 百川 M3 Lv26 |
 | 186 | 百川 M3 | Baichuan AI | CN | 对齐/检索 | R | 385 | ← 百川 2 |
-| 187 | 小米 MiMo-7B | Xiaomi | CN | 推理/开源 | N | 268 | → MiMo-V2-Flash Lv22 |
+| 187 | 小米 MiMo-7B | Xiaomi | CN | 推理/开源 | N | 272 | → MiMo-V2-Flash Lv22 |
 | 188 | MiMo-V2-Flash | Xiaomi | CN | 算力/开源 | SR | 434 | ← 小米 MiMo-7B；→ MiMo-V2.6-Pro Lv44 |
 | 189 | MiMo-V2.6-Pro | Xiaomi | CN | 开源/推理 | UR | 580 | ← MiMo-V2-Flash |
 | 190 | 美团 LongCat-Flash | Meituan | CN | 算力/智能体 | R | 379 | → 美团 LongCat 2.0 Lv24 |
 | 191 | 美团 LongCat 2.0 | Meituan | CN | 智能体/算力 | SR | 435 | ← 美团 LongCat-Flash；→ 美团龙猫 LongCat-2.5 Lv40 |
-| 192 | 美团龙猫 LongCat-2.5 | Meituan | CN | 智能体/视觉 | SR | 460 | ← 美团 LongCat 2.0 |
+| 192 | 美团龙猫 LongCat-2.5 | Meituan | CN | 智能体/视觉 | SR | 470 | ← 美团 LongCat 2.0 |
 | 193 | 蚂蚁百灵 Ling 3.0 / Ring 2.6 | Ant Group | CN | 推理/开源 | R | 371 | — |
 | 194 | 蚂蚁阿福 | Ant Group | CN | 对话/对齐 | SSR | 520 | — |
 | 195 | 可灵 1.0 | Kuaishou (Kling AI) | CN | 影像 | R | 351 | → 可灵 3.0 Lv28 |
-| 196 | 可灵 3.0 | Kuaishou (Kling AI) | CN | 影像/音律 | SSR | 530 | ← 可灵 1.0；→ 可灵 4.0 Lv48 |
-| 197 | 可灵 4.0 | Kling AI (Kuaishou spin-off) | CN | 影像/视觉 | SSR | 548 | ← 可灵 3.0 |
+| 196 | 可灵 3.0 | Kuaishou (Kling AI) | CN | 影像/音律 | SSR | 509 | ← 可灵 1.0；→ 可灵 4.0 Lv48 |
+| 197 | 可灵 4.0 | Kling AI (Kuaishou spin-off) | CN | 影像/视觉 | SSR | 550 | ← 可灵 3.0 |
 | 198 | 书生 Intern-S2 | Shanghai AI Laboratory | CN | 检索/推理 | R | 381 | — |
 | 199 | 天工 Mureka V9 | Kunlun Tech (Skywork AI) | CN | 音律/创作 | SR | 482 | — |
 | 200 | 天工 SkyReels V4 | Skywork AI (Kunlun Tech) | CN | 影像/创作 | SR | 488 | — |
@@ -248,11 +291,11 @@
 | 209 | MiniMax-M3 | MiniMax | CN | 代码/视觉 | SR | 461 | ← MiniMax-M2 |
 | 210 | 海螺 Video-01 | MiniMax | CN | 影像 | R | 358 | → 海螺 02 Lv24 |
 | 211 | 海螺 02 | MiniMax | CN | 影像 | SR | 455 | ← 海螺 Video-01；→ 海螺 H3 Lv40 |
-| 212 | 海螺 H3 | MiniMax | CN | 影像/开源 | UR | 565 | ← 海螺 02 |
+| 212 | 海螺 H3 | MiniMax | CN | 影像/开源 | UR | 574 | ← 海螺 02 |
 | 213 | MiniMax 音乐 3.0 | MiniMax | CN | 音律/创作 | SR | 485 | — |
 | 214 | Tripo H3.1 | VAST (Tripo AI) | CN | 视觉/算力 | SR | 485 | — |
 | 215 | 宇树 G1/H2 | Unitree Robotics | CN | 智能体/算力 | SSR | 543 | → 宇树 GD01 载人机甲 Lv50 |
-| 216 | 宇树 GD01 载人机甲 | Unitree Robotics | CN | 算力/智能体 | UR | 570 | ← 宇树 G1/H2 |
+| 216 | 宇树 GD01 载人机甲 | Unitree Robotics | CN | 算力/智能体 | UR | 587 | ← 宇树 G1/H2 |
 | 217 | 智元机器人 | AgiBot | CN | 智能体/视觉 | SSR | 541 | — |
 | 218 | o3-mini | OpenAI | US | 推理 | R | 368 | → o3 Lv20 |
 | 219 | o3 | OpenAI | US | 推理/代码 | SR | 448 | ← o3-mini；→ o3-pro Lv40 |
@@ -284,7 +327,7 @@
 | 245 | 通义千问 Qwen3.7-Max | Alibaba | CN | 开源/推理 | SSR | 520 | ← 通义千问 Qwen3.5 |
 | 246 | Qwen3-Coder | Alibaba | CN | 代码/开源 | SR | 440 | → Qwen3-Coder-Next Lv32 |
 | 247 | Qwen3-Coder-Next | Alibaba | CN | 代码/智能体 | SSR | 502 | ← Qwen3-Coder |
-| 248 | Kimi K2 Thinking | Moonshot AI | CN | 推理/智能体 | SR | 430 | → Kimi K2.5 Lv26 |
+| 248 | Kimi K2 Thinking | Moonshot AI | CN | 推理/智能体 | SR | 434 | → Kimi K2.5 Lv26 |
 | 249 | Kimi K2.5 | Moonshot AI | CN | 智能体/视觉 | SR | 470 | ← Kimi K2 Thinking；→ Kimi K2.6 Lv40 |
 | 250 | Kimi K2.6 | Moonshot AI | CN | 智能体/代码 | SSR | 515 | ← Kimi K2.5 |
 | 251 | GLM-4.7 | Zhipu AI (Z.ai) | CN | 智能体/代码 | SR | 438 | → GLM-5 Lv26 |
