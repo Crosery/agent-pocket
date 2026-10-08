@@ -161,10 +161,12 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
         lift += step * M.stepBounce * (running ? M.runBounceMul : 1)
         sy += (step - 0.5) * M.stepSquash
       } else if (layout.idleFrames === 1) sy += Math.sin(lifeT * M.breatheHz * Math.PI * 2) * M.breathe
+      // stretch while rising / falling (none at the apex), then a damped spring on touch-down: squash, overshoot, settle
+      if (hopT >= 0) sy += Math.abs(1 - 2 * hopT) * M.hopStretch
       if (landT >= 0) {
         landT += dt / (M.landMs / 1000)
         if (landT >= 1) landT = -1
-        else sy -= Math.sin(landT * Math.PI) * M.landSquash
+        else sy -= Math.exp(-M.landDamp * landT) * Math.cos(landT * M.landCycles * Math.PI * 2) * M.landSquash
       }
       let sx = 1 / Math.sqrt(sy)
       if (M.snapTexels) { sy = snapScale(sy, cell); sx = snapScale(sx, cell) }
@@ -335,6 +337,10 @@ void main() {
     },
     setMoving(m) { moving = m },
     setVisible(v) { visible = v; object.visible = v },
+    setCompanion(on) {
+      sprite.material.depthWrite = !on
+      layer(mesh, sprite, on ? 'companion' : 'creature')
+    },
     setShiny(s) {
       sprite.uniforms.uHue.value = s ? C.shiny.hue : 0
       sprite.uniforms.uSaturation.value = s ? C.shiny.saturation : 1

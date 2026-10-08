@@ -213,8 +213,8 @@
     "grassCut": 0.14,
     "grassCutMs": 140,
     "footInset": 2,
-    "renderOrder": {"player": 3, "remote": 2, "npc": 2, "creature": 1},
-    "depthBias": {"player": -0.012, "remote": 0, "npc": 0, "creature": 0.02},
+    "renderOrder": {"player": 4, "companion": 3, "remote": 2, "npc": 2, "creature": 1},
+    "depthBias": {"player": -0.012, "companion": 0.02, "remote": 0, "npc": 0, "creature": 0.02},
     "cardSegments": 8,
     "normalTilt": 0.6,
     "hop": {"height": 0.34, "ms": 300},
@@ -223,7 +223,7 @@
     "remoteAlpha": 1,
     "nameColor": "#ffffff",
     "walkCycle": {"stride": {"walk": 0.72, "run": 1.0}, "maxFps": 13, "teleportTiles": 2},
-    "motion": {"stepBounce": 0, "runBounceMul": 1, "stepSquash": 0, "stepsPerCycle": 2, "breathe": 0.006, "breatheHz": 0.55, "landSquash": 0.06, "landMs": 180, "snapTexels": true}
+    "motion": {"stepBounce": 0, "runBounceMul": 1, "stepSquash": 0, "stepsPerCycle": 2, "breathe": 0.006, "breatheHz": 0.55, "hopStretch": 0.1, "landSquash": 0.14, "landMs": 420, "landCycles": 1.25, "landDamp": 3.2, "snapTexels": true}
   },
   "creatures": {
     "height": 1.0,

@@ -53,6 +53,7 @@ export function createFollower(ctx: GameContext, deps: FollowerDeps = {}) {
     dropBack = F.cameraClear.dropBack.base + F.cameraClear.dropBack.perSize * size
     if (lead && k) {
       actor = ctx.world.createCreatureActor(lead.speciesId, lead.shiny)
+      actor.setCompanion?.(true)
       actor.setPosition(x, y, ctx.world.elevationAt(x, y))
     }
   }

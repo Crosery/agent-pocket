@@ -258,7 +258,7 @@ export interface ParticleKindDef {
 }
 
 /** Per actor kind: player, other characters, creatures. */
-export interface ActorKinds<T> { player: T; npc: T; remote: T; creature: T }
+export interface ActorKinds<T> { player: T; npc: T; remote: T; creature: T; companion: T }
 export interface ActorsConfig {
   height: number; width: number; alphaTest: number; walkFps: number; runFps: number
   /** Tall grass hides the body up to this fraction of `height` above the soles (eased in/out over grassCutMs;
@@ -268,7 +268,9 @@ export interface ActorsConfig {
   footInset: number
   /** Two cards on the same row share a depth: renderOrder draws the higher kind later and depthBias (world units
    * away from the camera, negative = toward it) settles what is left of the per-band depth error, so the player is
-   * never painted over by a follower or NPC standing level with it. cardSegments = horizontal bands per card. */
+   * never painted over by a follower or NPC standing level with it. The companion (the player's follower) draws
+   * just before the player and writes no depth, so the player always paints over it. cardSegments = horizontal
+   * bands per card. */
   renderOrder: ActorKinds<number>
   depthBias: ActorKinds<number>
   cardSegments: number
@@ -279,11 +281,14 @@ export interface ActorsConfig {
   walkCycle: { stride: { walk: number; run: number }; maxFps: number; teleportTiles: number }
   /** Chibi motion on top of the sheet (which already bakes a 1-texel step bob): extra step bounce (world units,
    * x runBounceMul when running) and squash per walk step (stepsPerCycle steps per sheet cycle), idle breathing
-   * (scale amplitude, Hz), landing squash after a hop. snapTexels rounds every scale to whole sheet texels so the
-   * pixel art never re-samples a fraction of a row (shimmer). */
+   * (scale amplitude, Hz). A hop stretches the card up by hopStretch at launch and touch-down (0 at the apex); the
+   * landing is a damped spring of landSquash amplitude over landMs: landCycles oscillations, decay landDamp (e-folds
+   * per landMs). snapTexels rounds every scale to whole sheet texels so the pixel art never re-samples a fraction
+   * of a row (shimmer). */
   motion: {
     stepBounce: number; runBounceMul: number; stepSquash: number; stepsPerCycle: number
-    breathe: number; breatheHz: number; landSquash: number; landMs: number; snapTexels: boolean
+    breathe: number; breatheHz: number; hopStretch: number
+    landSquash: number; landMs: number; landCycles: number; landDamp: number; snapTexels: boolean
   }
 }
 export interface CreaturesConfig {
@@ -846,12 +851,12 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
     if (!(A.grassCut >= 0 && A.grassCut < 1)) errs.push('actors.grassCut: must be a fraction of the height in 0..1')
     nonNeg('actors.grassCutMs', A.grassCutMs)
     if (!(A.footInset >= 0 && A.footInset < c.config.sprites.sheetCell / 2)) errs.push('actors.footInset: texels in 0..sheetCell/2')
-    for (const k of ['player', 'npc', 'remote', 'creature'] as const) {
+    for (const k of ['player', 'npc', 'remote', 'creature', 'companion'] as const) {
       if (!Number.isInteger(A.renderOrder?.[k])) errs.push(`actors.renderOrder.${k}: must be an integer`)
       if (!(typeof A.depthBias?.[k] === 'number' && Math.abs(A.depthBias[k]) < 0.1)) errs.push(`actors.depthBias.${k}: world units, |bias| < 0.1 (more sinks feet into the ground)`)
     }
     if (!(Number.isInteger(A.cardSegments) && A.cardSegments >= 1 && A.cardSegments <= 16)) errs.push('actors.cardSegments: integer 1..16')
-    for (const k of ['stepBounce', 'runBounceMul', 'stepSquash', 'breathe', 'breatheHz', 'landSquash', 'landMs'] as const) nonNeg(`actors.motion.${k}`, A.motion[k])
+    for (const k of ['stepBounce', 'runBounceMul', 'stepSquash', 'breathe', 'breatheHz', 'hopStretch', 'landSquash', 'landMs', 'landCycles', 'landDamp'] as const) nonNeg(`actors.motion.${k}`, A.motion[k])
     if (!(A.motion.stepsPerCycle >= 1)) errs.push('actors.motion.stepsPerCycle: must be >= 1')
     if (typeof A.motion.snapTexels !== 'boolean') errs.push('actors.motion.snapTexels: must be a boolean')
     if (!(A.walkCycle.stride.walk > 0 && A.walkCycle.stride.run > 0 && A.walkCycle.maxFps > 0)) errs.push('actors.walkCycle: stride and maxFps must be > 0')
