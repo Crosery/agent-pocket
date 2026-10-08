@@ -76,7 +76,7 @@
       {"id": "research", "trigger": {"kind": "on", "on": "screen:opened", "phase": "screen", "match": {"screen": "research"}, "delaySec": 0.6}, "text": "tutorial.tip.research", "expires": {"minBadges": 6}},
       {"id": "dex", "trigger": {"kind": "on", "on": "screen:opened", "phase": "screen", "match": {"screen": "dex"}, "delaySec": 0.6}, "text": "tutorial.tip.dex", "expires": {"minBadges": 2}},
       {"id": "online", "trigger": {"kind": "on", "on": "screen:opened", "phase": "screen", "match": {"screen": "online"}, "delaySec": 0.6}, "text": "tutorial.tip.online"},
-      {"id": "chat", "trigger": {"kind": "on", "on": "net:status", "phase": "field", "match": {"status": "online"}, "delaySec": 5}, "text": "tutorial.tip.chat", "expires": {"minBadges": 4}},
+      {"id": "chat", "trigger": {"kind": "on", "on": "net:status", "phase": "field", "match": {"status": "online"}, "delaySec": 5}, "text": "tutorial.tip.chat", "expires": {"minBadges": 4}, "after": ["move", "talk"]},
       {"id": "tradePvp", "trigger": {"kind": "on", "on": "screen:opened", "phase": "screen", "match": {"screen": "online"}, "delaySec": 0.6}, "text": "tutorial.tip.tradePvp", "after": ["online"]}
     ]
   },
