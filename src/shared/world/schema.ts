@@ -167,6 +167,8 @@ export interface EncounterRules {
   /** Early-game fairness: tables whose top level is <= maxLevel only hold species of rarity order <= maxOrder and,
    * when `onlyTypes` is set, whose types are all listed (first matching entry wins). */
   rarityLevelCaps?: { maxLevel: number; maxOrder: number; onlyTypes?: string[] }[]
+  /** Every non-starter base form up to this rarity order must sit in at least one wild table (see ensureEncounterCoverage). */
+  coverage?: { maxOrder: number }
 }
 
 export interface WorldSpec {

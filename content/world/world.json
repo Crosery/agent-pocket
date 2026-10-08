@@ -101,6 +101,7 @@
     "maxSpecies": 12,
     "rareMinOrder": 2,
     "nightPhase": "night",
+    "coverage": {"maxOrder": 3},
     "rarityLevelCaps": [
       {"maxLevel": 9, "maxOrder": 0, "onlyTypes": ["chat", "write", "sound", "vision", "motion"]},
       {"maxLevel": 14, "maxOrder": 1}

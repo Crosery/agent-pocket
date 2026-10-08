@@ -243,6 +243,14 @@ encounter tables from the biome's `encounterHabitats`, rare boost by danger. Rar
 grass/visible multipliers are applied at spawn time by gameplay/spawns.ts (not baked in twice). Hamlet pads are
 safe town regions (id = site id, `isTown`, `flySpawn`); nest tiles use `<siteId>:nest`.
 
+**Encounter coverage** (encounters.ts `ensureEncounterCoverage`, rule `world.json encounters.coverage.maxOrder`): tables are
+filled per region by habitat, level and early-game caps (`rarityLevelCaps`), so a large roster leaves some species in no
+table. After all maps exist, every non-starter base form up to `coverage.maxOrder` (SSR) that is in no wild table is
+appended to the smallest eligible table (same habitat, level and cap rules; at most a few extra slots per table);
+a species no table can hold is reported in the world build problems. `tests/balance-framework.test.ts` enforces it, so adding
+species never makes one unobtainable. Evolved forms are reached by evolution; starters are gifts; UR and MYTHIC are
+outside the guarantee (UR may still roll into a table, MYTHIC comes from events).
+
 **Ids** (stable, parseable with `frontier.parseFrontierId`):
 
 | id | what |
@@ -349,7 +357,7 @@ reachable (surf for islands). NPCs standing on all spots never seal a warp, a gy
 
 | file | shape |
 |---|---|
-| `content/world/world.json` | `overworld` (size, `layout {width height box}`, `coarse`, levels, `warp blur relief landforms`, `ocean archipelago beach cliffWidth`, islands/lakes/rivers, `riverRouting`, `hydrology`, `shallowBorder`, routing costs, gate/sign/cave/spot/access tuning), `encounters`, `text` (sign templates incl. `dungeonSign`) |
+| `content/world/world.json` | `overworld` (size, `layout {width height box}`, `coarse`, levels, `warp blur relief landforms`, `ocean archipelago beach cliffWidth`, islands/lakes/rivers, `riverRouting`, `hydrology`, `shallowBorder`, routing costs, gate/sign/cave/spot/access tuning), `encounters` (`minSlots maxSpecies rareMinOrder nightPhase rarityLevelCaps coverage`), `text` (sign templates incl. `dungeonSign`) |
 | `content/world/climate.json` | `temperature {noise contrast latitude lapse}`, `moisture {noise contrast water}`, `weirdness`, `bias {blur core wild weird}`, `core {radius jitter noise threshold}`, `rules[{biome t? m? weird? elev? sea?}]` (first match; last = fallback) |
 | `content/world/regions.json` | story zones: `id nameZh biome music weather levelRange encounterRate roamingDensity level relief accessStairs points[]` (+ `water`, `border`, `peaks[]`, `climate {t m w}`, `shore`) |
 | `content/world/wilds.json` | `cell jitter warp minArea maxRegions idPattern names{biome: {prefix suffix}} dupPattern tiers[{minDist levelBonus encounterRate roamingDensity rareBoost}] levels spots biomeMusic biomeWeather` |
