@@ -82,6 +82,12 @@ export interface UIConfig {
     channelColors: Record<string, string>
     commands: { whisper: string[]; reply: string[]; global: string[]; local: string[] }
   }
+  /**
+   * stallSec: seconds of held movement keys the chat may block while its input has no focus before it is released.
+   * escapeOrder: overlay ids Esc dismisses, topmost first. releaseClickScopes: CSS scopes whose buttons give focus
+   * back to the game after a pointer click.
+   */
+  focus: { stallSec: number; escapeOrder: string[]; releaseClickScopes: string[] }
   glyphPalette: Record<string, string>
   glyphs: Record<string, GlyphDef>
 }
@@ -131,6 +137,8 @@ export function validateUIConfig(cfg: UIConfig, knownSfx: readonly string[]): st
   if (!cfg.minimap.markers[cfg.minimap.fallbackMarker]) errs.push(`ui.minimap.fallbackMarker "${cfg.minimap.fallbackMarker}" has no style`)
   if (cfg.minimap.tilesVisible <= 0) errs.push('ui.minimap.tilesVisible must be > 0')
   if (cfg.chat.tabs.length === 0) errs.push('ui.chat.tabs must not be empty')
+  if (!(cfg.focus.stallSec > 0)) errs.push('ui.focus.stallSec must be > 0')
+  if (cfg.focus.escapeOrder.length === 0) errs.push('ui.focus.escapeOrder must not be empty')
   return errs
 }
 

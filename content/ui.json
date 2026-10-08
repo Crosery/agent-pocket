@@ -53,6 +53,7 @@
     "channelColors": {"global": "#f3dca0", "local": "#ffffff", "whisper": "#ff9fd0", "system": "#8fd3ff"},
     "commands": {"whisper": ["/w", "/m", "/tell"], "reply": ["/r"], "global": ["/g", "/world"], "local": ["/l", "/s"]}
   },
+  "focus": {"stallSec": 1.5, "escapeOrder": ["chat"], "releaseClickScopes": [".ap-chat-bar"]},
   "glyphPalette": {"o": "#0d0a08", "g": "#c9a45c", "h": "#f3dca0", "d": "#7a5a26", "w": "#ffffff", "k": "#0e1424", "r": "#e0524a", "R": "#9c2a26", "b": "#5a9cf0", "B": "#2a5596", "c": "#8fe6ff", "y": "#ffd84a", "n": "#ffa53a", "N": "#b4562a", "e": "#5ccf6a", "E": "#2a7a3a", "s": "#b8c0d0", "S": "#6b7488", "m": "#e8eeff"},
   "glyphs": {
     "cursor": {"rows": ["oo....", "ohoo..", "ohhgo.", "ohgggo", "ohgdo.", "oddo..", "oo...."]},

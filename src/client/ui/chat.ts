@@ -1,10 +1,15 @@
 // Chat: passive fading log (bottom-left) + open panel with channel tabs, input field and slash commands.
 // Open with the 'chat' action (call update() per frame) or focus(); Enter sends, Esc closes, Tab cycles channel.
+// Single source of truth: the chat is open exactly while focus is inside its box (input or own controls). Focus
+// leaving the box closes it (focusout, every update() and every isOpen read), so a click elsewhere hands the keys
+// straight back to the game. A stall watch releases it if movement keys are held against it with no input focus.
 import type { ChatChannel } from '../../shared/protocol.ts'
 import type { ChatUI, Input } from '../contracts.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { UI_CONFIG, type ChatTab, type SendChannel } from './config.ts'
 import { ensureUIEnvironment, getUIScale, onUIScaleChange, prepareRoot } from './scale.ts'
+import { bindTextField } from './focus.ts'
+import { chatFocusVerdict, createStallWatch } from './focus-guard.ts'
 import { clampCodePoints, clockParts, codePointLength, createRateLimiter, parseChatInput } from './textflow.ts'
 import { button, el, glyphEl, tabs } from './widgets.ts'
 
@@ -42,11 +47,14 @@ export function createChatUI(
   let unread = 0
   let idleTimer = 0
   let hovering = false
+  /** Set when the chat was opened by keyboard-activating the Chat button: Esc then returns focus to it. */
+  let restoreFocus = false
+  const stall = createStallWatch(UI_CONFIG.focus.stallSec)
 
   // ---- passive view
   const passiveLog = el('div', { class: 'ap-chat-log', attrs: { 'aria-hidden': 'true' } })
   const unreadEl = el('span', 'ap-chat-unread')
-  const openBtn = button('', () => api.focus(), { className: 'ap-chat-open ap-hud-frame' })
+  const openBtn = button('', (e) => { restoreFocus = e.detail === 0; api.focus() }, { className: 'ap-chat-open ap-hud-frame' })
   openBtn.append(glyphEl('chat'))
   openBtn.setAttribute('aria-label', t('ui.chat.open'))
   openBtn.setAttribute('aria-controls', 'ap-chat-box')
@@ -64,7 +72,7 @@ export function createChatUI(
       field.focus()
     },
   })
-  const openLog = el('div', { class: 'ap-chat-log', attrs: { role: 'log', 'aria-live': 'polite' } })
+  const openLog = el('div', { class: 'ap-chat-log', attrs: { role: 'log', 'aria-live': 'polite', tabindex: '-1' } })
   const chanBtn = button('', () => { cycleChannel(); field.focus() }, { className: 'ap-chat-chan' })
   const field = el('input', {
     class: 'ap-field',
@@ -158,9 +166,12 @@ export function createChatUI(
 
   const systemNote = (text: string) => push({ name: '', channel: 'system', text, at: Date.now(), self: false, label: '' })
 
-  const setTextActive = (on: boolean) => {
-    if (on) input.setTextInputActive(true)
-    else requestAnimationFrame(() => requestAnimationFrame(() => { if (document.activeElement !== field) input.setTextInputActive(false) }))
+  const textMode = bindTextField(input, field)
+  const wantsToMove = () => { const a = input.axis(); return a.x !== 0 || a.y !== 0 }
+  const focusInside = () => box.contains(document.activeElement)
+  /** Re-checks the open <-> focus invariant; closes a chat whose focus has gone elsewhere. */
+  const settle = () => {
+    if (chatFocusVerdict(open, focusInside()) === 'close') api.close()
   }
 
   const submit = () => {
@@ -194,9 +205,20 @@ export function createChatUI(
     else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); api.close() }
     else if (e.key === 'Tab') { e.preventDefault(); e.stopPropagation(); cycleChannel() }
   })
-  field.addEventListener('focus', () => setTextActive(true))
-  field.addEventListener('blur', () => setTextActive(false))
-  // Native button activation must not reach the game's preventDefault keyboard handler.
+  // Focus moving anywhere outside the box (canvas click, other UI) ends the chat. Decided one task later: when the
+  // whole window loses focus the input stays the active element and must keep the chat open for when it returns.
+  wrap.addEventListener('focusout', (e) => {
+    if (e.relatedTarget instanceof Node && box.contains(e.relatedTarget)) return
+    window.setTimeout(settle, 0)
+  })
+  // A click inside the panel must not strand focus on a button or on the page: the input keeps it, except in the
+  // log, where focus stays inside the box so text can still be selected and copied.
+  box.addEventListener('mousedown', (e) => {
+    if (e.target !== field && !openLog.contains(e.target as Node)) e.preventDefault()
+  })
+  openLog.addEventListener('pointerup', () => {
+    if (open && window.getSelection()?.isCollapsed !== false) field.focus({ preventScroll: true })
+  })
   wrap.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       if (!open) {
@@ -206,7 +228,10 @@ export function createChatUI(
       e.preventDefault()
       api.close()
     }
-    e.stopPropagation()
+    // Typing, and the keys native buttons / focus traversal need, stay in the chat; movement and menu keys pass
+    // through so a button that happens to hold focus never freezes the game.
+    const nativeKey = e.key === 'Tab' || ((e.key === 'Enter' || e.key === ' ') && e.target instanceof HTMLButtonElement)
+    if (e.target === field || nativeKey || e.key === 'Escape') e.stopPropagation()
   })
   wrap.addEventListener('pointerenter', () => { hovering = true; wrap.classList.remove('is-idle') })
   wrap.addEventListener('pointerleave', () => { hovering = false; wake() })
@@ -215,7 +240,7 @@ export function createChatUI(
 
   const api: ChatUIHandle = {
     el: wrap,
-    get isOpen() { return open },
+    get isOpen() { settle(); return open },
     addMessage(m) {
       let label = m.name
       if (m.channel === 'whisper') {
@@ -229,6 +254,7 @@ export function createChatUI(
       push({ name: m.name, channel: m.channel, text: m.text, at: m.at, self: !!m.self, label })
     },
     focus() {
+      if (layer.hidden) return
       if (!open) {
         open = true
         unread = 0
@@ -242,15 +268,19 @@ export function createChatUI(
       setSendChannel(sendChannel)
       recount()
       field.focus()
+      settle()
     },
     close() {
       if (!open) return
-      const restoreFocus = wrap.contains(document.activeElement)
+      const keepHud = restoreFocus && focusInside() && !layer.hidden
+      restoreFocus = false
       open = false
       wrap.classList.remove('is-open')
       field.blur()
-      setTextActive(false)
-      if (restoreFocus && !layer.hidden) openBtn.focus({ preventScroll: true })
+      if (focusInside() && document.activeElement instanceof HTMLElement) document.activeElement.blur()
+      textMode.release()
+      if (keepHud) openBtn.focus({ preventScroll: true })
+      stall.reset()
       renderPassive()
       renderBar()
       wake()
@@ -264,11 +294,21 @@ export function createChatUI(
       if (!c) unread = 0
       renderBar()
     },
-    update(_dtSec: number, allowOpen = true) {
+    update(dtSec: number, allowOpen = true) {
+      settle()
+      if (open) {
+        // Last resort: movement keys held against an open chat that has no focused input would trap the player.
+        const blocked = document.activeElement !== field
+        if (stall.step(dtSec, blocked, blocked && wantsToMove())) {
+          console.warn('[chat] released a chat that was open without input focus while movement keys were held')
+          api.close()
+        }
+      }
       // While menus/dialogue own the screen the passive log steps aside.
       wrap.classList.toggle('is-suppressed', !allowOpen && !open)
       if (!open && allowOpen && !layer.hidden && input.pressed('chat')) {
         input.consume('chat')
+        restoreFocus = false
         api.focus()
       }
     },
