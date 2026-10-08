@@ -10,6 +10,11 @@ import { perspective } from '../src/shared/battle/engine.ts'
 import { chooseBossAction } from '../src/shared/battle/boss.ts'
 import { validateBosses } from '../src/shared/battle/boss-validate.ts'
 import { buildBossInit, startBossBattle } from '../src/shared/battle/boss-battle.ts'
+import legendsJson from '../content/events/legends.json' with { type: 'json' }
+import mythicJson from '../content/events/mythic.json' with { type: 'json' }
+import populationJson from '../content/world/story/population.json' with { type: 'json' }
+import servicesJson from '../content/world/story/services.json' with { type: 'json' }
+import { applyEvent, bossPanelInfo, createBattleModel } from '../src/client/battle/model.ts'
 import { COUNTERS } from './boss-counters.ts'
 import { makeParty, SIM_PARTY, simulate, type SimOpts, type SimResult } from './boss-sim.ts'
 
@@ -372,4 +377,43 @@ test(`balance: ${SEEDS} seeded fights per boss — hard without the counter, cle
     assert.ok(counter - plain >= 0.25, `${b.id}: the counter does not help enough (${plain} -> ${counter})`)
   }
   if (process.env.BOSS_TABLE) console.log(table.join('\n'))
+})
+
+// ---------------------------------------------------------------------------------------------------- placement & hints
+
+test('placement: every boss is a roaming legend or a mythic chain finale, so the overworld fights it as a boss', () => {
+  const places = new Set([
+    ...(legendsJson as { legends: { species: string }[] }).legends.map((l) => l.species),
+    ...(mythicJson as { chains: { species: string }[] }).chains.map((c) => c.species),
+  ])
+  for (const b of BOSSES) assert.ok(places.has(b.species), `${b.id} (${b.species}) is placed in the world`)
+})
+
+test('hints: NPC rumours and shops carry the counterplay', () => {
+  const dialogues = new Set(Object.values((populationJson as { npcPools: Record<string, { dialogues: string[][] }[]> }).npcPools)
+    .flatMap((pool) => pool.flatMap((a) => a.dialogues.flat())))
+  for (const b of BOSSES) for (const key of b.gossip) assert.ok(dialogues.has(key), `${b.id}: gossip ${key} is spoken by some NPC`)
+  const sold = new Set(Object.values((servicesJson as { shop: { extra: Record<string, string[]> } }).shop.extra).flat())
+  for (const it of CONTENT.itemList.filter((i) => i.effect.kind === 'bait')) assert.ok(sold.has(it.id), `${it.id} is for sale somewhere`)
+})
+
+test('client model: the boss HUD folds from events (phase pips, meters, charge warning) and a form change swaps the body', () => {
+  const party = makeParty(SIM_PARTY, 60, 1)
+  const { engine, init, intro } = startBossBattle('astra', party, { seed: 5, expGain: false })
+  const model = createBattleModel(init, 'none')
+  for (const e of intro) applyEvent(model, e)
+  assert.equal(model.boss?.bossId, 'astra')
+  const info = bossPanelInfo(model.boss!)
+  assert.ok(info && info.title === t(byId('astra').title) && info.phases === 4 && info.phase === 1)
+  const charged = bossPanelInfo({ ...model.boss!, charge: 'exaflop-beam', enrage: 2 })!
+  assert.ok(charged.chips.some((c) => c.alert), 'the telegraphed move shows as an alert chip')
+  assert.ok(charged.chips.some((c) => c.id === 'enrage'))
+  const ds = bossPanelInfo({ bossId: 'deepseek', form: 'base', phase: 1, phases: 2, meters: { tide: 1 }, charge: null, enrage: 0 })!
+  assert.ok(ds.chips[0].text.includes(t('boss.deepseek.valley')))
+  assert.equal(model.sides[1].view?.speciesId, 'gpt-6-astra')
+  assert.equal(engine.choose(0, { kind: 'item', itemId: 'special-sauce', partyIndex: 0 }), null)
+  engine.choose(1, { kind: 'move', moveIndex: 0 })
+  for (const e of engine.step()) applyEvent(model, e)
+  assert.equal(model.sides[1].view?.speciesId, 'gpt-4o', 'the sprite and window follow the form event')
+  assert.equal(bossPanelInfo(model.boss!)?.phase, 2, 'the sauce phase lights the second pip')
 })
