@@ -12066,7 +12066,7 @@
     "meta": {
       "design": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same Llama-Nemotron girl, now slimmer and sharper after a trim. Hair: jet-black (#111111) ponytail grown longer with NVIDIA-green (#76B900) gradient ends, blunt bangs. Eyes: bright green with the tiny spiral swirl iris. Outfit: fitted black varsity jacket with green sleeves over a cream (#F3EAD3) knit vest, pleated black skirt, gunmetal (#4A4F55) boots; the star medal still pinned on the jacket. Signature accessory: the same cream llama-ear headband with green inner ears, neater and tighter. Prop: a pair of tiny green-handled pruning shears in one hand (a pruned and distilled build). Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: snipping the air with the shears, cheeky confident grin, ponytail swinging.",
       "nameEn": "Llama-3.3-Nemotron-Super-49B",
-      "nameZh": "Llama-3.3-Nemotron-Super-49B",
+      "nameZh": "Nemotron-Super-49B",
       "family": "nemotron-super-49b",
       "stage": 1,
       "rarity": "R",
@@ -12088,7 +12088,7 @@
     "meta": {
       "design": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the grown-up Llama-Nemotron girl, a calm reasoning strategist. Hair: jet-black (#111111) ponytail now waist-length with NVIDIA-green (#76B900) gradient ends, blunt bangs. Eyes: bright green with the spiral swirl iris, thoughtful and sharp. Outfit: long black coat with a cream (#F3EAD3) wool collar and glowing green circuit-vein lining, green-sleeved varsity top, gunmetal (#4A4F55) boots; the star medal pinned to the collar. Signature accessory: the same cream llama-ear headband with green inner ears, now with thin gunmetal heatsink-fin trim. Props: a softly glowing green thinking orb in one hand, and the tiny pruning shears at her belt. Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: orb raised in one palm, coat swept back, composed half-smile.",
       "nameEn": "Llama-3.1-Nemotron-Ultra-253B",
-      "nameZh": "Llama-3.1-Nemotron-Ultra-253B",
+      "nameZh": "Nemotron-Ultra-253B",
       "family": "nemotron-ultra-253b",
       "stage": 1,
       "rarity": "SR",

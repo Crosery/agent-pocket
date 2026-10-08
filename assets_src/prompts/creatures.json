@@ -6784,7 +6784,7 @@
  {
   "id": "nemotron-super-49b",
   "nameEn": "Llama-3.3-Nemotron-Super-49B",
-  "nameZh": "Llama-3.3-Nemotron-Super-49B",
+  "nameZh": "Nemotron-Super-49B",
   "family": "nemotron-super-49b",
   "stage": 1,
   "types": [
@@ -6799,7 +6799,7 @@
  {
   "id": "nemotron-ultra-253b",
   "nameEn": "Llama-3.1-Nemotron-Ultra-253B",
-  "nameZh": "Llama-3.1-Nemotron-Ultra-253B",
+  "nameZh": "Nemotron-Ultra-253B",
   "family": "nemotron-ultra-253b",
   "stage": 1,
   "types": [
