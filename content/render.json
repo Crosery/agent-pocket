@@ -1777,5 +1777,31 @@
     "lift": 0.03
   },
   "impacts": {"rain": {"color": "#dce8ff", "alpha": 0.75, "style": "ring", "life": 0.3, "size": 0.34, "share": 0.1}, "snow": {"color": "#ffffff", "alpha": 0.8, "style": "fleck", "life": 0.9, "size": 0.07, "share": 0.25}},
-  "snowCover": {"weather": "snow", "max": 0.3, "buildSec": 50, "meltSec": 80}
+  "snowCover": {"weather": "snow", "max": 0.3, "buildSec": 50, "meltSec": 80},
+  "leaves": {
+    "kinds": {
+      "leaves": {
+        "colors": ["#7cb84a", "#c8a03a", "#d0703a", "#5a9a3a"],
+        "size": [0.2, 0.3],
+        "props": ["tree_oak", "tree_pine", "tree_swamp", "bamboo", "tree_acacia", "tree_baobab", "tree_mangrove", "neural_tree"],
+        "air": 36,
+        "windGain": 1.1
+      },
+      "petals": {"colors": ["#ffc6dc", "#ffe2ee", "#f49cc0"], "size": [0.17, 0.25], "props": ["tree_cherry"], "air": 40, "windGain": 1.3}
+    },
+    "reach": 15,
+    "gravity": 3.0,
+    "terminal": [0.7, 1.2],
+    "drag": 2.2,
+    "flutter": {"hz": [1.2, 2.4], "amp": 0.5, "fall": 0.6},
+    "gustLift": 0.4,
+    "tumble": [2, 6],
+    "rest": [4, 9],
+    "fade": 1.8,
+    "water": {"drift": 0.3, "rest": [3, 6]},
+    "emit": {"height": [0.45, 0.95], "spread": 0.85},
+    "stray": {"rate": 0.8, "height": [2.5, 5]},
+    "spawnPerFrame": 4,
+    "cull": 24
+  }
 }

@@ -97,6 +97,8 @@ export interface FootstepsConfig {
 export interface LeavesKind {
   colors: string[]
   size: Vec2
+  /** Props (content/props.json keys) whose canopies shed this kind. */
+  props: string[]
   /** Airborne leaves wanted at ambient level 1, before the tier cap. */
   air: number
   /** How strongly the wind field carries it (1 = at air speed). */
@@ -105,8 +107,9 @@ export interface LeavesKind {
 
 export interface LeavesConfig {
   kinds: Record<string, LeavesKind>
-  /** Canopies closer than this to the focus (tiles) shed leaves. */
+  /** Canopies closer than this to the focus (tiles) shed leaves; leaves farther than `cull` vanish. */
   reach: number
+  cull: number
   gravity: number
   /** Fall speed of a drifting leaf (tiles/s), picked per leaf. */
   terminal: Vec2
@@ -114,6 +117,8 @@ export interface LeavesConfig {
   drag: number
   /** Flutter: swerve frequency (Hz), sideways speed (tiles/s), fall speed modulation 0..1. */
   flutter: { hz: Vec2; amp: number; fall: number }
+  /** Upward speed (tiles/s) a full gust adds to the air under it: leaves lift in gusts. */
+  gustLift: number
   /** Tumble rate (rad/s) while falling. */
   tumble: Vec2
   /** Seconds lying on the ground, then the fade. */
