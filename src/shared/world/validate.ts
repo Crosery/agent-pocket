@@ -47,11 +47,15 @@ export function validateWorldContent(wc: WorldContent = WORLD_CONTENT, c: Conten
   for (const k of [ow.hydrology.riverTerrain, ow.hydrology.bankTerrain, ow.hydrology.lakeTerrain, ow.hydrology.lakeRimTerrain]) terrain('world.overworld.hydrology', k)
   if (!(ow.coarse >= 1)) errs.push('world.overworld: coarse must be >= 1')
   if (ow.startFlat) {
-    if (!(ow.startFlat.radius >= 0) || !(ow.startFlat.transition >= 0) || !Number.isFinite(ow.startFlat.radius) || !Number.isFinite(ow.startFlat.transition)) {
-      errs.push('world.overworld.startFlat: radius and transition must be finite and >= 0')
-    }
-    if (!Number.isFinite(ow.startFlat.level) || ow.startFlat.level < 0 || ow.startFlat.level > ow.maxLevel) {
-      errs.push('world.overworld.startFlat: level must be within maxLevel')
+    const sf = ow.startFlat
+    const finite = [sf.radius, sf.transition, sf.level, sf.jitter, sf.minPatch, sf.noise?.scale].every((v) => Number.isFinite(v))
+    if (!finite || sf.radius < 0 || sf.jitter < 0 || sf.minPatch < 0 || !(sf.transition > 0) || !(sf.noise.scale > 0)) {
+      errs.push('world.overworld.startFlat: radius, jitter, minPatch >= 0, transition > 0 and a noise scale are required')
+    } else {
+      if (sf.level < 0 || sf.level > ow.maxLevel) errs.push('world.overworld.startFlat: level must be within maxLevel')
+      // The smoothstep cap climbs at most 1.5 * rise / transition per tile; it must stay inside the slope envelope.
+      const rise = ow.maxLevel + 0.5 - (sf.level + 0.99)
+      if ((1.5 * rise) / sf.transition > ow.slope / Math.SQRT2) errs.push('world.overworld.startFlat: transition too short for the slope envelope')
     }
   }
   if (!wc.world.text.dungeonSign) errs.push('world.text: missing dungeonSign')
