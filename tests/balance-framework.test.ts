@@ -9,6 +9,8 @@ import { curveViolations } from '../tools/balance/curve.ts'
 import { rarityCell } from '../tools/balance/solo.ts'
 import { judgeMatrix, runMatrix, type TeamSource } from '../tools/balance/sim.ts'
 import { DEFS, buildArchetype, lawProblems } from '../tools/balance/teams.ts'
+import { buildWorld, worldBuildInfo } from '../src/shared/world/index.ts'
+import { WORLD_CONTENT } from '../src/shared/world/data.ts'
 
 /**
  * Numeric framework guardrails (docs/balance.md). Every threshold lives in tools/balance/rules.json and
@@ -55,7 +57,7 @@ test('archetype teams obey the team-building law and use real species', () => {
 
 test('rarity ladder: a higher rarity is clearly but never absolutely ahead at an even level', () => {
   for (const [hi, lo] of [['R', 'N'], ['SR', 'R'], ['SSR', 'SR']] as const) {
-    const even = rarityCell(hi, lo, 0, 6, 2, RULES.sim.seed).rate
+    const even = rarityCell(hi, lo, 0, 12, 6, RULES.sim.seed).rate
     assert.ok(even > 0.55 && even < 0.95, `${hi} vs ${lo} at even level: ${even.toFixed(2)}`)
   }
 })
@@ -82,4 +84,17 @@ test('archetype matrix (seeded sample): no dominant archetype, every one has pre
   })
   assert.ok(v.cycle, 'no counter-cycle among archetypes')
   assert.ok(v.maxDraw <= R.maxDrawRate + slack, `draw rate ${v.maxDraw.toFixed(2)}`)
+})
+
+test('encounter coverage: every non-UR, non-MYTHIC base form is wild-obtainable (evolutions come from them)', () => {
+  const world = buildWorld()
+  const rules = WORLD_CONTENT.world.encounters
+  const ur = C.rarityById.UR.order
+  assert.ok(rules.coverage && rules.coverage.maxOrder >= ur - 1, 'coverage rule must reach every rarity below UR')
+  const wild = new Set<string>()
+  for (const m of Object.values(world.maps)) for (const r of m.regions) for (const e of r.encounters) wild.add(e.species)
+  const missing = C.speciesList.filter((s) => !s.evolvesFrom && !s.starter && C.rarityById[s.rarity].order < ur && !wild.has(s.id)).map((s) => s.id)
+  assert.deepEqual(missing, [], 'base forms in no wild encounter table')
+  assert.deepEqual(worldBuildInfo(world).problems.filter((p) => p.startsWith('encounter coverage')), [])
+  for (const s of C.speciesList) if (s.evolvesFrom) assert.equal(C.species[s.evolvesFrom]?.evolvesTo?.id, s.id, `${s.id}: its pre-evolution does not evolve into it`)
 })
