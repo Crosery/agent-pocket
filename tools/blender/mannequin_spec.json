@@ -5,6 +5,6 @@
   "render": {"size": 640, "fps": 24, "orthoScale": 2.1, "targetZ": 0.84, "elevationDeg": 22, "distance": 8, "background": [1.0, 0.0, 1.0], "outline": true},
   "timeline": {"idleFrames": 48, "blendFrames": 8, "walkCycleFrames": 24, "walkCycles": 4, "tailIdleFrames": 0},
   "walk": {"thighSwingDeg": 40, "kneeSwingDeg": 55, "kneeStanceDeg": 8, "armSwingDeg": 50, "elbowDeg": 24, "elbowSwingDeg": 14, "bob": 0.05, "torsoTwistDeg": 7, "torsoLeanDeg": 4, "headCounterDeg": 3, "hipSwayX": 0.012},
-  "idle": {"breathPeriodFrames": 48, "bob": 0.012, "chestScale": 0.025, "armSwayDeg": 4, "elbowDeg": 10, "headTiltDeg": 2.5, "weightShiftX": 0.01},
+  "idle": {"breathPeriodFrames": 48, "bob": 0.04, "chestScale": 0.025, "armSwayDeg": 4, "elbowDeg": 10, "headTiltDeg": 2.5, "weightShiftX": 0.01},
   "views": {"down": 0, "left": -90, "right": 90, "up": 180}
 }
