@@ -1,0 +1,173 @@
+{
+ "vendor": "ant",
+ "count": 7,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "ling1t",
+   "names": [
+    "Ling-1T"
+   ],
+   "releaseDateHints": {
+    "modelsdev:bailing": "2025-10"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:bailing": [
+     "Ling-1T"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ring1t",
+   "names": [
+    "Ring-1T"
+   ],
+   "releaseDateHints": {
+    "modelsdev:bailing": "2025-10"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:bailing": [
+     "Ring-1T"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ling30flash",
+   "names": [
+    "inclusionAI: Ling 3.0 Flash"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-23"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "inclusionai/ling-3.0-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ling30flashfin",
+   "names": [
+    "inclusionAI: Ling 3.0 Flash Fin",
+    "Ling 3.0 Flash Fin",
+    "Ling 3.0 Flash Fin Free"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-27",
+    "modelsdev:vercel": "2026-08-27",
+    "modelsdev:opencode": "2026-08-27"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "inclusionai/ling-3.0-flash-fin"
+    ],
+    "modelsdev:vercel": [
+     "inclusionai/ling-3.0-flash-fin"
+    ],
+    "modelsdev:opencode": [
+     "ling-3.0-flash-fin-free"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ling30flashsante",
+   "names": [
+    "inclusionAI: Ling 3.0 Flash Sante"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-04"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "inclusionai/ling-3.0-flash-sante"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ling30flashvl",
+   "names": [
+    "inclusionAI: Ling 3.0 Flash VL"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-10"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "inclusionai/ling-3.0-flash-vl"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "ling31flash",
+   "names": [
+    "inclusionAI: Ling 3.1 Flash",
+    "Ling 3.1 Flash",
+    "Ling 3.1 Flash (NovitaAI)",
+    "Ling 3.1 Flash Free"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-10-02",
+    "modelsdev:nano-gpt": "2026-09-29",
+    "modelsdev:llmgateway-providers": "2026-09-29",
+    "modelsdev:vercel": "2026-09-29",
+    "modelsdev:opencode": "2026-09-29",
+    "modelsdev:llmgateway": "2026-09-29"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "inclusionai/ling-3.1-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "inclusionai/ling-3.1-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/ling-3.1-flash"
+    ],
+    "modelsdev:vercel": [
+     "inclusionai/ling-3.1-flash"
+    ],
+    "modelsdev:opencode": [
+     "ling-3.1-flash-free"
+    ],
+    "modelsdev:llmgateway": [
+     "ling-3.1-flash"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

@@ -1,0 +1,26 @@
+{
+ "vendor": "fireworks",
+ "count": 1,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "ember1",
+   "names": [
+    "Fireworks: Ember-1"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-24"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "fireworks/ember-1"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

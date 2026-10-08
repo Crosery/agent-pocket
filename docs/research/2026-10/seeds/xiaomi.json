@@ -1,0 +1,673 @@
+{
+ "vendor": "xiaomi",
+ "count": 9,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "mimov2flash",
+   "names": [
+    "MiMo-V2-Flash",
+    "Mimo-V2-Flash",
+    "Xiaomi/Mimo-V2-Flash"
+   ],
+   "releaseDateHints": {
+    "modelsdev:zenmux": "2025-12-16",
+    "modelsdev:qiniu-ai": "2025-12-16",
+    "modelsdev:xiaomi": "2025-12-16"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:zenmux": [
+     "xiaomi/mimo-v2-flash"
+    ],
+    "modelsdev:qiniu-ai": [
+     "mimo-v2-flash",
+     "xiaomi/mimo-v2-flash"
+    ],
+    "modelsdev:xiaomi": [
+     "mimo-v2-flash"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "mimov2omni",
+   "names": [
+    "MiMo V2 Omni",
+    "MiMo-V2-Omni"
+   ],
+   "releaseDateHints": {
+    "modelsdev:zenmux": "2026-03-18",
+    "modelsdev:xiaomi": "2026-03-18"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,audio,video,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:zenmux": [
+     "xiaomi/mimo-v2-omni"
+    ],
+    "modelsdev:xiaomi": [
+     "mimo-v2-omni"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "mimov2pro",
+   "names": [
+    "MiMo-V2-Pro",
+    "MiMo V2 Pro"
+   ],
+   "releaseDateHints": {
+    "modelsdev:xiaomi-token-plan-cn": "2026-03-18",
+    "modelsdev:abacus": "2026-03-18",
+    "modelsdev:novita-ai": "2026-03-18",
+    "modelsdev:zenmux": "2026-03-18",
+    "modelsdev:xiaomi-token-plan-ams": "2026-03-18",
+    "modelsdev:xiaomi": "2026-03-18",
+    "modelsdev:xiaomi-token-plan-sgp": "2026-03-18"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:xiaomi-token-plan-cn": [
+     "mimo-v2-pro"
+    ],
+    "modelsdev:abacus": [
+     "mimo-v2-pro"
+    ],
+    "modelsdev:novita-ai": [
+     "xiaomimimo/mimo-v2-pro"
+    ],
+    "modelsdev:zenmux": [
+     "xiaomi/mimo-v2-pro"
+    ],
+    "modelsdev:xiaomi-token-plan-ams": [
+     "mimo-v2-pro"
+    ],
+    "modelsdev:xiaomi": [
+     "mimo-v2-pro"
+    ],
+    "modelsdev:xiaomi-token-plan-sgp": [
+     "mimo-v2-pro"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "mimov25",
+   "names": [
+    "Xiaomi: MiMo-V2.5",
+    "MiMo-V2.5",
+    "MiMo V2.5",
+    "MiMo V2.5 (NovitaAI)",
+    "MiMo V2.5 (Xiaomi)",
+    "MiMo M2.5",
+    "Xiaomi MiMo-V2.5",
+    "Coding Xiaomi MiMo-V2.5",
+    "mimo-v25"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-22",
+    "modelsdev:deepinfra": "2026-04-22",
+    "modelsdev:empiriolabs": "2026-04-22",
+    "modelsdev:nano-gpt": "2026-04-22",
+    "modelsdev:xiaomi-token-plan-cn": "2026-04-22",
+    "modelsdev:llmgateway-providers": "2026-04-22",
+    "modelsdev:kilo": "2026-04-22",
+    "modelsdev:venice": "2026-06-11",
+    "modelsdev:openrouter": "2026-04-22",
+    "modelsdev:cline-pass": "2026-04-22",
+    "modelsdev:llmtr": "2026-04-22",
+    "modelsdev:zenmux": "2026-04-22",
+    "modelsdev:xiaomi-token-plan-ams": "2026-04-22",
+    "modelsdev:huggingface": "2026-04-22",
+    "modelsdev:impossibl": "2026-04-22",
+    "modelsdev:ambient": "2026-04-22",
+    "modelsdev:vercel": "2026-04-22",
+    "modelsdev:aihubmix": "2026-04-22",
+    "modelsdev:pioneer": "2026-04-22",
+    "modelsdev:xiaomi": "2026-04-22",
+    "modelsdev:xiaomi-token-plan-sgp": "2026-04-22",
+    "modelsdev:inferx": "2026-04-22",
+    "modelsdev:kenari": "2026-04-22",
+    "modelsdev:requesty": "2026-04-22",
+    "modelsdev:llmgateway": "2026-04-22",
+    "modelsdev:crossmodel": "2026-04-22"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+audio+image+video->text",
+    "text,image,audio,video->text",
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "xiaomi/mimo-v2.5"
+    ],
+    "modelsdev:deepinfra": [
+     "XiaomiMiMo/MiMo-V2.5"
+    ],
+    "modelsdev:empiriolabs": [
+     "mimo-v2-5"
+    ],
+    "modelsdev:nano-gpt": [
+     "xiaomi/mimo-v2.5"
+    ],
+    "modelsdev:xiaomi-token-plan-cn": [
+     "mimo-v2.5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/mimo-v2.5",
+     "xiaomi/mimo-v2.5"
+    ],
+    "modelsdev:kilo": [
+     "xiaomi/mimo-v2.5"
+    ],
+    "modelsdev:venice": [
+     "xiaomi-mimo-v2-5"
+    ],
+    "modelsdev:openrouter": [
+     "xiaomi/mimo-v2.5"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/mimo-v2.5"
+    ],
+    "modelsdev:llmtr": [
+     "mimo/mimo-v2.5"
+    ],
+    "modelsdev:zenmux": [
+     "xiaomi/mimo-v2.5"
+    ],
+    "modelsdev:xiaomi-token-plan-ams": [
+     "mimo-v2.5"
+    ],
+    "modelsdev:huggingface": [
+     "XiaomiMiMo/MiMo-V2.5"
+    ],
+    "modelsdev:impossibl": [
+     "xiaomi/mimo-v2.5"
+    ],
+    "modelsdev:ambient": [
+     "xiaomi/mimo-v2.5"
+    ],
+    "modelsdev:vercel": [
+     "xiaomi/mimo-v2.5"
+    ],
+    "modelsdev:aihubmix": [
+     "mimo-v2.5",
+     "xiaomi-mimo-v2.5",
+     "coding-xiaomi-mimo-v2.5"
+    ],
+    "modelsdev:pioneer": [
+     "XiaomiMiMo/MiMo-V2.5"
+    ],
+    "modelsdev:xiaomi": [
+     "mimo-v2.5"
+    ],
+    "modelsdev:xiaomi-token-plan-sgp": [
+     "mimo-v2.5"
+    ],
+    "modelsdev:inferx": [
+     "mimo-v25"
+    ],
+    "modelsdev:kenari": [
+     "mimo-v2-5"
+    ],
+    "modelsdev:requesty": [
+     "mimo-v2.5"
+    ],
+    "modelsdev:llmgateway": [
+     "mimo-v2.5"
+    ],
+    "modelsdev:crossmodel": [
+     "xiaomi/mimo-v2.5"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "mimov25pro",
+   "names": [
+    "Xiaomi: MiMo-V2.5-Pro",
+    "MiMo-V2.5-Pro",
+    "MiMo V2.5 Pro",
+    "MiMo V2.5 Pro (Tencent Cloud)",
+    "MiMo V2.5 Pro (NovitaAI)",
+    "MiMo V2.5 Pro (Xiaomi)",
+    "Coding Xiaomi MiMo-V2.5-Pro",
+    "Xiaomi MiMo-V2.5-Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-22",
+    "modelsdev:deepinfra": "2026-04-22",
+    "modelsdev:empiriolabs": "2026-04-22",
+    "modelsdev:nano-gpt": "2026-04-22",
+    "modelsdev:crof": "2026-04-22",
+    "modelsdev:xiaomi-token-plan-cn": "2026-04-22",
+    "modelsdev:llmgateway-providers": "2026-04-22",
+    "modelsdev:kilo": "2026-04-22",
+    "modelsdev:novita-ai": "2026-04-22",
+    "modelsdev:openrouter": "2026-04-22",
+    "modelsdev:cline-pass": "2026-04-22",
+    "modelsdev:llmtr": "2026-04-22",
+    "modelsdev:zenmux": "2026-04-22",
+    "modelsdev:xiaomi-token-plan-ams": "2026-04-22",
+    "modelsdev:huggingface": "2026-04-22",
+    "modelsdev:vercel": "2026-04-22",
+    "modelsdev:aihubmix": "2026-04-22",
+    "modelsdev:pioneer": "2026-04-22",
+    "modelsdev:xiaomi": "2026-04-22",
+    "modelsdev:xiaomi-token-plan-sgp": "2026-04-22",
+    "modelsdev:kenari": "2026-04-22",
+    "modelsdev:requesty": "2026-04-22",
+    "modelsdev:llmgateway": "2026-04-22",
+    "modelsdev:crossmodel": "2026-04-22",
+    "modelsdev:digitalocean": "2026-04-22"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text",
+    "text,audio->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "xiaomi/mimo-v2.5-pro"
+    ],
+    "modelsdev:deepinfra": [
+     "XiaomiMiMo/MiMo-V2.5-Pro"
+    ],
+    "modelsdev:empiriolabs": [
+     "mimo-v2-5-pro"
+    ],
+    "modelsdev:nano-gpt": [
+     "xiaomi/mimo-v2.5-pro"
+    ],
+    "modelsdev:crof": [
+     "mimo-v2.5-pro"
+    ],
+    "modelsdev:xiaomi-token-plan-cn": [
+     "mimo-v2.5-pro"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "tencent/mimo-v2.5-pro",
+     "novita/mimo-v2.5-pro",
+     "xiaomi/mimo-v2.5-pro"
+    ],
+    "modelsdev:kilo": [
+     "xiaomi/mimo-v2.5-pro"
+    ],
+    "modelsdev:novita-ai": [
+     "xiaomimimo/mimo-v2.5-pro"
+    ],
+    "modelsdev:openrouter": [
+     "xiaomi/mimo-v2.5-pro"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/mimo-v2.5-pro"
+    ],
+    "modelsdev:llmtr": [
+     "mimo/mimo-v2.5-pro"
+    ],
+    "modelsdev:zenmux": [
+     "xiaomi/mimo-v2.5-pro"
+    ],
+    "modelsdev:xiaomi-token-plan-ams": [
+     "mimo-v2.5-pro"
+    ],
+    "modelsdev:huggingface": [
+     "XiaomiMiMo/MiMo-V2.5-Pro"
+    ],
+    "modelsdev:vercel": [
+     "xiaomi/mimo-v2.5-pro"
+    ],
+    "modelsdev:aihubmix": [
+     "mimo-v2.5-pro",
+     "coding-xiaomi-mimo-v2.5-pro",
+     "xiaomi-mimo-v2.5-pro"
+    ],
+    "modelsdev:pioneer": [
+     "XiaomiMiMo/MiMo-V2.5-Pro"
+    ],
+    "modelsdev:xiaomi": [
+     "mimo-v2.5-pro"
+    ],
+    "modelsdev:xiaomi-token-plan-sgp": [
+     "mimo-v2.5-pro"
+    ],
+    "modelsdev:kenari": [
+     "mimo-v2-5-pro"
+    ],
+    "modelsdev:requesty": [
+     "mimo-v2.5-pro"
+    ],
+    "modelsdev:llmgateway": [
+     "mimo-v2.5-pro"
+    ],
+    "modelsdev:crossmodel": [
+     "xiaomi/mimo-v2.5-pro"
+    ],
+    "modelsdev:digitalocean": [
+     "mimo-v2.5-pro"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "mimov25proultraspeed",
+   "names": [
+    "MiMo-V2.5-Pro-UltraSpeed"
+   ],
+   "releaseDateHints": {
+    "modelsdev:xiaomi": "2026-06-08"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:xiaomi": [
+     "mimo-v2.5-pro-ultraspeed"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mimov26flash",
+   "names": [
+    "Xiaomi: MiMo-V2.6-Flash",
+    "MiMo-V2.6-Flash",
+    "MiMo V2.6 Flash",
+    "MiMo V2.6 Flash (DeepInfra)",
+    "MiMo V2.6 Flash (Xiaomi)",
+    "MiMo-V2.6-Flash Free"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-21",
+    "modelsdev:deepinfra": "2026-09-22",
+    "modelsdev:empiriolabs": "2026-09-22",
+    "modelsdev:nano-gpt": "2026-09-22",
+    "modelsdev:nan": "2026-09-22",
+    "modelsdev:xiaomi-token-plan-cn": "2026-09-22",
+    "modelsdev:llmgateway-providers": "2026-09-22",
+    "modelsdev:above": "2026-09-22",
+    "modelsdev:kilo": "2026-09-22",
+    "modelsdev:venice": "2026-09-28",
+    "modelsdev:openrouter": "2026-09-22",
+    "modelsdev:cline-pass": "2026-09-22",
+    "modelsdev:xiaomi-token-plan-ams": "2026-09-22",
+    "modelsdev:vultr": "2026-09-22",
+    "modelsdev:vercel": "2026-09-22",
+    "modelsdev:aihubmix": "2026-09-22",
+    "modelsdev:xiaomi": "2026-09-22",
+    "modelsdev:xiaomi-token-plan-sgp": "2026-09-22",
+    "modelsdev:opencode-go": "2026-09-22",
+    "modelsdev:tempr": "2026-09-22",
+    "modelsdev:opencode": "2026-09-22",
+    "modelsdev:requesty": "2026-09-22",
+    "modelsdev:llmgateway": "2026-09-22",
+    "modelsdev:crossmodel": "2026-09-22"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video+audio->text",
+    "text,image,audio,video->text",
+    "text,image,audio->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "xiaomi/mimo-v2.6-flash"
+    ],
+    "modelsdev:deepinfra": [
+     "XiaomiMiMo/MiMo-V2.6-Flash"
+    ],
+    "modelsdev:empiriolabs": [
+     "mimo-v2-6-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "xiaomi/mimo-v2.6-flash"
+    ],
+    "modelsdev:nan": [
+     "mimo-v2.6-flash"
+    ],
+    "modelsdev:xiaomi-token-plan-cn": [
+     "mimo-v2.6-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "deepinfra/mimo-v2.6-flash",
+     "xiaomi/mimo-v2.6-flash"
+    ],
+    "modelsdev:above": [
+     "mimo-v2.6-flash"
+    ],
+    "modelsdev:kilo": [
+     "xiaomi/mimo-v2.6-flash"
+    ],
+    "modelsdev:venice": [
+     "xiaomi-mimo-v2-6-flash"
+    ],
+    "modelsdev:openrouter": [
+     "xiaomi/mimo-v2.6-flash"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/mimo-v2.6-flash"
+    ],
+    "modelsdev:xiaomi-token-plan-ams": [
+     "mimo-v2.6-flash"
+    ],
+    "modelsdev:vultr": [
+     "mimo-v2.6-flash-rl"
+    ],
+    "modelsdev:vercel": [
+     "xiaomi/mimo-v2.6-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "mimo-v2.6-flash"
+    ],
+    "modelsdev:xiaomi": [
+     "mimo-v2.6-flash"
+    ],
+    "modelsdev:xiaomi-token-plan-sgp": [
+     "mimo-v2.6-flash"
+    ],
+    "modelsdev:opencode-go": [
+     "mimo-v2.6-flash"
+    ],
+    "modelsdev:tempr": [
+     "xiaomi-mimo/mimo-v2.6-flash"
+    ],
+    "modelsdev:opencode": [
+     "mimo-v2.6-flash-free"
+    ],
+    "modelsdev:requesty": [
+     "mimo-v2.6-flash"
+    ],
+    "modelsdev:llmgateway": [
+     "mimo-v2.6-flash"
+    ],
+    "modelsdev:crossmodel": [
+     "xiaomi/mimo-v2.6-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mimov26pro",
+   "names": [
+    "Xiaomi: MiMo-V2.6-Pro",
+    "MiMo-V2.6-Pro",
+    "MiMo V2.6 Pro",
+    "MiMo V2.6 Pro (DeepInfra)",
+    "MiMo V2.6 Pro (Xiaomi)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-21",
+    "modelsdev:deepinfra": "2026-09-22",
+    "modelsdev:empiriolabs": "2026-09-22",
+    "modelsdev:nano-gpt": "2026-09-22",
+    "modelsdev:xiaomi-token-plan-cn": "2026-09-22",
+    "modelsdev:llmgateway-providers": "2026-09-22",
+    "modelsdev:above": "2026-09-22",
+    "modelsdev:kilo": "2026-09-22",
+    "modelsdev:openrouter": "2026-09-22",
+    "modelsdev:cline-pass": "2026-09-22",
+    "modelsdev:zenmux": "2026-09-22",
+    "modelsdev:xiaomi-token-plan-ams": "2026-09-22",
+    "modelsdev:vultr": "2026-09-22",
+    "modelsdev:vercel": "2026-09-22",
+    "modelsdev:aihubmix": "2026-09-22",
+    "modelsdev:xiaomi": "2026-09-22",
+    "modelsdev:xiaomi-token-plan-sgp": "2026-09-22",
+    "modelsdev:opencode-go": "2026-09-22",
+    "modelsdev:tempr": "2026-09-22",
+    "modelsdev:requesty": "2026-09-22",
+    "modelsdev:llmgateway": "2026-09-22",
+    "modelsdev:crossmodel": "2026-09-22"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video+audio->text",
+    "text,image,audio,video->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "xiaomi/mimo-v2.6-pro"
+    ],
+    "modelsdev:deepinfra": [
+     "XiaomiMiMo/MiMo-V2.6-Pro"
+    ],
+    "modelsdev:empiriolabs": [
+     "mimo-v2-6-pro"
+    ],
+    "modelsdev:nano-gpt": [
+     "xiaomi/mimo-v2.6-pro"
+    ],
+    "modelsdev:xiaomi-token-plan-cn": [
+     "mimo-v2.6-pro"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "deepinfra/mimo-v2.6-pro",
+     "xiaomi/mimo-v2.6-pro"
+    ],
+    "modelsdev:above": [
+     "mimo-v2.6-pro"
+    ],
+    "modelsdev:kilo": [
+     "xiaomi/mimo-v2.6-pro"
+    ],
+    "modelsdev:openrouter": [
+     "xiaomi/mimo-v2.6-pro"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/mimo-v2.6-pro"
+    ],
+    "modelsdev:zenmux": [
+     "xiaomi/mimo-v2.6-pro"
+    ],
+    "modelsdev:xiaomi-token-plan-ams": [
+     "mimo-v2.6-pro"
+    ],
+    "modelsdev:vultr": [
+     "mimo-v2.6-pro-rl"
+    ],
+    "modelsdev:vercel": [
+     "xiaomi/mimo-v2.6-pro"
+    ],
+    "modelsdev:aihubmix": [
+     "mimo-v2.6-pro"
+    ],
+    "modelsdev:xiaomi": [
+     "mimo-v2.6-pro"
+    ],
+    "modelsdev:xiaomi-token-plan-sgp": [
+     "mimo-v2.6-pro"
+    ],
+    "modelsdev:opencode-go": [
+     "mimo-v2.6-pro"
+    ],
+    "modelsdev:tempr": [
+     "xiaomi-mimo/mimo-v2.6-pro"
+    ],
+    "modelsdev:requesty": [
+     "mimo-v2.6-pro"
+    ],
+    "modelsdev:llmgateway": [
+     "mimo-v2.6-pro"
+    ],
+    "modelsdev:crossmodel": [
+     "xiaomi/mimo-v2.6-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mimov26proultraspeed",
+   "names": [
+    "Xiaomi: MiMo-V2.6-Pro-UltraSpeed",
+    "MiMo V2.6 Pro UltraSpeed",
+    "MiMo-V2.6-Pro-UltraSpeed"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-21",
+    "modelsdev:empiriolabs": "2026-09-21",
+    "modelsdev:nano-gpt": "2026-09-21",
+    "modelsdev:above": "2026-09-21",
+    "modelsdev:kilo": "2026-09-21",
+    "modelsdev:openrouter": "2026-09-21",
+    "modelsdev:vercel": "2026-09-21",
+    "modelsdev:aihubmix": "2026-09-21",
+    "modelsdev:xiaomi": "2026-09-21",
+    "modelsdev:tempr": "2026-09-21"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video+audio->text",
+    "text,image,audio,video->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "xiaomi/mimo-v2.6-pro-ultraspeed"
+    ],
+    "modelsdev:empiriolabs": [
+     "mimo-v2-6-pro-ultraspeed"
+    ],
+    "modelsdev:nano-gpt": [
+     "xiaomi/mimo-v2.6-pro-ultraspeed"
+    ],
+    "modelsdev:above": [
+     "mimo-v2.6-pro-ultraspeed"
+    ],
+    "modelsdev:kilo": [
+     "xiaomi/mimo-v2.6-pro-ultraspeed"
+    ],
+    "modelsdev:openrouter": [
+     "xiaomi/mimo-v2.6-pro-ultraspeed"
+    ],
+    "modelsdev:vercel": [
+     "xiaomi/mimo-v2.6-pro-ultraspeed"
+    ],
+    "modelsdev:aihubmix": [
+     "mimo-v2.6-pro-ultraspeed"
+    ],
+    "modelsdev:xiaomi": [
+     "mimo-v2.6-pro-ultraspeed"
+    ],
+    "modelsdev:tempr": [
+     "xiaomi-mimo/mimo-v2.6-pro-ultraspeed"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

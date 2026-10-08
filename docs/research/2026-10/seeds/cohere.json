@@ -1,0 +1,444 @@
+{
+ "vendor": "cohere",
+ "count": 17,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "commandr",
+   "names": [
+    "Cohere: Command R (08-2024)",
+    "Command R",
+    "Command R 08-2024"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-08-30",
+    "modelsdev:cohere": "2024-08-30",
+    "modelsdev:kilo": "2024-08-30",
+    "modelsdev:openrouter": "2024-08-30",
+    "modelsdev:merge-gateway": "2024-08-30",
+    "modelsdev:edenai": "2024-08-30"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "cohere/command-r-08-2024"
+    ],
+    "modelsdev:cohere": [
+     "command-r-08-2024"
+    ],
+    "modelsdev:kilo": [
+     "cohere/command-r-08-2024"
+    ],
+    "modelsdev:openrouter": [
+     "cohere/command-r-08-2024"
+    ],
+    "modelsdev:merge-gateway": [
+     "cohere/command-r-08-2024"
+    ],
+    "modelsdev:edenai": [
+     "cohere/command-r-08-2024"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "commandrplus",
+   "names": [
+    "Cohere: Command R+ (08-2024)",
+    "Cohere: Command R+",
+    "Command R+",
+    "Command R+ 08-2024"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-08-30",
+    "modelsdev:nano-gpt": "2024-08-30",
+    "modelsdev:cohere": "2024-08-30",
+    "modelsdev:kilo": "2024-08-30",
+    "modelsdev:openrouter": "2024-08-30",
+    "modelsdev:anyapi": "2024-08-30",
+    "modelsdev:merge-gateway": "2024-08-30",
+    "modelsdev:edenai": "2024-08-30"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "cohere/command-r-plus-08-2024"
+    ],
+    "modelsdev:nano-gpt": [
+     "cohere/command-r-plus-08-2024"
+    ],
+    "modelsdev:cohere": [
+     "command-r-plus-08-2024"
+    ],
+    "modelsdev:kilo": [
+     "cohere/command-r-plus-08-2024"
+    ],
+    "modelsdev:openrouter": [
+     "cohere/command-r-plus-08-2024"
+    ],
+    "modelsdev:anyapi": [
+     "cohere/command-r-plus-08-2024"
+    ],
+    "modelsdev:merge-gateway": [
+     "cohere/command-r-plus-08-2024"
+    ],
+    "modelsdev:edenai": [
+     "cohere/command-r-plus-08-2024"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "c4aiayaexpanse32b",
+   "names": [
+    "Aya Expanse 32B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cohere": "2024-10-24",
+    "modelsdev:edenai": "2024-10-24"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cohere": [
+     "c4ai-aya-expanse-32b"
+    ],
+    "modelsdev:edenai": [
+     "cohere/c4ai-aya-expanse-32b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "commandr7b",
+   "names": [
+    "Cohere: Command R7B (12-2024)",
+    "Command R7B",
+    "Command R7B 12-2024"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-12-14",
+    "modelsdev:cohere": "2024-12-02",
+    "modelsdev:kilo": "2024-12-02",
+    "modelsdev:openrouter": "2024-12-02",
+    "modelsdev:merge-gateway": "2024-12-02",
+    "modelsdev:edenai": "2024-12-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "cohere/command-r7b-12-2024"
+    ],
+    "modelsdev:cohere": [
+     "command-r7b-12-2024"
+    ],
+    "modelsdev:kilo": [
+     "cohere/command-r7b-12-2024"
+    ],
+    "modelsdev:openrouter": [
+     "cohere/command-r7b-12-2024"
+    ],
+    "modelsdev:merge-gateway": [
+     "cohere/command-r7b-12-2024"
+    ],
+    "modelsdev:edenai": [
+     "cohere/command-r7b-12-2024"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "commandr7barabic",
+   "names": [
+    "Command R7B Arabic"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cohere": "2025-02-27"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cohere": [
+     "command-r7b-arabic-02-2025"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "c4aiayavision32b",
+   "names": [
+    "Aya Vision 32B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cohere": "2025-03-04"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cohere": [
+     "c4ai-aya-vision-32b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "commanda",
+   "names": [
+    "Cohere: Command A",
+    "Command A",
+    "Command A 03-2025"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-03-13",
+    "modelsdev:cohere": "2025-03-13",
+    "modelsdev:merge-gateway": "2025-03-13",
+    "modelsdev:edenai": "2025-03-13"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "cohere/command-a"
+    ],
+    "modelsdev:cohere": [
+     "command-a-03-2025"
+    ],
+    "modelsdev:merge-gateway": [
+     "cohere/command-a-03-2025"
+    ],
+    "modelsdev:edenai": [
+     "cohere/command-a-03-2025"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "commandavision",
+   "names": [
+    "Command A Vision"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cohere": "2025-07-31"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cohere": [
+     "command-a-vision-07-2025"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "commandareasoning",
+   "names": [
+    "Cohere Command A (08/2025)",
+    "Command A Reasoning",
+    "cohere--command-a-reasoning"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nano-gpt": "2025-08-21",
+    "modelsdev:cohere": "2025-08-21",
+    "modelsdev:sap-ai-core": "2025-08-21"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nano-gpt": [
+     "command-a-reasoning-08-2025"
+    ],
+    "modelsdev:cohere": [
+     "command-a-reasoning-08-2025"
+    ],
+    "modelsdev:sap-ai-core": [
+     "cohere--command-a-reasoning"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "commandatranslate",
+   "names": [
+    "Command A Translate"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cohere": "2025-08-28"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cohere": [
+     "command-a-translate-08-2025"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "tinyayaearth",
+   "names": [
+    "Tiny Aya Earth"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cohere": "2026-02-17"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cohere": [
+     "tiny-aya-earth"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "tinyayafire",
+   "names": [
+    "Tiny Aya Fire"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cohere": "2026-02-17"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cohere": [
+     "tiny-aya-fire"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "tinyayaglobal",
+   "names": [
+    "Tiny Aya Global"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cohere": "2026-02-17"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cohere": [
+     "tiny-aya-global"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "tinyayawater",
+   "names": [
+    "Tiny Aya Water"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cohere": "2026-02-17"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cohere": [
+     "tiny-aya-water"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "commandaplus",
+   "names": [
+    "Cohere: Command A+",
+    "Command A Plus"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-22",
+    "modelsdev:cohere": "2026-05-20"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "cohere/command-a-plus"
+    ],
+    "modelsdev:cohere": [
+     "command-a-plus-05-2026"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "northminicode10",
+   "names": [
+    "North Mini Code",
+    "North Mini Code Free"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cohere": "2026-06-09",
+    "modelsdev:opencode": "2026-06-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cohere": [
+     "north-mini-code-1-0"
+    ],
+    "modelsdev:opencode": [
+     "north-mini-code-free"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "northsmalltranslate10",
+   "names": [
+    "North Small Translate"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cohere": "2026-09-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cohere": [
+     "north-small-translate-09-2026"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

@@ -1,0 +1,450 @@
+{
+ "vendor": "tencent",
+ "count": 14,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "hunyuana13binstruct",
+   "names": [
+    "Tencent: Hunyuan A13B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-07-08"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "tencent/hunyuan-a13b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "kimik25",
+   "names": [
+    "Kimi-K2.5"
+   ],
+   "releaseDateHints": {
+    "modelsdev:tencent-coding-plan": "2026-01-27"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:tencent-coding-plan": [
+     "kimi-k2.5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm5",
+   "names": [
+    "GLM-5"
+   ],
+   "releaseDateHints": {
+    "modelsdev:tencent-coding-plan": "2026-02-11"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:tencent-coding-plan": [
+     "glm-5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "minimaxm25",
+   "names": [
+    "MiniMax-M2.5"
+   ],
+   "releaseDateHints": {
+    "modelsdev:tencent-coding-plan": "2026-02-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:tencent-coding-plan": [
+     "minimax-m2.5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "hunyuan20instruct",
+   "names": [
+    "Tencent HY 2.0 Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:tencent-coding-plan": "2026-03-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:tencent-coding-plan": [
+     "hunyuan-2.0-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "hunyuan20thinking",
+   "names": [
+    "Tencent HY 2.0 Think"
+   ],
+   "releaseDateHints": {
+    "modelsdev:tencent-coding-plan": "2026-03-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:tencent-coding-plan": [
+     "hunyuan-2.0-thinking"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "hunyuant1",
+   "names": [
+    "Hunyuan-T1"
+   ],
+   "releaseDateHints": {
+    "modelsdev:tencent-coding-plan": "2026-03-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:tencent-coding-plan": [
+     "hunyuan-t1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "hunyuanturbos",
+   "names": [
+    "Hunyuan-TurboS"
+   ],
+   "releaseDateHints": {
+    "modelsdev:tencent-coding-plan": "2026-03-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:tencent-coding-plan": [
+     "hunyuan-turbos"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "hy3preview",
+   "names": [
+    "Tencent: Hy3 preview",
+    "Hy3 preview",
+    "Hy3 Preview"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-22",
+    "modelsdev:kilo": "2026-04-20",
+    "modelsdev:openrouter": "2026-04-20",
+    "modelsdev:zenmux": "2026-04-20",
+    "modelsdev:tencent-tokenhub": "2026-04-20",
+    "modelsdev:aihubmix": "2026-04-20"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "tencent/hy3-preview"
+    ],
+    "modelsdev:kilo": [
+     "tencent/hy3-preview"
+    ],
+    "modelsdev:openrouter": [
+     "tencent/hy3-preview"
+    ],
+    "modelsdev:zenmux": [
+     "tencent/hy3-preview"
+    ],
+    "modelsdev:tencent-tokenhub": [
+     "hy3-preview"
+    ],
+    "modelsdev:aihubmix": [
+     "hy3-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "hy3",
+   "names": [
+    "Tencent: Hy3",
+    "Hy3",
+    "Tencent Hy3",
+    "Hy3 (Tencent Cloud)",
+    "Hy3 (NovitaAI)",
+    "Hy3 (Deep Infra)",
+    "Hy3 (Tencent)",
+    "Hy3 Free"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-06",
+    "modelsdev:deepinfra": "2026-07-06",
+    "modelsdev:nano-gpt": "2026-07-06",
+    "modelsdev:siliconflow": "2026-07-06",
+    "modelsdev:llmgateway-providers": "2026-07-06",
+    "modelsdev:kilo": "2026-07-06",
+    "modelsdev:openrouter": "2026-07-06",
+    "modelsdev:huggingface": "2026-07-06",
+    "modelsdev:tencent-tokenhub": "2026-07-06",
+    "modelsdev:vercel": "2026-07-06",
+    "modelsdev:jalapeno": "2026-07-06",
+    "modelsdev:orcarouter": "2026-07-06",
+    "modelsdev:aihubmix": "2026-07-06",
+    "modelsdev:opencode-go": "2026-07-06",
+    "modelsdev:edenai": "2026-07-06",
+    "modelsdev:opencode": "2026-07-06",
+    "modelsdev:kenari": "2026-07-06",
+    "modelsdev:requesty": "2026-07-06",
+    "modelsdev:llmgateway": "2026-07-06",
+    "modelsdev:tencent-token-plan": "2026-07-06",
+    "modelsdev:crossmodel": "2026-07-06"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "tencent/hy3"
+    ],
+    "modelsdev:deepinfra": [
+     "tencent/Hy3"
+    ],
+    "modelsdev:nano-gpt": [
+     "tencent/hy3"
+    ],
+    "modelsdev:siliconflow": [
+     "tencent/Hy3"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "tencent/hy3",
+     "novita/hy3"
+    ],
+    "modelsdev:kilo": [
+     "tencent/hy3"
+    ],
+    "modelsdev:openrouter": [
+     "tencent/hy3"
+    ],
+    "modelsdev:huggingface": [
+     "tencent/Hy3"
+    ],
+    "modelsdev:tencent-tokenhub": [
+     "hy3"
+    ],
+    "modelsdev:vercel": [
+     "tencent/hy3"
+    ],
+    "modelsdev:jalapeno": [
+     "Hy3"
+    ],
+    "modelsdev:orcarouter": [
+     "tencent/hy3"
+    ],
+    "modelsdev:aihubmix": [
+     "hy3"
+    ],
+    "modelsdev:opencode-go": [
+     "hy3"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/tencent/Hy3",
+     "tencent/hy3"
+    ],
+    "modelsdev:opencode": [
+     "hy3-free"
+    ],
+    "modelsdev:kenari": [
+     "hy3"
+    ],
+    "modelsdev:requesty": [
+     "hy3"
+    ],
+    "modelsdev:llmgateway": [
+     "hy3"
+    ],
+    "modelsdev:tencent-token-plan": [
+     "hy3"
+    ],
+    "modelsdev:crossmodel": [
+     "tencent/hy3"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "hymt27b",
+   "names": [
+    "Tencent: Hy-MT2-7B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-19"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "tencent/hy-mt2-7b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "hymt218b",
+   "names": [
+    "Tencent: Hy-MT2-1.8B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-20"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "tencent/hy-mt2-1.8b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "hymt230ba3b",
+   "names": [
+    "Tencent: Hy-MT2-30B-A3B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-20"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "tencent/hy-mt2-30b-a3b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "hy4preview",
+   "names": [
+    "Tencent: Hy4 preview",
+    "Hy4 preview",
+    "Tencent Hy4 Preview",
+    "Hy4 Preview (Tencent Cloud)",
+    "Hy4 preview (Deep Infra)",
+    "Hy4 preview (Tencent)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-28",
+    "modelsdev:deepinfra": "2026-08-28",
+    "modelsdev:nano-gpt": "2026-08-28",
+    "modelsdev:llmgateway-providers": "2026-08-28",
+    "modelsdev:kilo": "2026-08-28",
+    "modelsdev:openrouter": "2026-08-28",
+    "modelsdev:huggingface": "2026-08-28",
+    "modelsdev:vancine": "2026-08-28",
+    "modelsdev:tencent-tokenhub": "2026-08-28",
+    "modelsdev:vercel": "2026-08-28",
+    "modelsdev:aihubmix": "2026-08-28",
+    "modelsdev:opencode-go": "2026-08-28",
+    "modelsdev:edenai": "2026-08-28",
+    "modelsdev:llmgateway": "2026-08-28",
+    "modelsdev:tencent-token-plan": "2026-08-28",
+    "modelsdev:crossmodel": "2026-08-28"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "tencent/hy4-preview"
+    ],
+    "modelsdev:deepinfra": [
+     "tencent/Hy4-preview"
+    ],
+    "modelsdev:nano-gpt": [
+     "tencent/hy4-preview"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "tencent/hy4-preview"
+    ],
+    "modelsdev:kilo": [
+     "tencent/hy4-preview"
+    ],
+    "modelsdev:openrouter": [
+     "tencent/hy4-preview"
+    ],
+    "modelsdev:huggingface": [
+     "tencent/Hy4-preview"
+    ],
+    "modelsdev:vancine": [
+     "hy4-preview"
+    ],
+    "modelsdev:tencent-tokenhub": [
+     "hy4-preview"
+    ],
+    "modelsdev:vercel": [
+     "tencent/hy4-preview"
+    ],
+    "modelsdev:aihubmix": [
+     "hy4-preview"
+    ],
+    "modelsdev:opencode-go": [
+     "hy4-preview"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/tencent/Hy4-preview",
+     "tencent/hy4-preview"
+    ],
+    "modelsdev:llmgateway": [
+     "hy4-preview"
+    ],
+    "modelsdev:tencent-token-plan": [
+     "hy4-preview"
+    ],
+    "modelsdev:crossmodel": [
+     "tencent/hy4-preview"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}
