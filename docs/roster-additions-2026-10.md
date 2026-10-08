@@ -67,7 +67,7 @@
 | 235 | `muse-image` | Muse Image | Meta | 视觉/创作 | SR | 470 | — | 2026-07-07 | <https://ai.meta.com/blog/introducing-muse-image-muse-video-msl/> |
 | 236 | `mistral-large-3` | Mistral Large 3 | Mistral AI | 开源/推理 | R | 398 | → Mistral Large 4 Lv32 | 2025-12-02 | <https://en.wikipedia.org/wiki/Mistral_AI> |
 | 237 | `mistral-large-4` | Mistral Large 4 | Mistral AI | 开源/推理 | SR | 460 | ← Mistral Large 3 | 2026-10-06 | <https://openrouter.ai/mistralai/mistral-large-4-0> |
-| 238 | `devstral-2` | Devstral 2 | Mistral AI | 代码/开源 | SR | 440 | — | 2025-12-10 | <https://en.wikipedia.org/wiki/Mistral_AI> |
+| 238 | `devstral-2` | Devstral 2 | Mistral AI | 代码/开源 | SR | 440 | — | 2025-12-09 | <https://en.wikipedia.org/wiki/Mistral_AI> |
 | 239 | `deepseek-v3-1` | DeepSeek-V3.1 | DeepSeek | 算力/推理 | R | 372 | → DeepSeek-V3.2 Lv22 | 2025-08-21 | <https://en.wikipedia.org/wiki/DeepSeek> |
 | 240 | `deepseek-v3-2` | DeepSeek-V3.2 | DeepSeek | 算力/推理 | SR | 450 | ← DeepSeek-V3.1；→ DeepSeek-V3.2-Speciale Lv38 | 2025-12-01 | <https://en.wikipedia.org/wiki/DeepSeek> |
 | 241 | `deepseek-v3-2-speciale` | DeepSeek-V3.2-Speciale | DeepSeek | 推理/开源 | SSR | 508 | ← DeepSeek-V3.2 | 2025-12-01 | <https://en.wikipedia.org/wiki/DeepSeek> |
