@@ -68,7 +68,10 @@ export function createTrampleField(): TrampleField {
   let ox = 0, oz = 0, placed = false, wasActive = false
   const tau = Math.max(0.05, T.recoverSec / 3)
 
-  const wipe = () => { bx.fill(0); bz.fill(0); sink.fill(0) }
+  // rows that may hold a bent cell, and rows whose texels must be rewritten this frame (live now or just emptied):
+  // decay and packing only visit those, so an idle field costs nothing and a short trail a few rows
+  const live = new Uint8Array(N), repack = new Uint8Array(N)
+  const wipe = () => { bx.fill(0); bz.fill(0); sink.fill(0); repack.fill(1); live.fill(0) }
 
   function slide(nx: number, nz: number): void {
     if (!placed) { placed = true; ox = nx; oz = nz; wipe(); return }
@@ -77,11 +80,13 @@ export function createTrampleField(): TrampleField {
     // columns / rows that leave the window are the ones the entering global cells land on
     for (let i = 0; i < Math.abs(dx); i++) {
       const col = mod(dx > 0 ? ox + i : ox - 1 - i, N)
-      for (let j = 0; j < N; j++) { const k = j * N + col; bx[k] = 0; bz[k] = 0; sink[k] = 0 }
+      for (let j = 0; j < N; j++) { const k = j * N + col; bx[k] = 0; bz[k] = 0; sink[k] = 0; if (live[j]) repack[j] = 1 }
     }
     for (let j = 0; j < Math.abs(dz); j++) {
-      const row = mod(dz > 0 ? oz + j : oz - 1 - j, N) * N
+      const r = mod(dz > 0 ? oz + j : oz - 1 - j, N), row = r * N
       for (let i = 0; i < N; i++) { const k = row + i; bx[k] = 0; bz[k] = 0; sink[k] = 0 }
+      if (live[r]) repack[r] = 1
+      live[r] = 0
     }
     ox = nx; oz = nz
   }
@@ -92,12 +97,18 @@ export function createTrampleField(): TrampleField {
       ;trampleUniforms.uTrampleFocus.value.set(focusX, focusZ)
       if (wasActive && dt > 0) {
         const keep = Math.exp(-dt / tau)
-        for (let k = 0; k < bx.length; k++) {
-          const s = sink[k]
-          if (s === 0 && bx[k] === 0 && bz[k] === 0) continue
-          sink[k] = s * keep < 0.01 ? 0 : s * keep
-          bx[k] *= keep; bz[k] *= keep
-          if (sink[k] === 0) { bx[k] = 0; bz[k] = 0 }
+        for (let r = 0; r < N; r++) {
+          if (!live[r]) continue
+          let any = 0
+          for (let k = r * N, e = k + N; k < e; k++) {
+            const s = sink[k]
+            if (s === 0) continue
+            const d = s * keep
+            if (d < 0.01) { sink[k] = 0; bx[k] = 0; bz[k] = 0; continue }
+            sink[k] = d; bx[k] *= keep; bz[k] *= keep
+            any = 1
+          }
+          live[r] = any
         }
       }
       let stamped = 0
@@ -116,6 +127,8 @@ export function createTrampleField(): TrampleField {
           if (accept && !accept(cx, cz, b.y)) continue
           const f = 1 - smooth(R * G.bendCore, R, d)
           const k = mod(gz, N) * N + mod(gx, N)
+          const row = mod(gz, N)
+          live[row] = 1; repack[row] = 1
           const tx = d > 1e-3 ? (dx / d) * f : 0, tz = d > 1e-3 ? (dz / d) * f : 0
           // the stronger bend wins, so a fresh step overrides a fading older one
           if (Math.hypot(tx, tz) >= Math.hypot(bx[k], bz[k])) { bx[k] = tx; bz[k] = tz }
@@ -124,21 +137,26 @@ export function createTrampleField(): TrampleField {
       }
       if (!wasActive && stamped === 0) return
       let active = 0
-      for (let k = 0; k < bx.length; k++) {
-        const o = k * 4
-        const s = sink[k]
-        if (s === 0) { bytes[o] = 127; bytes[o + 1] = 127; bytes[o + 2] = 0; continue }
-        active++
-        bytes[o] = Math.round(bx[k] * 127) + 127
-        bytes[o + 1] = Math.round(bz[k] * 127) + 127
-        bytes[o + 2] = Math.round(s * 255)
+      for (let r = 0; r < N; r++) {
+        if (!repack[r]) continue
+        for (let k = r * N, e = k + N; k < e; k++) {
+          const o = k * 4
+          const s = sink[k]
+          if (s === 0) { bytes[o] = 127; bytes[o + 1] = 127; bytes[o + 2] = 0; continue }
+          bytes[o] = Math.round(bx[k] * 127) + 127
+          bytes[o + 1] = Math.round(bz[k] * 127) + 127
+          bytes[o + 2] = Math.round(s * 255)
+        }
+        repack[r] = live[r]
       }
+      for (let r = 0; r < N; r++) if (live[r]) { active = 1; break }
       if (active > 0 || wasActive) texture.needsUpdate = true
       wasActive = active > 0
     },
     clear() {
       wipe()
       for (let k = 0; k < N * N; k++) { bytes[k * 4] = 127; bytes[k * 4 + 1] = 127; bytes[k * 4 + 2] = 0 }
+      repack.fill(0)
       texture.needsUpdate = true; wasActive = false; placed = false
     },
     dispose() {

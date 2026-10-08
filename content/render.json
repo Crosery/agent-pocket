@@ -141,7 +141,7 @@
     "bendSink": 0.35,
     "bendCore": 0.2,
     "assetTufts": ["tall_sakura", "tall_lavender", "tall_fern", "tall_glitch", "tall_savanna"],
-    "trample": {"cellsPerTile": 2, "window": 64, "recoverSec": 1.8, "maxBenders": 24, "edgeFade": 4, "decor": {"strength": 0.9, "sink": 0.45}, "strength": 1.0, "sink": 0.6, "darken": 0.2}
+    "trample": {"cellsPerTile": 2, "window": 48, "recoverSec": 1.8, "maxBenders": 24, "edgeFade": 4, "decor": {"strength": 0.9, "sink": 0.45}, "strength": 1.0, "sink": 0.6, "darken": 0.2}
   },
   "lights": {"pointIntensity": 1.9, "decay": 1.25, "distanceMul": 1.55, "glowSize": 0.4, "glowIntensity": 1.1, "glowFlicker": 0.06, "flickerSpeed": 9, "reassignSeconds": 0.2, "fadeSpeed": 2.5, "emissiveNight": 1.5, "emissiveDay": 0.06, "emissiveAlways": 1.25, "frontOffset": 0.4},
   "weather": {
