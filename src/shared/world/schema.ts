@@ -113,8 +113,11 @@ export interface OverworldSpec {
   hydrology: HydrologySpec
   /** Wall props on walkable sea tiles (shallows) inside a zone border band. */
   shallowBorder: { prop: string; weight: number }[]
-  /** Broad, low-elevation onboarding area around the start town; meaningful highlands begin outside the transition band. */
-  startFlat?: { radius: number; transition: number; level: number }
+  /**
+   * Level basin around the start town: nothing above `level` within `radius` tiles (radius wobbled by `jitter` tiles of
+   * Perlin noise), then the cap rises smoothly to the world's own relief over `transition` tiles. Isolated terraces under `minPatch` tiles inside that reach are levelled too.
+   */
+  startFlat?: { radius: number; transition: number; level: number; jitter: number; noise: NoiseSpec; minPatch: number }
   maxLevel: number; seaLevel: number; seaTerrain: string; seaShallowTerrain: string; seaShallowWidth: number
   outOfBounds: string
   edgeBand: number; borderRadius: number; townMargin: number; slope: number; caveSearch: number; routeRegionRadius: number
@@ -151,6 +154,8 @@ export interface OverworldSpec {
   stairsTerrain: string
   /** Minimum distance between extra (non-route) stairs carved into cliffs. */
   accessStairSpacing: number
+  /** Prop planted on both flanks of every extra cliff stair so it is easy to spot (omit for none). */
+  accessStairMarker?: string
   /** Repair of walkable pockets cut off by cliffs, rivers or scattered props. */
   access: { minPocket: number; maxRepairs: number; propCost: number }
   trainerSpots: { minPathDist: number; maxPathDist: number; minSpacing: number }
@@ -162,6 +167,8 @@ export interface EncounterRules {
   /** Early-game fairness: tables whose top level is <= maxLevel only hold species of rarity order <= maxOrder and,
    * when `onlyTypes` is set, whose types are all listed (first matching entry wins). */
   rarityLevelCaps?: { maxLevel: number; maxOrder: number; onlyTypes?: string[] }[]
+  /** Every non-starter base form up to this rarity order must sit in at least one wild table (see ensureEncounterCoverage). */
+  coverage?: { maxOrder: number }
 }
 
 export interface WorldSpec {

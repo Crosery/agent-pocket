@@ -55,6 +55,8 @@ export interface OverworldExt extends OverworldController {
   readonly region: RegionDef | null
   readonly terrainName: string
   readonly roamerCount: number
+  /** Dev automation: the visible roamers (species, level, mood, position, whether they noticed the player). */
+  roamerInfo(): { speciesId: string; level: number; mood: string; noticed: boolean; x: number; y: number; target: { x: number; y: number } | null; region: string }[]
   readonly weather: FieldWeatherKind
   readonly questNavigation: QuestNavigation | null
   setWeatherOverride(kind: FieldWeatherKind | null): void
@@ -988,6 +990,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     get region() { return regionDef },
     get terrainName() { return terrainAtTile(tile.x, tile.y)?.nameZh ?? '' },
     get roamerCount() { return roaming.list.length },
+    roamerInfo: () => roaming.list.map((r) => ({ speciesId: r.creature.speciesId, level: r.creature.level, mood: r.mood, noticed: r.noticed, x: r.x, y: r.y, target: r.target, region: r.region })),
     get weather() { return weatherKind },
     get questNavigation() { return navigator.state },
     setWeatherOverride(kind) { weatherOverride = kind; applyWeather() },

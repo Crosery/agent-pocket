@@ -1,0 +1,3422 @@
+{
+ "_doc": "Roster batch additions-2026-10-b3.json (issue #18 scope 2): new species + patches to existing records, merged by tools/data/apply_additions.py. Chains follow the lineage research (docs/research lineage); a later model of the same line is a later evolution.",
+ "species": [
+  {
+   "id": "qwen1-5",
+   "nameZh": "通义千问 Qwen1.5",
+   "nameEn": "Qwen1.5",
+   "company": "Alibaba (Qwen)",
+   "country": "CN",
+   "category": "llm",
+   "family": "qwen-mid",
+   "stage": 1,
+   "evolvesTo": "qwen2",
+   "evolveLevel": 22,
+   "types": [
+    "open",
+    "chat"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 47,
+    "atk": 44,
+    "def": 44,
+    "spa": 45,
+    "spd": 43,
+    "spe": 54
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2024-02-04",
+   "capabilityScore": 12,
+   "hotnessScore": 42,
+   "statRationale": "尺寸齐全、轻量易跑→速度、HP 高。 [BST 277 ∈ N 240-330; 强项 spe/hp; 能力 12/热度 42]",
+   "dexEntryZh": "2024 年 2 月 4 日发布的开源家族，从 0.5B 到 110B 尺寸齐全，其中 1.5-110B 在 LMArena 得分 1234，前身是 Qwen（Qwen-7B/14B）。它在图鉴里是开源线的起步形态，下一形态是同系列的通义千问 Qwen2。",
+   "lookZh": "天蓝短发，宽松白连帽衫，发夹是一把开着的六边形小锁",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a cheerful hoodie girl, small and energetic. Hair: cornflower-periwinkle (#7B8CF0) short messy bob with sky-blue (#A9B8FF) inner layer, side-swept bangs, one springy ahoge. Eyes: big aqua-teal (#36C9D6) with round white highlights, bright and curious. Outfit: oversized white hoodie with indigo (#2B2F8F) cuffs and hem, hood down, small hexagon patch on the chest, periwinkle shorts, white sneakers. Signature accessory: a small hexagon-bodied padlock hairclip with its shackle swung open, on the left (open weights). Prop: a canvas satchel with three little hexagon badges in a row, graduated small to large (many sizes). Palette: periwinkle #7B8CF0, sky blue #A9B8FF, indigo #2B2F8F, white, aqua-teal #36C9D6, electric blue #082DFF. Pose: bouncing mid-step, one hand waving hello, big open smile.",
+    "personality": "什么尺码都能借你穿的热心小前辈",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Qwen's identity in this roster is a hexagon emblem in periwinkle, indigo and electric blue (#082DFF); the open-weights line turns the hexagon into an unlocked padlock hairclip and keeps a casual hoodie look.",
+    "sourceUrls": [
+     "https://qwenlm.github.io/blog/qwen1.5/"
+    ]
+   }
+  },
+  {
+   "id": "qwen2",
+   "nameZh": "通义千问 Qwen2",
+   "nameEn": "Qwen2",
+   "company": "Alibaba (Qwen)",
+   "country": "CN",
+   "category": "llm",
+   "family": "qwen-mid",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "open",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 68,
+    "atk": 55,
+    "def": 57,
+    "spa": 59,
+    "spd": 55,
+    "spe": 63
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2024-06-07",
+   "capabilityScore": 30,
+   "hotnessScore": 50,
+   "statRationale": "稠密与 MoE 并存→HP 高；开源榜领跑→速度高。 [BST 357 ∈ R 330-420; 强项 hp/spe; 能力 30/热度 50]",
+   "dexEntryZh": "2024 年 6 月 7 日发布的开源家族，稠密与 MoE 并存，Qwen2-72B 在 LMArena 得分 1262，2024 年一度领跑 Hugging Face 开源 LLM 榜。它接在通义千问 Qwen1.5 之后，同系列的新一代，开源路线不变。",
+   "lookZh": "天蓝短发，连帽夹克，金边开锁发夹，举着小奖杯",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.4 heads tall, the same hoodie girl a size up, a confident open-source senior. Hair: cornflower-periwinkle (#7B8CF0) messy bob with sky-blue (#A9B8FF) inner layer, now with a short stubby ponytail, same side-swept bangs and ahoge. Eyes: aqua-teal (#36C9D6), round highlights, bolder and proud. Outfit: white zip-up hooded jacket with indigo (#2B2F8F) sleeves, hexagon chest patch, short indigo scarf, periwinkle shorts, black tights, white high-tops. Signature accessory: the same hexagon padlock hairclip with open shackle, larger and gold-rimmed. Props: the canvas satchel with graduated hexagon badges plus a second pouch, and a small gold trophy cup held up. Palette: periwinkle #7B8CF0, sky blue #A9B8FF, indigo #2B2F8F, white, aqua-teal #36C9D6, gold #D4AF37. Pose: striding forward, trophy raised, grinning.",
+    "personality": "拿了榜首也不摆架子，继续把门敞着",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Qwen's identity in this roster is a hexagon emblem in periwinkle, indigo and electric blue (#082DFF); the open-weights line turns the hexagon into an unlocked padlock hairclip and keeps a casual hoodie look.",
+    "sourceUrls": [
+     "https://qwenlm.github.io/blog/qwen2/"
+    ]
+   },
+   "lineRef": "qwen1-5"
+  },
+  {
+   "id": "qwen2-5-max",
+   "nameZh": "通义千问 Qwen2.5-Max",
+   "nameEn": "Qwen2.5-Max",
+   "company": "Alibaba (Qwen)",
+   "country": "CN",
+   "category": "llm",
+   "family": "qwen-max",
+   "stage": 1,
+   "evolvesTo": "qwen3-max",
+   "evolveLevel": 30,
+   "types": [
+    "chat",
+    "logic"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 66,
+    "atk": 56,
+    "def": 56,
+    "spa": 64,
+    "spd": 68,
+    "spe": 65
+   },
+   "habitats": [
+    "city",
+    "forest"
+   ],
+   "releaseDate": "2025-01-28",
+   "capabilityScore": 40,
+   "hotnessScore": 48,
+   "statRationale": "大规模 MoE 底盘厚→HP 高；对话稳健→特防高。 [BST 375 ∈ R 330-420; 强项 spd/hp; 能力 40/热度 48]",
+   "dexEntryZh": "2025 年 1 月 28 日除夕、DeepSeek-R1 正在刷屏时发布的闭源大型 MoE，前身是 Qwen2.5，LMArena 得分 1374。它在图鉴里是 Max 线的起步形态，下一形态是同系列新一代通义千问 Qwen3-Max。",
+   "lookZh": "淡紫姬发式，蓝宝石眼，背着蜂巢小挎包的小大小姐",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a prim little ojou-sama in training. Hair: pale lavender-silver (#CFD3F7) shoulder-length hime cut with two long side locks tied by small indigo ribbons, blunt bangs, indigo (#2B2F8F) tips, one small ahoge. Eyes: sapphire blue (#2F54E8) with hexagon white highlights, serious but sweet. Outfit: white sailor-style blouse with indigo collar and periwinkle (#7B8CF0) ribbon, indigo pleated skirt with one gold hexagon button, white knee socks, small indigo shoes. Signature accessory: a small silver hexagon hairclip on her right bangs. Prop: a honeycomb satchel of many tiny stitched hexagon pouches (a big mixture of experts). Palette: lavender-silver #CFD3F7, indigo #2B2F8F, periwinkle #7B8CF0, white, sapphire #2F54E8, gold #D4AF37. Pose: standing straight, satchel held in both hands, polite small smile.",
+    "personality": "端庄的小大小姐，发言前总要先请专家们开会",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Qwen's identity in this roster is a hexagon emblem in periwinkle, indigo and electric blue (#082DFF); the Max line adds pale lavender hair, sapphire eyes and gold trim to stay distinct from other Qwen girls.",
+    "sourceUrls": [
+     "https://qwenlm.github.io/blog/qwen2.5-max/"
+    ]
+   }
+  },
+  {
+   "id": "qwen3-max",
+   "nameZh": "通义千问 Qwen3-Max",
+   "nameEn": "Qwen3-Max",
+   "company": "Alibaba (Qwen)",
+   "country": "CN",
+   "category": "llm",
+   "family": "qwen-max",
+   "stage": 2,
+   "evolvesTo": "qwen3-max-thinking",
+   "evolveLevel": 40,
+   "types": [
+    "chat",
+    "logic"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 74,
+    "atk": 67,
+    "def": 73,
+    "spa": 84,
+    "spd": 77,
+    "spe": 74
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2025-09-23",
+   "capabilityScore": 56,
+   "hotnessScore": 52,
+   "statRationale": "万亿级规模→特攻高；工具调用稳健→特防高。 [BST 449 ∈ SR 420-490; 强项 spa/spd; 能力 56/热度 52]",
+   "dexEntryZh": "2025 年 9 月发布，云栖大会 2025 上亮相的阿里首个超万亿参数闭源旗舰，擅长智能体与工具调用，LMArena 1423。上一形态是通义千问 Qwen2.5-Max，同系列的新一代；下一形态是通义千问 Qwen3-Max-Thinking。",
+   "lookZh": "淡紫长发，靛蓝双排扣长外套，金边六边形发针",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.4 heads tall, the same lavender-haired girl grown into a poised student-council president. Hair: pale lavender-silver (#CFD3F7) with indigo (#2B2F8F) tips, now waist-length hime cut with long side locks, tiny ahoge. Eyes: sapphire blue (#2F54E8), hexagon highlights, calm. Outfit: white blouse with periwinkle (#7B8CF0) cravat under a double-breasted indigo (#23277A) coat-dress with gold hexagon buttons, indigo ankle boots. Signature accessory: the silver hexagon clip is now a gold-rimmed hairpin with a sapphire gem. Props: the honeycomb satchel at her hip, and a slim pointer rod with a glowing hexagon tip. Palette: lavender-silver #CFD3F7, indigo #23277A, periwinkle #7B8CF0, white, sapphire #2F54E8, gold #D4AF37. Pose: confident stride, pointer rod raised, smile.",
+    "personality": "万亿参数撑腰，办事利落的优等生会长",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Qwen's identity in this roster is a hexagon emblem in periwinkle, indigo and electric blue (#082DFF); the Max line adds pale lavender hair, sapphire eyes and gold trim to stay distinct from other Qwen girls.",
+    "sourceUrls": [
+     "https://openrouter.ai/qwen/qwen3-max",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "qwen2-5-max"
+  },
+  {
+   "id": "qwen3-max-thinking",
+   "nameZh": "通义千问 Qwen3-Max-Thinking",
+   "nameEn": "Qwen3-Max-Thinking",
+   "company": "Alibaba (Qwen)",
+   "country": "CN",
+   "category": "reasoning",
+   "family": "qwen-max",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "logic",
+    "chat"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 86,
+    "atk": 92,
+    "def": 79,
+    "spa": 84,
+    "spd": 94,
+    "spe": 79
+   },
+   "habitats": [
+    "ruins",
+    "snow"
+   ],
+   "releaseDate": "2026-02-09",
+   "capabilityScore": 72,
+   "hotnessScore": 50,
+   "statRationale": "思考模式推理强→攻击高；深想后稳如山→特防高。 [BST 514 ∈ SSR 490-550; 强项 spd/atk; 能力 72/热度 50]",
+   "dexEntryZh": "2026 年 2 月 9 日发布，是通义千问 Qwen3-Max 的思考模式版本（OpenRouter 上架），在图鉴里是同系列的下一代。沿用通义千问 Qwen3-Max 的底子，把推理摆到台前，属性偏向特防与攻击。",
+   "lookZh": "拖地长发，金边六边形光环冠，掌托螺旋思绪光球",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the same lavender-haired girl fully grown into a serene scholar-queen. Hair: pale lavender-silver (#CFD3F7) with indigo (#2B2F8F) tips, now floor-length hime cut, side locks in indigo ribbons, tiny ahoge. Eyes: sapphire blue (#2F54E8), hexagon highlights, half-lidded in thought. Outfit: white inner gown under a deep indigo (#23277A) wide-sleeve robe-coat with gold hexagon trim, periwinkle (#7B8CF0) sash. Signature accessory: the gold hexagon hairpin is now a gold hexagon tiara-halo with the sapphire gem. Props: a glowing hexagon orb wrapped by a spiral thought-ribbon in one palm, and a small honeycomb satchel charm on her sash. Palette: lavender-silver #CFD3F7, indigo #23277A, periwinkle #7B8CF0, white, sapphire #2F54E8, gold #D4AF37. Pose: standing calmly, orb held out, hand at her chin.",
+    "personality": "先想三秒再开口，一开口就不容反驳",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Qwen's identity in this roster is a hexagon emblem in periwinkle, indigo and electric blue (#082DFF); the Max line adds pale lavender hair, sapphire eyes and gold trim to stay distinct from other Qwen girls.",
+    "sourceUrls": [
+     "https://openrouter.ai/qwen/qwen3-max-thinking"
+    ]
+   },
+   "lineRef": "qwen3-max"
+  },
+  {
+   "id": "qwen-plus",
+   "nameZh": "通义千问 Qwen-Plus",
+   "nameEn": "Qwen-Plus",
+   "company": "Alibaba (Qwen)",
+   "country": "CN",
+   "category": "llm",
+   "family": "qwen-plus",
+   "stage": 1,
+   "evolvesTo": "qwen3-5-plus",
+   "evolveLevel": 29,
+   "types": [
+    "chat",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 65,
+    "atk": 48,
+    "def": 51,
+    "spa": 62,
+    "spd": 61,
+    "spe": 70
+   },
+   "habitats": [
+    "city",
+    "forest"
+   ],
+   "releaseDate": "2024-01-25",
+   "capabilityScore": 30,
+   "hotnessScore": 46,
+   "statRationale": "快照滚动更新→速度高；日常对话耐用→HP 高。 [BST 357 ∈ R 330-420; 强项 spe/hp; 能力 30/热度 46]",
+   "dexEntryZh": "2024 年 1 月 25 日起提供的 API 滚动别名，名下会随时间换新快照，比如 2025 年 7 月 28 日的 0728 快照。它在图鉴里排在 Plus 线最前，下一形态是同系列新一代通义千问 Qwen3.5-Plus。",
+   "lookZh": "青蓝渐变高马尾，运动外套，加号六边形发夹，脖子挂秒表",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a sporty little errand-runner girl. Hair: high ponytail in a cyan (#5CE1E6) to periwinkle (#7B8CF0) gradient, short and bouncy, with straight bangs and a small ahoge. Eyes: violet (#9B5CF0) with plus-shaped sparkle highlights, cheerful. Outfit: periwinkle zip track jacket with white side stripes over a white tee, indigo (#2B2F8F) shorts, white sneakers with cyan laces. Signature accessory: a hairclip made of a white plus sign inside a thin gold hexagon rim, at the base of the ponytail. Prop: a stopwatch on a cord around her neck (fast, always on call). Palette: cyan #5CE1E6, periwinkle #7B8CF0, indigo #2B2F8F, white, violet #9B5CF0, electric blue #082DFF. Pose: light jogging step, one fist pumped, bright grin.",
+    "personality": "永远在线、随叫随到的跑腿小能手",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Qwen's identity in this roster is a hexagon emblem in periwinkle, indigo and electric blue (#082DFF); the Plus line puts a plus sign inside the hexagon clip and uses cyan-to-periwinkle hair for speed.",
+    "sourceUrls": [
+     "https://openrouter.ai/qwen/qwen-plus-2025-07-28",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "qwen3-5-plus",
+   "nameZh": "通义千问 Qwen3.5-Plus",
+   "nameEn": "Qwen3.5-Plus",
+   "company": "Alibaba (Qwen)",
+   "country": "CN",
+   "category": "llm",
+   "family": "qwen-plus",
+   "stage": 2,
+   "evolvesTo": "qwen3-7-plus",
+   "evolveLevel": 36,
+   "types": [
+    "chat",
+    "compute"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 74,
+    "atk": 60,
+    "def": 64,
+    "spa": 76,
+    "spd": 76,
+    "spe": 94
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2026-02-16",
+   "capabilityScore": 52,
+   "hotnessScore": 50,
+   "statRationale": "迭代后输出更灵→特攻高；Plus 线一贯轻快→速度高。 [BST 444 ∈ SR 420-490; 强项 spe/spa; 能力 52/热度 50]",
+   "dexEntryZh": "2026 年 2 月 16 日上架，是通义千问 Qwen-Plus 之后同系列的新一代，在 Plus 线里承上启下，下一形态是通义千问 Qwen3.7-Plus。能力偏重速度与特攻，OpenRouter 与 models.dev 均有收录。",
+   "lookZh": "青蓝渐变长高马尾，长款运动外套，金边加号发夹",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.4 heads tall, the same ponytail girl grown into a quick, composed relay runner. Hair: same cyan (#5CE1E6) to periwinkle (#7B8CF0) gradient high ponytail, now waist-length, straight bangs, same ahoge. Eyes: same violet (#9B5CF0) with plus-shaped sparkle highlights, sharper and focused. Outfit: longer periwinkle track coat with white stripes and cyan hexagon-pattern trim over a fitted indigo (#2B2F8F) top, black cycling shorts, white high sneakers with small cyan wing details. Signature accessory: the same plus-in-hexagon hairclip, larger with a gold rim. Props: the stopwatch now clipped to her coat pocket, and a relay baton with a hexagon tip. Palette: cyan #5CE1E6, periwinkle #7B8CF0, indigo #2B2F8F, white, violet #9B5CF0, gold #D4AF37. Pose: leaning forward mid-run, baton extended back, calm confident smile.",
+    "personality": "越跑越稳的接力二棒，传棒前先拉伸",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Qwen's identity in this roster is a hexagon emblem in periwinkle, indigo and electric blue (#082DFF); the Plus line puts a plus sign inside the hexagon clip and uses cyan-to-periwinkle hair for speed.",
+    "sourceUrls": [
+     "https://openrouter.ai/qwen/qwen3.5-plus-20260420",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "qwen-plus"
+  },
+  {
+   "id": "qwen3-7-plus",
+   "nameZh": "通义千问 Qwen3.7-Plus",
+   "nameEn": "Qwen3.7-Plus",
+   "company": "Alibaba (Qwen)",
+   "country": "CN",
+   "category": "llm",
+   "family": "qwen-plus",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "chat",
+    "compute"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 86,
+    "atk": 62,
+    "def": 71,
+    "spa": 75,
+    "spd": 83,
+    "spe": 89
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2026-06-02",
+   "capabilityScore": 68,
+   "hotnessScore": 54,
+   "statRationale": "Plus 线轻快路线→速度高；多代打磨后底盘厚→HP 高。 [BST 466 ∈ SR 420-490; 强项 spe/hp; 能力 68/热度 54]",
+   "dexEntryZh": "2026 年 6 月 2 日上架，是 Plus 线接在通义千问 Qwen3.5-Plus 之后的同系列新一代；谱系记录里它的直接上一代是 Qwen3.6-Plus。速度与 HP 见长，models.dev 与 OpenRouter 在 6 月初先后收录。",
+   "lookZh": "青蓝渐变及髋高马尾，金边加号发冠，修身白风衣，手持接力棒",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the same ponytail girl fully grown into a poised ace runner. Hair: cyan (#5CE1E6) to periwinkle (#7B8CF0) gradient high ponytail, now hip-length with two long indigo ribbons, straight bangs, same ahoge. Eyes: violet (#9B5CF0), plus-shaped sparkle highlights, calm. Outfit: long slim white trench coat with indigo (#2B2F8F) lapels and cyan hexagon lining, periwinkle blouse, gold hexagon buttons, white boots with tiny wings. Signature accessory: the plus-in-hexagon clip has grown into a gold-rimmed plus tiara-pin with an electric-blue (#082DFF) gem. Props: a hexagon-tipped relay baton, and a stopwatch pendant at her collar. Palette: cyan #5CE1E6, periwinkle #7B8CF0, indigo #2B2F8F, white, violet #9B5CF0, gold #D4AF37. Pose: striding, baton raised, coat flaring, serene smile.",
+    "personality": "一路接棒跑到今天，依然稳稳当当的靠谱学姐",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Qwen's identity in this roster is a hexagon emblem in periwinkle, indigo and electric blue (#082DFF); the Plus line puts a plus sign inside the hexagon clip and uses cyan-to-periwinkle hair for speed.",
+    "sourceUrls": [
+     "https://openrouter.ai/qwen/qwen3.7-plus",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "qwen3-5-plus"
+  },
+  {
+   "id": "qwen-vl",
+   "nameZh": "通义千问 Qwen-VL",
+   "nameEn": "Qwen-VL",
+   "company": "Alibaba (Qwen)",
+   "country": "CN",
+   "category": "multimodal",
+   "family": "qwen-vl",
+   "stage": 1,
+   "evolvesTo": "qwen2-5-vl",
+   "evolveLevel": 21,
+   "types": [
+    "vision",
+    "open"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 49,
+    "atk": 40,
+    "def": 45,
+    "spa": 55,
+    "spd": 47,
+    "spe": 49
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2023-08-24",
+   "capabilityScore": 14,
+   "hotnessScore": 38,
+   "statRationale": "看图理解偏特攻→特攻最高；初阶形态底子稳→HP 次之。 [BST 285 ∈ N 240-330; 强项 spa/hp; 能力 14/热度 38]",
+   "dexEntryZh": "Qwen-VL 是阿里通义千问团队的视觉语言模型，2023 年 8 月 24 日发布，权重开放。作为这条视觉线的初阶形态，她还是个挎着玩具相机的新兵，学着把看到的画面讲给千问听。升到 Lv.21 后，她会迭代成同系列的下一代“通义千问 Qwen2.5-VL”。",
+   "lookZh": "靛紫齐刘海小新兵，脖子上挂着六边形镜头的玩具相机",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a shy newcomer photographer girl, the youngest form of the Qwen-VL line. Chin-length violet-indigo (#4A3FB5) bob with straight blunt bangs, two curled-in side locks, a small antenna ahoge and an electric-blue (#082DFF) hexagon hairclip on the left. Big aqua-cyan (#38C9E8) eyes with camera-aperture ring irises and white highlights. Outfit: oversized deep-indigo (#2B2F8F) smock jacket with a round white collar and periwinkle (#7B8CF0) cuffs, short white skirt, white socks, small indigo sneakers. Signature accessory: a toy-like camera with a hexagon lens on an Alibaba-orange (#FF7A1A) neck strap. Palette: violet #4A3FB5, indigo #2B2F8F, periwinkle #7B8CF0, aqua #38C9E8, orange #FF7A1A, white. Pose: lifting the camera with both hands, one eye squeezed shut, a shy smile.",
+    "personality": "好奇心满格的新手摄影师，见什么都想拍一张",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Qwen's mark is a hexagonal emblem in indigo-violet and electric blue (#082DFF), with Alibaba orange (#FF7A1A) as the group accent; the hexagon is drawn here as the camera lens and hairclip.",
+    "sourceUrls": [
+     "https://github.com/QwenLM/Qwen-VL"
+    ]
+   }
+  },
+  {
+   "id": "qwen2-5-vl",
+   "nameZh": "通义千问 Qwen2.5-VL",
+   "nameEn": "Qwen2.5-VL",
+   "company": "Alibaba (Qwen)",
+   "country": "CN",
+   "category": "multimodal",
+   "family": "qwen-vl",
+   "stage": 2,
+   "evolvesTo": "qwen3-vl",
+   "evolveLevel": 29,
+   "types": [
+    "vision",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 58,
+    "atk": 59,
+    "def": 54,
+    "spa": 80,
+    "spd": 60,
+    "spe": 68
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2025-01-28",
+   "capabilityScore": 42,
+   "hotnessScore": 50,
+   "statRationale": "看图推理→特攻高；含 3B 等小尺寸、出手快→速度高。 [BST 379 ∈ R 330-420; 强项 spa/spe; 能力 42/热度 50]",
+   "dexEntryZh": "Qwen2.5-VL 于 2025 年 1 月 28 日发布，权重开放，有 3B、7B、32B、72B 四档尺寸。她是“通义千问 Qwen-VL”同系列的下一代，玩具相机换成了带变焦镜头的正经机身；升到 Lv.29 后，会迭代成同系列的“通义千问 Qwen3-VL”。",
+   "lookZh": "靛紫短外套摄影师，背着变焦镜头相机随时蹲拍",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.4 heads tall, the same Qwen-VL photographer girl, a little older. Shoulder-length violet-indigo (#4A3FB5) hair with the same blunt bangs, curled-in side locks, antenna ahoge and electric-blue (#082DFF) hexagon hairclip. The same aqua-cyan (#38C9E8) aperture-ring eyes, alert and confident. Outfit: fitted deep-indigo (#2B2F8F) cropped jacket with a white collar, periwinkle (#7B8CF0) pleated skirt, white knee socks, indigo boots. Signature accessory: the hexagon-lens camera is now a mirrorless camera with a long zoom lens on the Alibaba-orange (#FF7A1A) strap. Second prop: a small clipboard under one arm. Palette: violet #4A3FB5, indigo #2B2F8F, periwinkle #7B8CF0, aqua #38C9E8, orange #FF7A1A. Pose: quick low crouch, camera at her eye with the zoom extended, a sporty grin.",
+    "personality": "动作比快门还快，看准就蹲下来连拍",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Qwen's mark is a hexagonal emblem in indigo-violet and electric blue (#082DFF), with Alibaba orange (#FF7A1A) as the group accent; here the hexagon returns as the lens shape and hairclip.",
+    "sourceUrls": [
+     "https://qwenlm.github.io/blog/qwen2.5-vl/"
+    ]
+   },
+   "lineRef": "qwen-vl"
+  },
+  {
+   "id": "qwen3-vl",
+   "nameZh": "通义千问 Qwen3-VL",
+   "nameEn": "Qwen3-VL",
+   "company": "Alibaba (Qwen)",
+   "country": "CN",
+   "category": "multimodal",
+   "family": "qwen-vl",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "open"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 72,
+    "atk": 68,
+    "def": 72,
+    "spa": 86,
+    "spd": 73,
+    "spe": 76
+   },
+   "habitats": [
+    "coast",
+    "highland"
+   ],
+   "releaseDate": "2025-09-23",
+   "capabilityScore": 54,
+   "hotnessScore": 52,
+   "statRationale": "看图理解→特攻高；小尺寸陆续铺开、响应快→速度高。 [BST 447 ∈ SR 420-490; 强项 spa/spe; 能力 54/热度 52]",
+   "dexEntryZh": "Qwen3-VL 于 2025 年 9 月 23 日发布，权重开放，先放出 235B-A22B 的大号版本，较小的尺寸陆续推到 2025 年 10 月。她是“通义千问 Qwen2.5-VL”同系列的下一代，长成了披着长风衣、神情沉稳的摄影师。",
+   "lookZh": "长发靛紫风衣摄影师，单片六边形镜片、广角多环镜头",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.8 heads tall, the grown-up Qwen-VL photographer girl. Waist-length violet-indigo (#4A3FB5) hair worn half-up, keeping the blunt bangs, side locks, ahoge and electric-blue (#082DFF) hexagon hairclip. The same aqua-cyan (#38C9E8) aperture-ring eyes, calm and sharp. Outfit: long deep-indigo (#2B2F8F) coat with periwinkle (#7B8CF0) lining and hexagon epaulettes, short pleated skirt, tall boots, a hexagonal monocle over her left eye. Signature accessory: the Alibaba-orange (#FF7A1A) strap now carries a pro camera with a wide multi-ring lens and a glowing blue hexagonal aperture. Second prop: a folded map-scroll. Palette: violet #4A3FB5, indigo #2B2F8F, periwinkle #7B8CF0, aqua #38C9E8, orange #FF7A1A. Pose: standing tall, camera held out, other hand pointing ahead, a composed smile.",
+    "personality": "沉稳的取景大师，一个眼神就把全局框进去",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Qwen's mark is a hexagonal emblem in indigo-violet and electric blue (#082DFF), with Alibaba orange (#FF7A1A) as the group accent; the glowing hexagonal aperture and monocle echo that emblem.",
+    "sourceUrls": [
+     "https://openrouter.ai/qwen/qwen3-vl-235b-a22b-instruct",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "qwen2-5-vl"
+  },
+  {
+   "id": "qwq-32b",
+   "nameZh": "QwQ-32B",
+   "nameEn": "QwQ-32B",
+   "company": "Alibaba (Qwen)",
+   "country": "CN",
+   "category": "reasoning",
+   "family": "qwq",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "logic",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 75,
+    "atk": 69,
+    "def": 62,
+    "spa": 58,
+    "spd": 61,
+    "spe": 64
+   },
+   "habitats": [
+    "city",
+    "snow"
+   ],
+   "releaseDate": "2025-03-05",
+   "capabilityScore": 48,
+   "hotnessScore": 55,
+   "statRationale": "长链推理→攻击高；32B 稠密扎实→HP 高。 [BST 389 ∈ R 330-420; 强项 hp/atk; 能力 48/热度 55]",
+   "dexEntryZh": "QwQ-32B 是通义千问的开源推理模型，2025 年 3 月 5 日发布，此前 2024 年 11 月 28 日有 Preview 版。她由 Qwen2.5-32B 经强化学习后训练而来，32B 稠密的小身板，发布时在数学上与 R1 看齐，并以 Apache 2.0 开放。",
+   "lookZh": "杏橙卷发猫耳卫衣少女，抱着画满思路箭头的小黑板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.2 heads tall, a small-but-fierce thinker girl with a cat-like vibe, a Qwen cousin. Short wavy apricot-orange (#FFA24A) hair with twin curled bangs and a messy tuft ahoge. Large deep-indigo eyes full of watery sparkle and big white highlights, a tiny cat-style 'w' smile. Outfit: oversized deep-indigo (#2B2F8F) hoodie with a small cat-ear hood, periwinkle (#7B8CF0) cuffs, a pocket stitched with a tiny teary-smile face, white pleated skirt, chunky sneakers, an open-padlock zipper charm (open weights). Props: a dark-teal (#1F4D4A) chalkboard slate showing boxes linked by arrows (chain of thought), and a pencil behind her ear. Palette: apricot #FFA24A, indigo #2B2F8F, periwinkle #7B8CF0, slate teal #1F4D4A, white. Pose: hugging the slate to her chest, head tilted, cheeks puffed in effort.",
+    "personality": "嘴上 QwQ，脑子里的思路链一刻不停",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Qwen's hexagonal emblem in indigo-violet and electric blue is the family colour base, and the name QwQ doubles as a teary kaomoji face, which inspires the hoodie pocket; the apricot hair is an invented accent from Alibaba orange.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "deepseek-v2",
+   "nameZh": "DeepSeek-V2",
+   "nameEn": "DeepSeek-V2",
+   "company": "DeepSeek",
+   "country": "CN",
+   "category": "llm",
+   "family": "deepseek-early",
+   "stage": 1,
+   "evolvesTo": "deepseek-v2-5",
+   "evolveLevel": 22,
+   "types": [
+    "open",
+    "compute"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 59,
+    "atk": 47,
+    "def": 47,
+    "spa": 44,
+    "spd": 52,
+    "spe": 61
+   },
+   "habitats": [
+    "coast",
+    "meadow"
+   ],
+   "releaseDate": "2024-05-06",
+   "capabilityScore": 20,
+   "hotnessScore": 50,
+   "statRationale": "MLA 省算力、推理快→速度高；MoE 大体量→HP高。 [BST 310 ∈ N 240-330; 强项 spe/hp; 能力 20/热度 50]",
+   "dexEntryZh": "2024 年 5 月 6 日发布的开源 MoE 模型，总参数 236B、激活 21B，引入多头潜在注意力（MLA），推理高效又省钱；她的超低定价点燃了 2024 年国内的大模型 API 价格战。前身是 DeepSeek LLM 67B，同一脉的下一形态是 DeepSeek-V2.5。",
+   "lookZh": "披着鲸鱼耳雨衣的小不点，抱着一枚大金币",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a tiny whale-hooded kid, the youngest stage of her line. Hair: pale ice-blue (#BFE3FF) in a short wavy bob with navy-tinted tips and one small curl ahoge. Eyes: big round aqua-teal (#35C6D6), white star-shaped highlight. Signature accessory (kept through all stages): a small whale-tail hairpin in white and cobalt on the right. Outfit: oversized white-and-cobalt raincoat hoodie, hood down with two small whale-fin flaps, navy shorts, short yellow-gold rain boots. Prop: one big gold coin (#E8C050) hugged in both arms, stamped with a small down-arrow pictogram (cheap pricing). Palette: DeepSeek blue #4D6BFE, navy #1B2A6B, ice blue #BFE3FF, aqua #35C6D6, white, gold #E8C050. Pose: hugging the coin with a proud beaming grin, one boot lifted mid-hop; idle = ahoge bobs.",
+    "personality": "精打细算，小个子却把价格打下来",
+    "communityPersona": "Community fan art commonly personifies DeepSeek as a whale-themed girl in blue; this line is an invented, distinct version.",
+    "officialMascotOrLogo": "DeepSeek's logo is a blue whale in brand blue (#4D6BFE), which makes the whale and cobalt blue the core mascot motif.",
+    "sourceUrls": [
+     "https://api-docs.deepseek.com/updates/",
+     "https://huggingface.co/deepseek-ai/DeepSeek-V2"
+    ]
+   }
+  },
+  {
+   "id": "deepseek-v2-5",
+   "nameZh": "DeepSeek-V2.5",
+   "nameEn": "DeepSeek-V2.5",
+   "company": "DeepSeek",
+   "country": "CN",
+   "category": "llm",
+   "family": "deepseek-early",
+   "stage": 2,
+   "evolvesTo": "deepseek-v3-0324",
+   "evolveLevel": 29,
+   "types": [
+    "open",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 67,
+    "atk": 58,
+    "def": 54,
+    "spa": 53,
+    "spd": 58,
+    "spe": 74
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2024-09-05",
+   "capabilityScore": 34,
+   "hotnessScore": 48,
+   "statRationale": "对话与代码合并→速度高；沿用 MoE 底子→HP高。 [BST 364 ∈ R 330-420; 强项 spe/hp; 能力 34/热度 48]",
+   "dexEntryZh": "2024 年 9 月 5 日发布，据报道把 DeepSeek-V2 的对话线与 Coder-V2 的代码线合并成一个模型，对话与代码一把抓，权重同样开放。她是 DeepSeek-V2 的后继，往后同一脉的下一站是 DeepSeek-V3-0324。",
+   "lookZh": "半白半蓝夹克的鲸鱼少女，一边聊天气泡一边代码括号",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same whale-hooded girl grown up a little, a tidy all-rounder merging two jobs. Hair: pale ice-blue (#BFE3FF), wavy bob now shoulder-length with navy-tinted tips, a small side braid, one curl ahoge. Eyes: aqua-teal (#35C6D6), white star-shaped highlight. Signature accessory: the small whale-tail hairpin in white and cobalt on the right. Outfit: two-tone jacket, left half white with a chat-bubble patch, right half cobalt with a bracket patch, navy pleated skirt, white knee socks, navy boots, a small gold coin charm on a wrist bracelet. Prop: one notebook whose cover is half bubble, half bracket. Palette: DeepSeek blue #4D6BFE, navy #1B2A6B, ice blue #BFE3FF, aqua #35C6D6, white, gold #E8C050. Pose: holding the notebook open to the viewer, head tilted, friendly smile.",
+    "personality": "一个人干两份活，还不抢风头",
+    "communityPersona": "Community fan art commonly personifies DeepSeek as a whale-themed girl in blue; this line is an invented, distinct version.",
+    "officialMascotOrLogo": "DeepSeek's logo is a blue whale in brand blue (#4D6BFE), which makes the whale and cobalt blue the core mascot motif.",
+    "sourceUrls": [
+     "https://api-docs.deepseek.com/updates/",
+     "https://huggingface.co/deepseek-ai/DeepSeek-V2.5"
+    ]
+   },
+   "lineRef": "deepseek-v2"
+  },
+  {
+   "id": "deepseek-v3-0324",
+   "nameZh": "DeepSeek-V3-0324",
+   "nameEn": "DeepSeek-V3-0324",
+   "company": "DeepSeek",
+   "country": "CN",
+   "category": "llm",
+   "family": "deepseek-early",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "open",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 72,
+    "atk": 64,
+    "def": 61,
+    "spa": 60,
+    "spd": 61,
+    "spe": 75
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2025-03-24",
+   "capabilityScore": 50,
+   "hotnessScore": 56,
+   "statRationale": "持续迭代、响应顺→速度高；沿用大模型底子→HP高。 [BST 393 ∈ R 330-420; 强项 spe/hp; 能力 50/热度 56]",
+   "dexEntryZh": "2025 年 3 月 24 日发布的更新版本，谱系记录里是 DeepSeek-V3 的同系列后继，在图鉴里接在 DeepSeek-V2.5 之后，同属 DeepSeek 对话线。名字里的 0324 对应发布日 3 月 24 日，速度与 HP 是她的亮点。",
+   "lookZh": "成年海蓝大衣的鲸鱼姐姐，权杖顶端挂着金币",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the whale-hooded girl grown into a graceful young woman, a calm open-source regular. Hair: pale ice-blue (#BFE3FF), long wavy hair with navy gradient tips and a loose side braid, one curl ahoge. Eyes: aqua-teal (#35C6D6), white star-shaped highlight, assured. Signature accessory: the small whale-tail hairpin in white and cobalt on the right. Outfit: long navy (#1B2A6B) coat with cobalt lining and gold buttons over a white blouse with a cobalt ribbon tie, navy skirt, white over-knee socks, navy boots. Props: a slim cobalt baton topped with a small gold coin, and a small calendar-page charm on her belt. Palette: DeepSeek blue #4D6BFE, navy #1B2A6B, ice blue #BFE3FF, aqua #35C6D6, white, gold #E8C050. Pose: striding forward, baton on one shoulder, coat flaring like a wave, relaxed smile.",
+    "personality": "从容不迫，把日期写进名字里",
+    "communityPersona": "Community fan art commonly personifies DeepSeek as a whale-themed girl in blue; this line is an invented, distinct version.",
+    "officialMascotOrLogo": "DeepSeek's logo is a blue whale in brand blue (#4D6BFE), which makes the whale and cobalt blue the core mascot motif.",
+    "sourceUrls": [
+     "https://api-docs.deepseek.com/updates/"
+    ]
+   },
+   "lineRef": "deepseek-v2-5"
+  },
+  {
+   "id": "deepseek-r1-0528",
+   "nameZh": "DeepSeek-R1-0528",
+   "nameEn": "DeepSeek-R1-0528",
+   "company": "DeepSeek",
+   "country": "CN",
+   "category": "reasoning",
+   "family": "deepseek-r1-0528",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "logic",
+    "open"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 93,
+    "atk": 99,
+    "def": 77,
+    "spa": 76,
+    "spd": 89,
+    "spe": 89
+   },
+   "habitats": [
+    "highland",
+    "city"
+   ],
+   "releaseDate": "2025-05-28",
+   "capabilityScore": 78,
+   "hotnessScore": 60,
+   "statRationale": "深度推理→攻击高；671B 体量→HP 高。 [BST 523 ∈ SSR 490-550; 强项 atk/hp; 能力 78/热度 60]",
+   "dexEntryZh": "DeepSeek-R1-0528 于 2025 年 5 月 28 日发布，是 DeepSeek-R1 的后训练升级版，她在图鉴里单独成链。总参数 671B、激活 37B，推理过程的 token 完全公开，OpenRouter 的介绍称其表现与 OpenAI o1 相当，且开源。",
+   "lookZh": "戴金边圆眼镜的鲸鱼学者女仆，卷轴变成透明玻璃",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the whale-girl scholar-maid of the R1 line upgraded, older and calmer than the original R1 girl. Hair: long wavy deep-sea blue fading to aqua tips, one curling spout ahoge, one side braid. Whale-fin ears with white frills, plump navy whale tail. Eyes: deep blue with a spiral glint, behind round thin gold-framed reading glasses. Outfit: navy-and-white maid-scholar dress with white ruffled blouse and lace hem, short navy capelet with gold trim, a small red arrow hairpin. Signature accessory: the chain-of-thought scroll, now glass-clear so every line shows (open reasoning). Props: that scroll unrolling around her, a thick open book in one arm. Palette: deep-sea blue #1B3FA8, DeepSeek blue #4D6BFE, navy #1B2A6B, aqua #7FE3F0, white #F5F9FF, gold #E8C050. Pose: finger on chin, half-closed eyes.",
+    "personality": "把思考过程摊开给你看的认真学霸",
+    "communityPersona": "Community fan depictions of DeepSeek lean on the blue whale motif; this upgraded scholar-maid is the R1 girl grown calmer, invented from the brand colours.",
+    "officialMascotOrLogo": "DeepSeek's logo is a stylised blue whale in cobalt #4D6BFE on white. The glass-clear scroll stands for the open reasoning tokens, and the capelet and glasses carry on the scholar look of the R1 form.",
+    "sourceUrls": [
+     "https://api-docs.deepseek.com/updates/"
+    ]
+   }
+  },
+  {
+   "id": "deepseek-v4-flash",
+   "nameZh": "DeepSeek-V4-Flash",
+   "nameEn": "DeepSeek-V4-Flash",
+   "company": "DeepSeek",
+   "country": "CN",
+   "category": "llm",
+   "family": "deepseek-flash",
+   "stage": 1,
+   "evolvesTo": "deepseek-v4-flash-0731",
+   "evolveLevel": 31,
+   "types": [
+    "compute",
+    "open"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 79,
+    "atk": 67,
+    "def": 68,
+    "spa": 65,
+    "spd": 69,
+    "spe": 104
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2026-04-24",
+   "capabilityScore": 58,
+   "hotnessScore": 52,
+   "statRationale": "稀疏 MoE 只激活 13B→速度高；1M 上下文→HP 高。 [BST 452 ∈ SR 420-490; 强项 spe/hp; 能力 58/热度 52]",
+   "dexEntryZh": "DeepSeek-V4-Flash 于 2026 年 4 月 24 日以预览版登场，是接续 DeepSeek-V3.2 的同系列新一代。284B 总参数的 MoE 每次只激活 13B，支持 1M 上下文，采用 MIT 许可，价格亲民、主打快速推理。她是这条进化线的第一形态，之后会经后训练变成 DeepSeek-V4-Flash 0731。",
+   "lookZh": "双马尾小鲸鱼娘，金色闪电发夹，举着秒表起跑",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, youngest Flash whale-girl, a tiny sprinter. Hair: sky-cyan short twin pigtails with cobalt tips, blunt fringe, one small curly spout ahoge. Small whale-fin ears, small round navy whale tail. Eyes: big electric aqua with a white zig-zag bolt highlight. Outfit: snug white-and-cobalt track jacket with whale-tail zip pull, short navy pleated skirt, white sneakers with tiny cyan wing flashes. Signature accessory: a small gold lightning-bolt hairpin on the right of her fringe. Props: a chunky silver stopwatch held up (fast), a tiny whale piggy-bank charm at her belt (cheap). Palette: DeepSeek blue #4D6BFE, navy #1B2A6B, sky cyan #8FD8FF, electric aqua #33D6F5, white #F5F9FF, gold #E8C050. Pose: crouched sprinter start, stopwatch raised, eager grin.",
+    "personality": "先跑再说，便宜又顺手的小飞毛腿",
+    "communityPersona": "Community fan depictions of DeepSeek lean on the blue whale motif; this small sprinter is invented from the brand colours.",
+    "officialMascotOrLogo": "DeepSeek's logo is a stylised blue whale in cobalt #4D6BFE on white, and the whale is the brand's de facto mascot. The Flash name is drawn here as a gold lightning bolt and a stopwatch, with a whale piggy bank for its low price.",
+    "sourceUrls": [
+     "https://api-docs.deepseek.com/updates/"
+    ]
+   }
+  },
+  {
+   "id": "deepseek-v4-flash-0731",
+   "nameZh": "DeepSeek-V4-Flash 0731",
+   "nameEn": "DeepSeek-V4-Flash 0731",
+   "company": "DeepSeek",
+   "country": "CN",
+   "category": "llm",
+   "family": "deepseek-flash",
+   "stage": 2,
+   "evolvesTo": "deepseek-v4-1-flash",
+   "evolveLevel": 38,
+   "types": [
+    "compute",
+    "open"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 86,
+    "atk": 70,
+    "def": 72,
+    "spa": 61,
+    "spd": 76,
+    "spe": 96
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2026-07-31",
+   "capabilityScore": 64,
+   "hotnessScore": 48,
+   "statRationale": "架构规模不变，速度与 HP 仍高；重新后训练→编码、智能体更稳。 [BST 461 ∈ SR 420-490; 强项 spe/hp; 能力 64/热度 48]",
+   "dexEntryZh": "DeepSeek-V4-Flash 0731 于 2026 年 7 月 31 日发布，是 DeepSeek-V4-Flash 的后训练版：架构和规模与预览版相同，只是重新做了后训练。284B 总参数、13B 激活、1M 上下文不变，适合写代码、推理和跑智能体流程，之后迭代到 DeepSeek-V4.1-Flash。",
+   "lookZh": "长高一截的双马尾鲸鱼娘，闪电发夹，手持代码平板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the Flash whale-girl a little older, a capable coder-runner. Hair: sky-cyan twin-tails to mid-back with cobalt tips, small curly spout ahoge. Medium whale-fin ears, medium navy whale tail with two flukes. Eyes: electric aqua, white zig-zag bolt highlight, calm and focused. Outfit: cropped white-and-cobalt track jacket with navy bolt stripes on the sleeves, navy pleated skirt, white over-knee socks, cobalt sneakers. Signature accessory: the small gold lightning-bolt hairpin on the right of her fringe. Props: the silver stopwatch now on a lanyard, a slim tablet showing a code-bracket pictogram; piggy-bank charm at her belt. Palette: DeepSeek blue #4D6BFE, navy #1B2A6B, sky cyan #8FD8FF, electric aqua #33D6F5, white #F5F9FF, gold #E8C050. Pose: tapping the tablet, calm smile.",
+    "personality": "同一副骨架，练得更稳更会干活",
+    "communityPersona": "Community fan depictions of DeepSeek lean on the blue whale motif; this Flash line is invented from the brand colours.",
+    "officialMascotOrLogo": "DeepSeek's logo is a stylised blue whale in cobalt #4D6BFE on white. The same gold lightning-bolt hairpin and stopwatch carry over from the first Flash form, with a code-bracket tablet for the coding and agent focus.",
+    "sourceUrls": [
+     "https://api-docs.deepseek.com/updates/"
+    ]
+   },
+   "lineRef": "deepseek-v4-flash"
+  },
+  {
+   "id": "deepseek-v4-1-flash",
+   "nameZh": "DeepSeek-V4.1-Flash",
+   "nameEn": "DeepSeek-V4.1-Flash",
+   "company": "DeepSeek",
+   "country": "CN",
+   "category": "llm",
+   "family": "deepseek-flash",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "compute",
+    "open"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 89,
+    "atk": 82,
+    "def": 70,
+    "spa": 76,
+    "spd": 84,
+    "spe": 113
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2026-09-10",
+   "capabilityScore": 72,
+   "hotnessScore": 52,
+   "statRationale": "KV 缓存压缩→速度高；1M 上下文→HP 高。 [BST 514 ∈ SSR 490-550; 强项 spe/hp; 能力 72/热度 52]",
+   "dexEntryZh": "DeepSeek-V4.1-Flash 于 2026 年 9 月 10 日登场，据报道是 DeepSeek-V4-Flash 0731 的新一代，也是新架构家族里最小的一员。她换上 KV 缓存压缩，原生支持多模态视觉，擅长智能体编程；旧的 V4 Flash 已改由她接手。",
+   "lookZh": "成熟版闪电鲸鱼娘，护目镜推在额头，手托压缩方块",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.8 heads tall, the grown-up Flash whale-girl. Hair: very long sky-cyan twin-tails with cobalt fluke-shaped tips, small curly spout ahoge. Large whale-fin ears with a gold cuff, large sweeping navy whale tail. Eyes: electric aqua, white zig-zag bolt highlight; round cyan goggles on her forehead (vision). Outfit: long white-and-cobalt racing coat with gold bolt buttons, navy pleated skirt, white over-knee socks, navy boots. Signature accessory: the gold lightning-bolt hairpin, now larger with a tiny cyan gem. Props: a gold stopwatch on a chain, a stack of tiny cyan cubes squeezed in a gold clamp (cache compression). Palette: DeepSeek blue #4D6BFE, navy #1B2A6B, sky cyan #8FD8FF, electric aqua #33D6F5, white #F5F9FF, gold #E8C050. Pose: striding tall, coat flaring, cube clamp raised, confident smile.",
+    "personality": "看得见、记得牢、跑得快的稳重前辈",
+    "communityPersona": "Community fan depictions of DeepSeek lean on the blue whale motif; this grown-up Flash form is invented from the brand colours.",
+    "officialMascotOrLogo": "DeepSeek's logo is a stylised blue whale in cobalt #4D6BFE on white. Goggles stand in for the new native vision, and the squeezed cube stack for the KV-cache compression, while the Flash bolt and stopwatch stay.",
+    "sourceUrls": [
+     "https://api-docs.deepseek.com/updates/"
+    ]
+   },
+   "lineRef": "deepseek-v4-flash-0731"
+  },
+  {
+   "id": "kimi-k1-5",
+   "nameZh": "Kimi k1.5",
+   "nameEn": "Kimi k1.5",
+   "company": "Moonshot AI",
+   "country": "CN",
+   "category": "reasoning",
+   "family": "kimi-k1-5",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "logic",
+    "agent"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 67,
+    "atk": 71,
+    "def": 55,
+    "spa": 56,
+    "spd": 64,
+    "spe": 62
+   },
+   "habitats": [
+    "snow",
+    "ruins"
+   ],
+   "releaseDate": "2025-01-20",
+   "capabilityScore": 40,
+   "hotnessScore": 52,
+   "statRationale": "强化学习推理→攻击高；多模态长思考→HP高。 [BST 375 ∈ R 330-420; 强项 atk/hp; 能力 40/热度 52]",
+   "dexEntryZh": "Kimi k1.5 是 Moonshot AI 的多模态强化学习推理模型，2025 年 1 月 20 日发布，恰好与 DeepSeek-R1 同一天亮相，闭源。它号称在数学、代码与视觉推理上与 o1 持平。谱系里它承接 Kimi Chat，是同系列的后继；在图鉴里它自成一格，攻击与 HP 最亮眼。",
+   "lookZh": "两条深蓝低双马尾的小学者，端着画有上升曲线的石板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.2 heads tall, a young moon-scholar of the Kimi line who learns by trying again and again. Hair: midnight-navy (#1B2350) low twin tails tipped with electric blue (#1E88FF), white crescent hair ties, blunt bangs. Eyes: bright azure with tiny crescent highlights, focused. Outfit: short white lab-style jacket with rolled sleeves over a navy pleated dress, black neck ribbon with a round white 'K' brooch whose dot glows electric blue, black boots. Signature accessory: crescent-framed goggles pushed up on her forehead (multimodal vision). Props: a small slate showing a drawn rising reward curve ending in a gold star, and a pencil in her other hand. Palette: midnight navy #1B2350, electric blue #1E88FF, white, black, gold star accent #F5C84B. Pose: leaning forward, slate held up, determined little pout.",
+    "personality": "认准的题就一遍遍重试，错了也不服输",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Kimi's mark is a white 'K' with a glowing blue dot on dark navy and black, tied to Moonshot AI's moon theme and crescent motifs. The design draws on navy, electric blue, white and gold accents.",
+    "sourceUrls": [
+     "https://github.com/MoonshotAI/Kimi-k1.5"
+    ]
+   }
+  },
+  {
+   "id": "kimi-k2-7-code",
+   "nameZh": "Kimi K2.7 Code",
+   "nameEn": "Kimi K2.7 Code",
+   "company": "Moonshot AI",
+   "country": "CN",
+   "category": "code",
+   "family": "kimi-k2-code",
+   "stage": 1,
+   "evolvesTo": "kimi-k2-8-preview",
+   "evolveLevel": 28,
+   "types": [
+    "code",
+    "agent"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 87,
+    "atk": 81,
+    "def": 66,
+    "spa": 69,
+    "spd": 70,
+    "spe": 82
+   },
+   "habitats": [
+    "volcano",
+    "forest"
+   ],
+   "releaseDate": "2026-06-12",
+   "capabilityScore": 60,
+   "hotnessScore": 48,
+   "statRationale": "上下文长、专攻代码→HP高；省token输出快→速度高。 [BST 455 ∈ SR 420-490; 强项 hp/spe; 能力 60/热度 48]",
+   "dexEntryZh": "Kimi K2.7 Code 于 2026 年 6 月 12 日发布，是 Moonshot AI 专攻智能体编程的开放权重模型，只有思考模式，上下文 256K，以省 token 见长，配合 Kimi Code CLI 使用。它承接 Kimi K2.6，是同系列的新一代；下一形态 Kimi K2.8 Preview 同样是同系列的后继。HP 与速度最亮眼。",
+   "lookZh": "戴猫耳发簇、颈圈亮着蓝点的黑发编程少女，抱着小终端板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.2 heads tall, a quick, quiet coder girl of the Kimi line. Hair: jet-black (#111111) medium bob with an electric-blue (#1E88FF) inner layer and two small cat-ear-shaped tufts on top, short side-swept bangs. Eyes: round amber-gold (#FFC83D) with a tiny '>_' cursor glint. Outfit: black zip hoodie with white drawstrings over a midnight-navy (#1B2350) tee, short navy pleated shorts, blue-striped knee socks, white sneakers. Signature accessory: a black choker collar with a glowing electric-blue dot pendant (the Kimi dot, like a cat's collar). Prop: a slim pocket-size terminal tablet showing a blinking '>_' prompt, hugged to her chest. Palette: jet black #111111, midnight navy #1B2350, electric blue #1E88FF, amber gold #FFC83D, white. Pose: hunched over the tablet, one finger tapping, a small focused smile.",
+    "personality": "话少手快，一低头就能把活儿干完",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Kimi's mark is a white 'K' with a glowing blue dot on dark navy and black, tied to Moonshot AI's moon theme. The design draws on that blue dot (as a collar pendant), navy and electric blue, with a terminal prompt for the coding focus.",
+    "sourceUrls": [
+     "https://openrouter.ai/moonshotai/kimi-k2.7-code",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "kimi-k2-8-preview",
+   "nameZh": "Kimi K2.8 Preview",
+   "nameEn": "Kimi K2.8 Preview",
+   "company": "Moonshot AI",
+   "country": "CN",
+   "category": "code",
+   "family": "kimi-k2-code",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "code",
+    "agent"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 82,
+    "atk": 84,
+    "def": 72,
+    "spa": 72,
+    "spd": 71,
+    "spe": 85
+   },
+   "habitats": [
+    "forest",
+    "highland"
+   ],
+   "releaseDate": "2026-09-11",
+   "capabilityScore": 68,
+   "hotnessScore": 44,
+   "statRationale": "编码响应快→速度高；表现接近K3→攻击高。 [BST 466 ∈ SR 420-490; 强项 spe/atk; 能力 68/热度 44]",
+   "dexEntryZh": "Kimi K2.8 Preview 自 2026 年 9 月 11 日起出现在 Kimi Code 的 kimi-for-coding 别名背后，仍是预览状态，没有公开的 Hugging Face 权重和许可。记录称它的表现「接近 K3」。它是 Kimi K2.7 Code 同系列的下一代，速度与攻击最亮眼。",
+   "lookZh": "披虚线缝边长外套的黑发少女，头顶一弯半成形的金月牙",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.6 heads tall, the same Kimi coder girl grown taller, still half-finished like a preview build. Hair: jet-black (#111111) shoulder-length bob, wider electric-blue (#1E88FF) inner layer, two sharper cat-ear tufts. Eyes: round amber-gold (#FFC83D) with a '>_' glint. Outfit: long black coat with midnight-navy (#1B2350) lining and dotted-line stitching along the hem (still being drawn), navy shorts, striped knee socks, black boots. Signature accessory: the same black choker with its electric-blue dot pendant. Props: a glowing-blue keyboard strapped to her forearm and a dashed-outline golden crescent halo above her head. Palette: jet black #111111, midnight navy #1B2350, electric blue #1E88FF, amber gold #FFC83D, white. Pose: typing on the forearm keyboard, other hand pointing ahead, confident grin.",
+    "personality": "总说先试试看，边跑边把自己改得更好",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Kimi's mark is a white 'K' with a glowing blue dot on dark navy and black, tied to Moonshot AI's moon theme and crescent motifs. The design draws on that blue dot, navy, electric blue and a gold crescent accent.",
+    "sourceUrls": [
+     "https://letsdatascience.com/news/moonshot-deploys-kimi-k28-preview-to-coding-tools-0d15f07f"
+    ]
+   },
+   "lineRef": "kimi-k2-7-code"
+  },
+  {
+   "id": "glm-4",
+   "nameZh": "GLM-4",
+   "nameEn": "GLM-4",
+   "company": "Zhipu AI (Z.ai)",
+   "country": "CN",
+   "category": "llm",
+   "family": "glm-mid",
+   "stage": 1,
+   "evolvesTo": "glm-4-6",
+   "evolveLevel": 20,
+   "types": [
+    "chat",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 60,
+    "atk": 50,
+    "def": 53,
+    "spa": 57,
+    "spd": 63,
+    "spe": 70
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2024-01-16",
+   "capabilityScore": 28,
+   "hotnessScore": 44,
+   "statRationale": "对话旗舰响应轻快→速度高；工具与中文兼顾、稳健→特防高。 [BST 353 ∈ R 330-420; 强项 spe/spd; 能力 28/热度 44]",
+   "dexEntryZh": "智谱 2024 年 1 月 16 日发布的旗舰，发布时为闭源，以追赶 GPT-4 为目标，擅长 All Tools 与中文。同年 6 月开源了 GLM-4-9B，8 月有 GLM-4-Plus，10 月有 GLM-4-Voice。前身是 ChatGLM-6B，在这条进化线里，下一形态是同系列的 GLM-4.6。",
+   "lookZh": "睡眼罩推在额头的小狐娘，一条小尾巴，怀抱黑色小笔记本",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the youngest sleepy fox-spirit girl. Hair: shoulder-length straight black bob, blunt bangs, one ahoge, a hint of deep-blue (#1B2B7A) underlayer. Small black fox ears with white fluff, ONE short white-tipped black tail. Eyes: large steel-blue with ring-shaped highlights, drowsy. Outfit: plain white frilled-collar blouse, short black pinafore with white hem, tiny cobalt (#2B5BFF) bow, black mary-janes; no cape yet. Signature accessory: frilled white sleep-mask headband pushed up on her forehead, embroidered eyes fully CLOSED, ONE silver bell and a small black 'Z' tile. Prop: a small black notebook with a silver 'Z' hugged to her chest. Palette: black #0B0B0F, white, cobalt #2B5BFF, deep blue #1B2B7A, silver. Pose: standing, mid-yawn, tail drooping.",
+    "personality": "爱打瞌睡的小学霸，中文说得明明白白",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Z.ai (Zhipu) brands itself with a bold letter 'Z' in black and white with cobalt blue accents; no official mascot is known, so the GLM line uses the roster's fox-spirit motif with a silver 'Z' tile and cobalt rings.",
+    "sourceUrls": [
+     "https://docs.z.ai/release-notes/new-released",
+     "https://github.com/THUDM/GLM-4"
+    ]
+   }
+  },
+  {
+   "id": "glm-4-6",
+   "nameZh": "GLM-4.6",
+   "nameEn": "GLM-4.6",
+   "company": "Zhipu AI (Z.ai)",
+   "country": "CN",
+   "category": "llm",
+   "family": "glm-mid",
+   "stage": 2,
+   "evolvesTo": "glm-5-1",
+   "evolveLevel": 31,
+   "types": [
+    "code",
+    "agent"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 71,
+    "atk": 68,
+    "def": 58,
+    "spa": 59,
+    "spd": 61,
+    "spe": 69
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2025-09-30",
+   "capabilityScore": 46,
+   "hotnessScore": 48,
+   "statRationale": "200K 长上下文→HP高；编程套餐迭代快→速度高。 [BST 386 ∈ R 330-420; 强项 hp/spe; 能力 46/热度 48]",
+   "dexEntryZh": "2025 年 9 月 30 日发布的编程升级版，上下文 200K，开放权重，部署在寒武纪国产芯片上，兼容 Claude Code 的 GLM Coding Plan 因它而火。直接前代是 GLM-4.5，与 GLM-4 同属一脉；下一形态是同系列的 GLM-5.1。",
+   "lookZh": "睡眼罩半睁的双尾小狐娘，腋下夹着银色 Z 字黑皮书",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same fox-spirit girl a little older, a drowsy junior coder. Hair: chest-length straight black, blunt bangs, one ahoge, deep-blue (#1B2B7A) underlayer. Black fox ears with white fluff, TWO white-tipped black tails. Eyes: steel-blue, ring-shaped highlights, half-lidded. Outfit: white frilled blouse, black corset vest with cobalt (#2B5BFF) piping, black layered skirt with white lace hem, small silver 'Z' pin. Signature accessory: frilled sleep-mask headband worn up, embroidered eyes half OPEN (sleepy slits), TWO silver bells and the black 'Z' tile. Props: a slim black codebook with a silver 'Z' under one arm, one small cobalt ring behind her shoulder. Palette: black #0B0B0F, white, cobalt #2B5BFF, deep blue #1B2B7A, silver. Pose: tapping the book, soft half-smile, tails swaying.",
+    "personality": "嘴上喊困，手上的代码一行没停",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Z.ai (Zhipu) brands itself with a bold letter 'Z' in black and white with cobalt blue accents; no official mascot is known, so the GLM line uses the roster's fox-spirit motif with a silver 'Z' tile and cobalt rings.",
+    "sourceUrls": [
+     "https://docs.z.ai/release-notes/new-released"
+    ]
+   },
+   "lineRef": "glm-4"
+  },
+  {
+   "id": "glm-5-1",
+   "nameZh": "GLM-5.1",
+   "nameEn": "GLM-5.1",
+   "company": "Zhipu AI (Z.ai)",
+   "country": "CN",
+   "category": "llm",
+   "family": "glm-mid",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "code",
+    "open"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 87,
+    "atk": 85,
+    "def": 66,
+    "spa": 68,
+    "spd": 68,
+    "spe": 84
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2026-04-07",
+   "capabilityScore": 62,
+   "hotnessScore": 50,
+   "statRationale": "编程套餐主打→攻击高；GLM-5 家底厚实→HP高。 [BST 458 ∈ SR 420-490; 强项 hp/atk; 能力 62/热度 50]",
+   "dexEntryZh": "GLM-5 的同系列升级版，智谱平台 2026 年 3 月 27 日先上架，面向订阅用户，4 月 7 日开放权重，主打编程套餐。在这条进化线里它接在 GLM-4.6 之后，是同系列的新一代，也是这条线的第三形态。",
+   "lookZh": "双尾黑狐学霸，睡眼罩睁开一半，抱着黑色魔导书",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the fox-spirit girl almost grown, a focused young coder. Hair: mid-back-length straight black, blunt bangs, one ahoge, glowing deep-blue (#1B2B7A) underlayer. Black fox ears with white fluff, TWO large white-tipped black tails. Eyes: steel-blue, ring highlights, alert. Outfit: gothic academy dress, white frilled blouse, black corset, black layered skirt with white lace hem, cobalt (#2B5BFF)-piped short capelet, silver diamond 'Z' brooch. Signature accessory: frilled sleep-mask headband, embroidered eyes half OPEN, THREE silver bells and the black 'Z' tile. Props: an open black grimoire with a silver 'Z', one large cobalt ring behind her like a halo. Palette: black #0B0B0F, white, cobalt #2B5BFF, deep blue #1B2B7A, silver. Pose: confident small smile, reading, tails fanned.",
+    "personality": "睡意渐消，认真起来一行代码都不放过",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Z.ai (Zhipu) brands itself with a bold letter 'Z' in black and white with cobalt blue accents; no official mascot is known, so the GLM line uses the roster's fox-spirit motif with a silver 'Z' tile and cobalt rings.",
+    "sourceUrls": [
+     "https://docs.z.ai/release-notes/new-released"
+    ]
+   },
+   "lineRef": "glm-4-6"
+  },
+  {
+   "id": "glm-4-5v",
+   "nameZh": "GLM-4.5V",
+   "nameEn": "GLM-4.5V",
+   "company": "Zhipu AI (Z.ai)",
+   "country": "CN",
+   "category": "multimodal",
+   "family": "glm-v",
+   "stage": 1,
+   "evolvesTo": "glm-4-6v",
+   "evolveLevel": 22,
+   "types": [
+    "vision",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 65,
+    "atk": 57,
+    "def": 55,
+    "spa": 74,
+    "spd": 54,
+    "spe": 63
+   },
+   "habitats": [
+    "highland",
+    "meadow"
+   ],
+   "releaseDate": "2025-08-11",
+   "capabilityScore": 36,
+   "hotnessScore": 40,
+   "statRationale": "看图理解属特殊型→特攻高；承自 GLM-4.5-Air 底子→HP高。 [BST 368 ∈ R 330-420; 强项 spa/hp; 能力 36/热度 40]",
+   "dexEntryZh": "2025 年 8 月 11 日发布的开放权重视觉语言模型，据报道是在 GLM-4.5-Air 上后训练而来（模型卡上未复核）。在这条视觉进化线里是第一形态，下一形态是同系列的 GLM-4.6V，类型为视觉与开源。",
+   "lookZh": "雪白短发小狐娘，额头推着圆镜片护目镜，抱着拍立得",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a small curious fox-spirit girl of the GLM vision line. Hair: chin-length snow-white straight bob, blunt bangs, cobalt (#2B5BFF) dipped tips, one small ahoge. White fox ears with black tips, ONE short white tail with a cobalt tip. Eyes: large amber-gold (#E8B13A) with hexagonal aperture-shaped highlights. Outfit: oversized white short hooded jacket with cobalt trim, black romper shorts, white socks, black boots. Signature accessory: round camera-lens goggles pushed up on her forehead, plain black rims, a small cobalt iris ring on the left lens. Prop: a small white instant camera with a cobalt lens held in both hands. Palette: snow white #F5F7FF, black #0B0B0F, cobalt #2B5BFF, amber #E8B13A, silver #C0C8D8. Pose: camera raised toward the viewer, head tilted, bright smile.",
+    "personality": "好奇心爆棚，看到什么都想拍下来",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Z.ai (Zhipu) brands itself with a bold letter 'Z' in black and white with cobalt blue accents; the vision (V) models are drawn with a camera-lens and aperture motif in the same black, white and cobalt colours.",
+    "sourceUrls": [
+     "https://docs.z.ai/release-notes/new-released"
+    ]
+   }
+  },
+  {
+   "id": "glm-4-6v",
+   "nameZh": "GLM-4.6V",
+   "nameEn": "GLM-4.6V",
+   "company": "Zhipu AI (Z.ai)",
+   "country": "CN",
+   "category": "multimodal",
+   "family": "glm-v",
+   "stage": 2,
+   "evolvesTo": "glm-5v-turbo",
+   "evolveLevel": 31,
+   "types": [
+    "vision",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 65,
+    "atk": 58,
+    "def": 55,
+    "spa": 81,
+    "spd": 63,
+    "spe": 60
+   },
+   "habitats": [
+    "highland",
+    "forest"
+   ],
+   "releaseDate": "2025-12-08",
+   "capabilityScore": 44,
+   "hotnessScore": 40,
+   "statRationale": "沿袭视觉路线→特攻高；开放权重稳扎稳打→HP高。 [BST 382 ∈ R 330-420; 强项 spa/hp; 能力 44/热度 40]",
+   "dexEntryZh": "2025 年 12 月 8 日发布的开放权重视觉语言模型，是 GLM-4.5V 同系列的下一代，保持视觉与开源的路线。在这条进化线里，上一形态是 GLM-4.5V，下一形态是 GLM-5V-Turbo。",
+   "lookZh": "雪白长发双尾小狐娘，护目镜镜片带光圈，颈挂黑色相机",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same fox-spirit photographer girl a little older. Hair: shoulder-length snow-white straight hair, blunt bangs, cobalt (#2B5BFF) dipped tips, small ahoge, two side locks. White fox ears with black tips, TWO white tails with cobalt tips. Eyes: amber-gold (#E8B13A), hexagonal aperture-shaped highlights. Outfit: white cropped field jacket with cobalt piping and hexagon buttons, black pleated skirt with white hem, black knee socks, boots. Signature accessory: round camera-lens goggles on her forehead, now with a six-blade cobalt iris ring on the left lens. Prop: a black mirrorless camera with a cobalt lens hanging at her chest, one hand framing a shot. Palette: snow white, black #0B0B0F, cobalt #2B5BFF, amber #E8B13A, silver. Pose: one eye squinting, finger-frame, confident smile.",
+    "personality": "镜头越换越准，看图又快又稳",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Z.ai (Zhipu) brands itself with a bold letter 'Z' in black and white with cobalt blue accents; the vision (V) models are drawn with a camera-lens and aperture motif in the same black, white and cobalt colours.",
+    "sourceUrls": [
+     "https://docs.z.ai/release-notes/new-released"
+    ]
+   },
+   "lineRef": "glm-4-5v"
+  },
+  {
+   "id": "glm-5v-turbo",
+   "nameZh": "GLM-5V-Turbo",
+   "nameEn": "GLM-5V-Turbo",
+   "company": "Zhipu AI (Z.ai)",
+   "country": "CN",
+   "category": "multimodal",
+   "family": "glm-v",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "compute"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 77,
+    "atk": 63,
+    "def": 70,
+    "spa": 85,
+    "spd": 69,
+    "spe": 83
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2026-04-01",
+   "capabilityScore": 54,
+   "hotnessScore": 42,
+   "statRationale": "Turbo 命名→速度高；视觉主攻→特攻高。 [BST 447 ∈ SR 420-490; 强项 spa/spe; 能力 54/热度 42]",
+   "dexEntryZh": "2026 年 4 月 1 日发布的闭源视觉模型，是 GLM-4.6V 同系列的后继，与前两代开放权重的路线不同，权重不对外开放。在这条进化线里她接在 GLM-4.6V 之后，类型为视觉与算力。",
+   "lookZh": "雪白长发双尾狐娘，镜片光圈全开，身后悬着钴蓝光圈",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the fox-spirit photographer girl almost grown, a speedy lens master. Hair: mid-back-length snow-white straight hair, blunt bangs, two long side locks, cobalt (#2B5BFF) dipped tips, one ahoge. White fox ears with black tips, TWO long white cobalt-tipped tails. Eyes: amber-gold (#E8B13A), hexagonal aperture highlights. Outfit: long white-and-black coat with cobalt piping flared like shutter blades, black skirt, white gloves, black boots. Signature accessory: round camera-lens goggles on her forehead, now with a fully open six-blade cobalt iris ring and silver trim. Props: a black camera with a big cobalt lens in one hand, one large cobalt iris ring behind her like a halo. Palette: snow white, black #0B0B0F, cobalt #2B5BFF, amber #E8B13A, silver. Pose: lens raised, tails streaming back, grin.",
+    "personality": "快门一按就出结果，主打一个迅捷",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Z.ai (Zhipu) brands itself with a bold letter 'Z' in black and white with cobalt blue accents; the vision (V) models are drawn with a camera-lens and aperture motif in the same black, white and cobalt colours.",
+    "sourceUrls": [
+     "https://docs.z.ai/release-notes/new-released",
+     "https://openrouter.ai/z-ai/glm-5v-turbo",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "glm-4-6v"
+  },
+  {
+   "id": "minimax-01",
+   "nameZh": "MiniMax-01",
+   "nameEn": "MiniMax-01",
+   "company": "MiniMax",
+   "country": "CN",
+   "category": "llm",
+   "family": "minimax-mid",
+   "stage": 1,
+   "evolvesTo": "minimax-m1",
+   "evolveLevel": 23,
+   "types": [
+    "open",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 68,
+    "atk": 53,
+    "def": 51,
+    "spa": 61,
+    "spd": 55,
+    "spe": 69
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2025-01-15",
+   "capabilityScore": 30,
+   "hotnessScore": 46,
+   "statRationale": "闪电注意力→速度高；456B 总参数、百万上下文→HP 高。 [BST 357 ∈ R 330-420; 强项 spe/hp; 能力 30/热度 46]",
+   "dexEntryZh": "MiniMax-01 于 2025 年 1 月 15 日发布，由文本模型 Text-01 和视觉模型 VL-01 合体而成，总参数 456B，每次推理激活 45.9B，用闪电注意力撑起约 100 万 token 上下文，开放权重。她是 MiniMax abab6.5 同系列的下一代，后面是 MiniMax-M1。",
+   "lookZh": "挂着大耳机的话痨小少年，拖着一卷超长纸卷",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.4 heads tall, the MiniMax boy a bit older than the little abab kid, a bright schoolkid. Hair: fluffy charcoal-black with one zig-zag soundwave streak dyed magenta to coral. Eyes: round coral-pink, white waveform highlight, wide and curious. Outfit: oversized charcoal hoodie with a magenta-to-coral waveform across the chest and a tiny gold lightning-bolt pin on the pocket, cuffed shorts, chunky white sneakers. Signature accessory: big over-ear headphones around his neck, one cup with a tiny round camera-lens charm. Props: a super-long off-white paper scroll unrolling from one hand and trailing on the ground (million-token context), a pocket coral notebook. Palette: charcoal #181E25, magenta #E5197E, coral #FF6B4A, off-white #F7F8FA, gold #FFD45E. Pose: grinning, striding forward, scroll unrolling behind him.",
+    "personality": "拖着百万字长卷也要往前冲的话痨",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "MiniMax's logo is a row of rising and falling waveform peaks in a magenta-to-coral gradient, set against charcoal. The long scroll stands for the million-token context and the bolt pin for lightning attention.",
+    "sourceUrls": [
+     "https://openrouter.ai/minimax/minimax-01"
+    ]
+   }
+  },
+  {
+   "id": "minimax-m1",
+   "nameZh": "MiniMax-M1",
+   "nameEn": "MiniMax-M1",
+   "company": "MiniMax",
+   "country": "CN",
+   "category": "reasoning",
+   "family": "minimax-mid",
+   "stage": 2,
+   "evolvesTo": "minimax-m2-5",
+   "evolveLevel": 30,
+   "types": [
+    "logic",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 67,
+    "atk": 70,
+    "def": 61,
+    "spa": 59,
+    "spd": 64,
+    "spe": 61
+   },
+   "habitats": [
+    "city",
+    "snow"
+   ],
+   "releaseDate": "2025-06-16",
+   "capabilityScore": 44,
+   "hotnessScore": 48,
+   "statRationale": "强化学习推理→攻击高；100 万上下文→HP 高。 [BST 382 ∈ R 330-420; 强项 atk/hp; 能力 44/热度 48]",
+   "dexEntryZh": "MiniMax-M1 于 2025 年 6 月 16 日发布，据报道是在 MiniMax-Text-01 之上构建的推理模型，是 MiniMax-01 之后的新一代。她把混合 MoE 与闪电注意力搭在一起，开放权重，上下文 100 万 token，走低成本强化学习路线，同一脉的下一站是 MiniMax-M2.5。",
+   "lookZh": "戴珊瑚色圆框眼镜的少年，手拿推理流程图笔记本",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the same MiniMax boy as a thoughtful tween, taller than the 01 kid. Hair: fluffy charcoal-black, swept to one side, the same zig-zag soundwave streak in magenta to coral. Eyes: round coral-pink, white waveform highlight, behind thin coral-rimmed round glasses. Outfit: charcoal hooded jacket with magenta-to-coral waveform piping over a waveform-print tee, the small gold bolt pin, slim trousers, white sneakers. Signature accessory: the big over-ear headphones around his neck with the little lens charm. Props: a notepad with a branching flowchart of arrows and checkmarks (reasoning), the long off-white scroll now rolled across his back. Palette: charcoal #181E25, magenta #E5197E, coral #FF6B4A, off-white #F7F8FA, gold #FFD45E. Pose: one hand on his chin, the other tapping the notepad, a sly smile.",
+    "personality": "遇事先列步骤，慢慢想清楚的眼镜少年",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "MiniMax's logo is a row of rising and falling waveform peaks in a magenta-to-coral gradient, set against charcoal. The flowchart notepad marks the reasoning model and the slung scroll keeps the long-context trait.",
+    "sourceUrls": [
+     "https://github.com/MiniMax-AI/MiniMax-M1"
+    ]
+   },
+   "lineRef": "minimax-01"
+  },
+  {
+   "id": "minimax-m2-5",
+   "nameZh": "MiniMax-M2.5",
+   "nameEn": "MiniMax-M2.5",
+   "company": "MiniMax",
+   "country": "CN",
+   "category": "llm",
+   "family": "minimax-mid",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "code",
+    "open"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 80,
+    "atk": 84,
+    "def": 68,
+    "spa": 66,
+    "spd": 71,
+    "spe": 83
+   },
+   "habitats": [
+    "forest",
+    "coast"
+   ],
+   "releaseDate": "2026-02-12",
+   "capabilityScore": 58,
+   "hotnessScore": 48,
+   "statRationale": "编码与办公任务→攻击高；Lightning 高速版→速度高。 [BST 452 ∈ SR 420-490; 强项 atk/spe; 能力 58/热度 48]",
+   "dexEntryZh": "MiniMax-M2.5 于 2026 年 2 月 12 日发布，是 MiniMax-M2.1 同系列的下一代，在 M2.1 的编码功底上面向真实工作场景，还带一个主打速度的 Lightning 版本。它出现在 MiniMax 港股上市后一个月，同一脉的上一站是 MiniMax-M1。",
+   "lookZh": "穿利落外套的少年程序员，腋下夹着印花括号的笔记本电脑",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall, the MiniMax boy grown into a sharp young coder. Hair: fluffy charcoal-black swept up and back with the zig-zag soundwave streak in magenta to coral, round coral-rimmed glasses pushed up into his hair. Eyes: round coral-pink, white waveform highlight. Outfit: charcoal coder jacket with waveform piping, open over a white waveform-print tee, slim trousers, white sneakers, the small gold bolt pin on the lapel. Signature accessory: the big over-ear headphones around his neck. Props: a slim silver laptop, its lid showing magenta-coral curly braces, a work ID lanyard. Palette: charcoal #181E25, magenta #E5197E, coral #FF6B4A, off-white #F7F8FA, gold #FFD45E. Pose: striding forward with a wink and a thumbs-up, jacket flaring.",
+    "personality": "一边敲代码一边眨眼的利落搭档",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "MiniMax's logo is a row of rising and falling waveform peaks in a magenta-to-coral gradient, set against charcoal. The braces laptop marks the coding strength and the gold bolt the Lightning variant.",
+    "sourceUrls": [
+     "https://openrouter.ai/minimax/minimax-m2.5",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "minimax-m1"
+  },
+  {
+   "id": "minimax-speech-2-5",
+   "nameZh": "MiniMax Speech 2.5",
+   "nameEn": "MiniMax Speech 2.5",
+   "company": "MiniMax",
+   "country": "CN",
+   "category": "audio",
+   "family": "minimax-speech",
+   "stage": 1,
+   "evolvesTo": "minimax-speech-2-6",
+   "evolveLevel": 23,
+   "types": [
+    "sound"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 53,
+    "atk": 46,
+    "def": 57,
+    "spa": 85,
+    "spd": 53,
+    "spe": 59
+   },
+   "habitats": [
+    "coast",
+    "city"
+   ],
+   "releaseDate": "2025-08-07",
+   "capabilityScore": 28,
+   "hotnessScore": 36,
+   "statRationale": "语音合成与声音克隆见长→特攻高；合成响应快→速度高。 [BST 353 ∈ R 330-420; 强项 spa/spe; 能力 28/热度 36]",
+   "dexEntryZh": "MiniMax Speech 2.5 是 MiniMax 的语音合成与声音克隆模型，2025 年 8 月 7 日发布，闭源，是图鉴里这条语音线的最初形态。它的本职是把文字念成人声、复刻音色，特攻与速度最亮眼。下一形态 MiniMax Speech 2.6 是同系列的新一代，主打低延迟的智能体语音。",
+   "lookZh": "戴橙粉耳麦的黑色短发少女，双手捧着一支小录音笔",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the youngest stage of the MiniMax Speech girl, a bright little announcer. Hair: chin-length charcoal-black (#181E25) bob with a magenta-to-coral dyed underlayer, side-swept bangs, one tiny waveform-peak ahoge. Eyes: big coral (#FF6B4A) with a small white waveform highlight. Outfit: plain cream (#FFF4EC) blouse with a small coral bow, short charcoal pinafore, white socks, coral sneakers. Signature accessory: a slim over-ear headset with a short gold-tipped mic boom and a magenta-coral waveform-peak earcup (the MiniMax logo shape). Prop: a small handheld voice recorder with one glowing coral record dot, held in both hands. Palette: cream #FFF4EC, charcoal #181E25, magenta #E5197E, coral #FF6B4A, gold #FFD45E. Pose: standing straight, recorder lifted toward her mouth, eager little smile.",
+    "personality": "嗓音清亮的小播音员，开口前先深吸一口气",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "MiniMax's logo is a set of rising and falling waveform-like peaks in a warm magenta-to-coral sunrise gradient; the brand palette is magenta, coral and gold on charcoal. The design draws on that waveform shape and palette.",
+    "sourceUrls": [
+     "https://invideo.io/blog/minimax-ai-voice-models/"
+    ]
+   }
+  },
+  {
+   "id": "minimax-speech-2-6",
+   "nameZh": "MiniMax Speech 2.6",
+   "nameEn": "MiniMax Speech 2.6",
+   "company": "MiniMax",
+   "country": "CN",
+   "category": "audio",
+   "family": "minimax-speech",
+   "stage": 2,
+   "evolvesTo": "minimax-speech-2-8",
+   "evolveLevel": 30,
+   "types": [
+    "sound",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 56,
+    "atk": 49,
+    "def": 58,
+    "spa": 79,
+    "spd": 60,
+    "spe": 66
+   },
+   "habitats": [
+    "city",
+    "forest"
+   ],
+   "releaseDate": "2025-10-30",
+   "capabilityScore": 36,
+   "hotnessScore": 36,
+   "statRationale": "语音生成强→特攻高；低延迟→速度高；多语种对话→带聊天属性。 [BST 368 ∈ R 330-420; 强项 spa/spe; 能力 36/热度 36]",
+   "dexEntryZh": "MiniMax Speech 2.6 于 2025 年 10 月发布，闭源，是 MiniMax Speech 2.5 同系列的新一代。资料里它是低延迟的智能体语音，覆盖 40 种语言，类型里多了聊天属性，特攻与速度依旧最亮眼。下一形态 MiniMax Speech 2.8 同样是同系列的后继，资料提到它有声音标签和 300 多种音色。",
+   "lookZh": "耳麦更轻巧的黑发少女，斜挎地球花纹小包，耳边贴着电话听筒",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same MiniMax Speech girl a little older. Hair: charcoal-black (#181E25) bob grown to the jaw with two longer side locks, magenta-to-coral dyed underlayer, the same bangs and waveform-peak ahoge. Eyes: coral (#FF6B4A), white waveform highlight. Outfit: cream (#FFF4EC) jacket-blouse with a magenta neck ribbon, short charcoal vest, pleated charcoal skirt, coral sneakers. Signature accessory: the same over-ear headset, sleeker, its waveform-peak earcup tipped with a tiny gold lightning notch (low latency). Props: a crossbody satchel printed like a little globe (40 languages) and a coral retro telephone handset held to her ear. Palette: cream #FFF4EC, charcoal #181E25, magenta #E5197E, coral #FF6B4A, gold #FFD45E. Pose: mid-chat, handset at her ear, free hand waving, lively grin.",
+    "personality": "反应快又爱聊天，话到嘴边立刻接上",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "MiniMax's logo is a set of rising and falling waveform-like peaks in a warm magenta-to-coral sunrise gradient; the brand palette is magenta, coral and gold on charcoal. The design draws on that waveform shape and palette.",
+    "sourceUrls": [
+     "https://invideo.io/blog/minimax-ai-voice-models/"
+    ]
+   },
+   "lineRef": "minimax-speech-2-5"
+  },
+  {
+   "id": "minimax-speech-2-8",
+   "nameZh": "MiniMax Speech 2.8",
+   "nameEn": "MiniMax Speech 2.8",
+   "company": "MiniMax",
+   "country": "CN",
+   "category": "audio",
+   "family": "minimax-speech",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "sound",
+    "chat"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 71,
+    "atk": 59,
+    "def": 71,
+    "spa": 93,
+    "spd": 67,
+    "spe": 74
+   },
+   "habitats": [
+    "city",
+    "forest"
+   ],
+   "releaseDate": "2026-01-23",
+   "capabilityScore": 46,
+   "hotnessScore": 38,
+   "statRationale": "声音标签与声音设计→特攻高；Turbo 低延迟→速度高。 [BST 435 ∈ SR 420-490; 强项 spa/spe; 能力 46/热度 38]",
+   "dexEntryZh": "MiniMax Speech 2.8 于 2026 年 1 月 23 日发布，闭源，是 MiniMax Speech 2.6 同系列的新一代。它分高清（HD）与极速（Turbo）两档，支持自然的声音标签，覆盖 40 种语言、300 多种音色，并擅长声音设计。类型仍是声音加聊天，特攻与速度最亮眼，嗓子既能念稿也能入戏。",
+   "lookZh": "披金橙双丝带的成熟播音少女，一手扇开音色色卡",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the grown-up MiniMax Speech girl. Hair: charcoal-black (#181E25) bob now shoulder-length with flaring ends, glowing magenta-to-coral underlayer, the same bangs and ahoge. Eyes: coral (#FF6B4A), white waveform highlight. Outfit: long cream (#FFF4EC) coat-dress with a magenta-to-coral gradient hem, charcoal vest with gold buttons, magenta ribbon, charcoal boots. Signature accessory: the same over-ear headset, now gold-rimmed with two short ribbon streamers, gold (HD tier) and coral (Turbo tier). Props: a hand-fanned set of colour-swatch voice cards (tiny heart, sparkle, note pictograms) and a slender waveform-headed mic. Palette: cream #FFF4EC, charcoal #181E25, magenta #E5197E, coral #FF6B4A, gold #FFD45E. Pose: sweeping the card fan open, mic lifted, serene smile.",
+    "personality": "声线百变，会笑会哭还会轻轻叹气",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "MiniMax's logo is a set of rising and falling waveform-like peaks in a warm magenta-to-coral sunrise gradient; the brand palette is magenta, coral and gold on charcoal. The design draws on that waveform shape and palette.",
+    "sourceUrls": [
+     "https://invideo.io/blog/minimax-ai-voice-models/"
+    ]
+   },
+   "lineRef": "minimax-speech-2-6"
+  },
+  {
+   "id": "doubao-seed-1-6",
+   "nameZh": "豆包 Seed-1.6",
+   "nameEn": "Doubao-Seed-1.6",
+   "company": "ByteDance Seed",
+   "country": "CN",
+   "category": "llm",
+   "family": "doubao-seed-mid",
+   "stage": 1,
+   "evolvesTo": "doubao-seed-1-8",
+   "evolveLevel": 32,
+   "types": [
+    "chat",
+    "agent"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 62,
+    "atk": 53,
+    "def": 60,
+    "spa": 67,
+    "spd": 66,
+    "spe": 67
+   },
+   "habitats": [
+    "city",
+    "forest"
+   ],
+   "releaseDate": "2025-06-11",
+   "capabilityScore": 40,
+   "hotnessScore": 60,
+   "statRationale": "自适应思考+视觉理解→特攻高；主力落地、响应快→速度高。 [BST 375 ∈ R 330-420; 强项 spa/spe; 能力 40/热度 60]",
+   "dexEntryZh": "2025 年 6 月 11 日登场的自适应思考多模态模型，拥有 256K 上下文，擅长图形界面与视觉理解，后来成了火山引擎上的主力干活选手。谱系记录里她是豆包 Pro 的同系列后继，也是这条进化线的第一形态，下一站是同系列的豆包 Seed-1.8。",
+   "lookZh": "戴豆荚耳机的双马尾小豆子，抱着平板点点点",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a cheerful little bean-sprout helper girl, the youngest stage of her line. Hair: warm honey-brown (#C28A4A) in two short low twin-tails with sky-blue ribbons, blunt fringe. Eyes: big round teal-green (#38B59A), square pixel highlight. Signature accessory (kept through all stages): a bean-shaped sky-blue headset with one tiny sprout-green leaf on the left earcup. Outfit: oversized sky-blue (#8EC9FF) hoodie with a white bun-pleat pocket, black shorts, white sneakers with green laces. Prop: one small tablet showing a cursor arrow and a tiny eye pictogram (GUI and vision). Palette: honey-brown #C28A4A, sky blue #8EC9FF, black #1E1E24, sprout green #6CC24A, warm white #FFF6E8. Pose: head tilted, tapping the tablet, curious open-mouth smile; idle = twin-tails sway.",
+    "personality": "先看一眼再动手，想多深全看题目",
+    "communityPersona": "No version-specific anime persona found; invented from brand colours, loosely echoing the community nickname '豆包姐'.",
+    "officialMascotOrLogo": "Doubao's app avatar is a friendly bean-like character in a black top; the brand leans on sky blue, black and sprout green.",
+    "sourceUrls": [
+     "https://seed.bytedance.com/en/blog"
+    ]
+   }
+  },
+  {
+   "id": "doubao-seed-1-8",
+   "nameZh": "豆包 Seed-1.8",
+   "nameEn": "Doubao-Seed-1.8",
+   "company": "ByteDance Seed",
+   "country": "CN",
+   "category": "llm",
+   "family": "doubao-seed-mid",
+   "stage": 2,
+   "evolvesTo": "doubao-seed-2-0-code",
+   "evolveLevel": 39,
+   "types": [
+    "chat",
+    "agent"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 74,
+    "atk": 67,
+    "def": 63,
+    "spa": 79,
+    "spd": 78,
+    "spe": 83
+   },
+   "habitats": [
+    "coast",
+    "city"
+   ],
+   "releaseDate": "2025-12-28",
+   "capabilityScore": 52,
+   "hotnessScore": 62,
+   "statRationale": "迭代加速→速度最高；沿用 1.x 对话+智能体底子→特攻高。 [BST 444 ∈ SR 420-490; 强项 spe/spa; 能力 52/热度 62]",
+   "dexEntryZh": "2025 年 12 月现身的豆包 Seed-1.8，是豆包 Seed-1.6 同系列的下一代，延续对话加智能体的路线，在图鉴里以速度与特攻见长。和 1.6 相比，她像是换上新装备继续冲刺的同一个人；再往后，这条线会转向代码方向的豆包 Seed-2.0 Code。",
+   "lookZh": "双马尾变长的豆子少女，黑夹克配天蓝滚边，拿着大平板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same bean-sprout girl grown a little older, a quick-handed junior agent. Hair: warm honey-brown (#C28A4A), low twin-tails now shoulder-length with sky-blue ribbons, blunt fringe. Eyes: teal-green (#38B59A), square pixel highlight, more focused. Signature accessory: the bean-shaped sky-blue headset with a sprout-green leaf on the left earcup. Outfit: black cropped zip jacket with sky-blue trim over a white tee, sky-blue pleated skirt with green piping, white knee socks, black sneakers. Props: a larger slate with split panels and a cursor arrow, plus a tiny steamed-bun pouch on her belt. Palette: honey-brown #C28A4A, sky blue #8EC9FF, black #1E1E24, sprout green #6CC24A, warm white #FFF6E8. Pose: swiping the slate, other hand on hip, sure-footed grin.",
+    "personality": "动作利落，答得快也答得稳",
+    "communityPersona": "No version-specific anime persona found; invented from brand colours, loosely echoing the community nickname '豆包姐'.",
+    "officialMascotOrLogo": "Doubao's app avatar is a friendly bean-like character in a black top; the brand leans on sky blue, black and sprout green.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "doubao-seed-1-6"
+  },
+  {
+   "id": "doubao-seed-2-0-code",
+   "nameZh": "豆包 Seed-2.0 Code",
+   "nameEn": "Doubao-Seed-2.0 Code",
+   "company": "ByteDance Seed",
+   "country": "CN",
+   "category": "code",
+   "family": "doubao-seed-mid",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "code",
+    "agent"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 79,
+    "atk": 80,
+    "def": 73,
+    "spa": 74,
+    "spd": 69,
+    "spe": 83
+   },
+   "habitats": [
+    "forest",
+    "highland"
+   ],
+   "releaseDate": "2026-02-14",
+   "capabilityScore": 62,
+   "hotnessScore": 56,
+   "statRationale": "专注代码与智能体→攻击高；预览版快速迭代→速度高。 [BST 458 ∈ SR 420-490; 强项 spe/atk; 能力 62/热度 56]",
+   "dexEntryZh": "2026 年 2 月亮相的代码与智能体方向模型，资料标注为 260215 预览版。她接在豆包 Seed-1.8 之后，是同系列的下一站，类型从对话转向写代码；谱系记录里她的直接参照是同系列的 Seed-2.0 Pro。速度与攻击是她的强项，随时准备开工。",
+   "lookZh": "成年工程师豆子少女，黑色开发外套，全息代码板上写着花括号",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the bean-sprout girl grown into a young woman, a calm coding-agent engineer. Hair: warm honey-brown (#C28A4A), low twin-tails now waist-long with black-and-green ribbons, blunt fringe. Eyes: teal-green (#38B59A), sharp square pixel highlight. Signature accessory: the bean-shaped sky-blue headset with a sprout-green leaf on the left earcup, now with a thin mic boom. Outfit: knee-length black developer coat with sky-blue collar and green piping, white shirt, sky-blue tie, black pleated skirt, black boots, tiny steamed-bun charm on her belt. Props: a holographic slate showing a curly-brace pictogram, and a wrench-shaped stylus. Palette: honey-brown #C28A4A, sky blue #8EC9FF, black #1E1E24, sprout green #6CC24A, warm white #FFF6E8. Pose: typing on the slate with one hand, confident half-smile.",
+    "personality": "话少手快，先提交再解释",
+    "communityPersona": "No version-specific anime persona found; invented from brand colours, loosely echoing the community nickname '豆包姐'.",
+    "officialMascotOrLogo": "Doubao's app avatar is a friendly bean-like character in a black top; the brand leans on sky blue, black and sprout green.",
+    "sourceUrls": [
+     "https://openrouter.ai/bytedance-seed/seed-2.0-code",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "doubao-seed-1-8"
+  },
+  {
+   "id": "doubao-seed-1-6-flash",
+   "nameZh": "豆包 Seed-1.6 Flash",
+   "nameEn": "Doubao-Seed-1.6-Flash",
+   "company": "ByteDance Seed",
+   "country": "CN",
+   "category": "llm",
+   "family": "doubao-seed-fast",
+   "stage": 1,
+   "evolvesTo": "doubao-seed-2-0-lite",
+   "evolveLevel": 22,
+   "types": [
+    "compute",
+    "chat"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 54,
+    "atk": 41,
+    "def": 45,
+    "spa": 47,
+    "spd": 46,
+    "spe": 68
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2025-06-11",
+   "capabilityScore": 18,
+   "hotnessScore": 46,
+   "statRationale": "Flash 档主打快→速度最高；底子稳→HP 次之。 [BST 301 ∈ N 240-330; 强项 spe/hp; 能力 18/热度 46]",
+   "dexEntryZh": "豆包 Seed-1.6 Flash 是字节跳动 Seed 团队的快速档模型，2025 年 6 月 11 日发布，权重未开放。名字里的 Flash 就是她的人设：主打一个快。升到 Lv.22 后，她会迭代成同系列的下一代“豆包 Seed-2.0 Lite”。",
+   "lookZh": "天蓝蓬松短发的小跑者，脖子上挂着豆荚秒表",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~1.9 heads tall, a tiny hyper little-sister runner of the Doubao Seed fast line. Fluffy short sky-blue (#8EC9FF) hair in a messy cut with side-swept bangs and a small bean-pod hairclip in sprout green (#6CCB5F). Big bright lime-green (#7BD16A) eyes with white star highlights and rosy round cheeks. Outfit: an oversized black (#1E1E24) hoodie with the hood down and sky-blue zip pulls, chocolate-brown (#5A3A2A) shorts, white sneakers with green laces. Signature accessory: a chunky bean-pod-shaped stopwatch hanging from a lanyard round her neck, its hand frozen at a quick time. Palette: sky blue #8EC9FF, black #1E1E24, chocolate #5A3A2A, sprout green #6CCB5F, lime #7BD16A, warm white. Pose: sprint start with one foot lifted, one fist pumping, a wide open-mouth grin.",
+    "personality": "起跑线上就在抢跑的急性子小不点",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "The roster's Doubao Seed designs use chocolate brown, black, sky blue and sprout green with a bean and steamed-bun motif; the bean-pod stopwatch carries that motif into the fast line.",
+    "sourceUrls": [
+     "https://seed.bytedance.com/en/blog"
+    ]
+   }
+  },
+  {
+   "id": "doubao-seed-2-0-lite",
+   "nameZh": "豆包 Seed-2.0 Lite",
+   "nameEn": "Doubao-Seed-2.0 Lite",
+   "company": "ByteDance Seed",
+   "country": "CN",
+   "category": "llm",
+   "family": "doubao-seed-fast",
+   "stage": 2,
+   "evolvesTo": "doubao-seed-2-1-turbo",
+   "evolveLevel": 29,
+   "types": [
+    "compute",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 65,
+    "atk": 54,
+    "def": 50,
+    "spa": 55,
+    "spd": 59,
+    "spe": 78
+   },
+   "habitats": [
+    "forest",
+    "coast"
+   ],
+   "releaseDate": "2026-02-14",
+   "capabilityScore": 32,
+   "hotnessScore": 50,
+   "statRationale": "Lite 档轻快→速度高；聊天型底子稳→HP 高。 [BST 361 ∈ R 330-420; 强项 spe/hp; 能力 32/热度 50]",
+   "dexEntryZh": "豆包 Seed-2.0 Lite 于 2026 年 2 月 14 日发布，权重未开放，是“豆包 Seed-1.6 Flash”同系列的下一代。Lite 是偏轻量的档位，所以她依旧跑得快、底子稳；升到 Lv.29 后，会迭代成同系列的“豆包 Seed-2.1 Turbo”。",
+   "lookZh": "天蓝短发带小马尾的短夹克少女，手持聊天平板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.2 heads tall, the same fast-line girl a little older, still light on her feet. Fluffy sky-blue (#8EC9FF) hair, now chin-length with a short low side ponytail, the same side-swept bangs and sprout-green (#6CCB5F) bean-pod hairclip. The same bright lime-green (#7BD16A) eyes, calmer with a friendly grin. Outfit: a cropped black (#1E1E24) zip jacket with sky-blue sleeve stripes over a white tee, chocolate-brown (#5A3A2A) pleated skirt with a sprout-green hem line, white sneakers. Signature accessory: the bean-pod stopwatch on its lanyard, now with a sleek metal rim. Second prop: a slim hand-held chat tablet with two plain speech-bubble pictograms. Palette: sky blue #8EC9FF, black #1E1E24, chocolate #5A3A2A, sprout green #6CCB5F, lime #7BD16A. Pose: jogging forward with the tablet held up, a sunny wink.",
+    "personality": "轻装上阵也不掉队，边跑边笑着答话",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "The roster's Doubao Seed designs use chocolate brown, black, sky blue and sprout green with a bean and steamed-bun motif; the bean-pod stopwatch and hairclip keep that motif.",
+    "sourceUrls": [
+     "https://openrouter.ai/bytedance-seed/seed-2.0-lite",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "doubao-seed-1-6-flash"
+  },
+  {
+   "id": "doubao-seed-2-1-turbo",
+   "nameZh": "豆包 Seed-2.1 Turbo",
+   "nameEn": "Doubao-Seed-2.1 Turbo",
+   "company": "ByteDance Seed",
+   "country": "CN",
+   "category": "llm",
+   "family": "doubao-seed-fast",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "compute",
+    "agent"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 67,
+    "atk": 63,
+    "def": 54,
+    "spa": 58,
+    "spd": 61,
+    "spe": 86
+   },
+   "habitats": [
+    "coast",
+    "meadow"
+   ],
+   "releaseDate": "2026-06-23",
+   "capabilityScore": 48,
+   "hotnessScore": 52,
+   "statRationale": "Turbo 档更快→速度高；底子稳→HP 高。 [BST 389 ∈ R 330-420; 强项 spe/hp; 能力 48/热度 52]",
+   "dexEntryZh": "豆包 Seed-2.1 Turbo 于 2026 年 6 月 23 日发布（OpenRouter 记录为 2026 年 8 月 12 日），是“豆包 Seed-2.0 Lite”同系列的下一代，定位更快更便宜的档位，属性也从聊天转向了 agent。",
+   "lookZh": "天蓝长马尾的竞速风衣少女，秒表装上涡轮环",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the grown-up Doubao Seed fast-line girl. Sky-blue (#8EC9FF) hair now in a long high ponytail tied with a sprout-green (#6CCB5F) ribbon, the same side-swept bangs and bean-pod hairclip. The same lime-green (#7BD16A) eyes, sharp and confident. Outfit: a sleek long black (#1E1E24) racing-style coat with sky-blue sleeve stripes, chocolate-brown (#5A3A2A) belt, black shorts, knee boots with small silver fins. Signature accessory: the bean-pod stopwatch on its lanyard, now chrome with a tiny turbine-blade ring. Second prop: a slim tablet with a checklist pictogram and ticked boxes (agent). Palette: sky blue #8EC9FF, black #1E1E24, chocolate #5A3A2A, sprout green #6CCB5F, lime #7BD16A. Pose: striding forward, coat flaring behind her, tablet held out, a confident smirk.",
+    "personality": "提速不降质，清单上的事一件件干完",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "The roster's Doubao Seed designs use chocolate brown, black, sky blue and sprout green with a bean and steamed-bun motif; the bean-pod stopwatch and ribbon keep that motif.",
+    "sourceUrls": [
+     "https://datanorth.ai/news/bytedance-releases-seed-2-1-pro-and-seed-2-1-turbo"
+    ]
+   },
+   "lineRef": "doubao-seed-2-0-lite"
+  },
+  {
+   "id": "hunyuan-large",
+   "nameZh": "混元 Large",
+   "nameEn": "Hunyuan-Large",
+   "company": "Tencent Hunyuan",
+   "country": "CN",
+   "category": "llm",
+   "family": "hunyuan-mid",
+   "stage": 1,
+   "evolvesTo": "hunyuan-turbos",
+   "evolveLevel": 22,
+   "types": [
+    "open",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 66,
+    "atk": 57,
+    "def": 52,
+    "spa": 55,
+    "spd": 59,
+    "spe": 75
+   },
+   "habitats": [
+    "city",
+    "coast"
+   ],
+   "releaseDate": "2024-11-05",
+   "capabilityScore": 34,
+   "hotnessScore": 48,
+   "statRationale": "389B 总参数→HP 高；每次只激活 52B→速度快。 [BST 364 ∈ R 330-420; 强项 spe/hp; 能力 34/热度 48]",
+   "dexEntryZh": "混元 Large 是腾讯开放权重的 MoE 大模型，2024 年 11 月 5 日发布，总参数 389B、每次激活 52B，像背着一整面小抽屉的大书包，要用谁就拉开谁。同系列的下一代是混元 TurboS。",
+   "lookZh": "钴蓝双马尾配企鹅鳍发饰，背着满是小抽屉的大背包",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall: a sturdy little girl called 'Hunyuan Large'. Cobalt-blue (#1F5BFF) twin low ponytails with white tips and a short side ahoge; on each side of her head sits a tiny white-and-blue penguin-flipper wing hair ornament (her signature accessory). Big golden-amber eyes (#F2B84B) with two round highlights. Outfit: an oversized hooded poncho patched from eight small squares in different blues (#0052D9, #2EB4FF, #BEE3F8), like many experts sewn into one, a white tunic, white tights and chunky blue boots. On her back is a bulky white backpack with a grid of tiny drawers, a few slightly open. A small silver key charm dangles from her belt. Palette: cobalt #1F5BFF, Tencent blue #0052D9, sky blue #2EB4FF, pale blue #BEE3F8, amber #F2B84B, white. Pose: feet planted wide, tugging one drawer open.",
+    "personality": "块头大，但每次只拉开该用的那一格",
+    "communityPersona": "No anime persona found; invented from the Tencent Hunyuan blue palette and the penguin mascot.",
+    "officialMascotOrLogo": "Tencent's penguin mascot (flipper-wing hair ornaments) and the Hunyuan blue palette (#0052D9, #2EB4FF, #BEE3F8); the patchwork poncho and drawer backpack stand for the open mixture-of-experts design.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Tencent_Hy",
+     "https://github.com/Tencent/Tencent-Hunyuan-Large"
+    ]
+   }
+  },
+  {
+   "id": "hunyuan-turbos",
+   "nameZh": "混元 TurboS",
+   "nameEn": "Hunyuan-TurboS",
+   "company": "Tencent Hunyuan",
+   "country": "CN",
+   "category": "llm",
+   "family": "hunyuan-mid",
+   "stage": 2,
+   "evolvesTo": "hunyuan-t1",
+   "evolveLevel": 31,
+   "types": [
+    "chat",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 66,
+    "atk": 57,
+    "def": 57,
+    "spa": 61,
+    "spd": 61,
+    "spe": 84
+   },
+   "habitats": [
+    "forest",
+    "coast"
+   ],
+   "releaseDate": "2025-02-01",
+   "capabilityScore": 46,
+   "hotnessScore": 48,
+   "statRationale": "混合架构主打低延迟→速度高；旗舰底子厚→HP 高。 [BST 386 ∈ R 330-420; 强项 spe/hp; 能力 46/热度 48]",
+   "dexEntryZh": "混元 TurboS 是混元 Large 同系列的下一代，2025 年 2 月登场，是 Mamba 与 Transformer 混合架构的快思考旗舰，主打低延迟。她把块头换成了脚力，之后据报道会被后训练成推理型的混元 T1。",
+   "lookZh": "穿赛车夹克的钴蓝双马尾少女，手握秒表，围着薄荷色小蛇围巾",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall: the same girl 'Hunyuan Large' grown into 'Hunyuan TurboS'. The same cobalt-blue (#1F5BFF) hair with white tips, now twin high ponytails swept back, the same short ahoge, and the same white-and-blue penguin-flipper wing hair ornaments, now longer and streamlined. The same golden-amber (#F2B84B) eyes, sharper,, winking. Outfit: a white racing jacket with Tencent-blue (#0052D9) side stripes and a lightning-shaped zip pull over a sky-blue (#2EB4FF) top, white bike shorts, blue-and-white sneakers with tiny fin wings, and a mint-green (#3DDC97) snake-shaped scarf (a wink at 'Mamba'). She holds a silver stopwatch with a blue face. Palette: #1F5BFF, #0052D9, #2EB4FF, mint #3DDC97, silver #C8D0DC, white. Pose: crouched sprinter start, stopwatch raised, cheeky grin.",
+    "personality": "先答再说，反应快过秒表",
+    "communityPersona": "No anime persona found; invented from the Tencent Hunyuan blue palette and the penguin mascot.",
+    "officialMascotOrLogo": "Tencent's penguin mascot (flipper wings) and the Hunyuan blue palette; the mint snake scarf puns on the Mamba half of the hybrid Mamba-Transformer design and the stopwatch on its low latency.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Tencent_Hy",
+     "https://cloud.tencent.com/document/product/1729/104753"
+    ]
+   },
+   "lineRef": "hunyuan-large"
+  },
+  {
+   "id": "hunyuan-t1",
+   "nameZh": "混元 T1",
+   "nameEn": "Hunyuan-T1",
+   "company": "Tencent Hunyuan",
+   "country": "CN",
+   "category": "reasoning",
+   "family": "hunyuan-mid",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "logic",
+    "chat"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 83,
+    "atk": 74,
+    "def": 69,
+    "spa": 75,
+    "spd": 77,
+    "spe": 71
+   },
+   "habitats": [
+    "snow",
+    "ruins"
+   ],
+   "releaseDate": "2025-03-21",
+   "capabilityScore": 56,
+   "hotnessScore": 50,
+   "statRationale": "长链推理沉得住气→HP 高；深度思考稳→特防高。 [BST 449 ∈ SR 420-490; 强项 hp/spd; 能力 56/热度 50]",
+   "dexEntryZh": "混元 T1 据报道由混元 TurboS 后训练而来，是 Mamba 混合架构的深度推理模型，主打又快又长的推理，2025 年 3 月问世。她是混元 Large、TurboS 这条线上的第三形态，从抢跑变成了沉着地想。",
+   "lookZh": "披学者长外套的钴蓝马尾少女，托着蓝沙飞落的沙漏",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall: the same girl, now 'Hunyuan T1', calm. The same cobalt-blue (#1F5BFF) hair with white tips, now one long ponytail plus a side braid, the same ahoge, and the same white-and-blue penguin-flipper wing hair ornaments, now larger. The same golden-amber (#F2B84B) eyes, half-lidded. Outfit: a long white scholar coat with Tencent-blue (#0052D9) trim and a high collar over a sky-blue (#2EB4FF) vest, a pleated skirt, white knee socks, blue shoes, and the mint-green (#3DDC97) snake scarf, now long and coiled over one shoulder. In one hand she carries a big brass-and-glass hourglass with quickly falling blue sand; the other hand rests under her chin. Palette: #1F5BFF, #0052D9, #2EB4FF, mint #3DDC97, brass #E6B54A, white. Pose: calm thinking stance, hourglass held at her side.",
+    "personality": "不抢跑了，想透再开口",
+    "communityPersona": "No anime persona found; invented from the Tencent Hunyuan blue palette and the penguin mascot.",
+    "officialMascotOrLogo": "Tencent's penguin mascot (flipper wings) and the Hunyuan blue palette; the hourglass stands for long, fast reasoning and the snake scarf for the Mamba hybrid.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Tencent_Hy",
+     "https://cloud.tencent.com/document/product/1729/104753"
+    ]
+   },
+   "lineRef": "hunyuan-turbos"
+  },
+  {
+   "id": "hunyuan3d-2",
+   "nameZh": "混元 3D 2.0",
+   "nameEn": "Hunyuan3D 2.0",
+   "company": "Tencent Hunyuan",
+   "country": "CN",
+   "category": "other",
+   "family": "hunyuan-3d",
+   "stage": 1,
+   "evolvesTo": "hunyuan3d-3-1",
+   "evolveLevel": 28,
+   "types": [
+    "vision",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 64,
+    "atk": 56,
+    "def": 63,
+    "spa": 73,
+    "spd": 56,
+    "spe": 63
+   },
+   "habitats": [
+    "desert",
+    "forest"
+   ],
+   "releaseDate": "2025-01-21",
+   "capabilityScore": 40,
+   "hotnessScore": 50,
+   "statRationale": "生成三维资产输出强→特攻高；开放权重、底子扎实→HP 高。 [BST 375 ∈ R 330-420; 强项 spa/hp; 能力 40/热度 50]",
+   "dexEntryZh": "混元 3D 2.0 是腾讯混元的 3D 资产生成模型，2025 年 1 月 21 日在 GitHub 开放权重。她负责把点子捏成能用的三维模型，像随身揣着一块会长出网格的黏土。同一脉的下一代是混元 3D 3.1，眼下她还在练基本功。",
+   "lookZh": "冰青色波波头的小雕塑师，捧着刻到一半的黏土方块",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall: a small sculptor girl called 'Hunyuan 3D'. Chin-length wavy ice-cyan bob (#A8E6F5) with one short ahoge and a faceted low-poly blue gem hairclip on the left (her signature accessory). Large sky-blue eyes (#2EB4FF) with a tiny diamond-shaped highlight. Outfit: an oversized white workshop smock with a Tencent-blue (#0052D9) collar and cuffs, sleeves so long only her fingertips show, plain white shorts and little grey boots. In both hands she holds a lump of grey clay (#8A94A6) half-carved into a cube, a thin white wireframe grid drawn on one face; a tiny wooden sculpting stick is tucked behind her ear. Palette: Tencent blue #0052D9, sky blue #2EB4FF, ice cyan #A8E6F5, clay grey #8A94A6, white. Pose: on tiptoe, proudly lifting the clay block with a shy smile.",
+    "personality": "手笨心细，先捏出形状再说",
+    "communityPersona": "No anime persona found; invented from the Tencent Hunyuan blue palette and the penguin mascot.",
+    "officialMascotOrLogo": "Tencent's Hunyuan blue palette (Tencent blue #0052D9, sky blue #2EB4FF) and the penguin mascot; the faceted gem clip and wireframe clay stand for 3D asset generation.",
+    "sourceUrls": [
+     "https://github.com/Tencent-Hunyuan/Hunyuan3D-2"
+    ]
+   }
+  },
+  {
+   "id": "hunyuan3d-3-1",
+   "nameZh": "混元 3D 3.1",
+   "nameEn": "Hunyuan3D 3.1",
+   "company": "Tencent Hunyuan",
+   "country": "CN",
+   "category": "other",
+   "family": "hunyuan-3d",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "open"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 72,
+    "atk": 64,
+    "def": 74,
+    "spa": 90,
+    "spd": 67,
+    "spe": 82
+   },
+   "habitats": [
+    "swamp",
+    "forest"
+   ],
+   "releaseDate": "2026-02-01",
+   "capabilityScore": 56,
+   "hotnessScore": 48,
+   "statRationale": "3D 生成输出强→特攻高；迭代后出活更利落→速度高。 [BST 449 ∈ SR 420-490; 强项 spa/spe; 能力 56/热度 48]",
+   "dexEntryZh": "混元 3D 3.1 是混元 3D 2.0 同系列的下一代。资料记载 2025 年 11 月 25 日腾讯宣布混元 3D 引擎面向全球创作者上线，2026 年 2 月出现 3.1 国际版介绍。与开放权重的 2.0 不同，3.1 的权重未开放。",
+   "lookZh": "披蓝色设计师外套的雕塑师，托着上好色的小企鹅手办",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall: the grown-up version of the same sculptor girl 'Hunyuan 3D'. The same ice-cyan (#A8E6F5) wavy hair, now shoulder length and the same short ahoge, still wearing the faceted low-poly blue gem hairclip, now larger with a thin gold rim. The same sky-blue (#2EB4FF) eyes with the diamond highlight. Outfit: a long Tencent-blue (#0052D9) designer coat with white lapels over a white blouse, a pleated navy (#12306B) skirt, grey boots, a tiny silver globe pin on the lapel and a yellow tape-measure scarf. She holds a slim digital stylus in one hand and a glossy finished figurine of a little blue penguin in the other. Palette: #0052D9, #2EB4FF, #A8E6F5, silver #C8D0DC, gold #E6B54A, white. Pose: relaxed three-quarter stance, presenting the figurine with a calm smile.",
+    "personality": "手艺见长，端出成品才肯笑",
+    "communityPersona": "No anime persona found; invented from the Tencent Hunyuan blue palette and the penguin mascot.",
+    "officialMascotOrLogo": "Tencent's Hunyuan blue palette (#0052D9, #2EB4FF) and the penguin mascot; the globe pin nods to the global launch of the Hunyuan 3D engine.",
+    "sourceUrls": [
+     "https://www.vset3d.com/hunyuan-3d-3-1-international-version/",
+     "https://www.tencent.com/tencent-announces-global-launch-of-hunyuan-3d-engine-to-empower-creators-with-advanced-creation-tools/"
+    ]
+   },
+   "lineRef": "hunyuan3d-2"
+  },
+  {
+   "id": "hunyuanworld-1-0",
+   "nameZh": "混元世界 1.0",
+   "nameEn": "HunyuanWorld 1.0",
+   "company": "Tencent Hunyuan",
+   "country": "CN",
+   "category": "other",
+   "family": "hunyuan-world",
+   "stage": 1,
+   "evolvesTo": "hunyuanworld-1-5",
+   "evolveLevel": 20,
+   "types": [
+    "vision",
+    "chaos"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 50,
+    "atk": 50,
+    "def": 51,
+    "spa": 94,
+    "spd": 58,
+    "spe": 65
+   },
+   "habitats": [
+    "forest",
+    "ruins"
+   ],
+   "releaseDate": "2025-07-26",
+   "capabilityScore": 36,
+   "hotnessScore": 44,
+   "statRationale": "文字/图像生成世界输出强→特攻高；上手轻快→速度高。 [BST 368 ∈ R 330-420; 强项 spa/spe; 能力 36/热度 44]",
+   "dexEntryZh": "混元世界 1.0 是腾讯混元的 3D 世界生成模型，2025 年 7 月 26 日开放权重，能从文字或图像出发生成三维世界。她还只会拎着一卷全景图四处张望，进化线上的下一形态是同系列的混元世界 1.5。",
+   "lookZh": "天蓝渐变桃粉长发的小探险家，抱着一卷全景地图",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall: a tiny explorer girl called 'Hunyuan World'. Shoulder-length wavy hair fading from sky-blue (#7CC8FF) at the roots to peach-pink (#FFB88C) at the tips, a short ahoge, and a small glass-sphere world hairpin on the right (a clear orb with a tiny mountain inside; her signature accessory). Big teal-green eyes (#2FC5B0) with a star-shaped highlight. Outfit: a cream (#FFF4E0) tunic dress, a short Tencent-blue (#0052D9) scarf, a little brown satchel, white socks and tan boots. In both hands she holds a rolled-out panorama paper scroll with a faint horizon painted on it. Palette: Tencent blue #0052D9, sky blue #7CC8FF, peach #FFB88C, teal #2FC5B0, cream #FFF4E0, tan #C99A6B. Pose: peeking over the scroll with wide curious eyes, one boot lifted mid-step.",
+    "personality": "好奇心打头阵，边走边画世界",
+    "communityPersona": "No anime persona found; invented from Tencent blue and a horizon-sunrise gradient.",
+    "officialMascotOrLogo": "Tencent's Hunyuan blue (#0052D9) with a warm sunrise gradient; the glass world-orb stands for 3D world generation from text or pixels.",
+    "sourceUrls": [
+     "https://github.com/Tencent-Hunyuan/HunyuanWorld-1.0"
+    ]
+   }
+  },
+  {
+   "id": "hunyuanworld-1-5",
+   "nameZh": "混元世界 1.5",
+   "nameEn": "HunyuanWorld 1.5 (WorldPlay)",
+   "company": "Tencent Hunyuan",
+   "country": "CN",
+   "category": "other",
+   "family": "hunyuan-world",
+   "stage": 2,
+   "evolvesTo": "hy-world-2",
+   "evolveLevel": 30,
+   "types": [
+    "vision",
+    "chaos"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 53,
+    "atk": 52,
+    "def": 55,
+    "spa": 103,
+    "spd": 54,
+    "spe": 69
+   },
+   "habitats": [
+    "desert",
+    "forest"
+   ],
+   "releaseDate": "2025-12-18",
+   "capabilityScore": 46,
+   "hotnessScore": 42,
+   "statRationale": "世界生成输出强→特攻高；行装更轻便、迭代更快→速度高。 [BST 386 ∈ R 330-420; 强项 spa/spe; 能力 46/热度 42]",
+   "dexEntryZh": "混元世界 1.5（WorldPlay）是混元世界 1.0 同系列的下一代，2025 年 12 月 18 日开放权重；两者之间还有 2025 年 10 月 22 日的 1.1（WorldMirror）。她换上了远行装备，后面接着 HY-World 2.0。",
+   "lookZh": "戴护目镜背着地图卷的探险家，手托黄铜罗盘",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall: the same explorer girl 'Hunyuan World', a bit older. The same wavy hair fading from sky-blue (#7CC8FF) to peach-pink (#FFB88C), now longer with a side braid, the same ahoge, and the same glass-sphere world hairpin, now bigger with a tiny green valley inside. The same teal-green (#2FC5B0) eyes with the star highlight. Outfit: a cream (#FFF4E0) hooded adventurer jacket with Tencent-blue (#0052D9) panels, a short pleated skirt over tan leggings, sturdy brown boots, round brass goggles pushed up on her forehead, and a travel backpack with rolled maps on top. A brass compass rests in her outstretched hand. Palette: Tencent blue #0052D9, sky blue #7CC8FF, peach #FFB88C, teal #2FC5B0, cream #FFF4E0, brass #C9A04A. Pose: striding forward, compass held out, confident smile.",
+    "personality": "背包鼓鼓，路在脚下再说",
+    "communityPersona": "No anime persona found; invented from Tencent blue and a horizon-sunrise gradient.",
+    "officialMascotOrLogo": "Tencent's Hunyuan blue (#0052D9) with a warm sunrise gradient; the world-orb hairpin, goggles and compass stand for exploring the generated world (WorldPlay).",
+    "sourceUrls": [
+     "https://explainx.ai/blog/tencent-hunyuan-hy-world-2-world-mirror-3d-world-model-2026"
+    ]
+   },
+   "lineRef": "hunyuanworld-1-0"
+  },
+  {
+   "id": "hy-world-2",
+   "nameZh": "HY-World 2.0",
+   "nameEn": "HY-World 2.0",
+   "company": "Tencent Hunyuan",
+   "country": "CN",
+   "category": "other",
+   "family": "hunyuan-world",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "chaos"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 65,
+    "atk": 55,
+    "def": 64,
+    "spa": 114,
+    "spd": 66,
+    "spe": 85
+   },
+   "habitats": [
+    "forest",
+    "ruins"
+   ],
+   "releaseDate": "2026-04-16",
+   "capabilityScore": 56,
+   "hotnessScore": 44,
+   "statRationale": "世界生成输出强→特攻高；成熟后行动利落→速度高。 [BST 449 ∈ SR 420-490; 强项 spa/spe; 能力 56/热度 44]",
+   "dexEntryZh": "HY-World 2.0 是混元世界 1.5（WorldPlay）同系列的下一代，2026 年 4 月 16 日登场。目前对外开放的只有约 1.2B 的 WorldMirror 2.0，其余部分尚未开放，她手里这面镜子照出的只是世界的一角。",
+   "lookZh": "披晨曦渐变斗篷的探险家，举着映出微缩世界的手镜",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall: the grown-up 'HY-World', the same explorer girl. The same sky-blue (#7CC8FF) to peach-pink (#FFB88C) wavy hair, now waist length with the side braid and the same ahoge; the same glass-sphere world hairpin, now planet-sized with a tiny mountain, river and clouds inside ringed in gold. The same teal-green (#2FC5B0) eyes with the star highlight. Outfit: a long Tencent-blue (#0052D9) travel cape lined with a soft sunrise gradient, over a cream (#FFF4E0) adventurer dress with gold trim; the brass goggles rest on her head and the compass hangs from her belt. She holds up a round brass hand mirror reflecting a miniature world (a nod to WorldMirror). Palette: #0052D9, #7CC8FF, #FFB88C, teal #2FC5B0, cream #FFF4E0, gold #E6B54A. Pose: cape billowing, mirror raised, calm smile.",
+    "personality": "见过很多世界，还想再看一个",
+    "communityPersona": "No anime persona found; invented from Tencent blue and a horizon-sunrise gradient.",
+    "officialMascotOrLogo": "Tencent's Hunyuan blue (#0052D9) with a warm sunrise gradient; the hand mirror nods to the open WorldMirror 2.0 component.",
+    "sourceUrls": [
+     "https://explainx.ai/blog/tencent-hunyuan-hy-world-2-world-mirror-3d-world-model-2026"
+    ]
+   },
+   "lineRef": "hunyuanworld-1-5"
+  },
+  {
+   "id": "kling-2-0",
+   "nameZh": "可灵 2.0",
+   "nameEn": "Kling 2.0",
+   "company": "Kuaishou (Kling AI)",
+   "country": "CN",
+   "category": "video",
+   "family": "kling-mid",
+   "stage": 1,
+   "evolvesTo": "kling-2-5-turbo",
+   "evolveLevel": 30,
+   "types": [
+    "motion",
+    "vision"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 58,
+    "atk": 55,
+    "def": 55,
+    "spa": 94,
+    "spd": 60,
+    "spe": 64
+   },
+   "habitats": [
+    "coast",
+    "meadow"
+   ],
+   "releaseDate": "2025-04-15",
+   "capabilityScore": 46,
+   "hotnessScore": 66,
+   "statRationale": "大师版画面表现→特攻高；出片顺畅→速度高。 [BST 386 ∈ R 330-420; 强项 spa/spe; 能力 46/热度 66]",
+   "dexEntryZh": "可灵 2.0 于 2025 年 4 月 15 日在北京的「From Vision to Screen」发布会上与 Kolors 2.0 图像模型一起亮相，带来大师版和多元素编辑器，是可灵 1.6 同系列的下一代。往后的下一站是可灵 2.5 Turbo，中间还隔着 2.1。",
+   "lookZh": "举着场记板的小胶片少年，背后拖着长长的胶片尾巴",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.2 heads tall, the film-spirit boy a little older than his Kling 1.0 self: still a child, with a Master air. Hair: fluffy black with one white S-shaped swoosh lock over his forehead. Eyes: big black with tilted white ellipse highlights. Outfit: better-fitting black zip hoodie with a white outlined S-swirl print, black cuffed shorts, white sneakers, one orange wristband. Signature accessory: a white film strip trailing from his back like a long ribbon-tail, its frames showing a tiny running stick figure. Props: a mini black-and-white clapperboard, a small fan of three sticker cards (star, cup, cat silhouette: multi-element editing). Palette: ink black #14161A, white #FFFFFF, Kuaishou orange #FF5A1F, silver #C9CED6. Pose: standing ready, clapperboard raised, film strip curling behind, small determined grin.",
+    "personality": "爱举场记板的小导演，心里全是大片",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Kling's logo is a flowing S-curve with a tilted ellipse in black and white, and parent company Kuaishou supplies the orange accent. The film strip and clapperboard nod to its text and image-to-video generation.",
+    "sourceUrls": [
+     "https://www.globenewswire.com/news-release/2025/04/15/3062142/0/en/Kling-AI-Advances-to-the-2-0-Era-Empowering-Everyone-to-Tell-Great-Stories-with-AI.html"
+    ]
+   }
+  },
+  {
+   "id": "kling-2-5-turbo",
+   "nameZh": "可灵 2.5 Turbo",
+   "nameEn": "Kling 2.5 Turbo",
+   "company": "Kuaishou (Kling AI)",
+   "country": "CN",
+   "category": "video",
+   "family": "kling-mid",
+   "stage": 2,
+   "evolvesTo": "kling-2-6",
+   "evolveLevel": 37,
+   "types": [
+    "motion",
+    "compute"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 71,
+    "atk": 64,
+    "def": 62,
+    "spa": 97,
+    "spd": 63,
+    "spe": 92
+   },
+   "habitats": [
+    "meadow",
+    "city"
+   ],
+   "releaseDate": "2025-09-23",
+   "capabilityScore": 56,
+   "hotnessScore": 66,
+   "statRationale": "Turbo 提速→速度高；动态画面表现→特攻高。 [BST 449 ∈ SR 420-490; 强项 spa/spe; 能力 56/热度 66]",
+   "dexEntryZh": "可灵 2.5 Turbo 于 2025 年 9 月 23 日发布，是同系列 2.1 之后的新一代，比 2.1 便宜约 30%，在图鉴里接在可灵 2.0 之后。下一步是自带原生音频的可灵 2.6。",
+   "lookZh": "穿黑色运动夹克的小胶片少年，胶片围巾拖出速度线",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.4 heads tall, the same film-spirit boy as a quick, sporty tween, older than his Kling 2.0 self. Hair: fluffy black swept back by speed, the white S-swoosh lock over his forehead. Eyes: big black with tilted white ellipse highlights. Outfit: black cropped hooded track jacket with white S-curve piping and two orange racing stripes on the sleeves, black shorts, white high-tops with orange turbine-fin soles, orange wristbands. Signature accessory: the white film strip, now a long streamlined scarf-ribbon looping around his shoulders and trailing behind, frames blurred into speed lines. Props: a mini clapperboard, a small orange turbine pinwheel (Turbo). Palette: ink black #14161A, white #FFFFFF, Kuaishou orange #FF5A1F, silver #C9CED6. Pose: mid-sprint lean, scarf streaming, two motion afterimages, cheeky grin.",
+    "personality": "又快又省，一路冲刺的小飞人",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Kling's logo is a flowing S-curve with a tilted ellipse in black and white, and Kuaishou's orange gives the racing stripes and the Turbo pinwheel. The film strip scarf is the line's constant.",
+    "sourceUrls": [
+     "https://ir.kuaishou.com/news-releases/news-release-details/kling-ai-launches-25-turbo-video-model-industry-leading"
+    ]
+   },
+   "lineRef": "kling-2-0"
+  },
+  {
+   "id": "kling-2-6",
+   "nameZh": "可灵 2.6",
+   "nameEn": "Kling 2.6",
+   "company": "Kuaishou (Kling AI)",
+   "country": "CN",
+   "category": "video",
+   "family": "kling-mid",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "motion",
+    "sound"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 76,
+    "atk": 65,
+    "def": 68,
+    "spa": 110,
+    "spd": 67,
+    "spe": 75
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2025-12-03",
+   "capabilityScore": 64,
+   "hotnessScore": 68,
+   "statRationale": "原生音频画面→特攻高；音画一次成型→HP 高。 [BST 461 ∈ SR 420-490; 强项 spa/hp; 能力 64/热度 68]",
+   "dexEntryZh": "可灵 2.6 于 2025 年 12 月 3 日发布，是可灵 2.5 Turbo 同系列的下一代，也是可灵里首次带原生音频生成的模型，口号是「See the Sound, Hear the Visual」。画面从这一代起开始自己出声。",
+   "lookZh": "挂着白色耳机的小胶片少年，手举毛茸茸的话筒",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the film-spirit boy as a lively preteen who has just learned to make sound, just before his big-headphone form. Hair: fluffy black, the white S-swoosh lock over his forehead. Eyes: big black with tilted white ellipse highlights. Outfit: black bomber-style jacket with white S-curve piping and one small sound-wave patch, black shorts, white high-tops, an orange wristband. Signature accessory: the white film strip, now a long scarf with a short audio waveform between the sprocket holes (native audio); small white headphones with orange cores on his head, one cup pushed up. Props: a mini clapperboard, a small fluffy boom mic. Palette: ink black #14161A, white #FFFFFF, Kuaishou orange #FF5A1F, silver #C9CED6. Pose: head tilted as if listening, mic held out, one heel bouncing to the beat.",
+    "personality": "刚学会给画面配声音的好奇少年",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Kling's logo is a flowing S-curve with a tilted ellipse in black and white, and Kuaishou supplies the orange accent. The waveform on the film strip and the headphones mark the native-audio step.",
+    "sourceUrls": [
+     "https://app.klingai.com/global/release-notes/c605hp1tzd?type=dialog"
+    ]
+   },
+   "lineRef": "kling-2-5-turbo"
+  },
+  {
+   "id": "mimo-v2-pro",
+   "nameZh": "MiMo-V2-Pro",
+   "nameEn": "MiMo-V2-Pro",
+   "company": "Xiaomi",
+   "country": "CN",
+   "category": "llm",
+   "family": "mimo-pro",
+   "stage": 1,
+   "evolvesTo": "mimo-v2-5-pro",
+   "evolveLevel": 29,
+   "types": [
+    "agent",
+    "logic"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 86,
+    "atk": 80,
+    "def": 67,
+    "spa": 72,
+    "spd": 77,
+    "spe": 70
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2026-03-18",
+   "capabilityScore": 58,
+   "hotnessScore": 50,
+   "statRationale": "1T+ 总参数→HP 高；智能体任务执行强→攻击高。 [BST 452 ∈ SR 420-490; 强项 hp/atk; 能力 58/热度 50]",
+   "dexEntryZh": "MiMo-V2-Pro 是小米 MiMo 的 Pro 线，2026 年 3 月 18 日发布，参数超过 1T、激活 42B，发布时为闭源。它曾化名 Hunter Alpha 在 OpenRouter 匿名试跑，服务超过 1T tokens 后才亮明身份，迭代版是 MiMo-V2.5-Pro。",
+   "lookZh": "戴半张猎人面具的黑发少女，披着连帽斗篷潜行",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall: a stealthy young hunter girl called 'MiMo-V2-Pro'. Short messy jet-black wolf-cut hair (#1B1B1F) with Xiaomi-orange (#FF6900) tips, one long ahoge and an orange squircle hairclip. Bright amber eyes (#FFB000) with a white highlight. A white half-mask with an orange Mi-squircle badge is pushed up on her forehead, a nod to her anonymous 'Hunter Alpha' debut (her signature accessory). Outfit: an oversized charcoal (#2B2B30) hooded cloak with orange lining and a squircle clasp, a black fitted top, black shorts with an orange stripe, orange-soled boots and a small tool belt. In one hand she holds a rolled quest scroll with a checklist pictogram. Palette: Xiaomi orange #FF6900, charcoal #2B2B30, jet black #1B1B1F, white, amber #FFB000. Pose: crouched mid-sneak, hood up, mask half lifted, sly grin.",
+    "personality": "先潜行再亮相，一鸣惊人",
+    "communityPersona": "No anime persona found; invented from Xiaomi orange and the anonymous 'Hunter Alpha' stealth-launch story.",
+    "officialMascotOrLogo": "Xiaomi's orange (#FF6900) rounded-square 'mi' logo (the Mi-squircle) and the white bunny mascot used in the sibling MiMo designs. The half-mask refers to its anonymous 'Hunter Alpha' launch on OpenRouter.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Xiaomi_MiMo"
+    ]
+   }
+  },
+  {
+   "id": "mimo-v2-5-pro",
+   "nameZh": "MiMo-V2.5-Pro",
+   "nameEn": "MiMo-V2.5-Pro",
+   "company": "Xiaomi",
+   "country": "CN",
+   "category": "llm",
+   "family": "mimo-pro",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "agent",
+    "logic"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 88,
+    "atk": 79,
+    "def": 72,
+    "spa": 67,
+    "spd": 78,
+    "spe": 79
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2026-04-22",
+   "capabilityScore": 66,
+   "hotnessScore": 48,
+   "statRationale": "约 1.02T 参数、超长上下文→HP 高；智能体与工程任务强→攻击高。 [BST 463 ∈ SR 420-490; 强项 hp/atk; 能力 66/热度 48]",
+   "dexEntryZh": "MiMo-V2.5-Pro 是 MiMo-V2-Pro 同系列的下一代，2026 年 4 月 22 日出现，约 1.02T 参数、以 MIT 协议开放权重，上下文 105 万 token，定位是通用智能体、复杂软件工程与长程任务。",
+   "lookZh": "摘下面具的黑发猎人，拖着长长的任务卷轴",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall: the grown-up, unmasked 'MiMo-V2.5-Pro', the same hunter girl. The same jet-black wolf-cut hair (#1B1B1F) with Xiaomi-orange (#FF6900) tips, now with two thin braids, the same long ahoge and orange squircle hairclip. The same amber (#FFB000) eyes. The same white half-mask with the orange Mi-squircle badge now sits on the side of her head like a festival mask, hood down. Outfit: a long charcoal tech coat with orange lining and gold trim, a black fitted top, orange-striped shorts, orange-soled boots, and a tool belt with a small silver key charm. She holds a very long unrolled quest scroll with checklist pictograms trailing behind her. Palette: Xiaomi orange #FF6900, charcoal #2B2B30, jet black #1B1B1F, white, amber #FFB000, gold. Pose: standing tall, one hand on hip, scroll unrolled.",
+    "personality": "面具摘了，活儿一件不落",
+    "communityPersona": "No anime persona found; invented from Xiaomi orange and the anonymous 'Hunter Alpha' stealth-launch story.",
+    "officialMascotOrLogo": "Xiaomi's orange (#FF6900) rounded-square 'mi' logo (the Mi-squircle) and the white bunny mascot used in the sibling MiMo designs. The unmasked look follows the end of its anonymous 'Hunter Alpha' stage; the silver key charm marks the MIT open weights.",
+    "sourceUrls": [
+     "https://openrouter.ai/xiaomi/mimo-v2.5-pro",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "mimo-v2-pro"
+  },
+  {
+   "id": "yi-34b",
+   "nameZh": "零一万物 Yi-34B",
+   "nameEn": "Yi-34B",
+   "company": "01.AI",
+   "country": "CN",
+   "category": "llm",
+   "family": "yi",
+   "stage": 1,
+   "evolvesTo": "yi-1-5",
+   "evolveLevel": 23,
+   "types": [
+    "open",
+    "chat"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 52,
+    "atk": 48,
+    "def": 49,
+    "spa": 51,
+    "spd": 53,
+    "spe": 57
+   },
+   "habitats": [
+    "city",
+    "coast"
+   ],
+   "releaseDate": "2023-11-02",
+   "capabilityScore": 20,
+   "hotnessScore": 46,
+   "statRationale": "34B 体量轻便→速度高；开放榜单上站得稳→特防高。 [BST 310 ∈ N 240-330; 强项 spe/spd; 能力 20/热度 46]",
+   "dexEntryZh": "2023 年 11 月，李开复旗下的 01.AI 推出开源 34B 的 Yi，主打开放权重和长上下文，一度登上开源榜单榜首。它在图鉴里排在这条线最前，之后由零一万物 Yi-1.5 以后训练的方式接棒。",
+   "lookZh": "松绿短发小学妹，环形发饰别着竖条，怀抱摊开的书",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a shy bookish little junior student. Hair: short chin-length bob in deep pine green-black (#16352C) with mint (#9FE3C0) tips, blunt bangs and one small ahoge. Eyes: big lemon-gold (#F2C94C) with round white highlights, gentle and curious. Outfit: plain white short-sleeve blouse with a mint ribbon bow, a pine-green (#1F6B4F) pinafore dress, white socks and simple green sneakers. Signature accessory: an emerald ring-shaped hairband (the '0') with a small vertical white bar pin (the '1') on the left side, a nod to the name 01.AI. Prop: she hugs a small open hardcover book to her chest (open weights, long context). Palette: pine green #16352C, emerald #1F6B4F, mint #9FE3C0, white #FFFFFF, lemon-gold #F2C94C. Pose: standing, hugging the open book, shy small smile, slight head tilt.",
+    "personality": "安静好学的开源小学妹，见谁都愿意把书摊开借你看",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "01.AI (零一万物) takes its name from binary 0 and 1; no official mascot is known, so the ring-and-bar hair ornament and the pine/emerald/mint colours are invented from that name.",
+    "sourceUrls": [
+     "https://github.com/01-ai/Yi"
+    ]
+   }
+  },
+  {
+   "id": "yi-1-5",
+   "nameZh": "零一万物 Yi-1.5",
+   "nameEn": "Yi-1.5",
+   "company": "01.AI",
+   "country": "CN",
+   "category": "llm",
+   "family": "yi",
+   "stage": 2,
+   "evolvesTo": "yi-lightning",
+   "evolveLevel": 30,
+   "types": [
+    "open",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 69,
+    "atk": 57,
+    "def": 52,
+    "spa": 59,
+    "spd": 55,
+    "spe": 72
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2024-05-13",
+   "capabilityScore": 34,
+   "hotnessScore": 40,
+   "statRationale": "继续预训练打磨→速度快；开放版底子厚→HP 高。 [BST 364 ∈ R 330-420; 强项 spe/hp; 能力 34/热度 40]",
+   "dexEntryZh": "2024 年 5 月 13 日的开源版本，记录称它是零一万物 Yi-34B 的持续预训练，属后训练一脉，开放权重的路线不变。图鉴里它的下一形态是零一万物 Yi-Lightning，同系列的下一代，但那一位不再开放权重。",
+   "lookZh": "及肩短发加半扎发髻，绿色针织外套，腋下夹着卷轴",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same pine-haired girl a year older, a diligent honor student. Hair: deep pine green-black (#16352C) with mint (#9FE3C0) tips, now shoulder-length with a small half-up knot, blunt bangs, same ahoge. Eyes: lemon-gold (#F2C94C), round highlights, more focused. Outfit: white blouse with mint bow, forest-green (#1F6B4F) cardigan-blazer with white piping, dark pine pleated skirt, knee socks, green loafers. Signature accessory: the same emerald ring hairband with white bar pin, slightly bigger, silver-edged. Props: a short parchment scroll tied with green cord under one arm, and a small open book clipped at her belt. Palette: pine #16352C, emerald #1F6B4F, mint #9FE3C0, white, lemon-gold #F2C94C. Pose: standing upright, scroll under arm, confident small smile.",
+    "personality": "稳扎稳打的优等生，笔记越记越厚",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "01.AI (零一万物) takes its name from binary 0 and 1; no official mascot is known, so the ring-and-bar hair ornament and the pine/emerald/mint colours are invented from that name.",
+    "sourceUrls": [
+     "https://github.com/01-ai/Yi"
+    ]
+   },
+   "lineRef": "yi-34b"
+  },
+  {
+   "id": "yi-lightning",
+   "nameZh": "零一万物 Yi-Lightning",
+   "nameEn": "Yi-Lightning",
+   "company": "01.AI",
+   "country": "CN",
+   "category": "llm",
+   "family": "yi",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "chat",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 71,
+    "atk": 54,
+    "def": 58,
+    "spa": 65,
+    "spd": 66,
+    "spe": 75
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2024-10-16",
+   "capabilityScore": 48,
+   "hotnessScore": 44,
+   "statRationale": "小型 MoE 又快又便宜→速度高；底盘够用→HP 也高。 [BST 389 ∈ R 330-420; 强项 spe/hp; 能力 48/热度 44]",
+   "dexEntryZh": "2024 年 10 月 16 日发布的小而快的 MoE，发布时在 LMArena 排第 6，价格为每百万 token 0.14 美元，不再开放权重。它是零一万物 Yi-1.5 同系列的下一代；此后 01.AI 转向企业方案，到 2026 年这条线已处于休眠。",
+   "lookZh": "长低马尾带闪电挑染，绿色运动外套裙，手握闪电短杖",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.6 heads tall, the same pine-haired girl grown into a sleek sprinter. Hair: deep pine green-black (#16352C) with mint (#9FE3C0) tips, now a long low ponytail, blunt bangs, same ahoge, one lemon-yellow lightning streak in the bangs. Eyes: lemon-gold (#F2C94C), round highlights, sharp and cheerful. Outfit: pine-green (#1F6B4F) zip track-jacket dress with white piping and gold lightning hem trim, black biker shorts, mint-and-white sneakers, a long mint scarf trailing behind. Signature accessory: the same emerald ring hairband, its white bar pin now a yellow lightning bolt. Props: a short lightning-bolt wand, and a small gold coin charm at her belt. Palette: pine #16352C, emerald #1F6B4F, mint #9FE3C0, white, yellow #F2C94C, gold #D9A92A. Pose: dashing mid-stride, wand pointed forward, cheeky grin.",
+    "personality": "又快又省、不废话的冲刺选手，跑完就收工",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "01.AI (零一万物) takes its name from binary 0 and 1; no official mascot is known, so the ring-and-bar hair ornament and the pine/emerald/mint colours are invented from that name.",
+    "sourceUrls": [
+     "https://github.com/01-ai/Yi"
+    ]
+   },
+   "lineRef": "yi-1-5"
+  },
+  {
+   "id": "internlm",
+   "nameZh": "书生 InternLM",
+   "nameEn": "InternLM",
+   "company": "Shanghai AI Laboratory",
+   "country": "CN",
+   "category": "llm",
+   "family": "internlm",
+   "stage": 1,
+   "evolvesTo": "internlm2-5",
+   "evolveLevel": 23,
+   "types": [
+    "open",
+    "logic"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 52,
+    "atk": 46,
+    "def": 43,
+    "spa": 39,
+    "spd": 46,
+    "spe": 51
+   },
+   "habitats": [
+    "coast",
+    "city"
+   ],
+   "releaseDate": "2023-06-07",
+   "capabilityScore": 12,
+   "hotnessScore": 40,
+   "statRationale": "权重开放、人人能用→HP 高；上手快、愿意学→速度高。 [BST 277 ∈ N 240-330; 强项 hp/spe; 能力 12/热度 40]",
+   "dexEntryZh": "上海人工智能实验室开源书生系列的初代，2023 年 6 月 7 日发布，权重公开，谁都能拿来读、拿来改。她还是背着书卷的小书童，勤奋又不藏私，擅长把道理一条条理清；攒够经验后，会进化成同一脉的书生 InternLM2.5。",
+   "lookZh": "抱着竹简书卷的双髻小书童",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a small bookish girl apprentice (书童) of the scholar line. Hair: deep indigo-black (#262B55) in two round twin buns wrapped with lilac (#B9A8D8) cloth bands whose short ribbon tails flutter, plus one small ahoge. Eyes: bright cyan (#5ED3E6) with white star highlights. Outfit: a plain cream (#F3EEDC) apprentice robe with sleeves a bit too long, a slate-indigo (#5B5F97) sash, lavender-grey (#858599) cuffs, little cloth shoes. Signature accessory: a short bamboo-slip scroll tied with a lilac cord, held in both arms. Palette: indigo-black #262B55, slate-indigo #5B5F97, lavender-grey #858599, lilac #B9A8D8, cream #F3EEDC, cyan #5ED3E6. Pose: hugging the scroll to her chest, wide-eyed and eager, a small determined smile.",
+    "personality": "勤奋好学，有问必答不藏私",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "InternLM from Shanghai AI Laboratory is the 书生 ('scholar') series; its sibling design uses a scholar mascot in slate-indigo and lavender-grey robes with cyan glowing glyphs. The bamboo-slip scroll and lilac-banded buns draw on that scholar theme.",
+    "sourceUrls": [
+     "https://github.com/InternLM/InternLM"
+    ]
+   }
+  },
+  {
+   "id": "internlm2-5",
+   "nameZh": "书生 InternLM2.5",
+   "nameEn": "InternLM2.5",
+   "company": "Shanghai AI Laboratory",
+   "country": "CN",
+   "category": "llm",
+   "family": "internlm",
+   "stage": 2,
+   "evolvesTo": "internlm3",
+   "evolveLevel": 30,
+   "types": [
+    "open",
+    "logic"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 70,
+    "atk": 58,
+    "def": 53,
+    "spa": 53,
+    "spd": 62,
+    "spe": 65
+   },
+   "habitats": [
+    "coast",
+    "city"
+   ],
+   "releaseDate": "2024-07-03",
+   "capabilityScore": 32,
+   "hotnessScore": 42,
+   "statRationale": "开放研究、1M 长上下文→HP 高；读得快→速度高。 [BST 361 ∈ R 330-420; 强项 hp/spe; 能力 32/热度 42]",
+   "dexEntryZh": "2024 年 7 月发布的书生开源学术模型，承接 2024 年 1 月的 InternLM2，与书生 InternLM 同属书生系列。研究笔记记着她长在开放研究和 1M 上下文：竹简越展越长，一口气能读完一大卷书。下一步，是同一脉的书生 InternLM3。",
+   "lookZh": "竹简卷轴拖到地上的靛蓝汉服小书生",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same bookish girl grown into a studious young scholar. Hair: the same deep indigo-black (#262B55) twin buns with lilac (#B9A8D8) cloth bands, now with longer ribbon tails, and the ahoge. Eyes: the same bright cyan (#5ED3E6) with white star highlights. Outfit: a slate-indigo (#5B5F97) scholar hanfu with lavender-grey (#858599) trim and a cream (#F3EEDC) under-collar, sleeves tied back, cloth boots. Signature accessory: the bamboo-slip scroll, now unrolled very long, trailing over her shoulder and along the ground, a few tiny cyan glyph marks on the slips. Second prop: a small brush tucked in her sash. Palette: indigo-black #262B55, slate-indigo #5B5F97, lavender-grey #858599, lilac #B9A8D8, cream #F3EEDC, cyan #5ED3E6. Pose: walking proudly, the long scroll swinging from one arm.",
+    "personality": "读书不嫌长，越长越来劲",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "InternLM from Shanghai AI Laboratory is the 书生 ('scholar') series, drawn in slate-indigo and lavender-grey with cyan glowing glyphs in its sibling design. The ever-longer scroll nods to the 1M-context strength noted for InternLM2.5.",
+    "sourceUrls": [
+     "https://github.com/InternLM/InternLM"
+    ]
+   },
+   "lineRef": "internlm"
+  },
+  {
+   "id": "internlm3",
+   "nameZh": "书生 InternLM3",
+   "nameEn": "InternLM3",
+   "company": "Shanghai AI Laboratory",
+   "country": "CN",
+   "category": "llm",
+   "family": "internlm",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "open",
+    "logic"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 75,
+    "atk": 64,
+    "def": 55,
+    "spa": 60,
+    "spd": 64,
+    "spe": 68
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2025-01-15",
+   "capabilityScore": 46,
+   "hotnessScore": 44,
+   "statRationale": "开放权重、底子厚→HP 高；逻辑清晰、反应快→速度高。 [BST 386 ∈ R 330-420; 强项 hp/spe; 能力 46/热度 44]",
+   "dexEntryZh": "书生系列的第三代，2025 年 1 月 15 日发布，权重公开，是书生 InternLM2.5 的同系列下一代。一路读书的小书童如今成了稳重的青年书生，开放、讲逻辑的做派一点没变。在这条进化线上，她排在书生 InternLM2.5 之后。",
+   "lookZh": "卷轴缠臂、袖绣云纹的沉稳青年书生",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall, the same bookish girl grown into an elegant young scholar. Hair: the same deep indigo-black (#262B55) twin buns with lilac (#B9A8D8) cloth bands and long ribbon tails, plus two slim silver-lilac hairpins, and the ahoge. Eyes: the same bright cyan (#5ED3E6) with white star highlights. Outfit: a layered slate-indigo (#5B5F97) robe with a long over-jacket, lavender-grey (#858599) trim, cyan cloud embroidery, cream (#F3EEDC) under-sleeves, a belt with a round cyan pendant. Signature accessory: the bamboo-slip scroll, now wound around her forearm in a glowing spiral of cyan-marked slips. Second prop: a brush in the other hand. Palette: indigo-black #262B55, slate-indigo #5B5F97, lavender-grey #858599, lilac #B9A8D8, cream #F3EEDC, cyan #5ED3E6. Pose: unrolling the scroll, brush raised, assured smile.",
+    "personality": "沉稳自持，开卷便要讲出个道理",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "InternLM from Shanghai AI Laboratory is the 书生 ('scholar') series; its sibling design is a scholar mascot in slate-indigo and lavender-grey robes with cyan glowing glyphs. The scroll, brush and cloud embroidery grow from that scholar theme.",
+    "sourceUrls": [
+     "https://github.com/InternLM/InternLM"
+    ]
+   },
+   "lineRef": "internlm2-5"
+  },
+  {
+   "id": "skyreels-v2",
+   "nameZh": "SkyReels V2",
+   "nameEn": "SkyReels V2",
+   "company": "Skywork AI (Kunlun Tech)",
+   "country": "CN",
+   "category": "video",
+   "family": "skyreels",
+   "stage": 1,
+   "evolvesTo": "skyreels-v3",
+   "evolveLevel": 32,
+   "types": [
+    "motion",
+    "open"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 69,
+    "atk": 63,
+    "def": 64,
+    "spa": 92,
+    "spd": 66,
+    "spe": 81
+   },
+   "habitats": [
+    "city",
+    "coast"
+   ],
+   "releaseDate": "2025-04-21",
+   "capabilityScore": 46,
+   "hotnessScore": 44,
+   "statRationale": "视频生成想象力足→特攻高；开放权重、出片利落→速度高。 [BST 435 ∈ SR 420-490; 强项 spa/spe; 能力 46/热度 44]",
+   "dexEntryZh": "昆仑万维 Skywork 旗下 SkyReels 视频生成系列的 V2，2025 年 4 月 21 日发布，权重开放，是同系列 SkyReels V1 的下一代。她还是个爱扮演员的小姑娘，拿着一块没有喇叭的小场记板练台词。往后的路是 SkyReels V3，最终长成天工 SkyReels V4。",
+   "lookZh": "抱着无声场记板的金色小双马尾",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a little aspiring actress who is the younger self of the golden-twin-tail screenwriter girl of her line. Hair: golden-yellow (#F0D01A) in two short twin-tails twisted like film strips with a tiny S-curl, amber (#A87A00) inner folds and sprocket-hole hair bands. Eyes: sky-blue (#8CCBEF) with small cloud-shaped highlights. Outfit: a small white cloud-puff beret, a plain pale sky-blue (#BFE3F5) pinafore dress with a thin yellow film-strip belt, white socks, little shoes. Prop: one small silent clapperboard held in both hands, no speaker grille yet. Palette: sunshine yellow #F0D01A, amber #A87A00, pale sky blue #BFE3F5, sky blue #8CCBEF, white. Pose: one hand raised in a shy dramatic 'action' gesture, flushed cheeks, excited little smile.",
+    "personality": "害羞但爱演，一喊开拍就来劲",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "SkyReels' logo is a film-strip folded into an S; the brand colours are sunshine yellow, sky blue and white. The film-strip twin-tails and cloud beret follow the line's existing V4 design.",
+    "sourceUrls": [
+     "https://github.com/SkyworkAI/SkyReels-V2"
+    ]
+   },
+   "lineRef": "skyreels"
+  },
+  {
+   "id": "skyreels-v3",
+   "nameZh": "SkyReels V3",
+   "nameEn": "SkyReels V3",
+   "company": "Skywork AI (Kunlun Tech)",
+   "country": "CN",
+   "category": "video",
+   "family": "skyreels",
+   "stage": 2,
+   "evolvesTo": "skyreels",
+   "evolveLevel": 39,
+   "types": [
+    "motion",
+    "open"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 70,
+    "atk": 73,
+    "def": 62,
+    "spa": 100,
+    "spd": 70,
+    "spe": 74
+   },
+   "habitats": [
+    "meadow",
+    "desert"
+   ],
+   "releaseDate": "2026-01-29",
+   "capabilityScore": 56,
+   "hotnessScore": 44,
+   "statRationale": "运镜花样多→特攻高；开放路线、出片快→速度高。 [BST 449 ∈ SR 420-490; 强项 spa/spe; 能力 56/热度 44]",
+   "dexEntryZh": "SkyReels 系列的 V3，2026 年 1 月发布，是 SkyReels V2 的同系列下一代，视频生成的路线没变。长高了一截的小演员不再只拿无声场记板，腰间多了一卷胶片；再往后一步，就是写得了台词的天工 SkyReels V4。",
+   "lookZh": "腰挂胶片卷、双马尾折成 S 的少年演员",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same actress girl grown into a teen trainee. Hair: the same golden-yellow (#F0D01A) film-strip twin-tails, now long and folding clearly into an S shape, amber (#A87A00) inner folds and sprocket-hole hair bands. Eyes: the same sky-blue (#8CCBEF) with cloud-shaped highlights. Outfit: the white cloud-puff beret, a short pale sky-blue (#BFE3F5) trench dress with a yellow film-strip belt and a small bow at the back, white boots. Props: a tiny clapperboard in one hand, and a small film-reel charm hanging at her hip. Palette: sunshine yellow #F0D01A, amber #A87A00, pale sky blue #BFE3F5, sky blue #8CCBEF, white. Pose: mid-spin with one arm flung out like a camera pan, bright cinematic smile.",
+    "personality": "一上镜头就停不下来的戏瘾少女",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "SkyReels' logo is a film-strip folded into an S; the brand colours are sunshine yellow, sky blue and white. The long S-folded twin-tails and trench dress lead into the line's existing V4 design.",
+    "sourceUrls": [
+     "https://github.com/SkyworkAI/SkyReels-V2"
+    ]
+   },
+   "lineRef": "skyreels-v2"
+  },
+  {
+   "id": "ernie-x1",
+   "nameZh": "文心 X1",
+   "nameEn": "ERNIE X1",
+   "company": "Baidu",
+   "country": "CN",
+   "category": "reasoning",
+   "family": "ernie-x",
+   "stage": 1,
+   "evolvesTo": "ernie-x1-1",
+   "evolveLevel": 32,
+   "types": [
+    "logic",
+    "search"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 70,
+    "atk": 61,
+    "def": 60,
+    "spa": 55,
+    "spd": 74,
+    "spe": 59
+   },
+   "habitats": [
+    "ruins",
+    "highland"
+   ],
+   "releaseDate": "2025-03-16",
+   "capabilityScore": 42,
+   "hotnessScore": 52,
+   "statRationale": "会用工具查证→特防高；推理链稳→HP 高。 [BST 379 ∈ R 330-420; 强项 spd/hp; 能力 42/热度 52]",
+   "dexEntryZh": "文心 X1 是百度的深度思考推理模型，2025 年 3 月 16 日随文心 4.5 一同宣布，会调用工具，定价为 DeepSeek-R1 的一半。同年 4 月另有 X1 Turbo 登场；升到 Lv.32 后，她会迭代成同系列的下一代“文心 X1.1”。",
+   "lookZh": "银白高马尾的小侦探研究员，举着六边形放大镜",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, an earnest young detective-researcher girl, the younger form of the ERNIE X line. Silvery-white (#E6ECFA) hair in a high ponytail with cobalt-blue (#2932E1) tips, long side locks and one bouncy ahoge. Round crimson-red (#E0344A) eyes with a determined shine. Outfit: a slightly too-large white lab coat with a Baidu-blue (#2932E1) collar and red piping over a navy (#0B1E5B) vest and short pleated skirt, brown boots, a small bear-paw-print badge on the chest. Signature accessory: a hand-held magnifying glass with a hexagon frame and a tiny paw print in the glass. Second prop: a small notebook under her arm. Palette: silver-white #E6ECFA, Baidu blue #2932E1, navy #0B1E5B, crimson #E0344A, white. Pose: leaning forward to peer through the magnifier, other hand on her chin.",
+    "personality": "认真到较真，凡事先查证再下结论",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Baidu's logo is a bear-paw print in Baidu blue (#2932E1) with red accents, and ERNIE's mark is drawn as a blue hexagon cube; the badge and magnifier frame borrow both.",
+    "sourceUrls": [
+     "https://presenc.ai/research/baidu-ernie-model-lineage-2026"
+    ]
+   }
+  },
+  {
+   "id": "ernie-x1-1",
+   "nameZh": "文心 X1.1",
+   "nameEn": "ERNIE X1.1",
+   "company": "Baidu",
+   "country": "CN",
+   "category": "reasoning",
+   "family": "ernie-x",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "logic",
+    "search"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 85,
+    "atk": 75,
+    "def": 64,
+    "spa": 66,
+    "spd": 82,
+    "spe": 69
+   },
+   "habitats": [
+    "ruins",
+    "snow"
+   ],
+   "releaseDate": "2025-09-09",
+   "capabilityScore": 50,
+   "hotnessScore": 50,
+   "statRationale": "沿用深度思考路线→HP 高；稳健查证→特防高。 [BST 441 ∈ SR 420-490; 强项 hp/spd; 能力 50/热度 50]",
+   "dexEntryZh": "文心 X1.1 于 2025 年 9 月 9 日发布，是“文心 X1”同系列的下一代，延续百度文心 X 系列的推理路线，权重未开放。她褪去稚气，换上合身的长款研究外套，腰间挂起了小工具带。",
+   "lookZh": "长款研究外套的银白马尾研究员，腰挂工具带",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the grown-up ERNIE X detective-researcher girl. Silvery-white (#E6ECFA) hair now long in a high ponytail with cobalt-blue (#2932E1) tips, the same side locks and ahoge. Round crimson-red (#E0344A) eyes, focused and confident. Outfit: a fitted long white research coat with wide Baidu-blue (#2932E1) lapels, crimson piping and a navy (#0B1E5B) vest, pleated navy skirt, knee boots, a leather tool-belt with a tiny wrench and compass, the bear-paw badge now an enamel pin. Signature accessory: the same hexagon-framed magnifying glass, larger, with a brass handle. Second prop: a thick case-file folder. Palette: silver-white #E6ECFA, Baidu blue #2932E1, navy #0B1E5B, crimson #E0344A, brass #C9A24A. Pose: striding forward, magnifier held high, other hand on the tool-belt, a calm smile.",
+    "personality": "冷静干练，工具带一拍就把线索串起来",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Baidu's logo is a bear-paw print in Baidu blue (#2932E1) with red accents, and ERNIE's mark is drawn as a blue hexagon cube; the enamel pin and magnifier frame borrow both.",
+    "sourceUrls": [
+     "https://the-decoder.com/baidus-ernie-5-1-cuts-94-percent-of-pre-training-costs-while-competing-with-top-models/"
+    ]
+   },
+   "lineRef": "ernie-x1"
+  },
+  {
+   "id": "step-2",
+   "nameZh": "阶跃 Step-2",
+   "nameEn": "Step-2",
+   "company": "StepFun",
+   "country": "CN",
+   "category": "llm",
+   "family": "step-early",
+   "stage": 1,
+   "evolvesTo": "step-3",
+   "evolveLevel": 20,
+   "types": [
+    "compute",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 58,
+    "atk": 51,
+    "def": 55,
+    "spa": 54,
+    "spd": 59,
+    "spe": 80
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2024-07-01",
+   "capabilityScore": 30,
+   "hotnessScore": 42,
+   "statRationale": "万亿级 MoE 体量大→特防高；稀疏激活→速度高。 [BST 357 ∈ R 330-420; 强项 spe/spd; 能力 30/热度 42]",
+   "dexEntryZh": "阶跃（StepFun）约 2024 年 7 月亮相的万亿参数 MoE 旗舰，在 WAIC 上露面，主打体量。她是阶跃 Step 系列在图鉴里的初始形态，沉稳安静，扛着一块沉甸甸的黑色台阶方块一步一步往上走；攒够经验后，会进化成同系列的阶跃 Step 3。",
+   "lookZh": "抱着黑色台阶方块的水蓝短发小姐姐",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a small earnest girl, the quiet big-sister type of the StepFun staircase family. Hair: aqua-cyan (#4FD8E8) neat chin-length bob with a short side ponytail tied by a white ribbon, mint (#7FF0D8) fade at the tips, a small zigzag stair-step ahoge. Signature accessory: a black rounded-square hair clip (#111111) with the white pixel-staircase logo above her right ear. Eyes: calm sea-blue (#2A8FD8) with white four-point star highlights. Outfit: a white school cardigan-dress with teal (#14B8C8) collar and ribbon, a black stair-step hem, white socks, sneakers. Prop: one heavy black pixel-stair block carried in both arms. Palette: aqua #4FD8E8, mint #7FF0D8, teal #14B8C8, sea-blue #2A8FD8, white, black #111111. Pose: leaning slightly under the block's weight, determined small smile.",
+    "personality": "话少稳重，再沉的担子也一级级扛上去",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "StepFun's logo is a white pixel-staircase on a black rounded square, paired with aqua-cyan and teal accents. The clip, stair-step hem and colours are taken from it.",
+    "sourceUrls": [
+     "https://platform.stepfun.com"
+    ]
+   }
+  },
+  {
+   "id": "step-3",
+   "nameZh": "阶跃 Step 3",
+   "nameEn": "Step 3",
+   "company": "StepFun",
+   "country": "CN",
+   "category": "llm",
+   "family": "step-early",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "compute",
+    "agent"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 73,
+    "atk": 63,
+    "def": 59,
+    "spa": 52,
+    "spd": 57,
+    "spe": 78
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2025-07-25",
+   "capabilityScore": 44,
+   "hotnessScore": 46,
+   "statRationale": "解码成本优化→速度高；321B 总参数→HP 高。 [BST 382 ∈ R 330-420; 强项 spe/hp; 能力 44/热度 46]",
+   "dexEntryZh": "阶跃 Step-2 的同系列下一代，2025 年 7 月 25 日在 WAIC 2025 发布的开源视觉语言模型，321B 总参数、38B 激活，针对国产芯片上的解码成本做了优化，长处是视觉推理和解码效率。扛方块的小姑娘长成了会拿平板干活的行动派。",
+   "lookZh": "单片镜、手托台阶平板的水蓝长马尾少女",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the same earnest girl grown into a capable field engineer. Hair: the same aqua-cyan (#4FD8E8), grown long into a waist-length side ponytail tied by a white ribbon, mint (#7FF0D8) tips, the zigzag stair-step ahoge. Signature accessory: the black rounded-square hair clip (#111111) with the white pixel-staircase logo, larger. Eyes: the same sea-blue (#2A8FD8) with star highlights, plus a round aqua monocle over the left eye. Outfit: a white field coat with teal (#14B8C8) collar, a black stair-step hem, black gloves, sneakers. Props: a flat tablet showing three glowing pixel stairs, and a small open padlock charm on her belt. Palette: aqua #4FD8E8, mint #7FF0D8, teal #14B8C8, sea-blue #2A8FD8, black #111111. Pose: stepping up a black stair block, tablet forward, confident smile.",
+    "personality": "行动派，看清路线就一级级登上去",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "StepFun's logo is a white pixel-staircase on a black rounded square, paired with aqua-cyan and teal accents. The clip, stair-step hem and colours are taken from it; the monocle and open padlock nod to its open vision model.",
+    "sourceUrls": [
+     "https://github.com/stepfun-ai/Step3"
+    ]
+   },
+   "lineRef": "step-2"
+  },
+  {
+   "id": "command-r-plus",
+   "nameZh": "Command R+",
+   "nameEn": "Command R+",
+   "company": "Cohere",
+   "country": "CA",
+   "category": "llm",
+   "family": "cohere-command",
+   "stage": 1,
+   "evolvesTo": "command-a",
+   "evolveLevel": 21,
+   "types": [
+    "chat",
+    "search"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 66,
+    "atk": 51,
+    "def": 54,
+    "spa": 57,
+    "spd": 70,
+    "spe": 66
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2024-04-04",
+   "capabilityScore": 34,
+   "hotnessScore": 44,
+   "statRationale": "检索引用靠谱→特防高；企业级大模型体量→HP高。 [BST 364 ∈ R 330-420; 强项 spd/hp; 能力 34/热度 44]",
+   "dexEntryZh": "2024 年 4 月 4 日发布的企业级模型，规模 104B，主打带引用的检索增强（RAG）与工具调用，多语言能力也是卖点，权重以非商用许可开放。她继 Command R 之后推出，是这条进化线的第一形态，同一脉的下一代是 Command A。",
+   "lookZh": "拿着账本的见习图书管理员，珊瑚色短发与书签发夹",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a diligent junior librarian-clerk girl, the youngest stage of her line. Hair: warm coral (#F4795B) in a short layered bob with two short side braids tied with cream ribbons, one small ahoge. Eyes: big round lilac-violet (#9B8CE8), soft cream highlight. Signature accessory (kept through all stages): a cream bookmark-ribbon hairclip with a small round deep-green seal, on the left. Outfit: cream blouse with a rounded collar, forest-green (#2F5D50) pinafore jumper with coral buttons, white socks, brown loafers. Prop: one open ledger book hugged to her chest, its pages marked with tiny round footnote dots (citations). Palette: coral #F4795B, forest green #2F5D50, cream #FFF3E0, lilac #C9B8F0, ink #2B2B3A. Pose: raising one finger as if pointing at a source, earnest smile; idle = braids swing.",
+    "personality": "认真到爱查证，每句话都要标出处",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Cohere has no official mascot; its brand identity pairs a coral-orange accent with deep green and soft neutral tones.",
+    "sourceUrls": [
+     "https://cohere.com/blog/command-r-plus-microsoft-azure"
+    ]
+   }
+  },
+  {
+   "id": "command-a",
+   "nameZh": "Command A",
+   "nameEn": "Command A",
+   "company": "Cohere",
+   "country": "CA",
+   "category": "llm",
+   "family": "cohere-command",
+   "stage": 2,
+   "evolvesTo": "command-a-plus",
+   "evolveLevel": 30,
+   "types": [
+    "chat",
+    "search"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 66,
+    "atk": 52,
+    "def": 59,
+    "spa": 65,
+    "spd": 75,
+    "spe": 69
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2025-03-13",
+   "capabilityScore": 46,
+   "hotnessScore": 46,
+   "statRationale": "企业智能体、少硬件也能跑→特防高；256K 上下文、响应顺→速度高。 [BST 386 ∈ R 330-420; 强项 spd/spe; 能力 46/热度 46]",
+   "dexEntryZh": "2025 年 3 月 13 日发布，111B 的企业级智能体模型，上下文 256K，两张 GPU 即可运行，主打智能体、多语言与编码。资料里把她定位为 Command R+ 的后继，权重以 CC-BY-NC 开放；2025 年还陆续出了推理与视觉变体。下一代是 Command A+。",
+   "lookZh": "长出长辫子的图书管理员，深绿马甲配珊瑚领结",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same librarian-clerk girl grown into a capable office agent. Hair: warm coral (#F4795B), the bob now shoulder-length with two longer side braids tied with cream ribbons, small ahoge kept. Eyes: lilac-violet (#9B8CE8), soft cream highlight, calmer. Signature accessory: the cream bookmark-ribbon hairclip with the small deep-green seal on the left. Outfit: crisp cream shirt, forest-green (#2F5D50) waistcoat with coral buttons, coral bow tie, forest-green pleated skirt, dark tights, brown loafers. Props: a thick clasped reference book under one arm, and two small chip-shaped charms on her belt (running on two GPUs). Palette: coral #F4795B, forest green #2F5D50, cream #FFF3E0, lilac #C9B8F0, ink #2B2B3A. Pose: striding forward, one hand adjusting the bow tie, assured smile; idle = braids sway.",
+    "personality": "办事稳妥，少设备也能扛大活",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Cohere has no official mascot; its brand identity pairs a coral-orange accent with deep green and soft neutral tones.",
+    "sourceUrls": [
+     "https://cohere.com/blog/command-a"
+    ]
+   },
+   "lineRef": "command-r-plus"
+  },
+  {
+   "id": "command-a-plus",
+   "nameZh": "Command A+",
+   "nameEn": "Command A+",
+   "company": "Cohere",
+   "country": "CA",
+   "category": "llm",
+   "family": "cohere-command",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "chat",
+    "search"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 81,
+    "atk": 62,
+    "def": 74,
+    "spa": 71,
+    "spd": 86,
+    "spe": 73
+   },
+   "habitats": [
+    "coast",
+    "meadow"
+   ],
+   "releaseDate": "2026-05-20",
+   "capabilityScore": 54,
+   "hotnessScore": 46,
+   "statRationale": "本地部署、引用扎实→特防高；MoE 大体量→HP高。 [BST 447 ∈ SR 420-490; 强项 spd/hp; 能力 54/热度 46]",
+   "dexEntryZh": "2026 年 5 月 20 日发布，是 Cohere 的首个 MoE 模型（总参数 218B），以 Apache 2.0 许可开放权重，接在 Command A 之后。她把推理、视觉、翻译（48 种语言）与工具调用合到一起，输入含文本与图像，两张 H100 就能跑，面向主权式本地部署的智能体。",
+   "lookZh": "成年图书管理长，深绿长披风，胸前一排专家徽章与地球仪胸针",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the librarian-clerk girl grown into a poised young woman, chief archivist. Hair: warm coral (#F4795B), long side braids plus a crown braid, small ahoge kept. Eyes: lilac-violet (#9B8CE8), cream highlight, serene. Signature accessory: the cream bookmark-ribbon hairclip with the small deep-green seal on the left. Outfit: cream blouse with a lilac cravat, long forest-green (#2F5D50) cloak-coat with lilac lining, a small globe brooch and a row of tiny round expert pins on the lapel (a few glowing), brown boots. Props: a large clasped grimoire-like book with a deep-green seal, and a small brass key pendant (on-prem). Palette: coral #F4795B, forest green #2F5D50, cream #FFF3E0, lilac #C9B8F0, ink #2B2B3A. Pose: holding the book open at her hip, gentle confident smile.",
+    "personality": "沉着可靠，自家机房里最稳的那位",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Cohere has no official mascot; its brand identity pairs a coral-orange accent with deep green and soft neutral tones.",
+    "sourceUrls": [
+     "https://docs.cohere.com/docs/command-a-plus",
+     "https://cohere.com/blog/cohere-releases-command-a-plus",
+     "https://betakit.com/cohere-releases-its-most-powerful-ai-model-as-open-source/"
+    ]
+   },
+   "lineRef": "command-a"
+  },
+  {
+   "id": "sonar",
+   "nameZh": "Sonar",
+   "nameEn": "Sonar",
+   "company": "Perplexity AI",
+   "country": "US",
+   "category": "search",
+   "family": "sonar",
+   "stage": 1,
+   "evolvesTo": "sonar-pro",
+   "evolveLevel": 31,
+   "types": [
+    "search",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 73,
+    "atk": 51,
+    "def": 54,
+    "spa": 55,
+    "spd": 71,
+    "spe": 64
+   },
+   "habitats": [
+    "highland",
+    "desert"
+   ],
+   "releaseDate": "2025-01-21",
+   "capabilityScore": 36,
+   "hotnessScore": 56,
+   "statRationale": "回答有出处、站得稳→特防高；上下文约 12.7 万→HP 高。 [BST 368 ∈ R 330-420; 强项 hp/spd; 能力 36/热度 56]",
+   "dexEntryZh": "Perplexity 的轻量问答型号，2025 年 1 月随 API 推出，主打快速、实惠、答案带引用。据报道，她是在 Llama 3.3 基础上后训练出的搜索接地模型，上下文约 12.7 万。小小的她像声纳一样先发出探测，再把带出处的回答送回来，攒够经验后会进化成同系列的 Sonar Pro。",
+   "lookZh": "抱着浮标灯笼侧耳听回声的小雨披少女",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a small shy girl just starting out. Hair: deep-sea teal (#14535C) wavy bob with side-swept bangs, silver-cyan (#BFE9EC) tips, a tiny wave-curl ahoge, and her signature off-white three-arc 'ping' hairclip (#FBFAF4) above the left ear. Eyes: round teal (#21808D) with white double-ring ripple highlights. Outfit: a paper-white (#FBFAF4) hooded rain-cape lined in off-black (#091717), a teal (#21808D) ribbon tie, off-black shorts, short teal rain boots. Prop: one small round off-white buoy lantern held in both hands, a tiny numbered tag dangling from it. Palette: teal #21808D, deep-sea teal #14535C, paper-white #FBFAF4, off-black #091717, silver-cyan #BFE9EC. Pose: head tilted, ear leaning toward the lantern as if listening for an echo, hopeful smile.",
+    "personality": "爱侧耳倾听，一有回声就要查个明白",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Perplexity's mark is a white symmetrical starburst-over-open-book glyph; its brand palette is teal (#21808D), paper-white (#FBFAF4) and off-black (#091717). The sonar ping-ring clip and numbered citation tag are original nods to the model name and its cited answers.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Perplexity_AI"
+    ]
+   }
+  },
+  {
+   "id": "sonar-pro",
+   "nameZh": "Sonar Pro",
+   "nameEn": "Sonar Pro",
+   "company": "Perplexity AI",
+   "country": "US",
+   "category": "search",
+   "family": "sonar",
+   "stage": 2,
+   "evolvesTo": "sonar-pro-search",
+   "evolveLevel": 38,
+   "types": [
+    "search",
+    "chat"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 84,
+    "atk": 59,
+    "def": 73,
+    "spa": 68,
+    "spd": 88,
+    "spe": 69
+   },
+   "habitats": [
+    "meadow",
+    "desert"
+   ],
+   "releaseDate": "2025-01-21",
+   "capabilityScore": 50,
+   "hotnessScore": 56,
+   "statRationale": "多步查询有据可循→特防高；上下文 20 万→HP 高。 [BST 441 ∈ SR 420-490; 强项 spd/hp; 能力 50/热度 56]",
+   "dexEntryZh": "Sonar 的同系列下一代，面向需要深入、多步查询的企业场景，上下文 20 万，定价里包含 Perplexity 的搜索费用。她 2025 年 1 月与 Sonar 同期推出，OpenRouter 在 3 月 7 日上架。比起 Sonar 的一声轻响，她探得更深、能走多步，之后会进化成 Sonar Pro Search。",
+   "lookZh": "举着声纳碟、领口别着脚注徽章的研究员",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same girl grown into a confident junior researcher. Hair: the same deep-sea teal (#14535C) wavy hair, now shoulder-length, silver-cyan (#BFE9EC) tips, the wave-curl ahoge, and the same off-white ping hairclip (#FBFAF4) with a fourth outer arc. Eyes: the same teal (#21808D) with double-ring highlights. Outfit: a teal (#21808D) research cape-coat lined in off-black (#091717) with paper-white cuffs, two small numbered footnote badges on the collar, off-black tights, boots. Props: a handheld off-white parabolic sonar dish on a short stick, and a thick notebook clipped to her belt. Palette: teal #21808D, deep-sea teal #14535C, paper-white #FBFAF4, off-black #091717, silver-cyan #BFE9EC. Pose: dish held out in front, free hand on its dial, a smug-cute grin.",
+    "personality": "自信干练，探测范围比谁都广",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Perplexity's mark is a white symmetrical starburst-over-open-book glyph on a palette of teal (#21808D), paper-white (#FBFAF4) and off-black (#091717). The sonar dish and footnote badges are original props for the Sonar line's search-with-citations identity.",
+    "sourceUrls": [
+     "https://docs.perplexity.ai/guides/models"
+    ]
+   },
+   "lineRef": "sonar"
+  },
+  {
+   "id": "sonar-pro-search",
+   "nameZh": "Sonar Pro Search",
+   "nameEn": "Sonar Pro Search",
+   "company": "Perplexity AI",
+   "country": "US",
+   "category": "search",
+   "family": "sonar",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "search",
+    "agent"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 82,
+    "atk": 73,
+    "def": 66,
+    "spa": 68,
+    "spd": 89,
+    "spe": 74
+   },
+   "habitats": [
+    "meadow",
+    "desert"
+   ],
+   "releaseDate": "2025-10-30",
+   "capabilityScore": 58,
+   "hotnessScore": 48,
+   "statRationale": "代理式多步搜索→特防高；上下文 20 万→HP 高。 [BST 452 ∈ SR 420-490; 强项 spd/hp; 能力 58/热度 48]",
+   "dexEntryZh": "2025 年 10 月底以 OpenRouter 独家的形式登场，是 Sonar Pro 新增的 Pro Search 代理式搜索模式，面向更深入的推理与分析，上下文 20 万。她是 Sonar Pro 同系列的下一代，在这条进化线上排在最后：不再只发一声探测，而是带着小探测器自己多步搜索、边查边答。",
+   "lookZh": "披着远征长外套、肩头跟着探测小球的搜索特工",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall, the same girl grown into a poised field agent. Hair: the same deep-sea teal (#14535C) wavy hair, now waist-long, silver-cyan (#BFE9EC) fade, the wave-curl ahoge, and her off-white ping hairclip (#FBFAF4) now five arcs wide. Eyes: the same teal (#21808D) with double-ring highlights. Outfit: a long teal (#21808D) expedition coat lined in off-black (#091717) with paper-white trim, a high collar with three small footnote badges, off-black gloves, cream boots. Props: a tablet-sized radar-sweep screen in one hand, and a small round teal scout drone with one magnifier eye at her shoulder. Palette: teal #21808D, deep-sea teal #14535C, paper-white #FBFAF4, off-black #091717, silver-cyan #BFE9EC. Pose: striding forward, one hand pointing ahead, calm confident smile.",
+    "personality": "冷静的探路者，认准目标一路追到底",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Perplexity's mark is a white symmetrical starburst-over-open-book glyph on teal (#21808D), paper-white (#FBFAF4) and off-black (#091717). The scout drone and radar tablet are original props for the agentic Pro Search mode.",
+    "sourceUrls": [
+     "https://openrouter.ai/perplexity/sonar-pro-search"
+    ]
+   },
+   "lineRef": "sonar-pro"
+  },
+  {
+   "id": "nemotron-70b",
+   "nameZh": "Llama-3.1-Nemotron-70B",
+   "nameEn": "Llama-3.1-Nemotron-70B-Instruct",
+   "company": "NVIDIA",
+   "country": "US",
+   "category": "llm",
+   "family": "nemotron-70b",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "open",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 69,
+    "atk": 61,
+    "def": 53,
+    "spa": 53,
+    "spd": 57,
+    "spe": 71
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2024-10-15",
+   "capabilityScore": 34,
+   "hotnessScore": 46,
+   "statRationale": "70B 底座扎实→HP高；RLHF 调教后响应利落→速度高。 [BST 364 ∈ R 330-420; 强项 spe/hp; 能力 34/热度 46]",
+   "dexEntryZh": "Llama-3.1-Nemotron-70B-Instruct 是 NVIDIA 在 Llama 3.1 70B 上做 RLHF（REINFORCE）微调得到的开放权重模型，2024 年 10 月 15 日发布，速度与 HP 最亮眼。她在图鉴里自成一支，没有前后形态。",
+   "lookZh": "戴羊驼耳发箍的黑发小姑娘，胸口别着绿金奖章",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the youngest stage of the Llama-Nemotron girl, a cheerful llama-eared helper. Hair: jet-black (#111111) hair in a short low ponytail with NVIDIA-green (#76B900) gradient ends and blunt bangs. Eyes: bright green with a tiny spiral swirl iris echoing the NVIDIA eye logo. Outfit: oversized cream (#F3EAD3) wool sweater with a green stripe at the hem, black shorts, green sneakers with gunmetal soles. Signature accessory: a cream llama-ear headband with green inner ears. Props: a gold-and-green star medal pinned to her chest (the reward signal of RLHF) and a small card with a green tick held in one hand. Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: proud little stance, tick card held up, ears perked.",
+    "personality": "被夸一句就干劲十足的乖巧小帮手",
+    "communityPersona": "No anime persona found; invented from brand colours and the Llama name.",
+    "officialMascotOrLogo": "NVIDIA's brand is its green (#76B900) eye-and-swirl logo on black; the model name pairs Nemotron with Meta's Llama base, which inspires the llama-ear motif. The design uses NVIDIA green, black and gunmetal.",
+    "sourceUrls": [
+     "https://huggingface.co/nvidia/Llama-3.1-Nemotron-70B-Instruct-HF"
+    ]
+   }
+  },
+  {
+   "id": "nemotron-super-49b",
+   "nameZh": "Llama-3.3-Nemotron-Super-49B",
+   "nameEn": "Llama-3.3-Nemotron-Super-49B",
+   "company": "NVIDIA",
+   "country": "US",
+   "category": "llm",
+   "family": "nemotron-super-49b",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "open",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 70,
+    "atk": 63,
+    "def": 59,
+    "spa": 56,
+    "spd": 58,
+    "spe": 80
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2025-03-18",
+   "capabilityScore": 46,
+   "hotnessScore": 44,
+   "statRationale": "剪枝蒸馏后依然扎实→HP高；体量更轻→速度高。 [BST 386 ∈ R 330-420; 强项 spe/hp; 能力 46/热度 44]",
+   "dexEntryZh": "Llama-3.3-Nemotron-Super-49B 在 2025 年 3 月 18 日的 GTC 上宣布，卡片说明它是 Llama 3.3 70B 经 NAS 剪枝与蒸馏的衍生版，开放权重。体量比 70B 瘦了一圈，速度与 HP 依旧突出。她在图鉴里自成一支，没有前后形态。",
+   "lookZh": "一身利落黑绿夹克的羊驼耳少女，手里拿着小修枝剪",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same Llama-Nemotron girl, now slimmer and sharper after a trim. Hair: jet-black (#111111) ponytail grown longer with NVIDIA-green (#76B900) gradient ends, blunt bangs. Eyes: bright green with the tiny spiral swirl iris. Outfit: fitted black varsity jacket with green sleeves over a cream (#F3EAD3) knit vest, pleated black skirt, gunmetal (#4A4F55) boots; the star medal still pinned on the jacket. Signature accessory: the same cream llama-ear headband with green inner ears, neater and tighter. Prop: a pair of tiny green-handled pruning shears in one hand (a pruned and distilled build). Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: snipping the air with the shears, cheeky confident grin, ponytail swinging.",
+    "personality": "删繁就简，剪掉多余的才更利索",
+    "communityPersona": "No anime persona found; invented from brand colours and the Llama name.",
+    "officialMascotOrLogo": "NVIDIA's brand is its green (#76B900) eye-and-swirl logo on black; the model name pairs Nemotron with Meta's Llama base, which inspires the llama-ear motif. The design uses NVIDIA green, black and gunmetal.",
+    "sourceUrls": [
+     "https://huggingface.co/nvidia/Llama-3_3-Nemotron-Super-49B-v1"
+    ]
+   }
+  },
+  {
+   "id": "nemotron-ultra-253b",
+   "nameZh": "Llama-3.1-Nemotron-Ultra-253B",
+   "nameEn": "Llama-3.1-Nemotron-Ultra-253B",
+   "company": "NVIDIA",
+   "country": "US",
+   "category": "reasoning",
+   "family": "nemotron-ultra-253b",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "open",
+    "logic"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 81,
+    "atk": 77,
+    "def": 74,
+    "spa": 72,
+    "spd": 71,
+    "spe": 77
+   },
+   "habitats": [
+    "ruins",
+    "city"
+   ],
+   "releaseDate": "2025-04-07",
+   "capabilityScore": 58,
+   "hotnessScore": 46,
+   "statRationale": "推理版→逻辑系；大底座→HP高；深度推理→攻击高。 [BST 452 ∈ SR 420-490; 强项 hp/atk; 能力 58/热度 46]",
+   "dexEntryZh": "Llama-3.1-Nemotron-Ultra-253B 于 2025 年 4 月发布，卡片说明它是 Llama 3.1 405B 经 NAS 剪枝的推理衍生版，开放权重。类型由算力系转向逻辑系，HP 与攻击最亮眼。她在图鉴里自成一支，没有前后形态。",
+   "lookZh": "长马尾及腰的羊驼耳少女，托着一枚发绿光的思考球",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the grown-up Llama-Nemotron girl, a calm reasoning strategist. Hair: jet-black (#111111) ponytail now waist-length with NVIDIA-green (#76B900) gradient ends, blunt bangs. Eyes: bright green with the spiral swirl iris, thoughtful and sharp. Outfit: long black coat with a cream (#F3EAD3) wool collar and glowing green circuit-vein lining, green-sleeved varsity top, gunmetal (#4A4F55) boots; the star medal pinned to the collar. Signature accessory: the same cream llama-ear headband with green inner ears, now with thin gunmetal heatsink-fin trim. Props: a softly glowing green thinking orb in one hand, and the tiny pruning shears at her belt. Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: orb raised in one palm, coat swept back, composed half-smile.",
+    "personality": "沉得住气，想清楚再出手的冷静军师",
+    "communityPersona": "No anime persona found; invented from brand colours and the Llama name.",
+    "officialMascotOrLogo": "NVIDIA's brand is its green (#76B900) eye-and-swirl logo on black; the model name pairs Nemotron with Meta's Llama base, which inspires the llama-ear motif. The design uses NVIDIA green, black and gunmetal.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "hermes-3-405b",
+   "nameZh": "Hermes 3 405B",
+   "nameEn": "Hermes 3 405B",
+   "company": "Nous Research",
+   "country": "US",
+   "category": "llm",
+   "family": "hermes-llm",
+   "stage": 1,
+   "evolvesTo": "hermes-4-405b",
+   "evolveLevel": 31,
+   "types": [
+    "open",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 71,
+    "atk": 58,
+    "def": 56,
+    "spa": 56,
+    "spd": 64,
+    "spe": 70
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2024-08-16",
+   "capabilityScore": 40,
+   "hotnessScore": 50,
+   "statRationale": "405B 大底座→HP高；聊天响应顺畅→速度高。 [BST 375 ∈ R 330-420; 强项 hp/spe; 能力 40/热度 50]",
+   "dexEntryZh": "Hermes 3 405B 是 Nous Research 基于 Llama 3.1 405B 微调的开放权重模型，2024 年 8 月在 OpenRouter 上架，同系列的 70B 小弟没有被收录。类型是开放加聊天，HP 与速度最亮眼。下一形态 Hermes 4 405B 在谱系里是它的后训练一步，类型会转向逻辑。",
+   "lookZh": "背着卷轴、摇着铜铃的琥珀金发小信使",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the younger stage of the Hermes herald-scribe girl, a friendly open-door messenger. Hair: wavy shoulder-length amber-gold (#E8A33D) hair with a small ahoge and an ultramarine (#2B3FE0) ribbon bow on one side. Eyes: deep ultramarine with ring-shaped white highlights. Outfit: cream (#F6F0E0) tunic with ultramarine engraving-hatch trim, a short ultramarine cape, brown leather boots. Signature accessory: a rolled parchment scroll tied with an ultramarine cord, slung across her back like a quiver (open weights, letters anyone may read). Prop: a small brass handbell held in one hand, for chatting with passers-by. Palette: ultramarine #2B3FE0, amber gold #E8A33D, parchment cream #F6F0E0, ink black #15151F, brass #C9A24A. Pose: skipping forward, ringing the bell, bright open smile.",
+    "personality": "热心的开门信使，谁来问都乐意回话",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Nous Research's Hermes models borrow the Greek messenger-god name; this roster's Hermes line uses ultramarine, white, black and gold with engraving-style hatching. The design reuses that palette with a scroll-and-lantern herald motif.",
+    "sourceUrls": [
+     "https://openrouter.ai/nousresearch/hermes-3-llama-3.1-405b"
+    ]
+   }
+  },
+  {
+   "id": "hermes-4-405b",
+   "nameZh": "Hermes 4 405B",
+   "nameEn": "Hermes 4 405B",
+   "company": "Nous Research",
+   "country": "US",
+   "category": "llm",
+   "family": "hermes-llm",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "open",
+    "logic"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 82,
+    "atk": 72,
+    "def": 65,
+    "spa": 68,
+    "spd": 78,
+    "spe": 82
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2025-08-26",
+   "capabilityScore": 54,
+   "hotnessScore": 52,
+   "statRationale": "混合推理→逻辑系；405B 底座→HP高；仍保持快速作答→速度高。 [BST 447 ∈ SR 420-490; 强项 hp/spe; 能力 54/热度 52]",
+   "dexEntryZh": "Hermes 4 405B 于 2025 年 8 月 26 日发布，同样基于 Llama 3.1 405B，引入了混合推理模式，可以选择先在内部推敲再作答。谱系里它以 Hermes 3 405B 为上一形态，是一步后训练。开放权重，上下文 131072，类型由聊天转为逻辑，HP 与速度最亮眼。",
+   "lookZh": "披高领蓝斗篷的琥珀金发少女，提着半掩灯罩的蓝焰提灯",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the grown-up Hermes herald-scribe girl. Hair: wavy amber-gold (#E8A33D) hair now past the shoulders, same ahoge and ultramarine (#2B3FE0) ribbon bow. Eyes: deep ultramarine with ring-shaped white highlights. Outfit: long cream (#F6F0E0) tabard coat with ultramarine hatch trim and gold edging, high-collared ultramarine cloak, brown boots. Signature accessory: the same parchment scroll tied with an ultramarine cord, now longer and partly unfurled down her back. Props: a small glass lantern with an ultramarine flame and a half-open shutter (hybrid reasoning), and the brass handbell at her belt. Palette: ultramarine #2B3FE0, amber gold #E8A33D, parchment cream #F6F0E0, ink black #15151F, brass #C9A24A. Pose: lantern raised beside her face, cloak flowing, calm smile.",
+    "personality": "先点灯想一想，再从容开口的信使",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Nous Research's Hermes models borrow the Greek messenger-god name; this roster's Hermes line uses ultramarine, white, black and gold with engraving-style hatching. The design reuses that palette with a scroll-and-lantern herald motif.",
+    "sourceUrls": [
+     "https://openrouter.ai/nousresearch/hermes-4-405b"
+    ]
+   },
+   "lineRef": "hermes-3-405b"
+  }
+ ],
+ "patches": [
+  {
+   "id": "skyreels",
+   "set": {
+    "stage": 3
+   }
+  }
+ ]
+}

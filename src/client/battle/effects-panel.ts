@@ -4,13 +4,15 @@ import type { SideIndex } from '../../shared/types.ts'
 import { t } from '../../shared/content/index.ts'
 import type { Input } from '../contracts.ts'
 import { el, panel, typeChip } from '../ui/widgets.ts'
-import { battleStatGlossary, describeBattleEffects, type BattleEffectDetail } from './effect-details.ts'
+import { battleStatGlossary, describeBattleEffects, effectBalance, type BattleEffectDetail } from './effect-details.ts'
 import type { StatusPanel } from './status-panel.ts'
 
 export interface BattleEffectsPanel {
   readonly el: HTMLElement
   readonly open: boolean
   show(side: SideIndex): void
+  /** Re-renders while open when either side's effects changed (the battle keeps playing behind the panel). */
+  sync(): void
   close(): void
   input(inp: Input): boolean
 }
@@ -34,6 +36,15 @@ function renderRow(row: BattleEffectDetail): HTMLElement {
   ])
 }
 
+/** Stat stages are one-liners: what they mean is in the glossary below, so the chip only carries step and factor. */
+function renderStage(row: BattleEffectDetail): HTMLElement {
+  return el('div', { class: `apb-stage is-${row.polarity}`, title: row.description }, [
+    el('span', { class: 'apb-stage-label', text: row.label }),
+    el('span', { class: 'apb-stage-delta', text: row.delta ?? '' }),
+    el('span', { class: 'apb-stage-factor', text: row.factor ?? '' }),
+  ])
+}
+
 function renderSide(panel: StatusPanel, side: SideIndex): HTMLElement {
   const snap = panel.getSnapshot()
   const label = side === 0 ? t('battleui.effects.sideOwn') : t('battleui.effects.sideFoe')
@@ -49,6 +60,14 @@ function renderSide(panel: StatusPanel, side: SideIndex): HTMLElement {
     return el('section', `apb-effects-side is-${side === 0 ? 'own' : 'foe'}`, body)
   }
 
+  const { buff, debuff } = effectBalance(snap)
+  body.push(el('div', {
+    class: 'apb-effects-balance',
+    attrs: { 'aria-label': t('battleui.effects.balance', { buff, debuff }) },
+  }, [
+    el('span', { class: `apb-balance is-buff${buff ? '' : ' is-zero'}`, text: t('battleui.effects.balanceBuff', { n: buff }) }),
+    el('span', { class: `apb-balance is-debuff${debuff ? '' : ' is-zero'}`, text: t('battleui.effects.balanceDebuff', { n: debuff }) }),
+  ]))
   if (snap.types.length) {
     body.push(el('div', 'apb-effects-types', [
       el('span', { class: 'apb-effects-section-label', text: t('battleui.effects.types') }),
@@ -63,7 +82,8 @@ function renderSide(panel: StatusPanel, side: SideIndex): HTMLElement {
       const groupRows = rows.filter((row) => row.group === group)
       if (!groupRows.length) continue
       body.push(el('div', { class: 'apb-effects-group-title', text: t(groupKey[group]) }))
-      body.push(...groupRows.map(renderRow))
+      if (group === 'stage') body.push(el('div', 'apb-stage-grid', groupRows.map(renderStage)))
+      else body.push(...groupRows.map(renderRow))
     }
   }
   return el('section', `apb-effects-side is-${side === 0 ? 'own' : 'foe'}`, body)
@@ -95,6 +115,15 @@ export function createBattleEffectsPanel(root: HTMLElement, statuses: readonly [
 
   let previousFocus: HTMLElement | null = null
   let shown = false
+  let focusSide: SideIndex = 0
+  let signature = ''
+
+  const render = () => {
+    const snaps = [statuses[0].getSnapshot(), statuses[1].getSnapshot()]
+    signature = JSON.stringify(snaps)
+    columns.replaceChildren(renderSide(statuses[0], 0), renderSide(statuses[1], 1))
+    columns.querySelector<HTMLElement>(`.apb-effects-side.is-${focusSide === 0 ? 'own' : 'foe'}`)?.classList.add('is-focused')
+  }
 
   const closePanel = () => {
     if (!shown) return
@@ -106,8 +135,9 @@ export function createBattleEffectsPanel(root: HTMLElement, statuses: readonly [
   }
   const showPanel = (side: SideIndex) => {
     previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
-    columns.replaceChildren(renderSide(statuses[0], 0), renderSide(statuses[1], 1))
-    columns.querySelector<HTMLElement>(`.apb-effects-side.is-${side === 0 ? 'own' : 'foe'}`)?.classList.add('is-focused')
+    focusSide = side
+    render()
+    p.body.scrollTop = 0
     shown = true
     backdrop.hidden = false
     p.el.hidden = false
@@ -127,6 +157,9 @@ export function createBattleEffectsPanel(root: HTMLElement, statuses: readonly [
     el: p.el,
     get open() { return shown },
     show: showPanel,
+    sync() {
+      if (shown && JSON.stringify([statuses[0].getSnapshot(), statuses[1].getSnapshot()]) !== signature) render()
+    },
     close: closePanel,
     input(inp) {
       if (!shown) return false

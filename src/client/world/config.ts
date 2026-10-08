@@ -37,7 +37,8 @@ export interface GameTuning {
     /** Personal space (tiles, + the same size extra): a follower in the player's way walks round its side at up to
      * sidestepSpeed (tiles/s along the circle) instead of being walked through. */
     minGap: number; sidestepSpeed: number
-    /** Sideways gap (tiles) kept from the player while trailing on the camera side: base + perSize * species size.
+    /** Sideways gap (tiles) kept from the player while trailing on the camera side: base (the player's half width) +
+     * perSize (half the card width of a size-1 lead) * species size, so even a wide lead never covers the player.
      * sideDeadzone: lateral offset (tiles) below which the follower keeps its current side; blendPerSec: how fast the
      * swing aside eases in / out (full swings per second); tries: swing shares tested (1, 1 - 1/tries, ...) when the
      * full swing would put it in a wall; dropBack: extra trail distance (base + perSize * size) taken when walls leave
@@ -47,7 +48,10 @@ export interface GameTuning {
     maxSpeed: number; catchUpMul: number
     /** |sin| of the angle off the player's path above which the follower keeps its current side when pushed aside. */
     sideBias: number
-    trailSpacing: number; maxTrail: number; indoorMaxSize: number; followRate: number
+    trailSpacing: number; maxTrail: number; indoorMaxSize: number
+    /** Follower position is a critically damped spring on its trail target: natural frequency (rad/s), so it settles
+     * in about 4 / springOmega seconds without overshooting and never starts or stops with a jolt. */
+    springOmega: number
     /** Hop gait below moveMinSpeed (tiles/s); mirror flips need flipMinSpeed sideways (tiles/s). */
     teleportDistance: number; moveMinSpeed: number; flipMinSpeed: number
     mapKinds: MapKind[]; interactRadius: number; fx: WorldFx; cryPitch: number
@@ -69,7 +73,9 @@ export interface GameTuning {
   roaming: {
     mapKinds: MapKind[]; spawnIntervalSec: number; spawnTries: number; minSpawnDistance: number; despawnMargin: number
     lifetimeSec: Range; idleSec: Range; wanderRadius: number; speed: number; fleeSpeed: number; chaseSpeed: number
-    touchRadius: number; noticeRange: number; fleeChance: number; rareFleeChance: number; chaseChance: number
+    touchRadius: number; noticeRange: number
+    /** Radians a cornered fleeing roamer turns to slide along a wall. */
+    fleeSlideRad: number
     noticeBubble: string; noticeBubbleMs: number; fleeBubble: string; despawnFx: WorldFx; spawnFx: WorldFx
     requireEncounterTerrain: boolean; cullDistance: number; arriveEpsilon: number
     /** Terrain keys no roamer or event creature spawns on (1-tile causeways would force the battle). */
@@ -198,6 +204,7 @@ export function validateGameContent(g: GameTuning = GAME, c: Content = CONTENT):
   checkKinds('roaming.mapKinds', g.roaming.mapKinds)
   checkRange('roaming.lifetimeSec', g.roaming.lifetimeSec)
   checkRange('roaming.idleSec', g.roaming.idleSec)
+  if (!(g.roaming.fleeSlideRad > 0 && g.roaming.fleeSlideRad < Math.PI)) errs.push('game.json roaming.fleeSlideRad must be in (0, pi)')
   checkFx('roaming.despawnFx', g.roaming.despawnFx)
   checkFx('roaming.spawnFx', g.roaming.spawnFx)
   for (const key of g.roaming.avoidTerrain ?? []) if (!c.terrainByKey[key]) errs.push(`game.json roaming.avoidTerrain: unknown terrain "${key}"`)

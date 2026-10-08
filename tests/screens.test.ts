@@ -10,7 +10,7 @@ import { Rng } from '../src/shared/rng.ts'
 import { UI_CONFIG, INPUT_BINDINGS } from '../src/client/ui/config.ts'
 import { SCREENS, validateScreensConfig, type SettingsField } from '../src/client/ui/screens/config.ts'
 import {
-  addItem, applyMedicine, canSell, dexCounts, evolutionChain, expProgress, filterDex, ivStars, maxAffordable,
+  addItem, applyMedicine, canSell, dexCounts, evolutionChain, expProgress, extraEnglishName, filterDex, ivStars, maxAffordable,
   medicineBlocker, moveCreature, pickInDirection, playTimeParts, releaseCreature, sellPrice, stepSetting, teachState,
 } from '../src/client/ui/screens/logic.ts'
 
@@ -239,4 +239,16 @@ test('map direction picking, IV stars, play time, exp, evolution chains', () => 
     assert.ok(chain.some((x) => x.id === sp.id), `${sp.id} in its own chain`)
     assert.equal(new Set(chain.map((x) => x.id)).size, chain.length)
   }
+})
+
+test('model names: the English line only appears when it differs, and no name outgrows the layouts audited at 1280x720 / 390x844', () => {
+  let same = 0
+  for (const sp of CONTENT.speciesList) {
+    if (sp.nameEn === sp.nameZh) { same++; assert.equal(extraEnglishName(sp), null, sp.id) }
+    else assert.equal(extraEnglishName(sp), sp.nameEn, sp.id)
+    // The box party column, starter cards and battle HUD were checked with names up to this many characters (output/20/names).
+    assert.ok(sp.nameZh.length <= 26, `${sp.id}: "${sp.nameZh}" is longer than the audited layouts allow`)
+    assert.ok(sp.nameEn.length <= 64, `${sp.id}: "${sp.nameEn}"`)
+  }
+  assert.ok(same > 0)
 })

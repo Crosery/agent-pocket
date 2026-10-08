@@ -18,7 +18,10 @@ import { generateNature, linearRgb } from './nature.ts'
 import { buildProceduralTemplate, createMaterialLibrary, templateFromModel, templateFromNature, type PropTemplate } from './prop-builders.ts'
 import { sampleWalkHeight, type TerrainSampler, type TileRect } from './terrain.ts'
 
-export interface PropChunk { meshes: THREE.InstancedMesh[]; count: number }
+/** A swaying canopy of a chunk (leaves fall from it): world position of its base, radius and height in tiles. */
+export interface Canopy { x: number; y: number; z: number; r: number; h: number; key: string }
+
+export interface PropChunk { meshes: THREE.InstancedMesh[]; count: number; canopies: Canopy[] }
 
 export interface PropLayer {
   /** Whole-map mode (battle dioramas): every chunk built by load() lives here. */
@@ -340,7 +343,7 @@ export function createPropLayer(assets: AssetStore, opts?: { occlusion?: boolean
     },
 
     buildChunk(cx, cy, deadline) {
-      const out: PropChunk = { meshes: [], count: 0 }
+      const out: PropChunk = { meshes: [], count: 0, canopies: [] }
       const list = source ? source.objects(chunkRect(cx, cy)).props : byChunk.get(cy * cols + cx)
       if (!list || !map) return out
       const m = map
@@ -363,6 +366,7 @@ export function createPropLayer(assets: AssetStore, opts?: { occlusion?: boolean
         const t = templates.get(key)!
         const nat = natureOfKey(b.def, key)
         const n = b.items.length
+        const sheds = !!b.def.sway && t.parts.some((part) => part.sway)
         const matrices = new Float32Array(n * 16)
         const tints = t.parts.map(() => new Float32Array(n * 3))
         b.items.forEach((p, i) => {
@@ -387,6 +391,7 @@ export function createPropLayer(assets: AssetStore, opts?: { occlusion?: boolean
           }
           _p.set(c.x, y, c.z)
           _m.compose(_p, _q, _s).toArray(matrices, i * 16)
+          if (sheds) out.canopies.push({ x: c.x, y, z: c.z, r: Math.max(0.5, Math.min(2.2, b.def.height * 0.38 * _s.x)), h: b.def.height * _s.y, key: b.def.key })
           if (nat) climate?.sampleAll(c.x, c.z, _cs)
           const bt = nat && tiles && N.biomeTints ? N.biomeTints[tiles.biome(Math.floor(c.x), Math.floor(c.z))?.id ?? ''] : undefined
           t.parts.forEach((part, k) => {

@@ -1,0 +1,12 @@
+{
+  "law": {"members": 6, "minTeamBst": 3150, "maxTeamBst": 3230, "minRarityOrder": 2, "maxRarityOrder": 3, "maxPerType": 2, "minDistinctTypes": 8, "pickFrom": 12, "tries": 600, "pool": 40, "attackFloor": 0.6},
+  "roles": [
+    {"id": "hyper-offense", "nameZh": "速攻队", "plan": "先手压制：高速度的输出手一路强攻，在对手展开战术前接连击倒。", "where": [{"stat": "spe", "min": 80}, {"stat": "off", "min": 85}], "score": {"spe": 0.85, "off": 1}, "slots": [["attack"], ["attack"], ["attack"], ["priority", "attack"]]},
+    {"id": "wall-stall", "nameZh": "耐久队", "plan": "耐久消耗：高双防加回复招式，用数据污染与过热慢慢耗死对手，被克制时换上抗性队友。", "where": [{"stat": "bulk", "min": 0.42}, {"stat": "hp", "min": 80}, {"stat": "off", "min": 92}], "score": {"bulk": 300, "def": 0.5, "spd": 0.5, "off": 0.3}, "slots": [["heal"], ["attack"], ["attack"], ["inflict", "protect", "attack"]], "inflict": ["poison", "burn", "paralysis", "sleep"]},
+    {"id": "setup-sweep", "nameZh": "强化流", "plan": "积累强化：趁对手出手不重时叠到 +2，再一路横扫。", "where": [{"stat": "bulk", "min": 0.36}, {"stat": "off", "min": 98}], "score": {"off": 1.5, "bulk": 120, "spe": 0.3}, "slots": [["boost"], ["attack"], ["attack"], ["heal", "attack"]]},
+    {"id": "status-control", "nameZh": "控场队", "plan": "异常状态：限流、宕机、幻觉轮番上，夺走对手的回合再用火力收割。", "where": [{"stat": "bulk", "min": 0.38}, {"stat": "off", "min": 70}], "score": {"bulk": 150, "off": 0.5, "spe": 0.3}, "slots": [["inflict"], ["inflict", "confuse"], ["attack"], ["attack"]], "inflict": ["sleep", "paralysis", "freeze", "burn", "poison"]},
+    {"id": "weather-rush", "nameZh": "超频队", "plan": "天气加成：先开算力过载，算力与代码属性招式威力 ×1.5，同时压制对面的对齐系。", "where": [{"stat": "off", "min": 80}], "score": {"off": 0.6, "spe": 0.4, "bulk": 80}, "slots": [["attack"], ["attack"], ["attack"], ["attack"]], "weather": "overclock", "maxPerType": 4},
+    {"id": "balanced", "nameZh": "均衡队", "plan": "没有专精：可靠的本系输出、覆盖招式和一点回复，靠属性覆盖应对一切。", "where": [{"stat": "off", "min": 80}, {"stat": "bulk", "min": 0.36}], "score": {"off": 1, "bulk": 100, "spe": 0.3}, "slots": [["attack"], ["attack"], ["attack"], ["heal", "boost", "attack"]]},
+    {"id": "glass-cannon", "nameZh": "重炮队", "plan": "一击必杀：特攻或攻击极高的脆皮，靠最大威力的招式一发定胜负，拼的是谁先开火。", "where": [{"stat": "off", "min": 100}, {"stat": "spe", "min": 70}], "score": {"off": 2, "bulk": -120}, "slots": [["attack"], ["attack"], ["attack"], ["attack"]]}
+  ]
+}

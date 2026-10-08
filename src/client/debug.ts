@@ -6,7 +6,7 @@
 //   &battle=wild|trainer [&species=<id>&level=<n> | &trainer=<id>]
 //   &screen=party|bag|dex|box|map|quests|settings|shop
 // Infinite overworld: &map=<overworld>&x/y accept any integer tile (negative included). window.__ap (dev only):
-//   pos() · tp(x, y, map?) · region() · gates() · places(radius?) · discover(id) · fly(id) · fog() · distance()
+//   pos() · tp(x, y, map?) · region() · gates() · places(radius?) · discover(id) · fly(id) · fog() · distance() · roamers()
 import type { FieldWeatherKind, SaveData, World } from '../shared/types.ts'
 import type { GameContext, SaveManager, Screens } from './contracts.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
@@ -186,6 +186,8 @@ export function installDebugHooks(ctx: GameContext, ow: OverworldExt, world: Wor
     fly: (id: string) => opts.flyTo(id),
     fog: () => ({ pages: fogPagesFor(ctx.save, world).pageCount, version: fogPagesFor(ctx.save, world).version }),
     distance: () => ({ now: distanceFromOrigin(world, ow.player.x, ow.player.y), max: ctx.save.maxDistance ?? 0 }),
+    /** Visible roamers with their species country and distance to the player. */
+    roamers: () => ow.roamerInfo().map((r) => ({ ...r, country: CONTENT.species[r.speciesId]?.country ?? '', dist: Math.hypot(r.x - ow.player.x, r.y - ow.player.y) })),
   }
   ;(window as unknown as { __ap: typeof hooks }).__ap = hooks
 }

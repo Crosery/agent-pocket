@@ -4,6 +4,12 @@
   "output": "content/species.json",
   "rosterDoc": "docs/roster.md",
   "statKeys": ["hp", "atk", "def", "spa", "spd", "spe"],
+  "statShape": {
+    "_doc": "Balance rules (docs/balance.md section 2): bandFloor lifts weak outliers inside their rarity band, evolutionStep bounds the BST gain of an evolution, speedBand tames speed. Applied after the rarity-band fit (docs/balance.md section 2). Speed is ordinal (only who is faster matters), so the researched speed spread is compressed toward a pivot and the points taken from fast species are refunded to hp/def/spd (slow species give theirs back); BST is preserved exactly. Species never leave their rarity band.",
+    "bandFloor": 0.2,
+    "evolutionStep": {"min": 1.08, "max": 1.6},
+    "speedBand": {"pivot": 80, "keep": 0.4, "refund": ["hp", "def", "spd"]}
+  },
   "starters": ["o1", "claude-haiku", "deepseek-v3"],
   "attackPreference": {"_doc": "physical if atk >= spa*(1+margin), special if spa >= atk*(1+margin), else mixed", "margin": 0.1},
   "keywordFields": ["id", "family", "company", "nameEn"],
@@ -25,7 +31,7 @@
       "status": {"classes": ["debuff", "inflict", "buff"], "_doc": "status moves come from own types first, then learnset.universalTypes"}
     },
     "slots": [
-      {"level": 5, "role": "stab", "band": [25, 50]},
+      {"level": 5, "role": "stab", "band": [25, 45]},
       {"level": 9, "role": "status", "classes": ["debuff", "inflict", "focus"]},
       {"level": 13, "role": "stab2", "band": [35, 55]},
       {"level": 17, "role": "coverage", "coverageIndex": 0, "band": [40, 65]},

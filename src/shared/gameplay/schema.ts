@@ -64,11 +64,25 @@ export interface LegendRules {
   edgeMargin: number
 }
 
+/** How a roaming wild creature reacts when it notices the player. */
+export type RoamingStance = 'neutral' | 'chase' | 'flee'
+
+/** `base` while the wild creature is at least as strong as the player's strongest party member, `outleveled` once the player is stronger. */
+export interface RoamingStances { base: RoamingStance; outleveled: RoamingStance }
+
+export interface RoamingPolicy {
+  /** Country codes not listed in `countries` (SpeciesDef.country). */
+  default: RoamingStances
+  countries: Record<string, RoamingStances>
+}
+
 export interface SpawnRules {
   scheduler: SchedulerRules
   rumor: RumorRules
   visible: VisibleRules
   legends: LegendRules
+  /** Overworld attitude of roaming creatures by country (see shared/gameplay/spawns.ts roamingDisposition). */
+  roamingPolicy: RoamingPolicy
   /** Type weight multipliers by time of day / field weather, applied on top of encounter slot weights. */
   typeAffinity: {
     time: Partial<Record<TimeOfDay, Record<TypeId, number>>>

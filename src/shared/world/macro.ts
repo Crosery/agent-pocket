@@ -238,7 +238,12 @@ export function compileBiomeRules(climate: ClimateFile): { rule: BiomeRule; biom
   })
 }
 
-interface LockGroup { cells: number[]; T: number }
+interface LockGroup {
+  cells: number[]
+  T: number
+  /** Told the final level when `startFlat` lowers the group (towns and POI pads keep it in `level`). */
+  retarget?: (T: number) => void
+}
 
 /** Flattens every lock group to T + 0.5 and raises the surroundings so pads never sit in a pit. */
 function applyLocks(spec: OverworldSpec, W: number, H: number, hf: Float32Array, sea: Uint8Array, locked: Uint8Array, groups: LockGroup[]): void {
@@ -268,6 +273,42 @@ function applyLocks(spec: OverworldSpec, W: number, H: number, hf: Float32Array,
       const t = frontier; frontier = next; next = t
     }
   })
+}
+
+/**
+ * Lowers tiny isolated terraces inside `box` to the level around them: a plateau of fewer than `minPatch` tiles whose
+ * neighbours are all lower reads as a stray bump, not a highland. Locked pads and the sea are never touched.
+ */
+function despeckle(level: Uint8Array, locked: Uint8Array, W: number, H: number, box: { x0: number; y0: number; x1: number; y1: number }, minPatch: number): void {
+  const x0 = Math.max(0, box.x0), y0 = Math.max(0, box.y0), x1 = Math.min(W - 1, box.x1), y1 = Math.min(H - 1, box.y1)
+  const seen = new Uint8Array(W * H)
+  const comp: number[] = []
+  let top = 0
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) top = Math.max(top, level[y * W + x])
+  for (let h = top; h >= 1; h--) {
+    seen.fill(0)
+    for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+      const start = y * W + x
+      if (seen[start] || level[start] !== h) continue
+      comp.length = 0
+      comp.push(start)
+      seen[start] = 1
+      let pinned = false, lower = false, higher = false
+      for (let k = 0; k < comp.length; k++) {
+        const i = comp[k], cx = i % W, cy = (i - cx) / W
+        if (locked[i]) pinned = true
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const nx = cx + dx, ny = cy + dy
+          if (nx < 0 || ny < 0 || nx >= W || ny >= H) { pinned = true; continue }
+          const j = ny * W + nx
+          if (level[j] === h) { if (!seen[j]) { seen[j] = 1; comp.push(j) } }
+          else if (level[j] > h) higher = true
+          else lower = true
+        }
+      }
+      if (comp.length < minPatch && !pinned && lower && !higher) for (const i of comp) level[i] = h - 1
+    }
+  }
 }
 
 /**
@@ -490,29 +531,6 @@ export function buildMacro(inp: MacroInput): Macro {
       }
     }
   }
-  // Keep the first playable area legible and easy to traverse. The cap is applied to the
-  // continuous height field before sea/pad locks and the slope envelope, so it creates a
-  // broad flat basin with a gradual edge instead of a hard artificial cliff.
-  const startTown = inp.towns.find(({ town }) => town.start)?.town
-  const startFlat = spec.startFlat
-  if (startTown && startFlat) {
-    const flatRadius = Math.max(0, startFlat.radius)
-    const transition = Math.max(0, startFlat.transition)
-    const flatLevel = Math.max(0, Math.min(spec.maxLevel, startFlat.level))
-    const innerCap = flatLevel + 0.5
-    const outerCap = spec.maxLevel + 0.5
-    const limit = flatRadius + transition
-    for (let y = Math.max(0, Math.floor(startTown.y - limit)); y <= Math.min(H - 1, Math.ceil(startTown.y + limit)); y++) {
-      for (let x = Math.max(0, Math.floor(startTown.x - limit)); x <= Math.min(W - 1, Math.ceil(startTown.x + limit)); x++) {
-        const dx = x - startTown.x, dy = y - startTown.y
-        const d = Math.sqrt(dx * dx + dy * dy)
-        if (d > limit) continue
-        const t = transition > 0 ? smoothstep(0, 1, Math.max(0, (d - flatRadius) / transition)) : d > flatRadius ? 1 : 0
-        hf[y * W + x] = Math.min(hf[y * W + x], innerCap + (outerCap - innerCap) * t)
-      }
-    }
-  }
-
   // --- sea: authored water zone + ocean ring, one continent ------------------------------------------
   const seaH = spec.seaLevel + 0.5
   const oc = spec.ocean
@@ -673,7 +691,7 @@ export function buildMacro(inp: MacroInput): Macro {
         cells.push(i)
       }
     }
-    locks.push({ cells, T })
+    locks.push({ cells, T, retarget: (t) => { pad.level = t } })
   }
   const lakeDist = bfsDistance(W, H, (i) => lake[i] !== 0 || lakeRim[i] !== 0, 0xff, undefined, true)
   const siteIn: SiteInput = {
@@ -715,7 +733,7 @@ export function buildMacro(inp: MacroInput): Macro {
     }
     s.level = T
     placed.push({ x: s.x, y: s.y, r, T })
-    locks.push({ cells, T })
+    locks.push({ cells, T, retarget: (t) => { s.level = t } })
   }
   applyLocks(spec, W, H, hf, sea, locked, locks)
 
@@ -726,6 +744,42 @@ export function buildMacro(inp: MacroInput): Macro {
   })
   for (const g of hydro.lockGroups) g.T = capBySea(g.cells, g.T)
   if (hydro.lockGroups.length) applyLocks(spec, W, H, hf, sea, locked, hydro.lockGroups)
+
+  // --- start basin: nothing above `startFlat.level` around the start town -------------------------------
+  // Applied after hydrology on purpose: rivers, lakes, sites and biomes are decided from the uncapped field, so the
+  // world keeps its layout and only the terraces near the start are levelled. The cap rises smoothly (Perlin-wobbled
+  // radius, no circular cliff) and the envelope below turns it into walkable slopes.
+  const startTown = inp.towns.find(({ town }) => town.start)?.town
+  const flat = spec.startFlat
+  if (startTown && flat) {
+    const wobble = noiseField(flat.noise, seed)
+    const inner = Math.max(0, Math.min(spec.maxLevel, flat.level)) + 0.99
+    const outer = spec.maxLevel + 0.5
+    const capAt = (x: number, y: number): number => {
+      const dx = x - startTown.x, dy = y - startTown.y
+      const d = Math.sqrt(dx * dx + dy * dy) + flat.jitter * (wobble.sample(x, y) - 0.5) * 2
+      return inner + (outer - inner) * smoothstep(0, 1, (d - flat.radius) / flat.transition)
+    }
+    // A flattened pad stays flat: it drops to the lowest cap it touches.
+    const groups: LockGroup[] = [...locks, ...hydro.lockGroups]
+    for (const g of groups) {
+      let low = Infinity
+      for (const i of g.cells) low = Math.min(low, capAt(i % W, (i - (i % W)) / W))
+      const T = Math.min(g.T, Math.max(0, Math.floor(low - 0.5)))
+      if (T === g.T) continue
+      g.T = T
+      g.retarget?.(T)
+      for (const i of g.cells) hf[i] = T + 0.5
+    }
+    const reach = Math.ceil(flat.radius + flat.jitter + flat.transition)
+    for (let y = Math.max(0, startTown.y - reach); y <= Math.min(H - 1, startTown.y + reach); y++) {
+      for (let x = Math.max(0, startTown.x - reach); x <= Math.min(W - 1, startTown.x + reach); x++) {
+        const i = y * W + x
+        if (locked[i] || sea[i]) continue
+        hf[i] = Math.min(hf[i], capAt(x, y))
+      }
+    }
+  }
 
   // --- slope-limited lower envelope (two-pass chamfer) -------------------------------------------
   const s = spec.slope
@@ -776,6 +830,10 @@ export function buildMacro(inp: MacroInput): Macro {
   for (let i = 0; i < N; i++) {
     const l = sea[i] ? spec.seaLevel : Math.floor(e[i])
     level[i] = Math.max(0, Math.min(spec.maxLevel, l))
+  }
+  if (startTown && flat && flat.minPatch > 0) {
+    const reach = Math.ceil(flat.radius + flat.jitter + flat.transition)
+    despeckle(level, locked, W, H, { x0: startTown.x - reach, y0: startTown.y - reach, x1: startTown.x + reach, y1: startTown.y + reach }, flat.minPatch)
   }
   seaDist = bfsDistance(W, H, (i) => sea[i] === 1, seaCap)
 
