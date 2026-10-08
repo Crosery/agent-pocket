@@ -5,6 +5,7 @@ import type { SpeciesDef } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
 import { button, el, rarityBadge, statRadar, typeChip } from '../widgets.ts'
 import { backPressed, frame, infoRow, openScreen, pressed, sectionTitle, sfx, textOrKey, uiSfx, type ScreenEnv, setChildren , arrowButton } from './base.ts'
+import { GAME } from '../../world/config.ts'
 import { SCREENS } from './config.ts'
 import { dexState, evolutionChain, extraEnglishName, statKeys } from './logic.ts'
 import { creatureImg } from './sprites.ts'
@@ -55,9 +56,22 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
         sectionTitle(t('screens.dex.entry')),
         caught ? el('p', { class: 'aps-dexd-entry', text: sp.dexEntry }) : el('p', { class: 'aps-dexd-entry ap-dim', text: t('screens.dex.lockedEntry') }),
         caught ? el('p', 'aps-dexd-persona', [el('span', { class: 'ap-gold', text: t('screens.starter.personality') }), sp.personality]) : null,
+        ...bossBlock(sp),
       ])
       right.replaceChildren(sectionTitle(t('screens.dex.baseStats')), caught ? statsBlock(sp) : el('p', { class: 'ap-dim', text: t('screens.dex.lockedStats') }), sectionTitle(t('screens.dex.evolution')), evoBlock(sp))
       f.setHints([['ud', t('screens.dex.hint.browse')], ...(caught ? [['lr', t('screens.dex.hint.shiny')] as ['lr', string]] : []), ['confirm', t('screens.dex.hint.cry')], ['cancel', t('screens.hint.back')]])
+    }
+
+    /** Boss species: the sighting hint once seen, the full counterplay once the boss has been beaten or tamed. */
+    const bossBlock = (sp: SpeciesDef): (HTMLElement | null)[] => {
+      const boss = CONTENT.bossBySpecies[sp.id]
+      if (!boss || dexState(ctx.save, sp.id) === 'unseen') return []
+      const beaten = ctx.save.flags[GAME.flags.bossWonPrefix + boss.id] === true
+      return [
+        sectionTitle(t('screens.dex.bossHints')),
+        el('p', { class: 'aps-dexd-entry', text: t(boss.hint.seen) }),
+        beaten ? el('p', { class: 'aps-dexd-entry', text: t(boss.hint.won) }) : el('p', { class: 'aps-dexd-entry ap-dim', text: t('screens.dex.bossHintLocked') }),
+      ]
     }
 
     const statsBlock = (sp: SpeciesDef): HTMLElement => {

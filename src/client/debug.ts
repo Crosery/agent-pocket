@@ -4,15 +4,16 @@
 //   &map=<id>&x=<n>&y=<n>        start position          &t=<minutes>   clock (frozen per debug.freezeClockWithTime)
 //   &weather=<kind>              force field weather     &evolve=1      evolution cutscene for the party lead
 //   &battle=wild|trainer [&species=<id>&level=<n> | &trainer=<id>]
+//   &battle=boss&boss=<bossId> [&level=<n>]   boss sandbox: sensible team + counter items, boss at its recommended level
 //   &screen=party|bag|dex|box|map|quests|settings|shop
 // Infinite overworld: &map=<overworld>&x/y accept any integer tile (negative included). window.__ap (dev only):
-//   pos() · tp(x, y, map?) · region() · gates() · places(radius?) · discover(id) · fly(id) · fog() · distance() · roamers()
+//   boss(id, level?) · pos() · tp(x, y, map?) · region() · gates() · places(radius?) · discover(id) · fly(id) · fog() · distance() · roamers()
 //   clock(minutes?) sets / reads the in-game clock (load with &t=<minutes> to keep it frozen) · weather(kind|null) forces field weather
 import type { FieldWeatherKind, SaveData, World } from '../shared/types.ts'
 import type { GameContext, SaveManager, Screens } from './contracts.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { Rng } from '../shared/rng.ts'
-import { createCreature } from '../shared/creature.ts'
+import { createCreature, maxHp } from '../shared/creature.ts'
 import { STORY_CONTENT } from '../shared/world/story.ts'
 import { distanceFromOrigin, getMap, isInfinite, regionAt } from '../shared/world/worldapi.ts'
 import { fogPagesFor, resolvePlace } from './world/explore.ts'
@@ -30,8 +31,9 @@ export interface DebugParams {
   y: number | null
   time: number | null
   weather: FieldWeatherKind | null
-  battle: 'wild' | 'trainer' | null
+  battle: 'wild' | 'trainer' | 'boss' | null
   species: string | null
+  boss: string | null
   level: number | null
   trainer: string | null
   screen: string | null
@@ -62,8 +64,9 @@ export function readDebugParams(search: string): DebugParams {
     time: dev ? num('t') : null,
     // Field weather kinds the game tunes (content/game.json region.weatherIntensity).
     weather: weather && weather in GAME.region.weatherIntensity ? (weather as FieldWeatherKind) : null,
-    battle: battle === 'wild' || battle === 'trainer' ? battle : null,
+    battle: battle === 'wild' || battle === 'trainer' || battle === 'boss' ? battle : null,
     species: str('species'),
+    boss: str('boss'),
     level: dev ? num('level') : null,
     trainer: str('trainer'),
     screen: str('screen'),
@@ -122,6 +125,26 @@ export function applyDebugStart(ctx: GameContext, world: World, dbg: DebugParams
   if (dbg.time !== null) ctx.clock.minutes = Math.max(0, dbg.time)
 }
 
+/** Boss sandbox: swaps the party for the configured team at the boss's level and stocks every counter item. */
+async function startBossSandbox(ctx: GameContext, ow: OverworldExt, bossId: string | null, level: number | null): Promise<boolean> {
+  const def = (bossId && CONTENT.bosses[bossId]) || CONTENT.bossList[0]
+  if (!def) return false
+  const D = GAME.debug.boss
+  const bossLevel = Math.max(1, Math.floor(level ?? def.level))
+  const rng = new Rng((Date.now() ^ 0xb055) >>> 0)
+  ctx.save.party = D.party.filter((id) => CONTENT.species[id]).map((id) => {
+    const cr = createCreature(id, Math.max(1, bossLevel + D.levelOffset), { rng, otName: ctx.save.name, otId: ctx.save.playerId, caughtMap: ctx.save.position.map })
+    for (const k of Object.keys(cr.ivs) as (keyof typeof cr.ivs)[]) cr.ivs[k] = CONTENT.config.creature.ivMax
+    cr.hp = maxHp(cr)
+    return cr
+  })
+  for (const it of CONTENT.itemList) if (it.effect.kind === 'bait') ctx.save.bag[it.id] = D.counterQty
+  ctx.events.emit('party:changed', {})
+  ctx.events.emit('bag:changed', {})
+  await ow.startWildBattle(def.species, bossLevel)
+  return true
+}
+
 /** Post-load actions: forced weather, evolution, a battle, or a screen. */
 export async function runDebugActions(ctx: GameContext, ow: OverworldExt, world: World, dbg: DebugParams, screens: Screens): Promise<void> {
   if (dbg.weather) ow.setWeatherOverride(dbg.weather)
@@ -141,6 +164,8 @@ export async function runDebugActions(ctx: GameContext, ow: OverworldExt, world:
     const pool = local.length ? local : CONTENT.speciesList.map((sp) => sp.id)
     const species = dbg.species && CONTENT.species[dbg.species] ? dbg.species : pool[Math.floor(Math.random() * pool.length)]
     if (species) await ow.startWildBattle(species, Math.floor(dbg.level ?? GAME.debug.battleLevel))
+  } else if (dbg.battle === 'boss') {
+    await startBossSandbox(ctx, ow, dbg.boss, dbg.level)
   } else if (dbg.battle === 'trainer') {
     const onMap = ow.mapId ? getMap(world, ow.mapId)?.npcs.find((n) => n.trainer && world.trainers[n.trainer])?.trainer : undefined
     const id = dbg.trainer && world.trainers[dbg.trainer] ? dbg.trainer : onMap ?? Object.keys(world.trainers)[0]
@@ -186,6 +211,8 @@ export function installDebugHooks(ctx: GameContext, ow: OverworldExt, world: Wor
     },
     fly: (id: string) => opts.flyTo(id),
     fog: () => ({ pages: fogPagesFor(ctx.save, world).pageCount, version: fogPagesFor(ctx.save, world).version }),
+    /** Starts a boss fight (sandbox team and counter items; level defaults to the boss's recommended level). */
+    boss: (id: string, level?: number) => startBossSandbox(ctx, ow, id, level ?? null),
     distance: () => ({ now: distanceFromOrigin(world, ow.player.x, ow.player.y), max: ctx.save.maxDistance ?? 0 }),
     clock: (minutes?: number) => {
       if (minutes !== undefined) ctx.clock.minutes = minutes

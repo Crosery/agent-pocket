@@ -7,9 +7,9 @@ import type { BattleEngine } from '../../shared/battle/engine.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { calcStats, creatureName } from '../../shared/creature.ts'
 import { BATTLE_UI } from './config.ts'
-import { applyEvent, effCategory, expRatio, expSegments, levelUpStats, type BattleModel, type ExpSegment } from './model.ts'
+import { applyEvent, bossOpeningHud, bossPanelInfo, effCategory, expRatio, expSegments, levelUpStats, type BattleModel, type ExpSegment } from './model.ts'
 import type { BattleScene } from './scene.ts'
-import { changeMoney, consumeItem, markSeen } from './saveops.ts'
+import { addBagItem, changeMoney, consumeItem, markSeen } from './saveops.ts'
 import { learnWithScreen } from './learn.ts'
 
 export interface PresenterEnv {
@@ -87,6 +87,9 @@ export function createPresenter(env: PresenterEnv): Presenter {
     syncSlots(e.side)
     if (e.side === 1) {
       markSeen(ctx, e.creature.speciesId)
+      const bossId = env.init.sides[1].boss
+      const opening = bossId && !model.boss ? bossOpeningHud(bossId) : null
+      if (opening) { model.boss = opening; view.setBoss(bossPanelInfo(opening)) }
     } else {
       const p = model.progress[e.partyIndex]
       void panel.setExp(p ? expRatio(growthOf(e.partyIndex), p.level, p.exp) : 0, false)
@@ -100,6 +103,26 @@ export function createPresenter(env: PresenterEnv): Presenter {
     }
     if (BATTLE_UI.cry.onSendOut) ctx.audio.playCry(e.creature.speciesId)
     panel.setAway(false)
+  }
+
+  /** Boss form change: the sprite swaps in place with a stat-burst, the window renames, a banner shows the new form. */
+  async function onForm(e: Extract<BattleEvent, { t: 'form' }>): Promise<void> {
+    const sp = CONTENT.species
+    const before = model.sides[e.side].view
+    applyEvent(model, e)
+    const s = model.sides[e.side]
+    const panel = view.status[e.side]
+    panel.setCreature(e.creature, env.init.sides[e.side].party[s.active]?.abilityId)
+    panel.setVolatiles(s.volatiles)
+    panel.setStages(s.stages)
+    syncSlots(e.side)
+    if (e.side === 1) markSeen(ctx, e.creature.speciesId)
+    stage.setCreature(e.side, e.creature.speciesId, e.creature.shiny)
+    view.banner(e.side, t('battleui.boss.formBanner', { from: before ? nameOf(before) : '', to: nameOf(e.creature) }))
+    sfx(S.ability)
+    const power = (id: string) => Object.values(sp[id]?.baseStats ?? {}).reduce((a, b) => a + b, 0)
+    await scene.settle(stage.statFx(e.side, power(e.creature.speciesId) >= power(e.fromSpeciesId)))
+    if (BATTLE_UI.cry.onSendOut) ctx.audio.playCry(e.creature.speciesId)
   }
 
   async function onLevelUp(e: Extract<BattleEvent, { t: 'levelUp' }>): Promise<void> {
@@ -274,6 +297,28 @@ export function createPresenter(env: PresenterEnv): Presenter {
         sfx(S.run)
         await scene.settle(stage.recall(e.side))
         view.status[e.side].setAway(true)
+        return
+      case 'boss': {
+        const before = model.boss
+        applyEvent(model, e)
+        view.setBoss(bossPanelInfo(e.hud))
+        if (before && e.hud.phase > before.phase) {
+          sfx(S.ability)
+          view.status[e.side].pulseBoss()
+          view.banner(e.side, t('battleui.boss.phase', { n: e.hud.phase }))
+        }
+        return
+      }
+      case 'form':
+        await onForm(e)
+        return
+      case 'telegraph':
+        sfx(S.status)
+        view.status[e.side].pulseBoss()
+        return
+      case 'loot':
+        if (env.writesSave) addBagItem(ctx, e.itemId, e.qty)
+        sfx(S.item)
         return
       case 'end':
         applyEvent(model, e)

@@ -13,6 +13,6 @@
       {"atLeast": 5, "items": ["full-cache", "max-repel"]},
       {"atLeast": 6, "items": ["full-restore"]}
     ],
-    "extra": {"opensource": ["chip-unit-test", "chip-community-support", "chip-quantize"], "pixelport": ["quick-ball", "chip-diffusion", "chip-spotlight"], "chord": ["night-ball", "chip-lullaby", "chip-voiceprint-wave"], "retrieval": ["finetune-ball", "chip-rag-recall", "chip-web-crawl"], "forge": ["chip-power-surge", "chip-gpu-overload"], "frostshield": ["chip-alignment-shield", "chip-oversight-beam"], "hub": ["rare-ball", "distill-ball", "chip-mcp-link", "chip-system-prompt"], "balance": ["chip-chain-of-thought", "chip-eureka", "chip-focus-mode"], "agi": ["rare-ball", "full-restore", "max-repel"]}
+    "extra": {"opensource": ["chip-unit-test", "chip-community-support", "chip-quantize", "complaint-letter"], "pixelport": ["quick-ball", "chip-diffusion", "chip-spotlight"], "chord": ["night-ball", "chip-lullaby", "chip-voiceprint-wave"], "retrieval": ["finetune-ball", "chip-rag-recall", "chip-web-crawl", "long-document"], "forge": ["chip-power-surge", "chip-gpu-overload", "off-peak-coupon"], "frostshield": ["chip-alignment-shield", "chip-oversight-beam", "sandbox-patch"], "hub": ["rare-ball", "distill-ball", "chip-mcp-link", "chip-system-prompt", "special-sauce", "residential-ip"], "balance": ["chip-chain-of-thought", "chip-eureka", "chip-focus-mode", "holdout-set"], "agi": ["rare-ball", "full-restore", "max-repel"]}
   }
 }

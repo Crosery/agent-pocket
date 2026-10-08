@@ -183,6 +183,7 @@
   "researchSource": "谱系资料 · {date}",
   "baseStats": "基础能力",
     "lockedStats": "捕获之后才能查看能力数据。",
+    "bossHints": "首领情报", "bossHintLocked": "（击败或收服它之后，会记下破解它的办法。）",
     "total": "总和",
     "evolution": "进化",
     "postTrainingEvolution": "后训练进化",
