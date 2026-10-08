@@ -31,7 +31,7 @@
       "status": {"classes": ["debuff", "inflict", "buff"], "_doc": "status moves come from own types first, then learnset.universalTypes"}
     },
     "slots": [
-      {"level": 5, "role": "stab", "band": [25, 50]},
+      {"level": 5, "role": "stab", "band": [25, 45]},
       {"level": 9, "role": "status", "classes": ["debuff", "inflict", "focus"]},
       {"level": 13, "role": "stab2", "band": [35, 55]},
       {"level": 17, "role": "coverage", "coverageIndex": 0, "band": [40, 65]},
