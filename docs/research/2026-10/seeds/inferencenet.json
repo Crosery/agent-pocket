@@ -1,0 +1,45 @@
+{
+ "vendor": "inferencenet",
+ "count": 2,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "schematronv2small",
+   "names": [
+    "Inference.net: Schematron V2 Small"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-12"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "inference-net/schematron-v2-small"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "schematronv2turbo",
+   "names": [
+    "Inference.net: Schematron V2 Turbo"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-12"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "inference-net/schematron-v2-turbo"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

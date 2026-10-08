@@ -1,0 +1,198 @@
+{
+ "vendor": "thinkingmachines",
+ "count": 2,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "inkling",
+   "names": [
+    "Thinking Machines: Inkling",
+    "Inkling",
+    "Inkling (DeepInfra)",
+    "Inkling (256K)",
+    "Inkling (Deep Infra)",
+    "Inkling (Databricks)",
+    "Inkling (Together AI)",
+    "Inkling (Fireworks AI)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-17",
+    "modelsdev:deepinfra": "2026-07-15",
+    "modelsdev:nano-gpt": "2026-07-15",
+    "modelsdev:baseten": "2026-07-15",
+    "modelsdev:llmgateway-providers": "2026-07-15",
+    "modelsdev:kilo": "2026-07-15",
+    "modelsdev:venice": "2026-07-16",
+    "modelsdev:thinkingmachines": "2026-07-15",
+    "modelsdev:abacus": "2026-07-15",
+    "modelsdev:openrouter": "2026-07-15",
+    "modelsdev:llmtr": "2026-07-15",
+    "modelsdev:huggingface": "2026-07-15",
+    "modelsdev:impossibl": "2026-07-15",
+    "modelsdev:vercel": "2026-07-15",
+    "modelsdev:hyper": "2026-08-15",
+    "modelsdev:fireworks-ai": "2026-07-15",
+    "modelsdev:neon": "2026-07-15",
+    "modelsdev:merge-gateway": "2026-07-15",
+    "modelsdev:nvidia": "2026-07-15",
+    "modelsdev:edenai": "2026-07-15",
+    "modelsdev:requesty": "2026-07-15",
+    "modelsdev:llmgateway": "2026-07-15",
+    "modelsdev:togetherai": "2026-07-15"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+audio->text",
+    "text,image,audio->text",
+    "text,image->text",
+    "text,image,pdf->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "thinkingmachines/inkling"
+    ],
+    "modelsdev:deepinfra": [
+     "thinkingmachines/Inkling"
+    ],
+    "modelsdev:nano-gpt": [
+     "thinkingmachines/inkling"
+    ],
+    "modelsdev:baseten": [
+     "thinkingmachines/inkling"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "deepinfra/inkling"
+    ],
+    "modelsdev:kilo": [
+     "thinkingmachines/inkling"
+    ],
+    "modelsdev:venice": [
+     "inkling"
+    ],
+    "modelsdev:thinkingmachines": [
+     "thinkingmachines/Inkling:peft:262144",
+     "thinkingmachines/Inkling"
+    ],
+    "modelsdev:abacus": [
+     "thinkingmachines/Inkling"
+    ],
+    "modelsdev:openrouter": [
+     "thinkingmachines/inkling"
+    ],
+    "modelsdev:llmtr": [
+     "thinkingmachines/inkling"
+    ],
+    "modelsdev:huggingface": [
+     "thinkingmachines/Inkling"
+    ],
+    "modelsdev:impossibl": [
+     "thinkingmachines/inkling"
+    ],
+    "modelsdev:vercel": [
+     "thinkingmachines/inkling"
+    ],
+    "modelsdev:hyper": [
+     "inkling"
+    ],
+    "modelsdev:fireworks-ai": [
+     "accounts/fireworks/models/inkling"
+    ],
+    "modelsdev:neon": [
+     "inkling"
+    ],
+    "modelsdev:merge-gateway": [
+     "thinkingmachines/inkling"
+    ],
+    "modelsdev:nvidia": [
+     "thinkingmachines/inkling"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/thinkingmachines/Inkling",
+     "databricks/databricks-inkling",
+     "together_ai/thinkingmachines/Inkling",
+     "fireworks_ai/accounts/fireworks/models/inkling"
+    ],
+    "modelsdev:requesty": [
+     "inkling"
+    ],
+    "modelsdev:llmgateway": [
+     "inkling"
+    ],
+    "modelsdev:togetherai": [
+     "thinkingmachines/Inkling"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "inklingsmall",
+   "names": [
+    "Thinking Machines: Inkling Small",
+    "Inkling Small",
+    "Inkling Small (Deep Infra)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-30",
+    "modelsdev:deepinfra": "2026-07-30",
+    "modelsdev:nano-gpt": "2026-07-30",
+    "modelsdev:baseten": "2026-07-30",
+    "modelsdev:kilo": "2026-07-30",
+    "modelsdev:openrouter": "2026-07-30",
+    "modelsdev:llmtr": "2026-07-30",
+    "modelsdev:huggingface": "2026-07-30",
+    "modelsdev:vercel": "2026-07-30",
+    "modelsdev:pioneer": "2026-07-30",
+    "modelsdev:edenai": "2026-07-30",
+    "modelsdev:arcee": "2026-07-30"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+audio->text",
+    "text,image,audio->text",
+    "text,image->text",
+    "text,image,pdf->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "thinkingmachines/inkling-small"
+    ],
+    "modelsdev:deepinfra": [
+     "thinkingmachines/Inkling-Small"
+    ],
+    "modelsdev:nano-gpt": [
+     "thinkingmachines/Inkling-Small"
+    ],
+    "modelsdev:baseten": [
+     "thinkingmachines/inkling-small"
+    ],
+    "modelsdev:kilo": [
+     "thinkingmachines/inkling-small"
+    ],
+    "modelsdev:openrouter": [
+     "thinkingmachines/inkling-small"
+    ],
+    "modelsdev:llmtr": [
+     "thinkingmachines/inkling-small"
+    ],
+    "modelsdev:huggingface": [
+     "thinkingmachines/Inkling-Small"
+    ],
+    "modelsdev:vercel": [
+     "thinkingmachines/inkling-small"
+    ],
+    "modelsdev:pioneer": [
+     "thinkingmachines/inkling-small"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/thinkingmachines/Inkling-Small"
+    ],
+    "modelsdev:arcee": [
+     "thinkingmachines/inkling-small"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

@@ -1,0 +1,1088 @@
+company	name	cats	release	parents	source
+ACE-Step 团队	ACE-Step 1.5	music	None		https://github.com/ace-step/ACE-Step-1.5
+AI21 Labs	Jamba	language	None		https://huggingface.co/ai21labs/Jamba-v0.1
+AI21 Labs	Jamba 1.5	language	None		https://huggingface.co/api/models?author=ai21labs&search=Jamba&limit=200
+AI21 Labs	Jamba2	language	2026-01-08	post-training:Jamba 1.5 pretraining	https://www.ai21.com/blog/introducing-jamba2/
+AgiBot	智元机器人	other	2023-08		
+Ai2 / Allen Institute for AI	OLMo	language	None		https://huggingface.co/allenai/OLMo-7B/raw/main/README.md
+Ai2 / Allen Institute for AI	OLMo 2	language	None		https://huggingface.co/allenai/OLMo-2-1124-7B
+Ai2 / Allen Institute for AI	OLMo 3	language	None		https://huggingface.co/allenai/Olmo-3-1025-7B
+Ai2 / Allen Institute for AI	OLMo 3.1	language	None		https://huggingface.co/allenai/Olmo-3.1-32B-Think
+Ai2 / Allen Institute for AI	OLMo 3.1 Think	language,reason,code	None	post-training:OLMo 3 Think · DPO 阶段	https://huggingface.co/allenai/Olmo-3.1-32B-Think/raw/main/README.md
+Ai2 / Allen Institute for AI	OLMo Hybrid	language	None		https://huggingface.co/allenai/Olmo-Hybrid-7B/raw/main/README.md
+Ai2 / Allen Institute for AI	OLMoE	language	None		https://huggingface.co/allenai/OLMoE-1B-7B-0125-Instruct/raw/main/README.md
+Aion Labs	Aion 3.5	language	2026-09-23		https://www.aionlabs.ai/docs/models/
+Aion Labs	Aion 3.5 Mini	language	2026-09-23		https://www.aionlabs.ai/docs/models/
+Alibaba	Qoder	agent	2025-08-21		https://huggingface.co/Qwen/models
+Alibaba	Qwen3.8-Flash-Next	understand	2026-08-26		https://huggingface.co/Qwen/models
+Alibaba	千问 App	agent	2025-11		https://huggingface.co/Qwen/models
+Alibaba	通义千问 1.0	language	2023-08		https://huggingface.co/Qwen/models
+Alibaba	通义千问 2.5	language	2024-09		https://huggingface.co/Qwen/models
+Alibaba	通义千问 3.8-Max	language	2026-08-03		https://huggingface.co/Qwen/models
+Alibaba (Qwen)	千问图像 3.1	image	2026-09-22		
+Alibaba (Qwen)	千问语音 3.1	tts	2026-09-23		
+Alibaba (Tongyi)	通义万相 2.1	video	2025-02-25		
+Alibaba (Tongyi)	通义万相 3.0	video	2026-08-24		
+Alibaba ATH	快乐生蚝 HappyOyster	other	2026-06-17		
+Alibaba ATH	快乐虾米 HappyShrimp	music	2026-08		
+Alibaba ATH (Taotian Future Life Lab)	快乐小马 HappyHorse	video	2026-04-07		
+Amazon (AWS)	Amazon Kiro	agent	2025-07-14		
+Amazon AWS	Amazon Nova 2 Sonic	realtime,speech-understand	None		https://docs.aws.amazon.com/nova/latest/nova2-userguide/using-conversational-speech.html
+Amazon AWS	Amazon Nova Canvas	image	None		https://docs.aws.amazon.com/nova/latest/userguide/additional-resources.html
+Amazon AWS	Amazon Nova Lite	language,understand	None		https://docs.aws.amazon.com/nova/latest/userguide/additional-resources.html
+Amazon AWS	Amazon Nova Micro	language	None		https://docs.aws.amazon.com/nova/latest/userguide/additional-resources.html
+Amazon AWS	Amazon Nova Premier	language,understand	None		https://docs.aws.amazon.com/nova/latest/userguide/additional-resources.html
+Amazon AWS	Amazon Nova Pro	language,understand	None		https://docs.aws.amazon.com/nova/latest/userguide/additional-resources.html
+Amazon AWS	Amazon Nova Reel	video	None		https://docs.aws.amazon.com/nova/latest/userguide/additional-resources.html
+Amazon AWS	Nova 2 Lite	language,understand	None		https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-amazon-nova-2-lite.html
+Amazon AWS	Nova Multimodal Embeddings	retrieval	None		https://docs.aws.amazon.com/nova/latest/nova2-userguide/what-is-nova-2.html
+Anomaly (formerly SST)	OpenCode	agent	2025-06		
+Ant Group	蚂蚁百灵 Ling 3.0 / Ring 2.6	language	2026-07-27		
+Ant Group	蚂蚁阿福	agent	2025-06		
+Anthropic	Claude 1	language	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude 2	language	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude 2.1	language	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude 3 Haiku	language	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude 3 Opus	language	2024-03-04		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude 3 Opus	language	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude 3 Sonnet	language	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude 3.5 Haiku	language	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude 3.5 Sonnet	code	2024-06-20		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude 3.5 Sonnet	code	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude 3.7 Sonnet	reason	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude Code	agent	2025-02-24		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude Fable 5	language	None		https://platform.claude.com/docs/en/about-claude/models/overview.md
+Anthropic	Claude Fable 5.1	language	2026-09-01		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude Fable 5.1	language,reason,code,understand	None		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude Haiku 4.5	code	2025-10-15		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude Haiku 4.5	language	None		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude Instant 1	language	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude Mythos 5.1	code	2026-09-01		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude Mythos 5.1	language,reason,code,understand	2026-09		https://platform.claude.com/docs/en/models/overview
+Anthropic	Claude Mythos Preview	code	2026-04-07		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude Opus 4	reason	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude Opus 4.1	language	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude Opus 4.5	language	None		https://platform.claude.com/docs/en/about-claude/models/overview.md
+Anthropic	Claude Opus 4.6	language	None		https://platform.claude.com/docs/en/about-claude/models/overview.md
+Anthropic	Claude Opus 4.7	language	None		https://platform.claude.com/docs/en/about-claude/models/overview.md
+Anthropic	Claude Opus 4.8	code	2026-05-28		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude Opus 4.8	language	None		https://platform.claude.com/docs/en/about-claude/models/overview.md
+Anthropic	Claude Opus 5	language	None		https://platform.claude.com/docs/en/about-claude/models/overview.md
+Anthropic	Claude Opus 5.5	code	2026-09-22		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude Opus 5.5	language,reason,code,understand	None		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude Sonnet 4	code	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude Sonnet 4.5	code	None		https://platform.claude.com/docs/en/about-claude/model-deprecations.md
+Anthropic	Claude Sonnet 4.6	language	None		https://platform.claude.com/docs/en/about-claude/models/overview.md
+Anthropic	Claude Sonnet 5	language	None		https://platform.claude.com/docs/en/about-claude/models/overview.md
+Anthropic	Claude Sonnet 5.5	code	2026-09-28		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude Sonnet 5.5	language,reason,understand	None		https://platform.claude.com/docs/en/about-claude/models/overview
+Anthropic	Claude 应用（Cowork 合体）	agent	2026-01-12		https://platform.claude.com/docs/en/about-claude/models/overview
+Anysphere (SpaceX / SpaceXAI)	Cursor	agent	2023-03		
+Apodex AI	Apodex 1.1	language,reason,code	None		https://www.apodex.com/api
+Apodex AI	Apodex 1.1 Mini	language	None		https://www.apodex.com/api
+Apple	Apple 智能（基础模型 3）	understand	2026-06-08		
+Arc Institute / NVIDIA	Evo	science	None		https://github.com/evo-design/evo
+Arc Institute / NVIDIA	Evo 2	science	None		https://raw.githubusercontent.com/ArcInstitute/evo2/main/README.md
+AssemblyAI	Universal-2	asr	None		https://www.assemblyai.com/docs/getting-started/models
+AssemblyAI	Universal-3.5 Pro	asr	None		https://www.assemblyai.com/docs/getting-started/models
+AssemblyAI	Universal-3.5 Pro Streaming	asr	None		https://www.assemblyai.com/docs/getting-started/models
+AssemblyAI	Universal-Streaming English	asr	None		https://www.assemblyai.com/docs/getting-started/models
+AssemblyAI	Universal-Streaming Multilingual	asr	None		https://www.assemblyai.com/docs/getting-started/models
+Baichuan AI	百川 2	language	2023-09-06		
+Baichuan AI	百川 M3	language	2026-01		
+Baidu	文心 4.5	understand	2025-03-16		
+Baidu	文心 5.1 Preview	language	2026-05-09		
+Baidu	文心一言 3.5	language	2023-03-16		
+Biohub	ESMFold2	science	None	architecture-component:ESMC	https://github.com/Biohub/esm
+Black Forest Labs	FLUX 3	video	2026-07-23		
+Black Forest Labs	FLUX 3 Action	robot,spatial	None		https://bfl.ai/models/flux-3-action
+Black Forest Labs	FLUX 3 Image	image	None		https://bfl.ai/models/flux-3-image
+Black Forest Labs	FLUX 3 Video	video	None		https://bfl.ai/models/flux-3-video
+Black Forest Labs	FLUX.1	image	2024-08-01		
+Black Forest Labs	FLUX.1	image	None		https://bfl.ai/models/flux-1
+Black Forest Labs	FLUX.1 Kontext	image	None		https://bfl.ai/models/flux-kontext
+Black Forest Labs	FLUX.2	image	None		https://bfl.ai/models/flux-2
+Black Forest Labs	FLUX1.1 [pro]	image	None		https://docs.bfl.ml/flux_models/flux_1_1_pro.md
+Boltz / MIT research team	Boltz-1	science	None		https://raw.githubusercontent.com/jwohlwend/boltz/main/README.md
+Boltz / MIT research team	Boltz-2	science	None		https://raw.githubusercontent.com/jwohlwend/boltz/main/README.md
+Boson AI	Higgs Audio v3	tts	None		https://github.com/boson-ai/higgs-audio
+Butterfly Effect (Meta deal being unwound)	Manus	agent	2025-03-06		
+Butterfly Effect (Meta deal being unwound)	Manus 2.0（Manus Studio）	agent	2026-09-28		
+ByteDance	Trae	agent	2025-01		
+ByteDance	扣子 Coze	agent	2024-02		
+ByteDance	豆包	agent	2023-08		
+ByteDance	豆包 Seed 2.0	language	2026-02-14		
+ByteDance	豆包 Seed 2.1 Pro	language	2026-06-24		
+ByteDance	豆包大模型 Pro	language	2024-05-15		
+ByteDance Seed	即梦 Seedance 1.0	video	2025-06-11		
+ByteDance Seed	即梦 Seedance 2.0	video	2026-02-12		
+ByteDance Seed	即梦 Seedance 2.5	video	2026-07-31		
+ByteDance Seed	即梦 Seedream 3.0	image	2025-04		
+ByteDance Seed	即梦 Seedream 5.0	image	2026-02		
+CMU WAVLab / ESPnet researchers	OWSM v4	asr,speech-translation	None		https://huggingface.co/espnet/owsm_v4_medium_1B/raw/main/README.md
+Cartesia	Ink 2	asr	2026-09-17		https://docs.cartesia.ai/build-with-cartesia/stt/latest
+Cartesia	Sonic 3.5	tts	None		https://docs.cartesia.ai/build-with-cartesia/tts-models/latest
+Cartesia	Sonic 3.6	tts	2026-08-27		https://docs.cartesia.ai/build-with-cartesia/tts-models/latest
+Chai Discovery	Chai-1	science	None		https://raw.githubusercontent.com/chaidiscovery/chai-lab/main/README.md
+Chai Discovery	Chai-3	science	None		https://www.chaidiscovery.com/news
+Character Technologies	Character.AI	agent	2022-09		
+Circuit & Chisel / Unbiased AI	Pareto 26.10 Preview	language,understand,reason,code	None		https://unbiased.ai/model-card/
+Codeium -> Cognition	Windsurf 风帆	agent	2024-11-13		
+Cognition	Devin（AI 软件工程师）	agent	2024-03-12		
+Cohere	Aya 101	language	None		https://huggingface.co/CohereLabs/aya-101/raw/main/README.md
+Cohere	Aya Vision	understand	None		https://docs.cohere.com/docs/aya-vision.md
+Cohere	Aya expanse	language	None		https://huggingface.co/CohereLabs/aya-expanse-8b
+Cohere	Cohere Embed 3	retrieval	None		https://docs.cohere.com/docs/models
+Cohere	Cohere Embed 4	retrieval	None		https://docs.cohere.com/docs/models
+Cohere	Cohere Embed 5	retrieval	2026-09-30		https://cohere.com/blog/embed-5
+Cohere	Cohere Rerank 3.5	rerank	None		https://docs.cohere.com/docs/models
+Cohere	Cohere Rerank 4	rerank	None		https://docs.cohere.com/docs/rerank-overview
+Cohere	Cohere Transcribe	asr	None		https://docs.cohere.com/v2/docs/models
+Cohere	Cohere Transcribe Arabic	asr	2026-07-07	finetune:Cohere Transcribe	https://docs.cohere.com/v2/docs/models
+Cohere	Command A	language	None		https://huggingface.co/CohereLabs/command-a-translate-08-2025
+Cohere	Command A Reasoning	reason	None		https://docs.cohere.com/docs/command-a-reasoning.md
+Cohere	Command A Translate	language	None		https://docs.cohere.com/docs/command-a-translate.md
+Cohere	Command A Vision	language,understand	None		https://docs.cohere.com/v2/docs/command-a-vision.md
+Cohere	Command A+	language,reason,understand	None		https://docs.cohere.com/docs/command-a-plus.md
+Cohere	Command R	language	None		https://docs.cohere.com/docs/models.md
+Cohere	Command R+	language,reason,understand	2024-08		https://docs.cohere.com/v2/docs/models
+Cohere	Command R7B	language	2024-12		https://docs.cohere.com/v2/docs/models
+Cohere	North Mini Code 1.0	code	None		https://huggingface.co/CohereLabs/North-Mini-Code-1.0/raw/main/README.md
+Cohere	North Small Translate 1.0	language	None		https://docs.cohere.com/docs/north-small-translate-1.0.md
+Cohere	Parse 5.0	understand	None		https://docs.cohere.com/v2/docs/models
+Cohere	Tiny Aya	language	None		https://docs.cohere.com/docs/tiny-aya.md
+Coqui	XTTS v2	tts	None		https://huggingface.co/coqui/XTTS-v2
+Datalab	Surya 2	understand	None		https://github.com/datalab-to/surya
+DeepSeek	DeepSeek Harness 虎鲸	agent	2026-08-13		https://huggingface.co/deepseek-ai/DeepSeek-R1
+DeepSeek	DeepSeek-Coder-V2	code,language	None		https://raw.githubusercontent.com/deepseek-ai/DeepSeek-Coder-V2/main/README.md
+DeepSeek	DeepSeek-OCR 2	understand	None		https://github.com/deepseek-ai/DeepSeek-OCR-2
+DeepSeek	DeepSeek-R1	reason,language	2025-01-20	post-training:DeepSeek-V3-Base;weight-base:DeepSeek-V3-Base	https://raw.githubusercontent.com/deepseek-ai/DeepSeek-R1/main/README.md
+DeepSeek	DeepSeek-R1 Distill Llama	reason,language	None	distillation-teacher:DeepSeek-R1;weight-base:Llama 3.1;weight-base:Llama 3.3	https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Llama-8B
+DeepSeek	DeepSeek-R1 Distill Qwen	reason,language	None	distillation-teacher:DeepSeek-R1;weight-base:Qwen2.5;weight-base:Qwen2.5-Math	https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-7B
+DeepSeek	DeepSeek-R1 深度思考	reason	2025-01-20		https://huggingface.co/deepseek-ai/DeepSeek-R1
+DeepSeek	DeepSeek-R1-0528	reason,language	2025-05-28		https://huggingface.co/deepseek-ai/DeepSeek-R1-0528
+DeepSeek	DeepSeek-R1-Zero	reason,language	None	post-training:DeepSeek-V3-Base;weight-base:DeepSeek-V3-Base	https://huggingface.co/deepseek-ai/DeepSeek-R1-Zero
+DeepSeek	DeepSeek-V2	language	2024-05-06		https://raw.githubusercontent.com/deepseek-ai/DeepSeek-V2/main/README.md
+DeepSeek	DeepSeek-V2.5	language	2024-09-05		https://api-docs.deepseek.com/updates
+DeepSeek	DeepSeek-V3	language	2024-12-26		https://huggingface.co/deepseek-ai/DeepSeek-R1
+DeepSeek	DeepSeek-V3	language	2024-12-26	post-training:DeepSeek-V3-Base	https://raw.githubusercontent.com/deepseek-ai/DeepSeek-V3/main/README.md
+DeepSeek	DeepSeek-V3-0324	language	2025-03-24		https://huggingface.co/deepseek-ai/DeepSeek-V3-0324
+DeepSeek	DeepSeek-V3-Base	language	None		https://huggingface.co/deepseek-ai/DeepSeek-V3-Base/raw/main/README.md
+DeepSeek	DeepSeek-V3.1	reason,language	2025-08-21	post-training:DeepSeek-V3.1-Base	https://api-docs.deepseek.com/updates
+DeepSeek	DeepSeek-V3.1-Base	language	None	continued-pretraining:DeepSeek-V3-Base	https://huggingface.co/deepseek-ai/DeepSeek-V3.1-Base/raw/main/README.md
+DeepSeek	DeepSeek-V3.1-Terminus	reason,language	2025-09-22	weight-base:DeepSeek-V3.1-Base	https://huggingface.co/deepseek-ai/DeepSeek-V3.1-Terminus/raw/main/README.md
+DeepSeek	DeepSeek-V3.2	reason,language	2025-12-01		https://api-docs.deepseek.com/updates
+DeepSeek	DeepSeek-V3.2-Exp	reason,language	2025-09-29	finetune:DeepSeek-V3.2-Exp-Base	https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp/raw/main/README.md
+DeepSeek	DeepSeek-V3.2-Exp-Base	language	None		https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp-Base
+DeepSeek	DeepSeek-V3.2-Speciale	reason,language	2025-12-01		https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Speciale
+DeepSeek	DeepSeek-V4 / V4.1	language	2026-04-24		https://huggingface.co/deepseek-ai/DeepSeek-R1
+DeepSeek	DeepSeek-V4-Flash	reason,language	2026-04-24	post-training:DeepSeek-V4-Flash-Base	https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash/raw/main/README.md
+DeepSeek	DeepSeek-V4-Flash-0731	reason,language	2026-07-31	post-training:DeepSeek-V4-Flash	https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731/raw/main/README.md
+DeepSeek	DeepSeek-V4-Flash-Base	language	None		https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash/raw/main/README.md
+DeepSeek	DeepSeek-V4-Flash-Vision-Exp	understand	2026-08-21	architecture-component:DeepSeek-V4-Flash	https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp/raw/main/README.md
+DeepSeek	DeepSeek-V4-Pro	reason,language	2026-04-24	post-training:DeepSeek-V4-Pro-Base	https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/raw/main/README.md
+DeepSeek	DeepSeek-V4-Pro-0813	reason,language	2026-08-13	architecture-component:DeepSeek-V4-Pro	https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813/raw/main/README.md
+DeepSeek	DeepSeek-V4-Pro-Base	language	None		https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash/raw/main/README.md
+DeepSeek	DeepSeek-V4.1-Flash	language,understand,agent	2026-09-10		https://api-docs.deepseek.com/updates
+Deepgram	Flux	asr	None		https://developers.deepgram.com/docs/models-languages-overview
+Deepgram	Nova-2	asr	None		https://developers.deepgram.com/docs/models-languages-overview
+Deepgram	Nova-3	asr	None		https://developers.deepgram.com/docs/models-languages-overview
+Deepgram	Nova-3 Medical	asr	None		https://developers.deepgram.com/docs/models-languages-overview
+Deepgram	Nova-3 Pharma	asr	None		https://developers.deepgram.com/docs/models-languages-overview
+ElevenLabs	Eleven Multilingual v2	tts	None		https://elevenlabs.io/docs/overview/models
+ElevenLabs	Eleven Music v2.5	music	None		https://elevenlabs.io/docs/overview/capabilities/music
+ElevenLabs	Eleven Sound Effects v2	sound	None		https://elevenlabs.io/docs/overview/models
+ElevenLabs	Eleven v3	tts	None		https://elevenlabs.io/docs/overview/models
+ElevenLabs	Eleven v4	tts	2026-09-28		
+ElevenLabs	Eleven v4	tts	2026-09-28		https://elevenlabs.io/docs/overview/models
+ElevenLabs	ElevenLabs 多语言 v2	tts	2023-08		
+ElevenLabs	Scribe v1	asr	None		https://elevenlabs.io/docs/overview/models
+ElevenLabs	Scribe v2	asr	None		https://elevenlabs.io/docs/overview/models
+ElevenLabs	Scribe v2 Medical	asr	None		https://elevenlabs.io/docs/overview/models
+ElevenLabs	Scribe v2 Realtime	asr	None		https://elevenlabs.io/docs/overview/models
+EuroBERT 研究团队	EuroBERT	understand	None		https://huggingface.co/EuroBERT/EuroBERT-210m
+EvolutionaryScale / Biohub	ESM3	science	None		https://github.com/Biohub/esm/blob/main/_assets/ESM3_README.md
+EvolutionaryScale / Biohub	ESMC	science	None		https://github.com/Biohub/esm
+Figure AI	Figure 03	other	2025-10-09		
+Figure AI	Helix 02	robot	2026-01-27		https://www.figure.ai/news/helix-02
+Figure AI	Helix 2.5	robot	2026-09-17		https://www.figure.ai/news/helix-2-5-zero-shot-30-home-generalization
+FireRedTeam / 小红书语音团队	FireRedASR2	asr	2026-02-12		https://github.com/FireRedTeam/FireRedASR2S
+FireRedTeam / 小红书语音团队	FireRedAudio	asr,speech-understand,tts	2026-08-21		https://raw.githubusercontent.com/FireRedTeam/FireRedAudio/main/README.md
+FireRedTeam / 小红书语音团队	FireRedTTS-2	tts	2025-09-08		https://github.com/FireRedTeam/FireRedTTS2
+FireRedTeam / 小红书语音团队	FireRedTTS3	tts	2026-08-13		https://raw.githubusercontent.com/FireRedTeam/FireRedTTS3/main/README.md
+Fireworks Research	Ember-1	language,reason,code,understand	2026-09-23	post-training:Kimi K3	https://fireworks.ai/blog/ember-1
+Fish Audio	Fish Audio Drama 3 Preview	tts	None		https://docs.fish.audio/api-reference/endpoint/openapi-v1/text-to-speech
+Fish Audio	Fish Audio S2 Pro	tts	None	continued-pretraining:Qwen3 Base;post-training:Fish Audio S2 SFT checkpoint（内部）	https://github.com/fishaudio/fish-speech
+Fish Audio	Fish Audio S2.1-Pro	tts	None		https://docs.fish.audio/developer-guide/models-pricing/models-overview
+Fish Audio	Fish Transcribe-1-Pro	asr	None		https://docs.fish.audio/developer-guide/models-pricing/models-overview
+GitHub (Microsoft)	GitHub Copilot	agent	2021-06		
+Google	Gemini 1.5 Pro	language	2024-02-15		https://ai.google.dev/gemini-api/docs/models
+Google	Gemini 2.5 Pro	reason	2025-03-25		https://ai.google.dev/gemini-api/docs/models
+Google	Gemini 3.1 Pro Preview	language	2026-02-19		https://ai.google.dev/gemini-api/docs/models
+Google	Gemini 3.5 Flash-Lite	language	2026-07-21		https://ai.google.dev/gemini-api/docs/models
+Google	Gemini 3.8 Flash	language	2026-09-02		https://ai.google.dev/gemini-api/docs/models
+Google	Gemini 3.8 Live	realtime	2026-09-15		https://ai.google.dev/gemini-api/docs/models
+Google	Gemini 4 Argon（氩）	language	2026-09-30		https://ai.google.dev/gemini-api/docs/models
+Google	Gemini Omni 1.1 Flash	video	2026-05-19		https://ai.google.dev/gemini-api/docs/models
+Google	Gemini Robotics 2	robot	2026-07-30		https://ai.google.dev/gemini-api/docs/models
+Google	Gemma 4	understand	2026-04-02		https://ai.google.dev/gemini-api/docs/models
+Google	Genie 3 精灵世界	spatial	2025-08-05		https://ai.google.dev/gemini-api/docs/models
+Google	Google Antigravity 反重力	agent	2025-11-18		https://ai.google.dev/gemini-api/docs/models
+Google	Lyria 3.5	music	2026-07-30		https://ai.google.dev/gemini-api/docs/models
+Google	Nano Banana 2	image	2026-02-26		https://ai.google.dev/gemini-api/docs/models
+Google	Nano Banana 纳米香蕉	image	2025-08-26		https://ai.google.dev/gemini-api/docs/models
+Google	NotebookLM	agent	2023-07-12		https://ai.google.dev/gemini-api/docs/models
+Google	Veo 3	video	2025-05-20		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	AlphaFold 2	science	None		https://raw.githubusercontent.com/google-deepmind/alphafold/main/README.md
+Google DeepMind	AlphaFold 3	science	None		https://github.com/google-deepmind/alphafold3
+Google DeepMind	AlphaGenome	science	None		https://github.com/google-deepmind/alphagenome_research
+Google DeepMind	Chirp 3 HD	tts	None		https://cloud.google.com/text-to-speech/docs/chirp3-hd
+Google DeepMind	Chirp 3 Transcription	asr	None		https://cloud.google.com/speech-to-text/v2/docs/chirp_3-model
+Google DeepMind	EmbeddingGemma	retrieval	None		https://ai.google.dev/gemma/docs/embeddinggemma/model_card?hl=en
+Google DeepMind	Gemini 2.0 Flash	language,understand	None		https://ai.google.dev/gemini-api/docs/models/gemini-2.0-flash
+Google DeepMind	Gemini 2.5 Flash	understand	None		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini 2.5 Flash-Lite	language,understand	None		https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash-lite
+Google DeepMind	Gemini 2.5 Pro	reason	None		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini 3 Flash Preview	understand	None		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini 3 Pro Image	image	None		https://ai.google.dev/gemini-api/docs/image-generation?hl=en
+Google DeepMind	Gemini 3.1 Flash Image	image	None		https://ai.google.dev/gemini-api/docs/image-generation?hl=en
+Google DeepMind	Gemini 3.1 Flash Lite Image	image	None		https://ai.google.dev/gemini-api/docs/image-generation?hl=en
+Google DeepMind	Gemini 3.1 Pro Preview	reason	None		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini 3.5 Flash	understand	None		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini 3.5 Live Translate	speech-translation	None		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini 3.5 Transcribe	asr	None		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini 3.7 Flash	code	None		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini 3.8 Flash	language,reason,code,understand	None		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini 3.8 Flash TTS	tts	None		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini 3.8 Flash-Lite Preview TTS	tts	2026-09-22		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini 3.8 Live	realtime	None		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini 3.8 Live Extended Thinking	language,reason,understand,realtime,speech-understand	None		https://ai.google.dev/gemini-api/docs/models
+Google DeepMind	Gemini Embedding 2	retrieval	None		https://ai.google.dev/gemini-api/docs/embeddings
+Google DeepMind	Gemini Omni 1.1 Flash	video	None		https://ai.google.dev/gemini-api/docs/models?hl=en
+Google DeepMind	Gemini Robotics 2	robot	2026-07-30		https://deepmind.google/models/gemini-robotics/vla/
+Google DeepMind	Gemini Robotics On-Device 2	robot	None		https://deepmind.google/models/model-cards/
+Google DeepMind	Gemini Robotics-ER 2	understand	None		https://ai.google.dev/gemini-api/docs/models/gemini-robotics-er-2-preview
+Google DeepMind	Gemma 2	language	None		https://raw.githubusercontent.com/google-deepmind/gemma/main/README.md
+Google DeepMind	Gemma 3	understand	None		https://raw.githubusercontent.com/google-deepmind/gemma/main/README.md
+Google DeepMind	Gemma 4	language,reason,code,understand	None		https://raw.githubusercontent.com/google-deepmind/gemma/main/README.md
+Google DeepMind	GenCast	science	None		https://github.com/google-deepmind/weathernext
+Google DeepMind	Genie 2	spatial	None		https://deepmind.google/discover/blog/genie-2-a-large-scale-foundation-world-model/
+Google DeepMind	Genie 3	spatial	None		https://deepmind.google/models/genie/
+Google DeepMind	GraphCast	science	None		https://github.com/google-deepmind/weathernext
+Google DeepMind	Imagen	image	None		https://imagen.research.google/
+Google DeepMind	Imagen 3	image	None		https://deepmind.google/models/imagen/
+Google DeepMind	Imagen 4	image	None		https://deepmind.google/models/imagen/
+Google DeepMind	Lyria 3.5	music	None		https://ai.google.dev/gemini-api/docs/models/lyria-3.5?hl=en
+Google DeepMind	Lyria RealTime	music	None		https://ai.google.dev/gemini-api/docs/models/lyria-realtime-exp?hl=en
+Google DeepMind	PaliGemma	understand	None		https://huggingface.co/api/models/google/paligemma-3b-pt-224
+Google DeepMind	PaliGemma 2	understand	None		https://ai.google.dev/gemma/docs/paligemma/model-card-2?hl=en
+Google DeepMind	SigLIP	understand,retrieval	None		https://huggingface.co/google/siglip-base-patch16-224
+Google DeepMind	SigLIP 2	understand,retrieval	None		https://huggingface.co/google/siglip2-base-patch16-224
+Google DeepMind	Veo	video	2024-05-14		https://blog.google/technology/ai/google-generative-ai-veo-imagen-3/
+Google DeepMind	Veo 2	video	None		https://deepmind.google/models/veo/
+Google DeepMind	Veo 3	video	None		https://deepmind.google/models/veo/
+Google DeepMind	Veo 3.1	video	None		https://deepmind.google/models/veo/
+Google DeepMind	Veo 3.1 Lite	video	None		https://ai.google.dev/gemini-api/docs/models?hl=en
+Google DeepMind	WeatherNext 2	science	None		https://github.com/google-deepmind/weathernext
+Google DeepMind	WeatherNext 3	science	None		https://deepmind.google/science/weathernext/
+Google DeepMind	阿尔法（AlphaGo / AlphaFold）	science	2016-03-09		
+Huawei	华为 openPangu 2.0 Pro	language	2026-07-31		
+Huawei	华为盘古 5.5	language	2025-06-20		
+Hugging Face	SmolLM 2	language	None		https://huggingface.co/HuggingFaceTB/SmolLM2-135M
+Hugging Face	SmolLM 3	language	2025-07-08		https://huggingface.co/HuggingFaceTB/SmolLM3-3B
+Hugging Face	SmolVLA	robot	None	weight-base:SmolVLM2	https://github.com/huggingface/lerobot/blob/main/docs/source/smolvla.mdx
+Hugging Face	SmolVLM	understand	None		https://huggingface.co/api/models/HuggingFaceTB/SmolVLM2-500M-Video-Instruct
+Hugging Face	SmolVLM2	understand	None	weight-base:SmolVLM;architecture-component:SigLIP;architecture-component:SmolLM 2	https://huggingface.co/HuggingFaceTB/SmolVLM2-500M-Video-Instruct
+Hugging Face	StarCoder 2	code	None		https://huggingface.co/bigcode/starcoder2-15b/raw/main/README.md
+IBM	Granite 3.0	language,code	2024-10-21		https://huggingface.co/ibm-granite/granite-3.0-8b-instruct/raw/main/README.md
+IBM	Granite 3.1	language,code	2024-12-18		https://huggingface.co/ibm-granite/granite-3.1-8b-instruct/raw/main/README.md
+IBM	Granite 3.2	language,reason,code	2025-02-26		https://huggingface.co/ibm-granite/granite-3.2-8b-instruct/raw/main/README.md
+IBM	Granite 3.3	language	None		https://huggingface.co/ibm-granite/granite-3.3-2b-base
+IBM	Granite 4.0	language	None		https://huggingface.co/ibm-granite/granite-4.0-1b
+IBM	Granite 4.1	language,code	2026-04-29		https://huggingface.co/ibm-granite/granite-4.1-3b/raw/main/README.md
+IBM	Granite 4.2	language,reason,code	None	post-training:Granite 4.1 Base	https://raw.githubusercontent.com/ibm-granite/granite-4.2-language-models/main/README.md
+IBM	Granite Code	code	2024-05-06		https://huggingface.co/ibm-granite/granite-8b-code-instruct-4k/raw/main/README.md
+IBM	Granite Embedding R2	retrieval	None		https://huggingface.co/ibm-granite/granite-embedding-english-r2/raw/main/README.md
+IBM	Granite Speech 5.0	asr	None		https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc
+Ideogram	Ideogram 4.0	image	None		https://ideogram.ai/models/4.0/
+Ideogram	Ideogram 4.5	image	None		https://ideogram.ai/models/4.5/
+InferenceNet	Schematron V2	understand	None		https://docs.inference.net/workhorse-models/schematron.md
+InferenceNet	Schematron V2 Small	understand	None		https://docs.inference.net/workhorse-models/schematron.md
+InferenceNet	Schematron V2 Turbo	understand	None		https://docs.inference.net/workhorse-models/schematron.md
+Jina AI / Elastic	Jina Code Embeddings	retrieval	None		https://huggingface.co/jinaai/jina-code-embeddings-0.5b/raw/main/README.md
+Jina AI / Elastic	Jina Embeddings v2	retrieval	None		https://huggingface.co/jinaai/jina-embeddings-v2-base-en/raw/main/README.md
+Jina AI / Elastic	Jina Embeddings v3	retrieval	None		https://huggingface.co/jinaai/jina-embeddings-v3/raw/main/README.md
+Jina AI / Elastic	Jina Embeddings v4	retrieval	None	weight-base:Qwen2.5-VL Instruct	https://jina.ai/news/jina-embeddings-v4-universal-embeddings-for-multimodal-multilingual-retrieval/
+Jina AI / Elastic	Jina Embeddings v5-omni	retrieval	None	architecture-component:Jina Embeddings v5-text;architecture-component:Qwen3.5;architecture-component:SigLIP 2;architecture-component:Qwen2.5-Omni	https://huggingface.co/jinaai/jina-embeddings-v5-omni-small
+Jina AI / Elastic	Jina Embeddings v5-text	retrieval	2026-02-18	weight-base:Qwen3 Base;weight-base:EuroBERT;distillation-teacher:Qwen3 Embedding	https://huggingface.co/jinaai/jina-embeddings-v5-text-small
+Jina AI / Elastic	Jina OCR v1	understand	None	post-training:DeepSeek-OCR	https://huggingface.co/jinaai/jina-ocr-v1
+Jina AI / Elastic	Jina Reranker m0	rerank	None		https://huggingface.co/jinaai/jina-reranker-m0/raw/main/README.md
+Jina AI / Elastic	Jina Reranker v2	rerank	None		https://huggingface.co/jinaai/jina-reranker-v2-base-multilingual/raw/main/README.md
+Jina AI / Elastic	Jina Reranker v3	rerank	None		https://huggingface.co/jinaai/jina-reranker-v3/raw/main/README.md
+Jina AI / Elastic	Jina Reranker v3.5	rerank	None	weight-base:Qwen3 Instruct	https://huggingface.co/jinaai/jina-reranker-v3.5
+Kling AI (Kuaishou spin-off)	可灵 4.0	video	2026-09-28		
+Kuaishou (Kling AI)	可灵 1.0	video	2024-06-06		
+Kuaishou (Kling AI)	可灵 3.0	video	2026-02-05		
+Kunlun Tech (Skywork AI)	天工 Mureka V9	music	2026-03		
+Kyutai	Kyutai STT	asr	None		https://github.com/kyutai-labs/delayed-streams-modeling
+Kyutai	Kyutai TTS	tts	None		https://github.com/kyutai-labs/delayed-streams-modeling
+Kyutai	Moshi	realtime	None	continued-pretraining:Helium;architecture-component:Mimi;distillation-teacher:Whisper v3	https://github.com/kyutai-labs/moshi
+LangChain	LangChain	agent	2022-10		
+Lightricks	LTX-2	video	None		https://github.com/Lightricks/LTX-2
+Lightricks	LTX-2.5	video	None	architecture-component:Gemma 4	https://huggingface.co/Lightricks/LTX-2.5
+Lightricks	LTX-Video	video	None		https://github.com/Lightricks/LTX-Video
+Liquid AI	LFM 2.5	language	None		https://huggingface.co/LiquidAI/LFM2.5-2.6B/raw/main/README.md
+Liquid AI	LFM2 ENJP MT	language	None		https://docs.liquid.ai/lfm/models/liquid-nanos.md
+Liquid AI	LFM2 Math	language,reason	None		https://docs.liquid.ai/lfm/models/liquid-nanos.md
+Liquid AI	LFM2 PII Extract JP	language,decision	None		https://docs.liquid.ai/lfm/models/liquid-nanos.md
+Liquid AI	LFM2 Transcript	language	None		https://docs.liquid.ai/lfm/models/liquid-nanos.md
+Liquid AI	LFM2.5 Audio	speech-understand,asr,tts	None		https://huggingface.co/LiquidAI/LFM2.5-Audio-1.5B/raw/main/README.md
+Liquid AI	LFM2.5 ColBERT	retrieval,rerank	None		https://docs.liquid.ai/lfm/models/liquid-nanos.md
+Liquid AI	LFM2.5 Embedding	retrieval	None		https://docs.liquid.ai/lfm/models/liquid-nanos.md
+Liquid AI	LFM2.5 Encoder	decision	None		https://docs.liquid.ai/lfm/models/liquid-nanos.md
+Liquid AI	LFM2.5 JP	language	None		https://docs.liquid.ai/lfm/models/text-models.md
+Liquid AI	LFM2.5 Thinking	language,reason	None		https://docs.liquid.ai/lfm/models/text-models.md
+Liquid AI	LFM2.5 VL	language,understand	None		https://huggingface.co/LiquidAI/LFM2.5-VL-1.6B/raw/main/README.md
+Liquid AI	LFM2.5 VL Extract	understand	None		https://docs.liquid.ai/lfm/models/liquid-nanos.md
+Liquid AI	d1	decision	None		https://docs.liquid.ai/lfm/models/decision-models.md
+Lovable	Lovable	agent	2024-11		
+Luma AI	Luma Ray 2	video	None		https://docs.lumalabs.ai/docs/video-generation
+Luma AI	Luma Ray3	video	2025-09-18		
+Luma AI	Luma Ray3	video	None		https://lumalabs.ai/ray3
+Luma AI	Luma Ray3.2	video	None		https://lumalabs.ai/ray
+MOSI.AI / OpenMOSS	MOSS-SoundEffect	sound	None		https://huggingface.co/OpenMOSS-Team/MOSS-SoundEffect/raw/main/README.md
+MOSI.AI / OpenMOSS	MOSS-TTS	tts	None		https://huggingface.co/OpenMOSS-Team/MOSS-TTS/raw/main/README.md
+MOSI.AI / OpenMOSS	MOSS-TTS-Realtime	tts	None		https://huggingface.co/OpenMOSS-Team/MOSS-TTS-Realtime/raw/main/README.md
+MOSI.AI / OpenMOSS	MOSS-TTSD v1.0	tts	None		https://huggingface.co/OpenMOSS-Team/MOSS-TTSD-v1.0/raw/main/README.md
+MOSI.AI / OpenMOSS	MOSS-VoiceGenerator	tts	None		https://huggingface.co/OpenMOSS-Team/MOSS-VoiceGenerator/raw/main/README.md
+Meituan	美团 LongCat-Flash	language	2025-09-01		
+Meituan	美团龙猫 LongCat-2.5	understand	2026-09-25		
+Meta	AudioGen	sound	None		https://github.com/facebookresearch/audiocraft
+Meta	DINO	understand	None		https://raw.githubusercontent.com/facebookresearch/dino/main/README.md
+Meta	DINOv2	understand	None		https://huggingface.co/facebook/dinov2-base
+Meta	DINOv3	understand	None		https://github.com/facebookresearch/dinov3
+Meta	ESM-2	science	None		https://github.com/facebookresearch/esm
+Meta	ESMFold	science	None		https://raw.githubusercontent.com/facebookresearch/esm/main/README.md
+Meta	JASCO	music	None		https://github.com/facebookresearch/audiocraft/blob/main/docs/JASCO.md
+Meta	LLaMA 初代	language	2023-02-24		
+Meta	Llama 2	language	2023-07-18		https://raw.githubusercontent.com/meta-llama/llama-models/main/README.md
+Meta	Llama 3	language	2024-04-18		https://raw.githubusercontent.com/meta-llama/llama-models/main/README.md
+Meta	Llama 3.1	language	2024-07-23		https://raw.githubusercontent.com/meta-llama/llama-models/main/README.md
+Meta	Llama 3.1 405B	language	2024-07-23		
+Meta	Llama 3.2	language,understand	2024-09-25		https://raw.githubusercontent.com/meta-llama/llama-models/main/README.md
+Meta	Llama 3.3	language	2024-12-04		https://raw.githubusercontent.com/meta-llama/llama-models/main/README.md
+Meta	Llama 4	language,understand	None		https://raw.githubusercontent.com/meta-llama/llama-models/main/README.md
+Meta	Llama 4（Scout / Maverick）	understand	2025-04-05		
+Meta	Meta Muse 个人智能体	agent	2026-09-08		
+Meta	Muse Image	image	2026-07-07		https://ai.meta.com/blog/introducing-muse-image-muse-video-msl
+Meta	Muse Spark	language,reason,understand	None		https://ai.meta.com/blog/introducing-muse-spark-meta-model-api/
+Meta	Muse Spark 1.1	language,reason,code,understand	2026-07-09		https://ai.meta.com/blog/introducing-muse-spark-meta-model-api/
+Meta	Muse Spark 灵感火花	understand	2026-04-08		
+Meta	Muse Video	video	2026-07-07		https://ai.meta.com/blog/introducing-muse-image-muse-video-msl
+Meta	MusicGen	music	None		https://github.com/facebookresearch/audiocraft
+Meta	SAM	understand	None		https://raw.githubusercontent.com/facebookresearch/segment-anything/main/README.md
+Meta	SAM 2	understand	None		https://github.com/facebookresearch/sam2
+Meta	SAM 3	understand	None		https://raw.githubusercontent.com/facebookresearch/sam3/main/README.md
+Meta	SAM 3.1	understand	2026-03-27		https://github.com/facebookresearch/sam3
+Meta	SeamlessM4T v2	speech-translation	None		https://github.com/facebookresearch/seamless_communication
+Meta	XLM-RoBERTa	understand	None		https://huggingface.co/FacebookAI/xlm-roberta-large
+Meta (acquired)	Moltbook 智能体论坛	agent	2026-01		
+Microsoft	Aurora	science	None		https://github.com/microsoft/aurora
+Microsoft	Aurora 1.5	science	None	finetune:Aurora 0.25° Pretrained	https://microsoft.github.io/aurora/models.html
+Microsoft	E5	retrieval	None		https://huggingface.co/intfloat/e5-base/raw/main/README.md
+Microsoft	E5 v2	retrieval	None		https://huggingface.co/intfloat/e5-base-v2/raw/main/README.md
+Microsoft	E5-Mistral Instruct	retrieval	None	finetune:Mistral 7B	https://huggingface.co/intfloat/e5-mistral-7b-instruct
+Microsoft	Florence-2	understand	None	continued-pretraining:Florence-2 original pretraining stage	https://huggingface.co/microsoft/Florence-2-large
+Microsoft	MAI-Code-1.1-Flash	code	None		https://microsoft.ai/models/mai-code-1-flash/
+Microsoft	MAI-Image-2.6	image	2026-09-04		
+Microsoft	MAI-Thinking-1	reason	2026-06-02		
+Microsoft	MAI-Transcribe-2	asr	None		https://learn.microsoft.com/en-us/azure/ai-services/speech-service/mai-transcribe
+Microsoft	MAI-Voice-2.1	tts	None		https://microsoft.ai/models/mai-voice-2-1/
+Microsoft	Multilingual E5	retrieval	None	weight-base:XLM-RoBERTa	https://huggingface.co/intfloat/multilingual-e5-large
+Microsoft	Multilingual E5 Instruct	retrieval	None		https://huggingface.co/intfloat/multilingual-e5-large-instruct/raw/main/README.md
+Microsoft	Phi-2	language	None		https://huggingface.co/microsoft/phi-2
+Microsoft	Phi-3	language	None		https://huggingface.co/microsoft/Phi-3-mini-4k-instruct
+Microsoft	Phi-3.5	language	None		https://huggingface.co/microsoft/Phi-3.5-MoE-instruct
+Microsoft	Phi-4	language	None		https://huggingface.co/microsoft/phi-4
+Microsoft	Phi-4	reason	2024-12-12		
+Microsoft	Phi-4 reasoning	reason,language	None	post-training:Phi-4	https://huggingface.co/microsoft/Phi-4-reasoning
+Microsoft	Phi-4-Reasoning-Vision	understand	None	weight-base:Phi-4 reasoning;architecture-component:SigLIP 2	https://huggingface.co/microsoft/Phi-4-reasoning-vision-15B/raw/main/README.md
+Microsoft	TRELLIS	spatial	None		https://github.com/microsoft/TRELLIS
+Microsoft	TRELLIS.2	spatial	None		https://github.com/microsoft/TRELLIS.2
+Microsoft	VibeVoice-ASR	asr	2026-01-21	distillation-teacher:Whisper turbo;architecture-component:VibeVoice acoustic/semantic tokenizers	https://github.com/microsoft/VibeVoice
+Microsoft	VibeVoice-ASR-Streaming	asr	2026-09-03	continued-pretraining:VibeVoice-ASR	https://github.com/microsoft/VibeVoice
+Microsoft	VibeVoice-Realtime	tts	2025-12-03	weight-base:Qwen2.5 Base	https://github.com/microsoft/VibeVoice
+Microsoft	VibeVoice-TTS	tts	2025-08-25	weight-base:Qwen2.5 Base	https://github.com/microsoft/VibeVoice
+Midjourney	Midjourney V1	image	None		https://docs.midjourney.com/api/v2/help_center/en-us/articles/33329788681101.json
+Midjourney	Midjourney V2	image	None		https://docs.midjourney.com/api/v2/help_center/en-us/articles/33329788681101.json
+Midjourney	Midjourney V3	image	None		https://docs.midjourney.com/api/v2/help_center/en-us/articles/33329788681101.json
+Midjourney	Midjourney V4	image	None		https://docs.midjourney.com/api/v2/help_center/en-us/articles/33329788681101.json
+Midjourney	Midjourney V5	image	2023-03-15		
+Midjourney	Midjourney V5	image	None		https://docs.midjourney.com/api/v2/help_center/en-us/articles/33329788681101.json
+Midjourney	Midjourney V5.1	image	2023-05-04		https://docs.midjourney.com/api/v2/help_center/en-us/articles/33329788681101.json
+Midjourney	Midjourney V5.2	image	None		https://docs.midjourney.com/api/v2/help_center/en-us/articles/33329788681101.json
+Midjourney	Midjourney V6	image	2023-12-20		https://docs.midjourney.com/api/v2/help_center/en-us/articles/32199405667853.json
+Midjourney	Midjourney V6.1	image	2024-07-30		https://docs.midjourney.com/api/v2/help_center/en-us/articles/32199405667853.json
+Midjourney	Midjourney V7	image	2025-04-03		
+Midjourney	Midjourney V7	image	2025-04-03		https://docs.midjourney.com/api/v2/help_center/en-us/articles/32199405667853.json
+Midjourney	Midjourney V8	image	2026-03-17		
+Midjourney	Midjourney V8.0	image	2026-03-17		https://docs.midjourney.com/api/v2/help_center/en-us/articles/32199405667853.json
+Midjourney	Midjourney V8.1	image	2026-04-14		https://docs.midjourney.com/api/v2/help_center/en-us/articles/32199405667853.json
+Midjourney	Midjourney V8.2	image	2026-07-24		https://docs.midjourney.com/hc/en-us/articles/32199405667853-Version
+Midjourney / Spellbrush	Midjourney Niji 4	image	None		https://docs.midjourney.com/hc/en-us/articles/33329788681101-Legacy-Features
+Midjourney / Spellbrush	Midjourney Niji 5	image	None		https://docs.midjourney.com/hc/en-us/articles/33329788681101-Legacy-Features
+Midjourney / Spellbrush	Midjourney Niji 6	image	None		https://docs.midjourney.com/hc/en-us/articles/33329788681101-Legacy-Features
+Midjourney / Spellbrush	Midjourney Niji 7	image	2026-01-09		https://docs.midjourney.com/api/v2/help_center/en-us/articles/32199405667853.json
+MiniMax	Hailuo 02	video	None		https://www.minimax.io/news/minimax-hailuo-02
+MiniMax	Hailuo 2.3	video	None		https://www.minimax.io/news/minimax-hailuo-2-3
+MiniMax	Hailuo 2.3 Fast	video	2025-10-28		https://platform.minimax.io/docs/guides/models-intro.md
+MiniMax	MiniMax ASR 1.0	asr	None		https://platform.minimax.io/docs/guides/speech-to-text.md
+MiniMax	MiniMax H3	video	2026-07-31	architecture-component:Qwen3-VL	https://huggingface.co/MiniMaxAI/MiniMax-H3
+MiniMax	MiniMax H3 Max	video	None	post-training:MiniMax H3	https://platform.minimax.io/docs/guides/video-generation.md
+MiniMax	MiniMax Image-01	image	2025-02-15		https://platform.minimax.io/docs/guides/image-generation.md
+MiniMax	MiniMax Music 1.5	music	2025-06-20		https://platform.minimax.io/docs/release-notes/models.md
+MiniMax	MiniMax Music 2.0	music	2025-10-29		https://platform.minimax.io/docs/guides/models-intro.md
+MiniMax	MiniMax Music 2.5	music	2026-01-16		https://platform.minimax.io/docs/release-notes/models.md
+MiniMax	MiniMax Music 2.5+	music	2026-03		https://platform.minimax.io/docs/release-notes/models.md
+MiniMax	MiniMax Music 2.6	music	2026-04		https://platform.minimax.io/docs/guides/models-intro.md
+MiniMax	MiniMax Music 3.0	music	2026-07-16	weight-base:Qwen3 Base	https://platform.minimax.io/docs/guides/models-intro
+MiniMax	MiniMax Music Cover	music	None		https://platform.minimax.io/docs/guides/music-generation.md
+MiniMax	MiniMax Speech 02	tts	2025-04-02		https://platform.minimax.io/docs/release-notes/models.md
+MiniMax	MiniMax Speech 2.5	tts	2025-08-06		https://platform.minimax.io/docs/release-notes/models.md
+MiniMax	MiniMax Speech 2.6	tts	2025-10-29		https://platform.minimax.io/docs/guides/models-intro.md
+MiniMax	MiniMax Speech 2.8	tts	2026-01-23		https://platform.minimax.io/docs/guides/models-intro
+MiniMax	MiniMax Video-01 Director	video	2025-02-11		https://platform.minimax.io/docs/release-notes/models.md
+MiniMax	MiniMax abab6.5	language	2024-04-17		https://huggingface.co/MiniMaxAI/models
+MiniMax	MiniMax 音乐 3.0	music	2026-07-16		https://huggingface.co/MiniMaxAI/models
+MiniMax	MiniMax-M1	reason,language	None	post-training:MiniMax-Text-01	https://raw.githubusercontent.com/MiniMax-AI/MiniMax-M1/main/README.md
+MiniMax	MiniMax-M2	code	2025-10-27		https://huggingface.co/MiniMaxAI/models
+MiniMax	MiniMax-M2	code,language	None		https://raw.githubusercontent.com/MiniMax-AI/MiniMax-M2/main/README.md
+MiniMax	MiniMax-M2-her	language	None		https://platform.minimax.io/docs/guides/text-chat.md
+MiniMax	MiniMax-M2.1	language,code,reason	2025-12-22		https://www.minimax.io/news/minimax-m21
+MiniMax	MiniMax-M2.5	language,code	2026-02		https://raw.githubusercontent.com/MiniMax-AI/MiniMax-M2.5/main/README.md
+MiniMax	MiniMax-M2.7	language,code	2026-03-18		https://platform.minimax.io/docs/guides/local-deploy.md
+MiniMax	MiniMax-M3	language,reason,code,understand	2026-06-01		https://platform.minimax.io/docs/guides/models-intro
+MiniMax	MiniMax-M3	understand	2026-06-01		https://huggingface.co/MiniMaxAI/models
+MiniMax	MiniMax-M3.1-Flash-Preview	language,code,understand	None		https://platform.minimax.io/docs/guides/models-intro
+MiniMax	MiniMax-Text-01	language	None		https://raw.githubusercontent.com/MiniMax-AI/MiniMax-M1/main/README.md
+MiniMax	MiniMax-VL-01	language,understand	2025-01-15	weight-base:MiniMax-Text-01	https://raw.githubusercontent.com/MiniMax-AI/MiniMax-01/main/README.md
+MiniMax	海螺 H3	video	2026-07-31		https://huggingface.co/MiniMaxAI/models
+MiniMax	海螺 Video-01	video	2024-09		https://huggingface.co/MiniMaxAI/models
+Mistral AI	Codestral	code	None		https://docs.mistral.ai/getting-started/models/models_overview
+Mistral AI	Codestral Embed	retrieval	None		https://docs.mistral.ai/getting-started/models/models_overview/
+Mistral AI	Devstral 2	code	2025-12-09		https://docs.mistral.ai/models/devstral-2-25-12
+Mistral AI	Ministral 3	understand	None		https://docs.mistral.ai/getting-started/models/models_overview
+Mistral AI	Mistral 7B	language	2023-09-27		
+Mistral AI	Mistral Embed	retrieval	None		https://docs.mistral.ai/getting-started/models/models_overview/
+Mistral AI	Mistral Large 1.0	language	None		https://docs.mistral.ai/getting-started/models/models_overview
+Mistral AI	Mistral Large 2.0	language	2024-07-24		https://docs.mistral.ai/models/mistral-large-2-0-24-07
+Mistral AI	Mistral Large 3	language,understand	None		https://docs.mistral.ai/getting-started/models/models_overview
+Mistral AI	Mistral Medium 3	language	None		https://docs.mistral.ai/getting-started/models/models_overview
+Mistral AI	Mistral Medium 3.5	code	2026-04-30		
+Mistral AI	Mistral Medium 3.5	language,code,understand	None		https://docs.mistral.ai/getting-started/models/models_overview
+Mistral AI	Mistral Moderation 2	decision	2026-03		https://docs.mistral.ai/models/mistral-moderation-26-03
+Mistral AI	Mistral OCR 4.1	understand	None		https://docs.mistral.ai/models/ocr-4-1
+Mistral AI	Mistral Small 3.0	language	2025-01-30		https://docs.mistral.ai/models/mistral-small-3-0-25-01
+Mistral AI	Mistral Small 4	language,reason,code	None		https://docs.mistral.ai/getting-started/models/models_overview
+Mistral AI	Shieldstral 1.0	understand,decision	None		https://docs.mistral.ai/models/shieldstral-1-0
+Mistral AI	Voxtral 1.0	speech-understand	None	weight-base:Mistral-Small-24B-Base-2501	https://huggingface.co/mistralai/Voxtral-Small-24B-2507
+Mistral AI	Voxtral Mini Transcribe 2	asr	None		https://docs.mistral.ai/models/voxtral-mini-transcribe-26-02
+Mistral AI	Voxtral Mini Transcribe Realtime	asr	None		https://docs.mistral.ai/models/voxtral-mini-transcribe-realtime-26-02
+Mistral AI	Voxtral TTS	tts	None		https://docs.mistral.ai/studio/audio/overview
+ModelBest	面壁 MiniCPM	language	2026-09-07		
+Moonshot AI	Kimi K2	language	2025-07-11		https://huggingface.co/moonshotai/Kimi-K3
+Moonshot AI	Kimi K3	language	2026-07-16		https://huggingface.co/moonshotai/Kimi-K3
+Moonshot AI	Kimi Work	agent	2026-06		https://huggingface.co/moonshotai/Kimi-K3
+Moonshot AI	Kimi 智能助手	agent	2023-10		https://huggingface.co/moonshotai/Kimi-K3
+Multimodal Art Projection / YuE 团队	YuE	music	None		https://github.com/multimodal-art-projection/YuE/tree/YuE-v1
+Multimodal Art Projection / YuE 团队	YuE2	music	None		https://github.com/multimodal-art-projection/YuE
+MyShell / MIT / 清华大学研究团队	MeloTTS	tts	None		https://raw.githubusercontent.com/myshell-ai/MeloTTS/main/README.md
+MyShell / MIT / 清华大学研究团队	OpenVoice V2	tts	2024-04		https://github.com/myshell-ai/OpenVoice
+NVIDIA	Canary Flash	asr,speech-translation	None		https://huggingface.co/nvidia/canary-180m-flash/raw/main/README.md
+NVIDIA	Canary v2	asr,speech-translation	None		https://huggingface.co/nvidia/canary-1b-v2
+NVIDIA	Canary-Qwen	asr,language	None		https://huggingface.co/nvidia/canary-qwen-2.5b/raw/main/README.md
+NVIDIA	Cosmos 1	spatial	None		https://github.com/NVIDIA/Cosmos
+NVIDIA	Cosmos 3	understand,image,video,spatial,robot	None		https://www.nvidia.com/en-us/ai/cosmos/
+NVIDIA	Cosmos Predict 2.5	spatial	None		https://github.com/nvidia-cosmos/cosmos-predict2.5
+NVIDIA	GR00T N1	robot	None		https://huggingface.co/nvidia/GR00T-N1-2B/raw/main/README.md
+NVIDIA	GR00T N1.5	robot	None		https://huggingface.co/nvidia/GR00T-N1.5-3B/raw/main/README.md
+NVIDIA	GR00T N1.6	robot	None		https://huggingface.co/nvidia/GR00T-N1.6-3B/raw/main/README.md
+NVIDIA	GR00T N1.7	robot	None	architecture-component:Cosmos Reason 2	https://github.com/NVIDIA/Isaac-GR00T
+NVIDIA	Llama-Nemotron 1.5	language,reason	2025-07-25		https://huggingface.co/nvidia/Llama-3_3-Nemotron-Super-49B-v1_5/raw/main/README.md
+NVIDIA	MagpieTTS	tts	2026-07-21		https://huggingface.co/nvidia/magpie_tts_multilingual_357m/raw/main/README.md
+NVIDIA	Multitalker Parakeet Streaming	asr	None		https://huggingface.co/nvidia/multitalker-parakeet-streaming-0.6b-v1/raw/main/README.md
+NVIDIA	Nemotron 3	language,reason	2025-12-15		https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16/raw/main/README.md
+NVIDIA	Nemotron 3 Diarization	speech-understand	None		https://huggingface.co/nvidia/Nemotron-3-Diarization
+NVIDIA	Nemotron 3 Embed	retrieval	None		https://huggingface.co/nvidia/Nemotron-3-Embed-1B-BF16
+NVIDIA	Nemotron 3 Ultra	reason	2026-06-04		
+NVIDIA	Nemotron 3.5 ASR	asr	None		https://huggingface.co/nvidia/nemotron-3.5-asr-streaming-0.6b/raw/main/README.md
+NVIDIA	Nemotron 3.5 Lightning	language,reason	2026-08-11		https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16/raw/main/README.md
+NVIDIA	Nemotron 4	language	None		https://huggingface.co/nvidia/Nemotron-4-340B-Instruct/raw/main/README.md
+NVIDIA	Nemotron Nano 2	language,reason	2025-08-18		https://huggingface.co/nvidia/NVIDIA-Nemotron-Nano-9B-v2/raw/main/README.md
+NVIDIA	Nemotron Parse 2.0	understand	None		https://huggingface.co/nvidia/NVIDIA-Nemotron-Parse-2.0
+NVIDIA	Nemotron-Cascade 2	reason	2026-03-19		https://huggingface.co/nvidia/Nemotron-Cascade-2-30B-A3B/raw/main/README.md
+NVIDIA	Nemotron-H	language,reason	None		https://huggingface.co/nvidia/Nemotron-H-8B-Reasoning-128K/raw/main/README.md
+NVIDIA	OpenCodeReasoning-Nemotron 1.1	code	2025-07-08		https://huggingface.co/nvidia/OpenCodeReasoning-Nemotron-1.1-14B/raw/main/README.md
+NVIDIA	Parakeet TDT v3	asr	None		https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3
+Nandha Kishor / Convai Innovations	Laya	decision	None		https://raw.githubusercontent.com/NandhaKishorM/laya/main/README.md
+Nex-AGI / 上海奇绩智峰智能科技有限公司	DeepSeek-V3.1-Nex-N1	language,reason,code	None		https://raw.githubusercontent.com/nex-agi/Nex-N1/main/README.md
+Nex-AGI / 上海奇绩智峰智能科技有限公司	Nex-N2-Pro	language,reason,code,understand	None		https://raw.githubusercontent.com/nex-agi/Nex-N2/main/README.md
+Nex-AGI / 上海奇绩智峰智能科技有限公司	Nex-N2.5	language,reason,code,understand	None		https://nex-agi.com/
+Nex-AGI / 上海奇绩智峰智能科技有限公司	Nex-N2.5-Max	language	None		https://huggingface.co/Nex-AGI/Nex-N2.5-Max
+Nex-AGI / 上海奇绩智峰智能科技有限公司	Nex-N2.5-Pro	language,understand,agent	None		https://huggingface.co/Nex-AGI/Nex-N2.5-Pro
+Nomic AI	ModernBERT Embed	retrieval	None		https://huggingface.co/nomic-ai/modernbert-embed-base/raw/main/README.md
+Nomic AI	Nomic Embed Code	retrieval	None		https://huggingface.co/nomic-ai/nomic-embed-code/raw/main/README.md
+Nomic AI	Nomic Embed Multimodal	retrieval	None		https://huggingface.co/nomic-ai/nomic-embed-multimodal-3b/raw/main/README.md
+Nomic AI	Nomic Embed Text v1	retrieval	None		https://huggingface.co/nomic-ai/nomic-embed-text-v1/raw/main/README.md
+Nomic AI	Nomic Embed Text v1.5	retrieval	None		https://huggingface.co/nomic-ai/nomic-embed-text-v1.5/raw/main/README.md
+Nomic AI	Nomic Embed Text v2 MoE	retrieval	None	weight-base:Nomic Embed v2 unsupervised	https://huggingface.co/nomic-ai/nomic-embed-text-v2-moe
+Nomic AI	Nomic Embed Vision v1	retrieval	None		https://huggingface.co/nomic-ai/nomic-embed-vision-v1/raw/main/README.md
+Nomic AI	Nomic Embed Vision v1.5	retrieval	None		https://huggingface.co/nomic-ai/nomic-embed-vision-v1.5/raw/main/README.md
+Nomic AI	Nomic XLM 2048	understand	None	finetune:XLM-RoBERTa	https://huggingface.co/nomic-ai/nomic-xlm-2048
+Nous Research	Hermes 2	language	None		https://huggingface.co/NousResearch/Hermes-2-Pro-Mistral-7B
+Nous Research	Hermes 3	language	None		https://huggingface.co/NousResearch/Hermes-3-Llama-3.1-8B
+Nous Research	Hermes 4	language	None		https://huggingface.co/NousResearch/Hermes-4-70B
+Nous Research	Hermes 4.3	language,reason,code	None	post-training:Seed-OSS Base	https://nousresearch.com/introducing-hermes-4-3/
+Nous Research	Hermes Agent 爱马仕智能体	agent	2026-03-12		
+OpenAI	CLIP	understand,retrieval	None		https://raw.githubusercontent.com/openai/CLIP/main/README.md
+OpenAI	ChatGPT dots（常驻智能体）	agent	2026-09-29		https://developers.openai.com/api/docs/models
+OpenAI	ChatGPT（超级应用）	agent	2022-11-30		https://developers.openai.com/api/docs/models
+OpenAI	Codex 初代	code	2021-08-10		https://developers.openai.com/api/docs/models
+OpenAI	DALL·E	image	2021-01-05		https://developers.openai.com/api/docs/models
+OpenAI	DALL·E 2	image	None		https://openai.com/index/dall-e-2/
+OpenAI	DALL·E 3	image	None		https://openai.com/index/dall-e-3/
+OpenAI	GPT Image 1	image	None		https://developers.openai.com/api/docs/models/gpt-image-1
+OpenAI	GPT Image 1.5	image	None		https://developers.openai.com/api/docs/models/gpt-image-1.5
+OpenAI	GPT Image 1（吉卜力风暴）	image	2025-03-25		https://developers.openai.com/api/docs/models
+OpenAI	GPT Image 2	image	None		https://developers.openai.com/api/docs/models/gpt-image-2
+OpenAI	GPT Image 2.5	image	2026-09-08		https://developers.openai.com/api/docs/models
+OpenAI	GPT Image 2.5	image	None		https://developers.openai.com/api/docs/models/gpt-image-2.5-sunburst
+OpenAI	GPT-2	language	None		https://raw.githubusercontent.com/openai/gpt-2/master/README.md
+OpenAI	GPT-3	language	None		https://raw.githubusercontent.com/openai/gpt-3/master/README.md
+OpenAI	GPT-3.5	language	2022-11-30		https://developers.openai.com/api/docs/models
+OpenAI	GPT-3.5 Turbo	language	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-4	language	2023-03-14		https://developers.openai.com/api/docs/models
+OpenAI	GPT-4	language	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-4 Turbo	language	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-4.1	language,code,understand	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-4.1 mini	language,code,understand	None		https://platform.openai.com/docs/models/gpt-4.1-mini
+OpenAI	GPT-4.1 nano	language,code,understand	None		https://platform.openai.com/docs/models/gpt-4.1-nano
+OpenAI	GPT-4.5 Preview	language	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-4o	understand	2024-05-13		https://developers.openai.com/api/docs/models
+OpenAI	GPT-4o	understand	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-4o Transcribe	asr	None		https://developers.openai.com/api/docs/models/gpt-4o-transcribe
+OpenAI	GPT-4o mini TTS	tts	None		https://developers.openai.com/api/docs/models/gpt-4o-mini-tts
+OpenAI	GPT-5	language	2025-08-07		https://developers.openai.com/api/docs/models
+OpenAI	GPT-5	reason	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-5 Mini	language	None		https://developers.openai.com/api/docs/models/gpt-5-mini.md
+OpenAI	GPT-5 nano	language	None		https://developers.openai.com/api/docs/models/gpt-5-nano.md
+OpenAI	GPT-5.1	reason	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-5.1-Codex	code	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-5.2	reason	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-5.2-Codex	code	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-5.3-Codex	code	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-5.4	reason	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-5.4 Mini	language,code	None		https://developers.openai.com/api/docs/models/gpt-5.4-mini.md
+OpenAI	GPT-5.5	reason	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-5.5「土豆」	language	2026-04-23		https://developers.openai.com/api/docs/models
+OpenAI	GPT-5.6 Luna	language	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-5.6 Sol	reason	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-5.6 Terra	language	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-5.6（日 / 地 / 月）	language	2026-07-09		https://developers.openai.com/api/docs/models
+OpenAI	GPT-6 Astra	language,reason,code,understand	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-6 Astra（星）	language	2026-09-03		https://developers.openai.com/api/docs/models
+OpenAI	GPT-6 Luna	language,reason,understand	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-6 Luna（月）	language	2026-09-22		https://developers.openai.com/api/docs/models
+OpenAI	GPT-6 Sol	reason	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-6.1 Sol	language,reason,code,understand	None		https://platform.openai.com/docs/models.md
+OpenAI	GPT-6.1 Sol（日）	code	2026-09-29		https://developers.openai.com/api/docs/models
+OpenAI	GPT-Live-1	realtime	None		https://developers.openai.com/api/docs/models/all
+OpenAI	GPT-Live-Transcribe	asr	None		https://developers.openai.com/api/docs/models/all
+OpenAI	GPT-Realtime-2	realtime	None		https://developers.openai.com/api/docs/models/gpt-realtime-2
+OpenAI	GPT-Realtime-2.1	realtime	None		https://developers.openai.com/api/docs/models/all
+OpenAI	GPT-Realtime-Whisper	asr	None		https://developers.openai.com/api/docs/models/gpt-realtime-whisper
+OpenAI	GPT-Transcribe	asr	None		https://developers.openai.com/api/docs/models/all
+OpenAI	OpenAI Codex（编程智能体）	agent	2025-05-16		https://developers.openai.com/api/docs/models
+OpenAI	OpenAI text-embedding-3	retrieval	None		https://platform.openai.com/docs/models/text-embedding-3-large
+OpenAI	Sora	video	None		https://openai.com/index/sora/
+OpenAI	Sora 2	video	None		https://openai.com/index/sora-2/
+OpenAI	Sora 2（已停服）	video	2025-09-30		https://developers.openai.com/api/docs/models
+OpenAI	Whisper turbo	asr	None	finetune:Whisper v3	https://huggingface.co/openai/whisper-large-v3-turbo
+OpenAI	Whisper v2	asr	None		https://huggingface.co/openai/whisper-large-v2
+OpenAI	Whisper v3	asr	None	distillation-teacher:Whisper v2	https://huggingface.co/openai/whisper-large-v3
+OpenAI	gpt-oss	reason,language	None		https://platform.openai.com/docs/models.md
+OpenAI	gpt-oss-120b	language	2025-08-05		https://developers.openai.com/api/docs/models
+OpenAI	o1	reason	2024-09-12		https://developers.openai.com/api/docs/models
+OpenAI	o1	reason	None		https://platform.openai.com/docs/models.md
+OpenAI	o3	reason	None		https://platform.openai.com/docs/models.md
+OpenAI	o4-mini	reason	None		https://platform.openai.com/docs/models.md
+OpenBMB / 面壁智能	MiniCPM 4	language	None		https://huggingface.co/openbmb/MiniCPM4-8B
+OpenBMB / 面壁智能	MiniCPM-Llama3-V 2.5	understand	None	weight-base:Llama 3 Instruct;architecture-component:SigLIP	https://huggingface.co/openbmb/MiniCPM-Llama3-V-2_5/raw/main/README.md
+OpenBMB / 面壁智能	MiniCPM-V 4.5	understand	None		https://huggingface.co/openbmb/MiniCPM-V-4_5
+OpenBMB / 面壁智能	MiniCPM-V 4.6	understand	2026-05-11	weight-base:Qwen3.5;architecture-component:SigLIP 2	https://raw.githubusercontent.com/OpenBMB/MiniCPM-V/main/README.md
+OpenBMB / 面壁智能	MiniCPM-o 4.5	language,understand,asr,tts,speech-understand,realtime	2026-02-03	continued-pretraining:MiniCPM-V 4.5 pretraining checkpoint;architecture-component:Whisper-medium encoder;architecture-component:Qwen3 Base	https://github.com/OpenBMB/MiniCPM-o
+OpenBMB / 面壁智能	MiniCPM5	reason,language	2026-09-07		https://raw.githubusercontent.com/OpenBMB/MiniCPM/main/README.md
+OpenBMB / 面壁智能	VoxCPM2	tts	2026-04	weight-base:MiniCPM 4	https://github.com/OpenBMB/VoxCPM
+OpenClaw Foundation	OpenClaw 小龙虾	agent	2026-01-30		
+OpenGVLab / 上海人工智能实验室	InternVL 2.5	understand	None		https://huggingface.co/OpenGVLab/InternVL2_5-8B
+OpenGVLab / 上海人工智能实验室	InternVL 3	understand	None		https://huggingface.co/OpenGVLab/InternVL3-1B
+OpenGVLab / 上海人工智能实验室	InternVL 3.5	understand	2025-08-26		https://huggingface.co/OpenGVLab/InternVL3_5-8B
+OpenGVLab / 上海人工智能实验室	InternVL3.5-Flash	understand	None		https://huggingface.co/OpenGVLab/InternVL3_5-8B-Flash/raw/main/README.md
+OpenGVLab / 上海人工智能实验室	InternVL3.5-GPT-OSS Preview	understand	2025-08-26	architecture-component:gpt-oss;architecture-component:InternViT	https://raw.githubusercontent.com/OpenGVLab/InternVL/main/README.md
+OpenMOSS	MOSS-Transcribe-Diarize	asr,speech-understand	2026-07-09		https://huggingface.co/OpenMOSS-Team/MOSS-Transcribe-Diarize/raw/main/README.md
+OpenMOSS	MOSS-VL	understand	None		https://github.com/OpenMOSS/MOSS-VL
+Perceptron Inc.	Perceptron Mk1	understand,reason	2026-05-12		https://www.perceptron.inc/blog/introducing-perceptron-mk1
+Perceptron Inc.	Perceptron Mk1.5	understand,reason,speech-understand	2026-09-25		https://www.perceptron.inc/blog/introducing-perceptron-mk1-5
+Perplexity AI	Comet 彗星浏览器	agent	2025-07-09		
+Perplexity AI	Perplexity	agent	2022-12-07		
+Perplexity AI	Perplexity Computer	agent	2026-02-25		
+Peter Steinberger (community)	Clawdbot	agent	2025-11-24		
+Peter Steinberger (community)	Moltbot（蜕壳期）	agent	2026-01-27		
+Physical Intelligence	pi0	robot	None		https://raw.githubusercontent.com/physical-intelligence/openpi/main/README.md
+Physical Intelligence	pi0-FAST	robot	None	architecture-component:PaliGemma	https://github.com/physical-intelligence/openpi
+Physical Intelligence	pi0.5	robot	None	architecture-component:PaliGemma	https://github.com/physical-intelligence/openpi
+Physical Intelligence	π*0.6	robot	None		https://www.physicalintelligence.company/download/pistar06.pdf
+Physical Intelligence	π0.7 物理智能	robot	2026-04		
+PixVerse (爱诗科技)	拍我AI PixVerse V6	video	2026-03-30		
+Recraft	Recraft V4.1	image	None		https://www.recraft.ai/docs/recraft-models/recraft-v4-1
+Recraft	Recraft V4.1 Flash	image	None		https://www.recraft.ai/docs/recraft-models/recraft-v4-1
+Replit	Replit Agent	agent	2024-09		
+Resemble AI	Chatterbox Multilingual V3	tts	None	architecture-component:Llama architecture	https://github.com/resemble-ai/chatterbox
+Resemble AI	Chatterbox-Turbo	tts	None		https://github.com/resemble-ai/chatterbox
+Resemble AI	Resemble Ultra	tts	None		https://docs.resemble.ai/getting-started/model-versions
+Runway	Runway Aleph	video	2025-07-25		https://runwayml.com/research/introducing-runway-aleph
+Runway	Runway Aleph 2.0	video	None		https://docs.dev.runwayml.com/guides/models.md
+Runway	Runway GWM-1	video	None		https://docs.dev.runwayml.com/guides/models.md
+Runway	Runway Gen-1	video	None		https://runwayml.com/research/gen-1
+Runway	Runway Gen-2	video	None		https://runwayml.com/research/gen-2
+Runway	Runway Gen-3	video	None		https://runwayml.com/research/introducing-gen-3-alpha
+Runway	Runway Gen-4	video	None		https://runwayml.com/research/introducing-runway-gen-4
+Runway	Runway Gen-4.5	video	2025-12-01		
+Runway	Runway Gen-4.5	video	None		https://runwayml.com/research/introducing-runway-gen-4.5
+Sakana AI	Fugu Cyber	reason	None		https://sakana.ai/fugu/
+Sakana AI	Sakana Fugu Max	decision	None		https://sakana.ai/fugu
+Sakana AI	Sakana Fugu Ultra v2	reason,code,decision	None		https://sakana.ai/fugu
+Sakana AI	Sakana Fugu 河豚	agent	2026-06		
+Salesforce Research	BLIP	understand,retrieval	None		https://raw.githubusercontent.com/salesforce/BLIP/main/README.md
+Salesforce Research	BLIP-2	understand	None		https://huggingface.co/Salesforce/blip2-opt-2.7b/raw/main/README.md
+Salesforce Research	XGen-MM (BLIP-3)	understand	None		https://huggingface.co/Salesforce/xgen-mm-phi3-mini-instruct-r-v1/raw/main/README.md
+SenseTime	商汤日日新 6.7 Flash-Lite	understand	2026-05-08		
+Shanghai AI Laboratory	书生 Intern-S2	understand	2026-09		
+ShengShu Technology	生数 Vidu	video	2024-07-30		
+ShengShu Technology	生数 Vidu Q3	video	2026-01-30		
+Significant Gravitas	AutoGPT	agent	2023-03-30		
+Skywork AI (Kunlun Tech)	天工 SkyReels V4	video	2026-03		
+Snowflake	Arctic Embed v1.5	retrieval	None		https://huggingface.co/Snowflake/snowflake-arctic-embed-m-v1.5
+Snowflake	Snowflake Arctic	language,code	2024-04-24		https://www.snowflake.com/en/blog/arctic-open-efficient-foundation-language-models-snowflake/
+Snowflake	Snowflake Arctic Embed 2.0	retrieval	None		https://huggingface.co/Snowflake/snowflake-arctic-embed-l-v2.0/raw/main/README.md
+Soniox	Soniox STT v5	asr	2026-06		https://soniox.com/docs/stt/models
+SpaceXAI (formerly xAI)	Ani（Grok 陪伴）	agent	2025-07-14		
+SpaceXAI (formerly xAI)	Grok 4	reason	2025-07-09		
+SpaceXAI (formerly xAI)	Grok 4.7	code	2026-09-21		
+SpaceXAI (formerly xAI)	Grok Imagine	video	2026-06-18		
+SpaceXAI (formerly xAI)	Grok-1	language	2023-11-04		
+SpaceXAI / xAI	Grok 2	language,understand	None		https://x.ai/news/grok-2
+SpaceXAI / xAI	Grok 3	language,reason	None		https://x.ai/news/grok-3
+SpaceXAI / xAI	Grok 3 mini	language,reason	None		https://x.ai/news/grok-3
+SpaceXAI / xAI	Grok 4.5	language,reason,code,understand	None		https://x.ai/news
+SpaceXAI / xAI	Grok 4.6	language,reason,code,understand	None		https://x.ai/news
+SpaceXAI / xAI	Grok 4.7	language,reason,code,understand	None		https://docs.x.ai/docs/models
+SpaceXAI / xAI	Grok Imagine Image 2.0	image	None		https://docs.x.ai/developers/model-capabilities/imagine
+SpaceXAI / xAI	Grok Imagine Video 1.5	video	None		https://docs.x.ai/developers/model-capabilities/imagine
+SpaceXAI / xAI	Grok-1	language	None		https://raw.githubusercontent.com/xai-org/grok-1/main/README.md
+SparkAudio 研究团队	Spark-TTS	tts	None		https://github.com/SparkAudio/Spark-TTS
+Speechmatics	Linden 1	asr	None		https://docs.speechmatics.com/speech-to-text/models.md
+Speechmatics	Melia 1	asr	None		https://docs.speechmatics.com/speech-to-text/models.md
+Speechmatics	Oak 1	asr	None		https://docs.speechmatics.com/speech-to-text/models.md
+Stability AI	SDXL	image	2023-07-26		
+Stability AI	SPAR3D	spatial	None		https://github.com/Stability-AI/stable-point-aware-3d
+Stability AI	Stable Audio 3.0	music	2026-05-20		https://stability.ai/news-updates/meet-stable-audio-3-the-model-family-built-for-artistic-experimentation-with-open-weig
+Stability AI	Stable Audio Open 1.0	sound	None		https://huggingface.co/stabilityai/stable-audio-open-1.0
+Stability AI	Stable Diffusion 1	image	None		https://github.com/CompVis/stable-diffusion
+Stability AI	Stable Diffusion 1.x	image	2022-08-22		
+Stability AI	Stable Diffusion 2	image	None		https://stability.ai/news/stable-diffusion-v2-release
+Stability AI	Stable Diffusion 3	image	None		https://stability.ai/news/stable-diffusion-3-medium
+Stability AI	Stable Diffusion 3.5	image	2024-10-22		https://stability.ai/news/introducing-stable-diffusion-3-5
+Stability AI	Stable Diffusion XL	image	None		https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0
+Stability AI	Stable Fast 3D	spatial	None		https://github.com/Stability-AI/stable-fast-3d
+Stability AI	Stable Video Diffusion XT 1.1	video	None		https://huggingface.co/stabilityai/stable-video-diffusion-img2vid-xt-1-1
+Stability AI	TripoSR	spatial	None		https://github.com/VAST-AI-Research/TripoSR
+Stanford / UC Berkeley 等研究团队	OpenVLA	robot	2024-06-13	finetune:Prismatic VLM (prism-dinosiglip-224px)	https://github.com/openvla/openvla
+Stanford / UC Berkeley 等研究团队	OpenVLA-OFT	robot	None		https://github.com/moojink/openvla-oft
+StepFun	阶跃 Step 3.5 Flash	language	2026-02		
+StepFun	阶跃 Step 5 Preview	understand	2026-09-20		
+Suno	Suno v3	music	2024-03-21		
+Suno	Suno v5	music	2025-09-23		
+Suno	Suno v6	music	2026-09-09		
+Suno	Suno v6	music	None		https://help.suno.com/en/articles/13924737-current-models-v6
+TII	Falcon	language	None		https://huggingface.co/tiiuae/falcon-7b-instruct/raw/main/README.md
+TII	Falcon 2	language	None		https://huggingface.co/tiiuae/falcon-11B/raw/main/README.md
+TII	Falcon 3	language	None		https://huggingface.co/tiiuae/Falcon3-7B-Base
+TII	Falcon Mamba	language	None		https://huggingface.co/tiiuae/falcon-mamba-7b-instruct/raw/main/README.md
+TII	Falcon OCR	understand	None		https://huggingface.co/tiiuae/Falcon-OCR
+TII	Falcon Perception	understand	None		https://huggingface.co/tiiuae/Falcon-Perception
+TII	Falcon-E	language	None		https://huggingface.co/tiiuae/Falcon-E-3B-Instruct/raw/main/README.md
+TII	Falcon-H1	language	2025-05-21		https://raw.githubusercontent.com/tiiuae/Falcon-H1/main/README.md
+TII	Falcon-H1R	reason,language	None	post-training:Falcon-H1 Base	https://huggingface.co/tiiuae/Falcon-H1R-7B/raw/main/README.md
+TRI-ML / Stanford research team	Prismatic VLM (prism-dinosiglip-224px)	understand	None	architecture-component:DINOv2;architecture-component:SigLIP;architecture-component:Llama 2	https://huggingface.co/openvla/openvla-7b
+Tencent	WorkBuddy	agent	2026-03-09		
+Tencent	混元 Hy3	language	2026-07-06		
+Tencent	混元 Hy4 Preview	language	2026-08-28		
+Tencent	腾讯元宝	agent	2024-05-30		
+Tencent	腾讯混元	language	2023-09-07		
+Tencent Hunyuan	混元生图 3.5（预览）	image	2026-09-24		
+Tesla	特斯拉 Optimus	other	2021-08-19		
+Thinking Machines Lab	Inkling 灵念	understand	2026-07-15		
+TypeSafe AI	Jev 1.13	decision	2026-09-15		https://typesafe.ai/blog/introducing-system-one-models-and-jev
+Udio	Udio v1.5	music	None		https://help.udio.com/en/articles/12874375-udio-warner-music-group-wmg-partnership
+Unitree Robotics	宇树 G1/H2	other	2024-05		
+Unitree Robotics	宇树 GD01 载人机甲	other	2026-05-12		
+University of Washington / Rosetta Commons	RFdiffusion	science	None		https://raw.githubusercontent.com/RosettaCommons/RFdiffusion/main/README.md
+University of Washington / Rosetta Commons	RFdiffusion2	science	None		https://github.com/RosettaCommons/RFdiffusion2
+University of Washington / Rosetta Commons	RFdiffusion3	science	2025-12-22		https://rosettacommons.org/2025/12/22/rfdiffusion3-is-now-available-in-foundry/
+Unknown (all labs)	AGI 奇点	other	TBD		
+Upstage	Solar Mini 4	language	2026-10-01		https://www.upstage.ai/blog/en/solar-mini-4
+Upstage	Solar Pro 4	agent	2026-08-12		
+VAST (Tripo AI)	Tripo H3.1	spatial	2026-03		
+VAST / Tripo AI	DetailGen3D	spatial	None		https://github.com/VAST-AI-Research/DetailGen3D
+VAST / Tripo AI	Tripo P1.0	spatial	2026-03-11		https://docs.tripo3d.ai/get-started/changelog.html
+VAST / Tripo AI	Tripo v3.1	spatial	2026-03-11		https://docs.tripo3d.ai/get-started/changelog.html
+VAST / Tripo AI	TripoSF	spatial	None		https://github.com/VAST-AI-Research/TripoSF
+VAST / Tripo AI	TripoSG	spatial	None		https://github.com/VAST-AI-Research/TripoSG
+VAST / Tripo AI	TripoSplat	spatial	None		https://github.com/VAST-AI-Research/TripoSplat
+Vedal (independent)	Neuro-sama（牛肉）	agent	2022-12-19		
+Voyage AI / MongoDB	Voyage 3	retrieval	None		https://docs.voyageai.com/docs/embeddings
+Voyage AI / MongoDB	Voyage 3.5	retrieval	None		https://docs.voyageai.com/docs/embeddings
+Voyage AI / MongoDB	Voyage 4	retrieval	None		https://docs.voyageai.com/docs/embeddings
+Voyage AI / MongoDB	Voyage 4 Nano	retrieval	2026-01-15		https://huggingface.co/voyageai/voyage-4-nano
+Voyage AI / MongoDB	Voyage Code 4	retrieval	None		https://docs.voyageai.com/docs/embeddings
+Voyage AI / MongoDB	Voyage Context 4	retrieval	None		https://docs.voyageai.com/docs/contextualized-chunk-embeddings
+Voyage AI / MongoDB	Voyage Finance 2	retrieval	None		https://docs.voyageai.com/docs/embeddings
+Voyage AI / MongoDB	Voyage Law 2	retrieval	None		https://docs.voyageai.com/docs/embeddings
+Voyage AI / MongoDB	Voyage Multimodal 3	retrieval	None		https://docs.voyageai.com/docs/multimodal-embeddings
+Voyage AI / MongoDB	Voyage Multimodal 3.5	retrieval	None		https://docs.voyageai.com/docs/multimodal-embeddings
+Voyage AI / MongoDB	Voyage Rerank 2.5	rerank	None		https://docs.voyageai.com/docs/reranker
+Voyage AI / MongoDB	Voyage Rerank 3	rerank	None		https://docs.voyageai.com/docs/reranker
+Voyage AI / MongoDB	Voyage Rerank 3 Lite	rerank	2026-09-30		https://blog.voyageai.com/2026/09/30/rerank-3/
+WeNet research team	U2++ Conformer（WenetSpeech 检查点）	asr	None		https://raw.githubusercontent.com/wenet-e2e/wenet/main/docs/pretrained_models.md
+World Labs	Marble 1.0	spatial	None		https://docs.worldlabs.ai/marble/models.md
+World Labs	Marble 1.1	spatial	None		https://docs.worldlabs.ai/marble/models.md
+World Labs	Marble 1.1 Plus	spatial	None		https://docs.worldlabs.ai/marble/models.md
+World Labs	Marble 世界大理石	spatial	2025-11		
+Xiaomi	MiMo-V2-Flash	language	2025-12-17		
+Xiaomi	MiMo-V2.6-Pro	understand	2026-09-21		
+Xiaomi	小米 MiMo-7B	reason	2025-04-30		
+Zhipu AI (Z.ai)	AutoGLM	agent	2024-10-25		https://huggingface.co/zai-org/GLM-5.3
+Zhipu AI (Z.ai)	ChatGLM-6B	language	2023-03-14		https://huggingface.co/zai-org/GLM-5.3
+Zhipu AI (Z.ai)	GLM-4.5	language	2025-07-28		https://huggingface.co/zai-org/GLM-5.3
+Zhipu AI (Z.ai)	GLM-5.3	code	2026-08-14		https://huggingface.co/zai-org/GLM-5.3
+emotion2vec research team / FunAudioLLM ecosystem	emotion2vec+	speech-understand	None		https://huggingface.co/emotion2vec/emotion2vec_plus_large/raw/main/README.md
+hexgrad / Kokoro 项目	Kokoro	tts	None	architecture-component:StyleTTS2 architecture	https://huggingface.co/hexgrad/Kokoro-82M
+iFlytek	讯飞星火 V4.0	language	2024-06-27		
+iFlytek	讯飞星火 X2.5	language	2026-09-07		
+上海交通大学等研究团队 / SWivid	F5-TTS v1	tts	2025-03-12		https://github.com/SWivid/F5-TTS
+华为云	Pangu-AI4S-Weather_24h-3.1.0	science	2025-03		https://doc.hcs.huawei.com/zh-cn/pangulm/doc/download/pdf/pangulm-productdesc.pdf
+华为云	Pangu-Weather	science	None		https://github.com/198808xc/Pangu-Weather
+哔哩哔哩 IndexTTS 团队	IndexTTS-2.5	tts	2026-08-10		https://github.com/index-tts/index-tts
+复旦大学 FuXi 团队	FuXi 1.0	science	None		https://github.com/tpys/FuXi
+复旦大学 FuXi 团队	FuXi 2.1	science	None		https://github.com/tpys/FuXi
+字节跳动 / ByteDance	Protenix	science	None		https://github.com/bytedance/Protenix
+字节跳动 / ByteDance	Protenix v2	science	2026-04-08		https://github.com/bytedance/Protenix
+字节跳动 / ByteDance	Seed-ASR	asr	None		https://arxiv.org/abs/2407.04675
+字节跳动 / ByteDance	Seed-ICL 2.0	tts	None		https://docs.byteplus.com/en/docs/byteplusvoice/unidirectional_tts_http
+字节跳动 / ByteDance	Seed-TTS 2.0	tts	None		https://docs.byteplus.com/en/docs/byteplusvoice/unidirectional_tts_http
+字节跳动 / ByteDance	Seed1.8	language,agent,code,understand	None		https://seed.bytedance.com/blog/official-release-of-seed1-8-a-generalized-agentic-model
+字节跳动 / ByteDance	Seed2.1	language,code,agent,understand	2026-06-23		https://seed.bytedance.com/en/blog_list/foundation
+字节跳动 / ByteDance	Seedance 1.0	video	None		https://seed.bytedance.com/en/seedance
+字节跳动 / ByteDance	Seedance 1.5 pro	video	None		https://seed.bytedance.com/en/seedance1_5_pro
+字节跳动 / ByteDance	Seedance 2.0	video	None		https://seed.bytedance.com/en/seedance2_0
+字节跳动 / ByteDance	Seedance 2.5	video	None		https://seed.bytedance.com/en/seedance
+字节跳动 / ByteDance	Seedream 4.0	image	None		https://seed.bytedance.com/en/seedream4_0
+字节跳动 / ByteDance	Seedream 5.0 Lite	image	2026-02-13		https://seed.bytedance.com/en/blog/deeper-thinking-more-accurate-generation-introducing-seedream-5-0-lite
+字节跳动 / ByteDance	Seedream 5.0 Pro	image	None		https://seed.bytedance.com/en/seedream5_0_pro
+字节跳动 / ByteDance	Seeduplex	realtime	None		https://seed.bytedance.com/en/blog/seeduplex-the-next-generation-full-duplex-voice-model
+小米 / Xiaomi MiMo	MiMo-7B-Base	language,reason,code	None		https://raw.githubusercontent.com/XiaomiMiMo/MiMo/main/README.md
+小米 / Xiaomi MiMo	MiMo-7B-RL	language,reason,code	None	post-training:MiMo-7B-SFT	https://raw.githubusercontent.com/XiaomiMiMo/MiMo/main/README.md
+小米 / Xiaomi MiMo	MiMo-7B-RL-0530	language,reason,code	2025-05-30		https://raw.githubusercontent.com/XiaomiMiMo/MiMo/main/README.md
+小米 / Xiaomi MiMo	MiMo-7B-RL-Zero	language,reason,code	None	post-training:MiMo-7B-Base	https://raw.githubusercontent.com/XiaomiMiMo/MiMo/main/README.md
+小米 / Xiaomi MiMo	MiMo-7B-SFT	language,reason,code	None	post-training:MiMo-7B-Base	https://raw.githubusercontent.com/XiaomiMiMo/MiMo/main/README.md
+小米 / Xiaomi MiMo	MiMo-Audio-7B-Base	speech-understand,tts	None	architecture-component:MiMo-Audio-Tokenizer	https://raw.githubusercontent.com/XiaomiMiMo/MiMo-Audio/main/README.md
+小米 / Xiaomi MiMo	MiMo-Audio-7B-Instruct	speech-understand,tts	None	post-training:MiMo-Audio-7B-Base	https://raw.githubusercontent.com/XiaomiMiMo/MiMo-Audio/main/README.md
+小米 / Xiaomi MiMo	MiMo-Audio-Tokenizer	speech-understand	None		https://raw.githubusercontent.com/XiaomiMiMo/MiMo-Audio/main/README.md
+小米 / Xiaomi MiMo	MiMo-Embodied-7B	understand,robot	None		https://raw.githubusercontent.com/XiaomiMiMo/MiMo-Embodied/main/README.md
+小米 / Xiaomi MiMo	MiMo-V2-Flash	language,reason,code	2025-12-16	post-training:MiMo-V2-Flash-Base	https://raw.githubusercontent.com/XiaomiMiMo/MiMo-V2-Flash/main/README.md
+小米 / Xiaomi MiMo	MiMo-V2-Flash-Base	language,reason,code	2025-12-16		https://raw.githubusercontent.com/XiaomiMiMo/MiMo-V2-Flash/main/README.md
+小米 / Xiaomi MiMo	MiMo-V2-Omni	language,understand,speech-understand	2026-03-18		https://mimo.mi.com/static/docs/news/previous-news/v2-omni-release.md
+小米 / Xiaomi MiMo	MiMo-V2-Pro	language,reason,code	2026-03-18		https://mimo.mi.com/static/docs/news/previous-news/v2-pro-release.md
+小米 / Xiaomi MiMo	MiMo-V2-TTS	tts	2026-03-18		https://mimo.mi.com/static/docs/news/previous-news/v2-tts-release.md
+小米 / Xiaomi MiMo	MiMo-V2.5	language,reason,code,understand,speech-understand	2026-04-23		https://mimo.mi.com/static/docs/news/latest/v2.5-news.md
+小米 / Xiaomi MiMo	MiMo-V2.5-ASR	asr	2026-06-02	architecture-component:MiMo-Audio-Tokenizer	https://raw.githubusercontent.com/XiaomiMiMo/MiMo-V2.5-ASR/main/README.md
+小米 / Xiaomi MiMo	MiMo-V2.5-Pro	language,reason,code	2026-04-23		https://mimo.mi.com/static/docs/news/latest/v2.5-news.md
+小米 / Xiaomi MiMo	MiMo-V2.5-TTS	tts	2026-04-23		https://mimo.mi.com/static/docs/quick-start/usage-guide/audio/speech-synthesis-v2.5.md
+小米 / Xiaomi MiMo	MiMo-V2.5-TTS-VoiceClone	tts	2026-04-23		https://mimo.mi.com/static/docs/quick-start/usage-guide/audio/speech-synthesis-v2.5.md
+小米 / Xiaomi MiMo	MiMo-V2.5-TTS-VoiceDesign	tts	2026-04-23		https://mimo.mi.com/static/docs/quick-start/usage-guide/audio/speech-synthesis-v2.5.md
+小米 / Xiaomi MiMo	MiMo-V2.6-Distill-Qwen-9B	language,code	2026-09-22		https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B
+小米 / Xiaomi MiMo	MiMo-V2.6-Flash	language,reason,code,understand,speech-understand	2026-09-22		https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Flash-RL/raw/main/README.md
+小米 / Xiaomi MiMo	MiMo-V2.6-Pro	language,reason,code,understand,speech-understand	2026-09-22		https://mimo.mi.com/docs/en-US/api/model/list-models
+小米 / Xiaomi MiMo	MiMo-VL-7B-RL	language,reason,understand	None	post-training:MiMo-VL-7B-SFT	https://raw.githubusercontent.com/XiaomiMiMo/MiMo-VL/main/README.md
+小米 / Xiaomi MiMo	MiMo-VL-7B-RL-2508	language,reason,understand	None		https://raw.githubusercontent.com/XiaomiMiMo/MiMo-VL/main/README.md
+小米 / Xiaomi MiMo	MiMo-VL-7B-SFT	language,reason,understand	None		https://raw.githubusercontent.com/XiaomiMiMo/MiMo-VL/main/README.md
+小米 / Xiaomi MiMo	MiMo-VL-7B-SFT-2508	language,reason,understand	None		https://raw.githubusercontent.com/XiaomiMiMo/MiMo-VL/main/README.md
+小米 / Xiaomi MiMo	MiMo-X-Flash-Preview	language,code	None		https://raw.githubusercontent.com/XiaomiMiMo/MiMo-Code/main/README.md
+小米 / Xiaomi MiMo	MiMo-X-Pro-Preview	language,code	None		https://raw.githubusercontent.com/XiaomiMiMo/MiMo-Code/main/README.md
+快手可灵	Kling 3.0	video	None		https://klingai.com/blog/kling-3-0
+快手可灵	Kling 3.0 Omni	video	None		https://klingai.com/blog/kling-3-0
+快手可灵	Kling 4.0	video	None		https://klingai.com/blog/kling40-kling-visual-realism-creative-control-introducing-storytelling
+快手可灵	Kling 4.0 Flash	video	2026-09-28		https://klingai.com/blog/kling-4-vs-3
+昆仑万维 Skywork	Matrix-3D	spatial	None		https://github.com/SkyworkAI/Matrix-3D
+昆仑万维 Skywork	Matrix-Game-1.0	spatial,video	None		https://raw.githubusercontent.com/SkyworkAI/Matrix-Game/main/README.md
+昆仑万维 Skywork	Matrix-Game-2.0	spatial,video	None		https://raw.githubusercontent.com/SkyworkAI/Matrix-Game/main/README.md
+昆仑万维 Skywork	Matrix-Game-3.0	spatial,video	None		https://raw.githubusercontent.com/SkyworkAI/Matrix-Game/main/README.md
+昆仑万维 Skywork	SkyReels-A1	video	None		https://github.com/SkyworkAI/SkyReels-A1
+昆仑万维 Skywork	SkyReels-A2	video	None		https://github.com/SkyworkAI/SkyReels-A2
+昆仑万维 Skywork	SkyReels-Text	image	None		https://raw.githubusercontent.com/SkyworkAI/SkyReels-Text/main/README.md
+昆仑万维 Skywork	SkyReels-V1	video	2025-02-18	finetune:HunyuanVideo	https://github.com/SkyworkAI/SkyReels-V1
+昆仑万维 Skywork	SkyReels-V2	video	2025-04-21		https://github.com/SkyworkAI/SkyReels-V2
+昆仑万维 Skywork	SkyReels-V3	video	2026-01-29		https://github.com/SkyworkAI/SkyReels-V3
+昆仑万维 Skywork	SkyReels-V4	video	None		https://arxiv.org/abs/2602.21818
+昆仑万维 Skywork	Skywork Base	language	None		https://raw.githubusercontent.com/SkyworkAI/Skywork/main/README.md
+昆仑万维 Skywork	Skywork-MoE-Base	language	None	weight-base:Skywork Base	https://raw.githubusercontent.com/SkyworkAI/Skywork-MoE/main/README.md
+昆仑万维 Skywork	Skywork-OR1	language,reason,code	None		https://raw.githubusercontent.com/SkyworkAI/Skywork-OR1/main/README.md
+昆仑万维 Skywork	Skywork-OR1-Math	language,reason	None		https://raw.githubusercontent.com/SkyworkAI/Skywork-OR1/main/README.md
+昆仑万维 Skywork	Skywork-R1V	language,understand,reason	None		https://raw.githubusercontent.com/SkyworkAI/Skywork-R1V/main/README.md
+昆仑万维 Skywork	Skywork-R1V2	language,understand,reason	None		https://raw.githubusercontent.com/SkyworkAI/Skywork-R1V/main/README.md
+昆仑万维 Skywork	Skywork-R1V3	language,understand,reason	None		https://raw.githubusercontent.com/SkyworkAI/Skywork-R1V/main/README.md
+智元 AgiBot / 上海人工智能实验室 OpenDriveLab	GO-1	robot	2025-09-19		https://github.com/OpenDriveLab/AgiBot-World
+智源 / BAAI	BGE	retrieval	None		https://huggingface.co/BAAI/bge-large-en/raw/main/README.md
+智源 / BAAI	BGE Reranker	rerank	None		https://huggingface.co/BAAI/bge-reranker-base/raw/main/README.md
+智源 / BAAI	BGE Reranker v2-M3	rerank	None	weight-base:BGE-M3	https://huggingface.co/BAAI/bge-reranker-v2-m3
+智源 / BAAI	BGE Reranker v2.5 Gemma2	rerank	None		https://huggingface.co/BAAI/bge-reranker-v2.5-gemma2-lightweight/raw/main/README.md
+智源 / BAAI	BGE v1.5	retrieval	None		https://huggingface.co/BAAI/bge-large-zh-v1.5
+智源 / BAAI	BGE-M3	retrieval	None	finetune:BGE-M3 unsupervised	https://huggingface.co/BAAI/bge-m3
+智源 / BAAI	Visualized-BGE	retrieval	None		https://huggingface.co/BAAI/bge-visualized/raw/main/README.md
+智谱 / Z.ai	CogVideoX1.5	video	2024-11-08		https://github.com/THUDM/CogVideo
+智谱 / Z.ai	GLM-4-Voice	realtime	None	continued-pretraining:GLM-4-9B	https://github.com/zai-org/GLM-4-Voice
+智谱 / Z.ai	GLM-4.5	reason,language	None		https://raw.githubusercontent.com/zai-org/GLM-4.5/main/README.md
+智谱 / Z.ai	GLM-4.6	code,language	None		https://raw.githubusercontent.com/zai-org/GLM-4.5/main/README.md
+智谱 / Z.ai	GLM-4.7	code,language	None		https://raw.githubusercontent.com/zai-org/GLM-4.5/main/README.md
+智谱 / Z.ai	GLM-5.2	code,language	None	weight-base:GLM-5.2/5.3 shared base（名称未公开）	https://docs.z.ai/guides/llm/glm-5.2
+智谱 / Z.ai	GLM-5.3	language,reason,code	None	post-training:GLM-5.2/5.3 shared base（名称未公开）;weight-base:GLM-5.2/5.3 shared base（名称未公开）	https://docs.z.ai/guides/llm/glm-5.3
+智谱 / Z.ai	GLM-5.3-Flash	language,reason,code,understand	None		https://huggingface.co/zai-org/GLM-5.3-Flash/raw/main/README.md
+智谱 / Z.ai	GLM-ASR	asr	None		https://github.com/zai-org/GLM-ASR
+智谱 / Z.ai	GLM-OCR	understand	None	architecture-component:CogViT;architecture-component:GLM-0.5B decoder	https://huggingface.co/zai-org/GLM-OCR
+智谱 / Z.ai	GLM-TTS	tts	2025-12-11	architecture-component:Llama architecture	https://github.com/zai-org/GLM-TTS
+月之暗面 / Moonshot AI	Kimi K2	language	None		https://raw.githubusercontent.com/MoonshotAI/Kimi-K2/main/README.md
+月之暗面 / Moonshot AI	Kimi K2.5	language,understand,agent	None	continued-pretraining:Kimi-K2-Base	https://raw.githubusercontent.com/MoonshotAI/Kimi-K2.5/master/README.md
+月之暗面 / Moonshot AI	Kimi K2.7 Code	language,code,reason,agent,understand	None		https://platform.moonshot.ai/docs/guide/kimi-k2-7-code-quickstart
+月之暗面 / Moonshot AI	Kimi K3	language,reason,code,understand,video,agent	None		https://platform.moonshot.ai/docs/guide/use-kimi-k3-model
+月之暗面 / Moonshot AI	Kimi-Audio	asr,speech-understand,realtime	2025-04-25	weight-base:Qwen2.5 Base	https://github.com/moonshotai/Kimi-Audio
+爱诗科技 / PixVerse	PixVerse R1	spatial,video	2026-01-12		https://pixverse.ai/en/blog/pixverse-r1-next-generation-real-time-world-model
+爱诗科技 / PixVerse	PixVerse R2	spatial	None		https://pixverse.ai/en/model/pixverse-r2
+爱诗科技 / PixVerse	PixVerse V6	video	None		https://pixverse.ai/en/model/pixverse-v6
+生数科技 / Vidu	Vidu 2.0	video	None		https://platform.vidu.com/docs/model-map
+生数科技 / Vidu	Vidu Q1	video	None		https://platform.vidu.com/docs/model-map
+生数科技 / Vidu	Vidu Q1 Image	image	None		https://platform.vidu.com/docs/model-map
+生数科技 / Vidu	Vidu Q2	video	None		https://platform.vidu.com/docs/model-map
+生数科技 / Vidu	Vidu Q2 Image	image	None		https://platform.vidu.com/docs/model-map
+生数科技 / Vidu	Vidu Q3	video	None		https://www.vidu.com/
+生数科技 / Vidu	Vidu S1	video	None		https://arxiv.org/abs/2607.03118
+生数科技 / Vidu	Vidu S2	video,spatial	None		https://arxiv.org/abs/2609.11638
+百度 / Baidu	ERNIE 4.5	language	None		https://huggingface.co/baidu/ERNIE-4.5-300B-A47B-PT/raw/main/README.md
+百度 / Baidu	ERNIE 4.5 Base	language	None		https://raw.githubusercontent.com/PaddlePaddle/ERNIE/release/v1.5/README.md
+百度 / Baidu	ERNIE 4.5 VL	language,understand	None		https://raw.githubusercontent.com/PaddlePaddle/ERNIE/release/v1.5/README.md
+百度 / Baidu	ERNIE 4.5 VL Base	language,understand	None		https://raw.githubusercontent.com/PaddlePaddle/ERNIE/release/v1.5/README.md
+百度 / Baidu	PP-OCRv6	understand	None		https://github.com/PaddlePaddle/PaddleOCR
+百度 / Baidu	PaddleOCR-VL 1.5	understand	None		https://huggingface.co/PaddlePaddle/PaddleOCR-VL-1.5
+百度 / Baidu	PaddleOCR-VL 1.6	understand	2026-05-28	architecture-component:PaddleOCR-VL 1.5;architecture-component:ERNIE 4.5	https://huggingface.co/PaddlePaddle/PaddleOCR-VL-1.6
+美团 / Meituan	LongCat 2.0	language,reason,code	None		https://huggingface.co/meituan-longcat/LongCat-2.0/raw/main/README.md
+美团 / Meituan	LongCat-AudioDiT	tts	None		https://raw.githubusercontent.com/meituan-longcat/LongCat-AudioDiT/main/README.md
+美团 / Meituan	LongCat-Flash-Chat	language,code	None		https://raw.githubusercontent.com/meituan-longcat/LongCat-Flash-Chat/main/README.md
+美团 / Meituan	LongCat-Flash-Omni	language,understand,speech-understand,tts	None		https://raw.githubusercontent.com/meituan-longcat/LongCat-Flash-Omni/main/README.md
+美团 / Meituan	LongCat-Flash-Prover	language,reason,code	None		https://raw.githubusercontent.com/meituan-longcat/LongCat-Flash-Prover/main/README.md
+美团 / Meituan	LongCat-Flash-Thinking	language,reason,code	None		https://raw.githubusercontent.com/meituan-longcat/LongCat-Flash-Thinking/main/README.md
+美团 / Meituan	LongCat-Flash-Thinking-2601	language,reason,code	None		https://raw.githubusercontent.com/meituan-longcat/LongCat-Flash-Thinking-2601/main/README.md
+美团 / Meituan	LongCat-Flash-Thinking-ZigZag	language,reason,code	None	continued-pretraining:LongCat-Flash-Thinking-2601 · 中期训练检查点	https://raw.githubusercontent.com/meituan-longcat/Longcat-Flash-Thinking-ZigZag/main/README.md
+美团 / Meituan	LongCat-Image	image	None		https://raw.githubusercontent.com/meituan-longcat/LongCat-Image/main/README.md
+美团 / Meituan	LongCat-Image-Dev	image	None		https://raw.githubusercontent.com/meituan-longcat/LongCat-Image/main/README.md
+美团 / Meituan	LongCat-Image-Edit	image	None		https://raw.githubusercontent.com/meituan-longcat/LongCat-Image/main/README.md
+美团 / Meituan	LongCat-Image-Edit-Turbo	image	None	distillation-teacher:LongCat-Image-Edit	https://raw.githubusercontent.com/meituan-longcat/LongCat-Image/main/README.md
+美团 / Meituan	LongCat-Next	language,understand,speech-understand,tts,image	None		https://huggingface.co/meituan-longcat/LongCat-Next
+美团 / Meituan	LongCat-Video	video	None		https://raw.githubusercontent.com/meituan-longcat/LongCat-Video/main/README.md
+美团 / Meituan	LongCat-Video-Avatar	video	None		https://raw.githubusercontent.com/meituan-longcat/LongCat-Video/main/README.md
+美团 / Meituan	LongCat-Video-Avatar-1.5	video	None		https://raw.githubusercontent.com/meituan-longcat/LongCat-Video/main/README.md
+腾讯 / Tencent	AuK	tts,speech-understand	2026-09-09	post-training:AuK unified pretraining checkpoint（内部）;architecture-component:Qwen2.5-Omni	https://github.com/Tencent-Hunyuan/AuK
+腾讯 / Tencent	AuK-Flash	tts	None	distillation-teacher:AuK;weight-base:AuK	https://github.com/Tencent-Hunyuan/AuK
+腾讯 / Tencent	HY-Motion 1.0	spatial	2025-12-30		https://github.com/Tencent-Hunyuan/HY-Motion-1.0
+腾讯 / Tencent	HY-Pano 2.0	image	2026-05-11		https://github.com/Tencent-Hunyuan/HY-World-2.0
+腾讯 / Tencent	HY-Vision-1.5-Thinking	understand	2025-09-16		https://cloud.tencent.com/document/product/1823/130051
+腾讯 / Tencent	HY-Vision-2.0-Instruct	understand	None		https://cloud.tencent.com/document/product/1823/130051
+腾讯 / Tencent	HY-Vision-Video	understand	2025-07-28		https://cloud.tencent.com/document/product/1823/130051
+腾讯 / Tencent	HY-World 1.5 / WorldPlay	video	2025-12-17		https://github.com/Tencent-Hunyuan/HY-WorldPlay
+腾讯 / Tencent	HY-World 2.0	spatial	2026-04-16		https://github.com/Tencent-Hunyuan/HY-World-2.0
+腾讯 / Tencent	HY-World 2.1	spatial	None		https://github.com/Tencent-Hunyuan/HY-World-2.0
+腾讯 / Tencent	Hunyuan Dense	language	2025-07-30		https://github.com/Tencent-Hunyuan/Hunyuan-7B
+腾讯 / Tencent	Hunyuan-A13B	language,reason,agent	2025-06-27		https://huggingface.co/tencent/Hunyuan-A13B-Instruct/raw/main/README.md
+腾讯 / Tencent	Hunyuan-DiT-v1.0	image	None		https://raw.githubusercontent.com/Tencent-Hunyuan/HunyuanDiT/main/README.md
+腾讯 / Tencent	Hunyuan-DiT-v1.1	image	2024-06-13		https://raw.githubusercontent.com/Tencent-Hunyuan/HunyuanDiT/main/README.md
+腾讯 / Tencent	Hunyuan-DiT-v1.2	image	2024-07-08		https://raw.githubusercontent.com/Tencent-Hunyuan/HunyuanDiT/main/README.md
+腾讯 / Tencent	Hunyuan-Large	language,reason,code	2024-11-05		https://github.com/Tencent-Hunyuan/Tencent-Hunyuan-Large
+腾讯 / Tencent	Hunyuan-T1	language,reason	None		https://cloud.tencent.com/document/product/1729/97765
+腾讯 / Tencent	Hunyuan-Turbo	language,code,agent	None		https://cloud.tencent.com/document/product/1729/97765
+腾讯 / Tencent	Hunyuan-TurboS	language,reason	None		https://cloud.tencent.com/document/product/1729/97765
+腾讯 / Tencent	Hunyuan3D 1.0	spatial	None		https://github.com/Tencent-Hunyuan/Hunyuan3D-1
+腾讯 / Tencent	Hunyuan3D 2.0	spatial	None		https://github.com/Tencent-Hunyuan/Hunyuan3D-2
+腾讯 / Tencent	Hunyuan3D 2.1	spatial	None		https://huggingface.co/tencent/Hunyuan3D-2.1
+腾讯 / Tencent	Hunyuan3D 2.5	spatial	None		https://github.com/Tencent-Hunyuan/Hunyuan3D-2
+腾讯 / Tencent	Hunyuan3D-2mini	spatial	2025-03-18		https://github.com/Tencent-Hunyuan/Hunyuan3D-2
+腾讯 / Tencent	Hunyuan3D-2mv	spatial	2025-03-18		https://github.com/Tencent-Hunyuan/Hunyuan3D-2
+腾讯 / Tencent	Hunyuan3D-Buffalo 1.0	spatial	None		https://github.com/Tencent-Hunyuan/Hunyuan3D-Buffalo1.0
+腾讯 / Tencent	Hunyuan3D-Omni	spatial	None	architecture-component:DINOv2	https://arxiv.org/abs/2509.21245
+腾讯 / Tencent	HunyuanCustom	video	2025-05-08		https://raw.githubusercontent.com/Tencent-Hunyuan/HunyuanCustom/main/README.md
+腾讯 / Tencent	HunyuanImage-2.1	image	None		https://github.com/Tencent-Hunyuan/HunyuanImage-2.1
+腾讯 / Tencent	HunyuanImage-3.0	image	2025-09-28		https://github.com/Tencent-Hunyuan/HunyuanImage-3.0
+腾讯 / Tencent	HunyuanImage-3.0-Instruct	image	2026-01-26		https://huggingface.co/tencent/HunyuanImage-3.0-Instruct/raw/main/README.md
+腾讯 / Tencent	HunyuanImage-3.0-Instruct-Distil	image	2026-01-26		https://huggingface.co/tencent/HunyuanImage-3.0-Instruct-Distil/raw/main/README.md
+腾讯 / Tencent	HunyuanOCR-1.0	understand	None		https://huggingface.co/tencent/HunyuanOCR/raw/main/README.md
+腾讯 / Tencent	HunyuanOCR-1.5	understand	None		https://huggingface.co/tencent/HunyuanOCR/raw/main/README.md
+腾讯 / Tencent	HunyuanVideo	video	2024-12-03		https://huggingface.co/tencent/HunyuanVideo
+腾讯 / Tencent	HunyuanVideo 1.5	video	2025-11-20		https://huggingface.co/tencent/HunyuanVideo-1.5
+腾讯 / Tencent	HunyuanVideo-Avatar	video	2025-05-28		https://huggingface.co/tencent/HunyuanVideo-Avatar/raw/main/README.md
+腾讯 / Tencent	HunyuanVideo-Foley	sound	None		https://github.com/Tencent-Hunyuan/HunyuanVideo-Foley
+腾讯 / Tencent	HunyuanVideo-I2V	video	2025-03-06		https://huggingface.co/tencent/HunyuanVideo-I2V/raw/main/README.md
+腾讯 / Tencent	HunyuanWorld 1.0	spatial	None		https://github.com/Tencent-Hunyuan/HunyuanWorld-1.0
+腾讯 / Tencent	HunyuanWorld-1.1 (WorldMirror)	spatial	2025-10-22		https://github.com/Tencent-Hunyuan/HunyuanWorld-Mirror
+腾讯 / Tencent	HunyuanWorld-Voyager	spatial	2025-09-02		https://github.com/Tencent-Hunyuan/HunyuanWorld-Voyager
+腾讯 / Tencent	Hy-Image-3.0	image	None		https://cloud.tencent.com/document/product/1823/130051
+腾讯 / Tencent	Hy-Image-3.5-preview	image	None		https://cloud.tencent.com/document/product/1823/130051
+腾讯 / Tencent	Hy-MT2	language	2026-05-21		https://github.com/Tencent-Hunyuan/Hy-MT2
+腾讯 / Tencent	Hy-Video-v1.5	video	None		https://cloud.tencent.com/document/product/1823/135738
+腾讯 / Tencent	Hy-World-2.1-panorama	image,spatial	None		https://cloud.tencent.com/document/product/1823/130051
+腾讯 / Tencent	Hy3	language,reason,code,agent	2026-07-06		https://github.com/Tencent-Hunyuan/Hy3
+腾讯 / Tencent	Hy3 preview	language,reason,code,agent	2026-04-23		https://github.com/Tencent-Hunyuan/Hy3-preview
+腾讯 / Tencent	Hy4 preview	language,reason,code,agent	2026-08-28		https://www.tencent.com/zh-cn/tencent-releases-and-open-sources-tencent-hy4-preview/
+腾讯 / Tencent	P3-SAM	spatial	None		https://github.com/Tencent-Hunyuan/Hunyuan3D-Part
+腾讯 / Tencent	Tencent HY 2.0 Instruct	language	2025-11-11		https://cloud.tencent.com/document/product/1729/127293
+腾讯 / Tencent	Tencent HY 2.0 Think	language,reason	2025-11-09		https://cloud.tencent.com/document/product/1729/127293
+腾讯 / Tencent	Tencent HY Vision 1.5 Instruct	understand	2025-12-17		https://cloud.tencent.com/document/product/1729/97765
+腾讯 / Tencent	WorldMirror 2.0	spatial	2026-04-16		https://github.com/Tencent-Hunyuan/HY-World-2.0
+腾讯 / Tencent	WorldStereo 2.0	spatial	2026-05-18		https://github.com/Tencent-Hunyuan/HY-World-2.0
+腾讯 / Tencent	X-Part	spatial	None		https://github.com/Tencent-Hunyuan/Hunyuan3D-Part
+腾讯 / Tencent	hunyuan	language	None		https://cloud.tencent.com/document/product/1729/131925
+腾讯 / Tencent	hunyuan-code	language,code	None		https://cloud.tencent.com/document/product/1729/112207
+腾讯 / Tencent	hunyuan-functioncall	language,agent	None		https://cloud.tencent.com/document/product/1729/112207
+腾讯 / Tencent	hunyuan-large-vision	understand	2025-05-26		https://cloud.tencent.com/document/product/1729/97765
+腾讯 / Tencent	hunyuan-lite	language	None		https://cloud.tencent.com/document/product/1729/112207
+腾讯 / Tencent	hunyuan-lite-vision	understand	2024-12-12		https://cloud.tencent.com/document/product/1729/97765
+腾讯 / Tencent	hunyuan-pro	language	None		https://cloud.tencent.com/document/product/1729/112207
+腾讯 / Tencent	hunyuan-standard	language	None		https://cloud.tencent.com/document/product/1729/112207
+腾讯 / Tencent	hunyuan-standard-vision	understand	2024-12-31		https://cloud.tencent.com/document/product/1729/97765
+腾讯 / Tencent	hunyuan-turbo-vision	understand	2024-11-26		https://cloud.tencent.com/document/product/1729/97765
+腾讯 / Tencent	hunyuan-turbos-vision	understand	2025-04-07		https://cloud.tencent.com/document/product/1729/97765
+腾讯 / Tencent	hunyuan-vision	understand	2024-10-23		https://cloud.tencent.com/document/product/1729/97765
+蚂蚁集团 / inclusionAI	Ling 3.0 Flash	language	None		https://huggingface.co/inclusionAI/Ling-3.0-flash/raw/main/README.md
+蚂蚁集团 / inclusionAI	Ling-2.5-1T	language,code	None		https://raw.githubusercontent.com/inclusionAI/Ling-V2.5/main/README.md
+蚂蚁集团 / inclusionAI	Ling-2.6-1T	language,code	None		https://developer.ant-ling.com/zh-CN/docs/models/ling/
+蚂蚁集团 / inclusionAI	Ling-3.0-flash-Fin	language	None		https://huggingface.co/inclusionAI/Ling-3.0-flash-Fin/raw/main/README.md
+蚂蚁集团 / inclusionAI	Ling-3.0-flash-VL	language,understand	None		https://huggingface.co/inclusionAI/Ling-3.0-flash-VL/raw/main/README.md
+蚂蚁集团 / inclusionAI	Ling-coder-lite	language,code	None		https://raw.githubusercontent.com/inclusionAI/Ling/master/README.md
+蚂蚁集团 / inclusionAI	Ling-coder-lite-base	language,code	None		https://raw.githubusercontent.com/inclusionAI/Ling/master/README.md
+蚂蚁集团 / inclusionAI	Ling-lite-1.5	language	None		https://raw.githubusercontent.com/inclusionAI/Ling/master/README.md
+蚂蚁集团 / inclusionAI	Ling-lite-base-1.5	language	None		https://raw.githubusercontent.com/inclusionAI/Ling/master/README.md
+蚂蚁集团 / inclusionAI	Ling-mini-2.0	language,reason	None	post-training:Ling-mini-base-2.0	https://raw.githubusercontent.com/inclusionAI/Ling-V2/main/README.md
+蚂蚁集团 / inclusionAI	Ling-mini-base-2.0	language,reason	None		https://raw.githubusercontent.com/inclusionAI/Ling-V2/main/README.md
+蚂蚁集团 / inclusionAI	Ming-Flash Omni 2.0	language,understand,speech-understand,tts,image,music,sound	None		https://developer.ant-ling.com/zh-CN/docs/models/ming/
+蚂蚁集团 / inclusionAI	Ming-Flash Omni Preview	language,understand,speech-understand,tts,image	None		https://developer.ant-ling.com/zh-CN/docs/models/ming/
+蚂蚁集团 / inclusionAI	Ming-Image-0.1-Design	image	None		https://raw.githubusercontent.com/inclusionAI/Ming-Image/main/README.md
+蚂蚁集团 / inclusionAI	Ming-Image-0.1-Design-Layer	image	None		https://raw.githubusercontent.com/inclusionAI/Ming-Image/main/README.md
+蚂蚁集团 / inclusionAI	Ming-Lite-Omni	language,understand,speech-understand,tts,image	None		https://raw.githubusercontent.com/inclusionAI/Ming/main/README.md
+蚂蚁集团 / inclusionAI	Ming-UniAudio	speech-understand,tts	None		https://raw.githubusercontent.com/inclusionAI/Ming-UniAudio/main/README.md
+蚂蚁集团 / inclusionAI	Ming-UniAudio-Edit	speech-understand,tts	None	finetune:Ming-Lite-Omni	https://raw.githubusercontent.com/inclusionAI/Ming-UniAudio/main/README.md
+蚂蚁集团 / inclusionAI	Ming-omni-tts	tts,music,sound	None		https://raw.githubusercontent.com/inclusionAI/Ming-omni-tts/main/README.md
+蚂蚁集团 / inclusionAI	Ring-1T	language,reason	None		https://raw.githubusercontent.com/inclusionAI/Ring-V2/main/README.md
+蚂蚁集团 / inclusionAI	Ring-2.5-1T	language,reason	None		https://raw.githubusercontent.com/inclusionAI/Ring-V2.5/main/README.md
+蚂蚁集团 / inclusionAI	Ring-2.6-1T	language,reason	None		https://developer.ant-ling.com/zh-CN/docs/models/ring/
+蚂蚁集团 / inclusionAI	Ring-flash-2.0	language,reason	None		https://raw.githubusercontent.com/inclusionAI/Ring-V2/main/README.md
+蚂蚁集团 / inclusionAI	Ring-linear-2.0	language,reason	None		https://raw.githubusercontent.com/inclusionAI/Ring-V2/main/README.md
+蚂蚁集团 / inclusionAI	Ring-lite	language,reason	None		https://raw.githubusercontent.com/inclusionAI/Ring/main/README.md
+蚂蚁集团 / inclusionAI	Ring-lite-2507	language,reason	None		https://raw.githubusercontent.com/inclusionAI/Ring/main/README.md
+蚂蚁集团 / inclusionAI	Ring-lite-distill-preview	language,reason	None		https://raw.githubusercontent.com/inclusionAI/Ring/main/README.md
+阶跃星辰 / StepFun	GOT-OCR 2.0	understand	None		https://huggingface.co/stepfun-ai/GOT-OCR2_0
+阶跃星辰 / StepFun	Step 5 Preview	language,code,understand	None		https://platform.stepfun.com/
+阶跃星辰 / StepFun	Step-3.7-Flash	language,reason,code,understand,agent	None		https://raw.githubusercontent.com/stepfun-ai/Step-3.7-Flash/main/README.md
+阶跃星辰 / StepFun	Step-Audio 2	asr,speech-understand,realtime	None		https://github.com/stepfun-ai/Step-Audio2
+阶跃星辰 / StepFun	Step-Audio-R1.1	speech-understand	2026-01-14		https://github.com/stepfun-ai/Step-Audio-R1
+阶跃星辰 / StepFun	Step-Audio-R1.5	speech-understand	None		https://github.com/stepfun-ai/Step-Audio-R1
+阶跃星辰 / StepFun	Step-Audio-TTS	tts	2025-02-17		https://github.com/stepfun-ai/Step-Audio
+阶跃星辰 / StepFun	Step3	understand	None		https://raw.githubusercontent.com/stepfun-ai/Step3/main/README.md
+阿里巴巴 / Alibaba	CosyVoice	tts	None		https://github.com/QwenAudio/CosyVoice
+阿里巴巴 / Alibaba	CosyVoice 2	tts	2024-12	weight-base:Qwen2.5 Base	https://github.com/QwenAudio/CosyVoice
+阿里巴巴 / Alibaba	Fun-ASR	asr	None		https://github.com/QwenAudio/Fun-ASR
+阿里巴巴 / Alibaba	Fun-CosyVoice 3	tts	2025-12		https://github.com/QwenAudio/CosyVoice
+阿里巴巴 / Alibaba	GTE ModernBERT	retrieval	None		https://huggingface.co/Alibaba-NLP/gte-modernbert-base/raw/main/README.md
+阿里巴巴 / Alibaba	GTE ModernBERT Reranker	rerank	None		https://huggingface.co/Alibaba-NLP/gte-reranker-modernbert-base/raw/main/README.md
+阿里巴巴 / Alibaba	GTE multilingual	retrieval	None		https://huggingface.co/Alibaba-NLP/gte-multilingual-base
+阿里巴巴 / Alibaba	GTE multilingual Reranker	rerank	None		https://huggingface.co/Alibaba-NLP/gte-multilingual-reranker-base
+阿里巴巴 / Alibaba	Paraformer	asr	None		https://github.com/modelscope/FunASR
+阿里巴巴 / Alibaba	QwQ	reason,language	None		https://raw.githubusercontent.com/QwenLM/QwQ/main/README.md
+阿里巴巴 / Alibaba	Qwen	language	None		https://huggingface.co/Qwen/Qwen-7B-Chat/raw/main/README.md
+阿里巴巴 / Alibaba	Qwen-Audio	speech-understand	None		https://huggingface.co/Qwen/Qwen-Audio
+阿里巴巴 / Alibaba	Qwen-Audio 3.0 TTS	tts	None		https://www.alibabacloud.com/help/en/model-studio/tts-model
+阿里巴巴 / Alibaba	Qwen-Audio 3.1 ASR	asr	None		https://www.alibabacloud.com/help/en/model-studio/asr-model
+阿里巴巴 / Alibaba	Qwen-Audio 3.1 Realtime Plus	realtime	None		https://www.alibabacloud.com/help/en/model-studio/s2s-model
+阿里巴巴 / Alibaba	Qwen-Image	image	2025-08-04		https://github.com/QwenLM/Qwen-Image
+阿里巴巴 / Alibaba	Qwen-Image-2.0	image	2026-02-10		https://github.com/QwenLM/Qwen-Image
+阿里巴巴 / Alibaba	Qwen-Image-2.1	image	None		https://huggingface.co/Qwen/Qwen-Image-2.1
+阿里巴巴 / Alibaba	Qwen-Image-3.0 Pro	image	None		https://www.alibabacloud.com/help/en/model-studio/models
+阿里巴巴 / Alibaba	Qwen-Image-Edit	image	2025-08-18	weight-base:Qwen-Image;architecture-component:Qwen2.5-VL	https://github.com/QwenLM/Qwen-Image
+阿里巴巴 / Alibaba	Qwen-Image-Edit-2509	image	None		https://huggingface.co/Qwen/Qwen-Image-Edit-2509/raw/main/README.md
+阿里巴巴 / Alibaba	Qwen-Image-Edit-2511	image	None		https://huggingface.co/Qwen/Qwen-Image-Edit-2511/raw/main/README.md
+阿里巴巴 / Alibaba	Qwen-Image-Layered	image	2025-12-19	weight-base:Qwen-Image	https://github.com/QwenLM/Qwen-Image
+阿里巴巴 / Alibaba	Qwen1.5	language	2024-02-05		https://raw.githubusercontent.com/QwenLM/Qwen3/main/README.md
+阿里巴巴 / Alibaba	Qwen2	language	2024-06-06		https://raw.githubusercontent.com/QwenLM/Qwen3/main/README.md
+阿里巴巴 / Alibaba	Qwen2-VL	understand	2024-08-30		https://raw.githubusercontent.com/QwenLM/Qwen3-VL/main/README.md
+阿里巴巴 / Alibaba	Qwen2.5	language	2024-09-19		https://raw.githubusercontent.com/QwenLM/Qwen3/main/README.md
+阿里巴巴 / Alibaba	Qwen2.5-Coder	code,language	None		https://huggingface.co/Qwen/Qwen2.5-Coder-7B
+阿里巴巴 / Alibaba	Qwen2.5-Math	reason,language	None		https://huggingface.co/Qwen/Qwen2.5-Math-7B
+阿里巴巴 / Alibaba	Qwen2.5-VL	understand	2025-01-28		https://raw.githubusercontent.com/QwenLM/Qwen3-VL/main/README.md
+阿里巴巴 / Alibaba	Qwen3	language,reason,code	2025-04-29		https://raw.githubusercontent.com/QwenLM/Qwen3/main/README.md
+阿里巴巴 / Alibaba	Qwen3 Embedding	retrieval	None	weight-base:Qwen3 Base	https://github.com/QwenLM/Qwen3-Embedding
+阿里巴巴 / Alibaba	Qwen3 Reranker	rerank	None	weight-base:Qwen3 Base	https://github.com/QwenLM/Qwen3-Embedding
+阿里巴巴 / Alibaba	Qwen3-ASR	asr	2026-01-29	post-training:Qwen3-Omni	https://github.com/QwenLM/Qwen3-ASR
+阿里巴巴 / Alibaba	Qwen3-Coder	code	None		https://raw.githubusercontent.com/QwenLM/Qwen3-Coder/main/README.md
+阿里巴巴 / Alibaba	Qwen3-Coder-Next	code	None	post-training:Qwen3-Next Base	https://raw.githubusercontent.com/QwenLM/Qwen3-Coder/main/README.md
+阿里巴巴 / Alibaba	Qwen3-ForcedAligner	asr	2026-01-29		https://raw.githubusercontent.com/QwenLM/Qwen3-ASR/main/README.md
+阿里巴巴 / Alibaba	Qwen3-LiveTranslate Flash Realtime	speech-translation	None		https://www.alibabacloud.com/help/en/model-studio/models
+阿里巴巴 / Alibaba	Qwen3-Next	reason,language	2025-09-11		https://raw.githubusercontent.com/QwenLM/Qwen3.5/main/README.md
+阿里巴巴 / Alibaba	Qwen3-Omni	language,understand,asr,tts,speech-understand,speech-translation,realtime	2025-09-22		https://github.com/QwenLM/Qwen3-Omni
+阿里巴巴 / Alibaba	Qwen3-TTS	tts	2026-01-22		https://github.com/QwenLM/Qwen3-TTS
+阿里巴巴 / Alibaba	Qwen3-VL	language,reason,code,understand	2025-09-23		https://raw.githubusercontent.com/QwenLM/Qwen3-VL/main/README.md
+阿里巴巴 / Alibaba	Qwen3-VL Embedding	retrieval	None	weight-base:Qwen3-VL Instruct	https://github.com/QwenLM/Qwen3-VL-Embedding
+阿里巴巴 / Alibaba	Qwen3-VL Reranker	rerank	None	weight-base:Qwen3-VL Instruct	https://github.com/QwenLM/Qwen3-VL-Embedding
+阿里巴巴 / Alibaba	Qwen3.5	language,reason,code,understand	2026-02-16		https://raw.githubusercontent.com/QwenLM/Qwen3.5/main/README.md
+阿里巴巴 / Alibaba	Qwen3.5 Omni Plus	speech-understand,tts	None		https://www.alibabacloud.com/help/en/model-studio/models
+阿里巴巴 / Alibaba	Qwen3.5 Plus	language	None		https://huggingface.co/Qwen/Qwen3.5-397B-A17B/raw/main/README.md
+阿里巴巴 / Alibaba	Qwen3.5-LiveTranslate Flash Realtime	speech-translation	None		https://www.alibabacloud.com/help/en/model-studio/qwen3-5-livetranslate-flash-realtime
+阿里巴巴 / Alibaba	Qwen3.6	language,reason,code,understand	2026-04-16		https://raw.githubusercontent.com/QwenLM/Qwen3.5/main/README.md
+阿里巴巴 / Alibaba	Qwen3.7 Plus	language,reason,code	None		https://www.alibabacloud.com/help/en/model-studio/models
+阿里巴巴 / Alibaba	Qwen3.8	language,reason,code,understand	2026-08-12		https://raw.githubusercontent.com/QwenLM/Qwen3.5/main/README.md
+阿里巴巴 / Alibaba	Qwen3.8 Flash	language,understand	None		https://www.alibabacloud.com/help/en/model-studio/models
+阿里巴巴 / Alibaba	Qwen3.8 Max	language,understand	None		https://www.alibabacloud.com/help/en/model-studio/models
+阿里巴巴 / Alibaba	Qwen3.8 Omni Flash	understand,speech-understand,language	None		https://www.alibabacloud.com/help/en/model-studio/models
+阿里巴巴 / Alibaba	Qwen3.8 Omni Flash Realtime	speech-understand,realtime	None		https://www.alibabacloud.com/help/en/model-studio/models
+阿里巴巴 / Alibaba	Qwen3.8-Flash-Next	language	None		https://huggingface.co/Qwen/Qwen3.8-Flash-Next/raw/main/README.md
+阿里巴巴 / Alibaba	Qwen3.8-LiveTranslate Flash Realtime	speech-translation	None		https://www.alibabacloud.com/help/en/model-studio/qwen3-5-livetranslate-flash-realtime
+阿里巴巴 / Alibaba	SenseVoice	asr,speech-understand	None		https://github.com/FunAudioLLM/SenseVoice
+阿里巴巴 / Alibaba	Wan 2.1	video	None		https://github.com/Wan-Video/Wan2.1
+阿里巴巴 / Alibaba	Wan 2.2	video	2025-07-28		https://github.com/Wan-Video/Wan2.2
+阿里巴巴 / Alibaba	Wan 2.2 Animate	video	2025-09-19		https://github.com/Wan-Video/Wan2.2
+阿里巴巴 / Alibaba	Wan 2.2 S2V	video	2025-08-26		https://raw.githubusercontent.com/Wan-Video/Wan2.2/main/README.md
+阿里巴巴 / Alibaba	Wan 2.5	video	None		https://www.alibabacloud.com/help/en/model-studio/text-to-video-api-reference
+阿里巴巴 / Alibaba	Wan 2.6	video	None		https://www.alibabacloud.com/help/en/model-studio/text-to-video-api-reference
+阿里巴巴 / Alibaba	Wan 2.7	video	None		https://www.alibabacloud.com/help/en/model-studio/text-to-video-api-reference
+阿里巴巴 / Alibaba	Wan 3.0	video	None		https://help.aliyun.com/zh/model-studio/wan-video-generation-api-reference
+阿里巴巴 / Alibaba	Z-Image	image	2026-01-27		https://github.com/Tongyi-MAI/Z-Image
+阿里巴巴 / Alibaba	Z-Image-Edit	image	None	finetune:Z-Image	https://github.com/Tongyi-MAI/Z-Image
+阿里巴巴 / Alibaba	Z-Image-Turbo	image	2025-11-26	distillation-teacher:Z-Image	https://github.com/Tongyi-MAI/Z-Image
+零一万物 / 01.AI	Yi	language	None		https://raw.githubusercontent.com/01-ai/Yi/main/README.md
+零一万物 / 01.AI	Yi-1.5	language	2024-05-13	continued-pretraining:Yi	https://raw.githubusercontent.com/01-ai/Yi/main/README.md
+零一万物 / 01.AI	Yi-Coder	code,language	None		https://huggingface.co/01-ai/Yi-Coder-9B/raw/main/README.md

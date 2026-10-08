@@ -1,0 +1,939 @@
+{
+ "vendor": "meta",
+ "count": 24,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "llama3170binstruct",
+   "names": [
+    "Meta: Llama 3.1 70B Instruct",
+    "Llama-3.1-70B-Instruct",
+    "Llama 3.1 70B",
+    "Llama 3.1 70B Instruct",
+    "Llama 3.1 70B Instruct (US)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-07-23",
+    "modelsdev:kilo": "2024-07-23",
+    "modelsdev:openrouter": "2024-07-23",
+    "modelsdev:merge-gateway": "2024-07-23",
+    "modelsdev:amazon-bedrock": "2024-07-23"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta-llama/llama-3.1-70b-instruct"
+    ],
+    "modelsdev:kilo": [
+     "meta-llama/llama-3.1-70b-instruct"
+    ],
+    "modelsdev:openrouter": [
+     "meta-llama/llama-3.1-70b-instruct"
+    ],
+    "modelsdev:merge-gateway": [
+     "meta/llama-3.1-70b-instruct"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "meta.llama3-1-70b-instruct-v1:0",
+     "us.meta.llama3-1-70b-instruct-v1:0"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama318binstruct",
+   "names": [
+    "Meta: Llama 3.1 8B Instruct",
+    "Llama 3.1 8b Instruct",
+    "Llama 3.1 8B",
+    "Llama-3.1-8B-Instruct",
+    "Llama 3.1 8B Instruct (US)",
+    "Llama 3.1 8B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-07-23",
+    "modelsdev:nano-gpt": "2024-07-23",
+    "modelsdev:wandb": "2024-07-23",
+    "modelsdev:kilo": "2024-07-23",
+    "modelsdev:openrouter": "2024-07-23",
+    "modelsdev:huggingface": "2024-07-23",
+    "modelsdev:merge-gateway": "2024-07-23",
+    "modelsdev:amazon-bedrock": "2024-07-23",
+    "modelsdev:cortecs": "2024-07-23"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta-llama/llama-3.1-8b-instruct"
+    ],
+    "modelsdev:nano-gpt": [
+     "meta-llama/llama-3.1-8b-instruct"
+    ],
+    "modelsdev:wandb": [
+     "meta-llama/Llama-3.1-8B-Instruct"
+    ],
+    "modelsdev:kilo": [
+     "meta-llama/llama-3.1-8b-instruct"
+    ],
+    "modelsdev:openrouter": [
+     "meta-llama/llama-3.1-8b-instruct"
+    ],
+    "modelsdev:huggingface": [
+     "meta-llama/Llama-3.1-8B-Instruct"
+    ],
+    "modelsdev:merge-gateway": [
+     "meta/llama-3.1-8b-instruct"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.meta.llama3-1-8b-instruct-v1:0",
+     "meta.llama3-1-8b-instruct-v1:0"
+    ],
+    "modelsdev:cortecs": [
+     "llama-3.1-8b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llamaguard38b",
+   "names": [
+    "Llama Guard 3 8B",
+    "Llama-Guard-3-8B (Deep Infra)",
+    "Llama-Guard-3-8B (Cloudflare)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cloudflare-workers-ai": "2024-07-23",
+    "modelsdev:edenai": "2024-07-23"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/meta/llama-guard-3-8b"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/meta-llama/Llama-Guard-3-8B",
+     "cloudflare/@cf/meta/llama-guard-3-8b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama3211bvisioninstruct",
+   "names": [
+    "Llama 3.2 11B Vision Instruct",
+    "Llama-3.2-11B-Vision-Instruct (Deep Infra)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cloudflare-workers-ai": "2024-09-25",
+    "modelsdev:edenai": "2024-09-25"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/meta/llama-3.2-11b-vision-instruct"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/meta-llama/Llama-3.2-11B-Vision-Instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama321b",
+   "names": [
+    "Llama 3.2 1B Instruct",
+    "Llama-3.2-1B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cloudflare-workers-ai": "2024-09-25",
+    "modelsdev:pioneer": "2024-09-25"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/meta/llama-3.2-1b-instruct"
+    ],
+    "modelsdev:pioneer": [
+     "meta-llama/Llama-3.2-1B"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama321binstruct",
+   "names": [
+    "Meta: Llama 3.2 1B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-09-25"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta-llama/llama-3.2-1b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama323b",
+   "names": [
+    "Llama 3.2 3B Instruct",
+    "Llama 3.2 3B",
+    "Llama-3.2-3B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cloudflare-workers-ai": "2024-09-25",
+    "modelsdev:venice": "2024-10-03",
+    "modelsdev:pioneer": "2024-09-25"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/meta/llama-3.2-3b-instruct"
+    ],
+    "modelsdev:venice": [
+     "llama-3.2-3b"
+    ],
+    "modelsdev:pioneer": [
+     "meta-llama/Llama-3.2-3B"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama323binstruct",
+   "names": [
+    "Meta: Llama 3.2 3B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-09-25"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta-llama/llama-3.2-3b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama3370binstruct",
+   "names": [
+    "Meta: Llama 3.3 70B Instruct",
+    "Llama 3.3 70b Instruct",
+    "Llama-3.3-70B-Instruct",
+    "Llama 3.3 70B",
+    "Llama 3.3 70B Instruct (Cerebras)",
+    "Llama 3.3 70B Instruct (NovitaAI)",
+    "Llama 3.3 70B Instruct",
+    "Llama-3.3-70B-Instruct (Deep Infra)",
+    "Llama-3.3-70B-Instruct (Scaleway)",
+    "Llama-3.3-70B-Instruct (IONOS)",
+    "Llama 3.3 70B Instruct (US)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-12-06",
+    "modelsdev:nano-gpt": "2024-12-06",
+    "modelsdev:tinfoil": "2024-12-06",
+    "modelsdev:llama": "2024-12-06",
+    "modelsdev:wandb": "2024-12-01",
+    "modelsdev:llmgateway-providers": "2024-12-06",
+    "modelsdev:kilo": "2024-12-06",
+    "modelsdev:snowflake-cortex": "2024-12-06",
+    "modelsdev:abacus": "2024-12-06",
+    "modelsdev:openrouter": "2024-12-06",
+    "modelsdev:pendra": "2024-12-06",
+    "modelsdev:huggingface": "2024-12-06",
+    "modelsdev:oci": "2024-12-06",
+    "modelsdev:crusoe": "2024-12-06",
+    "modelsdev:watsonx": "2024-12-06",
+    "modelsdev:greenpt": "2024-12-06",
+    "modelsdev:neon": "2024-12-06",
+    "modelsdev:merge-gateway": "2024-12-06",
+    "modelsdev:pioneer": "2024-12-06",
+    "modelsdev:edenai": "2024-12-06",
+    "modelsdev:amazon-bedrock": "2024-12-06",
+    "modelsdev:llmgateway": "2024-12-06",
+    "modelsdev:cortecs": "2024-12-06"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta-llama/llama-3.3-70b-instruct"
+    ],
+    "modelsdev:nano-gpt": [
+     "meta-llama/llama-3.3-70b-instruct"
+    ],
+    "modelsdev:tinfoil": [
+     "llama3-3-70b"
+    ],
+    "modelsdev:llama": [
+     "llama-3.3-70b-instruct"
+    ],
+    "modelsdev:wandb": [
+     "meta-llama/Llama-3.3-70B-Instruct"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "cerebras/llama-3.3-70b-instruct",
+     "novita/llama-3.3-70b-instruct"
+    ],
+    "modelsdev:kilo": [
+     "meta-llama/llama-3.3-70b-instruct"
+    ],
+    "modelsdev:snowflake-cortex": [
+     "snowflake-llama3.3-70b"
+    ],
+    "modelsdev:abacus": [
+     "meta-llama/Meta-Llama-3.3-70B-Instruct"
+    ],
+    "modelsdev:openrouter": [
+     "meta-llama/llama-3.3-70b-instruct"
+    ],
+    "modelsdev:pendra": [
+     "llama3.3:70b"
+    ],
+    "modelsdev:huggingface": [
+     "meta-llama/Llama-3.3-70B-Instruct"
+    ],
+    "modelsdev:oci": [
+     "meta.llama-3.3-70b-instruct"
+    ],
+    "modelsdev:crusoe": [
+     "meta-llama/Llama-3.3-70B-Instruct"
+    ],
+    "modelsdev:watsonx": [
+     "meta-llama/llama-3-3-70b-instruct"
+    ],
+    "modelsdev:greenpt": [
+     "llama-3.3-70b-instruct"
+    ],
+    "modelsdev:neon": [
+     "meta-llama-3-3-70b-instruct"
+    ],
+    "modelsdev:merge-gateway": [
+     "meta/llama-3.3-70b-instruct"
+    ],
+    "modelsdev:pioneer": [
+     "meta-llama/Llama-3.3-70B-Instruct"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/meta-llama/Llama-3.3-70B-Instruct",
+     "scaleway/llama-3.3-70b-instruct",
+     "ionos/meta-llama/Llama-3.3-70B-Instruct"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "meta.llama3-3-70b-instruct-v1:0",
+     "us.meta.llama3-3-70b-instruct-v1:0"
+    ],
+    "modelsdev:llmgateway": [
+     "llama-3.3-70b-instruct"
+    ],
+    "modelsdev:cortecs": [
+     "llama-3.3-70b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama338binstruct",
+   "names": [
+    "Llama-3.3-8B-Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:llama": "2024-12-06"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:llama": [
+     "llama-3.3-8b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "cerebrasllama4maverick17b128einstruct",
+   "names": [
+    "Cerebras-Llama-4-Maverick-17B-128E-Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:llama": "2025-04-05"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:llama": [
+     "cerebras-llama-4-maverick-17b-128e-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "cerebrasllama4scout17b16einstruct",
+   "names": [
+    "Cerebras-Llama-4-Scout-17B-16E-Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:llama": "2025-04-05"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:llama": [
+     "cerebras-llama-4-scout-17b-16e-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "groqllama4maverick17b128einstruct",
+   "names": [
+    "Groq-Llama-4-Maverick-17B-128E-Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:llama": "2025-04-05"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:llama": [
+     "groq-llama-4-maverick-17b-128e-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama4maverick",
+   "names": [
+    "Meta: Llama 4 Maverick"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-05"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta-llama/llama-4-maverick"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama4maverick17binstruct",
+   "names": [
+    "Llama 4 Maverick 17B Instruct (AWS Bedrock)",
+    "Llama 4 Maverick 17B Instruct (NovitaAI)",
+    "Llama 4 Maverick 17B Instruct (SCX.ai (Turbo))",
+    "Llama 4 Maverick 17B Instruct",
+    "Llama 4 Maverick 17B Instruct (US)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:llmgateway-providers": "2025-04-05",
+    "modelsdev:neon": "2025-04-05",
+    "modelsdev:amazon-bedrock": "2025-04-05"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/llama-4-maverick-17b-instruct",
+     "novita/llama-4-maverick-17b-instruct",
+     "scx-ai/llama-4-maverick-17b-instruct"
+    ],
+    "modelsdev:neon": [
+     "llama-4-maverick"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.meta.llama4-maverick-17b-instruct-v1:0",
+     "meta.llama4-maverick-17b-instruct-v1:0"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama4scout",
+   "names": [
+    "Meta: Llama 4 Scout"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-05"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta-llama/llama-4-scout"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llama4scout17binstruct",
+   "names": [
+    "Llama 4 Scout 17B 16E Instruct",
+    "Llama 4 Scout 17B Instruct (AWS Bedrock)",
+    "Llama 4 Scout 17B Instruct (NovitaAI)",
+    "Llama 4 Scout 17B Instruct",
+    "Llama 4 Scout 17B Instruct (US)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cloudflare-workers-ai": "2025-04-05",
+    "modelsdev:llmgateway-providers": "2025-04-05",
+    "modelsdev:oci": "2025-04-05",
+    "modelsdev:amazon-bedrock": "2025-04-05"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/meta/llama-4-scout-17b-16e-instruct"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/llama-4-scout-17b-instruct",
+     "novita/llama-4-scout-17b-instruct"
+    ],
+    "modelsdev:oci": [
+     "meta.llama-4-scout-17b-16e-instruct"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "meta.llama4-scout-17b-instruct-v1:0",
+     "us.meta.llama4-scout-17b-instruct-v1:0"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "llamaguard412b",
+   "names": [
+    "Meta: Llama Guard 4 12B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-30"
+   },
+   "openWeights": null,
+   "modalities": [
+    "image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta-llama/llama-guard-4-12b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "musespark11",
+   "names": [
+    "Meta: Muse Spark 1.1",
+    "Muse Spark 1.1",
+    "Muse Spark 1.1 (Meta)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-16",
+    "modelsdev:empiriolabs": "2026-04-08",
+    "modelsdev:nano-gpt": "2026-04-08",
+    "modelsdev:llmgateway-providers": "2026-04-08",
+    "modelsdev:kilo": "2026-04-08",
+    "modelsdev:abacus": "2026-04-08",
+    "modelsdev:openrouter": "2026-04-08",
+    "modelsdev:meta": "2026-04-08",
+    "modelsdev:vercel": "2026-04-08",
+    "modelsdev:orcarouter": "2026-04-08",
+    "modelsdev:aihubmix": "2026-04-08",
+    "modelsdev:merge-gateway": "2026-04-08",
+    "modelsdev:pioneer": "2026-04-08",
+    "modelsdev:llmgateway": "2026-04-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video+file->text",
+    "text,image,video,audio->text",
+    "text,image,pdf,video->text",
+    "text,image,video->text",
+    "text,image,pdf->text",
+    "text,image,video,audio,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta/muse-spark-1.1"
+    ],
+    "modelsdev:empiriolabs": [
+     "muse-spark-1-1"
+    ],
+    "modelsdev:nano-gpt": [
+     "meta/muse-spark-1.1"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "meta/muse-spark-1.1"
+    ],
+    "modelsdev:kilo": [
+     "meta/muse-spark-1.1"
+    ],
+    "modelsdev:abacus": [
+     "muse-spark-1.1"
+    ],
+    "modelsdev:openrouter": [
+     "meta/muse-spark-1.1"
+    ],
+    "modelsdev:meta": [
+     "muse-spark-1.1"
+    ],
+    "modelsdev:vercel": [
+     "meta/muse-spark-1.1"
+    ],
+    "modelsdev:orcarouter": [
+     "meta/muse-spark-1.1"
+    ],
+    "modelsdev:aihubmix": [
+     "muse-spark-1.1"
+    ],
+    "modelsdev:merge-gateway": [
+     "meta/muse-spark-1.1"
+    ],
+    "modelsdev:pioneer": [
+     "meta/muse-spark-1.1"
+    ],
+    "modelsdev:llmgateway": [
+     "muse-spark-1.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "musespark12",
+   "names": [
+    "Meta: Muse Spark 1.2",
+    "Muse Spark 1.2",
+    "Muse Spark 1.2 (Meta)",
+    "Muse Spark 1.2 Contributor",
+    "Muse Spark 1.2 Free"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-05",
+    "modelsdev:empiriolabs": "2026-08-05",
+    "modelsdev:nano-gpt": "2026-08-05",
+    "modelsdev:llmgateway-providers": "2026-08-05",
+    "modelsdev:kilo": "2026-08-05",
+    "modelsdev:abacus": "2026-08-05",
+    "modelsdev:openrouter": "2026-08-05",
+    "modelsdev:meta": "2026-08-05",
+    "modelsdev:llmtr": "2026-08-05",
+    "modelsdev:vercel": "2026-08-05",
+    "modelsdev:orcarouter": "2026-08-05",
+    "modelsdev:aihubmix": "2026-08-05",
+    "modelsdev:merge-gateway": "2026-08-05",
+    "modelsdev:opper": "2026-08-05",
+    "modelsdev:opencode-go": "2026-08-05",
+    "modelsdev:opencode": "2026-08-05",
+    "modelsdev:llmgateway": "2026-08-05"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video+file->text",
+    "text,image,video,audio->text",
+    "text,image,video,pdf,audio->text",
+    "text,image,video,pdf->text",
+    "text,image,audio,video->text",
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta/muse-spark-1.2"
+    ],
+    "modelsdev:empiriolabs": [
+     "muse-spark-1-2"
+    ],
+    "modelsdev:nano-gpt": [
+     "meta/muse-spark-1.2"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "meta/muse-spark-1.2"
+    ],
+    "modelsdev:kilo": [
+     "meta/muse-spark-1.2"
+    ],
+    "modelsdev:abacus": [
+     "muse-spark-1.2"
+    ],
+    "modelsdev:openrouter": [
+     "meta/muse-spark-1.2"
+    ],
+    "modelsdev:meta": [
+     "muse-spark-1.2",
+     "muse-spark-1.2-contributor"
+    ],
+    "modelsdev:llmtr": [
+     "meta/muse-spark-1.2-contributor"
+    ],
+    "modelsdev:vercel": [
+     "meta/muse-spark-1.2"
+    ],
+    "modelsdev:orcarouter": [
+     "meta/muse-spark-1.2"
+    ],
+    "modelsdev:aihubmix": [
+     "muse-spark-1.2"
+    ],
+    "modelsdev:merge-gateway": [
+     "meta/muse-spark-1.2"
+    ],
+    "modelsdev:opper": [
+     "muse-spark-1.2"
+    ],
+    "modelsdev:opencode-go": [
+     "muse-spark-1.2-contributor"
+    ],
+    "modelsdev:opencode": [
+     "muse-spark-1.2-contributor-free",
+     "muse-spark-1.2"
+    ],
+    "modelsdev:llmgateway": [
+     "muse-spark-1.2"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "museglimmer30b",
+   "names": [
+    "Meta: Muse Glimmer 30B",
+    "Muse Glimmer 30B",
+    "Muse Glimmer 30B (DeepInfra)",
+    "Muse Glimmer 30B (Together AI)",
+    "Muse Glimmer 30B (TR)",
+    "Muse Glimmer 30B (Deep Infra)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-09",
+    "modelsdev:empiriolabs": "2026-08-10",
+    "modelsdev:nano-gpt": "2026-08-10",
+    "modelsdev:llmgateway-providers": "2026-08-10",
+    "modelsdev:kilo": "2026-08-10",
+    "modelsdev:openrouter": "2026-08-10",
+    "modelsdev:llmtr": "2026-08-10",
+    "modelsdev:vultr": "2026-08-10",
+    "modelsdev:vercel": "2026-08-10",
+    "modelsdev:nvidia": "2026-08-10",
+    "modelsdev:edenai": "2026-08-10",
+    "modelsdev:requesty": "2026-08-10",
+    "modelsdev:llmgateway": "2026-08-10"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image->text",
+    "text,image,pdf->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta/muse-glimmer-30b"
+    ],
+    "modelsdev:empiriolabs": [
+     "muse-glimmer-30b"
+    ],
+    "modelsdev:nano-gpt": [
+     "meta/muse-glimmer-30b"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "deepinfra/muse-glimmer-30b",
+     "together-ai/muse-glimmer-30b"
+    ],
+    "modelsdev:kilo": [
+     "meta/muse-glimmer-30b"
+    ],
+    "modelsdev:openrouter": [
+     "meta/muse-glimmer-30b"
+    ],
+    "modelsdev:llmtr": [
+     "muse-glimmer-30b-tr"
+    ],
+    "modelsdev:vultr": [
+     "muse-glimmer-30b"
+    ],
+    "modelsdev:vercel": [
+     "meta/muse-glimmer-30b"
+    ],
+    "modelsdev:nvidia": [
+     "meta/muse-glimmer-30b"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/meta-models/Muse-Glimmer-30B",
+     "together_ai/meta-models/Muse-Glimmer-30B"
+    ],
+    "modelsdev:requesty": [
+     "muse-glimmer-30b"
+    ],
+    "modelsdev:llmgateway": [
+     "muse-glimmer-30b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "musespark12contributor",
+   "names": [
+    "Meta: Muse Spark 1.2 Contributor"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-21"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+video+file->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta/muse-spark-1.2-contributor"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "musespark13",
+   "names": [
+    "Meta: Muse Spark 1.3",
+    "Muse Spark 1.3",
+    "Muse Spark 1.3 Contributor",
+    "Muse Spark 1.3 (Meta)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-02",
+    "modelsdev:empiriolabs": "2026-09-02",
+    "modelsdev:nano-gpt": "2026-09-02",
+    "modelsdev:bothub": "2026-09-02",
+    "modelsdev:llmgateway-providers": "2026-09-02",
+    "modelsdev:kilo": "2026-09-02",
+    "modelsdev:openrouter": "2026-09-02",
+    "modelsdev:meta": "2026-09-02",
+    "modelsdev:cline-pass": "2026-09-02",
+    "modelsdev:vercel": "2026-09-02",
+    "modelsdev:aihubmix": "2026-09-02",
+    "modelsdev:opper": "2026-09-02",
+    "modelsdev:opencode": "2026-09-02",
+    "modelsdev:llmgateway": "2026-09-02"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video+file->text",
+    "text,image,video->text",
+    "text,image,video,pdf,audio->text",
+    "text,image,video,pdf->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta/muse-spark-1.3"
+    ],
+    "modelsdev:empiriolabs": [
+     "muse-spark-1-3"
+    ],
+    "modelsdev:nano-gpt": [
+     "meta/muse-spark-1.3"
+    ],
+    "modelsdev:bothub": [
+     "muse-spark-1.3-contributor"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "meta/muse-spark-1.3"
+    ],
+    "modelsdev:kilo": [
+     "meta/muse-spark-1.3"
+    ],
+    "modelsdev:openrouter": [
+     "meta/muse-spark-1.3"
+    ],
+    "modelsdev:meta": [
+     "muse-spark-1.3",
+     "muse-spark-1.3-contributor"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/muse-spark-1.3-contributor"
+    ],
+    "modelsdev:vercel": [
+     "meta/muse-spark-1.3"
+    ],
+    "modelsdev:aihubmix": [
+     "muse-spark-1.3"
+    ],
+    "modelsdev:opper": [
+     "muse-spark-1.3"
+    ],
+    "modelsdev:opencode": [
+     "muse-spark-1.3"
+    ],
+    "modelsdev:llmgateway": [
+     "muse-spark-1.3"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "musespark13contributor",
+   "names": [
+    "Meta: Muse Spark 1.3 Contributor"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-02"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+video+file->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meta/muse-spark-1.3-contributor"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

@@ -1,0 +1,156 @@
+name: issue-lifecycle
+
+# One issue = one task/<issue>/<slug> branch = one PR (docs/conventions/TRACKING.md). Three jobs:
+#   pr-contract    every PR into stage: body sections, `Closes #<issue>` matching the branch, issue still open.
+#                  Re-runs when the PR description is edited.
+#   close-on-merge a task PR merged into stage closes its issue and leaves a tracking record on both sides. GitHub only
+#                  honours `Closes #n` for the default branch (main), so stage needs this. The branch itself is deleted
+#                  by branch-hygiene.yml.
+#   sweep          daily (scripts/issue-sweep.mjs): close issues whose PR merged but are still open, nudge issues idle for
+#                  14 days, flag issues closed without a record. Scheduled runs use the workflow on main; a manual run can
+#                  tick dry_run to only print the plan into the run summary.
+#
+# Only GITHUB_TOKEN, least privilege per job. No pull_request_target: the contract check reads the PR body and the issue
+# state and runs the script from the base branch, never code from the PR.
+on:
+  pull_request:
+    branches: [stage]
+    types: [opened, edited, synchronize, reopened, ready_for_review, closed]
+  schedule:
+    # 03:37 UTC daily (11:37 Beijing), off branch-hygiene's Monday 03:17
+    - cron: '37 3 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Read-only; list what the sweep would do without closing or commenting
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: issue-lifecycle-${{ github.event.pull_request.number || 'sweep' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' && github.event.action != 'closed' }}
+
+jobs:
+  pr-contract:
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: read
+    steps:
+      - name: Check out the contract script from the base branch (never the PR's code)
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          persist-credentials: false
+          sparse-checkout: scripts/pr-contract.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Check body, branch number and issue state
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          set -eu
+          # The script reaches stage together with this workflow; until the PR that adds it merges, stage has none.
+          if [ ! -f scripts/pr-contract.mjs ]; then
+            echo "::notice title=PR 正文契约::目标分支上还没有 scripts/pr-contract.mjs，本次跳过（只会发生在引入契约检查的那个 PR 上）。"
+            exit 0
+          fi
+          printf '%s' "$PR_BODY" > "${RUNNER_TEMP}/body.md"
+          args=(check --branch "$HEAD_REF" --body-file "${RUNNER_TEMP}/body.md")
+          if issue="$(node scripts/pr-contract.mjs issue --branch "$HEAD_REF")"; then
+            if gh issue view "$issue" --repo "$GITHUB_REPOSITORY" --json number,state,title > "${RUNNER_TEMP}/issue.json" 2>/dev/null; then
+              args+=(--issue-state-file "${RUNNER_TEMP}/issue.json")
+            else
+              echo "::error title=PR 正文契约::找不到 issue #${issue}：分支 ${HEAD_REF} 指向的 issue 不存在，先开 issue 再提 PR。"
+              exit 1
+            fi
+          fi
+          node scripts/pr-contract.mjs "${args[@]}"
+
+  close-on-merge:
+    if: >-
+      github.event_name == 'pull_request'
+      && github.event.action == 'closed'
+      && github.event.pull_request.merged == true
+      && startsWith(github.event.pull_request.head.ref, 'task/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Close the issue and leave a record on both sides
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -eu
+          issue="$(printf '%s' "$HEAD_REF" | sed -nE 's#^task/([0-9]+)/.*#\1#p')"
+          if [ -z "$issue" ]; then
+            echo "::warning::分支 ${HEAD_REF} 不是 task/<issue>/<slug>，没有可关闭的 issue。"
+            exit 0
+          fi
+          sha12="$(printf '%s' "$MERGE_SHA" | cut -c1-12)"
+          state="$(gh issue view "$issue" --repo "$GITHUB_REPOSITORY" --json state --jq .state)"
+          # Record format: docs/conventions/TRACKING.md §3
+          issue_note="$(printf '%s\n%s\n\n%s\n%s\n%s\n' \
+            "<!-- ap:track v1 kind=closed stage=merged -->" \
+            "**关闭**｜PR #${PR_NUMBER} 已合并进 \`${BASE_REF}\`，这个 issue 结束" \
+            "**现状**：合并提交 ${MERGE_SHA}；task 分支 \`${HEAD_REF}\` 由 branch-hygiene 删除。" \
+            "**下一步**：随下一个 \`vX.Y.Z-rc.N\` 发到预发布，由所有者验收（docs/RELEASING.md）。" \
+            "**引用**：#${PR_NUMBER} · ${sha12}")"
+          pr_note="$(printf '%s\n%s\n\n%s\n%s\n' \
+            "<!-- ap:track v1 kind=closed stage=merged -->" \
+            "**关闭**｜已合并进 \`${BASE_REF}\`，issue #${issue} 已关闭" \
+            "**现状**：合并提交 ${MERGE_SHA}。" \
+            "**引用**：#${issue} · ${sha12}")"
+          if [ "$state" = "OPEN" ]; then
+            gh issue close "$issue" --repo "$GITHUB_REPOSITORY" --reason completed --comment "$issue_note"
+            echo "已关闭 issue #${issue}（PR #${PR_NUMBER}「${PR_TITLE}」合并）"
+          else
+            gh issue comment "$issue" --repo "$GITHUB_REPOSITORY" --body "$issue_note"
+            echo "issue #${issue} 原本已关闭，只补一条追踪记录"
+          fi
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$pr_note"
+
+  sweep:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: read
+    steps:
+      - name: Check out the sweep scripts
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            scripts/issue-sweep.mjs
+            scripts/pr-contract.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Close merged issues, leave overdue and unrecorded records
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          set -eu
+          args=(--repo "$GITHUB_REPOSITORY")
+          if [ "${DRY_RUN:-false}" != "true" ]; then args+=(--apply); fi
+          node scripts/issue-sweep.mjs "${args[@]}" >> "$GITHUB_STEP_SUMMARY"

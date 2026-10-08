@@ -1,0 +1,5038 @@
+{
+ "vendor": "alibaba",
+ "count": 113,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "qwendeepresearch",
+   "names": [
+    "Qwen Deep Research"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2024-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "qwen-deep-research"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwendocturbo",
+   "names": [
+    "Qwen Doc Turbo"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2024-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "qwen-doc-turbo"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenpluscharacter",
+   "names": [
+    "Qwen Plus Character"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2024-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "qwen-plus-character"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenpluscharacterja",
+   "names": [
+    "Qwen Plus Character (Japanese)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2024-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen-plus-character-ja"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "tongyiintentdetectv3",
+   "names": [
+    "Tongyi Intent Detect V3"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2024-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "tongyi-intent-detect-v3"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenplus",
+   "names": [
+    "Qwen: Qwen Plus 0728",
+    "Qwen: Qwen-Plus",
+    "Qwen Plus",
+    "Qwen Plus (Alibaba Cloud)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-02-01",
+    "modelsdev:nano-gpt": "2024-01-25",
+    "modelsdev:llmgateway-providers": "2024-01-25",
+    "modelsdev:kilo": "2024-01-25",
+    "modelsdev:openrouter": "2024-01-25",
+    "modelsdev:llmtr": "2024-01-25",
+    "modelsdev:alibaba": "2024-01-25",
+    "modelsdev:ofox": "2024-01-25",
+    "modelsdev:merge-gateway": "2024-01-25",
+    "modelsdev:llmgateway": "2024-01-25",
+    "modelsdev:alibaba-cn": "2024-01-25"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen-plus-2025-07-28",
+     "qwen/qwen-plus"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen-plus"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen-plus"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen-plus"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen-plus"
+    ],
+    "modelsdev:llmtr": [
+     "qwen/qwen-plus"
+    ],
+    "modelsdev:alibaba": [
+     "qwen-plus"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen-plus",
+     "qwen/qwen-plus"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen-plus"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen-plus"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen-plus"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenvlplus",
+   "names": [
+    "Qwen-VL Plus"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2024-01-25",
+    "modelsdev:edenai": "2024-01-25",
+    "modelsdev:alibaba-cn": "2024-01-25"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen-vl-plus"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen-vl-plus"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen-vl-plus"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenmax",
+   "names": [
+    "Qwen 2.5 Max",
+    "Qwen Max (Alibaba Cloud)",
+    "Qwen Max"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nano-gpt": "2024-04-03",
+    "modelsdev:llmgateway-providers": "2024-04-03",
+    "modelsdev:alibaba": "2024-04-03",
+    "modelsdev:ofox": "2024-04-03",
+    "modelsdev:edenai": "2024-04-03",
+    "modelsdev:llmgateway": "2024-04-03",
+    "modelsdev:alibaba-cn": "2024-04-03"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nano-gpt": [
+     "qwen/qwen-max"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen-max"
+    ],
+    "modelsdev:alibaba": [
+     "qwen-max"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen-max",
+     "qwen/qwen-max"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen-max"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen-max"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen-max"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenvlmax",
+   "names": [
+    "Qwen-VL Max"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2024-04-08",
+    "modelsdev:ofox": "2024-04-08",
+    "modelsdev:edenai": "2024-04-08",
+    "modelsdev:alibaba-cn": "2024-04-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen-vl-max"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen-vl-max",
+     "qwen/qwen-vl-max"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen-vl-max"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen-vl-max"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenmathplus",
+   "names": [
+    "Qwen Math Plus"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2024-08-16"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "qwen-math-plus"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen2514binstruct",
+   "names": [
+    "Qwen2.5 14B Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2024-09",
+    "modelsdev:alibaba-cn": "2024-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen2-5-14b-instruct"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen2-5-14b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen2532binstruct",
+   "names": [
+    "Qwen2.5 32B Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2024-09",
+    "modelsdev:alibaba-cn": "2024-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen2-5-32b-instruct"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen2-5-32b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen2572binstruct",
+   "names": [
+    "Qwen2.5 72B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-09-19",
+    "modelsdev:alibaba": "2024-09",
+    "modelsdev:alibaba-cn": "2024-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen-2.5-72b-instruct"
+    ],
+    "modelsdev:alibaba": [
+     "qwen2-5-72b-instruct"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen2-5-72b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen257binstruct",
+   "names": [
+    "Qwen: Qwen2.5 7B Instruct",
+    "Qwen2.5 7B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-10-16",
+    "modelsdev:alibaba": "2024-09",
+    "modelsdev:alibaba-cn": "2024-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen-2.5-7b-instruct"
+    ],
+    "modelsdev:alibaba": [
+     "qwen2-5-7b-instruct"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen2-5-7b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen25math72binstruct",
+   "names": [
+    "Qwen2.5-Math 72B Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2024-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "qwen2-5-math-72b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen25math7binstruct",
+   "names": [
+    "Qwen2.5-Math 7B Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2024-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "qwen2-5-math-7b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen25vl72binstruct",
+   "names": [
+    "Qwen: Qwen2.5 VL 72B Instruct",
+    "Qwen2.5-VL 72B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-02-01",
+    "modelsdev:alibaba": "2024-09",
+    "modelsdev:alibaba-cn": "2024-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen2.5-vl-72b-instruct"
+    ],
+    "modelsdev:alibaba": [
+     "qwen2-5-vl-72b-instruct"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen2-5-vl-72b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen25vl7binstruct",
+   "names": [
+    "Qwen2.5-VL 7B Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2024-09",
+    "modelsdev:alibaba-cn": "2024-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen2-5-vl-7b-instruct"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen2-5-vl-7b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenmathturbo",
+   "names": [
+    "Qwen Math Turbo"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2024-09-19"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "qwen-math-turbo"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenvlocr",
+   "names": [
+    "Qwen-VL OCR"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2024-10-28",
+    "modelsdev:alibaba-cn": "2024-10-28"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen-vl-ocr"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen-vl-ocr"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen25coder32binstruct",
+   "names": [
+    "Qwen2.5 Coder 32B Instruct",
+    "Qwen 2.5 Coder 32b",
+    "Qwen2.5-Coder-32B-Instruct",
+    "Qwen2.5-Coder-32B-Instruct (Cloudflare)",
+    "Qwen2.5-Coder 32B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-11-11",
+    "modelsdev:cloudflare-workers-ai": "2024-11-12",
+    "modelsdev:nano-gpt": "2024-11-12",
+    "modelsdev:huggingface": "2024-11-12",
+    "modelsdev:edenai": "2024-11-12",
+    "modelsdev:alibaba-cn": "2024-11"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen-2.5-coder-32b-instruct"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/qwen/qwen2.5-coder-32b-instruct"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen2.5-coder-32b-instruct"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen2.5-Coder-32B-Instruct"
+    ],
+    "modelsdev:edenai": [
+     "cloudflare/@cf/qwen/qwen2.5-coder-32b-instruct"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen2-5-coder-32b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen25coder7binstruct",
+   "names": [
+    "Qwen2.5-Coder 7B Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2024-11"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "qwen2-5-coder-7b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenturbo",
+   "names": [
+    "Qwen Turbo"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nano-gpt": "2024-11-01",
+    "modelsdev:alibaba": "2024-11-01",
+    "modelsdev:ofox": "2024-11-01",
+    "modelsdev:alibaba-cn": "2024-11-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nano-gpt": [
+     "qwen/qwen-turbo"
+    ],
+    "modelsdev:alibaba": [
+     "qwen-turbo"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen-turbo",
+     "qwen/qwen-turbo"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen-turbo"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen25coder05b",
+   "names": [
+    "Qwen2.5-Coder-0.5B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:pioneer": "2024-11-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:pioneer": [
+     "Qwen/Qwen2.5-Coder-0.5B"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen25omni7b",
+   "names": [
+    "Qwen2.5-Omni 7B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2024-12",
+    "modelsdev:alibaba-cn": "2024-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image,audio,video->text,audio"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen2-5-omni-7b"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen2-5-omni-7b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwq32b",
+   "names": [
+    "Qwq 32B",
+    "QwQ 32B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:cloudflare-workers-ai": "2025-03-05",
+    "modelsdev:alibaba-cn": "2024-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/qwen/qwq-32b"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwq-32b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekv3",
+   "names": [
+    "DeepSeek V3",
+    "siliconflow/deepseek-v3-0324"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2024-12-26"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "deepseek-v3",
+     "siliconflow/deepseek-v3-0324"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenmtplus",
+   "names": [
+    "Qwen-MT Plus"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2025-01",
+    "modelsdev:alibaba-cn": "2025-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen-mt-plus"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen-mt-plus"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenmtturbo",
+   "names": [
+    "Qwen-MT Turbo"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2025-01",
+    "modelsdev:alibaba-cn": "2025-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen-mt-turbo"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen-mt-turbo"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekr1distillllama70b",
+   "names": [
+    "DeepSeek R1 Distill Llama 70B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "deepseek-r1-distill-llama-70b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekr1distillllama8b",
+   "names": [
+    "DeepSeek R1 Distill Llama 8B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "deepseek-r1-distill-llama-8b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekr1distillqwen14b",
+   "names": [
+    "DeepSeek R1 Distill Qwen 14B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "deepseek-r1-distill-qwen-14b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekr1distillqwen15b",
+   "names": [
+    "DeepSeek R1 Distill Qwen 1.5B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "deepseek-r1-distill-qwen-1-5b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekr1distillqwen32b",
+   "names": [
+    "DeepSeek R1 Distill Qwen 32B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "deepseek-r1-distill-qwen-32b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekr1distillqwen7b",
+   "names": [
+    "DeepSeek R1 Distill Qwen 7B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "deepseek-r1-distill-qwen-7b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekv31",
+   "names": [
+    "DeepSeek V3.1"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "deepseek-v3-1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekv32exp",
+   "names": [
+    "DeepSeek V3.2 Exp"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "deepseek-v3-2-exp"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "moonshotkimik2instruct",
+   "names": [
+    "Moonshot Kimi K2 Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-01-01"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "moonshot-kimi-k2-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenomniturbo",
+   "names": [
+    "Qwen Omni Turbo (Alibaba Cloud)",
+    "Qwen-Omni Turbo"
+   ],
+   "releaseDateHints": {
+    "modelsdev:llmgateway-providers": "2025-01-19",
+    "modelsdev:alibaba": "2025-01-19",
+    "modelsdev:llmgateway": "2025-01-19",
+    "modelsdev:alibaba-cn": "2025-01-19"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,audio,video->text,audio"
+   ],
+   "catalogIds": {
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen-omni-turbo"
+    ],
+    "modelsdev:alibaba": [
+     "qwen-omni-turbo"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen-omni-turbo"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen-omni-turbo"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenlong",
+   "names": [
+    "Qwen Long"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-01-25"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "qwen-long"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwqplus",
+   "names": [
+    "QwQ Plus"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2025-03-05",
+    "modelsdev:edenai": "2025-03-05",
+    "modelsdev:alibaba-cn": "2025-03-05"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwq-plus"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwq-plus"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwq-plus"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qvqmax",
+   "names": [
+    "QVQ Max"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2025-03-25",
+    "modelsdev:alibaba-cn": "2025-03-25"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qvq-max"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qvq-max"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen314b",
+   "names": [
+    "Qwen: Qwen3 14B",
+    "Qwen3 14B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-28",
+    "modelsdev:alibaba": "2025-04",
+    "modelsdev:alibaba-cn": "2025-04"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-14b"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3-14b"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-14b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3235ba22b",
+   "names": [
+    "Qwen: Qwen3 235B A22B Instruct 2507",
+    "Qwen: Qwen3 235B A22B",
+    "Qwen 3 235b A22B",
+    "Qwen3 235B-A22B",
+    "Qwen3 235B A22B Instruct 2507",
+    "Qwen3 235B A22B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-28",
+    "modelsdev:nano-gpt": "2025-04",
+    "modelsdev:kilo": "2025-04",
+    "modelsdev:openrouter": "2025-04",
+    "modelsdev:alibaba": "2025-04",
+    "modelsdev:huggingface": "2025-04",
+    "modelsdev:scaleway": "2025-07-01",
+    "modelsdev:merge-gateway": "2025-04",
+    "modelsdev:alibaba-cn": "2025-04"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text",
+    "text,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-235b-a22b-2507",
+     "qwen/qwen3-235b-a22b"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-235b-a22b"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3-235b-a22b"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3-235b-a22b"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3-235b-a22b"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3-235B-A22B"
+    ],
+    "modelsdev:scaleway": [
+     "qwen3-235b-a22b-instruct-2507"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-235b-a22b"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-235b-a22b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen332b",
+   "names": [
+    "Qwen: Qwen3 32B",
+    "Qwen3 32B",
+    "Qwen 3 32b",
+    "Qwen3 32B (SCX.ai (Turbo))"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-28",
+    "modelsdev:deepinfra": "2025-04",
+    "modelsdev:nano-gpt": "2025-04",
+    "modelsdev:llmgateway-providers": "2025-04",
+    "modelsdev:kilo": "2025-04",
+    "modelsdev:abacus": "2025-04",
+    "modelsdev:openrouter": "2025-04",
+    "modelsdev:alibaba": "2025-04",
+    "modelsdev:huggingface": "2025-04",
+    "modelsdev:merge-gateway": "2025-04",
+    "modelsdev:pioneer": "2025-04",
+    "modelsdev:amazon-bedrock": "2025-04",
+    "modelsdev:llmgateway": "2025-04",
+    "modelsdev:cortecs": "2025-04",
+    "modelsdev:alibaba-cn": "2025-04"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text",
+    "text,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-32b"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3-32B"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-32b"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "scx-ai/qwen3-32b"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3-32b"
+    ],
+    "modelsdev:abacus": [
+     "Qwen/Qwen3-32B"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3-32b"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3-32b"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3-32B"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-32b"
+    ],
+    "modelsdev:pioneer": [
+     "Qwen/Qwen3-32B"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "qwen.qwen3-32b-v1:0"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3-32b"
+    ],
+    "modelsdev:cortecs": [
+     "qwen3-32b"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-32b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen38b",
+   "names": [
+    "Qwen: Qwen3 8B",
+    "Qwen3 8B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-28",
+    "modelsdev:alibaba": "2025-04",
+    "modelsdev:alibaba-cn": "2025-04"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-8b"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3-8b"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-8b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3coder30ba3binstruct",
+   "names": [
+    "Qwen: Qwen3 Coder 30B A3B Instruct",
+    "Qwen3 Coder 30B A3B Instruct",
+    "Qwen3 Coder 30B A3B Instruct (NovitaAI)",
+    "Qwen3-Coder 30B-A3B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-07-31",
+    "modelsdev:nano-gpt": "2025-04",
+    "modelsdev:llmgateway-providers": "2025-04",
+    "modelsdev:kilo": "2025-04",
+    "modelsdev:openrouter": "2025-04",
+    "modelsdev:pendra": "2025-04",
+    "modelsdev:alibaba": "2025-04",
+    "modelsdev:huggingface": "2025-04",
+    "modelsdev:scaleway": "2025-04",
+    "modelsdev:greenpt": "2025-04",
+    "modelsdev:edenai": "2025-04",
+    "modelsdev:amazon-bedrock": "2025-07-31",
+    "modelsdev:llmgateway": "2025-04",
+    "modelsdev:cortecs": "2025-04",
+    "modelsdev:alibaba-cn": "2025-04"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-coder-30b-a3b-instruct"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-coder-30b-a3b-instruct"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/qwen3-coder-30b-a3b-instruct"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3-coder-30b-a3b-instruct"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3-coder-30b-a3b-instruct"
+    ],
+    "modelsdev:pendra": [
+     "qwen3-coder:30b"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3-coder-30b-a3b-instruct"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3-Coder-30B-A3B-Instruct"
+    ],
+    "modelsdev:scaleway": [
+     "qwen3-coder-30b-a3b-instruct"
+    ],
+    "modelsdev:greenpt": [
+     "qwen3-coder-30b-a3b-instruct"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3-coder-30b-a3b-instruct"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "qwen.qwen3-coder-30b-a3b-v1:0"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3-coder-30b-a3b-instruct"
+    ],
+    "modelsdev:cortecs": [
+     "qwen3-coder-30b-a3b-instruct"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-coder-30b-a3b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3coder480ba35binstruct",
+   "names": [
+    "Qwen3 Coder 480B A35B Instruct (NovitaAI)",
+    "Qwen3 Coder 480B A35B Instruct (Vertex AI (OpenAI-compatible))",
+    "Qwen3-Coder 480B-A35B Instruct",
+    "Qwen3 Coder 480B A35B Instruct"
+   ],
+   "releaseDateHints": {
+    "modelsdev:llmgateway-providers": "2025-04",
+    "modelsdev:abacus": "2025-04",
+    "modelsdev:alibaba": "2025-04",
+    "modelsdev:merge-gateway": "2025-04",
+    "modelsdev:edenai": "2025-04",
+    "modelsdev:amazon-bedrock": "2025-07-23",
+    "modelsdev:llmgateway": "2025-04",
+    "modelsdev:alibaba-cn": "2025-04"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:llmgateway-providers": [
+     "novita/qwen3-coder-480b-a35b-instruct",
+     "vertex-openai/qwen3-coder-480b-a35b-instruct"
+    ],
+    "modelsdev:abacus": [
+     "Qwen/Qwen3-Coder-480B-A35B-Instruct"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3-coder-480b-a35b-instruct"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-coder-480b-a35b-instruct"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3-coder-480b-a35b-instruct"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "qwen.qwen3-coder-480b-a35b-v1:0"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3-coder-480b-a35b-instruct"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-coder-480b-a35b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3vl235ba22b",
+   "names": [
+    "Qwen3-VL 235B-A22B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2025-04",
+    "modelsdev:alibaba-cn": "2025-04"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen3-vl-235b-a22b"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-vl-235b-a22b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3vl30ba3b",
+   "names": [
+    "Qwen3-VL 30B-A3B"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2025-04",
+    "modelsdev:alibaba-cn": "2025-04"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen3-vl-30b-a3b"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-vl-30b-a3b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen330ba3b",
+   "names": [
+    "Qwen: Qwen3 30B A3B",
+    "Qwen3 30B A3B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-04-28",
+    "modelsdev:deepinfra": "2025-04-28",
+    "modelsdev:nano-gpt": "2025-04-28",
+    "modelsdev:kilo": "2025-04-28",
+    "modelsdev:openrouter": "2025-04-28",
+    "modelsdev:huggingface": "2025-04-28",
+    "modelsdev:merge-gateway": "2025-04-28"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-30b-a3b"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3-30B-A3B"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-30b-a3b"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3-30b-a3b"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3-30b-a3b"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3-30B-A3B"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-30b-a3b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3235ba22binstruct",
+   "names": [
+    "Qwen3 235B-A22B Instruct 2507",
+    "Qwen 3 235b A22B 2507",
+    "Qwen3 235B A22B Instruct 2507 (Cerebras)",
+    "Qwen3 235B A22B Instruct 2507 (NovitaAI)",
+    "Qwen3 235B A22B Instruct 2507 (Vertex AI (OpenAI-compatible))",
+    "Qwen 3 235B A22B Instruct 2507",
+    "Qwen3 235B A22B Instruct 2507"
+   ],
+   "releaseDateHints": {
+    "modelsdev:deepinfra": "2025-07-21",
+    "modelsdev:nano-gpt": "2025-07-21",
+    "modelsdev:llmgateway-providers": "2025-07-21",
+    "modelsdev:venice": "2025-04-29",
+    "modelsdev:huggingface": "2025-07-21",
+    "modelsdev:crusoe": "2025-07-21",
+    "modelsdev:merge-gateway": "2025-07-21",
+    "modelsdev:pioneer": "2025-07-21",
+    "modelsdev:edenai": "2025-07-21",
+    "modelsdev:amazon-bedrock": "2025-07-21",
+    "modelsdev:cortecs": "2025-07-21"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3-235B-A22B-Instruct-2507"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-235b-a22b-instruct-2507"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "cerebras/qwen3-235b-a22b-instruct-2507",
+     "novita/qwen3-235b-a22b-instruct-2507",
+     "vertex-openai/qwen3-235b-a22b-instruct-2507"
+    ],
+    "modelsdev:venice": [
+     "qwen3-235b-a22b-instruct-2507"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3-235B-A22B-Instruct-2507"
+    ],
+    "modelsdev:crusoe": [
+     "Qwen/Qwen3-235B-A22B-Instruct-2507"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-235b-a22b-instruct-2507"
+    ],
+    "modelsdev:pioneer": [
+     "Qwen/Qwen3-235B-A22B-Instruct-2507"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3-235b-a22b-instruct-2507"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "qwen.qwen3-235b-a22b-2507-v1:0"
+    ],
+    "modelsdev:cortecs": [
+     "qwen3-235b-a22b-instruct-2507"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenomniturborealtime",
+   "names": [
+    "Qwen-Omni Turbo Realtime"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2025-05-08",
+    "modelsdev:alibaba-cn": "2025-05-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,audio->text,audio"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen-omni-turbo-realtime"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen-omni-turbo-realtime"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekr1",
+   "names": [
+    "DeepSeek R1",
+    "DeepSeek R1 0528",
+    "siliconflow/deepseek-r1-0528"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-05-28"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "deepseek-r1",
+     "deepseek-r1-0528",
+     "siliconflow/deepseek-r1-0528"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3coder",
+   "names": [
+    "Qwen: Qwen3 Coder 480B A35B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-07-23"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-coder"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3coderplus",
+   "names": [
+    "Qwen: Qwen3 Coder Plus",
+    "Qwen3 Coder Plus",
+    "Qwen3 Coder Plus (Alibaba Cloud)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-09-23",
+    "modelsdev:nano-gpt": "2025-07-23",
+    "modelsdev:llmgateway-providers": "2025-07-23",
+    "modelsdev:kilo": "2025-07-23",
+    "modelsdev:openrouter": "2025-07-23",
+    "modelsdev:llmtr": "2025-07-23",
+    "modelsdev:alibaba": "2025-07-23",
+    "modelsdev:vercel": "2025-07-23",
+    "modelsdev:ofox": "2025-07-23",
+    "modelsdev:merge-gateway": "2025-07-23",
+    "modelsdev:edenai": "2025-07-23",
+    "modelsdev:llmgateway": "2025-07-23",
+    "modelsdev:alibaba-cn": "2025-07-23"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-coder-plus"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-coder-plus"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen3-coder-plus"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3-coder-plus"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3-coder-plus"
+    ],
+    "modelsdev:llmtr": [
+     "qwen/qwen3-coder-plus"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3-coder-plus"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3-coder-plus"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3-coder-plus",
+     "qwen/qwen3-coder-plus"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-coder-plus"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3-coder-plus"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3-coder-plus"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-coder-plus"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3235ba22bthinking",
+   "names": [
+    "Qwen: Qwen3 235B A22B Thinking 2507"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-07-25"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-235b-a22b-thinking-2507"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3coderflash",
+   "names": [
+    "Qwen: Qwen3 Coder Flash",
+    "Qwen3 Coder Flash",
+    "Qwen3 Coder Flash (Alibaba Cloud)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-09-17",
+    "modelsdev:nano-gpt": "2025-07-28",
+    "modelsdev:llmgateway-providers": "2025-07-28",
+    "modelsdev:kilo": "2025-07-28",
+    "modelsdev:openrouter": "2025-07-28",
+    "modelsdev:llmtr": "2025-07-28",
+    "modelsdev:alibaba": "2025-07-28",
+    "modelsdev:ofox": "2025-07-28",
+    "modelsdev:merge-gateway": "2025-07-28",
+    "modelsdev:edenai": "2025-07-28",
+    "modelsdev:llmgateway": "2025-07-28",
+    "modelsdev:alibaba-cn": "2025-07-28"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-coder-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-coder-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen3-coder-flash"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3-coder-flash"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3-coder-flash"
+    ],
+    "modelsdev:llmtr": [
+     "qwen/qwen3-coder-flash"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3-coder-flash"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3-coder-flash",
+     "qwen/qwen3-coder-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-coder-flash"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3-coder-flash"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3-coder-flash"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-coder-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenflash",
+   "names": [
+    "Qwen Flash (Alibaba Cloud)",
+    "Qwen Flash"
+   ],
+   "releaseDateHints": {
+    "modelsdev:llmgateway-providers": "2025-07-28",
+    "modelsdev:llmtr": "2025-07-28",
+    "modelsdev:alibaba": "2025-07-28",
+    "modelsdev:ofox": "2025-07-28",
+    "modelsdev:merge-gateway": "2025-07-28",
+    "modelsdev:llmgateway": "2025-07-28",
+    "modelsdev:alibaba-cn": "2025-07-28"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen-flash"
+    ],
+    "modelsdev:llmtr": [
+     "qwen/qwen-flash"
+    ],
+    "modelsdev:alibaba": [
+     "qwen-flash"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen-flash",
+     "qwen/qwen-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen-flash"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen-flash"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen330ba3binstruct",
+   "names": [
+    "Qwen: Qwen3 30B A3B Instruct 2507"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-07-29"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-30b-a3b-instruct-2507"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen330ba3bthinking",
+   "names": [
+    "Qwen: Qwen3 30B A3B Thinking 2507"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-08-28"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-30b-a3b-thinking-2507"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3next80ba3binstruct",
+   "names": [
+    "Qwen: Qwen3 Next 80B A3B Instruct",
+    "Qwen3-Next 80B-A3B Instruct",
+    "Qwen3 Next 80B A3B (Instruct)",
+    "Qwen3 Next 80B A3B Instruct (NovitaAI)",
+    "Qwen3 Next 80B A3B Instruct (Vertex AI (OpenAI-compatible))",
+    "Qwen3 Next 80B A3B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-09-11",
+    "modelsdev:deepinfra": "2025-09",
+    "modelsdev:nano-gpt": "2025-09",
+    "modelsdev:llmgateway-providers": "2025-09",
+    "modelsdev:kilo": "2025-09",
+    "modelsdev:openrouter": "2025-09",
+    "modelsdev:alibaba": "2025-09",
+    "modelsdev:vercel": "2025-09",
+    "modelsdev:jalapeno": "2025-09",
+    "modelsdev:neon": "2025-09",
+    "modelsdev:merge-gateway": "2025-09",
+    "modelsdev:edenai": "2025-09",
+    "modelsdev:amazon-bedrock": "2025-09-11",
+    "modelsdev:llmgateway": "2025-09",
+    "modelsdev:alibaba-cn": "2025-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-next-80b-a3b-instruct"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3-Next-80B-A3B-Instruct"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-next-80b-a3b-instruct"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/qwen3-next-80b-a3b-instruct",
+     "vertex-openai/qwen3-next-80b-a3b-instruct"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3-next-80b-a3b-instruct"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3-next-80b-a3b-instruct"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3-next-80b-a3b-instruct"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3-next-80b-a3b-instruct"
+    ],
+    "modelsdev:jalapeno": [
+     "Qwen3-Next-80B-A3B-Instruct"
+    ],
+    "modelsdev:neon": [
+     "qwen3-next-80b-a3b-instruct"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-next-80b-a3b-instruct"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3-next-80b-a3b-instruct"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "qwen.qwen3-next-80b-a3b"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3-next-80b-a3b-instruct"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-next-80b-a3b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3next80ba3bthinking",
+   "names": [
+    "Qwen: Qwen3 Next 80B A3B Thinking",
+    "Qwen3 Next 80B A3B (Thinking)",
+    "Qwen3 Next 80B A3B Thinking (Vertex AI (OpenAI-compatible))",
+    "Qwen3-Next 80B-A3B (Thinking)",
+    "Qwen3 Next 80B A3B Thinking"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-09-11",
+    "modelsdev:nano-gpt": "2025-09",
+    "modelsdev:llmgateway-providers": "2025-09",
+    "modelsdev:kilo": "2025-09",
+    "modelsdev:openrouter": "2025-09",
+    "modelsdev:alibaba": "2025-09",
+    "modelsdev:vercel": "2025-09",
+    "modelsdev:jalapeno": "2025-09",
+    "modelsdev:merge-gateway": "2025-09",
+    "modelsdev:edenai": "2025-09",
+    "modelsdev:llmgateway": "2025-09",
+    "modelsdev:alibaba-cn": "2025-09"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-next-80b-a3b-thinking"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-next-80b-a3b-thinking"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "vertex-openai/qwen3-next-80b-a3b-thinking"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3-next-80b-a3b-thinking"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3-next-80b-a3b-thinking"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3-next-80b-a3b-thinking"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3-next-80b-a3b-thinking"
+    ],
+    "modelsdev:jalapeno": [
+     "Qwen3-Next-80B-A3B-Thinking"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-next-80b-a3b-thinking"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3-next-80b-a3b-thinking"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3-next-80b-a3b-thinking"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-next-80b-a3b-thinking"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3asrflash",
+   "names": [
+    "Qwen3-ASR Flash"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2025-09-08",
+    "modelsdev:alibaba-cn": "2025-09-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "audio->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen3-asr-flash"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-asr-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3omniflash",
+   "names": [
+    "Qwen3-Omni Flash"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2025-09-15",
+    "modelsdev:alibaba-cn": "2025-09-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,audio,video->text,audio"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen3-omni-flash"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-omni-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3omniflashrealtime",
+   "names": [
+    "Qwen3-Omni Flash Realtime"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2025-09-15",
+    "modelsdev:alibaba-cn": "2025-09-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,audio,video->text,audio",
+    "text,image,audio->text,audio"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen3-omni-flash-realtime"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-omni-flash-realtime"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3livetranslateflashrealtime",
+   "names": [
+    "Qwen3-LiveTranslate Flash Realtime"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba": "2025-09-22"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,audio,video->text,audio"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba": [
+     "qwen3-livetranslate-flash-realtime"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3max",
+   "names": [
+    "Qwen: Qwen3 Max",
+    "Qwen3 Max",
+    "Qwen3 Max (NovitaAI)",
+    "Qwen3 Max (Alibaba Cloud)",
+    "Qwen3 Max (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-09-23",
+    "modelsdev:deepinfra": "2025-09-23",
+    "modelsdev:empiriolabs": "2025-09-23",
+    "modelsdev:nano-gpt": "2025-09-23",
+    "modelsdev:llmgateway-providers": "2025-09-23",
+    "modelsdev:kilo": "2025-09-23",
+    "modelsdev:openrouter": "2025-09-23",
+    "modelsdev:llmtr": "2025-09-23",
+    "modelsdev:alibaba": "2025-09-23",
+    "modelsdev:cloudflare-ai-gateway": "2025-09-23",
+    "modelsdev:vercel": "2025-09-23",
+    "modelsdev:orcarouter": "2025-09-23",
+    "modelsdev:ofox": "2025-09-23",
+    "modelsdev:aihubmix": "2025-09-23",
+    "modelsdev:merge-gateway": "2025-09-23",
+    "modelsdev:edenai": "2025-09-23",
+    "modelsdev:llmgateway": "2025-09-23",
+    "modelsdev:alibaba-cn": "2026-01-23"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-max"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3-Max"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-max"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-max"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/qwen3-max",
+     "alibaba/qwen3-max"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3-max"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3-max"
+    ],
+    "modelsdev:llmtr": [
+     "qwen/qwen3-max"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3-max"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "alibaba/qwen3-max"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3-max"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3-max"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3-max",
+     "qwen/qwen3-max"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3-max"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-max"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3-max",
+     "qwen/qwen3-max@eu"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3-max"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-max"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3vl235ba22binstruct",
+   "names": [
+    "Qwen: Qwen3 VL 235B A22B Instruct",
+    "Qwen3 VL 235B A22B Instruct",
+    "Qwen3 VL 235B A22B Instruct (DeepInfra)",
+    "Qwen3 VL 235B A22B Instruct (NovitaAI)",
+    "Qwen3-VL 235B A22B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-09-23",
+    "modelsdev:deepinfra": "2025-09-23",
+    "modelsdev:nano-gpt": "2025-09-23",
+    "modelsdev:llmgateway-providers": "2025-09-23",
+    "modelsdev:kilo": "2025-09-23",
+    "modelsdev:openrouter": "2025-09-23",
+    "modelsdev:huggingface": "2025-09-23",
+    "modelsdev:vercel": "2025-09-23",
+    "modelsdev:jalapeno": "2025-09-23",
+    "modelsdev:orcarouter": "2025-09-23",
+    "modelsdev:merge-gateway": "2025-09-23",
+    "modelsdev:edenai": "2025-09-23",
+    "modelsdev:amazon-bedrock": "2025-09-23"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-vl-235b-a22b-instruct"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3-VL-235B-A22B-Instruct"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-vl-235b-a22b-instruct"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "deepinfra/qwen3-vl-235b-a22b-instruct",
+     "novita/qwen3-vl-235b-a22b-instruct"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3-vl-235b-a22b-instruct"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3-vl-235b-a22b-instruct"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3-VL-235B-A22B-Instruct"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3-vl-235b-a22b-instruct"
+    ],
+    "modelsdev:jalapeno": [
+     "Qwen3-VL-235B-A22B-Instruct"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3-vl-235b-a22b-instruct"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-vl-235b-a22b-instruct"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3-vl-235b-a22b-instruct"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "qwen.qwen3-vl-235b-a22b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3vl235ba22bthinking",
+   "names": [
+    "Qwen: Qwen3 VL 235B A22B Thinking",
+    "Qwen3 VL 235B A22B Thinking",
+    "Qwen3 VL 235B A22B Thinking (NovitaAI)",
+    "Qwen3-VL 235B A22B Thinking"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-09-23",
+    "modelsdev:nano-gpt": "2025-09-23",
+    "modelsdev:llmgateway-providers": "2025-09-23",
+    "modelsdev:kilo": "2025-09-23",
+    "modelsdev:openrouter": "2025-09-23",
+    "modelsdev:huggingface": "2025-09-23",
+    "modelsdev:jalapeno": "2025-09-23",
+    "modelsdev:orcarouter": "2025-09-23",
+    "modelsdev:merge-gateway": "2025-09-23",
+    "modelsdev:edenai": "2025-09-23"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image->text",
+    "text,image->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-vl-235b-a22b-thinking"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-vl-235b-a22b-thinking"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/qwen3-vl-235b-a22b-thinking"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3-vl-235b-a22b-thinking"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3-vl-235b-a22b-thinking"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3-VL-235B-A22B-Thinking"
+    ],
+    "modelsdev:jalapeno": [
+     "Qwen3-VL-235B-A22B-Thinking"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3-vl-235b-a22b-thinking"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-vl-235b-a22b-thinking"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3-vl-235b-a22b-thinking"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3vlplus",
+   "names": [
+    "Qwen3 VL Plus (Alibaba Cloud)",
+    "Qwen3-VL Plus"
+   ],
+   "releaseDateHints": {
+    "modelsdev:llmgateway-providers": "2025-09-23",
+    "modelsdev:llmtr": "2025-09-23",
+    "modelsdev:alibaba": "2025-09-23",
+    "modelsdev:aihubmix": "2025-09-23",
+    "modelsdev:merge-gateway": "2025-09-23",
+    "modelsdev:llmgateway": "2025-09-23",
+    "modelsdev:alibaba-cn": "2025-09-23"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen3-vl-plus"
+    ],
+    "modelsdev:llmtr": [
+     "qwen/qwen3-vl-plus"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3-vl-plus"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3-vl-plus"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-vl-plus"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3-vl-plus"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3-vl-plus"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekv31terminus",
+   "names": [
+    "siliconflow/deepseek-v3.1-terminus"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-09-29"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "siliconflow/deepseek-v3.1-terminus"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3vl30ba3binstruct",
+   "names": [
+    "Qwen: Qwen3 VL 30B A3B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-06"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-vl-30b-a3b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3vl30ba3bthinking",
+   "names": [
+    "Qwen: Qwen3 VL 30B A3B Thinking"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-06"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-vl-30b-a3b-thinking"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3vl8binstruct",
+   "names": [
+    "Qwen: Qwen3 VL 8B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-14"
+   },
+   "openWeights": null,
+   "modalities": [
+    "image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-vl-8b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3vl8bthinking",
+   "names": [
+    "Qwen: Qwen3 VL 8B Thinking"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-14"
+   },
+   "openWeights": null,
+   "modalities": [
+    "image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-vl-8b-thinking"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3vl32binstruct",
+   "names": [
+    "Qwen: Qwen3 VL 32B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-23"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-vl-32b-instruct"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "kimik2thinking",
+   "names": [
+    "Moonshot Kimi K2 Thinking"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-11-06"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "kimi-k2-thinking"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "deepseekv32",
+   "names": [
+    "siliconflow/deepseek-v3.2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2025-12-03"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "siliconflow/deepseek-v3.2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "kimik25",
+   "names": [
+    "Moonshot Kimi K2.5",
+    "kimi/kimi-k2.5"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2026-01-27"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "kimi-k2.5",
+     "kimi/kimi-k2.5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3codernext",
+   "names": [
+    "Qwen: Qwen3 Coder Next",
+    "Qwen3 Coder Next",
+    "Qwen3 Coder Next (EmberCloud)",
+    "Qwen3 Coder Next (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-04",
+    "modelsdev:nano-gpt": "2026-02-03",
+    "modelsdev:llmgateway-providers": "2026-02-03",
+    "modelsdev:kilo": "2026-02-03",
+    "modelsdev:openrouter": "2026-02-03",
+    "modelsdev:vercel": "2026-02-03",
+    "modelsdev:ofox": "2026-02-03",
+    "modelsdev:merge-gateway": "2026-02-03",
+    "modelsdev:opper": "2026-02-03",
+    "modelsdev:edenai": "2026-02-03",
+    "modelsdev:amazon-bedrock": "2026-02-03",
+    "modelsdev:cortecs": "2026-02-03"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-coder-next"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3-coder-next"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "embercloud/qwen3-coder-next"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3-coder-next"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3-coder-next"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3-coder-next"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3-coder-next",
+     "qwen/qwen3-coder-next"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3-coder-next"
+    ],
+    "modelsdev:opper": [
+     "qwen3-coder-next"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3-coder-next",
+     "qwen/qwen3-coder-next@eu"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "qwen.qwen3-coder-next"
+    ],
+    "modelsdev:cortecs": [
+     "qwen3-coder-next"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3maxthinking",
+   "names": [
+    "Qwen: Qwen3 Max Thinking"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-09"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3-max-thinking"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm5",
+   "names": [
+    "GLM-5"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2026-02-11"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "glm-5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "minimaxm25",
+   "names": [
+    "MiniMax-M2.5"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2026-02-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "MiniMax-M2.5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen35397ba17b",
+   "names": [
+    "Qwen: Qwen3.5 397B A17B",
+    "Qwen3.5 397B-A17B",
+    "Qwen3.5 397B A17B",
+    "Qwen 3.5 397B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-16",
+    "modelsdev:empiriolabs": "2026-02-15",
+    "modelsdev:nano-gpt": "2026-02-15",
+    "modelsdev:crof": "2026-02-15",
+    "modelsdev:siliconflow": "2026-02-15",
+    "modelsdev:kilo": "2026-02-15",
+    "modelsdev:venice": "2026-02-16",
+    "modelsdev:openrouter": "2026-02-15",
+    "modelsdev:llmtr": "2026-02-15",
+    "modelsdev:alibaba": "2026-02-15",
+    "modelsdev:cloudflare-ai-gateway": "2026-02-15",
+    "modelsdev:scaleway": "2026-03-17",
+    "modelsdev:greenpt": "2026-02-15",
+    "modelsdev:jalapeno": "2026-02-15",
+    "modelsdev:orcarouter": "2026-02-15",
+    "modelsdev:ofox": "2026-02-15",
+    "modelsdev:aihubmix": "2026-02-15",
+    "modelsdev:merge-gateway": "2026-02-15",
+    "modelsdev:llmgateway": "2026-02-15",
+    "modelsdev:tokengo": "2026-02-15",
+    "modelsdev:cortecs": "2026-02-15",
+    "modelsdev:alibaba-cn": "2026-02-16"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text,image,video,audio->text",
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.5-397b-a17b"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-5-397b-a17b"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.5-397b-a17b"
+    ],
+    "modelsdev:crof": [
+     "qwen3.5-397b-a17b"
+    ],
+    "modelsdev:siliconflow": [
+     "Qwen/Qwen3.5-397B-A17B"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.5-397b-a17b"
+    ],
+    "modelsdev:venice": [
+     "qwen3-5-397b-a17b"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.5-397b-a17b"
+    ],
+    "modelsdev:llmtr": [
+     "qwen/qwen3.5-397b-a17b"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.5-397b-a17b"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "alibaba/qwen3.5-397b-a17b"
+    ],
+    "modelsdev:scaleway": [
+     "qwen3.5-397b-a17b"
+    ],
+    "modelsdev:greenpt": [
+     "qwen3.5-397b-a17b"
+    ],
+    "modelsdev:jalapeno": [
+     "Qwen3.5-397B-A17B"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.5-397b-a17b"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.5-397b-a17b",
+     "qwen/qwen3.5-397b-a17b"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.5-397b-a17b"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.5-397b-a17b"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen35-397b-a17b"
+    ],
+    "modelsdev:tokengo": [
+     "qwen/qwen3.5-397b-a17b"
+    ],
+    "modelsdev:cortecs": [
+     "qwen3.5-397b-a17b"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3.5-397b-a17b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen35plus",
+   "names": [
+    "Qwen: Qwen3.5 Plus 2026-04-20",
+    "Qwen3.5 Plus",
+    "Qwen 3.5 Plus"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-27",
+    "modelsdev:empiriolabs": "2026-02-16",
+    "modelsdev:nano-gpt": "2026-02-16",
+    "modelsdev:302ai": "2026-02-16",
+    "modelsdev:llmtr": "2026-02-16",
+    "modelsdev:alibaba": "2026-02-16",
+    "modelsdev:vercel": "2026-02-16",
+    "modelsdev:orcarouter": "2026-02-16",
+    "modelsdev:ofox": "2026-02-16",
+    "modelsdev:aihubmix": "2026-02-16",
+    "modelsdev:merge-gateway": "2026-02-16",
+    "modelsdev:alibaba-cn": "2026-02-16"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text,image,pdf->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.5-plus-20260420"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-5-plus"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.5-plus"
+    ],
+    "modelsdev:302ai": [
+     "qwen3.5-plus"
+    ],
+    "modelsdev:llmtr": [
+     "qwen/qwen3.5-plus"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.5-plus"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.5-plus"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.5-plus"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.5-plus",
+     "qwen/qwen3.5-plus"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.5-plus"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.5-plus"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3.5-plus"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen35plus0215",
+   "names": [
+    "Qwen: Qwen3.5 Plus 2026-02-15"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-16"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.5-plus-02-15"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen35122ba10b",
+   "names": [
+    "Qwen: Qwen3.5-122B-A10B",
+    "Qwen3.5 122B-A10B",
+    "Qwen3.5 122B A10B",
+    "Qwen3.5 122B A10B (NovitaAI)",
+    "Qwen3.5 122B A10B (Alibaba Cloud)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-25",
+    "modelsdev:deepinfra": "2026-02-23",
+    "modelsdev:empiriolabs": "2026-02-23",
+    "modelsdev:nano-gpt": "2026-02-23",
+    "modelsdev:siliconflow": "2026-02-23",
+    "modelsdev:llmgateway-providers": "2026-02-23",
+    "modelsdev:kilo": "2026-02-23",
+    "modelsdev:openrouter": "2026-02-23",
+    "modelsdev:alibaba": "2026-02-23",
+    "modelsdev:huggingface": "2026-02-23",
+    "modelsdev:jalapeno": "2026-02-23",
+    "modelsdev:orcarouter": "2026-02-23",
+    "modelsdev:ofox": "2026-02-23",
+    "modelsdev:neon": "2026-02-23",
+    "modelsdev:aihubmix": "2026-02-23",
+    "modelsdev:merge-gateway": "2026-02-23",
+    "modelsdev:tensorx": "2026-02-23",
+    "modelsdev:llmgateway": "2026-02-23"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video,audio->text",
+    "text,image,video->text",
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.5-122b-a10b"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3.5-122B-A10B"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-5-122b-a10b"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.5-122b-a10b"
+    ],
+    "modelsdev:siliconflow": [
+     "Qwen/Qwen3.5-122B-A10B"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/qwen3.5-122b-a10b",
+     "alibaba/qwen3.5-122b-a10b"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.5-122b-a10b"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.5-122b-a10b"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.5-122b-a10b"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3.5-122B-A10B"
+    ],
+    "modelsdev:jalapeno": [
+     "Qwen3.5-122B-A10B"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.5-122b-a10b"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.5-122b-a10b",
+     "qwen/qwen3.5-122b-a10b"
+    ],
+    "modelsdev:neon": [
+     "qwen35-122b-a10b"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.5-122b-a10b"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.5-122b-a10b"
+    ],
+    "modelsdev:tensorx": [
+     "qwen/qwen3.5-122b-a10b"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.5-122b-a10b"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "qwen3527b",
+   "names": [
+    "Qwen: Qwen3.5-27B",
+    "Qwen3.5 27B",
+    "Qwen3.5 27B (Alibaba Cloud)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-25",
+    "modelsdev:deepinfra": "2026-02-23",
+    "modelsdev:empiriolabs": "2026-02-23",
+    "modelsdev:nano-gpt": "2026-02-23",
+    "modelsdev:siliconflow": "2026-02-23",
+    "modelsdev:llmgateway-providers": "2026-02-23",
+    "modelsdev:kilo": "2026-02-23",
+    "modelsdev:openrouter": "2026-02-23",
+    "modelsdev:alibaba": "2026-02-23",
+    "modelsdev:huggingface": "2026-02-23",
+    "modelsdev:jalapeno": "2026-02-23",
+    "modelsdev:orcarouter": "2026-02-23",
+    "modelsdev:ofox": "2026-02-23",
+    "modelsdev:aihubmix": "2026-02-23",
+    "modelsdev:merge-gateway": "2026-02-23",
+    "modelsdev:requesty": "2026-02-23",
+    "modelsdev:llmgateway": "2026-02-23"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video,audio->text",
+    "text,image,video->text",
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.5-27b"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3.5-27B"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-5-27b"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.5-27b"
+    ],
+    "modelsdev:siliconflow": [
+     "Qwen/Qwen3.5-27B"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen3.5-27b"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.5-27b"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.5-27b"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.5-27b"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3.5-27B"
+    ],
+    "modelsdev:jalapeno": [
+     "Qwen3.5-27B"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.5-27b"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.5-27b",
+     "qwen/qwen3.5-27b"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.5-27b"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.5-27b"
+    ],
+    "modelsdev:requesty": [
+     "qwen3.5-27b"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.5-27b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3535ba3b",
+   "names": [
+    "Qwen: Qwen3.5-35B-A3B",
+    "Qwen3.5 35B-A3B",
+    "Qwen3.5 35B A3B",
+    "Qwen3.5 35B A3B (Alibaba Cloud)",
+    "Qwen 3.5 35B A3B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-25",
+    "modelsdev:empiriolabs": "2026-02-23",
+    "modelsdev:nano-gpt": "2026-02-23",
+    "modelsdev:siliconflow": "2026-02-23",
+    "modelsdev:llmgateway-providers": "2026-02-23",
+    "modelsdev:kilo": "2026-02-23",
+    "modelsdev:venice": "2026-02-25",
+    "modelsdev:302ai": "2026-02-23",
+    "modelsdev:openrouter": "2026-02-23",
+    "modelsdev:alibaba": "2026-02-23",
+    "modelsdev:huggingface": "2026-02-23",
+    "modelsdev:jalapeno": "2026-02-23",
+    "modelsdev:orcarouter": "2026-02-23",
+    "modelsdev:ofox": "2026-02-23",
+    "modelsdev:aihubmix": "2026-02-23",
+    "modelsdev:merge-gateway": "2026-02-23",
+    "modelsdev:requesty": "2026-02-23",
+    "modelsdev:llmgateway": "2026-02-23"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text->text",
+    "text,image,video,audio->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.5-35b-a3b"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-5-35b-a3b"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.5-35b-a3b"
+    ],
+    "modelsdev:siliconflow": [
+     "Qwen/Qwen3.5-35B-A3B"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen3.5-35b-a3b"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.5-35b-a3b"
+    ],
+    "modelsdev:venice": [
+     "qwen3-5-35b-a3b"
+    ],
+    "modelsdev:302ai": [
+     "qwen3.5-35b-a3b"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.5-35b-a3b"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.5-35b-a3b"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3.5-35B-A3B"
+    ],
+    "modelsdev:jalapeno": [
+     "Qwen3.5-35B-A3B"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.5-35b-a3b"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.5-35b-a3b",
+     "qwen/qwen3.5-35b-a3b"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.5-35b-a3b"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.5-35b-a3b"
+    ],
+    "modelsdev:requesty": [
+     "qwen3.5-35b-a3b"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.5-35b-a3b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen359b",
+   "names": [
+    "Qwen: Qwen3.5-9B",
+    "Qwen3.5 9B",
+    "Qwen3.5 9B (DeepInfra)",
+    "Qwen 3.5 9B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-10",
+    "modelsdev:deepinfra": "2026-02-23",
+    "modelsdev:empiriolabs": "2026-02-23",
+    "modelsdev:nano-gpt": "2026-02-23",
+    "modelsdev:llmgateway-providers": "2026-02-23",
+    "modelsdev:kilo": "2026-02-23",
+    "modelsdev:venice": "2026-03-05",
+    "modelsdev:openrouter": "2026-02-23",
+    "modelsdev:routing-run": "2026-02-23",
+    "modelsdev:huggingface": "2026-02-23",
+    "modelsdev:merge-gateway": "2026-02-23",
+    "modelsdev:pioneer": "2026-02-23",
+    "modelsdev:tensorx": "2026-02-23",
+    "modelsdev:llmgateway": "2026-02-23",
+    "modelsdev:cortecs": "2026-02-23",
+    "modelsdev:qvac": "2026-02-23"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.5-9b"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3.5-9B"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-5-9b"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.5-9b"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "deepinfra/qwen3.5-9b"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.5-9b"
+    ],
+    "modelsdev:venice": [
+     "qwen3-5-9b"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.5-9b"
+    ],
+    "modelsdev:routing-run": [
+     "qwen3.5-9b"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3.5-9B"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.5-9b"
+    ],
+    "modelsdev:pioneer": [
+     "Qwen/Qwen3.5-9B"
+    ],
+    "modelsdev:tensorx": [
+     "qwen/qwen3.5-9b"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.5-9b"
+    ],
+    "modelsdev:cortecs": [
+     "qwen3.5-9b"
+    ],
+    "modelsdev:qvac": [
+     "qwen3.5-9b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen35flash",
+   "names": [
+    "Qwen3.5 Flash",
+    "Qwen 3.5 Flash"
+   ],
+   "releaseDateHints": {
+    "modelsdev:empiriolabs": "2026-02-23",
+    "modelsdev:nano-gpt": "2026-02-23",
+    "modelsdev:alibaba": "2026-02-23",
+    "modelsdev:vercel": "2026-02-23",
+    "modelsdev:orcarouter": "2026-02-23",
+    "modelsdev:ofox": "2026-02-23",
+    "modelsdev:aihubmix": "2026-02-23",
+    "modelsdev:merge-gateway": "2026-02-23",
+    "modelsdev:alibaba-cn": "2026-02-23"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video->text",
+    "text,image,pdf->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:empiriolabs": [
+     "qwen3-5-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.5-flash"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.5-flash"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.5-flash"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.5-flash"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.5-flash",
+     "qwen/qwen3.5-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.5-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.5-flash"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3.5-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen35flash0223",
+   "names": [
+    "Qwen: Qwen3.5-Flash"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-25"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.5-flash-02-23"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "minimaxm27",
+   "names": [
+    "MiniMax-M2.7"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2026-03-18"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "MiniMax/MiniMax-M2.7"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3635ba3b",
+   "names": [
+    "Qwen: Qwen3.6 35B A3B",
+    "Qwen3.6 35B A3B",
+    "Qwen3.6 35B-A3B",
+    "Umans Flash",
+    "Qwen3.6 35B A3B (NovitaAI)",
+    "Qwen3.6 35B A3B (Alibaba Cloud)",
+    "Qwen 3.6 35B A3B",
+    "Qwen3.6 35B",
+    "Qwen3.6 35B Flex",
+    "Qwen3.6 35B Fast"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-27",
+    "modelsdev:empiriolabs": "2026-04-17",
+    "modelsdev:engy": "2026-04-17",
+    "modelsdev:nano-gpt": "2026-04-17",
+    "modelsdev:nan": "2026-04-17",
+    "modelsdev:wandb": "2026-04-15",
+    "modelsdev:umans-ai-coding-plan": "2026-04-17",
+    "modelsdev:umans-ai": "2026-04-17",
+    "modelsdev:siliconflow": "2026-04-17",
+    "modelsdev:llmgateway-providers": "2026-04-17",
+    "modelsdev:kilo": "2026-04-17",
+    "modelsdev:venice": "2026-07-20",
+    "modelsdev:302ai": "2026-04-17",
+    "modelsdev:openrouter": "2026-04-17",
+    "modelsdev:neuralwatt": "2026-04-01",
+    "modelsdev:llmtr": "2026-04-17",
+    "modelsdev:alibaba": "2026-04-17",
+    "modelsdev:salad-cloud": "2026-04-17",
+    "modelsdev:huggingface": "2026-04-17",
+    "modelsdev:scaleway": "2026-05-01",
+    "modelsdev:greenpt": "2026-04-17",
+    "modelsdev:orcarouter": "2026-04-17",
+    "modelsdev:zenifra": "2026-04-17",
+    "modelsdev:aihubmix": "2026-04-17",
+    "modelsdev:merge-gateway": "2026-04-17",
+    "modelsdev:opper": "2026-04-17",
+    "modelsdev:pioneer": "2026-04-17",
+    "modelsdev:aki-io": "2026-04-17",
+    "modelsdev:llmgateway": "2026-04-17",
+    "modelsdev:evroc": "2026-04-17",
+    "modelsdev:cortecs": "2026-04-17",
+    "modelsdev:qvac": "2026-04-17"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video->text",
+    "text->text",
+    "text,image,video->text",
+    "text,image->text",
+    "text,image,video,audio->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.6-35b-a3b"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-6-35b-a3b"
+    ],
+    "modelsdev:engy": [
+     "qwen3.6-35b-a3b"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.6-35b-a3b"
+    ],
+    "modelsdev:nan": [
+     "qwen3.6"
+    ],
+    "modelsdev:wandb": [
+     "Qwen/Qwen3.6-35B-A3B"
+    ],
+    "modelsdev:umans-ai-coding-plan": [
+     "umans-flash",
+     "umans-qwen3.6-35b-a3b"
+    ],
+    "modelsdev:umans-ai": [
+     "umans-flash"
+    ],
+    "modelsdev:siliconflow": [
+     "Qwen/Qwen3.6-35B-A3B"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/qwen3.6-35b-a3b",
+     "alibaba/qwen3.6-35b-a3b"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.6-35b-a3b"
+    ],
+    "modelsdev:venice": [
+     "qwen3-6-35b-a3b"
+    ],
+    "modelsdev:302ai": [
+     "qwen3.6-35b-a3b"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.6-35b-a3b"
+    ],
+    "modelsdev:neuralwatt": [
+     "qwen3.6-35b",
+     "qwen3.6-35b-flex",
+     "qwen3.6-35b-fast"
+    ],
+    "modelsdev:llmtr": [
+     "qwen3-6-35b"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.6-35b-a3b"
+    ],
+    "modelsdev:salad-cloud": [
+     "qwen3.6-35b-a3b"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3.6-35B-A3B"
+    ],
+    "modelsdev:scaleway": [
+     "qwen3.6-35b-a3b"
+    ],
+    "modelsdev:greenpt": [
+     "qwen3.6-35b-a3b"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.6-35b-a3b"
+    ],
+    "modelsdev:zenifra": [
+     "alibaba/qwen3.6-35b-a3b"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.6-35b-a3b"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.6-35b-a3b"
+    ],
+    "modelsdev:opper": [
+     "qwen3.6-35b-a3b"
+    ],
+    "modelsdev:pioneer": [
+     "Qwen/Qwen3.6-35B-A3B"
+    ],
+    "modelsdev:aki-io": [
+     "qwen3.6-35b"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.6-35b-a3b"
+    ],
+    "modelsdev:evroc": [
+     "Qwen/Qwen3.6-35B-A3B"
+    ],
+    "modelsdev:cortecs": [
+     "qwen3.6-35b-a3b"
+    ],
+    "modelsdev:qvac": [
+     "qwen3.6-35b-a3b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen36plus",
+   "names": [
+    "Qwen: Qwen3.6 Plus",
+    "Qwen3.6 Plus",
+    "Qwen 3.6 Plus",
+    "Qwen3.6 Plus (Alibaba Cloud)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-02",
+    "modelsdev:empiriolabs": "2026-04-02",
+    "modelsdev:alibaba-token-plan": "2026-04-02",
+    "modelsdev:nano-gpt": "2026-04-02",
+    "modelsdev:llmgateway-providers": "2026-04-02",
+    "modelsdev:kilo": "2026-04-02",
+    "modelsdev:alibaba-token-plan-cn": "2026-04-02",
+    "modelsdev:302ai": "2026-04-02",
+    "modelsdev:openrouter": "2026-04-02",
+    "modelsdev:llmtr": "2026-04-02",
+    "modelsdev:alibaba": "2026-04-02",
+    "modelsdev:auriko": "2026-04-02",
+    "modelsdev:vercel": "2026-04-02",
+    "modelsdev:orcarouter": "2026-04-02",
+    "modelsdev:ofox": "2026-04-02",
+    "modelsdev:merge-gateway": "2026-04-02",
+    "modelsdev:pioneer": "2026-04-02",
+    "modelsdev:requesty": "2026-04-02",
+    "modelsdev:llmgateway": "2026-04-02",
+    "modelsdev:crossmodel": "2026-04-02",
+    "modelsdev:alibaba-cn": "2026-04-02"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text,image,pdf->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.6-plus"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-6-plus"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "qwen3.6-plus"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.6-plus"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen3.6-plus"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.6-plus"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "qwen3.6-plus"
+    ],
+    "modelsdev:302ai": [
+     "qwen3.6-plus"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.6-plus"
+    ],
+    "modelsdev:llmtr": [
+     "qwen/qwen3.6-plus"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.6-plus"
+    ],
+    "modelsdev:auriko": [
+     "qwen-3.6-plus"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.6-plus"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.6-plus"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.6-plus",
+     "qwen/qwen3.6-plus"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.6-plus"
+    ],
+    "modelsdev:pioneer": [
+     "qwen3.6-plus"
+    ],
+    "modelsdev:requesty": [
+     "qwen3.6-plus"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.6-plus"
+    ],
+    "modelsdev:crossmodel": [
+     "qwen/qwen3.6-plus"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3.6-plus"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "glm51",
+   "names": [
+    "GLM-5.1"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2026-04-14"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "glm-5.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen36maxpreview",
+   "names": [
+    "Qwen: Qwen3.6 Max Preview",
+    "Qwen3.6 Max Preview",
+    "Qwen3.6 Max Preview (Alibaba Cloud)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-27",
+    "modelsdev:empiriolabs": "2026-04-20",
+    "modelsdev:nano-gpt": "2026-04-20",
+    "modelsdev:llmgateway-providers": "2026-04-20",
+    "modelsdev:kilo": "2026-04-20",
+    "modelsdev:openrouter": "2026-04-20",
+    "modelsdev:alibaba": "2026-04-20",
+    "modelsdev:ofox": "2026-04-20",
+    "modelsdev:merge-gateway": "2026-04-20",
+    "modelsdev:pioneer": "2026-04-20",
+    "modelsdev:llmgateway": "2026-04-20",
+    "modelsdev:alibaba-cn": "2026-04-20"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.6-max-preview"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-6-max-preview"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.6-max-preview"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen3.6-max-preview"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.6-max-preview"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.6-max-preview"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.6-max-preview"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.6-max-preview",
+     "qwen/qwen3.6-max-preview"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.6-max-preview"
+    ],
+    "modelsdev:pioneer": [
+     "qwen3.6-max-preview"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.6-max-preview"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3.6-max-preview"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "kimik26",
+   "names": [
+    "Moonshot Kimi K2.6"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-cn": "2026-04-21"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-cn": [
+     "kimi-k2.6"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3627b",
+   "names": [
+    "Qwen: Qwen3.6 27B",
+    "Qwen3.6 27B",
+    "Qwen 3.6 27B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-27",
+    "modelsdev:deepinfra": "2026-04-22",
+    "modelsdev:groq": "2026-04-22",
+    "modelsdev:empiriolabs": "2026-04-22",
+    "modelsdev:nano-gpt": "2026-04-22",
+    "modelsdev:crof": "2026-04-22",
+    "modelsdev:siliconflow": "2026-04-22",
+    "modelsdev:kilo": "2026-04-22",
+    "modelsdev:venice": "2026-04-24",
+    "modelsdev:abacus": "2026-04-22",
+    "modelsdev:openrouter": "2026-04-22",
+    "modelsdev:pendra": "2026-04-22",
+    "modelsdev:alibaba": "2026-04-22",
+    "modelsdev:huggingface": "2026-04-22",
+    "modelsdev:aiand": "2026-04-22",
+    "modelsdev:stackit": "2026-04-22",
+    "modelsdev:ambient": "2026-04-22",
+    "modelsdev:vercel": "2026-04-22",
+    "modelsdev:ofox": "2026-04-22",
+    "modelsdev:merge-gateway": "2026-04-22",
+    "modelsdev:pioneer": "2026-04-22",
+    "modelsdev:synthetic": "2026-04-22",
+    "modelsdev:cortecs": "2026-04-22",
+    "modelsdev:qvac": "2026-04-22"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video,audio->text",
+    "text,image->text",
+    "text,image,video->text",
+    "text->text",
+    "text,image,video,pdf->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.6-27b"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3.6-27B"
+    ],
+    "modelsdev:groq": [
+     "qwen/qwen3.6-27b"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-6-27b"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.6-27b"
+    ],
+    "modelsdev:crof": [
+     "qwen3.6-27b"
+    ],
+    "modelsdev:siliconflow": [
+     "Qwen/Qwen3.6-27B"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.6-27b"
+    ],
+    "modelsdev:venice": [
+     "qwen3-6-27b"
+    ],
+    "modelsdev:abacus": [
+     "Qwen/Qwen3.6-27B"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.6-27b"
+    ],
+    "modelsdev:pendra": [
+     "qwen3.6:27b"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.6-27b"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3.6-27B"
+    ],
+    "modelsdev:aiand": [
+     "qwen/qwen3.6-27b"
+    ],
+    "modelsdev:stackit": [
+     "Qwen/Qwen3.6-27B"
+    ],
+    "modelsdev:ambient": [
+     "qwen/qwen3.6-27b"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.6-27b"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.6-27b",
+     "qwen/qwen3.6-27b"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.6-27b"
+    ],
+    "modelsdev:pioneer": [
+     "Qwen/Qwen3.6-27B"
+    ],
+    "modelsdev:synthetic": [
+     "hf:Qwen/Qwen3.6-27B"
+    ],
+    "modelsdev:cortecs": [
+     "qwen3.6-27b"
+    ],
+    "modelsdev:qvac": [
+     "qwen3.6-27b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen36flash",
+   "names": [
+    "Qwen: Qwen3.6 Flash",
+    "Qwen3.6 Flash",
+    "Qwen3.6 Flash (Alibaba Cloud)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-27",
+    "modelsdev:empiriolabs": "2026-04-27",
+    "modelsdev:alibaba-token-plan": "2026-04-27",
+    "modelsdev:nano-gpt": "2026-04-27",
+    "modelsdev:llmgateway-providers": "2026-04-27",
+    "modelsdev:kilo": "2026-04-27",
+    "modelsdev:alibaba-token-plan-cn": "2026-04-27",
+    "modelsdev:302ai": "2026-04-27",
+    "modelsdev:openrouter": "2026-04-27",
+    "modelsdev:llmtr": "2026-04-27",
+    "modelsdev:alibaba": "2026-04-27",
+    "modelsdev:impossibl": "2026-04-27",
+    "modelsdev:orcarouter": "2026-04-27",
+    "modelsdev:ofox": "2026-04-27",
+    "modelsdev:merge-gateway": "2026-04-27",
+    "modelsdev:pioneer": "2026-04-27",
+    "modelsdev:llmgateway": "2026-04-27",
+    "modelsdev:crossmodel": "2026-04-27",
+    "modelsdev:alibaba-cn": "2026-04-27"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.6-flash"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-6-flash"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "qwen3.6-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.6-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen3.6-flash"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.6-flash"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "qwen3.6-flash"
+    ],
+    "modelsdev:302ai": [
+     "qwen3.6-flash"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.6-flash"
+    ],
+    "modelsdev:llmtr": [
+     "qwen/qwen3.6-flash"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.6-flash"
+    ],
+    "modelsdev:impossibl": [
+     "qwen/qwen3.6-flash"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.6-flash"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.6-flash",
+     "qwen/qwen3.6-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.6-flash"
+    ],
+    "modelsdev:pioneer": [
+     "qwen3.6-flash"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.6-flash"
+    ],
+    "modelsdev:crossmodel": [
+     "qwen/qwen3.6-flash"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3.6-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen37max",
+   "names": [
+    "Qwen: Qwen3.7 Max",
+    "Qwen3.7 Max",
+    "Qwen3.7 Max (NovitaAI)",
+    "Qwen3.7 Max (Alibaba Cloud)",
+    "Qwen 3.7 Max",
+    "qwen3.7-max-2026-06-08"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-05-21",
+    "modelsdev:deepinfra": "2026-05-21",
+    "modelsdev:empiriolabs": "2026-05-21",
+    "modelsdev:alibaba-token-plan": "2026-05-21",
+    "modelsdev:nano-gpt": "2026-05-21",
+    "modelsdev:llmgateway-providers": "2026-05-21",
+    "modelsdev:kilo": "2026-05-21",
+    "modelsdev:venice": "2026-05-22",
+    "modelsdev:alibaba-token-plan-cn": "2026-05-21",
+    "modelsdev:abacus": "2026-05-21",
+    "modelsdev:302ai": "2026-05-21",
+    "modelsdev:openrouter": "2026-05-21",
+    "modelsdev:cline-pass": "2026-05-21",
+    "modelsdev:alibaba": "2026-05-21",
+    "modelsdev:zenmux": "2026-05-21",
+    "modelsdev:impossibl": "2026-05-21",
+    "modelsdev:gmicloud": "2026-05-21",
+    "modelsdev:cloudflare-ai-gateway": "2026-05-21",
+    "modelsdev:vercel": "2026-05-21",
+    "modelsdev:hyper": "2026-05-28",
+    "modelsdev:orcarouter": "2026-05-21",
+    "modelsdev:ofox": "2026-05-21",
+    "modelsdev:aihubmix": "2026-05-21",
+    "modelsdev:merge-gateway": "2026-05-21",
+    "modelsdev:pioneer": "2026-05-21",
+    "modelsdev:modelis": "2026-05-21",
+    "modelsdev:requesty": "2026-05-21",
+    "modelsdev:llmgateway": "2026-05-21",
+    "modelsdev:crossmodel": "2026-05-21",
+    "modelsdev:alibaba-cn": "2026-05-21"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.7-max"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3.7-Max"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-7-max"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "qwen3.7-max"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.7-max"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/qwen3.7-max",
+     "alibaba/qwen3.7-max"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.7-max"
+    ],
+    "modelsdev:venice": [
+     "qwen-3-7-max"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "qwen3.7-max"
+    ],
+    "modelsdev:abacus": [
+     "qwen3.7-max"
+    ],
+    "modelsdev:302ai": [
+     "qwen3.7-max",
+     "qwen3.7-max-2026-06-08"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.7-max"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/qwen3.7-max"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.7-max"
+    ],
+    "modelsdev:zenmux": [
+     "qwen/qwen3.7-max"
+    ],
+    "modelsdev:impossibl": [
+     "qwen/qwen3.7-max"
+    ],
+    "modelsdev:gmicloud": [
+     "Qwen/Qwen3.7-Max"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "alibaba/qwen3.7-max"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.7-max"
+    ],
+    "modelsdev:hyper": [
+     "qwen3.7-max"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.7-max"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.7-max",
+     "qwen/qwen3.7-max"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.7-max"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.7-max"
+    ],
+    "modelsdev:pioneer": [
+     "qwen3.7-max"
+    ],
+    "modelsdev:modelis": [
+     "qwen/qwen3.7-max"
+    ],
+    "modelsdev:requesty": [
+     "qwen3.7-max"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.7-max"
+    ],
+    "modelsdev:crossmodel": [
+     "qwen/qwen3.7-max"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3.7-max"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen37plus",
+   "names": [
+    "Qwen: Qwen3.7 Plus",
+    "Qwen3.7 Plus",
+    "Qwen3.7 Plus (Alibaba Cloud)",
+    "Qwen 3.7 Plus"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-06-03",
+    "modelsdev:empiriolabs": "2026-06-02",
+    "modelsdev:alibaba-token-plan": "2026-06-02",
+    "modelsdev:nano-gpt": "2026-06-02",
+    "modelsdev:alibaba-coding-plan": "2026-06-02",
+    "modelsdev:llmgateway-providers": "2026-06-02",
+    "modelsdev:kilo": "2026-06-02",
+    "modelsdev:venice": "2026-06-02",
+    "modelsdev:alibaba-token-plan-cn": "2026-06-02",
+    "modelsdev:302ai": "2026-06-02",
+    "modelsdev:openrouter": "2026-06-02",
+    "modelsdev:cline-pass": "2026-06-02",
+    "modelsdev:llmtr": "2026-06-02",
+    "modelsdev:alibaba": "2026-06-02",
+    "modelsdev:zenmux": "2026-06-02",
+    "modelsdev:impossibl": "2026-06-02",
+    "modelsdev:cloudflare-ai-gateway": "2026-06-02",
+    "modelsdev:vercel": "2026-06-02",
+    "modelsdev:hyper": "2026-06-15",
+    "modelsdev:orcarouter": "2026-06-02",
+    "modelsdev:ofox": "2026-06-02",
+    "modelsdev:aihubmix": "2026-06-02",
+    "modelsdev:merge-gateway": "2026-06-02",
+    "modelsdev:pioneer": "2026-06-02",
+    "modelsdev:modelis": "2026-06-02",
+    "modelsdev:kenari": "2026-06-02",
+    "modelsdev:requesty": "2026-06-02",
+    "modelsdev:llmgateway": "2026-06-02",
+    "modelsdev:alibaba-coding-plan-cn": "2026-06-02",
+    "modelsdev:crossmodel": "2026-06-02",
+    "modelsdev:alibaba-cn": "2026-06-02"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image->text",
+    "text,image,video->text",
+    "text,image->text",
+    "text,image,pdf->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.7-plus"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-7-plus"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "qwen3.7-plus"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.7-plus"
+    ],
+    "modelsdev:alibaba-coding-plan": [
+     "qwen3.7-plus"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen3.7-plus"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.7-plus"
+    ],
+    "modelsdev:venice": [
+     "qwen-3-7-plus"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "qwen3.7-plus"
+    ],
+    "modelsdev:302ai": [
+     "qwen3.7-plus"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.7-plus"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/qwen3.7-plus"
+    ],
+    "modelsdev:llmtr": [
+     "qwen/qwen3.7-plus"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.7-plus"
+    ],
+    "modelsdev:zenmux": [
+     "qwen/qwen3.7-plus"
+    ],
+    "modelsdev:impossibl": [
+     "qwen/qwen3.7-plus"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "alibaba/qwen3.7-plus"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.7-plus"
+    ],
+    "modelsdev:hyper": [
+     "qwen3.7-plus"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.7-plus"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.7-plus",
+     "qwen/qwen3.7-plus"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.7-plus"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.7-plus"
+    ],
+    "modelsdev:pioneer": [
+     "qwen3.7-plus"
+    ],
+    "modelsdev:modelis": [
+     "qwen/qwen3.7-plus"
+    ],
+    "modelsdev:kenari": [
+     "qwen3-7-plus"
+    ],
+    "modelsdev:requesty": [
+     "qwen3.7-plus"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.7-plus"
+    ],
+    "modelsdev:alibaba-coding-plan-cn": [
+     "qwen3.7-plus"
+    ],
+    "modelsdev:crossmodel": [
+     "qwen/qwen3.7-plus"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3.7-plus"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen37flash",
+   "names": [
+    "Qwen: Qwen3.7 Flash",
+    "Qwen3.7 Flash",
+    "Qwen3.7 Flash (Alibaba Cloud)",
+    "Qwen 3.7 Flash"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-27",
+    "modelsdev:empiriolabs": "2026-07-15",
+    "modelsdev:nano-gpt": "2026-07-15",
+    "modelsdev:llmgateway-providers": "2026-07-15",
+    "modelsdev:kilo": "2026-07-15",
+    "modelsdev:openrouter": "2026-07-15",
+    "modelsdev:alibaba": "2026-07-15",
+    "modelsdev:vercel": "2026-07-15",
+    "modelsdev:hyper": "2026-07-27",
+    "modelsdev:orcarouter": "2026-07-15",
+    "modelsdev:aihubmix": "2026-07-15",
+    "modelsdev:crossmodel": "2026-07-15",
+    "modelsdev:alibaba-cn": "2026-07-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text,image,pdf->text",
+    "text,image->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.7-flash"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-7-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.7-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "alibaba/qwen3.7-flash"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.7-flash"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.7-flash"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.7-flash"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.7-flash"
+    ],
+    "modelsdev:hyper": [
+     "qwen3.7-flash"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.7-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.7-flash"
+    ],
+    "modelsdev:crossmodel": [
+     "qwen/qwen3.7-flash"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3.7-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen38maxpreview",
+   "names": [
+    "Qwen3.8 Max Preview",
+    "Qwen 3.8 Max"
+   ],
+   "releaseDateHints": {
+    "modelsdev:alibaba-token-plan": "2026-07-19",
+    "modelsdev:venice": "2026-07-22",
+    "modelsdev:alibaba-token-plan-cn": "2026-07-19",
+    "modelsdev:impossibl": "2026-07-19",
+    "modelsdev:vercel": "2026-07-19",
+    "modelsdev:hyper": "2026-07-19",
+    "modelsdev:aihubmix": "2026-07-19",
+    "modelsdev:llmgateway": "2026-07-19"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:alibaba-token-plan": [
+     "qwen3.8-max-preview"
+    ],
+    "modelsdev:venice": [
+     "qwen-3-8-max"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "qwen3.8-max-preview"
+    ],
+    "modelsdev:impossibl": [
+     "qwen/qwen3.8-max-preview"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.8-max"
+    ],
+    "modelsdev:hyper": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.8-max-preview"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.8-max"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "qwen38max",
+   "names": [
+    "Qwen: Qwen3.8 Max (0902)",
+    "Qwen3.8 Max",
+    "Qwen3.8 Max 0902",
+    "Qwen3.8 Max (SCX.ai)",
+    "Qwen3.8 Max (NovitaAI)",
+    "Qwen3.8 Max (Alibaba Cloud)",
+    "Qwen 3.8 Max",
+    "Qwen3.8-Max"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-03",
+    "modelsdev:deepinfra": "2026-08-03",
+    "modelsdev:empiriolabs": "2026-08-03",
+    "modelsdev:alibaba-token-plan": "2026-08-03",
+    "modelsdev:nano-gpt": "2026-09-02",
+    "modelsdev:llmgateway-providers": "2026-08-03",
+    "modelsdev:above": "2026-08-03",
+    "modelsdev:kilo": "2026-09-02",
+    "modelsdev:alibaba-token-plan-cn": "2026-08-03",
+    "modelsdev:abacus": "2026-08-03",
+    "modelsdev:302ai": "2026-08-03",
+    "modelsdev:openrouter": "2026-09-02",
+    "modelsdev:cline-pass": "2026-08-03",
+    "modelsdev:alibaba": "2026-08-03",
+    "modelsdev:vancine": "2026-08-03",
+    "modelsdev:gmicloud": "2026-08-03",
+    "modelsdev:cloudflare-ai-gateway": "2026-08-03",
+    "modelsdev:vercel": "2026-09-02",
+    "modelsdev:fireworks-ai": "2026-08-03",
+    "modelsdev:orcarouter": "2026-08-03",
+    "modelsdev:scx-ai": "2026-08-03",
+    "modelsdev:scnet-token-plan": "2026-08-03",
+    "modelsdev:ofox": "2026-09-02",
+    "modelsdev:aihubmix": "2026-08-03",
+    "modelsdev:merge-gateway": "2026-08-03",
+    "modelsdev:opper": "2026-08-03",
+    "modelsdev:opencode-go": "2026-08-03",
+    "modelsdev:edenai": "2026-09-02",
+    "modelsdev:opencode": "2026-08-03",
+    "modelsdev:kenari": "2026-08-03",
+    "modelsdev:requesty": "2026-08-03",
+    "modelsdev:crossmodel": "2026-08-03",
+    "modelsdev:digitalocean": "2026-08-03",
+    "modelsdev:alibaba-cn": "2026-08-03"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video,pdf->text",
+    "text,image,video->text",
+    "text,image->text",
+    "text,image,pdf->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.8-max-0902"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3.8-Max"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-8-max-0902",
+     "qwen3-8-max"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.8-max",
+     "qwen/qwen3.8-max-0902"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "scx-ai-gp/qwen3.8-max",
+     "novita/qwen3.8-max",
+     "alibaba/qwen3.8-max"
+    ],
+    "modelsdev:above": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.8-max-0902"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:abacus": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:302ai": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.8-max-0902"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/qwen3.8-max"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:vancine": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:gmicloud": [
+     "Qwen/Qwen3.8-Max"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "alibaba/qwen3.8-max"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.8-max-0902"
+    ],
+    "modelsdev:fireworks-ai": [
+     "accounts/fireworks/models/qwen3p8-max"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.8-max"
+    ],
+    "modelsdev:scx-ai": [
+     "Qwen3.8-Max"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "Qwen3.8-Max"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.8-max",
+     "bailian/qwen3.8-max-0902",
+     "qwen/qwen3.8-max",
+     "qwen/qwen3.8-max-0902"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.8-max"
+    ],
+    "modelsdev:opper": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:opencode-go": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3.8-max",
+     "qwen/qwen3.8-max-0902"
+    ],
+    "modelsdev:opencode": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:kenari": [
+     "qwen3-8-max"
+    ],
+    "modelsdev:requesty": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:crossmodel": [
+     "qwen/qwen3.8-max"
+    ],
+    "modelsdev:digitalocean": [
+     "qwen3.8-max"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3.8-max"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3824ta95b",
+   "names": [
+    "Qwen: Qwen3.8 2.4T A95B",
+    "Qwen3.8 2.4T A95B",
+    "Qwen3.8 2.4T A95B (DeepInfra)",
+    "Qwen3.8 2.4T A95B (NovitaAI)",
+    "Qwen3.8 2.4T A95B (Together AI)",
+    "Qwen 3.8 2.4T",
+    "Qwen3.8-Max",
+    "Qwen3.8 2.4T A95B (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-12",
+    "modelsdev:deepinfra": "2026-08-12",
+    "modelsdev:siliconflow": "2026-08-12",
+    "modelsdev:llmgateway-providers": "2026-08-12",
+    "modelsdev:kilo": "2026-08-12",
+    "modelsdev:venice": "2026-08-12",
+    "modelsdev:openrouter": "2026-08-12",
+    "modelsdev:iteracompute": "2026-08-12",
+    "modelsdev:modal": "2026-08-12",
+    "modelsdev:huggingface": "2026-08-12",
+    "modelsdev:vercel": "2026-08-12",
+    "modelsdev:hyper": "2026-08-26",
+    "modelsdev:fireworks-ai": "2026-08-12",
+    "modelsdev:aihubmix": "2026-08-12",
+    "modelsdev:merge-gateway": "2026-08-12",
+    "modelsdev:opper": "2026-08-12",
+    "modelsdev:tensorx": "2026-08-12",
+    "modelsdev:edenai": "2026-08-12",
+    "modelsdev:requesty": "2026-08-12",
+    "modelsdev:llmgateway": "2026-08-12",
+    "modelsdev:cortecs": "2026-08-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3.8-2.4T-A95B"
+    ],
+    "modelsdev:siliconflow": [
+     "Qwen/Qwen3.8-2.4T-A95B"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "deepinfra/qwen3.8-2.4t-a95b",
+     "novita/qwen3.8-2.4t-a95b",
+     "together-ai/qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:venice": [
+     "qwen-3-8-2-4t-a95b"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:iteracompute": [
+     "qwen/qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:modal": [
+     "Qwen/Qwen3.8-2.4T-A95B"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3.8-2.4T-A95B"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:hyper": [
+     "qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:fireworks-ai": [
+     "accounts/fireworks/models/qwen3p8-2p4t-a95b"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:opper": [
+     "qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:tensorx": [
+     "qwen/qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:requesty": [
+     "qwen3.8-2.4T-A95B@eu",
+     "qwen3.8-2.4T-A95B"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.8-2.4t-a95b"
+    ],
+    "modelsdev:cortecs": [
+     "qwen3.8-2.4t-a95b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen3827b",
+   "names": [
+    "Qwen: Qwen3.8 27B",
+    "Qwen3.8 27B",
+    "Qwen3.8 27B (NovitaAI)",
+    "Qwen 3.8 27B",
+    "Qwen3.8 27B Flex",
+    "Qwen3.8-27B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-14",
+    "modelsdev:deepinfra": "2026-08-14",
+    "modelsdev:cerebras": "2026-08-14",
+    "modelsdev:groq": "2026-08-14",
+    "modelsdev:blueclaw": "2026-08-14",
+    "modelsdev:empiriolabs": "2026-08-14",
+    "modelsdev:cloudflare-workers-ai": "2026-08-14",
+    "modelsdev:engy": "2026-08-14",
+    "modelsdev:nano-gpt": "2026-08-14",
+    "modelsdev:crof": "2026-08-14",
+    "modelsdev:wandb": "2026-08-14",
+    "modelsdev:llmgateway-providers": "2026-08-14",
+    "modelsdev:kilo": "2026-08-14",
+    "modelsdev:venice": "2026-08-17",
+    "modelsdev:openrouter": "2026-08-14",
+    "modelsdev:iteracompute": "2026-08-14",
+    "modelsdev:neuralwatt": "2026-08-14",
+    "modelsdev:regolo-ai": "2026-08-14",
+    "modelsdev:vultr": "2026-08-14",
+    "modelsdev:huggingface": "2026-08-14",
+    "modelsdev:aiand": "2026-08-14",
+    "modelsdev:ambient": "2026-08-14",
+    "modelsdev:nebius": "2026-08-14",
+    "modelsdev:scaleway": "2026-08-14",
+    "modelsdev:vercel": "2026-08-14",
+    "modelsdev:hyper": "2026-08-26",
+    "modelsdev:orcarouter": "2026-08-14",
+    "modelsdev:ofox": "2026-08-14",
+    "modelsdev:opper": "2026-08-14",
+    "modelsdev:aki-io": "2026-08-14",
+    "modelsdev:tensorx": "2026-08-14",
+    "modelsdev:edenai": "2026-08-14",
+    "modelsdev:tempr": "2026-08-14",
+    "modelsdev:ovhcloud": "2026-09-02",
+    "modelsdev:evroc": "2026-08-14",
+    "modelsdev:kosmik": "2026-08-14",
+    "modelsdev:cortecs": "2026-08-14",
+    "modelsdev:amd": "2026-08-14",
+    "modelsdev:runinfra": "2026-08-14",
+    "modelsdev:hetzner": "2026-08-14"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text,image->text",
+    "text->text",
+    "text,image,video,pdf->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3.8-27B"
+    ],
+    "modelsdev:cerebras": [
+     "qwen-3.8-27b"
+    ],
+    "modelsdev:groq": [
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:blueclaw": [
+     "Qwen3.8-27B"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-8-27b"
+    ],
+    "modelsdev:cloudflare-workers-ai": [
+     "@cf/qwen/qwen3.8-27b"
+    ],
+    "modelsdev:engy": [
+     "qwen3.8-27b"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:crof": [
+     "qwen3.8-27b"
+    ],
+    "modelsdev:wandb": [
+     "Qwen/Qwen3.8-27B"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/qwen3.8-27b"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:venice": [
+     "qwen-3-8-27b"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:iteracompute": [
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:neuralwatt": [
+     "qwen-3.8-27b",
+     "qwen-3.8-27b-flex"
+    ],
+    "modelsdev:regolo-ai": [
+     "qwen3.8-27b"
+    ],
+    "modelsdev:vultr": [
+     "qwen3.8-27b"
+    ],
+    "modelsdev:huggingface": [
+     "Qwen/Qwen3.8-27B"
+    ],
+    "modelsdev:aiand": [
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:ambient": [
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:nebius": [
+     "Qwen/Qwen3.8-27B"
+    ],
+    "modelsdev:scaleway": [
+     "qwen3.8-27b"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.8-27b"
+    ],
+    "modelsdev:hyper": [
+     "qwen3.8-27b"
+    ],
+    "modelsdev:orcarouter": [
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.8-27b",
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:opper": [
+     "qwen3.8-27b"
+    ],
+    "modelsdev:aki-io": [
+     "qwen3.8-27b"
+    ],
+    "modelsdev:tensorx": [
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:tempr": [
+     "cerebras/qwen-3.8-27b",
+     "groq/qwen/qwen3.8-27b"
+    ],
+    "modelsdev:ovhcloud": [
+     "qwen3.8-27b"
+    ],
+    "modelsdev:evroc": [
+     "Qwen/Qwen3.8-27B"
+    ],
+    "modelsdev:kosmik": [
+     "qwen/qwen3.8-27b"
+    ],
+    "modelsdev:cortecs": [
+     "qwen3.8-27b"
+    ],
+    "modelsdev:amd": [
+     "Qwen3.8-27B"
+    ],
+    "modelsdev:runinfra": [
+     "Qwen/Qwen3.8-27B"
+    ],
+    "modelsdev:hetzner": [
+     "Qwen3.8-27B"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen38flash",
+   "names": [
+    "Qwen: Qwen3.8 Flash",
+    "Qwen3.8 Flash",
+    "Qwen3.8 Flash (NovitaAI)",
+    "Qwen3.8 Flash (Alibaba Cloud)",
+    "Qwen 3.8 Flash"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-26",
+    "modelsdev:deepinfra": "2026-08-26",
+    "modelsdev:empiriolabs": "2026-08-26",
+    "modelsdev:alibaba-token-plan": "2026-08-26",
+    "modelsdev:nano-gpt": "2026-08-26",
+    "modelsdev:nan": "2026-08-26",
+    "modelsdev:llmgateway-providers": "2026-08-26",
+    "modelsdev:kilo": "2026-08-26",
+    "modelsdev:venice": "2026-09-10",
+    "modelsdev:alibaba-token-plan-cn": "2026-08-26",
+    "modelsdev:302ai": "2026-08-26",
+    "modelsdev:openrouter": "2026-08-26",
+    "modelsdev:alibaba": "2026-08-26",
+    "modelsdev:vancine": "2026-08-26",
+    "modelsdev:gmicloud": "2026-08-26",
+    "modelsdev:vercel": "2026-08-26",
+    "modelsdev:hyper": "2026-08-26",
+    "modelsdev:scnet-token-plan": "2026-08-26",
+    "modelsdev:ofox": "2026-08-26",
+    "modelsdev:aihubmix": "2026-08-26",
+    "modelsdev:merge-gateway": "2026-08-26",
+    "modelsdev:opencode-go": "2026-08-26",
+    "modelsdev:edenai": "2026-08-26",
+    "modelsdev:opencode": "2026-08-26",
+    "modelsdev:requesty": "2026-08-26",
+    "modelsdev:llmgateway": "2026-08-26",
+    "modelsdev:crossmodel": "2026-08-26",
+    "modelsdev:alibaba-cn": "2026-08-26"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text,image->text",
+    "text->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.8-flash"
+    ],
+    "modelsdev:deepinfra": [
+     "Qwen/Qwen3.8-Flash"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-8-flash"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "qwen3.8-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.8-flash"
+    ],
+    "modelsdev:nan": [
+     "qwen3.8-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/qwen3.8-flash",
+     "alibaba/qwen3.8-flash"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.8-flash"
+    ],
+    "modelsdev:venice": [
+     "qwen-3-8-flash"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "qwen3.8-flash"
+    ],
+    "modelsdev:302ai": [
+     "qwen3.8-flash"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.8-flash"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.8-flash"
+    ],
+    "modelsdev:vancine": [
+     "qwen3.8-flash"
+    ],
+    "modelsdev:gmicloud": [
+     "Qwen/Qwen3.8-Flash"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.8-flash"
+    ],
+    "modelsdev:hyper": [
+     "qwen3.8-flash"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "Qwen3.8-Flash"
+    ],
+    "modelsdev:ofox": [
+     "bailian/qwen3.8-flash",
+     "qwen/qwen3.8-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.8-flash"
+    ],
+    "modelsdev:merge-gateway": [
+     "qwen/qwen3.8-flash"
+    ],
+    "modelsdev:opencode-go": [
+     "qwen3.8-flash"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3.8-flash"
+    ],
+    "modelsdev:opencode": [
+     "qwen3.8-flash"
+    ],
+    "modelsdev:requesty": [
+     "qwen3.8-flash"
+    ],
+    "modelsdev:llmgateway": [
+     "qwen3.8-flash"
+    ],
+    "modelsdev:crossmodel": [
+     "qwen/qwen3.8-flash"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3.8-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen38flashnext",
+   "names": [
+    "Qwen3.8 Flash Next",
+    "Qwen3.8 Flash Next (EU)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vultr": "2026-08-27",
+    "modelsdev:tensorx": "2026-08-27",
+    "modelsdev:requesty": "2026-08-27",
+    "modelsdev:cortecs": "2026-08-27",
+    "modelsdev:amd": "2026-08-27"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image,video->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:vultr": [
+     "qwen3.8-flash-next"
+    ],
+    "modelsdev:tensorx": [
+     "qwen/qwen3.8-flash-next"
+    ],
+    "modelsdev:requesty": [
+     "qwen3.8-flash-next",
+     "qwen3.8-flash-next@eu"
+    ],
+    "modelsdev:cortecs": [
+     "qwen3.8-flash-next"
+    ],
+    "modelsdev:amd": [
+     "Qwen3.8-Flash-Next"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwenimage21",
+   "names": [
+    "Qwen-Image-2.1"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nan": "2026-09-14"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->image"
+   ],
+   "catalogIds": {
+    "modelsdev:nan": [
+     "qwen-image-2.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen38omniflash",
+   "names": [
+    "Qwen: Qwen3.8 Omni Flash",
+    "Qwen3.8 Omni Flash",
+    "Qwen 3.8 Omni Flash"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-21",
+    "modelsdev:empiriolabs": "2026-09-17",
+    "modelsdev:nano-gpt": "2026-09-17",
+    "modelsdev:kilo": "2026-09-17",
+    "modelsdev:openrouter": "2026-09-17",
+    "modelsdev:alibaba": "2026-09-17",
+    "modelsdev:vercel": "2026-09-17",
+    "modelsdev:aihubmix": "2026-09-17",
+    "modelsdev:edenai": "2026-09-17",
+    "modelsdev:crossmodel": "2026-09-17",
+    "modelsdev:alibaba-cn": "2026-09-17"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+audio+video->text",
+    "text,image,audio,video->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.8-omni-flash"
+    ],
+    "modelsdev:empiriolabs": [
+     "qwen3-8-omni-flash"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.8-omni-flash"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.8-omni-flash"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.8-omni-flash"
+    ],
+    "modelsdev:alibaba": [
+     "qwen3.8-omni-flash"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.8-omni-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "qwen3.8-omni-flash"
+    ],
+    "modelsdev:edenai": [
+     "qwen/qwen3.8-omni-flash"
+    ],
+    "modelsdev:crossmodel": [
+     "qwen/qwen3.8-omni-flash"
+    ],
+    "modelsdev:alibaba-cn": [
+     "qwen3.8-omni-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "qwen38maxprime",
+   "names": [
+    "Qwen: Qwen3.8 Max Prime",
+    "Qwen3.8 Max Prime",
+    "Qwen 3.8 Max Prime"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-23",
+    "modelsdev:nano-gpt": "2026-09-23",
+    "modelsdev:kilo": "2026-09-23",
+    "modelsdev:openrouter": "2026-09-23",
+    "modelsdev:vercel": "2026-09-23"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "qwen/qwen3.8-max-prime"
+    ],
+    "modelsdev:nano-gpt": [
+     "qwen/qwen3.8-max-prime"
+    ],
+    "modelsdev:kilo": [
+     "qwen/qwen3.8-max-prime"
+    ],
+    "modelsdev:openrouter": [
+     "qwen/qwen3.8-max-prime"
+    ],
+    "modelsdev:vercel": [
+     "alibaba/qwen3.8-max-prime"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}
