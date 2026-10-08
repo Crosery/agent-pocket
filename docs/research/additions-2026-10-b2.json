@@ -603,8 +603,8 @@
     "spe": 51
    },
    "habitats": [
-    "forest",
-    "meadow"
+    "coast",
+    "city"
    ],
    "releaseDate": "2025-05-01",
    "capabilityScore": 14,

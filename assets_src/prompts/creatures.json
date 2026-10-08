@@ -492,7 +492,7 @@
   "nameEn": "Gemini 3.8 Live (Live Avatar)",
   "nameZh": "Gemini 3.8 Live",
   "family": "gemini-live",
-  "stage": 1,
+  "stage": 2,
   "types": [
    "sound",
    "chat"
@@ -552,7 +552,7 @@
   "nameEn": "Gemma 4",
   "nameZh": "Gemma 4",
   "family": "gemma",
-  "stage": 2,
+  "stage": 3,
   "types": [
    "open",
    "vision"
@@ -641,7 +641,7 @@
   "nameEn": "Genie 3 (Project Genie)",
   "nameZh": "Genie 3 精灵世界",
   "family": "genie",
-  "stage": 1,
+  "stage": 3,
   "types": [
    "motion",
    "agent"
@@ -686,7 +686,7 @@
   "nameEn": "Gemini Robotics 2",
   "nameZh": "Gemini Robotics 2",
   "family": "gemini-robotics",
-  "stage": 1,
+  "stage": 3,
   "types": [
    "agent",
    "motion"
@@ -1179,7 +1179,7 @@
   "nameEn": "Luma Ray3",
   "nameZh": "Luma Ray3",
   "family": "luma",
-  "stage": 1,
+  "stage": 3,
   "types": [
    "motion",
    "vision"
@@ -1597,7 +1597,7 @@
   "nameEn": "π0.7 (Physical Intelligence)",
   "nameZh": "π0.7 物理智能",
   "family": "pi",
-  "stage": 1,
+  "stage": 3,
   "types": [
    "agent",
    "open"
@@ -2581,7 +2581,7 @@
   "nameEn": "SkyReels V4",
   "nameZh": "天工 SkyReels V4",
   "family": "skyreels",
-  "stage": 1,
+  "stage": 3,
   "types": [
    "motion",
    "write"
@@ -2789,7 +2789,7 @@
   "nameEn": "Unitree G1 / H2",
   "nameZh": "宇树 G1/H2",
   "family": "unitree",
-  "stage": 1,
+  "stage": 2,
   "types": [
    "agent",
    "compute"
@@ -2804,7 +2804,7 @@
   "nameEn": "Unitree GD01",
   "nameZh": "宇树 GD01 载人机甲",
   "family": "unitree",
-  "stage": 2,
+  "stage": 3,
   "types": [
    "compute",
    "agent"
@@ -3160,7 +3160,7 @@
   "nameEn": "Gemma 3",
   "nameZh": "Gemma 3",
   "family": "gemma",
-  "stage": 1,
+  "stage": 2,
   "types": [
    "open",
    "vision"
@@ -4700,5 +4700,2150 @@
   "lookZh": "长马尾加耳麦的薄荷发少女，闪电发夹更亮了",
   "personality": "跑得更稳的老练冲刺手，拐弯也不减速",
   "lineRef": "mai-code-1-flash"
+ },
+ {
+  "id": "gemini-1-0",
+  "nameEn": "Gemini 1.0",
+  "nameZh": "Gemini 1.0",
+  "family": "gemini-1-0",
+  "stage": 1,
+  "types": [
+   "chat",
+   "vision"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a bright young debut-idol girl of the Gemini twin-sign theme, her own character and not a cat girl. Hair: sky-blue in two round twin buns with long side locks fading to pale blue tips, a yellow four-point sparkle hairpin on one bun. Eyes: round honey-amber with a four-point sparkle highlight. Outfit: a white cropped school-style jacket with blue cuffs, a red collar ribbon, a short pale-blue pleated skirt, white sneakers. Signature accessory: a charm bracelet of three star charms in large, medium and small sizes (Ultra, Pro, Nano) on her left wrist. Props: a small round magnifier lens held to one eye (vision) and a speech-bubble-shaped shoulder bag (chat). Palette: #4285F4, #BBD4FF, #FBBC05, #34A853, #EA4335, #E8A317. Pose: tilting her head while peeking through the lens, the other hand waving.",
+  "lookZh": "蓝发双团子的星座小姑娘，腕上三颗大小不一的星星手链",
+  "personality": "好奇宝宝，聊着聊着就凑过来看图"
+ },
+ {
+  "id": "gemini-3-pro",
+  "nameEn": "Gemini 3 Pro",
+  "nameZh": "Gemini 3 Pro",
+  "family": "gemini-3-pro",
+  "stage": 1,
+  "types": [
+   "logic",
+   "vision"
+  ],
+  "rarity": "SSR",
+  "design": "Chibi HD-2D pixel sprite, ~2.8 heads tall, a poised older-teen scholar girl, flagship of the Pro family. Hair: very long pearl-white, ends dipped in thin bands of blue, red, yellow and green, half-up in a high knot with a four-point sparkle clip. Eyes: deep sapphire with a tiny prism-shaped highlight. Outfit: a white academic coat with gold trim over a pleated green skirt, white gloves, tall boots; on her sash a row of six tiny toggle-switch pins with only two lit (sparse experts). Signature accessory: a long parchment scroll unrolled in a loose spiral around her arm and trailing to her boots (long context). Prop: a clear glass prism wand held up (multimodal reasoning). Palette: #F4F2FF, #1F3FA8, #34A853, #E9B949, #EA4335, #FBBC05. Pose: raising the wand toward the viewer, a calm smile.",
+  "lookZh": "珍珠白长发的学者大姐姐，手中卷轴一路拖到脚边",
+  "personality": "沉着的全能学霸，卷子越长越从容"
+ },
+ {
+  "id": "gemini-2-0-flash",
+  "nameEn": "Gemini 2.0 Flash",
+  "nameZh": "Gemini 2.0 Flash",
+  "family": "gemini-2-0-flash",
+  "stage": 1,
+  "types": [
+   "compute",
+   "chat"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.2 heads tall, an energetic girl courier of the Flash family, not one of the Flash twins. Hair: a short high ponytail in sunny golden-yellow fading to pale orange-white tips, a four-point sparkle hairpin. Eyes: bright coral-red with a sparkle highlight. Outfit: a white-and-yellow track jacket with thin blue and green sleeve stripes, short shorts, high-top sneakers with tiny lightning bolts. Signature accessory: a utility tool-belt holding three pictogram tools (wrench, magnifier, paintbrush) (native tool use). Props: a small delivery satchel on her back and a tiny prism pendant at her neck splitting light. Palette: #FBBC05, #EA4335, #4285F4, #34A853, #FFFFFF, #FFF1C2. Pose: mid-run leaning forward, one hand pulling a tool from the belt, a bright grin.",
+  "lookZh": "金黄高马尾的快递少女，腰间挂着一圈小工具",
+  "personality": "一边跑一边把活干了，工具随手就掏"
+ },
+ {
+  "id": "gemini-3-6-flash",
+  "nameEn": "Gemini 3.6 Flash",
+  "nameZh": "Gemini 3.6 Flash",
+  "family": "gemini-flash-3x",
+  "stage": 1,
+  "types": [
+   "compute",
+   "agent"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Gemini Flash sprinter line: a young energetic cat girl, small and quick. Hair: honey-orange (#FFB547) short high ponytail tied with a four-point sparkle hair tie, a lightning-bolt-shaped ahoge on top; fluffy cat ears with cream inner fur, short white-tipped tail. Eyes: big emerald-green (#34A853) with four-point sparkle highlights. Outfit: oversized sky-blue (#4285F4) zip-up running hoodie with white sleeve stripes, plain white tee, navy shorts, small orange sneakers. Accessories: lightning ahoge and sparkle hair tie (signature, kept in every form); one prop, a chunky white stopwatch with a tiny bolt pictogram. Palette: #FFB547, #4285F4, #FFFFFF, #1F2A4D, #34A853, accent #EA4335. Pose: crouched in a sprinter's start, ears forward, thumb on the stopwatch, determined little grin.",
+  "lookZh": "橘金高马尾、闪电呆毛的猫娘小跑者，手握一只秒表",
+  "personality": "抢跑成瘾的省电冲刺手，话少活快不返工"
+ },
+ {
+  "id": "gemini-3-7-flash",
+  "nameEn": "Gemini 3.7 Flash",
+  "nameZh": "Gemini 3.7 Flash",
+  "family": "gemini-flash-3x",
+  "stage": 2,
+  "types": [
+   "compute",
+   "agent"
+  ],
+  "rarity": "SSR",
+  "design": "Chibi HD-2D pixel sprite, ~2.8 heads tall, stage 2 of the Gemini Flash sprinter line: the same cat girl grown into a confident older teen. Hair: honey-orange (#FFB547) long high ponytail to her waist, same four-point sparkle hair tie, same lightning-bolt ahoge; cat ears, longer white-tipped tail. Eyes: same emerald-green (#34A853), more assured. Outfit: sky-blue (#4285F4) track-coach jacket with thin Google four-colour cuff stripes, white blouse, navy pleated skirt, orange running shoes. Accessories: lightning ahoge and sparkle hair tie (signature); the stopwatch now on a lanyard, plus a slim tablet showing a tiny code-bracket glyph over a web-page wireframe. Palette: #FFB547, #4285F4, #FFFFFF, #1F2A4D, #34A853, accents #EA4335 #FBBC05. Pose: striding mid-run, tablet held like a relay baton, one confident wink.",
+  "lookZh": "橘金长马尾、闪电呆毛的猫娘教练，秒表挂在胸前，手持平板",
+  "personality": "稳稳挑大梁的全能主力，边跑边把活干完",
+  "lineRef": "gemini-3-6-flash"
+ },
+ {
+  "id": "gemma-2",
+  "nameEn": "Gemma 2",
+  "nameZh": "Gemma 2",
+  "family": "gemma",
+  "stage": 1,
+  "types": [
+   "open",
+   "chat"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~1.6 heads tall, the smallest and youngest version of the Gemma maker girl, the stage before the shy Gemma 3 form. Hair: crystal-teal (#2BB3A3) rounded short bob with only a few simple faceted planes; one sapphire four-point-star gem clip (#1E6FD9) pinned at the side (signature, kept in every form). Eyes: big aqua eyes with a single diamond-cut highlight. Outfit: oversized denim-blue (#1E6FD9) overalls that droop, with rolled-up cuffs, a plain white tee, boots two sizes too big, and a small open-padlock patch on the bib (open weights). Props: a small jewel-case satchel across her chest with three gems of increasing size peeking out. Palette: #2BB3A3, #1E6FD9, #A8F0E6, #F7F9FC, #3D4B6B. Pose: standing in her too-big boots, hugging the largest gem to her chest with both hands, a small determined grin.",
+  "lookZh": "背着三颗宝石小匣的青绿短发小不点，靴子大了两号",
+  "personality": "个头小志气大的小宝石匠，越级也敢上",
+  "lineRef": "gemma-3"
+ },
+ {
+  "id": "diffusiongemma",
+  "nameEn": "DiffusionGemma",
+  "nameZh": "DiffusionGemma",
+  "family": "diffusiongemma",
+  "stage": 1,
+  "types": [
+   "open",
+   "chaos"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.2 heads tall, a small sculptor girl who chisels clear words out of noise. Hair: a chin-length bob, roots static-grey lilac speckled with tiny pixel dots (noise), clearing to crystal aqua at the tips, one messy cowlick; a gem-cut sapphire hairpin. Eyes: pale aqua with a faceted diamond highlight. Outfit: an oversized chalk-white workshop smock with frosted rolled-up sleeves, a faceted gem-cut hem in four muted Google colours, shorts, work boots. Signature accessory: a faceted gem pendant on her chest, half frosted and half perfectly clear (Gemma, the gem). Props: a rough frosted crystal block with half its face already polished clear, and a small chisel. Palette: #B8B8C8, #BDF3F0, #4285F4, #7FE5E0, #FFFFFF, #34A853. Pose: mid-chisel, one eye squinting, cheeky grin.",
+  "lookZh": "发梢由噪点渐变成透明水晶的短发少女，胸前挂着切面宝石",
+  "personality": "先乱后清，一凿一凿把答案雕出来"
+ },
+ {
+  "id": "nano-banana-pro",
+  "nameEn": "Nano Banana Pro",
+  "nameZh": "Nano Banana Pro",
+  "family": "nano-banana-pro",
+  "stage": 1,
+  "types": [
+   "vision",
+   "write"
+  ],
+  "rarity": "SSR",
+  "design": "Chibi HD-2D pixel sprite, ~2.8 heads tall, a single-stage premium member of the Banana family: a poised studio-director girl in black and gold. Hair: long straight golden-banana (#FFC93C) hair shading to amber (#F5B700) at the ends, half tied in a high knot with a gold banana-shaped hairpin. Eyes: deep amber with a four-point sparkle highlight. Outfit: a sturdy black (#1A1A1A) long studio coat with a scalloped cream-gold banana-peel collar, gold buttons, white blouse with a small blue-and-green swatch ribbon, gold-buckled black boots. Props: a gold-nibbed pen held like a conductor's baton, and a slim gold-framed canvas tablet under the other arm with a poster layout on it, no readable text. Palette: #FFC93C, #F5B700, #1A1A1A, #FFFFFF, #4285F4, #34A853. Pose: standing tall and composed, pen tilted upward, a small knowing smile.",
+  "lookZh": "黑金长外套的香蕉工作室总监，手握金笔和画板",
+  "personality": "沉稳挑剔，每一版都要一次过稿"
+ },
+ {
+  "id": "nano-banana-2-lite",
+  "nameEn": "Nano Banana 2 Lite",
+  "nameZh": "Nano Banana 2 Lite",
+  "family": "nano-banana-2-lite",
+  "stage": 1,
+  "types": [
+   "vision",
+   "compute"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a single-stage younger-sister member of the Banana family: a small, light, quick girl. Hair: short fluffy banana-cream (#FFE680) bob with one green (#7CB342) leaf-shaped ahoge and a tiny blue (#4285F4) clip on the right. Eyes: large amber with a round lightning-bolt highlight. Outfit: a pale-yellow half-peeled banana-peel hoodie with two short peel flaps drooping like bunny ears on the hood, white tee, short cream pleated skirt, white sneakers with a thin yellow lightning stripe; no heavy gear. Props: a postcard-sized canvas tablet held in both hands showing a simple sunrise sketch, and a small paper-airplane charm on the hoodie zipper (lightweight speed). Palette: #FFE680, #FFD84A, #7CB342, #4285F4, #FFFFFF, #212121. Pose: skipping forward on tiptoe, tablet lifted, a cheerful wink.",
+  "lookZh": "奶油黄短发的小香蕉妹妹，穿剥开一半的香蕉皮连帽衫",
+  "personality": "轻装上阵的快手妹妹，永远在小跑"
+ },
+ {
+  "id": "imagen-3",
+  "nameEn": "Imagen 3",
+  "nameZh": "Imagen 3",
+  "family": "imagen",
+  "stage": 1,
+  "types": [
+   "vision"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Imagen line: a bright little apprentice photographer girl. Hair: short cloud-white (#F4F8FF) bob with sky-blue (#4285F4) tips and one soft ahoge, pinned on the left with a small square four-colour photo-frame clip (blue, red, yellow, green corners). Eyes: large bright blue with a round lens-ring highlight. Outfit: a plain white pinafore dress over a pale-blue blouse, a small shield-shaped badge on the collar (safety), white socks, blue sneakers. Props: a tiny pocket camera held up to one eye, and a thin brush-pen tucked behind her ear whose tip fades from grainy to clear (diffusion). Palette: #F4F8FF, #4285F4, #EA4335, #FBBC05, #34A853, #2B3A55. Pose: standing straight on both feet, framing the viewer through the camera with one eye squinting, a shy proud smile.",
+  "lookZh": "云白短发的小摄影师，发夹是四色相框，胸前别着盾牌徽章",
+  "personality": "爱把世界拍得清清楚楚，按快门前先查安全"
+ },
+ {
+  "id": "imagen-4",
+  "nameEn": "Imagen 4",
+  "nameZh": "Imagen 4",
+  "family": "imagen",
+  "stage": 2,
+  "types": [
+   "vision",
+   "write"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.7 heads tall, stage 2 of the Imagen line: the same photographer girl grown into a confident studio photographer. Hair: the same cloud-white (#F4F8FF) bob with a gentle side sweep, sky-blue (#4285F4) tips, one soft ahoge, and the same four-colour square photo-frame clip, now larger with gold trim. Eyes: bright blue with a round lens-ring highlight. Outfit: a white short cape-jacket with a blue (#4285F4) collar and thin red, yellow, green piping, pleated skirt, blue boots; the collar shield badge is now polished metal with a gold rim. Props: a vintage bellows camera at her hip, and the brush-pen slotted into her belt. Palette: #F4F8FF, #4285F4, #EA4335, #FBBC05, #34A853, #2B3A55. Pose: one foot forward, camera lifted toward the viewer, a calm confident smile.",
+  "lookZh": "长大的云白短发摄影师，披蓝白短披风，腰间挎着大镜头相机",
+  "personality": "安静自信，镜头一抬就是定格",
+  "lineRef": "imagen-3"
+ },
+ {
+  "id": "veo-1",
+  "nameEn": "Veo",
+  "nameZh": "Veo",
+  "family": "veo-early",
+  "stage": 1,
+  "types": [
+   "motion"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Veo clip-girl line: a small eager camera-assistant girl. Hair: short amber-gold (#FFB300) bob with a flat blunt fringe and one ahoge, a narrow charcoal (#2A2A35) film-strip headband across her head with tiny sprocket holes. Eyes: deep navy (#1F3A93) with a viewfinder-bracket highlight. Outfit: a plain navy (#1F3A93) pinafore over a white blouse, a small red (#D7263D) bow at the collar, white socks, charcoal sneakers. Props: a small hand-cranked toy movie camera held at her chest with both hands, and a mini clapperboard clipped to her belt. Palette: #FFB300, #2A2A35, #1F3A93, #D7263D, #FFFFFF. Pose: peering through the toy camera's viewfinder with one eye, one foot raised in excitement.",
+  "lookZh": "戴胶片发带的金色短发小场记，抱着手摇玩具摄影机",
+  "personality": "好奇心满格，什么都想先拍下来"
+ },
+ {
+  "id": "veo-2",
+  "nameEn": "Veo 2",
+  "nameZh": "Veo 2",
+  "family": "veo-early",
+  "stage": 2,
+  "types": [
+   "motion",
+   "vision"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.6 heads tall, stage 2 of the Veo clip-girl line: the same camera-assistant girl grown into a young cinematographer. Hair: the same amber-gold (#FFB300) bob, slightly longer with side-swept ends and one ahoge, and the same charcoal (#2A2A35) film-strip headband, now wider with a tiny red record-dot pictogram. Eyes: deep navy (#1F3A93) with a viewfinder-bracket highlight. Outfit: a navy (#1F3A93) short cape-jacket with film-strip piping and charcoal lining, white blouse with the red (#D7263D) bow, pleated charcoal skirt, dark boots. Props: a shoulder-mounted cinema camera with a wide lens and a tiny '4K' badge, and the mini clapperboard on her belt. Palette: #FFB300, #2A2A35, #1F3A93, #D7263D, #FFFFFF. Pose: wide stance, camera braced on her shoulder, free hand framing a shot, a confident grin.",
+  "lookZh": "长大的胶片发带摄影师，披海军蓝短披风，肩扛 4K 摄影机",
+  "personality": "冷静利落，光影对了才肯按下录制",
+  "lineRef": "veo-1"
+ },
+ {
+  "id": "gemini-2-5-flash-tts",
+  "nameEn": "Gemini 2.5 Flash TTS",
+  "nameZh": "Gemini 2.5 Flash TTS",
+  "family": "gemini-tts",
+  "stage": 1,
+  "types": [
+   "sound"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Gemini TTS narrator line: a small girl just learning to read aloud. Hair: coral-rose (#FF8A9B) soft wavy shoulder-length bob with one tiny feather-shaped ahoge; a small gold capsule-microphone hairpin (#F6B73C) clipped on the right side. Eyes: big honey-amber (#F6B73C) eyes with a tiny four-point sparkle highlight. Outfit: a cream (#FFF4E0) pinafore dress over a white blouse with a Gemini-blue (#4285F4) ribbon bow, short white socks and brown buckle shoes. Accessories: the gold mic hairpin and feather ahoge (signature, kept in every form); one prop, a picture book held open in both hands. Palette: #FF8A9B, #FFF4E0, #4285F4, #F6B73C, #2A2F4F. Pose: standing on tiptoe, reading aloud shyly with her mouth in a small 'o', cheeks slightly pink.",
+  "lookZh": "珊瑚粉波浪短发、别着金色话筒发卡的小女孩，捧着绘本朗读",
+  "personality": "害羞却爱出声的小朗读家，念到入迷就脸红"
+ },
+ {
+  "id": "gemini-3-1-flash-tts",
+  "nameEn": "Gemini 3.1 Flash TTS",
+  "nameZh": "Gemini 3.1 Flash TTS",
+  "family": "gemini-tts",
+  "stage": 2,
+  "types": [
+   "sound",
+   "chat"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.4 heads tall, stage 2 of the Gemini TTS narrator line: the same girl a few years older, now performing instead of just reading. Hair: coral-rose (#FF8A9B) wavy hair grown to chest length, same feather-shaped ahoge, low half-up tie with a Gemini-blue ribbon; same gold capsule-microphone hairpin (#F6B73C) on the right. Eyes: honey-amber (#F6B73C) with a tiny four-point sparkle highlight. Outfit: cream (#FFF4E0) blouse with a bigger blue bow, Gemini-blue (#4285F4) bolero vest with a tiny waveform on the hem, navy pleated skirt, brown loafers. Accessories: mic hairpin and feather ahoge (signature); two props, a handheld gold ribbon microphone and a script folder under one arm. Palette: #FF8A9B, #FFF4E0, #4285F4, #F6B73C, #2A2F4F. Pose: speaking into the microphone, free hand gesturing, one wink.",
+  "lookZh": "珊瑚粉长波浪发、金色话筒发卡的少女，手握话筒、腋下夹剧本",
+  "personality": "一站上台就来劲的小表演家，声情并茂",
+  "lineRef": "gemini-2-5-flash-tts"
+ },
+ {
+  "id": "gemini-3-8-flash-tts",
+  "nameEn": "Gemini 3.8 Flash TTS",
+  "nameZh": "Gemini 3.8 Flash TTS",
+  "family": "gemini-tts",
+  "stage": 3,
+  "types": [
+   "sound",
+   "chat"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.8 heads tall, stage 3 of the Gemini TTS narrator line: the same girl as a poised older teen, a full stage narrator. Hair: coral-rose (#FF8A9B) long wavy hair to mid-back, same feather-shaped ahoge, Gemini-blue half-up ribbon; same gold capsule-microphone hairpin (#F6B73C) on the right. Eyes: honey-amber (#F6B73C), sparkle highlights, calm. Outfit: cream (#FFF4E0) blouse with a large blue bow, long-tailed navy (#2A2F4F) narrator's coat with gold trim and waveform hem, short skirt, brown boots. Accessories: mic hairpin and feather ahoge (signature); two props, a handheld gold ribbon microphone and two finger puppets (a coral bird and a blue cat) on her other hand. Palette: #FF8A9B, #FFF4E0, #4285F4, #F6B73C, #2A2F4F. Pose: sweeping one arm out like opening a curtain, puppets chatting, confident smile.",
+  "lookZh": "珊瑚粉及腰卷发、金色话筒发卡的旁白少女，指尖站着两只手偶",
+  "personality": "从容的舞台旁白，一人分饰好几个声音",
+  "lineRef": "gemini-3-1-flash-tts"
+ },
+ {
+  "id": "gemini-3-1-flash-live",
+  "nameEn": "Gemini 3.1 Flash Live",
+  "nameZh": "Gemini 3.1 Flash Live",
+  "family": "gemini-live",
+  "stage": 1,
+  "types": [
+   "sound",
+   "chat"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~1.9 heads tall, the trainee stage of the Gemini Live virtual-idol girl, a younger, plainer Gemini 3.8 Live. Hair: aqua-cyan (#3FD5E8) short bob, shorter side locks just starting to ripple like audio waveforms and fading to Gemini blue (#4285F4); a small sound-wave squiggle ahoge and a four-point sparkle hairpin. Eyes: big bright cyan with a tiny red on-air dot in the highlight. Outfit: white-and-cyan zip trainee jacket a little too big, plain pleated skirt, white sneakers. Accessories: slim headset with cat-ear-shaped ear cups and a short boom mic (signature, kept in every form); one prop, a small handheld microphone held in both hands. Palette: #3FD5E8, #4285F4, #FFFFFF, #FF4D6D, #1B2A4A. Pose: standing nervously on tiptoe, mouth open mid-hello, shy hopeful smile.",
+  "lookZh": "戴猫耳耳机、握着话筒的水青短发练习生，紧张地踮着脚",
+  "personality": "紧张又认真的练习生，一开麦就停不下来",
+  "lineRef": "gemini-live"
+ },
+ {
+  "id": "genie-1",
+  "nameEn": "Genie",
+  "nameZh": "Genie",
+  "family": "genie",
+  "stage": 1,
+  "types": [
+   "motion",
+   "chaos"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, creature-like mascot, ~1.8 heads tall, stage 1 of the Genie line: a tiny genie spirit child, gender-neutral with playful boyish energy. Body: a short swirling turquoise smoke tail (#35D0C9) instead of legs, curling out of a small dented brass lamp. Hair: short dark navy (#1B1B3A) with a tiny topknot ending in a small flat square pixel bead, an early world-orb (signature, kept in every form). Eyes: big golden (#F2C14E) with a plus-shaped D-pad highlight. Outfit: small purple (#7A3FB0) vest with thin gold trim, one gold bangle. Props: the small brass lamp; a flat green pixel-ground tile held up like a tray, a nod to 2D platformer worlds. Palette: #35D0C9, #7A3FB0, #F2C14E, #FFFFFF, #1B1B3A. Pose: floating just above the lamp holding the tile with both hands, wide-eyed and delighted.",
+  "lookZh": "从凹痕铜灯里冒出的青绿烟尾小精灵，举着一块像素地面",
+  "personality": "好奇心满格的小精灵，许愿还没学会",
+  "lineRef": "genie-3"
+ },
+ {
+  "id": "genie-2",
+  "nameEn": "Genie 2",
+  "nameZh": "Genie 2",
+  "family": "genie",
+  "stage": 2,
+  "types": [
+   "motion",
+   "vision"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, creature-like mascot, ~2.2 heads tall, stage 2 of the Genie line: the same genie spirit child grown taller and bolder, gender-neutral with playful boyish energy. Body: a longer swirling turquoise smoke tail (#35D0C9) rising from a polished brass lamp. Hair: short dark navy (#1B1B3A), same topknot, now ending in a small glowing round world-orb with a tiny pixel landscape (signature, kept in every form). Eyes: big golden (#F2C14E) with a plus-shaped D-pad highlight. Outfit: purple (#7A3FB0) vest with fuller gold trim, two gold bangles, round gold belt buckle. Props: the polished brass lamp; one small isometric 3D world cube showing a voxel forest, balanced on one palm. Palette: #35D0C9, #7A3FB0, #F2C14E, #FFFFFF, #1B1B3A. Pose: rising out of the lamp, tossing the cube up with a confident grin, other arm flung wide.",
+  "lookZh": "烟尾拉长的青绿小精灵，掌心托着一块体素森林立方体",
+  "personality": "越玩越野的造世界小能手，随手抛个新关卡",
+  "lineRef": "genie-1"
+ },
+ {
+  "id": "alphago-zero",
+  "nameEn": "AlphaGo Zero",
+  "nameZh": "AlphaGo Zero",
+  "family": "alpha-zero",
+  "stage": 1,
+  "types": [
+   "logic",
+   "agent"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Alpha board-game line: a quiet young girl with a blank slate. Hair: straight midnight navy-black with a blunt fringe and two low twin tails, one tiny ahoge curled into a zero-shaped loop. Eyes: bright blue with a small plus-shaped grid highlight. Outfit: a plain white round-collar blouse under a navy pinafore, white socks, black mary-janes; blue ribbons at the tail bases are the only colour accent. Signature accessory: a pair of hair clips shaped like Go stones, glossy black on the left and pearly white on the right (kept across the line). Prop: a small wooden Go bowl held in both hands with a few stones. Palette: #16213E, #FFFFFF, #4285F4, #1B1B1B, #D9B77E. Pose: shyly placing one white stone with a determined look.",
+  "lookZh": "黑白围棋子发夹的藏蓝直刘海小姑娘，捧着一小钵棋子",
+  "personality": "安静寡言，白手起家，一子落定不回头"
+ },
+ {
+  "id": "alphazero",
+  "nameEn": "AlphaZero",
+  "nameZh": "AlphaZero",
+  "family": "alpha-zero",
+  "stage": 2,
+  "types": [
+   "logic",
+   "agent"
+  ],
+  "rarity": "SSR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, stage 2 of the Alpha board-game line: the same navy-haired girl now a confident mid-teen player. Hair: the same straight midnight navy-black with a blunt fringe, twin tails now waist-long with blue and white ribbons, tiny red and yellow ribbon ends; the zero-shaped ahoge stays. Eyes: the same bright blue with a plus-shaped grid highlight. Signature accessory: the same Go-stone hair clips, black on the left, white on the right. Outfit: a navy blazer with white piping, a pleated skirt with a navy-and-white checkerboard hem, thin red and yellow cuff trim. Props: a folding fan opened to three tiny board grids (Go, chess, shogi), and a small white chess knight raised in the other hand. Palette: #16213E, #FFFFFF, #4285F4, #EA4335, #FBBC05, #1B1B1B. Pose: fan spread, knight lifted.",
+  "lookZh": "长双马尾的藏蓝西装少女，一手展开三张棋盘折扇，一手举白骑士",
+  "personality": "自信的全能棋手，换什么棋盘都不换脑子",
+  "lineRef": "alphago-zero"
+ },
+ {
+  "id": "muzero",
+  "nameEn": "MuZero",
+  "nameZh": "MuZero",
+  "family": "alpha-zero",
+  "stage": 3,
+  "types": [
+   "logic",
+   "compute"
+  ],
+  "rarity": "SSR",
+  "design": "Chibi HD-2D pixel sprite, ~2.8 heads tall, stage 3 of the Alpha board-game line: the same girl as a calm older-teen planner. Hair: the same straight midnight navy-black with a blunt fringe, very long twin tails whose glowing tips shade from blue to green; the zero-shaped ahoge stays. Eyes: the same bright blue with a plus-shaped grid highlight, half-lidded. Signature accessory: the same Go-stone hair clips, black on the left, white on the right. Outfit: a long navy coat with white lining and thin four-colour trim at hem and cuffs, checkerboard skirt hem, tall boots. Props: a clear glass crystal ball showing a hazy half-drawn board (imagining moves, no rules given), and a small retro joystick charm on her belt. Palette: #16213E, #FFFFFF, #4285F4, #34A853, #EA4335, #FBBC05. Pose: ball raised, other hand at her chin, a sly smile.",
+  "lookZh": "长发尾梢泛蓝绿的藏蓝长外套少女，胸前托着一枚水晶球",
+  "personality": "沉稳的预言家，没人告诉她规则也照样算准",
+  "lineRef": "alphazero"
+ },
+ {
+  "id": "dall-e-2",
+  "nameEn": "DALL-E 2",
+  "nameZh": "DALL-E 2",
+  "family": "dall-e-old",
+  "stage": 1,
+  "types": [
+   "vision"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark 1px outline. The original robot painter, the younger stage of a line that later grows into a person. A tiny round-headed robot girl with a cream ceramic face plate and a stubby grey-white metal body; wavy honey-blonde synthetic hair, warm amber eyes with small square pixel highlights, a small black beret on top, and a curled-mustache-shaped hair clip on one side (signature accessory). Outfit: short cream painter's smock with a few paint drips over the metal body, straw-coloured sash, plain round feet. One prop only: a short wooden brush held in a three-fingered mitten hand. Palette: cream #F6E7B0, amber #E0B354, honey-blonde #D9A441, slate #3C3C3C, soft grey #C9CCD1. Pose: standing upright, tiny brush lifted, a single antenna-like ahoge wobbling.",
+  "lookZh": "戴黑贝雷帽的蜜金卷发画师机器人娘，卷胡子发夹",
+  "personality": "憨憨的机器人画手，一根画笔走天下"
+ },
+ {
+  "id": "dall-e-3",
+  "nameEn": "DALL-E 3",
+  "nameZh": "DALL-E 3",
+  "family": "dall-e-old",
+  "stage": 2,
+  "types": [
+   "vision",
+   "write"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark 1px outline. Grown-up stage of the robot painter line, the same robot girl as DALL-E 2, taller and smoother. Cream face plate, wavy honey-blonde synthetic hair now longer with a side lock, warm amber eyes with small star-shaped highlights, the black beret and the curled-mustache-shaped hair clip kept (signature accessory). Outfit: cream painter's smock dress with paint splashes over a slim grey-white metal body, straw-coloured sash, small brown boots. Props: a bigger fine-tip brush in her right hand and a small pencil-and-notepad tucked into the sash. Palette: cream #F6E7B0, amber #E0B354, honey-blonde #D9A441, slate #3C3C3C, soft grey #C9CCD1, paint blue #7DB7E8. Pose: brush raised with a proud grin, the other hand patting the notepad.",
+  "lookZh": "长了侧发的蜜金卷发画师机器人娘，画笔与小记事本",
+  "personality": "自信满满的画手，开始爱做笔记",
+  "lineRef": "dall-e-2"
+ },
+ {
+  "id": "gpt-image-1-5",
+  "nameEn": "GPT Image 1.5",
+  "nameZh": "GPT Image 1.5",
+  "family": "gpt-image-mid",
+  "stage": 1,
+  "types": [
+   "vision",
+   "write"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark 1px outline. Young retoucher girl, first stage of the photo-editor line. Pearl-white chin-length bob with a tiny ahoge and a thin coral inner streak, a small gold six-blade aperture hairpin on the right side (signature accessory, echoing OpenAI's six-loop knot). Teal-green eyes with a tiny six-point aperture highlight, focused look. Outfit: cream retoucher's smock with a charcoal round collar and teal piping, coral neck tie, short charcoal skirt, white sneakers. Props: a slim stylus with a soft eraser tip in her right hand and a small instant-photo frame held in her left. Palette: pearl #F4F1EA, teal #10A37F, coral #FF6B4A, gold #F6C445, charcoal #1E1E24. Pose: holding the photo frame up and touching it with the stylus, tongue slightly out in concentration.",
+  "lookZh": "珍珠白短发配光圈发夹的修图师少女，手持触控笔与相框",
+  "personality": "手脚麻利的修图师，改图绝不走样"
+ },
+ {
+  "id": "gpt-image-2",
+  "nameEn": "GPT Image 2",
+  "nameZh": "GPT Image 2",
+  "family": "gpt-image-mid",
+  "stage": 2,
+  "types": [
+   "vision",
+   "write"
+  ],
+  "rarity": "SSR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark 1px outline. Teen stage of the photo-editor line, the same girl as GPT Image 1.5, older and more thoughtful. Pearl-white bob grown longer with a long side lock, tiny ahoge and thin coral streak kept, same gold six-blade aperture hairpin (signature accessory). Teal-green eyes with aperture highlights behind thin gold round glasses. Outfit: charcoal-teal long coat with gold buttons over the cream smock, coral neck tie, charcoal skirt, white boots. Props: the stylus in her right hand and a rolled blueprint scroll tucked under her left arm, a hint that she plans before she paints. Palette: pearl #F4F1EA, teal #10A37F, coral #FF6B4A, gold #F6C445, charcoal #1E1E24. Pose: calm and composed, tapping the stylus against her temple as she thinks.",
+  "lookZh": "戴细框圆眼镜的珍珠白长侧发修图师，腋下夹着草图卷",
+  "personality": "冷静的策划型画手，先想清楚再动笔",
+  "lineRef": "gpt-image-1-5"
+ },
+ {
+  "id": "gpt-image-2-5-flare",
+  "nameEn": "GPT Image 2.5 Flare",
+  "nameZh": "GPT Image 2.5 Flare",
+  "family": "gpt-image-mid",
+  "stage": 3,
+  "types": [
+   "vision",
+   "compute"
+  ],
+  "rarity": "SSR",
+  "design": "Chibi HD-2D pixel sprite, ~3 heads tall, 3/4 front view, dark 1px outline. Most elaborate stage of the photo-editor line, the same girl as GPT Image 2, now sporty and fast. Pearl-white long hair with the side lock and a bolder coral streak, tiny ahoge kept, same gold six-blade aperture hairpin now with a four-point sparkle tip (signature accessory). Teal-green aperture-highlight eyes, thin gold glasses pushed up on her forehead. Outfit: cream-and-coral track jacket with a charcoal lens-hood collar and teal piping, short skirt, white sneakers with tiny gold shutter-blade fins. Props: the stylus with a coral flare-crystal tip in her right hand, a compact camera flash-unit on her left shoulder. Palette: pearl #F4F1EA, teal #10A37F, coral #FF6B4A, gold #F6C445, charcoal #1E1E24. Pose: mid-dash, coral motion streak behind her, confident grin.",
+  "lookZh": "光圈发夹的珍珠白长发修图师，珊瑚色运动夹克，肩扛闪光灯",
+  "personality": "快到来不及眨眼的闪光冲刺手",
+  "lineRef": "gpt-image-2"
+ },
+ {
+  "id": "whisper-large-v3",
+  "nameEn": "Whisper large-v3",
+  "nameZh": "Whisper large-v3",
+  "family": "whisper",
+  "stage": 1,
+  "types": [
+   "sound",
+   "open"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark outline. Stage 1 of the indigo listener line: a sleepy, soft-spoken young girl. Hair: long straight midnight-indigo (#2A2F5E) with pale-blue (#A9C7FF) tips, blunt bangs, one curved ahoge. Eyes: calm pale silver-blue (#BFD4F5) with a small ring-shaped highlight like a sound ripple. Signature accessory on every form: cream (#F6F0E0) over-ear headphones with indigo earcups, each with a tiny white knot emblem. Outfit: oversized indigo (#2A2F5E) knit cardigan with sleeves past her hands over a cream dress with a tiny waveform pattern on the hem, soft grey socks. Prop: a small notepad and stubby pencil hugged to her chest. Palette: #2A2F5E, #A9C7FF, #F6F0E0, #BFD4F5, #10A37F accent. Pose: one hand cupped behind an ear, a fingertip near her lips, shy and attentive.",
+  "lookZh": "靛蓝长发的犯困听写娘，戴米色耳机，一手捂耳一手抵唇",
+  "personality": "犯困又专注，声音再小也认真记下来"
+ },
+ {
+  "id": "whisper-large-v3-turbo",
+  "nameEn": "Whisper large-v3-turbo",
+  "nameZh": "Whisper large-v3-turbo",
+  "family": "whisper",
+  "stage": 2,
+  "types": [
+   "sound",
+   "open"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark outline. Stage 2 of the indigo listener line: the same girl, lighter, sleeker, faster. Hair: same long straight midnight-indigo (#2A2F5E) with pale-blue (#A9C7FF) tips and blunt bangs, now in a high ponytail streaming behind her, one curved ahoge. Eyes: pale silver-blue (#BFD4F5) with ring-ripple highlights, brighter and more awake. Signature cream (#F6F0E0) over-ear headphones with indigo earcups and tiny white knot emblems, now with a teal (#10A37F) glow ring on each earcup and a small open padlock charm. Outfit: fitted indigo track jacket with cream stripes, short pleated skirt, white sneakers. Prop: a slim cream stylus tablet. Palette: #2A2F5E, #A9C7FF, #F6F0E0, #BFD4F5, #10A37F. Pose: sprinting mid-stride, confident wink, one finger to her lips.",
+  "lookZh": "高马尾的靛蓝听写娘，耳机挂着开锁小挂件，运动外套冲刺中",
+  "personality": "说干就干的急性子，笔尖比声音还快",
+  "lineRef": "whisper-large-v3"
+ },
+ {
+  "id": "gpt-realtime-2-1",
+  "nameEn": "gpt-realtime-2.1",
+  "nameZh": "gpt-realtime-2.1",
+  "family": "gpt-realtime",
+  "stage": 1,
+  "types": [
+   "sound",
+   "chat"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark 1px outline. Young voice-host girl, first stage of the live-voice line. Midnight-blue hair in two low twin tails with a pale-cyan sound-wave streak on each, and a small ahoge. Cyan eyes with concentric-ring highlights, bright talkative smile. A white headset with a ring-shaped ear cup glowing soft cyan and a short boom mic (her signature accessory). Outfit: white hoodie with charcoal trim and a cyan zipper, charcoal short skirt, white sneakers. One prop: a small retro handheld microphone with a coiled cable in her right hand. Palette: midnight #1C2B4A, cyan #9ADCF2, white #F5F7F6, charcoal #22252B, teal #10A37F. Pose: leaning forward to speak into the mic, left hand cupped at her ear to catch the reply.",
+  "lookZh": "戴无线耳麦的午夜蓝双马尾小主播，手握复古话筒",
+  "personality": "反应飞快的接线员，张口就是实时回应"
+ },
+ {
+  "id": "gpt-live-1",
+  "nameEn": "GPT-Live-1",
+  "nameZh": "GPT-Live-1",
+  "family": "gpt-realtime",
+  "stage": 2,
+  "types": [
+   "sound",
+   "chat"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, dark 1px outline. Grown-up stage of the live-voice line, the same girl as gpt-realtime-2.1, now a host. Midnight-blue hair in longer twin tails with deeper pale-cyan sound-wave streaks, tiny ahoge kept. Cyan ring-highlight eyes, relaxed warm smile. The same white headset with glowing cyan ring ear cups, now on both ears, with a slimmer boom mic (signature accessory). Outfit: white-and-charcoal stage jacket with cyan equalizer-bar hem stripes, charcoal skirt, white boots. Props: a slim cable from her headset to a small teal relay box at her hip, standing for the backend model that does the thinking. Palette: midnight #1C2B4A, cyan #9ADCF2, white #F5F7F6, charcoal #22252B, teal #10A37F. Pose: talking into the boom mic, free hand cupping an ear, speaking and listening at once.",
+  "lookZh": "双环耳麦的午夜蓝长双马尾主持人，腰间挂着中继盒",
+  "personality": "能聊能听的舞台主持，一心二用毫不费力",
+  "lineRef": "gpt-realtime-2-1"
+ },
+ {
+  "id": "text-embedding-ada-002",
+  "nameEn": "text-embedding-ada-002",
+  "nameZh": "text-embedding-ada-002",
+  "family": "text-embedding",
+  "stage": 1,
+  "types": [
+   "search",
+   "compute"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark outline. Stage 1 of the teal archivist line: the youngest library apprentice girl. Hair: soft mint-green (#7FD1B9) in two short low twin-tails, side-swept bangs, darker teal (#2E8B72) inner layer, one small ahoge. Signature accessory on every form: a pale-gold (#E8D8A0) arrow-shaped hairpin on the left bangs (a vector arrow). Eyes: big deep teal (#0E7F66) with two tiny grid-dot highlights. Outfit: plain cream (#F4F1E8) cotton smock with rolled sleeves, a small teal (#10A37F) neckerchief in a loose knot, brown boots. Prop: a little wooden index-card box hugged to her chest, a few dotted cards peeking out. Palette: #7FD1B9, #2E8B72, #10A37F, #F4F1E8, #E8D8A0. Pose: on tiptoe, shyly holding out one card.",
+  "lookZh": "薄荷绿双马尾的图书馆小学徒，别着箭头发夹，抱着索引卡盒",
+  "personality": "老实本分的小学徒，认真替每句话找近邻"
+ },
+ {
+  "id": "text-embedding-3-small",
+  "nameEn": "text-embedding-3-small",
+  "nameZh": "text-embedding-3-small",
+  "family": "text-embedding",
+  "stage": 2,
+  "types": [
+   "search",
+   "compute"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark outline. Stage 2 of the teal archivist line: the same apprentice girl, older, quicker, more confident. Hair: same soft mint-green (#7FD1B9) twin-tails, now waist length, darker teal (#2E8B72) inner layer, side-swept bangs, small ahoge. Signature pale-gold (#E8D8A0) arrow-shaped hairpin on the left bangs. Eyes: deep teal (#0E7F66) with grid-dot highlights. Outfit: crisp cream (#F4F1E8) blouse under a teal (#10A37F) pinafore printed with tiny dots, a small index-card satchel on her hip, white knee socks, brown boots. Prop: a brass pocket compass in one hand, needle pointing the way. Palette: #7FD1B9, #2E8B72, #10A37F, #F4F1E8, #E8D8A0, #202123. Pose: mid-stride, checking the compass with a determined small smile.",
+  "lookZh": "薄荷绿双马尾少女，背着索引卡挎包，手握黄铜指南针",
+  "personality": "手脚麻利，永远先拿指南针确认方向",
+  "lineRef": "text-embedding-ada-002"
+ },
+ {
+  "id": "text-embedding-3-large",
+  "nameEn": "text-embedding-3-large",
+  "nameZh": "text-embedding-3-large",
+  "family": "text-embedding",
+  "stage": 3,
+  "types": [
+   "search",
+   "compute"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~3 heads tall, 3/4 front view, clean dark outline. Stage 3 of the teal archivist line: the same girl fully grown, the head archivist. Hair: same soft mint-green (#7FD1B9) twin-tails, now knee length with teal ribbons, darker teal (#2E8B72) inner layer, side-swept bangs, small ahoge. Signature pale-gold (#E8D8A0) arrow-shaped hairpin on the left bangs, slightly larger. Eyes: deep teal (#0E7F66) with grid-dot highlights, calm and sure. Outfit: long cream (#F4F1E8) archivist coat with teal (#10A37F) trim and white knot-shaped rosette clasps, a charcoal (#202123) sash dotted with tiny gold stars, brown boots. Props: a big unrolled star-chart scroll of clustered dots, and a gold-rimmed magnifying lens. Palette: #7FD1B9, #2E8B72, #10A37F, #F4F1E8, #E8D8A0, #202123. Pose: standing tall, scroll open, lens raised.",
+  "lookZh": "长及膝盖的薄荷双马尾档案官，米色长外套，手持星图卷轴与放大镜",
+  "personality": "沉稳的档案官，总能把相近的内容归到一处",
+  "lineRef": "text-embedding-3-small"
+ },
+ {
+  "id": "grok-imagine-image",
+  "nameEn": "Grok Imagine Image",
+  "nameZh": "Grok Imagine Image",
+  "family": "grok-imagine-img",
+  "stage": 1,
+  "types": [
+   "vision",
+   "chaos"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Grok image line: a small, curious snapshot girl. Hair: a chin-length asymmetric bob split cleanly down the middle, left half snow white (#F4F6FA), right half ink black (#12141A), like a cut-out mask, with one short ahoge. Eyes: big aurora-mint green (#37E6A8) with a white square-pixel highlight. Outfit: an oversized white tee under a black open short-sleeve shirt, black shorts, white sneakers with black soles. Signature accessory: a round white-and-black slashed-circle hairclip on the white side of her fringe. Prop: a small boxy instant camera held in both hands, black body, white front panel, one mint lens, hung on a violet (#8B5CFF) strap. Palette: #12141A, #F4F6FA, #37E6A8, #8B5CFF, #8A90A0. Pose: lifting the camera to her eye, one knee bent, a playful half-grin.",
+  "lookZh": "半黑半白短发的小摄影师，抱着方方的即影相机",
+  "personality": "爱抓拍的小混沌，快门一按画面就炸开"
+ },
+ {
+  "id": "grok-imagine-image-2",
+  "nameEn": "Grok Imagine Image 2.0",
+  "nameZh": "Grok Imagine Image 2.0",
+  "family": "grok-imagine-img",
+  "stage": 2,
+  "types": [
+   "vision",
+   "chaos"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.6 heads tall, stage 2 of the Grok image line: the same snapshot girl grown into a confident retouch sorceress. Hair: the same split of snow white (#F4F6FA) and ink black (#12141A), now a long asymmetric cut to her waist, ahoge kept. Eyes: the same aurora-mint green (#37E6A8) with a white square-pixel highlight. Outfit: a long coat split white and black, lined with a mint-to-violet (#8B5CFF) aurora gradient, black high-neck top, black shorts, white thigh-high socks, black boots. Signature accessory: the slashed-circle hairclip, larger now, with a thin silver chain. Props: a slim black magic wand with a pixel-star tip, and a fan of five small instant photos like playing cards. Palette: #12141A, #F4F6FA, #37E6A8, #8B5CFF, #8A90A0. Pose: flicking the wand toward the viewer, photo fan raised, a confident smirk.",
+  "lookZh": "黑白拼色长发的修图魔女，挥着星点魔法棒，手里扇开五张照片",
+  "personality": "一棒点出想改的地方，其余原样保留",
+  "lineRef": "grok-imagine-image"
+ },
+ {
+  "id": "midjourney-v1",
+  "nameEn": "Midjourney V1",
+  "nameZh": "Midjourney V1",
+  "family": "mj-early",
+  "stage": 1,
+  "types": [
+   "vision",
+   "chaos"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the early Midjourney line: a messy, wide-eyed cabin-apprentice girl who has just started painting. Hair: dawn-peach (#F6C1A6) wavy short bob with ink-black (#111111) tips, wild uneven strands and one big ahoge, wearing a crumpled ivory (#F7F4EE) paper-boat hat as her signature accessory. Eyes: large navy (#1B2A4A) with a swirling spiral highlight. Outfit: an oversized ivory smock splashed with navy and peach paint smudges over a simple navy tunic, navy shorts, ivory socks, little brass-buckled shoes. Props: a fat round paintbrush dripping a blob of navy paint, held in both hands, and a rolled-up wobbly sketch tucked under one arm. Palette: #F6C1A6, #111111, #F7F4EE, #1B2A4A, #C8A25A. Pose: mid-stumble on tiptoe, brush swinging wide, a gleeful open-mouth grin.",
+  "lookZh": "桃色乱发的纸船帽小学徒，白罩衫上全是颜料点",
+  "personality": "手忙脚乱的小画家，画到哪儿溅到哪儿"
+ },
+ {
+  "id": "midjourney-v4",
+  "nameEn": "Midjourney V4",
+  "nameZh": "Midjourney V4",
+  "family": "mj-early",
+  "stage": 2,
+  "types": [
+   "vision",
+   "write"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, stage 2 of the early Midjourney line: the same apprentice girl grown into a neat young cabin-artist. Hair: the same dawn-peach (#F6C1A6) bob in soft waves with ink-black (#111111) tips and one tamed ahoge; the same ivory (#F7F4EE) paper-boat hat, now crisp, with a tiny brass compass pin. Eyes: navy (#1B2A4A) with a steady spiral-ring highlight. Outfit: a clean ivory smock-coat with navy wave-line trim over a navy dress, peach neckerchief, brass-buckled belt, navy boots, a few tidy paint dots at the cuffs. Props: a slim ink brush-pen, and a bound sketchbook under her other arm with a neat sailboat doodle on the cover, no text. Palette: #F6C1A6, #111111, #F7F4EE, #1B2A4A, #C8A25A. Pose: drawing one confident line with the brush-pen, composed smile.",
+  "lookZh": "桃色柔波短发的小画师，纸船帽别着黄铜罗盘针",
+  "personality": "渐渐稳下来的小画师，一笔下去干净利落",
+  "lineRef": "midjourney-v1"
+ },
+ {
+  "id": "niji-6",
+  "nameEn": "Niji 6",
+  "nameZh": "Niji 6",
+  "family": "niji",
+  "stage": 1,
+  "types": [
+   "vision",
+   "write"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark 1px outline. Younger stage of the Niji ink-and-sketch girl line. Short ivory-white hair in two small twin buns with dawn-peach tips and one tiny ahoge, a little gold paper-boat hair clip on the left bun (her signature accessory). Large violet eyes with two sparkle highlights, shy smile. Outfit: plain navy art-school smock with oversized sleeves and a round white collar, peach ribbon bow, ivory pleated skirt, small brown shoes. Props: a slim manga ink-pen in her right hand and a small sketchbook hugged in her left arm, its cover marked with a simple big-eyed face pictogram. Palette: ivory #F7F4EE, navy #1B2A4A, dawn peach #F6C1A6, nebula violet #6B5BD6, gold #D9B45A. Pose: standing slightly pigeon-toed, pen raised as if about to draw her very first line.",
+  "lookZh": "象牙白双丸子头的小画师，纸船发夹，手握墨线笔",
+  "personality": "安静爱涂鸦，一画起来就停不下笔"
+ },
+ {
+  "id": "niji-7",
+  "nameEn": "Niji 7",
+  "nameZh": "Niji 7",
+  "family": "niji",
+  "stage": 2,
+  "types": [
+   "vision",
+   "write"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark 1px outline. Grown-up stage of the Niji sketch-girl line, the same girl as Niji 6, older. Long ivory-white hair now in high twin tails that fade to dawn-peach tips, the tiny ahoge kept, and the same gold paper-boat hair clip at the base of the left tail (signature accessory). Violet eyes with sparkle highlights, calm confident smile. Outfit: navy haori-style jacket with a wave-line hem and wide sleeves over an ivory blouse, peach obi sash tied with a gold knot, ivory skirt, brown boots. Props: a long brush-pen in her right hand and a rolled manga-panel scroll slung across her back. Palette: ivory #F7F4EE, navy #1B2A4A, dawn peach #F6C1A6, nebula violet #6B5BD6, gold #D9B45A. Pose: sweeping the brush in a wide arc, one curling ink stroke trailing behind her.",
+  "lookZh": "象牙白高双马尾配纸船发夹，海浪纹羽织与手卷画稿",
+  "personality": "落笔前先端详三遍的沉稳画手",
+  "lineRef": "niji-6"
+ },
+ {
+  "id": "midjourney-video-v1",
+  "nameEn": "Midjourney Video V1",
+  "nameZh": "Midjourney Video V1",
+  "family": "midjourney-video",
+  "stage": 1,
+  "types": [
+   "motion",
+   "vision"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.3 heads tall, a single-stage Midjourney video-line character, distinct from the ivory-haired sailor-painter: a small deckhand-animator girl. Hair: short wavy ink-black (#111111) bob with navy (#1B2A4A) gradient ends, one dawn-peach (#F6C1A6) streak by her face, one ahoge, and a tiny gold sailboat-shaped hairpin on the left. Eyes: warm gold (#D9B45A) with a small play-triangle highlight. Outfit: a short navy hooded duffle cape with ivory (#F7F4EE) wave-line trim and a brass toggle, peach scarf, white blouse, navy shorts, ivory boots. Props: a chunky flipbook with a brass crank handle on its spine, pages fanning to show a tiny sailing ship in successive poses. Palette: #111111, #1B2A4A, #F7F4EE, #F6C1A6, #D9B45A. Pose: flicking the pages with her thumb, hood bobbing, a delighted open smile.",
+  "lookZh": "黑短发的甲板小动画师，翻着画满小帆船的翻页本",
+  "personality": "手痒爱翻页，五秒也要演出一段航程"
+ },
+ {
+  "id": "stable-audio",
+  "nameEn": "Stable Audio",
+  "nameZh": "Stable Audio",
+  "family": "stable-audio",
+  "stage": 1,
+  "types": [
+   "sound",
+   "open"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Stable Audio line: a small, wide-eyed sound-catcher girl. Hair: a chin-length straight bob with blunt bangs in deep indigo-violet (#2B1B5E) fading to lavender (#A381FF) at the tips, one tiny ahoge. Eyes: big warm amber-gold (#FFC857) with a white sound-wave-shaped highlight, sakura-pink (#F7B6CF) blush. Outfit: a lilac (#D9CBFF) sailor-collar pinafore with a deep indigo bow over a white blouse, white knee socks, lavender sneakers. Signature accessory: a little lilac tuning-fork hairpin clipped above her left ear. Prop: a palm-sized cassette recorder held in both hands, lavender body with one small gold record button. Palette: #2B1B5E, #A381FF, #D9CBFF, #FFC857, #F7B6CF. Pose: holding the recorder up as if catching a sound, head tilted, shy smile.",
+  "lookZh": "靛紫短发的小音频师，抱着掌心大的卡带录音机",
+  "personality": "耳朵比眼睛还灵的小捕声者，什么声音都想录"
+ },
+ {
+  "id": "stable-audio-2",
+  "nameEn": "Stable Audio 2.0",
+  "nameZh": "Stable Audio 2.0",
+  "family": "stable-audio",
+  "stage": 2,
+  "types": [
+   "sound",
+   "open"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, stage 2 of the Stable Audio line: the same sound-catcher grown into a young session musician. Hair: the same deep indigo-violet (#2B1B5E) fading to lavender (#A381FF) tips, now shoulder-length with an inward flip and blunt bangs, ahoge kept. Eyes: the same amber-gold (#FFC857) with the sound-wave highlight. Outfit: a deep-indigo short blazer with lilac (#D9CBFF) lapels, a white blouse with a lavender ribbon tie, a lilac pleated skirt, lavender boots. Signature accessory: the lilac tuning-fork hairpin, larger now, with a tiny gold ring. Props: a mini keytar slung across her back, and her old cassette recorder clipped to her belt. Palette: #2B1B5E, #A381FF, #D9CBFF, #FFC857, #F7B6CF. Pose: stepping forward, one hand on the keytar strap, bright confident smile.",
+  "lookZh": "靛紫齐肩发的乐手少女，背着迷你合成器，腰挂小录音机",
+  "personality": "刚学会编曲就想拉所有人合奏的热心肠",
+  "lineRef": "stable-audio"
+ },
+ {
+  "id": "stable-audio-3",
+  "nameEn": "Stable Audio 3.0",
+  "nameZh": "Stable Audio 3.0",
+  "family": "stable-audio",
+  "stage": 3,
+  "types": [
+   "sound",
+   "open"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.8 heads tall, stage 3 (final) of the Stable Audio line: the same sound-catcher grown into a calm music director. Hair: the same deep indigo-violet (#2B1B5E) fading to lavender (#A381FF), now long and straight to mid-back, half tied up, blunt bangs, ahoge kept. Eyes: the same amber-gold (#FFC857) with the sound-wave highlight. Outfit: a long deep-indigo producer's coat with lavender lining and lilac (#D9CBFF) cuffs, a white blouse with a lavender ribbon, a short pleated skirt. Signature accessory: the tuning-fork hairpin, now ornate in lilac and gold with a tiny gold key charm. Props: a long staff-paper scroll unrolling to her feet, and a slim tablet with four slider faders. Palette: #2B1B5E, #A381FF, #D9CBFF, #FFC857, #F7B6CF. Pose: standing tall, tablet raised like a conductor's score, a gentle smile.",
+  "lookZh": "靛紫长发的音乐总监，谱纸长卷垂到脚边，手持推子平板",
+  "personality": "把整首歌从头到尾排得明明白白的冷静统筹",
+  "lineRef": "stable-audio-2"
+ },
+ {
+  "id": "flux-kontext",
+  "nameEn": "FLUX.1 Kontext",
+  "nameZh": "FLUX.1 Kontext",
+  "family": "flux-kontext",
+  "stage": 1,
+  "types": [
+   "vision",
+   "open"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.6 heads tall, a poised older-teen photo-retoucher girl of the FLUX forest family. Hair: long near-black hair fading to forest green, half-up in a neat knot, one lavender and one mint streak. Eyes: calm violet with a fine sparkle. Outfit: a charcoal ranger trench-coat with white triangle-line embroidery, the hood folded into a collar with three triangular pine peaks, a small cherry-red lapel pin, tall boots. Signature: a slim stylus with a white triangle nib. Prop: two instant photo cards held side by side showing the very same chibi face, one in a hat and one in a scarf (character consistency), pictograms only. Palette: #0C0C0C, #1E3A2F, #A184FD, #29C592, #C8102E, #FFFFFF. Pose: stylus hovering over one photo, the other hand holding both cards up, a calm smile.",
+  "lookZh": "握着三角笔尖修图笔、手捧两张同脸照片的黑绿发修图师",
+  "personality": "改图不改人，认准的那张脸绝不走样"
+ },
+ {
+  "id": "flux-2-klein",
+  "nameEn": "FLUX.2 Klein",
+  "nameZh": "FLUX.2 Klein",
+  "family": "flux-klein",
+  "stage": 1,
+  "types": [
+   "vision",
+   "open"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~1.8 heads tall, the smallest girl of the FLUX forest family, a pocket-sized little sister of the FLUX ranger boys. Hair: short messy twin buns, near-black fading to forest green, one lavender and one mint streak, a pine-needle ahoge. Eyes: big calm violet with a bright sparkle. Outfit: a snug charcoal mini ranger poncho with white triangle-line embroidery; the oversized hood sits like a small pine cap with three triangular peaks (the Black Forest triangle logo); a tiny cherry-red collar pin; shorts and little hiking boots. Props: two acorn charms, one small and one bigger, on a lanyard (the 4B and 9B versions), and a palm-sized sketch card held out. Palette: #0C0C0C, #1E3A2F, #A184FD, #29C592, #C8102E, #FFFFFF. Pose: mid-sprint with one boot lifted, grinning, card held forward.",
+  "lookZh": "抱着两颗大小橡果挂饰的黑绿发松林小精灵，小得能揣进口袋",
+  "personality": "个头小脚步快，接了活一眨眼就交卷"
+ },
+ {
+  "id": "luma-ray1",
+  "nameEn": "Luma Dream Machine (Ray1)",
+  "nameZh": "Luma Dream Machine (Ray1)",
+  "family": "luma",
+  "stage": 1,
+  "types": [
+   "motion"
+  ],
+  "rarity": "R",
+  "design": "Chibi pixel-art HD-2D sprite, ~2 heads tall, stage 1 of the Luma Ray line: the younger version of the Ray3 light-maker girl. Hair: the same silver-grey (#BFC3C8) bob, shorter and rounder, with a faint warm gold (#FFD27A) rim-light along its edges, topped by a small folded-paper isometric 'L' corner hat. Eyes: deep black pupils with shimmering rainbow highlights, sleepy. Outfit: a simple graphite (#2B2B2B) and white smock with few facet panels, white tights, black Mary Janes. Props: a small plain paper lantern held in both hands, a pinhole glow leaking a thin ray of light, no lens yet. Palette: graphite #2B2B2B, white #FFFFFF, silver grey #BFC3C8, warm gold #FFD27A. Pose: sleepily tiptoeing forward, lantern held out in front, a soft beam trailing behind her.",
+  "lookZh": "戴折纸 L 帽的银灰短发小学徒，捧着漏光的纸灯笼",
+  "personality": "迷迷糊糊的追光小学徒，最爱梦里的光",
+  "lineRef": "luma-ray3"
+ },
+ {
+  "id": "luma-ray2",
+  "nameEn": "Luma Ray2",
+  "nameZh": "Luma Ray2",
+  "family": "luma",
+  "stage": 2,
+  "types": [
+   "motion",
+   "vision"
+  ],
+  "rarity": "R",
+  "design": "Chibi pixel-art HD-2D sprite, ~2.3 heads tall, stage 2 of the Luma Ray line: the same light-maker girl a little older, now a focused cinematographer. Hair: the same silver-grey (#BFC3C8) bob, longer, with a stronger warm gold (#FFD27A) rim-light along its edges, topped by the folded-paper isometric 'L' corner hat with a gold fold edge. Eyes: deep black pupils with shimmering rainbow highlights, wide awake. Outfit: a graphite (#2B2B2B) and white panel dress with more facet panels, a small round light-meter brooch, white tights, black Mary Janes. Props: the paper lantern now has a round glass lens ring and a tiny crank, a lantern-camera held at her hip. Palette: graphite #2B2B2B, white #FFFFFF, silver grey #BFC3C8, warm gold #FFD27A. Pose: aiming the lantern-camera forward with one eye closed, light rays fanning out, one foot lifted.",
+  "lookZh": "银灰短发的少年摄影师，纸灯笼长出了镜头环",
+  "personality": "专注追光，眼里全是光比和画面",
+  "lineRef": "luma-ray1"
+ },
+ {
+  "id": "runway-gen-1",
+  "nameEn": "Runway Gen-1",
+  "nameZh": "Runway Gen-1",
+  "family": "runway-early",
+  "stage": 1,
+  "types": [
+   "motion"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, 3/4 front view, clean dark outline. Stage 1 of the filmstrip animator line, a small girl distinct from the Runway director boy. Hair: dark graphite (#3A3A40) in two small side buns, short straight bangs, one ahoge. Eyes: big warm amber (#F2B24C) with tiny square film-frame highlights. Signature accessory on every form: a ribbon cut from black film strip with off-white (#EEECE6) perforation holes, tied around the left bun. Outfit: oversized off-white (#EEECE6) cardigan with sleeves past her hands over a charcoal (#0C0C0C) pinafore, grey (#595959) socks, plain sneakers. Prop: a thick hand-drawn flipbook, its little drawings restyling themselves page by page. Palette: #0C0C0C, #3A3A40, #EEECE6, #595959, amber #F2B24C. Pose: small hop, flipping the book with a wide-eyed grin.",
+  "lookZh": "石墨色双团子头的小女孩，系着胶片发带，翻着手绘翻页本",
+  "personality": "爱翻页的小画家，总想把画面变个样"
+ },
+ {
+  "id": "runway-gen-2",
+  "nameEn": "Runway Gen-2",
+  "nameZh": "Runway Gen-2",
+  "family": "runway-early",
+  "stage": 2,
+  "types": [
+   "motion",
+   "vision"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark outline. Stage 2 of the filmstrip animator line: the same girl, taller and bolder. Hair: the same dark graphite (#3A3A40), now in two buns with loose back-length tails and straight bangs, one ahoge. Eyes: amber (#F2B24C) with film-frame highlights, now with a small round lens-shaped sparkle. Signature black film-strip ribbon with off-white (#EEECE6) perforations on the left bun, longer and trailing. Outfit: cropped black (#0C0C0C) jacket with amber piping over an off-white tee, grey (#595959) shorts, black boots, a mini satchel. Prop: a chunky handheld cine-camera with a big round lens held up to one eye, the lens ring glowing amber. Palette: #0C0C0C, #3A3A40, #EEECE6, #595959, amber #F2B24C. Pose: crouching to frame a shot, one foot kicked back, excited grin.",
+  "lookZh": "胶片发带飘起的双团子头少女，举着圆镜头手持摄影机",
+  "personality": "闲不住的取景狂，看到什么都要框一框",
+  "lineRef": "runway-gen-1"
+ },
+ {
+  "id": "runway-gen-3-alpha",
+  "nameEn": "Runway Gen-3 Alpha",
+  "nameZh": "Runway Gen-3 Alpha",
+  "family": "runway-early",
+  "stage": 3,
+  "types": [
+   "motion",
+   "vision"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~3 heads tall, 3/4 front view, clean dark outline. Stage 3 of the filmstrip animator line: the same girl grown into a confident cinematographer. Hair: same dark graphite (#3A3A40), two high buns with long loose tails to her waist, straight bangs, one ahoge. Eyes: amber (#F2B24C) with film-frame highlights, calm and sharp. Signature black film-strip ribbon with off-white (#EEECE6) perforations, now long, wrapped around the left bun and flowing behind her. Outfit: long off-white (#EEECE6) cinema trench coat with amber (#F2B24C) lining, black (#0C0C0C) dress, grey (#595959) belt, platform boots. Props: a compact cine-camera on a shoulder rig and a small round studio lamp glowing warm amber. Palette: #0C0C0C, #3A3A40, #EEECE6, #595959, amber #F2B24C. Pose: standing tall, coat swishing, lamp raised like a spotlight.",
+  "lookZh": "高团子头加长胶片发带的摄影师少女，米色风衣配琥珀色聚光灯",
+  "personality": "沉着的掌镜人，光线一到位就开拍",
+  "lineRef": "runway-gen-2"
+ },
+ {
+  "id": "runway-aleph",
+  "nameEn": "Runway Aleph",
+  "nameZh": "Runway Aleph",
+  "family": "runway-aleph",
+  "stage": 1,
+  "types": [
+   "motion",
+   "write"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, 3/4 front view, clean dark 1px outline. A solitary young film-editor girl, unlike the Runway director boy. Hair: sleek silver-ash (#C9C9CF) in a long high ponytail with one black (#0C0C0C) streak and straight bangs. Eyes: warm amber (#F2B24C) with tiny timeline-bracket highlights. Signature accessory: a black hairpin shaped like the Hebrew letter aleph in her bangs. Outfit: cropped black (#0C0C0C) bomber with off-white (#EEECE6) film-strip perforated sleeve trim, off-white shirt, grey (#595959) pleated skirt, black boots, amber-lined cape. Props: oversized round-tipped scissors with grey blades and amber handles, and a loose film strip whose cut frames shift from grey to amber. Palette: #0C0C0C, #EEECE6, #595959, #C9C9CF, amber #F2B24C. Pose: mid-snip, scissors raised, playful smirk.",
+  "lookZh": "银灰高马尾的剪辑师少女，别着 ℵ 字发夹，举着圆头大剪刀和胶片",
+  "personality": "手起剪落的独行剪辑师，爱把旧画面改成新的"
+ },
+ {
+  "id": "suno-v4",
+  "nameEn": "Suno v4",
+  "nameZh": "Suno v4",
+  "family": "suno-mid",
+  "stage": 1,
+  "types": [
+   "sound",
+   "write"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Suno songwriter line: a small street-corner songwriter girl. Hair: short butter-blonde (#FFD98A) in a messy half-up bun, the two front locks dipped in hot pink (#FE3D7C), one little ahoge. Eyes: big rose-pink (#FE3D7C) with cream star highlights. Outfit: an oversized cream (#FFF1D6) knit cardigan with orange (#FF691D) cuffs over a white tee, orange pleated shorts, white socks, orange sneakers, soft black (#101012) outlines. Signature accessory: a chunky orange pencil with a pink eraser stuck through the hair bun. Prop: a small spiral-bound lyric notebook with one music-note doodle on the cover, hugged to her chest. Palette: #FF691D, #FE3D7C, #FFD98A, #FFF1D6, #101012. Pose: hugging the notebook, humming with eyes half-closed, one foot tapping the beat.",
+  "lookZh": "奶油金发半扎丸子头的小词曲少女，发间插着橙色铅笔",
+  "personality": "走到哪写到哪的随身词人，灵感全记本子上"
+ },
+ {
+  "id": "suno-v4-5",
+  "nameEn": "Suno v4.5",
+  "nameZh": "Suno v4.5",
+  "family": "suno-mid",
+  "stage": 2,
+  "types": [
+   "sound",
+   "write"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, stage 2 of the Suno songwriter line: the same street songwriter grown into a rising stage performer. Hair: the same butter-blonde (#FFD98A), now shoulder-length under the half-up bun, front locks dipped in hot pink (#FE3D7C), ahoge kept. Eyes: the same rose-pink (#FE3D7C) with cream star highlights. Outfit: a cropped orange (#FF691D) stage jacket with gold star buttons over a cream (#FFF1D6) blouse and pink scarf, an orange pleated skirt, orange boots, soft black (#101012) outlines. Signature accessory: the chunky orange pencil in her bun, now tied with a small gold ribbon. Props: a small cream-wood ukulele with a pink strap, and the lyric notebook tucked into her belt. Palette: #FF691D, #FE3D7C, #FFD98A, #FFF1D6, #101012. Pose: strumming the ukulele, head tilted, a wink and a bright grin.",
+  "lookZh": "挎着尤克里里的橙色演出夹克少女，发髻铅笔缀着金色丝带",
+  "personality": "一上台就想把整个街角唱亮的舞台新秀",
+  "lineRef": "suno-v4"
+ },
+ {
+  "id": "suno-v5-5",
+  "nameEn": "Suno v5.5",
+  "nameZh": "Suno v5.5",
+  "family": "suno-mid",
+  "stage": 3,
+  "types": [
+   "sound",
+   "write"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.8 heads tall, stage 3 of the Suno songwriter line: the same street songwriter grown into a poised touring singer. Hair: the same butter-blonde (#FFD98A), now waist-long under a high half-up bun, front locks dipped in hot pink (#FE3D7C), ahoge kept. Eyes: the same rose-pink (#FE3D7C) with cream star highlights. Outfit: a long cream (#FFF1D6) stage coat with orange (#FF691D) lining and gold cuffs, a pink scarf tied in a ribbon, an orange pleated skirt, tall orange boots, soft black (#101012) outlines. Signature accessory: the chunky orange pencil in her bun, now gold-capped with a long gold ribbon tail. Props: a chrome-and-orange retro hand microphone, and a thick songbook with a pink heart sticker. Palette: #FF691D, #FE3D7C, #FFD98A, #FFF1D6, #101012. Pose: singing into the microphone, a warm proud smile.",
+  "lookZh": "金发长发的巡演歌手，握着橙色复古麦克风，歌本贴着爱心",
+  "personality": "唱的全是自己的歌，连嗓音都是自己的",
+  "lineRef": "suno-v4-5"
+ },
+ {
+  "id": "helix",
+  "nameEn": "Helix",
+  "nameZh": "Helix",
+  "family": "figure-helix",
+  "stage": 1,
+  "types": [
+   "agent",
+   "motion"
+  ],
+  "rarity": "R",
+  "design": "Chibi android HD-2D pixel sprite, ~2 heads tall, stage 1 of the Helix line: a shy apprentice robot girl learning to see and grasp. Hair: soft silvery-white fibre hair in two long braids twisted around each other like a double helix, sensor-blue bands, a short blunt fringe. Eyes: round sensor-blue with a ring highlight; smooth porcelain-white face, pixel blush, round joint hinges at the wrists. Outfit: a matte-grey and white training jumpsuit with charcoal elbow and knee pads, white sneakers; a small blue dot glows in each palm. Signature accessory: a double-helix hairpin of two interlocked curved bars (kept across the line). Prop: a small cardboard parcel held in both hands. Palette: #E6E9EE, #8A9097, #2B2E33, #5AA9FF, #FFFFFF, #E8DCC4. Pose: carefully lifting the parcel with wide eyes and a tilted head, one foot slightly raised.",
+  "lookZh": "双股螺旋麻花辫的银白小机器人学徒，手心亮着蓝色传感点",
+  "personality": "慢热的学徒，先看三遍再动手，一动就稳"
+ },
+ {
+  "id": "helix-02",
+  "nameEn": "Helix 02",
+  "nameZh": "Helix 02",
+  "family": "figure-helix",
+  "stage": 2,
+  "types": [
+   "agent",
+   "motion"
+  ],
+  "rarity": "SR",
+  "design": "Chibi android HD-2D pixel sprite, ~2.6 heads tall, stage 2 of the Helix line: the same robot girl grown taller, moving with her whole body. Hair: the same silvery-white fibre hair, double-helix braids now waist-long with sensor-blue bands and tiny blue caps on the tips, a short blunt fringe. Eyes: the same round sensor-blue eyes with a ring highlight; porcelain-white face. Outfit: a matte-grey and white field jacket with charcoal shoulder and hip plates, a slim utility belt, fingerless gloves showing the glowing blue palm dots, tall boots. Signature accessory: the same double-helix hairpin. Props: a stack of three cardboard parcels on one arm, and a small rolling cart she bumps forward with her hip. Palette: #E6E9EE, #8A9097, #2B2E33, #5AA9FF, #FFFFFF, #E8DCC4. Pose: mid-stride, braids swinging, a quiet grin.",
+  "lookZh": "双螺旋辫长到腰间的银白机器人姐姐，抱着包裹顶开小推车",
+  "personality": "话少手快，全身一起听指挥",
+  "lineRef": "helix"
+ },
+ {
+  "id": "pi0-5",
+  "nameEn": "pi0.5",
+  "nameZh": "π0.5",
+  "family": "pi",
+  "stage": 1,
+  "types": [
+   "agent",
+   "vision"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, front view, clean dark outline. Stage 1 of the pi robot mascot line, the small, plain early version of the existing plump-pi mascot. Body: a plump white (#FFFFFF) Greek letter pi; the top bar forms its head and shoulders with a soft matte-black (#1E1E22) face panel showing two white dot eyes and a tiny smile, no hair. Its two pi legs are its feet with rounded soles. Arms: two slender matte-black robot arms ending in safety-yellow (#FFC400) parallel-jaw grippers. Signature accessory on every form: a scarf printed with a dotted pattern of digits, here a short stub. Prop: a tiny soft sponge in one gripper. It stands on a small warm-wood (#B07A4A) plank step. Palette: white, matte black, safety yellow, warm wood brown, soft gray (#C9CCD1). Pose: wobbly first steps, head tilted, curious.",
+  "lookZh": "圆周率 π 形的白色小机器人，抱着小海绵，围着短短的数字围巾",
+  "personality": "笨手笨脚却好奇，什么都想上手试试",
+  "lineRef": "pi-zero"
+ },
+ {
+  "id": "pi-star-0-6",
+  "nameEn": "pi*0.6",
+  "nameZh": "π*0.6",
+  "family": "pi",
+  "stage": 2,
+  "types": [
+   "agent",
+   "vision"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, front view, clean dark outline. Stage 2 of the pi robot mascot line: the same plump white (#FFFFFF) Greek-letter pi mascot, bigger and more capable. Matte-black (#1E1E22) face panel with two white dot eyes and a confident smile, no hair. Two matte-black articulated robot arms with safety-yellow (#FFC400) parallel-jaw grippers, longer and smoother. Signature scarf printed with a dotted pattern of digits, now longer and trailing behind. Marks of learning from experience: a small gold asterisk-star badge on its chest and a tiny bandage plaster on one pi leg. Prop: a small steaming coffee cup. It stands on a small warm-wood (#B07A4A) table-top platform. Palette: white, matte black, safety yellow, wood brown, soft gray, gold #E3B341. Pose: steady stance, proud small smile.",
+  "lookZh": "更大一圈的 π 机器人，胸口有金色星标，腿上贴着创可贴，稳稳端着咖啡",
+  "personality": "摔过的跟头都记在心里，越做越稳",
+  "lineRef": "pi0-5"
+ },
+ {
+  "id": "unitree-h1",
+  "nameEn": "Unitree H1",
+  "nameZh": "宇树 H1",
+  "family": "unitree",
+  "stage": 1,
+  "types": [
+   "motion",
+   "agent"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the Unitree robot line: the younger, plainer version of the kung-fu robot girl. Rounded gunmetal helmet-head with a smooth black visor (#0D0F12) face showing a soft glowing ring and two pixel-dot eyes in pale signal blue; a short silver-white (#C9CDD3) bob of cable hair peeks out below. Body: matte graphite (#2B2D31) and silver jointed limbs, round servo knees, a slanted-U chest emblem, small blue (#1897F2) joint lights, a plain grey sleeveless tabard. Signature accessory: a short festive-red (#E8343A) silk scarf at her neck, the seed of the long red water-sleeves to come. Prop: a short hazard-yellow (#F5C400) striped safety tether clipped to her back. Palette: #2B2D31, #C9CDD3, #0D0F12, #1897F2, #E8343A. Pose: a wobbly one-leg kung-fu ready stance, arms out.",
+  "lookZh": "圆头盔黑面罩的小机娘，银白短发，脖子系着红绸",
+  "personality": "刚学会跑跳就想上台表演的实干小机娘",
+  "lineRef": "unitree"
+ },
+ {
+  "id": "gemini-robotics-1",
+  "nameEn": "Gemini Robotics",
+  "nameZh": "Gemini Robotics",
+  "family": "gemini-robotics",
+  "stage": 1,
+  "types": [
+   "agent",
+   "vision"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, creature-like robot mascot, ~1.7 heads tall, stage 1 of the Gemini Robotics line: the smallest, plainest version of a cheerful boyish helper robot. Body: small round humanoid, glossy white shell (#F5F7FA), soft grey joints (#9AA5B1), oversized feet, stubby three-finger mitten hands, still a bit clumsy. Face: dark visor (#1A1F2B) with two simple round blue LED eyes. Short antenna topped with a tiny Gemini four-point sparkle; ear pods glow blue (#4285F4). Outfit: only a plain blue bib apron with no pockets yet. Props: a single chunky yellow toy block (#FBBC05) cradled in both hands. Palette: #F5F7FA, #9AA5B1, #4285F4, #1A1F2B, #FBBC05. Pose: standing on wobbly oversized feet, carefully holding the block out in front, eyes focused.",
+  "lookZh": "圆滚滚的白色小机器人，抱着一块黄色积木，脚大得站不稳",
+  "personality": "认真又笨手笨脚的小帮手，抓稳了才得意",
+  "lineRef": "gemini-robotics"
+ },
+ {
+  "id": "gemini-robotics-1-5",
+  "nameEn": "Gemini Robotics 1.5",
+  "nameZh": "Gemini Robotics 1.5",
+  "family": "gemini-robotics",
+  "stage": 2,
+  "types": [
+   "agent",
+   "vision"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, creature-like robot mascot, ~1.9 heads tall, stage 2 of the Gemini Robotics line: the same cheerful boyish helper robot, a size bigger and more capable. Body: small round humanoid, glossy white shell (#F5F7FA), soft grey joints (#9AA5B1), oversized feet, four-finger hands getting dexterous. Face: dark visor (#1A1F2B) with two LED eyes that blink as four-point sparkles. Short antenna topped with a Gemini sparkle; ear pods glow blue (#4285F4). Outfit: blue utility apron now with a tool pocket, yellow-and-black safety stripes on both knees. Props: a small sorting tray holding three blocks in blue, red and yellow. Palette: #F5F7FA, #9AA5B1, #4285F4, #1A1F2B, #FBBC05. Pose: one hand raised in an 'I've got it' gesture over the tray, head tilted thoughtfully.",
+  "lookZh": "系着带口袋蓝围裙的白色小机器人，托盘里码着三色积木",
+  "personality": "越来越靠谱的整理小能手，动手前先想一想",
+  "lineRef": "gemini-robotics-1"
+ },
+ {
+  "id": "qwen1-5",
+  "nameEn": "Qwen1.5",
+  "nameZh": "通义千问 Qwen1.5",
+  "family": "qwen-mid",
+  "stage": 1,
+  "types": [
+   "open",
+   "chat"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a cheerful hoodie girl, small and energetic. Hair: cornflower-periwinkle (#7B8CF0) short messy bob with sky-blue (#A9B8FF) inner layer, side-swept bangs, one springy ahoge. Eyes: big aqua-teal (#36C9D6) with round white highlights, bright and curious. Outfit: oversized white hoodie with indigo (#2B2F8F) cuffs and hem, hood down, small hexagon patch on the chest, periwinkle shorts, white sneakers. Signature accessory: a small hexagon-bodied padlock hairclip with its shackle swung open, on the left (open weights). Prop: a canvas satchel with three little hexagon badges in a row, graduated small to large (many sizes). Palette: periwinkle #7B8CF0, sky blue #A9B8FF, indigo #2B2F8F, white, aqua-teal #36C9D6, electric blue #082DFF. Pose: bouncing mid-step, one hand waving hello, big open smile.",
+  "lookZh": "天蓝短发，宽松白连帽衫，发夹是一把开着的六边形小锁",
+  "personality": "什么尺码都能借你穿的热心小前辈"
+ },
+ {
+  "id": "qwen2",
+  "nameEn": "Qwen2",
+  "nameZh": "通义千问 Qwen2",
+  "family": "qwen-mid",
+  "stage": 2,
+  "types": [
+   "open",
+   "chat"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.4 heads tall, the same hoodie girl a size up, a confident open-source senior. Hair: cornflower-periwinkle (#7B8CF0) messy bob with sky-blue (#A9B8FF) inner layer, now with a short stubby ponytail, same side-swept bangs and ahoge. Eyes: aqua-teal (#36C9D6), round highlights, bolder and proud. Outfit: white zip-up hooded jacket with indigo (#2B2F8F) sleeves, hexagon chest patch, short indigo scarf, periwinkle shorts, black tights, white high-tops. Signature accessory: the same hexagon padlock hairclip with open shackle, larger and gold-rimmed. Props: the canvas satchel with graduated hexagon badges plus a second pouch, and a small gold trophy cup held up. Palette: periwinkle #7B8CF0, sky blue #A9B8FF, indigo #2B2F8F, white, aqua-teal #36C9D6, gold #D4AF37. Pose: striding forward, trophy raised, grinning.",
+  "lookZh": "天蓝短发，连帽夹克，金边开锁发夹，举着小奖杯",
+  "personality": "拿了榜首也不摆架子，继续把门敞着",
+  "lineRef": "qwen1-5"
+ },
+ {
+  "id": "qwen2-5-max",
+  "nameEn": "Qwen2.5-Max",
+  "nameZh": "通义千问 Qwen2.5-Max",
+  "family": "qwen-max",
+  "stage": 1,
+  "types": [
+   "chat",
+   "logic"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a prim little ojou-sama in training. Hair: pale lavender-silver (#CFD3F7) shoulder-length hime cut with two long side locks tied by small indigo ribbons, blunt bangs, indigo (#2B2F8F) tips, one small ahoge. Eyes: sapphire blue (#2F54E8) with hexagon white highlights, serious but sweet. Outfit: white sailor-style blouse with indigo collar and periwinkle (#7B8CF0) ribbon, indigo pleated skirt with one gold hexagon button, white knee socks, small indigo shoes. Signature accessory: a small silver hexagon hairclip on her right bangs. Prop: a honeycomb satchel of many tiny stitched hexagon pouches (a big mixture of experts). Palette: lavender-silver #CFD3F7, indigo #2B2F8F, periwinkle #7B8CF0, white, sapphire #2F54E8, gold #D4AF37. Pose: standing straight, satchel held in both hands, polite small smile.",
+  "lookZh": "淡紫姬发式，蓝宝石眼，背着蜂巢小挎包的小大小姐",
+  "personality": "端庄的小大小姐，发言前总要先请专家们开会"
+ },
+ {
+  "id": "qwen3-max",
+  "nameEn": "Qwen3-Max",
+  "nameZh": "通义千问 Qwen3-Max",
+  "family": "qwen-max",
+  "stage": 2,
+  "types": [
+   "chat",
+   "logic"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.4 heads tall, the same lavender-haired girl grown into a poised student-council president. Hair: pale lavender-silver (#CFD3F7) with indigo (#2B2F8F) tips, now waist-length hime cut with long side locks, tiny ahoge. Eyes: sapphire blue (#2F54E8), hexagon highlights, calm. Outfit: white blouse with periwinkle (#7B8CF0) cravat under a double-breasted indigo (#23277A) coat-dress with gold hexagon buttons, indigo ankle boots. Signature accessory: the silver hexagon clip is now a gold-rimmed hairpin with a sapphire gem. Props: the honeycomb satchel at her hip, and a slim pointer rod with a glowing hexagon tip. Palette: lavender-silver #CFD3F7, indigo #23277A, periwinkle #7B8CF0, white, sapphire #2F54E8, gold #D4AF37. Pose: confident stride, pointer rod raised, smile.",
+  "lookZh": "淡紫长发，靛蓝双排扣长外套，金边六边形发针",
+  "personality": "万亿参数撑腰，办事利落的优等生会长",
+  "lineRef": "qwen2-5-max"
+ },
+ {
+  "id": "qwen3-max-thinking",
+  "nameEn": "Qwen3-Max-Thinking",
+  "nameZh": "通义千问 Qwen3-Max-Thinking",
+  "family": "qwen-max",
+  "stage": 3,
+  "types": [
+   "logic",
+   "chat"
+  ],
+  "rarity": "SSR",
+  "design": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the same lavender-haired girl fully grown into a serene scholar-queen. Hair: pale lavender-silver (#CFD3F7) with indigo (#2B2F8F) tips, now floor-length hime cut, side locks in indigo ribbons, tiny ahoge. Eyes: sapphire blue (#2F54E8), hexagon highlights, half-lidded in thought. Outfit: white inner gown under a deep indigo (#23277A) wide-sleeve robe-coat with gold hexagon trim, periwinkle (#7B8CF0) sash. Signature accessory: the gold hexagon hairpin is now a gold hexagon tiara-halo with the sapphire gem. Props: a glowing hexagon orb wrapped by a spiral thought-ribbon in one palm, and a small honeycomb satchel charm on her sash. Palette: lavender-silver #CFD3F7, indigo #23277A, periwinkle #7B8CF0, white, sapphire #2F54E8, gold #D4AF37. Pose: standing calmly, orb held out, hand at her chin.",
+  "lookZh": "拖地长发，金边六边形光环冠，掌托螺旋思绪光球",
+  "personality": "先想三秒再开口，一开口就不容反驳",
+  "lineRef": "qwen3-max"
+ },
+ {
+  "id": "qwen-plus",
+  "nameEn": "Qwen-Plus",
+  "nameZh": "通义千问 Qwen-Plus",
+  "family": "qwen-plus",
+  "stage": 1,
+  "types": [
+   "chat",
+   "compute"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a sporty little errand-runner girl. Hair: high ponytail in a cyan (#5CE1E6) to periwinkle (#7B8CF0) gradient, short and bouncy, with straight bangs and a small ahoge. Eyes: violet (#9B5CF0) with plus-shaped sparkle highlights, cheerful. Outfit: periwinkle zip track jacket with white side stripes over a white tee, indigo (#2B2F8F) shorts, white sneakers with cyan laces. Signature accessory: a hairclip made of a white plus sign inside a thin gold hexagon rim, at the base of the ponytail. Prop: a stopwatch on a cord around her neck (fast, always on call). Palette: cyan #5CE1E6, periwinkle #7B8CF0, indigo #2B2F8F, white, violet #9B5CF0, electric blue #082DFF. Pose: light jogging step, one fist pumped, bright grin.",
+  "lookZh": "青蓝渐变高马尾，运动外套，加号六边形发夹，脖子挂秒表",
+  "personality": "永远在线、随叫随到的跑腿小能手"
+ },
+ {
+  "id": "qwen3-5-plus",
+  "nameEn": "Qwen3.5-Plus",
+  "nameZh": "通义千问 Qwen3.5-Plus",
+  "family": "qwen-plus",
+  "stage": 2,
+  "types": [
+   "chat",
+   "compute"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.4 heads tall, the same ponytail girl grown into a quick, composed relay runner. Hair: same cyan (#5CE1E6) to periwinkle (#7B8CF0) gradient high ponytail, now waist-length, straight bangs, same ahoge. Eyes: same violet (#9B5CF0) with plus-shaped sparkle highlights, sharper and focused. Outfit: longer periwinkle track coat with white stripes and cyan hexagon-pattern trim over a fitted indigo (#2B2F8F) top, black cycling shorts, white high sneakers with small cyan wing details. Signature accessory: the same plus-in-hexagon hairclip, larger with a gold rim. Props: the stopwatch now clipped to her coat pocket, and a relay baton with a hexagon tip. Palette: cyan #5CE1E6, periwinkle #7B8CF0, indigo #2B2F8F, white, violet #9B5CF0, gold #D4AF37. Pose: leaning forward mid-run, baton extended back, calm confident smile.",
+  "lookZh": "青蓝渐变长高马尾，长款运动外套，金边加号发夹",
+  "personality": "越跑越稳的接力二棒，传棒前先拉伸",
+  "lineRef": "qwen-plus"
+ },
+ {
+  "id": "qwen3-7-plus",
+  "nameEn": "Qwen3.7-Plus",
+  "nameZh": "通义千问 Qwen3.7-Plus",
+  "family": "qwen-plus",
+  "stage": 3,
+  "types": [
+   "chat",
+   "compute"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the same ponytail girl fully grown into a poised ace runner. Hair: cyan (#5CE1E6) to periwinkle (#7B8CF0) gradient high ponytail, now hip-length with two long indigo ribbons, straight bangs, same ahoge. Eyes: violet (#9B5CF0), plus-shaped sparkle highlights, calm. Outfit: long slim white trench coat with indigo (#2B2F8F) lapels and cyan hexagon lining, periwinkle blouse, gold hexagon buttons, white boots with tiny wings. Signature accessory: the plus-in-hexagon clip has grown into a gold-rimmed plus tiara-pin with an electric-blue (#082DFF) gem. Props: a hexagon-tipped relay baton, and a stopwatch pendant at her collar. Palette: cyan #5CE1E6, periwinkle #7B8CF0, indigo #2B2F8F, white, violet #9B5CF0, gold #D4AF37. Pose: striding, baton raised, coat flaring, serene smile.",
+  "lookZh": "青蓝渐变及髋高马尾，金边加号发冠，修身白风衣，手持接力棒",
+  "personality": "一路接棒跑到今天，依然稳稳当当的靠谱学姐",
+  "lineRef": "qwen3-5-plus"
+ },
+ {
+  "id": "qwen-vl",
+  "nameEn": "Qwen-VL",
+  "nameZh": "通义千问 Qwen-VL",
+  "family": "qwen-vl",
+  "stage": 1,
+  "types": [
+   "vision",
+   "open"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a shy newcomer photographer girl, the youngest form of the Qwen-VL line. Chin-length violet-indigo (#4A3FB5) bob with straight blunt bangs, two curled-in side locks, a small antenna ahoge and an electric-blue (#082DFF) hexagon hairclip on the left. Big aqua-cyan (#38C9E8) eyes with camera-aperture ring irises and white highlights. Outfit: oversized deep-indigo (#2B2F8F) smock jacket with a round white collar and periwinkle (#7B8CF0) cuffs, short white skirt, white socks, small indigo sneakers. Signature accessory: a toy-like camera with a hexagon lens on an Alibaba-orange (#FF7A1A) neck strap. Palette: violet #4A3FB5, indigo #2B2F8F, periwinkle #7B8CF0, aqua #38C9E8, orange #FF7A1A, white. Pose: lifting the camera with both hands, one eye squeezed shut, a shy smile.",
+  "lookZh": "靛紫齐刘海小新兵，脖子上挂着六边形镜头的玩具相机",
+  "personality": "好奇心满格的新手摄影师，见什么都想拍一张"
+ },
+ {
+  "id": "qwen2-5-vl",
+  "nameEn": "Qwen2.5-VL",
+  "nameZh": "通义千问 Qwen2.5-VL",
+  "family": "qwen-vl",
+  "stage": 2,
+  "types": [
+   "vision",
+   "open"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.4 heads tall, the same Qwen-VL photographer girl, a little older. Shoulder-length violet-indigo (#4A3FB5) hair with the same blunt bangs, curled-in side locks, antenna ahoge and electric-blue (#082DFF) hexagon hairclip. The same aqua-cyan (#38C9E8) aperture-ring eyes, alert and confident. Outfit: fitted deep-indigo (#2B2F8F) cropped jacket with a white collar, periwinkle (#7B8CF0) pleated skirt, white knee socks, indigo boots. Signature accessory: the hexagon-lens camera is now a mirrorless camera with a long zoom lens on the Alibaba-orange (#FF7A1A) strap. Second prop: a small clipboard under one arm. Palette: violet #4A3FB5, indigo #2B2F8F, periwinkle #7B8CF0, aqua #38C9E8, orange #FF7A1A. Pose: quick low crouch, camera at her eye with the zoom extended, a sporty grin.",
+  "lookZh": "靛紫短外套摄影师，背着变焦镜头相机随时蹲拍",
+  "personality": "动作比快门还快，看准就蹲下来连拍",
+  "lineRef": "qwen-vl"
+ },
+ {
+  "id": "qwen3-vl",
+  "nameEn": "Qwen3-VL",
+  "nameZh": "通义千问 Qwen3-VL",
+  "family": "qwen-vl",
+  "stage": 3,
+  "types": [
+   "vision",
+   "open"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.8 heads tall, the grown-up Qwen-VL photographer girl. Waist-length violet-indigo (#4A3FB5) hair worn half-up, keeping the blunt bangs, side locks, ahoge and electric-blue (#082DFF) hexagon hairclip. The same aqua-cyan (#38C9E8) aperture-ring eyes, calm and sharp. Outfit: long deep-indigo (#2B2F8F) coat with periwinkle (#7B8CF0) lining and hexagon epaulettes, short pleated skirt, tall boots, a hexagonal monocle over her left eye. Signature accessory: the Alibaba-orange (#FF7A1A) strap now carries a pro camera with a wide multi-ring lens and a glowing blue hexagonal aperture. Second prop: a folded map-scroll. Palette: violet #4A3FB5, indigo #2B2F8F, periwinkle #7B8CF0, aqua #38C9E8, orange #FF7A1A. Pose: standing tall, camera held out, other hand pointing ahead, a composed smile.",
+  "lookZh": "长发靛紫风衣摄影师，单片六边形镜片、广角多环镜头",
+  "personality": "沉稳的取景大师，一个眼神就把全局框进去",
+  "lineRef": "qwen2-5-vl"
+ },
+ {
+  "id": "qwq-32b",
+  "nameEn": "QwQ-32B",
+  "nameZh": "QwQ-32B",
+  "family": "qwq",
+  "stage": 1,
+  "types": [
+   "logic",
+   "open"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.2 heads tall, a small-but-fierce thinker girl with a cat-like vibe, a Qwen cousin. Short wavy apricot-orange (#FFA24A) hair with twin curled bangs and a messy tuft ahoge. Large deep-indigo eyes full of watery sparkle and big white highlights, a tiny cat-style 'w' smile. Outfit: oversized deep-indigo (#2B2F8F) hoodie with a small cat-ear hood, periwinkle (#7B8CF0) cuffs, a pocket stitched with a tiny teary-smile face, white pleated skirt, chunky sneakers, an open-padlock zipper charm (open weights). Props: a dark-teal (#1F4D4A) chalkboard slate showing boxes linked by arrows (chain of thought), and a pencil behind her ear. Palette: apricot #FFA24A, indigo #2B2F8F, periwinkle #7B8CF0, slate teal #1F4D4A, white. Pose: hugging the slate to her chest, head tilted, cheeks puffed in effort.",
+  "lookZh": "杏橙卷发猫耳卫衣少女，抱着画满思路箭头的小黑板",
+  "personality": "嘴上 QwQ，脑子里的思路链一刻不停"
+ },
+ {
+  "id": "deepseek-v2",
+  "nameEn": "DeepSeek-V2",
+  "nameZh": "DeepSeek-V2",
+  "family": "deepseek-early",
+  "stage": 1,
+  "types": [
+   "open",
+   "compute"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a tiny whale-hooded kid, the youngest stage of her line. Hair: pale ice-blue (#BFE3FF) in a short wavy bob with navy-tinted tips and one small curl ahoge. Eyes: big round aqua-teal (#35C6D6), white star-shaped highlight. Signature accessory (kept through all stages): a small whale-tail hairpin in white and cobalt on the right. Outfit: oversized white-and-cobalt raincoat hoodie, hood down with two small whale-fin flaps, navy shorts, short yellow-gold rain boots. Prop: one big gold coin (#E8C050) hugged in both arms, stamped with a small down-arrow pictogram (cheap pricing). Palette: DeepSeek blue #4D6BFE, navy #1B2A6B, ice blue #BFE3FF, aqua #35C6D6, white, gold #E8C050. Pose: hugging the coin with a proud beaming grin, one boot lifted mid-hop; idle = ahoge bobs.",
+  "lookZh": "披着鲸鱼耳雨衣的小不点，抱着一枚大金币",
+  "personality": "精打细算，小个子却把价格打下来"
+ },
+ {
+  "id": "deepseek-v2-5",
+  "nameEn": "DeepSeek-V2.5",
+  "nameZh": "DeepSeek-V2.5",
+  "family": "deepseek-early",
+  "stage": 2,
+  "types": [
+   "open",
+   "compute"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same whale-hooded girl grown up a little, a tidy all-rounder merging two jobs. Hair: pale ice-blue (#BFE3FF), wavy bob now shoulder-length with navy-tinted tips, a small side braid, one curl ahoge. Eyes: aqua-teal (#35C6D6), white star-shaped highlight. Signature accessory: the small whale-tail hairpin in white and cobalt on the right. Outfit: two-tone jacket, left half white with a chat-bubble patch, right half cobalt with a bracket patch, navy pleated skirt, white knee socks, navy boots, a small gold coin charm on a wrist bracelet. Prop: one notebook whose cover is half bubble, half bracket. Palette: DeepSeek blue #4D6BFE, navy #1B2A6B, ice blue #BFE3FF, aqua #35C6D6, white, gold #E8C050. Pose: holding the notebook open to the viewer, head tilted, friendly smile.",
+  "lookZh": "半白半蓝夹克的鲸鱼少女，一边聊天气泡一边代码括号",
+  "personality": "一个人干两份活，还不抢风头",
+  "lineRef": "deepseek-v2"
+ },
+ {
+  "id": "deepseek-v3-0324",
+  "nameEn": "DeepSeek-V3-0324",
+  "nameZh": "DeepSeek-V3-0324",
+  "family": "deepseek-early",
+  "stage": 3,
+  "types": [
+   "open",
+   "compute"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the whale-hooded girl grown into a graceful young woman, a calm open-source regular. Hair: pale ice-blue (#BFE3FF), long wavy hair with navy gradient tips and a loose side braid, one curl ahoge. Eyes: aqua-teal (#35C6D6), white star-shaped highlight, assured. Signature accessory: the small whale-tail hairpin in white and cobalt on the right. Outfit: long navy (#1B2A6B) coat with cobalt lining and gold buttons over a white blouse with a cobalt ribbon tie, navy skirt, white over-knee socks, navy boots. Props: a slim cobalt baton topped with a small gold coin, and a small calendar-page charm on her belt. Palette: DeepSeek blue #4D6BFE, navy #1B2A6B, ice blue #BFE3FF, aqua #35C6D6, white, gold #E8C050. Pose: striding forward, baton on one shoulder, coat flaring like a wave, relaxed smile.",
+  "lookZh": "成年海蓝大衣的鲸鱼姐姐，权杖顶端挂着金币",
+  "personality": "从容不迫，把日期写进名字里",
+  "lineRef": "deepseek-v2-5"
+ },
+ {
+  "id": "deepseek-r1-0528",
+  "nameEn": "DeepSeek-R1-0528",
+  "nameZh": "DeepSeek-R1-0528",
+  "family": "deepseek-r1-0528",
+  "stage": 1,
+  "types": [
+   "logic",
+   "open"
+  ],
+  "rarity": "SSR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the whale-girl scholar-maid of the R1 line upgraded, older and calmer than the original R1 girl. Hair: long wavy deep-sea blue fading to aqua tips, one curling spout ahoge, one side braid. Whale-fin ears with white frills, plump navy whale tail. Eyes: deep blue with a spiral glint, behind round thin gold-framed reading glasses. Outfit: navy-and-white maid-scholar dress with white ruffled blouse and lace hem, short navy capelet with gold trim, a small red arrow hairpin. Signature accessory: the chain-of-thought scroll, now glass-clear so every line shows (open reasoning). Props: that scroll unrolling around her, a thick open book in one arm. Palette: deep-sea blue #1B3FA8, DeepSeek blue #4D6BFE, navy #1B2A6B, aqua #7FE3F0, white #F5F9FF, gold #E8C050. Pose: finger on chin, half-closed eyes.",
+  "lookZh": "戴金边圆眼镜的鲸鱼学者女仆，卷轴变成透明玻璃",
+  "personality": "把思考过程摊开给你看的认真学霸"
+ },
+ {
+  "id": "deepseek-v4-flash",
+  "nameEn": "DeepSeek-V4-Flash",
+  "nameZh": "DeepSeek-V4-Flash",
+  "family": "deepseek-flash",
+  "stage": 1,
+  "types": [
+   "compute",
+   "open"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, youngest Flash whale-girl, a tiny sprinter. Hair: sky-cyan short twin pigtails with cobalt tips, blunt fringe, one small curly spout ahoge. Small whale-fin ears, small round navy whale tail. Eyes: big electric aqua with a white zig-zag bolt highlight. Outfit: snug white-and-cobalt track jacket with whale-tail zip pull, short navy pleated skirt, white sneakers with tiny cyan wing flashes. Signature accessory: a small gold lightning-bolt hairpin on the right of her fringe. Props: a chunky silver stopwatch held up (fast), a tiny whale piggy-bank charm at her belt (cheap). Palette: DeepSeek blue #4D6BFE, navy #1B2A6B, sky cyan #8FD8FF, electric aqua #33D6F5, white #F5F9FF, gold #E8C050. Pose: crouched sprinter start, stopwatch raised, eager grin.",
+  "lookZh": "双马尾小鲸鱼娘，金色闪电发夹，举着秒表起跑",
+  "personality": "先跑再说，便宜又顺手的小飞毛腿"
+ },
+ {
+  "id": "deepseek-v4-flash-0731",
+  "nameEn": "DeepSeek-V4-Flash 0731",
+  "nameZh": "DeepSeek-V4-Flash 0731",
+  "family": "deepseek-flash",
+  "stage": 2,
+  "types": [
+   "compute",
+   "open"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the Flash whale-girl a little older, a capable coder-runner. Hair: sky-cyan twin-tails to mid-back with cobalt tips, small curly spout ahoge. Medium whale-fin ears, medium navy whale tail with two flukes. Eyes: electric aqua, white zig-zag bolt highlight, calm and focused. Outfit: cropped white-and-cobalt track jacket with navy bolt stripes on the sleeves, navy pleated skirt, white over-knee socks, cobalt sneakers. Signature accessory: the small gold lightning-bolt hairpin on the right of her fringe. Props: the silver stopwatch now on a lanyard, a slim tablet showing a code-bracket pictogram; piggy-bank charm at her belt. Palette: DeepSeek blue #4D6BFE, navy #1B2A6B, sky cyan #8FD8FF, electric aqua #33D6F5, white #F5F9FF, gold #E8C050. Pose: tapping the tablet, calm smile.",
+  "lookZh": "长高一截的双马尾鲸鱼娘，闪电发夹，手持代码平板",
+  "personality": "同一副骨架，练得更稳更会干活",
+  "lineRef": "deepseek-v4-flash"
+ },
+ {
+  "id": "deepseek-v4-1-flash",
+  "nameEn": "DeepSeek-V4.1-Flash",
+  "nameZh": "DeepSeek-V4.1-Flash",
+  "family": "deepseek-flash",
+  "stage": 3,
+  "types": [
+   "compute",
+   "open"
+  ],
+  "rarity": "SSR",
+  "design": "Chibi HD-2D pixel sprite, ~2.8 heads tall, the grown-up Flash whale-girl. Hair: very long sky-cyan twin-tails with cobalt fluke-shaped tips, small curly spout ahoge. Large whale-fin ears with a gold cuff, large sweeping navy whale tail. Eyes: electric aqua, white zig-zag bolt highlight; round cyan goggles on her forehead (vision). Outfit: long white-and-cobalt racing coat with gold bolt buttons, navy pleated skirt, white over-knee socks, navy boots. Signature accessory: the gold lightning-bolt hairpin, now larger with a tiny cyan gem. Props: a gold stopwatch on a chain, a stack of tiny cyan cubes squeezed in a gold clamp (cache compression). Palette: DeepSeek blue #4D6BFE, navy #1B2A6B, sky cyan #8FD8FF, electric aqua #33D6F5, white #F5F9FF, gold #E8C050. Pose: striding tall, coat flaring, cube clamp raised, confident smile.",
+  "lookZh": "成熟版闪电鲸鱼娘，护目镜推在额头，手托压缩方块",
+  "personality": "看得见、记得牢、跑得快的稳重前辈",
+  "lineRef": "deepseek-v4-flash-0731"
+ },
+ {
+  "id": "kimi-k1-5",
+  "nameEn": "Kimi k1.5",
+  "nameZh": "Kimi k1.5",
+  "family": "kimi-k1-5",
+  "stage": 1,
+  "types": [
+   "logic",
+   "agent"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.2 heads tall, a young moon-scholar of the Kimi line who learns by trying again and again. Hair: midnight-navy (#1B2350) low twin tails tipped with electric blue (#1E88FF), white crescent hair ties, blunt bangs. Eyes: bright azure with tiny crescent highlights, focused. Outfit: short white lab-style jacket with rolled sleeves over a navy pleated dress, black neck ribbon with a round white 'K' brooch whose dot glows electric blue, black boots. Signature accessory: crescent-framed goggles pushed up on her forehead (multimodal vision). Props: a small slate showing a drawn rising reward curve ending in a gold star, and a pencil in her other hand. Palette: midnight navy #1B2350, electric blue #1E88FF, white, black, gold star accent #F5C84B. Pose: leaning forward, slate held up, determined little pout.",
+  "lookZh": "两条深蓝低双马尾的小学者，端着画有上升曲线的石板",
+  "personality": "认准的题就一遍遍重试，错了也不服输"
+ },
+ {
+  "id": "kimi-k2-7-code",
+  "nameEn": "Kimi K2.7 Code",
+  "nameZh": "Kimi K2.7 Code",
+  "family": "kimi-k2-code",
+  "stage": 1,
+  "types": [
+   "code",
+   "agent"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.2 heads tall, a quick, quiet coder girl of the Kimi line. Hair: jet-black (#111111) medium bob with an electric-blue (#1E88FF) inner layer and two small cat-ear-shaped tufts on top, short side-swept bangs. Eyes: round amber-gold (#FFC83D) with a tiny '>_' cursor glint. Outfit: black zip hoodie with white drawstrings over a midnight-navy (#1B2350) tee, short navy pleated shorts, blue-striped knee socks, white sneakers. Signature accessory: a black choker collar with a glowing electric-blue dot pendant (the Kimi dot, like a cat's collar). Prop: a slim pocket-size terminal tablet showing a blinking '>_' prompt, hugged to her chest. Palette: jet black #111111, midnight navy #1B2350, electric blue #1E88FF, amber gold #FFC83D, white. Pose: hunched over the tablet, one finger tapping, a small focused smile.",
+  "lookZh": "戴猫耳发簇、颈圈亮着蓝点的黑发编程少女，抱着小终端板",
+  "personality": "话少手快，一低头就能把活儿干完"
+ },
+ {
+  "id": "kimi-k2-8-preview",
+  "nameEn": "Kimi K2.8 Preview",
+  "nameZh": "Kimi K2.8 Preview",
+  "family": "kimi-k2-code",
+  "stage": 2,
+  "types": [
+   "code",
+   "agent"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.6 heads tall, the same Kimi coder girl grown taller, still half-finished like a preview build. Hair: jet-black (#111111) shoulder-length bob, wider electric-blue (#1E88FF) inner layer, two sharper cat-ear tufts. Eyes: round amber-gold (#FFC83D) with a '>_' glint. Outfit: long black coat with midnight-navy (#1B2350) lining and dotted-line stitching along the hem (still being drawn), navy shorts, striped knee socks, black boots. Signature accessory: the same black choker with its electric-blue dot pendant. Props: a glowing-blue keyboard strapped to her forearm and a dashed-outline golden crescent halo above her head. Palette: jet black #111111, midnight navy #1B2350, electric blue #1E88FF, amber gold #FFC83D, white. Pose: typing on the forearm keyboard, other hand pointing ahead, confident grin.",
+  "lookZh": "披虚线缝边长外套的黑发少女，头顶一弯半成形的金月牙",
+  "personality": "总说先试试看，边跑边把自己改得更好",
+  "lineRef": "kimi-k2-7-code"
+ },
+ {
+  "id": "glm-4",
+  "nameEn": "GLM-4",
+  "nameZh": "GLM-4",
+  "family": "glm-mid",
+  "stage": 1,
+  "types": [
+   "chat",
+   "open"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, the youngest sleepy fox-spirit girl. Hair: shoulder-length straight black bob, blunt bangs, one ahoge, a hint of deep-blue (#1B2B7A) underlayer. Small black fox ears with white fluff, ONE short white-tipped black tail. Eyes: large steel-blue with ring-shaped highlights, drowsy. Outfit: plain white frilled-collar blouse, short black pinafore with white hem, tiny cobalt (#2B5BFF) bow, black mary-janes; no cape yet. Signature accessory: frilled white sleep-mask headband pushed up on her forehead, embroidered eyes fully CLOSED, ONE silver bell and a small black 'Z' tile. Prop: a small black notebook with a silver 'Z' hugged to her chest. Palette: black #0B0B0F, white, cobalt #2B5BFF, deep blue #1B2B7A, silver. Pose: standing, mid-yawn, tail drooping.",
+  "lookZh": "睡眼罩推在额头的小狐娘，一条小尾巴，怀抱黑色小笔记本",
+  "personality": "爱打瞌睡的小学霸，中文说得明明白白"
+ },
+ {
+  "id": "glm-4-6",
+  "nameEn": "GLM-4.6",
+  "nameZh": "GLM-4.6",
+  "family": "glm-mid",
+  "stage": 2,
+  "types": [
+   "code",
+   "agent"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same fox-spirit girl a little older, a drowsy junior coder. Hair: chest-length straight black, blunt bangs, one ahoge, deep-blue (#1B2B7A) underlayer. Black fox ears with white fluff, TWO white-tipped black tails. Eyes: steel-blue, ring-shaped highlights, half-lidded. Outfit: white frilled blouse, black corset vest with cobalt (#2B5BFF) piping, black layered skirt with white lace hem, small silver 'Z' pin. Signature accessory: frilled sleep-mask headband worn up, embroidered eyes half OPEN (sleepy slits), TWO silver bells and the black 'Z' tile. Props: a slim black codebook with a silver 'Z' under one arm, one small cobalt ring behind her shoulder. Palette: black #0B0B0F, white, cobalt #2B5BFF, deep blue #1B2B7A, silver. Pose: tapping the book, soft half-smile, tails swaying.",
+  "lookZh": "睡眼罩半睁的双尾小狐娘，腋下夹着银色 Z 字黑皮书",
+  "personality": "嘴上喊困，手上的代码一行没停",
+  "lineRef": "glm-4"
+ },
+ {
+  "id": "glm-5-1",
+  "nameEn": "GLM-5.1",
+  "nameZh": "GLM-5.1",
+  "family": "glm-mid",
+  "stage": 3,
+  "types": [
+   "code",
+   "open"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the fox-spirit girl almost grown, a focused young coder. Hair: mid-back-length straight black, blunt bangs, one ahoge, glowing deep-blue (#1B2B7A) underlayer. Black fox ears with white fluff, TWO large white-tipped black tails. Eyes: steel-blue, ring highlights, alert. Outfit: gothic academy dress, white frilled blouse, black corset, black layered skirt with white lace hem, cobalt (#2B5BFF)-piped short capelet, silver diamond 'Z' brooch. Signature accessory: frilled sleep-mask headband, embroidered eyes half OPEN, THREE silver bells and the black 'Z' tile. Props: an open black grimoire with a silver 'Z', one large cobalt ring behind her like a halo. Palette: black #0B0B0F, white, cobalt #2B5BFF, deep blue #1B2B7A, silver. Pose: confident small smile, reading, tails fanned.",
+  "lookZh": "双尾黑狐学霸，睡眼罩睁开一半，抱着黑色魔导书",
+  "personality": "睡意渐消，认真起来一行代码都不放过",
+  "lineRef": "glm-4-6"
+ },
+ {
+  "id": "glm-4-5v",
+  "nameEn": "GLM-4.5V",
+  "nameZh": "GLM-4.5V",
+  "family": "glm-v",
+  "stage": 1,
+  "types": [
+   "vision",
+   "open"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a small curious fox-spirit girl of the GLM vision line. Hair: chin-length snow-white straight bob, blunt bangs, cobalt (#2B5BFF) dipped tips, one small ahoge. White fox ears with black tips, ONE short white tail with a cobalt tip. Eyes: large amber-gold (#E8B13A) with hexagonal aperture-shaped highlights. Outfit: oversized white short hooded jacket with cobalt trim, black romper shorts, white socks, black boots. Signature accessory: round camera-lens goggles pushed up on her forehead, plain black rims, a small cobalt iris ring on the left lens. Prop: a small white instant camera with a cobalt lens held in both hands. Palette: snow white #F5F7FF, black #0B0B0F, cobalt #2B5BFF, amber #E8B13A, silver #C0C8D8. Pose: camera raised toward the viewer, head tilted, bright smile.",
+  "lookZh": "雪白短发小狐娘，额头推着圆镜片护目镜，抱着拍立得",
+  "personality": "好奇心爆棚，看到什么都想拍下来"
+ },
+ {
+  "id": "glm-4-6v",
+  "nameEn": "GLM-4.6V",
+  "nameZh": "GLM-4.6V",
+  "family": "glm-v",
+  "stage": 2,
+  "types": [
+   "vision",
+   "open"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same fox-spirit photographer girl a little older. Hair: shoulder-length snow-white straight hair, blunt bangs, cobalt (#2B5BFF) dipped tips, small ahoge, two side locks. White fox ears with black tips, TWO white tails with cobalt tips. Eyes: amber-gold (#E8B13A), hexagonal aperture-shaped highlights. Outfit: white cropped field jacket with cobalt piping and hexagon buttons, black pleated skirt with white hem, black knee socks, boots. Signature accessory: round camera-lens goggles on her forehead, now with a six-blade cobalt iris ring on the left lens. Prop: a black mirrorless camera with a cobalt lens hanging at her chest, one hand framing a shot. Palette: snow white, black #0B0B0F, cobalt #2B5BFF, amber #E8B13A, silver. Pose: one eye squinting, finger-frame, confident smile.",
+  "lookZh": "雪白长发双尾小狐娘，护目镜镜片带光圈，颈挂黑色相机",
+  "personality": "镜头越换越准，看图又快又稳",
+  "lineRef": "glm-4-5v"
+ },
+ {
+  "id": "glm-5v-turbo",
+  "nameEn": "GLM-5V-Turbo",
+  "nameZh": "GLM-5V-Turbo",
+  "family": "glm-v",
+  "stage": 3,
+  "types": [
+   "vision",
+   "compute"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the fox-spirit photographer girl almost grown, a speedy lens master. Hair: mid-back-length snow-white straight hair, blunt bangs, two long side locks, cobalt (#2B5BFF) dipped tips, one ahoge. White fox ears with black tips, TWO long white cobalt-tipped tails. Eyes: amber-gold (#E8B13A), hexagonal aperture highlights. Outfit: long white-and-black coat with cobalt piping flared like shutter blades, black skirt, white gloves, black boots. Signature accessory: round camera-lens goggles on her forehead, now with a fully open six-blade cobalt iris ring and silver trim. Props: a black camera with a big cobalt lens in one hand, one large cobalt iris ring behind her like a halo. Palette: snow white, black #0B0B0F, cobalt #2B5BFF, amber #E8B13A, silver. Pose: lens raised, tails streaming back, grin.",
+  "lookZh": "雪白长发双尾狐娘，镜片光圈全开，身后悬着钴蓝光圈",
+  "personality": "快门一按就出结果，主打一个迅捷",
+  "lineRef": "glm-4-6v"
+ },
+ {
+  "id": "minimax-01",
+  "nameEn": "MiniMax-01",
+  "nameZh": "MiniMax-01",
+  "family": "minimax-mid",
+  "stage": 1,
+  "types": [
+   "open",
+   "chat"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.4 heads tall, the MiniMax boy a bit older than the little abab kid, a bright schoolkid. Hair: fluffy charcoal-black with one zig-zag soundwave streak dyed magenta to coral. Eyes: round coral-pink, white waveform highlight, wide and curious. Outfit: oversized charcoal hoodie with a magenta-to-coral waveform across the chest and a tiny gold lightning-bolt pin on the pocket, cuffed shorts, chunky white sneakers. Signature accessory: big over-ear headphones around his neck, one cup with a tiny round camera-lens charm. Props: a super-long off-white paper scroll unrolling from one hand and trailing on the ground (million-token context), a pocket coral notebook. Palette: charcoal #181E25, magenta #E5197E, coral #FF6B4A, off-white #F7F8FA, gold #FFD45E. Pose: grinning, striding forward, scroll unrolling behind him.",
+  "lookZh": "挂着大耳机的话痨小少年，拖着一卷超长纸卷",
+  "personality": "拖着百万字长卷也要往前冲的话痨"
+ },
+ {
+  "id": "minimax-m1",
+  "nameEn": "MiniMax-M1",
+  "nameZh": "MiniMax-M1",
+  "family": "minimax-mid",
+  "stage": 2,
+  "types": [
+   "logic",
+   "open"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the same MiniMax boy as a thoughtful tween, taller than the 01 kid. Hair: fluffy charcoal-black, swept to one side, the same zig-zag soundwave streak in magenta to coral. Eyes: round coral-pink, white waveform highlight, behind thin coral-rimmed round glasses. Outfit: charcoal hooded jacket with magenta-to-coral waveform piping over a waveform-print tee, the small gold bolt pin, slim trousers, white sneakers. Signature accessory: the big over-ear headphones around his neck with the little lens charm. Props: a notepad with a branching flowchart of arrows and checkmarks (reasoning), the long off-white scroll now rolled across his back. Palette: charcoal #181E25, magenta #E5197E, coral #FF6B4A, off-white #F7F8FA, gold #FFD45E. Pose: one hand on his chin, the other tapping the notepad, a sly smile.",
+  "lookZh": "戴珊瑚色圆框眼镜的少年，手拿推理流程图笔记本",
+  "personality": "遇事先列步骤，慢慢想清楚的眼镜少年",
+  "lineRef": "minimax-01"
+ },
+ {
+  "id": "minimax-m2-5",
+  "nameEn": "MiniMax-M2.5",
+  "nameZh": "MiniMax-M2.5",
+  "family": "minimax-mid",
+  "stage": 3,
+  "types": [
+   "code",
+   "open"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~3 heads tall, the MiniMax boy grown into a sharp young coder. Hair: fluffy charcoal-black swept up and back with the zig-zag soundwave streak in magenta to coral, round coral-rimmed glasses pushed up into his hair. Eyes: round coral-pink, white waveform highlight. Outfit: charcoal coder jacket with waveform piping, open over a white waveform-print tee, slim trousers, white sneakers, the small gold bolt pin on the lapel. Signature accessory: the big over-ear headphones around his neck. Props: a slim silver laptop, its lid showing magenta-coral curly braces, a work ID lanyard. Palette: charcoal #181E25, magenta #E5197E, coral #FF6B4A, off-white #F7F8FA, gold #FFD45E. Pose: striding forward with a wink and a thumbs-up, jacket flaring.",
+  "lookZh": "穿利落外套的少年程序员，腋下夹着印花括号的笔记本电脑",
+  "personality": "一边敲代码一边眨眼的利落搭档",
+  "lineRef": "minimax-m1"
+ },
+ {
+  "id": "minimax-speech-2-5",
+  "nameEn": "MiniMax Speech 2.5",
+  "nameZh": "MiniMax Speech 2.5",
+  "family": "minimax-speech",
+  "stage": 1,
+  "types": [
+   "sound"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, the youngest stage of the MiniMax Speech girl, a bright little announcer. Hair: chin-length charcoal-black (#181E25) bob with a magenta-to-coral dyed underlayer, side-swept bangs, one tiny waveform-peak ahoge. Eyes: big coral (#FF6B4A) with a small white waveform highlight. Outfit: plain cream (#FFF4EC) blouse with a small coral bow, short charcoal pinafore, white socks, coral sneakers. Signature accessory: a slim over-ear headset with a short gold-tipped mic boom and a magenta-coral waveform-peak earcup (the MiniMax logo shape). Prop: a small handheld voice recorder with one glowing coral record dot, held in both hands. Palette: cream #FFF4EC, charcoal #181E25, magenta #E5197E, coral #FF6B4A, gold #FFD45E. Pose: standing straight, recorder lifted toward her mouth, eager little smile.",
+  "lookZh": "戴橙粉耳麦的黑色短发少女，双手捧着一支小录音笔",
+  "personality": "嗓音清亮的小播音员，开口前先深吸一口气"
+ },
+ {
+  "id": "minimax-speech-2-6",
+  "nameEn": "MiniMax Speech 2.6",
+  "nameZh": "MiniMax Speech 2.6",
+  "family": "minimax-speech",
+  "stage": 2,
+  "types": [
+   "sound",
+   "chat"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same MiniMax Speech girl a little older. Hair: charcoal-black (#181E25) bob grown to the jaw with two longer side locks, magenta-to-coral dyed underlayer, the same bangs and waveform-peak ahoge. Eyes: coral (#FF6B4A), white waveform highlight. Outfit: cream (#FFF4EC) jacket-blouse with a magenta neck ribbon, short charcoal vest, pleated charcoal skirt, coral sneakers. Signature accessory: the same over-ear headset, sleeker, its waveform-peak earcup tipped with a tiny gold lightning notch (low latency). Props: a crossbody satchel printed like a little globe (40 languages) and a coral retro telephone handset held to her ear. Palette: cream #FFF4EC, charcoal #181E25, magenta #E5197E, coral #FF6B4A, gold #FFD45E. Pose: mid-chat, handset at her ear, free hand waving, lively grin.",
+  "lookZh": "耳麦更轻巧的黑发少女，斜挎地球花纹小包，耳边贴着电话听筒",
+  "personality": "反应快又爱聊天，话到嘴边立刻接上",
+  "lineRef": "minimax-speech-2-5"
+ },
+ {
+  "id": "minimax-speech-2-8",
+  "nameEn": "MiniMax Speech 2.8",
+  "nameZh": "MiniMax Speech 2.8",
+  "family": "minimax-speech",
+  "stage": 3,
+  "types": [
+   "sound",
+   "chat"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the grown-up MiniMax Speech girl. Hair: charcoal-black (#181E25) bob now shoulder-length with flaring ends, glowing magenta-to-coral underlayer, the same bangs and ahoge. Eyes: coral (#FF6B4A), white waveform highlight. Outfit: long cream (#FFF4EC) coat-dress with a magenta-to-coral gradient hem, charcoal vest with gold buttons, magenta ribbon, charcoal boots. Signature accessory: the same over-ear headset, now gold-rimmed with two short ribbon streamers, gold (HD tier) and coral (Turbo tier). Props: a hand-fanned set of colour-swatch voice cards (tiny heart, sparkle, note pictograms) and a slender waveform-headed mic. Palette: cream #FFF4EC, charcoal #181E25, magenta #E5197E, coral #FF6B4A, gold #FFD45E. Pose: sweeping the card fan open, mic lifted, serene smile.",
+  "lookZh": "披金橙双丝带的成熟播音少女，一手扇开音色色卡",
+  "personality": "声线百变，会笑会哭还会轻轻叹气",
+  "lineRef": "minimax-speech-2-6"
+ },
+ {
+  "id": "doubao-seed-1-6",
+  "nameEn": "Doubao-Seed-1.6",
+  "nameZh": "豆包 Seed-1.6",
+  "family": "doubao-seed-mid",
+  "stage": 1,
+  "types": [
+   "chat",
+   "agent"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a cheerful little bean-sprout helper girl, the youngest stage of her line. Hair: warm honey-brown (#C28A4A) in two short low twin-tails with sky-blue ribbons, blunt fringe. Eyes: big round teal-green (#38B59A), square pixel highlight. Signature accessory (kept through all stages): a bean-shaped sky-blue headset with one tiny sprout-green leaf on the left earcup. Outfit: oversized sky-blue (#8EC9FF) hoodie with a white bun-pleat pocket, black shorts, white sneakers with green laces. Prop: one small tablet showing a cursor arrow and a tiny eye pictogram (GUI and vision). Palette: honey-brown #C28A4A, sky blue #8EC9FF, black #1E1E24, sprout green #6CC24A, warm white #FFF6E8. Pose: head tilted, tapping the tablet, curious open-mouth smile; idle = twin-tails sway.",
+  "lookZh": "戴豆荚耳机的双马尾小豆子，抱着平板点点点",
+  "personality": "先看一眼再动手，想多深全看题目"
+ },
+ {
+  "id": "doubao-seed-1-8",
+  "nameEn": "Doubao-Seed-1.8",
+  "nameZh": "豆包 Seed-1.8",
+  "family": "doubao-seed-mid",
+  "stage": 2,
+  "types": [
+   "chat",
+   "agent"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same bean-sprout girl grown a little older, a quick-handed junior agent. Hair: warm honey-brown (#C28A4A), low twin-tails now shoulder-length with sky-blue ribbons, blunt fringe. Eyes: teal-green (#38B59A), square pixel highlight, more focused. Signature accessory: the bean-shaped sky-blue headset with a sprout-green leaf on the left earcup. Outfit: black cropped zip jacket with sky-blue trim over a white tee, sky-blue pleated skirt with green piping, white knee socks, black sneakers. Props: a larger slate with split panels and a cursor arrow, plus a tiny steamed-bun pouch on her belt. Palette: honey-brown #C28A4A, sky blue #8EC9FF, black #1E1E24, sprout green #6CC24A, warm white #FFF6E8. Pose: swiping the slate, other hand on hip, sure-footed grin.",
+  "lookZh": "双马尾变长的豆子少女，黑夹克配天蓝滚边，拿着大平板",
+  "personality": "动作利落，答得快也答得稳",
+  "lineRef": "doubao-seed-1-6"
+ },
+ {
+  "id": "doubao-seed-2-0-code",
+  "nameEn": "Doubao-Seed-2.0 Code",
+  "nameZh": "豆包 Seed-2.0 Code",
+  "family": "doubao-seed-mid",
+  "stage": 3,
+  "types": [
+   "code",
+   "agent"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the bean-sprout girl grown into a young woman, a calm coding-agent engineer. Hair: warm honey-brown (#C28A4A), low twin-tails now waist-long with black-and-green ribbons, blunt fringe. Eyes: teal-green (#38B59A), sharp square pixel highlight. Signature accessory: the bean-shaped sky-blue headset with a sprout-green leaf on the left earcup, now with a thin mic boom. Outfit: knee-length black developer coat with sky-blue collar and green piping, white shirt, sky-blue tie, black pleated skirt, black boots, tiny steamed-bun charm on her belt. Props: a holographic slate showing a curly-brace pictogram, and a wrench-shaped stylus. Palette: honey-brown #C28A4A, sky blue #8EC9FF, black #1E1E24, sprout green #6CC24A, warm white #FFF6E8. Pose: typing on the slate with one hand, confident half-smile.",
+  "lookZh": "成年工程师豆子少女，黑色开发外套，全息代码板上写着花括号",
+  "personality": "话少手快，先提交再解释",
+  "lineRef": "doubao-seed-1-8"
+ },
+ {
+  "id": "doubao-seed-1-6-flash",
+  "nameEn": "Doubao-Seed-1.6-Flash",
+  "nameZh": "豆包 Seed-1.6 Flash",
+  "family": "doubao-seed-fast",
+  "stage": 1,
+  "types": [
+   "compute",
+   "chat"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~1.9 heads tall, a tiny hyper little-sister runner of the Doubao Seed fast line. Fluffy short sky-blue (#8EC9FF) hair in a messy cut with side-swept bangs and a small bean-pod hairclip in sprout green (#6CCB5F). Big bright lime-green (#7BD16A) eyes with white star highlights and rosy round cheeks. Outfit: an oversized black (#1E1E24) hoodie with the hood down and sky-blue zip pulls, chocolate-brown (#5A3A2A) shorts, white sneakers with green laces. Signature accessory: a chunky bean-pod-shaped stopwatch hanging from a lanyard round her neck, its hand frozen at a quick time. Palette: sky blue #8EC9FF, black #1E1E24, chocolate #5A3A2A, sprout green #6CCB5F, lime #7BD16A, warm white. Pose: sprint start with one foot lifted, one fist pumping, a wide open-mouth grin.",
+  "lookZh": "天蓝蓬松短发的小跑者，脖子上挂着豆荚秒表",
+  "personality": "起跑线上就在抢跑的急性子小不点"
+ },
+ {
+  "id": "doubao-seed-2-0-lite",
+  "nameEn": "Doubao-Seed-2.0 Lite",
+  "nameZh": "豆包 Seed-2.0 Lite",
+  "family": "doubao-seed-fast",
+  "stage": 2,
+  "types": [
+   "compute",
+   "chat"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.2 heads tall, the same fast-line girl a little older, still light on her feet. Fluffy sky-blue (#8EC9FF) hair, now chin-length with a short low side ponytail, the same side-swept bangs and sprout-green (#6CCB5F) bean-pod hairclip. The same bright lime-green (#7BD16A) eyes, calmer with a friendly grin. Outfit: a cropped black (#1E1E24) zip jacket with sky-blue sleeve stripes over a white tee, chocolate-brown (#5A3A2A) pleated skirt with a sprout-green hem line, white sneakers. Signature accessory: the bean-pod stopwatch on its lanyard, now with a sleek metal rim. Second prop: a slim hand-held chat tablet with two plain speech-bubble pictograms. Palette: sky blue #8EC9FF, black #1E1E24, chocolate #5A3A2A, sprout green #6CCB5F, lime #7BD16A. Pose: jogging forward with the tablet held up, a sunny wink.",
+  "lookZh": "天蓝短发带小马尾的短夹克少女，手持聊天平板",
+  "personality": "轻装上阵也不掉队，边跑边笑着答话",
+  "lineRef": "doubao-seed-1-6-flash"
+ },
+ {
+  "id": "doubao-seed-2-1-turbo",
+  "nameEn": "Doubao-Seed-2.1 Turbo",
+  "nameZh": "豆包 Seed-2.1 Turbo",
+  "family": "doubao-seed-fast",
+  "stage": 3,
+  "types": [
+   "compute",
+   "agent"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the grown-up Doubao Seed fast-line girl. Sky-blue (#8EC9FF) hair now in a long high ponytail tied with a sprout-green (#6CCB5F) ribbon, the same side-swept bangs and bean-pod hairclip. The same lime-green (#7BD16A) eyes, sharp and confident. Outfit: a sleek long black (#1E1E24) racing-style coat with sky-blue sleeve stripes, chocolate-brown (#5A3A2A) belt, black shorts, knee boots with small silver fins. Signature accessory: the bean-pod stopwatch on its lanyard, now chrome with a tiny turbine-blade ring. Second prop: a slim tablet with a checklist pictogram and ticked boxes (agent). Palette: sky blue #8EC9FF, black #1E1E24, chocolate #5A3A2A, sprout green #6CCB5F, lime #7BD16A. Pose: striding forward, coat flaring behind her, tablet held out, a confident smirk.",
+  "lookZh": "天蓝长马尾的竞速风衣少女，秒表装上涡轮环",
+  "personality": "提速不降质，清单上的事一件件干完",
+  "lineRef": "doubao-seed-2-0-lite"
+ },
+ {
+  "id": "hunyuan-large",
+  "nameEn": "Hunyuan-Large",
+  "nameZh": "混元 Large",
+  "family": "hunyuan-mid",
+  "stage": 1,
+  "types": [
+   "open",
+   "compute"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall: a sturdy little girl called 'Hunyuan Large'. Cobalt-blue (#1F5BFF) twin low ponytails with white tips and a short side ahoge; on each side of her head sits a tiny white-and-blue penguin-flipper wing hair ornament (her signature accessory). Big golden-amber eyes (#F2B84B) with two round highlights. Outfit: an oversized hooded poncho patched from eight small squares in different blues (#0052D9, #2EB4FF, #BEE3F8), like many experts sewn into one, a white tunic, white tights and chunky blue boots. On her back is a bulky white backpack with a grid of tiny drawers, a few slightly open. A small silver key charm dangles from her belt. Palette: cobalt #1F5BFF, Tencent blue #0052D9, sky blue #2EB4FF, pale blue #BEE3F8, amber #F2B84B, white. Pose: feet planted wide, tugging one drawer open.",
+  "lookZh": "钴蓝双马尾配企鹅鳍发饰，背着满是小抽屉的大背包",
+  "personality": "块头大，但每次只拉开该用的那一格"
+ },
+ {
+  "id": "hunyuan-turbos",
+  "nameEn": "Hunyuan-TurboS",
+  "nameZh": "混元 TurboS",
+  "family": "hunyuan-mid",
+  "stage": 2,
+  "types": [
+   "chat",
+   "compute"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall: the same girl 'Hunyuan Large' grown into 'Hunyuan TurboS'. The same cobalt-blue (#1F5BFF) hair with white tips, now twin high ponytails swept back, the same short ahoge, and the same white-and-blue penguin-flipper wing hair ornaments, now longer and streamlined. The same golden-amber (#F2B84B) eyes, sharper,, winking. Outfit: a white racing jacket with Tencent-blue (#0052D9) side stripes and a lightning-shaped zip pull over a sky-blue (#2EB4FF) top, white bike shorts, blue-and-white sneakers with tiny fin wings, and a mint-green (#3DDC97) snake-shaped scarf (a wink at 'Mamba'). She holds a silver stopwatch with a blue face. Palette: #1F5BFF, #0052D9, #2EB4FF, mint #3DDC97, silver #C8D0DC, white. Pose: crouched sprinter start, stopwatch raised, cheeky grin.",
+  "lookZh": "穿赛车夹克的钴蓝双马尾少女，手握秒表，围着薄荷色小蛇围巾",
+  "personality": "先答再说，反应快过秒表",
+  "lineRef": "hunyuan-large"
+ },
+ {
+  "id": "hunyuan-t1",
+  "nameEn": "Hunyuan-T1",
+  "nameZh": "混元 T1",
+  "family": "hunyuan-mid",
+  "stage": 3,
+  "types": [
+   "logic",
+   "chat"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~3 heads tall: the same girl, now 'Hunyuan T1', calm. The same cobalt-blue (#1F5BFF) hair with white tips, now one long ponytail plus a side braid, the same ahoge, and the same white-and-blue penguin-flipper wing hair ornaments, now larger. The same golden-amber (#F2B84B) eyes, half-lidded. Outfit: a long white scholar coat with Tencent-blue (#0052D9) trim and a high collar over a sky-blue (#2EB4FF) vest, a pleated skirt, white knee socks, blue shoes, and the mint-green (#3DDC97) snake scarf, now long and coiled over one shoulder. In one hand she carries a big brass-and-glass hourglass with quickly falling blue sand; the other hand rests under her chin. Palette: #1F5BFF, #0052D9, #2EB4FF, mint #3DDC97, brass #E6B54A, white. Pose: calm thinking stance, hourglass held at her side.",
+  "lookZh": "披学者长外套的钴蓝马尾少女，托着蓝沙飞落的沙漏",
+  "personality": "不抢跑了，想透再开口",
+  "lineRef": "hunyuan-turbos"
+ },
+ {
+  "id": "hunyuan3d-2",
+  "nameEn": "Hunyuan3D 2.0",
+  "nameZh": "混元 3D 2.0",
+  "family": "hunyuan-3d",
+  "stage": 1,
+  "types": [
+   "vision",
+   "open"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall: a small sculptor girl called 'Hunyuan 3D'. Chin-length wavy ice-cyan bob (#A8E6F5) with one short ahoge and a faceted low-poly blue gem hairclip on the left (her signature accessory). Large sky-blue eyes (#2EB4FF) with a tiny diamond-shaped highlight. Outfit: an oversized white workshop smock with a Tencent-blue (#0052D9) collar and cuffs, sleeves so long only her fingertips show, plain white shorts and little grey boots. In both hands she holds a lump of grey clay (#8A94A6) half-carved into a cube, a thin white wireframe grid drawn on one face; a tiny wooden sculpting stick is tucked behind her ear. Palette: Tencent blue #0052D9, sky blue #2EB4FF, ice cyan #A8E6F5, clay grey #8A94A6, white. Pose: on tiptoe, proudly lifting the clay block with a shy smile.",
+  "lookZh": "冰青色波波头的小雕塑师，捧着刻到一半的黏土方块",
+  "personality": "手笨心细，先捏出形状再说"
+ },
+ {
+  "id": "hunyuan3d-3-1",
+  "nameEn": "Hunyuan3D 3.1",
+  "nameZh": "混元 3D 3.1",
+  "family": "hunyuan-3d",
+  "stage": 2,
+  "types": [
+   "vision",
+   "open"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall: the grown-up version of the same sculptor girl 'Hunyuan 3D'. The same ice-cyan (#A8E6F5) wavy hair, now shoulder length and the same short ahoge, still wearing the faceted low-poly blue gem hairclip, now larger with a thin gold rim. The same sky-blue (#2EB4FF) eyes with the diamond highlight. Outfit: a long Tencent-blue (#0052D9) designer coat with white lapels over a white blouse, a pleated navy (#12306B) skirt, grey boots, a tiny silver globe pin on the lapel and a yellow tape-measure scarf. She holds a slim digital stylus in one hand and a glossy finished figurine of a little blue penguin in the other. Palette: #0052D9, #2EB4FF, #A8E6F5, silver #C8D0DC, gold #E6B54A, white. Pose: relaxed three-quarter stance, presenting the figurine with a calm smile.",
+  "lookZh": "披蓝色设计师外套的雕塑师，托着上好色的小企鹅手办",
+  "personality": "手艺见长，端出成品才肯笑",
+  "lineRef": "hunyuan3d-2"
+ },
+ {
+  "id": "hunyuanworld-1-0",
+  "nameEn": "HunyuanWorld 1.0",
+  "nameZh": "混元世界 1.0",
+  "family": "hunyuan-world",
+  "stage": 1,
+  "types": [
+   "vision",
+   "chaos"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall: a tiny explorer girl called 'Hunyuan World'. Shoulder-length wavy hair fading from sky-blue (#7CC8FF) at the roots to peach-pink (#FFB88C) at the tips, a short ahoge, and a small glass-sphere world hairpin on the right (a clear orb with a tiny mountain inside; her signature accessory). Big teal-green eyes (#2FC5B0) with a star-shaped highlight. Outfit: a cream (#FFF4E0) tunic dress, a short Tencent-blue (#0052D9) scarf, a little brown satchel, white socks and tan boots. In both hands she holds a rolled-out panorama paper scroll with a faint horizon painted on it. Palette: Tencent blue #0052D9, sky blue #7CC8FF, peach #FFB88C, teal #2FC5B0, cream #FFF4E0, tan #C99A6B. Pose: peeking over the scroll with wide curious eyes, one boot lifted mid-step.",
+  "lookZh": "天蓝渐变桃粉长发的小探险家，抱着一卷全景地图",
+  "personality": "好奇心打头阵，边走边画世界"
+ },
+ {
+  "id": "hunyuanworld-1-5",
+  "nameEn": "HunyuanWorld 1.5 (WorldPlay)",
+  "nameZh": "混元世界 1.5",
+  "family": "hunyuan-world",
+  "stage": 2,
+  "types": [
+   "vision",
+   "chaos"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall: the same explorer girl 'Hunyuan World', a bit older. The same wavy hair fading from sky-blue (#7CC8FF) to peach-pink (#FFB88C), now longer with a side braid, the same ahoge, and the same glass-sphere world hairpin, now bigger with a tiny green valley inside. The same teal-green (#2FC5B0) eyes with the star highlight. Outfit: a cream (#FFF4E0) hooded adventurer jacket with Tencent-blue (#0052D9) panels, a short pleated skirt over tan leggings, sturdy brown boots, round brass goggles pushed up on her forehead, and a travel backpack with rolled maps on top. A brass compass rests in her outstretched hand. Palette: Tencent blue #0052D9, sky blue #7CC8FF, peach #FFB88C, teal #2FC5B0, cream #FFF4E0, brass #C9A04A. Pose: striding forward, compass held out, confident smile.",
+  "lookZh": "戴护目镜背着地图卷的探险家，手托黄铜罗盘",
+  "personality": "背包鼓鼓，路在脚下再说",
+  "lineRef": "hunyuanworld-1-0"
+ },
+ {
+  "id": "hy-world-2",
+  "nameEn": "HY-World 2.0",
+  "nameZh": "HY-World 2.0",
+  "family": "hunyuan-world",
+  "stage": 3,
+  "types": [
+   "vision",
+   "chaos"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~3 heads tall: the grown-up 'HY-World', the same explorer girl. The same sky-blue (#7CC8FF) to peach-pink (#FFB88C) wavy hair, now waist length with the side braid and the same ahoge; the same glass-sphere world hairpin, now planet-sized with a tiny mountain, river and clouds inside ringed in gold. The same teal-green (#2FC5B0) eyes with the star highlight. Outfit: a long Tencent-blue (#0052D9) travel cape lined with a soft sunrise gradient, over a cream (#FFF4E0) adventurer dress with gold trim; the brass goggles rest on her head and the compass hangs from her belt. She holds up a round brass hand mirror reflecting a miniature world (a nod to WorldMirror). Palette: #0052D9, #7CC8FF, #FFB88C, teal #2FC5B0, cream #FFF4E0, gold #E6B54A. Pose: cape billowing, mirror raised, calm smile.",
+  "lookZh": "披晨曦渐变斗篷的探险家，举着映出微缩世界的手镜",
+  "personality": "见过很多世界，还想再看一个",
+  "lineRef": "hunyuanworld-1-5"
+ },
+ {
+  "id": "kling-2-0",
+  "nameEn": "Kling 2.0",
+  "nameZh": "可灵 2.0",
+  "family": "kling-mid",
+  "stage": 1,
+  "types": [
+   "motion",
+   "vision"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.2 heads tall, the film-spirit boy a little older than his Kling 1.0 self: still a child, with a Master air. Hair: fluffy black with one white S-shaped swoosh lock over his forehead. Eyes: big black with tilted white ellipse highlights. Outfit: better-fitting black zip hoodie with a white outlined S-swirl print, black cuffed shorts, white sneakers, one orange wristband. Signature accessory: a white film strip trailing from his back like a long ribbon-tail, its frames showing a tiny running stick figure. Props: a mini black-and-white clapperboard, a small fan of three sticker cards (star, cup, cat silhouette: multi-element editing). Palette: ink black #14161A, white #FFFFFF, Kuaishou orange #FF5A1F, silver #C9CED6. Pose: standing ready, clapperboard raised, film strip curling behind, small determined grin.",
+  "lookZh": "举着场记板的小胶片少年，背后拖着长长的胶片尾巴",
+  "personality": "爱举场记板的小导演，心里全是大片"
+ },
+ {
+  "id": "kling-2-5-turbo",
+  "nameEn": "Kling 2.5 Turbo",
+  "nameZh": "可灵 2.5 Turbo",
+  "family": "kling-mid",
+  "stage": 2,
+  "types": [
+   "motion",
+   "compute"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.4 heads tall, the same film-spirit boy as a quick, sporty tween, older than his Kling 2.0 self. Hair: fluffy black swept back by speed, the white S-swoosh lock over his forehead. Eyes: big black with tilted white ellipse highlights. Outfit: black cropped hooded track jacket with white S-curve piping and two orange racing stripes on the sleeves, black shorts, white high-tops with orange turbine-fin soles, orange wristbands. Signature accessory: the white film strip, now a long streamlined scarf-ribbon looping around his shoulders and trailing behind, frames blurred into speed lines. Props: a mini clapperboard, a small orange turbine pinwheel (Turbo). Palette: ink black #14161A, white #FFFFFF, Kuaishou orange #FF5A1F, silver #C9CED6. Pose: mid-sprint lean, scarf streaming, two motion afterimages, cheeky grin.",
+  "lookZh": "穿黑色运动夹克的小胶片少年，胶片围巾拖出速度线",
+  "personality": "又快又省，一路冲刺的小飞人",
+  "lineRef": "kling-2-0"
+ },
+ {
+  "id": "kling-2-6",
+  "nameEn": "Kling 2.6",
+  "nameZh": "可灵 2.6",
+  "family": "kling-mid",
+  "stage": 3,
+  "types": [
+   "motion",
+   "sound"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the film-spirit boy as a lively preteen who has just learned to make sound, just before his big-headphone form. Hair: fluffy black, the white S-swoosh lock over his forehead. Eyes: big black with tilted white ellipse highlights. Outfit: black bomber-style jacket with white S-curve piping and one small sound-wave patch, black shorts, white high-tops, an orange wristband. Signature accessory: the white film strip, now a long scarf with a short audio waveform between the sprocket holes (native audio); small white headphones with orange cores on his head, one cup pushed up. Props: a mini clapperboard, a small fluffy boom mic. Palette: ink black #14161A, white #FFFFFF, Kuaishou orange #FF5A1F, silver #C9CED6. Pose: head tilted as if listening, mic held out, one heel bouncing to the beat.",
+  "lookZh": "挂着白色耳机的小胶片少年，手举毛茸茸的话筒",
+  "personality": "刚学会给画面配声音的好奇少年",
+  "lineRef": "kling-2-5-turbo"
+ },
+ {
+  "id": "mimo-v2-pro",
+  "nameEn": "MiMo-V2-Pro",
+  "nameZh": "MiMo-V2-Pro",
+  "family": "mimo-pro",
+  "stage": 1,
+  "types": [
+   "agent",
+   "logic"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall: a stealthy young hunter girl called 'MiMo-V2-Pro'. Short messy jet-black wolf-cut hair (#1B1B1F) with Xiaomi-orange (#FF6900) tips, one long ahoge and an orange squircle hairclip. Bright amber eyes (#FFB000) with a white highlight. A white half-mask with an orange Mi-squircle badge is pushed up on her forehead, a nod to her anonymous 'Hunter Alpha' debut (her signature accessory). Outfit: an oversized charcoal (#2B2B30) hooded cloak with orange lining and a squircle clasp, a black fitted top, black shorts with an orange stripe, orange-soled boots and a small tool belt. In one hand she holds a rolled quest scroll with a checklist pictogram. Palette: Xiaomi orange #FF6900, charcoal #2B2B30, jet black #1B1B1F, white, amber #FFB000. Pose: crouched mid-sneak, hood up, mask half lifted, sly grin.",
+  "lookZh": "戴半张猎人面具的黑发少女，披着连帽斗篷潜行",
+  "personality": "先潜行再亮相，一鸣惊人"
+ },
+ {
+  "id": "mimo-v2-5-pro",
+  "nameEn": "MiMo-V2.5-Pro",
+  "nameZh": "MiMo-V2.5-Pro",
+  "family": "mimo-pro",
+  "stage": 2,
+  "types": [
+   "agent",
+   "logic"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~3 heads tall: the grown-up, unmasked 'MiMo-V2.5-Pro', the same hunter girl. The same jet-black wolf-cut hair (#1B1B1F) with Xiaomi-orange (#FF6900) tips, now with two thin braids, the same long ahoge and orange squircle hairclip. The same amber (#FFB000) eyes. The same white half-mask with the orange Mi-squircle badge now sits on the side of her head like a festival mask, hood down. Outfit: a long charcoal tech coat with orange lining and gold trim, a black fitted top, orange-striped shorts, orange-soled boots, and a tool belt with a small silver key charm. She holds a very long unrolled quest scroll with checklist pictograms trailing behind her. Palette: Xiaomi orange #FF6900, charcoal #2B2B30, jet black #1B1B1F, white, amber #FFB000, gold. Pose: standing tall, one hand on hip, scroll unrolled.",
+  "lookZh": "摘下面具的黑发猎人，拖着长长的任务卷轴",
+  "personality": "面具摘了，活儿一件不落",
+  "lineRef": "mimo-v2-pro"
+ },
+ {
+  "id": "yi-34b",
+  "nameEn": "Yi-34B",
+  "nameZh": "零一万物 Yi-34B",
+  "family": "yi",
+  "stage": 1,
+  "types": [
+   "open",
+   "chat"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a shy bookish little junior student. Hair: short chin-length bob in deep pine green-black (#16352C) with mint (#9FE3C0) tips, blunt bangs and one small ahoge. Eyes: big lemon-gold (#F2C94C) with round white highlights, gentle and curious. Outfit: plain white short-sleeve blouse with a mint ribbon bow, a pine-green (#1F6B4F) pinafore dress, white socks and simple green sneakers. Signature accessory: an emerald ring-shaped hairband (the '0') with a small vertical white bar pin (the '1') on the left side, a nod to the name 01.AI. Prop: she hugs a small open hardcover book to her chest (open weights, long context). Palette: pine green #16352C, emerald #1F6B4F, mint #9FE3C0, white #FFFFFF, lemon-gold #F2C94C. Pose: standing, hugging the open book, shy small smile, slight head tilt.",
+  "lookZh": "松绿短发小学妹，环形发饰别着竖条，怀抱摊开的书",
+  "personality": "安静好学的开源小学妹，见谁都愿意把书摊开借你看"
+ },
+ {
+  "id": "yi-1-5",
+  "nameEn": "Yi-1.5",
+  "nameZh": "零一万物 Yi-1.5",
+  "family": "yi",
+  "stage": 2,
+  "types": [
+   "open",
+   "chat"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same pine-haired girl a year older, a diligent honor student. Hair: deep pine green-black (#16352C) with mint (#9FE3C0) tips, now shoulder-length with a small half-up knot, blunt bangs, same ahoge. Eyes: lemon-gold (#F2C94C), round highlights, more focused. Outfit: white blouse with mint bow, forest-green (#1F6B4F) cardigan-blazer with white piping, dark pine pleated skirt, knee socks, green loafers. Signature accessory: the same emerald ring hairband with white bar pin, slightly bigger, silver-edged. Props: a short parchment scroll tied with green cord under one arm, and a small open book clipped at her belt. Palette: pine #16352C, emerald #1F6B4F, mint #9FE3C0, white, lemon-gold #F2C94C. Pose: standing upright, scroll under arm, confident small smile.",
+  "lookZh": "及肩短发加半扎发髻，绿色针织外套，腋下夹着卷轴",
+  "personality": "稳扎稳打的优等生，笔记越记越厚",
+  "lineRef": "yi-34b"
+ },
+ {
+  "id": "yi-lightning",
+  "nameEn": "Yi-Lightning",
+  "nameZh": "零一万物 Yi-Lightning",
+  "family": "yi",
+  "stage": 3,
+  "types": [
+   "chat",
+   "compute"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.6 heads tall, the same pine-haired girl grown into a sleek sprinter. Hair: deep pine green-black (#16352C) with mint (#9FE3C0) tips, now a long low ponytail, blunt bangs, same ahoge, one lemon-yellow lightning streak in the bangs. Eyes: lemon-gold (#F2C94C), round highlights, sharp and cheerful. Outfit: pine-green (#1F6B4F) zip track-jacket dress with white piping and gold lightning hem trim, black biker shorts, mint-and-white sneakers, a long mint scarf trailing behind. Signature accessory: the same emerald ring hairband, its white bar pin now a yellow lightning bolt. Props: a short lightning-bolt wand, and a small gold coin charm at her belt. Palette: pine #16352C, emerald #1F6B4F, mint #9FE3C0, white, yellow #F2C94C, gold #D9A92A. Pose: dashing mid-stride, wand pointed forward, cheeky grin.",
+  "lookZh": "长低马尾带闪电挑染，绿色运动外套裙，手握闪电短杖",
+  "personality": "又快又省、不废话的冲刺选手，跑完就收工",
+  "lineRef": "yi-1-5"
+ },
+ {
+  "id": "internlm",
+  "nameEn": "InternLM",
+  "nameZh": "书生 InternLM",
+  "family": "internlm",
+  "stage": 1,
+  "types": [
+   "open",
+   "logic"
+  ],
+  "rarity": "N",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a small bookish girl apprentice (书童) of the scholar line. Hair: deep indigo-black (#262B55) in two round twin buns wrapped with lilac (#B9A8D8) cloth bands whose short ribbon tails flutter, plus one small ahoge. Eyes: bright cyan (#5ED3E6) with white star highlights. Outfit: a plain cream (#F3EEDC) apprentice robe with sleeves a bit too long, a slate-indigo (#5B5F97) sash, lavender-grey (#858599) cuffs, little cloth shoes. Signature accessory: a short bamboo-slip scroll tied with a lilac cord, held in both arms. Palette: indigo-black #262B55, slate-indigo #5B5F97, lavender-grey #858599, lilac #B9A8D8, cream #F3EEDC, cyan #5ED3E6. Pose: hugging the scroll to her chest, wide-eyed and eager, a small determined smile.",
+  "lookZh": "抱着竹简书卷的双髻小书童",
+  "personality": "勤奋好学，有问必答不藏私"
+ },
+ {
+  "id": "internlm2-5",
+  "nameEn": "InternLM2.5",
+  "nameZh": "书生 InternLM2.5",
+  "family": "internlm",
+  "stage": 2,
+  "types": [
+   "open",
+   "logic"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same bookish girl grown into a studious young scholar. Hair: the same deep indigo-black (#262B55) twin buns with lilac (#B9A8D8) cloth bands, now with longer ribbon tails, and the ahoge. Eyes: the same bright cyan (#5ED3E6) with white star highlights. Outfit: a slate-indigo (#5B5F97) scholar hanfu with lavender-grey (#858599) trim and a cream (#F3EEDC) under-collar, sleeves tied back, cloth boots. Signature accessory: the bamboo-slip scroll, now unrolled very long, trailing over her shoulder and along the ground, a few tiny cyan glyph marks on the slips. Second prop: a small brush tucked in her sash. Palette: indigo-black #262B55, slate-indigo #5B5F97, lavender-grey #858599, lilac #B9A8D8, cream #F3EEDC, cyan #5ED3E6. Pose: walking proudly, the long scroll swinging from one arm.",
+  "lookZh": "竹简卷轴拖到地上的靛蓝汉服小书生",
+  "personality": "读书不嫌长，越长越来劲",
+  "lineRef": "internlm"
+ },
+ {
+  "id": "internlm3",
+  "nameEn": "InternLM3",
+  "nameZh": "书生 InternLM3",
+  "family": "internlm",
+  "stage": 3,
+  "types": [
+   "open",
+   "logic"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~3 heads tall, the same bookish girl grown into an elegant young scholar. Hair: the same deep indigo-black (#262B55) twin buns with lilac (#B9A8D8) cloth bands and long ribbon tails, plus two slim silver-lilac hairpins, and the ahoge. Eyes: the same bright cyan (#5ED3E6) with white star highlights. Outfit: a layered slate-indigo (#5B5F97) robe with a long over-jacket, lavender-grey (#858599) trim, cyan cloud embroidery, cream (#F3EEDC) under-sleeves, a belt with a round cyan pendant. Signature accessory: the bamboo-slip scroll, now wound around her forearm in a glowing spiral of cyan-marked slips. Second prop: a brush in the other hand. Palette: indigo-black #262B55, slate-indigo #5B5F97, lavender-grey #858599, lilac #B9A8D8, cream #F3EEDC, cyan #5ED3E6. Pose: unrolling the scroll, brush raised, assured smile.",
+  "lookZh": "卷轴缠臂、袖绣云纹的沉稳青年书生",
+  "personality": "沉稳自持，开卷便要讲出个道理",
+  "lineRef": "internlm2-5"
+ },
+ {
+  "id": "skyreels-v2",
+  "nameEn": "SkyReels V2",
+  "nameZh": "SkyReels V2",
+  "family": "skyreels",
+  "stage": 1,
+  "types": [
+   "motion",
+   "open"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a little aspiring actress who is the younger self of the golden-twin-tail screenwriter girl of her line. Hair: golden-yellow (#F0D01A) in two short twin-tails twisted like film strips with a tiny S-curl, amber (#A87A00) inner folds and sprocket-hole hair bands. Eyes: sky-blue (#8CCBEF) with small cloud-shaped highlights. Outfit: a small white cloud-puff beret, a plain pale sky-blue (#BFE3F5) pinafore dress with a thin yellow film-strip belt, white socks, little shoes. Prop: one small silent clapperboard held in both hands, no speaker grille yet. Palette: sunshine yellow #F0D01A, amber #A87A00, pale sky blue #BFE3F5, sky blue #8CCBEF, white. Pose: one hand raised in a shy dramatic 'action' gesture, flushed cheeks, excited little smile.",
+  "lookZh": "抱着无声场记板的金色小双马尾",
+  "personality": "害羞但爱演，一喊开拍就来劲",
+  "lineRef": "skyreels"
+ },
+ {
+  "id": "skyreels-v3",
+  "nameEn": "SkyReels V3",
+  "nameZh": "SkyReels V3",
+  "family": "skyreels",
+  "stage": 2,
+  "types": [
+   "motion",
+   "open"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same actress girl grown into a teen trainee. Hair: the same golden-yellow (#F0D01A) film-strip twin-tails, now long and folding clearly into an S shape, amber (#A87A00) inner folds and sprocket-hole hair bands. Eyes: the same sky-blue (#8CCBEF) with cloud-shaped highlights. Outfit: the white cloud-puff beret, a short pale sky-blue (#BFE3F5) trench dress with a yellow film-strip belt and a small bow at the back, white boots. Props: a tiny clapperboard in one hand, and a small film-reel charm hanging at her hip. Palette: sunshine yellow #F0D01A, amber #A87A00, pale sky blue #BFE3F5, sky blue #8CCBEF, white. Pose: mid-spin with one arm flung out like a camera pan, bright cinematic smile.",
+  "lookZh": "腰挂胶片卷、双马尾折成 S 的少年演员",
+  "personality": "一上镜头就停不下来的戏瘾少女",
+  "lineRef": "skyreels-v2"
+ },
+ {
+  "id": "ernie-x1",
+  "nameEn": "ERNIE X1",
+  "nameZh": "文心 X1",
+  "family": "ernie-x",
+  "stage": 1,
+  "types": [
+   "logic",
+   "search"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, an earnest young detective-researcher girl, the younger form of the ERNIE X line. Silvery-white (#E6ECFA) hair in a high ponytail with cobalt-blue (#2932E1) tips, long side locks and one bouncy ahoge. Round crimson-red (#E0344A) eyes with a determined shine. Outfit: a slightly too-large white lab coat with a Baidu-blue (#2932E1) collar and red piping over a navy (#0B1E5B) vest and short pleated skirt, brown boots, a small bear-paw-print badge on the chest. Signature accessory: a hand-held magnifying glass with a hexagon frame and a tiny paw print in the glass. Second prop: a small notebook under her arm. Palette: silver-white #E6ECFA, Baidu blue #2932E1, navy #0B1E5B, crimson #E0344A, white. Pose: leaning forward to peer through the magnifier, other hand on her chin.",
+  "lookZh": "银白高马尾的小侦探研究员，举着六边形放大镜",
+  "personality": "认真到较真，凡事先查证再下结论"
+ },
+ {
+  "id": "ernie-x1-1",
+  "nameEn": "ERNIE X1.1",
+  "nameZh": "文心 X1.1",
+  "family": "ernie-x",
+  "stage": 2,
+  "types": [
+   "logic",
+   "search"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the grown-up ERNIE X detective-researcher girl. Silvery-white (#E6ECFA) hair now long in a high ponytail with cobalt-blue (#2932E1) tips, the same side locks and ahoge. Round crimson-red (#E0344A) eyes, focused and confident. Outfit: a fitted long white research coat with wide Baidu-blue (#2932E1) lapels, crimson piping and a navy (#0B1E5B) vest, pleated navy skirt, knee boots, a leather tool-belt with a tiny wrench and compass, the bear-paw badge now an enamel pin. Signature accessory: the same hexagon-framed magnifying glass, larger, with a brass handle. Second prop: a thick case-file folder. Palette: silver-white #E6ECFA, Baidu blue #2932E1, navy #0B1E5B, crimson #E0344A, brass #C9A24A. Pose: striding forward, magnifier held high, other hand on the tool-belt, a calm smile.",
+  "lookZh": "长款研究外套的银白马尾研究员，腰挂工具带",
+  "personality": "冷静干练，工具带一拍就把线索串起来",
+  "lineRef": "ernie-x1"
+ },
+ {
+  "id": "step-2",
+  "nameEn": "Step-2",
+  "nameZh": "阶跃 Step-2",
+  "family": "step-early",
+  "stage": 1,
+  "types": [
+   "compute",
+   "chat"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a small earnest girl, the quiet big-sister type of the StepFun staircase family. Hair: aqua-cyan (#4FD8E8) neat chin-length bob with a short side ponytail tied by a white ribbon, mint (#7FF0D8) fade at the tips, a small zigzag stair-step ahoge. Signature accessory: a black rounded-square hair clip (#111111) with the white pixel-staircase logo above her right ear. Eyes: calm sea-blue (#2A8FD8) with white four-point star highlights. Outfit: a white school cardigan-dress with teal (#14B8C8) collar and ribbon, a black stair-step hem, white socks, sneakers. Prop: one heavy black pixel-stair block carried in both arms. Palette: aqua #4FD8E8, mint #7FF0D8, teal #14B8C8, sea-blue #2A8FD8, white, black #111111. Pose: leaning slightly under the block's weight, determined small smile.",
+  "lookZh": "抱着黑色台阶方块的水蓝短发小姐姐",
+  "personality": "话少稳重，再沉的担子也一级级扛上去"
+ },
+ {
+  "id": "step-3",
+  "nameEn": "Step 3",
+  "nameZh": "阶跃 Step 3",
+  "family": "step-early",
+  "stage": 2,
+  "types": [
+   "compute",
+   "agent"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the same earnest girl grown into a capable field engineer. Hair: the same aqua-cyan (#4FD8E8), grown long into a waist-length side ponytail tied by a white ribbon, mint (#7FF0D8) tips, the zigzag stair-step ahoge. Signature accessory: the black rounded-square hair clip (#111111) with the white pixel-staircase logo, larger. Eyes: the same sea-blue (#2A8FD8) with star highlights, plus a round aqua monocle over the left eye. Outfit: a white field coat with teal (#14B8C8) collar, a black stair-step hem, black gloves, sneakers. Props: a flat tablet showing three glowing pixel stairs, and a small open padlock charm on her belt. Palette: aqua #4FD8E8, mint #7FF0D8, teal #14B8C8, sea-blue #2A8FD8, black #111111. Pose: stepping up a black stair block, tablet forward, confident smile.",
+  "lookZh": "单片镜、手托台阶平板的水蓝长马尾少女",
+  "personality": "行动派，看清路线就一级级登上去",
+  "lineRef": "step-2"
+ },
+ {
+  "id": "command-r-plus",
+  "nameEn": "Command R+",
+  "nameZh": "Command R+",
+  "family": "cohere-command",
+  "stage": 1,
+  "types": [
+   "chat",
+   "search"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a diligent junior librarian-clerk girl, the youngest stage of her line. Hair: warm coral (#F4795B) in a short layered bob with two short side braids tied with cream ribbons, one small ahoge. Eyes: big round lilac-violet (#9B8CE8), soft cream highlight. Signature accessory (kept through all stages): a cream bookmark-ribbon hairclip with a small round deep-green seal, on the left. Outfit: cream blouse with a rounded collar, forest-green (#2F5D50) pinafore jumper with coral buttons, white socks, brown loafers. Prop: one open ledger book hugged to her chest, its pages marked with tiny round footnote dots (citations). Palette: coral #F4795B, forest green #2F5D50, cream #FFF3E0, lilac #C9B8F0, ink #2B2B3A. Pose: raising one finger as if pointing at a source, earnest smile; idle = braids swing.",
+  "lookZh": "拿着账本的见习图书管理员，珊瑚色短发与书签发夹",
+  "personality": "认真到爱查证，每句话都要标出处"
+ },
+ {
+  "id": "command-a",
+  "nameEn": "Command A",
+  "nameZh": "Command A",
+  "family": "cohere-command",
+  "stage": 2,
+  "types": [
+   "chat",
+   "search"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same librarian-clerk girl grown into a capable office agent. Hair: warm coral (#F4795B), the bob now shoulder-length with two longer side braids tied with cream ribbons, small ahoge kept. Eyes: lilac-violet (#9B8CE8), soft cream highlight, calmer. Signature accessory: the cream bookmark-ribbon hairclip with the small deep-green seal on the left. Outfit: crisp cream shirt, forest-green (#2F5D50) waistcoat with coral buttons, coral bow tie, forest-green pleated skirt, dark tights, brown loafers. Props: a thick clasped reference book under one arm, and two small chip-shaped charms on her belt (running on two GPUs). Palette: coral #F4795B, forest green #2F5D50, cream #FFF3E0, lilac #C9B8F0, ink #2B2B3A. Pose: striding forward, one hand adjusting the bow tie, assured smile; idle = braids sway.",
+  "lookZh": "长出长辫子的图书管理员，深绿马甲配珊瑚领结",
+  "personality": "办事稳妥，少设备也能扛大活",
+  "lineRef": "command-r-plus"
+ },
+ {
+  "id": "command-a-plus",
+  "nameEn": "Command A+",
+  "nameZh": "Command A+",
+  "family": "cohere-command",
+  "stage": 3,
+  "types": [
+   "chat",
+   "search"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the librarian-clerk girl grown into a poised young woman, chief archivist. Hair: warm coral (#F4795B), long side braids plus a crown braid, small ahoge kept. Eyes: lilac-violet (#9B8CE8), cream highlight, serene. Signature accessory: the cream bookmark-ribbon hairclip with the small deep-green seal on the left. Outfit: cream blouse with a lilac cravat, long forest-green (#2F5D50) cloak-coat with lilac lining, a small globe brooch and a row of tiny round expert pins on the lapel (a few glowing), brown boots. Props: a large clasped grimoire-like book with a deep-green seal, and a small brass key pendant (on-prem). Palette: coral #F4795B, forest green #2F5D50, cream #FFF3E0, lilac #C9B8F0, ink #2B2B3A. Pose: holding the book open at her hip, gentle confident smile.",
+  "lookZh": "成年图书管理长，深绿长披风，胸前一排专家徽章与地球仪胸针",
+  "personality": "沉着可靠，自家机房里最稳的那位",
+  "lineRef": "command-a"
+ },
+ {
+  "id": "sonar",
+  "nameEn": "Sonar",
+  "nameZh": "Sonar",
+  "family": "sonar",
+  "stage": 1,
+  "types": [
+   "search",
+   "chat"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, a small shy girl just starting out. Hair: deep-sea teal (#14535C) wavy bob with side-swept bangs, silver-cyan (#BFE9EC) tips, a tiny wave-curl ahoge, and her signature off-white three-arc 'ping' hairclip (#FBFAF4) above the left ear. Eyes: round teal (#21808D) with white double-ring ripple highlights. Outfit: a paper-white (#FBFAF4) hooded rain-cape lined in off-black (#091717), a teal (#21808D) ribbon tie, off-black shorts, short teal rain boots. Prop: one small round off-white buoy lantern held in both hands, a tiny numbered tag dangling from it. Palette: teal #21808D, deep-sea teal #14535C, paper-white #FBFAF4, off-black #091717, silver-cyan #BFE9EC. Pose: head tilted, ear leaning toward the lantern as if listening for an echo, hopeful smile.",
+  "lookZh": "抱着浮标灯笼侧耳听回声的小雨披少女",
+  "personality": "爱侧耳倾听，一有回声就要查个明白"
+ },
+ {
+  "id": "sonar-pro",
+  "nameEn": "Sonar Pro",
+  "nameZh": "Sonar Pro",
+  "family": "sonar",
+  "stage": 2,
+  "types": [
+   "search",
+   "chat"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same girl grown into a confident junior researcher. Hair: the same deep-sea teal (#14535C) wavy hair, now shoulder-length, silver-cyan (#BFE9EC) tips, the wave-curl ahoge, and the same off-white ping hairclip (#FBFAF4) with a fourth outer arc. Eyes: the same teal (#21808D) with double-ring highlights. Outfit: a teal (#21808D) research cape-coat lined in off-black (#091717) with paper-white cuffs, two small numbered footnote badges on the collar, off-black tights, boots. Props: a handheld off-white parabolic sonar dish on a short stick, and a thick notebook clipped to her belt. Palette: teal #21808D, deep-sea teal #14535C, paper-white #FBFAF4, off-black #091717, silver-cyan #BFE9EC. Pose: dish held out in front, free hand on its dial, a smug-cute grin.",
+  "lookZh": "举着声纳碟、领口别着脚注徽章的研究员",
+  "personality": "自信干练，探测范围比谁都广",
+  "lineRef": "sonar"
+ },
+ {
+  "id": "sonar-pro-search",
+  "nameEn": "Sonar Pro Search",
+  "nameZh": "Sonar Pro Search",
+  "family": "sonar",
+  "stage": 3,
+  "types": [
+   "search",
+   "agent"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~3 heads tall, the same girl grown into a poised field agent. Hair: the same deep-sea teal (#14535C) wavy hair, now waist-long, silver-cyan (#BFE9EC) fade, the wave-curl ahoge, and her off-white ping hairclip (#FBFAF4) now five arcs wide. Eyes: the same teal (#21808D) with double-ring highlights. Outfit: a long teal (#21808D) expedition coat lined in off-black (#091717) with paper-white trim, a high collar with three small footnote badges, off-black gloves, cream boots. Props: a tablet-sized radar-sweep screen in one hand, and a small round teal scout drone with one magnifier eye at her shoulder. Palette: teal #21808D, deep-sea teal #14535C, paper-white #FBFAF4, off-black #091717, silver-cyan #BFE9EC. Pose: striding forward, one hand pointing ahead, calm confident smile.",
+  "lookZh": "披着远征长外套、肩头跟着探测小球的搜索特工",
+  "personality": "冷静的探路者，认准目标一路追到底",
+  "lineRef": "sonar-pro"
+ },
+ {
+  "id": "nemotron-70b",
+  "nameEn": "Llama-3.1-Nemotron-70B-Instruct",
+  "nameZh": "Llama-3.1-Nemotron-70B",
+  "family": "nemotron-llama",
+  "stage": 1,
+  "types": [
+   "open",
+   "compute"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, the youngest stage of the Llama-Nemotron girl, a cheerful llama-eared helper. Hair: jet-black (#111111) hair in a short low ponytail with NVIDIA-green (#76B900) gradient ends and blunt bangs. Eyes: bright green with a tiny spiral swirl iris echoing the NVIDIA eye logo. Outfit: oversized cream (#F3EAD3) wool sweater with a green stripe at the hem, black shorts, green sneakers with gunmetal soles. Signature accessory: a cream llama-ear headband with green inner ears. Props: a gold-and-green star medal pinned to her chest (the reward signal of RLHF) and a small card with a green tick held in one hand. Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: proud little stance, tick card held up, ears perked.",
+  "lookZh": "戴羊驼耳发箍的黑发小姑娘，胸口别着绿金奖章",
+  "personality": "被夸一句就干劲十足的乖巧小帮手"
+ },
+ {
+  "id": "nemotron-super-49b",
+  "nameEn": "Llama-3.3-Nemotron-Super-49B",
+  "nameZh": "Llama-3.3-Nemotron-Super-49B",
+  "family": "nemotron-llama",
+  "stage": 2,
+  "types": [
+   "open",
+   "compute"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same Llama-Nemotron girl, now slimmer and sharper after a trim. Hair: jet-black (#111111) ponytail grown longer with NVIDIA-green (#76B900) gradient ends, blunt bangs. Eyes: bright green with the tiny spiral swirl iris. Outfit: fitted black varsity jacket with green sleeves over a cream (#F3EAD3) knit vest, pleated black skirt, gunmetal (#4A4F55) boots; the star medal still pinned on the jacket. Signature accessory: the same cream llama-ear headband with green inner ears, neater and tighter. Prop: a pair of tiny green-handled pruning shears in one hand (a pruned and distilled build). Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: snipping the air with the shears, cheeky confident grin, ponytail swinging.",
+  "lookZh": "一身利落黑绿夹克的羊驼耳少女，手里拿着小修枝剪",
+  "personality": "删繁就简，剪掉多余的才更利索",
+  "lineRef": "nemotron-70b"
+ },
+ {
+  "id": "nemotron-ultra-253b",
+  "nameEn": "Llama-3.1-Nemotron-Ultra-253B",
+  "nameZh": "Llama-3.1-Nemotron-Ultra-253B",
+  "family": "nemotron-llama",
+  "stage": 3,
+  "types": [
+   "open",
+   "logic"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the grown-up Llama-Nemotron girl, a calm reasoning strategist. Hair: jet-black (#111111) ponytail now waist-length with NVIDIA-green (#76B900) gradient ends, blunt bangs. Eyes: bright green with the spiral swirl iris, thoughtful and sharp. Outfit: long black coat with a cream (#F3EAD3) wool collar and glowing green circuit-vein lining, green-sleeved varsity top, gunmetal (#4A4F55) boots; the star medal pinned to the collar. Signature accessory: the same cream llama-ear headband with green inner ears, now with thin gunmetal heatsink-fin trim. Props: a softly glowing green thinking orb in one hand, and the tiny pruning shears at her belt. Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: orb raised in one palm, coat swept back, composed half-smile.",
+  "lookZh": "长马尾及腰的羊驼耳少女，托着一枚发绿光的思考球",
+  "personality": "沉得住气，想清楚再出手的冷静军师",
+  "lineRef": "nemotron-super-49b"
+ },
+ {
+  "id": "hermes-3-405b",
+  "nameEn": "Hermes 3 405B",
+  "nameZh": "Hermes 3 405B",
+  "family": "hermes-llm",
+  "stage": 1,
+  "types": [
+   "open",
+   "chat"
+  ],
+  "rarity": "R",
+  "design": "Chibi HD-2D pixel sprite, ~2 heads tall, the younger stage of the Hermes herald-scribe girl, a friendly open-door messenger. Hair: wavy shoulder-length amber-gold (#E8A33D) hair with a small ahoge and an ultramarine (#2B3FE0) ribbon bow on one side. Eyes: deep ultramarine with ring-shaped white highlights. Outfit: cream (#F6F0E0) tunic with ultramarine engraving-hatch trim, a short ultramarine cape, brown leather boots. Signature accessory: a rolled parchment scroll tied with an ultramarine cord, slung across her back like a quiver (open weights, letters anyone may read). Prop: a small brass handbell held in one hand, for chatting with passers-by. Palette: ultramarine #2B3FE0, amber gold #E8A33D, parchment cream #F6F0E0, ink black #15151F, brass #C9A24A. Pose: skipping forward, ringing the bell, bright open smile.",
+  "lookZh": "背着卷轴、摇着铜铃的琥珀金发小信使",
+  "personality": "热心的开门信使，谁来问都乐意回话"
+ },
+ {
+  "id": "hermes-4-405b",
+  "nameEn": "Hermes 4 405B",
+  "nameZh": "Hermes 4 405B",
+  "family": "hermes-llm",
+  "stage": 2,
+  "types": [
+   "open",
+   "logic"
+  ],
+  "rarity": "SR",
+  "design": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the grown-up Hermes herald-scribe girl. Hair: wavy amber-gold (#E8A33D) hair now past the shoulders, same ahoge and ultramarine (#2B3FE0) ribbon bow. Eyes: deep ultramarine with ring-shaped white highlights. Outfit: long cream (#F6F0E0) tabard coat with ultramarine hatch trim and gold edging, high-collared ultramarine cloak, brown boots. Signature accessory: the same parchment scroll tied with an ultramarine cord, now longer and partly unfurled down her back. Props: a small glass lantern with an ultramarine flame and a half-open shutter (hybrid reasoning), and the brass handbell at her belt. Palette: ultramarine #2B3FE0, amber gold #E8A33D, parchment cream #F6F0E0, ink black #15151F, brass #C9A24A. Pose: lantern raised beside her face, cloak flowing, calm smile.",
+  "lookZh": "披高领蓝斗篷的琥珀金发少女，提着半掩灯罩的蓝焰提灯",
+  "personality": "先点灯想一想，再从容开口的信使",
+  "lineRef": "hermes-3-405b"
  }
 ]
