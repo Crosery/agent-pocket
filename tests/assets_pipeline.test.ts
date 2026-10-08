@@ -188,7 +188,7 @@ test('creature prompts: every (stage, family size) in the roster has its own sta
   const spec = templates.kinds.creature
   const hint: LookupSpec | undefined = spec?.lookups?.stageHint
   assert.ok(spec?.source && hint, 'creature kind with a stageHint lookup')
-  const roster = JSON.parse(readFileSync(join(ROOT, spec.source.file), 'utf8')) as { id: string; family: string; stage: number; design: string }[]
+  const roster = JSON.parse(readFileSync(join(ROOT, spec.source.file), 'utf8')) as { id: string; family: string; stage: number; design: string; lineRef?: string }[]
   const family = new Map<string, number>()
   for (const r of roster) family.set(r.family, (family.get(r.family) ?? 0) + 1)
   for (const r of roster) {
@@ -202,9 +202,12 @@ test('creature prompts: every (stage, family size) in the roster has its own sta
     assert.equal(j.out, `public/assets/creatures/${j.id}.png`)
     // reference images: the style anchor always, plus the family identity sheet when one exists
     // (refs are private and absent from other checkouts; there only check jobs.json names a subset, in order)
-    const fam = roster.find((r) => r.id === j.id)!.family
-    const cand = ['assets_src/refs/creature/_style.png', `assets_src/refs/creature/${fam}.png`]
+    const rec = roster.find((r) => r.id === j.id)!
+    const cand = ['assets_src/refs/creature/_style.png', `assets_src/refs/creature/${rec.family}.png`]
     const want = existsSync(join(ROOT, 'assets_src/refs')) ? cand.filter((p) => existsSync(join(ROOT, p))) : cand.filter((p) => (j.images ?? []).includes(p))
+    // the neighbouring evolution form's raw render (lineRef) is gitignored: it counts when it exists here or jobs.json names it
+    const line = rec.lineRef ? `assets_src/raw/creature/${rec.lineRef}.png` : ''
+    if (line && (existsSync(join(ROOT, line)) || (j.images ?? []).includes(line))) want.push(line)
     assert.deepEqual(j.images, want, `${j.id}: reference images`)
     assert.ok(j.prompt.startsWith('REFERENCE IMAGES: Image 1 '), `${j.id}: prompt must explain its reference images`)
   }
