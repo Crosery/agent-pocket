@@ -89,7 +89,7 @@ test('lesson facts agree with the rules data', () => {
   const loops = [['logic', 'chaos', 'search', 'logic'], ['compute', 'code', 'logic', 'compute'], ['write', 'motion', 'vision', 'write'], ['safety', 'open', 'code', 'safety']]
   for (const loop of loops) for (let i = 0; i < loop.length - 1; i++) assert.equal(eff(loop[i], loop[i + 1]), 2, `${loop[i]} -> ${loop[i + 1]}`)
   assert.equal(eff('chat', 'compute'), 0)
-  assert.equal(eff('sound', 'vision'), 0)
+  assert.deepEqual(Object.entries(CONTENT.typeChart).flatMap(([a, row]) => Object.entries(row).filter(([, m]) => m === 0).map(([d]) => `${a}>${d}`)), ['chat>compute'], 'the 免疫 page names the only immunity')
   assert.equal(CONTENT.config.battle.stab, 1.5)
   assert.equal(CONTENT.config.battle.statStageLimit, 6)
   assert.deepEqual(Object.entries(CONTENT.statusImmunities).map(([k, v]) => `${k}:${v}`).sort(), ['burn:compute', 'freeze:code', 'poison:safety', 'sleep:open'])
