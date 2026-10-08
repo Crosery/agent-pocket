@@ -4,6 +4,7 @@
 import renderJson from '../../../content/render.json' with { type: 'json' }
 import { CONTENT, type Content } from '../../shared/content/index.ts'
 import type { GameMap, Settings } from '../../shared/types.ts'
+import type { FootstepsConfig, ImpactKind, LeavesConfig, PhysicsConfig, ReflectionsConfig, SnowCoverConfig, WaterFxConfig } from './physics-config.ts'
 
 export type Vec2 = [number, number]
 export type Vec3 = [number, number, number]
@@ -179,16 +180,31 @@ export interface WaterConfig {
   /** Pixel ripples: noise frequency per tile, scroll speed, trough/crest thresholds (0..1) and their strength. */
   rippleScale: number; rippleSpeed: number; troughLevel: number; troughShade: number; crestLevel: number; crestAmount: number
   falls: FallsConfig
+  /** Actor / rain rings and washing foam (render.json water.interact). */
+  interact: WaterFxConfig
 }
 export interface LavaConfig {
   hot: string; mid: string; crust: string; emissive: number; pixelsPerTile: number
   flowSpeed: number; crustAmount: number; pulseSpeed: number
 }
-export interface WindConfig { dir: Vec2; strength: number; speed: number; gust: number; gustSpeed: number; swayHeight: number }
+export interface WindConfig {
+  dir: Vec2; strength: number; speed: number; gust: number; swayHeight: number
+  /** Extra downwind lean of swaying geometry at full gust, in units of `strength`. */
+  gustLean: number
+  /** Gust fronts travelling along `dir`: wavelength (tiles), front speed (tiles/s), peak sharpness (power), front
+   * warp (rad), calm floor of the slow strength envelope and its rate (rad/s) and spatial phase (rad/tile). */
+  field: { wavelength: number; speed: number; sharp: number; warp: number; calm: number; envelopeRate: number; envelopeSpace: number }
+  /** Particle / leaf drift: base air speed (tiles/s at strength 1) and how far gusts modulate it (0..1). */
+  drift: { base: number; gust: number }
+}
 export interface GrassConfig {
   height: number; width: number; planes: number; jitter: number; colorJitter: number; scaleJitter: number
   bendRadius: number; bendStrength: number; sway: number; texSize: number; blades: number
   rootShade: number; tipLight: number; maxBenders: number; alphaTest: number; bendSink: number; bendCore: number
+  /** Lingering bend: grid cells per tile, window size (tiles) around the focus, seconds until a trampled cell is back
+   * up (to ~5 %), actors stamped per frame, fade of the window edge (tiles); strength / sink / darken = tip push (tuft
+   * heights), flatten and crushed-blade darkening of trampled tufts; decor = bend / flatten of ground sprigs. */
+  trample: { cellsPerTile: number; window: number; recoverSec: number; maxBenders: number; edgeFade: number; strength: number; sink: number; darken: number; decor: { strength: number; sink: number } }
   /** Tall-grass keys drawn with the asset store's tuft texture (placeholder art included) instead of blades derived
    * from the ground texture's average colour. */
   assetTufts?: string[]
@@ -636,6 +652,14 @@ export interface RenderContent {
   lava: LavaConfig
   wind: WindConfig
   grass: GrassConfig
+  /** World physics feedback (footsteps, leaves, rain splashes, reflections, quality tiers). */
+  physics: PhysicsConfig
+  footsteps: FootstepsConfig
+  leaves: LeavesConfig
+  /** Splashes where the drops of a particle field (rain, snow) land, keyed by the field's kind. */
+  impacts: Record<string, ImpactKind>
+  snowCover: SnowCoverConfig
+  reflections: ReflectionsConfig
   lights: LightsConfig
   weather: Record<string, WeatherRenderDef>
   weatherFadeSeconds: number

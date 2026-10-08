@@ -18,10 +18,11 @@ import { cameraPitch, cameraYaw } from './sprite-utils.ts'
 import { createActorImpl, createCreatureActorImpl, type ActorContext, type ActorEntry } from './world/actors.ts'
 import { createTerrainAtlas, terrainAtlasKeys } from './world/atlas.ts'
 import { createCameraRig, type CameraBounds } from './world/camera.ts'
-import { applySnowDust, bindClimate, createClimate, type ClimateGrid } from './world/climate.ts'
+import { applySnowDust, bindClimate, createClimate, setSnowCover, type ClimateGrid } from './world/climate.ts'
 import { tileOf } from './world/coords.ts'
 import { createDecorLayer } from './world/decor.ts'
 import { createFringeLayer } from './world/fringe.ts'
+import { createFootsteps, type StepActor } from './world/footsteps.ts'
 import { createFxSystem } from './world/fx.ts'
 import { createGrassLayer, type GrassBender } from './world/grass.ts'
 import { createLightRig, type LightSource } from './world/lights.ts'
@@ -90,12 +91,13 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
     specular: new THREE.Color().setRGB(...hexToRgb(RENDER.terrain.glossy.specular), THREE.SRGBColorSpace),
   }), false))
   const liquids = createLiquidMaterials()
-  const grass = createGrassLayer(assets, atlas)
+  const grass = createGrassLayer(assets, atlas, { trample: true })
   const props = createPropLayer(assets, { occlusion: true })
   const decor = createDecorLayer()
   const fringe = createFringeLayer(atlas.texture)
   const lights = createLightRig()
   const fx = createFxSystem()
+  const footsteps = createFootsteps((x, z, _y, amp) => liquids.ripple(x, z, amp))
   const questTrail = createQuestTrail()
   const overlayLayer = createOverlayLayer(overlay)
   const aurora = createAurora()
@@ -103,7 +105,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   chunkRoot.name = 'chunks'
   const actorsGroup = new THREE.Group()
   actorsGroup.name = 'actors'
-  scene.add(chunkRoot, lights.group, fx.group, actorsGroup, aurora.mesh, questTrail.glow, questTrail.mesh)
+  scene.add(chunkRoot, lights.group, fx.group, footsteps.group, actorsGroup, aurora.mesh, questTrail.glow, questTrail.mesh)
   bindOcclusion(scene)
 
   const registry = new Set<ActorEntry>()
@@ -138,7 +140,12 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   /** First update after a map load: weather and ambient particles start at full level instead of fading in. */
   let snapAmbience = false
   let shadowsCast = true
+  let physicsTier = ''
+  /** Snow built up by the weather, 0..1 of render.json snowCover.max. */
+  let snowLevel = 0
   const post: Partial<PostParams> = {}
+  const stepActors = new WeakMap<ActorEntry, StepActor>()
+  const stepList: StepActor[] = []
 
   const actorCtx: ActorContext = {
     assets,
@@ -317,6 +324,8 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
 
   function clearMap(): void {
     questTrail.set([], () => 0)
+    grass.clearTrample()
+    footsteps.setEnv(null)
     streamer?.clear()
     streamer = null
     props.clear()
@@ -456,6 +465,13 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       bindClimate(climate, quality().snowDust)
       heights = createHeightField(s, IS.heightWindow)
       mapSize.copy(heights.size)
+      footsteps.setEnv({
+        terrainKey: (tx, ty) => s.terrain(tx, ty)?.key ?? null,
+        isLiquid: (tx, ty) => s.isLiquid(tx, ty),
+        liquidY: (tx, ty) => s.liquidY(tx, ty),
+        groundY: (x, z) => sampleWalkHeight(s, x, z),
+        snowAt: (x, z) => climate?.sample('snow', x, z) ?? 0,
+      })
       gen.prefetched = 0; gen.ensured = 0; gen.lastMs = 0; gen.maxMs = 0; gen.retainMs = 0
       retainT = IS.retainSeconds
       decor.setMap(m)
@@ -557,7 +573,25 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
         benders.push({ x: p.x, y: p.y, z: p.z, r: e.bendRadius })
       }
       benders.sort((a, b) => (a.x - focus.x) ** 2 + (a.z - focus.z) ** 2 - ((b.x - focus.x) ** 2 + (b.z - focus.z) ** 2))
-      grass.setBenders(benders)
+      const tier = RENDER.physics.tiers[st.quality] ?? RENDER.physics.tiers.medium
+      if (st.quality !== physicsTier) { physicsTier = st.quality; footsteps.configure(tier) }
+      if (tier.trample) {
+        const lh = CONTENT.config.world.levelHeight * 1.5
+        grass.updateTrample(dt, focus.x, focus.z, benders, (x, z, y) => !sampler || Math.abs(sampleWalkHeight(sampler, x, z) - y) < lh)
+      } else {
+        grass.clearTrample()
+        grass.setBenders(benders)
+      }
+
+      stepList.length = 0
+      for (const e of registry) {
+        let a = stepActors.get(e)
+        if (!a) { a = { id: e, x: 0, y: 0, z: 0, visible: true, kind: e.stepKind, scale: e.stepScale }; stepActors.set(e, a) }
+        const p = e.object.position
+        a.x = p.x; a.y = p.y; a.z = p.z
+        a.visible = e.isVisible()
+        stepList.push(a)
+      }
 
       atlasT -= dt
       if (atlasT <= 0) { atlasT = 0.5; if (atlas.refresh()) grass.refresh() }
@@ -574,6 +608,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       const windVec = new THREE.Vector2(...RENDER.wind.dir).normalize().multiplyScalar(wx.wind)
       for (const [k, fl] of fields) {
         fl.target = wanted.get(k) ?? 0
+        fl.impactOn = tier.impacts
         if (snap) fl.level = fl.target
         const def = RENDER.particles[k]
         const tf = def.time === 'night' ? night : def.time === 'day' ? 1 - night : 1
@@ -581,6 +616,14 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
         if (fl.target === 0 && fl.level < 0.002) { scene.remove(fl.points); fl.dispose(); fields.delete(k) }
       }
       aurora.update(time, camera, wx.aurora * (RENDER.aurora.nightOnly ? s.lamps : 1))
+      footsteps.update(dt, time, focus, stepList, sky.ambientLight, pxPerUnit)
+      liquids.setRipples(tier.ripples, weatherLevels.get('rain') ?? 0)
+      {
+        const C = RENDER.snowCover
+        const snowing = weatherLevels.get(C.weather) ?? 0
+        snowLevel = Math.min(1, Math.max(0, snowLevel + (snowing > 0.3 ? (dt / C.buildSec) * snowing : -dt / C.meltSec)))
+        setSnowCover(tier.snowCover && outdoor ? snowLevel * C.max : 0)
+      }
       fx.update(dt, time, camera, pxPerUnit)
       questTrail.update(time, reducedMotion.matches)
 
@@ -613,7 +656,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       return { x: (_v.x * 0.5 + 0.5) * w, y: (0.5 - _v.y * 0.5) * h, visible }
     },
 
-    spawnFx(kind, x, y, elev) { fx.spawn(kind, x, elev, y) },
+    spawnFx(kind, x, y, elev) { if (!footsteps.route(kind, x, elev, y)) fx.spawn(kind, x, elev, y) },
 
     setGroundItems(items) {
       // ground items are given as tile indices (GroundItemDef): orbs float over the tile centre
@@ -644,7 +687,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       for (const e of [...registry]) e.object.removeFromParent()
       registry.clear()
       grass.dispose(); props.dispose(); decor.dispose(); fringe.dispose(); lights.dispose(); fx.dispose(); questTrail.dispose(); aurora.dispose(); sky.dispose()
-      liquids.dispose(); atlas.dispose(); matte.dispose(); glossy.dispose(); overlayLayer.dispose()
+      liquids.dispose(); footsteps.dispose(); atlas.dispose(); matte.dispose(); glossy.dispose(); overlayLayer.dispose()
       map = null
       sampler = null
     },

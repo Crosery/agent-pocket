@@ -108,11 +108,41 @@
     "troughShade": 0.12,
     "crestLevel": 0.75,
     "crestAmount": 0.24,
-    "falls": {"body": "#78c4ec", "streak": "#e6f7ff", "speed": 2.4, "streaks": 5, "streakAmount": 0.36, "crestBand": 0.08, "splashBand": 0.24, "alpha": 0.88, "offset": 0.03, "overlap": 0.06, "crest": 0.02}
+    "falls": {"body": "#78c4ec", "streak": "#e6f7ff", "speed": 2.4, "streaks": 5, "streakAmount": 0.36, "crestBand": 0.08, "splashBand": 0.24, "alpha": 0.88, "offset": 0.03, "overlap": 0.06, "crest": 0.02},
+    "interact": {"ripple": {"speed": 0.85, "life": 1.35, "width": 0.09, "strength": 1.0}, "rain": {"cell": 1.3, "life": 1.15, "radius": 0.36, "width": 0.085, "strength": 0.7}, "wash": {"period": 5.2, "width": 0.11, "strength": 0.5}}
   },
   "lava": {"hot": "#ffcf4a", "mid": "#ff5a14", "crust": "#3c120a", "emissive": 2.6, "pixelsPerTile": 16, "flowSpeed": 0.22, "crustAmount": 0.45, "pulseSpeed": 1.3},
-  "wind": {"dir": [1, 0.35], "strength": 0.085, "speed": 1.6, "gust": 0.4, "gustSpeed": 0.35, "swayHeight": 3},
-  "grass": {"height": 0.62, "width": 0.78, "planes": 3, "jitter": 0.32, "colorJitter": 0.1, "scaleJitter": 0.22, "bendRadius": 1.15, "bendStrength": 0.6, "sway": 1.4, "texSize": 32, "blades": 11, "rootShade": 0.55, "tipLight": 1.22, "maxBenders": 8, "alphaTest": 0.5, "bendSink": 0.35, "bendCore": 0.2, "assetTufts": ["tall_sakura", "tall_lavender", "tall_fern", "tall_glitch", "tall_savanna"]},
+  "wind": {
+    "dir": [1, 0.35],
+    "strength": 0.085,
+    "speed": 1.6,
+    "gust": 0.4,
+    "swayHeight": 3,
+    "gustLean": 1.4,
+    "field": {"wavelength": 16, "speed": 2.4, "sharp": 2.2, "warp": 1.2, "calm": 0.5, "envelopeRate": 0.17, "envelopeSpace": 0.02},
+    "drift": {"base": 1.0, "gust": 0.85}
+  },
+  "grass": {
+    "height": 0.62,
+    "width": 0.78,
+    "planes": 3,
+    "jitter": 0.32,
+    "colorJitter": 0.1,
+    "scaleJitter": 0.22,
+    "bendRadius": 1.15,
+    "bendStrength": 0.6,
+    "sway": 1.4,
+    "texSize": 32,
+    "blades": 11,
+    "rootShade": 0.55,
+    "tipLight": 1.22,
+    "maxBenders": 8,
+    "alphaTest": 0.5,
+    "bendSink": 0.35,
+    "bendCore": 0.2,
+    "assetTufts": ["tall_sakura", "tall_lavender", "tall_fern", "tall_glitch", "tall_savanna"],
+    "trample": {"cellsPerTile": 2, "window": 64, "recoverSec": 1.8, "maxBenders": 24, "edgeFade": 4, "decor": {"strength": 0.9, "sink": 0.45}, "strength": 1.0, "sink": 0.6, "darken": 0.2}
+  },
   "lights": {"pointIntensity": 1.9, "decay": 1.25, "distanceMul": 1.55, "glowSize": 0.4, "glowIntensity": 1.1, "glowFlicker": 0.06, "flickerSpeed": 9, "reassignSeconds": 0.2, "fadeSpeed": 2.5, "emissiveNight": 1.5, "emissiveDay": 0.06, "emissiveAlways": 1.25, "frontOffset": 0.4},
   "weather": {
     "clear": {"particles": [], "grade": {}},
@@ -1697,5 +1727,55 @@
       }
     }
   },
-  "occlusion": {"enabled": true, "lift": 0.75, "radius": [1.05, 1.0], "soft": 0.45, "keep": 0.0, "near": 0.35, "fade": 0.6}
+  "occlusion": {"enabled": true, "lift": 0.75, "radius": [1.05, 1.0], "soft": 0.45, "keep": 0.0, "near": 0.35, "fade": 0.6},
+  "physics": {
+    "tiers": {
+      "low": {"trample": false, "footsteps": "puffs", "ripples": 0, "reflections": false, "leaves": 0, "impacts": false, "snowCover": false, "puffPool": 48, "printPool": 0},
+      "medium": {"trample": true, "footsteps": "full", "ripples": 12, "reflections": true, "leaves": 60, "impacts": true, "snowCover": true, "puffPool": 160, "printPool": 32},
+      "high": {"trample": true, "footsteps": "full", "ripples": 20, "reflections": true, "leaves": 100, "impacts": true, "snowCover": true, "puffPool": 240, "printPool": 48},
+      "ultra": {"trample": true, "footsteps": "full", "ripples": 24, "reflections": true, "leaves": 140, "impacts": true, "snowCover": true, "puffPool": 320, "printPool": 64}
+    }
+  },
+  "footsteps": {
+    "maxDistance": 16,
+    "teleportTiles": 2,
+    "stride": {"walk": 0.72, "run": 1.0, "hop": 1.1},
+    "runSpeed": 3.6,
+    "terrain": {"path": "dirt", "savanna": "dirt", "red_rock": "dirt", "forest_floor": "dirt", "jungle_floor": "dirt", "salt": "dirt", "sand": "sand", "coral_sand": "sand", "ash": "ash", "snow": "snow", "ledge_snow": "snow", "ledge_sand": "sand", "ledge_dirt": "dirt", "mud": "mud", "shallow": "shallow", "water": "deep"},
+    "climateSnow": {
+      "threshold": 0.6,
+      "class": "snow",
+      "terrains": ["grass", "tall_grass", "dark_grass", "forest_floor", "path", "savanna", "sakura_grass", "moss", "rock", "tall_snowgrass", "lavender", "ledge_grass", "ledge_rock"]
+    },
+    "classes": {"dirt": {"puff": "dustStep"}, "sand": {"puff": ["dustSand", "sandGrain"], "print": "sand"}, "ash": {"puff": "ashStep", "print": "ash"}, "snow": {"puff": "powder", "print": "snow"}, "mud": {"puff": "mudSplat", "print": "mud"}, "shallow": {"puff": "splashStep", "ripple": {"amp": 1, "rings": 2}, "idleEverySec": 0.9}, "deep": {"puff": "wakeSplash", "ripple": {"amp": 1.3, "rings": 2}, "idleEverySec": 1.0}},
+    "puffs": {
+      "dustStep": {"count": 5, "colors": ["#e4d6b4", "#d6c49e", "#efe4c8"], "speed": [0.15, 0.5], "up": [0.1, 0.4], "gravity": -0.25, "drag": 3.2, "life": [0.35, 0.6], "size": [0.22, 0.32], "grow": 2.4, "alpha": 0.7, "radius": 0.1, "wind": 0.6, "shape": "cloud", "glow": 1},
+      "dustSand": {"count": 5, "colors": ["#f4e6b8", "#e8d4a0"], "speed": [0.15, 0.45], "up": [0.1, 0.35], "gravity": -0.2, "drag": 3.4, "life": [0.35, 0.55], "size": [0.22, 0.32], "grow": 2.2, "alpha": 0.7, "radius": 0.1, "wind": 0.7, "shape": "cloud", "glow": 1},
+      "sandGrain": {"count": 6, "colors": ["#f0dc9c", "#d8c07c", "#e8d08c"], "speed": [0.3, 0.9], "up": [0.5, 1.1], "gravity": 6.5, "drag": 1.2, "life": [0.3, 0.5], "size": [0.035, 0.05], "grow": 1, "alpha": 0.95, "radius": 0.08, "wind": 0.4, "shape": "drop", "glow": 1},
+      "ashStep": {"count": 5, "colors": ["#5a5452", "#6e6663", "#4a4442"], "speed": [0.15, 0.5], "up": [0.1, 0.45], "gravity": -0.2, "drag": 3, "life": [0.4, 0.7], "size": [0.22, 0.32], "grow": 2.4, "alpha": 0.7, "radius": 0.1, "wind": 0.7, "shape": "cloud", "glow": 1},
+      "powder": {"count": 5, "colors": ["#ffffff", "#eaf2ff", "#dce8f8"], "speed": [0.2, 0.6], "up": [0.2, 0.6], "gravity": 0.8, "drag": 2.6, "life": [0.4, 0.7], "size": [0.22, 0.32], "grow": 2, "alpha": 0.7, "radius": 0.1, "wind": 0.8, "shape": "cloud", "glow": 1.05},
+      "mudSplat": {"count": 4, "colors": ["#5a4430", "#6a5038", "#4a3826"], "speed": [0.3, 0.8], "up": [0.9, 1.7], "gravity": 10, "drag": 0.9, "life": [0.3, 0.5], "size": [0.05, 0.08], "grow": 1, "alpha": 0.95, "radius": 0.06, "wind": 0, "shape": "drop", "glow": 1},
+      "splashStep": {"count": 8, "colors": ["#e4f6ff", "#a8dcf8", "#ffffff"], "speed": [0.4, 1.2], "up": [1.6, 2.8], "gravity": 11, "drag": 0.8, "life": [0.35, 0.6], "size": [0.045, 0.07], "grow": 1, "alpha": 0.95, "radius": 0.1, "wind": 0.2, "shape": "drop", "glow": 1.5},
+      "wakeSplash": {"count": 10, "colors": ["#e4f6ff", "#a8dcf8", "#ffffff"], "speed": [0.6, 1.5], "up": [1.8, 3.2], "gravity": 11, "drag": 0.8, "life": [0.4, 0.7], "size": [0.05, 0.08], "grow": 1, "alpha": 0.95, "radius": 0.2, "wind": 0.2, "shape": "drop", "glow": 1.5},
+      "landDust": {"count": 12, "colors": ["#d4c8a6", "#c4b896", "#e0d6ba"], "speed": [0.8, 1.5], "up": [0.1, 0.4], "gravity": -0.2, "drag": 2.6, "life": [0.4, 0.7], "size": [0.22, 0.32], "grow": 2.6, "alpha": 0.7, "radius": 0.25, "wind": 0.6, "shape": "cloud", "glow": 1},
+      "landSplash": {"count": 14, "colors": ["#e4f6ff", "#a8dcf8", "#ffffff"], "speed": [0.8, 1.8], "up": [2.2, 3.6], "gravity": 11, "drag": 0.8, "life": [0.4, 0.7], "size": [0.05, 0.08], "grow": 1, "alpha": 0.95, "radius": 0.25, "wind": 0.2, "shape": "drop", "glow": 1.5}
+    },
+    "prints": {
+      "snow": {"color": "#8ea6c6", "alpha": 0.62, "size": [0.34, 0.22], "gap": 0.1, "lifeSec": 14, "fadeSec": 6, "rim": 0.82},
+      "sand": {"color": "#a8905c", "alpha": 0.5, "size": [0.34, 0.22], "gap": 0.1, "lifeSec": 10, "fadeSec": 5, "rim": 0.85},
+      "mud": {"color": "#3e2e20", "alpha": 0.6, "size": [0.34, 0.22], "gap": 0.1, "lifeSec": 12, "fadeSec": 6, "rim": 0.8},
+      "ash": {"color": "#2c2826", "alpha": 0.55, "size": [0.34, 0.22], "gap": 0.1, "lifeSec": 10, "fadeSec": 5, "rim": 0.8}
+    },
+    "shore": {"reach": 0.5, "everySec": 1.9, "amp": 0.55},
+    "land": {"puff": "landDust", "splash": "landSplash", "ripple": {"amp": 1.6, "rings": 2}},
+    "fxRoute": {"dust": {"land": true}, "splash": {"puff": "splashStep", "ripple": {"amp": 1.2, "rings": 2}}},
+    "printTexture": {
+      "width": 7,
+      "height": 10,
+      "rows": ["..XXX..", ".XXXXX.", ".XXXXX.", ".XXXXX.", "..XXX..", "..XXX..", ".......", "..XXX..", ".XXXXX.", "..XXX.."]
+    },
+    "lift": 0.03
+  },
+  "impacts": {"rain": {"color": "#dce8ff", "alpha": 0.75, "style": "ring", "life": 0.3, "size": 0.34, "share": 0.1}, "snow": {"color": "#ffffff", "alpha": 0.8, "style": "fleck", "life": 0.9, "size": 0.07, "share": 0.25}},
+  "snowCover": {"weather": "snow", "max": 0.3, "buildSec": 50, "meltSec": 80}
 }

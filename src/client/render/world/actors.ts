@@ -20,6 +20,9 @@ export interface ActorEntry {
   head(out: THREE.Vector3, pitch?: number): THREE.Vector3
   /** Grass bend radius (world units) or 0. */
   readonly bendRadius: number
+  /** Footstep feedback (footsteps.ts): characters step by walked distance, creatures hop; size multiplier of the marks. */
+  readonly stepKind: 'foot' | 'hop'
+  readonly stepScale: number
   isVisible(): boolean
 }
 
@@ -190,6 +193,8 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
       return billboardPointToWorld(out, mesh, pitch, RENDER.camera.billboard)
     },
     bendRadius: 1,
+    stepKind: 'foot',
+    stepScale: 1,
     isVisible: () => visible,
   }
   ctx.registry.add(entry)
@@ -394,6 +399,8 @@ void main() {
       return billboardPointToWorld(out, mesh, pitch, RENDER.camera.billboard)
     },
     bendRadius: Math.max(0.5, h / A.height),
+    stepKind: 'hop',
+    stepScale: Math.max(0.6, h / A.height),
     isVisible: () => visible,
   }
   ctx.registry.add(entry)
