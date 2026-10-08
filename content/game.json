@@ -43,7 +43,7 @@
     "scriptedCanRun": true,
     "repelOfferRefill": true
   },
-  "roaming": {"mapKinds": ["overworld", "cave"], "spawnIntervalSec": 0.9, "spawnTries": 14, "minSpawnDistance": 7, "despawnMargin": 5, "lifetimeSec": [90, 200], "idleSec": [1.0, 3.4], "wanderRadius": 4, "speed": 1.5, "fleeSpeed": 2.8, "chaseSpeed": 2.2, "touchRadius": 0.62, "noticeRange": 3.6, "fleeChance": 0.35, "rareFleeChance": 0.75, "chaseChance": 0.25, "noticeBubble": "!", "noticeBubbleMs": 900, "fleeBubble": "…", "despawnFx": "dust", "spawnFx": "dust", "requireEncounterTerrain": false, "avoidTerrain": ["causeway"], "cullDistance": 34, "arriveEpsilon": 0.05},
+  "roaming": {"mapKinds": ["overworld", "cave"], "spawnIntervalSec": 0.9, "spawnTries": 14, "minSpawnDistance": 7, "despawnMargin": 5, "lifetimeSec": [90, 200], "idleSec": [1.0, 3.4], "wanderRadius": 4, "speed": 1.5, "fleeSpeed": 2.8, "chaseSpeed": 2.2, "touchRadius": 0.62, "noticeRange": 3.6, "fleeSlideRad": 1.2, "noticeBubble": "!", "noticeBubbleMs": 900, "fleeBubble": "…", "despawnFx": "dust", "spawnFx": "dust", "requireEncounterTerrain": false, "avoidTerrain": ["causeway"], "cullDistance": 34, "arriveEpsilon": 0.05},
   "warp": {"fadeMs": 240, "sfx": {"door": "door", "stairs": "door", "cave": "door", "edge": ""}, "fx": "warp"},
   "region": {"bannerCooldownSec": 6, "musicFadeMs": 900, "nightMusicForTowns": true, "weatherIntensity": {"clear": 0, "rain": 0.85, "snow": 0.8, "sand": 0.7, "fog": 0.75, "aurora": 1, "ash": 0.7}, "recheckSec": 1, "mapKinds": ["overworld"], "defaultWeather": "clear"},
   "items": {"pickupSfx": "item", "keyItemSfx": "levelup", "hiddenGlint": {"radius": 3.2, "intervalSec": 2.6, "fx": "sparkle"}},

@@ -69,7 +69,9 @@ export interface GameTuning {
   roaming: {
     mapKinds: MapKind[]; spawnIntervalSec: number; spawnTries: number; minSpawnDistance: number; despawnMargin: number
     lifetimeSec: Range; idleSec: Range; wanderRadius: number; speed: number; fleeSpeed: number; chaseSpeed: number
-    touchRadius: number; noticeRange: number; fleeChance: number; rareFleeChance: number; chaseChance: number
+    touchRadius: number; noticeRange: number
+    /** Radians a cornered fleeing roamer turns to slide along a wall. */
+    fleeSlideRad: number
     noticeBubble: string; noticeBubbleMs: number; fleeBubble: string; despawnFx: WorldFx; spawnFx: WorldFx
     requireEncounterTerrain: boolean; cullDistance: number; arriveEpsilon: number
     /** Terrain keys no roamer or event creature spawns on (1-tile causeways would force the battle). */
@@ -198,6 +200,7 @@ export function validateGameContent(g: GameTuning = GAME, c: Content = CONTENT):
   checkKinds('roaming.mapKinds', g.roaming.mapKinds)
   checkRange('roaming.lifetimeSec', g.roaming.lifetimeSec)
   checkRange('roaming.idleSec', g.roaming.idleSec)
+  if (!(g.roaming.fleeSlideRad > 0 && g.roaming.fleeSlideRad < Math.PI)) errs.push('game.json roaming.fleeSlideRad must be in (0, pi)')
   checkFx('roaming.despawnFx', g.roaming.despawnFx)
   checkFx('roaming.spawnFx', g.roaming.spawnFx)
   for (const key of g.roaming.avoidTerrain ?? []) if (!c.terrainByKey[key]) errs.push(`game.json roaming.avoidTerrain: unknown terrain "${key}"`)
