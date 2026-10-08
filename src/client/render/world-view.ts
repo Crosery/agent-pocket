@@ -14,7 +14,7 @@ import {
   type LightingState, type QualityPreset, type StaticLighting, type Vec3,
 } from './config.ts'
 import { isHD2DRendererExt } from './hd2d.ts'
-import { billboardAnchorScale, cameraPitch, cameraYaw } from './sprite-utils.ts'
+import { cameraPitch, cameraYaw } from './sprite-utils.ts'
 import { createActorImpl, createCreatureActorImpl, type ActorContext, type ActorEntry } from './world/actors.ts'
 import { createTerrainAtlas, terrainAtlasKeys } from './world/atlas.ts'
 import { createCameraRig, type CameraBounds } from './world/camera.ts'
@@ -30,6 +30,7 @@ import { applyOcclusion, bindOcclusion, setOcclusionView } from './world/occlusi
 import { createOverlayLayer } from './world/overlay.ts'
 import { createAurora, createParticleField, type ParticleField } from './world/particles.ts'
 import { createPropLayer, type PropChunk } from './world/props.ts'
+import { createQuestTrail } from './world/quest-trail.ts'
 import { createSkyRig } from './world/sky.ts'
 import { createStreamer, type ChunkSlot, type StreamFrame, type Streamer, type StreamStats } from './world/streamer.ts'
 import { buildChunk, createHeightField, createTerrainSampler, sampleWalkHeight, type HeightField, type TerrainSampler } from './world/terrain.ts'
@@ -71,6 +72,7 @@ const STAGE_COUNT = 5
 export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, overlay: HTMLElement): WorldViewExt {
   const ext = isHD2DRendererExt(renderer) ? renderer : null
   const settings = () => ext?.settings ?? CONTENT.config.defaultSettings
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
   const quality = (): QualityPreset => ext?.quality ?? qualityPreset(settings().quality)
   const chunkSize = CONTENT.config.world.chunk
   const S = RENDER.streaming
@@ -94,13 +96,14 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   const fringe = createFringeLayer(atlas.texture)
   const lights = createLightRig()
   const fx = createFxSystem()
+  const questTrail = createQuestTrail()
   const overlayLayer = createOverlayLayer(overlay)
   const aurora = createAurora()
   const chunkRoot = new THREE.Group()
   chunkRoot.name = 'chunks'
   const actorsGroup = new THREE.Group()
   actorsGroup.name = 'actors'
-  scene.add(chunkRoot, lights.group, fx.group, actorsGroup, aurora.mesh)
+  scene.add(chunkRoot, lights.group, fx.group, actorsGroup, aurora.mesh, questTrail.glow, questTrail.mesh)
   bindOcclusion(scene)
 
   const registry = new Set<ActorEntry>()
@@ -313,6 +316,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   }
 
   function clearMap(): void {
+    questTrail.set([], () => 0)
     streamer?.clear()
     streamer = null
     props.clear()
@@ -578,6 +582,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       }
       aurora.update(time, camera, wx.aurora * (RENDER.aurora.nightOnly ? s.lamps : 1))
       fx.update(dt, time, camera, pxPerUnit)
+      questTrail.update(time, reducedMotion.matches)
 
       post.exposure = s.exposure
       post.saturation = s.saturation
@@ -616,14 +621,16 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       fx.setGroundItems(items.map((i) => ({ id: i.id, x: i.x + 0.5, z: i.y + 0.5, y: s ? sampleWalkHeight(s, i.x + 0.5, i.y + 0.5) : 0 })))
     },
 
+    setQuestPath(path) {
+      questTrail.set(path, (x, y) => sampler ? sampleWalkHeight(sampler, x, y) : 0)
+    },
+
     renderView(): RenderView {
       const showNames = settings().showNames
       const maxD = RENDER.overlay.maxDistance
-      // head anchors are upright heights; the sprite shader leans/stretches the card, so its top lands higher
-      const anchor = billboardAnchorScale(cameraPitch(camera), RENDER.camera.billboard)
+      const pitch = cameraPitch(camera)
       for (const e of registry) {
-        e.head(_head)
-        _head.y = e.object.position.y + (_head.y - e.object.position.y) * anchor
+        e.head(_head, pitch)
         const sp = view.worldToScreen(_head.x, _head.y, _head.z)
         const near = _head.distanceTo(camera.position) < maxD
         e.tag.place(sp.x, sp.y, sp.visible && near && e.isVisible(), showNames)
@@ -636,7 +643,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       clearMap()
       for (const e of [...registry]) e.object.removeFromParent()
       registry.clear()
-      grass.dispose(); props.dispose(); decor.dispose(); fringe.dispose(); lights.dispose(); fx.dispose(); aurora.dispose(); sky.dispose()
+      grass.dispose(); props.dispose(); decor.dispose(); fringe.dispose(); lights.dispose(); fx.dispose(); questTrail.dispose(); aurora.dispose(); sky.dispose()
       liquids.dispose(); atlas.dispose(); matte.dispose(); glossy.dispose(); overlayLayer.dispose()
       map = null
       sampler = null

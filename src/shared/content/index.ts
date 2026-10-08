@@ -3,7 +3,7 @@
 // World/story JSON (content/world/**) is loaded by src/shared/world/ itself.
 import type {
   AbilityDef, AudioFile, BiomeDef, CharacterSheetDef, GameConfig, ItemDef, MoveDef, PropDef, RarityDef,
-  SpeciesDef, StatDef, StatusDef, TerrainDef, TextTable, TimeOfDay, TypeChart, TypeDef, TypeId, TypesFile,
+  DexResearchEntry, SpeciesDef, StatDef, StatusDef, TerrainDef, TextTable, TimeOfDay, TypeChart, TypeDef, TypeId, TypesFile,
   VolatileDef, WeatherDef,
 } from '../types.ts'
 
@@ -18,6 +18,7 @@ import abilitiesJson from '../../../content/abilities.json' with { type: 'json' 
 import movesJson from '../../../content/moves.json' with { type: 'json' }
 import itemsJson from '../../../content/items.json' with { type: 'json' }
 import speciesJson from '../../../content/species.json' with { type: 'json' }
+import dexResearchJson from '../../../content/dex-research.json' with { type: 'json' }
 import biomesJson from '../../../content/biomes.json' with { type: 'json' }
 import terrainJson from '../../../content/terrain.json' with { type: 'json' }
 import propsJson from '../../../content/props.json' with { type: 'json' }
@@ -37,6 +38,7 @@ import textBattleUi from '../../../content/text/zh-CN/battleui.json' with { type
 import textMultiplayer from '../../../content/text/zh-CN/multiplayer.json' with { type: 'json' }
 import textEvents from '../../../content/text/zh-CN/events.json' with { type: 'json' }
 import textResearch from '../../../content/text/zh-CN/research.json' with { type: 'json' }
+import textTutorial from '../../../content/text/zh-CN/tutorial.json' with { type: 'json' }
 // Gameplay content (content/events/**, content/research.json) is loaded by src/shared/gameplay/data.ts; only its
 // reference checks are hooked in here (both modules import JSON/types only, so there is no cycle).
 import { GAMEPLAY } from '../gameplay/data.ts'
@@ -66,6 +68,9 @@ export interface Content {
   species: Record<string, SpeciesDef>
   /** Sorted by dexNo. */
   speciesList: SpeciesDef[]
+  /** Research metadata matched to the playable Dex roster from local lineage/event dossiers. */
+  dexResearch: Record<string, DexResearchEntry>
+  dexResearchMeta: { source: string; lineageDate: string; eventsCheckedAt: string; entryCount: number }
   biomes: BiomeDef[]
   biomeById: Record<string, BiomeDef>
   /** Indexed by terrain numeric id (TerrainDef.id === index). */
@@ -105,6 +110,10 @@ function build(): Content {
   const biomes = biomesJson as unknown as BiomeDef[]
   const characters = charactersJson as unknown as CharacterSheetDef[]
   const stats = statsJson as unknown as StatDef[]
+  const dexResearchFile = dexResearchJson as unknown as {
+    meta: { source: string; lineageDate: string; eventsCheckedAt: string; entryCount: number }
+    entries: Record<string, DexResearchEntry>
+  }
   return {
     config: configJson as unknown as GameConfig,
     types: types.types,
@@ -128,6 +137,8 @@ function build(): Content {
     itemList,
     species: byId(speciesList, 'id'),
     speciesList,
+    dexResearch: dexResearchFile.entries,
+    dexResearchMeta: dexResearchFile.meta,
     biomes,
     biomeById: byId(biomes, 'id'),
     terrain,
@@ -139,7 +150,7 @@ function build(): Content {
     text: flattenText({
       common: textCommon, battle: textBattle, ui: textUi, hud: textHud, screens: textScreens, world: textWorld,
       net: textNet, game: textGame, items: textItems, audio: textAudio, battleui: textBattleUi, multiplayer: textMultiplayer,
-      events: textEvents, research: textResearch,
+      events: textEvents, research: textResearch, tutorial: textTutorial,
     }),
   }
 }
@@ -199,6 +210,11 @@ export function validateContent(c: Content = CONTENT): string[] {
   dup('items', c.itemList.map((x) => x.id))
   dup('species', c.speciesList.map((x) => x.id))
   dup('species.dexNo', c.speciesList.map((x) => String(x.dexNo)))
+  for (const [id, r] of Object.entries(c.dexResearch)) {
+    if (!c.species[id]) errs.push(`dexResearch: unknown species "${id}"`)
+    if (!r.officialName || !r.family || !r.generation || !r.kind || !r.access) errs.push(`dexResearch ${id}: missing identity fields`)
+    if (!Array.isArray(r.eventTitles)) errs.push(`dexResearch ${id}: eventTitles must be an array`)
+  }
   dup('characters', c.characters.map((x) => x.id))
   c.terrain.forEach((x, i) => { if (x.id !== i) errs.push(`terrain: id ${x.id} must equal its index ${i}`) })
 

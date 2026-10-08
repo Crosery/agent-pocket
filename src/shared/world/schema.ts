@@ -113,6 +113,8 @@ export interface OverworldSpec {
   hydrology: HydrologySpec
   /** Wall props on walkable sea tiles (shallows) inside a zone border band. */
   shallowBorder: { prop: string; weight: number }[]
+  /** Broad, low-elevation onboarding area around the start town; meaningful highlands begin outside the transition band. */
+  startFlat?: { radius: number; transition: number; level: number }
   maxLevel: number; seaLevel: number; seaTerrain: string; seaShallowTerrain: string; seaShallowWidth: number
   outOfBounds: string
   edgeBand: number; borderRadius: number; townMargin: number; slope: number; caveSearch: number; routeRegionRadius: number
@@ -155,7 +157,12 @@ export interface OverworldSpec {
   spots: SpotSpec[]
 }
 
-export interface EncounterRules { minSlots: number; maxSpecies: number; rareMinOrder: number; nightPhase: string }
+export interface EncounterRules {
+  minSlots: number; maxSpecies: number; rareMinOrder: number; nightPhase: string
+  /** Early-game fairness: tables whose top level is <= maxLevel only hold species of rarity order <= maxOrder and,
+   * when `onlyTypes` is set, whose types are all listed (first matching entry wins). */
+  rarityLevelCaps?: { maxLevel: number; maxOrder: number; onlyTypes?: string[] }[]
+}
 
 export interface WorldSpec {
   overworld: OverworldSpec

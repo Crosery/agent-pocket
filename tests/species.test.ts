@@ -63,6 +63,7 @@ test('evolution chains are consistent', () => {
       assert.equal(to.stage, s.stage + 1, `${to.id} stage`)
       assert.equal(to.family, s.family, `${to.id} family`)
       assert.ok(s.evolvesTo.level > 1 && s.evolvesTo.level <= CONTENT.config.party.maxLevel, `${s.id} evolve level`)
+      assert.equal(s.evolvesTo.kind, 'post-training', `${s.id}: evolution should remain playable as post-training`)
       if (s.evolvesFrom) assert.ok(s.evolvesTo.level > byId[s.evolvesFrom].evolvesTo!.level, `${s.id}: evolve levels must increase`)
     }
     if (s.evolvesFrom) {

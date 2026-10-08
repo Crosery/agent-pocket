@@ -3,7 +3,7 @@
 import type { Dir, PropPlacement } from '../types.ts'
 import { CONTENT } from '../content/index.ts'
 import { mirrorTownTemplate } from './data.ts'
-import { DIR_DX, DIR_DY, opposite, propDoor, propSize } from './collision.ts'
+import { DIR_DX, DIR_DY, opposite, propDoors, propRect, propSize } from './collision.ts'
 import { F_KEEP, F_PATH, F_RESERVED, F_TOWN, addFlag, canPlace, fmt, idx, inside, placeProp } from './grid.ts'
 import { townRect, type TownPad } from './macro.ts'
 import type { InteriorTemplate, TownSpec, TownTemplate } from './schema.ts'
@@ -106,7 +106,8 @@ export function stampTowns(ctx: OwCtx): StampedTown[] {
       const p: PropPlacement = { prop: bs?.prop ?? b.prop, x: rect.x + b.x, y: rect.y + b.y, rot: 0 }
       if (!canPlace(d, p, { anyTerrain: true })) { ctx.problems.push(`${where}: building ${b.slot} does not fit`); continue }
       placeProp(d, p)
-      const door = propDoor(p)
+      const entries = propDoors(p)
+      const door = entries[0]
       if (!door) continue
       const floors = bs?.floors ?? (bs?.interior ? [bs.interior] : [])
       if (!floors.length) { ctx.problems.push(`${where}: building ${b.slot} has a door but no interior`); continue }
@@ -115,12 +116,14 @@ export function stampTowns(ctx: OwCtx): StampedTown[] {
       const first = interiorTemplate(ctx, floors[0])
       const link: DoorLink = { townId: spec.id, townNameZh: spec.nameZh, slot: b.slot, floors, mapIds, door, biome, nameZh: bs?.nameZh }
       ctx.doors.push(link)
-      d.warps.push({ x: door.x, y: door.y, toMap: mapIds[0], toX: first.arrive[0], toY: first.arrive[1], facing: opposite(door.facing), kind: 'door' })
-      addFlag(d, idx(d, door.x, door.y), F_RESERVED)
-      if (inside(d, door.front.x, door.front.y)) {
-        addFlag(d, idx(d, door.front.x, door.front.y), F_RESERVED | F_KEEP)
-        addAnchor(ctx.anchors, ctx.problems, `${anchorBase}:${b.slot}`, d.id, door.front.x, door.front.y)
+      for (const entry of entries) {
+        d.warps.push({ x: entry.x, y: entry.y, toMap: mapIds[0], toX: first.arrive[0], toY: first.arrive[1], facing: opposite(entry.facing), kind: 'door' })
+        addFlag(d, idx(d, entry.x, entry.y), F_RESERVED)
+        if (inside(d, entry.front.x, entry.front.y)) {
+          addFlag(d, idx(d, entry.front.x, entry.front.y), F_RESERVED | F_KEEP)
+        }
       }
+      if (inside(d, door.front.x, door.front.y)) addAnchor(ctx.anchors, ctx.problems, `${anchorBase}:${b.slot}`, d.id, door.front.x, door.front.y)
       if (spec.start && spec.home === b.slot) {
         d.spawn = { x: door.front.x, y: door.front.y, facing: door.facing }
         addAnchor(ctx.anchors, ctx.problems, 'spawn', d.id, door.front.x, door.front.y)

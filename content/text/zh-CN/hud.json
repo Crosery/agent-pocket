@@ -1,7 +1,24 @@
 {
   "region": {"unknown": "未知区域"},
   "tod": {"dawn": "黎明", "day": "白昼", "dusk": "黄昏", "night": "夜晚"},
-  "quest": {"title": "当前任务"},
+  "quest": {"title": "当前任务", "label": "当前任务：{quest}"},
+  "events": {
+    "title": "活动", "label": "活动：{n} 项进行中", "close": "关闭活动",
+    "detail": "活动详情", "benefits": "收益与影响", "select": "查看{name}的收益与详情",
+    "emptyBenefits": "本活动没有直接数值加成，可查看活动介绍与现场线索。",
+    "scope": {"global": "全世界生效", "region": "当前区域生效", "local": "活动地点附近生效"},
+    "effect": {"shopPrice": "商店售价", "money": "对战奖金", "exp": "对战经验", "catchRate": "收服成功率", "shiny": "闪光出现概率", "encounterRate": "野生遭遇频率", "fleeChance": "智灵逃走概率", "friendship": "亲密度增长"},
+    "category": {"ball": "捕捉球", "medicine": "药品", "battle": "战斗道具", "key": "关键道具", "material": "材料", "held": "携带道具", "chip": "技能芯片", "sell": "出售物品"},
+    "qualified": "{qualifier} · {subject}", "multiplier": "×{n}",
+    "encounterWeight": "{qualifier} · 出现权重", "allCreatures": "野生智灵",
+    "loot": "附近可拾取", "hiddenLoot": "附近可搜寻（隐藏）", "itemCount": "{item} ×{n}",
+    "spawns": "新增现场智灵", "spawnCount": "{qualifier} · {n} 只",
+    "trainerReward": "击败{name}", "baseMoney": "基础奖金 {n} {currency}",
+    "npc": "活动人物", "talkTo": "与{name}对话参与活动",
+    "npcReward": "{name} · 条件奖励", "scriptReward": "完成活动要求后的奖励", "moneyCount": "{n} {currency}",
+    "reveal": "探索机会", "newPlace": "解锁新的地点线索",
+    "rulesNote": "倍率为本活动的效果；实际收益还取决于参与条件及其他生效加成。地面道具与对话奖励需要亲自领取。"
+  },
   "net": {"offline": "离线", "connecting": "连接中", "online": "在线", "error": "连接异常", "count": "在线 {n} 人"},
   "minimap": {
     "north": "N",

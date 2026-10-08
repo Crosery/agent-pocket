@@ -58,6 +58,8 @@ test('every literal screens.* text key used by the screens exists', () => {
 
 test('every templated screens.* text key resolves for all values it can take', () => {
   const keys: string[] = []
+  for (const e of SCREENS.pause.entries) keys.push(`screens.pause.description.${e.action}`)
+  for (const dir of ['left', 'up', 'down', 'right']) keys.push(`screens.newGame.direction.${dir}`, `screens.newGame.directionLabel.${dir}`)
   for (const mode of ['view', 'select', 'battleSwitch']) keys.push(`screens.party.title.${mode}`)
   for (const mode of ['field', 'battle']) keys.push(`screens.bag.title.${mode}`, `screens.bag.hint.${mode}`)
   for (const st of ['caught', 'seen', 'unseen']) keys.push(`screens.dex.caught.${st}`, `screens.dex.state.${st}`)

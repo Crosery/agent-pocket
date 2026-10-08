@@ -211,7 +211,9 @@ export interface Actor {
   setInGrass(v: boolean): void
   /** Floating bubble over head ("!", "...", emote glyph or short text). */
   bubble(text: string, ms?: number): void
-  hop(): void
+  /** Hop arc + landing squash (render.json actors.hop by default). A caller that moves the body along its own arc
+   * passes its duration with height 0 so the landing squash lands with it. */
+  hop(opts?: { ms?: number; height?: number }): void
   update(dtSec: number): void
   dispose(): void
 }
@@ -259,6 +261,8 @@ export interface WorldView {
   spawnFx(kind: WorldFx, x: number, y: number, elev: number): void
   /** Mark a ground item / hidden item sparkle etc. */
   setGroundItems(items: { id: string; x: number; y: number }[]): void
+  /** Walkable tiles of the currently tracked, accepted quest (empty clears the trail). */
+  setQuestPath(path: readonly { x: number; y: number }[]): void
   /** Hide a prop instance at tile (e.g. after cutting/item pickup). */
   renderView(): RenderView
   dispose(): void
@@ -312,7 +316,7 @@ export interface HUD {
   showBanner(title: string, subtitle?: string): void
   setClock(label: string, tod: TimeOfDay): void
   setMoney(money: number): void
-  setQuest(text: string | null): void
+  setQuest(text: string | null, summary?: string): void
   setNetStatus(status: NetStatus, online: number): void
   /** Name tags / speech bubbles over 3D actors are positioned by world/ using this layer. */
   readonly overlay: HTMLElement
@@ -322,7 +326,7 @@ export interface MinimapMarker { x: number; y: number; kind: 'player' | 'other' 
 
 export interface Minimap {
   setMap(map: GameMap, explored: Uint8Array | null): void
-  update(playerX: number, playerY: number, facing: Dir, markers: MinimapMarker[]): void
+  update(playerX: number, playerY: number, facing: Dir, markers: MinimapMarker[], route?: readonly { x: number; y: number }[]): void
   /** Reveal fog-of-war chunk(s) around a tile. */
   reveal(x: number, y: number): void
   exploredBits(): Uint8Array | null

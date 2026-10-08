@@ -18,8 +18,8 @@ export function starterScreen(env: ScreenEnv, options: SpeciesDef[]): Promise<st
       const glow = CONTENT.typeById[sp.types[0]]?.color
       const card = el('button', { class: 'aps-starter-card aps-card', attrs: { type: 'button', 'aria-label': sp.nameZh }, vars: glow ? { '--glow': glow, '--i': i } : { '--i': i } }, [
         el('div', 'aps-starter-stage', [el('div', 'aps-starter-pedestal'), creatureImg(ctx.assets, sp.id, { className: 'aps-starter-sprite' })]),
-        el('div', { class: 'aps-starter-name', text: sp.nameZh }),
-        el('div', { class: 'aps-starter-en ap-dim', text: sp.nameEn }),
+        el('div', { class: 'aps-starter-name ap-model-name', text: sp.nameZh, title: sp.nameZh, attrs: { 'aria-label': sp.nameZh } }),
+        el('div', { class: 'aps-starter-en ap-dim ap-model-name', text: sp.nameEn, title: sp.nameEn, attrs: { 'aria-label': sp.nameEn } }),
         el('div', 'aps-chips', [...sp.types.map((ty) => typeChip(ty)), rarityBadge(sp.rarity)]),
       ])
       card.addEventListener('mouseenter', api.guard(() => { if (nav.index !== i) { nav.index = i; uiSfx(env, 'move'); paint() } }))
@@ -38,7 +38,7 @@ export function starterScreen(env: ScreenEnv, options: SpeciesDef[]): Promise<st
       detail.replaceChildren(
         el('div', 'aps-starter-dhead', [
           el('span', { class: 'ap-gold', text: t('screens.starter.dexNo', { n: String(sp.dexNo).padStart(3, '0') }) }),
-          el('span', { class: 'aps-starter-dname', text: sp.nameZh }),
+          el('span', { class: 'aps-starter-dname ap-model-name', text: sp.nameZh, title: sp.nameZh }),
           el('span', { class: 'ap-dim', text: t('screens.starter.company', { company: sp.company }) }),
         ]),
         el('p', { class: 'aps-starter-entry', text: sp.dexEntry }),

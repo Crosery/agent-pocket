@@ -54,8 +54,40 @@ export function accessStairs(ctx: OwCtx): void {
   const stairsT = tid(ctx.spec.stairsTerrain)
   const spacing = ctx.spec.accessStairSpacing
   const blocked = NO_DRESS | F_LOCK | F_BORDER | F_EDGE
-  const cands: [number, number][][] = ctx.wc.regions.map(() => [])
+  type Candidate = [tile: number, step: number, score: number]
+  const cands: Candidate[][] = ctx.wc.regions.map(() => [])
   const W = d.w
+  // A two-pass Manhattan distance transform keeps stair candidate scoring linear in map size. Scanning a
+  // radius around every candidate looks equivalent, but on the 1024x1024 overworld it turns this dressing
+  // pass into an accidental quadratic hot path.
+  const distanceToFlags = (mask: number, radius: number): Uint8Array => {
+    const max = radius + 1
+    const dist = new Uint8Array(d.w * d.h)
+    for (let i = 0; i < dist.length; i++) dist[i] = (d.flags[i] & mask) !== 0 ? 0 : max
+    for (let y = 0; y < d.h; y++) {
+      const row = y * W
+      for (let x = 0; x < W; x++) {
+        const i = row + x
+        let v = dist[i]
+        if (x > 0 && dist[i - 1] + 1 < v) v = dist[i - 1] + 1
+        if (y > 0 && dist[i - W] + 1 < v) v = dist[i - W] + 1
+        dist[i] = v
+      }
+    }
+    for (let y = d.h - 1; y >= 0; y--) {
+      const row = y * W
+      for (let x = W - 1; x >= 0; x--) {
+        const i = row + x
+        let v = dist[i]
+        if (x + 1 < W && dist[i + 1] + 1 < v) v = dist[i + 1] + 1
+        if (y + 1 < d.h && dist[i + W] + 1 < v) v = dist[i + W] + 1
+        dist[i] = v
+      }
+    }
+    return dist
+  }
+  const routeDistance = distanceToFlags(F_PATH | F_ROAD, 5)
+  const siteDistance = distanceToFlags(F_SITE | F_TOWN, 4)
   for (let i = 0; i < d.w * d.h; i++) {
     if ((d.flags[i] & blocked) !== 0) continue
     const x = i % W, y = (i - x) / W
@@ -64,7 +96,14 @@ export function accessStairs(ctx: OwCtx): void {
     for (const step of [-W, W, -1, 1]) {
       const hi = i + step, beyond = hi + step
       if (d.elevation[hi] !== e + 1 || (d.flags[hi] & blocked) !== 0 || d.elevation[beyond] !== d.elevation[hi]) continue
-      if (stairsOk(d, i, hi)) cands[ctx.macro.wild[i]].push([i, step])
+      if (stairsOk(d, i, hi)) {
+        // Prefer crossings that visually continue a route or point-of-interest approach. The old random
+        // selection scattered stairs evenly through wilderness, making the map look busy and hiding the
+        // intended traversal line.
+        const routeScore = routeDistance[i] <= 5 ? 6 - routeDistance[i] : 0
+        const siteScore = siteDistance[i] <= 4 ? 5 - siteDistance[i] : 0
+        cands[ctx.macro.wild[i]].push([i, step, routeScore * 4 + siteScore])
+      }
     }
   }
   ctx.wc.regions.forEach((region, ri) => {
@@ -73,15 +112,21 @@ export function accessStairs(ctx: OwCtx): void {
     const list = cands[ri]
     const rng = rngFor(ctx.seed, `access-stairs-${region.id}`)
     rng.shuffle(list)
+    // The score is a small bounded integer. Bucketing keeps route-biased selection linear and avoids
+    // sorting tens of thousands of wilderness crossings on every world build.
+    const buckets: Candidate[][] = Array.from({ length: 25 }, () => [])
+    for (const candidate of list) buckets[candidate[2]].push(candidate)
     const chosen: number[] = []
-    for (const [i, step] of list) {
-      if (chosen.length >= want) break
-      const x = i % W, y = (i - x) / W
-      if (chosen.some((j) => Math.max(Math.abs((j % W) - x), Math.abs(Math.floor(j / W) - y)) < spacing)) continue
-      if (!stairsOk(d, i, i + step)) continue
-      d.terrain[i] = stairsT
-      for (const k of [i, i + step, i - step, i + 2 * step]) addFlag(d, k, F_KEEP)
-      chosen.push(i)
+    for (let score = buckets.length - 1; score >= 0 && chosen.length < want; score--) {
+      for (const [i, step] of buckets[score]) {
+        if (chosen.length >= want) break
+        const x = i % W, y = (i - x) / W
+        if (chosen.some((j) => Math.max(Math.abs((j % W) - x), Math.abs(Math.floor(j / W) - y)) < spacing)) continue
+        if (!stairsOk(d, i, i + step)) continue
+        d.terrain[i] = stairsT
+        for (const k of [i, i + step, i - step, i + 2 * step]) addFlag(d, k, F_KEEP)
+        chosen.push(i)
+      }
     }
   })
 }

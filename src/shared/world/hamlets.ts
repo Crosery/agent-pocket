@@ -4,7 +4,7 @@
 // get door warps into ordinary interior templates (map id `<hamletId>-<slot>`).
 import type { PropPlacement } from '../types.ts'
 import { CONTENT } from '../content/index.ts'
-import { opposite, propDoor, propRect, propSize } from './collision.ts'
+import { opposite, propDoors, propRect, propSize } from './collision.ts'
 import {
   F_KEEP, F_LAKE, F_PATH, F_RESERVED, F_ROAD, F_SEA, F_SITE, F_TOWN, addFlag, canPlace, hasFlag, inside, placeProp, type MapDraft,
 } from './grid.ts'
@@ -167,10 +167,13 @@ export function stampHamlets(ctx: OwCtx, sites: Site[], used: Set<string>, doorL
         const [w, h] = propSize(s.prop, rot)
         const p: PropPlacement = { prop: s.prop, x: at.x - Math.floor(w / 2), y: at.y - Math.floor(h / 2), rot }
         if (!footprintOk(p)) continue
-        const door = propDoor(p)
-        if (!door || !inPad(door.front.x, door.front.y, 0)) continue
-        const fi = door.front.y * d.w + door.front.x
-        if (d.occ[fi] || hasFlag(d, fi, F_RESERVED) || !walkableDry(d.terrain[fi])) continue
+        const entries = propDoors(p)
+        const door = entries[0]
+        if (!door || entries.some(({ front }) => {
+          if (!inPad(front.x, front.y, 0)) return true
+          const fi = front.y * d.w + front.x
+          return d.occ[fi] || hasFlag(d, fi, F_RESERVED) || !walkableDry(d.terrain[fi])
+        })) continue
         const path = lane(door.front, p)
         if (!path) continue
         placeProp(d, p)
@@ -182,9 +185,13 @@ export function stampHamlets(ctx: OwCtx, sites: Site[], used: Set<string>, doorL
         const mapId = `${site.id}-${slot}`
         const first = interiorTemplate(ctx, s.interior)
         doorLinks.push({ townId: site.id, townNameZh: nameZh, slot, floors: [s.interior], mapIds: [mapId], door, biome })
-        d.warps.push({ x: door.x, y: door.y, toMap: mapId, toX: first.arrive[0], toY: first.arrive[1], facing: opposite(door.facing), kind: 'door' })
-        addFlag(d, door.y * d.w + door.x, F_RESERVED)
-        addFlag(d, fi, F_RESERVED | F_KEEP)
+        for (const entry of entries) {
+          d.warps.push({ x: entry.x, y: entry.y, toMap: mapId, toX: first.arrive[0], toY: first.arrive[1], facing: opposite(entry.facing), kind: 'door' })
+          addFlag(d, entry.y * d.w + entry.x, F_RESERVED)
+          const fi = entry.front.y * d.w + entry.front.x
+          if (!hasFlag(d, fi, F_PATH | F_ROAD)) d.terrain[fi] = roadT
+          addFlag(d, fi, F_RESERVED | F_KEEP | F_ROAD)
+        }
         addAnchor(ctx.anchors, ctx.problems, `hamlet:${site.id}:${slot}-door`, d.id, door.front.x, door.front.y)
         doors.push({ slot, front: { ...door.front } })
         break

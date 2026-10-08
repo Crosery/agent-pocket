@@ -5,6 +5,7 @@ import type { BattleSideInit, Creature, GameMap, RegionDef } from '../../shared/
 import type { CreatureActor, GameContext } from '../contracts.ts'
 import type { IRng } from '../../shared/contracts.ts'
 import { createCreature, rollShiny } from '../../shared/creature.ts'
+import { roamingDisposition } from '../../shared/gameplay/spawns.ts'
 import { regionAt, terrainAt } from '../../shared/world/worldapi.ts'
 import { GAME } from './config.ts'
 import { auraColor, pickEncounter } from './encounters.ts'
@@ -63,6 +64,13 @@ export interface RoamingDeps {
 }
 
 const range = (rng: IRng, r: [number, number]) => r[0] + rng.next() * (r[1] - r[0])
+const maxPartyLevel = (ctx: Pick<GameContext, 'save'>): number =>
+  ctx.save.party.reduce((max, creature) => Math.max(max, creature.level), 0)
+
+function moodFor(ctx: GameContext, creature: Creature): Mood {
+  const disposition = roamingDisposition(ctx.data.species[creature.speciesId]?.country, creature.level, maxPartyLevel(ctx))
+  return disposition === 'flee' ? 'flee' : disposition === 'chase' ? 'chase' : 'calm'
+}
 
 export function createRoamingLayer(deps: RoamingDeps) {
   const { ctx, rng } = deps
@@ -122,9 +130,7 @@ export function createRoamingLayer(deps: RoamingDeps) {
       actor.setAura(picked.aura)
       const x = tx + 0.5, y = ty + 0.5
       actor.setPosition(x, y, ctx.world.elevationAt(x, y))
-      const fleeChance = rare ? R.rareFleeChance : R.fleeChance
-      const roll = rng.next()
-      const mood: Mood = extra?.avoidPlayer ? 'flee' : roll < fleeChance ? 'flee' : roll < fleeChance + R.chaseChance ? 'chase' : 'calm'
+      const mood = moodFor(ctx, creature)
       roamers.push({
         id: nextId++, creature, rare, actor, region: region.id, x, y, home: { x, y }, target: null,
         idle: range(rng, R.idleSec), life: extra?.lifeSec ?? range(rng, R.lifetimeSec), mood, noticed: false,
@@ -144,6 +150,13 @@ export function createRoamingLayer(deps: RoamingDeps) {
   }
 
   function step(g: MotionGrid, r: Roamer, dt: number, player: { x: number; y: number }): void {
+    const nextMood = moodFor(ctx, r.creature)
+    if (nextMood !== r.mood) {
+      r.mood = nextMood
+      r.target = null
+      r.noticed = false
+      r.idle = range(rng, R.idleSec)
+    }
     const dist = Math.hypot(player.x - r.x, player.y - r.y)
     const noticeRange = r.extra && r.extra.noticeRadius > 0 ? r.extra.noticeRadius : R.noticeRange
     const speedMul = r.extra?.speedMul ?? 1
@@ -177,7 +190,8 @@ export function createRoamingLayer(deps: RoamingDeps) {
           r.target = null
           r.idle = range(rng, R.idleSec)
         } else {
-          if (Math.abs(res.x - r.x) > 1e-3) r.actor.setFacingLeft(res.x < r.x)
+          // face where it is heading, not the per-frame nudge (corner slips push sideways against the travel)
+          if (Math.abs(dx) > 1e-3) r.actor.setFacingLeft(dx < 0)
           r.x = res.x
           r.y = res.y
           moving = true

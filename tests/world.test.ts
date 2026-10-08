@@ -4,7 +4,7 @@ import { CONTENT } from '../src/shared/content/index.ts'
 import type { GameMap, World } from '../src/shared/types.ts'
 import { WORLD_CONTENT, buildWorld, validateWorldContent, worldAnchors, worldBuildInfo, worldStats } from '../src/shared/world/index.ts'
 import {
-  buildCollision, canStep, elevationAt, propDoor, propRect, propSize, regionAt, stairsDir, terrainAt,
+  buildCollision, canStep, elevationAt, propDoor, propDoors, propRect, propSize, regionAt, stairsDir, terrainAt,
 } from '../src/shared/world/collision.ts'
 import { floodReach } from '../src/shared/world/reach.ts'
 import { createNoise, fbm, fbm01, perlin, ridged, simplex, upsample, sampleField, worley } from '../src/shared/noise.ts'
@@ -115,6 +115,34 @@ test('world shape: maps, towns, badges and story slots', () => {
   assert.ok(typeof stats.buildMs === 'number')
 })
 
+test('start town has a broad flat onboarding area before the first highland', () => {
+  const flat = WORLD_CONTENT.world.overworld.startFlat
+  assert.ok(flat)
+  const start = world.towns.find((t) => t.id === WORLD_CONTENT.towns.find((x) => x.start)?.id)
+  assert.ok(start)
+  const radius = Math.max(1, Math.min(flat.radius - 20, 160))
+  let count = 0
+  let high = 0
+  let max = 0
+  for (let y = Math.max(0, start.y - radius); y <= Math.min(ow.height - 1, start.y + radius); y++) {
+    for (let x = Math.max(0, start.x - radius); x <= Math.min(ow.width - 1, start.x + radius); x++) {
+      if ((x - start.x) ** 2 + (y - start.y) ** 2 > radius * radius) continue
+      const elevation = ow.elevation[y * ow.width + x]
+      count++
+      max = Math.max(max, elevation)
+      if (elevation >= flat.level + 2) high++
+    }
+  }
+  assert.ok(count > 0)
+  assert.ok(max <= flat.level + 1, `start area max elevation ${max}`)
+  assert.ok(high / count < 0.01, `start area high-elevation ratio ${(high / count * 100).toFixed(2)}%`)
+  const startScenery = new Set(['tree_oak', 'tree_pine', 'tree_cherry', 'tree_palm', 'tree_dead', 'tree_snowpine', 'rock_large'])
+  assert.ok(
+    ow.props.some((p) => startScenery.has(p.prop) && Math.hypot(p.x - start.x, p.y - start.y) < 80),
+    'spawn area should retain authored/natural scenery',
+  )
+})
+
 test('every warp lands on a walkable, non-warp tile and is itself enterable', () => {
   for (const m of Object.values(world.maps)) {
     const col = colOf(m)
@@ -168,8 +196,7 @@ test('no prop sits on a warp tile except the building that owns the door', () =>
       const r = propRect(p)
       for (let y = r.y; y < r.y + r.h; y++) for (let x = r.x; x < r.x + r.w; x++) {
         if (!warpAt.has(y * m.width + x)) continue
-        const door = propDoor(p)
-        const ownsDoor = door && door.x === x && door.y === y
+        const ownsDoor = propDoors(p).some(door => door.x === x && door.y === y)
         const passable = !CONTENT.props[p.prop]?.collide
         assert.ok(ownsDoor || passable, `${m.id}: ${p.prop} covers warp at ${x},${y}`)
       }

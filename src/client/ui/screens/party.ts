@@ -4,6 +4,7 @@ import type { Creature } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
 import { creatureName, maxHp } from '../../../shared/creature.ts'
 import { createGridNav, creatureIcon, el, expBar, hpBar, statusChip, typeChip } from '../widgets.ts'
+import { onUIScaleChange } from '../scale.ts'
 import { backPressed, frame, H, isCompact, openScreen, popupMenu, pressed, sfx, uiSfx, type PartyOptions, type ScreenEnv } from './base.ts'
 import { SCREENS } from './config.ts'
 import { expProgress, isConscious } from './logic.ts'
@@ -26,7 +27,8 @@ export function partyScreen(env: ScreenEnv, mode: PartyMode, opts?: PartyOptions
 
     const cols = () => (isCompact() ? cfg.compactCols : cfg.cols)
     grid.style.setProperty('--cols', String(cols()))
-    const nav = createGridNav({ count: party().length, cols: cols(), audio: ctx.audio, onChange: () => paintCursor() })
+    const makeNav = (initial = 0) => createGridNav({ count: party().length, cols: cols(), initial, audio: ctx.audio, onChange: () => paintCursor() })
+    let nav = makeNav()
     let cards: HTMLElement[] = []
 
     const blocked = (c: Creature): string | null => {
@@ -52,7 +54,7 @@ export function partyScreen(env: ScreenEnv, mode: PartyMode, opts?: PartyOptions
         el('div', 'aps-party-icon', [creatureIcon(ctx.assets.creatureImageUrl(c.speciesId), c.shiny, cfg.iconSize)]),
         el('div', 'aps-party-main', [
           el('div', 'aps-party-line', [
-            el('span', { class: 'aps-party-name', text: creatureName(c) }),
+            el('span', { class: 'aps-party-name ap-model-name', text: creatureName(c), title: creatureName(c), attrs: { 'aria-label': creatureName(c) } }),
             el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) }),
           ]),
           el('div', 'aps-party-line', [
@@ -80,6 +82,7 @@ export function partyScreen(env: ScreenEnv, mode: PartyMode, opts?: PartyOptions
     }
     const paintCursor = () => {
       cards.forEach((c, k) => { c.classList.toggle('is-active', k === nav.index); c.setAttribute('aria-selected', String(k === nav.index)) })
+      cards[nav.index]?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
       banner.textContent = swapFrom >= 0 ? t('screens.party.swapHint', { name: creatureName(party()[swapFrom]) }) : ''
       banner.hidden = swapFrom < 0
       f.setHints(swapFrom >= 0
@@ -138,12 +141,18 @@ export function partyScreen(env: ScreenEnv, mode: PartyMode, opts?: PartyOptions
     })
 
     render()
+    const offScale = onUIScaleChange(() => {
+      grid.style.setProperty('--cols', String(cols()))
+      nav = makeNav(nav.index)
+      paintCursor()
+    })
     return {
       onInput(input) {
         if (backPressed(input)) { back(); return }
         if (pressed(input, 'confirm')) { void activate(); return }
         nav.handle(input)
       },
+      dispose: offScale,
     }
   })
 }

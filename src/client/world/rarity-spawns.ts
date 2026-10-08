@@ -11,7 +11,7 @@ import type { BattleSideInit, Creature, Dir, GameMap, Rarity } from '../../share
 import type { CreatureActor, GameContext, WorldFx } from '../contracts.ts'
 import type { IRng } from '../../shared/contracts.ts'
 import { createCreature } from '../../shared/creature.ts'
-import { speciesBehavior, type VisibleSpawn } from '../../shared/gameplay/spawns.ts'
+import { roamingDisposition, speciesBehavior, type VisibleSpawn } from '../../shared/gameplay/spawns.ts'
 import { canStep, collisionField, terrainAt } from '../../shared/world/worldapi.ts'
 import { GAME } from './config.ts'
 import { auraCueColor, cueDef, GPC } from './gameplay-config.ts'
@@ -133,6 +133,8 @@ export interface SpecialDeps {
 }
 
 const range = (rng: IRng, r: [number, number]) => r[0] + rng.next() * (r[1] - r[0])
+const maxPartyLevel = (ctx: Pick<GameContext, 'save'>): number =>
+  ctx.save.party.reduce((max, creature) => Math.max(max, creature.level), 0)
 
 /** Walkable, dry, flat (no stairs / ledge) free tile — where a creature may stand. */
 export function standable(map: GameMap, tx: number, ty: number, ctx: Pick<GameContext, 'data'>): boolean {
@@ -218,16 +220,27 @@ export function createSpecialLayer(deps: SpecialDeps) {
 
   function think(map: GameMap, s: Special, dt: number, player: { x: number; y: number }): boolean {
     if (!s.roaming) return false
+    const disposition = roamingDisposition(
+      ctx.data.species[s.creature.speciesId]?.country,
+      s.creature.level,
+      maxPartyLevel(ctx),
+    )
     const dist = Math.hypot(player.x - s.x, player.y - s.y)
-    const notice = s.noticeRadius > 0 ? s.noticeRadius : 0
-    if (!s.noticed && notice > 0 && dist < notice) {
+    const notice = s.noticeRadius > 0 ? s.noticeRadius : S.noticeRange
+    if (disposition === 'neutral') {
+      if (s.noticed) s.target = null
+      s.noticed = false
+    } else if (!s.noticed && notice > 0 && dist < notice) {
       s.noticed = true
       deps.cues.play(s.cues.notice, { x: s.x, y: s.y, actor: s.actor })
     } else if (s.noticed && dist > notice * 2) s.noticed = false
-    if (s.noticed && s.avoidPlayer) {
+    if (s.noticed && disposition === 'flee') {
       const k = 1 / Math.max(0.001, dist)
       const tx = s.x + (s.x - player.x) * k * 2, ty = s.y + (s.y - player.y) * k * 2
       if (stepToward(map, s, tx, ty, S.speed * s.speedMul * S.fleeSpeedMul, dt)) return true
+      s.target = null
+    } else if (s.noticed && disposition === 'chase') {
+      if (stepToward(map, s, player.x, player.y, S.speed * s.speedMul * S.chaseSpeedMul, dt)) return true
       s.target = null
     }
     if (!s.target) {

@@ -659,7 +659,11 @@ def build():
             "stage": s["stage"],
         }
         if s.get("evolvesTo"):
-            sp["evolvesTo"] = {"id": s["evolvesTo"], "level": s["evolveLevel"]}
+            evo = RULES.get("evolution", {})
+            kind = s.get("evolutionKind") or evo.get("defaultKind", "post-training")
+            if kind not in {"post-training", "version"}:
+                raise SystemExit(f"{s['id']}: invalid evolutionKind {kind!r}")
+            sp["evolvesTo"] = {"id": s["evolvesTo"], "level": s["evolveLevel"], "kind": kind}
         if p:
             sp["evolvesFrom"] = p
         sp.update(

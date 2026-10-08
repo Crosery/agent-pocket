@@ -1,0 +1,746 @@
+{
+  "meta": {
+    "source": "AI模型图鉴与大事件 / 本地研究资料",
+    "lineageDate": "2026-10-05",
+    "eventsCheckedAt": "2026-10-05",
+    "entryCount": 70
+  },
+  "entries": {
+    "gpt-4": {
+      "officialName": "GPT-4",
+      "family": "GPT",
+      "generation": "4",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "OpenAI 公布 ChatGPT 的 GPT-4o 等旧模型退役日期"
+      ]
+    },
+    "gpt-4o": {
+      "officialName": "GPT-4o",
+      "family": "GPT",
+      "generation": "4o",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "旧 API 模型获公开 Sol/Luna 迁移安排，而非静默替换证据",
+        "chatgpt-4o-latest API 快照有独立退役时间线",
+        "OpenAI 公布 ChatGPT 的 GPT-4o 等旧模型退役日期"
+      ]
+    },
+    "o1": {
+      "officialName": "o1",
+      "family": "OpenAI o",
+      "generation": "1",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "gpt-5": {
+      "officialName": "GPT-5",
+      "family": "GPT",
+      "generation": "5",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "旧 API 模型获公开 Sol/Luna 迁移安排，而非静默替换证据",
+        "研究发布：第三方 API 的模型身份声明与指纹核验不一致",
+        "chatgpt-4o-latest API 快照有独立退役时间线"
+      ]
+    },
+    "gpt-5-5": {
+      "officialName": "GPT-5.5",
+      "family": "GPT",
+      "generation": "5.5",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "gpt-6-astra": {
+      "officialName": "GPT-6 Astra",
+      "family": "GPT",
+      "generation": "6 Astra",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "旧 API 模型获公开 Sol/Luna 迁移安排，而非静默替换证据"
+      ]
+    },
+    "gpt-6-luna": {
+      "officialName": "GPT-6 Luna",
+      "family": "GPT",
+      "generation": "6 Luna",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "旧 API 模型获公开 Sol/Luna 迁移安排，而非静默替换证据"
+      ]
+    },
+    "gpt-6-sol": {
+      "officialName": "GPT-6.1 Sol",
+      "family": "GPT",
+      "generation": "6.1 Sol",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "gpt-image-1": {
+      "officialName": "GPT Image 1",
+      "family": "GPT Image",
+      "generation": "1",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "gpt-image-2-5": {
+      "officialName": "GPT Image 2.5",
+      "family": "GPT Image",
+      "generation": "2.5，Sunburst / Flare",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "sora-2": {
+      "officialName": "Sora 2",
+      "family": "Sora",
+      "generation": "2，已退役 API",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "Sora 从爆红到关停：用户导出与 Disney 合作转向"
+      ]
+    },
+    "claude-haiku": {
+      "officialName": "Claude Haiku 4.5",
+      "family": "Claude Haiku",
+      "generation": "4.5",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "claude-opus-4-8": {
+      "officialName": "Claude Opus 4.8",
+      "family": "Claude Opus",
+      "generation": "4.8",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "claude-opus": {
+      "officialName": "Claude Opus 5.5",
+      "family": "Claude Opus",
+      "generation": "5.5",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "claude-3-opus": {
+      "officialName": "Claude 3 Opus",
+      "family": "Claude Opus",
+      "generation": "3",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "claude-3-5-sonnet": {
+      "officialName": "Claude 3.5 Sonnet",
+      "family": "Claude Sonnet",
+      "generation": "3.5",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "claude-sonnet": {
+      "officialName": "Claude Sonnet 5.5",
+      "family": "Claude Sonnet",
+      "generation": "5.5",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "claude-fable": {
+      "officialName": "Claude Fable 5.1",
+      "family": "Claude Fable",
+      "generation": "5.1",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "官方宣布加固身份核验与推理保护，不是按国籍一键封号"
+      ]
+    },
+    "claude-mythos": {
+      "officialName": "Claude Mythos 5.1",
+      "family": "Claude Mythos",
+      "generation": "Claude Mythos 5.1",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "Trusted Access Program 邀请制研究预览",
+      "evidence": "checked",
+      "release": "2026-09",
+      "eventTitles": []
+    },
+    "gemini-flash": {
+      "officialName": "Gemini 3.8 Flash",
+      "family": "Gemini Flash",
+      "generation": "3.8",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "gemini-2-5-pro": {
+      "officialName": "Gemini 2.5 Pro",
+      "family": "Gemini Pro",
+      "generation": "2.5",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "gemini-live": {
+      "officialName": "Gemini 3.8 Live",
+      "family": "Gemini Live",
+      "generation": "3.8",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "gemini-3-1-pro": {
+      "officialName": "Gemini 3.1 Pro Preview",
+      "family": "Gemini Pro",
+      "generation": "3.1",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "gemma-4": {
+      "officialName": "Gemma 4",
+      "family": "Gemma",
+      "generation": "4",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "genie-3": {
+      "officialName": "Genie 3",
+      "family": "Genie",
+      "generation": "3，世界模型 / 受限体验",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "未核实",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "veo-3": {
+      "officialName": "Veo 3",
+      "family": "Veo",
+      "generation": "3",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "gemini-robotics": {
+      "officialName": "Gemini Robotics 2",
+      "family": "Gemini Robotics",
+      "generation": "2",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "未核实",
+      "evidence": "checked",
+      "release": "2026-07-30",
+      "eventTitles": []
+    },
+    "grok-1": {
+      "officialName": "Grok-1",
+      "family": "Grok",
+      "generation": "1",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "xAI 公开系统提示，提示许可与模型权重许可并非同一层",
+        "Grok-1 公开基础权重和示例代码，许可边界不覆盖所有 Grok"
+      ]
+    },
+    "grok-4-7": {
+      "officialName": "Grok 4.7",
+      "family": "Grok",
+      "generation": "4.7",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "mistral-7b": {
+      "officialName": "Mistral 7B",
+      "family": "Mistral",
+      "generation": "Mistral 7B",
+      "kind": "训练阶段 / 基座参考 · 不计入产品数量",
+      "access": "官方已发布的训练阶段 / 组件，访问条件见来源",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "mistral-medium": {
+      "officialName": "Mistral Medium 3.5",
+      "family": "Mistral Medium",
+      "generation": "3.5",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "phi-4": {
+      "officialName": "Phi-4",
+      "family": "Phi",
+      "generation": "Phi-4",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "metadata",
+      "release": null,
+      "eventTitles": []
+    },
+    "midjourney-v5": {
+      "officialName": "Midjourney V5",
+      "family": "Midjourney",
+      "generation": "V5",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "未核实",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "midjourney-v7": {
+      "officialName": "Midjourney V7",
+      "family": "Midjourney",
+      "generation": "V7",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "未核实",
+      "evidence": "checked",
+      "release": "2025-04-03",
+      "eventTitles": []
+    },
+    "flux-1": {
+      "officialName": "FLUX.1",
+      "family": "FLUX",
+      "generation": "1",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "runway": {
+      "officialName": "Runway Gen-4.5",
+      "family": "Runway Gen",
+      "generation": "4.5",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "luma-ray3": {
+      "officialName": "Luma Ray3",
+      "family": "Ray",
+      "generation": "Ray3",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "未核实",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "llama-4": {
+      "officialName": "Llama 4",
+      "family": "Llama",
+      "generation": "4",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "The Leaderboard Illusion 质疑 Arena 私测、选择性披露与数据不对称",
+        "Llama 4 Maverick 的 Arena 实验版与公开版差异"
+      ]
+    },
+    "suno-v6": {
+      "officialName": "Suno v6",
+      "family": "Suno",
+      "generation": "v6",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "未核实",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "Suno v6 上线后出现“变闷、失去个性”吐槽与旧模型怀旧"
+      ]
+    },
+    "deepseek-v3": {
+      "officialName": "DeepSeek-V3",
+      "family": "DeepSeek V",
+      "generation": "3",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": "2024-12-26",
+      "eventTitles": [
+        "DeepSeek 爆红时限制注册，公司称遭大规模恶意攻击"
+      ]
+    },
+    "deepseek-r1": {
+      "officialName": "DeepSeek-R1",
+      "family": "DeepSeek R1",
+      "generation": "1",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": "2025-01-20",
+      "eventTitles": [
+        "DeepSeek 爆红时限制注册，公司称遭大规模恶意攻击"
+      ]
+    },
+    "qwen2-5": {
+      "officialName": "Qwen2.5",
+      "family": "Qwen",
+      "generation": "2.5",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": "2024-09-19",
+      "eventTitles": []
+    },
+    "qwen3-8-max": {
+      "officialName": "Qwen3.8 Max",
+      "family": "Qwen API",
+      "generation": "3.8 Max API",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "闭源 API（Alibaba Cloud Model Studio）",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "qwen-flash-next": {
+      "officialName": "Qwen3.8-Flash-Next",
+      "family": "Qwen Flash Next",
+      "generation": "3.8 Preview",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "wan-2-1": {
+      "officialName": "Wan 2.1",
+      "family": "Wan",
+      "generation": "2.1",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "wan-3": {
+      "officialName": "Wan 3.0",
+      "family": "Wan",
+      "generation": "3.0",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "kimi-k2": {
+      "officialName": "Kimi K2",
+      "family": "Kimi",
+      "generation": "K2",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "kimi-k3": {
+      "officialName": "Kimi K3",
+      "family": "Kimi",
+      "generation": "K3",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "“提取过输出”不等于“实力全靠蒸馏”：Kimi K3 引发技术争论"
+      ]
+    },
+    "glm-4-5": {
+      "officialName": "GLM-4.5",
+      "family": "GLM",
+      "generation": "4.5",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "GLM-4.5 / GLM-5：公开组件复用与“偷代码”指控需要分层"
+      ]
+    },
+    "glm-5-3": {
+      "officialName": "GLM-5.3",
+      "family": "GLM",
+      "generation": "5.3",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": [
+        "GLM-4.5 / GLM-5：公开组件复用与“偷代码”指控需要分层"
+      ]
+    },
+    "seedance-1": {
+      "officialName": "Seedance 1.0",
+      "family": "Seedance",
+      "generation": "1.0",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "seedance-2": {
+      "officialName": "Seedance 2.0",
+      "family": "Seedance",
+      "generation": "2.0",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "seedance-2-5": {
+      "officialName": "Seedance 2.5",
+      "family": "Seedance",
+      "generation": "2.5",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "hunyuan": {
+      "officialName": "hunyuan",
+      "family": "Hunyuan API",
+      "generation": "API default",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "历史腾讯混元 API 型号",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "hy3": {
+      "officialName": "Hy3",
+      "family": "Tencent Hy",
+      "generation": "Hy3",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "开放权重；亦可通过腾讯云 TokenHub 调用",
+      "evidence": "checked",
+      "release": "2026-07-06",
+      "eventTitles": []
+    },
+    "hy4": {
+      "officialName": "Hy4 preview",
+      "family": "Tencent Hy",
+      "generation": "Hy4",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "开放权重；亦可通过腾讯云 TokenHub 调用",
+      "evidence": "checked",
+      "release": "2026-08-28",
+      "eventTitles": []
+    },
+    "ernie-4-5": {
+      "officialName": "ERNIE 4.5",
+      "family": "ERNIE",
+      "generation": "4.5",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "step-5": {
+      "officialName": "Step 5 Preview",
+      "family": "Step",
+      "generation": "Step 5 Preview",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "未核实",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "mimo-v2-flash": {
+      "officialName": "MiMo-V2-Flash",
+      "family": "MiMo · Flash",
+      "generation": "MiMo-V2-Flash",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "官方开放权重；许可见原始模型卡",
+      "evidence": "checked",
+      "release": "2025-12-16",
+      "eventTitles": []
+    },
+    "mimo-v2-6-pro": {
+      "officialName": "MiMo-V2.6-Pro",
+      "family": "MiMo · Pro",
+      "generation": "2.6",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "官方开放权重 / API；具体权重许可见模型卡",
+      "evidence": "checked",
+      "release": "2026-09-22",
+      "eventTitles": []
+    },
+    "longcat-flash": {
+      "officialName": "LongCat-Flash-Chat",
+      "family": "LongCat · 语言",
+      "generation": "LongCat-Flash-Chat",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "官方型号；权重或服务访问条件见原始模型卡",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "kling-3": {
+      "officialName": "Kling 3.0",
+      "family": "Kling",
+      "generation": "3.0",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "kling-4": {
+      "officialName": "Kling 4.0",
+      "family": "Kling",
+      "generation": "4.0 early access",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "未核实",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "skyreels": {
+      "officialName": "SkyReels-V4",
+      "family": "SkyReels",
+      "generation": "V4，技术报告",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "未核实",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "vidu-q3": {
+      "officialName": "Vidu Q3",
+      "family": "Vidu",
+      "generation": "Q3",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "未核实",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "pixverse": {
+      "officialName": "PixVerse V6",
+      "family": "PixVerse",
+      "generation": "V6",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "闭源 API",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "minimax-m2": {
+      "officialName": "MiniMax-M2",
+      "family": "MiniMax M",
+      "generation": "2",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": null,
+      "eventTitles": []
+    },
+    "minimax-h3": {
+      "officialName": "MiniMax H3",
+      "family": "Hailuo / MiniMax Video",
+      "generation": "H3，统一音视频",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": "2026-07-31",
+      "eventTitles": []
+    },
+    "minimax-m3": {
+      "officialName": "MiniMax-M3",
+      "family": "MiniMax M",
+      "generation": "3",
+      "kind": "官方模型 / 已命名训练分支",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": "2026-06-01",
+      "eventTitles": []
+    },
+    "minimax-music": {
+      "officialName": "MiniMax Music 3.0",
+      "family": "MiniMax Music",
+      "generation": "3.0",
+      "kind": "官方模型家族 / 主要版本",
+      "access": "开放权重",
+      "evidence": "checked",
+      "release": "2026-07-16",
+      "eventTitles": []
+    }
+  }
+}

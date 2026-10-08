@@ -21,20 +21,52 @@ export function createHUD(root: HTMLElement): HUDHandle {
   const overlay = el('div', { class: 'ap-layer ap-l-overlay', attrs: { 'aria-hidden': 'true' } })
 
   const regionText = el('span', { text: t('hud.region.unknown') })
-  const region = el('div', 'ap-region', [glyphEl('diamond'), regionText])
+  const region = el('div', 'ap-region', [glyphEl('home'), regionText])
   const todHost = el('span', 'ap-tod')
   const clockText = el('span', { class: 'ap-clock', text: t('hud.clock.placeholder') })
   const clock = el('span', 'ap-hud-stat', [todHost, clockText])
   const moneyVal = el('span', { class: 'ap-money-val', text: '0' })
   const money = el('span', { class: 'ap-hud-stat', title: t('common.money') }, [glyphEl('coin'), el('span', { class: 'ap-lbl', text: t('common.money') }), moneyVal])
-  const plate = el('div', 'ap-plate', [region, el('div', 'ap-hud-stats', [clock, money])])
+  const plate = el('div', 'ap-plate ap-hud-frame', [region, el('div', 'ap-hud-stats', [clock, money])])
 
   const questText = el('div', 'ap-quest-text')
-  const quest = el('div', { class: 'ap-quest', attrs: { role: 'status' } }, [
-    el('div', 'ap-quest-title', [glyphEl('quest'), el('span', { text: t('hud.quest.title') })]),
-    questText,
-  ])
+  const questSummary = el('span', 'ap-quest-summary')
+  const questDetails = el('div', { class: 'ap-quest-details', attrs: {
+    id: 'ap-quest-details', role: 'region', tabindex: '0', 'aria-label': t('hud.quest.title'),
+  } }, [questText])
+  const questToggle = el('button', { class: 'ap-quest-toggle', attrs: {
+    type: 'button', 'aria-expanded': 'false', 'aria-controls': 'ap-quest-details',
+  } }, [glyphEl('quest'), el('span', { class: 'ap-quest-title', text: t('hud.quest.title') }),
+    questSummary, glyphEl('advance', { className: 'ap-quest-chevron' })])
+  const quest = el('div', { class: 'ap-quest is-collapsed', attrs: { 'aria-label': t('hud.quest.title') } }, [questToggle, questDetails])
   quest.hidden = true
+  questDetails.hidden = true
+  const missions = el('div', 'ap-hud-missions ap-hud-frame', [quest])
+  const expandQuest = (on: boolean) => {
+    if (!on && !quest.hidden && questDetails.contains(document.activeElement)) questToggle.focus({ preventScroll: true })
+    quest.classList.toggle('is-collapsed', !on)
+    questToggle.setAttribute('aria-expanded', String(on))
+    questDetails.hidden = !on
+    if (on) quest.dispatchEvent(new CustomEvent('ap-hud-expand', { bubbles: true }))
+  }
+  questToggle.addEventListener('click', () => expandQuest(quest.classList.contains('is-collapsed')))
+  questToggle.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && quest.classList.contains('is-collapsed')) { questToggle.blur(); return }
+    e.stopPropagation()
+    if (e.key === 'Escape') { e.preventDefault(); expandQuest(false) }
+    if (e.key !== 'Enter' && e.key !== ' ') return
+    e.preventDefault()
+    if (!e.repeat) questToggle.click()
+  })
+  questDetails.addEventListener('keydown', (e) => {
+    e.stopPropagation()
+    if (e.key !== 'Escape') return
+    e.preventDefault()
+    expandQuest(false)
+    questToggle.focus()
+  })
+  const onDetailsOpen = (e: Event) => { if (e.target !== quest) expandQuest(false) }
+  root.addEventListener('ap-hud-expand', onDetailsOpen)
 
   const bannerTitle = el('div', 'ap-banner-title')
   const bannerSub = el('div', 'ap-banner-sub')
@@ -42,12 +74,13 @@ export function createHUD(root: HTMLElement): HUDHandle {
     el('div', 'ap-banner-row', [el('div', 'ap-banner-line'), glyphEl('diamond'), bannerTitle, glyphEl('diamond'), el('div', 'ap-banner-line is-right')]),
     bannerSub,
   ])
+  banner.hidden = true
 
   const netDot = el('span', 'ap-net-dot')
   const netText = el('span')
   const net = el('div', { class: 'ap-net', data: { status: 'offline' } }, [netDot, netText])
 
-  const hud = el('div', 'ap-layer ap-l-hud ap-hud', [el('div', 'ap-hud-tl', [plate, quest]), banner, net])
+  const hud = el('div', 'ap-layer ap-l-hud ap-hud', [el('div', 'ap-hud-tl', [plate, banner, missions]), net])
   root.append(overlay, hud)
 
   let regionName = ''
@@ -58,16 +91,18 @@ export function createHUD(root: HTMLElement): HUDHandle {
   let moneyTarget = 0
   let moneyRaf = 0
   let questValue: string | null = null
+  let questTitle = ''
 
   const api: HUDHandle = {
     el: hud,
     overlay,
-    setVisible(v: boolean) { hud.classList.toggle('is-hidden', !v) },
+    setVisible(v: boolean) { hud.classList.toggle('is-hidden', !v); if (!v) expandQuest(false) },
     setRegion(nameZh: string) {
       const name = nameZh || t('hud.region.unknown')
       if (name === regionName) return
       const first = regionName === ''
       regionName = name
+      region.title = name
       if (regionTimer) clearTimeout(regionTimer)
       if (first) { regionText.textContent = name; return }
       region.classList.add('is-swapping')
@@ -78,13 +113,17 @@ export function createHUD(root: HTMLElement): HUDHandle {
       }, cfg.regionFadeMs)
     },
     showBanner(title: string, subtitle?: string) {
+      if (bannerTimer) clearTimeout(bannerTimer)
       bannerTitle.textContent = title
       bannerSub.textContent = subtitle ?? ''
+      banner.hidden = false
       banner.classList.remove('is-on')
       void banner.offsetWidth
       banner.classList.add('is-on')
-      if (bannerTimer) clearTimeout(bannerTimer)
-      bannerTimer = window.setTimeout(() => { bannerTimer = 0; banner.classList.remove('is-on') }, cfg.bannerMs)
+      bannerTimer = window.setTimeout(() => {
+        banner.classList.remove('is-on')
+        bannerTimer = window.setTimeout(() => { bannerTimer = 0; banner.hidden = true }, cfg.bannerFadeMs)
+      }, cfg.bannerMs)
     },
     setClock(label: string, next: TimeOfDay) {
       if (clockText.textContent !== label) clockText.textContent = label
@@ -117,11 +156,16 @@ export function createHUD(root: HTMLElement): HUDHandle {
       }
       moneyRaf = requestAnimationFrame(step)
     },
-    setQuest(text: string | null) {
-      if (text === questValue) return
+    setQuest(text: string | null, summary?: string) {
+      const title = summary || t('hud.quest.title')
+      if (text === questValue && title === questTitle) return
       questValue = text
+      questTitle = title
+      expandQuest(false)
       quest.hidden = !text
       if (!text) return
+      questSummary.textContent = title
+      questToggle.setAttribute('aria-label', t('hud.quest.label', { quest: title }))
       questText.textContent = text
       quest.style.animation = 'none'
       void quest.offsetWidth
@@ -136,6 +180,7 @@ export function createHUD(root: HTMLElement): HUDHandle {
       if (moneyRaf) cancelAnimationFrame(moneyRaf)
       if (bannerTimer) clearTimeout(bannerTimer)
       if (regionTimer) clearTimeout(regionTimer)
+      root.removeEventListener('ap-hud-expand', onDetailsOpen)
       overlay.remove()
       hud.remove()
     },

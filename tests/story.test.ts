@@ -18,7 +18,7 @@ const ROUTE_SIGHT = [3, 5]
 const ROUTE_PARTY = [1, 4]
 const ROUTE_LEVEL_SLACK = 2
 const GYM_TRAINERS = [2, 4]
-const FIRST_LEADER_ACE = [12, 14]
+const FIRST_LEADER_ACE = [10, 14]
 const LAST_LEADER_ACE = [50, 55]
 const CHAMPION_ACE = [60, 65]
 const MIN_SIDE_QUESTS = 10
@@ -185,6 +185,7 @@ test('no unresolved placeholders or authoring macros reach the World', () => {
 test('flags read by scripts are written somewhere or are client conventions', () => {
   const f = STORY_CONTENT.meta.flags
   const written = new Set(everyStep.filter(({ s }) => s.op === 'setFlag').map(({ s }) => (s as { flag: string }).flag))
+  for (const { s } of everyStep) if (s.op === 'battle' && s.lossFlag) written.add(s.lossFlag)
   const groundItems = new Set(Object.values(world.maps).flatMap((m) => m.items.map((i) => i.id)))
   const ok = (flag: string) => written.has(flag) || flag === f.starter
     || (flag.startsWith(f.trainerWon) && !!world.trainers[flag.slice(f.trainerWon.length)])

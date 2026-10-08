@@ -128,7 +128,7 @@ export function researchScreen(env: ScreenEnv): Promise<void> {
         el('div', 'aps-rs-sphead', [
           el('img', { class: 'aps-rs-portrait', attrs: { src: ctx.assets.creatureImageUrl(r.id), alt: '' } }),
           el('div', 'aps-rs-spname', [
-            el('span', { class: 'aps-rs-title ap-gold', text: sp?.nameZh ?? r.id }),
+            el('span', { class: 'aps-rs-title ap-gold ap-model-name', text: sp?.nameZh ?? r.id, title: sp?.nameZh ?? r.id }),
             el('div', 'aps-rs-tags', [
               rarity ? rarityBadge(rarity, { label: 'name' }) : null,
               el('span', { class: `aps-tag${sr.complete ? ' is-ok' : ''}`, text: t(sr.complete ? 'research.ui.complete' : 'research.ui.incomplete') }),

@@ -33,7 +33,7 @@ import {
 import { distanceFromOrigin, regionAt, worldOrigin } from '../../shared/world/worldapi.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
 import { createEventHud } from '../ui/event-hud.ts'
-import { textOrKey } from './config.ts'
+import { grassEncounterRate, textOrKey } from './config.ts'
 import { auraCueColor, cueDef, GPC, pingColor } from './gameplay-config.ts'
 import { placeById, placesNear, realPlaceId, revealedPlaces } from './places.ts'
 import {
@@ -42,6 +42,7 @@ import {
 import { createResearchObserver, researchState, researchSummary, scriptResearch } from './research.ts'
 import type { RoamPick } from './roaming.ts'
 import { addItem } from './save-ops.ts'
+import { eventBenefits } from './event-details.ts'
 
 export interface GameplayPlace { map: GameMap; x: number; y: number; region: RegionDef | null }
 
@@ -76,7 +77,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
   const cues = createCuePlayer(ctx)
   const ambience = createAmbienceEmitter(ctx, rng)
   const hudRoot = ctx.hud.overlay.parentElement ?? ctx.ui.root
-  const hud = createEventHud(hudRoot)
+  const hud = createEventHud(hudRoot, ctx.ui)
   const research = createResearchObserver(ctx, () => ({ timeOfDay: ctx.clock.timeOfDay, weather: deps.weather(), biome: deps.place()?.region?.biome ?? null }))
 
   let saveRef = ctx.save
@@ -523,10 +524,11 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     const chips = active
       .filter((ev) => ev.def.tag && H.chipTags.includes(ev.def.tag) && eventAppliesAt(ev, at))
       .sort((a, b) => (b.def.priority ?? 0) - (a.def.priority ?? 0))
-      .slice(0, H.maxChips)
       .map((ev) => ({
         id: ev.id, title: eventTitle(ev.def), tag: ev.def.tag ?? '', color: H.tagColors[ev.def.tag ?? ''] ?? H.defaultColor,
         sub: t('events.ui.endsIn', { minutes: Math.max(1, Math.ceil(ev.endsAt - minutes())) }),
+        description: eventDescription(ev.def), scope: t(`hud.events.scope.${ev.def.scope}`),
+        benefits: eventBenefits(ev, minutes(), ctx.data),
       }))
     hud.setChips(chips)
     if (sensed) setSense(sensed)
@@ -603,7 +605,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
   /** Tall-grass step encounter (replaces encounters.rollEncounter): rate x event modifier, rarity weighting, flee. */
   function rollGrass(region: RegionDef, o: { repelActive: boolean; leadLevel: number }): WildPick | null {
     if (!(region.encounterRate > 0) || !region.encounters.length) return null
-    if (!rng.chance(Math.min(1, region.encounterRate * modifierValue(mods, 'encounterRate')))) return null
+    if (!rng.chance(grassEncounterRate(region.encounterRate, modifierValue(mods, 'encounterRate')))) return null
     const p = deps.place()
     const ectx = p ? contextAt(p, region) : lastCtx
     if (!ectx) return null

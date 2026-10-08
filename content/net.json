@@ -32,7 +32,7 @@
   },
   "store": {"defaultDir": "data/server", "file": "profiles.json", "debounceMs": 2000, "maxProfiles": 50000, "version": 1},
   "leaderboard": {"size": 50, "sortBy": ["dexCaught", "badges", "pvpWins", "maxDistance"]},
-  "client": {"reconnect": {"baseMs": 1000, "maxMs": 30000, "factor": 1.8, "jitter": 0.3}, "pingSeconds": 5, "pingTimeoutSeconds": 15, "rttSmoothing": 0.2, "interpolationDelayMs": 120, "sampleBufferMs": 1500, "snapDistanceTiles": 6, "positionDecimals": 2, "profileDebounceMs": 1500, "leaderboardTimeoutMs": 6000},
+  "client": {"reconnect": {"baseMs": 1000, "maxMs": 30000, "factor": 1.8, "jitter": 0.3}, "pingSeconds": 5, "pingTimeoutSeconds": 15, "rttSmoothing": 0.2, "interpolationDelayMs": 240, "sampleBufferMs": 1500, "snapDistanceTiles": 6, "positionDecimals": 2, "profileDebounceMs": 1500, "leaderboardTimeoutMs": 6000},
   "http": {
     "apiPrefix": "/api/",
     "healthPath": "/api/health",

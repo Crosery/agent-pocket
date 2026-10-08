@@ -6,7 +6,7 @@
 //   rot 1, north at rot 2, west at rot 3. For rot 1/3 the footprint [w, d] becomes [d, w].
 // - PropDef.door [dx, dz] is relative to the footprint centre tile (floor(w/2), floor(d/2)) at rot 0 and points
 //   at the tile in FRONT of the facade. The door warp sits on the facade tile behind it (inside the footprint),
-//   which is the only walkable tile of a building.
+//   with doorSpan extending that opening along local X. Other footprint tiles remain blocked.
 // - A stairs tile stores the LOWER level L; exactly one orthogonal neighbour (stairsDir) is at L+1 and the ramp
 //   rises towards it. Elevation changes happen only along that axis; diagonal moves never change elevation.
 // - buildCollision values: 0 free, 1 blocked, 2 water (enterable only while surfing).
@@ -73,16 +73,31 @@ export interface DoorInfo {
   facing: Dir
 }
 
-export function propDoor(p: PropPlacement): DoorInfo | null {
+function doorAt(p: PropPlacement, lateral: number): DoorInfo | null {
   const def = propDef(p.prop)
   if (!def.door) return null
   const [w, d] = def.footprint
-  const ci = Math.floor(w / 2) + def.door[0]
+  const ci = Math.floor(w / 2) + def.door[0] + lateral
   const cj = Math.floor(d / 2) + def.door[1]
   const facing = FACING_BY_ROT[p.rot & 3]
   const [fi, fj] = rotateCell(ci, cj, w, d, p.rot)
   const front = { x: p.x + fi, y: p.y + fj }
   return { x: front.x - DIR_DX[facing], y: front.y - DIR_DY[facing], front, facing }
+}
+
+/** Primary entry: stable return destination and anchor, including for a multi-tile opening. */
+export function propDoor(p: PropPlacement): DoorInfo | null { return doorAt(p, 0) }
+
+/** All entry lanes, primary first, rotated together with the footprint. */
+export function propDoors(p: PropPlacement): DoorInfo[] {
+  const main = propDoor(p)
+  if (!main) return []
+  const out = [main]
+  const [lo, hi] = propDef(p.prop).doorSpan ?? [0, 0]
+  for (let offset = lo; offset <= hi; offset++) {
+    if (offset !== 0) out.push(doorAt(p, offset)!)
+  }
+  return out
 }
 
 function terrainDef(id: number): TerrainDef | undefined { return CONTENT.terrain[id] }

@@ -6,6 +6,7 @@ import { STORY_CONTENT } from '../../shared/world/story.ts'
 import { GAME } from './config.ts'
 import type { NpcRuntime } from './npcs.ts'
 import { flagSet } from './save-ops.ts'
+import type { QuestNavigation } from './quest-navigation.ts'
 
 export interface MarkerSources {
   map: GameMap
@@ -16,6 +17,7 @@ export interface MarkerSources {
   roamers: readonly { x: number; y: number; rare: boolean }[]
   /** Live ground items (streamed on infinite maps); defaults to map.items. */
   items?: readonly GroundItemDef[]
+  navigation?: QuestNavigation | null
 }
 
 export function collectMarkers(s: MarkerSources): MinimapMarker[] {
@@ -29,7 +31,9 @@ export function collectMarkers(s: MarkerSources): MinimapMarker[] {
       }
     }
   }
-  if (M.quest && s.save.trackedQuest) {
+  if (M.quest && s.navigation && (s.navigation.status === 'ready' || s.navigation.status === 'arrived')) {
+    out.push({ x: s.navigation.waypoint.x + 0.5, y: s.navigation.waypoint.y + 0.5, kind: 'quest', label: s.navigation.title })
+  } else if (M.quest && s.navigation === undefined && s.save.trackedQuest) {
     const q = s.world.quests.find((x) => x.id === s.save.trackedQuest)
     const st = q && s.save.quests[q.id]
     const target = q && st && !st.done ? q.stages[Math.min(st.stage, q.stages.length - 1)]?.target : undefined

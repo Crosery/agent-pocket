@@ -131,13 +131,17 @@ export interface ScreenBehaviour {
   dispose?(): void
 }
 
+let screenId = 0
+
 /**
  * Pushes a full-screen panel built by `build`; resolves with the value passed to api.close().
  * `leave` supplies the result used when leaveAllScreens() unwinds the stack (screens without it stay open).
  */
 export function openScreen<T>(env: ScreenEnv, className: string, build: (api: ScreenApi<T>) => ScreenBehaviour, leave?: () => T): Promise<T> {
   return new Promise<T>((resolve) => {
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     const root = el('div', { class: `aps-screen ${className}`, attrs: { role: 'dialog', 'aria-modal': 'true' } })
+    root.tabIndex = -1
     let closed = false
     let busy = 0
     let behaviour: ScreenBehaviour | null = null
@@ -167,13 +171,16 @@ export function openScreen<T>(env: ScreenEnv, className: string, build: (api: Sc
           env.state.after = null
           after?.()
         }
+        if (previousFocus?.isConnected) previousFocus.focus({ preventScroll: true })
         resolve(value)
       },
       async run<R>(fn: () => Promise<R>): Promise<R> {
+        const focus = document.activeElement instanceof HTMLElement && root.contains(document.activeElement) ? document.activeElement : null
         setBusy(1)
         try { return await fn() } finally {
           setBusy(-1)
           if (env.state.leave && leave && !closed) api.close(leave())
+          if (!closed && focus?.isConnected) focus.focus({ preventScroll: true })
         }
       },
       guard<A extends unknown[]>(fn: (...args: A) => void) {
@@ -182,7 +189,30 @@ export function openScreen<T>(env: ScreenEnv, className: string, build: (api: Sc
     }
     env.state.depth++
     behaviour = build(api)
+    const heading = root.querySelector('h2')
+    if (heading) {
+      heading.id ||= `ap-screen-${++screenId}`
+      root.setAttribute('aria-labelledby', heading.id)
+    }
+    root.addEventListener('keydown', (e) => {
+      if (e.key !== 'Tab' || closed) return
+      // Tab navigates controls here; the world's Tab-to-menu binding must not close the screen.
+      e.stopPropagation()
+      if (busy) { e.preventDefault(); return }
+      const controls = [...root.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex="0"]')]
+        .filter((node) => node.getClientRects().length && getComputedStyle(node).visibility !== 'hidden')
+      const first = controls[0], last = controls.at(-1)
+      if (!first) { e.preventDefault(); root.focus(); return }
+      if (!root.contains(document.activeElement) || (e.shiftKey ? document.activeElement === first : document.activeElement === last)) {
+        e.preventDefault()
+        const target = e.shiftKey ? last : first
+        target?.focus()
+      }
+    })
     env.ctx.ui.pushPanel(ui)
+    const first = root.querySelector<HTMLElement>('button.is-active, [tabindex="0"].is-active') ??
+      root.querySelector<HTMLElement>('input:not([disabled]), button:not([disabled])') ?? root
+    first.focus({ preventScroll: true })
   })
 }
 

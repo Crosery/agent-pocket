@@ -6,6 +6,7 @@ import type { AudioManager, Input } from '../contracts.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { el, panel } from '../ui/widgets.ts'
 import { BATTLE_UI } from './config.ts'
+import { createBattleEffectsPanel } from './effects-panel.ts'
 import { createMenus, type Menus } from './menus.ts'
 import { createMessageBox, type MessageBox } from './message.ts'
 import type { StatDelta } from './model.ts'
@@ -36,7 +37,11 @@ export interface BattleView {
 export function createBattleView(audio: AudioManager, settings: () => Settings): BattleView {
   const T = BATTLE_UI.timing
   const root = el('div', 'apb-root')
-  const status: [StatusPanel, StatusPanel] = [createStatusPanel(true), createStatusPanel(false)]
+  let openDetails: (side: SideIndex) => void = () => undefined
+  const status: [StatusPanel, StatusPanel] = [
+    createStatusPanel(true, () => openDetails(0)),
+    createStatusPanel(false, () => openDetails(1)),
+  ]
   const weather = el('div', 'apb-weather')
   weather.hidden = true
   const timer = el('div', 'apb-timer')
@@ -45,7 +50,9 @@ export function createBattleView(audio: AudioManager, settings: () => Settings):
   const menus: Menus = createMenus(audio)
   const bar = el('div', 'apb-bar', [message.el, menus.el, status[0].el])
   root.append(status[1].el, weather, timer, bar)
-  root.addEventListener('click', () => { if (!menus.open) message.advance() })
+  const effects = createBattleEffectsPanel(root, status)
+  openDetails = (side) => effects.show(side)
+  root.addEventListener('click', () => { if (!menus.open && !effects.open) message.advance() })
   root.addEventListener('contextmenu', (e) => e.preventDefault())
 
   let interceptor: ((inp: Input) => boolean) | null = null
@@ -105,6 +112,7 @@ export function createBattleView(audio: AudioManager, settings: () => Settings):
     setInterceptor(fn) { interceptor = fn },
     input(inp) {
       if (interceptor?.(inp)) return true
+      if (effects.input(inp)) return true
       if (levelWait) {
         if (inp.pressed('confirm') || inp.pressed('cancel')) {
           inp.consume('confirm')

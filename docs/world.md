@@ -302,8 +302,10 @@ in `content/terrain.json`, scatter rules in `content/world/scatter.json` (`scale
   turns counter-clockwise seen from above (three.js `rotation.y = rot·π/2`). Facade faces south at rot 0,
   east at 1, north at 2, west at 3; rot 1/3 swap footprint w/d (`propSize`).
 - **Doors**: `PropDef.door` is an offset from the footprint centre tile `(floor(w/2), floor(d/2))` at rot 0,
-  pointing to the tile *in front of* the door. The door warp sits on the facade tile behind it — the only
-  enterable tile of a building. Interior exits return the player onto the front tile facing away from the door.
+  pointing to the tile *in front of* the primary door. `doorSpan` is an inclusive range of local-X tile offsets
+  from it (default `[0, 0]`; centred double doors use `[-1, 0]`). `propDoors` rotates all entry lanes with the
+  footprint. Each facade lane has the same interior warp, and every front lane is kept clear. The rest of the
+  building stays blocked. Interior exits and anchors retain the primary front tile and facing.
 - **Stairs**: a stairs tile stores the *lower* level; exactly one orthogonal neighbour is one level higher
   (`stairsDir`). Elevation changes only along that axis; diagonals need equal elevation, no stairs, and both
   corner tiles passable.

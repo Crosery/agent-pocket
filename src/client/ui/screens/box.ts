@@ -65,7 +65,10 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
       cell.setAttribute('aria-label', c ? creatureName(c) : t('screens.box.emptySlot'))
       setChildren(cell, c ? [
         creatureIcon(ctx.assets.creatureImageUrl(c.speciesId), c.shiny, withName ? SCREENS.box.partyIconSize : SCREENS.box.cellIconSize),
-        withName ? el('span', 'aps-box-pinfo', [el('span', { class: 'aps-box-pname', text: creatureName(c) }), el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) })]) : null,
+        withName ? el('span', 'aps-box-pinfo', [
+          el('span', { class: 'aps-box-pname ap-model-name', text: creatureName(c), title: creatureName(c), attrs: { 'aria-label': creatureName(c) } }),
+          el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) }),
+        ]) : null,
       ] : [])
     }
 
@@ -98,14 +101,21 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
       const show = zone === 'head' ? undefined : creatureAt(save, curSlot())
       const heldC = held ? creatureAt(save, held) : undefined
       const parts: (HTMLElement | null)[] = []
-      if (heldC) parts.push(el('div', 'aps-box-holding', [el('span', { class: 'ap-gold', text: t('screens.box.holding') }), creatureIcon(ctx.assets.creatureImageUrl(heldC.speciesId), heldC.shiny, SCREENS.box.partyIconSize), el('span', { text: creatureName(heldC) })]))
+      if (heldC) parts.push(el('div', 'aps-box-holding', [
+        el('span', { class: 'ap-gold', text: t('screens.box.holding') }),
+        creatureIcon(ctx.assets.creatureImageUrl(heldC.speciesId), heldC.shiny, SCREENS.box.partyIconSize),
+        el('span', { class: 'ap-model-name', text: creatureName(heldC), title: creatureName(heldC) }),
+      ]))
       if (show) {
         const sp = CONTENT.species[show.speciesId]
         const bar = hpBar({ numbers: true })
         bar.set(show.hp, maxHp(show))
         parts.push(
           el('div', 'aps-box-stage', [el('div', 'aps-sum-pedestal'), creatureImg(ctx.assets, show.speciesId, { shiny: show.shiny, className: 'aps-box-sprite' })]),
-          el('div', 'aps-sum-name', [el('span', { text: creatureName(show) }), el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: show.level }) })]),
+          el('div', 'aps-sum-name', [
+            el('span', { class: 'ap-model-name', text: creatureName(show), title: creatureName(show), attrs: { 'aria-label': creatureName(show) } }),
+            el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: show.level }) }),
+          ]),
           el('div', 'aps-chips', [...(sp?.types ?? []).map((ty) => typeChip(ty)), sp ? rarityBadge(sp.rarity) : null, show.status ? statusChip(show.status) : null]),
           bar.el,
         )

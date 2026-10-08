@@ -22,6 +22,16 @@ export function validateWorldContent(wc: WorldContent = WORLD_CONTENT, c: Conten
   const regionIds = new Set(wc.regions.map((r) => r.id))
   const region = (where: string, id: string) => { if (!regionIds.has(id)) errs.push(`${where}: unknown region "${id}"`) }
 
+  for (const def of Object.values(c.props)) {
+    if (!def.doorSpan) continue
+    const [lo, hi] = def.doorSpan
+    const col = Math.floor(def.footprint[0] / 2) + (def.door?.[0] ?? 0)
+    if (!def.door || !Number.isInteger(lo) || !Number.isInteger(hi) || lo > 0 || hi < 0 ||
+      col + lo < 0 || col + hi >= def.footprint[0]) {
+      errs.push(`prop ${def.key}: doorSpan must include the primary door and stay inside the footprint`)
+    }
+  }
+
   // world.json
   if (ow.width > 2048 || ow.height > 2048) errs.push('overworld: larger than 2048x2048')
   const L = ow.layout
@@ -36,6 +46,14 @@ export function validateWorldContent(wc: WorldContent = WORLD_CONTENT, c: Conten
   collider1('world.overworld.hydrology.rapidsProp', ow.hydrology.rapidsProp)
   for (const k of [ow.hydrology.riverTerrain, ow.hydrology.bankTerrain, ow.hydrology.lakeTerrain, ow.hydrology.lakeRimTerrain]) terrain('world.overworld.hydrology', k)
   if (!(ow.coarse >= 1)) errs.push('world.overworld: coarse must be >= 1')
+  if (ow.startFlat) {
+    if (!(ow.startFlat.radius >= 0) || !(ow.startFlat.transition >= 0) || !Number.isFinite(ow.startFlat.radius) || !Number.isFinite(ow.startFlat.transition)) {
+      errs.push('world.overworld.startFlat: radius and transition must be finite and >= 0')
+    }
+    if (!Number.isFinite(ow.startFlat.level) || ow.startFlat.level < 0 || ow.startFlat.level > ow.maxLevel) {
+      errs.push('world.overworld.startFlat: level must be within maxLevel')
+    }
+  }
   if (!wc.world.text.dungeonSign) errs.push('world.text: missing dungeonSign')
   for (const k of [ow.seaTerrain, ow.seaShallowTerrain, ow.outOfBounds, ow.beach.terrain, ow.exitStubTerrain, ow.bridgeTerrain, ow.stairsTerrain]) terrain('world.overworld', k)
   if (c.terrainByKey[ow.stairsTerrain] && !c.terrainByKey[ow.stairsTerrain].stairs) errs.push(`world.overworld: stairsTerrain "${ow.stairsTerrain}" lacks the stairs flag`)

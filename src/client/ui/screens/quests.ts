@@ -93,7 +93,7 @@ export function questsScreen(env: ScreenEnv): Promise<void> {
         uiSfx(env, 'cancel')
       } else {
         ctx.save.trackedQuest = e.def.id
-        ctx.hud.setQuest(questHudText(e.def, e.stage))
+        ctx.hud.setQuest(questHudText(e.def, e.stage), e.def.nameZh)
         uiSfx(env, 'confirm')
       }
       dirty = true

@@ -263,6 +263,8 @@ export interface ItemDef {
 
 export interface LearnsetEntry { level: number; move: string }
 
+export type EvolutionKind = 'post-training' | 'version'
+
 export interface SpeciesDef {
   id: string                 // ascii kebab-case; sprite file name
   dexNo: number
@@ -273,7 +275,7 @@ export interface SpeciesDef {
   category: string
   family: string
   stage: number
-  evolvesTo?: { id: string; level: number }
+  evolvesTo?: { id: string; level: number; kind?: EvolutionKind }
   evolvesFrom?: string
   types: TypeId[]            // 1..2
   rarity: Rarity
@@ -291,6 +293,18 @@ export interface SpeciesDef {
   size: number               // world sprite scale (1 = player height)
   starter?: boolean
   designPrompt?: string      // sprite generation prompt (tools only)
+}
+
+/** Curated research metadata derived from the local model-lineage and event dossiers. */
+export interface DexResearchEntry {
+  officialName: string
+  family: string
+  generation: string
+  kind: string
+  access: string
+  evidence: string
+  release: string | null
+  eventTitles: string[]
 }
 
 // ---------------------------------------------------------------------------
@@ -323,6 +337,8 @@ export interface PropDef {
   height: number
   collide: boolean
   door?: [number, number]
+  /** Inclusive local-X tile offsets from the primary door; defaults to [0, 0]. */
+  doorSpan?: [number, number]
   billboard?: boolean
   light?: PropLight
   minimapIcon?: 'center' | 'shop' | 'gym' | 'lab' | 'house' | 'tower' | 'none'
@@ -349,7 +365,7 @@ export interface GameConfig {
   movement: { walkSpeed: number; runSpeed: number; bikeSpeed: number; surfSpeed: number }
   party: { maxParty: number; boxCount: number; boxSize: number; maxLevel: number; maxMoves: number }
   time: { dayRealSeconds: number; startMinutes: number; phases: { id: TimeOfDay; from: number; to: number }[] }
-  sprites: { sheetCell: number; sheetFrames: number; sheetRows: Record<Dir, number>; creatureSize: number }
+  sprites: { sheetCell: number; sheetFrames: number; sheetWalkFrames: number; sheetIdleFrames: number; idleFps: number; idleSettleMs: number; sheetRows: Record<Dir, number>; creatureSize: number }
   net: {
     tickHz: number; viewRadius: number; protocolVersion: number; chatMaxLen: number
     chatRate: { count: number; perSeconds: number }; localChatRadius: number
@@ -555,7 +571,8 @@ export type ScriptStep =
   | { op: 'takeMoney'; amount: number; failText?: string }
   | { op: 'giveCreature'; species?: string; pick?: SpeciesPick; level: number; shiny?: boolean }
   | { op: 'chooseStarter' }
-  | { op: 'battle'; trainer: string }
+  /** lossContinues: a loss does not black out or abort the script (story-scripted fights); lossFlag records win/loss. */
+  | { op: 'battle'; trainer: string; lossContinues?: boolean; lossFlag?: string }
   | { op: 'wildBattle'; species?: string; pick?: SpeciesPick; level: number; music?: string }
   | { op: 'heal' }
   | { op: 'shop'; items: string[] }
@@ -913,6 +930,9 @@ export interface Settings {
   textSpeed: 'slow' | 'normal' | 'fast' | 'instant'
   showMinimap: boolean
   showNames: boolean
+  /** Objective tracker in the HUD / one-time contextual tips (content/tutorial.json). */
+  showObjective: boolean
+  showTips: boolean
   autoRun: boolean
   touchControls: 'auto' | 'on' | 'off'
   /** Ids of one-time settings migrations (config.settingsMigrations) already applied to this save. */
