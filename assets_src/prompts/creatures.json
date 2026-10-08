@@ -985,7 +985,7 @@
   "nameEn": "Nemotron 3 Ultra",
   "nameZh": "Nemotron 3 Ultra",
   "family": "nemotron",
-  "stage": 2,
+  "stage": 1,
   "types": [
    "open",
    "compute"
@@ -3392,7 +3392,7 @@
   "id": "nemotron-3-super",
   "nameEn": "Nemotron 3 Super",
   "nameZh": "Nemotron 3 Super",
-  "family": "nemotron",
+  "family": "nemotron-3-super",
   "stage": 1,
   "types": [
    "open",
@@ -3401,8 +3401,7 @@
   "rarity": "SR",
   "design": "Chibi HD-2D pixel sprite, ~2 heads tall, the younger Nemotron boy: the same green-haired tech kid before his full gear. Hair: spiky NVIDIA-green (#76B900) with a small spiral swirl on one side, black undercut. Eyes: bright green, faint circuit-trace irises, eager grin. Outfit: a too-big black leather jacket with rolled sleeves, dark-grey tee with a glowing green chip print, cargo shorts, small heatsink-fin sneakers. Signature companion: a baby green mamba wrapped around his neck like a scarf (hybrid Mamba-Transformer), tail tip a tiny watchful eye. On his back: a compact GPU backpack with a single spinning fan and a thin green RGB strip. Prop: a small open notebook (an open recipe in the making). Palette: NVIDIA green #76B900, jet black #111111, gunmetal #4A4F55, white. Pose: bouncing on his toes, one fist pumped.",
   "lookZh": "背着单风扇显卡包的绿发少年，脖子上缠着小青蛇",
-  "personality": "只动 12B 就能干活的节能小学徒，嗓门不小",
-  "lineRef": "nemotron"
+  "personality": "只动 12B 就能干活的节能小学徒，嗓门不小"
  },
  {
   "id": "sd-3-5",
@@ -4173,8 +4172,8 @@
   "id": "claude-3-sonnet",
   "nameEn": "Claude 3 Sonnet",
   "nameZh": "Claude 3 Sonnet",
-  "family": "claude-classic",
-  "stage": 3,
+  "family": "claude-3-sonnet",
+  "stage": 1,
   "types": [
    "chat",
    "safety"
@@ -4182,8 +4181,7 @@
   "rarity": "R",
   "design": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the same girl grown into a poised young scholar. Honey-blonde (#E3B877) bob now shoulder length with a neat side braid, the same sunburst-curl ahoge, olive-green (#788C5D) eyes with a cream highlight. Cream academy blazer (#FAF9F5) with coral (#CC785C) piping and a shield-shaped pocket, olive tie (#788C5D), slate pleated skirt (#3A3A38), kraft-brown (#D4A27F) loafers and a small kraft satchel. Signature accessory: the coral sunburst hair clip, with its cream ribbon bookmark now wrapped around the end of the braid. Prop: a closed hardcover book with a shield pictogram on the cover, held in both arms. Palette #E3B877 honey, #788C5D olive, #FAF9F5 cream, #CC785C coral, #3A3A38 slate, #D4A27F kraft. Pose: upright and calm, book held to her chest, a reassuring smile.",
   "lookZh": "穿奶油色学院西装、抱着盾徽书本的蜜金编发少女",
-  "personality": "沉稳可靠，说话让人安心",
-  "lineRef": "claude-2"
+  "personality": "沉稳可靠，说话让人安心"
  },
  {
   "id": "claude-3-7-sonnet",
@@ -6772,7 +6770,7 @@
   "id": "nemotron-70b",
   "nameEn": "Llama-3.1-Nemotron-70B-Instruct",
   "nameZh": "Llama-3.1-Nemotron-70B",
-  "family": "nemotron-llama",
+  "family": "nemotron-70b",
   "stage": 1,
   "types": [
    "open",
@@ -6787,8 +6785,8 @@
   "id": "nemotron-super-49b",
   "nameEn": "Llama-3.3-Nemotron-Super-49B",
   "nameZh": "Llama-3.3-Nemotron-Super-49B",
-  "family": "nemotron-llama",
-  "stage": 2,
+  "family": "nemotron-super-49b",
+  "stage": 1,
   "types": [
    "open",
    "compute"
@@ -6796,15 +6794,14 @@
   "rarity": "R",
   "design": "Chibi HD-2D pixel sprite, ~2.3 heads tall, the same Llama-Nemotron girl, now slimmer and sharper after a trim. Hair: jet-black (#111111) ponytail grown longer with NVIDIA-green (#76B900) gradient ends, blunt bangs. Eyes: bright green with the tiny spiral swirl iris. Outfit: fitted black varsity jacket with green sleeves over a cream (#F3EAD3) knit vest, pleated black skirt, gunmetal (#4A4F55) boots; the star medal still pinned on the jacket. Signature accessory: the same cream llama-ear headband with green inner ears, neater and tighter. Prop: a pair of tiny green-handled pruning shears in one hand (a pruned and distilled build). Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: snipping the air with the shears, cheeky confident grin, ponytail swinging.",
   "lookZh": "一身利落黑绿夹克的羊驼耳少女，手里拿着小修枝剪",
-  "personality": "删繁就简，剪掉多余的才更利索",
-  "lineRef": "nemotron-70b"
+  "personality": "删繁就简，剪掉多余的才更利索"
  },
  {
   "id": "nemotron-ultra-253b",
   "nameEn": "Llama-3.1-Nemotron-Ultra-253B",
   "nameZh": "Llama-3.1-Nemotron-Ultra-253B",
-  "family": "nemotron-llama",
-  "stage": 3,
+  "family": "nemotron-ultra-253b",
+  "stage": 1,
   "types": [
    "open",
    "logic"
@@ -6812,8 +6809,7 @@
   "rarity": "SR",
   "design": "Chibi HD-2D pixel sprite, ~2.7 heads tall, the grown-up Llama-Nemotron girl, a calm reasoning strategist. Hair: jet-black (#111111) ponytail now waist-length with NVIDIA-green (#76B900) gradient ends, blunt bangs. Eyes: bright green with the spiral swirl iris, thoughtful and sharp. Outfit: long black coat with a cream (#F3EAD3) wool collar and glowing green circuit-vein lining, green-sleeved varsity top, gunmetal (#4A4F55) boots; the star medal pinned to the collar. Signature accessory: the same cream llama-ear headband with green inner ears, now with thin gunmetal heatsink-fin trim. Props: a softly glowing green thinking orb in one hand, and the tiny pruning shears at her belt. Palette: NVIDIA green #76B900, jet black #111111, wool cream #F3EAD3, gunmetal #4A4F55, white. Pose: orb raised in one palm, coat swept back, composed half-smile.",
   "lookZh": "长马尾及腰的羊驼耳少女，托着一枚发绿光的思考球",
-  "personality": "沉得住气，想清楚再出手的冷静军师",
-  "lineRef": "nemotron-super-49b"
+  "personality": "沉得住气，想清楚再出手的冷静军师"
  },
  {
   "id": "hermes-3-405b",

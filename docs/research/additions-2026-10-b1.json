@@ -916,8 +916,8 @@
    "category": "llm",
    "family": "claude-classic",
    "stage": 2,
-   "evolvesTo": "claude-3-sonnet",
-   "evolveLevel": 29,
+   "evolvesTo": "",
+   "evolveLevel": 0,
    "types": [
     "chat",
     "write"
@@ -939,7 +939,7 @@
    "capabilityScore": 20,
    "hotnessScore": 38,
    "statRationale": "长文写作→特攻高；200K 上下文→HP高。 [BST 339 ∈ R 330-420; 强项 spa/hp; 能力 20/热度 38]",
-   "dexEntryZh": "Claude 2 于 2023 年 7 月 11 日上线，是 claude.ai 上首个向公众开放的 Claude，由 Claude 1 迭代而来，擅长长文档。据记载，之后的 Claude 2.1（2023 年 11 月）带来 200K 上下文，并把幻觉减少了 50%。再往后一步，就是同属 Claude 一脉的 Claude 3 Sonnet。",
+   "dexEntryZh": "Claude 2 于 2023 年 7 月 11 日上线，是 claude.ai 上首个向公众开放的 Claude，由 Claude 1 迭代而来，擅长长文档。据记载，之后的 Claude 2.1（2023 年 11 月）带来 200K 上下文，并把幻觉减少了 50%。她是图鉴里这条经典线的第 2 阶形态。",
    "lookZh": "拖着长卷轴的蜜金波波头少女，珊瑚色开衫配书签发夹",
    "design": {
     "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same girl a little older and bolder than her first form. Honey-blonde (#E3B877) bob grown to chin length with a side-swept fringe and the same sunburst-curl ahoge, olive-green (#788C5D) eyes with a cream highlight. Cream blouse (#FAF9F5) under a coral cardigan (#CC785C) with kraft-brown (#D4A27F) trim, a short olive pleated skirt (#788C5D) and brown boots. Signature accessory: the coral sunburst hair clip with its cream ribbon bookmark, the ribbon now longer. Props: a very long paper scroll draped over one arm and trailing to the floor (long documents), and a slim quill in her other hand. Palette #E3B877 honey, #788C5D olive, #FAF9F5 cream, #CC785C coral, #D4A27F kraft. Pose: one step forward with the scroll trailing behind her, an eager open-mouthed smile as if about to read it all aloud.",
@@ -959,8 +959,8 @@
    "company": "Anthropic",
    "country": "US",
    "category": "llm",
-   "family": "claude-classic",
-   "stage": 3,
+   "family": "claude-3-sonnet",
+   "stage": 1,
    "evolvesTo": "",
    "evolveLevel": 0,
    "types": [
@@ -984,7 +984,7 @@
    "capabilityScore": 36,
    "hotnessScore": 44,
    "statRationale": "安全属性延续→防御、特防最高。 [BST 368 ∈ R 330-420; 强项 def/spd; 能力 36/热度 44]",
-   "dexEntryZh": "Claude 3 Sonnet 发布于 2024 年 3 月 4 日，属于 Sonnet 家族，是 Claude 2 之后的下一形态，两者同属 Claude 一脉。资料里对她的记载不多，只能确认她延续了对话与安全两条属性，防御和特防最高，如今已经退役。",
+   "dexEntryZh": "Claude 3 Sonnet 发布于 2024 年 3 月 4 日，是 Claude 3 一代里的 Sonnet 型号。资料里对她的记载不多，只能确认她延续了对话与安全两条属性，防御和特防最高，如今已经退役。她在图鉴里自成一支，没有前后形态。",
    "lookZh": "穿奶油色学院西装、抱着盾徽书本的蜜金编发少女",
    "design": {
     "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the same girl grown into a poised young scholar. Honey-blonde (#E3B877) bob now shoulder length with a neat side braid, the same sunburst-curl ahoge, olive-green (#788C5D) eyes with a cream highlight. Cream academy blazer (#FAF9F5) with coral (#CC785C) piping and a shield-shaped pocket, olive tie (#788C5D), slate pleated skirt (#3A3A38), kraft-brown (#D4A27F) loafers and a small kraft satchel. Signature accessory: the coral sunburst hair clip, with its cream ribbon bookmark now wrapped around the end of the braid. Prop: a closed hardcover book with a shield pictogram on the cover, held in both arms. Palette #E3B877 honey, #788C5D olive, #FAF9F5 cream, #CC785C coral, #3A3A38 slate, #D4A27F kraft. Pose: upright and calm, book held to her chest, a reassuring smile.",
@@ -994,8 +994,7 @@
     "sourceUrls": [
      "https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html"
     ]
-   },
-   "lineRef": "claude-2"
+   }
   },
   {
    "id": "claude-3-7-sonnet",
