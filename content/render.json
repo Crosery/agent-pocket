@@ -57,7 +57,7 @@
     "cloud": {"size": 128, "octaves": 4, "scale": 26, "speed": 0.9, "coverage": 0.56, "softness": 0.2, "strength": 0.55, "ambient": 0.12, "drift": 0.1, "driftSeconds": 420, "detail": 0.35, "detailScale": 2.7, "pixels": 0},
     "shafts": {"props": ["tree_oak", "tree_cherry", "tree_pine", "tree_swamp"], "density": 0.5, "jitter": 1.4, "perChunk": 8, "radius": 15, "fade": 4, "reselectSeconds": 0.5, "width": [0.5, 0.95], "length": 0, "maxLength": 10, "intensity": 0.42, "tipFade": 0.55, "footFade": 0.35, "shimmer": 0.35, "shimmerSpeed": 0.7, "dust": 0.8, "moon": 0.6, "minElevationDeg": 6, "steepDeg": 38},
     "sprite": {"rimPixels": 1.0, "rimStrength": 0.9, "rimMin": 0.15, "shadowRadius": 0.35, "shadowLift": 0.25, "shadowStrength": 0.85, "shadowOffset": 0.18},
-    "wet": {"darken": 0.3, "sheen": 1.0, "sheenPower": 2.0, "puddleScale": 0.13, "puddleCoverage": 0.62, "puddleSoftness": 0.1, "reflect": 0.5, "sheenBase": 0.4, "propSheen": 0.18}
+    "wet": {"darken": 0.3, "sheen": 1.0, "sheenPower": 2.0, "puddleScale": 0.13, "puddleCoverage": 0.66, "puddleSoftness": 0.1, "reflect": 0.3, "sheenBase": 0.4, "propSheen": 0.18}
   },
   "terrain": {
     "atlasCell": 64,
