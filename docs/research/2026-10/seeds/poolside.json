@@ -1,0 +1,131 @@
+{
+ "vendor": "poolside",
+ "count": 4,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "lagunam1",
+   "names": [
+    "Laguna M.1"
+   ],
+   "releaseDateHints": {
+    "modelsdev:poolside": "2026-04-28",
+    "modelsdev:requesty": "2026-04-28"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:poolside": [
+     "poolside/laguna-m.1"
+    ],
+    "modelsdev:requesty": [
+     "laguna-m.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "lagunaxs2",
+   "names": [
+    "Laguna XS.2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:requesty": "2026-04-28"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:requesty": [
+     "laguna-xs.2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "lagunaxs21",
+   "names": [
+    "Poolside: Laguna XS 2.1",
+    "Laguna XS 2.1"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-02",
+    "modelsdev:poolside": "2026-07-02",
+    "modelsdev:openrouter": "2026-07-02",
+    "modelsdev:llmtr": "2026-07-02",
+    "modelsdev:nvidia": "2026-07-02"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "poolside/laguna-xs-2.1"
+    ],
+    "modelsdev:poolside": [
+     "poolside/laguna-xs-2.1"
+    ],
+    "modelsdev:openrouter": [
+     "poolside/laguna-xs-2.1"
+    ],
+    "modelsdev:llmtr": [
+     "poolside/laguna-xs-2.1"
+    ],
+    "modelsdev:nvidia": [
+     "poolside/laguna-xs-2.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "lagunas21",
+   "names": [
+    "Poolside: Laguna S 2.1",
+    "Laguna S 2.1",
+    "Laguna S 2.1 Free"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-21",
+    "modelsdev:poolside": "2026-07-21",
+    "modelsdev:nano-gpt": "2026-07-21",
+    "modelsdev:vultr": "2026-07-21",
+    "modelsdev:vercel": "2026-07-21",
+    "modelsdev:pioneer": "2026-07-21",
+    "modelsdev:opencode": "2026-07-21"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "poolside/laguna-s-2.1"
+    ],
+    "modelsdev:poolside": [
+     "poolside/laguna-s-2.1"
+    ],
+    "modelsdev:nano-gpt": [
+     "poolside/laguna-s-2.1"
+    ],
+    "modelsdev:vultr": [
+     "laguna-s-2.1"
+    ],
+    "modelsdev:vercel": [
+     "poolside/laguna-s-2.1-free",
+     "poolside/laguna-s-2.1"
+    ],
+    "modelsdev:pioneer": [
+     "poolside/laguna-s-2.1"
+    ],
+    "modelsdev:opencode": [
+     "laguna-s-2.1-free"
+    ]
+   },
+   "deprecated": true
+  }
+ ]
+}

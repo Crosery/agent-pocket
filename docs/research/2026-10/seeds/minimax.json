@@ -1,0 +1,906 @@
+{
+ "vendor": "minimax",
+ "count": 12,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "minimax01",
+   "names": [
+    "MiniMax: MiniMax-01"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-01-15"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "minimax/minimax-01"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "minimaxm1",
+   "names": [
+    "MiniMax: MiniMax M1"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-06-17"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "minimax/minimax-m1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "minimaxm2",
+   "names": [
+    "MiniMax: MiniMax M2",
+    "MiniMax M2",
+    "MiniMax M2 (MiniMax)",
+    "MiniMax-M2"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-23",
+    "modelsdev:nano-gpt": "2025-10-27",
+    "modelsdev:llmgateway-providers": "2025-10-27",
+    "modelsdev:kilo": "2025-10-27",
+    "modelsdev:openrouter": "2025-10-27",
+    "modelsdev:huggingface": "2025-10-27",
+    "modelsdev:minimax-cn": "2025-10-27",
+    "modelsdev:vercel": "2025-10-27",
+    "modelsdev:ofox": "2025-10-27",
+    "modelsdev:merge-gateway": "2025-10-27",
+    "modelsdev:minimax": "2025-10-27",
+    "modelsdev:edenai": "2025-10-27",
+    "modelsdev:amazon-bedrock": "2025-10-27",
+    "modelsdev:llmgateway": "2025-10-27",
+    "modelsdev:cortecs": "2025-10-27"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "minimax/minimax-m2"
+    ],
+    "modelsdev:nano-gpt": [
+     "minimax/minimax-m2"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "minimax/minimax-m2"
+    ],
+    "modelsdev:kilo": [
+     "minimax/minimax-m2"
+    ],
+    "modelsdev:openrouter": [
+     "minimax/minimax-m2"
+    ],
+    "modelsdev:huggingface": [
+     "MiniMaxAI/MiniMax-M2"
+    ],
+    "modelsdev:minimax-cn": [
+     "MiniMax-M2"
+    ],
+    "modelsdev:vercel": [
+     "minimax/minimax-m2"
+    ],
+    "modelsdev:ofox": [
+     "minimax/minimax-m2"
+    ],
+    "modelsdev:merge-gateway": [
+     "minimax/minimax-m2"
+    ],
+    "modelsdev:minimax": [
+     "MiniMax-M2"
+    ],
+    "modelsdev:edenai": [
+     "minimax/MiniMax-M2"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "minimax.minimax-m2"
+    ],
+    "modelsdev:llmgateway": [
+     "minimax-m2"
+    ],
+    "modelsdev:cortecs": [
+     "minimax-m2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "minimaxm21",
+   "names": [
+    "MiniMax: MiniMax M2.1",
+    "MiniMax M2.1",
+    "MiniMax M2.1 (NovitaAI)",
+    "MiniMax M2.1 (MiniMax)",
+    "MiniMax-M2.1",
+    "MiniMax-M2.1 Lightning"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-23",
+    "modelsdev:nano-gpt": "2025-12-23",
+    "modelsdev:llmgateway-providers": "2025-12-23",
+    "modelsdev:kilo": "2025-12-23",
+    "modelsdev:302ai": "2025-12-23",
+    "modelsdev:openrouter": "2025-12-23",
+    "modelsdev:minimax-cn": "2025-12-23",
+    "modelsdev:vercel": "2025-12-23",
+    "modelsdev:ofox": "2025-12-23",
+    "modelsdev:merge-gateway": "2025-12-23",
+    "modelsdev:minimax": "2025-12-23",
+    "modelsdev:edenai": "2025-12-23",
+    "modelsdev:amazon-bedrock": "2025-12-23",
+    "modelsdev:llmgateway": "2025-12-23",
+    "modelsdev:cortecs": "2025-12-23"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "minimax/minimax-m2.1"
+    ],
+    "modelsdev:nano-gpt": [
+     "minimax/minimax-m2.1"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/minimax-m2.1",
+     "minimax/minimax-m2.1"
+    ],
+    "modelsdev:kilo": [
+     "minimax/minimax-m2.1"
+    ],
+    "modelsdev:302ai": [
+     "MiniMax-M2.1"
+    ],
+    "modelsdev:openrouter": [
+     "minimax/minimax-m2.1"
+    ],
+    "modelsdev:minimax-cn": [
+     "MiniMax-M2.1"
+    ],
+    "modelsdev:vercel": [
+     "minimax/minimax-m2.1"
+    ],
+    "modelsdev:ofox": [
+     "minimax/minimax-m2.1-lightning",
+     "minimax/minimax-m2.1"
+    ],
+    "modelsdev:merge-gateway": [
+     "minimax/minimax-m2.1"
+    ],
+    "modelsdev:minimax": [
+     "MiniMax-M2.1"
+    ],
+    "modelsdev:edenai": [
+     "minimax/MiniMax-M2.1"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "minimax.minimax-m2.1"
+    ],
+    "modelsdev:llmgateway": [
+     "minimax-m2.1"
+    ],
+    "modelsdev:cortecs": [
+     "minimax-m2.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "minimaxm2her",
+   "names": [
+    "MiniMax: MiniMax M2-her",
+    "MiniMax M2-her",
+    "MiniMax-M2 Her"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-01-23",
+    "modelsdev:nano-gpt": "2026-01-23",
+    "modelsdev:kilo": "2026-01-23",
+    "modelsdev:openrouter": "2026-01-23",
+    "modelsdev:ofox": "2026-01-23"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "minimax/minimax-m2-her"
+    ],
+    "modelsdev:nano-gpt": [
+     "minimax/minimax-m2-her"
+    ],
+    "modelsdev:kilo": [
+     "minimax/minimax-m2-her"
+    ],
+    "modelsdev:openrouter": [
+     "minimax/minimax-m2-her"
+    ],
+    "modelsdev:ofox": [
+     "minimax/m2-her"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "minimaxm25",
+   "names": [
+    "MiniMax: MiniMax M2.5",
+    "MiniMax-M2.5",
+    "MiniMax M2.5",
+    "MiniMax M2.5 (NovitaAI)",
+    "MiniMax M2.5 (MiniMax)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-12",
+    "modelsdev:alibaba-token-plan": "2026-02-12",
+    "modelsdev:nano-gpt": "2026-02-12",
+    "modelsdev:llmgateway-providers": "2026-02-12",
+    "modelsdev:kilo": "2026-02-12",
+    "modelsdev:venice": "2026-02-12",
+    "modelsdev:alibaba-token-plan-cn": "2026-02-12",
+    "modelsdev:302ai": "2026-02-12",
+    "modelsdev:openrouter": "2026-02-12",
+    "modelsdev:minimax-cn": "2026-02-12",
+    "modelsdev:vercel": "2026-02-12",
+    "modelsdev:greenpt": "2026-02-12",
+    "modelsdev:dinference": "2026-02-12",
+    "modelsdev:orcarouter": "2026-02-12",
+    "modelsdev:friendli": "2026-02-12",
+    "modelsdev:scnet-token-plan": "2026-02-12",
+    "modelsdev:ofox": "2026-02-12",
+    "modelsdev:merge-gateway": "2026-02-12",
+    "modelsdev:minimax": "2026-02-12",
+    "modelsdev:tensorx": "2026-02-12",
+    "modelsdev:edenai": "2026-02-12",
+    "modelsdev:hpc-ai": "2026-02-12",
+    "modelsdev:amazon-bedrock": "2026-02-12",
+    "modelsdev:llmgateway": "2026-02-12",
+    "modelsdev:tokengo": "2026-02-12",
+    "modelsdev:cortecs": "2026-02-12"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "minimax/minimax-m2.5"
+    ],
+    "modelsdev:alibaba-token-plan": [
+     "MiniMax-M2.5"
+    ],
+    "modelsdev:nano-gpt": [
+     "minimax/minimax-m2.5"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/minimax-m2.5",
+     "minimax/minimax-m2.5"
+    ],
+    "modelsdev:kilo": [
+     "minimax/minimax-m2.5"
+    ],
+    "modelsdev:venice": [
+     "minimax-m25"
+    ],
+    "modelsdev:alibaba-token-plan-cn": [
+     "MiniMax-M2.5"
+    ],
+    "modelsdev:302ai": [
+     "MiniMax-M2.5"
+    ],
+    "modelsdev:openrouter": [
+     "minimax/minimax-m2.5"
+    ],
+    "modelsdev:minimax-cn": [
+     "MiniMax-M2.5"
+    ],
+    "modelsdev:vercel": [
+     "minimax/minimax-m2.5"
+    ],
+    "modelsdev:greenpt": [
+     "minimax-m2.5"
+    ],
+    "modelsdev:dinference": [
+     "minimax-m2.5"
+    ],
+    "modelsdev:orcarouter": [
+     "minimax/minimax-m2.5"
+    ],
+    "modelsdev:friendli": [
+     "MiniMaxAI/MiniMax-M2.5"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "MiniMax-M2.5"
+    ],
+    "modelsdev:ofox": [
+     "minimax/minimax-m2.5"
+    ],
+    "modelsdev:merge-gateway": [
+     "minimax/minimax-m2.5"
+    ],
+    "modelsdev:minimax": [
+     "MiniMax-M2.5"
+    ],
+    "modelsdev:tensorx": [
+     "minimax/minimax-m2.5"
+    ],
+    "modelsdev:edenai": [
+     "minimax/MiniMax-M2.5"
+    ],
+    "modelsdev:hpc-ai": [
+     "minimax/minimax-m2.5"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "minimax.minimax-m2.5"
+    ],
+    "modelsdev:llmgateway": [
+     "minimax-m2.5"
+    ],
+    "modelsdev:tokengo": [
+     "minimax/minimax-m2.5"
+    ],
+    "modelsdev:cortecs": [
+     "minimax-m2.5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "minimaxm25highspeed",
+   "names": [
+    "MiniMax M2.5 Highspeed (MiniMax)",
+    "MiniMax-M2.5-highspeed",
+    "MiniMax M2.5 High Speed",
+    "MiniMax-M2.5 Lightning",
+    "MiniMax M2.5 Highspeed"
+   ],
+   "releaseDateHints": {
+    "modelsdev:llmgateway-providers": "2026-02-13",
+    "modelsdev:minimax-cn": "2026-02-13",
+    "modelsdev:vercel": "2026-02-13",
+    "modelsdev:orcarouter": "2026-02-13",
+    "modelsdev:ofox": "2026-02-13",
+    "modelsdev:merge-gateway": "2026-02-13",
+    "modelsdev:minimax": "2026-02-13",
+    "modelsdev:llmgateway": "2026-02-13"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:llmgateway-providers": [
+     "minimax/minimax-m2.5-highspeed"
+    ],
+    "modelsdev:minimax-cn": [
+     "MiniMax-M2.5-highspeed"
+    ],
+    "modelsdev:vercel": [
+     "minimax/minimax-m2.5-highspeed"
+    ],
+    "modelsdev:orcarouter": [
+     "minimax/minimax-m2.5-highspeed"
+    ],
+    "modelsdev:ofox": [
+     "minimax/minimax-m2.5-lightning"
+    ],
+    "modelsdev:merge-gateway": [
+     "minimax/minimax-m2.5-highspeed"
+    ],
+    "modelsdev:minimax": [
+     "MiniMax-M2.5-highspeed"
+    ],
+    "modelsdev:llmgateway": [
+     "minimax-m2.5-highspeed"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "minimaxm27",
+   "names": [
+    "MiniMax: MiniMax M2.7",
+    "MiniMax-M2.7",
+    "MiniMax M2.7",
+    "MiniMax M2.7 (Tencent Cloud)",
+    "MiniMax M2.7 (NovitaAI)",
+    "MiniMax M2.7 (Gonka24)",
+    "MiniMax M2.7 (SCX.ai (Turbo))",
+    "MiniMax M2.7 (MiniMax)",
+    "Minimax M2.7"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-18",
+    "modelsdev:deepinfra": "2026-03-18",
+    "modelsdev:empiriolabs": "2026-03-18",
+    "modelsdev:nano-gpt": "2026-03-18",
+    "modelsdev:llmgateway-providers": "2026-03-18",
+    "modelsdev:kilo": "2026-03-18",
+    "modelsdev:venice": "2026-03-18",
+    "modelsdev:abacus": "2026-03-18",
+    "modelsdev:302ai": "2026-03-18",
+    "modelsdev:openrouter": "2026-03-18",
+    "modelsdev:auriko": "2026-03-18",
+    "modelsdev:unorouter": "2026-03-18",
+    "modelsdev:gmicloud": "2026-03-18",
+    "modelsdev:minimax-cn": "2026-03-18",
+    "modelsdev:vercel": "2026-03-18",
+    "modelsdev:hyper": "2026-06-05",
+    "modelsdev:fastrouter": "2026-03-18",
+    "modelsdev:orcarouter": "2026-03-18",
+    "modelsdev:scx-ai": "2026-03-18",
+    "modelsdev:scnet-token-plan": "2026-03-18",
+    "modelsdev:ofox": "2026-03-18",
+    "modelsdev:merge-gateway": "2026-03-18",
+    "modelsdev:opper": "2026-03-18",
+    "modelsdev:pioneer": "2026-03-18",
+    "modelsdev:minimax": "2026-03-18",
+    "modelsdev:edenai": "2026-03-18",
+    "modelsdev:tempr": "2026-03-18",
+    "modelsdev:kenari": "2026-03-18",
+    "modelsdev:requesty": "2026-03-18",
+    "modelsdev:llmgateway": "2026-03-18",
+    "modelsdev:togetherai": "2026-03-18",
+    "modelsdev:crossmodel": "2026-03-18"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "minimax/minimax-m2.7"
+    ],
+    "modelsdev:deepinfra": [
+     "MiniMaxAI/MiniMax-M2.7"
+    ],
+    "modelsdev:empiriolabs": [
+     "minimax-m2-7"
+    ],
+    "modelsdev:nano-gpt": [
+     "minimax/minimax-m2.7"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "tencent/minimax-m2.7",
+     "novita/minimax-m2.7",
+     "gonka24/minimax-m2.7",
+     "scx-ai/minimax-m2.7",
+     "minimax/minimax-m2.7"
+    ],
+    "modelsdev:kilo": [
+     "minimax/minimax-m2.7"
+    ],
+    "modelsdev:venice": [
+     "minimax-m27"
+    ],
+    "modelsdev:abacus": [
+     "MiniMaxAI/MiniMax-M2.7"
+    ],
+    "modelsdev:302ai": [
+     "MiniMax-M2.7"
+    ],
+    "modelsdev:openrouter": [
+     "minimax/minimax-m2.7"
+    ],
+    "modelsdev:auriko": [
+     "minimax-m2-7"
+    ],
+    "modelsdev:unorouter": [
+     "minimax-m2.7"
+    ],
+    "modelsdev:gmicloud": [
+     "MiniMaxAI/MiniMax-M2.7"
+    ],
+    "modelsdev:minimax-cn": [
+     "MiniMax-M2.7"
+    ],
+    "modelsdev:vercel": [
+     "minimax/minimax-m2.7"
+    ],
+    "modelsdev:hyper": [
+     "minimax-m2.7"
+    ],
+    "modelsdev:fastrouter": [
+     "minimax/minimax-m2.7"
+    ],
+    "modelsdev:orcarouter": [
+     "minimax/minimax-m2.7"
+    ],
+    "modelsdev:scx-ai": [
+     "MiniMax-M2.7"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "MiniMax-M2.7"
+    ],
+    "modelsdev:ofox": [
+     "minimax/minimax-m2.7"
+    ],
+    "modelsdev:merge-gateway": [
+     "minimax/minimax-m2.7"
+    ],
+    "modelsdev:opper": [
+     "minimax-m2.7"
+    ],
+    "modelsdev:pioneer": [
+     "MiniMaxAI/MiniMax-M2.7"
+    ],
+    "modelsdev:minimax": [
+     "MiniMax-M2.7"
+    ],
+    "modelsdev:edenai": [
+     "minimax/MiniMax-M2.7"
+    ],
+    "modelsdev:tempr": [
+     "minimax/MiniMax-M2.7"
+    ],
+    "modelsdev:kenari": [
+     "minimax-m2-7"
+    ],
+    "modelsdev:requesty": [
+     "minimax-m2.7"
+    ],
+    "modelsdev:llmgateway": [
+     "minimax-m2.7"
+    ],
+    "modelsdev:togetherai": [
+     "MiniMaxAI/MiniMax-M2.7"
+    ],
+    "modelsdev:crossmodel": [
+     "minimax/minimax-m2.7"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "minimaxm27highspeed",
+   "names": [
+    "MiniMax M2.7 Highspeed",
+    "MiniMax M2.7 Highspeed (MiniMax)",
+    "MiniMax-M2.7-highspeed",
+    "MiniMax M2.7 High Speed"
+   ],
+   "releaseDateHints": {
+    "modelsdev:empiriolabs": "2026-03-18",
+    "modelsdev:llmgateway-providers": "2026-03-18",
+    "modelsdev:novita-ai": "2026-03-18",
+    "modelsdev:auriko": "2026-03-18",
+    "modelsdev:minimax-cn": "2026-03-18",
+    "modelsdev:vercel": "2026-03-18",
+    "modelsdev:fastrouter": "2026-03-18",
+    "modelsdev:orcarouter": "2026-03-18",
+    "modelsdev:ofox": "2026-03-18",
+    "modelsdev:merge-gateway": "2026-03-18",
+    "modelsdev:minimax": "2026-03-18",
+    "modelsdev:tempr": "2026-03-18",
+    "modelsdev:kenari": "2026-03-18",
+    "modelsdev:requesty": "2026-03-18",
+    "modelsdev:llmgateway": "2026-03-18"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:empiriolabs": [
+     "minimax-m2-7-highspeed"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "minimax/minimax-m2.7-highspeed"
+    ],
+    "modelsdev:novita-ai": [
+     "minimax/minimax-m2.7-highspeed"
+    ],
+    "modelsdev:auriko": [
+     "minimax-m2-7-highspeed"
+    ],
+    "modelsdev:minimax-cn": [
+     "MiniMax-M2.7-highspeed"
+    ],
+    "modelsdev:vercel": [
+     "minimax/minimax-m2.7-highspeed"
+    ],
+    "modelsdev:fastrouter": [
+     "minimax/minimax-m2.7-highspeed"
+    ],
+    "modelsdev:orcarouter": [
+     "minimax/minimax-m2.7-highspeed"
+    ],
+    "modelsdev:ofox": [
+     "minimax/minimax-m2.7-highspeed"
+    ],
+    "modelsdev:merge-gateway": [
+     "minimax/minimax-m2.7-highspeed"
+    ],
+    "modelsdev:minimax": [
+     "MiniMax-M2.7-highspeed"
+    ],
+    "modelsdev:tempr": [
+     "minimax/MiniMax-M2.7-highspeed"
+    ],
+    "modelsdev:kenari": [
+     "minimax-m2-7-highspeed"
+    ],
+    "modelsdev:requesty": [
+     "minimax-m2.7-highspeed"
+    ],
+    "modelsdev:llmgateway": [
+     "minimax-m2.7-highspeed"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "minimaxm3",
+   "names": [
+    "MiniMax: MiniMax M3",
+    "MiniMax-M3",
+    "MiniMax M3",
+    "MiniMax M3 (Tencent Cloud)",
+    "MiniMax M3 (Together AI)",
+    "MiniMax M3 (MiniMax)",
+    "MiniMax M3 Fast",
+    "MiniMax-M3 (EU)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-05-31",
+    "modelsdev:deepinfra": "2026-06-01",
+    "modelsdev:empiriolabs": "2026-06-01",
+    "modelsdev:nano-gpt": "2026-06-01",
+    "modelsdev:wandb": "2026-06-12",
+    "modelsdev:siliconflow": "2026-06-01",
+    "modelsdev:lilac": "2026-06-01",
+    "modelsdev:llmgateway-providers": "2026-06-01",
+    "modelsdev:kilo": "2026-06-01",
+    "modelsdev:abacus": "2026-06-01",
+    "modelsdev:302ai": "2026-06-01",
+    "modelsdev:openrouter": "2026-06-01",
+    "modelsdev:iteracompute": "2026-06-01",
+    "modelsdev:cline-pass": "2026-06-01",
+    "modelsdev:zenmux": "2026-06-01",
+    "modelsdev:vultr": "2026-06-01",
+    "modelsdev:huggingface": "2026-06-01",
+    "modelsdev:vancine": "2026-06-01",
+    "modelsdev:gmicloud": "2026-06-01",
+    "modelsdev:volcengine-coding-plan": "2026-06-01",
+    "modelsdev:nebius": "2026-06-01",
+    "modelsdev:minimax-cn": "2026-06-01",
+    "modelsdev:vercel": "2026-06-01",
+    "modelsdev:hyper": "2026-07-30",
+    "modelsdev:jalapeno": "2026-06-01",
+    "modelsdev:orcarouter": "2026-06-01",
+    "modelsdev:inco": "2026-06-01",
+    "modelsdev:scnet-token-plan": "2026-06-01",
+    "modelsdev:ofox": "2026-06-01",
+    "modelsdev:aihubmix": "2026-06-01",
+    "modelsdev:merge-gateway": "2026-06-01",
+    "modelsdev:opper": "2026-06-01",
+    "modelsdev:nvidia": "2026-06-01",
+    "modelsdev:pioneer": "2026-06-01",
+    "modelsdev:minimax": "2026-06-01",
+    "modelsdev:tensorx": "2026-06-01",
+    "modelsdev:edenai": "2026-06-01",
+    "modelsdev:tempr": "2026-06-01",
+    "modelsdev:opencode": "2026-06-01",
+    "modelsdev:kenari": "2026-06-01",
+    "modelsdev:wafer.ai": "2026-06-01",
+    "modelsdev:requesty": "2026-06-01",
+    "modelsdev:synthetic": "2026-06-12",
+    "modelsdev:llmgateway": "2026-06-01",
+    "modelsdev:cortecs": "2026-06-01",
+    "modelsdev:crossmodel": "2026-06-01"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text,image->text",
+    "text->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "minimax/minimax-m3"
+    ],
+    "modelsdev:deepinfra": [
+     "MiniMaxAI/MiniMax-M3"
+    ],
+    "modelsdev:empiriolabs": [
+     "minimax-m3"
+    ],
+    "modelsdev:nano-gpt": [
+     "minimax/minimax-m3"
+    ],
+    "modelsdev:wandb": [
+     "MiniMaxAI/MiniMax-M3"
+    ],
+    "modelsdev:siliconflow": [
+     "MiniMaxAI/MiniMax-M3"
+    ],
+    "modelsdev:lilac": [
+     "minimaxai/minimax-m3"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "tencent/minimax-m3",
+     "together-ai/minimax-m3",
+     "minimax/minimax-m3"
+    ],
+    "modelsdev:kilo": [
+     "minimax/minimax-m3"
+    ],
+    "modelsdev:abacus": [
+     "MiniMaxAI/MiniMax-M3"
+    ],
+    "modelsdev:302ai": [
+     "MiniMax-M3"
+    ],
+    "modelsdev:openrouter": [
+     "minimax/minimax-m3"
+    ],
+    "modelsdev:iteracompute": [
+     "minimax/minimax-m3"
+    ],
+    "modelsdev:cline-pass": [
+     "cline-pass/minimax-m3"
+    ],
+    "modelsdev:zenmux": [
+     "minimax/minimax-m3"
+    ],
+    "modelsdev:vultr": [
+     "minimax-m3"
+    ],
+    "modelsdev:huggingface": [
+     "MiniMaxAI/MiniMax-M3"
+    ],
+    "modelsdev:vancine": [
+     "MiniMax-M3"
+    ],
+    "modelsdev:gmicloud": [
+     "MiniMaxAI/MiniMax-M3"
+    ],
+    "modelsdev:volcengine-coding-plan": [
+     "minimax-m3"
+    ],
+    "modelsdev:nebius": [
+     "MiniMaxAI/MiniMax-M3"
+    ],
+    "modelsdev:minimax-cn": [
+     "MiniMax-M3"
+    ],
+    "modelsdev:vercel": [
+     "minimax/minimax-m3"
+    ],
+    "modelsdev:hyper": [
+     "minimax-m3"
+    ],
+    "modelsdev:jalapeno": [
+     "MiniMax-M3"
+    ],
+    "modelsdev:orcarouter": [
+     "minimax/minimax-m3"
+    ],
+    "modelsdev:inco": [
+     "minimax-m3",
+     "minimax-m3:fast"
+    ],
+    "modelsdev:scnet-token-plan": [
+     "MiniMax-M3"
+    ],
+    "modelsdev:ofox": [
+     "minimax/minimax-m3"
+    ],
+    "modelsdev:aihubmix": [
+     "minimax-m3"
+    ],
+    "modelsdev:merge-gateway": [
+     "minimax/minimax-m3"
+    ],
+    "modelsdev:opper": [
+     "minimax-m3"
+    ],
+    "modelsdev:nvidia": [
+     "minimaxai/minimax-m3"
+    ],
+    "modelsdev:pioneer": [
+     "MiniMaxAI/MiniMax-M3"
+    ],
+    "modelsdev:minimax": [
+     "MiniMax-M3"
+    ],
+    "modelsdev:tensorx": [
+     "minimax/minimax-m3"
+    ],
+    "modelsdev:edenai": [
+     "minimax/MiniMax-M3"
+    ],
+    "modelsdev:tempr": [
+     "minimax/MiniMax-M3"
+    ],
+    "modelsdev:opencode": [
+     "minimax-m3"
+    ],
+    "modelsdev:kenari": [
+     "minimax-m3"
+    ],
+    "modelsdev:wafer.ai": [
+     "MiniMax-M3"
+    ],
+    "modelsdev:requesty": [
+     "minimax-m3",
+     "minimax-m3@eu"
+    ],
+    "modelsdev:synthetic": [
+     "hf:MiniMaxAI/MiniMax-M3"
+    ],
+    "modelsdev:llmgateway": [
+     "minimax-m3"
+    ],
+    "modelsdev:cortecs": [
+     "minimax-m3"
+    ],
+    "modelsdev:crossmodel": [
+     "minimax/minimax-m3"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "minimaxh3",
+   "names": [
+    "MiniMax H3"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2026-07-31"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text,image->video"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "minimax/minimax-h3"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "minimaxm31flashpreview",
+   "names": [
+    "MiniMax-M3.1-Flash-Preview"
+   ],
+   "releaseDateHints": {
+    "modelsdev:minimax-coding-plan": "2026-09-27",
+    "modelsdev:minimax-cn-coding-plan": "2026-09-27"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:minimax-coding-plan": [
+     "MiniMax-M3.1-Flash-Preview"
+    ],
+    "modelsdev:minimax-cn-coding-plan": [
+     "MiniMax-M3.1-Flash-Preview"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

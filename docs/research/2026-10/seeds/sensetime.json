@@ -1,0 +1,26 @@
+{
+ "vendor": "sensetime",
+ "count": 1,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "sensenova68flashlite",
+   "names": [
+    "SenseNova 6.8 Flash Lite"
+   ],
+   "releaseDateHints": {
+    "modelsdev:sensenova": "2026-08-11"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:sensenova": [
+     "sensenova-6.8-flash-lite"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

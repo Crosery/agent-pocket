@@ -1,0 +1,452 @@
+{
+ "vendor": "bytedance",
+ "count": 13,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "uitars157b",
+   "names": [
+    "ByteDance: UI-TARS 7B "
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-07-22"
+   },
+   "openWeights": null,
+   "modalities": [
+    "image+text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "bytedance/ui-tars-1.5-7b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "seed16vision",
+   "names": [
+    "Seed 1.6 Vision"
+   ],
+   "releaseDateHints": {
+    "modelsdev:volcengine": "2025-08-15",
+    "modelsdev:ofox": "2025-08-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:volcengine": [
+     "doubao-seed-1-6-vision-250815"
+    ],
+    "modelsdev:ofox": [
+     "volcengine/doubao-seed-1-6-vision"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "seed16flash",
+   "names": [
+    "ByteDance Seed: Seed 1.6 Flash",
+    "Seed 1.6 Flash"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-23",
+    "modelsdev:volcengine": "2025-08-28",
+    "modelsdev:ofox": "2025-08-28"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+video->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "bytedance-seed/seed-1.6-flash"
+    ],
+    "modelsdev:volcengine": [
+     "doubao-seed-1-6-flash-250828"
+    ],
+    "modelsdev:ofox": [
+     "volcengine/doubao-seed-1-6-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "seed16",
+   "names": [
+    "ByteDance Seed: Seed 1.6",
+    "Seed 1.6"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-23",
+    "modelsdev:volcengine": "2025-10-15",
+    "modelsdev:ofox": "2025-10-15"
+   },
+   "openWeights": false,
+   "modalities": [
+    "image+text+video->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "bytedance-seed/seed-1.6"
+    ],
+    "modelsdev:volcengine": [
+     "doubao-seed-1-6-251015"
+    ],
+    "modelsdev:ofox": [
+     "volcengine/doubao-seed-1-6"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "seed18",
+   "names": [
+    "Seed 1.8"
+   ],
+   "releaseDateHints": {
+    "modelsdev:volcengine": "2025-12-28",
+    "modelsdev:ofox": "2025-12-28"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:volcengine": [
+     "doubao-seed-1-8-251228"
+    ],
+    "modelsdev:ofox": [
+     "volcengine/doubao-seed-1-8"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "seed20code",
+   "names": [
+    "ByteDance Seed: Seed-2.0-Code",
+    "Seed 2.0 Code",
+    "Doubao Seed 2.0 Code Preview",
+    "ByteDance Seed 2.0 Code",
+    "Seed 2.0 Code (Deep Infra)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-12",
+    "modelsdev:deepinfra": "2026-02-14",
+    "modelsdev:empiriolabs": "2026-02-14",
+    "modelsdev:nano-gpt": "2026-02-14",
+    "modelsdev:kilo": "2026-02-14",
+    "modelsdev:openrouter": "2026-02-14",
+    "modelsdev:volcengine": "2026-02-14",
+    "modelsdev:ofox": "2026-02-14",
+    "modelsdev:merge-gateway": "2026-02-14",
+    "modelsdev:edenai": "2026-02-14",
+    "modelsdev:requesty": "2026-02-14"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video->text",
+    "text,image->text",
+    "text,image,video->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "bytedance-seed/seed-2.0-code"
+    ],
+    "modelsdev:deepinfra": [
+     "ByteDance/Seed-2.0-code"
+    ],
+    "modelsdev:empiriolabs": [
+     "seed-2-0-code"
+    ],
+    "modelsdev:nano-gpt": [
+     "doubao-seed-2-0-code-preview-260215",
+     "bytedance-seed/seed-2.0-code"
+    ],
+    "modelsdev:kilo": [
+     "bytedance-seed/seed-2.0-code"
+    ],
+    "modelsdev:openrouter": [
+     "bytedance-seed/seed-2.0-code"
+    ],
+    "modelsdev:volcengine": [
+     "doubao-seed-2-0-code-preview-260215"
+    ],
+    "modelsdev:ofox": [
+     "volcengine/doubao-seed-2.0-code"
+    ],
+    "modelsdev:merge-gateway": [
+     "bytedance/dola-seed-2.0-code"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/ByteDance/Seed-2.0-code"
+    ],
+    "modelsdev:requesty": [
+     "seed-2.0-code"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "seed20lite",
+   "names": [
+    "ByteDance Seed: Seed-2.0-Lite",
+    "Seed 2.0 Lite",
+    "ByteDance Seed 2.0 Lite"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-10",
+    "modelsdev:empiriolabs": "2026-02-14",
+    "modelsdev:nano-gpt": "2026-02-14",
+    "modelsdev:kilo": "2026-02-14",
+    "modelsdev:openrouter": "2026-02-14",
+    "modelsdev:volcengine": "2026-02-14",
+    "modelsdev:volcengine-coding-plan": "2026-02-14",
+    "modelsdev:ofox": "2026-02-14"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "bytedance-seed/seed-2.0-lite"
+    ],
+    "modelsdev:empiriolabs": [
+     "seed-2-0-lite"
+    ],
+    "modelsdev:nano-gpt": [
+     "bytedance-seed/seed-2.0-lite"
+    ],
+    "modelsdev:kilo": [
+     "bytedance-seed/seed-2.0-lite"
+    ],
+    "modelsdev:openrouter": [
+     "bytedance-seed/seed-2.0-lite"
+    ],
+    "modelsdev:volcengine": [
+     "doubao-seed-2-0-lite-260428"
+    ],
+    "modelsdev:volcengine-coding-plan": [
+     "doubao-seed-2.0-lite"
+    ],
+    "modelsdev:ofox": [
+     "volcengine/doubao-seed-2.0-lite"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "seed20mini",
+   "names": [
+    "ByteDance Seed: Seed-2.0-Mini",
+    "Seed 2.0 Mini",
+    "Seed 2.0 Mini (Deep Infra)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-02-26",
+    "modelsdev:deepinfra": "2026-02-14",
+    "modelsdev:empiriolabs": "2026-02-14",
+    "modelsdev:kilo": "2026-02-14",
+    "modelsdev:openrouter": "2026-02-14",
+    "modelsdev:volcengine": "2026-02-14",
+    "modelsdev:ofox": "2026-02-14",
+    "modelsdev:edenai": "2026-02-14",
+    "modelsdev:requesty": "2026-02-14"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video->text",
+    "text,image->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "bytedance-seed/seed-2.0-mini"
+    ],
+    "modelsdev:deepinfra": [
+     "ByteDance/Seed-2.0-mini"
+    ],
+    "modelsdev:empiriolabs": [
+     "seed-2-0-mini"
+    ],
+    "modelsdev:kilo": [
+     "bytedance-seed/seed-2.0-mini"
+    ],
+    "modelsdev:openrouter": [
+     "bytedance-seed/seed-2.0-mini"
+    ],
+    "modelsdev:volcengine": [
+     "doubao-seed-2-0-mini-260428"
+    ],
+    "modelsdev:ofox": [
+     "volcengine/doubao-seed-2.0-mini"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/ByteDance/Seed-2.0-mini"
+    ],
+    "modelsdev:requesty": [
+     "seed-2.0-mini"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "seed20pro",
+   "names": [
+    "Seed 2.0 Pro"
+   ],
+   "releaseDateHints": {
+    "modelsdev:deepinfra": "2026-02-14",
+    "modelsdev:empiriolabs": "2026-02-14",
+    "modelsdev:volcengine": "2026-02-14",
+    "modelsdev:ofox": "2026-02-14",
+    "modelsdev:requesty": "2026-02-14"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:deepinfra": [
+     "ByteDance/Seed-2.0-pro"
+    ],
+    "modelsdev:empiriolabs": [
+     "seed-2-0-pro"
+    ],
+    "modelsdev:volcengine": [
+     "doubao-seed-2-0-pro-260215"
+    ],
+    "modelsdev:ofox": [
+     "volcengine/doubao-seed-2.0-pro"
+    ],
+    "modelsdev:requesty": [
+     "seed-2.0-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "seed21pro",
+   "names": [
+    "Seed 2.1 Pro"
+   ],
+   "releaseDateHints": {
+    "modelsdev:volcengine": "2026-06-23",
+    "modelsdev:ofox": "2026-06-23"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:volcengine": [
+     "doubao-seed-2-1-pro-260628"
+    ],
+    "modelsdev:ofox": [
+     "volcengine/doubao-seed-2.1-pro"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "seed21turbo",
+   "names": [
+    "ByteDance Seed: Seed 2.1 Turbo",
+    "Seed 2.1 Turbo"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-12",
+    "modelsdev:empiriolabs": "2026-06-23",
+    "modelsdev:venice": "2026-06-28",
+    "modelsdev:volcengine": "2026-06-23",
+    "modelsdev:volcengine-coding-plan": "2026-06-23",
+    "modelsdev:ofox": "2026-06-23"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "bytedance-seed/seed-2-1-turbo"
+    ],
+    "modelsdev:empiriolabs": [
+     "seed-2-1-turbo"
+    ],
+    "modelsdev:venice": [
+     "seed-2-1-turbo"
+    ],
+    "modelsdev:volcengine": [
+     "doubao-seed-2-1-turbo-260628"
+    ],
+    "modelsdev:volcengine-coding-plan": [
+     "doubao-seed-2.1-turbo"
+    ],
+    "modelsdev:ofox": [
+     "volcengine/doubao-seed-2.1-turbo"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "seedcharacter",
+   "names": [
+    "Seed Character"
+   ],
+   "releaseDateHints": {
+    "modelsdev:volcengine": "2026-06-23",
+    "modelsdev:ofox": "2026-06-23"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:volcengine": [
+     "doubao-seed-character-260628"
+    ],
+    "modelsdev:ofox": [
+     "volcengine/doubao-seed-character"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "seedevolving",
+   "names": [
+    "Seed Evolving"
+   ],
+   "releaseDateHints": {
+    "modelsdev:volcengine": "2026-06-23",
+    "modelsdev:volcengine-coding-plan": "2026-06-23",
+    "modelsdev:ofox": "2026-06-23"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video->text"
+   ],
+   "catalogIds": {
+    "modelsdev:volcengine": [
+     "doubao-seed-evolving"
+    ],
+    "modelsdev:volcengine-coding-plan": [
+     "doubao-seed-evolving"
+    ],
+    "modelsdev:ofox": [
+     "volcengine/doubao-seed-evolving"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

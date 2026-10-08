@@ -1,0 +1,284 @@
+{
+ "vendor": "amazon",
+ "count": 11,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "novalite",
+   "names": [
+    "Nova Lite",
+    "Nova Lite (US)",
+    "Nova Lite (EU)",
+    "Nova Lite (CA)",
+    "Nova Lite (APAC)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2024-12-03",
+    "modelsdev:edenai": "2024-12-03",
+    "modelsdev:amazon-bedrock": "2024-12-03"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video,pdf->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "amazon/nova-lite"
+    ],
+    "modelsdev:edenai": [
+     "amazon/amazon.nova-lite-v1:0@us",
+     "amazon/amazon.nova-lite-v1:0"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "eu.amazon.nova-lite-v1:0",
+     "us.amazon.nova-lite-v1:0",
+     "amazon.nova-lite-v1:0",
+     "ca.amazon.nova-lite-v1:0",
+     "apac.amazon.nova-lite-v1:0"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "novamicro",
+   "names": [
+    "Nova Micro",
+    "Nova Micro (US)",
+    "Nova Micro (APAC)",
+    "Nova Micro (EU)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2024-12-03",
+    "modelsdev:edenai": "2024-12-03",
+    "modelsdev:amazon-bedrock": "2024-12-03"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "amazon/nova-micro"
+    ],
+    "modelsdev:edenai": [
+     "amazon/amazon.nova-micro-v1:0",
+     "amazon/amazon.nova-micro-v1:0@us"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "apac.amazon.nova-micro-v1:0",
+     "amazon.nova-micro-v1:0",
+     "eu.amazon.nova-micro-v1:0",
+     "us.amazon.nova-micro-v1:0"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "novapro",
+   "names": [
+    "Nova Pro",
+    "Nova Pro (US)",
+    "Nova Pro (APAC)",
+    "Nova Pro (EU)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2024-12-03",
+    "modelsdev:edenai": "2024-12-03",
+    "modelsdev:amazon-bedrock": "2024-12-03"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video,pdf->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "amazon/nova-pro"
+    ],
+    "modelsdev:edenai": [
+     "amazon/amazon.nova-pro-v1:0",
+     "amazon/amazon.nova-pro-v1:0@us"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.amazon.nova-pro-v1:0",
+     "apac.amazon.nova-pro-v1:0",
+     "amazon.nova-pro-v1:0",
+     "eu.amazon.nova-pro-v1:0"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "novalitev1",
+   "names": [
+    "Amazon: Nova Lite 1.0"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-12-05"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "amazon/nova-lite-v1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "novamicrov1",
+   "names": [
+    "Amazon: Nova Micro 1.0"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-12-05"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "amazon/nova-micro-v1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "novaprov1",
+   "names": [
+    "Amazon: Nova Pro 1.0"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-12-05"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "amazon/nova-pro-v1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "novapremier",
+   "names": [
+    "Nova Premier (US)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:amazon-bedrock": "2025-04-30"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:amazon-bedrock": [
+     "us.amazon.nova-premier-v1:0"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "novapremierv1",
+   "names": [
+    "Amazon: Nova Premier 1.0"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-10-31"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "amazon/nova-premier-v1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "nova2litev1",
+   "names": [
+    "Amazon: Nova 2 Lite",
+    "Nova 2 Lite"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-12-02",
+    "modelsdev:nova": "2025-12-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video+file->text",
+    "text,image,video,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "amazon/nova-2-lite-v1"
+    ],
+    "modelsdev:nova": [
+     "nova-2-lite-v1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "nova2lite",
+   "names": [
+    "Nova 2 Lite (EU)",
+    "Nova 2 Lite (Global)",
+    "Nova 2 Lite (US)",
+    "Nova 2 Lite (JP)",
+    "Nova 2 Lite"
+   ],
+   "releaseDateHints": {
+    "modelsdev:amazon-bedrock": "2025-12-02",
+    "modelsdev:cortecs": "2025-12-02"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video,pdf->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:amazon-bedrock": [
+     "eu.amazon.nova-2-lite-v1:0",
+     "global.amazon.nova-2-lite-v1:0",
+     "us.amazon.nova-2-lite-v1:0",
+     "jp.amazon.nova-2-lite-v1:0",
+     "amazon.nova-2-lite-v1:0"
+    ],
+    "modelsdev:cortecs": [
+     "nova-2-lite"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "nova2prov1",
+   "names": [
+    "Nova 2 Pro"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nova": "2025-12-03"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nova": [
+     "nova-2-pro-v1"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

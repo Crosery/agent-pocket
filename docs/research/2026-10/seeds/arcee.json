@@ -1,0 +1,26 @@
+{
+ "vendor": "arcee",
+ "count": 1,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "trinitylargethinking",
+   "names": [
+    "Arcee AI: Trinity Large Thinking"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-01"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "arcee-ai/trinity-large-thinking"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

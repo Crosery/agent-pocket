@@ -1,0 +1,45 @@
+{
+ "vendor": "nex",
+ "count": 2,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "nexn25mini",
+   "names": [
+    "Nex AGI: Nex-N2.5-Mini"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-08"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "nex-agi/nex-n2.5-mini"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "nexn25pro",
+   "names": [
+    "Nex AGI: Nex-N2.5-Pro"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-08"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "nex-agi/nex-n2.5-pro"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

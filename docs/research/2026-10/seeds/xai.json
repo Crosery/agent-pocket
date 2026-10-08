@@ -1,0 +1,1006 @@
+{
+ "vendor": "xai",
+ "count": 19,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "grok41fast",
+   "names": [
+    "Grok 4.1 Fast"
+   ],
+   "releaseDateHints": {
+    "modelsdev:ofox": "2025-11-19",
+    "modelsdev:google-vertex": "2025-11-19"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:ofox": [
+     "x-ai/grok-4.1-fast"
+    ],
+    "modelsdev:google-vertex": [
+     "xai/grok-4.1-fast-non-reasoning"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "grok41fastreasoning",
+   "names": [
+    "Grok 4.1 Fast Reasoning",
+    "Grok 4.1 Fast (Reasoning)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:vercel": "2025-11-19",
+    "modelsdev:google-vertex": "2025-11-19"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,pdf->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:vercel": [
+     "spacexai/grok-4.1-fast-reasoning"
+    ],
+    "modelsdev:google-vertex": [
+     "xai/grok-4.1-fast-reasoning"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "grokimagineimage",
+   "names": [
+    "Grok Imagine Image"
+   ],
+   "releaseDateHints": {
+    "modelsdev:xai": "2026-01-28"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,pdf->image,pdf"
+   ],
+   "catalogIds": {
+    "modelsdev:xai": [
+     "grok-imagine-image"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grokimaginevideo",
+   "names": [
+    "Grok Imagine Video"
+   ],
+   "releaseDateHints": {
+    "modelsdev:xai": "2026-01-28"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,video,pdf->video"
+   ],
+   "catalogIds": {
+    "modelsdev:xai": [
+     "grok-imagine-video"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grok4200309nonreasoning",
+   "names": [
+    "Grok 4.2 Fast Non Reasoning",
+    "Grok 4.20 (Non-Reasoning)",
+    "Grok 4.20 Non-Reasoning"
+   ],
+   "releaseDateHints": {
+    "modelsdev:zenmux": "2026-03-09",
+    "modelsdev:impossibl": "2026-03-09",
+    "modelsdev:oci": "2026-03-09",
+    "modelsdev:cloudflare-ai-gateway": "2026-03-09",
+    "modelsdev:xai": "2026-03-09",
+    "modelsdev:merge-gateway": "2026-03-09",
+    "modelsdev:edenai": "2026-03-09",
+    "modelsdev:tempr": "2026-03-09",
+    "modelsdev:llmgateway": "2026-03-09",
+    "modelsdev:google-vertex": "2026-03-09"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:zenmux": [
+     "x-ai/grok-4.2-fast-non-reasoning"
+    ],
+    "modelsdev:impossibl": [
+     "xai/grok-4.20-0309-non-reasoning"
+    ],
+    "modelsdev:oci": [
+     "xai.grok-4.20-non-reasoning"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "xai/grok-4.20-0309-non-reasoning"
+    ],
+    "modelsdev:xai": [
+     "grok-4.20-0309-non-reasoning"
+    ],
+    "modelsdev:merge-gateway": [
+     "xai/grok-4.20-0309-non-reasoning"
+    ],
+    "modelsdev:edenai": [
+     "xai/grok-4.20-0309-non-reasoning"
+    ],
+    "modelsdev:tempr": [
+     "xai/grok-4.20-0309-non-reasoning"
+    ],
+    "modelsdev:llmgateway": [
+     "grok-4-20-beta-0309-non-reasoning",
+     "grok-4-20-non-reasoning"
+    ],
+    "modelsdev:google-vertex": [
+     "xai/grok-4.20-non-reasoning"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grok4200309reasoning",
+   "names": [
+    "Grok 4.2 Fast",
+    "Grok 4.20 (Reasoning)",
+    "Grok 4.20"
+   ],
+   "releaseDateHints": {
+    "modelsdev:zenmux": "2026-03-09",
+    "modelsdev:impossibl": "2026-03-09",
+    "modelsdev:oci": "2026-03-09",
+    "modelsdev:cloudflare-ai-gateway": "2026-03-09",
+    "modelsdev:xai": "2026-03-09",
+    "modelsdev:ofox": "2026-03-09",
+    "modelsdev:merge-gateway": "2026-03-09",
+    "modelsdev:edenai": "2026-03-09",
+    "modelsdev:tempr": "2026-03-09",
+    "modelsdev:llmgateway": "2026-03-09",
+    "modelsdev:google-vertex": "2026-03-09"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:zenmux": [
+     "x-ai/grok-4.2-fast"
+    ],
+    "modelsdev:impossibl": [
+     "xai/grok-4.20-0309-reasoning"
+    ],
+    "modelsdev:oci": [
+     "xai.grok-4.20-reasoning"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "xai/grok-4.20-0309-reasoning"
+    ],
+    "modelsdev:xai": [
+     "grok-4.20-0309-reasoning"
+    ],
+    "modelsdev:ofox": [
+     "x-ai/grok-4.20"
+    ],
+    "modelsdev:merge-gateway": [
+     "xai/grok-4.20-0309-reasoning"
+    ],
+    "modelsdev:edenai": [
+     "xai/grok-4.20-0309-reasoning"
+    ],
+    "modelsdev:tempr": [
+     "xai/grok-4.20-0309-reasoning"
+    ],
+    "modelsdev:llmgateway": [
+     "grok-4-20-beta-0309-reasoning",
+     "grok-4-20-reasoning"
+    ],
+    "modelsdev:google-vertex": [
+     "xai/grok-4.20-reasoning"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grok420multiagent",
+   "names": [
+    "SpaceXAI: Grok 4.20 Multi-Agent",
+    "Grok 4.20 Multi-Agent"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-31",
+    "modelsdev:xai": "2026-03-09"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "x-ai/grok-4.20-multi-agent"
+    ],
+    "modelsdev:xai": [
+     "grok-4.20-multi-agent-0309"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grok420",
+   "names": [
+    "SpaceXAI: Grok 4.20"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-31"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+file->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "x-ai/grok-4.20"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grokimagineimagequality",
+   "names": [
+    "Grok Imagine Image Quality"
+   ],
+   "releaseDateHints": {
+    "modelsdev:xai": "2026-04-03"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,pdf->image,pdf"
+   ],
+   "catalogIds": {
+    "modelsdev:xai": [
+     "grok-imagine-image-quality"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grokbuild01",
+   "names": [
+    "SpaceXAI: Grok Build 0.1",
+    "Grok Build 0.1"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-05-20",
+    "modelsdev:nano-gpt": "2026-04-16",
+    "modelsdev:kilo": "2026-04-16",
+    "modelsdev:venice": "2026-05-21",
+    "modelsdev:openrouter": "2026-04-16",
+    "modelsdev:zenmux": "2026-04-16",
+    "modelsdev:impossibl": "2026-04-16",
+    "modelsdev:xai": "2026-04-16",
+    "modelsdev:vercel": "2026-04-16",
+    "modelsdev:fastrouter": "2026-04-16",
+    "modelsdev:aihubmix": "2026-04-16",
+    "modelsdev:merge-gateway": "2026-04-16",
+    "modelsdev:opper": "2026-04-16",
+    "modelsdev:edenai": "2026-04-16",
+    "modelsdev:tempr": "2026-04-16",
+    "modelsdev:opencode": "2026-04-16",
+    "modelsdev:kenari": "2026-04-16",
+    "modelsdev:requesty": "2026-04-16",
+    "modelsdev:llmgateway": "2026-04-16",
+    "modelsdev:crossmodel": "2026-04-16"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "x-ai/grok-build-0.1"
+    ],
+    "modelsdev:nano-gpt": [
+     "x-ai/grok-build-0.1"
+    ],
+    "modelsdev:kilo": [
+     "x-ai/grok-build-0.1"
+    ],
+    "modelsdev:venice": [
+     "grok-build-0-1"
+    ],
+    "modelsdev:openrouter": [
+     "x-ai/grok-build-0.1"
+    ],
+    "modelsdev:zenmux": [
+     "x-ai/grok-build-0.1"
+    ],
+    "modelsdev:impossibl": [
+     "xai/grok-build-0.1"
+    ],
+    "modelsdev:xai": [
+     "grok-build-0.1"
+    ],
+    "modelsdev:vercel": [
+     "spacexai/grok-build-0.1"
+    ],
+    "modelsdev:fastrouter": [
+     "x-ai/grok-build-0.1"
+    ],
+    "modelsdev:aihubmix": [
+     "grok-build-0.1"
+    ],
+    "modelsdev:merge-gateway": [
+     "xai/grok-build-0.1"
+    ],
+    "modelsdev:opper": [
+     "grok-build-0.1"
+    ],
+    "modelsdev:edenai": [
+     "xai/grok-build-0.1"
+    ],
+    "modelsdev:tempr": [
+     "xai/grok-build-0.1"
+    ],
+    "modelsdev:opencode": [
+     "grok-build-0.1"
+    ],
+    "modelsdev:kenari": [
+     "grok-build-0-1"
+    ],
+    "modelsdev:requesty": [
+     "grok-build-0.1"
+    ],
+    "modelsdev:llmgateway": [
+     "grok-build-0-1"
+    ],
+    "modelsdev:crossmodel": [
+     "x-ai/grok-build-0.1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grok43",
+   "names": [
+    "SpaceXAI: Grok 4.3",
+    "Grok 4.3"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-04-30",
+    "modelsdev:nano-gpt": "2026-04-17",
+    "modelsdev:kilo": "2026-04-17",
+    "modelsdev:venice": "2026-04-18",
+    "modelsdev:abacus": "2026-04-17",
+    "modelsdev:302ai": "2026-04-17",
+    "modelsdev:openrouter": "2026-04-17",
+    "modelsdev:auriko": "2026-04-17",
+    "modelsdev:zenmux": "2026-04-17",
+    "modelsdev:impossibl": "2026-04-17",
+    "modelsdev:oci": "2026-04-17",
+    "modelsdev:cloudflare-ai-gateway": "2026-04-17",
+    "modelsdev:anyapi": "2026-04-17",
+    "modelsdev:xai": "2026-04-17",
+    "modelsdev:vercel": "2026-04-17",
+    "modelsdev:fastrouter": "2026-04-17",
+    "modelsdev:orcarouter": "2026-04-17",
+    "modelsdev:ofox": "2026-04-17",
+    "modelsdev:merge-gateway": "2026-04-17",
+    "modelsdev:opper": "2026-04-17",
+    "modelsdev:edenai": "2026-04-17",
+    "modelsdev:tempr": "2026-04-17",
+    "modelsdev:requesty": "2026-04-17",
+    "modelsdev:amazon-bedrock": "2026-04-17",
+    "modelsdev:llmgateway": "2026-04-17",
+    "modelsdev:google-vertex": "2026-04-17",
+    "modelsdev:daoxe": "2026-04-17",
+    "modelsdev:crossmodel": "2026-04-17"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "x-ai/grok-4.3"
+    ],
+    "modelsdev:nano-gpt": [
+     "x-ai/grok-4.3"
+    ],
+    "modelsdev:kilo": [
+     "x-ai/grok-4.3"
+    ],
+    "modelsdev:venice": [
+     "grok-4-3"
+    ],
+    "modelsdev:abacus": [
+     "grok-4.3"
+    ],
+    "modelsdev:302ai": [
+     "grok-4.3"
+    ],
+    "modelsdev:openrouter": [
+     "x-ai/grok-4.3"
+    ],
+    "modelsdev:auriko": [
+     "grok-4.3"
+    ],
+    "modelsdev:zenmux": [
+     "x-ai/grok-4.3"
+    ],
+    "modelsdev:impossibl": [
+     "xai/grok-4.3"
+    ],
+    "modelsdev:oci": [
+     "xai.grok-4.3"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "xai/grok-4.3"
+    ],
+    "modelsdev:anyapi": [
+     "xai/grok-4.3"
+    ],
+    "modelsdev:xai": [
+     "grok-4.3"
+    ],
+    "modelsdev:vercel": [
+     "spacexai/grok-4.3"
+    ],
+    "modelsdev:fastrouter": [
+     "x-ai/grok-4.3"
+    ],
+    "modelsdev:orcarouter": [
+     "grok/grok-4.3"
+    ],
+    "modelsdev:ofox": [
+     "x-ai/grok-4.3"
+    ],
+    "modelsdev:merge-gateway": [
+     "xai/grok-4.3"
+    ],
+    "modelsdev:opper": [
+     "grok-4.3"
+    ],
+    "modelsdev:edenai": [
+     "xai/grok-4.3"
+    ],
+    "modelsdev:tempr": [
+     "xai/grok-4.3"
+    ],
+    "modelsdev:requesty": [
+     "grok-4.3"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "xai.grok-4.3"
+    ],
+    "modelsdev:llmgateway": [
+     "grok-4-3"
+    ],
+    "modelsdev:google-vertex": [
+     "xai/grok-4.3"
+    ],
+    "modelsdev:daoxe": [
+     "grok-4.3"
+    ],
+    "modelsdev:crossmodel": [
+     "x-ai/grok-4.3"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grokimaginevideo15",
+   "names": [
+    "Grok Imagine Video 1.5"
+   ],
+   "releaseDateHints": {
+    "modelsdev:xai": "2026-05-30",
+    "modelsdev:vercel": "2026-05-30"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,audio,pdf->video",
+    "text->video"
+   ],
+   "catalogIds": {
+    "modelsdev:xai": [
+     "grok-imagine-video-1.5"
+    ],
+    "modelsdev:vercel": [
+     "spacexai/grok-imagine-video-1.5"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grok45",
+   "names": [
+    "SpaceXAI: Grok 4.5",
+    "Grok 4.5"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-08",
+    "modelsdev:nano-gpt": "2026-07-08",
+    "modelsdev:kilo": "2026-07-08",
+    "modelsdev:venice": "2026-07-07",
+    "modelsdev:abacus": "2026-07-08",
+    "modelsdev:302ai": "2026-07-08",
+    "modelsdev:openrouter": "2026-07-08",
+    "modelsdev:zenmux": "2026-07-08",
+    "modelsdev:impossibl": "2026-07-08",
+    "modelsdev:cloudflare-ai-gateway": "2026-07-08",
+    "modelsdev:xai": "2026-07-08",
+    "modelsdev:vercel": "2026-07-08",
+    "modelsdev:orcarouter": "2026-07-08",
+    "modelsdev:ofox": "2026-07-08",
+    "modelsdev:aihubmix": "2026-07-08",
+    "modelsdev:merge-gateway": "2026-07-08",
+    "modelsdev:opper": "2026-07-08",
+    "modelsdev:pioneer": "2026-07-08",
+    "modelsdev:github-copilot": "2026-07-08",
+    "modelsdev:opencode-go": "2026-07-08",
+    "modelsdev:edenai": "2026-07-08",
+    "modelsdev:tempr": "2026-07-08",
+    "modelsdev:opencode": "2026-07-08",
+    "modelsdev:kenari": "2026-07-08",
+    "modelsdev:requesty": "2026-07-08",
+    "modelsdev:daoxe": "2026-07-08",
+    "modelsdev:crossmodel": "2026-07-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "x-ai/grok-4.5"
+    ],
+    "modelsdev:nano-gpt": [
+     "x-ai/grok-4.5"
+    ],
+    "modelsdev:kilo": [
+     "x-ai/grok-4.5"
+    ],
+    "modelsdev:venice": [
+     "grok-4-5"
+    ],
+    "modelsdev:abacus": [
+     "grok-4.5"
+    ],
+    "modelsdev:302ai": [
+     "grok-4.5"
+    ],
+    "modelsdev:openrouter": [
+     "x-ai/grok-4.5"
+    ],
+    "modelsdev:zenmux": [
+     "x-ai/grok-4.5"
+    ],
+    "modelsdev:impossibl": [
+     "xai/grok-4.5"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "xai/grok-4.5"
+    ],
+    "modelsdev:xai": [
+     "grok-4.5"
+    ],
+    "modelsdev:vercel": [
+     "spacexai/grok-4.5"
+    ],
+    "modelsdev:orcarouter": [
+     "grok/grok-4.5"
+    ],
+    "modelsdev:ofox": [
+     "x-ai/grok-4.5"
+    ],
+    "modelsdev:aihubmix": [
+     "grok-4.5"
+    ],
+    "modelsdev:merge-gateway": [
+     "xai/grok-4.5"
+    ],
+    "modelsdev:opper": [
+     "grok-4.5"
+    ],
+    "modelsdev:pioneer": [
+     "grok-4.5"
+    ],
+    "modelsdev:github-copilot": [
+     "grok-4.5"
+    ],
+    "modelsdev:opencode-go": [
+     "grok-4.5"
+    ],
+    "modelsdev:edenai": [
+     "xai/grok-4.5"
+    ],
+    "modelsdev:tempr": [
+     "xai/grok-4.5"
+    ],
+    "modelsdev:opencode": [
+     "grok-4.5"
+    ],
+    "modelsdev:kenari": [
+     "grok-4-5"
+    ],
+    "modelsdev:requesty": [
+     "grok-4.5"
+    ],
+    "modelsdev:daoxe": [
+     "grok-4.5"
+    ],
+    "modelsdev:crossmodel": [
+     "x-ai/grok-4.5"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "grokvoicetts10",
+   "names": [
+    "Grok Voice TTS 1.0"
+   ],
+   "releaseDateHints": {
+    "modelsdev:zenmux": "2026-07-31"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->audio"
+   ],
+   "catalogIds": {
+    "modelsdev:zenmux": [
+     "x-ai/grok-voice-tts-1.0"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grokvoicestt10",
+   "names": [
+    "Grok Voice STT 1.0"
+   ],
+   "releaseDateHints": {
+    "modelsdev:zenmux": "2026-08-04"
+   },
+   "openWeights": false,
+   "modalities": [
+    "audio->text"
+   ],
+   "catalogIds": {
+    "modelsdev:zenmux": [
+     "x-ai/grok-voice-stt-1.0"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grokimagineimage20",
+   "names": [
+    "Grok Imagine Image 2.0"
+   ],
+   "releaseDateHints": {
+    "modelsdev:zenmux": "2026-08-07",
+    "modelsdev:vercel": "2026-08-07",
+    "modelsdev:kenari": "2026-08-07"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->image",
+    "text->image"
+   ],
+   "catalogIds": {
+    "modelsdev:zenmux": [
+     "x-ai/grok-imagine-image-2.0"
+    ],
+    "modelsdev:vercel": [
+     "spacexai/grok-imagine-image-2.0"
+    ],
+    "modelsdev:kenari": [
+     "grok-imagine-image-2-0"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grok46",
+   "names": [
+    "SpaceXAI: Grok 4.6",
+    "Grok 4.6",
+    "Grok 4.6 (AWS Bedrock)",
+    "Grok 4.6 (xAI)",
+    "Grok 4.6 (Vertex AI (OpenAI-compatible))",
+    "Grok 4.6 (US)",
+    "Grok 4.6 (Global)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-08-12",
+    "modelsdev:perplexity-agent": "2026-08-12",
+    "modelsdev:nano-gpt": "2026-08-12",
+    "modelsdev:llmgateway-providers": "2026-08-12",
+    "modelsdev:kilo": "2026-08-12",
+    "modelsdev:venice": "2026-08-10",
+    "modelsdev:abacus": "2026-08-12",
+    "modelsdev:302ai": "2026-08-12",
+    "modelsdev:openrouter": "2026-08-12",
+    "modelsdev:azure": "2026-08-12",
+    "modelsdev:zenmux": "2026-08-12",
+    "modelsdev:oci": "2026-08-12",
+    "modelsdev:cloudflare-ai-gateway": "2026-08-12",
+    "modelsdev:xai": "2026-08-12",
+    "modelsdev:vercel": "2026-08-12",
+    "modelsdev:orcarouter": "2026-08-12",
+    "modelsdev:ofox": "2026-08-12",
+    "modelsdev:neon": "2026-08-12",
+    "modelsdev:aihubmix": "2026-08-12",
+    "modelsdev:merge-gateway": "2026-08-12",
+    "modelsdev:opper": "2026-08-12",
+    "modelsdev:github-copilot": "2026-08-12",
+    "modelsdev:opencode-go": "2026-08-12",
+    "modelsdev:edenai": "2026-08-12",
+    "modelsdev:tempr": "2026-08-12",
+    "modelsdev:opencode": "2026-08-12",
+    "modelsdev:kenari": "2026-08-12",
+    "modelsdev:requesty": "2026-08-12",
+    "modelsdev:amazon-bedrock": "2026-08-12",
+    "modelsdev:llmgateway": "2026-08-12",
+    "modelsdev:google-vertex": "2026-08-12",
+    "modelsdev:crossmodel": "2026-08-12"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "x-ai/grok-4.6"
+    ],
+    "modelsdev:perplexity-agent": [
+     "xai/grok-4.6"
+    ],
+    "modelsdev:nano-gpt": [
+     "x-ai/grok-4.6"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "aws-bedrock/grok-4-6",
+     "xai/grok-4-6",
+     "vertex-openai/grok-4-6"
+    ],
+    "modelsdev:kilo": [
+     "x-ai/grok-4.6"
+    ],
+    "modelsdev:venice": [
+     "grok-4-6"
+    ],
+    "modelsdev:abacus": [
+     "grok-4.6"
+    ],
+    "modelsdev:302ai": [
+     "grok-4.6"
+    ],
+    "modelsdev:openrouter": [
+     "x-ai/grok-4.6"
+    ],
+    "modelsdev:azure": [
+     "grok-4.6"
+    ],
+    "modelsdev:zenmux": [
+     "x-ai/grok-4.6"
+    ],
+    "modelsdev:oci": [
+     "xai.grok-4.6"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "xai/grok-4.6"
+    ],
+    "modelsdev:xai": [
+     "grok-4.6"
+    ],
+    "modelsdev:vercel": [
+     "spacexai/grok-4.6"
+    ],
+    "modelsdev:orcarouter": [
+     "grok/grok-4.6"
+    ],
+    "modelsdev:ofox": [
+     "x-ai/grok-4.6"
+    ],
+    "modelsdev:neon": [
+     "grok-4-6"
+    ],
+    "modelsdev:aihubmix": [
+     "grok-4.6"
+    ],
+    "modelsdev:merge-gateway": [
+     "xai/grok-4.6"
+    ],
+    "modelsdev:opper": [
+     "grok-4.6"
+    ],
+    "modelsdev:github-copilot": [
+     "grok-4.6"
+    ],
+    "modelsdev:opencode-go": [
+     "grok-4.6"
+    ],
+    "modelsdev:edenai": [
+     "xai/grok-4.6"
+    ],
+    "modelsdev:tempr": [
+     "xai/grok-4.6"
+    ],
+    "modelsdev:opencode": [
+     "grok-4.6"
+    ],
+    "modelsdev:kenari": [
+     "grok-4-6"
+    ],
+    "modelsdev:requesty": [
+     "grok-4.6"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "us.xai.grok-4.6",
+     "xai.grok-4.6",
+     "global.xai.grok-4.6"
+    ],
+    "modelsdev:llmgateway": [
+     "grok-4-6"
+    ],
+    "modelsdev:google-vertex": [
+     "xai/grok-4.6"
+    ],
+    "modelsdev:crossmodel": [
+     "x-ai/grok-4.6"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grok47",
+   "names": [
+    "SpaceXAI: Grok 4.7",
+    "Grok 4.7",
+    "Grok 4.7 (Global)",
+    "Grok 4.7 (US)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-21",
+    "modelsdev:nano-gpt": "2026-09-21",
+    "modelsdev:kilo": "2026-09-21",
+    "modelsdev:venice": "2026-09-16",
+    "modelsdev:302ai": "2026-09-21",
+    "modelsdev:openrouter": "2026-09-21",
+    "modelsdev:azure": "2026-09-21",
+    "modelsdev:cloudflare-ai-gateway": "2026-09-21",
+    "modelsdev:xai": "2026-09-21",
+    "modelsdev:vercel": "2026-09-21",
+    "modelsdev:ofox": "2026-09-21",
+    "modelsdev:aihubmix": "2026-09-21",
+    "modelsdev:merge-gateway": "2026-09-21",
+    "modelsdev:github-copilot": "2026-09-21",
+    "modelsdev:opencode-go": "2026-09-21",
+    "modelsdev:edenai": "2026-09-21",
+    "modelsdev:tempr": "2026-09-21",
+    "modelsdev:opencode": "2026-09-21",
+    "modelsdev:requesty": "2026-09-21",
+    "modelsdev:amazon-bedrock": "2026-09-21",
+    "modelsdev:crossmodel": "2026-09-21"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+file->text",
+    "text,image->text",
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "x-ai/grok-4.7"
+    ],
+    "modelsdev:nano-gpt": [
+     "x-ai/grok-4.7"
+    ],
+    "modelsdev:kilo": [
+     "x-ai/grok-4.7"
+    ],
+    "modelsdev:venice": [
+     "grok-4-7"
+    ],
+    "modelsdev:302ai": [
+     "grok-4.7"
+    ],
+    "modelsdev:openrouter": [
+     "x-ai/grok-4.7"
+    ],
+    "modelsdev:azure": [
+     "grok-4.7"
+    ],
+    "modelsdev:cloudflare-ai-gateway": [
+     "xai/grok-4.7"
+    ],
+    "modelsdev:xai": [
+     "grok-4.7"
+    ],
+    "modelsdev:vercel": [
+     "spacexai/grok-4.7"
+    ],
+    "modelsdev:ofox": [
+     "x-ai/grok-4.7"
+    ],
+    "modelsdev:aihubmix": [
+     "grok-4.7"
+    ],
+    "modelsdev:merge-gateway": [
+     "xai/grok-4.7"
+    ],
+    "modelsdev:github-copilot": [
+     "grok-4.7"
+    ],
+    "modelsdev:opencode-go": [
+     "grok-4.7"
+    ],
+    "modelsdev:edenai": [
+     "xai/grok-4.7"
+    ],
+    "modelsdev:tempr": [
+     "xai/grok-4.7"
+    ],
+    "modelsdev:opencode": [
+     "grok-4.7"
+    ],
+    "modelsdev:requesty": [
+     "grok-4.7"
+    ],
+    "modelsdev:amazon-bedrock": [
+     "global.xai.grok-4.7",
+     "us.xai.grok-4.7"
+    ],
+    "modelsdev:crossmodel": [
+     "x-ai/grok-4.7"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "grokimaginevideo15lite",
+   "names": [
+    "Grok Imagine Video 1.5 Lite"
+   ],
+   "releaseDateHints": {
+    "modelsdev:xai": "2026-10-01",
+    "modelsdev:vercel": "2026-10-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,pdf->video",
+    "text->video"
+   ],
+   "catalogIds": {
+    "modelsdev:xai": [
+     "grok-imagine-video-1.5-lite"
+    ],
+    "modelsdev:vercel": [
+     "spacexai/grok-imagine-video-1.5-lite"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}
