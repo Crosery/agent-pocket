@@ -23,6 +23,7 @@ import { tileOf } from './world/coords.ts'
 import { createDecorLayer } from './world/decor.ts'
 import { createFringeLayer } from './world/fringe.ts'
 import { createFootsteps, type StepActor } from './world/footsteps.ts'
+import { createReflections } from './world/reflections.ts'
 import { createFxSystem } from './world/fx.ts'
 import { createGrassLayer, type GrassBender } from './world/grass.ts'
 import { createLeafSystem } from './world/leaves.ts'
@@ -100,6 +101,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   const fx = createFxSystem()
   const leaves = createLeafSystem(Math.max(...Object.values(RENDER.physics.tiers).map((t) => t.leaves)))
   const footsteps = createFootsteps((x, z, _y, amp) => liquids.ripple(x, z, amp))
+  const reflections = createReflections()
   const questTrail = createQuestTrail()
   const overlayLayer = createOverlayLayer(overlay)
   const aurora = createAurora()
@@ -329,6 +331,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
     questTrail.set([], () => 0)
     grass.clearTrample()
     footsteps.setEnv(null)
+    reflections.setEnv(null)
     leaves.reset()
     leaves.setCanopies([])
     streamer?.clear()
@@ -479,6 +482,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
         groundY: (x, z) => sampleWalkHeight(s, x, z),
         snowAt: (x, z) => climate?.sample('snow', x, z) ?? 0,
       })
+      reflections.setEnv({ waterY: (tx, ty) => (s.isLiquid(tx, ty) ? s.liquidY(tx, ty) : null), heights })
       leaves.setGround(
         (x, z) => (s.isLiquid(Math.floor(x), Math.floor(z)) ? s.liquidY(Math.floor(x), Math.floor(z)) : sampleWalkHeight(s, x, z)),
         (x, z) => s.isLiquid(Math.floor(x), Math.floor(z)),
@@ -652,6 +656,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       aurora.update(time, camera, wx.aurora * (RENDER.aurora.nightOnly ? s.lamps : 1))
       leaves.update(dt, time, focus, sky.ambientLight)
       footsteps.update(dt, time, focus, stepList, sky.ambientLight, pxPerUnit)
+      reflections.update(time, sky.ambientLight, focus, registry, tier.reflections && outdoor)
       liquids.setRipples(tier.ripples, weatherLevels.get('rain') ?? 0)
       {
         const C = RENDER.snowCover

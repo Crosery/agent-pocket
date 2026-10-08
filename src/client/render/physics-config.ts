@@ -159,13 +159,18 @@ export interface ReflectionsConfig {
   alpha: number
   /** Brightness kept by the mirror image (0..1) and the water tint mixed in. */
   darken: number; tint: string; tintAmount: number
-  /** Ripple distortion: sideways wobble amplitude (tiles), frequency (1/tile), speed (rad/s). */
+  /** Ripple distortion: sideways wobble amplitude (tiles), frequency (1/tile of depth below the waterline), speed (rad/s). */
   distort: { amp: number; freq: number; speed: number }
   /** Share of the sprite height over which the image fades out going down. */
   fade: number
   maxActors: number
   /** Actors farther than this from the focus (tiles) have no reflection. */
   maxDistance: number
+  /** An actor on land mirrors in water up to this many tiles away. */
+  reach: number
+  /** A tile counts as the actor's water when its surface is within this many world units of the plane. */
+  tolerance: number
+  renderOrder: number
 }
 
 export interface WaterFxConfig {

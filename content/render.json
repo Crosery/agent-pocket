@@ -1736,6 +1736,7 @@
       "ultra": {"trample": true, "footsteps": "full", "ripples": 24, "reflections": true, "leaves": 140, "impacts": true, "snowCover": true, "puffPool": 320, "printPool": 64}
     }
   },
+  "reflections": {"alpha": 0.82, "darken": 0.9, "tint": "#2f6f9e", "tintAmount": 0.16, "distort": {"amp": 0.04, "freq": 24, "speed": 3.2}, "fade": 1.4, "maxActors": 8, "maxDistance": 16, "reach": 2, "tolerance": 0.04, "renderOrder": 4},
   "footsteps": {
     "maxDistance": 16,
     "teleportTiles": 2,
