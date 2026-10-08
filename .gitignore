@@ -24,3 +24,6 @@ docs/HANDOFF.md
 docs/handoff/
 __pycache__/
 *.pyc
+
+# local QA artifacts (screenshots, reports)
+output/
