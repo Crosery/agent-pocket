@@ -1,0 +1,2706 @@
+{
+ "_doc": "Roster batch additions-2026-10-b1.json (issue #18 scope 2): new species + patches to existing records, merged by tools/data/apply_additions.py. Chains follow the lineage research (docs/research lineage); a later model of the same line is a later evolution.",
+ "species": [
+  {
+   "id": "gpt-4-turbo",
+   "nameZh": "GPT-4 Turbo",
+   "nameEn": "GPT-4 Turbo",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-4x",
+   "stage": 1,
+   "evolvesTo": "gpt-4-1",
+   "evolveLevel": 31,
+   "types": [
+    "chat",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 59,
+    "atk": 48,
+    "def": 55,
+    "spa": 60,
+    "spd": 61,
+    "spe": 78
+   },
+   "habitats": [
+    "meadow",
+    "city"
+   ],
+   "releaseDate": "2023-11-06",
+   "capabilityScore": 32,
+   "hotnessScore": 40,
+   "statRationale": "更快更便宜→速度高；JSON 模式输出规矩→特防稳。 [BST 361 ∈ R 330-420; 强项 spe/spd; 能力 32/热度 40]",
+   "dexEntryZh": "2023 年 11 月 6 日在 DevDay 以预览版亮相的 GPT-4 Turbo，是更便宜、更快的 GPT-4，新增 128K 上下文窗口和 JSON 模式，后来的版本还带上了视觉能力。如今已被标为弃用。往后是同系列的 GPT-4.1。",
+   "lookZh": "头戴小风车的水獭快递娘，挎着卷轴包狂奔",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the young otter-eared 'courier' of the GPT-4 line (first stage; she grows into the GPT-4.1 form). Hair: short sea-foam mint (#9FE3D2) bob with a white inner layer, blunt bangs, one ahoge. Ears: small round otter ears, cream inside; a thick otter tail with a teal tip. Eyes: big round deep teal (#0E7C66) with twin white highlights, cheery grin. Outfit: short white raincoat with a teal zipper line and rolled sleeves, teal shorts, little white rain boots. Signature accessory: a small teal pinwheel-turbine hairclip that spins when she runs (the 'turbo'). Prop: a compact satchel with one rolled scroll tucked in, curly braces stitched on its flap (JSON mode). Palette: #FFFFFF, #9FE3D2, #10A37F teal, #0E7C66, #2B2D36 charcoal. Pose: mid-sprint, tail streaming, pinwheel whirling.",
+    "personality": "风风火火的快递员，办事又快又省",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is the six-loop knot, and the ChatGPT products it powers lean on a teal-green and white scheme. No official mascot for this model, so a fast otter courier was invented to stay distinct from the GPT-6 dragon, rabbit and lion lines.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-4-turbo",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "gpt-4-1",
+   "nameZh": "GPT-4.1",
+   "nameEn": "GPT-4.1",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-4x",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "code",
+    "chat"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 81,
+    "atk": 71,
+    "def": 63,
+    "spa": 73,
+    "spd": 73,
+    "spe": 80
+   },
+   "habitats": [
+    "forest",
+    "coast"
+   ],
+   "releaseDate": "2025-04-14",
+   "capabilityScore": 50,
+   "hotnessScore": 52,
+   "statRationale": "100 万上下文→HP 厚；API 主力、干活利落→速度快。 [BST 441 ∈ SR 420-490; 强项 hp/spe; 能力 50/热度 52]",
+   "dexEntryZh": "2025 年 4 月 14 日发布的 GPT-4.1，主打 API，拥有 100 万 token 级的上下文窗口，指令遵循和写代码在当时都很在行，另有 mini 和 nano 两个小号。她是 GPT-4 Turbo 同一脉的下一代，现已被标为弃用。",
+   "lookZh": "背着大卷轴背包的水獭娘，风车长成了双叶涡轮",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the grown-up GPT-4 Turbo otter courier. Hair: same sea-foam mint (#9FE3D2) bob with a white inner layer, longer, same blunt bangs and ahoge. Ears: round otter ears, cream inside; a bigger otter tail with a teal tip. Eyes: same deep teal (#0E7C66) with twin highlights, confident grin. Outfit: longer white-and-teal travel trench with a curly-brace pin, teal leggings, sturdy boots. Signature accessory: the pinwheel-turbine hairclip, now a double-blade turbine. Props: the satchel grown into a huge backpack stuffed with rolled scrolls (million-token memory), and a checklist clipboard with neat ticks (instruction following). Palette: #FFFFFF, #9FE3D2, #10A37F teal, #0E7C66, #2B2D36 charcoal. Pose: standing tall, clipboard held up, hand on strap.",
+    "personality": "靠谱的大背包，指令一条不落地办完",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is the six-loop knot, and the ChatGPT products it powers lean on a teal-green and white scheme. No official mascot for this model, so the otter courier from GPT-4 Turbo was grown up using the same colours.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-4.1",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gpt-4-turbo"
+  },
+  {
+   "id": "gpt-5-1",
+   "nameZh": "GPT-5.1",
+   "nameEn": "GPT-5.1",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-5-early",
+   "stage": 1,
+   "evolvesTo": "gpt-5-2",
+   "evolveLevel": 37,
+   "types": [
+    "logic",
+    "chat"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 82,
+    "atk": 94,
+    "def": 78,
+    "spa": 87,
+    "spd": 92,
+    "spe": 87
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2025-11-13",
+   "capabilityScore": 76,
+   "hotnessScore": 60,
+   "statRationale": "自适应推理→攻击高；语气稳、有分寸→特防高。 [BST 520 ∈ SSR 490-550; 强项 atk/spd; 能力 76/热度 60]",
+   "dexEntryZh": "2025 年 11 月登场的 GPT-5.1，给 GPT-5 加上了自适应推理，会动态分配思考力度，语气也更温暖自然，还能切换个性预设。她是 GPT-5 同系列的下一代，后面接着 GPT-5.2。",
+   "lookZh": "捧着热饮的小猫头鹰学妹，发夹是一枚金色拨盘",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the young owlet scholar of the GPT-5 line (first stage; she grows into the GPT-5.2 form). Hair: a chin-length ivory (#FFF8F0) bob with peach (#F7B7A3) tips, blunt bangs, one ahoge, and two soft owl feather tufts rising like ears. Eyes: big round rose-pink (#E88FA8) with double-ring highlights, a warm smile. Outfit: a lavender-indigo (#7C6BC4) scalloped feather cape-cardigan with short owl-wing sleeves over a cream dress with a peach ribbon, small fluffy tail feathers, little cocoa boots. Signature accessory: a round gold dial hairclip with three notches, the needle on the middle one (adaptive reasoning). Prop: a steaming mug held in both wing-hands (the warmer tone). Palette: #FFF8F0, #F7B7A3, #E88FA8, #7C6BC4, #C9A94A gold, #2A2540. Pose: head tilted, blinking slowly, hugging the mug.",
+    "personality": "温柔爱聊天，开口前会先掂量一下",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is the six-loop knot, drawn in white and lavender on the roster's GPT art. No official mascot for this model, so an owl scholar was invented to stay distinct from the GPT dragon, rabbit and lion lines.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-5.1",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "gpt-5-2",
+   "nameZh": "GPT-5.2",
+   "nameEn": "GPT-5.2",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-5-early",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "logic",
+    "compute"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 99,
+    "atk": 102,
+    "def": 74,
+    "spa": 71,
+    "spd": 84,
+    "spe": 99
+   },
+   "habitats": [
+    "forest",
+    "coast"
+   ],
+   "releaseDate": "2025-12-11",
+   "capabilityScore": 82,
+   "hotnessScore": 62,
+   "statRationale": "专业知识工作→攻击高；40 万上下文、长任务耐力→HP 厚。 [BST 529 ∈ SSR 490-550; 强项 atk/hp; 能力 82/热度 62]",
+   "dexEntryZh": "2025 年 12 月 11 日发布的 GPT-5.2，面向专业知识工作和长链条任务，据 OpenRouter 的描述，智能体与长上下文表现比 GPT-5.1 更强，上下文窗口 40 万 token，另有 Pro 算力档。她是 GPT-5.1 同系列的下一代。",
+   "lookZh": "戴圆框眼镜的猫头鹰干部，手里是长线任务甘特表",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall, the grown-up GPT-5.1 owl scholar, now a professional. Hair: same ivory (#FFF8F0) with peach (#F7B7A3) tips, longer, in a low half-up knot, same blunt bangs and ahoge, taller feather tufts. Eyes: same big round rose-pink (#E88FA8) with double-ring highlights, behind thin round gold glasses. Outfit: tailored indigo (#7C6BC4) blazer-cape with a scalloped hem and gold buttons, white blouse, peach bow, dark pleated skirt, folded wings behind, tall boots. Signature accessory: the round gold dial hairclip, now ringed in gold, needle on top notch. Props: a slim ledger tablet with a row of tiny gantt-bar stripes (long-horizon tasks), and the steaming mug in the other hand. Palette: #FFF8F0, #F7B7A3, #E88FA8, #7C6BC4, #C9A94A gold, #2A2540. Pose: upright, wing-hand pointing along the ledger.",
+    "personality": "沉稳干练，长线任务一件件排好",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is the six-loop knot, drawn in white and lavender on the roster's GPT art. No official mascot for this model, so the owl scholar from GPT-5.1 was grown up into a professional-work look.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-5.2",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gpt-5-1"
+  },
+  {
+   "id": "gpt-4o-mini",
+   "nameZh": "GPT-4o mini",
+   "nameEn": "GPT-4o mini",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-mini",
+   "stage": 1,
+   "evolvesTo": "gpt-5-mini",
+   "evolveLevel": 22,
+   "types": [
+    "chat"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 44,
+    "atk": 40,
+    "def": 43,
+    "spa": 53,
+    "spd": 53,
+    "spe": 52
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2024-07-18",
+   "capabilityScore": 14,
+   "hotnessScore": 42,
+   "statRationale": "多模态够用→特攻高；便宜稳定的预算主力→特防高。 [BST 285 ∈ N 240-330; 强项 spa/spd; 能力 14/热度 42]",
+   "dexEntryZh": "GPT-4o mini，2024 年 7 月 18 日发布的小型多模态模型，支持文本和图像输入，取代 GPT-3.5 成了 OpenAI 的预算主力，靠便宜和快吃饭，拥有 128000 的上下文。这条 mini 进化线从它起步，之后由同系列的下一代 GPT-5 mini 接棒。",
+   "lookZh": "薄荷双马尾小快递娘，斜挎帆布包，高举一枚铜板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a small cheerful girl, the youngest stage of the seafoam courier 'mini' line. Seafoam-mint hair (#B8EBD9) with white-tipped ends in short low twin-tails just past the ears, tied with round white ring bands, one tiny ahoge. Big warm rose-pink eyes (#F2A0B5) with two round highlights, small happy smile. Plain white short-sleeve courier tunic with a teal (#10A37F) collar, teal shorts, simple white sneakers. Signature accessory: a cream canvas courier satchel (#F4EAD5) worn across the body with a small brass knot-logo buckle. One small prop: a shiny copper coin (#C98A4B) held up in one hand for 'cheap and cheerful'. Palette: #FFFFFF, #10A37F, #B8EBD9 mint, #F4EAD5 cream, #C98A4B copper, #2B2B2B outline. Pose: bouncing on tiptoes, coin held high, grinning.",
+    "personality": "便宜又勤快的跑腿小能手，笑着把活都接下",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a black-and-white hexagonal interlocking-knot mark, and its signature brand green is the teal #10A37F seen in ChatGPT; there is no official mascot.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-4o-mini",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "gpt-5-mini",
+   "nameZh": "GPT-5 mini",
+   "nameEn": "GPT-5 mini",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-mini",
+   "stage": 2,
+   "evolvesTo": "gpt-5-4-mini",
+   "evolveLevel": 29,
+   "types": [
+    "chat",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 65,
+    "atk": 46,
+    "def": 56,
+    "spa": 63,
+    "spd": 65,
+    "spe": 76
+   },
+   "habitats": [
+    "meadow",
+    "city"
+   ],
+   "releaseDate": "2025-08-07",
+   "capabilityScore": 38,
+   "hotnessScore": 44,
+   "statRationale": "低延迟→速度高；40 万上下文→HP高。 [BST 371 ∈ R 330-420; 强项 spe/hp; 能力 38/热度 44]",
+   "dexEntryZh": "GPT-5 mini，2025 年 8 月 7 日登场，是 GPT-5 的紧凑版，专接较轻量的推理活儿，指令遵循和安全调校与 GPT-5 一脉相承，延迟和成本却更低，上下文 40 万。它是 GPT-4o mini 同系列的下一代，之后会长成 GPT-5.4 mini。",
+   "lookZh": "薄荷双马尾快递娘长大了，帆布包鼓起，手握黄铜秒表冲刺",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the middle stage of the seafoam courier 'mini' line, grown up from GPT-4o mini. The same seafoam-mint hair (#B8EBD9) with white-tipped ends, twin-tails now shoulder-length with the same round white ring bands and ahoge, plus a small teal hair clip. The same warm rose-pink eyes (#F2A0B5) with round highlights, now focused. Fitted white-and-teal (#10A37F) short courier jacket with rolled sleeves, teal shorts with a white belt, white socks, sneakers. The same cream canvas satchel (#F4EAD5) with its brass knot-logo buckle, now fuller. One extra prop: a brass stopwatch (#C98A4B) on a short chain gripped in one hand for speed and low latency. Palette: #FFFFFF, #10A37F, #B8EBD9 mint, #F4EAD5 cream, #C98A4B brass, #2B2B2B outline. Pose: mid-sprint, twin-tails streaming back, stopwatch raised.",
+    "personality": "脚下生风的务实派，常说“马上就好”",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a black-and-white hexagonal interlocking-knot mark, and its signature brand green is the teal #10A37F seen in ChatGPT; there is no official mascot.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-5-mini",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gpt-4o-mini"
+  },
+  {
+   "id": "gpt-5-4-mini",
+   "nameZh": "GPT-5.4 mini",
+   "nameEn": "GPT-5.4 mini",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-mini",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "chat",
+    "agent"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 75,
+    "atk": 64,
+    "def": 69,
+    "spa": 76,
+    "spd": 86,
+    "spe": 78
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2026-03-17",
+   "capabilityScore": 55,
+   "hotnessScore": 46,
+   "statRationale": "承袭 GPT-5.4 核心能力→特防高；为高吞吐优化→速度高。 [BST 448 ∈ SR 420-490; 强项 spd/spe; 能力 55/热度 46]",
+   "dexEntryZh": "GPT-5.4 mini，2026 年 3 月 17 日发布，把 GPT-5.4 的核心能力装进更快更省的身板，面向高吞吐场景，支持文本和图像输入，推理、编码都有不错表现。它接在 GPT-5 mini 之后，是 mini 线同系列的下一代，拥有 40 万上下文。",
+   "lookZh": "薄荷双马尾稳重快递娘，铜扣制服加半披风，举平板打勾",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the grown-up stage of the seafoam courier 'mini' line, upgraded from GPT-5 mini. The same seafoam-mint hair (#B8EBD9) with white-tipped ends, twin-tails now mid-back length with the same round white ring bands, ahoge and teal hair clip. The same rose-pink eyes (#F2A0B5) with round highlights, calm. Teal (#10A37F) courier jacket with white piping, brass buttons and a short half-cape on one shoulder, white shorts, a tool belt of small pouches (agent tools), boots. The same cream satchel (#F4EAD5) with its brass knot-logo buckle, now with two side pouches. One prop: a slim white clipboard-tablet with three tiny green checkmarks in one hand. Palette: #FFFFFF, #10A37F, #B8EBD9 mint, #F4EAD5 cream, #C98A4B brass, #2B2B2B outline. Pose: confident stride, tablet raised, chin up.",
+    "personality": "干活成批成批的靠谱前辈，勾完一项接下一项",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a black-and-white hexagonal interlocking-knot mark, and its signature brand green is the teal #10A37F seen in ChatGPT; there is no official mascot.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-5.4-mini",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gpt-5-mini"
+  },
+  {
+   "id": "gpt-4-1-nano",
+   "nameZh": "GPT-4.1 nano",
+   "nameEn": "GPT-4.1 nano",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-nano",
+   "stage": 1,
+   "evolvesTo": "gpt-5-nano",
+   "evolveLevel": 18,
+   "types": [
+    "compute"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 49,
+    "atk": 37,
+    "def": 37,
+    "spa": 35,
+    "spd": 39,
+    "spe": 63
+   },
+   "habitats": [
+    "meadow",
+    "city"
+   ],
+   "releaseDate": "2025-04-14",
+   "capabilityScore": 8,
+   "hotnessScore": 22,
+   "statRationale": "最快最便宜→速度高；百万级上下文→HP高。 [BST 260 ∈ N 240-330; 强项 spe/hp; 能力 8/热度 22]",
+   "dexEntryZh": "GPT-4.1 nano，2025 年 4 月 14 日发布，GPT-4.1 系列里主打低延迟的小个子，据介绍是该系列最快也最便宜的型号，体型虽小，却带着 100 万级的上下文窗口。它是 nano 线的 1 阶形态，之后由同系列的下一代 GPT-5 nano 接班。",
+   "lookZh": "冰蓝短发小不点，芯片发夹，袖子过长，捏着纸飞机",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~1.8 heads tall, a tiny girl, the youngest stage of the ice-blue 'nano' speed line. Short pale ice-blue pixie bob (#CFF1F7) with teal-tipped ends, a zigzag ahoge and a small chip-shaped hairclip with gold pins on the left. Big round citrus-lime eyes (#D8F34A) with sparkle highlights, curious open mouth. Oversized teal (#10A37F) raincoat that reaches her knees, sleeves too long and covering her hands, hood down, small white boots. Signature accessory: the chip hairclip. One small prop: a white folded paper airplane held up in a sleeve-covered hand. Palette: #FFFFFF, #10A37F teal, #CFF1F7 ice blue, #D8F34A lime, #F2C14E gold pins, #1F2A2E outline. Pose: standing on tiptoe, about to throw the paper plane, hood flapping.",
+    "personality": "话没说完人已经跑出去的小飞毛腿",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a black-and-white hexagonal interlocking-knot mark, and its signature brand green is the teal #10A37F seen in ChatGPT; there is no official mascot.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-4.1-nano",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "gpt-5-nano",
+   "nameZh": "GPT-5 nano",
+   "nameEn": "GPT-5 nano",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-nano",
+   "stage": 2,
+   "evolvesTo": "gpt-5-4-nano",
+   "evolveLevel": 25,
+   "types": [
+    "compute",
+    "chat"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 54,
+    "atk": 41,
+    "def": 44,
+    "spa": 43,
+    "spd": 50,
+    "spe": 69
+   },
+   "habitats": [
+    "coast",
+    "meadow"
+   ],
+   "releaseDate": "2025-08-07",
+   "capabilityScore": 18,
+   "hotnessScore": 24,
+   "statRationale": "超低延迟→速度高；40 万上下文→HP高；推理深度有限→攻击不高。 [BST 301 ∈ N 240-330; 强项 spe/hp; 能力 18/热度 24]",
+   "dexEntryZh": "GPT-5 nano，2025 年 8 月 7 日登场，是 GPT-5 体系里最小最快的型号，主攻开发者工具、即时交互和超低延迟，代价是推理深度不及大哥们。它是 GPT-4.1 nano 同系列的下一代，有 40 万上下文，之后会长成 GPT-5.4 nano。",
+   "lookZh": "冰蓝短发芯片发夹少女，青绿风衣狂奔，腋下夹纸飞机",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the middle stage of the ice-blue 'nano' speed line, grown up from GPT-4.1 nano. The same pale ice-blue pixie bob (#CFF1F7) with teal-tipped ends, now nape-length, the same zigzag ahoge and gold-pinned chip hairclip on the left. The same citrus-lime eyes (#D8F34A) with sparkle highlights, alert grin. Fitted teal (#10A37F) windbreaker with rolled sleeves and a white collar, white shorts with a thin lime stripe, sneakers. Signature accessory: the chip hairclip, slightly larger. Props: the white paper airplane tucked under one arm, and a palm-size handheld terminal with a tiny green cursor block in the other hand (developer tools). Palette: #FFFFFF, #10A37F teal, #CFF1F7 ice blue, #D8F34A lime, #F2C14E gold pins, #1F2A2E outline. Pose: running at full tilt, windbreaker flapping, terminal held out.",
+    "personality": "刷屏式快反应，最怕等人慢慢想",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a black-and-white hexagonal interlocking-knot mark, and its signature brand green is the teal #10A37F seen in ChatGPT; there is no official mascot.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-5-nano",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gpt-4-1-nano"
+  },
+  {
+   "id": "gpt-5-4-nano",
+   "nameZh": "GPT-5.4 nano",
+   "nameEn": "GPT-5.4 nano",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-nano",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "compute",
+    "agent"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 62,
+    "atk": 63,
+    "def": 51,
+    "spa": 55,
+    "spd": 53,
+    "spe": 73
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2026-03-17",
+   "capabilityScore": 30,
+   "hotnessScore": 26,
+   "statRationale": "为速度敏感任务优化→速度高；agent 属性加持→攻击高。 [BST 357 ∈ R 330-420; 强项 spe/atk; 能力 30/热度 26]",
+   "dexEntryZh": "GPT-5.4 nano，2026 年 3 月 17 日发布，是 GPT-5.4 家族里最轻量、最省钱的变体，为速度敏感和大批量任务而生，支持文本与图像输入，主打低延迟。它接在 GPT-5 nano 之后，是 nano 线同系列的下一代。",
+   "lookZh": "冰蓝短发飞行夹克少女，大号芯片发夹，弹出飞镖纸飞机",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the grown-up stage of the ice-blue 'nano' speed line, upgraded from GPT-5 nano. The same pale ice-blue pixie bob (#CFF1F7) with teal tips, now chin-length with longer side bangs, the same zigzag ahoge and a bigger gold-pinned chip hairclip on the left. The same citrus-lime eyes (#D8F34A), sharp and focused. Teal (#10A37F) flight bomber jacket with a white collar and lime sleeve stripes, a utility belt with tiny chip pouches (agent tools), white shorts, lace-up boots. Props: a sleek dart-shaped white paper airplane with a teal edge in one hand, and the small handheld terminal clipped to the belt. Palette: #FFFFFF, #10A37F teal, #CFF1F7 ice blue, #D8F34A lime, #F2C14E gold pins, #1F2A2E outline. Pose: flicking the plane forward, leaning into a dash, confident smirk.",
+    "personality": "又快又敢冲，批量活儿一口气清空",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a black-and-white hexagonal interlocking-knot mark, and its signature brand green is the teal #10A37F seen in ChatGPT; there is no official mascot.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-5.4-nano",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gpt-5-nano"
+  },
+  {
+   "id": "gpt-5-codex",
+   "nameZh": "GPT-5-Codex",
+   "nameEn": "GPT-5-Codex",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "code",
+   "family": "codex-5",
+   "stage": 1,
+   "evolvesTo": "gpt-5-1-codex-max",
+   "evolveLevel": 37,
+   "types": [
+    "code",
+    "agent"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 79,
+    "atk": 83,
+    "def": 73,
+    "spa": 67,
+    "spd": 74,
+    "spe": 82
+   },
+   "habitats": [
+    "forest",
+    "volcano"
+   ],
+   "releaseDate": "2025-09-15",
+   "capabilityScore": 62,
+   "hotnessScore": 55,
+   "statRationale": "专攻智能体编程→攻击高；Codex 里干活利落→速度快。 [BST 458 ∈ SR 420-490; 强项 atk/spe; 能力 62/热度 55]",
+   "dexEntryZh": "2025 年 9 月 15 日登场的 GPT-5-Codex，是为 Codex 智能体和命令行专门调校的 GPT-5 变体，擅长智能体式编程和代码审查。她抱着审查清单到处找 bug，查完一项就打一个对勾。下一站是同系列的 GPT-5.1-Codex-Max。",
+   "lookZh": "戴耳机抱清单板的淡紫蝾螈娘，头侧长着薄荷色外鳃",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the young axolotl-eared 'code reviewer' of the Codex agent line (first stage; she grows into the long-scarf Max form, then the logic-circuit form). Hair: lilac (#D9CFF2) in two short low twin-tails with violet (#7C5CD6) tips, blunt bangs, one ahoge. Axolotl gills: three small feathery frills per side, tipped mint (#6EE7B7). Eyes: big round teal (#2BB59A) with white square highlights, eager smile. Outfit: oversized white short cardigan with lilac cuffs over a code-dark (#1E1E2E) pinafore, tiny violet slippers, a short flat axolotl tail. Signature accessory: a small headset with one glowing mint LED. Prop: a clipboard of review notes with three tidy check marks. Palette: #FFFFFF, #D9CFF2, #7C5CD6, #1E1E2E, #6EE7B7, #2BB59A. Pose: on tiptoe, ticking the clipboard with one finger, gills perked.",
+    "personality": "细心的审稿人，专挑代码里的小毛病",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is the six-loop knot, and Codex branding uses a '>_' terminal prompt, in white, lavender-violet and mint-green accents. No official mascot for this model, so an axolotl code reviewer was invented to stay distinct from the Codex dragon line.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "gpt-5-1-codex-max",
+   "nameZh": "GPT-5.1-Codex-Max",
+   "nameEn": "GPT-5.1-Codex-Max",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "code",
+   "family": "codex-5",
+   "stage": 2,
+   "evolvesTo": "gpt-5-2-codex",
+   "evolveLevel": 44,
+   "types": [
+    "code",
+    "agent"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 89,
+    "atk": 95,
+    "def": 78,
+    "spa": 76,
+    "spd": 84,
+    "spe": 95
+   },
+   "habitats": [
+    "forest",
+    "volcano"
+   ],
+   "releaseDate": "2025-11-19",
+   "capabilityScore": 74,
+   "hotnessScore": 52,
+   "statRationale": "长时间高上下文开发→攻击高；跑得久不掉链子→速度快。 [BST 517 ∈ SSR 490-550; 强项 atk/spe; 能力 74/热度 52]",
+   "dexEntryZh": "2025 年 11 月发布的 GPT-5.1-Codex-Max，面向跑得久、上下文多的软件开发任务，基于更新过的 5.1 推理栈，上下文窗口 40 万 token。她接在 GPT-5-Codex 之后，是同系列的下一代，围巾拖得老长。再往后是 GPT-5.2-Codex。",
+   "lookZh": "长围巾拖得老远的蝾螈娘，耳机带上了麦克风",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the middle stage of the Codex axolotl line: the GPT-5-Codex reviewer, grown taller. Hair: same lilac (#D9CFF2) with violet (#7C5CD6) tips, longer twin-tails, same blunt bangs and ahoge. Axolotl gills: four mint-tipped (#6EE7B7) frills per side. Eyes: same big round teal (#2BB59A) with square highlights, calm determined smile. Outfit: knee-length white-and-lilac coat with violet lining and a code-dark (#1E1E2E) belt, violet skirt, slim boots, a longer tail with a mint fin edge. Signature accessory: the headset, now with a boom mic and a brighter mint LED. Prop: an extra-long violet scarf printed with tiny pixel code lines, trailing far behind her (long context). Palette: #FFFFFF, #D9CFF2, #7C5CD6, #1E1E2E, #6EE7B7, #2BB59A. Pose: striding forward, one fist raised, scarf streaming behind.",
+    "personality": "耐力十足，一跑就是很久也不喊累",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is the six-loop knot, and Codex branding uses a '>_' terminal prompt, in white, lavender-violet and mint-green accents. No official mascot for this model, so the axolotl code reviewer was grown up with a long 'long-running task' scarf.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-5.1-codex-max",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gpt-5-codex"
+  },
+  {
+   "id": "gpt-5-2-codex",
+   "nameZh": "GPT-5.2-Codex",
+   "nameEn": "GPT-5.2-Codex",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "code",
+   "family": "codex-5",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "code",
+    "logic"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 94,
+    "atk": 98,
+    "def": 75,
+    "spa": 84,
+    "spd": 83,
+    "spe": 92
+   },
+   "habitats": [
+    "forest",
+    "highland"
+   ],
+   "releaseDate": "2025-12-11",
+   "capabilityScore": 80,
+   "hotnessScore": 54,
+   "statRationale": "工程任务硬碰硬→攻击高；40 万上下文撑长任务→HP 厚。 [BST 526 ∈ SSR 490-550; 强项 atk/hp; 能力 80/热度 54]",
+   "dexEntryZh": "2025 年 12 月现身的 GPT-5.2-Codex，是 GPT-5.1-Codex 的升级版，面向软件工程和编程工作流，既能陪你边聊边写，也能自己长时间把复杂工程任务做完。她是 GPT-5.1-Codex-Max 同系列的下一代，上下文同为 40 万 token。",
+   "lookZh": "穿工程师长风衣的蝾螈娘，外鳃像王冠，领口别着电路胸针",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall, the grown-up stage of the Codex axolotl line: the Max stage runner, now composed. Hair: same lilac (#D9CFF2) with violet (#7C5CD6) tips, ankle-long twin-tails with mint ribbons, same blunt bangs and ahoge. Axolotl gills: five mint-tipped (#6EE7B7) frills per side, crown-like. Eyes: same round teal (#2BB59A) with square highlights, assured smile. Outfit: long white-and-violet engineer's greatcoat with code-dark (#1E1E2E) lining and mint piping, tall boots, a long finned tail. Signature accessory: the headset, now with a slim one-lens visor. Props: the long scarf now a caped train with a mint circuit-trace border, and a hexagonal logic-gate brooch. Palette: #FFFFFF, #D9CFF2, #7C5CD6, #1E1E2E, #6EE7B7, #2BB59A. Pose: upright and composed, one hand on the visor.",
+    "personality": "沉着利落，逻辑一环扣一环",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is the six-loop knot, and Codex branding uses a '>_' terminal prompt, in white, lavender-violet and mint-green accents. No official mascot for this model, so the axolotl code reviewer was given a logic-circuit upgrade for the code/logic typing.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-5.2-codex",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gpt-5-1-codex-max"
+  },
+  {
+   "id": "o4-mini",
+   "nameZh": "o4-mini",
+   "nameEn": "o4-mini",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "reasoning",
+   "family": "o4-mini",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "logic",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 73,
+    "atk": 67,
+    "def": 56,
+    "spa": 52,
+    "spd": 68,
+    "spe": 70
+   },
+   "habitats": [
+    "city",
+    "snow"
+   ],
+   "releaseDate": "2025-04-16",
+   "capabilityScore": 46,
+   "hotnessScore": 45,
+   "statRationale": "20 万上下文→HP高；轻量快速的小型推理→速度高。 [BST 386 ∈ R 330-420; 强项 hp/spe; 能力 46/热度 45]",
+   "dexEntryZh": "o4-mini，2025 年 4 月 16 日与 o3 同期发布，是追求又快又省的小型推理模型，支持工具调用，按价位看 AIME 一类的数学题相当能打。它承接 o3-mini 的路线，据资料是 GPT-5 收编 o 系列之前的最后一员。",
+   "lookZh": "深青高马尾小个子，圆环发圈，指尖拨着黄铜算盘珠",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a small energetic girl, a quick little reasoning cousin of the teal O-ring family but her own character. Deep-teal hair (#0B6B54) cut in a straight fringe with a high bouncy ponytail wrapped by a big round ring-shaped scrunchie (the O-ring), a tiny ahoge. Warm brass-gold eyes (#F2C14E) with ring-shaped highlights, a determined wink. Slate pinafore (#2F3E46) with teal piping over a white blouse, a small mint ribbon at the collar, knee socks and sneakers. Signature accessory: the ring scrunchie. One prop: a pocket brass abacus with teal beads held up in both hands, beads mid-flick (fast math). Palette: #E6F4F1 mint-white, #10A37F teal green, #0B6B54 deep teal, #2F3E46 slate, #F2C14E brass, #1F2A2E outline. Pose: ponytail swinging, flicking abacus beads with a confident wink.",
+    "personality": "算得快还爱眨眼，主打一个性价比",
+    "communityPersona": "No anime persona found; invented from brand colours and the existing o3 / o3-pro O-ring designs.",
+    "officialMascotOrLogo": "OpenAI's logo is a black-and-white hexagonal interlocking-knot mark, and its signature brand green is the teal #10A37F seen in ChatGPT; there is no official mascot. The o-series is drawn with a teal ring motif.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/o4-mini",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "gpt-oss-20b",
+   "nameZh": "gpt-oss-20b",
+   "nameEn": "gpt-oss-20b",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-oss-20b",
+   "stage": 1,
+   "evolvesTo": "gpt-oss-safeguard-20b",
+   "evolveLevel": 22,
+   "types": [
+    "open",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 66,
+    "atk": 61,
+    "def": 51,
+    "spa": 53,
+    "spd": 59,
+    "spe": 74
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2025-08-05",
+   "capabilityScore": 34,
+   "hotnessScore": 55,
+   "statRationale": "3.6B 激活参数→速度高；21B MoE 总量→HP高。 [BST 364 ∈ R 330-420; 强项 spe/hp; 能力 34/热度 55]",
+   "dexEntryZh": "gpt-oss-20b，2025 年 8 月 5 日发布，据资料是 OpenAI 自 GPT-2 以来首个开放权重的 LLM。21B 参数的 MoE，每次只激活 3.6B，采用 Apache 2.0 协议，16GB 设备就能本地跑。它是这条线的 1 阶形态，后训练出了 gpt-oss-safeguard-20b。",
+   "lookZh": "银白乱发的小妹妹，背着迷你显卡书包，挂着橙色羽毛",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a small girl, the little sibling of the free-spirited open-weights wanderer clan, a miniature echo of the gpt-oss big brother's look. Messy silver-white hair with a mint streak under a small dark bandana, tiny chipped ivory horn nubs, a tiny ahoge. Bright teal eyes with a round highlight, cheeky grin with a snaggletooth. Open hiking jacket (open weights) a size too big, over a black tee with a hollow-outline knot logo, cargo shorts, scuffed little boots. Signature: a compact backpack shaped like a single small graphics card with a mint chip (runs on a 16GB device), an orange feather charm (#E2683C) and an unlocked padlock keychain. Palette: #FFFFFF, #10A37F, #2B2B2B, #E2683C feather orange, #8C8C8C. Pose: hopping forward with both fists up, ready to run locally anywhere.",
+    "personality": "自由散漫的小野孩，哪台电脑都能当家",
+    "communityPersona": "No anime persona found; invented from the existing gpt-oss-120b design and OpenAI brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a black-and-white hexagonal interlocking-knot mark, and its signature brand green is the teal #10A37F seen in ChatGPT; there is no official mascot.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-oss-20b",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "gpt-oss-safeguard-20b",
+   "nameZh": "gpt-oss-safeguard-20b",
+   "nameEn": "gpt-oss-safeguard-20b",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-oss-20b",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "open",
+    "safety"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 76,
+    "atk": 57,
+    "def": 64,
+    "spa": 46,
+    "spd": 68,
+    "spe": 64
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2025-10-29",
+   "capabilityScore": 40,
+   "hotnessScore": 30,
+   "statRationale": "安全推理与过滤→特防高；21B MoE 总量→HP高。 [BST 375 ∈ R 330-420; 强项 hp/spd; 能力 40/热度 30]",
+   "dexEntryZh": "gpt-oss-safeguard-20b，2025 年 10 月 29 日发布，由 gpt-oss-20b 后训练而来的安全推理模型，仍是 21B 参数的开放权重 MoE，延迟更低，擅长内容分类、LLM 过滤等安全任务。它是 gpt-oss-20b 这一脉的 2 阶形态。",
+   "lookZh": "银白乱发小巡逻员，盾徽夹克，书包挂着合上的小锁",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the grown-up form of the small open-weights wanderer, now a junior safety patroller like her big brother. The same messy silver-white hair with the mint streak under the same dark bandana, tiny ivory horn nubs slightly longer, the same ahoge. The same bright teal eyes. Zipped teal-and-white patrol jacket with reflective stripes and a small shield badge, over the black tee with the hollow-outline knot logo, cargo shorts, boots. The same compact graphics-card backpack with the orange feather charm (#E2683C); the padlock keychain is now clicked shut. Prop: a small clipboard with a green check and a grey cross pictogram under one arm. Palette: #FFFFFF, #10A37F, #2B2B2B, #E2683C feather orange, #8C8C8C, #F2C14E badge gold. Pose: standing at attention, one hand in a proud little salute.",
+    "personality": "小小年纪守规矩，抱着写字板一板一眼",
+    "communityPersona": "No anime persona found; invented from the existing gpt-oss-120b design and OpenAI brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a black-and-white hexagonal interlocking-knot mark, and its signature brand green is the teal #10A37F seen in ChatGPT; there is no official mascot.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-oss-safeguard-20b",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gpt-oss-20b"
+  },
+  {
+   "id": "gpt-oss-safeguard-120b",
+   "nameZh": "gpt-oss-safeguard-120b",
+   "nameEn": "gpt-oss-safeguard-120b",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-oss",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "open",
+    "safety"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 88,
+    "atk": 69,
+    "def": 76,
+    "spa": 56,
+    "spd": 82,
+    "spe": 76
+   },
+   "habitats": [
+    "coast",
+    "city"
+   ],
+   "releaseDate": "2025-10-29",
+   "capabilityScore": 54,
+   "hotnessScore": 34,
+   "statRationale": "安全分类微调→特防高；120b 大体量→HP高。 [BST 447 ∈ SR 420-490; 强项 hp/spd; 能力 54/热度 34]",
+   "dexEntryZh": "gpt-oss-safeguard-120b，2025 年 10 月 29 日发布，是开放权重的 gpt-oss-120b 经后训练得到的安全分类版本，把大块头的力气转去判断内容该不该放行。它接在 gpt-oss-120b 之后，是 gpt-oss 这一脉的 2 阶形态。",
+   "lookZh": "银白乱发少年巡逻员，拉紧的青绿夹克配盾徽，抱着打勾写字板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall, the grown-up form of the free-spirited open-weights wanderer, now a safety patroller. The same messy silver-white hair with the mint streak under the same dark bandana, tiny ivory horn nubs slightly longer. The same bright teal eyes, calmer and focused. The unzipped hiking jacket is now a zipped teal-and-white patrol jacket with reflective stripes and a small shield badge, over the black tee with the hollow-outline knot logo, cargo shorts, sturdy boots. The same big backpack shaped like a single 80GB GPU card with the orange feather charm (#E2683C); the padlock keychain is now clicked shut. Prop: a slim clipboard with a green check and a grey cross pictogram. Palette: #FFFFFF, #10A37F, #2B2B2B, #E2683C feather orange, #8C8C8C, #F2C14E badge gold. Pose: standing guard, clipboard raised.",
+    "personality": "嘴上还是自由派，手上已经盖章把关",
+    "communityPersona": "No anime persona found; invented from the existing gpt-oss-120b design and OpenAI brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is a black-and-white hexagonal interlocking-knot mark, and its signature brand green is the teal #10A37F seen in ChatGPT; there is no official mascot.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gpt-oss"
+  },
+  {
+   "id": "gpt-5-6-luna",
+   "nameZh": "GPT-5.6 Luna",
+   "nameEn": "GPT-5.6 Luna",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-6",
+   "stage": 1,
+   "evolvesTo": "gpt-6-luna",
+   "evolveLevel": 23,
+   "types": [
+    "compute",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 68,
+    "atk": 53,
+    "def": 54,
+    "spa": 55,
+    "spd": 62,
+    "spe": 83
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2026-07-09",
+   "capabilityScore": 40,
+   "hotnessScore": 50,
+   "statRationale": "三档里主打快又省→速度高；105 万上下文→HP 厚。 [BST 375 ∈ R 330-420; 强项 spe/hp; 能力 40/热度 50]",
+   "dexEntryZh": "2026 年 7 月 9 日发布的 GPT-5.6 Luna，是 GPT-5.6 三档里最快最省的一档，适合大批量、低延迟的任务，在多项评测上超过 GPT-5.5，上下文窗口约 105 万 token。往后是同一脉的 GPT-6 Luna（月），再往后是 GPT-6.1 Sol（日）。",
+   "lookZh": "抱着小月牙灯的银白月兔幼崽，兔耳还短短的",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~1.8 heads tall, the younger form of the Luna moon-rabbit line, before GPT-6 Luna (hair, eyes and crescent hairpin stay the same as the older form). Hair: short wavy white with periwinkle-blue (#AFC2F5) tips, a crescent-moon hairpin with a small blue ribbon, and tiny pearl horn nubs shaped like crescent tips. Eyes: big round indigo-blue (#5D6FD6), a sleepy contented smile. Outfit: a plain short white-and-periwinkle dress with a simple frill, a small moon-rabbit hooded capelet with short stubby ears that do not flop yet, no rosette buttons, tiny white shoes. Signature accessory: the crescent-moon hairpin. Prop: a pocket-sized crescent lantern with a dim moonlight-yellow glow. Palette: #FFFFFF, #AFC2F5, #5D6FD6, #F4E6A1, #2E335A outline. Pose: hugging the lantern and yawning, the short ears drooping a little.",
+    "personality": "困困的小月兔，反应却快得出奇",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "OpenAI's logo is the six-loop knot; the GPT-5.6 tiers are named Sol, Luna and Terra, so Luna takes a moon motif in white and periwinkle-blue, matching the existing GPT-6 Luna art.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-5.6-luna",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "gpt-6-luna"
+  },
+  {
+   "id": "gpt-5-6-terra",
+   "nameZh": "GPT-5.6 Terra",
+   "nameEn": "GPT-5.6 Terra",
+   "company": "OpenAI",
+   "country": "US",
+   "category": "llm",
+   "family": "gpt-terra",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "logic",
+    "write"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 88,
+    "atk": 80,
+    "def": 71,
+    "spa": 79,
+    "spd": 88,
+    "spe": 57
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2026-07-09",
+   "capabilityScore": 66,
+   "hotnessScore": 56,
+   "statRationale": "百万级上下文→HP高；均衡的中档定位→特防高。 [BST 463 ∈ SR 420-490; 强项 hp/spd; 能力 66/热度 56]",
+   "dexEntryZh": "GPT-5.6 Terra，2026 年 7 月 9 日发布，是 GPT-5.6 里夹在旗舰 Sol 与高性价比 Luna 之间的中档型号，据资料约有 GPT-5.5 水平的表现，成本只要一半，适合日常编码、推理和 agent 工作。上一代是 GPT-5.5，上下文约 105 万。",
+   "lookZh": "栗发苔绿发梢的沉稳大姐姐，小龙角，手持黄铜天平与羽毛笔",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, a calm, grounded older-sister type, the balanced middle sibling of the Sol and Luna tiers. Long wavy chestnut-brown hair (#7A5230) fading to moss-green tips, a loose side braid fastened with a small gold ring, a gentle ahoge; small ivory horns ringed with moss-green bands (cousin of the dragon line). Jade-green eyes (#3FA672) with round highlights, soft patient smile. Cream-white long coat with deep-green trim and a globe-shaped gold brooch at the collar, brown pleated skirt, sturdy boots. Props: a small brass balance scale held level in one hand (price-performance), and a feather quill pen in the other (writing). Palette: #FFFFFF, #10A37F, #7A5230 chestnut, #8DBE6A moss, #C9A94A gold, #2A2A24 outline. Pose: standing steady, scale held perfectly level, warm reassuring smile.",
+    "personality": "稳稳当当的中间派，什么活都算得清",
+    "communityPersona": "No anime persona found; invented from brand colours and the Sol/Luna/Astra designs of the same GPT line.",
+    "officialMascotOrLogo": "OpenAI's logo is a black-and-white hexagonal interlocking-knot mark, and its signature brand green is the teal #10A37F seen in ChatGPT; there is no official mascot.",
+    "sourceUrls": [
+     "https://openrouter.ai/openai/gpt-5.6-terra",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "claude-1",
+   "nameZh": "Claude 1",
+   "nameEn": "Claude 1",
+   "company": "Anthropic",
+   "country": "US",
+   "category": "llm",
+   "family": "claude-classic",
+   "stage": 1,
+   "evolvesTo": "claude-2",
+   "evolveLevel": 22,
+   "types": [
+    "chat",
+    "safety"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 44,
+    "atk": 36,
+    "def": 45,
+    "spa": 41,
+    "spd": 46,
+    "spe": 40
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2023-03-14",
+   "capabilityScore": 6,
+   "hotnessScore": 30,
+   "statRationale": "对话与安全属性→特防、防御最高；早期访问版→其余数值朴素。 [BST 252 ∈ N 240-330; 强项 spd/def; 能力 6/热度 30]",
+   "dexEntryZh": "Claude 1 于 2023 年 3 月 14 日以 API 早期访问的形式亮相，走的是对话与安全路线，特防和防御都很扎实，像个抱着小本子、凡事先确认安全的谨慎小帮手。她现已退役，但 Claude 一脉的进化链从她开始：下一形态是同系列的下一代 Claude 2。",
+   "lookZh": "抱着盾牌小本子的蜜金短发小姑娘，发夹挂着书签丝带",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a small shy girl, the youngest version of her line. Short honey-blonde (#E3B877) bob with blunt bangs and one curly ahoge shaped like a tiny sunburst, olive-green (#788C5D) eyes with a big cream highlight. Plain cream smock dress (#FAF9F5) with a round collar and two coral buttons (#CC785C), kraft-brown (#D4A27F) boots. Signature accessory: a coral sunburst hair clip on her left side with a short cream ribbon bookmark hanging from it. Prop: a tiny cream notebook with a little shield pictogram on the cover, hugged to her chest (the careful, safety-first helper). Palette #E3B877 honey, #788C5D olive, #FAF9F5 cream, #CC785C coral, #D4A27F kraft. Pose: standing slightly pigeon-toed, hugging the notebook, a gentle polite smile.",
+    "personality": "胆小但认真，凡事先问一句安不安全",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Claude's logo is a coral-orange radial sunburst on a warm cream background, and the brand leans on warm kraft-paper and ink tones; the sunburst became her hair clip and the cream/coral outfit.",
+    "sourceUrls": [
+     "https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html"
+    ]
+   }
+  },
+  {
+   "id": "claude-2",
+   "nameZh": "Claude 2",
+   "nameEn": "Claude 2",
+   "company": "Anthropic",
+   "country": "US",
+   "category": "llm",
+   "family": "claude-classic",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "chat",
+    "write"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 58,
+    "atk": 48,
+    "def": 54,
+    "spa": 69,
+    "spd": 58,
+    "spe": 52
+   },
+   "habitats": [
+    "coast",
+    "meadow"
+   ],
+   "releaseDate": "2023-07-11",
+   "capabilityScore": 20,
+   "hotnessScore": 38,
+   "statRationale": "长文写作→特攻高；200K 上下文→HP高。 [BST 339 ∈ R 330-420; 强项 spa/hp; 能力 20/热度 38]",
+   "dexEntryZh": "Claude 2 于 2023 年 7 月 11 日上线，是 claude.ai 上首个向公众开放的 Claude，由 Claude 1 迭代而来，擅长长文档。据记载，之后的 Claude 2.1（2023 年 11 月）带来 200K 上下文，并把幻觉减少了 50%。她是图鉴里这条经典线的第 2 阶形态。",
+   "lookZh": "拖着长卷轴的蜜金波波头少女，珊瑚色开衫配书签发夹",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same girl a little older and bolder than her first form. Honey-blonde (#E3B877) bob grown to chin length with a side-swept fringe and the same sunburst-curl ahoge, olive-green (#788C5D) eyes with a cream highlight. Cream blouse (#FAF9F5) under a coral cardigan (#CC785C) with kraft-brown (#D4A27F) trim, a short olive pleated skirt (#788C5D) and brown boots. Signature accessory: the coral sunburst hair clip with its cream ribbon bookmark, the ribbon now longer. Props: a very long paper scroll draped over one arm and trailing to the floor (long documents), and a slim quill in her other hand. Palette #E3B877 honey, #788C5D olive, #FAF9F5 cream, #CC785C coral, #D4A27F kraft. Pose: one step forward with the scroll trailing behind her, an eager open-mouthed smile as if about to read it all aloud.",
+    "personality": "好奇心旺，一读起来就停不下来",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Claude's logo is a coral-orange radial sunburst on cream; the brand uses warm kraft-paper tones. The long scroll echoes her long-document, 200K-context reputation.",
+    "sourceUrls": [
+     "https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html"
+    ]
+   },
+   "lineRef": "claude-1"
+  },
+  {
+   "id": "claude-3-sonnet",
+   "nameZh": "Claude 3 Sonnet",
+   "nameEn": "Claude 3 Sonnet",
+   "company": "Anthropic",
+   "country": "US",
+   "category": "llm",
+   "family": "claude-3-sonnet",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "chat",
+    "safety"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 57,
+    "atk": 53,
+    "def": 70,
+    "spa": 58,
+    "spd": 69,
+    "spe": 61
+   },
+   "habitats": [
+    "city",
+    "forest"
+   ],
+   "releaseDate": "2024-03-04",
+   "capabilityScore": 36,
+   "hotnessScore": 44,
+   "statRationale": "安全属性延续→防御、特防最高。 [BST 368 ∈ R 330-420; 强项 def/spd; 能力 36/热度 44]",
+   "dexEntryZh": "Claude 3 Sonnet 发布于 2024 年 3 月 4 日，是 Claude 3 一代里的 Sonnet 型号。资料里对她的记载不多，只能确认她延续了对话与安全两条属性，防御和特防最高，如今已经退役。她在图鉴里自成一支，没有前后形态。",
+   "lookZh": "穿奶油色学院西装、抱着盾徽书本的蜜金编发少女",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the same girl grown into a poised young scholar. Honey-blonde (#E3B877) bob now shoulder length with a neat side braid, the same sunburst-curl ahoge, olive-green (#788C5D) eyes with a cream highlight. Cream academy blazer (#FAF9F5) with coral (#CC785C) piping and a shield-shaped pocket, olive tie (#788C5D), slate pleated skirt (#3A3A38), kraft-brown (#D4A27F) loafers and a small kraft satchel. Signature accessory: the coral sunburst hair clip, with its cream ribbon bookmark now wrapped around the end of the braid. Prop: a closed hardcover book with a shield pictogram on the cover, held in both arms. Palette #E3B877 honey, #788C5D olive, #FAF9F5 cream, #CC785C coral, #3A3A38 slate, #D4A27F kraft. Pose: upright and calm, book held to her chest, a reassuring smile.",
+    "personality": "沉稳可靠，说话让人安心",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Claude's logo is a coral-orange radial sunburst on cream with warm kraft-paper and ink tones; the shield motifs stand for her safety type, while the sunburst stays on her hair clip.",
+    "sourceUrls": [
+     "https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html"
+    ]
+   }
+  },
+  {
+   "id": "claude-3-7-sonnet",
+   "nameZh": "Claude 3.7 Sonnet",
+   "nameEn": "Claude 3.7 Sonnet",
+   "company": "Anthropic",
+   "country": "US",
+   "category": "llm",
+   "family": "claude-sonnet-37",
+   "stage": 1,
+   "evolvesTo": "claude-sonnet-4",
+   "evolveLevel": 28,
+   "types": [
+    "code",
+    "write"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 66,
+    "atk": 67,
+    "def": 60,
+    "spa": 68,
+    "spd": 62,
+    "spe": 56
+   },
+   "habitats": [
+    "forest",
+    "coast"
+   ],
+   "releaseDate": "2025-02-24",
+   "capabilityScore": 42,
+   "hotnessScore": 55,
+   "statRationale": "扩展思考→特攻高；代理式编码→攻击高。 [BST 379 ∈ R 330-420; 强项 spa/atk; 能力 42/热度 55]",
+   "dexEntryZh": "Claude 3.7 Sonnet 发布于 2025 年 2 月 24 日，是 Claude 3.5 Sonnet 的系列后继，也是首个混合推理的 Claude：可在即时回答与扩展思考之间切换，并与 Claude Code 预览版同期亮相。她擅长代理式编码，下一形态是同一脉的 Claude Sonnet 4。",
+   "lookZh": "穿宽大奶油连帽衫、抱着小笔记本电脑的咖啡棕马尾少女",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, an energetic little girl swallowed by an oversized hoodie. Espresso-brown (#4A3128) hair in a short high ponytail with a messy ahoge, big sky-blue (#6A9BCC) eyes with a white double highlight. Oversized cream hoodie (#FAF9F5) with sleeves past her hands and a coral drawstring (#D97757), charcoal shorts (#2B2B2A), coral sneakers. Signature accessory: a slender quill pen with a coral tip tucked into her coral scrunchie, the Sonnet writer's quill that doubles as a coding stylus. Prop: a tiny laptop in one hand, its screen showing only a '>_' prompt glyph, with a small two-position slider on the lid (instant answer vs deep thinking). Palette #4A3128 espresso, #6A9BCC sky blue, #FAF9F5 cream, #D97757 coral, #2B2B2A charcoal. Pose: bouncing mid-step, laptop raised, a tongue-out grin.",
+    "personality": "元气冲动，想一想再动手也行",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Claude's logo is a coral-orange sunburst on cream, with sky blue as a secondary brand accent; coral becomes her scrunchie and quill tip, and the sky-blue eyes mark the Sonnet line.",
+    "sourceUrls": [
+     "https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html"
+    ]
+   }
+  },
+  {
+   "id": "claude-sonnet-4",
+   "nameZh": "Claude Sonnet 4",
+   "nameEn": "Claude Sonnet 4",
+   "company": "Anthropic",
+   "country": "US",
+   "category": "llm",
+   "family": "claude-sonnet-37",
+   "stage": 2,
+   "evolvesTo": "claude-sonnet-4-6",
+   "evolveLevel": 35,
+   "types": [
+    "code",
+    "write"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 81,
+    "atk": 78,
+    "def": 68,
+    "spa": 75,
+    "spd": 76,
+    "spe": 66
+   },
+   "habitats": [
+    "coast",
+    "meadow"
+   ],
+   "releaseDate": "2025-05-22",
+   "capabilityScore": 52,
+   "hotnessScore": 54,
+   "statRationale": "均衡档位→HP高；编码与工具调用→攻击高。 [BST 444 ∈ SR 420-490; 强项 hp/atk; 能力 52/热度 54]",
+   "dexEntryZh": "Claude Sonnet 4 发布于 2025 年 5 月 22 日，是 Claude 3.7 Sonnet 的系列后继，定位均衡的 Claude 4 档位，2025 年年中成了不少编码工具的默认模型。据 OpenRouter 的介绍，它在 SWE-bench 上达到 72.7%。下一形态是同一脉的 Claude Sonnet 4.6。",
+   "lookZh": "穿炭灰工作夹克、腰挂工具袋的咖啡棕高马尾少女",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same girl as her hoodie form, older and more capable. Espresso-brown (#4A3128) hair in a full high ponytail down to her shoulder blades, a smaller ahoge, big sky-blue (#6A9BCC) eyes with a white double highlight. Cream cropped hoodie (#FAF9F5) under a coral-trimmed charcoal workshop jacket (#2B2B2A), a belt with two small pouches, khaki cargo shorts (#8C7B64), coral sneakers. Signature accessory: the coral-tipped quill pen tucked into her coral scrunchie (#D97757). Props: the laptop now tucked under one arm with a small gear pictogram on its lid, and a small screwdriver in the other hand (tool use). Palette #4A3128 espresso, #6A9BCC sky blue, #FAF9F5 cream, #D97757 coral, #2B2B2A charcoal, #8C7B64 khaki. Pose: planted stance, screwdriver pointing forward, a focused grin.",
+    "personality": "靠谱利落，工具一拎就开工",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Claude's logo is a coral-orange sunburst on cream; the Sonnet line keeps coral and sky-blue accents on neutral workwear, here with practical pouches for tool use.",
+    "sourceUrls": [
+     "https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html"
+    ]
+   },
+   "lineRef": "claude-3-7-sonnet"
+  },
+  {
+   "id": "claude-sonnet-4-6",
+   "nameZh": "Claude Sonnet 4.6",
+   "nameEn": "Claude Sonnet 4.6",
+   "company": "Anthropic",
+   "country": "US",
+   "category": "llm",
+   "family": "claude-sonnet-37",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "code",
+    "agent"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 89,
+    "atk": 82,
+    "def": 66,
+    "spa": 70,
+    "spd": 75,
+    "spe": 84
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2026-02-17",
+   "capabilityScore": 68,
+   "hotnessScore": 58,
+   "statRationale": "1M 上下文→HP高；性价比与迭代开发→速度高。 [BST 466 ∈ SR 420-490; 强项 hp/spe; 能力 68/热度 58]",
+   "dexEntryZh": "Claude Sonnet 4.6 发布于 2026 年 2 月 17 日，承接 Claude Sonnet 4.5 的 Sonnet 系列，在图鉴里排在 Claude Sonnet 4 之后。她有 1M 上下文，用户在对比中 59% 的时候更偏爱她而不是 Opus 4.5，价格却是 Sonnet 档。擅长编码、代理和性价比。",
+   "lookZh": "披奶油风衣、扎腰长马尾的咖啡棕发少女，背着满是工具的挎包",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the same girl fully grown into a nimble young engineer. Espresso-brown (#4A3128) hair in a waist-long high ponytail tied with two coral scrunchies, a small ahoge, big sky-blue (#6A9BCC) eyes with a white double highlight. Long cream trench jacket (#FAF9F5) with coral lining (#D97757) and sky-blue cuffs, slim charcoal trousers (#2B2B2A), tan courier satchel with small tool pockets, a belt with a tiny wrench. Signature accessory: the coral-tipped quill pen tucked into her upper scrunchie. Props: a sleek open laptop in one hand and a small wrench in the other (agentic work). Palette #4A3128 espresso, #6A9BCC sky blue, #FAF9F5 cream, #D97757 coral, #2B2B2A charcoal. Pose: striding forward, trench jacket flaring and ponytail swinging, a bright and efficient smile.",
+    "personality": "利落高效，又快又省",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Claude's logo is a coral-orange sunburst on cream; the Sonnet line is the fast, cost-efficient tier, so the grown-up design stays light and practical with coral lining and sky-blue accents.",
+    "sourceUrls": [
+     "https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html"
+    ]
+   },
+   "lineRef": "claude-sonnet-4"
+  },
+  {
+   "id": "claude-opus-4-1",
+   "nameZh": "Claude Opus 4.1",
+   "nameEn": "Claude Opus 4.1",
+   "company": "Anthropic",
+   "country": "US",
+   "category": "llm",
+   "family": "claude-opus-mid",
+   "stage": 1,
+   "evolvesTo": "claude-opus-4-6",
+   "evolveLevel": 30,
+   "types": [
+    "code",
+    "safety"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 79,
+    "atk": 78,
+    "def": 83,
+    "spa": 58,
+    "spd": 84,
+    "spe": 67
+   },
+   "habitats": [
+    "coast",
+    "meadow"
+   ],
+   "releaseDate": "2025-08-05",
+   "capabilityScore": 56,
+   "hotnessScore": 50,
+   "statRationale": "安全属性与可终止滥用对话→特防、防御高。 [BST 449 ∈ SR 420-490; 强项 spd/def; 能力 56/热度 50]",
+   "dexEntryZh": "Claude Opus 4.1 发布于 2025 年 8 月 5 日，是 Claude Opus 4 的系列后继。她在 SWE-bench Verified 上拿到 74.5%，擅长编码与代理式搜索，还能结束持续滥用的对话。据记载已于 2026 年 8 月退役。图鉴里她的下一形态是同属 Opus 一脉的 Claude Opus 4.6。",
+   "lookZh": "举着金边放大镜的墨蓝长发小少女，领口别着罗盘胸针",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a composed little girl with a hint of formality. Long straight ink-navy (#1E2233) hair to mid-back with blunt bangs and one coral streak (#D97757) in the right fringe, large violet (#7A5BB0) eyes with a gold ring highlight. Small ink-navy pinafore dress (#1E2233) over an ivory blouse (#FAF9F5) with a round collar and gold (#C9A44C) trim, black mary-jane shoes. Signature accessory: a gold compass-rose brooch with a coral sunburst centre pinned at her collar. Prop: a round gold-framed magnifying glass held in one hand (agentic search and bug hunting). Palette #1E2233 ink navy, #7A5BB0 violet, #C9A44C gold, #FAF9F5 ivory, #D97757 coral. Pose: standing straight with the magnifier raised toward one eye, the other palm held up in a polite 'that's enough' stop gesture.",
+    "personality": "端正克制，滥用不奉陪",
+    "communityPersona": "No anime persona found; invented from brand colours and the Opus name.",
+    "officialMascotOrLogo": "Claude's logo is a coral-orange sunburst on cream; Opus is the flagship tier, so the design uses ink and gold with a coral sunburst brooch at the centre of a compass rose.",
+    "sourceUrls": [
+     "https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html"
+    ]
+   }
+  },
+  {
+   "id": "claude-opus-4-6",
+   "nameZh": "Claude Opus 4.6",
+   "nameEn": "Claude Opus 4.6",
+   "company": "Anthropic",
+   "country": "US",
+   "category": "llm",
+   "family": "claude-opus-mid",
+   "stage": 2,
+   "evolvesTo": "claude-opus-5",
+   "evolveLevel": 37,
+   "types": [
+    "code",
+    "logic"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 88,
+    "atk": 86,
+    "def": 71,
+    "spa": 74,
+    "spd": 74,
+    "spe": 79
+   },
+   "habitats": [
+    "forest",
+    "coast"
+   ],
+   "releaseDate": "2026-02-05",
+   "capabilityScore": 72,
+   "hotnessScore": 58,
+   "statRationale": "1M 上下文→HP高；编码与代理团队→攻击高。 [BST 472 ∈ SR 420-490; 强项 hp/atk; 能力 72/热度 58]",
+   "dexEntryZh": "Claude Opus 4.6 发布于 2026 年 2 月 5 日，承接 Claude Opus 4.5 的 Opus 系列，在图鉴里排在 Claude Opus 4.1 之后。她有 1M 上下文、128K 输出和自适应思考；演示中 16 个实例组成的代理团队约花 2 万美元，写出了能运行的 Rust C 编译器。下一形态是 Claude Opus 5。",
+   "lookZh": "穿墨蓝长外套、腋下夹账本的半扎长发少女，罗盘胸针闪着金光",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the same girl as her first form, taller and more composed. Long straight ink-navy (#1E2233) hair now pulled half-up with a small gold ring tie, blunt bangs and the same coral streak (#D97757) in the right fringe, large violet (#7A5BB0) eyes with a gold ring highlight. Tailored ink-navy coat-dress (#1E2233) with ivory collar (#FAF9F5), gold (#C9A44C) trim, four small gold buttons, coral cuffs, black knee boots. Signature accessory: the gold compass-rose brooch with a coral sunburst centre at her collar. Props: the gold-framed magnifier in one hand, a thick cream ledger with a gold clasp under the other arm (long context). Palette #1E2233 ink navy, #7A5BB0 violet, #C9A44C gold, #FAF9F5 ivory, #D97757 coral. Pose: striding forward, magnifier held out, a confident half-smile.",
+    "personality": "统筹全局，一人顶一个小团队",
+    "communityPersona": "No anime persona found; invented from brand colours and the Opus name.",
+    "officialMascotOrLogo": "Claude's logo is a coral-orange sunburst on cream; the Opus line keeps ink navy and gold with the sunburst compass brooch. The ledger stands for her long-running, whole-workflow jobs.",
+    "sourceUrls": [
+     "https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html"
+    ]
+   },
+   "lineRef": "claude-opus-4-1"
+  },
+  {
+   "id": "claude-opus-5",
+   "nameZh": "Claude Opus 5",
+   "nameEn": "Claude Opus 5",
+   "company": "Anthropic",
+   "country": "US",
+   "category": "llm",
+   "family": "claude-opus-mid",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "code",
+    "logic"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 95,
+    "atk": 105,
+    "def": 85,
+    "spa": 78,
+    "spd": 91,
+    "spe": 83
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2026-07-24",
+   "capabilityScore": 88,
+   "hotnessScore": 66,
+   "statRationale": "推理与编码→攻击高；1M 上下文→HP高。 [BST 537 ∈ SSR 490-550; 强项 atk/hp; 能力 88/热度 66]",
+   "dexEntryZh": "Claude Opus 5 发布于 2026 年 7 月 24 日，承接 Claude Opus 4.8 的 Opus 系列新一代，在图鉴里接在 Claude Opus 4.6 之后。资料称她接近 Fable 5 的前沿智能，价格约为一半（$5/$25）；带工具的 HLE 得分 63.6%，OSWorld 2.0 为 70.2%，擅长推理与编码。",
+   "lookZh": "披珊瑚里衬短披风的墨蓝长发指挥官少女，手持金色放大镜",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the same girl fully grown into an elegant young commander-scholar. Waist-length straight ink-navy (#1E2233) hair, half-up with a gold ring tie, blunt bangs, the same coral streak (#D97757) in the right fringe, large violet (#7A5BB0) eyes with a gold ring highlight. Long ink-navy coat (#1E2233) with ivory collar (#FAF9F5), gold (#C9A44C) epaulettes and trim, a short coral-lined cape (#D97757) over one shoulder, black knee boots. Signature accessory: a larger gold compass-rose brooch with a coral sunburst centre at her collar. Props: an ornate gold magnifier held out like a scepter (code review), the cream ledger strapped to her hip. Palette #1E2233 ink navy, #7A5BB0 violet, #C9A44C gold, #FAF9F5 ivory, #D97757 coral. Pose: coat and cape flaring, magnifier extended, a calm confident smile.",
+    "personality": "从容笃定，找 Bug 一找一个准",
+    "communityPersona": "No anime persona found; invented from brand colours and the Opus name.",
+    "officialMascotOrLogo": "Claude's logo is a coral-orange sunburst on cream; the Opus line is the flagship tier, so the finished design wears ink navy and gold with a coral-lined cape and the sunburst compass brooch.",
+    "sourceUrls": [
+     "https://hidekazu-konishi.com/entry/anthropic_claude_model_release_timeline.html"
+    ]
+   },
+   "lineRef": "claude-opus-4-6"
+  },
+  {
+   "id": "grok-2",
+   "nameZh": "Grok-2",
+   "nameEn": "Grok-2",
+   "company": "SpaceXAI (formerly xAI)",
+   "country": "US",
+   "category": "llm",
+   "family": "grok-early",
+   "stage": 1,
+   "evolvesTo": "grok-3",
+   "evolveLevel": 29,
+   "types": [
+    "chat",
+    "chaos"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 59,
+    "atk": 42,
+    "def": 52,
+    "spa": 77,
+    "spd": 56,
+    "spe": 71
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2024-08-13",
+   "capabilityScore": 30,
+   "hotnessScore": 45,
+   "statRationale": "X 实时数据+图像生成→特攻高；消息快→速度高。 [BST 357 ∈ R 330-420; 强项 spa/spe; 能力 30/热度 45]",
+   "dexEntryZh": "2024 年 8 月发布，是 Grok-1 之后的系列迭代，另有 mini 变体。在当时有与前沿模型一较高下的实力，擅长读取 X 平台实时数据，还接入了图像生成。Grok 2.5 的权重在 2025 年 8 月以 source-available 方式公开。进化后是同系列的下一代 Grok 3。",
+   "lookZh": "青蓝单马尾的捣蛋鬼，举着扩音喇叭，围着白色彗星围巾",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, stage 1 of the comet-courier line: a mischievous prankster kid. Hair: bright aqua-cyan (#19D3F3) with teal (#0E8FA8) shadows and white tips, messy bangs, one tall ahoge, a stubby high side ponytail on her left that hints at the comet tail she will grow. Eyes: large violet (#7C5CFF) with a star highlight, one eye winking, cheeky fang grin. Outfit: oversized black (#14141C) zip hoodie-jacket with a white X on the chest, cuffs over small hands, black shorts, white sneakers with cyan soles. Signature accessory: a short white comet scarf with one cyan stripe and a small black X pin. Prop: a toy megaphone with a cyan bell. Palette: #19D3F3, #0E8FA8, #F4F7FF, #14141C, #7C5CFF. Pose: leaning forward on tiptoe, megaphone raised to shout, scarf flicking behind; smallest, plainest form.",
+    "personality": "爱起哄爱搞怪，消息比谁都灵通",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Grok's mark is a monochrome slashed-circle logo from xAI (now SpaceXAI), with the parent X branding in stark black and white and a SpaceX rocket nod; the design leans on black, white and the line's gold or cyan accents.",
+    "sourceUrls": [
+     "https://x.ai/news/grok-2"
+    ]
+   }
+  },
+  {
+   "id": "grok-3",
+   "nameZh": "Grok 3",
+   "nameEn": "Grok 3",
+   "company": "SpaceXAI (formerly xAI)",
+   "country": "US",
+   "category": "llm",
+   "family": "grok-early",
+   "stage": 2,
+   "evolvesTo": "grok-4-1-fast",
+   "evolveLevel": 36,
+   "types": [
+    "chat",
+    "logic"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 77,
+    "atk": 69,
+    "def": 71,
+    "spa": 78,
+    "spd": 78,
+    "spe": 71
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2025-02-17",
+   "capabilityScore": 52,
+   "hotnessScore": 55,
+   "statRationale": "数学推理强→特攻高；DeepSearch 求证稳→特防高。 [BST 444 ∈ SR 420-490; 强项 spa/spd; 能力 52/热度 55]",
+   "dexEntryZh": "2025 年 2 月 17 日发布，是 Grok-2 的系列迭代，下一站是同系列的 Grok 4.1 Fast。它在 Colossus 超算集群上训练，推理模式在 AIME 和 GPQA 上胜过 GPT-4o 与 o3-mini-high；数学、DeepSearch 和 X 平台实时信息都是拿手项目。",
+   "lookZh": "长马尾学院派王牌，平板上有求和符号与放大镜图案",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, stage 2 of the comet-courier line: the same cyan-haired girl, now a math-club ace. Hair: the same aqua-cyan (#19D3F3) with teal (#0E8FA8) shadows and white tips, the high side ponytail now waist-length, ahoge kept, bangs neatly swept. Eyes: violet (#7C5CFF) with a star highlight, calm smirk. Outfit: fitted black-and-white varsity jacket with cyan trim and a white X on the chest, pleated black (#14141C) skirt, black thigh-high socks, white sneakers. Signature accessory: the white comet scarf, now longer with two cyan stripes and the black X pin. Props: a slim slate tablet showing a sigma sign and a magnifier pictogram, and a tiny server-tower charm on her belt. Palette: #19D3F3, #0E8FA8, #F4F7FF, #14141C, #7C5CFF. Pose: tablet held up, other hand adjusting the scarf, steady smile.",
+    "personality": "冷静爱算题，遇事先上 DeepSearch",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Grok's mark is a monochrome slashed-circle logo from xAI (now SpaceXAI), with the parent X branding in stark black and white and a SpaceX rocket nod; the design leans on black, white and the line's gold or cyan accents.",
+    "sourceUrls": [
+     "https://x.ai/news/grok-3"
+    ]
+   },
+   "lineRef": "grok-2"
+  },
+  {
+   "id": "grok-4-1-fast",
+   "nameZh": "Grok 4.1 Fast",
+   "nameEn": "Grok 4.1 Fast",
+   "company": "SpaceXAI (formerly xAI)",
+   "country": "US",
+   "category": "llm",
+   "family": "grok-early",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "chat",
+    "compute"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 81,
+    "atk": 61,
+    "def": 77,
+    "spa": 77,
+    "spd": 76,
+    "spe": 89
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2025-11-19",
+   "capabilityScore": 64,
+   "hotnessScore": 52,
+   "statRationale": "名副其实的 Fast→速度高；推理/非推理双模式→HP 高。 [BST 461 ∈ SR 420-490; 强项 spe/hp; 能力 64/热度 52]",
+   "dexEntryZh": "2025 年 11 月 19 日上线，名字里带 Fast，图鉴里的速度与 HP 也是它的强项；同一模型有推理与非推理两种模式。它在图鉴中接在 Grok 3 之后，属同一脉；谱系记录里它的上一代是 Grok 4。目前状态记为 deprecated（已弃用）。",
+   "lookZh": "彗星长马尾的飞行服少女，脚踏喷出火焰的滑行靴",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.8 heads tall, stage 3 of the comet-courier line: the same cyan-haired girl, now a speed-courier pilot. Hair: aqua-cyan (#19D3F3) with teal (#0E8FA8) shadows and white tips, a long high side ponytail streaming behind like a comet tail, ahoge kept, a gold star hairpin (#F5C542). Eyes: violet (#7C5CFF) with a star highlight, fang grin. Outfit: cropped black (#14141C) flight jacket with cyan stripes and a white X on the chest, fitted black shorts, thigh-high socks, roller boots with cyan thruster flares. Signature accessory: the long white comet scarf with cyan stripes and black X pin, trailing behind. Prop: a forearm gauntlet with a lightning-bolt pictogram dial. Palette: #19D3F3, #0E8FA8, #F4F7FF, #14141C, #7C5CFF, #F5C542. Pose: mid-dash, scarf and ponytail streaming back, daring grin.",
+    "personality": "话少脚快，永远在冲刺的路上",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Grok's mark is a monochrome slashed-circle logo from xAI (now SpaceXAI), with the parent X branding in stark black and white and a SpaceX rocket nod; the design leans on black, white and the line's gold or cyan accents.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "grok-3"
+  },
+  {
+   "id": "grok-4-3",
+   "nameZh": "Grok 4.3",
+   "nameEn": "Grok 4.3",
+   "company": "SpaceXAI (formerly xAI)",
+   "country": "US",
+   "category": "llm",
+   "family": "grok-4y",
+   "stage": 1,
+   "evolvesTo": "grok-4-6",
+   "evolveLevel": 36,
+   "types": [
+    "chat",
+    "logic"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 84,
+    "atk": 68,
+    "def": 72,
+    "spa": 80,
+    "spd": 88,
+    "spe": 80
+   },
+   "habitats": [
+    "meadow",
+    "city"
+   ],
+   "releaseDate": "2026-04-17",
+   "capabilityScore": 72,
+   "hotnessScore": 55,
+   "statRationale": "推理稳→特防高；100 万上下文→HP 高。 [BST 472 ∈ SR 420-490; 强项 spd/hp; 能力 72/热度 55]",
+   "dexEntryZh": "2026 年 4 月登场的推理型小领航员，是 Grok 4.20 之后的同系列迭代。它能接收文字和图片输入、输出文字，擅长推理，还能读取 X 平台实时数据，OpenRouter 称它适合智能体工作流与指令跟随；上下文窗口达 100 万 token。图鉴里升到 36 级会进化成同系列的下一代 Grok 4.6。",
+   "lookZh": "黑发贝雷帽见习领航员，手持金色望远镜与长卷轴",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.2 heads tall, stage 1 of the star-navigator line: a bright cadet. Hair: glossy jet black (#14141C) with a midnight-blue sheen, chin-length bob, blunt bangs, two slightly longer front locks dipped in gold (#F5C542). Eyes: large ruby (#D7263D) with a white star highlight. Outfit: cropped black cadet jacket with white piping, starlight-white (#E8ECFF) blouse, crimson ribbon tie, black pleated skirt, white knee socks. Signature accessory: a black beret with a small gold orbit-ring-and-dot badge, tilted over one ear. Props: a short gold spyglass and a small rolled scroll tied with crimson ribbon under one arm. Palette: #14141C, #E8ECFF, #F5C542, #D7263D, #3A3F5C. Pose: peeking through the spyglass with one eye, one foot lifted, eager smile.",
+    "personality": "好奇认真的新手，凡事先看清再行动",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Grok's mark is a monochrome slashed-circle logo from xAI (now SpaceXAI), with the parent X branding in stark black and white and a SpaceX rocket nod; the design leans on black, white and the line's gold or cyan accents.",
+    "sourceUrls": [
+     "https://openrouter.ai/x-ai/grok-4.3",
+     "https://models.dev/"
+    ]
+   }
+  },
+  {
+   "id": "grok-4-6",
+   "nameZh": "Grok 4.6",
+   "nameEn": "Grok 4.6",
+   "company": "SpaceXAI (formerly xAI)",
+   "country": "US",
+   "category": "llm",
+   "family": "grok-4y",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "chat",
+    "logic"
+   ],
+   "rarity": "SSR",
+   "baseStats": {
+    "hp": 94,
+    "atk": 83,
+    "def": 86,
+    "spa": 86,
+    "spd": 87,
+    "spe": 95
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2026-08-12",
+   "capabilityScore": 84,
+   "hotnessScore": 62,
+   "statRationale": "响应快、性价比高→速度高；50 万上下文→HP 高。 [BST 531 ∈ SSR 490-550; 强项 spe/hp; 能力 84/热度 62]",
+   "dexEntryZh": "2026 年 8 月 12 日发布，是 Grok 4.3 同系列的下一代；谱系记录里它紧接在 Grok 4.5 之后，后继是 Grok 4.7。OpenRouter 称它在编程、知识工作与 STEM 上表现前沿，上下文 50 万 token，标价 $2/$6，Artificial Analysis 智能指数 59（medium 档），性价比是招牌。",
+   "lookZh": "长发黑大衣领航官，金色望远镜指向前方，手持星图平板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.8 heads tall, stage 2 of the star-navigator line: the same cadet grown into a poised bridge officer. Hair: the same jet black (#14141C) with a midnight-blue sheen, now mid-back length, blunt bangs, front locks still dipped in gold (#F5C542). Eyes: ruby (#D7263D) with a white star highlight. Outfit: long black officer coat with crimson lining, gold epaulettes, starlight-white (#E8ECFF) blouse, crimson ribbon tie, black shorts, knee-high black boots. Signature accessory: the black beret, now larger, its gold orbit badge ornate and a short gold chain. Props: a gold telescope baton and a slim slate tablet showing a star-chart pictogram. Palette: #14141C, #E8ECFF, #F5C542, #D7263D, #3A3F5C. Pose: striding forward, coat flaring, baton aimed at the horizon, calm smile.",
+    "personality": "沉稳干练，算清性价比才出手",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Grok's mark is a monochrome slashed-circle logo from xAI (now SpaceXAI), with the parent X branding in stark black and white and a SpaceX rocket nod; the design leans on black, white and the line's gold or cyan accents.",
+    "sourceUrls": [
+     "https://codersera.com/blog/grok-4-6-launch-guide-2026/"
+    ]
+   },
+   "lineRef": "grok-4-3"
+  },
+  {
+   "id": "llama-2",
+   "nameZh": "Llama 2",
+   "nameEn": "Llama 2",
+   "company": "Meta",
+   "country": "US",
+   "category": "llm",
+   "family": "llama-mid",
+   "stage": 1,
+   "evolvesTo": "llama-3",
+   "evolveLevel": 24,
+   "types": [
+    "open",
+    "chat"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 47,
+    "atk": 42,
+    "def": 42,
+    "spa": 47,
+    "spd": 46,
+    "spe": 53
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2023-07-18",
+   "capabilityScore": 12,
+   "hotnessScore": 45,
+   "statRationale": "多规格可选→速度快；微调底座生态大→HP高。 [BST 277 ∈ N 240-330; 强项 spe/hp; 能力 12/热度 45]",
+   "dexEntryZh": "2023 年 7 月 18 日登场的 Llama 2 提供 7B、13B、70B 三种规格，是首个可商用授权的 Llama，也是无数微调模型的底座。她接棒初代 LLaMA，把开放权重织成一条拼布围巾，社区每缝上一块补丁就多一种新玩法。同系列的下一代是 Llama 3。",
+   "lookZh": "拼布围巾羊驼娘，蓝色∞发夹，拖着一根蓝毛线",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, youngest stage of the patchwork-weaver Llama sister line: a shy little girl. Hair: a short honey-caramel (#E8B96E) wool-curl bob with one springy ahoge curl and a small blue ∞ hairclip; soft cream floppy llama ears. Eyes: big sky-blue (#4DA3FF) with a tiny ∞-shaped highlight. Outfit: a slightly oversized cream (#FFF3DC) knit sweater with Meta-blue (#0866FF) cuff stripes, a short beige skirt, wool booties. Signature accessory: a short patchwork scarf of three mismatched squares (mint #6FD3C1, coral #FF8F6B, mustard #F2C14E), each patch a community fine-tune. Prop: one oversized knitting needle trailing blue yarn. Palette: #E8B96E, #FFF3DC, #0866FF, #6FD3C1, #FF8F6B. Pose: hugging the scarf end to her chest, peeking up shyly.",
+    "personality": "怕生却乐于被改造，谁来缝补都点头",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Meta's logo is a blue infinity loop (Meta blue #0866FF) and the Llama models are represented by a llama; the design uses the ∞ mark plus a patchwork scarf standing for the open fine-tune ecosystem.",
+    "sourceUrls": [
+     "https://ai.meta.com/blog/llama-2/"
+    ]
+   }
+  },
+  {
+   "id": "llama-3",
+   "nameZh": "Llama 3",
+   "nameEn": "Llama 3",
+   "company": "Meta",
+   "country": "US",
+   "category": "llm",
+   "family": "llama-mid",
+   "stage": 2,
+   "evolvesTo": "llama-3-3",
+   "evolveLevel": 31,
+   "types": [
+    "open",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 65,
+    "atk": 53,
+    "def": 58,
+    "spa": 58,
+    "spd": 59,
+    "spe": 68
+   },
+   "habitats": [
+    "city",
+    "coast"
+   ],
+   "releaseDate": "2024-04-18",
+   "capabilityScore": 32,
+   "hotnessScore": 58,
+   "statRationale": "8B/70B 轻量高效→速度快；撑起多款应用→HP厚。 [BST 361 ∈ R 330-420; 强项 spe/hp; 能力 32/热度 58]",
+   "dexEntryZh": "2024 年 4 月 18 日发布的 Llama 3 是 Llama 2 同系列的下一代，推出 8B 与 70B 两个规格，撑起了 Meta 各款应用里的 Meta AI。她延续开放权重，讲究效率，把上一形态的拼布围巾织得更长。同系列的下一站是 Llama 3.3。",
+   "lookZh": "围巾加长的拼布羊驼少女，挎着印∞扣的邮差包",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the grown-up version of the shy patchwork weaver: a cheerful helper girl. Hair: the same honey-caramel (#E8B96E) wool-curl hair, now shoulder-length with a side braid and blue ribbon; ahoge curl and blue ∞ hairclip kept; cream floppy llama ears. Eyes: sky-blue (#4DA3FF) with an ∞ highlight, bright and sure. Outfit: a cream (#FFF3DC) knit cardigan with Meta-blue (#0866FF) trim over a white blouse, a pleated beige skirt, knee socks, boots. Signature accessory: the patchwork scarf, now twice as long with six patches (mint #6FD3C1, coral #FF8F6B, mustard #F2C14E). Props: a messenger satchel with a blue ∞ buckle, and her knitting needle tucked in the braid like a hairpin. Palette: #E8B96E, #FFF3DC, #0866FF, #6FD3C1, #FF8F6B. Pose: striding forward, waving with one hand, scarf fluttering.",
+    "personality": "热心的跑腿小能手，走到哪都有人找她聊天",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Meta's logo is a blue infinity loop (Meta blue #0866FF) and the Llama models are represented by a llama; the design uses the ∞ mark plus a patchwork scarf standing for the open fine-tune ecosystem.",
+    "sourceUrls": [
+     "https://ai.meta.com/blog/meta-llama-3/"
+    ]
+   },
+   "lineRef": "llama-2"
+  },
+  {
+   "id": "llama-3-3",
+   "nameZh": "Llama 3.3",
+   "nameEn": "Llama 3.3",
+   "company": "Meta",
+   "country": "US",
+   "category": "llm",
+   "family": "llama-mid",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "open",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 74,
+    "atk": 65,
+    "def": 61,
+    "spa": 58,
+    "spd": 58,
+    "spe": 81
+   },
+   "habitats": [
+    "coast",
+    "forest"
+   ],
+   "releaseDate": "2024-12-07",
+   "capabilityScore": 52,
+   "hotnessScore": 48,
+   "statRationale": "70B 规模→HP厚；开放权重上手快→速度快。 [BST 397 ∈ R 330-420; 强项 spe/hp; 能力 52/热度 48]",
+   "dexEntryZh": "2024 年 12 月登场的 Llama 3.3 接在 Llama 3 之后，同系列、开放权重，资料记载为 70B 规模。她是这条线上的第三阶段形态：当年的小围巾已织成一条拖地的拼布披巾，补丁一块比一块多，人也长成了可靠的大姐姐。",
+   "lookZh": "围巾长成披风的拼布羊驼姐姐，提着发光线轴灯",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~3 heads tall, the most grown-up form of the patchwork-weaver Llama sister line: a calm, dependable big-sister girl. Hair: the same honey-caramel (#E8B96E) wool-curl hair, now in one long braid with a blue bow; ahoge and blue ∞ hairclip kept; cream llama ears. Eyes: sky-blue (#4DA3FF) with an ∞ highlight, a warm confident gaze. Outfit: a long cream (#FFF3DC) knit coat with Meta-blue (#0866FF) trim, a pleated beige skirt, tall brown boots. Signature accessory: the patchwork scarf grown into a long caped scarf of nine patches (mint #6FD3C1, coral #FF8F6B, mustard #F2C14E). Props: a glowing blue yarn-spool lantern at her hip, and her knitting needle grown into a tall staff with a blue ∞ loop. Palette: #E8B96E, #FFF3DC, #0866FF, #6FD3C1, #FF8F6B. Pose: standing tall, staff planted, hand on hip, a proud smile.",
+    "personality": "沉稳可靠的大姐头，补丁越多越有安全感",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Meta's logo is a blue infinity loop (Meta blue #0866FF) and the Llama models are represented by a llama; the design uses the ∞ mark plus a patchwork scarf standing for the open fine-tune ecosystem.",
+    "sourceUrls": [
+     "https://en.wikipedia.org/wiki/Llama_(language_model)"
+    ]
+   },
+   "lineRef": "llama-3"
+  },
+  {
+   "id": "muse-spark-1-1",
+   "nameZh": "Muse Spark 1.1",
+   "nameEn": "Muse Spark 1.1",
+   "company": "Meta",
+   "country": "US",
+   "category": "multimodal",
+   "family": "muse",
+   "stage": 1,
+   "evolvesTo": "muse-spark-1-2",
+   "evolveLevel": 30,
+   "types": [
+    "logic",
+    "vision"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 74,
+    "atk": 80,
+    "def": 71,
+    "spa": 79,
+    "spd": 74,
+    "spe": 71
+   },
+   "habitats": [
+    "highland",
+    "forest"
+   ],
+   "releaseDate": "2026-07-16",
+   "capabilityScore": 56,
+   "hotnessScore": 56,
+   "statRationale": "推理强→攻击高；图文视频都能看→特攻高。 [BST 449 ∈ SR 420-490; 强项 atk/spa; 能力 56/热度 56]",
+   "dexEntryZh": "Muse Spark 1.1 于 2026 年 7 月上架，是 Meta 面向智能体任务的多模态推理模型，能读文字、图片、视频和 PDF，输出文字，上下文窗口为 100 万 token。她是图鉴里这条进化线的第一形态，下一站是 Muse Spark 1.2，再往后才是 Muse Spark 灵感火花。",
+   "lookZh": "睡眼惺忪的小羊驼耳缪斯，发间别着一枚暗淡星星",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the youngest stage of the Muse Spark line: a sleepy little muse girl. Hair: fluffy curly pearl-cream (#FFF6E9) hair only shoulder-length, tips touched with lavender (#B79CFF); soft cream alpaca ears. Eyes: drowsy half-closed violet-blue (#7A7DFF), one iris with a tiny four-point star glint. Outfit: an oversized cream knit hoodie with Meta-blue (#0866FF) ∞ drawstrings ending in white pom-poms, sleeves covering her hands, a short tiered cream skirt, alpaca-face slippers. Signature accessory: one small golden (#FFD35A) four-point spark-star hairclip glowing faintly. Prop: a short star-tipped wand in her sleeve, its star flickering dimly. Palette: #FFF6E9, #B79CFF, #0866FF, #7A7DFF, #FFD35A. Pose: yawning and rubbing one eye with a sleeve-covered fist.",
+    "personality": "迷迷糊糊爱打盹，灵感一来眼睛就亮",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Meta's logo is a blue infinity loop (Meta blue #0866FF); the Muse family in this roster is drawn with cream alpaca ears and the blue ∞ mark.",
+    "sourceUrls": [
+     "https://openrouter.ai/meta/muse-spark-1.1",
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "muse-spark"
+  },
+  {
+   "id": "muse-spark-1-2",
+   "nameZh": "Muse Spark 1.2",
+   "nameEn": "Muse Spark 1.2",
+   "company": "Meta",
+   "country": "US",
+   "category": "multimodal",
+   "family": "muse",
+   "stage": 2,
+   "evolvesTo": "muse-spark",
+   "evolveLevel": 47,
+   "types": [
+    "logic",
+    "vision"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 85,
+    "atk": 79,
+    "def": 68,
+    "spa": 81,
+    "spd": 76,
+    "spe": 72
+   },
+   "habitats": [
+    "forest",
+    "coast"
+   ],
+   "releaseDate": "2026-08-05",
+   "capabilityScore": 64,
+   "hotnessScore": 58,
+   "statRationale": "百万上下文→HP高；复杂智能体推理→特攻高。 [BST 461 ∈ SR 420-490; 强项 hp/spa; 能力 64/热度 58]",
+   "dexEntryZh": "Muse Spark 1.2 于 2026 年 8 月 5 日登场，是 Meta 面向复杂智能体任务的推理模型，同样接受文字、图片、视频与 PDF，保持 100 万 token 上下文。她随编程智能体 Muse Code（测试版）一同发布，接棒 Muse Spark 1.1，之后是 Muse Spark 灵感火花；目录里已标为弃用。",
+   "lookZh": "发带上亮起三颗小星的缪斯少女，举着发光魔杖半睡半醒",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the middle stage of the Muse Spark line: a sleepy muse girl growing up. Hair: fluffy curly pearl-cream (#FFF6E9) hair now waist-long, tips fading to lavender (#B79CFF) and sky blue (#8CCBFF); soft cream alpaca ears. Eyes: drowsy half-closed violet-blue (#7A7DFF) with a tiny star glint in one iris. Outfit: an oversized cream knit hoodie with Meta-blue (#0866FF) ∞ drawstrings and white pom-poms, sleeves over her hands, a longer lace-trimmed tiered cream skirt, alpaca-face slippers. Signature accessory: a slim gold headband with three small golden (#FFD35A) four-point spark stars, the halo beginning to form. Prop: a star-tipped wand that now glows like a small lantern. Palette: #FFF6E9, #B79CFF, #8CCBFF, #0866FF, #FFD35A. Pose: half-awake, raising the glowing wand to light the stars.",
+    "personality": "半梦半醒地算着大事，星星一颗接一颗亮",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Meta's logo is a blue infinity loop (Meta blue #0866FF); the Muse family in this roster is drawn with cream alpaca ears and the blue ∞ mark.",
+    "sourceUrls": [
+     "https://zapier.com/blog/llama-meta/"
+    ]
+   },
+   "lineRef": "muse-spark-1-1"
+  },
+  {
+   "id": "muse-glimmer",
+   "nameZh": "Muse Glimmer",
+   "nameEn": "Muse Glimmer",
+   "company": "Meta",
+   "country": "US",
+   "category": "llm",
+   "family": "muse-glimmer",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "chat",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 67,
+    "atk": 51,
+    "def": 60,
+    "spa": 60,
+    "spd": 60,
+    "spe": 77
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2026-08-10",
+   "capabilityScore": 40,
+   "hotnessScore": 40,
+   "statRationale": "30B 体量轻便→速度快；多模态加开放权重→底子厚。 [BST 375 ∈ R 330-420; 强项 spe/hp; 能力 40/热度 40]",
+   "dexEntryZh": "Muse Glimmer 于 2026 年 8 月 10 日发布，是 30B 规模的多模态开放权重模型，采用 Apache 2.0 许可，宣传可在约 24GB 显存的个人电脑上运行。资料称这是 Llama 4 之后 Meta 的首次开放权重发布，被视为部分回归开源。目前自成一支，没有前后形态。",
+   "lookZh": "背着迷你主机背包的小羊驼娘，提着装星光的玻璃灯",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, a small friendly Muse family girl who lives on a home computer. Hair: short fluffy lilac-white (#F1E9FF) curls with glimmering pale-mint (#BFF0DC) tips and a blue ∞ hairclip (#0866FF); soft cream alpaca ears. Eyes: warm amber (#FFB94D) with a small four-point sparkle highlight. Outfit: a cream (#FFF6E9) knit sweater vest over a white shirt with a Meta-blue ∞ button, a short pleated skirt, round-toed boots. Signature accessory: a backpack shaped like a mini PC tower with a softly glowing blue side panel and a tiny open padlock keychain (open weights). Prop: a small glass-jar lantern holding one gentle glimmer of light. Palette: #F1E9FF, #BFF0DC, #FFF6E9, #0866FF, #FFB94D. Pose: trotting along with the lantern held high, the backpack bouncing, a cheerful open-mouthed smile.",
+    "personality": "亲民的邻家小妹，谁的电脑都愿意住进去",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Meta's logo is a blue infinity loop (Meta blue #0866FF); the Muse family in this roster is drawn with cream alpaca ears and the blue ∞ mark.",
+    "sourceUrls": [
+     "https://www.cnbc.com/2026/08/10/meta-muse-glimmer-open-weight-ai.html"
+    ]
+   }
+  },
+  {
+   "id": "muse-code",
+   "nameZh": "Muse Code",
+   "nameEn": "Muse Code",
+   "company": "Meta",
+   "country": "US",
+   "category": "agent",
+   "family": "muse-code",
+   "stage": 1,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "code",
+    "agent"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 86,
+    "atk": 82,
+    "def": 71,
+    "spa": 64,
+    "spd": 64,
+    "spe": 77
+   },
+   "habitats": [
+    "ruins",
+    "desert"
+   ],
+   "releaseDate": "2026-08-05",
+   "capabilityScore": 52,
+   "hotnessScore": 42,
+   "statRationale": "动手写代码→攻击高；智能体持续跑任务→HP厚。 [BST 444 ∈ SR 420-490; 强项 hp/atk; 能力 52/热度 42]",
+   "dexEntryZh": "Muse Code 是 2026 年 8 月 5 日随 Muse Spark 1.2 一同发布的编程智能体，处于测试版阶段。她属于 Meta 的 Muse 家族，却自成 muse-code 一支，目前没有前后形态，一个人守着终端，专心做写代码这一件事。",
+   "lookZh": "戴羊驼耳兜帽的深蓝短发程序员少女，夹着发光终端板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, a Muse family coding-agent girl, clearly different from the family's painter and concierge. Hair: a messy short midnight-navy (#16306B) bob with a cowlick and a blue ∞ hairclip (#0866FF); fluffy cream (#FFF6E9) alpaca ears. Eyes: bright cyan (#37C8FF) with angle-bracket-shaped highlights. Outfit: an oversized Meta-blue (#0866FF) zip hoodie with a cream fleece-lined hood and white pom-pom drawstrings, sleeves rolled up, a short dark pleated skirt, chunky white sneakers. Signature accessory: a hazard-yellow (#FFC94D) striped armband marking the beta stage. Props: a slim glowing terminal slate with a blinking cursor bar under one arm, and a star-tipped stylus behind her ear. Palette: #16306B, #0866FF, #FFF6E9, #37C8FF, #FFC94D. Pose: grinning, tapping the slate with one finger, ears perked.",
+    "personality": "话少手快的夜班程序员，bug 来了先笑一下",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Meta's logo is a blue infinity loop (Meta blue #0866FF); the Muse family in this roster is drawn with cream alpaca ears and the blue ∞ mark.",
+    "sourceUrls": [
+     "https://zapier.com/blog/llama-meta/"
+    ]
+   }
+  },
+  {
+   "id": "mistral-large-2",
+   "nameZh": "Mistral Large 2",
+   "nameEn": "Mistral Large 2",
+   "company": "Mistral AI",
+   "country": "FR",
+   "category": "llm",
+   "family": "mistral-large",
+   "stage": 1,
+   "evolvesTo": "mistral-large-3",
+   "evolveLevel": 22,
+   "types": [
+    "open",
+    "chat"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 64,
+    "atk": 56,
+    "def": 51,
+    "spa": 50,
+    "spd": 56,
+    "spe": 62
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2024-07-24",
+   "capabilityScore": 20,
+   "hotnessScore": 45,
+   "statRationale": "123B 稠密、全员出力→HP高；轻便好动→速度快。 [BST 339 ∈ R 330-420; 强项 hp/spe; 能力 20/热度 45]",
+   "dexEntryZh": "Mistral Large 2 于 2024 年 7 月 24 日发布，是 123B 稠密的旗舰，采用 Mistral Research License，权重开放，擅长多语言和函数调用，是 Mistral Large 同系列的下一代。她还是刚学会站稳的小狮崽，22 级后会长成同一脉的 Mistral Large 3，再往后是 Mistral Large 4。",
+   "lookZh": "只戴两块积木小王冠的奶狮崽娘，叼着一支短羽毛笔",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~1.8 heads tall, baby stage of the Mistral Large lion line: the younger version of the Large 3 cub (not the Mistral cat). Lion-cub girl. Hair: short fluffy ember-orange (#FA500F) with sun-yellow (#FFD800) tips, mane-like fringe, little ahoge. Ears: round golden lion ears, dark-red inside. Tail: short, small dark-red tuft. Eyes: big garnet-red, star highlight, wide proud grin. Signature: a tiny crown of two stacked pixel blocks, yellow and orange. Outfit: cream bib-style tabard with a stair-stepped orange hem, small red cape-scarf with a tiny square grid where every square glows evenly (dense), white socks, small brown boots. Prop: one short golden feather quill held like a baton. Palette: #FFD800, #FA500F, #E10500, cream #FFF4DC, black. Pose: on tiptoe, chest puffed, a tiny squeaky roar.",
+    "personality": "憨憨的小狮崽，一激动就想吼一嗓子",
+    "communityPersona": "No anime persona found; invented from brand colours and the existing Mistral Large 3/4 lion line.",
+    "officialMascotOrLogo": "Mistral AI's logo is a stepped pixel-block 'M' in a yellow-to-orange-to-red gradient (#FFD800, #FA500F, #E10500) on black or cream; the Large line is drawn as a lion with a pixel-block crown built from that logo.",
+    "sourceUrls": [
+     "https://mistral.ai/news/mistral-large-2407/"
+    ]
+   },
+   "lineRef": "mistral-large-3"
+  },
+  {
+   "id": "mistral-small-3",
+   "nameZh": "Mistral Small 3",
+   "nameEn": "Mistral Small 3",
+   "company": "Mistral AI",
+   "country": "FR",
+   "category": "llm",
+   "family": "mistral-small",
+   "stage": 1,
+   "evolvesTo": "mistral-small-3-2",
+   "evolveLevel": 21,
+   "types": [
+    "open",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 64,
+    "atk": 55,
+    "def": 55,
+    "spa": 47,
+    "spd": 54,
+    "spe": 71
+   },
+   "habitats": [
+    "city",
+    "meadow"
+   ],
+   "releaseDate": "2025-01-30",
+   "capabilityScore": 24,
+   "hotnessScore": 42,
+   "statRationale": "低延迟→速度高；24B 小而稳→HP不低。 [BST 346 ∈ R 330-420; 强项 spe/hp; 能力 24/热度 42]",
+   "dexEntryZh": "Mistral Small 3 于 2025 年 1 月 30 日发布，24B、Apache 2.0，主打低延迟，适合本地部署，前代是 Mistral 7B。她是只轻装上阵的小雨燕，头上的小风车转得飞快。21 级后会进化成 Mistral Small 3.2，再往后是 Mistral Small 4。",
+   "lookZh": "头顶小风车的雨燕娘，背着方块小背包轻装出发",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, fledgling stage of the Mistral Small swift-bird girl line (bird-winged girl, not the Mistral cat, lion, fox or scholar). Hair: short wind-tossed bob in pale cream (#FFF0C2) with orange (#FA500F) tips, small ahoge. Wings: tiny cream wing nubs with orange tips, short forked tail feathers. Eyes: big sky-blue (#6EC6F5), round highlight, eager grin. Signature: a small four-vane pinwheel hairpin in orange, yellow, red and cream (the Mistral wind). Outfit: light cream hooded windbreaker with a stair-stepped orange hem, black shorts, white socks, orange sneakers. Prop: a small cube-shaped satchel of orange pixel blocks on her back (runs locally). Palette: #FA500F, #FFD800, #E10500, cream #FFF0C2, black, sky #6EC6F5. Pose: running on tiptoe, wings out behind her, pinwheel whirling.",
+    "personality": "手脚麻利的跑腿小能手，从不拖泥带水",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Mistral AI's logo is a stepped pixel-block 'M' in a yellow-to-orange-to-red gradient (#FFD800, #FA500F, #E10500) on black or cream; the name comes from the Mistral wind, which inspires the pinwheel and swift-bird motif.",
+    "sourceUrls": [
+     "https://openrouter.ai/mistralai/mistral-small-24b-instruct-2501"
+    ]
+   }
+  },
+  {
+   "id": "mistral-small-3-2",
+   "nameZh": "Mistral Small 3.2",
+   "nameEn": "Mistral Small 3.2",
+   "company": "Mistral AI",
+   "country": "FR",
+   "category": "llm",
+   "family": "mistral-small",
+   "stage": 2,
+   "evolvesTo": "mistral-small-4",
+   "evolveLevel": 28,
+   "types": [
+    "open",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 67,
+    "atk": 58,
+    "def": 56,
+    "spa": 53,
+    "spd": 55,
+    "spe": 75
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2025-06-20",
+   "capabilityScore": 34,
+   "hotnessScore": 40,
+   "statRationale": "沿袭低延迟→速度高；小而稳→HP不低。 [BST 364 ∈ R 330-420; 强项 spe/hp; 能力 34/热度 40]",
+   "dexEntryZh": "Mistral Small 3.2 于 2025 年 6 月 20 日发布，权重开放，是 Mistral Small 3.1 的同系列下一代；3.1 在 2025 年 3 月给 Small 加上了视觉。她接在 Mistral Small 3 之后，翅膀长大了一圈，风车也更大了。28 级后会进化成 Mistral Small 4。",
+   "lookZh": "翅膀长大一圈、围着橙色围巾的雨燕娘，风车更大了",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.3 heads tall, young flyer stage of the Mistral Small swift-bird girl line (Small 3 fledgling grown a bit; bird-winged girl). Hair: shoulder-length wind-swept bob in pale cream (#FFF0C2) with orange (#FA500F) tips, small ahoge. Wings: medium cream wings with orange and yellow tips, longer tail feathers. Eyes: big sky-blue (#6EC6F5), round highlight, bright smile. Signature: the four-vane pinwheel hairpin, bigger, with a pixel-block centre. Outfit: cream hooded windbreaker with a stair-stepped orange hem, long orange scarf trailing behind, black shorts over cream leggings, orange boots. Prop: the cube satchel with a small round lens-shaped flap. Palette: #FA500F, #FFD800, #E10500, cream #FFF0C2, black, sky #6EC6F5. Pose: gliding on one foot, wings half spread, scarf streaming.",
+    "personality": "越飞越稳的小信使，开始懂得看路",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Mistral AI's logo is a stepped pixel-block 'M' in a yellow-to-orange-to-red gradient (#FFD800, #FA500F, #E10500) on black or cream; the name comes from the Mistral wind, which inspires the pinwheel and swift-bird motif.",
+    "sourceUrls": [
+     "https://openrouter.ai/mistralai/mistral-small-3.2-24b-instruct"
+    ]
+   },
+   "lineRef": "mistral-small-3"
+  },
+  {
+   "id": "mistral-small-4",
+   "nameZh": "Mistral Small 4",
+   "nameEn": "Mistral Small 4",
+   "company": "Mistral AI",
+   "country": "FR",
+   "category": "llm",
+   "family": "mistral-small",
+   "stage": 3,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "open",
+    "agent"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 84,
+    "atk": 72,
+    "def": 69,
+    "spa": 65,
+    "spd": 70,
+    "spe": 81
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2026-03-16",
+   "capabilityScore": 50,
+   "hotnessScore": 48,
+   "statRationale": "119B MoE 体量大→HP高；仅 6B 激活→速度快。 [BST 441 ∈ SR 420-490; 强项 hp/spe; 能力 50/热度 48]",
+   "dexEntryZh": "Mistral Small 4 于 2026 年 3 月 16 日发布，119B MoE、激活参数 6B，Apache 2.0 开源。它把 Small、Magistral、Pixtral 和 Devstral 合并进同一个模型，推理强度可调。她是 Mistral Small 3.2 之后的下一代，披着缀有四色补丁的挎带，已经能独当一面。",
+   "lookZh": "风车翅膀全展开的雨燕娘，挎带缀着四枚色块徽章",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.7 heads tall, grown-up flyer stage of the Mistral Small swift-bird girl line (Small 3.2 flyer grown up; bird-winged girl). Hair: long wind-swept cream (#FFF0C2) hair with orange (#FA500F) tips, same ahoge. Wings: large wings in four bands of orange, yellow, red and cream, long tail feathers. Eyes: big sky-blue (#6EC6F5), round highlight, calm smile. Signature: the four-vane pinwheel hairpin, large, with a pixel-block centre. Outfit: long cream-and-black field coat with a stair-stepped orange hem, a sash with four small colour patches (orange, yellow, red, cream) and a round dial brooch, black boots. Prop: the cube satchel grown into a messenger bag. Palette: #FA500F, #FFD800, #E10500, cream #FFF0C2, black, sky #6EC6F5. Pose: forward stride mid-takeoff, wings wide, one hand turning the dial.",
+    "personality": "从容的全能小队长，推理力度随时拨档",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Mistral AI's logo is a stepped pixel-block 'M' in a yellow-to-orange-to-red gradient (#FFD800, #FA500F, #E10500) on black or cream; the name comes from the Mistral wind, which inspires the pinwheel and swift-bird motif.",
+    "sourceUrls": [
+     "https://openrouter.ai/mistralai/mistral-small-2603",
+     "https://docs.mistral.ai/resources/changelogs"
+    ]
+   },
+   "lineRef": "mistral-small-3-2"
+  },
+  {
+   "id": "devstral-small",
+   "nameZh": "Devstral Small",
+   "nameEn": "Devstral Small",
+   "company": "Mistral AI",
+   "country": "FR",
+   "category": "code",
+   "family": "devstral",
+   "stage": 1,
+   "evolvesTo": "devstral-medium",
+   "evolveLevel": 21,
+   "types": [
+    "code",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 62,
+    "atk": 65,
+    "def": 51,
+    "spa": 54,
+    "spd": 56,
+    "spe": 65
+   },
+   "habitats": [
+    "highland",
+    "city"
+   ],
+   "releaseDate": "2025-05-21",
+   "capabilityScore": 28,
+   "hotnessScore": 40,
+   "statRationale": "专攻代码→攻击高；体型小、反应快→速度高。 [BST 353 ∈ R 330-420; 强项 atk/spe; 能力 28/热度 40]",
+   "dexEntryZh": "Devstral Small 是 Mistral 与 All Hands AI 合作打造的智能体编程模型，据记录基于 Mistral Small 3.1 后训练而来，权重开放，2025 年 5 月 21 日发布。她是戴着护目镜的小狐崽修理工，扳手比手还大一圈。21 级后会成长为同系列的 Devstral Medium，再往后是 Devstral 2。",
+   "lookZh": "护目镜推在额头的小狐崽，抱着一把大号扳手",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, fox-kit apprentice stage of the Devstral fox-girl coding mechanic (younger Devstral 2; not the Mistral cat or lion). Hair: short messy rust-orange (#FA500F) bob, small yellow (#FFD800) streak, stubby ahoge, small goggles pushed up on her forehead (signature). Ears: pointed fox ears with black tips, slightly too big. Tail: small fluffy orange tail, cream tip. Eyes: bright teal (#2BB5A5), square pixel highlights, eager grin. Outfit: oversized black zip hoodie with orange sleeve stripes, sleeves covering her hands, no patch or tool belt yet, short charcoal skirt over black leggings, chunky orange sneakers. Prop: one big shiny wrench held in both hands like a trophy. Palette: #FA500F, #FFD800, #E10500, black, charcoal, teal #2BB5A5. Pose: hopping forward, wrench raised, tail up.",
+    "personality": "爱动手的小学徒，修好一个 bug 就摇尾巴",
+    "communityPersona": "No anime persona found; invented from brand colours and the existing Devstral 2 fox-girl mechanic.",
+    "officialMascotOrLogo": "Mistral AI's logo is a stepped pixel-block 'M' in a yellow-to-orange-to-red gradient (#FFD800, #FA500F, #E10500) on black; the design draws on that palette and the coding-tool theme of the Devstral line.",
+    "sourceUrls": [
+     "https://mistral.ai/news/devstral"
+    ]
+   },
+   "lineRef": "devstral-2"
+  },
+  {
+   "id": "devstral-medium",
+   "nameZh": "Devstral Medium",
+   "nameEn": "Devstral Medium",
+   "company": "Mistral AI",
+   "country": "FR",
+   "category": "code",
+   "family": "devstral",
+   "stage": 2,
+   "evolvesTo": "devstral-2",
+   "evolveLevel": 28,
+   "types": [
+    "code",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 71,
+    "atk": 68,
+    "def": 61,
+    "spa": 57,
+    "spd": 66,
+    "spe": 66
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2025-07-10",
+   "capabilityScore": 48,
+   "hotnessScore": 40,
+   "statRationale": "体量更大→HP高；仍专攻代码→攻击高。 [BST 389 ∈ R 330-420; 强项 hp/atk; 能力 48/热度 40]",
+   "dexEntryZh": "Devstral Medium 于 2025 年 7 月 10 日发布，只通过 API 提供，不放出权重。她和 Devstral Small 同属一脉，是同系列里体量更大的一档，资料里没有写明二者的继承关系。腰上多了工具带，袖子也不再盖住手；28 级后会成长为 Devstral 2。",
+   "lookZh": "挂上工具腰带、袖子终于露出手的狐耳修理工",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.3 heads tall, apprentice-mechanic stage of the Devstral fox-girl coding mechanic (between the Devstral Small kit and Devstral 2; not the Mistral cat or lion). Hair: short messy rust-orange (#FA500F) bob, yellow (#FFD800) streak, stubby ahoge, goggles pushed up on her forehead (signature). Ears: pointed fox ears with black tips. Tail: medium bushy orange tail, cream tip. Eyes: bright teal (#2BB5A5), square pixel highlights, calm smile. Outfit: black zip hoodie that now fits, orange sleeve stripes, sleeves pushed up, small blank orange patch, charcoal skirt over black leggings, orange tool belt, orange sneakers. Props: a medium wrench, a small terminal slate with a '>_' pictogram under her arm. Palette: #FA500F, #FFD800, #E10500, black, charcoal, teal #2BB5A5. Pose: leaning on the wrench, tail swaying.",
+    "personality": "靠得住的熟练工，话不多，活儿很稳",
+    "communityPersona": "No anime persona found; invented from brand colours and the existing Devstral 2 fox-girl mechanic.",
+    "officialMascotOrLogo": "Mistral AI's logo is a stepped pixel-block 'M' in a yellow-to-orange-to-red gradient (#FFD800, #FA500F, #E10500) on black; the design draws on that palette and the coding-tool theme of the Devstral line.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "devstral-small"
+  },
+  {
+   "id": "magistral-small",
+   "nameZh": "Magistral Small",
+   "nameEn": "Magistral Small",
+   "company": "Mistral AI",
+   "country": "FR",
+   "category": "reasoning",
+   "family": "magistral",
+   "stage": 1,
+   "evolvesTo": "magistral-medium",
+   "evolveLevel": 31,
+   "types": [
+    "logic",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 63,
+    "atk": 69,
+    "def": 58,
+    "spa": 54,
+    "spd": 58,
+    "spe": 55
+   },
+   "habitats": [
+    "highland",
+    "snow"
+   ],
+   "releaseDate": "2025-06-10",
+   "capabilityScore": 30,
+   "hotnessScore": 36,
+   "statRationale": "推理专精→攻击高；24B 体量扎实→HP高。 [BST 357 ∈ R 330-420; 强项 atk/hp; 能力 30/热度 36]",
+   "dexEntryZh": "Magistral Small 于 2025 年 6 月 10 日发布，24B、Apache 2.0 开源，记录里是 Mistral 的首个推理模型，据记录由 Mistral Small 3.1 后训练而来。1.2 版加入了视觉，2026 年并入 Small 4。她是戴着小学士帽的见习学者，边想边把推理步骤写在小本子上。31 级后进化为同系列的 Magistral Medium。",
+   "lookZh": "戴着像素积木学士帽的见习学者娘，捧着步骤小本子",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, apprentice stage of the Magistral scholar girl (a human scholar, not the Mistral cat, lion or fox). Hair: neat chin-length bob in deep plum-black (#2E2230) with one orange (#FA500F) inner streak and a little ahoge. Eyes: big amber-yellow (#FFC21A), swirl highlight, thoughtful half-smile. Signature: a small square academic cap of orange and yellow pixel blocks with a short gold tassel. Outfit: too-big black scholar's gown with orange trim over a cream blouse, small red bow tie, black knee socks, brown loafers, tiny golden key charm at her waist (open weights). Prop: a small open notebook showing three step-pictograms joined by arrows (chain of thought). Palette: #FA500F, #FFD800, #E10500, plum-black #2E2230, cream #FFF4DC, gold. Pose: notebook open in one hand, one finger raised, counting steps.",
+    "personality": "爱把想法一步步写出来的小书呆子",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Mistral AI's logo is a stepped pixel-block 'M' in a yellow-to-orange-to-red gradient (#FFD800, #FA500F, #E10500) on black or cream; the Magistral name suggests a master scholar, drawn here as a gowned student with a pixel-block cap.",
+    "sourceUrls": [
+     "https://docs.mistral.ai/resources/changelogs",
+     "https://simonwillison.net/2025/Sep/19/magistral/"
+    ]
+   }
+  },
+  {
+   "id": "magistral-medium",
+   "nameZh": "Magistral Medium",
+   "nameEn": "Magistral Medium",
+   "company": "Mistral AI",
+   "country": "FR",
+   "category": "reasoning",
+   "family": "magistral",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "logic",
+    "open"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 85,
+    "atk": 77,
+    "def": 66,
+    "spa": 63,
+    "spd": 75,
+    "spe": 75
+   },
+   "habitats": [
+    "highland",
+    "snow"
+   ],
+   "releaseDate": "2025-06-10",
+   "capabilityScore": 50,
+   "hotnessScore": 38,
+   "statRationale": "体量更大→HP高；强化学习练出推理→攻击高。 [BST 441 ∈ SR 420-490; 强项 hp/atk; 能力 50/热度 38]",
+   "dexEntryZh": "Magistral Medium 与 Magistral Small 同系列，同在 2025 年 6 月 10 日发布，只提供 API。据记录她是在 Mistral Medium 3 上做强化学习的后训练推理模型，擅长多语言推理，思考过程摊开可看。最后一版是 1.2，2026 年 4 月并入 Medium 3.5。",
+   "lookZh": "披上学位长袍的博学少女，翻开的巨册上写满推理步骤",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, graduated magister stage of the Magistral scholar girl (the Small apprentice grown up; a human scholar). Hair: same deep plum-black (#2E2230), now waist-long and sleek, orange (#FA500F) inner streak, neat ahoge. Eyes: big amber-yellow (#FFC21A), swirl highlight, calm confident smile. Signature: the pixel-block academic cap, taller, with an orange, yellow and red stepped top and a long gold tassel. Outfit: full black magister's gown with orange and gold trim, lace collar, red bow tie, short red-lined cape, black tights, boots. Props: a thick open tome whose pages show step-pictograms joined by arrows, a slim baton with a pixel-block tip. Palette: #FA500F, #FFD800, #E10500, plum-black #2E2230, cream #FFF4DC, gold. Pose: lecturing stance, baton raised toward the tome.",
+    "personality": "沉着的主讲人，结论之前先把过程摆出来",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Mistral AI's logo is a stepped pixel-block 'M' in a yellow-to-orange-to-red gradient (#FFD800, #FA500F, #E10500) on black or cream; the Magistral name suggests a master scholar, drawn here as a gowned graduate with a pixel-block cap.",
+    "sourceUrls": [
+     "https://docs.mistral.ai/resources/changelogs"
+    ]
+   },
+   "lineRef": "magistral-small"
+  },
+  {
+   "id": "pixtral-12b",
+   "nameZh": "Pixtral 12B",
+   "nameEn": "Pixtral 12B",
+   "company": "Mistral AI",
+   "country": "FR",
+   "category": "multimodal",
+   "family": "pixtral",
+   "stage": 1,
+   "evolvesTo": "pixtral-large",
+   "evolveLevel": 22,
+   "types": [
+    "vision",
+    "open"
+   ],
+   "rarity": "N",
+   "baseStats": {
+    "hp": 47,
+    "atk": 44,
+    "def": 45,
+    "spa": 61,
+    "spd": 44,
+    "spe": 44
+   },
+   "habitats": [
+    "forest",
+    "meadow"
+   ],
+   "releaseDate": "2024-09-11",
+   "capabilityScore": 14,
+   "hotnessScore": 36,
+   "statRationale": "看图是看家本领→特攻高；12B 体量精巧而稳→HP 不低。 [BST 285 ∈ N 240-330; 强项 spa/hp; 能力 14/热度 36]",
+   "dexEntryZh": "2024 年 9 月 11 日登场的 Pixtral 12B，是 Mistral 的第一款多模态模型，在 Mistral NeMo 12B 的底子上学会了看图，权重开放。她抱着速写本到处读图，看什么都像在数像素方块。再往后是同系列的下一代 Pixtral Large。",
+   "lookZh": "抱着速写本的像素狐娘，胸前挂着镜头吊坠",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the young fox-eared 'pixel painter' of the Pixtral line (first stage; her older self is Pixtral Large). Hair: short bob with stepped pixel-block bangs in sun-yellow (#FFD800) fading to ember-orange (#FA500F) tips, one square-tipped ahoge. Ears: small fennec-style fox ears, cream inside; a short fox tail tipped with three red-orange pixel blocks. Eyes: big tangerine-orange with square pixel highlights, curious open smile. Outfit: cream painter's smock, yellow neck scarf, rolled sleeves, orange shorts, small red boots. Signature accessory: a round camera-lens pendant on a red cord (image input). Prop: a pocket pixel-grid sketchbook. Palette: #FFD800, #FA500F, #E10500, cream #FFF4DC, outline #1A1A1A. Pose: hugging the sketchbook, leaning in to peer at something, head tilted, tail wagging.",
+    "personality": "好奇宝宝，见到新图就想凑近看个够",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Mistral AI's brand is a pixel-block 'M' in a sunset gradient from yellow (#FFD800) through orange (#FA500F) to red (#E10500), with cream and black accents; the Pixtral name echoes 'pixel'. No official mascot, so a fox was invented to stay distinct from the Mistral cat and lion lines.",
+    "sourceUrls": [
+     "https://mistral.ai/news/pixtral-12b/"
+    ]
+   }
+  },
+  {
+   "id": "pixtral-large",
+   "nameZh": "Pixtral Large",
+   "nameEn": "Pixtral Large",
+   "company": "Mistral AI",
+   "country": "FR",
+   "category": "multimodal",
+   "family": "pixtral",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "vision",
+    "open"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 57,
+    "atk": 59,
+    "def": 58,
+    "spa": 69,
+    "spd": 58,
+    "spe": 63
+   },
+   "habitats": [
+    "meadow",
+    "coast"
+   ],
+   "releaseDate": "2024-11-18",
+   "capabilityScore": 34,
+   "hotnessScore": 38,
+   "statRationale": "图像理解更深→特攻高；124B 体量大、行动利落→速度快。 [BST 364 ∈ R 330-420; 强项 spa/spe; 能力 34/热度 38]",
+   "dexEntryZh": "2024 年 11 月 18 日发布的 Pixtral Large，是 Pixtral 12B 同系列的下一代：基于 Mistral Large 2 的 124B 多模态模型，同样开放权重。小狐娘披上披风长大成画师，块头从 12B 一路长到了 124B。",
+   "lookZh": "披着披风的画师狐娘，手持画架权杖",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5-3 heads tall, the grown-up Pixtral 12B fox painter. Hair: same sun-yellow (#FFD800) bob with ember-orange (#FA500F) tips, now shoulder-length with a half-up red ribbon, same stepped pixel-block bangs and square-tipped ahoge. Ears: taller fennec-style fox ears, cream inside; a bigger fluffy tail tipped with five stepped pixel blocks. Eyes: same tangerine-orange with square highlights, confident smile. Outfit: cream-and-orange painter's coat dress, red trim, gold pixel buttons, short red cape, floppy red beret with a yellow feather, boots. Signature accessory: the round camera-lens pendant, now a large gilded lens. Prop: a tall easel-staff topped with a small framed picture. Palette: #FFD800, #FA500F, #E10500, cream #FFF4DC, gold, black. Pose: wide stance, easel-staff planted, cape flaring.",
+    "personality": "稳重大方，一幅画也看得头头是道",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Mistral AI's brand is a pixel-block 'M' in a sunset gradient from yellow (#FFD800) through orange (#FA500F) to red (#E10500), with cream and black accents. No official mascot, so the fox painter from Pixtral 12B was grown up using the same colours.",
+    "sourceUrls": [
+     "https://mistral.ai/news/pixtral-large/"
+    ]
+   },
+   "lineRef": "pixtral-12b"
+  },
+  {
+   "id": "mai-1-preview",
+   "nameZh": "MAI-1-preview",
+   "nameEn": "MAI-1-preview",
+   "company": "Microsoft",
+   "country": "US",
+   "category": "llm",
+   "family": "mai",
+   "stage": 1,
+   "evolvesTo": "mai-thinking",
+   "evolveLevel": 30,
+   "types": [
+    "chat",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 64,
+    "atk": 47,
+    "def": 56,
+    "spa": 66,
+    "spd": 63,
+    "spe": 72
+   },
+   "habitats": [
+    "coast",
+    "city"
+   ],
+   "releaseDate": "2025-08-28",
+   "capabilityScore": 36,
+   "hotnessScore": 38,
+   "statRationale": "中档 MoE 体量轻巧→速度快；撑起 Copilot→特攻高。 [BST 368 ∈ R 330-420; 强项 spe/spa; 能力 36/热度 38]",
+   "dexEntryZh": "MAI-1-preview 于 2025 年 8 月 28 日随 MAI-Voice-1 一同亮相，是微软 AI 首个自研基础大模型，属中档 MoE，被看作摆脱对 OpenAI 依赖的起点，也是自家 Copilot 的骨干。目录里已标为被取代，下一形态是 MAI-Thinking-1。",
+   "lookZh": "淡紫卷发的小男孩，发间别着彩色圆圈发夹，捧着热马克杯",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the younger version of the calm thinker boy (MAI-Thinking-1). Hair: soft wavy pastel-lavender (#CDB8F0) hair, shorter and fluffier, with just two overlapping pastel-circle hairpins (pink #F6B6CC and sky blue #9FD3F5). Eyes: gentle half-lidded grey (#9AA3AE) with a soft highlight and a faint curious smile. Outfit: a cream (#FFF4DF) cardigan one size too big, sleeves past his hands, over a sky-blue collared shirt, a short watercolor-gradient scarf, beige shorts, soft sneakers. Signature accessory: the pastel-circle hairpins that will grow into a full cluster, plus a small soft-pastel four-pane window patch on the cardigan pocket. Prop: a steaming mug held in both hands. Palette: #CDB8F0, #FFF4DF, #9FD3F5, #F6B6CC, #FFE59A. Pose: standing with his head tilted, blowing on the mug as the steam curls.",
+    "personality": "安静的小实干派，先把底座搭稳再说话",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Microsoft's logo is a four-square window mark in red (#F25022), green (#7FBA00), blue (#00A4EF) and yellow (#FFB900); the MAI cast in this roster uses soft watercolor pastels of those four colours.",
+    "sourceUrls": [
+     "https://innfactory.ai/en/ai-models/microsoft-phi/",
+     "https://en.wikipedia.org/wiki/Microsoft_AI"
+    ]
+   },
+   "lineRef": "mai-thinking"
+  },
+  {
+   "id": "mai-image-1",
+   "nameZh": "MAI-Image-1",
+   "nameEn": "MAI-Image-1",
+   "company": "Microsoft",
+   "country": "US",
+   "category": "image",
+   "family": "mai-image",
+   "stage": 1,
+   "evolvesTo": "mai-image-2",
+   "evolveLevel": 32,
+   "types": [
+    "vision"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 51,
+    "atk": 53,
+    "def": 59,
+    "spa": 88,
+    "spd": 61,
+    "spe": 63
+   },
+   "habitats": [
+    "meadow",
+    "city"
+   ],
+   "releaseDate": "2025-10-01",
+   "capabilityScore": 40,
+   "hotnessScore": 42,
+   "statRationale": "专攻文生图→特攻高；出图利落→速度快。 [BST 375 ∈ R 330-420; 强项 spa/spe; 能力 40/热度 42]",
+   "dexEntryZh": "MAI-Image-1 是微软自研的文生图模型，记录里是微软首个自研图像模型，2025 年 10 月在 LMArena 上亮相。她还是脸颊蹭着颜料的小画师，握着一支小号圆头画笔。升到 32 级后，会进化成同系列的下一代 MAI-Image-2，再往后是 MAI-Image-2.6。",
+   "lookZh": "脸颊蹭着颜料的小画师娘，举着一支小号圆头画笔",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, young apprentice stage of the MAI-Image watercolor painter girl (MAI-Image-2.6, much younger and plainer). Hair: shoulder-length watercolor gradient from peach-pink to butter-yellow, one mint-green streak, short ahoge, one small pink blossom clip (seed of her later flower crown). Eyes: big bright hazel, round highlight, paint smudge on one cheek. Outfit: oversized pale sky-blue painter's smock with a few paint dots over a white undershirt, plain pastel ribbon belt, small paint-stained boots. Props: one small round-tipped paintbrush, a tiny four-square palette (red, green, blue, yellow) at her belt. Palette: #BFE3F5 sky blue, #FFB6A3 peach-pink, #FFE9A8 butter-yellow, #A8E6CF mint, #A9895A hazel. Pose: shy half-step forward, drawing her first little flower.",
+    "personality": "认真又害羞的小画师，一提笔就忘了时间",
+    "communityPersona": "No anime persona found; invented from brand colours and the existing MAI-Image-2.6 watercolor painter girl.",
+    "officialMascotOrLogo": "Microsoft's logo is a four-square window grid in red #F25022, green #7FBA00, blue #00A4EF and yellow #FFB900; MAI-Image is the in-house image model family from Microsoft AI and has no official mascot.",
+    "sourceUrls": [
+     "https://microsoft.ai/news/"
+    ]
+   },
+   "lineRef": "mai-image"
+  },
+  {
+   "id": "mai-image-2",
+   "nameZh": "MAI-Image-2",
+   "nameEn": "MAI-Image-2",
+   "company": "Microsoft",
+   "country": "US",
+   "category": "image",
+   "family": "mai-image",
+   "stage": 2,
+   "evolvesTo": "mai-image",
+   "evolveLevel": 39,
+   "types": [
+    "vision",
+    "write"
+   ],
+   "rarity": "SR",
+   "baseStats": {
+    "hp": 79,
+    "atk": 66,
+    "def": 76,
+    "spa": 97,
+    "spd": 69,
+    "spe": 62
+   },
+   "habitats": [
+    "forest",
+    "city"
+   ],
+   "releaseDate": "2026-03-19",
+   "capabilityScore": 56,
+   "hotnessScore": 46,
+   "statRationale": "文生图精进→特攻高；画布够大、耐力足→HP高。 [BST 449 ∈ SR 420-490; 强项 spa/hp; 能力 56/热度 46]",
+   "dexEntryZh": "MAI-Image-2 于 2026 年 3 月 19 日先在 MAI Playground 上线，4 月 2 日登陆 Foundry。她是 MAI-Image-1 同系列的下一代，画笔长大了，头上的花环也多开了几朵。39 级后会进化成自带搜索放大镜的 MAI-Image-2.6。",
+   "lookZh": "花环初绽、画笔长大的少女画师，腰间挂着四色调色板",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, growing-up painter stage of the MAI-Image watercolor girl (older than MAI-Image-1, younger than MAI-Image-2.6). Hair: long watercolor gradient from peach-pink to butter-yellow to soft orange tips, mint-green streaks, a half-wreath of pink, yellow and orange blossoms on one side. Eyes: bright hazel, round highlight, paint smudge on one cheek. Outfit: pale sky-blue painter's smock with more paint splatters over a white dress, pastel ribbon belt tied in a bow, paint-stained ankle boots. Props: a medium round brush trailing a few petals, a four-square palette (red, green, blue, yellow) in the other hand. Palette: #BFE3F5 sky blue, #FFB6A3 peach-pink, #FFE9A8 butter-yellow, #FFB27A soft orange, #A8E6CF mint. Pose: mid-stroke, brush swept to one side, palette held up.",
+    "personality": "干劲十足的新晋画师，画完一幅马上画下一幅",
+    "communityPersona": "No anime persona found; invented from brand colours and the existing MAI-Image-2.6 watercolor painter girl.",
+    "officialMascotOrLogo": "Microsoft's logo is a four-square window grid in red #F25022, green #7FBA00, blue #00A4EF and yellow #FFB900; MAI-Image is the in-house image model family from Microsoft AI and has no official mascot.",
+    "sourceUrls": [
+     "https://innfactory.ai/en/ai-models/microsoft-phi/"
+    ]
+   },
+   "lineRef": "mai-image-1"
+  },
+  {
+   "id": "mai-code-1-flash",
+   "nameZh": "MAI-Code-1-Flash",
+   "nameEn": "MAI-Code-1-Flash",
+   "company": "Microsoft",
+   "country": "US",
+   "category": "code",
+   "family": "mai-code",
+   "stage": 1,
+   "evolvesTo": "mai-code-1-1-flash",
+   "evolveLevel": 20,
+   "types": [
+    "code",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 61,
+    "atk": 62,
+    "def": 57,
+    "spa": 55,
+    "spd": 53,
+    "spe": 69
+   },
+   "habitats": [
+    "forest",
+    "highland"
+   ],
+   "releaseDate": "2026-06-02",
+   "capabilityScore": 30,
+   "hotnessScore": 30,
+   "statRationale": "激活参数仅 5B→速度快；专攻编程→攻击高。 [BST 357 ∈ R 330-420; 强项 spe/atk; 能力 30/热度 30]",
+   "dexEntryZh": "MAI-Code-1-Flash 于 2026 年 6 月 2 日发布，是微软 AI 的小型智能体编程模型，激活参数约 5B，主打快而便宜。据资料，它在所测的四项编程基准上胜过 Claude Haiku 4.5，SWE-Bench Pro 约 51%。同系列的下一代是 MAI-Code-1.1-Flash。",
+   "lookZh": "闪电发夹薄荷马尾的小程序员，抱着发光键盘板狂奔",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the youngest stage of the Flash coder girl: a quick, tiny prodigy. Hair: mint-green (#A8E6CF) hair in a short high ponytail with a few loose strands, held by a butter-yellow (#FFD84D) lightning-bolt hairpin. Eyes: bright sky-blue (#6EC6FF) with a small lightning-shaped highlight. Outfit: a slightly oversized pastel sky-blue (#BFE3FF) zip hoodie with a small four-pane window patch (soft red, green, blue, yellow) on the chest, cream shorts, light sneakers with yellow stripes. Signature accessory: the lightning-bolt hairpin. Prop: a compact glowing pastel keyboard slate hugged to her chest. Palette: #A8E6CF, #FFD84D, #BFE3FF, #FFF4DF, #F6B6CC. Pose: mid-sprint on tiptoes, ponytail flying, keyboard held tight.",
+    "personality": "手脚飞快的小冲刺选手，写完才想起喘气",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Microsoft's logo is a four-square window mark in red (#F25022), green (#7FBA00), blue (#00A4EF) and yellow (#FFB900); the MAI cast in this roster uses soft watercolor pastels of those four colours.",
+    "sourceUrls": [
+     "https://theaieconomy.substack.com/p/microsofts-mai-models-build-2026",
+     "https://gigazine.net/gsc_news/en/20260603-microsoft-ai-thinking/"
+    ]
+   }
+  },
+  {
+   "id": "mai-code-1-1-flash",
+   "nameZh": "MAI-Code-1.1-Flash",
+   "nameEn": "MAI-Code-1.1-Flash",
+   "company": "Microsoft",
+   "country": "US",
+   "category": "code",
+   "family": "mai-code",
+   "stage": 2,
+   "evolvesTo": "",
+   "evolveLevel": 0,
+   "types": [
+    "code",
+    "compute"
+   ],
+   "rarity": "R",
+   "baseStats": {
+    "hp": 70,
+    "atk": 64,
+    "def": 56,
+    "spa": 53,
+    "spd": 62,
+    "spe": 77
+   },
+   "habitats": [
+    "highland",
+    "city"
+   ],
+   "releaseDate": "2026-08-11",
+   "capabilityScore": 44,
+   "hotnessScore": 32,
+   "statRationale": "沿用 Flash 轻量路线→速度快；迭代后更稳→HP高。 [BST 382 ∈ R 330-420; 强项 spe/hp; 能力 44/热度 32]",
+   "dexEntryZh": "MAI-Code-1.1-Flash 于 2026 年 8 月 11 日登场，是 MAI-Code-1-Flash 同系列的下一代，沿用 Flash 路线，仍是未开放权重的微软编程模型。资料对她的细节记载不多，只确认她接棒了上一形态。",
+   "lookZh": "长马尾加耳麦的薄荷发少女，闪电发夹更亮了",
+   "design": {
+    "chibiDesign": "Chibi HD-2D pixel sprite, ~2.5 heads tall, the grown-up version of the Flash coder girl. Hair: the same mint-green (#A8E6CF) hair, now a longer high ponytail reaching her waist, still tied with the butter-yellow (#FFD84D) lightning-bolt hairpin. Eyes: bright sky-blue (#6EC6FF) with a lightning-shaped highlight, sharper and more confident. Outfit: a pastel sky-blue (#BFE3FF) windbreaker with cream reflective stripes and the four-pane window patch (soft red, green, blue, yellow) on the chest, a short cream skirt, striped sneakers. Signature accessory: the lightning-bolt hairpin, plus a slim pastel headset. Props: the glowing pastel keyboard slate held like a tray, and a small mint energy canister on her belt. Palette: #A8E6CF, #FFD84D, #BFE3FF, #FFF4DF, #F6B6CC. Pose: skidding to a stop, peace sign raised, ponytail swinging.",
+    "personality": "跑得更稳的老练冲刺手，拐弯也不减速",
+    "communityPersona": "No anime persona found; invented from brand colours.",
+    "officialMascotOrLogo": "Microsoft's logo is a four-square window mark in red (#F25022), green (#7FBA00), blue (#00A4EF) and yellow (#FFB900); the MAI cast in this roster uses soft watercolor pastels of those four colours.",
+    "sourceUrls": [
+     "https://models.dev/"
+    ]
+   },
+   "lineRef": "mai-code-1-flash"
+  }
+ ],
+ "patches": [
+  {
+   "id": "gpt-oss",
+   "set": {
+    "evolvesTo": "gpt-oss-safeguard-120b",
+    "evolveLevel": 29
+   }
+  },
+  {
+   "id": "gpt-6-luna",
+   "set": {
+    "stage": 2
+   }
+  },
+  {
+   "id": "gpt-6-sol",
+   "set": {
+    "stage": 3,
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "muse-spark",
+   "set": {
+    "stage": 3,
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "mistral-large-3",
+   "set": {
+    "stage": 2
+   }
+  },
+  {
+   "id": "mistral-large-4",
+   "set": {
+    "stage": 3
+   }
+  },
+  {
+   "id": "devstral-2",
+   "set": {
+    "stage": 3
+   }
+  },
+  {
+   "id": "mai-thinking",
+   "set": {
+    "stage": 2
+   }
+  },
+  {
+   "id": "mai-image",
+   "set": {
+    "stage": 3
+   }
+  },
+  {
+   "id": "chatgpt",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "gpt-6-astra",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "openai-codex",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "gpt-image-2-5",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "claude-sonnet",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "claude-opus",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "claude-fable",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "claude-mythos",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "claude-code",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "gemini-argon",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "genie-3",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "alpha",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "grok-4-7",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "suno-v6",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "eleven-v4",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "cursor",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "openclaw",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "agi",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "deepseek-v4",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "qwen3-8-max",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "wan-3",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "kimi-k3",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "glm-5-3",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "doubao-app",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "seedance-2-5",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "mimo-v2-6-pro",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "minimax-h3",
+   "set": {
+    "bossCandidate": true
+   }
+  },
+  {
+   "id": "unitree-gd01",
+   "set": {
+    "bossCandidate": true
+   }
+  }
+ ]
+}

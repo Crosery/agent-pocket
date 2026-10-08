@@ -20,8 +20,13 @@ export interface BattleEffectDetail {
   id: string
   group: BattleEffectGroup
   label: string
+  /** Compact form for the HUD tag row ("推理+2"); the label for statuses and volatiles. */
+  short: string
   description: string
   value?: string
+  /** Stage rows only: signed step ("+2") and the multiplier it gives ("×2"), for the compact stage chips. */
+  delta?: string
+  factor?: string
   polarity: BattleEffectPolarity
 }
 
@@ -33,10 +38,8 @@ export interface BattleStatGlossary {
 
 const BATTLE_STAT_ORDER: readonly BattleStatKey[] = ['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva']
 
-function multiplierText(stage: number): string {
-  const value = stageMul(stage, 2)
-  const formatted = value.toFixed(2).replace(/0+$/, '').replace(/\.$/, '')
-  return t('battleui.effects.multiplier', { n: formatted })
+function factorNumber(stage: number): string {
+  return stageMul(stage, 2).toFixed(2).replace(/0+$/, '').replace(/\.$/, '')
 }
 
 function volatilePolarity(id: string): BattleEffectPolarity {
@@ -60,6 +63,7 @@ export function describeBattleEffects(snapshot: BattleStatusSnapshot): BattleEff
       id: `ability:${snapshot.abilityId}`,
       group: 'ability',
       label: ability.nameZh,
+      short: ability.nameZh,
       description: ability.description,
       polarity: 'neutral',
     })
@@ -70,6 +74,7 @@ export function describeBattleEffects(snapshot: BattleStatusSnapshot): BattleEff
       id: `status:${snapshot.status}`,
       group: 'status',
       label: def.nameZh,
+      short: def.nameZh,
       description: t(`battleui.effects.status.${snapshot.status}`),
       polarity: 'debuff',
     })
@@ -81,6 +86,7 @@ export function describeBattleEffects(snapshot: BattleStatusSnapshot): BattleEff
       id: `volatile:${id}`,
       group: 'volatile',
       label: def.nameZh,
+      short: def.nameZh,
       description: t(`battleui.effects.volatile.${id}`),
       polarity: volatilePolarity(id),
     })
@@ -94,12 +100,15 @@ export function describeBattleEffects(snapshot: BattleStatusSnapshot): BattleEff
       id: `stage:${stat}`,
       group: 'stage',
       label: def.nameZh,
+      short: t('battleui.hud.stage', { stat: def.nameZh, sign: t(stage > 0 ? 'battleui.hud.plus' : 'battleui.hud.minus'), n: Math.abs(stage) }),
       description: def.desc,
       value: t('battleui.effects.stageValue', {
         sign: stage > 0 ? '+' : '-',
         n: Math.abs(stage),
-        multiplier: multiplierText(stage),
+        multiplier: t('battleui.effects.multiplier', { n: factorNumber(stage) }),
       }),
+      delta: `${stage > 0 ? '+' : '-'}${Math.abs(stage)}`,
+      factor: t('battleui.effects.factor', { n: factorNumber(stage) }),
       polarity: stage > 0 ? 'buff' : 'debuff',
     })
   }
@@ -108,4 +117,21 @@ export function describeBattleEffects(snapshot: BattleStatusSnapshot): BattleEff
 
 export function effectCount(snapshot: BattleStatusSnapshot): number {
   return Number(!!snapshot.status) + snapshot.volatiles.length + Object.values(snapshot.stages).filter(Boolean).length
+}
+
+/** Buffs and debuffs among the status, volatile and stage effects (the passive ability is neither). */
+export function effectBalance(snapshot: BattleStatusSnapshot): { buff: number; debuff: number } {
+  let buff = 0, debuff = 0
+  for (const row of describeBattleEffects(snapshot)) {
+    if (row.polarity === 'buff') buff++
+    else if (row.polarity === 'debuff') debuff++
+  }
+  return { buff, debuff }
+}
+
+/** HUD tag order: the status condition first (it decides whether the creature can act), then gains, then losses. */
+export function hudEffects(snapshot: BattleStatusSnapshot): BattleEffectDetail[] {
+  const rows = describeBattleEffects(snapshot).filter((row) => row.group !== 'ability')
+  const rank = (row: BattleEffectDetail) => (row.group === 'status' ? 0 : row.polarity === 'buff' ? 1 : 2)
+  return rows.map((row, i) => ({ row, i })).sort((a, b) => rank(a.row) - rank(b.row) || a.i - b.i).map(({ row }) => row)
 }

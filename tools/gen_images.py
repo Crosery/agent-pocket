@@ -154,6 +154,8 @@ def crosery_render(job: dict, gen: dict, tmp: str) -> tuple[str, dict]:
         "quality": job["quality"],
         "timeout_seconds": gen["timeoutSeconds"],
     }
+    if gen.get("crosery", {}).get("model"):
+        args["model"] = gen["crosery"]["model"]
     if job.get("images"):
         args["images"] = [str(ROOT / p) for p in job["images"]]
     proc = subprocess.run(

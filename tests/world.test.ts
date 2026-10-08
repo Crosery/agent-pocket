@@ -115,32 +115,57 @@ test('world shape: maps, towns, badges and story slots', () => {
   assert.ok(typeof stats.buildMs === 'number')
 })
 
-test('start town has a broad flat onboarding area before the first highland', () => {
+test('start basin: flat near the start town, relief returns outside it, layout unchanged', () => {
   const flat = WORLD_CONTENT.world.overworld.startFlat
   assert.ok(flat)
   const start = world.towns.find((t) => t.id === WORLD_CONTENT.towns.find((x) => x.start)?.id)
   assert.ok(start)
-  const radius = Math.max(1, Math.min(flat.radius - 20, 160))
-  let count = 0
-  let high = 0
-  let max = 0
-  for (let y = Math.max(0, start.y - radius); y <= Math.min(ow.height - 1, start.y + radius); y++) {
-    for (let x = Math.max(0, start.x - radius); x <= Math.min(ow.width - 1, start.x + radius); x++) {
-      if ((x - start.x) ** 2 + (y - start.y) ** 2 > radius * radius) continue
-      const elevation = ow.elevation[y * ow.width + x]
-      count++
-      max = Math.max(max, elevation)
-      if (elevation >= flat.level + 2) high++
+  const within = (r: number) => {
+    let n = 0, max = 0, above = 0
+    for (let y = Math.max(0, start.y - r); y <= Math.min(ow.height - 1, start.y + r); y++) {
+      for (let x = Math.max(0, start.x - r); x <= Math.min(ow.width - 1, start.x + r); x++) {
+        if ((x - start.x) ** 2 + (y - start.y) ** 2 > r * r) continue
+        const e = ow.elevation[y * ow.width + x]
+        n++
+        max = Math.max(max, e)
+        if (e > flat.level) above++
+      }
     }
+    return { n, max, above }
   }
-  assert.ok(count > 0)
-  assert.ok(max <= flat.level + 1, `start area max elevation ${max}`)
-  assert.ok(high / count < 0.01, `start area high-elevation ratio ${(high / count * 100).toFixed(2)}%`)
-  const startScenery = new Set(['tree_oak', 'tree_pine', 'tree_cherry', 'tree_palm', 'tree_dead', 'tree_snowpine', 'rock_large'])
-  assert.ok(
-    ow.props.some((p) => startScenery.has(p.prop) && Math.hypot(p.x - start.x, p.y - start.y) < 80),
-    'spawn area should retain authored/natural scenery',
-  )
+  const core = within(flat.radius - flat.jitter)
+  assert.ok(core.n > 0)
+  assert.equal(core.max, flat.level, `no terrace inside the basin core (max level ${core.max})`)
+  const reach = within(flat.radius + flat.jitter + flat.transition)
+  assert.ok(reach.max > flat.level + 1, 'the world keeps real highlands once the basin ends')
+  assert.ok(reach.above > 0)
+  const scenery = ow.props.filter((p) => /^tree_|^bush$|^fence$/.test(p.prop) && Math.hypot(p.x - start.x, p.y - start.y) < 60)
+  assert.ok(scenery.some((p) => p.prop === 'fence') && scenery.filter((p) => p.prop.startsWith('tree_')).length >= 40, 'trees and fences survive in the start area')
+
+  // The cap runs after rivers, sites and biomes are decided: without it the towns, hamlets, landmarks and rivers sit on the same tiles.
+  const capped = WORLD_CONTENT.world.overworld.startFlat
+  WORLD_CONTENT.world.overworld.startFlat = undefined
+  let open: World
+  try { open = buildWorld() } finally { WORLD_CONTENT.world.overworld.startFlat = capped }
+  const mouths = new Set(info.features.dungeons.map((d) => d.id))
+  const places = (w: World) => w.towns.filter((t) => !mouths.has(t.id)).map((t) => `${t.id}@${t.x},${t.y}`).join('|')
+  assert.equal(places(world), places(open), 'town, hamlet and landmark positions are untouched by the start basin')
+  for (const t of world.towns.filter((x) => mouths.has(x.id))) {
+    const o = open.towns.find((x) => x.id === t.id)
+    assert.ok(o && Math.hypot(o.x - t.x, o.y - t.y) <= 8, `dungeon mouth ${t.id} stays near its uncapped spot (it re-seats on level ground)`)
+  }
+  // Water bodies stay put; only a route may cross a river a few tiles away (water <-> bridge).
+  const openMap = open.maps[open.startMap]
+  let moved = 0
+  for (let i = 0; i < ow.terrain.length; i++) {
+    const a = CONTENT.terrain[ow.terrain[i]], b = CONTENT.terrain[openMap.terrain[i]]
+    if (a.swim === b.swim) continue
+    assert.ok(a.key === 'bridge' || b.key === 'bridge', `water tile ${i % ow.width},${Math.floor(i / ow.width)} changed to ${a.key} (was ${b.key})`)
+    moved++
+  }
+  assert.ok(moved < 200, `only a bridge crossing moved (${moved} tiles)`)
+  const fences = (m: GameMap) => m.props.filter((p) => p.prop === 'fence').map((p) => `${p.x},${p.y}`).join('|')
+  assert.equal(fences(ow), fences(openMap), 'fences stay exactly where they were')
 })
 
 test('every warp lands on a walkable, non-warp tile and is itself enterable', () => {

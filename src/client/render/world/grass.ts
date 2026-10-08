@@ -9,6 +9,7 @@ import type { TerrainAtlas } from './atlas.ts'
 import type { ClimateGrid } from './climate.ts'
 import { hash2 } from './coords.ts'
 import { terrainTint, type TerrainSampler } from './terrain.ts'
+import { createTrampleField, TRAMPLE_GLSL, trampleUniforms, type Bender, type TrampleField } from './trample.ts'
 import { applyWind } from './wind.ts'
 
 export interface GrassBender { x: number; y: number; z: number; r: number }
@@ -20,7 +21,12 @@ export interface GrassLayer {
   /** Tufts of one chunk (streamed overworld); the caller owns the meshes. Climate tints follow the ground. */
   buildChunk(sampler: TerrainSampler, cx: number, cy: number, chunk: number, perTile: number, climate: ClimateGrid | null): THREE.InstancedMesh[]
   disposeChunk(meshes: THREE.InstancedMesh[]): void
+  /** Instant bend by up to maxBenders actors (battle dioramas, low quality): gone the frame the actor leaves. */
   setBenders(list: GrassBender[]): void
+  /** Lingering bend (overworld): actors stamp the trample map, which decays after they pass. */
+  updateTrample(dt: number, focusX: number, focusZ: number, benders: readonly Bender[], accept?: (x: number, z: number, y: number) => boolean): void
+  /** Drops every lingering trail. */
+  clearTrample(): void
   /** Hide chunks farther than radius from (x, z). */
   cull(x: number, z: number, radius: number): void
   /** Re-derive tuft textures if base terrain textures (re)loaded. */
@@ -89,8 +95,9 @@ function deriveTuft(avg: Vec3, seed: number): HTMLCanvasElement {
   return c
 }
 
-export function createGrassLayer(assets: AssetStore, atlas: TerrainAtlas): GrassLayer {
+export function createGrassLayer(assets: AssetStore, atlas: TerrainAtlas, opts: { trample?: boolean } = {}): GrassLayer {
   const G = RENDER.grass
+  const trample: TrampleField | null = opts.trample ? createTrampleField() : null
   const group = new THREE.Group()
   group.name = 'grass'
   const geometry = tuftGeometry()
@@ -103,6 +110,10 @@ export function createGrassLayer(assets: AssetStore, atlas: TerrainAtlas): Grass
     uBendSink: { value: G.bendSink },
     uBendCore: { value: G.bendCore },
     uBendLevel: { value: CONTENT.config.world.levelHeight * 1.5 },
+    uTrampleBend: { value: G.trample.strength },
+    uTrampleSink: { value: G.trample.sink },
+    uTrampleDarken: { value: G.trample.darken },
+    ...trampleUniforms,
   }
   const grassKeys = CONTENT.terrain.filter((t) => t.tallGrass)
   const materials = new Map<string, { material: THREE.MeshLambertMaterial; derived: boolean; avgKey: string }>()
@@ -121,7 +132,9 @@ export function createGrassLayer(assets: AssetStore, atlas: TerrainAtlas): Grass
     const material = new THREE.MeshLambertMaterial({ map, alphaTest: G.alphaTest, side: THREE.DoubleSide })
     applyWind(material, 'grass', {
       uniforms,
-      pars: `uniform vec4 uBenders[${maxB}];\nuniform float uBendStrength, uGrassHeight, uBendSink, uBendCore, uBendLevel;`,
+      pars: `uniform vec4 uBenders[${maxB}];\nuniform float uBendStrength, uGrassHeight, uBendSink, uBendCore, uBendLevel, uTrampleBend, uTrampleSink;\nvarying float vApTramp;\n${TRAMPLE_GLSL}`,
+      fragPars: 'varying float vApTramp;\nuniform float uTrampleDarken;',
+      fragBody: 'diffuseColor.rgb *= 1.0 - vApTramp * uTrampleDarken;',
       body: `
   vec2 apBend = vec2(0.0);
   float apSink = 0.0;
@@ -134,9 +147,11 @@ export function createGrassLayer(assets: AssetStore, atlas: TerrainAtlas): Grass
     apBend += (dist > 1e-3 ? d / dist : vec2(0.0)) * f;
     apSink = max(apSink, f);
   }
+  vec3 apTr = apTrample(apRoot.xz);
   float apK = clamp(position.y / uGrassHeight, 0.0, 1.0);
-  transformed.xz += apBend * uBendStrength * apK;
-  transformed.y *= 1.0 - apSink * uBendSink * apK;`,
+  transformed.xz += apBend * uBendStrength * apK + apTr.xy * uTrampleBend * apK;
+  transformed.y *= 1.0 - max(apSink * uBendSink, apTr.z * uTrampleSink) * apK;
+  vApTramp = apTr.z;`,
     })
     materials.set(t.key, { material, derived: !own, avgKey: atlas.averageColor(t.key).join(',') })
     return material
@@ -216,6 +231,8 @@ export function createGrassLayer(assets: AssetStore, atlas: TerrainAtlas): Grass
         else benders[i].set(0, -1e4, 0, 0)
       }
     },
+    updateTrample(dt, focusX, focusZ, list, accept) { trample?.update(dt, focusX, focusZ, list, accept) },
+    clearTrample() { trample?.clear() },
     cull(x, z, radius) {
       for (const c of chunks) c.mesh.visible = Math.hypot(c.cx - x, c.cz - z) < radius
     },
@@ -233,6 +250,7 @@ export function createGrassLayer(assets: AssetStore, atlas: TerrainAtlas): Grass
     },
     dispose() {
       clear()
+      trample?.dispose()
       geometry.dispose()
       for (const m of materials.values()) { m.material.map?.dispose(); m.material.dispose() }
       materials.clear()

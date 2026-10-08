@@ -1645,10 +1645,10 @@
    "company": "NVIDIA",
    "country": "US",
    "category": "reasoning",
-   "family": "nemotron",
+   "family": "nemotron-3-super",
    "stage": 1,
-   "evolvesTo": "nemotron",
-   "evolveLevel": 34,
+   "evolvesTo": "",
+   "evolveLevel": 0,
    "types": [
     "open",
     "compute"
@@ -1670,7 +1670,7 @@
    "capabilityScore": 54,
    "hotnessScore": 42,
    "statRationale": "12B 激活→速度快；120B 总参数→HP 高。 [BST 440 ∈ SR 420-490; 强项 spe/hp; 能力 54/热度 42]",
-   "dexEntryZh": "NVIDIA 在 2026 年 3 月的 GTC 上推出的开源混合 MoE：总参数 120B、激活 12B，采用 Mamba-Transformer 混合架构，专为多智能体的复杂推理做效率优化。前作是 Nemotron 3 Nano，之后长大为 550B 的 Nemotron 3 Ultra。",
+   "dexEntryZh": "NVIDIA 在 2026 年 3 月的 GTC 上推出的开源混合 MoE：总参数 120B、激活 12B，采用 Mamba-Transformer 混合架构，专为多智能体的复杂推理做效率优化。前作是 Nemotron 3 Nano；同代更大的 Nemotron 3 Ultra 在图鉴里另成一支。",
    "lookZh": "背着单风扇显卡包的绿发少年，脖子上缠着小青蛇",
    "design": {
     "chibiDesign": "Chibi HD-2D pixel sprite, ~2 heads tall, the younger Nemotron boy: the same green-haired tech kid before his full gear. Hair: spiky NVIDIA-green (#76B900) with a small spiral swirl on one side, black undercut. Eyes: bright green, faint circuit-trace irises, eager grin. Outfit: a too-big black leather jacket with rolled sleeves, dark-grey tee with a glowing green chip print, cargo shorts, small heatsink-fin sneakers. Signature companion: a baby green mamba wrapped around his neck like a scarf (hybrid Mamba-Transformer), tail tip a tiny watchful eye. On his back: a compact GPU backpack with a single spinning fan and a thin green RGB strip. Prop: a small open notebook (an open recipe in the making). Palette: NVIDIA green #76B900, jet black #111111, gunmetal #4A4F55, white. Pose: bouncing on his toes, one fist pumped.",
@@ -1681,8 +1681,7 @@
      "https://en.wikipedia.org/wiki/Nemotron",
      "https://openrouter.ai/nvidia/nemotron-3-super-120b-a12b"
     ]
-   },
-   "lineRef": "nemotron"
+   }
   },
   {
    "id": "sd-3-5",
@@ -3092,7 +3091,7 @@
   {
    "id": "nemotron",
    "set": {
-    "stage": 2
+    "stage": 1
    }
   },
   {
