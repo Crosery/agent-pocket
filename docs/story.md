@@ -199,6 +199,23 @@ Gates: `gate:snowpass` 山口守卫 (`hiddenIfFlag: badge:compute`); `gate:ruins
 `setFlag gate:ruins` + `hideNpc`). Before the starter, eight patrol NPCs stand in the start town's four exits
 (`hiddenIfFlag: starter`).
 
+## Branches and the hidden storyline (issue #25)
+
+Four `choice` steps decide a flag value and pay out differently; later scripts read the value with `ifFlag … equals`.
+`tests/story-branches.test.ts` asserts the values, the per-option rewards, the readers and that no branch touches `main`.
+
+| choice (where) | flag = options | rewards per option | read by |
+|---|---|---|---|
+| 零 at 像素港 (`rival-pixelport`) | `rival:bond` = `ally` / `rival` / `calm` | cache ×3 + refill / 3000 + rare ball / 5 balls | `rival-frost` (intel or rematch line, ally gift), `rival-final` (greeting, parting gift) |
+| 被困研究员 after the boss (`dt-scientist`) | `choice:dataset` = `public` / `lab` / `keep` | 3000 / rare dataset / rare chip | `professor`, `dc-chief` |
+| 圣殿长老 before the champion (`tp-elder`) | `temple:blessing` = `accept` / `refuse` | full restore ×2 + respawn / heal | `champion` (refusers get a gold token after the win) |
+| 守档人 (hidden line, below) | `zero:ending` = `lab` / `rival` / `self` | 2 finetune sets / dataset + restore / quantum bit + gold token | `professor` (gift), `rival-final` |
+
+Hidden storyline 「第 0 号服务器」 (quest `hq-zero`, started only by finding the terminal): `zero-terminal` (`cave-core:4`,
+deep in the second cave) sets `zero:t1` → `zero-rack` (`region:desert`, appears after t1) takes 3 data shards (or 3000 Token
+coins, so nothing soft-locks) and sets `zero:t2` → `zero-keeper` (`agi-house1:resident-2`, appears after t2) hands over the
+original training log, one-time (`zero:ending`). The professor, mom and the rival also react to progress (`badgeTiers`).
+
 ## Side quests
 
 | id | name | type | where | reward |
@@ -215,6 +232,7 @@ Gates: `gate:snowpass` 山口守卫 (`hiddenIfFlag: badge:compute`); `gate:ruins
 | sq-arena | 开源擂台 | battle | 开源林镇 擂台主·阿源 | 1000 + chip-unit-test |
 | sq-lostkid | 迷路的孩子 | visit (`cave-core:3`) | 衡理镇 焦急的妈妈 | 2500 + hyper-cache ×3 |
 | sq-chaos | 幻觉研究 | catch type (1 chaos) | 枢纽市 诺瓦 | chip-hallucination-nova |
+| hq-zero | 第 0 号服务器（隐藏） | hidden chain (cave → desert → temple town) | 守档人 | rare-ball ×2 + the chosen ending |
 | sq-ruins | 遗迹铭文 | visit 2 spots (`quest:11`, `quest:18`) | 圣殿镇 石教授 | agi-key |
 
 Also: two move tutors (和弦沙城 曲, 枢纽市 栈: `takeMoney` + chip), one-time gift NPCs on quest spots, a desert
@@ -232,6 +250,9 @@ merchant `shop`, optional trainers (外卖骑手, 岛主, 机房主管 behind `l
 | `gate:ruins` | ruins gate keeper | gate keeper, final rival |
 | `gift:lab-pass`, `gift:<npc>` | gift scripts | one-time gifts |
 | `champion` `legend` | champion script | champion, professor, temple fan |
+| `rival:bond` `choice:dataset` `temple:blessing` `zero:ending` | the branch choices above | rivals, professor, champion, data-center chief |
+| `zero:t1` `zero:t2` `zero:fed` `gift:professor-zero` | hidden line | cabinet / keeper visibility, professor |
+| `lesson:<id>`, `lesson:types-lost`, `ob:typeLesson`, `exchange:<offer>` | `teach`, the type-lesson battle, the exchange desk | manual, objective, tips |
 | `sq-<quest>:<step>` | quest NPCs | quest NPCs (`started`, `given`, `found`, `rescued`, `a`, `b`, `s1`, `s2`, `done`) |
 | `trainer:<id>` | client | trainer scripts (after-line, post-battle rewards) |
 | `{chain}:t{k}`, `{chain}:done` | legend tablets / seer | next tablet, seer visibility, one-time encounter |
