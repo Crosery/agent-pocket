@@ -5,6 +5,7 @@ import { CONTENT, t } from '../../../shared/content/index.ts'
 import { createGridNav, el, rarityBadge, typeChip } from '../widgets.ts'
 import { frame, H, openScreen, pressed, uiSfx, type ScreenEnv } from './base.ts'
 import { SCREENS } from './config.ts'
+import { extraEnglishName } from './logic.ts'
 import { creatureImg } from './sprites.ts'
 
 export function starterScreen(env: ScreenEnv, options: SpeciesDef[]): Promise<string> {
@@ -19,7 +20,7 @@ export function starterScreen(env: ScreenEnv, options: SpeciesDef[]): Promise<st
       const card = el('button', { class: 'aps-starter-card aps-card', attrs: { type: 'button', 'aria-label': sp.nameZh }, vars: glow ? { '--glow': glow, '--i': i } : { '--i': i } }, [
         el('div', 'aps-starter-stage', [el('div', 'aps-starter-pedestal'), creatureImg(ctx.assets, sp.id, { className: 'aps-starter-sprite' })]),
         el('div', { class: 'aps-starter-name ap-model-name', text: sp.nameZh, title: sp.nameZh, attrs: { 'aria-label': sp.nameZh } }),
-        el('div', { class: 'aps-starter-en ap-dim ap-model-name', text: sp.nameEn, title: sp.nameEn, attrs: { 'aria-label': sp.nameEn } }),
+        extraEnglishName(sp) ? el('div', { class: 'aps-starter-en ap-dim ap-model-name', text: sp.nameEn, title: sp.nameEn, attrs: { 'aria-label': sp.nameEn } }) : null,
         el('div', 'aps-chips', [...sp.types.map((ty) => typeChip(ty)), rarityBadge(sp.rarity)]),
       ])
       card.addEventListener('mouseenter', api.guard(() => { if (nav.index !== i) { nav.index = i; uiSfx(env, 'move'); paint() } }))

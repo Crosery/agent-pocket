@@ -64,10 +64,15 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
       cell.classList.toggle('is-fainted', !!c && c.hp <= 0)
       cell.setAttribute('aria-label', c ? creatureName(c) : t('screens.box.emptySlot'))
       setChildren(cell, c ? [
-        creatureIcon(ctx.assets.creatureImageUrl(c.speciesId), c.shiny, withName ? SCREENS.box.partyIconSize : SCREENS.box.cellIconSize),
+        // Party column: the level sits under the icon so a long name keeps both text lines for itself.
+        withName
+          ? el('span', 'aps-box-pico', [
+            creatureIcon(ctx.assets.creatureImageUrl(c.speciesId), c.shiny, SCREENS.box.partyIconSize),
+            el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) }),
+          ])
+          : creatureIcon(ctx.assets.creatureImageUrl(c.speciesId), c.shiny, SCREENS.box.cellIconSize),
         withName ? el('span', 'aps-box-pinfo', [
           el('span', { class: 'aps-box-pname ap-model-name', text: creatureName(c), title: creatureName(c), attrs: { 'aria-label': creatureName(c) } }),
-          el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) }),
         ]) : null,
       ] : [])
     }
