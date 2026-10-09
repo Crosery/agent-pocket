@@ -85,6 +85,7 @@ export function createFallbackScreens(ctx: GameContext): Screens {
     async manual() { unavailable() },
     async box() { unavailable() },
     async worldMap() { unavailable(); return null },
+    async anchorPicker() { unavailable(); return null },
     async quests() { unavailable() },
     async settings() { unavailable() },
     async online() { unavailable() },

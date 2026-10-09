@@ -39,6 +39,10 @@
     "gridEveryTiles": 512,
     "cursorGlyph": "diamond",
     "placeGlyphs": {"town": "diamond", "hamlet": "mHouse", "landmark": "star", "dungeon": "mWarp"},
+    "anchorGlyphs": {"minor": "mAnchor", "grand": "mAnchorGrand"},
+    "pinSpacingUnits": 14,
+    "pinTouchPx": 44,
+    "anchorPalettes": {"on": {}, "off": {"m": "#b8c0d0", "c": "#8a93a6", "b": "#5b6477", "S": "#4a5163", "o": "#0d0a08"}},
     "placePalettes": {"fly": {"h": "#fff6c8", "g": "#ffd257", "o": "#2a1a06"}, "known": {"h": "#d8f0ff", "g": "#7fb8e8", "o": "#0d1626"}, "locked": {"h": "#b8c0d0", "g": "#6b7488", "o": "#0d0a08"}},
     "flyList": 12
   }

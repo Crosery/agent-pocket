@@ -187,6 +187,7 @@
     "partyIconSize": 24
   },
   "worldMap": {"townGlyph": "diamond", "playerGlyph": "mPlayer", "visitedPalette": {"h": "#fff6c8", "g": "#ffd257", "o": "#2a1a06"}, "unvisitedPalette": {"h": "#b8c0d0", "g": "#6b7488", "o": "#0d0a08"}, "minLabelTiles": 260, "padUnits": 6},
+  "anchors": {"visibleRows": 8, "compactVisibleRows": 5, "reserveUnits": {"base": 40, "home": 78}},
   "quests": {
     "tabs": [
       {"id": "main", "label": "screens.quests.tab.main", "kinds": ["main"], "done": false},

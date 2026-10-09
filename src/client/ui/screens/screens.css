@@ -1042,3 +1042,39 @@ html.ap-compact .aps-set-page.is-options { columns: 1; }
 .aps-credit { text-align: center; margin-bottom: calc(var(--u) * 10); }
 .aps-credit-role { margin-bottom: calc(var(--u) * 2); }
 .aps-credit-name { color: var(--ap-text); }
+
+/* ------------------------------------------------------------------ teleport anchors (anchorpicker.ts, worldmap.ts pins) */
+
+.aps-anchor .aps-bag-left { gap: calc(var(--u) * 6); }
+.aps-anchor-home {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 8);
+  width: 100%;
+  min-height: calc(var(--u) * 30);
+  padding: calc(var(--u) * 4) calc(var(--u) * 9);
+  text-align: left;
+  white-space: normal;
+}
+.aps-anchor-home-icon { flex: none; }
+.aps-anchor-home-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 1); }
+.aps-anchor-home-name { font-size: calc(var(--u) * 10); }
+.aps-anchor-home-dist { flex: none; }
+.aps-anchor-row-icon { flex: none; margin-right: calc(var(--u) * 6); align-self: center; }
+.aps-anchor .ap-row.is-disabled .aps-anchor-row-icon { opacity: 0.5; }
+.aps-map-anchorbar { display: flex; flex-direction: column; gap: calc(var(--u) * 3); }
+.aps-map-anchorbtn { display: flex; align-items: center; gap: calc(var(--u) * 6); justify-content: flex-start; text-align: left; width: 100%; }
+.aps-map-anchorbtn.is-home { color: var(--ap-gold-hi); }
+html.ap-compact .aps-map-anchorbar { flex-direction: row; flex-wrap: wrap; }
+html.ap-compact .aps-map-anchorbtn { width: auto; flex: 1 1 calc(var(--u) * 70); }
+.aps-map-town.is-anchor:not(.is-active) .aps-map-town-name { display: none; }
+.aps-map-town.is-anchor.is-on .ap-glyph { filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(120, 232, 255, 0.85)); }
+.aps-map-town.is-anchor.is-off { cursor: pointer; opacity: 0.85; }
+html.ap-compact .aps-anchor-home { min-height: calc(var(--u) * 26); }
+html[data-touch-controls='on'] .aps-anchor-home, html[data-touch-controls='on'] .aps-map-anchorbtn { min-height: 46px; }
+.aps-map-town-badge { position: absolute; left: calc(50% + var(--u) * 3); top: calc(var(--u) * -2); transform: scale(0.75); transform-origin: 0 100%; pointer-events: none; }
+.aps-map-town.has-anchor.is-on .aps-map-town-badge { filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(120, 232, 255, 0.85)); }
+html.ap-compact .aps-anchor .aps-item-icon, html.ap-compact .aps-anchor .aps-sec { display: none; }
+html[data-touch-controls='on'] .aps-map-town { min-width: 46px; min-height: 46px; }
+html[data-touch-controls='on'] .aps-map-town.is-anchor { min-width: 46px; min-height: 46px; }

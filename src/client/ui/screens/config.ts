@@ -140,6 +140,8 @@ export interface ScreensConfig {
     padUnits: number
   }
   quests: { tabs: (MenuEntry & { kinds: ('main' | 'side')[]; done: boolean })[]; visibleRows: number; compactVisibleRows: number }
+  /** Teleport-anchor picker (anchorpicker.ts): rows of the destination list. */
+  anchors: { visibleRows: number; compactVisibleRows: number; reserveUnits: { base: number; home: number } }
   moveCategoryColors: Record<'physical' | 'special' | 'status', string>
   badges: { tintLight: number; tintDark: number; cols: number; compactCols: number }
   settings: {

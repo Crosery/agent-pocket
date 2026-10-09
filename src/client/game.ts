@@ -3,11 +3,12 @@
 // are discovered with import.meta.glob so the game still runs, with fallbacks, while they are missing.
 import type { Creature, QuestDef, SaveData, Settings } from '../shared/types.ts'
 import type { ClientMsg, PublicProfile } from '../shared/protocol.ts'
-import type { AudioManager, BattleRunner, GameClock, GameContext, GameData, GameEvents, Minimap, Screens } from './contracts.ts'
+import type { AudioManager, BattleRunner, GameClock, GameContext, GameData, GameEvents, Minimap, Screens, WorldFx } from './contracts.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { toView } from '../shared/creature.ts'
 import { buildWorld, worldAnchors } from '../shared/world/index.ts'
 import { getMap } from '../shared/world/worldapi.ts'
+import { anchorKindSpec, anchorSpotFromId, parseAnchorId } from '../shared/world/anchors.ts'
 import {
   applyDocumentSettings, createAssetStore, createAudio, createClock, createEventBus, createInput, createSaveManager,
 } from './core/index.ts'
@@ -19,6 +20,7 @@ import { createOnboarding } from './onboarding/index.ts'
 import { createFallbackBattleRunner, createFallbackScreens, createOverworld, GAME, type MultiplayerHooks, type OverworldExt } from './world/index.ts'
 import { ownedKeyItem } from './world/save-ops.ts'
 import { flyLanding, resolvePlace } from './world/explore.ts'
+import { anchorGateMessage, anchorLanding, anchorName, canAnchorTravel } from './world/anchors.ts'
 import { createDebugOverlay } from './debug-overlay.ts'
 import type { DevKit } from './dev/kit.ts'
 
@@ -275,6 +277,12 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     multiplayer: () => hooks,
     onLoadProgress: (p, name) => loader.map(p, name),
     ...(screensMod?.questHudText ? { questText: screensMod.questHudText } : {}),
+    anchorUse: async (spot) => {
+      const gate = canAnchors() ? null : anchorGateMessage(ctx.save) ?? t('world.anchor.blocked')
+      if (gate) { ui.toast(gate, 'warn'); return }
+      const dest = await screens.anchorPicker({ hereId: spot.id })
+      if (dest) await anchorTravelTo(dest)
+    },
   })
   ctxObj.overworld = overworld
   const onboarding = createOnboarding(ctx, overworld, uiRoot)
@@ -359,6 +367,23 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     ui.toast(t('world.fly.arrive', { name: ctx.save.name, town: place.nameZh }), 'info')
   }
 
+  const canAnchors = () => canAnchorTravel(ctx.save, overworld.mapId ? getMap(world, overworld.mapId)?.kind ?? null : null)
+
+  /** Teleports to an activated anchor: the fly arrival flow (fade, landing tile search), no town, no distance credit. */
+  async function anchorTravelTo(anchorId: string): Promise<void> {
+    const spot = parseAnchorId(anchorId) ? anchorSpotFromId(anchorId) : null
+    const land = spot ? anchorLanding(world, spot) : null
+    if (!spot || !land) { ui.toast(t('world.anchor.noLanding'), 'warn'); return }
+    if (!canAnchors()) { ui.toast(anchorGateMessage(ctx.save) ?? t('world.anchor.blocked'), 'warn'); return }
+    const spec = anchorKindSpec(spot.kind)
+    const here = overworld.player
+    ctx.world.spawnFx(spec.travelFx as WorldFx, here.x, here.y, here.elev)
+    audio.playSfx(spec.travelSfx)
+    await overworld.enterMap(land.map.id, land.x, land.y, 'up', true)
+    ctx.world.spawnFx(spec.arriveFx as WorldFx, land.x + 0.5, land.y + 0.5, ctx.world.elevationAt(land.x + 0.5, land.y + 0.5))
+    ui.toast(t('world.anchor.arrive', { place: anchorName(world, spot) }), 'info')
+  }
+
   function globalKeys(): void {
     if (input.pressed('debug')) { input.consume('debug'); debugOverlay.toggle() }
     if (modal || !overworld.free) return
@@ -366,9 +391,11 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     else if (input.pressed('map')) {
       input.consume('map')
       const fly = canFly()
+      const anchors = canAnchors()
       void runModal(async () => {
-        const town = await screens.worldMap({ fly })
-        if (town && fly) await flyTo(town)
+        const dest = await screens.worldMap({ fly, anchors })
+        if (!dest) return
+        if (parseAnchorId(dest)) { if (anchors) await anchorTravelTo(dest) } else if (fly) await flyTo(dest)
       })
     } else if (input.pressed('bag')) {
       input.consume('bag')

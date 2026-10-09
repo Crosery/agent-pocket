@@ -4,10 +4,13 @@
 // only explored cells are sampled, so the unexplored infinite void costs nothing. Overlay: discovered places
 // (towns, hamlets, landmarks, dungeons), frontier province names with danger stars, core region names and the
 // player. Arrow keys / stick / drag pan; zoom keys / wheel / pinch / buttons zoom; places snap to the centre
-// cursor. In fly mode the selected fly target (visited town or discovered place) resolves its id; else null.
+// cursor. In fly mode the selected fly target (visited town or discovered place) resolves its id; in anchor mode an
+// activated teleport anchor does (discovered-but-inactive anchors are pinned grey); else null.
 import type { ChunkProvider, GameMap, RegionDef, TownDef } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
 import { distanceFromOrigin, isInfinite } from '../../../shared/world/worldapi.ts'
+import { anchorSpotFromId, type AnchorSpot } from '../../../shared/world/anchors.ts'
+import { anchorGroup, anchorName, anchorPlace, isUnlocked, travelDestinations } from '../../world/anchors.ts'
 import { EXPLORE, type PlaceKind } from '../../world/explore-config.ts'
 import { fogPagesFor, isFlyTarget, knownPlaces, placeKindOf } from '../../world/explore.ts'
 import { mapPings } from '../../world/places.ts'
@@ -16,7 +19,7 @@ import { FogPages, fogGrid } from '../fog.ts'
 import { decodeExplored } from '../minimap.ts'
 import { bakeChunkPixels, bakeMapPixels, regionCentroids, shadeTile, terrainColor, type RegionLabel } from '../mapbake.ts'
 import { parseColor, type Bitmap, type RGBA } from '../pixel.ts'
-import { onUIScaleChange } from '../scale.ts'
+import { getUIScale, onUIScaleChange } from '../scale.ts'
 import { button, el } from '../widgets.ts'
 import { provincesIn, quickSample, regionUnder, type ProvinceLabel } from '../worldgeo.ts'
 import { backPressed, frame, icon, infoRow, meterIcons, openScreen, pressed, sectionTitle, setChildren, uiSfx, type ScreenEnv } from './base.ts'
@@ -117,10 +120,15 @@ function bakeTile(env: BakeEnv, L: number, i: number, j: number): TileEntry {
   return { cv, stamp, full }
 }
 
-/** Place marker data for the overlay. */
-interface PlaceMark { place: TownDef; kind: PlaceKind; fly: boolean; el: HTMLButtonElement }
+type MarkKind = PlaceKind | 'anchor' | 'anchorGrand'
 
-export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<string | null> {
+/**
+ * Place or teleport-anchor marker. A place keeps its pin and wears its anchor (`anchor`, `on`); an anchor in the
+ * wild is a pin of its own. `fly`: the place can be flown to once the mode allows it.
+ */
+interface PlaceMark { id: string; name: string; x: number; y: number; kind: MarkKind; place: TownDef | null; anchor: AnchorSpot | null; on: boolean; fly: boolean; el: HTMLButtonElement }
+
+export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean; anchors?: boolean }): Promise<string | null> {
   const { ctx } = env
   const world = ctx.data.world
   const map = world.maps[world.startMap]
@@ -144,17 +152,40 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
   const player = overworldPosition(world, ctx.overworld.player.map, ctx.overworld.player.x, ctx.overworld.player.y)
   if (player) fog.revealAround(player.x, player.y, UI_CONFIG.minimap.fog.revealRadiusChunks)
 
-  const places = knownPlaces(world, ctx.save, fog).map((place) => ({ place, kind: placeKindOf(world, place), fly: isFlyTarget(world, ctx.save, place) }))
-  const pickable = opts.fly ? places.filter((p) => p.fly) : places
-  if (opts.fly && !pickable.length) {
-    ctx.ui.toast(t('screens.map.noFlyTargets'), 'warn')
+  const places: Omit<PlaceMark, 'el'>[] = knownPlaces(world, ctx.save, fog).map((place) => ({
+    id: place.id, name: place.nameZh, x: place.x, y: place.y, kind: placeKindOf(world, place), place, anchor: null, on: false, fly: isFlyTarget(world, ctx.save, place),
+  }))
+  // Teleport anchors: every one seen (grey until activated); in fly-only mode they would be pins nobody can use.
+  const anchorsOn = !!opts.anchors
+  const pins: Omit<PlaceMark, 'el'>[] = []
+  if (!opts.fly || anchorsOn) {
+    const hosts = new Map(places.map((m) => [m.id, m]))
+    for (const id of new Set([...(ctx.save.anchors?.seen ?? []), ...(ctx.save.anchors?.unlocked ?? [])])) {
+      const spot = anchorSpotFromId(id)
+      if (!spot) continue
+      const host = hosts.get(anchorPlace(world, spot)?.id ?? '')
+      if (host && !host.anchor) { host.anchor = spot; host.on = isUnlocked(ctx.save, id); continue }
+      pins.push({ id, name: anchorName(world, spot), x: spot.cx - 0.5, y: spot.cy - 0.5, kind: spot.kind === 'grand' ? 'anchorGrand' : 'anchor', place: null, anchor: spot, on: isUnlocked(ctx.save, id), fly: false })
+    }
+  }
+  const travel = opts.fly || anchorsOn
+  const byAnchor = (m: Pick<PlaceMark, 'anchor' | 'on'>) => anchorsOn && !!m.anchor && m.on
+  const byFly = (m: Pick<PlaceMark, 'place' | 'fly'>) => opts.fly && !!m.place && m.fly
+  /** Can this marker be picked as the destination in the current mode? */
+  const goes = (m: PlaceMark | Omit<PlaceMark, 'el'>) => byAnchor(m) || byFly(m)
+  /** What picking it resolves: its anchor (works without the town-fly gate) or its place. */
+  const target = (m: PlaceMark) => (byAnchor(m) ? m.anchor!.id : m.id)
+  const pickable = [...places, ...pins].filter(goes)
+  if (travel && !pickable.length) {
+    ctx.ui.toast(t(anchorsOn ? 'screens.map.noTargets' : 'screens.map.noFlyTargets'), 'warn')
     return Promise.resolve(null)
   }
+  const homeDest = anchorsOn ? travelDestinations(world, ctx.save, player ?? map.spawn).home : null
   if (!cache.regions) cache.regions = regionCentroids(map).filter((r) => map.regions[r.index]?.nameZh && !map.regions[r.index].isTown && r.tiles >= cfg.minLabelTiles)
   const coreRegions = cache.regions
 
-  return openScreen<string | null>(env, `aps-map${opts.fly ? ' is-fly' : ''}`, (api) => {
-    const f = frame(env, { title: t(opts.fly ? 'screens.map.flyTitle' : 'screens.map.title'), glyph: 'map', onClose: api.guard(() => api.close(null)) })
+  return openScreen<string | null>(env, `aps-map${travel ? ' is-fly' : ''}`, (api) => {
+    const f = frame(env, { title: t(anchorsOn ? 'screens.map.anchorTitle' : opts.fly ? 'screens.map.flyTitle' : 'screens.map.title'), glyph: 'map', onClose: api.guard(() => api.close(null)) })
     const cv = el('canvas', 'aps-map-canvas')
     const labels = el('div', 'aps-map-labels')
     const markers = el('div', 'aps-map-marks')
@@ -166,7 +197,7 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
     f.body.append(el('div', 'aps-map-layout', [view, side]))
     f.setHints([
       ['lr', t('screens.map.hint.pan')], ['minimap', t('screens.map.hint.zoomIn')], ['bike', t('screens.map.hint.zoomOut')],
-      ['run', t('screens.map.hint.next')], ...(opts.fly ? [['confirm', t('screens.map.hint.fly')] as ['confirm', string]] : []),
+      ['run', t('screens.map.hint.next')], ...(travel ? [['confirm', t(anchorsOn ? 'screens.map.hint.warp' : 'screens.map.hint.fly')] as ['confirm', string]] : []),
       ['cancel', t('screens.hint.back')],
     ])
     api.root.append(f.el)
@@ -301,15 +332,24 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
       return show
     }
 
-    const marks: PlaceMark[] = places.map((p) => {
-      const palette = p.fly ? WM.placePalettes.fly : opts.fly ? WM.placePalettes.locked : WM.placePalettes.known
+    const marks: PlaceMark[] = [...places, ...pins].map((p) => {
+      const pin = !p.place
+      const palette = pin
+        ? WM.anchorPalettes[p.on ? 'on' : 'off']
+        : p.fly ? WM.placePalettes.fly : opts.fly ? WM.placePalettes.locked : WM.placePalettes.known
+      const glyph = p.place ? WM.placeGlyphs[p.kind as PlaceKind] ?? cfg.townGlyph : WM.anchorGlyphs[p.anchor!.kind]
+      const dim = pin ? travel && !p.on : opts.fly && !p.fly
       const node = el('button', {
-        class: `aps-map-town is-${p.kind}${p.fly ? ' is-visited' : ''}${opts.fly && !p.fly ? ' is-locked' : ''}`,
-        attrs: { type: 'button', 'aria-label': p.place.nameZh },
-      }, [icon(WM.placeGlyphs[p.kind] ?? cfg.townGlyph, { palette }), el('span', { class: 'aps-map-town-name', text: p.place.nameZh })])
+        class: `aps-map-town is-${p.kind}${p.fly ? ' is-visited' : ''}${dim ? ' is-locked' : ''}${p.anchor ? ` has-anchor ${p.on ? 'is-on' : 'is-off'}` : ''}${pin ? ' is-anchor' : ''}`,
+        attrs: { type: 'button', 'aria-label': p.name },
+      }, [
+        icon(glyph, { palette }),
+        !pin && p.anchor ? icon(WM.anchorGlyphs.minor, { className: 'aps-map-town-badge', palette: WM.anchorPalettes[p.on ? 'on' : 'off'] }) : null,
+        el('span', { class: 'aps-map-town-name', text: p.name }),
+      ])
       const mark: PlaceMark = { ...p, el: node }
       node.addEventListener('click', api.guard(() => {
-        if (sel === mark && opts.fly && mark.fly) { void fly(); return }
+        if (sel === mark && goes(mark)) { void fly(); return }
         focusPlace(mark)
       }))
       return mark
@@ -342,13 +382,57 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
       return n
     }
 
+    /** Wild anchor pins yield to places, to stronger pins (selected, grand, activated) and to the map tools. */
+    const declutterPins = () => {
+      const touch = document.documentElement.dataset.touchControls === 'on'
+      const sp = Math.max(WM.pinSpacingUnits * getUIScale().cssPerUnit, touch ? WM.pinTouchPx : 0)
+      const cellOf = (v: number) => Math.floor(v / sp)
+      const taken = new Map<string, { sx: number; sy: number }[]>()
+      const take = (sx: number, sy: number) => {
+        const k = `${cellOf(sx)},${cellOf(sy)}`
+        const list = taken.get(k)
+        if (list) list.push({ sx, sy }); else taken.set(k, [{ sx, sy }])
+      }
+      const near = (sx: number, sy: number) => {
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+          for (const o of taken.get(`${cellOf(sx) + dx},${cellOf(sy) + dy}`) ?? []) if (Math.hypot(o.sx - sx, o.sy - sy) < sp) return true
+        }
+        return false
+      }
+      const stage0 = stage.getBoundingClientRect()
+      const tool = tools.getBoundingClientRect()
+      const rect = { l: tool.left - stage0.left - sp, t: tool.top - stage0.top - sp, r: tool.right - stage0.left + sp, b: tool.bottom - stage0.top + sp }
+      const pinsLeft: PlaceMark[] = []
+      const placeBoxes: DOMRect[] = []
+      for (const m of marks) {
+        if (m.el.hidden) continue
+        const s = toScreen(m.x + 0.5, m.y + 0.5)
+        if (m.place) {
+          take(s.sx, s.sy)
+          placeBoxes.push(m.el.getBoundingClientRect())
+        } else pinsLeft.push(m)
+      }
+      const onPlace = (m: PlaceMark) => {
+        const r = m.el.getBoundingClientRect()
+        return placeBoxes.some((l) => r.left < l.right && r.right > l.left && r.top < l.bottom && r.bottom > l.top)
+      }
+      const rank = (m: PlaceMark) => (m === sel ? 0 : m.kind === 'anchorGrand' ? 1 : m.on ? 2 : 3)
+      for (const m of pinsLeft.sort((a, b) => rank(a) - rank(b))) {
+        const s = toScreen(m.x + 0.5, m.y + 0.5)
+        const underTool = s.sx >= rect.l && s.sx <= rect.r && s.sy >= rect.t && s.sy <= rect.b
+        if (m !== sel && (underTool || near(s.sx, s.sy) || onPlace(m))) { m.el.hidden = true; continue }
+        take(s.sx, s.sy)
+      }
+    }
+
     const layoutOverlay = () => {
       const z = zoom()
       const showNames = z >= WM.placeNameMinZoom
       for (const m of marks) {
-        place(m.el, m.place.x + 0.5, m.place.y + 0.5)
+        place(m.el, m.x + 0.5, m.y + 0.5)
         m.el.classList.toggle('is-named', showNames || m === sel)
       }
+      declutterPins()
       if (playerEl && player) place(playerEl, player.x + 0.5, player.y + 0.5)
       for (const pg of pings) {
         place(pg.el, pg.p.x + 0.5, pg.p.y + 0.5)
@@ -394,11 +478,12 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
       }
     }
 
-    const snap = () => {
+    /** Selects the mark under the cursor; true when the selection changed (its name shows, so pins re-declutter). */
+    const snap = (): boolean => {
       let best: PlaceMark | null = null
       let bd = WM.snapPx
-      for (const m of opts.fly ? marks.filter((x) => x.fly) : marks) {
-        const s = toScreen(m.place.x + 0.5, m.place.y + 0.5)
+      for (const m of travel ? marks.filter(goes) : marks) {
+        const s = toScreen(m.x + 0.5, m.y + 0.5)
         const d = Math.hypot(s.sx - cssW / 2, s.sy - cssH / 2)
         if (d <= bd) { bd = d; best = m }
       }
@@ -407,20 +492,22 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
         sel = best
         sel?.el.classList.add('is-active')
         sideT = 0
+        return true
       }
+      return false
     }
 
     const focusPlace = (m: PlaceMark) => {
-      cam = { x: m.place.x + 0.5, y: m.place.y + 0.5 }
+      cam = { x: m.x + 0.5, y: m.y + 0.5 }
       uiSfx(env, 'move')
       dirty = overlayDirty = true
     }
 
     const nextPlace = () => {
-      const list = (opts.fly ? marks.filter((m) => m.fly) : marks).slice()
+      const list = (travel ? marks.filter(goes) : marks).slice()
       if (!list.length) return
       const from = player ?? cam
-      list.sort((a, b) => Math.hypot(a.place.x - from.x, a.place.y - from.y) - Math.hypot(b.place.x - from.x, b.place.y - from.y))
+      list.sort((a, b) => Math.hypot(a.x - from.x, a.y - from.y) - Math.hypot(b.x - from.x, b.y - from.y))
       const at = sel ? list.indexOf(sel) : -1
       focusPlace(list[(at + 1) % list.length])
     }
@@ -433,31 +520,59 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
     }
 
     // ------------------------------------------------------------------ side panel
-    const flyList = opts.fly
-      ? marks.filter((m) => m.fly).sort((a, b) => {
-        const o = player ?? cam
-        return Math.hypot(a.place.x - o.x, a.place.y - o.y) - Math.hypot(b.place.x - o.x, b.place.y - o.y)
-      }).slice(0, WM.flyList)
-      : []
+    const nearest = (list: PlaceMark[]) => {
+      const o = player ?? cam
+      return list.sort((a, b) => Math.hypot(a.x - o.x, a.y - o.y) - Math.hypot(b.x - o.x, b.y - o.y))
+    }
+    const flyList = opts.fly && !anchorsOn ? nearest(marks.filter(goes)).slice(0, WM.flyList) : []
     let lastInfoKey = ''
 
     const dangerRow = (r: RegionDef) => r.danger === undefined ? null
       : infoRow(t('screens.map.danger'), meterIcons(Math.min(EXPLORE.banner.dangerTiers, r.danger + 1), EXPLORE.banner.dangerTiers, 'star', 'starOff'))
 
+    const anchorBtns: HTMLElement[] = []
+    if (anchorsOn) {
+      if (homeDest) {
+        const b = button('', api.guard(() => { void pickAnchor(homeDest.id, homeDest.name) }), { className: 'aps-map-anchorbtn is-home' })
+        b.append(icon(WM.anchorGlyphs.grand), el('span', { text: t('screens.anchor.home') }))
+        anchorBtns.push(b)
+      }
+      const b = button('', api.guard(() => {
+        void api.run(async () => {
+          const id = await ctx.screens.anchorPicker({})
+          if (id) api.close(id)
+        })
+      }), { className: 'aps-map-anchorbtn' })
+      b.append(icon(WM.anchorGlyphs.minor), el('span', { text: t('screens.map.anchorList') }))
+      anchorBtns.push(b)
+    }
+
     const paintSide = () => {
       const tx = Math.floor(cam.x), ty = Math.floor(cam.y)
-      const key = `${sel?.place.id ?? ''}|${tx >> 3}|${ty >> 3}|${fog.version}`
+      const key = `${sel?.id ?? ''}|${tx >> 3}|${ty >> 3}|${fog.version}`
       if (key === lastInfoKey) return
       lastInfoKey = key
       const parts: (HTMLElement | null)[] = []
-      if (sel) {
-        const isVisited = ctx.save.visitedTowns.includes(sel.place.id)
+      if (anchorBtns.length) parts.push(el('div', 'aps-map-anchorbar', anchorBtns))
+      if (sel && !sel.place && sel.anchor) {
         parts.push(
           sectionTitle(t('screens.map.selected')),
-          el('div', { class: 'aps-map-tname ap-gold', text: sel.place.nameZh }),
+          el('div', { class: 'aps-map-tname ap-gold', text: sel.name }),
+          el('div', 'aps-chips', [
+            el('span', { class: 'aps-tag', text: t(`screens.map.kind.${sel.kind}`) }),
+            el('span', { class: `aps-tag ${sel.on ? 'is-ok' : 'is-bad'}`, text: t(sel.on ? 'screens.map.anchorOn' : 'screens.map.anchorOff') }),
+          ]),
+          el('p', { class: 'aps-map-desc', text: sel.on ? t('screens.map.anchorDesc', { region: anchorGroup(world, sel.anchor) }) : t('screens.map.anchorLockedDesc') }),
+        )
+      } else if (sel?.place) {
+        const isVisited = ctx.save.visitedTowns.includes(sel.id)
+        parts.push(
+          sectionTitle(t('screens.map.selected')),
+          el('div', { class: 'aps-map-tname ap-gold', text: sel.name }),
           el('div', 'aps-chips', [
             el('span', { class: 'aps-tag', text: t(`screens.map.kind.${sel.kind}`) }),
             sel.fly ? el('span', { class: 'aps-tag is-ok', text: t('screens.map.flyable') }) : null,
+            sel.anchor ? el('span', { class: `aps-tag ${sel.on ? 'is-ok' : 'is-bad'}`, text: t(sel.on ? 'screens.map.placeAnchorOn' : 'screens.map.placeAnchorOff') }) : null,
             !sel.fly && sel.kind === 'town' ? el('span', { class: 'aps-tag is-bad', text: t(isVisited ? 'screens.map.visited' : 'screens.map.notVisited') }) : null,
           ]),
           el('p', { class: 'aps-map-desc', text: sel.fly || isVisited || sel.kind !== 'town' ? sel.place.description : t('screens.map.unknownTown') }),
@@ -479,7 +594,7 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
       if (flyList.length) {
         parts.push(sectionTitle(t('screens.map.flyList')), el('div', 'aps-map-flylist', flyList.map((m) => {
           const b = button('', api.guard(() => { if (sel === m) void fly(); else focusPlace(m) }), { className: `aps-map-flyitem${m === sel ? ' is-active' : ''}` })
-          b.append(icon(WM.placeGlyphs[m.kind], { palette: WM.placePalettes.fly }), el('span', { text: m.place.nameZh }))
+          b.append(icon(WM.placeGlyphs[m.kind as PlaceKind], { palette: WM.placePalettes.fly }), el('span', { text: m.name }))
           return b
         })))
       }
@@ -488,6 +603,8 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
         el('div', 'aps-map-legend', [
           el('span', 'ap-legend-item', [icon(cfg.townGlyph, { palette: WM.placePalettes.fly }), t(opts.fly ? 'screens.map.legendFly' : 'screens.map.legendVisited')]),
           el('span', 'ap-legend-item', [icon(cfg.townGlyph, { palette: opts.fly ? WM.placePalettes.locked : WM.placePalettes.known }), t(opts.fly ? 'screens.map.legendUnvisited' : 'screens.map.legendKnown')]),
+          marks.some((m) => m.anchor && m.on) ? el('span', 'ap-legend-item', [icon(WM.anchorGlyphs.minor, { palette: WM.anchorPalettes.on }), t('screens.map.legendAnchorOn')]) : null,
+          marks.some((m) => m.anchor && !m.on) ? el('span', 'ap-legend-item', [icon(WM.anchorGlyphs.minor, { palette: WM.anchorPalettes.off }), t('screens.map.legendAnchorOff')]) : null,
           player ? el('span', 'ap-legend-item', [icon(cfg.playerGlyph), t('screens.map.legendPlayer')]) : null,
           ...[...new Map(pings.map((x) => [x.p.kind === 'legend' ? 'legend' : 'event', x.p.color])).entries()].map(([k, color]) => el('span', 'ap-legend-item', [el('span', { class: 'aps-legend-ping', vars: { '--pc': color } }), t(`hud.minimap.legend.${k}`)])),
         ]),
@@ -496,8 +613,15 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
     }
 
     const fly = () => api.run(async () => {
-      if (!sel || !opts.fly || !sel.fly) { uiSfx(env, 'error'); return }
-      if (await ctx.ui.confirm(t('screens.map.flyConfirm', { town: sel.place.nameZh }))) api.close(sel.place.id)
+      if (!sel || !goes(sel)) { uiSfx(env, 'error'); return }
+      await pickMark(sel)
+    })
+    const pickMark = async (m: PlaceMark) => {
+      const ask = byAnchor(m) ? t('screens.map.anchorConfirm', { name: m.name }) : t('screens.map.flyConfirm', { town: m.name })
+      if (await ctx.ui.confirm(ask)) api.close(target(m))
+    }
+    const pickAnchor = (id: string, name: string) => api.run(async () => {
+      if (await ctx.ui.confirm(t('screens.map.anchorConfirm', { name }))) api.close(id)
     })
 
     // ------------------------------------------------------------------ tools + pointer
@@ -571,7 +695,7 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
     window.addEventListener('resize', onResize)
 
     // Fly mode starts on the nearest fly target; the view mode on the player.
-    if (opts.fly && flyList.length) cam = { x: flyList[0].place.x + 0.5, y: flyList[0].place.y + 0.5 }
+    if (flyList.length) cam = { x: flyList[0].x + 0.5, y: flyList[0].y + 0.5 }
     requestAnimationFrame(resize)
 
     return {
@@ -583,7 +707,7 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
         else if (pressed(input, 'bike')) setZoom(zoomIdx + 1)
         else if (pressed(input, 'run')) nextPlace()
         else if (pressed(input, 'confirm')) {
-          if (opts.fly) void fly()
+          if (travel) void fly()
           else if (sel) focusPlace(sel)
           else home()
         }
@@ -597,7 +721,7 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean }): Promise<
         panAxis = { x: 0, y: 0 }
         bakeSome()
         if (dirty) { dirty = false; render() }
-        if (overlayDirty) { overlayDirty = false; layoutOverlay(); snap() }
+        if (overlayDirty) { overlayDirty = false; layoutOverlay(); if (snap()) layoutOverlay() }
         if (declutterT > 0) { declutterT -= dt; if (declutterT <= 0) declutter() }
         sideT -= dt
         if (sideT <= 0) { sideT = 0.12; paintSide() }

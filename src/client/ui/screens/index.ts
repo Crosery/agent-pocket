@@ -17,6 +17,7 @@ import { exchangeScreen } from './exchange.ts'
 import { manualScreen } from './manual.ts'
 import { boxScreen } from './box.ts'
 import { worldMapScreen } from './worldmap.ts'
+import { anchorPickerScreen } from './anchorpicker.ts'
 import { questsScreen, questHudText } from './quests.ts'
 import { settingsScreen } from './settings.ts'
 import { learnMoveScreen } from './learnmove.ts'
@@ -67,6 +68,7 @@ export function createScreens(ctx: GameContext): ScreensHandle {
     manual: () => manualScreen(env),
     box: () => boxScreen(env),
     worldMap: (opts) => worldMapScreen(env, opts),
+    anchorPicker: (opts) => anchorPickerScreen(env, opts),
     quests: () => questsScreen(env),
     settings: () => settingsScreen(env),
     async online() {
