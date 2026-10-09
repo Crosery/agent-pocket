@@ -1,0 +1,1 @@
+{"id": "night-rain-forge", "titleKey": "dev.scn.nightRainForge", "extends": "after-gym-3", "place": "town:forge", "clock": {"minutes": 1290, "frozen": true}, "weather": "rain", "expect": [{"path": "/save/clockMinutes", "eq": 1290}]}

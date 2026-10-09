@@ -332,6 +332,13 @@
       "shiny": [
         {"type": "burst", "count": 16, "colors": ["#ffffff", "#fff4a0", "#a8f0ff", "#ffb0e0"], "speed": [0.8, 1.8], "up": [0.6, 1.6], "gravity": 0.4, "life": [0.6, 1.0], "size": [3, 5], "glow": 4, "shape": "star", "y": 0.7, "radius": 0.15, "drag": 1.8},
         {"type": "ring", "color": "#fff4b0", "radius": [0.1, 1.0], "life": 0.55, "intensity": 3, "width": 0.06, "y": 0.06}
+      ],
+      "tapMarker": [
+        {"type": "ring", "color": "#9fe8ff", "radius": [0.7, 0.22], "life": 0.5, "intensity": 2.6, "width": 0.07, "y": 0.05},
+        {"type": "burst", "count": 6, "colors": ["#ffffff", "#bff0ff"], "speed": [0.1, 0.35], "up": [0.4, 1.0], "gravity": 0.5, "life": [0.3, 0.5], "size": [2, 3], "glow": 3, "shape": "dot", "y": 0.1, "radius": 0.3, "drag": 1.2}
+      ],
+      "tapBlocked": [
+        {"type": "ring", "color": "#ff7a6a", "radius": [0.12, 0.5], "life": 0.35, "intensity": 2.4, "width": 0.07, "y": 0.05}
       ]
     },
     "iconFont": "bold 26px 'Fusion Pixel', 'Fusion Pixel 12px', monospace",

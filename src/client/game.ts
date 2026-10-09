@@ -11,6 +11,7 @@ import { getMap } from '../shared/world/worldapi.ts'
 import {
   applyDocumentSettings, createAssetStore, createAudio, createClock, createEventBus, createInput, createSaveManager,
 } from './core/index.ts'
+import { RngHub, randomSeed } from './core/rng-hub.ts'
 import { createRenderer, createWorldView } from './render/index.ts'
 import { UI_CONFIG, createChatUI, createEscapeStack, createHUD, createMinimap, createUIKit, installEscapeFallback, releaseButtonFocusAfterClick } from './ui/index.ts'
 import { createNetClient } from './net/index.ts'
@@ -156,10 +157,10 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   await assets.init()
   loader.step('world')
   await new Promise((r) => setTimeout(r, 0))
-  const world = buildWorld()
+  const world = buildWorld(dev?.worldSeed ?? undefined)
   const data: GameData = { ...CONTENT, world }
   dev?.afterWorld(world)
-  const saves = createSaveManager({ world })
+  const saves = createSaveManager({ world, ...(dev?.storage ? { storage: dev.storage } : {}) })
   const stored = saves.load(slot)
   let save: SaveData = stored ?? saves.newGame({ name: '', avatar: '' })
   /** Before the world starts only a save that already exists on disk may be written (settings changed on the title). */
@@ -167,7 +168,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   let playing: SaveData | null = null
 
   const events = createEventBus<GameEvents>()
-  const input = createInput(appRoot)
+  const input = dev ? dev.wrapInput(createInput(appRoot)) : createInput(appRoot)
   const audio: AudioManager = createAudio(assets)
   const clockHolder = createClockHolder(save)
 
@@ -270,6 +271,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   ctxObj.battle = battleMod ? battleMod.createBattleRunner(ctx) : createFallbackBattleRunner(ctx)
   const hooks: MultiplayerHooks = { startTradeFlow: tradeMod?.startTradeFlow, challengePvp: pvpMod?.challengePvp }
   const overworld: OverworldExt = createOverworld(ctx, {
+    rng: new RngHub(dev?.rngSeed ?? randomSeed()),
     multiplayer: () => hooks,
     onLoadProgress: (p, name) => loader.map(p, name),
     ...(screensMod?.questHudText ? { questText: screensMod.questHudText } : {}),
@@ -285,6 +287,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     audio.setVolumes(s.bgmVolume, s.sfxVolume)
     applyDocumentSettings(s)
     input.setTouchControlsVisible(document.documentElement.dataset.touchControls === 'on')
+    input.refreshTouchLayout()
     minimap.setVisible(inWorld && s.showMinimap)
     resize()
   }
@@ -367,6 +370,9 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         const town = await screens.worldMap({ fly })
         if (town && fly) await flyTo(town)
       })
+    } else if (input.pressed('bag')) {
+      input.consume('bag')
+      void runModal(async () => { await screens.bag('field') })
     } else if (input.pressed('minimap')) {
       input.consume('minimap')
       const mm = minimap as Minimap & { expanded?: boolean }
@@ -384,9 +390,16 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
 
   function frame(now: number): void {
     requestAnimationFrame(frame)
-    const dt = Math.min(GAME.loop.maxDtSec, Math.max(0, (now - lastFrame) / 1000))
+    const real = Math.min(GAME.loop.maxDtSec, Math.max(0, (now - lastFrame) / 1000))
     lastFrame = now
     if (GAME.loop.pauseWhenHidden && document.hidden) { input.endFrame(); return }
+    const dt = dev ? dev.frameDt(real) : real
+    if (dt === null) { input.endFrame(); return }
+    tick(dt)
+  }
+
+  /** One main-loop frame of dt seconds (the animation frame callback, and the developer's frame stepper). */
+  function tick(dt: number): void {
     try {
       ui.update(dt)
       const blocking = ui.isBlocking()
@@ -410,7 +423,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     input.endFrame()
   }
   requestAnimationFrame(frame)
-  dev?.install({ ctx, overworld, world, onboarding, flyTo: (id) => runModal(() => flyTo(id)) })
+  dev?.install({ ctx, overworld, world, onboarding, flyTo: (id) => runModal(() => flyTo(id)), tick })
 
   // ---- title flow ---------------------------------------------------------
   hud.setVisible(false)

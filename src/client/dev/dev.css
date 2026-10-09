@@ -1,0 +1,139 @@
+/* Developer panel (devtools builds only). Sizes that depend on the viewport class come from the .apd--compact class,
+   which the panel sets from content/dev/console.json (panel.compactMaxWidth). */
+.apd, .apd-badge {
+  --apd-hit: 32px;
+  --apd-bg: rgba(11, 13, 26, 0.96);
+  --apd-edge: #3a2d6b;
+  --apd-ink: #f3ecd2;
+  --apd-dim: #9aa3d8;
+  --apd-gold: #ffd34d;
+  --apd-ok: #8fe3a2;
+  --apd-bad: #ff9b8a;
+  font: 13px/1.45 'FusionPixel', 'PingFang SC', 'Microsoft YaHei', ui-monospace, monospace;
+  color: var(--apd-ink);
+  -webkit-user-select: none; user-select: none;
+  touch-action: manipulation;
+}
+@media (pointer: coarse) { .apd, .apd-badge { --apd-hit: 44px; } }
+.apd--compact, .apd-badge--compact { --apd-hit: 44px; }
+
+.apd {
+  position: fixed; z-index: 950; top: 0; right: 0; bottom: 0; width: min(420px, 100vw);
+  display: flex; flex-direction: column; box-sizing: border-box;
+  background: var(--apd-bg); border-left: 2px solid var(--apd-edge); box-shadow: -6px 0 24px rgba(0, 0, 0, 0.45);
+}
+.apd[hidden] { display: none; }
+.apd--compact {
+  top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 62vh;
+  border-left: 0; border-top: 2px solid var(--apd-edge); box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.45);
+}
+
+.apd__bar { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-bottom: 1px solid var(--apd-edge); }
+.apd__title { color: var(--apd-gold); letter-spacing: 2px; white-space: nowrap; }
+.apd__seeds { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--apd-dim); font-size: 11px; text-align: right; }
+
+.apd__tabs { display: flex; flex-wrap: wrap; gap: 2px; padding: 4px 6px 0; border-bottom: 1px solid var(--apd-edge); }
+.apd--compact .apd__tabs { flex-wrap: nowrap; overflow-x: auto; overscroll-behavior: contain; touch-action: pan-x; scrollbar-width: none; }
+.apd-tab {
+  flex: none; min-height: var(--apd-hit); padding: 0 12px; font: inherit; color: var(--apd-dim);
+  background: transparent; border: 1px solid transparent; border-bottom: 0; cursor: pointer;
+}
+.apd-tab[aria-selected='true'] { color: var(--apd-gold); background: rgba(58, 45, 107, 0.55); border-color: var(--apd-edge); }
+
+.apd__body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; padding: 6px 8px 10px; }
+.apd-sec { margin: 0 0 12px; }
+.apd-sec__t { margin: 6px 0 6px; padding: 0 0 2px; font-size: 12px; font-weight: normal; letter-spacing: 2px; color: var(--apd-gold); border-bottom: 1px dashed var(--apd-edge); }
+.apd-sec__c { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-start; }
+
+.apd-btn, .apd-in, .apd-row {
+  font: inherit; color: var(--apd-ink); box-sizing: border-box; min-height: var(--apd-hit);
+  background: rgba(27, 31, 61, 0.9); border: 1px solid var(--apd-edge);
+}
+.apd-btn { min-width: var(--apd-hit); padding: 0 12px; cursor: pointer; }
+.apd-btn:hover, .apd-row:hover, .apd-tab:hover { border-color: var(--apd-gold); }
+.apd-btn:active, .apd-row:active { background: var(--apd-edge); }
+.apd-btn--go { color: #0b0d1a; background: var(--apd-gold); border-color: #f3ecd2; }
+.apd-btn--go:active { background: #f0a83a; }
+.apd-in { min-width: 0; width: 100%; padding: 0 8px; -webkit-user-select: text; user-select: text; font-size: 16px; }
+.apd-in--json { padding: 6px 8px; font-family: ui-monospace, monospace; font-size: 13px; }
+.apd :focus-visible, .apd-badge:focus-visible { outline: 2px solid var(--apd-gold); outline-offset: 1px; }
+
+.apd-ro { display: flex; flex: 1 1 45%; min-width: 140px; justify-content: space-between; gap: 8px; padding: 2px 6px; background: rgba(5, 6, 13, 0.6); border: 1px solid var(--apd-edge); }
+.apd-ro__k { color: var(--apd-dim); }
+.apd-ro__v { color: var(--apd-ok); font-weight: normal; overflow-wrap: anywhere; text-align: right; }
+
+.apd-pick, .apd-acc { flex: 1 1 100%; display: flex; flex-direction: column; gap: 4px; padding: 6px; background: rgba(27, 31, 61, 0.45); border: 1px solid var(--apd-edge); }
+.apd-cmd { flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 4px 6px; padding: 6px; background: rgba(27, 31, 61, 0.45); border: 1px solid var(--apd-edge); }
+.apd-cmd > .apd-field { flex: 1 1 110px; min-width: 0; }
+.apd-cmd > .apd-btn { flex: none; }
+.apd-cmd > .apd-cmd__head { flex: 1 1 100%; }
+.apd-cmd__head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.apd-cmd__t { flex: 1; min-width: 0; }
+.apd-tag { padding: 0 5px; font-size: 11px; border: 1px solid var(--apd-edge); }
+.apd-tag--warn { color: var(--apd-gold); }
+.apd-tag--info { color: var(--apd-dim); }
+.apd-field { position: relative; display: flex; flex-direction: column; gap: 2px; }
+.apd-field__k { font-size: 11px; color: var(--apd-dim); }
+
+.apd-list { display: flex; flex-direction: column; gap: 2px; max-height: 14em; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; }
+.apd-list--inline { margin-top: 2px; border: 1px solid var(--apd-edge); background: #0b0d1a; }
+.apd-list--inline[hidden] { display: none; }
+.apd-row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 8px; padding: 4px 8px; text-align: left; cursor: pointer; }
+.apd-row__t { min-width: 0; overflow-wrap: anywhere; }
+.apd-row__i { color: var(--apd-dim); font-size: 11px; overflow-wrap: anywhere; }
+.apd-empty { padding: 6px; color: var(--apd-dim); }
+
+.apd-accs { flex: 1 1 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.apd-accs > .apd-acc { align-self: stretch; }
+.apd-acc__row { display: flex; align-items: center; gap: 6px; padding: 2px 0; }
+.apd-acc__row > .apd-row__t { flex: 1; display: flex; flex-direction: column; }
+
+.apd__foot { display: flex; flex-direction: column; gap: 4px; padding: 6px 8px 8px; border-top: 1px solid var(--apd-edge); }
+.apd__out {
+  height: 5.6em; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; padding: 2px 6px;
+  font: 12px/1.4 ui-monospace, 'FusionPixel', monospace; background: #05060d; border: 1px solid var(--apd-edge);
+  -webkit-user-select: text; user-select: text; overflow-wrap: anywhere;
+}
+.apd--compact .apd__out { height: 3.2em; }
+.apd__ok { color: var(--apd-ok); }
+.apd__err { color: var(--apd-bad); }
+.apd__line { display: flex; gap: 6px; }
+.apd__line .apd-in { flex: 1; }
+
+.apd-badge {
+  position: fixed; z-index: 946; left: 50%; bottom: 2px; transform: translateX(-50%); max-width: calc(100vw - 16px);
+  min-height: 20px; padding: 0 8px; box-sizing: border-box; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  color: var(--apd-gold); background: rgba(11, 13, 26, 0.82); border: 1px solid var(--apd-edge); cursor: pointer; opacity: 0.85;
+}
+.apd-badge--compact { min-height: var(--apd-hit); }
+/* Touch: the bottom edge belongs to the stick and action buttons, so the badge sits mid-left (free in portrait and landscape). */
+@media (pointer: coarse) {
+  .apd-badge { left: calc(env(safe-area-inset-left, 0px) + 6px); top: 50%; bottom: auto; transform: translateY(-50%); max-width: 42vw; }
+}
+.apd-badge:hover { opacity: 1; border-color: var(--apd-gold); }
+html.apd-on .apd-badge { opacity: 0.5; }
+
+/* World editor overlay: footprints, selection, drag ghost, tap layer and the floating toolbar. */
+.apd-ed__svg { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 944; pointer-events: none; }
+.apd-ed__all { fill: rgba(143, 227, 162, 0.07); stroke: rgba(143, 227, 162, 0.6); stroke-width: 1; }
+.apd-ed__sel { fill: rgba(255, 211, 77, 0.3); stroke: #ffd34d; stroke-width: 2.5; }
+.apd-ed__ghost { fill: rgba(127, 208, 255, 0.3); stroke: #7fd0ff; stroke-width: 2; stroke-dasharray: 5 3; }
+.apd-ed__hit { position: fixed; inset: 0; z-index: 945; touch-action: none; cursor: crosshair; -webkit-user-select: none; user-select: none; }
+.apd-ed__hit[hidden] { display: none; }
+.apd-ed__bar {
+  position: fixed; z-index: 947; top: 8px; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100vw - 16px);
+  display: flex; flex-direction: column; gap: 6px; padding: 6px 8px; box-sizing: border-box;
+  font: 13px/1.45 'FusionPixel', 'PingFang SC', 'Microsoft YaHei', ui-monospace, monospace; color: #f3ecd2;
+  background: rgba(11, 13, 26, 0.92); border: 2px solid #3a2d6b; touch-action: manipulation;
+}
+.apd-ed__bar[hidden] { display: none; }
+.apd-ed__bar--stale { border-color: #ffd34d; }
+.apd-ed__msg { min-height: 1.4em; overflow-wrap: anywhere; }
+.apd-ed__btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.apd-ed__btn { --apd-hit: 32px; min-width: 44px; min-height: 32px; }
+@media (pointer: coarse), (max-width: 700px) { .apd-ed__btn { --apd-hit: 44px; min-height: 44px; } }
+.apd-pal { display: flex; flex-direction: column; gap: 4px; padding: 6px; background: rgba(27, 31, 61, 0.45); border: 1px solid #3a2d6b; }
+
+/* Screenshot mode (shot.prepare): the developer UI and, on request, the HUD are out of the picture. */
+html.apd-shot .apd, html.apd-shot .apd-badge, html.apd-shot .apd-ed__svg, html.apd-shot .apd-ed__bar, html.apd-shot .apd-ed__hit, html.apd-shot #ap-debug { visibility: hidden !important; }
+html.apd-shot-hud #ap-ui { visibility: hidden !important; }

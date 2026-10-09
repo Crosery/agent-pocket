@@ -12,11 +12,14 @@ import { parseFrontierId } from '../../shared/world/frontier/sites.ts'
 import { getMap, isInfinite } from '../../shared/world/worldapi.ts'
 import { FogPages } from '../ui/fog.ts'
 import { EXPLORE } from '../world/explore-config.ts'
+import { isTouchDevice } from './settings.ts'
 
 /** Schema literals (mirrors types.ts unions — structure, not data). */
 const DIRS: readonly Dir[] = ['down', 'left', 'right', 'up']
 const TEXT_SPEEDS: readonly Settings['textSpeed'][] = ['slow', 'normal', 'fast', 'instant']
 const TOUCH_MODES: readonly Settings['touchControls'][] = ['auto', 'on', 'off']
+const TOUCH_HANDS: readonly Settings['touchHand'][] = ['right', 'left']
+const TOUCH_SIZES: readonly Settings['touchSize'][] = ['small', 'normal', 'large']
 const SAVE_STAT_KEYS: readonly (keyof SaveData['stats'])[] = ['battlesWon', 'caught', 'steps', 'pvpWins', 'pvpLosses', 'trades', 'shiniesFound']
 
 export type Place = SaveData['position']
@@ -66,11 +69,12 @@ export function sanitizeName(raw: unknown, c: Content, fallback: string): string
   return cut || fallback
 }
 
-export function sanitizeSettings(raw: unknown, c: Content): Settings {
+/** `touch` selects the touchOnly migrations (phone defaults); it defaults to the current device. */
+export function sanitizeSettings(raw: unknown, c: Content, touch: boolean = isTouchDevice()): Settings {
   const d = c.config.defaultSettings
   const r0 = isObj(raw) ? raw : {}
   const applied = Array.isArray(r0.migrations) ? r0.migrations.filter((x): x is string => typeof x === 'string') : []
-  const pending = (c.config.settingsMigrations ?? []).filter((m) => !applied.includes(m.id))
+  const pending = (c.config.settingsMigrations ?? []).filter((m) => !applied.includes(m.id) && (!m.touchOnly || touch))
   const r: Record<string, unknown> = Object.assign({}, r0, ...pending.map((m) => m.set))
   const qualities = Object.keys(c.config.render.internalHeight) as Settings['quality'][]
   const pixelScale = num(r.pixelScale)
@@ -90,6 +94,9 @@ export function sanitizeSettings(raw: unknown, c: Content): Settings {
     showTips: bool(r.showTips, d.showTips),
     autoRun: bool(r.autoRun, d.autoRun),
     touchControls: oneOf(r.touchControls, TOUCH_MODES, d.touchControls),
+    touchHand: oneOf(r.touchHand, TOUCH_HANDS, d.touchHand),
+    touchSize: oneOf(r.touchSize, TOUCH_SIZES, d.touchSize),
+    haptics: bool(r.haptics, d.haptics),
     migrations: [...applied, ...pending.map((m) => m.id)],
   }
 }

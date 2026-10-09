@@ -7,7 +7,7 @@
 import type { BattleSideInit, Dir, FieldWeatherKind, GameMap, GroundItemDef, NpcDef, QuestDef, RegionDef, ScriptStep } from '../../shared/types.ts'
 import type { GameContext, MinimapMarker, OverworldController } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
-import { Rng } from '../../shared/rng.ts'
+import { RngHub } from '../core/rng-hub.ts'
 import { createCreature, creatureName, maxHp, rollShiny } from '../../shared/creature.ts'
 import { propRect } from '../../shared/world/collision.ts'
 import { collisionField, getMap, isInfinite, isLedgeDrop, objectsInRect, regionAt, terrainAt, warpAt } from '../../shared/world/worldapi.ts'
@@ -27,6 +27,8 @@ import { createLedgeGuard } from './ledge-guard.ts'
 import { createFollower } from './follower.ts'
 import { collectMarkers } from './markers.ts'
 import { createQuestNavigator, type QuestNavigation } from './quest-navigation.ts'
+import { INPUT_CONFIG } from '../core/input-config.ts'
+import { createTravel, pickCandidate, planTapRoute, retravel, screenToGround, stepTravel, type TapCandidate, type TapTarget, type Travel } from './tap-move.ts'
 import { DIR_VEC, dirTowards, facingFromAxis, moveBody, tilePassable, type MotionGrid } from './motion.ts'
 import { createNpcLayer, type NpcRuntime } from './npcs.ts'
 import { createPresence, type MultiplayerHooks } from './presence.ts'
@@ -43,6 +45,8 @@ export interface OverworldOptions {
   onLoadProgress?: (p: number | null, mapName: string) => void
   /** Quest tracker text (defaults to t('world.quest.hud')). */
   questText?: (def: QuestDef, stage: number) => string
+  /** Random streams (encounters, battle seeds, scripts, ambient NPCs); a fresh random hub when omitted. */
+  rng?: RngHub
 }
 
 export interface OverworldExt extends OverworldController {
@@ -58,7 +62,7 @@ export interface OverworldExt extends OverworldController {
   /** Dev automation: the visible roamers (species, level, mood, position, whether they noticed the player). */
   roamerInfo(): { speciesId: string; level: number; mood: string; noticed: boolean; x: number; y: number; target: { x: number; y: number } | null; region: string }[]
   /** Dev tooling only (src/client/dev): internals of the overworld services. */
-  devHandles(): { gameplayHooks: Record<string, unknown> | null }
+  devHandles(): { gameplayHooks: Record<string, unknown> | null; rng: RngHub; forceEncounter(spec: { species: string; level: number; shiny?: boolean } | null): void }
   readonly weather: FieldWeatherKind
   readonly questNavigation: QuestNavigation | null
   setWeatherOverride(kind: FieldWeatherKind | null): void
@@ -75,7 +79,9 @@ type Lock = 'external' | 'script' | 'warp' | 'battle' | 'prompt'
 
 export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): OverworldExt {
   const P = GAME.player
-  const rng = new Rng((Date.now() ^ Math.floor(Math.random() * 0x7fffffff)) >>> 0)
+  const hub = opts.rng ?? new RngHub()
+  /** Encounters, wild and roaming spawns, event spawns. NPC wandering (cosmetic) and battle seeds have their own streams. */
+  const rng = hub.stream('encounter')
   const locks = new Set<Lock>()
   const stream = createObjectStream()
   const navigator = createQuestNavigator(ctx.data.world, TUTORIAL.objective.navigation)
@@ -87,6 +93,9 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
   })
   /** Ledge jump in progress (input frozen, position tweened, hop arc added to the elevation). */
   let hop: { fx: number; fy: number; tx: number; ty: number; t: number; dur: number; lift: number; e0: number; e1: number } | null = null
+
+  /** Route walked after a tap on the screen (tap-move.ts); stick / key input or a modal cancels it. */
+  let travel: Travel | null = null
 
   let map: GameMap | null = null
   let grid: MotionGrid | null = null
@@ -144,7 +153,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
 
   // ---------------------------------------------------------------- sub-systems
 
-  const npcs = createNpcLayer({ ctx, playerTile, field: () => grid?.field ?? null, rng })
+  const npcs = createNpcLayer({ ctx, playerTile, field: () => grid?.field ?? null, rng: hub.stream('cosmetic') })
   const follower = createFollower(ctx, {
     // walkable from the player's tile one tile step at a time (the spot can be two tiles off)
     canStand: (x, y) => {
@@ -168,7 +177,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     cue: (key, at) => gameplay.cue(key, at),
   })
   const battles = createBattleFlow({
-    ctx, rng,
+    ctx, rng: hub.stream('battle'),
     place: () => (map ? { map, x: player.x, y: player.y } : null),
     setBattleActive: (on) => { battleActive = on },
     afterBattle: () => {
@@ -182,6 +191,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
   })
 
   const host: ScriptHost = {
+    rng: hub.stream('script'),
     ctx,
     async moveNpc(id, path, speed) {
       const n = npcs.get(id)
@@ -282,6 +292,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
   }
 
   async function enterMap(mapId: string, x: number, y: number, facing: Dir, transition = false): Promise<void> {
+    travel = null
     const next = getMap(ctx.data.world, mapId)
     if (!next) { console.warn(`[overworld] unknown map "${mapId}"`); return }
     lock('warp')
@@ -520,11 +531,87 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     return false
   }
 
+  // ---------------------------------------------------------------- tap to move
+
+  const TAP = INPUT_CONFIG.touch.tapMove
+
+  function tapCandidates(): TapCandidate[] {
+    if (!map) return []
+    const R = TAP.candidateTiles
+    const out: TapCandidate[] = []
+    const add = (kind: TapCandidate['kind'], id: string, rect: TapCandidate['rect']) => {
+      const x = rect.x + rect.w / 2, y = rect.y + rect.h / 2
+      out.push({ kind, id, rect, x, y, elev: ctx.world.elevationAt(x, y) })
+    }
+    for (const n of npcs.list) {
+      if (!n.visible || Math.abs(n.x - player.x) > R || Math.abs(n.y - player.y) > R) continue
+      const tx = Math.floor(n.x), ty = Math.floor(n.y)
+      out.push({ kind: 'npc', id: n.def.id, rect: { x: tx, y: ty, w: 1, h: 1 }, x: n.x, y: n.y, elev: ctx.world.elevationAt(n.x, n.y) })
+    }
+    const prefix = STORY_CONTENT.meta.flags.groundItem
+    for (const it of liveItems()) {
+      if (it.hidden || flagSet(ctx.save, prefix + it.id) || Math.abs(it.x - player.x) > R || Math.abs(it.y - player.y) > R) continue
+      add('item', it.id, { x: it.x, y: it.y, w: 1, h: 1 })
+    }
+    const near = objectsInRect(map, Math.floor(player.x) - R, Math.floor(player.y) - R, Math.floor(player.x) + R + 1, Math.floor(player.y) + R + 1)
+    for (const w of near.warps) add('warp', `${w.x},${w.y}`, { x: w.x, y: w.y, w: 1, h: 1 })
+    for (const s of near.signs) add('sign', `${s.x},${s.y}`, { x: s.x, y: s.y, w: 1, h: 1 })
+    for (const p of near.props) if (ctx.data.props[p.prop]?.interactable) add('prop', `${p.prop}@${p.x},${p.y}`, propRect(p))
+    return out
+  }
+
+  /** A tap on the game surface: grab the thing under the finger, else the ground tile, and walk there. */
+  function onWorldTap(p: { x: number; y: number }): void {
+    if (!map || !grid || !isFree()) return
+    const box = ctx.renderer.canvas.getBoundingClientRect()
+    const px = { x: p.x - box.left, y: p.y - box.top }
+    const hit = pickCandidate((x, e, y) => ctx.world.worldToScreen(x, e, y), px, tapCandidates(), TAP)
+    let target: TapTarget | null = hit ? { kind: hit.kind, id: hit.id, rect: hit.rect } : null
+    if (!target) {
+      const g = screenToGround(ctx.world.camera, px, { width: box.width, height: box.height }, player.elev, (x, y) => ctx.world.elevationAt(x, y), TAP.elevationPasses)
+      if (!g) return
+      target = { kind: 'ground', id: '', rect: { x: Math.floor(g.x), y: Math.floor(g.y), w: 1, h: 1 } }
+    }
+    const plan = planTapRoute(grid, playerTile(), target, surf, TAP)
+    const at = plan?.marker ?? { x: target.rect.x + 0.5, y: target.rect.y + 0.5 }
+    if (!plan) { ctx.world.spawnFx(TAP.blockedFx as 'tapBlocked', at.x, at.y, ctx.world.elevationAt(at.x, at.y)); return }
+    ctx.world.spawnFx(TAP.markerFx as 'tapMarker', at.x, at.y, ctx.world.elevationAt(at.x, at.y))
+    travel = createTravel(plan, target, player)
+    if (plan.path.length <= 1) arriveTravel()
+  }
+
+  /** Reached the end of a tapped route: face what was tapped and use it (talk, read, open, pick up). */
+  function arriveTravel(): void {
+    const tr = travel
+    travel = null
+    player.moving = false
+    if (!tr?.interactAt) return
+    const dx = tr.interactAt.x - player.x, dy = tr.interactAt.y - player.y
+    if (Math.hypot(dx, dy) > 1e-3) player.facing = facingFromAxis(dx, dy, player.facing, 0)
+    void interact()
+  }
+
+  /** Steering axis while a tapped route is walked; manual input, modals and dead ends drop it. */
+  function steerTravel(dt: number, free: boolean, manual: { x: number; y: number }): { x: number; y: number } {
+    const none = { x: 0, y: 0 }
+    if (!travel || !free || Math.hypot(manual.x, manual.y) > P.axisDeadzone) { travel = null; return manual }
+    const step = stepTravel(travel, player, dt, TAP)
+    if (step.done) { arriveTravel(); return none }
+    if (step.stuck) {
+      const plan = travel.replans < TAP.replans && grid ? planTapRoute(grid, playerTile(), travel.target, surf, TAP) : null
+      if (!plan) { travel = null; return none }
+      travel = retravel(travel, plan, player)
+      return none
+    }
+    return step.axis
+  }
+
   function updatePlayer(dt: number, free: boolean): void {
     if (!grid || !map) return
     if (updateHop(dt)) return
     bumpCooldown = Math.max(0, bumpCooldown - dt * 1000)
-    const axis = free ? ctx.input.axis() : { x: 0, y: 0 }
+    let axis = free ? ctx.input.axis() : { x: 0, y: 0 }
+    if (travel) axis = steerTravel(dt, free, axis)
     const mag = Math.hypot(axis.x, axis.y)
     const autoRun = ctx.save.settings.autoRun
     const running = free && (ctx.input.held('run') !== autoRun)
@@ -634,6 +721,9 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
 
   // ---------------------------------------------------------------- encounters & battles
 
+  /** Developer tooling: the next tall-grass encounter, regardless of the roll (src/client/dev/commands/env.ts). */
+  let forcedEncounter: { species: string; level: number; shiny?: boolean } | null = null
+
   async function tryEncounter(tx: number, ty: number): Promise<void> {
     if (!map || !regionDef || battleActive) return
     const tt = terrainAtTile(tx, ty)
@@ -641,6 +731,12 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     if (!eligible) return
     const l = lead()
     if (GAME.encounters.requireConsciousParty && !l) return
+    const forced = forcedEncounter
+    if (forced && ctx.data.species[forced.species]) {
+      forcedEncounter = null
+      await wildEncounter(createCreature(forced.species, forced.level, { rng, shiny: forced.shiny ?? rollShiny(rng, ctx.data), caughtMap: map.id }, ctx.data), null, {})
+      return
+    }
     const pick = gameplay.rollGrass(regionDef, { repelActive: ctx.save.repelSteps > 0, leadLevel: l?.level ?? 0 })
     if (!pick) return
     const cr = createCreature(pick.speciesId, pick.level, { rng, shiny: pick.shiny, caughtMap: map.id }, ctx.data)
@@ -972,6 +1068,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     ctx.net.reportPosition({ map: map.id, x: player.x, y: player.y, facing: player.facing, moving: player.moving, running: player.running || bike })
   }
 
+  const offTap = ctx.input.onWorldTap(onWorldTap)
   const offParty = ctx.events.on('party:changed', () => refreshFollower())
   const offMoney = ctx.events.on('money:changed', ({ money }) => ctx.hud.setMoney(money))
 
@@ -992,7 +1089,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     get region() { return regionDef },
     get terrainName() { return terrainAtTile(tile.x, tile.y)?.nameZh ?? '' },
     get roamerCount() { return roaming.list.length },
-    devHandles: () => ({ gameplayHooks: gameplay.debugHooks }),
+    devHandles: () => ({ gameplayHooks: gameplay.debugHooks, rng: hub, forceEncounter: (spec) => { forcedEncounter = spec } }),
     roamerInfo: () => roaming.list.map((r) => ({ speciesId: r.creature.speciesId, level: r.creature.level, mood: r.mood, noticed: r.noticed, x: r.x, y: r.y, target: r.target, region: r.region })),
     get weather() { return weatherKind },
     get questNavigation() { return navigator.state },
@@ -1017,6 +1114,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     storeExplored,
     dispose() {
       disposed = true
+      offTap()
       offParty()
       offMoney()
       gameplay.dispose()

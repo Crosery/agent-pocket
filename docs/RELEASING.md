@@ -77,6 +77,22 @@
 
   不带 sha 时，回到 `deploy-history.log` 里的上一个版本。回滚不动 tag，也不动数据。
 
+## 预发布使用 devtools 构建
+
+预发布（`prev.ap.crosery.com`）用 `vite build --mode devtools` 构建，所有者可以在手机上点场景链接验收（ADR 0002 §9，所有者 10-09 批准）。正式环境仍是普通构建，并在构建后运行 `npm run check:devgate`，门禁不过就让部署失败。
+
+- **界面：** 不带 `?dev=1` 时，devtools 构建里的调试工具不启动，玩家看到的和正式版一样。带 `?dev=1` 或 `?scenario=<id>` 才会出现右下角的 `DEV` 徽标和面板。
+- **服务器：** devtools 构建会向服务器声明自己，服务器默认拒绝。预发布的 env 文件需要有 `AP_DEV=1`，**这是一次性手工步骤，由维护者在 Arch 上做**，下一次获准的预发布部署之前完成：
+
+  ```bash
+  echo 'AP_DEV=1' >> /srv/ap/preview.env   # 只加在 preview，production.env 里不能有
+  sudo systemctl restart ap@preview        # 部署时 remote-deploy.sh 本来就会重启，已经加过就不需要再手动重启
+  ```
+
+- **漏做会怎样：** 发布本身通过 HTTP 健康检查，但每个游戏连接都会被关闭。`deploy/remote-deploy.sh` 发现发布是 devtools 构建而 env 里没有 `AP_DEV=1` 时，会在部署日志（`deploy-history.log` 和 Actions 输出）里写一条 `WARNING`，并发出 Actions 警告。
+- **`release.json`：** 多一个 `devtools` 字段，预发布为 `true`，正式为 `false`。
+- **代价：** 预发布环境的排行榜等数据失去参考意义。
+
 ## 静态资源 CDN（七牛）
 
 - **只有 HTML 和 `release.json` 留在源站**，其余资源都从 `https://cdn.crosery.com/ap/static/` 加载：

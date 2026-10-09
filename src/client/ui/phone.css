@@ -1,0 +1,70 @@
+/* Phone layouts: everything is scoped to html[data-touch-controls='on'] (the touch pad is showing), so the desktop
+   look is untouched. The pad's reserved space comes from core/touch-layout.ts as --ap-touch-*-inset: the bottom strip in
+   portrait, the two bottom corners in landscape (where menus, dialogue and battles hide the pad and run on taps). */
+
+/* Landscape: the key-cap footer names buttons that are hidden with the pad. */
+html:not(.ap-portrait)[data-touch-controls='on'] .aps-foot { display: none; }
+
+/* Landscape chat log sits between the stick and the buttons even while a first-run tip is up
+   (onboarding.css sizes it for the desktop pad), and gives way to the tip card. */
+html:not(.ap-portrait)[data-touch-controls='on'] .ap-chat:not(.is-open) { width: auto !important; }
+html:not(.ap-portrait)[data-touch-controls='on'] .ap-root:has(.ap-l-tips .ap-tip.is-in:not(.is-inline)) .ap-chat:not(.is-open) .ap-chat-log { visibility: hidden; }
+
+/* The dex number is a label over the sprite cell; keep it above the sprite box. */
+html[data-touch-controls='on'] .aps-dex-no { position: relative; z-index: 1; }
+
+/* Toasts on a phone: the newest two, two compact lines each, so the stack stays clear of the player's name tag, the
+   key-cap footer and the pad. (!important: the screen/compact variants in styles.css are more specific.) */
+html[data-touch-controls='on'] .ap-toast:nth-last-child(n+3) { display: none !important; }
+html[data-touch-controls='on'] .ap-toast { font-size: calc(var(--u) * 10) !important; line-height: 1.15 !important; padding-top: calc(var(--u) * 2) !important; padding-bottom: calc(var(--u) * 3) !important; }
+html[data-touch-controls='on'] .ap-toast-text { display: -webkit-box !important; -webkit-box-orient: vertical; -webkit-line-clamp: 2 !important; overflow: hidden !important; }
+
+/* The chat button is a finger target, and the first-run tip card rests above it instead of on it. */
+html[data-touch-controls='on'] .ap-chat-bar .ap-chat-open { min-width: 44px; min-height: 44px; }
+html:not(.ap-portrait)[data-touch-controls='on'] .ap-l-tips:not(.is-top):not(.is-right):not(.is-battle) .ap-tip:not(.is-inline) { margin-bottom: calc(52px + env(safe-area-inset-bottom, 0px)); }
+
+/* The online hub stacks head, tabs, list, emotes and footer: taller than a landscape phone, so its body scrolls. */
+html:not(.ap-portrait)[data-touch-controls='on'] .mp-hub > .ap-panel { display: flex; flex-direction: column; max-height: calc(100% - var(--u) * 12); }
+html:not(.ap-portrait)[data-touch-controls='on'] .mp-hub > .ap-panel > .ap-panel-body { min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+
+/* The rolling chat log fades its oldest line out instead of cutting it in half. */
+html[data-touch-controls='on'] .ap-chat:not(.is-open) > .ap-chat-log {
+  overflow: visible;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--u) * 10));
+  mask-image: linear-gradient(to bottom, transparent 0, #000 calc(var(--u) * 10));
+}
+
+/* Long row labels wrap inside the finger-sized row instead of being cut off. */
+html[data-touch-controls='on'] .ap-row-label { white-space: normal; line-height: 1.15; }
+
+/* Narrow phones: the dex header keeps the title and the percentage, the seen/caught counts go. */
+@media (max-width: 420px) { html[data-touch-controls='on'] .aps-dex-count { display: none; } }
+
+/* Compact portrait battle: the type chip and PP shrink so move names fit their half-width cell. */
+html[data-touch-controls='on'].ap-compact .apb-move-row .ap-chip { min-width: 0; font-size: calc(var(--u) * 8); }
+html[data-touch-controls='on'].ap-compact .apb-move-row .apb-move-pp { font-size: calc(var(--u) * 9); }
+
+/* The battle tip's dismiss button drops below the text instead of sitting over the title. */
+html[data-touch-controls='on'].ap-compact .ap-l-tips.is-battle .ap-tip-foot { position: static; margin-top: calc(var(--u) * 3); }
+
+/* ------------------------------------------------------------------ finger-sized targets (44 CSS px) */
+
+html[data-touch-controls='on'] :is(.ap-btn, .ap-tab, .aps-pause-row, .aps-filter, .aps-small-btn, .aps-map-town, .ap-chat-chan, .apb-back, .apb-effects-close, .ap-tip-off, .ap-field) { min-height: 44px; }
+/* HUD cards: finger-sized in portrait; landscape has no height to spare for them. */
+html.ap-portrait[data-touch-controls='on'] :is(.ap-quest-toggle, .ap-objective-toggle, .ap-evtoggle, .ap-evdone) { min-height: 44px; }
+html[data-touch-controls='on'] :is(.aps-close, .ap-tip-close, .ap-evclose, .aps-arrow, .aps-map-tool) { min-width: 44px; min-height: 44px; }
+
+/* Pause menu: two columns of finger-sized rows on every phone, so twelve entries fit a landscape screen too. */
+html:not(.ap-portrait)[data-touch-controls='on'] .aps-pause-menu { display: grid; grid-template-columns: 1fr 1fr; align-content: start; }
+
+/* Battle: the back button and the detail pane stack above the move list, the tip's dismiss button clears the 44px close button. */
+html[data-touch-controls='on'] .apb-back { top: auto; bottom: calc(100% + var(--u) * 3); }
+html[data-touch-controls='on'] .apb-detail { bottom: calc(100% + 44px + var(--u) * 8); }
+html[data-touch-controls='on'] .ap-l-tips.is-battle .ap-tip-foot { right: calc(var(--u) * 10 + 44px); }
+
+/* Box in landscape: six party rows are taller than the screen, so the party column scrolls. */
+html:not(.ap-portrait)[data-touch-controls='on'] .aps-box-layout { grid-template-rows: minmax(0, 1fr); }
+html:not(.ap-portrait)[data-touch-controls='on'] .aps-box-party { max-height: 100%; overflow-y: auto; }
+
+/* Chat: the Tab / Esc hint is keyboard-only. */
+html[data-touch-controls='on'] .ap-chat-hint { display: none; }

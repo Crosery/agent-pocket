@@ -1,0 +1,17 @@
+{
+  "id": "frontier-far",
+  "titleKey": "dev.scn.frontierFar",
+  "extends": "after-gym-3",
+  "seed": 20261002,
+  "place": {"map": "overworld", "x": 277, "y": 2294},
+  "then": [
+    {"cmd": "discover", "args": {"place": "fx:hamlet:2:20"}},
+    {"cmd": "discover", "args": {"place": "fx:nest:3:20"}},
+    {"cmd": "discover", "args": {"place": "fx:landmark:2:21"}},
+    {"cmd": "discover", "args": {"place": "fx:hamlet:3:21"}},
+    {"cmd": "discover", "args": {"place": "fx:ruins:4:21"}}
+  ],
+  "expect": [
+    {"path": "/save/position/y", "gt": 2000}
+  ]
+}

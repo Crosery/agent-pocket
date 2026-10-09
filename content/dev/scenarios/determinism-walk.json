@@ -1,0 +1,1 @@
+{"id": "determinism-walk", "titleKey": "dev.scn.determinismWalk", "extends": "after-gym-3", "place": "wild:wild-meadow-1:1", "seed": 20261002, "rng": 424242, "clock": {"minutes": 720, "frozen": true}, "weather": "clear", "expect": [{"path": "/save/clockMinutes", "eq": 720}]}

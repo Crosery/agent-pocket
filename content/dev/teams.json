@@ -1,0 +1,23 @@
+{
+  "plain": {"level": 30, "members": [{"species": "o1"}, {"species": "deepseek-v3"}, {"species": "kling-4"}, {"species": "qwen-audio"}]},
+  "boss-counter:astra": {
+    "level": 60,
+    "members": [
+      {"species": "gpt-5-6"},
+      {"species": "kling-4"},
+      {"species": "google-antigravity"},
+      {"species": "qwen-audio"}
+    ]
+  },
+  "worst-case": {
+    "level": 50,
+    "members": [
+      {"species": "alpha", "nickname": "超级无敌霹雳大魔王小可爱", "status": "burn"},
+      {"species": "nano-banana", "nickname": "WWWWWWWWWWWW", "status": "paralysis"},
+      {"species": "claude-mythos", "nickname": "智灵口袋智灵口袋智灵口袋", "status": "sleep"},
+      {"species": "veo-3-1", "nickname": "最强王者荣耀无敌战神号啊", "status": "poison"},
+      {"species": "gemini-3-pro", "nickname": "MMMMMMMMMMMM", "status": "freeze"},
+      {"species": "windsurf", "nickname": "今天也要努力打败所有对手", "hp": 0.15}
+    ]
+  }
+}

@@ -63,6 +63,7 @@ export type InputAction =
   | 'chat'         // T (Enter when chat focused sends)
   | 'minimap'      // N toggles minimap size
   | 'bike'         // B
+  | 'bag'          // touch button only (opens the field bag)
   | 'quickSave'    // F5
   | 'debug'        // F3
 
@@ -82,6 +83,10 @@ export interface Input {
   readonly lastDevice: 'keyboard' | 'gamepad' | 'touch'
   /** Show/hide on-screen touch controls (virtual stick + A/B/Menu). */
   setTouchControlsVisible(visible: boolean): void
+  /** Re-places the touch pad after a settings change (hand, size) or a rotation; publishes the --ap-touch-* insets. */
+  refreshTouchLayout(): void
+  /** A short, still touch on the game surface (client px). Fires only while the touch pad owns the screen. */
+  onWorldTap(fn: (p: { x: number; y: number }) => void): () => void
 }
 
 export interface AudioManager {
@@ -247,7 +252,7 @@ export interface CreatureActor {
   dispose(): void
 }
 
-export type WorldFx = 'exclaim' | 'question' | 'grass' | 'dust' | 'sparkle' | 'splash' | 'heart' | 'warp' | 'levelup' | 'shiny'
+export type WorldFx = 'exclaim' | 'question' | 'grass' | 'dust' | 'sparkle' | 'splash' | 'heart' | 'warp' | 'levelup' | 'shiny' | 'tapMarker' | 'tapBlocked'
 
 export interface WorldWeather { kind: FieldWeatherKind; intensity: number }
 

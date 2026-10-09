@@ -1,6 +1,6 @@
 # ADR 0002：开发者调试模式（控制台、自动化接口、场景预设、建筑编辑器）
 
-- **状态：** 已采纳（第 9 节第 1、3 项由主控按推荐方案定；第 2 项待所有者确认）
+- **状态：** 已采纳（第 9 节第 1、3 项由主控按推荐方案定；第 2 项待所有者确认）；**已实现**，与原设计的差异和未做项见第 11 节
 - **Issue：** #30，分支 `task/30/dev_mode`（`ap-wt/t30`）
 - **依据代码：** `integrate/0.2` @ 19182e1
 - **关联：** ADR 0001（WP2 调试钩子剔除、WP4 种子启动、WP5/WP6 服务端权威、WP8 房间）
@@ -116,9 +116,10 @@
 每个可操作的控件都带 `data-dev-cmd="<命令 id>"`，作为自动化的稳定选择器。
 
 ### 3.2 桌面与手机
-- **入口：** 输入动作 `devConsole`（写在 `content/input.json`，默认反引号键）。开发模式下常驻一个可点击的 `DEV` 徽标，同时显示世界种子、随机种子和场景 id；手机上靠它打开面板。F3 叠加层保留。
+- **入口：** 反引号键（`KeyboardEvent.code` 写在 `content/dev/console.json` 的 `panel.toggleCode`，由调试模块自己的 keydown 监听处理，`Esc` 关闭；不进 `content/input.json`，因为 `Input` 本来就不处理可编辑控件里的按键，调试键不该成为游戏的输入动作）。开发模式下底部居中常驻一个可点击的 `DEV` 徽标，同时显示世界种子、随机种子和场景 id；手机上靠它打开面板。F3 叠加层保留。
 - **布局：** 宽屏为右侧抽屉，宽 420 px。窄屏或触屏为底部抽屉，高 62%，标签页做成可横向滚动的标签条。触控目标不小于 44 px。
-- **输入隔离：** 面板打开时关闭角色操控，并调用 `input.setTouchControlsVisible(false)`；关闭后恢复。
+- **输入隔离：** 面板或编辑器打开时关闭角色操控，并调用 `input.setTouchControlsVisible(false)`；两者都关闭后恢复（`src/client/dev/ui/gate.ts` 按持有者计数）。面板内的按键事件不再冒泡到游戏。
+- **布局来源：** 标签页、分区、预设按钮、读数、选择列表全部来自 `content/dev/console.json` 的 `panel`；`≤ panel.compactMaxWidth`（700 px）时变成底部抽屉。`tests/dev-panel.test.ts` 保证每个控件指向真实命令、预设和列表项通过同一套参数校验、所有文案存在、没有面板够不到的命令。
 - **编辑器触屏操作：** 点按选中，单指拖动，浮动工具条提供旋转、删除和撤销。
 
 ### 3.3 建筑与摆件编辑器
@@ -154,7 +155,15 @@
   - 写入前在 Node 端再跑一次校验器；
   - 原子写入；
   - 用 `python3 tools/content_fmt.py` 格式化（参数用数组传，不拼 shell 字符串）。
-- **刷新行为：** 对自己的写入抑制 HMR 整页刷新，改发 `ap:content-updated` 事件。之后刷新页面读到的就是新 JSON，所以位置保持不变。
+- **刷新行为：** 对自己的写入抑制 HMR 整页刷新，改发 `ap:content-updated` 事件。之后刷新页面读到的就是新 JSON，所以位置保持不变。[verified] 实测：页面标记在两次写入后仍在，Vite 日志没有对应的 `page reload`。写入前先登记「自己的写入」，因为文件监听可能早于接口返回就报告改动。
+- **实现细节：**
+  - 来源记录用模块级 sink（`src/shared/world/provenance.ts`，`buildWorld(seed, { provenance })` 才开启，不传时零开销），除每个物件外还记录模板覆盖的区域（放置新摆件时用）。
+  - 只记录来自 `towns.json`、`interiors.json`、`gyms.json` 模板的建筑、摆件、告示牌、锚点；洞穴、前线、POI、散布、路线都是生成物，只读。
+  - 一个模板可被多个城镇共用（`town_gym_a` 被 `opensource` 与镜像的 `forge` 共用），编辑改的是模板，所以所有使用处一起变；选中时显示「N 处共用同一模板」。
+  - 编辑的模型在 `src/client/dev/editor/session.ts`（无 DOM，Node 可测），补丁与反向补丁在 `src/shared/dev/editor.ts`。
+  - 写前校验在子进程里跑（`scripts/dev/validate-edit.ts`）：分别用原文件和候选文件建世界，新增构建问题或内容错误即拒绝（422）。
+  - 写回接口还提供 `GET ?file=` 返回文件哈希，作为 `baseHash` 的来源。
+  - 运行中的游戏不会立刻换成新世界：编辑器自己重建一份带来源的世界做校验，工具条提供「重新载入」。
 
 ### 3.4 联机模拟（不改 `net/client.ts`）
 
@@ -241,8 +250,8 @@ window.__ap = { version: 1, v1: {
 | `determinism-walk` | 草丛路径起点，固定种子 | 确定性用例 |
 
 ### 4.5 录制与回放
-- 在 `Input` 接口层录制每一帧的 held、pressed（含长按重复）、方向轴和 dt；回放时用一个替身 `Input` 驱动固定步长。
-- 回放文件绑定提交哈希和内容哈希，版本不匹配就拒绝回放。
+- 在 `Input` 接口层录制每一帧的 held、pressed（含长按重复）、released、方向轴和 dt；回放时用一个替身 `Input` 驱动固定步长。接缝只有 `game.ts` 里的一行：`dev ? dev.wrapInput(createInput(root)) : createInput(root)`；`src/client/dev/replay.ts` 的 `InputTap` 同时承担录制、回放和脚本输入（`input.press / hold / axis`）。游戏不走帧（暂停、页面隐藏）时脚本帧不前进；`time.step` 手动走的帧会前进。
+- 回放文件绑定提交哈希和内容哈希，版本不匹配就拒绝回放；还记录开始时存档的摘要，不一致时只在结果里报告 `startMatches: false`。
 - 回放只作为 bug 复现的附件，不作为长期回归资产。
 - 局限：不录制 DOM 上的鼠标点击。
 
@@ -250,9 +259,9 @@ window.__ap = { version: 1, v1: {
 - **截图：** `shot.prepare` 依次暂停时间，隐藏面板和光标，等资源和流式加载空闲，再等若干帧。截图由 ego-browser 执行，报告同时记录 `digest()`。
 - **Node 端：** `tests/dev-scenarios.test.ts` 逐个场景应用，检查：sanitize 后没有字段丢失、地点能解析、`expect` 成立、引导目标和任务导航能给出结果、Boss 场景能用自动驾驶打完。
 - **浏览器：**
-  - `scripts/qa/run.mjs <suite>` 读取 `content/dev/suites/*.json`，逐个用例执行"加载场景 → 命令或回放 → 等待 → 截图、导出状态、断言"。
-  - 输出 `report.json`、`report.md` 和总览拼图。
-  - 套件有四个：`scenarios`、`dev-panel`（10 类 × d1280 与 m390 触屏）、`editor`、`determinism`。
+  - `node scripts/qa/run.mjs <suite|all> [--space <id>] [--base <url>] [--out <dir>]` 读取 `content/dev/suites/*.json`，把用例展开（`each` 展开、`viewports` 乘开）后，连同 `scripts/qa/browser.mjs` 一起通过标准输入交给 `ego-browser nodejs` 执行（ego-browser 把脚本的 console 输出写在 stderr，运行器从那里读结果），逐个用例执行"加载场景 → 命令或输入 → 等待 → 截图、导出状态、断言"。启动时检查 `scripts/qa/` 与套件 JSON 不含 `__AP` 和 `import('/src/...')`。
+  - 输出 `report.json`、`report.md` 和 `overview.html`（所有截图的缩略图拼图）。套件可声明 `guard`（如 `cleanGit`: 套件结束后 `git status` 在指定路径下必须干净）。
+  - 套件有四个：`scenarios`（9 个场景）、`dev-panel`（13 类 × d1280 与 m390 触屏，每格带 `expect.layout`）、`editor`（拖动 → 文件变化 → 撤销哈希一致；移动 → 刷新后位置保持 → 移回哈希一致，`cleanGit` 守卫）、`determinism`（同场景、同种子、同脚本输入加载两次，状态与 `battle:start` 摘要一致）。`actors` 套件未做，见第 11 节。
 
 ### 4.7 对测试的帮助
 
@@ -284,6 +293,7 @@ window.__ap = { version: 1, v1: {
 
 **官方服拒绝（在 #30 内实现）：**
 - `src/server/index.ts` 读取 `AP_DEV` 得到 `allowDev`。生产环境的 env 文件里没有这个变量，所以为 false。
+- `vite` 开发服务器永远声明自己是 devtools 构建，所以本地用开发服务器时，游戏服务也要带 `AP_DEV=1`（`scripts/dev.mjs` 已经设了），否则每个连接都会被关闭。预发布同理，见第 9 节第 2 项。
 - hello 新增可选字段 `build: { devtools }`，不升 `protocolVersion`。
 - `hub.ts` 的 `hello()` 在 `devtools && !allowDev` 时，用新关闭码 `closeCodes.devNotAllowed` 断开。
 - `net/client.ts` 收到这个关闭码后，像版本不匹配一样停止重连，并提示 `t('net.error.dev_not_allowed')`。
@@ -317,7 +327,7 @@ window.__ap = { version: 1, v1: {
 | M2 确定性 | M | `RngHub`；两处一行改动和调试存档；`&seed`、`&rng`；`devClock` | `src/client/core/rng-hub.ts`、`src/client/dev/clock.ts`、`controller.ts`、`script.ts` | `tests/dev-determinism.test.ts`（见 4.3）；不开调试时仍是每局随机 |
 | M3 场景 | M | 场景格式、纯函数应用器、9 个场景、`beats.json`、`teams.json` | `content/dev/{scenarios/*,beats,teams}.json`、`src/shared/dev/scenario.ts`、`src/client/dev/scenario.ts`、`src/shared/types.ts`（只在末尾追加 dev 段） | `tests/dev-scenarios.test.ts` |
 | M4 各类命令 | M/L | 3.1 中的全部类别（战斗强制结果除外，见 M8） | `src/client/dev/commands/*.ts` | 每类命令都有 Node 单测（用假 host） |
-| M5 面板 | L | 各标签页、命令行、`DEV` 徽标、桌面抽屉、手机底部抽屉 | `src/client/dev/ui/**`、`src/client/dev/dev.css`、`content/input.json`（只加 `devConsole`） | M9 的 `dev-panel` 套件 |
+| M5 面板 | L | 各标签页、命令行、`DEV` 徽标、桌面抽屉、手机底部抽屉 | `src/client/dev/ui/**`、`src/client/dev/dev.css`、`content/dev/console.json`（`panel` 段；开关键在这里而不在 `input.json`） | M9 的 `dev-panel` 套件 |
 | M6 联机模拟 | M | `DevSocket`、假服务器、机器人 | `src/client/dev/net-sim.ts`、`content/dev/net-sim.json`、`scripts/dev/bots.ts` | `tests/dev-netsim.test.ts`：用假定时器验证延迟、顺序和停顿；假服务器发出的消息符合 `ServerMsg` |
 | M7 编辑器 | L | 来源记录（含镜像逆变换）、编辑器、写回插件、HMR 抑制 | `src/shared/world/{index,towns,interiors,data}.ts`（只加可选参数）、`src/client/dev/editor/**`、`scripts/vite-dev-api.ts`、`vite.config.ts`、`content/dev/editor.json` | `tests/dev-editor.test.ts`：来源记录往返（含镜像城镇）；patch 后重建，建筑在新位置且没有新增 `problems`。`tests/dev-api-endpoint.test.ts`：在临时目录副本上测 403、409，以及校验失败时文件不变。`world.test.ts` 的耗时预算不变 |
 | M8 强制暴击、未命中 | S | `BattleInit.debug.rolls`，作用于 `engine.ts` 的命中、伤害浮动、暴击和捕获共 4 处 | `src/shared/battle/engine.ts`（只改这 4 处）、`types.ts` 末尾 dev 段 | 强制时全部暴击或全部未中；不设置时事件流与原来逐字节相同 |
@@ -355,7 +365,7 @@ window.__ap = { version: 1, v1: {
 
 ## 9 决策
 1. **正式包是否保留调试代码** —— **已定 B**：编译期剔除，另外提供 `--mode devtools` 构建，用于本地验收和自建服。（A：只在 `vite` 开发服务器上提供；C：运行期开关，即现状，不采用。）
-2. **预发布环境 `prev.ap.crosery.com` 是否用 devtools 构建** —— **待所有者确认**。推荐使用：所有者可以在手机上点场景链接验收，预发布服开启 `allowDev`、界面显示 `DEV`；代价是预发布环境的排行榜失去参考意义。
+2. **预发布环境 `prev.ap.crosery.com` 是否用 devtools 构建** —— **已定（所有者 10-09 批准）**：所有者可以在手机上点场景链接验收，预发布服开启 `allowDev`、界面显示 `DEV`；代价是预发布环境的排行榜失去参考意义。部署流程见 `docs/RELEASING.md`“预发布使用 devtools 构建”：`deploy.yml` 在 preview 用 `--mode devtools`，production 仍是普通构建加 `check:devgate`；Arch 上的 `/srv/ap/preview.env` 需要一次性加 `AP_DEV=1`，漏了会让每个连接被拒，`remote-deploy.sh` 会在日志里警告。
 3. **编辑器写回的范围** —— **已定 A**：只写回模板来源的内容，即城镇、室内、道馆、洞穴模板里的建筑、摆件、告示牌和锚点；生成物只读。（B：给生成物加固定种子下的覆盖文件，换种子即失效，与种子世界冲突，不采用。）
 
 ## 10 剩余风险与待验证
@@ -364,7 +374,7 @@ window.__ap = { version: 1, v1: {
   - #30 能保证的是：正式包里没有调试代码，官方服拒绝声明了调试构建的客户端。
   - "官方服不接收调试改出来的状态"要等 ADR 0001 的 WP5、WP6 完成才真正成立。在那之前，服务端仍然信任客户端上报的档案。
 - **[verified] 线上正式包现在就能用 `?dev=1`**（主控已核对 `index-EOg5VBNs.js`）。M0 合入并发版之前会一直如此。
-- **[unverified] HMR 抑制：** `handleHotUpdate` 返回 `[]` 能否既不整页刷新、又让模块缓存失效，需要实测。"刷新后位置保持"这条用例本身就会测到。
+- **[verified] HMR 抑制：** `handleHotUpdate` 返回 `[]` 既不整页刷新、又让模块缓存失效：写回后手动刷新读到的是新 JSON（`editor` 套件的 `survives-reload` 用例）。
 - **[unverified] 其他：** 其他 worktree 的未提交改动；节日事件是否依赖真实日期（因此没有做成场景，改由"触发事件"控件覆盖）。
 
 ## 参考
@@ -373,3 +383,20 @@ window.__ap = { version: 1, v1: {
 - Source Engine：`sv_cheats`
 - Minecraft：命令系统与世界"允许作弊"标记
 - Factorio：确定性输入回放
+
+## 11 实现状态与偏差（#30 完成时）
+
+**与设计一致且已验证的部分：** M0 门禁（`check:devgate` 两个方向）、注册表与 `__ap.v1`、确定性（`RngHub`、`devClock`、`&seed`、`&rng`）、9 个场景与纯函数应用器、全部命令类别、面板（桌面抽屉与手机底部抽屉）、联机模拟（`DevSocket`、页面内假服务器、本地机器人）、编辑器与写回接口、输入录制回放、`shot`、`expect.layout`、运行器与四个套件。
+
+**与设计不同的实现：**
+- **开关键**：在 `content/dev/console.json` 的 `panel.toggleCode`，不在 `content/input.json`（见 3.2）。
+- **重建世界**：运行中的世界不能原地替换（世界对象被游戏各处持有）。`world.seed` / `world.seedRandom` 把当前存档写进开发者专用槽（`limits.reloadSlot`），再用新种子的网址重载；不碰玩家自己的存档槽。
+- **场景的 `net` 字段**：用 `then` 里的 `net.fake` 命令表达，没有单独字段。
+- **`expect.layout`**：是 DOM 层的审计（屏外控件、被裁文字、同级控件重叠、触屏目标过小），不是 #29 `qa-layout-audit.mjs` 的移植。
+- **确定性的起点**：场景加载本身会跑真实时间的帧（地图进入、淡入），这些帧里 `encounter` 流的抽取次数不固定。所以可比对的起点是“`time.fixed` 之后再 `rng.seed` 一次”，`determinism` 套件按这个顺序执行；只在场景加载时播种，两次加载的游标会差几次抽取（实测出现过 202 对 198）。
+- **编辑器**：运行中的游戏不会立刻换成新世界（见 3.3）；写回只接受回环地址，所以手机上能编辑、校验，但写回会被 403 拒绝。
+
+**未做（留待后续）：**
+- 世界页：导出地图 PNG、前线重置；剧情页：分支选择器；事件页：逐条显示条件成立与否的原因；战斗页：自动驾驶与超出玩家选项的倍速（`battle.auto`）；环境页的角色动作库与 `actors` 套件；`tests/boss-counters.ts` 改读 `teams.json`（与 #27 协调）。
+- 强制暴击、未命中、伤害浮动取极值、捕获必成：引擎侧由 M8 提供（`BattleInit.debug.rolls`，分支上最后一个独立提交，只改 `engine.ts` 的 4 处和 `types.ts` 末尾 dev 段）；面板和命令把它接进开战参数还没做。
+- 旧 `scripts/qa-*.mjs` 仍用 `__AP`，按 4.7 的表格逐个迁移，不在 #30 内。

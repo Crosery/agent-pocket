@@ -792,7 +792,9 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
 
   private rollHit(s: SideIndex, f: SideIndex, move: MoveDef, struggle: boolean): boolean {
     if (struggle || move.accuracy === 0 || move.effects.some((e) => e.kind === 'alwaysHit')) return true
-    return this.rng.next() * PERCENT < hitChance(this.fighter(s), this.fighter(f), move, this.c)
+    const hit = this.rng.next() * PERCENT < hitChance(this.fighter(s), this.fighter(f), move, this.c)
+    const forced = this.init.debug?.rolls?.hit
+    return forced === undefined ? hit : forced === 'always'
   }
 
   private rollPct(pct: number): boolean {
@@ -802,7 +804,9 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
 
   private rollRandom(): number {
     const b = this.c.config.battle
-    return b.randomMin + this.rng.next() * (b.randomMax - b.randomMin)
+    const random = b.randomMin + this.rng.next() * (b.randomMax - b.randomMin)
+    const forced = this.init.debug?.rolls?.damage
+    return forced === undefined ? random : forced === 'min' ? b.randomMin : b.randomMax
   }
 
   private fraction(max: number, frac: number): number {
@@ -834,6 +838,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
         const att = this.fighter(s)
         const def = this.fighter(f)
         crit = this.rng.chance(critChance(att, highCrit, this.c))
+        if (this.init.debug?.rolls?.crit !== undefined) crit = this.init.debug.rolls.crit === 'always'
         const r = computeDamage(att, def, { power: move.power, category: move.category === 'special' ? 'special' : 'physical', type },
           this.weatherId, { crit, random: this.rollRandom() }, this.c)
         dmg = r.damage
@@ -1323,7 +1328,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     if (e.kind !== 'ball') return
     const target = this.act(1)
     const checks = Math.max(1, this.c.config.catch.shakeChecks)
-    const shakes = e.bonus === 'master' ? checks : catchShakes({
+    const rolled = e.bonus === 'master' ? checks : catchShakes({
       maxHp: this.maxHpOf(target),
       hp: target.hp,
       catchRate: (this.c.species[target.speciesId]?.catchRate ?? 0) * (this.init.mods?.catchRate ?? 1) * (this.boss?.cr === target ? this.boss.def.catchRateMul : 1),
@@ -1331,6 +1336,8 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
       statusBonus: target.status ? (this.c.statusById[target.status]?.catchBonus ?? 1) : 1,
       checks,
     }, this.rng)
+    const forced = this.init.debug?.rolls?.catch
+    const shakes = forced === undefined ? rolled : forced === 'success' ? checks : 0
     const success = shakes >= checks
     this.emit({ t: 'catch', ballId: item.id, shakes, success })
     const name = creatureName(target, this.c)

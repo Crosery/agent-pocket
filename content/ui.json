@@ -1,10 +1,10 @@
 {
-  "scale": {"baseWidth": 512, "baseHeight": 288, "minCssPerUnit": 1, "maxDeviceScale": 8, "compactBelowWidth": 480, "touchInsetGapCss": 6},
+  "scale": {"baseWidth": 512, "baseHeight": 288, "minCssPerUnit": 1, "maxDeviceScale": 8, "compactBelowWidth": 480},
   "anim": {"panelOpenMs": 180, "panelCloseMs": 140, "modalOpenMs": 120, "cursorBobMs": 560, "toastEnterMs": 180, "toastLeaveMs": 240},
   "fade": {"defaultMs": 420},
   "sfx": {"move": "select", "confirm": "confirm", "cancel": "cancel", "error": "error", "open": "menu_open", "close": "menu_close", "tab": "select"},
   "dialogue": {"charsPerSecond": {"slow": 22, "normal": 45, "fast": 110, "instant": 0}, "blip": {"sfx": "select", "everyChars": 3, "volume": 0.22, "pitch": 1.7, "pitchJitter": 0.08}, "pause": {"chars": "，。！？；：…,.!?;:", "ms": 110}, "lingerMs": 90, "portraitFallbackChars": 1},
-  "list": {"visibleRows": 8, "compactVisibleRows": 6, "rowHeight": 18, "wrap": true, "pageStep": 5, "minWidth": 160, "detailWidth": 168},
+  "list": {"visibleRows": 8, "compactVisibleRows": 6, "rowHeight": 18, "wrap": true, "pageStep": 5, "minWidth": 160, "detailWidth": 168, "touchRowCss": 44, "touchReservePx": {"portrait": 500, "landscape": 150}, "minTouchRows": 3},
   "prompt": {"shakeMs": 300},
   "toast": {"max": 2, "durationMs": {"info": 2600, "success": 2600, "warn": 3400, "error": 4200}, "sfx": {"info": "notify", "success": "notify", "warn": "notify", "error": "error"}},
   "bars": {"hp": {"midBelow": 0.5, "lowBelow": 0.2, "drainPerSecond": 0.9, "width": 64}, "exp": {"fillPerSecond": 0.8, "width": 64}},

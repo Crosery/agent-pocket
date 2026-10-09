@@ -1,4 +1,5 @@
-// Layout audit for every screen at 1280x720, 1920x1080 and 390x844 (issue #29).
+// Layout audit for every screen at 1280x720, 1920x1080 and the phone viewports 390x844, 360x780 (portrait) and 844x390
+// (landscape), all at DPR 3 with touch emulation (issues #29, #33).
 // Run through ego-browser against a dev server (?dev=1) in its own TaskSpace and an isolated save slot:
 //   ego-browser nodejs <<'JS'
 //   const { runLayoutAudit } = await import('file:///<repo>/scripts/qa-layout-audit.mjs')
@@ -23,7 +24,9 @@ const BATTLE_UI = JSON.parse(readFileSync(new URL('../content/battle-ui.json', i
 export const VIEWPORTS = [
   { name: 'd1280', width: 1280, height: 720, dpr: 1 },
   { name: 'd1920', width: 1920, height: 1080, dpr: 1 },
-  { name: 'm390', width: 390, height: 844, dpr: 2, touch: true },
+  { name: 'm390', width: 390, height: 844, dpr: 3, touch: true },
+  { name: 'm360', width: 360, height: 780, dpr: 3, touch: true },
+  { name: 'm844', width: 844, height: 390, dpr: 3, touch: true },
 ]
 
 /** Runs inside the page (serialised by page.evaluate): must not reference anything outside itself. */
@@ -207,7 +210,7 @@ export function auditLayout(opts) {
   }
   if (document.documentElement.scrollWidth > vw + 1) violations.push({ type: 'page-overflow', sel: 'html', text: '', detail: `scrollWidth ${document.documentElement.scrollWidth} > ${vw}` })
   const touch = matchMedia('(pointer: coarse)').matches
-  if (touch) for (const c of controls) if (c.w < 24 || c.h < 24) warnings.push({ type: 'small-target', sel: label(c.el), text: c.el.textContent.trim().slice(0, 20), detail: `${c.w.toFixed(0)}x${c.h.toFixed(0)}px` })
+  if (touch) for (const c of controls) if (c.w < 44 || c.h < 44) warnings.push({ type: 'small-target', sel: label(c.el), text: c.el.textContent.trim().slice(0, 20), detail: `${c.w.toFixed(0)}x${c.h.toFixed(0)}px` })
   hitStyle.remove()
   const uniq = (list) => { const m = new Map(); for (const v of list) { const k = `${v.type}|${v.sel}|${v.text}|${v.detail}`; if (!m.has(k)) m.set(k, v) } return [...m.values()] }
   // How much of the screen's content sits behind a scroll: the tallest scroller's content height in viewport heights.
@@ -509,9 +512,9 @@ export async function measureScreen(page, screen, shot) {
   return result
 }
 
-export async function runLayoutAudit({ task, base, phase = 'after', viewports = VIEWPORTS, only = null, slot = '2029100001' }) {
+export async function runLayoutAudit({ task, base, phase = 'after', viewports = VIEWPORTS, only = null, slot = '2029100001', issue = 29 }) {
   assert.match(phase, /^[a-z0-9-]+$/)
-  const outDir = fileURLToPath(new URL(`../output/29/${phase}/`, import.meta.url))
+  const outDir = fileURLToPath(new URL(`../output/${issue}/${phase}/`, import.meta.url))
   await mkdir(outDir, { recursive: true })
   let page
   try { page = task.page('p1') } catch { page = await task.newPage() }

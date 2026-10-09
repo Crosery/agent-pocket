@@ -1,6 +1,6 @@
 {
   "unlockHint": "点击或按任意键开启声音",
   "muted": "声音已静音",
-  "touch": {"confirm": "A", "cancel": "B", "menu": "菜单", "run": "跑", "stick": "移动摇杆"},
+  "touch": {"confirm": "A", "cancel": "B", "menu": "菜单", "run": "跑", "bag": "包", "map": "图", "bike": "骑", "chat": "聊天图标", "minimap": "小地图", "stick": "移动摇杆"},
   "save": {"defaultName": "训练家"}
 }

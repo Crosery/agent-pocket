@@ -3,6 +3,7 @@
 import type { AudioManager, Input, ListItem } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
 import { UI_CONFIG } from './config.ts'
+import { getUIScale } from './scale.ts'
 import { el } from './widgets.ts'
 
 export interface RowMenu {
@@ -17,6 +18,8 @@ export interface RowMenu {
 
 export interface RowMenuOptions {
   visibleRows: number
+  /** CSS px of chrome beside the list that touch rows must leave room for (added to the screen's own reserve). */
+  reservePx?: number
   initial?: number
   wrap?: boolean
   audio: AudioManager
@@ -25,11 +28,32 @@ export interface RowMenuOptions {
   onPick: (i: number) => void
 }
 
-const ROW_UNITS = UI_CONFIG.list.rowHeight
+/** Row height in UI units: the content value, or taller when the touch pad is on so a row is a finger-sized target. */
+function rowUnits(): number {
+  const L = UI_CONFIG.list
+  if (document.documentElement.dataset.touchControls !== 'on') return L.rowHeight
+  return Math.max(L.rowHeight, Math.ceil(L.touchRowCss / getUIScale().cssPerUnit))
+}
+
+/** With touch rows a list may no longer fit its screen: show fewer rows and scroll the rest (`extraPx`: more chrome around it). */
+function fitRows(wanted: number, rowH: number, extraPx = 0): number {
+  const L = UI_CONFIG.list
+  if (document.documentElement.dataset.touchControls !== 'on') return wanted
+  const s = getUIScale()
+  const reserve = s.portrait ? L.touchReservePx.portrait : L.touchReservePx.landscape
+  return Math.min(wanted, Math.max(L.minTouchRows, Math.floor((window.innerHeight - reserve - extraPx) / (rowH * s.cssPerUnit))))
+}
+
+/** Row height and visible rows a list of `wanted` rows really gets on this screen (touch rows are taller). */
+export function listMetrics(wanted: number, extraPx = 0): { rows: number; rowH: number } {
+  const rowH = rowUnits()
+  return { rows: fitRows(wanted, rowH, extraPx), rowH }
+}
 
 export function createRowMenu(items: ListItem[], o: RowMenuOptions): RowMenu {
   const count = items.length
-  const visible = Math.max(1, Math.min(o.visibleRows, Math.max(1, count)))
+  const ROW_UNITS = rowUnits()
+  const visible = Math.max(1, Math.min(fitRows(o.visibleRows, ROW_UNITS, o.reservePx), Math.max(1, count)))
   const wrap = o.wrap ?? UI_CONFIG.list.wrap
   const sfx = (k: keyof typeof UI_CONFIG.sfx) => o.audio.playSfx(UI_CONFIG.sfx[k])
 

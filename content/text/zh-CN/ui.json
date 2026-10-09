@@ -12,6 +12,7 @@
     "title": "聊天",
     "open": "聊天",
     "placeholder": "输入消息，回车发送",
+    "placeholderTouch": "输入消息",
     "send": "发送",
     "collapse": "收起聊天",
     "expand": "展开聊天",

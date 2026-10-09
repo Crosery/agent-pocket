@@ -4,6 +4,7 @@
 import type { BadgeDef, GameMap, RegionDef, TownDef, World } from '../types.ts'
 import { CONTENT } from '../content/index.ts'
 import { WORLD_CONTENT, scaleLayout } from './data.ts'
+import { withProvenance, type ProvenanceSink } from './provenance.ts'
 import { buildCollision } from './collision.ts'
 import { buildCave, caveAnchors } from './caves.ts'
 import { computeEncounters, ensureEncounterCoverage } from './encounters.ts'
@@ -77,7 +78,11 @@ function caveItemsArea(d: MapDraft, levelRange: Vec2, items: { visible: number; 
   return { draft: d, tiles, levelMid: Math.round((levelRange[0] + levelRange[1]) / 2), visible: items.visible, hidden: items.hidden }
 }
 
-export function buildWorld(seed: number = CONTENT.config.world.seed): World {
+export function buildWorld(seed: number = CONTENT.config.world.seed, opts: { provenance?: ProvenanceSink } = {}): World {
+  return withProvenance(opts.provenance, () => buildWorldInner(seed))
+}
+
+function buildWorldInner(seed: number): World {
   const t0 = performance.now()
   const wc = scaleLayout(WORLD_CONTENT)
   const owId = wc.world.overworld.id

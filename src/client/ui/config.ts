@@ -25,8 +25,7 @@ export interface MarkerStyle {
 }
 
 export interface UIConfig {
-  /** touchInsetGapCss: CSS px kept between the virtual pad (layout from content/input.json) and bottom UI. */
-  scale: { baseWidth: number; baseHeight: number; minCssPerUnit: number; maxDeviceScale: number; compactBelowWidth: number; touchInsetGapCss: number }
+  scale: { baseWidth: number; baseHeight: number; minCssPerUnit: number; maxDeviceScale: number; compactBelowWidth: number }
   anim: { panelOpenMs: number; panelCloseMs: number; modalOpenMs: number; cursorBobMs: number; toastEnterMs: number; toastLeaveMs: number }
   fade: { defaultMs: number }
   sfx: { move: string; confirm: string; cancel: string; error: string; open: string; close: string; tab: string }
@@ -38,7 +37,15 @@ export interface UIConfig {
     lingerMs: number
     portraitFallbackChars: number
   }
-  list: { visibleRows: number; compactVisibleRows: number; rowHeight: number; wrap: boolean; pageStep: number; minWidth: number; detailWidth: number }
+  list: {
+    visibleRows: number; compactVisibleRows: number; rowHeight: number; wrap: boolean; pageStep: number; minWidth: number; detailWidth: number
+    /** With the touch pad on, rows grow to at least this many CSS px (a finger, not a cursor)... */
+    touchRowCss: number
+    /** ...and a list shows no more rows than fit in the viewport height minus this many CSS px of header, detail pane and footer
+     *  (portrait also counts the pad strip); never fewer than minTouchRows. */
+    touchReservePx: { portrait: number; landscape: number }
+    minTouchRows: number
+  }
   prompt: { shakeMs: number }
   toast: { max: number; durationMs: Record<ToastKind, number>; sfx: Record<ToastKind, string> }
   bars: {
