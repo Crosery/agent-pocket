@@ -128,7 +128,7 @@
         "base": {
           "species": "kimi-k3",
           "moves": ["moe-burst", "web-crawl", "swarm-mind", "chain-of-thought"],
-          "statMul": {"hp": 8.45, "atk": 1.7, "spa": 1.7},
+          "statMul": {"hp": 7.6, "atk": 1.7, "spa": 1.7},
           "pattern": [
             {"move": "moe-burst", "weight": 30},
             {"move": "swarm-mind", "weight": 32},
@@ -142,7 +142,7 @@
         "crashed": {
           "species": "kimi-k3",
           "moves": ["moe-burst", "web-crawl", "swarm-mind", "chain-of-thought"],
-          "statMul": {"hp": 8.45, "atk": 1.19, "spa": 1.19},
+          "statMul": {"hp": 7.6, "atk": 1.19, "spa": 1.19},
           "banner": "boss.kimi.crash",
           "pattern": [
             {"move": "moe-burst", "weight": 40},
@@ -240,7 +240,7 @@
         "base": {
           "species": "qwen3-8-max",
           "moves": ["plan-execute", "distill-strike", "lora-strike", "chain-of-thought"],
-          "statMul": {"hp": 3.69, "atk": 3.6, "spa": 3.6},
+          "statMul": {"hp": 3.69, "atk": 2.52, "spa": 2.52},
           "pattern": [
             {"move": "plan-execute", "weight": 24},
             {"move": "distill-strike", "weight": 20},
@@ -504,7 +504,7 @@
         "open": {
           "species": "claude-opus",
           "moves": ["debug-strike", "qed", "context-slam", "stack-overflow"],
-          "statMul": {"hp": 4.8},
+          "statMul": {"hp": 5.28},
           "pattern": [
             {"move": "debug-strike", "weight": 28},
             {"move": "qed", "weight": 30},
@@ -523,7 +523,8 @@
         {"id": "behavior", "max": 3, "start": 0, "label": "boss.opus.behavior", "show": true, "tone": "bad"},
         {"id": "share", "max": 3, "start": 0, "label": "boss.opus.share", "show": true, "tone": "bad", "decay": 1},
         {"id": "ip", "max": 12, "start": 0, "label": "boss.opus.ip", "show": true, "tone": "good", "decay": 1},
-        {"id": "apple", "max": 12, "start": 0, "label": "boss.opus.apple", "show": true, "tone": "good", "decay": 1}
+        {"id": "apple", "max": 12, "start": 0, "label": "boss.opus.apple", "show": true, "tone": "good", "decay": 1},
+        {"id": "kin", "max": 1, "start": 0, "label": "boss.opus.kin", "show": false, "tone": "bad"}
       ],
       "triggers": [
         {"id": "flag-cn", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "region", "add": 1}], "if": {"foeCountry": ["CN"], "meter": {"id": "ip", "atMost": 0}}},
@@ -532,6 +533,7 @@
         {"id": "binge", "on": "foeMove", "times": 0, "do": [{"op": "meter", "id": "behavior", "add": 1}], "typeShift": false},
         {"id": "varied", "on": "foeMove", "times": 0, "do": [{"op": "meter", "id": "behavior", "add": -1}], "typeShift": true},
         {"id": "hop", "on": "foeSwitch", "times": 0, "do": [{"op": "meter", "id": "share", "add": 2}], "voluntary": true},
+        {"id": "kin-hit", "on": "foeSwitch", "times": 0, "do": [{"op": "say", "text": "boss.opus.kin_hit"}, {"op": "meter", "id": "pay", "add": 1}, {"op": "meter", "id": "kin", "set": 0}], "if": {"meter": {"id": "kin", "atLeast": 1}}},
         {"id": "fresh-region", "on": "foeSwitch", "times": 0, "do": [{"op": "meter", "id": "region", "set": 1}], "if": {"meter": {"id": "region", "atLeast": 2}}},
         {"id": "fresh-behavior", "on": "foeSwitch", "times": 0, "do": [{"op": "meter", "id": "behavior", "set": 1}], "if": {"meter": {"id": "behavior", "atLeast": 2}}},
         {"id": "warn-pay", "on": "turnEnd", "times": 2, "do": [{"op": "say", "text": "boss.opus.warn_pay"}], "if": {"meter": {"id": "pay", "atLeast": 2, "atMost": 2}}},
@@ -541,7 +543,7 @@
         {"id": "cloak", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.opus.cloak"}, {"op": "cure", "target": "foe"}, {"op": "meter", "id": "ip", "set": 12}, {"op": "meter", "id": "region", "set": 0}], "tag": "vpn", "if": {"meter": {"id": "ip", "atMost": 3}}},
         {"id": "apple", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.opus.paid"}, {"op": "meter", "id": "apple", "set": 12}, {"op": "meter", "id": "pay", "set": 0}], "tag": "pay-apple", "if": {"meter": {"id": "apple", "atMost": 3}}},
         {"id": "unionpay", "on": "turnEnd", "times": 0, "do": [{"op": "say", "text": "boss.opus.unionpay"}, {"op": "meter", "id": "pay", "add": -1}, {"op": "meter", "id": "region", "add": -1}], "if": {"turnCycle": {"period": 8, "from": 4, "to": 5}}},
-        {"id": "ban-pay", "on": "afterAction", "times": 0, "do": [{"op": "say", "text": "boss.opus.ban_pay"}, {"op": "status", "target": "foe", "status": "freeze"}, {"op": "meter", "id": "pay", "set": 1}, {"op": "meter", "id": "region", "set": 0}, {"op": "meter", "id": "behavior", "set": 0}, {"op": "meter", "id": "share", "set": 0}], "phase": true, "if": {"foeStatus": false, "meter": {"id": "pay", "atLeast": 3}}},
+        {"id": "ban-pay", "on": "afterAction", "times": 0, "do": [{"op": "say", "text": "boss.opus.ban_pay"}, {"op": "status", "target": "foe", "status": "freeze"}, {"op": "meter", "id": "pay", "set": 1}, {"op": "meter", "id": "region", "set": 0}, {"op": "meter", "id": "behavior", "set": 0}, {"op": "meter", "id": "share", "set": 0}, {"op": "meter", "id": "kin", "set": 1}], "phase": true, "if": {"foeStatus": false, "meter": {"id": "pay", "atLeast": 3}}},
         {"id": "ban-region", "on": "afterAction", "times": 0, "do": [{"op": "say", "text": "boss.opus.ban_region"}, {"op": "status", "target": "foe", "status": "freeze"}, {"op": "meter", "id": "pay", "set": 1}, {"op": "meter", "id": "region", "set": 0}, {"op": "meter", "id": "behavior", "set": 0}, {"op": "meter", "id": "share", "set": 0}], "phase": true, "if": {"foeStatus": false, "meter": {"id": "region", "atLeast": 3}}},
         {"id": "ban-behavior", "on": "afterAction", "times": 0, "do": [{"op": "say", "text": "boss.opus.ban_behavior"}, {"op": "status", "target": "foe", "status": "freeze"}, {"op": "meter", "id": "pay", "set": 1}, {"op": "meter", "id": "region", "set": 0}, {"op": "meter", "id": "behavior", "set": 0}, {"op": "meter", "id": "share", "set": 0}], "phase": true, "if": {"foeStatus": false, "meter": {"id": "behavior", "atLeast": 3}}},
         {"id": "ban-share", "on": "afterAction", "times": 0, "do": [{"op": "say", "text": "boss.opus.ban_share"}, {"op": "status", "target": "foe", "status": "freeze"}, {"op": "meter", "id": "pay", "set": 1}, {"op": "meter", "id": "region", "set": 0}, {"op": "meter", "id": "behavior", "set": 0}, {"op": "meter", "id": "share", "set": 0}], "if": {"foeStatus": false, "meter": {"id": "share", "atLeast": 3}}},
@@ -640,7 +642,7 @@
         "upright": {
           "species": "unitree-gd01",
           "moves": ["cluster-crush", "overheat-strike", "plan-execute", "tool-chain"],
-          "statMul": {"hp": 3.75},
+          "statMul": {"hp": 4.125},
           "pattern": [
             {"move": "cluster-crush", "weight": 22},
             {"move": "overheat-strike", "weight": 30},
@@ -651,7 +653,7 @@
         "fallen": {
           "species": "unitree-gd01",
           "moves": ["cluster-crush", "overheat-strike", "plan-execute", "tool-chain"],
-          "statMul": {"hp": 3.75},
+          "statMul": {"hp": 4.125},
           "banner": "boss.unitree.fall",
           "pattern": [
             {"move": "cluster-crush", "weight": 22},

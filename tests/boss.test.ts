@@ -157,11 +157,11 @@ test('mechanics: each boss has its own counterplay', () => {
 
   // Claude Opus: four risk columns, any full one bans the account; the residential IP and the Apple subscription hold the first two back.
   const RISK = ['pay', 'region', 'behavior', 'share']
-  const banned = (rs: SimResult[]) => rs.filter((r) => RISK.some((d) => (r.fired[`ban-${d}`] ?? 0) > 0)).length
+  const banned = (rs: SimResult[], dims = RISK) => rs.filter((r) => dims.some((d) => (r.fired[`ban-${d}`] ?? 0) > 0)).length
   assert.ok(['ban-pay', 'ban-region', 'ban-behavior', 'flag-cn', 'bill', 'binge'].every((k) => firedIn(P('opus')).has(k)))
   assert.equal(meterPeak(P('opus'), 'region'), 3)
   assert.ok(firedIn(C('opus')).has('cloak') && firedIn(C('opus')).has('apple'))
-  assert.ok(banned(C('opus')) < banned(P('opus')) / 4, 'the checklist keeps most accounts alive')
+  assert.ok(banned(C('opus'), ['pay', 'region']) < banned(P('opus'), ['pay', 'region']) / 4, 'the two items stop the payment and region bans (behaviour and sharing are play style)')
 
   // Unitree GD01: a banana peel drops the mech for several turns.
   assert.ok(formsIn(C('unitree')).has('fallen') && firedIn(C('unitree')).has('slip'))
@@ -317,6 +317,9 @@ test('events: Opus scores four risk columns; a full one bans the account and the
   assert.equal(st.fired['ban-pay'], 1)
   assert.equal(pay.foe().status, 'freeze')
   assert.equal(st.meters.pay, 1, 'a fresh column after the ban')
+  st = pay.turn({ kind: 'switch', partyIndex: 1 })
+  assert.equal(st.fired['kin-hit'], 1, 'the same card is checked again on whoever comes in next (the 野卡 chain)')
+  assert.equal(st.meters.kin, 0)
 
   // behaviour: the same attack type twice in a row is binging; sharing: hopping between creatures is worth two.
   const binge = stage('opus', [us, cn])

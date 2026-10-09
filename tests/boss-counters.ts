@@ -100,8 +100,8 @@ export const COUNTERS: Record<string, Counter> = {
   // Never repeat the previous type: every damaging move changes the type it has just read.
   alpha: { policy: (h) => pickAttack(h, (m) => m.type !== h.state.lastFoeType) },
 
-  // The checklist: a residential IP once the origin gets flagged (or is Chinese), the Apple subscription for the payment
-  // column, and never the same attack type twice in a row. (Sharing is avoided by not hopping, which the AI mostly does.)
+  // The checklist: a residential IP once the origin gets flagged (or is Chinese) and the Apple subscription for the payment
+  // column. The behaviour and sharing columns (don't repeat one type, don't hop) are play style the AI already mostly honours.
   opus: {
     bag: { 'residential-ip': 6, 'apple-sub': 6 },
     policy: (h) => {
@@ -109,7 +109,7 @@ export const COUNTERS: Record<string, Counter> = {
       const cn = CONTENT.species[h.active.speciesId]?.country === 'CN'
       if (m.ip <= 2 && (m.region >= 1 || h.active.status !== null || cn)) return h.bait('residential-ip')
       if (m.apple <= 2 && m.pay >= 1) return h.bait('apple-sub')
-      return pickAttack(h, (mv) => mv.type !== h.state.lastFoeType)
+      return null
     },
   },
 
