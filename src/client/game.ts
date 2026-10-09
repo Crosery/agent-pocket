@@ -1,12 +1,12 @@
 // Integration: builds every client service into one GameContext, runs the main loop, title flow, settings,
 // autosave, global keys and multiplayer wiring. Optional modules (battle client, screens, multiplayer flows)
 // are discovered with import.meta.glob so the game still runs, with fallbacks, while they are missing.
-import type { Creature, QuestDef, SaveData, Settings } from '../shared/types.ts'
+import type { Creature, QuestDef, SaveData, Settings, World } from '../shared/types.ts'
 import type { ClientMsg, PublicProfile } from '../shared/protocol.ts'
 import type { AudioManager, BattleRunner, GameClock, GameContext, GameData, GameEvents, Minimap, Screens } from './contracts.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { toView } from '../shared/creature.ts'
-import { buildWorld, worldAnchors } from '../shared/world/index.ts'
+import { buildWorld, buildWorldAsync, worldAnchors } from '../shared/world/index.ts'
 import { getMap } from '../shared/world/worldapi.ts'
 import {
   applyDocumentSettings, createAssetStore, createAudio, createClock, createEventBus, createInput, createSaveManager, isTouchDevice,
@@ -18,6 +18,7 @@ import { UI_CONFIG, createChatUI, createEscapeStack, createHUD, createMinimap, c
 import { createNetClient } from './net/index.ts'
 import { createOnboarding } from './onboarding/index.ts'
 import { createFallbackBattleRunner, createFallbackScreens, createOverworld, GAME, type MultiplayerHooks, type OverworldExt } from './world/index.ts'
+import type { Onboarding } from './onboarding/index.ts'
 import { ownedKeyItem } from './world/save-ops.ts'
 import { flyLanding, resolvePlace } from './world/explore.ts'
 import { createDebugOverlay } from './debug-overlay.ts'
@@ -97,6 +98,8 @@ function createLoader() {
       set(p, t('game.loading.steps.map', { map: mapName }))
       if (root?.hidden && !showTimer) showTimer = window.setTimeout(() => { showTimer = 0; show() }, GAME.loading.showAfterMs)
     },
+    /** Progress of the world build while the overlay is up (it is built in the background behind the title). */
+    world(p: number) { set(p, t('game.loading.steps.world')) },
     hide,
     error(message: string) {
       show()
@@ -157,19 +160,52 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
 
   loader.step('content')
   const loaders = optionalModules()
+  // The optional chunks start downloading now and overlap everything else the boot does; screens are needed for the title,
+  // the battle, PvP and trade code only from the first fight / online play on.
+  const loadScreens = loadOptional<ScreensModule>(loaders, './ui/screens/index.ts', (m) => typeof m.createScreens === 'function')
+  const loadBattle = loadOptional<BattleModule>(loaders, './battle/index.ts', (m) => typeof m.createBattleRunner === 'function')
+  const loadPvp = loadOptional<PvpModule>(loaders, './net/pvp-channel.ts', (m) => typeof m.challengePvp === 'function')
+  const loadTrade = loadOptional<TradeModule>(loaders, './net/trade-flow.ts', (m) => typeof m.startTradeFlow === 'function')
   loader.step('assets')
   const assets = createAssetStore()
   await assets.init()
   mark('assets')
-  loader.step('world')
-  await new Promise((r) => setTimeout(r, 0))
-  const world = buildWorld(dev?.worldSeed ?? undefined)
-  mark('world')
-  const data: GameData = { ...CONTENT, world }
-  dev?.afterWorld(world)
-  const saves = createSaveManager({ world, ...(dev?.storage ? { storage: dev.storage } : {}) })
+
+  // The world is generated after the title is up, in slices (buildWorldAsync): about 2 s of CPU on a desktop and several times
+  // that on a phone. Whatever needs it waits on ensureWorld(). The developer tooling wipes and seeds slots right after the world
+  // exists, so with it the world is built first.
+  let world: World | null = null
+  const data: GameData = { ...CONTENT, world: undefined as unknown as World }
+  const needWorld = (): World => { if (!world) throw new Error('the world is not built yet'); return world }
+  const adoptWorld = (w: World): World => {
+    world = w
+    data.world = w
+    mark('world')
+    dev?.afterWorld(w)
+    return w
+  }
+  let worldTask: Promise<World> | null = null
+  const startWorld = (): Promise<World> => {
+    worldTask ??= buildWorldAsync(undefined, { sliceMs: GAME.loading.worldSliceMs, onProgress: (p) => loader.world(p) }).then(adoptWorld)
+    worldTask.catch((err) => console.error('[game] world build failed', err))
+    return worldTask
+  }
+  const ensureWorld = async (): Promise<World> => {
+    if (world) return world
+    const pending = startWorld()
+    loader.step('world')
+    try { return await pending } finally { loader.hide() }
+  }
+  if (dev) {
+    loader.step('world')
+    await new Promise((r) => setTimeout(r, 0))
+    adoptWorld(buildWorld(dev.worldSeed ?? undefined))
+  }
+  const saves = createSaveManager({ world: () => world, ...(dev?.storage ? { storage: dev.storage } : {}) })
   const stored = saves.load(slot)
   let save: SaveData = stored ?? saves.newGame({ name: '', avatar: '' })
+  // A device without a save yet starts on its own tier (phones: the lighter one); a stored choice always wins.
+  if (!stored) save.settings.quality = defaultQualityFor(isTouchDevice(), save.settings.quality)
   /** Before the world starts only a save that already exists on disk may be written (settings changed on the title). */
   let titleSaveStored = !!stored
   let playing: SaveData | null = null
@@ -204,8 +240,6 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     net.send(msg)
   })
   // Focus hand-over: Esc always closes the topmost overlay, a click on the game view returns to the game,
-  // A device without a save yet starts on its own tier (phones: the lighter one); a stored choice always wins.
-  if (!stored) save.settings.quality = defaultQualityFor(isTouchDevice(), save.settings.quality)
   // and HUD buttons let go of focus after a pointer click (see ui/focus-guard.ts).
   const escapes = createEscapeStack(UI_CONFIG.focus.escapeOrder)
   escapes.register({ id: 'chat', isOpen: () => chat.isOpen, dismiss: () => chat.close() })
@@ -269,27 +303,28 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   const ctx = ctxObj as unknown as GameContext
 
   loader.step('modules')
-  const [screensMod, battleMod, pvpMod, tradeMod] = await Promise.all([
-    loadOptional<ScreensModule>(loaders, './ui/screens/index.ts', (m) => typeof m.createScreens === 'function'),
-    loadOptional<BattleModule>(loaders, './battle/index.ts', (m) => typeof m.createBattleRunner === 'function'),
-    loadOptional<PvpModule>(loaders, './net/pvp-channel.ts', (m) => typeof m.challengePvp === 'function'),
-    loadOptional<TradeModule>(loaders, './net/trade-flow.ts', (m) => typeof m.startTradeFlow === 'function'),
-  ])
+  const screensMod = await loadScreens
   mark('modules')
   const screens = screensMod ? screensMod.createScreens(ctx) : createFallbackScreens(ctx)
   ctxObj.screens = screens
-  ctxObj.battle = battleMod ? battleMod.createBattleRunner(ctx) : createFallbackBattleRunner(ctx)
-  const hooks: MultiplayerHooks = { startTradeFlow: tradeMod?.startTradeFlow, challengePvp: pvpMod?.challengePvp }
-  const overworld: OverworldExt = createOverworld(ctx, {
-    rng: new RngHub(dev?.rngSeed ?? randomSeed()),
-    multiplayer: () => hooks,
-    onLoadProgress: (p, name) => loader.map(p, name),
-    ...(screensMod?.questHudText ? { questText: screensMod.questHudText } : {}),
-  })
-  ctxObj.overworld = overworld
-  const onboarding = createOnboarding(ctx, overworld, uiRoot)
   if (!screensMod) console.warn('[game] screens module missing: using fallback screens')
-  if (!battleMod) console.warn('[game] battle module missing: battles auto-resolve')
+  // The battle runner is built on the first fight (its chunk is usually in by then); BattleRunner is async-only, so a stand-in works.
+  let battleRunner: Promise<BattleRunner> | null = null
+  const battleOnDemand = (): Promise<BattleRunner> => (battleRunner ??= loadBattle.then((m) => {
+    if (m) return m.createBattleRunner(ctx)
+    console.warn('[game] battle module missing: battles auto-resolve')
+    return createFallbackBattleRunner(ctx)
+  }))
+  ctxObj.battle = {
+    run: async (init, opts) => (await battleOnDemand()).run(init, opts),
+    evolve: async (partyIndex, to) => (await battleOnDemand()).evolve(partyIndex, to),
+  }
+
+  // What needs the generated world (built by buildWorldLayer once it exists).
+  let overworld!: OverworldExt
+  let onboarding!: Onboarding
+  let debugOverlay!: ReturnType<typeof createDebugOverlay>
+  let hooks: MultiplayerHooks = {}
 
   // ---- settings -----------------------------------------------------------
   const applySettings = (s: Settings) => {
@@ -317,9 +352,6 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     events.emit('chat:message', { from: m.from, name: m.name, channel: m.channel, text: m.text, at: m.at })
   })
   net.on('system', (m) => chat.addMessage({ name: '', channel: 'system', text: m.text, at: Date.now() }))
-  for (const [name, install] of [['pvp', pvpMod?.installPvpHandlers], ['trade', tradeMod?.installTradeHandlers]] as const) {
-    try { install?.(ctx) } catch (err) { console.error(`[game] ${name} handlers failed to install`, err) }
-  }
 
   for (const e of GAME.autosave.events) {
     events.on(e as keyof GameEvents, () => {
@@ -339,7 +371,6 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   for (const ev of ['pointerdown', 'keydown', 'touchstart'] as const) window.addEventListener(ev, unlockAudio, true)
 
   // ---- main loop ----------------------------------------------------------
-  const debugOverlay = createDebugOverlay(ctx, overworld, appRoot)
   let autosaveT = data.config.save.autosaveSeconds
   let modal = false
   const clockFrozen = () => !!dev?.clockFrozen()
@@ -354,15 +385,15 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   }
 
   const canFly = () => {
-    const map = overworld.mapId ? getMap(world, overworld.mapId) : null
+    const map = overworld.mapId ? getMap(needWorld(), overworld.mapId) : null
     return !!map && GAME.fly.mapKinds.includes(map.kind) && ctx.save.badges.length >= GAME.fly.minBadges
       && !!ownedKeyItem(ctx.save, GAME.fly.keyItemKind, data)
   }
 
   /** Flies to a story town, hamlet, landmark or dungeon mouth of the core or the frontier (place id). */
   async function flyTo(placeId: string): Promise<void> {
-    const place = resolvePlace(world, placeId)
-    const land = place ? flyLanding(world, place) : null
+    const place = resolvePlace(needWorld(), placeId)
+    const land = place ? flyLanding(needWorld(), place) : null
     if (!place || !land) { ui.toast(t('world.fly.blocked'), 'warn'); return }
     audio.playSfx(GAME.fly.sfx)
     await overworld.enterMap(land.map.id, land.x, land.y, 'down', true)
@@ -398,14 +429,19 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   /** A battle / evolution scene owns the canvas: ours (overworld flow) or one opened directly (PvP, field evolution). */
   const battleScreenUp = () => overworld.battleActive || html.classList.contains(BATTLE_SCREEN_CLASS)
 
+  /** Set by tick() when it drew the overworld; frame() then reports the frame to the governor. */
+  let worldRendered = false
+
   function frame(now: number): void {
     requestAnimationFrame(frame)
+    worldRendered = false
     const real = Math.min(GAME.loop.maxDtSec, Math.max(0, (now - lastFrame) / 1000))
     lastFrame = now
     if (GAME.loop.pauseWhenHidden && document.hidden) { input.endFrame(); return }
     const dt = dev ? dev.frameDt(real) : real
     if (dt === null) { input.endFrame(); return }
     tick(dt)
+    if (worldRendered) renderer.noteFrame(now)
   }
 
   /** One main-loop frame of dt seconds (the animation frame callback, and the developer's frame stepper). */
@@ -429,19 +465,36 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
       }
     } catch (err) {
       console.error('[game] frame error', err)
-  /** Set by tick() when it drew the overworld; frame() then reports the frame to the governor. */
-  let worldRendered = false
-
     }
     input.endFrame()
-    worldRendered = false
   }
   requestAnimationFrame(frame)
-  dev?.install({ ctx, overworld, world, onboarding, flyTo: (id) => runModal(() => flyTo(id)), tick })
+
+  /** The overworld, onboarding, debug overlay, PvP / trade hooks and the developer tooling: everything that reads the world. */
+  let layerBuilt = false
+  async function buildWorldLayer(): Promise<void> {
+    if (layerBuilt) return
+    layerBuilt = true
+    const [pvpMod, tradeMod] = await Promise.all([loadPvp, loadTrade])
+    hooks = { startTradeFlow: tradeMod?.startTradeFlow, challengePvp: pvpMod?.challengePvp }
+    overworld = createOverworld(ctx, {
+      rng: new RngHub(dev?.rngSeed ?? randomSeed()),
+      multiplayer: () => hooks,
+      onLoadProgress: (p, name) => loader.map(p, name),
+      ...(screensMod?.questHudText ? { questText: screensMod.questHudText } : {}),
+    })
+    ctxObj.overworld = overworld
+    onboarding = createOnboarding(ctx, overworld, uiRoot)
+    debugOverlay = createDebugOverlay(ctx, overworld, appRoot)
+    for (const [name, install] of [['pvp', pvpMod?.installPvpHandlers], ['trade', tradeMod?.installTradeHandlers]] as const) {
+      try { install?.(ctx) } catch (err) { console.error(`[game] ${name} handlers failed to install`, err) }
+    }
+    dev?.install({ ctx, overworld, world: needWorld(), onboarding, flyTo: (id) => runModal(() => flyTo(id)), tick })
+  }
+  if (dev) await buildWorldLayer()
 
   // ---- title flow ---------------------------------------------------------
   hud.setVisible(false)
-    if (worldRendered) renderer.noteFrame(now)
   minimap.setVisible(false)
   chat.setVisible(false)
   loader.step('ready')
@@ -449,8 +502,8 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   mark('title')
 
   const applyNewGameStart = (s: SaveData) => {
-    const anchor = worldAnchors(world)[GAME.newGame.startAnchor]
-    if (!anchor || !getMap(world, anchor.map)) return
+    const anchor = worldAnchors(needWorld())[GAME.newGame.startAnchor]
+    if (!anchor || !getMap(needWorld(), anchor.map)) return
     const place = { map: anchor.map, x: anchor.x, y: anchor.y, facing: GAME.newGame.facing }
     s.position = { ...place }
     if (GAME.newGame.respawnAtStart) s.respawn = { ...place }
@@ -469,7 +522,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   async function titleFlow(): Promise<{ save: SaveData; isNew: boolean }> {
     if (dev?.skipTitle) {
       const existing = saves.load(slot)
-      const s = existing ?? dev.newSave(saves, world)
+      const s = existing ?? dev.newSave(saves, needWorld())
       if (!existing) applyNewGameStart(s)
       return { save: s, isNew: false }
     }
@@ -477,17 +530,20 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
       const hasSave = saves.hasSave(slot)
       const choice = await screens.title(hasSave)
       if (choice === 'continue') {
+        await ensureWorld()
         const s = saves.load(slot)
         if (s) return { save: s, isNew: false }
       } else if (choice === 'new') {
         if (hasSave && !(await ui.confirm(t('game.title.overwrite')))) continue
         const r = await screens.newGame()
         if (!r) continue
+        await ensureWorld()
         const s = saves.newGame(r)
         s.settings = { ...ctx.save.settings }
         applyNewGameStart(s)
         return { save: s, isNew: true }
       } else if (choice === 'import') {
+        await ensureWorld()
         const s = await importSave()
         if (s) {
           // Settings are per device: an imported save keeps this device's current ones.
@@ -502,15 +558,19 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     }
   }
 
+  if (!dev) void startWorld()
   const start = await titleFlow()
+  await ensureWorld()
+  await buildWorldLayer()
+  const readyWorld = needWorld()
   ctx.save = start.save
   playing = start.save
-  dev?.applyStart(ctx, world)
+  dev?.applyStart(ctx, readyWorld)
   applySettings(ctx.save.settings)
   audio.stopBgm(GAME.region.musicFadeMs)
   await ui.fade(true, GAME.warp.fadeMs)
   const pos = ctx.save.position
-  const startMap = getMap(world, pos.map) ? pos : { ...world.maps[world.startMap].spawn, map: world.startMap }
+  const startMap = getMap(readyWorld, pos.map) ? pos : { ...readyWorld.maps[readyWorld.startMap].spawn, map: readyWorld.startMap }
   await overworld.enterMap(startMap.map, startMap.x, startMap.y, startMap.facing, false)
   inWorld = true
   mark('world-entered')
@@ -524,5 +584,5 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   net.connect()
   await ui.fade(false, GAME.warp.fadeMs)
   if (start.isNew) await overworld.playIntro()
-  await dev?.runActions(ctx, overworld, world, screens)
+  await dev?.runActions(ctx, overworld, readyWorld, screens)
 }
