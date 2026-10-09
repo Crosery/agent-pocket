@@ -27,6 +27,8 @@ export interface BattleUiConfig {
     charsPerSecond: Record<TextSpeed, number>
     autoAdvanceMs: Record<TextSpeed, number>
     autoAdvance: boolean
+    /** Splits "Name: 「line」" into the speaker (group 1) and the quoted line: the speaker gets a plate in the message window. */
+    speakerPattern: string
     pause: { chars: string; ms: number }
     blip: { sfx: string; everyChars: number; volume: number; pitch: number }
   }
@@ -49,9 +51,30 @@ export interface BattleUiConfig {
     select: string; confirm: string; cancel: string; error: string; advance: string
   }
   cry: { onSendOut: boolean; onFaint: boolean; faintPitch: number; evolvePitch: number }
+  /**
+   * Window geometry in UI pixels (CSS reads it from --apb-* variables set by view.ts). `syncSec` is how often the HUD's
+   * rectangles are re-measured for the stage composition; `bottomMaxGapPx` is the most space the bottom windows may leave
+   * under them (QA: no dead band).
+   */
+  layout: {
+    syncSec: number; margin: number; gap: number; barHeight: number
+    foeWidth: number; ownWidth: number; cmdWidth: number
+    compactFoeWidth: number; compactOwnWidth: number; compactCmdWidth: number
+    detailWidth: number; bottomMaxGapPx: number
+  }
   hud: {
     hpBarWidth: number; expBarWidth: number; foeHpNumbers: boolean; ownHpNumbers: boolean
     showTypes: boolean; showStages: boolean
+    /** Boss meter tiles: characters of the label kept, cells of the pip row, and how long a tapped tile's full reading stays up. */
+    meterLabelChars: number; meterPipCells: number; meterReadoutMs: number
+  }
+  /** Pixel icons (files under `base`, named icon-<id>.png); type badges use each type's own `icon` file under `typeBase`. */
+  icons: {
+    base: string
+    commands: Record<CommandId, string>
+    effects: string[]
+    meterTones: Record<'neutral' | 'good' | 'warn' | 'bad', string>
+    typeBase: string
   }
   commands: { normal: CommandId[]; pvp: CommandId[]; columns: number }
   moves: { columns: number; hintRequiresSeen: boolean; categoryColors: Record<MoveCategory, string> }

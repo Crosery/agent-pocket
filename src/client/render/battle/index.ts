@@ -13,6 +13,7 @@ import { isHD2DRendererExt } from '../hd2d.ts'
 import { cameraYaw } from '../sprite-utils.ts'
 import { createCaptureBall } from './ball.ts'
 import { createBattleCamera } from './camera.ts'
+import { solveFraming, type Box, type Solution } from './framing.ts'
 import { STAGE, expandSteps, otherSide, shotFor, timelineLength, type ShotDef, type SideIndex, type VfxStep } from './config.ts'
 import { createEnvironment } from './environment.ts'
 import { createSharedGeometries } from './meshes.ts'
@@ -43,6 +44,15 @@ export interface BattleStage {
   setBoss(side: 0 | 1, bossId: string | null): void
   /** Screen rectangle of a creature's sprite card as fractions of the viewport (QA / layout audit); null when hidden. */
   creatureRect(side: 0 | 1): { left: number; top: number; right: number; bottom: number } | null
+  /**
+   * The HUD's windows (CSS pixels, relative to the viewport) and the viewport size: the camera recomposes (zoom +
+   * shift) so that no creature at rest sits under a window or off screen. Call whenever a window moves or resizes.
+   */
+  setHud(layout: HudLayout | null): void
+  /** Where each creature rests under the base shot at neutral framing (QA; viewport fractions). */
+  restBoxes(): { left: number; top: number; right: number; bottom: number }[]
+  /** What the last composition decided (QA). */
+  readonly composition: Solution & { framing: { zoom: number; dx: number; dy: number } }
   intro(kind: IntroKind): Promise<void>
   sendOut(side: 0 | 1, ballColor?: string): Promise<void>
   recall(side: 0 | 1): Promise<void>
@@ -65,6 +75,14 @@ export interface BattleStage {
   cancelEvolve(): void
   update(dt: number): void
   dispose(): void
+}
+
+export interface HudLayout {
+  width: number
+  height: number
+  /** CSS pixels per UI pixel. */
+  unit: number
+  rects: { left: number; top: number; right: number; bottom: number }[]
 }
 
 const srgb = (hex: string, out = new THREE.Color()) => out.setRGB(...hexToRgb(hex), THREE.SRGBColorSpace)
@@ -257,6 +275,62 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
     }
   }
 
+  // --- screen composition (HUD-aware framing) ------------------------------------
+  let hud: HudLayout | null = null
+  let lastSolution: Solution = { framing: { zoom: 1, dx: 0, dy: 0 }, clear: true, overlap: 0 }
+  let fitted = false
+  const probe = new THREE.PerspectiveCamera()
+
+  /** The sprite's opaque part as a viewport box when seen through `camera`; `lift` raises it (idle float, as a fraction of its height). */
+  function projectBox(sp: BattleSprite, camera: THREE.PerspectiveCamera, scale: number, lift: number): Box {
+    const right = _qa.setFromMatrixColumn(camera.matrixWorld, 0)
+    const o = sp.opaque
+    let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity
+    for (const h of [1 - o.y1, 1 - o.y0 + lift]) {
+      for (const f of [o.x0, o.x1]) {
+        sp.pointAt(h, _qb)
+        _qb.addScaledVector(right, (f - 0.5) * sp.width * scale).project(camera)
+        const x = _qb.x * 0.5 + 0.5, y = 0.5 - _qb.y * 0.5
+        l = Math.min(l, x); r = Math.max(r, x); t = Math.min(t, y); b = Math.max(b, y)
+      }
+    }
+    return { left: l, top: t, right: r, bottom: b }
+  }
+
+  /** Where each creature rests when seen through the base shot at neutral framing. */
+  function restBoxes(width: number, height: number): Box[] {
+    const C = S.camera
+    const b = cam.base
+    probe.aspect = width / height
+    const widen = Math.max(1, C.refAspect / probe.aspect)
+    probe.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(b.fov) / 2) * widen))
+    probe.near = C.near
+    probe.far = C.far
+    probe.position.copy(b.pos)
+    probe.lookAt(b.look)
+    probe.updateProjectionMatrix()
+    probe.updateMatrixWorld()
+    const boxes: Box[] = []
+    for (const side of [0, 1] as const) {
+      const sp = creatures[side]
+      if (!sp.id) continue
+      const boss = bosses[side]
+      const theme = boss ? BOSS_PRES.themes[boss.theme] : undefined
+      boxes.push(projectBox(sp, probe, 1, C.framing.idlePad + (theme?.bob.amp ?? 0)))
+    }
+    return boxes
+  }
+
+  function refit(): void {
+    if (!hud || hud.width < 1 || hud.height < 1) return
+    const F = S.camera.framing
+    const boxes = restBoxes(hud.width, hud.height)
+    const frac = hud.rects.map((r) => ({ left: r.left / hud!.width, right: r.right / hud!.width, top: r.top / hud!.height, bottom: r.bottom / hud!.height }))
+    lastSolution = solveFraming(boxes, frac, { w: hud.width, h: hud.height, unit: hud.unit }, F)
+    cam.setFraming(lastSolution.framing, !fitted)
+    fitted = true
+  }
+
   // --- evolution helpers -------------------------------------------------------
   /** Holds a sprite's flash at a level (silhouette) until stopped; `fadeOut` ramps it down. */
   function holdFlash(sp: BattleSprite, color: THREE.Color, rampIn: number) {
@@ -305,6 +379,7 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
       if (!speciesId) { sp.setCreature(null, false, slotScale(side), sl.facesRight); sp.present = false; return }
       sp.setCreature(speciesId, shiny, slotScale(side), sl.facesRight)
       if (side === 1) ball.setVisible(false)
+      refit()
     },
 
     showCreature(side, visible) { creatures[side].present = visible && !!creatures[side].id },
@@ -312,18 +387,15 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
     creatureRect(side) {
       const sp = creatures[side]
       if (!sp.present || !sp.id) return null
-      const cam3 = cam.camera
-      const right = _qa.setFromMatrixColumn(cam3.matrixWorld, 0)
-      const half = (sp.width * sp.fx.scale) / 2
-      let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity
-      for (const [h, dx] of [[0, -1], [0, 1], [1, -1], [1, 1]] as const) {
-        sp.pointAt(h, _qb)
-        _qb.addScaledVector(right, dx * half).project(cam3)
-        const x = _qb.x * 0.5 + 0.5, y = 0.5 - _qb.y * 0.5
-        l = Math.min(l, x); r = Math.max(r, x); t = Math.min(t, y); b = Math.max(b, y)
-      }
-      return { left: l, top: t, right: r, bottom: b }
+      return projectBox(sp, cam.camera, sp.fx.scale, 0)
     },
+
+    setHud(layout) {
+      hud = layout
+      refit()
+    },
+    restBoxes() { return hud ? restBoxes(hud.width, hud.height) : [] },
+    get composition() { return { ...lastSolution, framing: { ...cam.framing } } },
 
     setBoss(side, bossId) {
       const entry = bossEntry(bossId)
@@ -338,6 +410,7 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
       }
       const sp = creatures[side]
       if (sp.id) sp.setCreature(sp.id, sp.shiny, slotScale(side), S.slots[side].facesRight)
+      refit()
     },
 
     setTrainer(side, sheet) {
@@ -369,6 +442,8 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
       void run(T.sendOut.throw, ctx)
       await ballFlight(from, to, S.ball.sendOutDur, S.ball.sendOutArc)
       if (!alive()) return
+      // the player's own trainer stands just off screen; once the throw is done it would only peek in when the composition shifts
+      if (side === 0) trainers[0].present = false
       ball.setVisible(false)
       await run(T.sendOut.open, ctx)
       if (!alive()) return

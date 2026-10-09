@@ -12,6 +12,7 @@
   "camera": {
     "fov": 30,
     "refAspect": 1.7778,
+    "framing": {"rate": 5, "minZoom": 0.5, "maxZoom": 2.2, "zoomStep": 0.02, "shiftStep": 0.01, "shiftMax": 0.45, "target": [0.5, 0.42], "targetPortrait": [0.5, 0.5], "fill": [0.6, 0.86], "padU": 5, "edgeU": 3, "idlePad": 0.04},
     "near": 0.3,
     "far": 220,
     "sway": {"pos": [0.22, 0.07, 0.12], "look": [0.06, 0.03, 0.05], "hz": [0.045, 0.07, 0.057], "phase": 1.7, "rate": 2.0},

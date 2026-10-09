@@ -210,6 +210,13 @@ export interface CameraCfg {
   fov: number
   /** Aspect the shots are framed for: on narrower screens the vertical FOV widens to keep that horizontal coverage. */
   refAspect: number
+  /**
+   * Screen composition solver (framing.ts): eases at `rate` (1/s); zoom stays in [minZoom, maxZoom] in `zoomStep`s and
+   * the picture slides at most `shiftMax` of the viewport in `shiftStep`s; the creatures' union centre is pulled
+   * towards `target` (viewport fractions) and its width stays within `fill` of the screen (landscape, portrait). `padU` keeps that many UI pixels between a creature and a window, `edgeU` between a
+   * creature and the screen edge; `idlePad` (fraction of sprite height) covers the float / breathing swing.
+   */
+  framing: { rate: number; minZoom: number; maxZoom: number; zoomStep: number; shiftStep: number; shiftMax: number; target: [number, number]; targetPortrait: [number, number]; fill: [number, number]; padU: number; edgeU: number; idlePad: number }
   near: number
   far: number
   /** Idle sway amplitudes / frequencies; `phase` offsets the three axes; `rate` = how fast setSway() levels ease (1/s). */

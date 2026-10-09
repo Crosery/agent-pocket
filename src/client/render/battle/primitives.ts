@@ -683,9 +683,9 @@ export function spawnStep(step: VfxStep, ctx: FxCtx, host: FxHost): Effect | nul
       return null
     case 'camera': {
       const side = s.on === 'foe' ? ctx.foe : s.on === 'stage' ? 0 : ctx.self
-      const shot = shotFor(s.shot, side)
-      if (!shot) return null
       const cam = host.camera
+      const shot = s.shot === 'base' ? cam.baseShot : shotFor(s.shot, side)
+      if (!shot) return null
       if (step.mode === 'cut') cam.cut(shot)
       else if (step.hold !== undefined) cam.push(shot, s.dur, step.hold, s.back)
       else cam.blendTo(shot, s.dur)

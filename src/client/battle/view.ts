@@ -4,7 +4,9 @@
 import type { Settings, SideIndex, StatKey } from '../../shared/types.ts'
 import type { AudioManager, Input } from '../contracts.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
+import { getUIScale } from '../ui/scale.ts'
 import { el, panel } from '../ui/widgets.ts'
+import type { HudLayout } from '../render/battle/index.ts'
 import { BATTLE_UI } from './config.ts'
 import { battleMs, battleSpeedScale } from './speed.ts'
 import { createBattleEffectsPanel } from './effects-panel.ts'
@@ -31,6 +33,8 @@ export interface BattleView {
   setHudVisible(on: boolean): void
   /** Hides the bottom bar (message, menus, own status) and the foe window while screens / kit dialogues are on top. */
   setBarVisible(on: boolean): void
+  /** Where the windows sit (every [data-hud] element), for the stage's screen composition; null while not laid out. */
+  layout(): HudLayout | null
   /** Extra handler that sees input first (e.g. evolution cancel). */
   setInterceptor(fn: ((inp: Input) => boolean) | null): void
   input(inp: Input): boolean
@@ -41,6 +45,11 @@ export interface BattleView {
 export function createBattleView(audio: AudioManager, settings: () => Settings, pace: () => Pick<Settings, 'battleSpeed'> = settings): BattleView {
   const T = BATTLE_UI.timing
   const root = el('div', 'apb-root')
+  const L = BATTLE_UI.layout
+  for (const [k, v] of Object.entries({
+    margin: L.margin, gap: L.gap, 'bar-h': L.barHeight, 'foe-w': L.foeWidth, 'own-w': L.ownWidth, 'cmd-w': L.cmdWidth,
+    'foe-w-c': L.compactFoeWidth, 'own-w-c': L.compactOwnWidth, 'cmd-w-c': L.compactCmdWidth, 'detail-w': L.detailWidth,
+  })) root.style.setProperty(`--apb-${k}`, String(v))
   const barSpeed = () => battleSpeedScale(pace())
   let openDetails: (side: SideIndex) => void = () => undefined
   const status: [StatusPanel, StatusPanel] = [
@@ -54,6 +63,7 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
   const message: MessageBox = createMessageBox(audio, settings, pace)
   const menus: Menus = createMenus(audio)
   const bar = el('div', 'apb-bar', [message.el, menus.el, status[0].el])
+  for (const n of [status[1].el, status[0].el, message.el, menus.el, weather]) n.dataset.hud = ''
   root.append(status[1].el, weather, timer, bar)
   const effects = createBattleEffectsPanel(root, status)
   openDetails = (side) => effects.show(side)
@@ -103,6 +113,7 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
           el('span', { class: 'apb-lv-d', text: t('battleui.levelUp.delta', { n: d.after - d.before }) }),
         ]))
       }
+      p.el.dataset.hud = ''
       root.append(p.el)
       p.el.addEventListener('click', (e) => { e.stopPropagation(); levelWait?.done() })
       return new Promise<void>((resolve) => {
@@ -122,6 +133,18 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
       root.classList.toggle('is-covered', !on)
     },
     setInterceptor(fn) { interceptor = fn },
+    layout() {
+      const rr = root.getBoundingClientRect()
+      if (rr.width < 1 || rr.height < 1) return null
+      const rects: HudLayout['rects'] = []
+      for (const n of root.querySelectorAll<HTMLElement>('[data-hud]')) {
+        if (!n.checkVisibility() || n.offsetWidth < 1 || n.offsetHeight < 1) continue
+        let x = rr.left, y = rr.top
+        for (let cur: HTMLElement | null = n; cur && cur !== root; cur = cur.offsetParent as HTMLElement | null) { x += cur.offsetLeft; y += cur.offsetTop }
+        rects.push({ left: x, top: y, right: x + n.offsetWidth, bottom: y + n.offsetHeight })
+      }
+      return { width: rr.width, height: rr.height, unit: getUIScale().cssPerUnit, rects }
+    },
     input(inp) {
       if (interceptor?.(inp)) return true
       if (effects.input(inp)) return true

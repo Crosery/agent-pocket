@@ -78,6 +78,20 @@ export async function openScene(ctx: GameContext, opts: SceneOptions): Promise<B
   ctx.ui.pushPanel(panel)
 
   const holds = createHolds()
+  // The stage recomposes (zoom + shift) whenever a window moves or the screen resizes, so no creature sits under the HUD.
+  let hudKey = ''
+  let hudClock = 0
+  const syncHud = (dt: number, force = false) => {
+    hudClock += dt
+    if (!force && hudClock < BATTLE_UI.layout.syncSec) return
+    hudClock = 0
+    const l = view.layout()
+    if (!l) return
+    const key = `${l.width}x${l.height}@${l.unit}|${l.rects.map((r) => `${Math.round(r.left)},${Math.round(r.top)},${Math.round(r.right)},${Math.round(r.bottom)}`).join(';')}`
+    if (key === hudKey) return
+    hudKey = key
+    stage.setHud(l)
+  }
   let frameHook: ((dt: number) => void) | null = null
   let raf = 0
   let last = performance.now()
@@ -90,6 +104,7 @@ export async function openScene(ctx: GameContext, opts: SceneOptions): Promise<B
     frameHook?.(dt)
     for (const step of stageSteps(dt, pace(), BATTLE_UI.stage.maxDtSec)) stage.update(step)
     view.update(dt)
+    syncHud(dt, hudKey === '')
     ctx.renderer.render(stage.view, dt)
   }
   raf = requestAnimationFrame(frame)
