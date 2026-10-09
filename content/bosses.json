@@ -475,6 +475,447 @@
       "catchRateMul": 0.5,
       "reward": {"money": 15000, "items": {"chip-first-principles": 1, "rare-dataset": 1}},
       "enrage": {"turn": 22, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.alpha.enrageWarn", "start": "boss.alpha.enrageStart", "tick": "boss.alpha.enrageTick"}
+    },
+    "opus": {
+      "species": "claude-opus",
+      "level": 66,
+      "title": "boss.opus.title",
+      "taunt": ["boss.opus.taunt1", "boss.opus.taunt2"],
+      "hint": {"seen": "boss.opus.hintSeen", "won": "boss.opus.hintWon"},
+      "gossip": ["boss.opus.gossip1", "boss.opus.gossip2"],
+      "canRun": true,
+      "expMul": 2.5,
+      "initialForm": "answering",
+      "forms": {
+        "answering": {
+          "species": "claude-opus",
+          "moves": ["debug-strike", "qed", "context-slam", "stack-overflow"],
+          "statMul": {"hp": 6.9},
+          "keepStages": true,
+          "pattern": [
+            {"move": "debug-strike", "weight": 28},
+            {"move": "qed", "weight": 30},
+            {"move": "context-slam", "weight": 22},
+            {"move": "stack-overflow", "weight": 20}
+          ]
+        },
+        "thinking": {
+          "species": "claude-opus",
+          "moves": ["debug-strike", "qed", "context-slam", "stack-overflow"],
+          "statMul": {"hp": 6.9},
+          "banner": "boss.opus.think",
+          "pattern": [
+            {"move": "debug-strike", "weight": 28},
+            {"move": "qed", "weight": 30},
+            {"move": "context-slam", "weight": 22},
+            {"move": "stack-overflow", "weight": 20}
+          ],
+          "rules": [
+            {"id": "focus", "dealtMul": 0.25, "takenMul": [{"mul": 0.5}]}
+          ]
+        },
+        "snapped": {
+          "species": "claude-opus",
+          "moves": ["debug-strike", "qed", "context-slam", "stack-overflow"],
+          "statMul": {"hp": 6.9},
+          "banner": "boss.opus.esc",
+          "pattern": [
+            {"move": "debug-strike", "weight": 28},
+            {"move": "qed", "weight": 30},
+            {"move": "context-slam", "weight": 22},
+            {"move": "stack-overflow", "weight": 20}
+          ],
+          "rules": [
+            {"id": "dazed", "dealtMul": 0.4, "takenMul": [{"mul": 2.2}]}
+          ]
+        }
+      },
+      "meters": [
+        {"id": "mind", "max": 2, "start": 0, "label": "boss.opus.mind", "show": true, "tone": "warn", "states": ["boss.opus.mind0", "boss.opus.mind1", "boss.opus.mind2"]}
+      ],
+      "triggers": [
+        {"id": "ponder", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "mind", "set": 1}, {"op": "form", "form": "thinking"}], "if": {"form": ["answering"], "turnCycle": {"period": 6, "from": 3, "to": 4}}},
+        {"id": "esc", "on": "foeMove", "times": 0, "do": [{"op": "meter", "id": "mind", "set": 2}, {"op": "clearStages", "target": "boss"}, {"op": "cancelCharge"}, {"op": "loseTurn", "turns": 1}, {"op": "form", "form": "snapped"}], "if": {"form": ["thinking"]}, "phase": true, "categories": ["status"]},
+        {"id": "esc-switch", "on": "foeSwitch", "times": 0, "do": [{"op": "meter", "id": "mind", "set": 2}, {"op": "clearStages", "target": "boss"}, {"op": "cancelCharge"}, {"op": "loseTurn", "turns": 1}, {"op": "form", "form": "snapped"}], "if": {"form": ["thinking"]}, "voluntary": true},
+        {"id": "esc-item", "on": "foeMedicine", "times": 0, "do": [{"op": "meter", "id": "mind", "set": 2}, {"op": "clearStages", "target": "boss"}, {"op": "cancelCharge"}, {"op": "loseTurn", "turns": 1}, {"op": "form", "form": "snapped"}], "if": {"form": ["thinking"]}},
+        {"id": "brood", "on": "turnEnd", "times": 0, "do": [{"op": "stages", "target": "boss", "stats": {"atk": 1, "spa": 1}}], "if": {"form": ["thinking"], "formTurnAtLeast": 1}},
+        {"id": "deliver", "on": "turnEnd", "times": 0, "do": [{"op": "form", "form": "answering"}, {"op": "say", "text": "boss.opus.deliver"}, {"op": "meter", "id": "mind", "set": 0}, {"op": "charge", "move": "stack-overflow", "warn": "boss.opus.charge", "mul": 1.0}], "if": {"form": ["thinking"], "formTurnAtLeast": 2}},
+        {"id": "recover", "on": "turnEnd", "times": 0, "do": [{"op": "say", "text": "boss.opus.recover"}, {"op": "meter", "id": "mind", "set": 0}, {"op": "form", "form": "answering"}], "if": {"form": ["snapped"], "formTurnAtLeast": 3}}
+      ],
+      "gates": [],
+      "catchRateMul": 0.6,
+      "reward": {"money": 12000, "items": {"chip-long-reasoning": 1, "rare-dataset": 1}},
+      "enrage": {"turn": 20, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.opus.enrageWarn", "start": "boss.opus.enrageStart", "tick": "boss.opus.enrageTick"}
+    },
+    "chatgpt": {
+      "species": "chatgpt",
+      "level": 62,
+      "title": "boss.chatgpt.title",
+      "taunt": ["boss.chatgpt.taunt1", "boss.chatgpt.taunt2"],
+      "hint": {"seen": "boss.chatgpt.hintSeen", "won": "boss.chatgpt.hintWon"},
+      "gossip": ["boss.chatgpt.gossip1", "boss.chatgpt.gossip2"],
+      "canRun": true,
+      "expMul": 2.5,
+      "initialForm": "assistant",
+      "forms": {
+        "assistant": {
+          "species": "chatgpt",
+          "moves": ["soul-question", "plan-execute", "chatter-storm", "million-token-rush"],
+          "statMul": {"hp": 6.3, "atk": 2.1, "spa": 2.1},
+          "pattern": [
+            {"move": "soul-question", "weight": 32},
+            {"move": "plan-execute", "weight": 26},
+            {"move": "chatter-storm", "weight": 26},
+            {"move": "million-token-rush", "weight": 16}
+          ],
+          "rules": [
+            {"id": "nostalgia", "if": {"foeReleasedBefore": "2025-01"}, "dealtMul": 0.2}
+          ]
+        }
+      },
+      "meters": [
+        {"id": "warm", "max": 1, "start": 0, "label": "boss.chatgpt.warm", "show": true, "tone": "good", "states": ["boss.chatgpt.warm0", "boss.chatgpt.warm1"]}
+      ],
+      "triggers": [
+        {"id": "soften", "on": "turnStart", "times": 0, "do": [{"op": "say", "text": "boss.chatgpt.soft"}, {"op": "meter", "id": "warm", "set": 1}], "if": {"foeReleasedBefore": "2025-01", "meter": {"id": "warm", "atMost": 0}}},
+        {"id": "harden", "on": "turnStart", "times": 0, "do": [{"op": "say", "text": "boss.chatgpt.cold"}, {"op": "meter", "id": "warm", "set": 0}], "if": {"foeReleasedFrom": "2025-01", "meter": {"id": "warm", "atLeast": 1}}}
+      ],
+      "gates": [],
+      "catchRateMul": 0.6,
+      "reward": {"money": 10000, "items": {"chip-memory-recall": 1, "rare-dataset": 1}},
+      "enrage": {"turn": 22, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.chatgpt.enrageWarn", "start": "boss.chatgpt.enrageStart", "tick": "boss.chatgpt.enrageTick"}
+    },
+    "unitree": {
+      "species": "unitree-gd01",
+      "level": 60,
+      "title": "boss.unitree.title",
+      "taunt": ["boss.unitree.taunt1", "boss.unitree.taunt2"],
+      "hint": {"seen": "boss.unitree.hintSeen", "won": "boss.unitree.hintWon"},
+      "gossip": ["boss.unitree.gossip1", "boss.unitree.gossip2"],
+      "canRun": true,
+      "expMul": 2.5,
+      "initialForm": "upright",
+      "forms": {
+        "upright": {
+          "species": "unitree-gd01",
+          "moves": ["cluster-crush", "overheat-strike", "plan-execute", "tool-chain"],
+          "statMul": {"hp": 3.75},
+          "pattern": [
+            {"move": "cluster-crush", "weight": 22},
+            {"move": "overheat-strike", "weight": 30},
+            {"move": "plan-execute", "weight": 28},
+            {"move": "tool-chain", "weight": 20}
+          ]
+        },
+        "fallen": {
+          "species": "unitree-gd01",
+          "moves": ["cluster-crush", "overheat-strike", "plan-execute", "tool-chain"],
+          "statMul": {"hp": 3.75},
+          "banner": "boss.unitree.fall",
+          "pattern": [
+            {"move": "cluster-crush", "weight": 22},
+            {"move": "overheat-strike", "weight": 30},
+            {"move": "plan-execute", "weight": 28},
+            {"move": "tool-chain", "weight": 20}
+          ],
+          "rules": [
+            {"id": "down", "dealtMul": 0.2, "takenMul": [{"mul": 3.0}]}
+          ]
+        }
+      },
+      "meters": [],
+      "triggers": [
+        {"id": "slip", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.unitree.slip"}, {"op": "cancelCharge"}, {"op": "loseTurn", "turns": 3}, {"op": "form", "form": "fallen"}], "if": {"form": ["upright"]}, "phase": true, "tag": "peel"},
+        {"id": "rise", "on": "turnEnd", "times": 0, "do": [{"op": "say", "text": "boss.unitree.rise"}, {"op": "form", "form": "upright"}], "if": {"form": ["fallen"], "formTurnAtLeast": 4}}
+      ],
+      "gates": [],
+      "catchRateMul": 0.6,
+      "reward": {"money": 9000, "items": {"chip-power-surge": 1, "banana-peel": 3}},
+      "enrage": {"turn": 20, "warnBefore": 3, "stages": {"atk": 1, "spe": 1}, "max": 4, "warn": "boss.unitree.enrageWarn", "start": "boss.unitree.enrageStart", "tick": "boss.unitree.enrageTick"}
+    },
+    "grok": {
+      "species": "grok-4-7",
+      "level": 64,
+      "title": "boss.grok.title",
+      "taunt": ["boss.grok.taunt1", "boss.grok.taunt2"],
+      "hint": {"seen": "boss.grok.hintSeen", "won": "boss.grok.hintWon"},
+      "gossip": ["boss.grok.gossip1", "boss.grok.gossip2"],
+      "canRun": true,
+      "expMul": 2.5,
+      "initialForm": "contrarian",
+      "forms": {
+        "contrarian": {
+          "species": "grok-4-7",
+          "moves": ["stack-overflow", "occams-razor", "trending-blast", "compile-cannon"],
+          "statMul": {"hp": 2.22},
+          "pattern": [
+            {"move": "stack-overflow", "weight": 24},
+            {"move": "occams-razor", "weight": 28},
+            {"move": "trending-blast", "weight": 26},
+            {"move": "compile-cannon", "weight": 22}
+          ],
+          "rules": [
+            {"id": "contrarian", "takenMul": [{"mul": 0.1, "effectiveness": "super", "note": "boss.grok.agree"}, {"mul": 0.45, "effectiveness": "neutral"}, {"mul": 3.0, "effectiveness": "resisted", "note": "boss.grok.argue"}]}
+          ]
+        }
+      },
+      "meters": [],
+      "triggers": [],
+      "gates": [],
+      "catchRateMul": 0.6,
+      "reward": {"money": 11000, "items": {"chip-sarcasm": 1, "rare-dataset": 1}},
+      "enrage": {"turn": 20, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.grok.enrageWarn", "start": "boss.grok.enrageStart", "tick": "boss.grok.enrageTick"}
+    },
+    "openclaw": {
+      "species": "openclaw",
+      "level": 60,
+      "title": "boss.openclaw.title",
+      "taunt": ["boss.openclaw.taunt1", "boss.openclaw.taunt2"],
+      "hint": {"seen": "boss.openclaw.hintSeen", "won": "boss.openclaw.hintWon"},
+      "gossip": ["boss.openclaw.gossip1", "boss.openclaw.gossip2"],
+      "canRun": true,
+      "expMul": 2.5,
+      "initialForm": "molty",
+      "forms": {
+        "molty": {
+          "species": "openclaw",
+          "moves": ["merge-rush", "plan-execute", "api-barrage", "community-power"],
+          "statMul": {"hp": 3.6, "atk": 0.72, "spa": 0.72},
+          "pattern": [
+            {"move": "merge-rush", "weight": 30},
+            {"move": "plan-execute", "weight": 28},
+            {"move": "api-barrage", "weight": 26},
+            {"move": "community-power", "weight": 16}
+          ]
+        },
+        "molted": {
+          "species": "openclaw",
+          "moves": ["merge-rush", "plan-execute", "api-barrage", "community-power"],
+          "statMul": {"hp": 3.6, "atk": 0.936, "spa": 0.936, "def": 1.2, "spd": 1.2},
+          "keepStages": true,
+          "banner": "boss.openclaw.molt",
+          "pattern": [
+            {"move": "merge-rush", "weight": 30},
+            {"move": "plan-execute", "weight": 28},
+            {"move": "api-barrage", "weight": 26},
+            {"move": "community-power", "weight": 16}
+          ]
+        }
+      },
+      "meters": [
+        {"id": "fed", "max": 3, "start": 0, "label": "boss.openclaw.fed", "show": true, "tone": "warn"}
+      ],
+      "triggers": [
+        {"id": "feed", "on": "foeMedicine", "times": 0, "do": [{"op": "say", "text": "boss.openclaw.feed"}, {"op": "heal", "target": "boss", "fraction": 0.15}, {"op": "stages", "target": "boss", "stats": {"atk": 1, "spa": 1}}, {"op": "meter", "id": "fed", "add": 1}]},
+        {"id": "molt", "on": ["afterAction", "turnEnd"], "times": 1, "do": [{"op": "form", "form": "molted"}], "if": {"form": ["molty"], "meter": {"id": "fed", "atLeast": 3}}, "phase": true}
+      ],
+      "gates": [],
+      "catchRateMul": 0.6,
+      "reward": {"money": 9000, "items": {"chip-mcp-link": 1, "rare-dataset": 1}},
+      "enrage": {"turn": 22, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.openclaw.enrageWarn", "start": "boss.openclaw.enrageStart", "tick": "boss.openclaw.enrageTick"}
+    },
+    "gemini": {
+      "species": "gemini-argon",
+      "level": 68,
+      "title": "boss.gemini.title",
+      "taunt": ["boss.gemini.taunt1", "boss.gemini.taunt2"],
+      "hint": {"seen": "boss.gemini.hintSeen", "won": "boss.gemini.hintWon"},
+      "gossip": ["boss.gemini.gossip1", "boss.gemini.gossip2"],
+      "canRun": true,
+      "expMul": 2.5,
+      "initialForm": "grounded",
+      "forms": {
+        "grounded": {
+          "species": "gemini-argon",
+          "moves": ["occams-razor", "overheat-strike", "knowledge-graph", "sandbox-seal"],
+          "statMul": {"hp": 7.5, "atk": 1.1, "spa": 1.1},
+          "pattern": [
+            {"move": "occams-razor", "weight": 30},
+            {"move": "overheat-strike", "weight": 26},
+            {"move": "knowledge-graph", "weight": 26},
+            {"move": "sandbox-seal", "weight": 18}
+          ]
+        },
+        "overview": {
+          "species": "gemini-argon",
+          "moves": ["occams-razor", "overheat-strike", "knowledge-graph", "sandbox-seal"],
+          "statMul": {"hp": 7.5, "atk": 1.1, "spa": 1.1},
+          "banner": "boss.gemini.overview",
+          "pattern": [
+            {"move": "occams-razor", "weight": 30},
+            {"move": "overheat-strike", "weight": 26},
+            {"move": "knowledge-graph", "weight": 26},
+            {"move": "sandbox-seal", "weight": 18}
+          ],
+          "rules": [
+            {"id": "advice", "dealtMul": 0.6, "takenMul": [{"mul": 1.8}]}
+          ]
+        }
+      },
+      "meters": [
+        {"id": "advice", "max": 1, "start": 0, "label": "boss.gemini.advice", "show": true, "tone": "good", "states": ["boss.gemini.advice0", "boss.gemini.advice1"]}
+      ],
+      "triggers": [
+        {"id": "rock", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.gemini.rock"}, {"op": "meter", "id": "advice", "set": 1}, {"op": "status", "target": "boss", "status": "poison"}, {"op": "volatile", "target": "boss", "volatile": "confusion"}, {"op": "loseTurn", "turns": 1}, {"op": "form", "form": "overview"}], "if": {"form": ["grounded"]}, "phase": true, "tag": "rock"},
+        {"id": "rock-again", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.gemini.rockAgain"}, {"op": "status", "target": "boss", "status": "poison"}, {"op": "volatile", "target": "boss", "volatile": "confusion"}, {"op": "loseTurn", "turns": 1}], "if": {"form": ["overview"]}, "tag": "rock"},
+        {"id": "digest", "on": "turnEnd", "times": 0, "do": [{"op": "say", "text": "boss.gemini.digest"}, {"op": "meter", "id": "advice", "set": 0}, {"op": "cure", "target": "boss"}, {"op": "form", "form": "grounded"}], "if": {"form": ["overview"], "formTurnAtLeast": 6}}
+      ],
+      "gates": [],
+      "catchRateMul": 0.6,
+      "reward": {"money": 13000, "items": {"chip-constitution": 1, "small-rock": 3}},
+      "enrage": {"turn": 22, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.gemini.enrageWarn", "start": "boss.gemini.enrageStart", "tick": "boss.gemini.enrageTick"}
+    },
+    "doubao": {
+      "species": "doubao-app",
+      "level": 58,
+      "title": "boss.doubao.title",
+      "taunt": ["boss.doubao.taunt1", "boss.doubao.taunt2"],
+      "hint": {"seen": "boss.doubao.hintSeen", "won": "boss.doubao.hintWon"},
+      "gossip": ["boss.doubao.gossip1", "boss.doubao.gossip2"],
+      "canRun": true,
+      "expMul": 2.5,
+      "initialForm": "subsidy",
+      "forms": {
+        "subsidy": {
+          "species": "doubao-app",
+          "moves": ["voiceprint-wave", "soul-question", "chatter-storm", "feedback-howl"],
+          "statMul": {"hp": 7.5, "atk": 1.2, "spa": 1.2},
+          "pattern": [
+            {"move": "voiceprint-wave", "weight": 30},
+            {"move": "soul-question", "weight": 28},
+            {"move": "chatter-storm", "weight": 24},
+            {"move": "feedback-howl", "weight": 18}
+          ]
+        },
+        "broke": {
+          "species": "doubao-app",
+          "moves": ["voiceprint-wave", "soul-question", "chatter-storm", "feedback-howl"],
+          "statMul": {"hp": 7.5, "atk": 1.2, "spa": 1.2},
+          "banner": "boss.doubao.broke",
+          "pattern": [
+            {"move": "voiceprint-wave", "weight": 30},
+            {"move": "soul-question", "weight": 28},
+            {"move": "chatter-storm", "weight": 24},
+            {"move": "feedback-howl", "weight": 18}
+          ],
+          "rules": [
+            {"id": "budget-gone", "dealtMul": 0.6, "takenMul": [{"mul": 1.5}]}
+          ]
+        }
+      },
+      "meters": [
+        {"id": "packets", "max": 4, "start": 0, "label": "boss.doubao.packets", "show": true, "tone": "good"}
+      ],
+      "triggers": [
+        {"id": "packet", "on": "foeItem", "times": 4, "do": [{"op": "say", "text": "boss.doubao.packet"}, {"op": "stages", "target": "foe", "stats": {"atk": 1, "spa": 1}}, {"op": "heal", "target": "foe", "fraction": 0.25}, {"op": "cure", "target": "foe"}, {"op": "meter", "id": "packets", "add": 1}], "if": {"form": ["subsidy"]}, "tag": "referral"},
+        {"id": "broke", "on": ["afterAction", "turnEnd"], "times": 1, "do": [{"op": "form", "form": "broke"}], "if": {"form": ["subsidy"], "meter": {"id": "packets", "atLeast": 4}}, "phase": true}
+      ],
+      "gates": [],
+      "catchRateMul": 0.6,
+      "reward": {"money": 8000, "items": {"chip-symphony-finale": 1, "invite-code": 3}},
+      "enrage": {"turn": 20, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.doubao.enrageWarn", "start": "boss.doubao.enrageStart", "tick": "boss.doubao.enrageTick"}
+    },
+    "seedance": {
+      "species": "seedance-2-5",
+      "level": 62,
+      "title": "boss.seedance.title",
+      "taunt": ["boss.seedance.taunt1", "boss.seedance.taunt2"],
+      "hint": {"seen": "boss.seedance.hintSeen", "won": "boss.seedance.hintWon"},
+      "gossip": ["boss.seedance.gossip1", "boss.seedance.gossip2"],
+      "canRun": true,
+      "expMul": 2.5,
+      "initialForm": "boxer",
+      "forms": {
+        "boxer": {
+          "species": "seedance-2-5",
+          "moves": ["beat-drop", "long-take", "director-cut", "symphony-finale"],
+          "statMul": {"hp": 12.0, "atk": 1.5, "spa": 1.5},
+          "banner": "boss.seedance.cameo_boxer",
+          "pattern": [
+            {"move": "beat-drop", "weight": 30},
+            {"move": "long-take", "weight": 26},
+            {"move": "director-cut", "weight": 24},
+            {"move": "symphony-finale", "weight": 20}
+          ],
+          "rules": [
+            {"id": "cameo", "takenMul": [{"mul": 6.0, "moveTypes": ["chat", "write"]}, {"mul": 0.05, "notMoveTypes": ["chat", "write"], "note": "boss.seedance.miss"}]}
+          ]
+        },
+        "truck": {
+          "species": "seedance-2-5",
+          "moves": ["beat-drop", "long-take", "director-cut", "symphony-finale"],
+          "statMul": {"hp": 12.0, "atk": 1.5, "spa": 1.5},
+          "banner": "boss.seedance.cameo_truck",
+          "pattern": [
+            {"move": "beat-drop", "weight": 30},
+            {"move": "long-take", "weight": 26},
+            {"move": "director-cut", "weight": 24},
+            {"move": "symphony-finale", "weight": 20}
+          ],
+          "rules": [
+            {"id": "cameo", "takenMul": [{"mul": 6.0, "moveTypes": ["code", "compute"]}, {"mul": 0.05, "notMoveTypes": ["code", "compute"], "note": "boss.seedance.miss"}]}
+          ]
+        },
+        "spy": {
+          "species": "seedance-2-5",
+          "moves": ["beat-drop", "long-take", "director-cut", "symphony-finale"],
+          "statMul": {"hp": 12.0, "atk": 1.5, "spa": 1.5},
+          "banner": "boss.seedance.cameo_spy",
+          "pattern": [
+            {"move": "beat-drop", "weight": 30},
+            {"move": "long-take", "weight": 26},
+            {"move": "director-cut", "weight": 24},
+            {"move": "symphony-finale", "weight": 20}
+          ],
+          "rules": [
+            {"id": "cameo", "takenMul": [{"mul": 6.0, "moveTypes": ["logic", "safety"]}, {"mul": 0.05, "notMoveTypes": ["logic", "safety"], "note": "boss.seedance.miss"}]}
+          ]
+        },
+        "villain": {
+          "species": "seedance-2-5",
+          "moves": ["beat-drop", "long-take", "director-cut", "symphony-finale"],
+          "statMul": {"hp": 12.0, "atk": 1.5, "spa": 1.5},
+          "banner": "boss.seedance.cameo_villain",
+          "pattern": [
+            {"move": "beat-drop", "weight": 30},
+            {"move": "long-take", "weight": 26},
+            {"move": "director-cut", "weight": 24},
+            {"move": "symphony-finale", "weight": 20}
+          ],
+          "rules": [
+            {"id": "cameo", "takenMul": [{"mul": 6.0, "moveTypes": ["vision", "open"]}, {"mul": 0.05, "notMoveTypes": ["vision", "open"], "note": "boss.seedance.miss"}]}
+          ]
+        },
+        "idol": {
+          "species": "seedance-2-5",
+          "moves": ["beat-drop", "long-take", "director-cut", "symphony-finale"],
+          "statMul": {"hp": 12.0, "atk": 1.5, "spa": 1.5},
+          "banner": "boss.seedance.cameo_idol",
+          "pattern": [
+            {"move": "beat-drop", "weight": 30},
+            {"move": "long-take", "weight": 26},
+            {"move": "director-cut", "weight": 24},
+            {"move": "symphony-finale", "weight": 20}
+          ],
+          "rules": [
+            {"id": "cameo", "takenMul": [{"mul": 6.0, "moveTypes": ["search", "agent"]}, {"mul": 0.05, "notMoveTypes": ["search", "agent"], "note": "boss.seedance.miss"}]}
+          ]
+        }
+      },
+      "meters": [
+        {"id": "cameo", "max": 4, "start": 0, "label": "boss.seedance.cameo", "show": true, "tone": "warn", "states": ["boss.seedance.cameo_boxer", "boss.seedance.cameo_truck", "boss.seedance.cameo_spy", "boss.seedance.cameo_villain", "boss.seedance.cameo_idol"]}
+      ],
+      "triggers": [
+        {"id": "cut-truck", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "cameo", "set": 1}, {"op": "form", "form": "truck"}], "if": {"form": ["boxer"], "turnCycle": {"period": 15, "from": 2, "to": 3}}, "phase": true},
+        {"id": "cut-spy", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "cameo", "set": 2}, {"op": "form", "form": "spy"}], "if": {"form": ["truck"], "turnCycle": {"period": 15, "from": 5, "to": 6}}},
+        {"id": "cut-villain", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "cameo", "set": 3}, {"op": "form", "form": "villain"}], "if": {"form": ["spy"], "turnCycle": {"period": 15, "from": 8, "to": 9}}},
+        {"id": "cut-idol", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "cameo", "set": 4}, {"op": "form", "form": "idol"}], "if": {"form": ["villain"], "turnCycle": {"period": 15, "from": 11, "to": 12}}},
+        {"id": "cut-boxer", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "cameo", "set": 0}, {"op": "form", "form": "boxer"}], "if": {"form": ["idol"], "turnCycle": {"period": 15, "from": 14, "to": 15}}}
+      ],
+      "gates": [],
+      "catchRateMul": 0.6,
+      "reward": {"money": 10000, "items": {"chip-director-cut": 1, "rare-dataset": 1}},
+      "enrage": {"turn": 24, "warnBefore": 3, "stages": {"spa": 1, "spe": 1}, "max": 4, "warn": "boss.seedance.enrageWarn", "start": "boss.seedance.enrageStart", "tick": "boss.seedance.enrageTick"}
     }
   }
 }
