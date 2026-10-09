@@ -104,6 +104,8 @@ html[data-touch-controls='on'] { --ap-bottom-inset: var(--ap-touch-inset, 0px); 
 /* Visible reading controls take precedence over the joystick's transparent capture area. */
 html[data-touch-controls='on']:not(.ap-ui-blocking) .ap-l-hud:has(.ap-evchips:not(.is-collapsed)) { z-index: 61; }
 html[data-touch-controls='on']:not(.ap-ui-blocking) .ap-l-chat { z-index: 62; }
+/* A first-run tip is the thing to read when it is up; the chat history under it can wait. */
+html[data-touch-controls='on']:not(.ap-ui-blocking) .ap-l-tips { z-index: 63; }
 .ap-l-kit { z-index: 20; }
 .ap-l-mapview { z-index: 18; }
 
@@ -687,6 +689,10 @@ html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast-text { di
   outline: none;
 }
 .ap-tab:hover { color: var(--ap-text); }
+/* Touch targets: pixel-scale controls shrink to 16-20px on a phone; keep every tap target at least 24px
+   (WCAG 2.2 target size minimum). */
+html.ap-compact :is(.ap-btn, .ap-tab, .aps-filter, .aps-arrow, .aps-small-btn, .aps-map-tool, .aps-map-town, .ap-chat-chan, .ap-field, .apb-back, .apb-effects-close) { min-height: 24px; min-width: 24px; }
+
 .ap-tab.is-active {
   color: var(--ap-gold-hi);
   background: linear-gradient(180deg, rgba(60, 50, 26, 0.95), rgba(22, 28, 48, 0.95));
@@ -993,7 +999,7 @@ html.ap-portrait .ap-mapview-legend { flex-direction: row; flex-wrap: wrap; gap:
 .ap-chat-log {
   --lines: 5;
   overflow: hidden;
-  max-height: calc(var(--u) * 14 * var(--lines) + var(--u) * 2);
+  max-height: calc(var(--u) * 14 * var(--lines));
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
