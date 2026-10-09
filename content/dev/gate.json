@@ -1,0 +1,5 @@
+{
+  "sentinel": "__AP_DEV_SENTINEL",
+  "prodForbidden": ["__AP_DEV_SENTINEL", "\\b__ap\\b", "\\b__AP\\b", "__apOnboarding", "__AP_LOG", "skipTitle", "content/dev"],
+  "devtoolsRequired": ["__AP_DEV_SENTINEL", "\\b__ap\\b", "\\b__AP\\b", "skipTitle"]
+}

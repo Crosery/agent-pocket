@@ -336,7 +336,7 @@ export function createUIKit(root: HTMLElement, input: Input, audio: AudioManager
   // -------------------------------------------------------------------------
 
   const toast = (text: string, kind: ToastKind = 'info') => {
-    const node = el('div', { class: `ap-toast ap-toast--${kind}`, text })
+    const node = el('div', { class: `ap-toast ap-toast--${kind}` }, [el('span', { class: 'ap-toast-text', text })])
     toastsEl.append(node)
     audio.playSfx(UI_CONFIG.toast.sfx[kind] ?? UI_CONFIG.toast.sfx.info)
     const leave = () => {

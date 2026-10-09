@@ -1,10 +1,11 @@
 // Battle scene lifecycle shared by battles and evolution cutscenes: covers the screen, builds the HD-2D battle stage
 // and the battle view (pushed as a UIKit panel so it owns input and blocks the overworld), runs its own render loop,
 // reveals, and tears everything down behind a fade.
-import type { BiomeId, TimeOfDay } from '../../shared/types.ts'
+import type { BiomeId, Settings, TimeOfDay } from '../../shared/types.ts'
 import type { GameContext, UIPanel } from '../contracts.ts'
 import { createBattleStage, type BattleStage } from '../render/battle/index.ts'
 import { BATTLE_UI } from './config.ts'
+import { createHolds, stageSteps } from './speed.ts'
 import { createBattleView, type BattleView } from './view.ts'
 
 /**
@@ -15,14 +16,15 @@ import { createBattleView, type BattleView } from './view.ts'
  */
 export type CoverMode = 'covered' | 'transition' | 'fade'
 
-export interface SceneOptions { biome: BiomeId; timeOfDay: TimeOfDay; indoor: boolean; cover: CoverMode }
+/** `paced`: the scene runs on the player's battle speed (battles); cutscenes such as field evolution keep authored time. */
+export interface SceneOptions { biome: BiomeId; timeOfDay: TimeOfDay; indoor: boolean; cover: CoverMode; paced?: boolean }
 
 export interface BattleScene {
   readonly stage: BattleStage
   readonly view: BattleView
   /** Uncovers the scene (resolves when fully visible). */
   reveal(): Promise<void>
-  /** Waits scene time (advances with the render loop). */
+  /** Waits scene time (advances with the render loop, scaled by battle speed when the scene is paced). */
   wait(ms: number): Promise<void>
   /** Resolves with `p`, or after timing.stageGuardMs of wall time: a stuck animation never blocks the battle. */
   settle(p: Promise<unknown>): Promise<void>
@@ -57,11 +59,12 @@ export async function openScene(ctx: GameContext, opts: SceneOptions): Promise<B
     await ctx.ui.fade(true, TR.exit.fadeMs)
   }
 
+  const pace = (): Pick<Settings, 'battleSpeed'> => ({ battleSpeed: opts.paced ? ctx.save.settings.battleSpeed : 1 })
   let built: BattleStage | null = null
   let view: BattleView
   try {
     built = createBattleStage(ctx.renderer, ctx.assets, { biome: opts.biome, timeOfDay: opts.timeOfDay, indoor: opts.indoor })
-    view = createBattleView(ctx.audio, () => ctx.save.settings)
+    view = createBattleView(ctx.audio, () => ctx.save.settings, pace)
   } catch (err) {
     // Uncover whatever was there so a failed scene never leaves the screen black.
     try { built?.dispose() } catch { /* already failing */ }
@@ -74,7 +77,7 @@ export async function openScene(ctx: GameContext, opts: SceneOptions): Promise<B
   document.documentElement.classList.add(HTML_CLASS)
   ctx.ui.pushPanel(panel)
 
-  const waits: { left: number; done: () => void }[] = []
+  const holds = createHolds()
   let frameHook: ((dt: number) => void) | null = null
   let raf = 0
   let last = performance.now()
@@ -83,12 +86,9 @@ export async function openScene(ctx: GameContext, opts: SceneOptions): Promise<B
     raf = requestAnimationFrame(frame)
     const dt = Math.min(BATTLE_UI.stage.maxDtSec, Math.max(0, (now - last) / 1000))
     last = now
-    for (let i = waits.length - 1; i >= 0; i--) {
-      waits[i].left -= dt * 1000
-      if (waits[i].left <= 0) waits.splice(i, 1)[0].done()
-    }
+    holds.advance(dt, pace())
     frameHook?.(dt)
-    stage.update(dt)
+    for (const step of stageSteps(dt, pace(), BATTLE_UI.stage.maxDtSec)) stage.update(step)
     view.update(dt)
     ctx.renderer.render(stage.view, dt)
   }
@@ -103,8 +103,7 @@ export async function openScene(ctx: GameContext, opts: SceneOptions): Promise<B
       ctx.renderer.setTransition('none', 0)
     },
     wait(ms) {
-      if (ms <= 0 || closed) return Promise.resolve()
-      return new Promise<void>((done) => waits.push({ left: ms, done }))
+      return closed ? Promise.resolve() : holds.wait(ms)
     },
     settle(p) {
       if (closed) return Promise.resolve()
@@ -125,7 +124,7 @@ export async function openScene(ctx: GameContext, opts: SceneOptions): Promise<B
       } finally {
         closed = true
         cancelAnimationFrame(raf)
-        for (const w of waits.splice(0)) w.done()
+        holds.flush()
         frameHook = null
         ctx.ui.popPanel(panel)
         view.root.remove()

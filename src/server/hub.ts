@@ -26,6 +26,8 @@ export interface HubOptions {
   pvp: PvpModule | null
   /** Resolves sanitizeCreature from src/shared/creature.ts (null while unavailable). */
   sanitizer: () => SanitizeCreature | null
+  /** Accept clients built with developer tooling (AP_DEV); the official server leaves this off. */
+  allowDev?: boolean
   log?: (msg: string) => void
 }
 
@@ -282,6 +284,7 @@ export function createHub(opts: HubOptions): Hub {
 
   function hello(c: Conn, m: HelloMsg): void {
     if (m.v !== net.protocolVersion) { drop(c, codes.version, 'version_mismatch'); return }
+    if (m.build?.devtools === true && !opts.allowDev) { drop(c, codes.devNotAllowed, 'dev_not_allowed'); return }
     const secret = isUuidLike(m.playerId) ? m.playerId : newSecretId()
     const id = publicIdFor(secret)
     const prev = registry.get(id)

@@ -27,7 +27,7 @@ export interface StatusPanel {
   pulseBoss(): void
 }
 
-export function createStatusPanel(own: boolean, onInspect: () => void): StatusPanel {
+export function createStatusPanel(own: boolean, onInspect: () => void, speed?: () => number): StatusPanel {
   const H = BATTLE_UI.hud
   const p = panel(null, { className: `apb-status ${own ? 'is-own' : 'is-foe'} is-away is-empty` })
   const name = el('span', 'apb-st-name ap-model-name')
@@ -37,8 +37,8 @@ export function createStatusPanel(own: boolean, onInspect: () => void): StatusPa
   const lv = el('span', 'apb-st-lv')
   const tags = el('span', 'apb-st-taglist')
   const effects = el('div', 'apb-st-effects')
-  const hp = hpBar({ width: H.hpBarWidth, numbers: own ? H.ownHpNumbers : H.foeHpNumbers })
-  const exp: BarHandle | null = own ? expBar({ width: H.expBarWidth }) : null
+  const hp = hpBar({ width: H.hpBarWidth, numbers: own ? H.ownHpNumbers : H.foeHpNumbers, speed })
+  const exp: BarHandle | null = own ? expBar({ width: H.expBarWidth, speed }) : null
   const balls = el('div', 'apb-balls')
   const more = el('span', 'apb-tag is-more is-folded')
   const inspect = el('button', {
@@ -55,7 +55,7 @@ export function createStatusPanel(own: boolean, onInspect: () => void): StatusPa
   const bossBox = el('div', 'apb-st-boss')
   bossBox.hidden = true
   append(p.body, [
-    el('div', 'apb-st-head', [name, shiny, rarity, lv]),
+    el('div', 'apb-st-head', [name, el('span', 'apb-st-badges', [shiny, rarity, lv])]),
     bossBox,
     tagRow,
     effects,

@@ -1,7 +1,7 @@
 // Client view of content/net.json (transport tunables shared with the server).
 import netJson from '../../../content/net.json' with { type: 'json' }
 
-export type CloseCodeKey = 'shutdown' | 'duplicate' | 'version' | 'flood' | 'helloTimeout' | 'serverFull' | 'slowConsumer'
+export type CloseCodeKey = 'shutdown' | 'duplicate' | 'version' | 'flood' | 'helloTimeout' | 'serverFull' | 'slowConsumer' | 'devNotAllowed'
 
 export interface NetClientTuning {
   protocol: { wsPath: string; closeCodes: Record<CloseCodeKey, number> }

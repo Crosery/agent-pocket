@@ -61,6 +61,7 @@ jobs:
         env:
           AP_PERF_SCALE: 3
       - run: npm run build
+      - run: npm run check:devgate
 
   verify:
     if: always()
