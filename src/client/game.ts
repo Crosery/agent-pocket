@@ -142,7 +142,11 @@ async function loadDevKit(): Promise<DevKit | null> {
   return (await import('./dev/index.ts')).createDevKit(location.search)
 }
 
+/** User Timing marks of the boot path (performance.getEntriesByType('mark') / scripts/qa-perf-boot.mjs). */
+const mark = (name: string) => { try { performance.mark(`ap:${name}`) } catch { /* no User Timing */ } }
+
 async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
+  mark('boot')
   const dev = typeof __AP_DEVTOOLS__ !== 'undefined' && __AP_DEVTOOLS__ ? await loadDevKit() : null
   const slot = dev?.slot ?? 0
   const appRoot = document.getElementById('app') ?? document.body
@@ -155,9 +159,11 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   loader.step('assets')
   const assets = createAssetStore()
   await assets.init()
+  mark('assets')
   loader.step('world')
   await new Promise((r) => setTimeout(r, 0))
   const world = buildWorld(dev?.worldSeed ?? undefined)
+  mark('world')
   const data: GameData = { ...CONTENT, world }
   dev?.afterWorld(world)
   const saves = createSaveManager({ world, ...(dev?.storage ? { storage: dev.storage } : {}) })
@@ -266,6 +272,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     loadOptional<PvpModule>(loaders, './net/pvp-channel.ts', (m) => typeof m.challengePvp === 'function'),
     loadOptional<TradeModule>(loaders, './net/trade-flow.ts', (m) => typeof m.startTradeFlow === 'function'),
   ])
+  mark('modules')
   const screens = screensMod ? screensMod.createScreens(ctx) : createFallbackScreens(ctx)
   ctxObj.screens = screens
   ctxObj.battle = battleMod ? battleMod.createBattleRunner(ctx) : createFallbackBattleRunner(ctx)
@@ -431,6 +438,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   chat.setVisible(false)
   loader.step('ready')
   loader.hide()
+  mark('title')
 
   const applyNewGameStart = (s: SaveData) => {
     const anchor = worldAnchors(world)[GAME.newGame.startAnchor]
@@ -497,6 +505,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   const startMap = getMap(world, pos.map) ? pos : { ...world.maps[world.startMap].spawn, map: world.startMap }
   await overworld.enterMap(startMap.map, startMap.x, startMap.y, startMap.facing, false)
   inWorld = true
+  mark('world-entered')
   hud.setVisible(true)
   onboarding.setVisible(true)
   minimap.setVisible(ctx.save.settings.showMinimap)
