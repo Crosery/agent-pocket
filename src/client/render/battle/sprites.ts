@@ -36,12 +36,17 @@ export interface BattleSprite {
   /** Base visibility; effects (reveal / vanish) toggle it. */
   present: boolean
   readonly fx: SpriteFx
-  /** Nominal world height of the sprite. */
+  /** Nominal world height / width of the sprite card. */
   readonly height: number
+  readonly width: number
   readonly id: string | null
   readonly shiny: boolean
+  /** Opaque part of the sprite card as fractions of it (y down); the whole card until the art is decoded. */
+  readonly opaque: { x0: number; y0: number; x1: number; y1: number }
   setCreature(speciesId: string | null, shiny: boolean, sizeMul: number, facesRight: boolean): void
   setSheet(sheet: string | null, row: Dir): void
+  /** Boss idle motion: replaces the breathing and adds a slow float; null restores the defaults. */
+  setIdleMotion(m: { breath: BreathDef; floatAmp: number; floatHz: number } | null): void
   /** Temporarily shows another texture (evolution swap); null restores the assigned one. */
   setTextureOverride(tex: THREE.Texture | null): void
   /** World point at a fraction of the visual height, including the current offset and scale. */
@@ -85,6 +90,39 @@ if (uDissolve > 0.0 && apD < uDissolve) discard;`)
   m.customProgramCacheKey = () => 'ap-battle-sprite-v1'
 }
 
+const FULL_CARD = { x0: 0, y0: 0, x1: 1, y1: 1 }
+const opaqueCache = new WeakMap<object, BattleSprite['opaque']>()
+
+/** Bounding box of the visible pixels of a texture (alpha above the sprite cut-off), fractions of the image. */
+function opaqueBox(t: THREE.Texture, alphaTest: number): BattleSprite['opaque'] {
+  const hit = opaqueCache.get(t)
+  if (hit) return hit
+  const { w, h } = textureSize(t)
+  const img = t.image as CanvasImageSource | undefined
+  if (!img || !w || !h || typeof document === 'undefined') return FULL_CARD
+  const k = Math.min(1, 96 / Math.max(w, h))
+  const cw = Math.max(1, Math.round(w * k)), ch = Math.max(1, Math.round(h * k))
+  const c = document.createElement('canvas')
+  c.width = cw
+  c.height = ch
+  const g = c.getContext('2d', { willReadFrequently: true })
+  if (!g) return FULL_CARD
+  g.drawImage(img, 0, 0, cw, ch)
+  const { data } = g.getImageData(0, 0, cw, ch)
+  const cut = alphaTest * 255
+  let x0 = cw, y0 = ch, x1 = -1, y1 = -1
+  for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) {
+    if (data[(y * cw + x) * 4 + 3] <= cut) continue
+    if (x < x0) x0 = x
+    if (x > x1) x1 = x
+    if (y < y0) y0 = y
+    if (y > y1) y1 = y
+  }
+  const box = x1 < 0 ? FULL_CARD : { x0: x0 / cw, y0: y0 / ch, x1: (x1 + 1) / cw, y1: (y1 + 1) / ch }
+  opaqueCache.set(t, box)
+  return box
+}
+
 const srgb = (hex: string) => new THREE.Color().setRGB(...hexToRgb(hex), THREE.SRGBColorSpace)
 
 export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetStore, home: THREE.Vector3, phase: number): BattleSprite {
@@ -122,6 +160,8 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
   let flip = false
   let row = 0
   let layout = sheetLayout()
+  let opaque = FULL_CARD
+  let motion: { breath: BreathDef; floatAmp: number; floatHz: number } | null = null
   const idleAnimation = () => createCharacterAnimation(layout.walkFrames, layout.walkStart, {
     frames: layout.idleFrames, fps: CONTENT.config.sprites.idleFps, settleMs: CONTENT.config.sprites.idleSettleMs, phase,
   })
@@ -157,6 +197,7 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
     if (Math.abs(a - aspect) < 1e-4 && !layoutChanged) return
     aspect = a
     width = height * a
+    opaque = kind === 'creature' ? opaqueBox(t, cfg.alphaTest) : FULL_CARD
     rebuild()
   }
 
@@ -164,8 +205,10 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
     kind, root, mesh, home, fx,
     present: false,
     get height() { return height },
+    get width() { return width },
     get id() { return id },
     get shiny() { return shiny },
+    get opaque() { return opaque },
     setCreature(speciesId, isShiny, sizeMul, facesRight) {
       id = speciesId
       shiny = isShiny
@@ -175,6 +218,7 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
       height = C.height * size * sizeMul
       flip = facesRight === RENDER.creatures.artFacesLeft
       tex = assets.creatureTexture(speciesId)
+      opaque = FULL_CARD
       sm.setMap(override ?? tex)
       sm.uniforms.uHue.value = shiny ? shinyCfg.hue : 0
       sm.uniforms.uSaturation.value = shiny ? shinyCfg.saturation : 1
@@ -196,6 +240,7 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
       rebuild()
       syncAspect()
     },
+    setIdleMotion(m) { motion = m },
     setTextureOverride(t) {
       override = t
       const m = override ?? tex
@@ -230,13 +275,14 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
           setGeometryFrame(geo, idleFrame, row, layout.cols, layout.rows)
         }
       }
-      const b = cfg.breath
+      const b = motion?.breath ?? cfg.breath
       const P = STAGE.sprite
       const breath = kind === 'trainer' && layout.idleFrames > 1 ? 0 : Math.sin(time * b.hz * Math.PI * 2 + phase)
       const sq = fx.squash + breath * b.squash
       const s = fx.scale
       mesh.scale.set(s * (1 - sq * P.squashWiden), s * (1 + sq), s)
-      mesh.position.set(fx.offset.x, fx.offset.y + Math.max(0, breath) * b.bob * height, fx.offset.z)
+      const float = motion ? (0.5 + 0.5 * Math.sin(time * motion.floatHz * Math.PI * 2 + phase)) * motion.floatAmp * height : 0
+      mesh.position.set(fx.offset.x, fx.offset.y + float + Math.max(0, breath) * b.bob * height, fx.offset.z)
       mesh.rotation.set(0, yaw, 0)
       shadow.object.position.set(fx.offset.x, 0, fx.offset.z)
       shadow.update({

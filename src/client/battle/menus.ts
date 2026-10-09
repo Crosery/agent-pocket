@@ -5,7 +5,8 @@
 import type { MoveDef } from '../../shared/types.ts'
 import type { AudioManager, Input } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
-import { append, button, createGridNav, el, panel, typeChip, type GridNav } from '../ui/widgets.ts'
+import { actionKeyLabel, append, button, createGridNav, el, panel, type GridNav } from '../ui/widgets.ts'
+import { categoryIcon, commandIcon, typeBadge } from './badges.ts'
 import { BATTLE_UI, type CommandId, type EffCategory } from './config.ts'
 
 export interface CommandItem { id: CommandId; disabled: boolean }
@@ -92,10 +93,14 @@ export function createMenus(audio: AudioManager): Menus {
 
     openCommands(items, initial) {
       return new Promise<CommandId>((resolve) => {
-        const p = panel(null, { className: 'apb-menu apb-cmd' })
+        const p = panel(null, { className: 'apb-win apb-menu apb-cmd' })
         p.el.style.setProperty('--cols', String(BATTLE_UI.commands.columns))
-        const rows = items.map((it) => row('apb-cmd-row', [el('span', { class: 'ap-row-label', text: t(`battleui.cmd.${it.id}`) })], it.disabled))
-        p.body.replaceWith(...rows)
+        const rows = items.map((it) => row('apb-cmd-row', [commandIcon(it.id), el('span', { class: 'ap-row-label', text: t(`battleui.cmd.${it.id}`) })], it.disabled))
+        const hint = el('div', 'apb-cmd-hint', [
+          el('span', { class: 'apb-hint-keys', text: t('battleui.hint.keys', { confirm: actionKeyLabel('confirm'), menu: actionKeyLabel('menu') }) }),
+          el('span', { class: 'apb-hint-touch', text: t('battleui.hint.touch') }),
+        ])
+        p.body.replaceWith(...rows, hint)
         const nav = createGridNav({ count: items.length, cols: BATTLE_UI.commands.columns, initial, audio, onChange: paint })
         install([p.el], rows, {
           mode: 'commands',
@@ -108,25 +113,26 @@ export function createMenus(audio: AudioManager): Menus {
 
     openMoves(items, initial) {
       return new Promise<number>((resolve) => {
-        const p = panel(null, { className: 'apb-menu apb-moves' })
+        const p = panel(null, { className: 'apb-win apb-menu apb-moves' })
         p.el.style.setProperty('--cols', String(BATTLE_UI.moves.columns))
         const rows = items.map((it) => {
           const out = it.pp <= 0
           const low = !out && it.pp * 4 <= it.ppMax
           return row('apb-move-row', [
-            it.def ? typeChip(it.def.type) : el('span'),
+            it.def ? typeBadge(it.def.type) : el('span'),
             el('span', { class: 'apb-move-name', text: it.label }),
             el('span', { class: `apb-move-pp${out ? ' is-out' : low ? ' is-low' : ''}`, text: t('battleui.move.pp', { pp: it.pp, max: it.ppMax }) }),
           ], it.disabled)
         })
         p.body.replaceWith(...rows)
-        const detail = panel(null, { className: 'apb-detail' })
+        const back = button(t('battleui.move.back'), (e) => { e.stopPropagation(); active?.cancel() }, { className: 'apb-back' })
+        const detail = panel(null, { className: 'apb-win apb-detail' })
         const showDetail = (i: number) => {
           const it = items[i]
           const m = it?.def
           if (!m) { detail.el.hidden = true; return }
           detail.el.hidden = false
-          const cat = el('span', { class: 'apb-cat', text: t(`battleui.move.category.${m.category}`) })
+          const cat = categoryIcon(m.category)
           cat.style.setProperty('--cat', BATTLE_UI.moves.categoryColors[m.category])
           const stat = (k: string, v: string) => el('span', {}, [t(k), el('b', { text: v })])
           const priority = m.priority
@@ -134,22 +140,24 @@ export function createMenus(audio: AudioManager): Menus {
             : null
           detail.body.replaceChildren()
           append(detail.body, [
-            el('div', 'apb-detail-head', [typeChip(m.type), cat, el('span', { class: 'apb-detail-name', text: m.nameZh })]),
+            el('div', 'apb-detail-head', [typeBadge(m.type), el('span', { class: 'apb-detail-name', text: m.nameZh }), cat, back]),
             el('div', 'apb-detail-stats', [
               stat('battleui.move.power', m.power > 0 ? String(m.power) : t('battleui.move.none')),
               stat('battleui.move.accuracy', m.accuracy === 0 ? t('battleui.move.never') : String(m.accuracy)),
               priority,
             ]),
-            el('p', { class: 'apb-detail-desc', text: m.description }),
-            it.hint ? el('div', { class: `apb-eff is-${it.hint}`, text: t(`battleui.eff.${it.hint}`) }) : null,
+            el('p', 'apb-detail-desc', [
+              it.hint ? el('span', { class: `apb-eff is-${it.hint}`, text: t(`battleui.eff.${it.hint}`) }) : null,
+              m.description,
+            ]),
           ])
         }
-        const back = button(t('battleui.move.back'), (e) => { e.stopPropagation(); active?.cancel() }, { className: 'apb-back' })
         const nav = createGridNav({
           count: items.length, cols: BATTLE_UI.moves.columns, initial, audio,
           onChange: (i) => { paint(); showDetail(i) },
         })
-        const holder = el('div', { style: { display: 'contents' } }, [p.el, detail.el, back])
+        const holder = el('div', 'apb-moves-wrap', [p.el, detail.el])
+        detail.el.dataset.hud = ''
         install([holder], rows, {
           mode: 'moves',
           nav,

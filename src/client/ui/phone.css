@@ -57,9 +57,7 @@ html[data-touch-controls='on'] :is(.aps-close, .ap-tip-close, .ap-evclose, .aps-
 /* Pause menu: two columns of finger-sized rows on every phone, so twelve entries fit a landscape screen too. */
 html:not(.ap-portrait)[data-touch-controls='on'] .aps-pause-menu { display: grid; grid-template-columns: 1fr 1fr; align-content: start; }
 
-/* Battle: the back button and the detail pane stack above the move list, the tip's dismiss button clears the 44px close button. */
-html[data-touch-controls='on'] .apb-back { top: auto; bottom: calc(100% + var(--u) * 3); }
-html[data-touch-controls='on'] .apb-detail { bottom: calc(100% + 44px + var(--u) * 8); }
+/* Battle: the tip's dismiss button clears the 44px close button. (The move detail window carries its own back button inside the bar, see battle.css.) */
 html[data-touch-controls='on'] .ap-l-tips.is-battle .ap-tip-foot { right: calc(var(--u) * 10 + 44px); }
 
 /* Box in landscape: six party rows are taller than the screen, so the party column scrolls. */

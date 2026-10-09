@@ -15,7 +15,7 @@ import { chooseAiAction } from '../src/shared/battle/ai.ts'
 import { BATTLE_UI, validateBattleUi } from '../src/client/battle/config.ts'
 import { createLocalChannel, isLocalChannel } from '../src/client/battle/channel.ts'
 import {
-  applyEvent, catchPlacement, createBattleModel, effCategory, evolutionMoves, expRatio, expSegments, finalResult, levelUpStats, moveEffectiveness,
+  applyEvent, catchPlacement, createBattleModel, effCategory, evolutionMoves, expRatio, expSegments, finalResult, levelUpStats, moveEffectiveness, shortName,
 } from '../src/client/battle/model.ts'
 import { changeMoney, consumeItem, markCaught, markSeen, storeCaught } from '../src/client/battle/saveops.ts'
 
@@ -77,7 +77,7 @@ test('every battleui text key used by the client exists, and every defined key i
     'battleui.eff.': ['immune', 'weak', 'normal', 'super', 'unknown'],
     'battleui.effects.status.': Object.keys(CONTENT.statusById),
     'battleui.effects.volatile.': Object.keys(CONTENT.volatileById),
-    'battleui.effects.': ['buff', 'debuff', 'neutral', 'ability', 'statusTitle', 'volatileTitle', 'stageTitle'],
+    'battleui.effects.statusShort.': Object.keys(CONTENT.statusById),
   }
   for (const prefix of Object.keys(dynamic)) assert.ok(all.includes(`\`${prefix}\${`), `dynamic prefix ${prefix} is used`)
   const used = new Set([...literal, ...Object.entries(dynamic).flatMap(([p, xs]) => xs.map((x) => p + x))])
@@ -263,4 +263,16 @@ test('final result: shown end, else engine, else fled (local) / forfeited (PvP) 
   assert.equal(finalResult(undefined, 'caught', false), 'caught')
   assert.equal(finalResult(undefined, null, false), 'run')
   assert.equal(finalResult(undefined, undefined, true), 'forfeit')
+})
+
+test('card names drop their parenthetical and never come back empty', () => {
+  assert.equal(shortName('Llama 4 (Scout / Maverick)'), 'Llama 4')
+  assert.equal(shortName('GPT-5.6（日 / 地 / 月）'), 'GPT-5.6')
+  assert.equal(shortName('ChatGPT（超级应用）'), 'ChatGPT')
+  assert.equal(shortName('GPT-5'), 'GPT-5')
+  assert.equal(shortName('（只有括号）'), '（只有括号）')
+  for (const sp of Object.values(CONTENT.species)) {
+    assert.ok(shortName(sp.nameZh).length > 0, sp.id)
+    assert.ok(shortName(sp.nameZh).length <= sp.nameZh.length, sp.id)
+  }
 })

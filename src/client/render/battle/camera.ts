@@ -6,12 +6,26 @@ import { ease, type Ease } from './timeline.ts'
 
 interface CamState { pos: THREE.Vector3; look: THREE.Vector3; fov: number }
 
+/**
+ * Screen-space composition on top of whatever shot is current: `zoom` scales the picture about the screen centre
+ * (a narrower FOV), `dx` / `dy` slide it by that fraction of the viewport (a lens shift: no change of perspective).
+ * The HUD layout solver (framing.ts) picks it so no creature sits under a window.
+ */
+export interface Framing { zoom: number; dx: number; dy: number }
+
 export interface BattleCamera {
   readonly camera: THREE.PerspectiveCamera
   /** Current (unswayed) look-at point, world space. */
   readonly look: THREE.Vector3
   /** Camera-to-look distance. */
   readonly distance: number
+  /** Where the base shot puts the camera, for projecting stage points without moving the live camera. */
+  readonly base: { readonly pos: THREE.Vector3; readonly look: THREE.Vector3; readonly fov: number }
+  /** Eased towards `f`; `snap` jumps there at once. */
+  setFraming(f: Framing, snap?: boolean): void
+  readonly framing: Framing
+  /** The base shot as authored (what a timeline's "base" shot resolves to: bosses override it). */
+  readonly baseShot: ShotDef
   setBase(shot: ShotDef): void
   cut(shot: ShotDef): void
   /** Eased blend to a shot; stays there. */
@@ -24,6 +38,14 @@ export interface BattleCamera {
   update(dt: number, time: number): void
 }
 
+/** Slides the rendered picture by (dx, dy) viewport fractions (y down) without touching the camera pose. */
+export function applyLensShift(camera: THREE.PerspectiveCamera, dx: number, dy: number): void {
+  const e = camera.projectionMatrix.elements
+  e[8] = -2 * dx
+  e[9] = 2 * dy
+  camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert()
+}
+
 export function createBattleCamera(origin: THREE.Vector3): BattleCamera {
   const C = STAGE.camera
   // aspect is synced to the renderer's internal target every frame by the stage
@@ -34,7 +56,8 @@ export function createBattleCamera(origin: THREE.Vector3): BattleCamera {
     look: new THREE.Vector3(...shot.look).add(origin),
     fov: shot.fov ?? C.fov,
   })
-  let base = abs(C.shots.base as ShotDef)
+  let baseDef = C.shots.base as ShotDef
+  let base = abs(baseDef)
   const cur: CamState = { pos: base.pos.clone(), look: base.look.clone(), fov: base.fov }
   const from: CamState = { pos: new THREE.Vector3(), look: new THREE.Vector3(), fov: C.fov }
   let to: CamState | null = null
@@ -45,6 +68,8 @@ export function createBattleCamera(origin: THREE.Vector3): BattleCamera {
   let backDur = 0
   let swayMul = 1
   let swayLevel = 1
+  const framing: Framing = { zoom: 1, dx: 0, dy: 0 }
+  const framingTo: Framing = { zoom: 1, dx: 0, dy: 0 }
   const look = new THREE.Vector3()
   const _o = new THREE.Vector3()
 
@@ -62,7 +87,14 @@ export function createBattleCamera(origin: THREE.Vector3): BattleCamera {
     camera,
     look,
     get distance() { return cur.pos.distanceTo(cur.look) },
-    setBase(shot) { base = abs(shot) },
+    get base() { return base },
+    get framing() { return framing },
+    setFraming(f, snap = false) {
+      Object.assign(framingTo, f)
+      if (snap) Object.assign(framing, f)
+    },
+    get baseShot() { return baseDef },
+    setBase(shot) { baseDef = shot; base = abs(shot) },
     cut(shot) {
       const s = abs(shot)
       cur.pos.copy(s.pos)
@@ -100,10 +132,16 @@ export function createBattleCamera(origin: THREE.Vector3): BattleCamera {
       look.copy(cur.look)
       _o.set(S.look[0] * w(1), S.look[1] * w(2), S.look[2] * w(0)).multiplyScalar(swayLevel)
       camera.lookAt(_o.add(cur.look))
+      const fk = 1 - Math.exp(-dt * C.framing.rate)
+      framing.zoom += (framingTo.zoom - framing.zoom) * fk
+      framing.dx += (framingTo.dx - framing.dx) * fk
+      framing.dy += (framingTo.dy - framing.dy) * fk
       // narrower than the framing aspect: widen the vertical FOV so both sides stay in frame horizontally
-      const widen = Math.max(1, C.refAspect / camera.aspect)
+      const widen = Math.max(1, C.refAspect / camera.aspect) / framing.zoom
       const fov = widen === 1 ? cur.fov : THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(cur.fov) / 2) * widen))
-      if (Math.abs(camera.fov - fov) > 1e-4) { camera.fov = fov; camera.updateProjectionMatrix() }
+      if (Math.abs(camera.fov - fov) > 1e-4) camera.fov = fov
+      camera.updateProjectionMatrix()
+      applyLensShift(camera, framing.dx, framing.dy)
       camera.updateMatrixWorld()
     },
   }

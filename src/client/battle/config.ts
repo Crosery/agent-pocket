@@ -1,5 +1,5 @@
 // Typed view of content/battle-ui.json (battle client tunables) + validation. Pure module: no DOM.
-import type { MoveCategory, Settings } from '../../shared/types.ts'
+import type { BattleStatKey, MoveCategory, Settings } from '../../shared/types.ts'
 import type { BattleKind } from '../contracts.ts'
 import type { Content } from '../../shared/content/index.ts'
 import battleUiJson from '../../../content/battle-ui.json' with { type: 'json' }
@@ -27,6 +27,8 @@ export interface BattleUiConfig {
     charsPerSecond: Record<TextSpeed, number>
     autoAdvanceMs: Record<TextSpeed, number>
     autoAdvance: boolean
+    /** Splits "Name: 「line」" into the speaker (group 1) and the quoted line: the speaker gets a plate in the message window. */
+    speakerPattern: string
     pause: { chars: string; ms: number }
     blip: { sfx: string; everyChars: number; volume: number; pitch: number }
   }
@@ -49,9 +51,39 @@ export interface BattleUiConfig {
     select: string; confirm: string; cancel: string; error: string; advance: string
   }
   cry: { onSendOut: boolean; onFaint: boolean; faintPitch: number; evolvePitch: number }
+  /**
+   * Window geometry in UI pixels (CSS reads it from --apb-* variables set by view.ts). `syncSec` is how often the HUD's
+   * rectangles are re-measured for the stage composition; `bottomMaxGapPx` is the most space the bottom windows may leave
+   * under them (QA: no dead band).
+   */
+  layout: {
+    syncSec: number; margin: number; gap: number; barHeight: number
+    foeWidth: number; ownWidth: number; cmdWidth: number
+    compactFoeWidth: number; compactOwnWidth: number; compactCmdWidth: number
+    detailWidth: number; bottomMaxGapPx: number
+  }
   hud: {
+    /** What a card header drops from a long name (a trailing parenthetical): the full name stays in the tooltip and the status sheet. */
+    shortNamePattern: string
     hpBarWidth: number; expBarWidth: number; foeHpNumbers: boolean; ownHpNumbers: boolean
     showTypes: boolean; showStages: boolean
+    /** Boss meter tiles: display width of the label kept (wide characters count 2), cells of the pip row, and how long a tapped tile's full reading stays up. */
+    meterLabelWidth: number; meterPipCells: number; meterReadoutMs: number
+  }
+  /** The status-detail sheet: window width (at least `width` units, or `widthFraction` of the screen when that is wider), HP bar width and the side accents. */
+  /** While any of these matches in the document (a screen, a tip card with a button) or the view holds its own sheet, the battle clock stands still. */
+  pause: { selectors: string[] }
+  inspector: { width: number; widthFraction: number; hpBarWidth: number; sideColors: { own: string; foe: string } }
+  /** Pixel icons (files under `base`, named icon-<id>.png); type badges use each type's own `icon` file under `typeBase`. */
+  icons: {
+    base: string
+    commands: Record<CommandId, string>
+    effects: string[]
+    meterTones: Record<'neutral' | 'good' | 'warn' | 'bad', string>
+    /** Move category icons and stat icons (stat-stage chips). */
+    categories: Record<MoveCategory, string>
+    stats: Record<BattleStatKey, string>
+    typeBase: string
   }
   commands: { normal: CommandId[]; pvp: CommandId[]; columns: number }
   moves: { columns: number; hintRequiresSeen: boolean; categoryColors: Record<MoveCategory, string> }
@@ -105,6 +137,11 @@ export function validateBattleUi(c: Content, cfg: BattleUiConfig = BATTLE_UI): s
   num('cry.evolvePitch', cfg.cry.evolvePitch, Number.MIN_VALUE)
   num('hud.hpBarWidth', cfg.hud.hpBarWidth, 4)
   num('hud.expBarWidth', cfg.hud.expBarWidth, 4)
+  if (!Array.isArray(cfg.pause?.selectors) || cfg.pause.selectors.some((q) => typeof q !== 'string' || !q)) errs.push('battle-ui pause.selectors: expected a list of selectors')
+  num('inspector.width', cfg.inspector.width, 100)
+  num('inspector.widthFraction', cfg.inspector.widthFraction, 0.2)
+  num('inspector.hpBarWidth', cfg.inspector.hpBarWidth, 4)
+  for (const k of ['own', 'foe'] as const) if (!/^#[0-9a-f]{6}$/i.test(cfg.inspector.sideColors[k])) errs.push(`battle-ui inspector.sideColors.${k}: expected #rrggbb`)
   for (const list of [cfg.commands.normal, cfg.commands.pvp]) {
     for (const id of list) if (!COMMAND_IDS.includes(id)) errs.push(`battle-ui commands: unknown command "${id}"`)
     if (!list.includes('fight')) errs.push('battle-ui commands: every command list needs "fight"')
