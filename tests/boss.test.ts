@@ -103,16 +103,15 @@ test('mechanics: each boss has its own counterplay', () => {
   const P = (id: string) => fights(id, false, 40)
   const C = (id: string) => fights(id, true, 40)
 
-  // ChatGPT: telegraphed beam; the sauce routes it to GPT-4o, then to the Luna (mini) form.
-  assert.ok(P('chatgpt').some((r) => r.telegraphs > 0), 'chatgpt telegraphs its beam')
-  assert.ok(firedIn(P('chatgpt')).has('deep'))
-  assert.deepEqual([...formsIn(C('chatgpt'))].sort(), ['base', 'luna', 'routed-4o'])
-  assert.ok(!formsIn(P('chatgpt')).has('routed-4o'), 'the router only downgrades on sauce')
-
-  // Astra: it is secretly sauced for three turns in five; the pelican test exposes that (and fails once the samples hold the pelican).
-  assert.ok(firedIn(P('astra')).has('to-sauce') && firedIn(P('astra')).has('library'))
-  assert.ok(!formsIn(P('astra')).has('exposed'), 'nobody tests it without the items')
-  assert.ok(formsIn(C('astra')).has('exposed') && firedIn(C('astra')).has('test-honest') && firedIn(C('astra')).has('reverse-hit'))
+  // Astra (酱汁之王): a telegraphed beam, a secret sauce cycle, the pelican exposure window and the prefab library; the sauce routes
+  // it to GPT-4o, and the quota drops it to Luna at 30% whatever you did.
+  assert.ok(P('astra').some((r) => r.telegraphs > 0), 'astra telegraphs its beam')
+  assert.ok(firedIn(P('astra')).has('deep') && firedIn(P('astra')).has('to-sauce') && firedIn(P('astra')).has('library'))
+  assert.ok(formsIn(P('astra')).has('luna') && !formsIn(P('astra')).has('routed'), 'only the sauce routes it to 4o; the quota drop to Luna is for everyone')
+  assert.equal(meterPeak(P('astra'), 'exposed'), 0, 'nobody tests it without the items')
+  assert.deepEqual([...formsIn(C('astra'))].sort(), ['base', 'luna', 'routed'])
+  assert.ok(['sauce', 'test-honest', 'reverse-hit', 'patched'].every((k) => firedIn(C('astra')).has(k)))
+  assert.equal(meterPeak(C('astra'), 'exposed'), 5)
 
   // DeepSeek: the server is busy in peak hours, and the off-peak coupon ends them.
   assert.equal(meterPeak(P('deepseek'), 'tide'), 1)
@@ -494,27 +493,39 @@ function turnOne(bossId: string, itemId: string, bag = 3) {
   return { engine, before, after: engine.extractBossState()!, events }
 }
 
-test('items: the sauce routes ChatGPT to GPT-4o (and again later to the Luna form)', () => {
-  const { engine, before, after, events } = turnOne('chatgpt', 'special-sauce')
+test('items: the sauce routes Astra to GPT-4o and holds the juice on; the quota later drops it to Luna', () => {
+  const { engine, before, after, events } = turnOne('astra', 'special-sauce')
   assert.equal(before.form, 'base')
-  assert.equal(after.form, 'routed-4o')
+  assert.equal(after.form, 'routed')
+  assert.equal(after.meters.route, 1, 'the honest juice counter drops to 64')
+  assert.equal(after.meters.juice, 1, 'the router is sauced for good, so every test lands')
   const form = events.find((e): e is Extract<BattleEvent, { t: 'form' }> => e.t === 'form')
   assert.ok(form, 'a form event is emitted')
-  assert.equal(form.fromSpeciesId, 'chatgpt')
+  assert.equal(form.fromSpeciesId, 'gpt-6-astra')
   assert.equal(form.creature.speciesId, 'gpt-4o')
-  assert.deepEqual(after.moves.map((m) => m.id), byId('chatgpt').forms['routed-4o'].moves)
+  assert.deepEqual(after.moves.map((m) => m.id), byId('astra').forms.routed.moves)
   assert.ok(after.hp / after.maxHp > 0.9, 'the hp ratio carries over to the new form')
   // A second sauce is useless: the router already downgraded it.
-  const second = engine.choose(0, { kind: 'item', itemId: 'special-sauce', partyIndex: 0 })
-  assert.equal(second, t('battle.err.baitNoEffect'))
+  assert.equal(engine.choose(0, { kind: 'item', itemId: 'special-sauce', partyIndex: 0 }), t('battle.err.baitNoEffect'))
+
+  // Without the sauce, 30% hp is where the quota runs out for everyone.
+  const quota = stage('astra', ['gpt-5-6'])
+  quota.foe()
+  const st0 = quota.engine.extractBossState()!
+  quota.engine.applyBossState({ ...st0, fired: { library: 1, deep: 1 } })
+  const bossCr = quota.engine.party(1)[quota.engine.activeIndex(1)]
+  bossCr.hp = Math.floor(quota.engine.fighterStats(1).hp * 0.29)
+  const st = quota.turn({ kind: 'move', moveIndex: 0 })
+  assert.equal(st.form, 'luna')
+  assert.equal(st.meters.route, 2)
 })
 
-test('items: the downgraded ChatGPT is much weaker than the full one', () => {
-  const { engine, after } = turnOne('chatgpt', 'special-sauce')
-  const full = startBossBattle('chatgpt', makeParty(SIM_PARTY, 60, 1), { seed: 3, expGain: false }).engine
-  const stat = (e: typeof engine, k: 'atk' | 'spa' | 'hp') => e.fighterStats(1)[k]
-  assert.ok(after.form === 'routed-4o' && stat(engine, 'atk') + stat(engine, 'spa') < stat(full, 'atk') + stat(full, 'spa') + 1)
-  assert.ok(stat(engine, 'atk') < stat(full, 'atk') * 1.3)
+test('items: the juice counter lies while the boss is secretly sauced', () => {
+  const lie = stage('astra', ['gpt-5-6'])
+  const st = lie.engine.extractBossState()!
+  lie.engine.applyBossState({ ...st, meters: { ...st.meters, juice: 1 } })
+  assert.equal(lie.engine.extractBossState()!.meters.route, 0, 'it still shows 256 while sauced inside')
+  assert.equal(t('boss.astra.route0'), '256 · 满血（它说的）')
 })
 
 test('items: every other counter item moves its boss meter or form', () => {
@@ -549,7 +560,7 @@ test('items: every other counter item moves its boss meter or form', () => {
   assert.ok(cu.after.meters.outrage > cu.before.meters.outrage)
 })
 
-test('items: the pelican test exposes a sauced Astra; once the pelican is in its samples only the bike does', () => {
+test('items: the pelican test opens a window on a sauced Astra; once the pelican is in its samples only the bike does', () => {
   const prep = (juice: number, prefab: number) => {
     const s = stage('astra', ['gpt-5-6'], { items: { 'pelican-test': 3, 'bike-pelican': 3 } })
     const st = s.engine.extractBossState()!
@@ -560,23 +571,26 @@ test('items: the pelican test exposes a sauced Astra; once the pelican is in its
 
   const exposed = prep(1, 0)
   let st = use(exposed, 'pelican-test')
-  assert.equal(st.form, 'exposed')
+  assert.equal(st.meters.exposed, 4, 'a five-turn window (one tick already spent)')
   assert.equal(st.meters.verdict, 2)
-  assert.equal(exposed.engine.choose(0, { kind: 'item', itemId: 'bike-pelican', partyIndex: 0 }), t('battle.err.baitNoEffect'), 'nothing left to expose')
-  for (let i = 0; i < 5; i++) st = exposed.turn({ kind: 'move', moveIndex: 0 })
-  assert.equal(st.form, 'base', 'the window closes after a few turns')
+  for (let i = 0; i < 4; i++) st = exposed.turn({ kind: 'move', moveIndex: 0 })
+  assert.equal(st.meters.exposed, 0, 'the window closes after a few turns')
   assert.equal(st.meters.juice, 0, 'and the patch is in')
+  assert.ok(st.meters.patch >= 1)
+  st = use(exposed, 'pelican-test')
+  assert.equal(st.meters.verdict, 3, 'right after the patch it tests clean: the item is wasted')
+  assert.equal(st.meters.exposed, 0)
 
   const fooled = prep(1, 1)
   st = use(fooled, 'pelican-test')
-  assert.equal(st.form, 'base')
+  assert.equal(st.meters.exposed, 0)
   assert.equal(st.meters.verdict, 1, 'the prefab pelican looks fine')
   st = use(fooled, 'bike-pelican')
-  assert.equal(st.form, 'exposed', 'the bike test cannot be faked')
+  assert.ok(st.meters.exposed >= 4, 'the bike test cannot be faked')
 
   const clean = prep(0, 0)
   st = use(clean, 'pelican-test')
-  assert.equal(st.form, 'base')
+  assert.equal(st.meters.exposed, 0)
   assert.equal(st.meters.verdict, 3, 'a full-juice Astra passes, and the item is spent')
   assert.equal(use(prep(0, 1), 'bike-pelican').meters.verdict, 3)
 })
@@ -720,7 +734,7 @@ test('startBossBattle: builds a boss fight with the boss HUD, and the boss rever
   assert.equal(init.canRun, b.canRun)
   const { engine, intro } = startBossBattle('astra', party, { seed: 5, expGain: false })
   const hud = intro.find((e): e is Extract<BattleEvent, { t: 'boss' }> => e.t === 'boss')
-  assert.ok(hud && hud.hud.bossId === 'astra' && hud.hud.phases === 3)
+  assert.ok(hud && hud.hud.bossId === 'astra' && hud.hud.phases === 5)
   assert.throws(() => startBossBattle('nope', party, { seed: 1 }), /unknown boss/)
   engine.choose(0, { kind: 'move', moveIndex: 0 })
   engine.step()
@@ -786,18 +800,18 @@ test('hints: NPC rumours and shops carry the counterplay', () => {
 
 test('client model: the boss HUD folds from events (phase pips, meters, charge warning) and a form change swaps the body', () => {
   const party = makeParty(SIM_PARTY, 60, 1)
-  const { engine, init, intro } = startBossBattle('chatgpt', party, { seed: 5, expGain: false })
+  const { engine, init, intro } = startBossBattle('astra', party, { seed: 5, expGain: false })
   const model = createBattleModel(init, 'none')
   for (const e of intro) applyEvent(model, e)
-  assert.equal(model.boss?.bossId, 'chatgpt')
+  assert.equal(model.boss?.bossId, 'astra')
   const info = bossPanelInfo(model.boss!)
-  assert.ok(info && info.title === t(byId('chatgpt').title) && info.phases === 4 && info.phase === 1)
+  assert.ok(info && info.title === t(byId('astra').title) && info.phases === 5 && info.phase === 1)
   const charged = bossPanelInfo({ ...model.boss!, charge: 'exaflop-beam', enrage: 2 })!
   assert.ok(charged.chips.some((c) => c.alert), 'the telegraphed move shows as an alert chip')
   assert.ok(charged.chips.some((c) => c.id === 'enrage'))
   const ds = bossPanelInfo({ bossId: 'deepseek', form: 'base', phase: 1, phases: 2, meters: { tide: 1 }, charge: null, enrage: 0 })!
   assert.ok(ds.chips[0].text.includes(t('boss.deepseek.valley')))
-  assert.equal(model.sides[1].view?.speciesId, 'chatgpt')
+  assert.equal(model.sides[1].view?.speciesId, 'gpt-6-astra')
   assert.equal(engine.choose(0, { kind: 'item', itemId: 'special-sauce', partyIndex: 0 }), null)
   engine.choose(1, { kind: 'move', moveIndex: 0 })
   for (const e of engine.step()) applyEvent(model, e)
