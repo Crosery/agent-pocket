@@ -392,3 +392,19 @@ Icon shapes are data (`assets_src/battle-ui/icons.json`: palette plus rect / lin
 12x12 grid, outlined to 14x14 by the tool). Which icon a command, effect or meter tone uses is `icons` in
 `content/battle-ui.json`; type badges reuse each type's own `icon` (`type_*.png`). Window geometry (card widths, bar
 height, margins) is `layout` in the same file and reaches the CSS as `--apb-*` variables.
+
+### Battle screen layout contract
+
+- The info cards sit in the corners: the foe card top-left, the own card at the right end of the bottom bar, the bar
+  (message | commands | own card; in portrait own card, commands, message) pinned to the real viewport bottom plus the
+  safe-area inset. Nothing reserves a fixed 16:9 stage.
+- Every window carries `data-hud`; `BattleView.layout()` reports their rectangles and the scene feeds them to
+  `stage.setHud()`. The stage projects both creatures' opaque pixels through the base shot and `render/battle/framing.ts`
+  picks a zoom and a lens shift (`camera.framing` in `content/battle-stage.json`) so that no creature touches a window
+  (padding `padU`) or the screen edge. Cinematic push-in shots are exempt while they play.
+- The overworld touch pad is hidden in battle (`html.ap-battle-on`) and no bottom space is reserved for it.
+- QA: `scripts/qa-battle-audit.mjs` runs boss (6 and 3 meters), wild and trainer battles through message, commands, moves,
+  item and party screens at the seven viewports of `scripts/qa-battle-layout.mjs` (1280x720, 1920x1080, 1440x900,
+  2000x1300, 1024x768, 390x844, 844x390). `auditBattleSprites` fails a window over a creature, any other painted element
+  over a creature, a window leaving the screen, a bottom gap above `layout.bottomMaxGapPx` and a visible overworld pad;
+  `measureScreen` in `qa-layout-audit.mjs` runs it on every battle screen.
