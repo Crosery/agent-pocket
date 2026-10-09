@@ -146,7 +146,7 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     const out: Creature[] = []
     for (const e of tr.party) {
       if (!e.species || !ctx.data.species[e.species]) { console.warn(`[overworld] trainer ${tr.id}: unresolved party entry`); continue }
-      const opts = { rng, otName: tr.nameZh, otId: tr.id, ...(e.moves?.length ? { moves: e.moves } : {}) }
+      const opts = { rng, otName: tr.nameZh, otId: tr.id, nature: ctx.data.quality.npcNature, ...(e.moves?.length ? { moves: e.moves } : {}) }
       out.push(createCreature(e.species, e.level, opts, ctx.data))
     }
     return out

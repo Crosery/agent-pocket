@@ -2,7 +2,7 @@
 // This is the ONLY place game data enters the code. Everything else looks data up by id via CONTENT.
 // World/story JSON (content/world/**) is loaded by src/shared/world/ itself.
 import type {
-  AbilityDef, AudioFile, BiomeDef, BossDef, BossFile, CharacterSheetDef, GameConfig, ItemDef, MoveDef, PropDef, RarityDef,
+  AbilityDef, AudioFile, BiomeDef, BossDef, BossFile, CharacterSheetDef, GameConfig, ItemDef, MoveDef, NatureDef, PropDef, QualityFile, RarityDef,
   DexResearchEntry, SpeciesDef, StatDef, StatusDef, TerrainDef, TextTable, TimeOfDay, TypeChart, TypeDef, TypeId, TypesFile,
   VolatileDef, WeatherDef,
 } from '../types.ts'
@@ -18,6 +18,7 @@ import abilitiesJson from '../../../content/abilities.json' with { type: 'json' 
 import movesJson from '../../../content/moves.json' with { type: 'json' }
 import itemsJson from '../../../content/items.json' with { type: 'json' }
 import bossesJson from '../../../content/bosses.json' with { type: 'json' }
+import qualityJson from '../../../content/quality.json' with { type: 'json' }
 import speciesJson from '../../../content/species.json' with { type: 'json' }
 import dexResearchJson from '../../../content/dex-research.json' with { type: 'json' }
 import biomesJson from '../../../content/biomes.json' with { type: 'json' }
@@ -75,6 +76,9 @@ export interface Content {
   bosses: Record<string, BossDef>
   bossList: BossDef[]
   bossBySpecies: Record<string, BossDef>
+  /** Individual quality: natures, grades, appraisal rules (content/quality.json). */
+  quality: QualityFile
+  natureById: Record<string, NatureDef>
   /** Research metadata matched to the playable Dex roster from local lineage/event dossiers. */
   dexResearch: Record<string, DexResearchEntry>
   dexResearchMeta: { source: string; lineageDate: string; eventsCheckedAt: string; entryCount: number }
@@ -121,6 +125,7 @@ function build(): Content {
     meta: { source: string; lineageDate: string; eventsCheckedAt: string; entryCount: number }
     entries: Record<string, DexResearchEntry>
   }
+  const quality = qualityJson as unknown as QualityFile
   const bossList: BossDef[] = Object.entries((bossesJson as unknown as BossFile).bosses).map(([id, b]) => ({ ...b, id }))
   return {
     config: configJson as unknown as GameConfig,
@@ -148,6 +153,8 @@ function build(): Content {
     bosses: byId(bossList, 'id'),
     bossList,
     bossBySpecies: byId(bossList, 'species'),
+    quality,
+    natureById: byId(quality.natures, 'id'),
     dexResearch: dexResearchFile.entries,
     dexResearchMeta: dexResearchFile.meta,
     biomes,
@@ -285,7 +292,40 @@ export function validateContent(c: Content = CONTENT): string[] {
   }
   for (const p of Object.values(c.props)) if (p.footprint.length !== 2) errs.push(`prop ${p.key}: footprint must be [w,d]`)
   for (const k of Object.values(c.audio.battleMusic)) if (!c.audio.bgm.some((b) => b.id === k)) errs.push(`audio.battleMusic: unknown track "${k}"`)
+  errs.push(...validateQuality(c))
   errs.push(...validateGameplay(GAMEPLAY, c))
   errs.push(...validateBosses(c.bossList, c))
+  return errs
+}
+
+const NATURE_STATS = ['atk', 'def', 'spa', 'spd', 'spe']
+
+function validateQuality(c: Content): string[] {
+  const errs: string[] = []
+  const q = c.quality
+  const seen = new Set<string>()
+  for (const n of q.natures) {
+    if (seen.has(n.id)) errs.push(`quality.natures: duplicate id "${n.id}"`)
+    seen.add(n.id)
+    if ((n.up === null) !== (n.down === null)) errs.push(`quality.natures ${n.id}: up and down must both be set or both null`)
+    if (n.up !== null && !NATURE_STATS.includes(n.up)) errs.push(`quality.natures ${n.id}: up "${n.up}" is not a nature stat`)
+    if (n.down !== null && !NATURE_STATS.includes(n.down)) errs.push(`quality.natures ${n.id}: down "${n.down}" is not a nature stat`)
+    if (n.up !== null && n.up === n.down) errs.push(`quality.natures ${n.id}: up and down must differ`)
+    if (!c.text[`screens.quality.nature.${n.id}.name`]) errs.push(`quality.natures ${n.id}: missing text screens.quality.nature.${n.id}.name`)
+  }
+  if (!c.natureById[q.legacyNature]) errs.push(`quality.legacyNature: unknown nature "${q.legacyNature}"`)
+  if (!c.natureById[q.npcNature]) errs.push(`quality.npcNature: unknown nature "${q.npcNature}"`)
+  if (q.natureMulPct.up <= 100 || q.natureMulPct.down >= 100 || q.natureMulPct.down <= 0) errs.push('quality.natureMulPct: up must exceed 100 and down lie within (0, 100)')
+  if (q.grades[0]?.min !== 0) errs.push('quality.grades: the first grade must start at 0')
+  q.grades.forEach((g, i) => {
+    if (i > 0 && g.min <= q.grades[i - 1].min) errs.push(`quality.grades ${g.id}: min must ascend`)
+    if (!c.text[`screens.quality.grade.${g.id}`]) errs.push(`quality.grades ${g.id}: missing text screens.quality.grade.${g.id}`)
+  })
+  const gradeIds = q.grades.map((g) => g.id)
+  if (!gradeIds.includes(q.box.filterMinGrade)) errs.push(`quality.box.filterMinGrade: unknown grade "${q.box.filterMinGrade}"`)
+  if (!gradeIds.includes(q.giftGradeFloor)) errs.push(`quality.giftGradeFloor: unknown grade "${q.giftGradeFloor}"`)
+  if (!gradeIds.includes(q.reveal.fullWhen.gradeAtLeast)) errs.push(`quality.reveal.fullWhen.gradeAtLeast: unknown grade "${q.reveal.fullWhen.gradeAtLeast}"`)
+  for (const g of q.grades) if (!c.audio.sfx.includes(q.reveal.sfx[g.id] ?? '')) errs.push(`quality.reveal.sfx ${g.id}: unknown sfx "${q.reveal.sfx[g.id]}"`)
+  for (const id of Object.keys(q.legacyGift)) if (!c.items[id]) errs.push(`quality.legacyGift: unknown item "${id}"`)
   return errs
 }

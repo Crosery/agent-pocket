@@ -251,6 +251,30 @@ test('sanitizeCreature clamps and repairs every field', () => {
   assert.deepEqual(evo.moves.map((m) => m.id), ['m6', 'evo'])
 })
 
+test('sanitizeCreature repairs nature, origin and finetuned', () => {
+  const base = { uid: 'q1', speciesId: 'base', level: 5 }
+  const legacy = SC.quality.legacyNature
+  assert.equal(sanitizeCreature({ ...base }, SC)!.nature, legacy)
+  assert.equal(sanitizeCreature({ ...base, nature: 'no-such-nature' }, SC)!.nature, legacy)
+  assert.equal(sanitizeCreature({ ...base, nature: 42 }, SC)!.nature, legacy)
+  const picked = SC.quality.natures.find((n) => n.up === 'spa' && n.down === 'def')!.id
+  assert.equal(sanitizeCreature({ ...base, nature: picked }, SC)!.nature, picked)
+
+  assert.equal(sanitizeCreature({ ...base, origin: { kind: 'hacked' } }, SC)!.origin, undefined)
+  assert.equal(sanitizeCreature({ ...base, origin: 'wild' }, SC)!.origin, undefined)
+  assert.deepEqual(sanitizeCreature({ ...base, origin: { kind: 'wild', at: 1700000000000.9, extra: 1 } }, SC)!.origin, { kind: 'wild', at: 1700000000000 })
+  const bossId = SC.bossList[0].id
+  assert.deepEqual(sanitizeCreature({ ...base, origin: { kind: 'boss', boss: bossId, tier: 'story', run: 'r-1' } }, SC)!.origin, { kind: 'boss', boss: bossId, tier: 'story', run: 'r-1' })
+  assert.deepEqual(sanitizeCreature({ ...base, origin: { kind: 'boss', boss: 'no-such-boss' } }, SC)!.origin, { kind: 'boss' })
+  assert.deepEqual(sanitizeCreature({ ...base, origin: { kind: 'legacy', tier: 'bad tier!' } }, SC)!.origin, { kind: 'legacy' })
+
+  const max = SC.quality.finetune.loraMaxPerCreature
+  assert.equal(sanitizeCreature({ ...base, finetuned: 99 }, SC)!.finetuned, max)
+  assert.equal(sanitizeCreature({ ...base, finetuned: -4 }, SC)!.finetuned, 0)
+  assert.equal(sanitizeCreature({ ...base, finetuned: 2.9 }, SC)!.finetuned, 2)
+  assert.equal(sanitizeCreature({ ...base, finetuned: 'x' }, SC)!.finetuned, undefined)
+})
+
 test('sanitizeCreature round-trips a valid creature unchanged', () => {
   const cr = createCreature('base', 23, { rng: new Rng(12), otName: '小明', otId: 'p1', caughtMap: 'overworld' }, SC)
   cr.nickname = '小智'

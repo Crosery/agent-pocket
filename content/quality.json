@@ -1,0 +1,24 @@
+{
+  "natureMulPct": {"up": 110, "down": 90},
+  "legacyNature": "balanced",
+  "npcNature": "balanced",
+  "natures": [
+    {"id": "balanced", "up": null, "down": null}, {"id": "chill", "up": null, "down": null}, {"id": "casual", "up": null, "down": null},
+    {"id": "lawful", "up": null, "down": null}, {"id": "moderate", "up": null, "down": null},
+    {"id": "reckless", "up": "atk", "down": "def"}, {"id": "rigorous", "up": "atk", "down": "spa"}, {"id": "intuitive", "up": "atk", "down": "spd"}, {"id": "deep", "up": "atk", "down": "spe"},
+    {"id": "steady", "up": "def", "down": "atk"}, {"id": "conservative", "up": "def", "down": "spa"}, {"id": "stubborn", "up": "def", "down": "spd"}, {"id": "heavy", "up": "def", "down": "spe"},
+    {"id": "whimsical", "up": "spa", "down": "atk"}, {"id": "unbound", "up": "spa", "down": "def"}, {"id": "imaginative", "up": "spa", "down": "spd"}, {"id": "poetic", "up": "spa", "down": "spe"},
+    {"id": "erudite", "up": "spd", "down": "atk"}, {"id": "bookish", "up": "spd", "down": "def"}, {"id": "citing", "up": "spd", "down": "spa"}, {"id": "cautious", "up": "spd", "down": "spe"},
+    {"id": "hasty", "up": "spe", "down": "atk"}, {"id": "light", "up": "spe", "down": "def"}, {"id": "pragmatic", "up": "spe", "down": "spa"}, {"id": "surfing", "up": "spe", "down": "spd"}
+  ],
+  "grades": [
+    {"id": "C", "min": 0, "color": "#9aa5b1"}, {"id": "B", "min": 85, "color": "#5fb0ff"}, {"id": "A", "min": 115, "color": "#b07cff"},
+    {"id": "S", "min": 145, "color": "#ffb43c"}, {"id": "SS", "min": 170, "color": "#ff5c5c"}
+  ],
+  "giftGradeFloor": "B",
+  "box": {"filterMinGrade": "A"},
+  "reveal": {"fullWhen": {"newSpecies": true, "gradeAtLeast": "A", "boss": true, "firstCatch": true}, "maxMs": 2500, "chipMs": 3000, "sfx": {"C": "select", "B": "select", "A": "levelup", "S": "levelup", "SS": "evolve"}},
+  "legacyGift": {"persona-card": 2},
+  "flags": {"legacyGift": "gift:quality-legacy", "legacyToast": "ob:legacyToast", "revealLadder": "ob:revealLadder"},
+  "finetune": {"loraMaxPerCreature": 3}
+}

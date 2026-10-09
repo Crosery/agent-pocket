@@ -55,7 +55,7 @@ function fighterOf(engine: IBattleEngine, side: SideIndex, c: Content): Fighter 
   const cr = engine.party(side)[engine.activeIndex(side)]
   const cap = engine.init.levelCap
   const level = cap !== undefined && cap > 0 ? Math.min(cr.level, cap) : cr.level
-  const stats = extras(engine).fighterStats?.(side) ?? calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, level }, c)
+  const stats = extras(engine).fighterStats?.(side) ?? calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, nature: cr.nature, level }, c)
   return { creature: cr, level, stats, stages: toStages(engine.stages(side)), critStageAdd: 0 }
 }
 
