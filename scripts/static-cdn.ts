@@ -1,11 +1,13 @@
 // Qiniu static CDN for the layout in scripts/static-cdn-base.ts.
 //   node scripts/static-cdn.ts mint-token --env-file <file>   owner only: prints an insert-only, prefix-scoped upload token
 //   node scripts/static-cdn.ts upload                          CI: uploads dist/ (bundles) and public/ under content-addressed keys
-//   node scripts/static-cdn.ts verify                          CI: HEADs every key through the CDN (200, size, CORS)
+//   node scripts/static-cdn.ts verify                          CI: HEADs keys through the CDN (200, size, CORS): every key uploaded
+//                                                              by this run's upload, plus a sample of the unchanged public set
 // CI needs STATIC_CDN_BASE and STATIC_CDN_UPLOAD_TOKEN. The token can never overwrite or delete anything.
 import { createHmac } from 'node:crypto'
 import { setDefaultResultOrder } from 'node:dns'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { extname, join } from 'node:path'
 import { CDN, cdnBase, listFiles, publicHash } from './static-cdn-base.ts'
 
@@ -16,6 +18,8 @@ const DIST = 'dist'
 const PUBLIC = 'public'
 const ORIGIN_ONLY = new Set(['index.html', 'release.json'])
 const MARKER = '.complete'
+// upload -> verify handoff (same CI step): which public keys this run actually uploaded.
+const UPLOADED = join(tmpdir(), 'ap-static-cdn-uploaded.json')
 
 const b64url = (b: Buffer | string) => Buffer.from(b).toString('base64').replace(/\+/g, '-').replace(/\//g, '_')
 const die = (msg: string): never => { console.error(`static-cdn: ${msg}`); process.exit(1) }
@@ -89,12 +93,20 @@ async function upload(): Promise<void> {
   const items = [...p.bundles, ...(pubDone ? [] : p.pub)]
   await pool(items, (it) => put(tok, { key: it.key, body: readFileSync(it.file), type: mime(it.file) }))
   if (!pubDone) await put(tok, { key: p.marker, body: Buffer.from(`${p.hash}\n`), type: 'text/plain' })
+  writeFileSync(UPLOADED, JSON.stringify({ hash: p.hash, pub: !pubDone }))
   console.log(`static-cdn: uploaded ${items.length} files (public ${p.hash} ${pubDone ? 'already on CDN' : 'uploaded'})`)
 }
 
 async function verify(): Promise<void> {
   const p = plan()
-  const all = [...p.bundles, ...p.pub]
+  // An unchanged public set was uploaded and verified by an earlier release under the same content hash and is never
+  // overwritten, so re-HEADing all ~860 keys from a US runner only adds cross-border timeouts (v0.2.0-rc.6). Sample it.
+  const handoff = existsSync(UPLOADED) ? (JSON.parse(readFileSync(UPLOADED, 'utf8')) as { hash: string; pub: boolean }) : null
+  const pubFull = !handoff || handoff.hash !== p.hash || handoff.pub
+  const step = Math.max(1, Math.floor(p.pub.length / CDN.verifySample))
+  const pub = pubFull ? p.pub : p.pub.filter((_, i) => i % step === 0).slice(0, CDN.verifySample)
+  const all = [...p.bundles, ...pub]
+  console.log(`static-cdn: verifying ${p.bundles.length} bundle keys + ${pub.length}/${p.pub.length} public keys (${pubFull ? 'full' : 'sample, public set unchanged'})`)
   // status 0 = the runner could not reach the CDN at all (connect reset / timeout), not a CDN answer. Those keys get slower
   // re-check rounds; only real answers (404, wrong size, missing CORS) or keys still unreachable after every round fail.
   const check = async (items: typeof all, width: number, log: boolean): Promise<{ bad: string[]; unreachable: typeof all }> => {
@@ -122,7 +134,7 @@ async function verify(): Promise<void> {
   }
   bad = [...bad, ...unreachable.map((it) => `0 ${it.key} (unreachable after ${CDN.verifyRecheckRounds} re-check rounds)`)]
   if (bad.length) die(`verify failed for ${bad.length} keys:\n${bad.slice(0, 20).join('\n')}`)
-  console.log(`static-cdn: verified ${p.bundles.length + p.pub.length} keys via ${p.base}`)
+  console.log(`static-cdn: verified ${all.length} keys via ${p.base}`)
 }
 
 function mintToken(args: string[]): void {
