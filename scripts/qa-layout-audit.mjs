@@ -401,7 +401,7 @@ const phoneHudOpen = (withTip) => async (page) => {
       for (const text of ['欢迎来到智灵口袋！和其他训练家一起探索、交换与对战吧。', '系统: 少年训练家 进入了智灵世界', '另一条用来撑满聊天栏的系统消息。']) {
         ctx.chat.addMessage({ name: '', channel: 'system', text: `${text} #${Date.now() % 10000}`, at: Date.now() })
       }
-      window.__apOnboarding.debugShow('movement')
+      window.__apOnboarding.debugShow('move')
     })
     await page.waitForTimeout(1200)
   if (!withTip) {
@@ -632,7 +632,7 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
         const shot = `${outDir}${vp.name}/${screen.id}.png`
         // The zone check goes first: tips and toasts time out, and the text audit below takes seconds. The tip is shown again for it.
         const zones = screen.hudZones ? await page.evaluate(auditHudZones, { pad: UI_PHONE_PAD }) : null
-        if (zones && !screen.noReshow) { await page.evaluate(() => window.__apOnboarding.debugShow('movement')); await page.waitForTimeout(600) }
+        if (zones && !screen.noReshow) { await page.evaluate(() => window.__apOnboarding.debugShow('move')); await page.waitForTimeout(600) }
         const result = await measureScreen(page, screen, shot)
         if (zones) {
           result.violations.push(...zones.violations)
