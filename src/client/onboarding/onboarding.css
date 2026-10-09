@@ -106,3 +106,11 @@ html:not(.ap-portrait)[data-touch-controls='on'] .ap-l-tips:not(.is-top):not(.is
   .ap-tip.is-in, .ap-objective.is-new, .ap-tip.is-in .ap-tip-progress { animation: none; }
   .ap-objective-arrow { transition: none; }
 }
+
+/* A tip that offers a screen (the type chart) carries its button under the text. */
+.ap-tip-open { display: inline-flex; align-items: center; gap: calc(var(--u) * 4); margin-top: calc(var(--u) * 4); min-height: max(24px, calc(var(--u) * 16)); padding: 0 calc(var(--u) * 6); color: var(--ap-gold-hi); font: inherit; background: rgba(201, 164, 92, 0.14); border: var(--u) solid var(--ap-gold-dk); cursor: pointer; }
+.ap-tip-open[hidden] { display: none; }
+.ap-tip-open:hover, .ap-tip-open:focus-visible { border-color: var(--ap-gold-hi); }
+.ap-tip-open .ap-key { color: inherit; vertical-align: baseline; }
+.ap-tip-open .ap-key kbd { height: calc(var(--u) * 12); line-height: calc(var(--u) * 10); }
+html[data-touch-controls='on'] .ap-tip-open { min-height: 44px; }

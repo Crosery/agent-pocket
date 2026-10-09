@@ -5,7 +5,7 @@ import { TUTORIAL, type LessonDef } from '../../onboarding/config.ts'
 import { lessonLearned } from '../../onboarding/logic.ts'
 import { richText } from '../../onboarding/view.ts'
 import { createRowMenu, type RowMenu } from '../menu.ts'
-import { el, tabs } from '../widgets.ts'
+import { button, el, keyHint, tabs } from '../widgets.ts'
 import { backPressed, frame, isCompact, openScreen, pressed, setChildren, type ScreenEnv } from './base.ts'
 import { SCREENS } from './config.ts'
 
@@ -27,12 +27,20 @@ export function manualScreen(env: ScreenEnv): Promise<void> {
     f.setHints([['lr', t('screens.hint.tabs')], ['ud', t('screens.hint.choose')], ['cancel', t('screens.hint.back')]])
     api.root.append(f.el)
 
+    /** A lesson with a chart link opens the type chart from a button above its text (the confirm key does the same). */
+    const openChart = (l: LessonDef) => { if (l.chart) void api.run(() => env.screens.typeChart(l.chart)) }
+    const chartButton = (l: LessonDef) => {
+      const btn = button(t('screens.manual.openChart'), api.guard(() => openChart(l)), { primary: true, className: 'aps-manual-open' })
+      if (ctx.input.lastDevice !== 'touch') btn.append(keyHint('confirm', { device: ctx.input.lastDevice }))
+      return btn
+    }
     const paint = (i: number) => {
       const l = rows[i]
       if (!l) { detail.replaceChildren(el('div', { class: 'aps-empty', text: t('screens.manual.empty') })); return }
       setChildren(detail, [
         el('div', { class: 'aps-item-name ap-gold', text: t(`tutorial.manual.${l.id}.title`) }),
         el('div', { class: 'ap-dim', text: t(learnt(l) ? 'screens.manual.learnt' : 'screens.manual.unlearnt') }),
+        l.chart ? chartButton(l) : null,
         el('p', { class: 'aps-manual-body' }, richText(t(`tutorial.manual.${l.id}.body`), ctx.input.lastDevice)),
       ])
     }
@@ -59,6 +67,8 @@ export function manualScreen(env: ScreenEnv): Promise<void> {
         if (backPressed(input)) { api.close(); return }
         if (pressed(input, 'left', true)) { tabBar.prev(); return }
         if (pressed(input, 'right', true)) { tabBar.next(); return }
+        const l = rows[menu?.index ?? 0]
+        if (l?.chart && pressed(input, 'confirm')) { openChart(l); return }
         menu?.handleInput(input)
       },
     }

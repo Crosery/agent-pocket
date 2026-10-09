@@ -122,7 +122,7 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
     shownThisSession.add(tip.id)
     ctx.save.flags[tipFlag(tip.id)] = true
     showing = { tip, ...(tip.doneOn ? { doneOn: tip.doneOn } : {}), startPos: here(), until: clock + cfg.tips.layer.ttlSec }
-    tips.show({ textKey: tip.text, device: ctx.input.lastDevice, place: tip.trigger.kind === 'menu' ? 'menu' : tip.place ?? (phaseOf(tip) === 'battle' ? 'battle' : 'bottom') })
+    tips.show({ textKey: tip.text, device: ctx.input.lastDevice, openKey: tip.open?.text, place: tip.trigger.kind === 'menu' ? 'menu' : tip.place ?? (phaseOf(tip) === 'battle' ? 'battle' : 'bottom') })
     ctx.audio.playSfx('select', { volume: 0.4 })
   }
 
@@ -187,6 +187,14 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
     const inBattle = overworld.battleActive
     if (!blocking) dropPhase('screen')
     if (showing) {
+      const open = showing.tip.open
+      const keyed = !!open && ctx.input.pressed(open.action)
+      if (open && (tips.openRequested() || keyed)) {
+        if (keyed) ctx.input.consume(open.action)
+        closeTip()
+        void ctx.screens.typeChart()
+        return
+      }
       if (tipFinished(showing) || tips.dismissed()) closeTip()
       else if (tips.disableRequested()) { closeTip(); disableTips() }
       return

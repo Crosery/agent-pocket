@@ -4,6 +4,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { CONTENT, t, typeEffectiveness } from '../src/shared/content/index.ts'
 import { buildWorld, worldAnchors } from '../src/shared/world/index.ts'
+import { walkSteps } from '../src/shared/world/story.ts'
+import type { ScriptStep } from '../src/shared/types.ts'
 import { TUTORIAL, validateTutorial, validateTypeChartTeaching, type LoopDef } from '../src/client/onboarding/config.ts'
 import { SCREENS, validateTypeChartConfig } from '../src/client/ui/screens/config.ts'
 import { attackGroups, defendGroups, exampleOf, loopEdges, mulOf, ringLayout, rowOfMul } from '../src/client/ui/screens/typechart-logic.ts'
@@ -50,6 +52,14 @@ test('tutorial content (tips offering the chart, lesson links) validates', () =>
   for (const id of ['typeMatchup', 'superEffective', 'resisted']) assert.ok(offered.includes(id), `${id} offers the chart`)
   const lesson = TUTORIAL.curriculum.lessons.find((l) => l.id === 'typeChart')!
   assert.ok(lesson.chart, 'the manual page opens the chart')
+})
+
+test('the type lesson NPC opens the chart as part of the lesson', () => {
+  const world = buildWorld()
+  const npc = Object.values(world.maps).flatMap((m) => m.npcs).find((n) => n.id === 'aide-types')!
+  const ops: string[] = []
+  walkSteps(npc.script as ScriptStep[], (s) => { ops.push(s.op) })
+  assert.ok(ops.includes('openTypeChart'), 'aide-types script has an openTypeChart step')
 })
 
 test('matchup rows are exactly the chart: attack and defence agree, and every pair is in at most one row', () => {
