@@ -10,6 +10,7 @@ import type {
 import type { IRng } from '../contracts.ts'
 import { creatureName } from '../creature.ts'
 import type { Content } from '../content/index.ts'
+import { typeEffectiveness } from '../content/index.ts'
 import { isDamaging } from './formulas.ts'
 
 /** The boss always fights on the enemy side of the singles engine. */
@@ -48,7 +49,7 @@ export interface BossHost {
 }
 
 /** What the boss's decision needs to know about its opponent. */
-export interface BossFoeView { status: StatusId | null; country: string }
+export interface BossFoeView { status: StatusId | null; country: string; released: string }
 export interface BossDecision { moveId: string; forced: boolean }
 
 interface CondCtx { core: Core; hpRatio: number; foe: BossFoeView; turn: number }
@@ -82,6 +83,8 @@ export function bossCondHolds(cond: BossCond | undefined, x: CondCtx): boolean {
   }
   if (cond.foeCountry && !cond.foeCountry.includes(x.foe.country)) return false
   if (cond.foeNotCountry?.includes(x.foe.country)) return false
+  if (cond.foeReleasedBefore !== undefined && !(x.foe.released !== '' && x.foe.released < cond.foeReleasedBefore)) return false
+  if (cond.foeReleasedFrom !== undefined && !(x.foe.released !== '' && x.foe.released >= cond.foeReleasedFrom)) return false
   return true
 }
 
@@ -170,7 +173,8 @@ export class BossDirector {
 
   private foeView(): BossFoeView {
     const foe = this.host.foe()
-    return { status: foe.status, country: this.host.c.species[foe.speciesId]?.country ?? '' }
+    const sp = this.host.c.species[foe.speciesId]
+    return { status: foe.status, country: sp?.country ?? '', released: sp?.releaseDate ?? '' }
   }
 
   private ctx(hpMax?: number): CondCtx {
@@ -237,6 +241,10 @@ export class BossDirector {
     if (e.categories && !e.categories.includes(move.category)) return false
     if (e.moves && !e.moves.includes(move.id)) return false
     if (e.sameTypeAsLast && move.type !== this.core.lastFoeType) return false
+    if (e.effectiveness) {
+      const eff = typeEffectiveness(move.type, this.host.c.species[this.cr.speciesId]?.types ?? [], this.host.c)
+      if ((eff > 1 ? 'super' : eff < 1 ? 'resisted' : 'neutral') !== e.effectiveness) return false
+    }
     return true
   }
 
@@ -337,6 +345,13 @@ export class BossDirector {
   onFoeItem(tag: string | undefined): void {
     if (!this.active || this.cr.hp <= 0) return
     this.fire('foeItem', { tag })
+    this.pushHud()
+  }
+
+  /** The foe healed, cured or refilled PP with an item. */
+  onFoeMedicine(): void {
+    if (!this.active || this.cr.hp <= 0) return
+    this.fire('foeMedicine', {})
     this.pushHud()
   }
 

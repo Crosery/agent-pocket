@@ -59,7 +59,10 @@
     "residential-ip": "a small cozy house with a red roof and cyan wifi signal arcs above it",
     "sandbox-patch": "a square sandbox full of sand with a large green plus-shaped repair patch stuck across it",
     "complaint-letter": "a cream envelope sealed with a red wax seal stamped with a white exclamation mark",
-    "off-peak-coupon": "a golden-yellow ticket coupon with a dark blue crescent moon on the left and a perforated tear-off edge"
+    "off-peak-coupon": "a golden-yellow ticket coupon with a dark blue crescent moon on the left and a perforated tear-off edge",
+    "small-rock": "a single smooth grey pebble with a light top-left highlight and a tiny yellow sparkle beside it",
+    "banana-peel": "a single yellow banana peel lying flat with three curled-open flaps and a small brown tip",
+    "invite-code": "a glossy red envelope with a gold circular seal and a tiny white chain-link symbol in the corner"
   },
   "chips": {}
 }

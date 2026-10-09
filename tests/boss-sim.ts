@@ -9,7 +9,7 @@ import { chooseAiAction } from '../src/shared/battle/ai.ts'
 import { estimateDamage, isDamaging, toStages, type Fighter } from '../src/shared/battle/formulas.ts'
 import { startBossBattle } from '../src/shared/battle/boss-battle.ts'
 import { buildTeam } from '../tools/balance/sim.ts'
-import { DEFS, buildArchetype, type RoleDef } from '../tools/balance/teams.ts'
+import { DEFS, buildArchetype, movesetFor, type RoleDef } from '../tools/balance/teams.ts'
 import type { TeamSpec } from '../tools/balance/sim.ts'
 import { pilot } from '../tools/balance/pilot.ts'
 
@@ -128,6 +128,8 @@ export interface SimOpts {
   seed: number
   /** Species of a hand-picked team; default = a level-appropriate archetype team (sensibleParty). */
   partyIds?: readonly string[]
+  /** With partyIds: kit each member like this archetype role does (tools/balance movesets, IVs rolled) instead of its default moves. */
+  partyRole?: string
   level?: number
   bossLevel?: number
   /** Counter strategy on top of the shared AI (undefined = plain AI). */
@@ -145,7 +147,12 @@ export function simulate(o: SimOpts): SimResult {
   const c = o.c ?? CONTENT
   const def = c.bosses[o.bossId]
   const level = o.level ?? (o.bossLevel ?? def.level) - 2
-  const party = o.partyIds ? makeParty(o.partyIds, level, o.seed, c) : sensibleParty(level, o.seed)
+  const role = o.partyRole ? DEFS.roles.find((r) => r.id === o.partyRole) : undefined
+  const party = o.partyIds
+    ? role
+      ? buildTeam({ id: 'hand-picked', nameZh: '', plan: '', members: o.partyIds.map((id) => ({ species: id, moves: movesetFor(c.species[id], role, undefined, false) })) }, level, o.seed)
+      : makeParty(o.partyIds, level, o.seed, c)
+    : sensibleParty(level, o.seed)
   const bag = { ...SIM_BAG, ...(o.bag ?? {}) }
   const { engine, intro } = startBossBattle(o.bossId, party, { seed: o.seed, autoPlayer: true, items: SIM_BAG, expGain: false, c, ...(o.bossLevel ? { level: o.bossLevel } : {}) })
   const rng = new Rng(o.seed ^ 0x2545f491)

@@ -3,7 +3,7 @@
 // a boss is beatable without its counter (hard) and clearly easier with it.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { CONTENT, t } from '../src/shared/content/index.ts'
+import { CONTENT, t, typeEffectiveness } from '../src/shared/content/index.ts'
 import type { BattleEvent, BossDef, BossState } from '../src/shared/types.ts'
 import { Rng } from '../src/shared/rng.ts'
 import { perspective } from '../src/shared/battle/engine.ts'
@@ -15,7 +15,7 @@ import mythicJson from '../content/events/mythic.json' with { type: 'json' }
 import populationJson from '../content/world/story/population.json' with { type: 'json' }
 import servicesJson from '../content/world/story/services.json' with { type: 'json' }
 import { applyEvent, bossOpeningHud, bossPanelInfo, createBattleModel } from '../src/client/battle/model.ts'
-import { COUNTERS } from './boss-counters.ts'
+import { COUNTERS, PLAIN } from './boss-counters.ts'
 import { DEFS } from '../tools/balance/teams.ts'
 import { makeParty, SIM_PARTY, simulate, type SimOpts, type SimResult } from './boss-sim.ts'
 
@@ -28,7 +28,7 @@ const cache = new Map<string, SimResult[]>()
 function fights(bossId: string, counter: boolean, n: number): SimResult[] {
   const key = `${bossId}:${counter}`
   const have = cache.get(key) ?? []
-  const extra: Partial<SimOpts> = counter ? COUNTERS[bossId] : {}
+  const extra: Partial<SimOpts> = counter ? COUNTERS[bossId] : (PLAIN[bossId] ?? {})
   for (let i = have.length; i < n; i++) have.push(simulate({ bossId, seed: seedOf(i), ...extra }))
   cache.set(key, have)
   return have.slice(0, n)
@@ -143,6 +143,119 @@ test('mechanics: each boss has its own counterplay', () => {
   // AlphaGo: changing the move type every turn (a surprise it has not read) breaks its reading.
   assert.ok(formsIn(C('alpha')).has('dazed'))
   assert.ok(firedIn(C('alpha')).has('shift') && firedIn(P('alpha')).has('repeat'))
+
+  // Claude Opus: extended thinking buys it growth and a charged answer; any action but an attack interrupts it.
+  assert.deepEqual([...formsIn(C('opus'))].sort(), ['answering', 'snapped', 'thinking'])
+  assert.ok(firedIn(P('opus')).has('deliver') && firedIn(P('opus')).has('brood'), 'uncut thinking pays off')
+  assert.ok(firedIn(C('opus')).has('esc') || firedIn(C('opus')).has('esc-switch') || firedIn(C('opus')).has('esc-item'))
+  assert.ok(P('opus').some((r) => r.telegraphs > 0), 'the answer is telegraphed')
+
+  // ChatGPT: it cannot bring itself to hit models released before 2025 (the #keep4o white moonlight).
+  assert.ok(meterPeak(C('chatgpt'), 'warm') === 1 && firedIn(C('chatgpt')).has('soften'))
+  assert.ok(firedIn(P('chatgpt')).has('harden') || meterPeak(P('chatgpt'), 'warm') === 0 || meterPeak(P('chatgpt'), 'warm') === 1)
+
+  // Unitree GD01: a banana peel drops the mech for several turns.
+  assert.ok(formsIn(C('unitree')).has('fallen') && firedIn(C('unitree')).has('slip'))
+  assert.ok(!formsIn(P('unitree')).has('fallen'), 'it only falls on the peel')
+
+  // Grok: the type chart is argued with: super effective hits are cut, resisted ones land.
+  assert.ok(firedIn(P('grok')).size === 0, 'the contrarian rule is a standing rule, not a trigger')
+
+  // OpenClaw: every dose of medicine feeds the lobster; three of them and it molts.
+  assert.ok(firedIn(P('openclaw')).has('feed') && !firedIn(C('openclaw')).has('feed'))
+  assert.ok(formsIn(P('openclaw')).has('molted') || meterPeak(P('openclaw'), 'fed') >= 1)
+
+  // Gemini: the small rock makes it follow its own advice; it digests after a while.
+  assert.ok(formsIn(C('gemini')).has('overview') && firedIn(C('gemini')).has('rock'))
+  assert.ok(!formsIn(P('gemini')).has('overview'))
+
+  // Doubao: invite codes make it pay red packets (a buff for the foe); four of them bankrupt it.
+  assert.ok(firedIn(C('doubao')).has('packet') && formsIn(C('doubao')).has('broke'))
+
+  // Seedance: the cameo changes every three turns, and each cameo has its own weak types.
+  assert.ok(formsIn(P('seedance')).size >= 4, 'all the cameos appear')
+  assert.ok(meterPeak(P('seedance'), 'cameo') >= 3)
+})
+
+// ---------------------------------------------------------------------------------------------------- rule conditions
+
+/** Damage events of the first turn of a boss fight in which the lead only knows `moveId` and the boss opens with its own pattern. */
+function firstTurn(bossId: string, species: string, moveId: string, seed = 5, bossIdle = false) {
+  const def = byId(bossId)
+  const party = makeParty([species], def.level - 2, seed)
+  party[0].moves = [{ id: moveId, pp: 20, ppMax: 20 }]
+  const { engine } = startBossBattle(bossId, party, { seed, expGain: false })
+  if (bossIdle) engine.applyBossState({ ...engine.extractBossState()!, skip: 1 })
+  engine.choose(0, { kind: 'move', moveIndex: 0 })
+  engine.choose(1, { kind: 'move', moveIndex: 0 })
+  const dmg = engine.step().filter((e): e is Extract<BattleEvent, { t: 'damage' }> => e.t === 'damage')
+  return { toBoss: dmg.filter((e) => e.side === 1).reduce((n, e) => n + e.amount, 0), toFoe: dmg.filter((e) => e.side === 0).reduce((n, e) => n + e.amount, 0) }
+}
+
+/** Runs `fn` with the boss's rules switched off (restored afterwards). */
+function withoutRules<T>(bossId: string, fn: () => T): T {
+  const forms = Object.values(byId(bossId).forms)
+  const saved = forms.map((f) => f.rules)
+  for (const f of forms) f.rules = []
+  try { return fn() } finally { forms.forEach((f, i) => { f.rules = saved[i] }) }
+}
+
+test('rules: Grok argues with the type chart (super effective cut, resisted raised)', () => {
+  const types = CONTENT.species['grok-4-7'].types
+  const pick = (want: (e: number) => boolean) => CONTENT.moveList.find((m) => m.power >= 60 && m.category !== 'status' && want(typeEffectiveness(m.type, types)) && m.effects.every((x) => x.kind !== 'multiHit'))!
+  const sup = pick((e) => e > 1)
+  const res = pick((e) => e < 1)
+  const neu = pick((e) => e === 1)
+  for (const [m, mul] of [[sup, 0.1], [neu, 0.45], [res, 3]] as const) {
+    const ruled = firstTurn('grok', 'gpt-5-6', m.id, 5, true).toBoss
+    const plain = withoutRules('grok', () => firstTurn('grok', 'gpt-5-6', m.id, 5, true).toBoss)
+    assert.ok(plain > 0 && ruled > 0, `${m.id} lands`)
+    assert.ok(Math.abs(ruled / plain - mul) < 0.12 * Math.max(1, mul), `${m.id} (${typeEffectiveness(m.type, types)}x): ${ruled} vs ${plain} should be about x${mul}`)
+  }
+})
+
+test('rules: ChatGPT cannot hit a model released before 2025, but hits a new one in full', () => {
+  const hit = (species: string) => firstTurn('chatgpt', species, 'token-tackle', 8).toFoe
+  assert.ok(CONTENT.species['gpt-4o'].releaseDate < '2025-01' && CONTENT.species['gpt-5-6'].releaseDate >= '2025-01')
+  const old = hit('gpt-4o')
+  const oldPlain = withoutRules('chatgpt', () => hit('gpt-4o'))
+  const fresh = hit('gpt-5-6')
+  const freshPlain = withoutRules('chatgpt', () => hit('gpt-5-6'))
+  assert.ok(old < oldPlain * 0.4, `veteran: ${old} vs ${oldPlain}`)
+  assert.equal(fresh, freshPlain, 'a new model gets no mercy')
+})
+
+test('events: using medicine feeds OpenClaw, and interrupts Opus when it is thinking', () => {
+  const claw = byId('openclaw')
+  const party = makeParty(SIM_PARTY, claw.level - 2, 1)
+  party[0].hp = Math.floor(party[0].hp / 2)
+  const { engine } = startBossBattle('openclaw', party, { seed: 3, items: { 'hyper-cache': 2 }, expGain: false })
+  assert.equal(engine.choose(0, { kind: 'item', itemId: 'hyper-cache', partyIndex: 0 }), null)
+  engine.choose(1, { kind: 'move', moveIndex: 0 })
+  engine.step()
+  const st = engine.extractBossState()!
+  assert.equal(st.meters.fed, 1)
+  assert.ok((st.stages.atk ?? 0) >= 1 && (st.stages.spa ?? 0) >= 1, 'the dose raised its attack and special attack')
+
+  const opus = byId('opus')
+  const thinking = (action: 'switch' | 'status' | 'attack') => {
+    const { engine: e } = startBossBattle('opus', makeParty(SIM_PARTY, opus.level - 2, 1), { seed: 9, expGain: false })
+    const first = e.extractBossState()!
+    first.form = 'thinking'
+    e.applyBossState(first)
+    if (action === 'switch') e.choose(0, { kind: 'switch', partyIndex: 1 })
+    else if (action === 'status') {
+      const lead = e.party(0)[0]
+      lead.moves = [{ id: 'focus-mode', pp: 5, ppMax: 5 }]
+      e.choose(0, { kind: 'move', moveIndex: 0 })
+    } else e.choose(0, { kind: 'move', moveIndex: 0 })
+    e.choose(1, { kind: 'move', moveIndex: 0 })
+    e.step()
+    return e.extractBossState()!.form
+  }
+  assert.equal(thinking('switch'), 'snapped')
+  assert.equal(thinking('status'), 'snapped')
+  assert.notEqual(thinking('attack'), 'snapped')
 })
 
 // ---------------------------------------------------------------------------------------------------- counter items
@@ -252,7 +365,7 @@ test('enrage: every boss with a timer warns first, then stacks its stat stages u
 test('determinism: the same seed replays the same fight, event for event', () => {
   for (const b of BOSSES) {
     for (const counter of [false, true]) {
-      const extra: Partial<SimOpts> = counter ? COUNTERS[b.id] : {}
+      const extra: Partial<SimOpts> = counter ? COUNTERS[b.id] : (PLAIN[b.id] ?? {})
       const a = simulate({ bossId: b.id, seed: 4242, log: true, ...extra })
       const c = simulate({ bossId: b.id, seed: 4242, log: true, ...extra })
       assert.equal(JSON.stringify(a.events), JSON.stringify(c.events), `${b.id} (counter=${counter})`)
@@ -312,7 +425,7 @@ test('contract: chooseBossAction is pure and honours the form pattern', () => {
     const { engine } = startBossBattle(b.id, makeParty(SIM_PARTY, b.level - 2, 1), { seed: 1, expGain: false })
     const state = engine.extractBossState()!
     const frozen = JSON.stringify(state)
-    const foe = { status: null, country: 'US' }
+    const foe = { status: null, country: 'US', released: '2025-01' }
     const allowed = new Set(b.forms[state.form].moves)
     const a = chooseBossAction(state, b, foe, new Rng(5))
     const c = chooseBossAction(state, b, foe, new Rng(5))
@@ -331,7 +444,7 @@ test('contract: a charged attack is forced on the next turn', () => {
   const { engine } = startBossBattle('astra', makeParty(SIM_PARTY, b.level, 1), { seed: 1, expGain: false })
   const state = engine.extractBossState()!
   state.charge = { move: 'exaflop-beam', warn: 'boss.astra.charge', mul: 0.6 }
-  assert.deepEqual(chooseBossAction(state, b, { status: null, country: '' }, new Rng(1)), { moveId: 'exaflop-beam', forced: true })
+  assert.deepEqual(chooseBossAction(state, b, { status: null, country: '', released: '' }, new Rng(1)), { moveId: 'exaflop-beam', forced: true })
 })
 
 // ---------------------------------------------------------------------------------------------------- entry point & rewards
