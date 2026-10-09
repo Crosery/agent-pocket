@@ -15,6 +15,7 @@ import { dexScreen } from './dex.ts'
 import { shopScreen } from './shop.ts'
 import { exchangeScreen } from './exchange.ts'
 import { manualScreen } from './manual.ts'
+import { typeChartScreen } from './typechart.ts'
 import { boxScreen } from './box.ts'
 import { worldMapScreen } from './worldmap.ts'
 import { questsScreen, questHudText } from './quests.ts'
@@ -65,6 +66,7 @@ export function createScreens(ctx: GameContext): ScreensHandle {
     shop: (itemIds, opts) => shopScreen(env, itemIds, opts),
     exchange: (desk) => exchangeScreen(env, desk),
     manual: () => manualScreen(env),
+    typeChart: (opts) => typeChartScreen(env, opts),
     box: () => boxScreen(env),
     worldMap: (opts) => worldMapScreen(env, opts),
     quests: () => questsScreen(env),

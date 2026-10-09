@@ -1233,6 +1233,10 @@ class StoryBuilder implements PopHost {
             case 'unlockTown': if (!w.towns.some((t) => t.id === s.town)) bad(`unknown town "${s.town}"`); break
             case 'exchange': if (!EXCHANGE.desks[s.desk]) bad(`unknown exchange desk "${s.desk}"`); break
             case 'teach': if (typeof s.lesson !== 'string' || !s.lesson) bad('teach needs a lesson id'); break
+            case 'openTypeChart':
+              if (s.type !== undefined && !CONTENT.typeById[s.type]) bad(`unknown type "${s.type}"`)
+              if (s.view !== undefined && !['type', 'grid', 'loops'].includes(s.view)) bad(`unknown chart view "${s.view}"`)
+              break
             case 'chooseStarter': case 'heal': case 'openBox': case 'setRespawn': case 'end': break
             default: bad('unknown op')
           }

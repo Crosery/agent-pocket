@@ -1,5 +1,5 @@
-// Layout audit for every screen at 1280x720, 1920x1080 and the phone viewports 390x844, 360x780 (portrait) and 844x390
-// (landscape), all at DPR 3 with touch emulation (issues #29, #33).
+// Layout audit for every screen at 1280x720, 1920x1080 and the phone viewports 390x844, 360x780 (portrait) and 844x390,
+// 932x430 (landscape), all at DPR 3 with touch emulation (issues #29, #33, #37).
 // Run through ego-browser against a dev server (?dev=1) in its own TaskSpace and an isolated save slot:
 //   ego-browser nodejs <<'JS'
 //   const { runLayoutAudit } = await import('file:///<repo>/scripts/qa-layout-audit.mjs')
@@ -412,6 +412,21 @@ const phoneHudOpen = (withTip) => async (page) => {
 
 const run = (fn) => async (page) => { await page.evaluate(fn) }
 
+/** Phones: the screens before this one were closed with keys, which makes the game think a keyboard is in use; a tap on the empty header corner restores touch. */
+async function touchActivity(page) {
+  if (!(await page.evaluate(() => matchMedia('(pointer: coarse)').matches))) return
+  await page.cdp('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 2, y: 2, id: 1 }] })
+  await page.waitForTimeout(90)
+  await page.cdp('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+  await page.waitForTimeout(200)
+}
+
+const openChart = (o) => async (page) => {
+  await page.evaluate(({ view, last }) => { void window.__AP.screens.typeChart({ view, type: last ? window.__AP.data.types.at(-1).id : undefined }) }, o)
+  await page.waitForTimeout(600)
+  await touchActivity(page)
+}
+
 export const SCREENS = [
   { id: 'hud', keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', open: async (page) => {
     await page.evaluate(async () => {
@@ -442,6 +457,19 @@ export const SCREENS = [
   { id: 'map', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.worldMap({ fly: false }) }) },
   { id: 'quests', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.quests() }) },
   { id: 'settings', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.settings() }) },
+  // 属性克制表 (issue #37): the three views, the grid with the cursor on its last row (scrolled, sticky headers), and the manual page that links to it.
+  { id: 'typechart-type', scope: '.ap-kit-stack > *:last-child', open: openChart({ view: 'type' }) },
+  { id: 'typechart-grid', scope: '.ap-kit-stack > *:last-child', open: openChart({ view: 'grid' }) },
+  { id: 'typechart-grid-end', scope: '.ap-kit-stack > *:last-child', open: openChart({ view: 'grid', last: true }) },
+  { id: 'typechart-loops', scope: '.ap-kit-stack > *:last-child', open: openChart({ view: 'loops' }) },
+  { id: 'manual-chart', scope: '.ap-kit-stack > *:last-child', open: async (page) => {
+    await page.evaluate(() => { void window.__AP.screens.manual() })
+    await page.waitForTimeout(700)
+    await page.evaluate(() => { [...document.querySelectorAll('.aps-manual .ap-tab')][1]?.click() })
+    await page.waitForTimeout(400)
+    await page.evaluate(() => { [...document.querySelectorAll('.aps-manual .ap-row')].find((r) => r.textContent.includes('属性克制'))?.click() })
+    await page.waitForTimeout(400)
+  } },
   { id: 'online', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.online() }) },
   { id: 'learn-move', scope: '.ap-kit-stack > *:last-child', open: run(() => {
     const cr = window.__AP.save.party[0]
@@ -533,7 +561,8 @@ async function hideTips(page, hide) {
   await page.evaluate((h) => {
     let st = document.getElementById('qa-hide-tips')
     if (!st) { st = document.createElement('style'); st.id = 'qa-hide-tips'; document.head.append(st) }
-    st.textContent = h ? '.ap-tip { display: none !important }' : ''
+    // The developer badge (?dev=1) floats over the bottom centre; it is not part of the game's UI.
+    st.textContent = `.apd-badge { display: none !important }${h ? ' .ap-tip { display: none !important }' : ''}`
   }, hide)
 }
 
