@@ -65,3 +65,6 @@ html[data-touch-controls='on'] .ap-l-tips.is-battle .ap-tip-foot { right: calc(v
 /* Box in landscape: six party rows are taller than the screen, so the party column scrolls. */
 html:not(.ap-portrait)[data-touch-controls='on'] .aps-box-layout { grid-template-rows: minmax(0, 1fr); }
 html:not(.ap-portrait)[data-touch-controls='on'] .aps-box-party { max-height: 100%; overflow-y: auto; }
+
+/* Chat: the Tab / Esc hint is keyboard-only. */
+html[data-touch-controls='on'] .ap-chat-hint { display: none; }

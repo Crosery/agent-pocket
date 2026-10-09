@@ -112,6 +112,7 @@ export function createChatUI(
     passiveLog.replaceChildren(...entries.slice(-n).map(line))
   }
   const renderOpen = () => {
+    field.placeholder = t(document.documentElement.dataset.touchControls === 'on' ? 'ui.chat.placeholderTouch' : 'ui.chat.placeholder')
     openLog.style.setProperty('--lines', String(CFG.openLines))
     const shown = tab === 'all' ? entries : entries.filter((e) => e.channel === tab)
     openLog.replaceChildren(...shown.map(line))
