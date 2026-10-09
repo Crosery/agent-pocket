@@ -199,9 +199,9 @@ export function expSegments(growth: string, from: Progress, to: Progress, c: Con
 export interface StatDelta { key: StatKey; before: number; after: number }
 
 /** Stats at fromLevel vs toLevel for the level-up panel. */
-export function levelUpStats(cr: Pick<Creature, 'speciesId' | 'ivs'>, fromLevel: number, toLevel: number, c: Content = CONTENT): StatDelta[] {
-  const a = calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, level: fromLevel }, c)
-  const b = calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, level: toLevel }, c)
+export function levelUpStats(cr: Pick<Creature, 'speciesId' | 'ivs' | 'nature'>, fromLevel: number, toLevel: number, c: Content = CONTENT): StatDelta[] {
+  const a = calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, nature: cr.nature, level: fromLevel }, c)
+  const b = calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, nature: cr.nature, level: toLevel }, c)
   return STAT_KEYS.map((key) => ({ key, before: a[key], after: b[key] }))
 }
 

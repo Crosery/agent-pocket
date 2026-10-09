@@ -1,0 +1,14 @@
+{
+  "id": "quality-reveal-full",
+  "titleKey": "dev.scn.qualityRevealFull",
+  "extends": "quality-showcase",
+  "then": [
+    {
+      "cmd": "reveal.show",
+      "args": {
+        "index": 2,
+        "full": true
+      }
+    }
+  ]
+}

@@ -47,7 +47,7 @@ function fighter(e: BattleEngine, side: SideIndex, idx = e.activeIndex(side)): F
   const cap = e.init.levelCap
   const level = cap !== undefined && cap > 0 ? Math.min(cr.level, cap) : cr.level
   const stages = idx === e.activeIndex(side) ? toStages(e.stages(side)) : toStages(undefined)
-  return { creature: cr, level, stats: calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, level }, C), stages, critStageAdd: 0 }
+  return { creature: cr, level, stats: calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, nature: cr.nature, level }, C), stages, critStageAdd: 0 }
 }
 
 const hpOf = (f: Fighter): number => f.creature.hp / f.stats.hp

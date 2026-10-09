@@ -6,6 +6,8 @@ import type { BattleAction, BattleInit, BattleResult, Creature, WeatherId } from
 import type { BattleOutcome, BattleRunner, GameContext } from '../contracts.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { creatureName, evolve } from '../../shared/creature.ts'
+import { revealIsFull } from '../../shared/gameplay/quality.ts'
+import { showReveal } from '../ui/reveal.ts'
 import { BattleEngine } from '../../shared/battle/engine.ts'
 import { getMap, regionAt } from '../../shared/world/worldapi.ts'
 import { RULES } from '../../shared/battle/rules.ts'
@@ -45,10 +47,11 @@ const characterOrNull = (ctx: GameContext, id: string | undefined): string | nul
 const coveredByCaller = (ctx: GameContext): boolean => (ctx.overworld as { battleActive?: boolean } | undefined)?.battleActive === true
 
 export function createBattleRunner(ctx: GameContext): BattleRunner {
-  /** Stores the capture first (synchronously, so a failing prompt can never lose it), then narrates. */
+  /** Stores the capture first (synchronously, so a failing prompt can never lose it), then narrates and appraises. */
   async function catchFlow(scene: BattleScene, cr: Creature): Promise<void> {
     const { view } = scene
     const name = CONTENT.species[cr.speciesId]?.nameZh ?? cr.speciesId
+    const firstCatch = ctx.save.stats.caught === 0
     const newEntry = markCaught(ctx, cr.speciesId)
     const where = storeCaught(ctx, cr)
     if (newEntry) {
@@ -73,6 +76,7 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
     const shown = creatureName(cr)
     if (where?.where === 'party') await view.message.show(t('battleui.catch.toParty', { name: shown }))
     else if (where?.where === 'box') await view.message.show(t('battleui.catch.toBox', { name: shown, box: where.box + 1 }))
+    if (where) await showReveal(ctx, cr, { full: revealIsFull(cr, { newSpecies: newEntry, firstCatch }, ctx.data) })
   }
 
   return {

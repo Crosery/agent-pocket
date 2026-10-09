@@ -243,7 +243,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     const cap = this.init.levelCap
     return cap !== undefined && cap > 0 ? Math.min(cr.level, cap) : cr.level
   }
-  private plainStats(cr: Creature): Stats { return calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, level: this.lvl(cr) }, this.c) }
+  private plainStats(cr: Creature): Stats { return calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, nature: cr.nature, level: this.lvl(cr) }, this.c) }
   private statsOf(cr: Creature): Stats {
     const base = this.plainStats(cr)
     return this.boss ? this.boss.adjustStats(cr, base) : base

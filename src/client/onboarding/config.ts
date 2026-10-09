@@ -120,6 +120,8 @@ export interface TutorialConfig {
   }
   tips: { layer: { ttlSec: number; fadeMs: number; gapSec: number; staleSec: number }; list: TipDef[] }
   curriculum: { flagPrefix: string; groups: { id: string }[]; lessons: LessonDef[] }
+  /** One-time notices: the migrated-save gift toast waits this long so the arrival toasts (anchor, rumour) do not push it off the stack. */
+  notices: { legacyDelaySec: number }
   /** The memory loops the type chart screen draws as rings (every edge must be x2 in content/types.json). */
   typeChart: { loops: LoopDef[] }
 }
@@ -135,6 +137,7 @@ const COND_KEYS = new Set(['flag', 'noFlag', 'minBadges', 'maxBadges', 'minParty
 
 export function validateTutorial(world: World, anchors: Record<string, unknown>, cfg: TutorialConfig = TUTORIAL): string[] {
   const errs: string[] = []
+  if (!(cfg.notices.legacyDelaySec >= 0)) errs.push('notices.legacyDelaySec must be a number >= 0')
   const text = (key: string, where: string) => { if (!(key in CONTENT.text)) errs.push(`${where}: missing text "${key}"`) }
   const cond = (c: Cond | undefined, where: string) => {
     for (const k of Object.keys(c ?? {})) if (!COND_KEYS.has(k)) errs.push(`${where}: unknown condition "${k}"`)

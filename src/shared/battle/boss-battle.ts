@@ -30,7 +30,7 @@ export interface BossBattleOpts {
 export function createBossCreature(bossId: string, level: number, rng: Rng, c: Content = CONTENT): Creature {
   const def = c.bosses[bossId]
   if (!def) throw new Error(`unknown boss "${bossId}"`)
-  const cr = createCreature(def.species, level, { rng, shiny: false, moves: def.forms[def.initialForm]?.moves }, c)
+  const cr = createCreature(def.species, level, { rng, shiny: false, nature: c.quality.npcNature, moves: def.forms[def.initialForm]?.moves }, c)
   for (const k of Object.keys(cr.ivs) as (keyof Creature['ivs'])[]) cr.ivs[k] = c.config.creature.ivMax
   cr.hp = Math.max(1, maxHp(cr, c))
   return cr

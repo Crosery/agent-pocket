@@ -1,0 +1,13 @@
+{
+  "id": "quality-settings",
+  "titleKey": "dev.scn.qualitySettings",
+  "extends": "quality-showcase",
+  "then": [
+    {
+      "cmd": "screen.open",
+      "args": {
+        "screen": "settings"
+      }
+    }
+  ]
+}

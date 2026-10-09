@@ -6,6 +6,7 @@ import type { BattleKind, GameContext } from '../contracts.ts'
 import type { BattleEngine } from '../../shared/battle/engine.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { calcStats, creatureName } from '../../shared/creature.ts'
+import { gradeOf } from '../../shared/gameplay/quality.ts'
 import { BATTLE_UI } from './config.ts'
 import { applyEvent, bossOpeningHud, bossPanelInfo, effCategory, expRatio, expSegments, levelUpStats, type BattleModel, type ExpSegment } from './model.ts'
 import type { BattleScene } from './scene.ts'
@@ -74,6 +75,14 @@ export function createPresenter(env: PresenterEnv): Presenter {
     await panel.setExp(seg.to, true)
   }
 
+  /** Quality letter on the wild foe's name plate, shown once the species is in the player's caught dex. */
+  function foeGrade(side: number, partyIndex: number, speciesId: string): string | undefined {
+    const sd = env.init.sides[side]
+    if (side !== 1 || sd.kind !== 'wild' || !ctx.save.dexCaught.includes(speciesId)) return undefined
+    const cr = sd.party[partyIndex]
+    return cr ? gradeOf(cr.ivs, ctx.data).id : undefined
+  }
+
   async function onSwitch(e: Extract<BattleEvent, { t: 'switch' }>): Promise<void> {
     const s = model.sides[e.side]
     const panel = view.status[e.side]
@@ -83,7 +92,7 @@ export function createPresenter(env: PresenterEnv): Presenter {
       panel.setAway(true)
     }
     applyEvent(model, e)
-    panel.setCreature(e.creature, env.init.sides[e.side].party[e.partyIndex]?.abilityId)
+    panel.setCreature(e.creature, env.init.sides[e.side].party[e.partyIndex]?.abilityId, foeGrade(e.side, e.partyIndex, e.creature.speciesId))
     syncSlots(e.side)
     if (e.side === 1) {
       markSeen(ctx, e.creature.speciesId)
@@ -112,7 +121,7 @@ export function createPresenter(env: PresenterEnv): Presenter {
     applyEvent(model, e)
     const s = model.sides[e.side]
     const panel = view.status[e.side]
-    panel.setCreature(e.creature, env.init.sides[e.side].party[s.active]?.abilityId)
+    panel.setCreature(e.creature, env.init.sides[e.side].party[s.active]?.abilityId, foeGrade(e.side, s.active, e.creature.speciesId))
     panel.setVolatiles(s.volatiles)
     panel.setStages(s.stages)
     syncSlots(e.side)
@@ -137,8 +146,8 @@ export function createPresenter(env: PresenterEnv): Presenter {
       view.status[0].setLevel(lv(e.level))
       if (v) {
         v.level = lv(e.level)
-        const before = calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, level: lv(e.level - 1) }).hp
-        const max = calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, level: lv(e.level) }).hp
+        const before = calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, nature: cr.nature, level: lv(e.level - 1) }).hp
+        const max = calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, nature: cr.nature, level: lv(e.level) }).hp
         if (v.hp > 0) v.hp = Math.min(max, v.hp + max - before)
         v.maxHp = max
         void view.status[0].setHp(v.hp, v.maxHp, true)

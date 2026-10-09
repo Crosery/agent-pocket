@@ -4,12 +4,14 @@
 import type { Creature, MoveDef } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
 import { calcStats, creatureName, maxHp } from '../../../shared/creature.ts'
+import { gradeOf, natureArrows } from '../../../shared/gameplay/quality.ts'
 import { getMap } from '../../../shared/world/worldapi.ts'
-import { button, el, expBar, hpBar, rarityBadge, statRadar, statusChip, tabs, typeChip } from '../widgets.ts'
+import { button, el, expBar, gradeChip, hpBar, rarityBadge, statRadar, statusChip, tabs, typeChip } from '../widgets.ts'
 import { backPressed, frame, icon, infoRow, meterIcons, openScreen, pressed, sectionTitle, sfx, textOrKey, uiSfx, type ScreenEnv, setChildren , arrowButton } from './base.ts'
 import { SCREENS } from './config.ts'
 import { defensiveProfile, expProgress, extraEnglishName, ivStars, statKeys } from './logic.ts'
 import { creatureImg } from './sprites.ts'
+import { gradeNick, natureName, natureQuip, natureStats } from '../quality-text.ts'
 
 export function moveDetail(m: MoveDef | undefined, pp?: { pp: number; ppMax: number }): HTMLElement {
   if (!m) return el('div', 'aps-move-detail')
@@ -39,12 +41,22 @@ export function matchupBlock(types: readonly string[]): HTMLElement {
   return box
 }
 
-export function summaryScreen(env: ScreenEnv, list: Creature[], start: number): Promise<void> {
+/** "激进 推理↑ 稳健↓" and the nature's one-liner (tooltip everywhere, inline on roomy screens). */
+function natureValue(nature: string | undefined): HTMLElement[] {
+  const s = natureStats(nature)
+  return [
+    el('span', { class: 'aps-nature-name', text: natureName(nature), title: natureQuip(nature) }),
+    s ? el('span', 'aps-nature-arrows', [el('span', { class: 'is-up', text: `${s.up}↑` }), el('span', { class: 'is-down', text: `${s.down}↓` })]) : null,
+    el('span', { class: 'aps-nature-quip ap-dim', text: natureQuip(nature) }),
+  ].filter((n): n is HTMLElement => n !== null)
+}
+
+export function summaryScreen(env: ScreenEnv, list: Creature[], start: number, startPage = 0): Promise<void> {
   const { ctx } = env
   const pages = SCREENS.summary.pages
   return openScreen<void>(env, 'aps-summary', (api) => {
     let index = Math.max(0, Math.min(list.length - 1, start))
-    let page = 0
+    let page = Math.max(0, Math.min(pages.length - 1, startPage))
     let moveIndex = 0
     let moveSwap = -1
     let dirty = false
@@ -56,7 +68,7 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number): 
     const f = frame(env, { title: t('screens.summary.title'), onClose: api.guard(() => back()) })
     if (list.length > 1) f.right.append(prevBtn, counter, nextBtn)
     const left = el('div', 'aps-sum-left ap-panel')
-    const tabBar = tabs(pages.map((p) => t(p.label)), { audio: ctx.audio, onChange: (i) => { page = i; moveSwap = -1; renderPage() } })
+    const tabBar = tabs(pages.map((p) => t(p.label)), { initial: page, audio: ctx.audio, onChange: (i) => { page = i; moveSwap = -1; renderPage() } })
     const pageEl = el('div', 'aps-sum-page')
     const right = el('div', 'aps-sum-right', [tabBar.el, el('div', 'aps-sum-pagewrap ap-panel', [pageEl])])
     f.body.append(el('div', 'aps-sum-layout', [left, right]))
@@ -74,7 +86,7 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number): 
         el('div', 'aps-sum-stage', [el('div', 'aps-sum-pedestal'), creatureImg(ctx.assets, c.speciesId, { shiny: c.shiny, className: 'aps-sum-sprite' }), c.shiny ? icon('shine', { className: 'aps-sum-shine' }) : null]),
         el('div', 'aps-sum-name', [
           el('span', { class: 'ap-model-name', text: creatureName(c), title: creatureName(c), attrs: { 'aria-label': creatureName(c) } }),
-          el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) }),
+          el('span', 'aps-party-lvbox', [el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) }), gradeChip(gradeOf(c.ivs).id)]),
         ]),
         c.nickname && sp ? el('div', { class: 'ap-dim ap-model-name aps-sum-species', text: sp.nameZh, title: sp.nameZh }) : null,
         el('div', 'aps-chips', [...(sp?.types ?? []).map((ty) => typeChip(ty)), sp ? rarityBadge(sp.rarity, { label: 'name' }) : null, c.status ? statusChip(c.status) : null]),
@@ -101,6 +113,7 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number): 
         ball ? infoRow(t('screens.summary.ball'), [el('img', { class: 'aps-inline-icon', attrs: { src: ctx.assets.itemIconUrl(ball.id), alt: '' } }), ball.nameZh]) : null,
         infoRow(t('screens.summary.friendship'), meterIcons(hearts, fs.friendshipHearts, 'heart', 'heartOff')),
         infoRow(t('screens.summary.personality'), sp?.personality ?? t('screens.common.dash')),
+        infoRow(t('screens.quality.summary.nature'), natureValue(c.nature), 'aps-nature-row'),
         infoRow(t('screens.summary.held'), c.heldItem && CONTENT.items[c.heldItem] ? CONTENT.items[c.heldItem].nameZh : t('screens.summary.none')),
       ].filter((r): r is HTMLElement => r !== null)
     }
@@ -111,12 +124,22 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number): 
       const top = Math.max(1, ...keys.map((k) => stats[k]))
       const radar = statRadar(stats, top, { size: SCREENS.summary.radarSize, values: false })
       const ivMax = CONTENT.config.creature.ivMax
+      const arrows = natureArrows(c.nature)
+      const showIv = ctx.save.settings.showIvNumbers
+      const grade = gradeOf(c.ivs)
       const rows = keys.map((k) => el('div', 'aps-stat-row', [
-        el('span', { class: 'aps-stat-k', text: CONTENT.statByKey[k]?.nameZh ?? k, title: CONTENT.statByKey[k]?.desc }),
+        el('span', { class: 'aps-stat-k', title: CONTENT.statByKey[k]?.desc }, [
+          CONTENT.statByKey[k]?.nameZh ?? k,
+          arrows[k] ? el('span', { class: `aps-stat-arrow is-${arrows[k]}`, text: arrows[k] === 'up' ? '↑' : '↓' }) : null,
+        ]),
         el('span', { class: 'aps-stat-v', text: k === 'hp' ? t('screens.summary.hpValue', { hp: c.hp, max: stats.hp }) : String(stats[k]) }),
-        meterIcons(ivStars(c.ivs[k] ?? 0, ivMax, SCREENS.summary.ivStars), SCREENS.summary.ivStars, 'star', 'starOff'),
+        el('span', 'aps-stat-pot', [
+          meterIcons(ivStars(c.ivs[k] ?? 0, ivMax, SCREENS.summary.ivStars), SCREENS.summary.ivStars, 'star', 'starOff'),
+          showIv ? el('span', { class: 'aps-stat-iv', text: String(c.ivs[k] ?? 0) }) : null,
+        ]),
       ]))
-      return [el('div', 'aps-stats-layout', [el('div', 'aps-stat-table', [el('div', 'aps-stat-row is-head', [el('span', { text: t('screens.summary.stat') }), el('span', { text: t('screens.summary.value') }), el('span', { text: t('screens.summary.potential') })]), ...rows, el('div', 'aps-stat-help', keys.map((k) => el('div', { class: 'ap-dim', text: t('screens.summary.statHelp', { name: CONTENT.statByKey[k]?.nameZh ?? k, desc: CONTENT.statByKey[k]?.desc ?? '' }) })))]), radar.el])]
+      const gradeRow = el('div', 'aps-stat-grade', [gradeChip(grade.id), el('span', { text: t('screens.quality.summary.grade', { grade: grade.id, nick: gradeNick(grade.id) }) })])
+      return [gradeRow, el('div', 'aps-stats-layout', [el('div', 'aps-stat-table', [el('div', 'aps-stat-row is-head', [el('span', { text: t('screens.summary.stat') }), el('span', { text: t('screens.summary.value') }), el('span', { text: t('screens.summary.potential') })]), ...rows, el('div', 'aps-stat-help', keys.map((k) => el('div', { class: 'ap-dim', text: t('screens.summary.statHelp', { name: CONTENT.statByKey[k]?.nameZh ?? k, desc: CONTENT.statByKey[k]?.desc ?? '' }) })))]), radar.el])]
     }
 
     let moveRows: HTMLElement[] = []

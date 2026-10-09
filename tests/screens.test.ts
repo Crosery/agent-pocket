@@ -4,14 +4,15 @@ import { readFileSync, readdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Creature, ItemDef, SaveData } from '../src/shared/types.ts'
-import { CONTENT } from '../src/shared/content/index.ts'
+import { CONTENT, t } from '../src/shared/content/index.ts'
 import { createCreature, maxHp } from '../src/shared/creature.ts'
+import { gradeOf } from '../src/shared/gameplay/quality.ts'
 import { Rng } from '../src/shared/rng.ts'
 import { UI_CONFIG, INPUT_BINDINGS } from '../src/client/ui/config.ts'
 import { SCREENS, validateScreensConfig, type SettingsField } from '../src/client/ui/screens/config.ts'
 import {
-  addItem, applyMedicine, canSell, dexCounts, evolutionChain, expProgress, extraEnglishName, filterDex, ivStars, maxAffordable,
-  medicineBlocker, moveCreature, pickInDirection, playTimeParts, releaseCreature, sellPrice, stepSetting, teachState,
+  addItem, applyMedicine, boxView, canSell, dexCounts, evolutionChain, expProgress, extraEnglishName, filterDex, ivStars, maxAffordable,
+  medicineBlocker, moveCreature, natureAxis, natureGrid, pickInDirection, playTimeParts, releaseCreature, sellPrice, stepSetting, teachState,
 } from '../src/client/ui/screens/logic.ts'
 
 const here = dirname(fileURLToPath(import.meta.url))
@@ -251,4 +252,51 @@ test('model names: the English line only appears when it differs, and no name ou
     assert.ok(sp.nameEn.length <= 64, `${sp.id}: "${sp.nameEn}"`)
   }
   assert.ok(same > 0)
+})
+
+// ---------------------------------------------------------------------------
+// Quality (#58): box toolbar, nature grid, grade chip and nature rows on the screens
+// ---------------------------------------------------------------------------
+
+const withGrade = (g: string): Creature => createCreature(CONTENT.speciesList[0].id, 10, { rng, gradeFloor: g, gradeCap: g })
+
+test('box toolbar: "only A+" drops lower grades, "sort by quality" puts the best first, ties keep their slots', () => {
+  const ids = ['C', 'A', 'B', 'SS', 'A', 'S']
+  const items = ids.map(withGrade)
+  assert.deepEqual(items.map((c) => gradeOf(c.ivs).id), ids, 'fixtures hit their grade')
+  assert.deepEqual(boxView(items, { sortByGrade: false, onlyTop: false }), [0, 1, 2, 3, 4, 5], 'default keeps slot order')
+  const min = CONTENT.quality.box.filterMinGrade
+  const rank = (g: string) => CONTENT.quality.grades.findIndex((x) => x.id === g)
+  const top = boxView(items, { sortByGrade: false, onlyTop: true })
+  assert.deepEqual(top, ids.map((g, i) => (rank(g) >= rank(min) ? i : -1)).filter((i) => i >= 0), `only ${min}+ in slot order`)
+  const sorted = boxView(items, { sortByGrade: true, onlyTop: false })
+  assert.deepEqual([...sorted].sort(), [0, 1, 2, 3, 4, 5], 'a permutation, nothing lost')
+  const ranks = sorted.map((i) => rank(gradeOf(items[i].ivs).id))
+  assert.deepEqual(ranks, [...ranks].sort((a, b) => b - a), 'grades never go up down the list')
+  assert.equal(boxView([], { sortByGrade: true, onlyTop: true }).length, 0)
+})
+
+test('nature picker grid: 25 distinct natures, row = stat raised, column = stat lowered, diagonal neutral', () => {
+  const grid = natureGrid()
+  const axis = natureAxis()
+  assert.equal(axis.length, 5)
+  assert.equal(grid.length, axis.length * axis.length)
+  assert.equal(new Set(grid.map((n) => n.id)).size, grid.length)
+  grid.forEach((n, i) => {
+    const r = Math.floor(i / axis.length)
+    const c = i % axis.length
+    if (r === c) assert.equal(n.up, null, `${n.id} sits on the diagonal`)
+    else assert.deepEqual([n.up, n.down], [axis[r], axis[c]], n.id)
+  })
+})
+
+test('party row and summary carry the quality: grade chip on both, 人设 and 性格 as separate info rows', () => {
+  const party = sources.find((x) => x.file === 'party.ts')!.code
+  const summary = sources.find((x) => x.file === 'summary.ts')!.code
+  assert.match(party, /gradeChip\(gradeOf\(/, 'party row shows the grade chip')
+  assert.match(summary, /gradeChip\(gradeOf\(/, 'summary left panel shows the grade chip')
+  assert.match(summary, /screens\.summary\.personality/)
+  assert.match(summary, /screens\.quality\.summary\.nature/)
+  assert.equal(t('screens.summary.personality'), '人设')
+  assert.equal(t('screens.quality.summary.nature'), '性格')
 })

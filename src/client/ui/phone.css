@@ -49,7 +49,7 @@ html[data-touch-controls='on'].ap-compact .ap-l-tips.is-battle .ap-tip-foot { po
 
 /* ------------------------------------------------------------------ finger-sized targets (44 CSS px) */
 
-html[data-touch-controls='on'] :is(.ap-btn, .ap-tab, .aps-pause-row, .aps-filter, .aps-small-btn, .aps-map-town, .ap-chat-chan, .apb-back, .apb-effects-close, .ap-tip-off, .ap-field) { min-height: 44px; }
+html[data-touch-controls='on'] :is(.ap-btn, .ap-tab, .aps-pause-row, .aps-filter, .aps-small-btn, .aps-nat-cell, .aps-map-town, .ap-chat-chan, .apb-back, .apb-effects-close, .ap-tip-off, .ap-field) { min-height: 44px; }
 /* HUD cards: finger-sized in portrait; landscape has no height to spare for them. */
 html.ap-portrait[data-touch-controls='on'] :is(.ap-quest-toggle, .ap-objective-toggle, .ap-evtoggle, .ap-evdone) { min-height: 44px; }
 html[data-touch-controls='on'] :is(.aps-close, .ap-tip-close, .ap-evclose, .aps-arrow, .aps-map-tool) { min-width: 44px; min-height: 44px; }

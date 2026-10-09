@@ -10,6 +10,7 @@ import { Rng } from '../src/shared/rng.ts'
 import { applyScenario, checkExpectations, flattenScenario, resolveDevPlace } from '../src/shared/dev/scenario.ts'
 import { digest } from '../src/shared/dev/diff.ts'
 import { createSaveManager } from '../src/client/core/save.ts'
+import { migrateSave } from '../src/client/core/save-migrate.ts'
 import { pickObjective } from '../src/client/onboarding/logic.ts'
 import { TIP_FLAG_PREFIX } from '../src/client/onboarding/config.ts'
 import { resolvePlace } from '../src/client/world/explore.ts'
@@ -31,7 +32,8 @@ const memory = () => {
 }
 const saves = createSaveManager({ world, storage: memory(), now: () => 1_700_000_000_000, newId: () => '00000000-0000-4000-8000-000000000001' })
 const avatar = CONTENT.characters.find((c) => c.playable)!
-const apply = (id: string) => applyScenario(id, { world, ...content, base: saves.newGame({ name: avatar.nameZh, avatar: avatar.id }), rng: new Rng(7) })
+const legacy = (name: string) => (content.saves[name] ? saves.sanitize(migrateSave(structuredClone(content.saves[name]))) : null)
+const apply = (id: string) => applyScenario(id, { world, ...content, base: saves.newGame({ name: avatar.nameZh, avatar: avatar.id }), legacy, rng: new Rng(7) })
 
 test('at least six scenarios, each file named after its id, each with a title', () => {
   assert.ok(ids.length >= 6, `${ids.length} scenarios`)

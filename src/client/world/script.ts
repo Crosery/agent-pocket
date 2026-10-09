@@ -1,13 +1,14 @@
 // ScriptRunner: executes data-only ScriptStep lists (dialogue, flags, branching, rewards, battles, warps,
 // NPC choreography). Every op of the ScriptStep contract is implemented; behaviour comes from the step data,
 // content tables and content/game.json — never from ids in code.
-import type { BattleResult, Dir, FieldWeatherKind, ItemDef, NpcDef, ScriptStep } from '../../shared/types.ts'
+import type { BattleResult, Creature, Dir, FieldWeatherKind, ItemDef, NpcDef, ScriptStep } from '../../shared/types.ts'
 import type { DialogueLine, GameContext } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
 import type { IRng } from '../../shared/contracts.ts'
 import { Rng } from '../../shared/rng.ts'
 import { randomSeed } from '../core/rng-hub.ts'
 import { createCreature, creatureName, rollShiny } from '../../shared/creature.ts'
+import { revealIsFull } from '../../shared/gameplay/quality.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
 import { dayOf, expandFlag, realDateOf } from '../../shared/gameplay/events.ts'
 import { GAME, textOrKey } from './config.ts'
@@ -44,6 +45,8 @@ export interface ScriptHost {
   revealPlace?(ref: string): Promise<unknown>
   /** Buy-price multiplier of an item from active world events ('shop'; absent = list price). */
   shopPriceMul?(item: ItemDef): number
+  /** Appraisal card (full) or chip for a creature that just joined the player; absent = nothing is shown. */
+  reveal?(cr: Creature, opts: { full: boolean }): Promise<void>
 }
 
 const ballId = (ctx: GameContext): string | undefined => ctx.data.itemList.find((it) => it.effect.kind === 'ball')?.id
@@ -68,8 +71,10 @@ export function createScriptRunner(host: ScriptHost) {
   async function giveCreature(speciesId: string, level: number, shiny: boolean | undefined): Promise<void> {
     if (!ctx.data.species[speciesId]) { console.warn(`[script] unknown species "${speciesId}"`); return }
     const place = host.playerPlace()
+    const isNew = !ctx.save.dexCaught.includes(speciesId)
     const cr = createCreature(speciesId, level, {
       rng, shiny: shiny ?? rollShiny(rng, ctx.data), otName: ctx.save.name, otId: ctx.save.playerId, ballId: ballId(ctx), caughtMap: place.map,
+      gradeFloor: ctx.data.quality.giftGradeFloor, origin: { kind: 'gift' },
     }, ctx.data)
     const species = creatureName(cr, ctx.data)
     ctx.audio.playSfx(GAME.items.keyItemSfx)
@@ -77,6 +82,7 @@ export function createScriptRunner(host: ScriptHost) {
     const where = addCreature(ctx, cr)
     if (!where) await narrate(t('world.script.boxFull', { species }))
     else if (where.where === 'box') await narrate(t('world.script.toBox', { species, box: t('world.script.boxName', { n: where.box + 1 }) }))
+    if (where) await host.reveal?.(cr, { full: revealIsFull(cr, { newSpecies: isNew, firstCatch: false }, ctx.data) })
     host.onWorldChanged()
   }
 
@@ -177,11 +183,13 @@ export function createScriptRunner(host: ScriptHost) {
         const chosen = ctx.data.species[id] ? id : options[0].id
         const cr = createCreature(chosen, ctx.data.config.creature.starterLevel, {
           rng, otName: ctx.save.name, otId: ctx.save.playerId, ballId: ballId(ctx), caughtMap: host.playerPlace().map,
+          gradeFloor: ctx.data.quality.giftGradeFloor, origin: { kind: 'starter' },
         }, ctx.data)
         addCreature(ctx, cr)
         ctx.save.flags[STORY_CONTENT.meta.flags.starter] = chosen
         ctx.audio.playCry(chosen)
         await narrate(t('world.script.starter', { ...params(), species: creatureName(cr, ctx.data) }))
+        await host.reveal?.(cr, { full: true })
         host.onWorldChanged()
         return 'done'
       }

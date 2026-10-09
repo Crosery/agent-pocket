@@ -4,14 +4,15 @@ import type { BattleStatKey, CreatureView } from '../../shared/types.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { creatureName } from '../../shared/creature.ts'
 import { effectBalance, hudEffects, type BattleStatusSnapshot } from './effect-details.ts'
-import { actionKeyLabel, append, el, expBar, hpBar, panel, rarityBadge, type BarHandle } from '../ui/widgets.ts'
+import { actionKeyLabel, append, el, expBar, gradeChip, hpBar, panel, rarityBadge, type BarHandle } from '../ui/widgets.ts'
 import { effectIcon, meterTile, statIcon, typeBadge } from './badges.ts'
 import { BATTLE_UI } from './config.ts'
 import { shortName, type BossPanelInfo, type SlotInfo } from './model.ts'
 
 export interface StatusPanel {
   readonly el: HTMLElement
-  setCreature(v: CreatureView, abilityId?: string): void
+  /** `gradeId`: quality letter in front of the tag row (wild foes of species the player has caught). */
+  setCreature(v: CreatureView, abilityId?: string, gradeId?: string): void
   setLevel(level: number): void
   setHp(hp: number, maxHp: number, animate: boolean): Promise<void>
   setStatus(status: string | null): void
@@ -37,6 +38,7 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
   const shiny = el('span', { class: 'apb-st-shiny', text: t('ui.shiny') })
   shiny.hidden = true
   const rarity = el('span')
+  const grade = el('span', 'apb-st-grade')
   const lv = el('span', 'apb-st-lv')
   const tags = el('span', 'apb-st-taglist')
   const effects = el('div', 'apb-st-effects')
@@ -53,7 +55,8 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
     e.stopPropagation()
     onInspect()
   })
-  const tagRow = el('div', 'apb-st-tags', [tags, balls, inspect])
+  // The quality letter rides in front of the tags: on a portrait phone the name row has no width to spare ("Claude Haiku 4.5" fits to the pixel).
+  const tagRow = el('div', 'apb-st-tags', [grade, tags, balls, inspect])
   const bossBox = el('div', 'apb-st-boss')
   bossBox.hidden = true
   append(p.body, [
@@ -148,7 +151,7 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
 
   return {
     el: p.el,
-    setCreature(v, nextAbilityId) {
+    setCreature(v, nextAbilityId, gradeId) {
       const sp = CONTENT.species[v.speciesId]
       p.el.classList.remove('is-empty')
       fullName = creatureName(v)
@@ -157,6 +160,7 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
       name.setAttribute('aria-label', fullName)
       shiny.hidden = !v.shiny
       rarity.replaceChildren(sp ? rarityBadge(sp.rarity) : '')
+      grade.replaceChildren(...(gradeId ? [gradeChip(gradeId)] : []))
       lv.textContent = t('battleui.hud.level', { level: v.level })
       level = v.level
       hpNow = v.hp

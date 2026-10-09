@@ -1,0 +1,142 @@
+{
+ "version": 1,
+ "playerId": "fixture-player-0001",
+ "name": "老训练家",
+ "avatar": "hero_boy",
+ "createdAt": 1700000000000,
+ "playTimeSec": 0,
+ "money": 2600,
+ "badges": [],
+ "party": [
+  {
+   "uid": "45dwarqj4ldw",
+   "speciesId": "o1",
+   "level": 5,
+   "exp": 159,
+   "ivs": {
+    "hp": 20,
+    "atk": 4,
+    "def": 12,
+    "spa": 4,
+    "spd": 13,
+    "spe": 4
+   },
+   "moves": [
+    {
+     "id": "step-by-step",
+     "pp": 20,
+     "ppMax": 20
+    },
+    {
+     "id": "reflection",
+     "pp": 20,
+     "ppMax": 20
+    },
+    {
+     "id": "syllogism",
+     "pp": 15,
+     "ppMax": 15
+    }
+   ],
+   "hp": 20,
+   "status": null,
+   "statusTurns": 0,
+   "abilityId": "deep-think",
+   "shiny": false,
+   "friendship": 70,
+   "ballId": "prompt-ball",
+   "caughtMap": "overworld",
+   "otName": "老训练家",
+   "otId": "fixture-player-0001"
+  }
+ ],
+ "boxes": [
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  []
+ ],
+ "bag": {
+  "cache-potion": 3,
+  "prompt-ball": 5
+ },
+ "dexSeen": [
+  "o1"
+ ],
+ "dexCaught": [
+  "o1"
+ ],
+ "position": {
+  "map": "overworld",
+  "x": 526,
+  "y": 873,
+  "facing": "down"
+ },
+ "respawn": {
+  "map": "overworld",
+  "x": 526,
+  "y": 873,
+  "facing": "down"
+ },
+ "flags": {
+  "starter": "o1"
+ },
+ "quests": {
+  "main": {
+   "stage": 1,
+   "done": false
+  }
+ },
+ "visitedTowns": [],
+ "exploredChunks": {},
+ "repelSteps": 0,
+ "clockMinutes": 600,
+ "stats": {
+  "battlesWon": 0,
+  "caught": 0,
+  "steps": 0,
+  "pvpWins": 0,
+  "pvpLosses": 0,
+  "trades": 0,
+  "shiniesFound": 0
+ },
+ "settings": {
+  "bgmVolume": 0,
+  "sfxVolume": 0.8,
+  "quality": "high",
+  "pixelScale": 2,
+  "dof": true,
+  "bloom": true,
+  "shadows": true,
+  "textSpeed": "normal",
+  "battleSpeed": 1,
+  "showMinimap": true,
+  "showNames": true,
+  "showObjective": true,
+  "showTips": true,
+  "autoRun": false,
+  "touchControls": "auto",
+  "touchHand": "right",
+  "touchSize": "normal",
+  "haptics": true,
+  "migrations": [
+   "bgm-mute-20261003"
+  ]
+ },
+ "anchors": {
+  "unlocked": [
+   "anchor:grand:525:877"
+  ],
+  "seen": [
+   "anchor:grand:525:877"
+  ]
+ }
+}

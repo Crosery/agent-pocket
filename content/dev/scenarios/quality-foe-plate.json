@@ -1,0 +1,14 @@
+{
+  "id": "quality-foe-plate",
+  "titleKey": "dev.scn.qualityFoePlate",
+  "extends": "quality-showcase",
+  "then": [
+    {
+      "cmd": "battle.wild",
+      "args": {
+        "species": "claude-haiku",
+        "level": 12
+      }
+    }
+  ]
+}

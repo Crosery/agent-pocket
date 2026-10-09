@@ -30,7 +30,7 @@ const EFFECT_KINDS: Record<MoveEffect['kind'], true> = {
 const ITEM_CATEGORIES: Record<ItemCategory, true> = { ball: true, medicine: true, battle: true, key: true, chip: true, evolution: true, misc: true }
 const ITEM_EFFECT_KINDS: Record<ItemEffect['kind'], true> = {
   ball: true, heal: true, cure: true, healCure: true, revive: true, pp: true, levelUp: true, evolve: true,
-  battleBoost: true, repel: true, escape: true, chip: true, key: true, none: true, bait: true,
+  battleBoost: true, repel: true, escape: true, chip: true, key: true, none: true, bait: true, nature: true,
 }
 const BALL_BONUSES: Record<BallBonus, true> = { night: true, quick: true, status: true, lowLevel: true, rare: true, master: true }
 const KEY_KINDS: Record<KeyItemKind, true> = { bike: true, surf: true, map: true, dex: true, badgeCase: true, pass: true }

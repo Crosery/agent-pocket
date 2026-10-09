@@ -1,0 +1,13 @@
+{
+  "id": "quality-box",
+  "titleKey": "dev.scn.qualityBox",
+  "extends": "quality-showcase",
+  "then": [
+    {
+      "cmd": "screen.open",
+      "args": {
+        "screen": "boxGrade"
+      }
+    }
+  ]
+}

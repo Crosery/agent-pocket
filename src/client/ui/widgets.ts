@@ -231,6 +231,18 @@ export function statusChip(statusId: string): HTMLElement {
   return chip
 }
 
+/** Quality grade as a coloured shield badge (grade colours: content/quality.json); the nickname is its tooltip. Shape, not text, tells it from the rarity chip. */
+export function gradeChip(gradeId: string): HTMLElement {
+  ensureUIEnvironment()
+  const def = CONTENT.quality.grades.find((g) => g.id === gradeId)
+  const badge = el('span', { class: 'ap-grade', text: gradeId, title: def ? t(`screens.quality.grade.${gradeId}`) : undefined, data: { grade: gradeId } })
+  if (def) {
+    badge.style.setProperty('--gc', def.color)
+    badge.classList.add(prefersDarkInk(def.color, UI_CONFIG.widgets.chipDarkInkAboveLuminance) ? 'is-dark-ink' : 'is-light-ink')
+  }
+  return badge
+}
+
 /** Red dot: "there is something here for you" (menu key, menu rows, claimable entries). Decoration; the row keeps its own label. */
 export function attentionDot(className = ''): HTMLElement {
   return el('span', { class: `ap-attn-dot ${className}`.trim(), attrs: { role: 'img', 'aria-label': t('hud.attention.dot') } })

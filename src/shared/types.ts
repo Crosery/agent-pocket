@@ -242,6 +242,8 @@ export type ItemEffect =
   | { kind: 'pp'; amount: number | 'full'; all: boolean }
   | { kind: 'levelUp' }
   | { kind: 'evolve' }
+  /** Rewrites the creature's nature to one the player picks. */
+  | { kind: 'nature' }
   | { kind: 'battleBoost'; stat: BattleStatKey; stages: number }
   /** Thrown at the foe in battle: only a boss that listens for this `tag` reacts (BossTrigger on 'foeItem'). */
   | { kind: 'bait'; tag: string }
@@ -406,6 +408,48 @@ export type TextTable = Record<string, string>
 
 export interface MoveSlot { id: string; pp: number; ppMax: number }
 
+/** Where an individual came from (content/quality.json drives the rules around it). */
+export interface CreatureOrigin {
+  kind: 'wild' | 'starter' | 'gift' | 'boss' | 'trade' | 'legacy'
+  boss?: string
+  tier?: string
+  run?: string
+  at?: number
+}
+
+/** One of the 25 natures: +10% on `up`, -10% on `down` (both null = neutral). hp is never touched. */
+export interface NatureDef { id: string; up: StatKey | null; down: StatKey | null }
+/** Quality grade of an individual: the IV sum reaching `min` is at least this grade. */
+export interface GradeDef { id: string; min: number; color: string }
+
+/** content/quality.json */
+export interface QualityFile {
+  natureMulPct: { up: number; down: number }
+  /** Nature given to creatures that existed before natures did / to NPC-owned creatures (no random draw). */
+  legacyNature: string
+  npcNature: string
+  natures: NatureDef[]
+  /** Ascending by `min`; the first grade starts at 0. */
+  grades: GradeDef[]
+  /** Grade floor of the starter and story gifts. */
+  giftGradeFloor: string
+  /** Storage box toolbar: the "only this grade and above" filter. */
+  box: { filterMinGrade: string }
+  reveal: {
+    /** The full appraisal card shows when any enabled condition holds; otherwise a one-line chip. */
+    fullWhen: { newSpecies: boolean; gradeAtLeast: string; boss: boolean; firstCatch: boolean }
+    maxMs: number
+    chipMs: number
+    /** Audio sfx id played when a card or chip of that grade appears. */
+    sfx: Record<string, string>
+  }
+  /** One-time bag gift for saves migrated from before natures. */
+  legacyGift: Record<string, number>
+  /** Save flags: the gift was handed out / its toast was shown / the one-time ladder hint was shown. */
+  flags: { legacyGift: string; legacyToast: string; revealLadder: string }
+  finetune: { loraMaxPerCreature: number }
+}
+
 export interface Creature {
   uid: string
   speciesId: string
@@ -425,6 +469,11 @@ export interface Creature {
   otName: string
   otId: string
   heldItem?: string
+  /** NatureDef id (content/quality.json); missing = neutral. */
+  nature?: string
+  origin?: CreatureOrigin
+  /** LoRA patches applied so far (quality.finetune.loraMaxPerCreature at most). */
+  finetuned?: number
 }
 
 export interface CreatureView {
@@ -1201,6 +1250,8 @@ export interface Settings {
   /** Objective tracker in the HUD / one-time contextual tips (content/tutorial.json). */
   showObjective: boolean
   showTips: boolean
+  /** Show the raw 0-31 individual values next to the star ratings in the creature summary. */
+  showIvNumbers: boolean
   autoRun: boolean
   touchControls: 'auto' | 'on' | 'off'
   /** Which thumb owns the stick: 'left' mirrors the pad (stick right, buttons left). */
@@ -1280,6 +1331,10 @@ export interface DevPartyEntry {
   /** Fraction of max HP left (default full). */
   hp?: number
   shiny?: boolean
+  /** NatureDef id; random when absent. */
+  nature?: string
+  /** Quality grade id the IV total lands in exactly (random when absent). */
+  grade?: string
 }
 
 export interface DevTeamMember { species: string; nickname?: string; status?: StatusId; hp?: number; shiny?: boolean }
@@ -1310,6 +1365,10 @@ export interface DevScenario {
   rng?: number
   place?: DevPlace
   party?: DevPartyEntry[]
+  /** This many random creatures (random species, level and quality) go into the first box. */
+  boxFill?: number
+  /** Base the scenario on a pre-natures save: the id of a v1 save fixture (tests/fixtures/<id>.json), migrated like a real load. */
+  legacySave?: string
   bag?: Record<string, number>
   /** Every item at this quantity. */
   bagAll?: number

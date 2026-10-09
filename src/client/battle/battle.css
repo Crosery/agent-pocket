@@ -81,6 +81,9 @@ html.ap-battle-on[data-touch-controls] { --ap-bottom-inset: 0px; }
 .apb-st-lv { color: var(--ap-gold-hi); flex: none; text-shadow: 0 var(--u) 0 var(--ap-ink); }
 .apb-status .ap-rarity { height: calc(var(--u) * 13); padding: 0 calc(var(--u) * 3); }
 .apb-st-tags { display: flex; align-items: center; gap: calc(var(--u) * 3); min-height: calc(var(--u) * 16); margin: calc(var(--u) * 1) 0; }
+.apb-st-grade { flex: none; display: inline-flex; }
+.apb-st-grade:empty { display: none; }
+.apb-st-grade .ap-grade { --gh: calc(var(--u) * 17); }
 .apb-st-taglist { display: flex; align-items: center; flex-wrap: wrap; gap: calc(var(--u) * 2) calc(var(--u) * 3); flex: 1 1 auto; min-width: 0; }
 .apb-st-taglist > * { flex: none; }
 /* type badge: the type's own round pixel icon */

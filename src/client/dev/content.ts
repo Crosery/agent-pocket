@@ -10,6 +10,8 @@ export interface DevContent {
   teams: Record<string, DevTeam>
   /** Per-issue acceptance lists (content/dev/acceptance/<issue>.json). */
   acceptance: DevAcceptance[]
+  /** Older-version saves a scenario can start from (`legacySave`): tests/fixtures/save-v1-*.json, keyed by the file name without extension. */
+  saves: Record<string, unknown>
 }
 
 export function loadDevContent(): DevContent {
@@ -20,5 +22,9 @@ export function loadDevContent(): DevContent {
   // @ts-ignore -- see above
   const acc = import.meta.glob('../../../content/dev/acceptance/*.json', { eager: true, import: 'default' }) as Record<string, DevAcceptance>
   const acceptance = Object.values(acc).sort((a, b) => a.issue - b.issue)
-  return { scenarios, beats: beats as unknown as Record<string, DevBeat>, teams: teams as unknown as Record<string, DevTeam>, acceptance }
+  // @ts-ignore -- see above
+  const fx = import.meta.glob('../../../tests/fixtures/save-v1-*.json', { eager: true, import: 'default' }) as Record<string, unknown>
+  const saves: Record<string, unknown> = {}
+  for (const [path, raw] of Object.entries(fx)) saves[/([^/]+)\.json$/.exec(path)![1]] = raw
+  return { scenarios, beats: beats as unknown as Record<string, DevBeat>, teams: teams as unknown as Record<string, DevTeam>, acceptance, saves }
 }

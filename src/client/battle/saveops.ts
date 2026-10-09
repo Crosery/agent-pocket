@@ -56,6 +56,7 @@ export function storeCaught(ctx: SaveCtx, cr: Creature): CatchPlacement {
   if (!where) return null
   if (!cr.otName) cr.otName = ctx.save.name
   if (!cr.otId) cr.otId = ctx.save.playerId
+  cr.origin ??= { kind: 'wild', at: Date.now() }
   if (where.where === 'party') {
     ctx.save.party.push(cr)
     ctx.events.emit('party:changed', {})

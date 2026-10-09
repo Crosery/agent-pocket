@@ -82,6 +82,22 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
     for (const m of cfg.objective.markers) if (m.on === 'region:entered' && m.region === region.id) ctx.save.flags[m.flag] = true
   })
 
+  // -- one-time notice for a save that was migrated to natures (it got the persona-card gift) ------------------------
+  let legacyTimer = 0
+  const offLegacyEvent = ctx.events.on('map:entered', () => {
+    const { legacyGift, legacyToast } = ctx.data.quality.flags
+    if (!ctx.save.flags[legacyGift] || ctx.save.flags[legacyToast] || legacyTimer) return
+    legacyTimer = window.setTimeout(() => {
+      legacyTimer = 0
+      const f = ctx.save.flags
+      if (f[legacyToast]) return
+      f[legacyToast] = true
+      ctx.ui.toast(t('screens.quality.legacyToast'), 'success')
+      ctx.persist('legacy-notice')
+    }, cfg.notices.legacyDelaySec * 1000)
+  })
+  const offLegacy = () => { offLegacyEvent(); window.clearTimeout(legacyTimer) }
+
   // -- tips ----------------------------------------------------------------------------------------------------
   const offBattle = ctx.events.on('battle:start', ({ kind }) => {
     for (const tip of cfg.tips.list) {
@@ -256,7 +272,7 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
       present(tip)
     },
     get objectiveId() { return objectiveRule },
-    dispose() { offRegion(); offBattle(); offBattleEnd(); offCues(); offBus.forEach((off) => off()); objective.dispose(); tips.dispose() },
+    dispose() { offRegion(); offLegacy(); offBattle(); offBattleEnd(); offCues(); offBus.forEach((off) => off()); objective.dispose(); tips.dispose() },
   }
   return api
 }

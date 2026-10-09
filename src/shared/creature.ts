@@ -1,9 +1,10 @@
 // Creature instance math (stats, exp, moves, evolution, validation). Implements CreatureApi from contracts.ts.
 // Every function takes an optional trailing Content; formula constants come from content/battle_rules.json.
-import type { Creature, CreatureView, GrowthRate, MoveSlot, SpeciesDef, StatKey, Stats } from './types.ts'
+import type { Creature, CreatureOrigin, CreatureView, GrowthRate, MoveSlot, SpeciesDef, StatKey, Stats } from './types.ts'
 import type { IRng } from './contracts.ts'
 import { CONTENT, type Content } from './content/index.ts'
 import { RULES } from './battle/rules.ts'
+import { natureMod, rollIvs, rollNature } from './gameplay/quality.ts'
 
 export const STAT_KEYS: readonly StatKey[] = ['hp', 'atk', 'def', 'spa', 'spd', 'spe']
 const UID_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyz'
@@ -23,13 +24,13 @@ export function creatureName(cr: Pick<Creature, 'nickname' | 'speciesId'>, c: Co
   return cr.nickname?.trim() || c.species[cr.speciesId]?.nameZh || cr.speciesId
 }
 
-export function calcStats(cr: Pick<Creature, 'speciesId' | 'level' | 'ivs'>, c: Content = CONTENT): Stats {
+export function calcStats(cr: Pick<Creature, 'speciesId' | 'level' | 'ivs' | 'nature'>, c: Content = CONTENT): Stats {
   const sp = speciesOf(cr.speciesId, c)
   const f = RULES.statFormula
   const out = {} as Stats
   for (const k of STAT_KEYS) {
     const core = Math.floor(((f.baseMul * sp.baseStats[k] + (cr.ivs?.[k] ?? 0)) * cr.level) / f.levelDivisor)
-    out[k] = k === 'hp' ? core + cr.level + f.hpFlat : core + f.otherFlat
+    out[k] = k === 'hp' ? core + cr.level + f.hpFlat : natureMod(core + f.otherFlat, k, cr.nature, c)
   }
   return out
 }
@@ -90,19 +91,26 @@ export function rollShiny(rng: IRng, c: Content = CONTENT): boolean {
 export function createCreature(
   speciesId: string,
   level: number,
-  opts: { rng: IRng; shiny?: boolean; otName?: string; otId?: string; ballId?: string; caughtMap?: string; moves?: string[] },
+  opts: {
+    rng: IRng; shiny?: boolean; otName?: string; otId?: string; ballId?: string; caughtMap?: string; moves?: string[]
+    /** Fixed nature; when given no random draw is spent on it (NPC teams, bosses). */
+    nature?: string
+    /** IV rules (see rollIvs). */
+    gradeFloor?: string; gradeCap?: string; perfectIvs?: number; ivMin?: number
+    origin?: CreatureOrigin
+  },
   c: Content = CONTENT,
 ): Creature {
   const sp = speciesOf(speciesId, c)
   const lv = clampInt(level, RULES.creature.minLevel, c.config.party.maxLevel)
   const rng = opts.rng
   const uid = newUid(rng)
-  const ivs = {} as Stats
-  for (const k of STAT_KEYS) ivs[k] = rng.int(0, c.config.creature.ivMax)
+  const ivs = rollIvs(rng, { perfect: opts.perfectIvs, min: opts.ivMin, gradeFloor: opts.gradeFloor, gradeCap: opts.gradeCap }, c)
   const abilityId = sp.abilities.length > 1 && rng.chance(c.config.creature.secondAbilityChance)
     ? sp.abilities[1]
     : (sp.abilities[0] ?? '')
   const shiny = opts.shiny ?? rollShiny(rng, c)
+  const nature = opts.nature && c.natureById[opts.nature] ? opts.nature : rollNature(rng, c)
   let moveIds = opts.moves
     ? [...new Set(opts.moves.filter((m) => c.moves[m]))].slice(0, c.config.party.maxMoves)
     : []
@@ -124,7 +132,9 @@ export function createCreature(
     caughtMap: opts.caughtMap ?? '',
     otName: opts.otName ?? '',
     otId: opts.otId ?? '',
+    nature,
   }
+  if (opts.origin) cr.origin = { ...opts.origin }
   cr.hp = maxHp(cr, c)
   return cr
 }
@@ -222,6 +232,23 @@ function cleanId(v: unknown, pattern: RegExp = ID_PATTERN): string {
   return typeof v === 'string' && v.length <= RULES.creature.idMaxLen && pattern.test(v) ? v : ''
 }
 
+const ORIGIN_KINDS: readonly CreatureOrigin['kind'][] = ['wild', 'starter', 'gift', 'boss', 'trade', 'legacy']
+
+function sanitizeOrigin(raw: unknown, c: Content): CreatureOrigin | undefined {
+  if (!isObj(raw)) return undefined
+  const kind = ORIGIN_KINDS.find((k) => k === raw.kind)
+  if (!kind) return undefined
+  const out: CreatureOrigin = { kind }
+  if (typeof raw.boss === 'string' && c.bosses[raw.boss]) out.boss = raw.boss
+  const tier = cleanId(raw.tier)
+  if (tier) out.tier = tier
+  const run = cleanId(raw.run)
+  if (run) out.run = run
+  const at = num(raw.at)
+  if (at !== null && at >= 0) out.at = Math.floor(at)
+  return out
+}
+
 export function sanitizeCreature(raw: unknown, c: Content = CONTENT): Creature | null {
   if (!isObj(raw)) return null
   const uid = cleanId(raw.uid)
@@ -264,6 +291,8 @@ export function sanitizeCreature(raw: unknown, c: Content = CONTENT): Creature |
   const ballId = typeof raw.ballId === 'string' && c.items[raw.ballId]?.effect.kind === 'ball' ? raw.ballId : ''
   const nickname = cleanText(raw.nickname, RULES.creature.nicknameMaxLen)
   const heldItem = typeof raw.heldItem === 'string' && c.items[raw.heldItem] ? raw.heldItem : undefined
+  const nature = typeof raw.nature === 'string' && c.natureById[raw.nature] ? raw.nature : c.quality.legacyNature
+  const origin = sanitizeOrigin(raw.origin, c)
 
   const cr: Creature = {
     uid,
@@ -282,9 +311,13 @@ export function sanitizeCreature(raw: unknown, c: Content = CONTENT): Creature |
     caughtMap: cleanId(raw.caughtMap, REF_PATTERN),
     otName: cleanText(raw.otName, c.config.net.nameMaxLen),
     otId: cleanId(raw.otId, REF_PATTERN),
+    nature,
   }
   if (nickname) cr.nickname = nickname
   if (heldItem) cr.heldItem = heldItem
+  if (origin) cr.origin = origin
+  const finetuned = num(raw.finetuned)
+  if (finetuned !== null) cr.finetuned = clampInt(finetuned, 0, c.quality.finetune.loraMaxPerCreature)
   const max = maxHp(cr, c)
   cr.hp = clampInt(num(raw.hp) ?? max, 0, max)
   if (cr.hp === 0) {

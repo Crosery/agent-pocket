@@ -141,6 +141,7 @@
       {"id": "pvp", "group": "online", "tips": ["tradePvp"]}
     ]
   },
+  "notices": {"legacyDelaySec": 3},
   "typeChart": {
     "loops": [
       {"id": "info", "types": ["logic", "chaos", "search"]},

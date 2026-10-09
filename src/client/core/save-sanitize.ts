@@ -94,6 +94,7 @@ export function sanitizeSettings(raw: unknown, c: Content, touch: boolean = isTo
     showNames: bool(r.showNames, d.showNames),
     showObjective: bool(r.showObjective, d.showObjective),
     showTips: bool(r.showTips, d.showTips),
+    showIvNumbers: bool(r.showIvNumbers, d.showIvNumbers),
     autoRun: bool(r.autoRun, d.autoRun),
     touchControls: oneOf(r.touchControls, TOUCH_MODES, d.touchControls),
     touchHand: oneOf(r.touchHand, TOUCH_HANDS, d.touchHand),

@@ -16,6 +16,7 @@ import { anchorKindSpec, anchorSpotOf, anchorsInRect, type AnchorSpot } from '..
 import { frontierTrainer, registerFrontierRefs } from '../../shared/world/frontier/content/index.ts'
 import { decodeExplored, encodeExplored, type MinimapHandle } from '../ui/minimap.ts'
 import { UI_CONFIG } from '../ui/config.ts'
+import { showReveal } from '../ui/reveal.ts'
 import { TUTORIAL } from '../onboarding/config.ts'
 import { GAME, textOrKey } from './config.ts'
 import { EXPLORE } from './explore-config.ts'
@@ -231,6 +232,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     triggerEvent: (id) => gameplay.triggerEvent(id),
     revealPlace: (ref) => gameplay.revealPlace(ref),
     shopPriceMul: (item) => gameplay.modifier('shopPrice', { category: item.category }),
+    reveal: (cr, o) => showReveal(ctx, cr, o),
   }
   const scripts = createScriptRunner(host)
   /** World events, rarity spawns, roaming legends, rumors, research (events-runtime.ts). */
