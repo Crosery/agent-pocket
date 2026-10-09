@@ -55,7 +55,7 @@ async function put(tok: string, it: { key: string; body: Buffer; type: string })
     form.set('token', tok)
     form.set('key', it.key)
     form.set('file', new Blob([new Uint8Array(it.body)], { type: it.type }), it.key.split('/').pop())
-    const res = await fetch(CDN.uploadUrl, { method: 'POST', body: form }).catch((e: Error) => ({ ok: false, status: 0, text: async () => e.message }))
+    const res = await fetch(CDN.uploadUrl, { method: 'POST', body: form, signal: AbortSignal.timeout(CDN.uploadTimeoutMs) }).catch((e: Error) => ({ ok: false, status: 0, text: async () => e.message }))
     if (res.ok) return
     if (res.status === 614) return // key exists: content-addressed, so it is already the same bytes
     if (attempt >= 2 || (res.status > 0 && res.status < 500)) die(`upload ${it.key} failed: ${res.status} ${await res.text()}`)
@@ -65,10 +65,11 @@ async function put(tok: string, it: { key: string; body: Buffer; type: string })
 const mime = (f: string) => (CDN.mime as Record<string, string>)[extname(f).toLowerCase()] ?? 'application/octet-stream'
 
 async function head(url: string): Promise<{ ok: boolean; status: number; headers: Headers }> {
-  // CI runners reach the CDN over a lossy path: retry network errors and 5xx with backoff.
+  // CI runners reach the CDN over a lossy path: retry network errors and 5xx with backoff. Without a per-request
+  // timeout one stalled connection hung verify until the 30-minute job limit (v0.2.0-rc.1).
   for (let attempt = 0; ; attempt++) {
     try {
-      const res = await fetch(url, { method: 'HEAD', headers: { Origin: 'https://cdn-check.invalid', 'Accept-Encoding': 'identity' } })
+      const res = await fetch(url, { method: 'HEAD', headers: { Origin: 'https://cdn-check.invalid', 'Accept-Encoding': 'identity' }, signal: AbortSignal.timeout(CDN.verifyTimeoutMs) })
       if (res.status < 500 || attempt >= CDN.verifyRetries) return res
     } catch (e) {
       if (attempt >= CDN.verifyRetries) return { ok: false, status: 0, headers: new Headers({ 'x-error': String((e as Error).cause ?? e) }) }
@@ -90,8 +91,11 @@ async function upload(): Promise<void> {
 async function verify(): Promise<void> {
   const p = plan()
   const bad: string[] = []
-  await pool([...p.bundles, ...p.pub], async (it) => {
+  const all = [...p.bundles, ...p.pub]
+  let done = 0
+  await pool(all, async (it) => {
     const res = await head(cdnUrl(it.key))
+    if (++done % 100 === 0 || done === all.length) console.log(`static-cdn: verified ${done}/${all.length}`)
     const size = readFileSync(it.file).length
     if (!res.ok) bad.push(`${res.status} ${it.key}${res.headers.get('x-error') ? ` (${res.headers.get('x-error')})` : ''}`)
     else if (Number(res.headers.get('content-length')) !== size) bad.push(`size ${res.headers.get('content-length')} != ${size} ${it.key}`)
