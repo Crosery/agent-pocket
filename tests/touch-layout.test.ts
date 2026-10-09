@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { CONTENT, t } from '../src/shared/content/index.ts'
 import { sanitizeSettings } from '../src/client/core/save-sanitize.ts'
 import { INPUT_CONFIG } from '../src/client/core/input-config.ts'
-import { buttonRect, computeTouchLayout, rectsOverlap } from '../src/client/core/touch-layout.ts'
+import { buttonRect, clampRing, computeTouchLayout, driveStick, inStickZone, rectsOverlap } from '../src/client/core/touch-layout.ts'
 
 const T = INPUT_CONFIG.touch
 const VIEWPORTS = [
@@ -26,12 +26,6 @@ test('every touch button is at least 44px, inside the screen, and clear of the o
       assert.ok(b.size >= 44, `${where}: ${b.size}px < 44`)
       assert.ok(r.left >= 0 && r.top >= 0 && r.right <= vp.width && r.bottom <= vp.height, `${where}: off screen ${JSON.stringify(r)}`)
     }
-    // The idle stick ring rests in the opposite bottom corner; no button may sit on it.
-    const d = 2 * layout.stickRadius
-    const ringLeft = hand === 'right' ? T.margin : vp.width - T.margin - d
-    const ring = { left: ringLeft, right: ringLeft + d, top: vp.height - T.margin - d, bottom: vp.height - T.margin }
-    // (The large preset cannot fit stick + cluster side by side on a 360-390px phone; there the ghost ring may sit under the run button.)
-    if (size !== 'large' || vp.width >= 600) for (const { b, r } of rects) assert.ok(!rectsOverlap(r, ring), `${vp.name} ${hand} ${size}: ${b.def.action} sits on the stick ring`)
     for (let i = 0; i < rects.length; i++) for (let j = i + 1; j < rects.length; j++) {
       assert.ok(!rectsOverlap(rects[i].r, rects[j].r, 4), `${vp.name} ${hand} ${size}: ${rects[i].b.def.action} touches ${rects[j].b.def.action}`)
     }
@@ -55,15 +49,20 @@ test('the pad reserves the bottom only in portrait; world-only buttons never res
   const landscape = computeTouchLayout(T, VIEWPORTS[2], 'right', 'normal', T.insetGap)
   assert.ok(portrait.portrait && portrait.insets.bottom > 0)
   assert.ok(!landscape.portrait && landscape.insets.bottom === 0)
-  assert.ok(landscape.insets.left > 0 && landscape.insets.right > 0)
+  assert.equal(landscape.insets.left, 0, 'the stick spawns under the thumb and reserves no corner')
+  assert.ok(landscape.insets.right > 0, 'the button cluster still does')
   const core = Math.max(...T.buttons.filter((b) => !b.worldOnly).map((b) => b.bottom + (b.size === 'large' ? T.buttonSize : T.smallButtonSize)))
-  assert.equal(portrait.insets.bottom, T.margin + Math.max(2 * T.stickRadius, core) + T.insetGap)
+  assert.equal(portrait.insets.bottom, T.margin + core + T.insetGap)
 })
 
 test('touch tuning is sane and every button resolves a label', () => {
   assert.ok(T.tap.slopPx > 0 && T.tap.maxMs > T.tap.stickHoldMs, 'a tap must be able to end before the hold timer fires')
   assert.ok(T.zoneWidthFraction > 0 && T.zoneWidthFraction <= 0.6)
-  assert.ok(T.zoneHeightFraction.portrait > 0 && T.zoneHeightFraction.landscape > 0)
+  assert.equal(T.zoneWidthFraction, 0.5, 'the stick zone is the whole left half')
+  assert.ok(T.stick.fadeMs > 0 && T.stick.edgePadPx >= 0)
+  assert.equal(T.style.idleOpacity, 0, 'no resting stick: it is invisible until a thumb lands')
+  assert.ok(T.hint.opacity > 0 && T.hint.opacity < 0.7 && T.hint.loopMs > 0, 'the hint is faint')
+  for (const spot of [T.hint.portrait, T.hint.landscape]) assert.ok(spot.x > 0 && spot.x < T.zoneWidthFraction && spot.y > 0 && spot.y < 1, 'the hint sits inside the stick half')
   for (const k of ['small', 'normal', 'large'] as const) assert.ok(T.sizes[k] > 0)
   for (const b of T.buttons) assert.notEqual(t(b.label), b.label, b.label)
   const seen = new Set<string>()
@@ -81,4 +80,49 @@ test('phone defaults: touch-only migration lowers quality once, desktop keeps th
   assert.ok(!desktop.migrations?.includes(id), 'stays pending so the same save is migrated if it is later opened on a phone')
   const chosen = sanitizeSettings({ quality: 'high', migrations: phone.migrations }, CONTENT, true)
   assert.equal(chosen.quality, 'high', 'an applied migration never overrides the player later')
+})
+
+test('stick zone: the whole half opposite the buttons, any height, mirrored for left-handed', () => {
+  for (const vp of VIEWPORTS) {
+    for (let y = 0; y <= vp.height; y += vp.height / 8) {
+      // The zone is a function of x only: every height of the left half starts the stick.
+      for (const x of [0, 1, vp.width * 0.25, vp.width * 0.4999]) assert.ok(inStickZone(x, vp.width, 'right', T.zoneWidthFraction), `${vp.name} x=${x} y=${y}`)
+      for (const x of [vp.width * 0.5, vp.width * 0.75, vp.width]) assert.ok(!inStickZone(x, vp.width, 'right', T.zoneWidthFraction), `${vp.name} right half x=${x}`)
+    }
+    assert.ok(inStickZone(vp.width * 0.75, vp.width, 'left', T.zoneWidthFraction))
+    assert.ok(!inStickZone(vp.width * 0.25, vp.width, 'left', T.zoneWidthFraction))
+  }
+})
+
+test('stick ring: spawns neutral under the thumb, trails it past the radius, and is drawn inside the screen', () => {
+  const R = T.stickRadius
+  const vp = { width: 390, height: 844 }
+  const land = { x: 120, y: 500 }
+  const neutral = driveStick(land, land, R, T.follow)
+  assert.deepEqual([neutral.dx, neutral.dy, neutral.dist], [0, 0, 0])
+  // inside the ring the base stays put
+  const inside = driveStick(land, { x: land.x + R / 2, y: land.y }, R, true)
+  assert.deepEqual(inside.origin, land)
+  assert.equal(inside.dist, R / 2)
+  // past it the base trails the thumb at exactly one radius
+  const far = driveStick(land, { x: land.x + 3 * R, y: land.y }, R, true)
+  assert.equal(far.dist, R)
+  assert.equal(far.origin.x, land.x + 2 * R)
+  const back = driveStick(far.origin, { x: far.origin.x - R, y: land.y }, R, true)
+  assert.equal(back.dx, -R, 'reversing needs one ring of travel, not three')
+  // without follow the knob just clamps
+  assert.deepEqual(driveStick(land, { x: land.x + 3 * R, y: land.y }, R, false).origin, land)
+  // the ring never leaves the screen, wherever the thumb lands
+  const pad = T.stick.edgePadPx
+  for (const p of [{ x: 0, y: 0 }, { x: 3, y: 840 }, { x: 389, y: 10 }, { x: 195, y: 422 }, { x: -50, y: 900 }]) {
+    const c = clampRing(p, R, vp, pad)
+    assert.ok(c.x - R >= pad - 1e-9 && c.x + R <= vp.width - pad + 1e-9 && c.y - R >= pad - 1e-9 && c.y + R <= vp.height - pad + 1e-9, JSON.stringify(c))
+  }
+  assert.deepEqual(clampRing({ x: 200, y: 400 }, R, vp, pad), { x: 200, y: 400 }, 'a thumb in the open leaves the ring where it is')
+})
+
+test('the tutorial text for touch points at the left half, not at a fixed stick', () => {
+  assert.match(t('tutorial.tip.move.bodyTouch'), /左半边/)
+  assert.match(t('tutorial.manual.move.bodyTouch'), /左半边/)
+  assert.doesNotMatch(t('tutorial.device.touch.move'), /摇杆/)
 })

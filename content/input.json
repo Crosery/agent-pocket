@@ -19,7 +19,8 @@
     "pixel": 3,
     "labelScale": {"large": 0.38, "small": 0.3},
     "zoneWidthFraction": 0.5,
-    "zoneHeightFraction": {"portrait": 0.72, "landscape": 0.5},
+    "stick": {"fadeMs": 180, "edgePadPx": 6},
+    "hint": {"enabled": true, "storageKey": "ap.touch.hintDone", "portrait": {"x": 0.26, "y": 0.4}, "landscape": {"x": 0.38, "y": 0.38}, "dragPx": 34, "loopMs": 2600, "opacity": 0.42, "startDelayMs": 1200},
     "tap": {"slopPx": 10, "maxMs": 280, "stickHoldMs": 150},
     "haptics": {"button": 10, "toggle": 14, "stick": 5, "tap": 8},
     "sizes": {"small": 0.96, "normal": 1, "large": 1.25},
@@ -49,7 +50,7 @@
       {"action": "bike", "label": "audio.touch.bike", "size": "small", "right": 66, "bottom": 128, "worldOnly": true}
     ],
     "style": {
-      "idleOpacity": 0.72,
+      "idleOpacity": 0,
       "frame": "#141026",
       "ringFill": "rgba(40,36,72,.55)",
       "ringEdge": "rgba(150,160,220,.35)",

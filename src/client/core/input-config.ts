@@ -44,6 +44,9 @@ export interface TapMoveConfig {
 export interface TouchButtonColors { hi: string; base: string; lo: string }
 
 /** CSS colour values for the touch overlay. */
+/** A screen position as fractions of the viewport. */
+export interface HintSpot { x: number; y: number }
+
 export interface TouchStyle {
   idleOpacity: number
   frame: string
@@ -82,8 +85,12 @@ export interface InputConfig {
     follow: boolean
     /** CSS px kept between the pad and the UI above it (portrait). */
     insetGap: number
+    /** The stick starts anywhere on this share of the screen width, full height, on the side opposite the buttons. */
     zoneWidthFraction: number
-    zoneHeightFraction: { portrait: number; landscape: number }
+    /** The ring fades out on release (fadeMs) and stays edgePadPx inside the screen edges. */
+    stick: { fadeMs: number; edgePadPx: number }
+    /** One-time faint drag animation in the stick zone until the stick has been used once (flag kept in localStorage). */
+    hint: { enabled: boolean; storageKey: string; portrait: HintSpot; landscape: HintSpot; dragPx: number; loopMs: number; opacity: number; startDelayMs: number }
     /** A touch is a world tap when it moves less than slopPx and ends within maxMs; a hold of stickHoldMs starts the stick. */
     tap: { slopPx: number; maxMs: number; stickHoldMs: number }
     /** navigator.vibrate durations (ms). */

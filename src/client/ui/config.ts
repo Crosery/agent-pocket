@@ -182,5 +182,5 @@ export function touchPadHeight(b: InputBindings = INPUT_BINDINGS): number {
   const t = b.touch
   if (!t) return 0
   const buttons = t.buttons.map((x) => x.bottom + (x.size === 'large' ? t.buttonSize : t.smallButtonSize))
-  return (t.margin ?? 0) + Math.max(2 * (t.stickRadius ?? 0), 0, ...buttons)
+  return (t.margin ?? 0) + Math.max(0, ...buttons)
 }
