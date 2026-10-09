@@ -407,6 +407,12 @@ height, margins) is `layout` in the same file and reaches the CSS as `--apb-*` v
   `stage.setHud()`. The stage projects both creatures' opaque pixels through the base shot and `render/battle/framing.ts`
   picks a zoom and a lens shift (`camera.framing` in `content/battle-stage.json`) so that no creature touches a window
   (padding `padU`) or the screen edge. Cinematic push-in shots are exempt while they play.
+- The status sheet (`effects-panel.ts`, opened from either info card or the menu key) is a modal over the dimmed scene:
+  our side | the foe's side (stacked in portrait), each with name, level, types, HP, the status condition and its one-line
+  effect, only the non-zero stat stages as chips, volatile chips and the ability; one field row (weather, boss meters) when
+  there is one. Definitions are the chips' tooltips and the readout line at the foot (hover, focus or tap), never a list.
+  Window width, HP bar and side accents are `inspector` in `content/battle-ui.json`; the audit's `inspect` state builds the
+  worst case (both sides with a status, 3-4 stages, 2 volatiles, weather, boss meters) and fails on scrolling or clipping.
 - The overworld touch pad is hidden in battle (`html.ap-battle-on`) and no bottom space is reserved for it.
 - QA: `scripts/qa-battle-audit.mjs` runs boss (6 and 3 meters), wild and trainer battles through message, commands, moves,
   item and party screens at the seven viewports of `scripts/qa-battle-layout.mjs` (1280x720, 1920x1080, 1440x900,

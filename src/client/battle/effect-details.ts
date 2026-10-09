@@ -9,6 +9,10 @@ export type BattleEffectPolarity = 'buff' | 'debuff' | 'neutral'
 
 export interface BattleStatusSnapshot {
   name: string
+  /** Shown in the status sheet's head; the HUD windows carry their own. */
+  level?: number
+  hp?: number
+  maxHp?: number
   abilityId: string | null
   types: readonly string[]
   status: string | null
@@ -30,12 +34,6 @@ export interface BattleEffectDetail {
   polarity: BattleEffectPolarity
 }
 
-export interface BattleStatGlossary {
-  key: string
-  label: string
-  description: string
-}
-
 const BATTLE_STAT_ORDER: readonly BattleStatKey[] = ['atk', 'def', 'spa', 'spd', 'spe', 'acc', 'eva']
 
 function factorNumber(stage: number): string {
@@ -45,14 +43,6 @@ function factorNumber(stage: number): string {
 function volatilePolarity(id: string): BattleEffectPolarity {
   const def = CONTENT.volatileById[id]
   return def?.protects || (def?.critStageAdd ?? 0) > 0 ? 'buff' : 'debuff'
-}
-
-export function battleStatGlossary(): BattleStatGlossary[] {
-  return CONTENT.stats.map((stat) => ({
-    key: stat.key,
-    label: stat.nameZh,
-    description: stat.desc,
-  }))
 }
 
 export function describeBattleEffects(snapshot: BattleStatusSnapshot): BattleEffectDetail[] {
@@ -134,4 +124,63 @@ export function hudEffects(snapshot: BattleStatusSnapshot): BattleEffectDetail[]
   const rows = describeBattleEffects(snapshot).filter((row) => row.group !== 'ability')
   const rank = (row: BattleEffectDetail) => (row.group === 'status' ? 0 : row.polarity === 'buff' ? 1 : 2)
   return rows.map((row, i) => ({ row, i })).sort((a, b) => rank(a.row) - rank(b.row) || a.i - b.i).map(({ row }) => row)
+}
+
+// ---- the status sheet (effects-panel.ts): what each side is under right now, one short line each ----------------
+
+export interface SheetChip {
+  id: string
+  label: string
+  polarity: BattleEffectPolarity
+  /** What the readout line shows when the chip is focused / tapped: "label：description". */
+  tip: string
+  /** Stage chips: signed step and multiplier ("▼1", "×0.67"). */
+  delta?: string
+  factor?: string
+}
+
+export interface SideSheet {
+  /** The status condition with its one-line effect. */
+  status: { id: string; label: string; line: string; tip: string } | null
+  /** Non-zero stat stages in stat order. */
+  stages: SheetChip[]
+  volatiles: SheetChip[]
+  /** The passive ability: name and its description (one line, ellipsised by the layout; the readout shows it whole). */
+  ability: { label: string; line: string; tip: string } | null
+  /** No status, stage or volatile. */
+  quiet: boolean
+}
+
+export function sideSheet(snapshot: BattleStatusSnapshot): SideSheet {
+  const tip = (label: string, description: string) => t('battleui.effects.tip', { label, description })
+  const sheet: SideSheet = { status: null, stages: [], volatiles: [], ability: null, quiet: true }
+  for (const row of describeBattleEffects(snapshot)) {
+    const id = row.id.slice(row.id.indexOf(':') + 1)
+    if (row.group === 'ability') sheet.ability = { label: row.label, line: row.description, tip: tip(row.label, row.description) }
+    else if (row.group === 'status') sheet.status = { id, label: row.label, line: t(`battleui.effects.statusShort.${id}`), tip: tip(row.label, row.description) }
+    else if (row.group === 'volatile') sheet.volatiles.push({ id, label: row.label, polarity: row.polarity, tip: tip(row.label, row.description) })
+    else sheet.stages.push({
+      id, label: row.label, polarity: row.polarity, tip: tip(row.label, `${row.description} ${row.value ?? ''}`.trim()),
+      delta: `${row.polarity === 'buff' ? '▲' : '▼'}${row.delta?.slice(1) ?? ''}`, factor: row.factor,
+    })
+  }
+  sheet.quiet = !sheet.status && !sheet.stages.length && !sheet.volatiles.length
+  return sheet
+}
+
+export interface WeatherSheet { id: string; label: string; color: string; line: string }
+
+/** The weather as one line: which types it boosts or weakens and the chip damage it deals each turn. */
+export function weatherSheet(id: string | null | undefined): WeatherSheet | null {
+  const def = id ? CONTENT.weatherById[id] : undefined
+  if (!def) return null
+  const byMul = new Map<number, string[]>()
+  for (const [type, mul] of Object.entries(def.powerMul ?? {})) {
+    const name = CONTENT.typeById[type]?.nameZh ?? type
+    byMul.set(mul, [...(byMul.get(mul) ?? []), name])
+  }
+  const parts = [...byMul].sort((a, b) => b[0] - a[0]).map(([mul, names]) => t('battleui.effects.weatherPower', { types: names.join(t('battleui.effects.typesJoin')), n: String(mul) }))
+  if (def.heal) parts.push(t('battleui.effects.weatherHeal', { types: def.heal.types.map((x) => CONTENT.typeById[x]?.nameZh ?? x).join(t('battleui.effects.typesJoin')), n: `1/${Math.round(1 / def.heal.fraction)}` }))
+  if (def.chip) parts.push(t('battleui.effects.weatherChip', { n: `1/${Math.round(1 / def.chip.fraction)}` }))
+  return { id: def.id, label: def.nameZh, color: def.color, line: parts.join(t('battleui.effects.weatherJoin')) }
 }

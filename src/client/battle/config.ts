@@ -68,6 +68,8 @@ export interface BattleUiConfig {
     /** Boss meter tiles: display width of the label kept (wide characters count 2), cells of the pip row, and how long a tapped tile's full reading stays up. */
     meterLabelWidth: number; meterPipCells: number; meterReadoutMs: number
   }
+  /** The status-detail sheet: window width (at least `width` units, or `widthFraction` of the screen when that is wider), HP bar width and the side accents. */
+  inspector: { width: number; widthFraction: number; hpBarWidth: number; sideColors: { own: string; foe: string } }
   /** Pixel icons (files under `base`, named icon-<id>.png); type badges use each type's own `icon` file under `typeBase`. */
   icons: {
     base: string
@@ -128,6 +130,10 @@ export function validateBattleUi(c: Content, cfg: BattleUiConfig = BATTLE_UI): s
   num('cry.evolvePitch', cfg.cry.evolvePitch, Number.MIN_VALUE)
   num('hud.hpBarWidth', cfg.hud.hpBarWidth, 4)
   num('hud.expBarWidth', cfg.hud.expBarWidth, 4)
+  num('inspector.width', cfg.inspector.width, 100)
+  num('inspector.widthFraction', cfg.inspector.widthFraction, 0.2)
+  num('inspector.hpBarWidth', cfg.inspector.hpBarWidth, 4)
+  for (const k of ['own', 'foe'] as const) if (!/^#[0-9a-f]{6}$/i.test(cfg.inspector.sideColors[k])) errs.push(`battle-ui inspector.sideColors.${k}: expected #rrggbb`)
   for (const list of [cfg.commands.normal, cfg.commands.pvp]) {
     for (const id of list) if (!COMMAND_IDS.includes(id)) errs.push(`battle-ui commands: unknown command "${id}"`)
     if (!list.includes('fight')) errs.push('battle-ui commands: every command list needs "fight"')

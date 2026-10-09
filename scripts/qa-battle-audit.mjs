@@ -1,5 +1,5 @@
 // Battle screen audit across the seven owner viewports (issue #32): per scenario (boss with 6 meters, boss with 3, wild,
-// trainer) and state (message, commands, moves, item screen, party screen): the layout auditor over the whole battle UI
+// trainer) and state (message, commands, moves, item screen, party screen, status sheet in its worst case): the layout auditor over the whole battle UI
 // plus the creature checks of qa-battle-layout.mjs (no window or foreign element on a sprite, bottom anchoring, no pad).
 //   ego-browser nodejs <<'JS'
 //   const { runBattleAudit } = await import('file:///<repo>/scripts/qa-battle-audit.mjs')
@@ -18,7 +18,7 @@ export const BATTLE_SCENARIOS = [
   { id: 'wild', query: 'battle=wild' },
   { id: 'trainer', query: 'battle=trainer&trainer=route-1' },
 ]
-export const BATTLE_STATES = ['msg', 'cmd', 'moves', 'bag', 'party']
+export const BATTLE_STATES = ['msg', 'cmd', 'moves', 'bag', 'party', 'inspect']
 
 export async function runBattleAudit({ task, base, phase = 'audit', viewports = BATTLE_VIEWPORTS, scenarios = BATTLE_SCENARIOS, states = BATTLE_STATES, slot = '2032100003', repoRoot = null }) {
   assert.match(phase, /^[a-z0-9-]+$/)
@@ -63,6 +63,40 @@ export async function runBattleAudit({ task, base, phase = 'audit', viewports = 
           if (st === 'msg') await measure('msg')
           if (st === 'cmd') await measure('cmd')
           if (st === 'moves') { await key('KeyZ'); await page.waitForTimeout(600); await measure('moves'); await key('KeyX'); await page.waitForTimeout(500) }
+          if (st === 'inspect') {
+            // worst case: both sides with a status, three or four stat stages and two volatiles, plus weather (and the boss meters, if any)
+            await page.evaluate(() => {
+              const v = window.__apBattleView
+              v.status.forEach((p, i) => {
+                p.setStatus(i ? 'paralysis' : 'burn')
+                p.setVolatiles(i ? ['confusion', 'taunt'] : ['focus', 'leech'])
+                p.setStages(i ? { atk: -1, spe: 2, eva: -2 } : { atk: 2, def: -1, spa: 1, spe: -2 })
+              })
+              v.setWeather('overclock')
+            })
+            await page.waitForTimeout(500)
+            await page.evaluate(() => document.querySelector('.apb-status.is-foe').click())
+            await page.waitForTimeout(900)
+            const r = await measureScreen(page, { scope: '.apb-effects-dialog', ignore: '' }, `${outDir}${vp.name}/${sc.id}-inspect.png`)
+            violations.push(...r.violations)
+            const fit = await page.evaluate(() => {
+              const d = document.querySelector('.apb-effects-dialog')
+              const b = d?.querySelector('.apb-fx-body')
+              if (!d || !b) return { missing: true }
+              const box = d.getBoundingClientRect()
+              const head = d.querySelector('.apb-fx-head').getBoundingClientRect()
+              return { scroll: b.scrollHeight - b.clientHeight, inView: box.left >= 0 && box.top >= 0 && box.right <= innerWidth && box.bottom <= innerHeight, headIn: head.top >= box.top && head.bottom <= box.bottom, sides: d.querySelectorAll('.apb-fx-side').length }
+            })
+            if (fit.missing) violations.push({ type: 'inspector-missing', sel: '.apb-effects-dialog', text: '', detail: 'the status sheet did not open' })
+            else {
+              if (fit.scroll > 1) violations.push({ type: 'inspector-scrolls', sel: '.apb-fx-body', text: '', detail: `${fit.scroll}px of the worst case do not fit` })
+              if (!fit.inView) violations.push({ type: 'inspector-off-screen', sel: '.apb-effects-dialog', text: '', detail: 'the sheet leaves the viewport' })
+              if (!fit.headIn || fit.sides !== 2) violations.push({ type: 'inspector-structure', sel: '.apb-fx-head', text: '', detail: `header inside: ${fit.headIn}, sides: ${fit.sides}` })
+            }
+            record('inspect', { warnings: r.warnings })
+            await key('KeyX')
+            await page.waitForTimeout(500)
+          }
           if (st === 'bag' || st === 'party') {
             await key('ArrowRight', st === 'bag' ? 1 : 0)
             if (st === 'party') await key('ArrowDown')

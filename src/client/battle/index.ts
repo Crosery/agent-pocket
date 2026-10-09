@@ -19,6 +19,8 @@ import { createPresenter, type PresenterEnv } from './present.ts'
 import { markCaught, storeCaught } from './saveops.ts'
 import { openScene, type BattleScene, type CoverMode } from './scene.ts'
 
+declare const __AP_DEVTOOLS__: boolean | undefined
+
 export { createLocalChannel, isLocalChannel, type LocalChannel } from './channel.ts'
 export { BATTLE_UI, validateBattleUi, type BattleUiConfig } from './config.ts'
 
@@ -101,8 +103,10 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         })
         const { stage, view } = scene
         if (bossId) stage.setBoss(1, bossId)
-        // dev automation (layout audit): the live stage, only where window.__AP exists (?dev=1)
-        if (typeof window !== 'undefined' && (window as unknown as { __AP?: unknown }).__AP) (window as unknown as { __apStage?: typeof stage }).__apStage = stage
+        // dev automation (layout audit): the live stage and view; only the devtools build carries this (check:devgate)
+        if (typeof __AP_DEVTOOLS__ !== 'undefined' && __AP_DEVTOOLS__ && (window as unknown as { __AP?: unknown }).__AP) {
+          Object.assign(window, { __apStage: stage, __apBattleView: view })
+        }
         const music = opts.music ?? ctx.data.audio.battleMusic[kind]
         if (music) ctx.audio.playBgm(music, { fadeMs: BATTLE_UI.music.fadeMs })
         stage.setTrainer(0, characterOrNull(ctx, init.sides[0].sprite ?? ctx.save.avatar))

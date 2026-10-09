@@ -49,7 +49,10 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
   for (const [k, v] of Object.entries({
     margin: L.margin, gap: L.gap, 'bar-h': L.barHeight, 'foe-w': L.foeWidth, 'own-w': L.ownWidth, 'cmd-w': L.cmdWidth,
     'foe-w-c': L.compactFoeWidth, 'own-w-c': L.compactOwnWidth, 'cmd-w-c': L.compactCmdWidth, 'detail-w': L.detailWidth,
+    'fx-w': BATTLE_UI.inspector.width, 'fx-frac': BATTLE_UI.inspector.widthFraction,
   })) root.style.setProperty(`--apb-${k}`, String(v))
+  root.style.setProperty('--apb-own-c', BATTLE_UI.inspector.sideColors.own)
+  root.style.setProperty('--apb-foe-c', BATTLE_UI.inspector.sideColors.foe)
   const barSpeed = () => battleSpeedScale(pace())
   let openDetails: (side: SideIndex) => void = () => undefined
   const status: [StatusPanel, StatusPanel] = [
@@ -65,7 +68,8 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
   const bar = el('div', 'apb-bar', [message.el, menus.el, status[0].el])
   for (const n of [status[1].el, status[0].el, message.el, menus.el, weather, timer]) n.dataset.hud = ''
   root.append(status[1].el, weather, timer, bar)
-  const effects = createBattleEffectsPanel(root, status)
+  let weatherId: string | null = null
+  const effects = createBattleEffectsPanel(root, status, () => ({ weather: weatherId, boss: status[1].getBoss() }))
   openDetails = (side) => effects.show(side)
   root.addEventListener('click', () => { if (!menus.open && !effects.open) message.advance() })
   root.addEventListener('contextmenu', (e) => e.preventDefault())
@@ -83,6 +87,7 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
     menus,
     setWeather(id) {
       const def = CONTENT.weatherById[id]
+      weatherId = def ? id : null
       weather.hidden = !def
       if (!def) return
       weather.textContent = def.nameZh

@@ -18,6 +18,8 @@ export interface StatusPanel {
   setVolatiles(ids: readonly string[]): void
   setStages(stages: Partial<Record<BattleStatKey, number>>): void
   getSnapshot(): BattleStatusSnapshot | null
+  /** Foe window only: the boss info last given to `setBoss`. */
+  getBoss(): BossPanelInfo | null
   /** Own panel only: exp bar ratio (0..1). */
   setExp(ratio: number, animate: boolean): Promise<void>
   setSlots(slots: readonly SlotInfo[] | null, size: number): void
@@ -69,9 +71,16 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
   let volatiles: string[] = []
   let stages: Partial<Record<BattleStatKey, number>> = {}
   let abilityId: string | null = null
+  let level = 0
+  let hpNow = 0
+  let hpMax = 0
+  let boss: BossPanelInfo | null = null
 
   const snapshot = (): BattleStatusSnapshot | null => p.el.classList.contains('is-empty') ? null : ({
     name: name.textContent ?? '',
+    level,
+    hp: hpNow,
+    maxHp: hpMax,
     abilityId,
     types: [...types],
     status,
@@ -145,6 +154,9 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
       shiny.hidden = !v.shiny
       rarity.replaceChildren(sp ? rarityBadge(sp.rarity) : '')
       lv.textContent = t('battleui.hud.level', { level: v.level })
+      level = v.level
+      hpNow = v.hp
+      hpMax = v.maxHp
       types = sp ? [...sp.types] : []
       status = v.status
       volatiles = []
@@ -153,8 +165,10 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
       paintTags()
       hp.set(v.hp, v.maxHp, false)
     },
-    setLevel(level) { lv.textContent = t('battleui.hud.level', { level }) },
+    setLevel(next) { level = next; lv.textContent = t('battleui.hud.level', { level: next }) },
     setHp(value, max, animate) {
+      hpNow = value
+      hpMax = max
       hp.set(value, max, animate)
       return animate ? hp.settled() : Promise.resolve()
     },
@@ -162,6 +176,7 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
     setVolatiles(ids) { volatiles = [...ids]; paintTags() },
     setStages(s) { stages = { ...s }; paintTags() },
     getSnapshot: snapshot,
+    getBoss: () => boss,
     setExp(ratio, animate) {
       if (!exp) return Promise.resolve()
       exp.set(ratio, 1, animate)
@@ -183,6 +198,7 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
     },
     setAway(away) { p.el.classList.toggle('is-away', away) },
     setBoss(info) {
+      boss = info
       p.el.classList.toggle('is-boss', info !== null)
       bossBox.hidden = info === null
       if (!info) { bossBox.replaceChildren(); return }
