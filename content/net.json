@@ -40,6 +40,7 @@
     "distDir": "dist",
     "publicDir": "public",
     "indexFile": "index.html",
+    "noCacheFiles": ["release.json"],
     "hashedAssetPattern": "-[A-Za-z0-9_-]{8}\\.[A-Za-z0-9]+$",
     "immutableMaxAgeSeconds": 31536000,
     "defaultMaxAgeSeconds": 300,
