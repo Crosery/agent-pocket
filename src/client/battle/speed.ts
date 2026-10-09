@@ -33,6 +33,16 @@ export function stageSteps(dtSec: number, s: SpeedSetting, maxStepSec: number): 
   return out
 }
 
+/** Real seconds the battle clock may consume this frame: none while an overlay holds the battle. */
+export function gatedDt(dtSec: number, held: boolean): number {
+  return held ? 0 : dtSec
+}
+
+/** True when any selector matches; `matches` is the document lookup, injected so the rule stays pure. */
+export function anyMatch(selectors: readonly string[], matches: (selector: string) => boolean): boolean {
+  return selectors.some(matches)
+}
+
 /** Wait queue on battle time: `advance` takes real seconds, so every hold shrinks with the multiplier. */
 export interface Holds {
   wait(ms: number): Promise<void>

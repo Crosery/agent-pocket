@@ -5,7 +5,7 @@ import type { BiomeId, Settings, TimeOfDay } from '../../shared/types.ts'
 import type { GameContext, UIPanel } from '../contracts.ts'
 import { createBattleStage, type BattleStage } from '../render/battle/index.ts'
 import { BATTLE_UI } from './config.ts'
-import { createHolds, stageSteps } from './speed.ts'
+import { anyMatch, createHolds, gatedDt, stageSteps } from './speed.ts'
 import { createBattleView, type BattleView } from './view.ts'
 
 /**
@@ -92,6 +92,7 @@ export async function openScene(ctx: GameContext, opts: SceneOptions): Promise<B
     hudKey = key
     stage.setHud(l)
   }
+  const paused = () => view.overlayOpen() || anyMatch(BATTLE_UI.pause.selectors, (q) => document.querySelector(q) !== null)
   let frameHook: ((dt: number) => void) | null = null
   let raf = 0
   let last = performance.now()
@@ -100,12 +101,15 @@ export async function openScene(ctx: GameContext, opts: SceneOptions): Promise<B
     raf = requestAnimationFrame(frame)
     const dt = Math.min(BATTLE_UI.stage.maxDtSec, Math.max(0, (now - last) / 1000))
     last = now
-    holds.advance(dt, pace())
+    // An overlay on top (status sheet, screen, tip card with a button) stops the battle clock: messages, waits,
+    // banners and stage animation all see no time pass until it closes. Layout still follows the window.
+    const battleDt = gatedDt(dt, paused())
+    holds.advance(battleDt, pace())
     frameHook?.(dt)
-    for (const step of stageSteps(dt, pace(), BATTLE_UI.stage.maxDtSec)) stage.update(step)
-    view.update(dt)
+    for (const step of stageSteps(battleDt, pace(), BATTLE_UI.stage.maxDtSec)) stage.update(step)
+    view.update(battleDt)
     syncHud(dt, hudKey === '')
-    ctx.renderer.render(stage.view, dt)
+    ctx.renderer.render(stage.view, battleDt)
   }
   raf = requestAnimationFrame(frame)
 
@@ -123,10 +127,13 @@ export async function openScene(ctx: GameContext, opts: SceneOptions): Promise<B
     settle(p) {
       if (closed) return Promise.resolve()
       return new Promise<void>((done) => {
-        const timer = setTimeout(() => {
+        // The guard waits out an overlay too: a paused animation is not a stuck one.
+        const arm = (): ReturnType<typeof setTimeout> => setTimeout(() => {
+          if (paused()) { timer = arm(); return }
           console.warn('[battle] stage animation timed out')
           done()
         }, BATTLE_UI.timing.stageGuardMs)
+        let timer = arm()
         const finish = () => { clearTimeout(timer); done() }
         p.then(finish, (err: unknown) => { console.error('[battle] stage animation failed', err); finish() })
       })

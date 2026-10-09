@@ -71,6 +71,8 @@ export interface BattleUiConfig {
     meterLabelWidth: number; meterPipCells: number; meterReadoutMs: number
   }
   /** The status-detail sheet: window width (at least `width` units, or `widthFraction` of the screen when that is wider), HP bar width and the side accents. */
+  /** While any of these matches in the document (a screen, a tip card with a button) or the view holds its own sheet, the battle clock stands still. */
+  pause: { selectors: string[] }
   inspector: { width: number; widthFraction: number; hpBarWidth: number; sideColors: { own: string; foe: string } }
   /** Pixel icons (files under `base`, named icon-<id>.png); type badges use each type's own `icon` file under `typeBase`. */
   icons: {
@@ -135,6 +137,7 @@ export function validateBattleUi(c: Content, cfg: BattleUiConfig = BATTLE_UI): s
   num('cry.evolvePitch', cfg.cry.evolvePitch, Number.MIN_VALUE)
   num('hud.hpBarWidth', cfg.hud.hpBarWidth, 4)
   num('hud.expBarWidth', cfg.hud.expBarWidth, 4)
+  if (!Array.isArray(cfg.pause?.selectors) || cfg.pause.selectors.some((q) => typeof q !== 'string' || !q)) errs.push('battle-ui pause.selectors: expected a list of selectors')
   num('inspector.width', cfg.inspector.width, 100)
   num('inspector.widthFraction', cfg.inspector.widthFraction, 0.2)
   num('inspector.hpBarWidth', cfg.inspector.hpBarWidth, 4)

@@ -10,7 +10,7 @@ import { CONTENT } from '../src/shared/content/index.ts'
 import { sanitizeSettings } from '../src/client/core/save-sanitize.ts'
 import { BATTLE_UI } from '../src/client/battle/config.ts'
 import { advanceTypewriter, createTypewriter } from '../src/client/ui/textflow.ts'
-import { battleMs, battleSec, battleSpeedScale, createHolds, stageSteps } from '../src/client/battle/speed.ts'
+import { anyMatch, battleMs, battleSec, battleSpeedScale, createHolds, gatedDt, stageSteps } from '../src/client/battle/speed.ts'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const read = (f: string) => readFileSync(join(ROOT, f), 'utf8')
@@ -77,8 +77,8 @@ test('stage updates carry the scaled frame in steps no longer than the stage lim
 
 test('every battle time consumer takes its clock from the battle speed module', () => {
   const scene = read('src/client/battle/scene.ts')
-  assert.match(scene, /holds\.advance\(dt, pace\(\)\)/, 'scene holds')
-  assert.match(scene, /stageSteps\(dt, pace\(\), BATTLE_UI\.stage\.maxDtSec\)/, 'stage timelines and vfx')
+  assert.match(scene, /holds\.advance\(battleDt, pace\(\)\)/, 'scene holds')
+  assert.match(scene, /stageSteps\(battleDt, pace\(\), BATTLE_UI\.stage\.maxDtSec\)/, 'stage timelines and vfx')
   assert.doesNotMatch(scene, /left -= dt \* 1000/, 'no raw wait countdown left in the scene')
   assert.match(scene, /paced: boolean|paced\?: boolean/)
   assert.match(read('src/client/battle/index.ts'), /paced: true/, 'battles are paced, cutscenes are not')
@@ -102,4 +102,40 @@ test('the settings screen offers exactly the configured speeds with a 中文 lab
   const text = JSON.parse(read('content/text/zh-CN/screens.json')).settings
   assert.equal(text.field.battleSpeed, '战斗速度')
   assert.match(text.speedValue, /\{value\}/)
+})
+
+test('an overlay stops the battle clock: gated time never reaches holds, typing or stage steps', async () => {
+  assert.equal(gatedDt(0.016, false), 0.016)
+  assert.equal(gatedDt(0.016, true), 0)
+  const holds = createHolds()
+  let fired = false
+  void holds.wait(100).then(() => { fired = true })
+  for (let i = 0; i < 600; i++) holds.advance(gatedDt(0.016, true), at(2))
+  await Promise.resolve()
+  assert.equal(fired, false, 'ten seconds behind an overlay leave a 100 ms hold untouched')
+  for (let i = 0; i < 4; i++) holds.advance(gatedDt(0.016, false), at(2))
+  await Promise.resolve()
+  assert.equal(fired, true, 'it elapses once the overlay is gone')
+  assert.deepEqual(stageSteps(gatedDt(0.25, true), at(2), 1 / 30), [])
+  const tw = createTypewriter('0123456789')
+  for (let i = 0; i < 100; i++) advanceTypewriter(tw, battleSec(gatedDt(0.1, true), at(2)), 20, '', 0)
+  assert.equal(tw.shown, 0, 'message typing stands still')
+})
+
+test('the pause selectors come from content and any single match holds the battle', () => {
+  const sel = BATTLE_UI.pause.selectors
+  assert.ok(sel.length >= 2 && sel.every((q) => typeof q === 'string' && q.length > 0))
+  assert.equal(anyMatch(sel, () => false), false)
+  for (const hit of sel) assert.equal(anyMatch(sel, (q) => q === hit), true)
+  assert.ok(sel.some((q) => /aps-screen/.test(q)), 'kit screens (type chart, bag, party)')
+  assert.ok(sel.some((q) => /ap-tip-open/.test(q)), 'tip cards that carry a button')
+})
+
+test('the scene gates every battle time consumer on one pause check, including the stuck-animation guard', () => {
+  const scene = read('src/client/battle/scene.ts')
+  assert.match(scene, /const battleDt = gatedDt\(dt, paused\(\)\)/)
+  for (const use of ['holds.advance(battleDt', 'stageSteps(battleDt', 'view.update(battleDt', 'render(stage.view, battleDt']) assert.ok(scene.includes(use), use)
+  assert.match(scene, /if \(paused\(\)\) \{ timer = arm\(\); return \}/, 'the wall-clock guard waits out an overlay')
+  assert.match(scene, /view\.overlayOpen\(\)/)
+  assert.match(read('src/client/battle/view.ts'), /overlayOpen: \(\) => effects\.open/)
 })

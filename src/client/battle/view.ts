@@ -38,6 +38,8 @@ export interface BattleView {
   /** Extra handler that sees input first (e.g. evolution cancel). */
   setInterceptor(fn: ((inp: Input) => boolean) | null): void
   input(inp: Input): boolean
+  /** True while a sheet of the view itself (the status detail) is open: the scene holds the battle clock. */
+  overlayOpen(): boolean
   update(dtSec: number): void
 }
 
@@ -170,6 +172,7 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
       if (menus.input(inp)) return true
       return message.input(inp)
     },
+    overlayOpen: () => effects.open,
     update(dt) {
       effects.sync()
       message.update(dt)
