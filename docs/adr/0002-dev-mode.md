@@ -293,6 +293,7 @@ window.__ap = { version: 1, v1: {
 
 **官方服拒绝（在 #30 内实现）：**
 - `src/server/index.ts` 读取 `AP_DEV` 得到 `allowDev`。生产环境的 env 文件里没有这个变量，所以为 false。
+- `vite` 开发服务器永远声明自己是 devtools 构建，所以本地用开发服务器时，游戏服务也要带 `AP_DEV=1`（`scripts/dev.mjs` 已经设了），否则每个连接都会被关闭。预发布同理，见第 9 节第 2 项。
 - hello 新增可选字段 `build: { devtools }`，不升 `protocolVersion`。
 - `hub.ts` 的 `hello()` 在 `devtools && !allowDev` 时，用新关闭码 `closeCodes.devNotAllowed` 断开。
 - `net/client.ts` 收到这个关闭码后，像版本不匹配一样停止重连，并提示 `t('net.error.dev_not_allowed')`。
@@ -364,7 +365,7 @@ window.__ap = { version: 1, v1: {
 
 ## 9 决策
 1. **正式包是否保留调试代码** —— **已定 B**：编译期剔除，另外提供 `--mode devtools` 构建，用于本地验收和自建服。（A：只在 `vite` 开发服务器上提供；C：运行期开关，即现状，不采用。）
-2. **预发布环境 `prev.ap.crosery.com` 是否用 devtools 构建** —— **待所有者确认**。推荐使用：所有者可以在手机上点场景链接验收，预发布服开启 `allowDev`、界面显示 `DEV`；代价是预发布环境的排行榜失去参考意义。
+2. **预发布环境 `prev.ap.crosery.com` 是否用 devtools 构建** —— **已定（所有者 10-09 批准）**：所有者可以在手机上点场景链接验收，预发布服开启 `allowDev`、界面显示 `DEV`；代价是预发布环境的排行榜失去参考意义。部署流程见 `docs/RELEASING.md`“预发布使用 devtools 构建”：`deploy.yml` 在 preview 用 `--mode devtools`，production 仍是普通构建加 `check:devgate`；Arch 上的 `/srv/ap/preview.env` 需要一次性加 `AP_DEV=1`，漏了会让每个连接被拒，`remote-deploy.sh` 会在日志里警告。
 3. **编辑器写回的范围** —— **已定 A**：只写回模板来源的内容，即城镇、室内、道馆、洞穴模板里的建筑、摆件、告示牌和锚点；生成物只读。（B：给生成物加固定种子下的覆盖文件，换种子即失效，与种子世界冲突，不采用。）
 
 ## 10 剩余风险与待验证

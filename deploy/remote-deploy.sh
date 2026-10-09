@@ -13,6 +13,12 @@ activate() { ln -sfn "$1" "$BASE/current.next" && mv -T "$BASE/current.next" "$B
 healthy() { for _ in $(seq "$WAIT"); do curl -fsS "http://$HOST:$PORT/release.json" 2>/dev/null | grep -q "\"commit\":\"$1\"" && return 0; sleep 1; done; return 1; }
 
 cd "$BASE/releases/$SHA"
+# A devtools build (preview) declares itself to the server, which refuses it unless the env file sets AP_DEV (ADR 0002 §5):
+# without that line the release is healthy over HTTP but every game connection is closed.
+if grep -q '"devtools":true' dist/release.json 2>/dev/null && ! grep -qE '^AP_DEV=(1|true|yes|on)$' "/srv/ap/$ENV.env"; then
+  log "WARNING: $SHA is a devtools build but /srv/ap/$ENV.env has no AP_DEV=1; the server will refuse every connection (docs/RELEASING.md)"
+  echo "::warning::/srv/ap/$ENV.env has no AP_DEV=1: this devtools release will refuse every game connection"
+fi
 npm ci --omit=dev --ignore-scripts --no-audit --no-fund --loglevel=error
 activate "releases/$SHA"
 if healthy "$SHA"; then
