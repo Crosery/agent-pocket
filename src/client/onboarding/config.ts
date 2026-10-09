@@ -4,6 +4,7 @@ import { CONTENT } from '../../shared/content/index.ts'
 import tutorialJson from '../../../content/tutorial.json' with { type: 'json' }
 import type { NavigationRules } from '../world/quest-navigation.ts'
 import { walkSteps } from '../../shared/world/story.ts'
+import { ATTENTION } from '../attention/config.ts'
 
 export interface Cond {
   flag?: string[]
@@ -40,7 +41,7 @@ export interface ObjectiveRule {
 /** Game-bus events an `on` trigger may listen to (payload fields are what `match` tests; see logic.ts enrich). */
 export const ON_EVENTS = [
   'screen:opened', 'badge:earned', 'quest:updated', 'dex:seen', 'dex:caught', 'party:changed', 'map:entered', 'region:entered',
-  'net:status', 'world:event', 'battle:end', 'bag:changed',
+  'net:status', 'world:event', 'battle:end', 'bag:changed', 'attention:raised',
 ] as const
 
 /** Moments inside a battle derived from its event stream (logic.ts battleCues). */
@@ -91,6 +92,8 @@ export interface TipDef {
   place?: 'top' | 'bottom' | 'right'
   /** The tip closes by itself once the player does what it explains. */
   doneOn?: 'moved' | 'dialogue'
+  /** The tip is only worth showing while this attention source (content/ui.json attention) still has something waiting. */
+  whileAttention?: string
   /** Offers a screen: a button on the card and a key (battle tips only, the card is out of the way of the battle UI). */
   open?: { screen: 'typeChart'; action: (typeof KEY_PLACEHOLDERS)[number]; /** Button label key; <text>Touch is the phone variant (no key cap). */ text: string }
 }
@@ -172,6 +175,7 @@ export function validateTutorial(world: World, anchors: Record<string, unknown>,
     text(`${tip.text}.title`, where)
     text(`${tip.text}.body`, where)
     cond(tip.expires, where)
+    if (tip.whileAttention && !ATTENTION.sources.some((a) => a.id === tip.whileAttention)) errs.push(`${where}: unknown attention source "${tip.whileAttention}"`)
     if (tip.trigger.kind === 'free') cond(tip.trigger.needs, where)
     const tr = tip.trigger
     for (const a of tip.after ?? []) if (!cfg.tips.list.some((x) => x.id === a)) errs.push(`${where}: unknown "after" tip "${a}"`)

@@ -5,7 +5,8 @@
 import type { MoveDef } from '../../shared/types.ts'
 import type { AudioManager, Input } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
-import { actionKeyLabel, append, button, createGridNav, el, panel, type GridNav } from '../ui/widgets.ts'
+import { actionKeyLabel, append, button, createGridNav, el, keyHint, panel, type GridNav } from '../ui/widgets.ts'
+import { icon } from '../ui/screens/base.ts'
 import { categoryIcon, commandIcon, typeBadge } from './badges.ts'
 import { BATTLE_UI, type CommandId, type EffCategory } from './config.ts'
 
@@ -27,8 +28,8 @@ export interface Menus {
   readonly open: boolean
   readonly mode: 'commands' | 'moves' | null
   openCommands(items: CommandItem[], initial: number): Promise<CommandId>
-  /** Resolves the move index, or -1 when backing out. */
-  openMoves(items: MoveItem[], initial: number): Promise<number>
+  /** Resolves the move index, or -1 when backing out. `onChart(i)` opens the type chart for move i; the list stays up beneath it. */
+  openMoves(items: MoveItem[], initial: number, onChart?: (i: number) => void): Promise<number>
   close(): void
   input(inp: Input): boolean
 }
@@ -39,6 +40,7 @@ interface Active {
   rows: HTMLElement[]
   pick(i: number): void
   cancel(): void
+  chart?: (i: number) => void
 }
 
 export function createMenus(audio: AudioManager): Menus {
@@ -111,7 +113,7 @@ export function createMenus(audio: AudioManager): Menus {
       })
     },
 
-    openMoves(items, initial) {
+    openMoves(items, initial, onChart) {
       return new Promise<number>((resolve) => {
         const p = panel(null, { className: 'apb-win apb-menu apb-moves' })
         p.el.style.setProperty('--cols', String(BATTLE_UI.moves.columns))
@@ -126,6 +128,12 @@ export function createMenus(audio: AudioManager): Menus {
         })
         p.body.replaceWith(...rows)
         const back = button(t('battleui.move.back'), (e) => { e.stopPropagation(); active?.cancel() }, { className: 'apb-back' })
+        // Icon button (the key cap shows where there is a keyboard): the type chart for the highlighted move.
+        const chart = el('button', { class: 'ap-btn apb-chart', title: t('battleui.move.chart'), attrs: { type: 'button', 'aria-label': t('battleui.move.chart') } }, [
+          icon('typeChart', { className: 'apb-chart-ico' }),
+          keyHint(BATTLE_UI.moves.chart.action),
+        ])
+        chart.addEventListener('click', (e) => { e.stopPropagation(); active?.chart?.(active.nav.index) })
         const detail = panel(null, { className: 'apb-win apb-detail' })
         const showDetail = (i: number) => {
           const it = items[i]
@@ -140,7 +148,7 @@ export function createMenus(audio: AudioManager): Menus {
             : null
           detail.body.replaceChildren()
           append(detail.body, [
-            el('div', 'apb-detail-head', [typeBadge(m.type), el('span', { class: 'apb-detail-name', text: m.nameZh }), cat, back]),
+            el('div', 'apb-detail-head', [typeBadge(m.type), el('span', { class: 'apb-detail-name', text: m.nameZh }), cat, ...(onChart ? [chart] : []), back]),
             el('div', 'apb-detail-stats', [
               stat('battleui.move.power', m.power > 0 ? String(m.power) : t('battleui.move.none')),
               stat('battleui.move.accuracy', m.accuracy === 0 ? t('battleui.move.never') : String(m.accuracy)),
@@ -163,6 +171,7 @@ export function createMenus(audio: AudioManager): Menus {
           nav,
           pick: (i) => { if (!items[i].disabled) audio.playSfx(S.confirm); close(); resolve(i) },
           cancel: () => { audio.playSfx(S.cancel); close(); resolve(-1) },
+          ...(onChart ? { chart: (i: number) => { audio.playSfx(S.select); onChart(i) } } : {}),
         })
         rows.forEach((r, i) => r.addEventListener('mouseenter', () => showDetail(i)))
         showDetail(nav.index)
@@ -174,6 +183,7 @@ export function createMenus(audio: AudioManager): Menus {
     input(inp) {
       const a = active
       if (!a) return false
+      if (a.chart && inp.pressed(BATTLE_UI.moves.chart.action)) { inp.consume(BATTLE_UI.moves.chart.action); a.chart(a.nav.index); return true }
       const r = a.nav.handle(inp)
       if (r === 'confirm') a.pick(a.nav.index)
       else if (r === 'cancel') a.cancel()

@@ -16,8 +16,10 @@ import { RngHub, randomSeed } from './core/rng-hub.ts'
 import { createRenderer, createWorldView } from './render/index.ts'
 import { UI_CONFIG, createChatUI, createEscapeStack, createHUD, createMinimap, createUIKit, installEscapeFallback, releaseButtonFocusAfterClick } from './ui/index.ts'
 import { createNetClient } from './net/index.ts'
+import { createAttention } from './attention/index.ts'
 import { createOnboarding } from './onboarding/index.ts'
 import { createFallbackBattleRunner, createFallbackScreens, createOverworld, GAME, type MultiplayerHooks, type OverworldExt } from './world/index.ts'
+import type { Attention } from './attention/index.ts'
 import type { Onboarding } from './onboarding/index.ts'
 import { ownedKeyItem } from './world/save-ops.ts'
 import { flyLanding, resolvePlace } from './world/explore.ts'
@@ -322,6 +324,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   // What needs the generated world (built by buildWorldLayer once it exists).
   let overworld!: OverworldExt
   let onboarding!: Onboarding
+  let attention!: Attention
   let debugOverlay!: ReturnType<typeof createDebugOverlay>
   let hooks: MultiplayerHooks = {}
 
@@ -478,6 +481,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         const battleUp = battleScreenUp()
         if (!battleUp) overworld.update(dt)
         onboarding.update(dt)
+        attention.update(dt)
         autosaveT -= dt
         if (autosaveT <= 0) { autosaveT = data.config.save.autosaveSeconds; ctx.persist('auto') }
         if (!battleUp && worldView.map) { renderer.render(worldView.renderView(), dt); worldRendered = true }
@@ -511,6 +515,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     })
     ctxObj.overworld = overworld
     onboarding = createOnboarding(ctx, overworld, uiRoot)
+    attention = createAttention(ctx)
     debugOverlay = createDebugOverlay(ctx, overworld, appRoot)
     for (const [name, install] of [['pvp', pvpMod?.installPvpHandlers], ['trade', tradeMod?.installTradeHandlers]] as const) {
       try { install?.(ctx) } catch (err) { console.error(`[game] ${name} handlers failed to install`, err) }

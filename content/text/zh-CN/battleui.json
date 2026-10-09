@@ -2,7 +2,7 @@
   "cmd": {"fight": "战斗", "bag": "背包", "party": "队伍", "run": "逃跑", "forfeit": "投降"},
   "hint": {"keys": "{confirm} 确定 {menu} 状态", "touch": "点状态卡看详情"},
   "prompt": {"command": "要让 {name} 做什么？", "move": "要使用哪个招式？", "forcedSwitch": "要让哪只智灵上场？", "switchTitle": "要换上哪只智灵？", "waiting": "正在等待 {name} 行动……", "timer": "{sec} 秒"},
-  "move": {"pp": "{pp}/{max}", "power": "威力", "accuracy": "命中", "category": {"physical": "物理", "special": "特殊", "status": "变化"}, "none": "—", "never": "必中", "priority": "先制 {n}", "back": "返回"},
+  "move": {"pp": "{pp}/{max}", "power": "威力", "accuracy": "命中", "category": {"physical": "物理", "special": "特殊", "status": "变化"}, "none": "—", "never": "必中", "priority": "先制 {n}", "back": "返回", "chart": "属性克制表"},
   "eff": {"immune": "没有效果", "weak": "效果不理想", "normal": "效果一般", "super": "效果绝佳", "unknown": "效果未知"},
   "hud": {"level": "Lv.{level}", "hp": "HP", "exp": "EXP", "stage": "{stat}{sign}{n}", "plus": "+", "minus": "-", "up": "▲{n}", "down": "▼{n}", "statusLabel": "查看{name}的状态详情"},
   "effects": {
