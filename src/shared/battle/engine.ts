@@ -1297,6 +1297,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
         break
     }
     if (!worked && e.kind !== 'battleBoost') this.say('battle.itemNoEffect')
+    if (worked && s !== BOSS_SIDE && (e.kind === 'heal' || e.kind === 'healCure' || e.kind === 'cure' || e.kind === 'pp' || e.kind === 'revive')) this.boss?.onFoeMedicine()
   }
 
   private ballMultiplier(e: Extract<ItemDef['effect'], { kind: 'ball' }>, target: Creature): number {
