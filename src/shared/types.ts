@@ -509,9 +509,13 @@ export interface BossCond {
   foeStatus?: boolean | StatusId
   foeCountry?: string[]
   foeNotCountry?: string[]
+  /** The foe's active creature was released before this date (YYYY-MM or YYYY-MM-DD). */
+  foeReleasedBefore?: string
+  /** The foe's active creature was released on or after this date. */
+  foeReleasedFrom?: string
 }
 
-export type BossEventKind = 'start' | 'turnStart' | 'turnEnd' | 'afterAction' | 'foeMove' | 'foeItem' | 'foeSwitch'
+export type BossEventKind = 'start' | 'turnStart' | 'turnEnd' | 'afterAction' | 'foeMove' | 'foeItem' | 'foeMedicine' | 'foeSwitch'
 
 /** Declarative side effect of a trigger; interpreted by the engine, never code per boss. */
 export type BossOp =
@@ -567,6 +571,8 @@ export interface BossTakenMul {
   moves?: string[]
   /** The move has the same type as the foe's previous damaging move. */
   sameTypeAsLast?: boolean
+  /** The move's type effectiveness against the boss's current species (super > 1, resisted < 1). */
+  effectiveness?: 'super' | 'neutral' | 'resisted'
   /** Text key said when this entry reduces or raises a hit (once per action). */
   note?: string
 }
