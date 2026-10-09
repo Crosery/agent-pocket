@@ -1,6 +1,6 @@
 // Loader for content/world/** (everything except story/). Data only enters the generator here.
 import type {
-  CavesFile, ClimateFile, DungeonsFile, GroundItemRules, InteriorTemplate, LayoutFile, PoisFile, RegionSpec, RouteSpec,
+  AnchorsFile, CavesFile, ClimateFile, DungeonsFile, GroundItemRules, InteriorTemplate, LayoutFile, PoisFile, RegionSpec, RouteSpec,
   ScatterFile, TownSpec, TownTemplate, Vec2, WildsFile, WorldSpec,
 } from './schema.ts'
 
@@ -18,6 +18,7 @@ import climateJson from '../../../content/world/climate.json' with { type: 'json
 import wildsJson from '../../../content/world/wilds.json' with { type: 'json' }
 import poisJson from '../../../content/world/pois.json' with { type: 'json' }
 import dungeonsJson from '../../../content/world/dungeons.json' with { type: 'json' }
+import anchorsJson from '../../../content/world/anchors.json' with { type: 'json' }
 
 /** Repo-relative files the layout templates are read from (the editor writes edits back to them). */
 export const LAYOUT_FILES = {
@@ -55,6 +56,7 @@ export interface WorldContent {
   wilds: WildsFile
   pois: PoisFile
   dungeons: DungeonsFile
+  anchors: AnchorsFile
 }
 
 export function mergeInteriors(a: LayoutFile<InteriorTemplate>, b: LayoutFile<InteriorTemplate>): LayoutFile<InteriorTemplate> {
@@ -82,6 +84,7 @@ export const WORLD_CONTENT: WorldContent = {
   wilds: wildsJson as unknown as WildsFile,
   pois: poisJson as unknown as PoisFile,
   dungeons: dungeonsJson as unknown as DungeonsFile,
+  anchors: anchorsJson as unknown as AnchorsFile,
 }
 
 /**

@@ -11,6 +11,7 @@ import { F_BRIDGE, F_KEEP, F_LAKE, F_PATH, F_RESERVED, F_RIVER, F_SEA, canPlace,
 import type { AnchorMap, DoorLink, OwCtx } from '../ctx.ts'
 import { stampHamlets } from '../hamlets.ts'
 import { stampPois } from '../pois.ts'
+import { placeSiteAnchor } from '../anchor-place.ts'
 import { uniqueName } from '../lore.ts'
 import { bandFor, pickItem } from '../items.ts'
 import { rngFor, type Rng } from '../random.ts'
@@ -114,6 +115,7 @@ export function buildSiteLayout(deps: BaseDeps, site: FrontierSite, levelRange: 
     props: [], warps: [], signs: [], items: [], spots: [], doors: [], services: false, nest: [], dungeon: null, levelRange,
   }
   const wc = frontierWorldContent(deps)
+  let stamped = false
   if (site.type === 'hamlet') {
     const hs = wc.pois.hamlets
     const spec = site.gate ? { ...hs, names: sc.gateway.names, services: sc.gateway.services } : hs
@@ -121,6 +123,7 @@ export function buildSiteLayout(deps: BaseDeps, site: FrontierSite, levelRange: 
     const links: DoorLink[] = []
     const [h] = stampHamlets(ctxH, [local], used, links)
     if (h) {
+      stamped = true
       out.nameZh = h.nameZh
       out.description = h.description
       out.center = { x: h.center.x + x0, y: h.center.y + y0 }
@@ -138,6 +141,7 @@ export function buildSiteLayout(deps: BaseDeps, site: FrontierSite, levelRange: 
   } else if (site.type === 'poi') {
     const [p] = stampPois(ctx, [local], used)
     if (p) {
+      stamped = true
       out.nameZh = p.nameZh
       out.center = { x: p.center.x + x0, y: p.center.y + y0 }
       out.spots = p.spots.map((s) => ({ x: s.x + x0, y: s.y + y0 }))
@@ -148,8 +152,13 @@ export function buildSiteLayout(deps: BaseDeps, site: FrontierSite, levelRange: 
     }
   } else if (site.type === 'dungeon') {
     out.dungeon = stampDungeon(deps, d, site, x0, y0, rng, biomeId, used, levelRange, out)
+    stamped = out.dungeon !== null
   }
   if (!out.nameZh) out.nameZh = regionName
+  // Teleport anchor beside the plaza / POI centre / dungeon mouth; causeway gateways get the grand one.
+  if (stamped) {
+    placeSiteAnchor(d, site.gate ? 'gateway' : site.kind.id, { x: out.center.x - x0, y: out.center.y - y0 })
+  }
   for (const sg of d.signs) out.signs.push({ ...sg, x: sg.x + x0, y: sg.y + y0 })
   for (const pr of d.props) out.props.push({ ...pr, x: pr.x + x0, y: pr.y + y0 })
   const tx: number[] = [], ty: number[] = [], tt: number[] = []

@@ -78,5 +78,6 @@ html.ap-compact .aps-rs-list { flex: none; }
   white-space: nowrap;
 }
 .aps-map-ping:not(.is-named) .aps-map-ping-label, .aps-map-ping.is-place .aps-map-ping-label { display: none; }
+.aps-map-ping.is-cluttered .aps-map-ping-label { visibility: hidden; }
 @keyframes aps-ping { 0%, 100% { opacity: 0.55; transform: scale(0.92); } 50% { opacity: 1; transform: scale(1.06); } }
 .aps-map-legend .aps-legend-ping { display: inline-block; width: calc(var(--u) * 8); height: calc(var(--u) * 8); border-radius: 50%; border: var(--u) solid var(--pc); box-shadow: 0 0 calc(var(--u) * 3) var(--pc); margin-right: calc(var(--u) * 3); vertical-align: middle; }

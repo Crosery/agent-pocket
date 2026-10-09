@@ -1,0 +1,16 @@
+{
+  "id": "anchor-wild",
+  "titleKey": "dev.scn.anchorWild",
+  "extends": "fresh-start",
+  "place": {
+    "map": "overworld",
+    "x": 508,
+    "y": 940
+  },
+  "expect": [
+    {
+      "path": "/save/position/map",
+      "eq": "overworld"
+    }
+  ]
+}

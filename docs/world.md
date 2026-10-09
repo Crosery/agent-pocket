@@ -353,6 +353,42 @@ in `content/terrain.json`, scatter rules in `content/world/scatter.json` (`scale
 Anchors are on walkable tiles or (object anchors such as `pc`, `tv`, `nurse` behind a counter) next to one, and
 reachable (surf for islands). NPCs standing on all spots never seal a warp, a gym leader, a town or a hamlet (tested).
 
+## Teleport anchors (`content/world/anchors.json`)
+
+Two kinds of prop (`warp_anchor_grand`, 3×3 landmark obelisk; `warp_anchor`, 1×1 pillar) that the player walks up to
+(or presses 确定 on) to activate, then travels between from the destination picker or the world map. Ids are
+`anchor:<kind>:<x>:<y>` (footprint top-left), so a save stores plain strings (`SaveData.anchors {unlocked, seen}`;
+old saves load through `sanitize`, the grand anchor beside the start is always active). Everything is content:
+look and sounds per kind (`kinds`), where they stand (`core.rules`, `frontier`), the travel gate (`content/game.json`
+`anchorTravel`, separate from `fly`), strings (`world.anchor.*`, `screens.anchor.*`, `screens.map.anchor*`), the
+procedural model (`content/render.json` `props.styles.warp_anchor*`) and the glow/beam/sparkles (`anchors.beacons`).
+
+| where | rule |
+|---|---|
+| core, start | one **grand** anchor 4–16 tiles from the spawn (`start`, `home: true`: "回原点" travels here); active from the first minute |
+| core, towns / hamlets / dungeon mouths / listed POI templates | one minor anchor per site (`min`/`max` band, `minSpacing`) |
+| core, routes | a candidate every `spacing` path tiles, none within `edgeMargin` of an end |
+| core, fill | raster sweep with a capped 4-neighbour walking distance field over the continent the player can reach: a lattice of probes places an anchor wherever a tile is still more than `maxWalk` steps from every anchor |
+| frontier, sites | each site layout (hamlet, dungeon, ruins, shrine, landmark) gets a minor anchor; causeway gateways get a **grand** one (found on arrival, not pre-activated) |
+| frontier, filler | `fx-anchors` chunk decorator: one probe per `cell` tiles (jittered), skipped near the core and near anchor-bearing sites, needs `reachTiles` of open ground; a pure function of seed and chunk |
+
+An anchor stands on dry, flat, walkable ground inside a free ring (`margin`), never on a path / road / gate / bridge /
+nest / river flag, never on or beside a warp, sign, item or NPC spot; the footprint and ring are stamped `F_RESERVED` /
+`F_KEEP`, so later scatter and NPC placement keep out. A spot that cannot be found leaves a `problems` entry only for
+mandatory rules (spawn).
+
+Measured on the default seed (`tests/anchors.test.ts`): 172 core anchors (1 grand, 171 minor), 619,448 walkable tiles;
+steps on foot to the nearest anchor: median 40, p95 77, p99 95, max 152, 99.996 % within `maxWalk` 130. Frontier
+(`cell` 64): about one anchor per 4.6k open tiles, straight-line distance from open ground to the nearest anchor
+median ~37, p95 ~70. Anchor placement adds ~70 ms to the cold world build.
+
+Online, an anchor trip is one same-map move across the world: the server accepts it through the same jump budget
+as the town fly (`net.json` `rates.jump`), never credits it as distance, never kicks (`tests/anchors-server.test.ts`).
+
+Tuning: fewer / more anchors → `core.rules.fill.maxWalk` (130 → 172 core anchors; 100 → 240, 170 → 125), `frontier.fill.cell`;
+a stricter / looser gate → `game.json anchorTravel.minBadges` / `keyItemKind`; unlock distances →
+`kinds.<kind>.unlockRadius` / `seenRadius`.
+
 ## Content files
 
 | file | shape |

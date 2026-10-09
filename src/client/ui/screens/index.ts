@@ -18,6 +18,7 @@ import { manualScreen } from './manual.ts'
 import { typeChartScreen } from './typechart.ts'
 import { boxScreen } from './box.ts'
 import { worldMapScreen } from './worldmap.ts'
+import { anchorPickerScreen } from './anchorpicker.ts'
 import { questsScreen, questHudText } from './quests.ts'
 import { settingsScreen } from './settings.ts'
 import { learnMoveScreen } from './learnmove.ts'
@@ -69,6 +70,7 @@ export function createScreens(ctx: GameContext): ScreensHandle {
     typeChart: (opts) => typeChartScreen(env, opts),
     box: () => boxScreen(env),
     worldMap: (opts) => worldMapScreen(env, opts),
+    anchorPicker: (opts) => anchorPickerScreen(env, opts),
     quests: () => questsScreen(env),
     settings: () => settingsScreen(env),
     async online() {

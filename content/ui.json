@@ -108,6 +108,8 @@
     "mRare": {"rows": ["...o...", "..oyo..", "ooyhyoo", "oyhhhyo", ".oyyyo.", ".oyoyo.", ".oo.oo."]},
     "mItem": {"rows": ["..o..", ".oco.", "ocwco", ".oco.", "..o.."]},
     "mWarp": {"rows": [".ooo.", "oNNNo", "oNnNo", "oNNyo", "oNNNo", "ooooo"]},
+    "mAnchor": {"rows": ["...o...", "..omo..", ".ocmco.", ".ocmco.", ".obcbo.", "..obo..", ".oSSSo.", "oSSSSSo", "ooooooo"]},
+    "mAnchorGrand": {"rows": [".....o.....", "....omo....", "...ocmco...", "..ocmmmco..", "..ocmmmco..", "..obcmcbo..", "...obcbo...", "....obo....", "..oSSSSSo..", ".oSSSSSSSo.", "oSSSSSSSSSo", "ooooooooooo"]},
     "mQuest": {"rows": [".ooo.", "oyyyo", "oyyyo", ".oyo.", ".oyo.", ".ooo.", ".oyo.", ".ooo."]},
     "mCenter": {"rows": ["ooooooo", "owwwwwo", "owwrwwo", "owrrrwo", "owwrwwo", "owwwwwo", "ooooooo"]},
     "mShop": {"rows": ["..ooo..", ".ow.wo.", "ooooooo", "obbbbbo", "obwbbbo", "obbbbBo", "ooooooo"]},

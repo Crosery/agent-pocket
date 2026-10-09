@@ -932,7 +932,7 @@ html.ap-compact .aps-box-stage { grid-row: span 4; }
 
 /* ------------------------------------------------------------------ world map */
 
-.aps-map-layout { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) calc(var(--u) * 164); gap: calc(var(--u) * 10); }
+.aps-map-layout { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) calc(var(--u) * var(--wm-side, 150)); gap: calc(var(--u) * 10); }
 .aps-map-view { min-width: 0; min-height: 0; display: flex; align-items: center; justify-content: center; padding: calc(var(--u) * 6); overflow: hidden; }
 .aps-map-stage { position: relative; flex: none; box-shadow: 0 0 0 var(--u) var(--ap-ink), 0 0 0 calc(var(--u) * 2) var(--ap-gold-dk); }
 .aps-map-canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
@@ -967,14 +967,29 @@ html.ap-compact .aps-box-stage { grid-row: span 4; }
 .aps-map-town.is-active .ap-glyph { animation: ap-bob-y 600ms steps(1) infinite; filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(255, 230, 140, 0.95)); }
 .aps-map-town.is-active .aps-map-town-name { color: var(--ap-gold-hi); border-bottom-color: var(--ap-gold-hi); }
 .aps-map-player { position: absolute; transform: translate(-50%, -50%); z-index: 3; pointer-events: none; filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(255, 240, 180, 0.9)); animation: aps-blink var(--blink, 700ms) steps(1) infinite; }
-.aps-map-side { display: flex; flex-direction: column; gap: calc(var(--u) * 3); white-space: normal; overflow: auto; }
-.aps-map-tname { font-size: calc(var(--u) * 12); }
-.aps-map-desc { margin: calc(var(--u) * 3) 0 0; }
-.aps-map-legend { display: flex; flex-direction: column; gap: calc(var(--u) * 3); }
-.aps-map-side .aps-tag { align-self: flex-start; }
+/* Side panel: everything visible at once, never scrolling; sizes come from content/screens.json worldMap.panel (--wm-*). */
+.aps-map-side { display: flex; flex-direction: column; white-space: normal; font-size: max(var(--wm-min), calc(var(--u) * var(--wm-body))); line-height: 1.25; }
+/* The panel's corner studs stick out of it, so the clipped, never-scrolling body is the inner box. */
+.aps-map-sidebody { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 5); overflow: hidden; }
+.aps-wm-card { display: flex; flex-direction: column; gap: calc(var(--u) * 3); min-width: 0; }
+.aps-wm-head { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--u) * 2) calc(var(--u) * 4); min-width: 0; }
+.aps-wm-name { min-width: 0; font-size: max(var(--wm-min), calc(var(--u) * var(--wm-name))); overflow-wrap: anywhere; }
+.aps-wm-chips { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 2) calc(var(--u) * 3); }
+.aps-fact { display: inline-flex; align-items: center; gap: calc(var(--u) * 2); padding: calc(var(--u) * 1) calc(var(--u) * 3); white-space: nowrap; font-size: max(var(--wm-chip-min), calc(var(--u) * var(--wm-chip))); background: rgba(5, 7, 13, 0.55); border: var(--u) solid var(--ap-gold-dk); }
+.aps-fact.is-ok { color: var(--ap-success); border-color: rgba(130, 224, 140, 0.55); }
+.aps-fact.is-off { color: var(--ap-text-dim); }
+.aps-fact.is-quest { color: var(--ap-gold-hi); border-color: var(--ap-gold); }
+.aps-wm-row { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--u) * 4); min-width: 0; }
+.aps-wm-away { min-width: 0; }
+.aps-wm-act { flex: none; margin-left: auto; padding: calc(var(--u) * 2) calc(var(--u) * 10); color: var(--ap-gold-hi); }
+.aps-wm-desc { margin: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; cursor: pointer; }
+.aps-wm-desc.is-open { -webkit-line-clamp: var(--wm-desc-open, 4); }
+.aps-wm-you { margin-top: auto; padding-top: calc(var(--u) * 3); border-top: var(--u) solid rgba(255, 255, 255, 0.1); font-size: max(var(--wm-chip-min), calc(var(--u) * var(--wm-chip))); }
+.aps-map-legendpop { position: absolute; top: 0; right: calc(100% + var(--u) * 3); z-index: 6; width: max-content; max-width: calc(var(--u) * 150); display: flex; flex-direction: column; gap: calc(var(--u) * 3); padding: calc(var(--u) * 5) calc(var(--u) * 7); font-size: max(var(--wm-chip-min), calc(var(--u) * var(--wm-chip))); }
+.aps-map-legendpop[hidden] { display: none; }
+.aps-map-tool.is-on { color: var(--ap-gold-hi); }
+.aps-map-town-name.is-cluttered { visibility: hidden; }
 html.ap-compact .aps-map-layout { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; }
-html.ap-compact .aps-map-side { max-height: calc(var(--u) * 150); }
-html.ap-compact .aps-map-legend { flex-direction: row; flex-wrap: wrap; gap: calc(var(--u) * 3) calc(var(--u) * 10); }
 /* Pannable / zoomable infinite world map (worldmap.ts): the stage fills the view, overlays are positioned in CSS px. */
 .aps-map-view:has(.aps-map-stage.is-free) { padding: 0; }
 .aps-map-stage.is-free { flex: 1 1 auto; align-self: stretch; width: 100%; height: 100%; overflow: hidden; cursor: grab; touch-action: none; }
@@ -992,7 +1007,6 @@ html.ap-compact .aps-map-legend { flex-direction: row; flex-wrap: wrap; gap: cal
 .aps-map-cursor { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); pointer-events: none; opacity: 0.55; z-index: 4; }
 .aps-map-tools { position: absolute; top: calc(var(--u) * 4); right: calc(var(--u) * 4); display: flex; flex-direction: column; gap: calc(var(--u) * 2); z-index: 5; }
 .aps-map-tool { min-width: calc(var(--u) * 16); min-height: calc(var(--u) * 16); padding: 0; display: inline-flex; align-items: center; justify-content: center; }
-.aps-map-rname { color: var(--ap-gold-hi); }
 .aps-map-flylist { display: flex; flex-direction: column; gap: calc(var(--u) * 2); }
 .aps-map-flyitem { display: flex; align-items: center; gap: calc(var(--u) * 3); justify-content: flex-start; text-align: left; }
 
@@ -1059,3 +1073,47 @@ html.ap-compact .aps-set-page.is-options { columns: 1; }
 .aps-credit { text-align: center; margin-bottom: calc(var(--u) * 10); }
 .aps-credit-role { margin-bottom: calc(var(--u) * 2); }
 .aps-credit-name { color: var(--ap-text); }
+
+/* ------------------------------------------------------------------ teleport anchors (anchorpicker.ts, worldmap.ts pins) */
+
+.aps-anchor .aps-bag-left { gap: calc(var(--u) * 6); }
+.aps-anchor-home {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 8);
+  width: 100%;
+  min-height: calc(var(--u) * 30);
+  padding: calc(var(--u) * 4) calc(var(--u) * 9);
+  text-align: left;
+  white-space: normal;
+}
+.aps-anchor-home-icon { flex: none; }
+.aps-anchor-home-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 1); }
+.aps-anchor-home-name { font-size: calc(var(--u) * 10); }
+.aps-anchor-home-dist { flex: none; }
+.aps-anchor-row-icon { flex: none; margin-right: calc(var(--u) * 6); align-self: center; }
+.aps-anchor .ap-row.is-disabled .aps-anchor-row-icon { opacity: 0.5; }
+.aps-map-anchorbar { display: flex; gap: calc(var(--u) * 3); }
+.aps-map-anchorbtn { display: flex; align-items: center; gap: calc(var(--u) * 4); justify-content: flex-start; text-align: left; flex: 1 1 0; min-width: 0; padding-left: calc(var(--u) * 4); padding-right: calc(var(--u) * 4); }
+.aps-map-anchorbtn.is-home { color: var(--ap-gold-hi); }
+.aps-map-town.is-anchor:not(.is-active) .aps-map-town-name { display: none; }
+.aps-map-town.is-anchor.is-on .ap-glyph { filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(120, 232, 255, 0.85)); }
+.aps-map-town.is-anchor.is-off { cursor: pointer; opacity: 0.85; }
+html.ap-compact .aps-anchor-home { min-height: calc(var(--u) * 26); }
+html[data-touch-controls='on'] .aps-anchor-home, html[data-touch-controls='on'] .aps-map-anchorbtn { min-height: 46px; }
+.aps-map-town-badge { position: absolute; left: calc(50% + var(--u) * 3); top: calc(var(--u) * -2); transform: scale(0.75); transform-origin: 0 100%; pointer-events: none; }
+.aps-map-town.has-anchor.is-on .aps-map-town-badge { filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(120, 232, 255, 0.85)); }
+html.ap-compact .aps-anchor .aps-item-icon, html.ap-compact .aps-anchor .aps-sec { display: none; }
+/* One scrolling row of area tabs on a phone (the wrapped block ate four rows of a list that wants the height). */
+html.ap-compact .aps-anchor .aps-bag-left .ap-tabs { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; }
+html.ap-compact .aps-anchor .aps-bag-left .ap-tab { flex: none; }
+html[data-touch-controls='on'] .aps-map-town { min-width: 46px; min-height: 46px; }
+html[data-touch-controls='on'] .aps-wm-act { min-width: 46px; min-height: 46px; }
+html[data-touch-controls='on'] .aps-map-town.is-anchor { min-width: 46px; min-height: 46px; }
+
+/* On a phone the map and the destination picker own the whole display (like pause / type chart): no overworld pad underneath. */
+.aps-map, .aps-anchor { --ap-bottom-inset: 0px; }
+html:not(.ap-battle-on):has(.ap-kit-stack > .aps-map):not(:has(.aps-map ~ .aps-screen:not(.ap-pushed-out))) .ap-touch,
+html:not(.ap-battle-on):has(.ap-kit-stack > .aps-anchor):not(:has(.aps-anchor ~ .aps-screen:not(.ap-pushed-out))) .ap-touch { visibility: hidden; }
+.aps-map .aps-foot:empty, .aps-anchor .aps-foot:empty { display: none; }

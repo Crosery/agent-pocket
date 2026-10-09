@@ -8,6 +8,8 @@ export interface FxSystem {
   readonly group: THREE.Group
   spawn(kind: string, x: number, y: number, z: number): void
   setGroundItems(items: { id: string; x: number; y: number; z: number }[]): void
+  /** Persistent teleport-anchor glow (render.json anchors.beacons): ground ring, plus column and sparkles while `on`. */
+  setBeacons(items: { id: string; x: number; y: number; z: number; style: string; on: boolean }[]): void
   update(dt: number, time: number, camera: THREE.PerspectiveCamera, pxScale: number): void
   dispose(): void
 }
@@ -168,6 +170,26 @@ void main() { float r = length(gl_PointCoord - 0.5) * 2.0; if (r > 1.0) discard;
   group.add(orbGlow)
   const _m = new THREE.Matrix4()
 
+  // --- teleport anchor beacons ---
+  const B = RENDER.anchors.beacons
+  interface Beacon { x: number; y: number; z: number; style: string; on: boolean; phase: number; idle: number; ring: THREE.Mesh; col: THREE.Mesh | null; core: THREE.Mesh | null }
+  const coreGeo = new THREE.PlaneGeometry(1, 1)
+  const coreMat = (c: THREE.Color) => new THREE.ShaderMaterial({
+    uniforms: { uColor: { value: c }, uAlpha: { value: 1 } },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+    fragmentShader: 'uniform vec3 uColor; uniform float uAlpha; varying vec2 vUv; void main(){ float r = length(vUv - 0.5) * 2.0; if (r > 1.0) discard; float k = pow(1.0 - r, 2.2); gl_FragColor = vec4(uColor * uAlpha * k, 1.0); }',
+    transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false,
+  })
+  let beacons: Beacon[] = []
+  const dropBeacons = () => {
+    for (const b of beacons) {
+      for (const m of [b.ring, b.col, b.core]) if (m) { group.remove(m); (m.material as THREE.Material).dispose() }
+    }
+    beacons = []
+  }
+  const sameBeacons = (items: { id: string; x: number; y: number; z: number; style: string; on: boolean }[]) =>
+    items.length === beacons.length && items.every((it, i) => beacons[i].x === it.x && beacons[i].y === it.y && beacons[i].z === it.z && beacons[i].style === it.style && beacons[i].on === it.on)
+
   return {
     group,
     spawn(kind, x, y, z) {
@@ -211,8 +233,55 @@ void main() { float r = length(gl_PointCoord - 0.5) * 2.0; if (r > 1.0) discard;
       orbGlowGeo.setAttribute('position', new THREE.BufferAttribute(p, 3))
       orbGlowGeo.setAttribute('aPhase', new THREE.BufferAttribute(ph, 1))
     },
+    setBeacons(items) {
+      if (sameBeacons(items)) return
+      dropBeacons()
+      items.forEach((it, i) => {
+        const st = B[it.style]
+        if (!st) return
+        const ring = new THREE.Mesh(ringGeo, glowMat(srgb(st.color).multiplyScalar(it.on ? st.ring.intensity : st.ring.dormantIntensity), false))
+        ring.scale.set(st.ring.radius, 1, st.ring.radius)
+        ring.position.set(it.x, it.y + st.ring.y, it.z)
+        ring.renderOrder = 24
+        ring.frustumCulled = false
+        group.add(ring)
+        let col: THREE.Mesh | null = null
+        let core: THREE.Mesh | null = null
+        if (it.on) {
+          core = new THREE.Mesh(coreGeo, coreMat(srgb(st.color).multiplyScalar(st.core.intensity)))
+          core.scale.setScalar(st.core.size)
+          core.position.set(it.x, it.y + st.core.y, it.z)
+          core.renderOrder = 26
+          core.frustumCulled = false
+          group.add(core)
+          col = new THREE.Mesh(colGeo, glowMat(srgb(st.color).multiplyScalar(st.column.intensity), true))
+          col.scale.set(st.column.radius, st.column.height, st.column.radius)
+          col.position.set(it.x, it.y + st.column.from, it.z)
+          col.renderOrder = 24
+          col.frustumCulled = false
+          group.add(col)
+        }
+        beacons.push({ x: it.x, y: it.y, z: it.z, style: it.style, on: it.on, phase: i * 2.3, idle: (i * 0.37) % 1, ring, col, core })
+      })
+    },
     update(dt, time, camera, pxScale) {
       bodyScale = billboardAnchorScale(cameraPitch(camera), RENDER.camera.billboard)
+      for (const b of beacons) {
+        const st = B[b.style]
+        const k = (hz: number, amp: number) => 1 + amp * Math.sin((time * hz + b.phase) * Math.PI * 2)
+        ;(b.ring.material as THREE.ShaderMaterial).uniforms.uAlpha.value = b.on ? k(st.ring.pulseHz, st.ring.pulseAmp) : 1
+        if (b.col) (b.col.material as THREE.ShaderMaterial).uniforms.uAlpha.value = k(st.column.pulseHz, st.column.pulseAmp)
+        if (b.core) {
+          const pulse = k(st.core.pulseHz, st.core.pulseAmp)
+          b.core.quaternion.copy(camera.quaternion)
+          b.core.scale.setScalar(st.core.size * (0.9 + 0.1 * pulse))
+          ;(b.core.material as THREE.ShaderMaterial).uniforms.uAlpha.value = pulse
+        }
+        if (b.on) {
+          b.idle -= dt
+          if (b.idle <= 0) { b.idle = st.idle.everySec * (0.7 + 0.6 * Math.random()); burst(st.idle.burst, b.x, b.y, b.z) }
+        }
+      }
       // particles
       let any = false
       for (let k = 0; k < N; k++) {
@@ -269,7 +338,8 @@ void main() { float r = length(gl_PointCoord - 0.5) * 2.0; if (r > 1.0) discard;
     dispose() {
       for (const l of live) { group.remove(l.obj); (l.obj.material as THREE.Material).dispose() }
       live.length = 0
-      pGeo.dispose(); pMat.dispose(); iconGeo.dispose(); ringGeo.dispose(); colGeo.dispose()
+      dropBeacons()
+      pGeo.dispose(); pMat.dispose(); iconGeo.dispose(); ringGeo.dispose(); colGeo.dispose(); coreGeo.dispose()
       for (const t of iconTex.values()) t.dispose()
       orbs?.dispose(); orbGeo.dispose(); orbMat.dispose(); orbGlowGeo.dispose(); orbGlowMat.dispose()
     },

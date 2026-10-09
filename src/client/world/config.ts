@@ -3,12 +3,13 @@ import type { Dir, FieldWeatherKind, GameMap, ScriptStep } from '../../shared/ty
 import type { WorldFx } from '../contracts.ts'
 import { CONTENT, t, type Content } from '../../shared/content/index.ts'
 import gameJson from '../../../content/game.json' with { type: 'json' }
+import { WORLD_CONTENT } from '../../shared/world/data.ts'
 
 export type MapKind = GameMap['kind']
 export type Range = [number, number]
 
 export interface FootstepDef { sfx: string; volume: number; pitch: number; fx?: WorldFx }
-export interface PropInteraction { action: 'box' | 'statue' | 'text' | 'script'; text?: string; script?: ScriptStep[] }
+export interface PropInteraction { action: 'box' | 'statue' | 'text' | 'script' | 'anchor'; text?: string; script?: ScriptStep[] }
 
 export interface GameTuning {
   loop: { maxDtSec: number; pauseWhenHidden: boolean }
@@ -92,6 +93,12 @@ export interface GameTuning {
   battle: { sayIntroBefore: boolean; sayDefeatTextAfter: boolean; lossAbortsScript: boolean; afterBattleSettleMs: number; fallbackMaxSteps: number }
   blackout: { fadeMs: number; sfx: string }
   fly: { minBadges: number; keyItemKind: string; mapKinds: MapKind[]; sfx: string }
+  /**
+   * Teleport anchors (content/world/anchors.json): who may travel between them, separate from the town fly above.
+   * `keyItemKind` '' = no key item needed; `scanSec` = how often the surroundings are checked for anchors to
+   * activate; `beaconRadius` = anchors within this many tiles get their glow drawn.
+   */
+  anchorTravel: { minBadges: number; keyItemKind: string; mapKinds: MapKind[]; scanSec: number; beaconRadius: number }
   script: {
     maxDepth: number; healWaitMs: number; healSfx: string; moneySfx: string; questSfx: string; unlockSfx: string
     fadeMs: number; moveNpcSpeed: number
@@ -192,7 +199,7 @@ export function validateGameContent(g: GameTuning = GAME, c: Content = CONTENT):
   for (const key of g.interact.reachAcrossProps) if (!c.props[key]) errs.push(`game.json interact.reachAcrossProps: unknown prop "${key}"`)
   for (const [key, p] of Object.entries(g.interact.props)) {
     if (!c.props[key]) errs.push(`game.json interact.props: unknown prop "${key}"`)
-    if (!['box', 'statue', 'text', 'script'].includes(p.action)) errs.push(`game.json interact.props.${key}: unknown action "${p.action}"`)
+    if (!['box', 'statue', 'text', 'script', 'anchor'].includes(p.action)) errs.push(`game.json interact.props.${key}: unknown action "${p.action}"`)
     if (p.action === 'text' && !p.text) errs.push(`game.json interact.props.${key}: text action needs "text"`)
     if (p.action === 'script' && !Array.isArray(p.script)) errs.push(`game.json interact.props.${key}: script action needs "script"`)
   }
@@ -218,6 +225,12 @@ export function validateGameContent(g: GameTuning = GAME, c: Content = CONTENT):
   checkSfx('blackout.sfx', g.blackout.sfx)
   checkSfx('fly.sfx', g.fly.sfx)
   checkKinds('fly.mapKinds', g.fly.mapKinds)
+  checkKinds('anchorTravel.mapKinds', g.anchorTravel.mapKinds)
+  if (g.anchorTravel.keyItemKind && !c.itemList.some((it) => it.effect.kind === 'key' && it.effect.key === g.anchorTravel.keyItemKind)) errs.push(`game.json anchorTravel.keyItemKind: no item of kind "${g.anchorTravel.keyItemKind}"`)
+  if (!(g.anchorTravel.scanSec > 0 && g.anchorTravel.beaconRadius > 0)) errs.push('game.json anchorTravel: scanSec and beaconRadius must be > 0')
+  for (const [id, k] of Object.entries(WORLD_CONTENT.anchors.kinds)) {
+    if (g.interact.props[k.prop]?.action !== 'anchor') errs.push(`game.json interact.props.${k.prop}: anchor kind "${id}" needs action "anchor"`)
+  }
   for (const k of ['healSfx', 'moneySfx', 'questSfx', 'unlockSfx'] as const) checkSfx(`script.${k}`, g.script[k])
   checkKinds('fog.mapKinds', g.fog.mapKinds)
   checkKinds('follower.sizeCapMapKinds', g.follower.sizeCapMapKinds)

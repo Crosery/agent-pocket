@@ -2,6 +2,7 @@ import type { Creature, SaveData, Settings, World } from '../../shared/types.ts'
 import type { SaveManager } from '../contracts.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import type { Content } from '../../shared/content/index.ts'
+import { preUnlockedIds } from '../../shared/world/anchors.ts'
 import { decodeSaveCode, encodeSaveCode } from './save-codec.ts'
 import { playableAvatars, sanitizeName, sanitizeSaveData, sanitizeSettings, worldSpawn } from './save-sanitize.ts'
 import type { SanitizeContext } from './save-sanitize.ts'
@@ -68,7 +69,8 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
     },
     newGame(opts) {
       const avatars = playableAvatars(c)
-      const spawn = worldSpawn(world())
+      const w = world()
+      const spawn = worldSpawn(w)
       const bag: Record<string, number> = {}
       for (const [id, qty] of Object.entries(c.config.economy.startItems)) {
         if (c.items[id] && Number.isFinite(qty) && qty > 0) bag[id] = Math.floor(qty)
@@ -97,6 +99,7 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
         clockMinutes: c.config.time.startMinutes,
         stats: { battlesWon: 0, caught: 0, steps: 0, pvpWins: 0, pvpLosses: 0, trades: 0, shiniesFound: 0 },
         settings: sanitizeSettings(c.config.defaultSettings, c),
+        anchors: { unlocked: w ? preUnlockedIds(w) : [], seen: w ? preUnlockedIds(w) : [] },
       }
     },
     exportCode(save: SaveData) {

@@ -154,8 +154,29 @@ export interface ScreensConfig {
     unvisitedPalette: Record<string, string>
     minLabelTiles: number
     padUnits: number
+    /** The side panel: sizes in UI units (px floors for phones), what counts as "nearby", and which services a place can offer. */
+    panel: {
+      widthUnits: number
+      nameUnits: number
+      bodyUnits: number
+      chipUnits: number
+      minPx: number
+      chipMinPx: number
+      /** Tiles: the nearest place named in "you are here" / an open quest target counts as at a place. */
+      nearRadius: number
+      questRadius: number
+      flyChips: number
+      /** Description lines once expanded (it is one line otherwise). */
+      descLinesOpen: number
+      /** Distances from this many tiles on read as thousands. */
+      farAbove: number
+      services: { id: string; npcRole: string; glyph: string; text: string }[]
+      glyphs: { gym: string; anchor: string; quest: string; levels: string }
+    }
   }
   quests: { tabs: (MenuEntry & { kinds: ('main' | 'side')[]; done: boolean })[]; visibleRows: number; compactVisibleRows: number }
+  /** Teleport-anchor picker (anchorpicker.ts): rows of the destination list. */
+  anchors: { visibleRows: number; compactVisibleRows: number; reserveUnits: { base: number; home: number }; padFreeReserveUnits: { base: number; home: number } }
   typeChart: TypeChartConfig
   moveCategoryColors: Record<'physical' | 'special' | 'status', string>
   badges: { tintLight: number; tintDark: number; cols: number; compactCols: number }
@@ -247,6 +268,10 @@ export function validateScreensConfig(cfg: ScreensConfig, c: Content, ui: { glyp
   if (cfg.box.wallpapers.length === 0) errs.push('box.wallpapers must not be empty')
   if (!glyphKnown(cfg.worldMap.townGlyph)) errs.push(`worldMap.townGlyph: unknown glyph "${cfg.worldMap.townGlyph}"`)
   if (!glyphKnown(cfg.worldMap.playerGlyph)) errs.push(`worldMap.playerGlyph: unknown glyph "${cfg.worldMap.playerGlyph}"`)
+  for (const g of [...cfg.worldMap.panel.services.map((x) => x.glyph), ...Object.values(cfg.worldMap.panel.glyphs)]) {
+    if (!glyphKnown(g)) errs.push(`worldMap.panel: unknown glyph "${g}"`)
+  }
+  for (const sv of cfg.worldMap.panel.services) text(`worldMap.panel.services.${sv.id}`, sv.text)
   errs.push(...validateTypeChartConfig(cfg.typeChart, c))
   return errs
 }
