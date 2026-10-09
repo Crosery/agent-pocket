@@ -493,8 +493,9 @@ html.ap-compact .ap-detail { width: auto; align-self: stretch; }
 .ap-fade.is-on { pointer-events: auto; }
 .ap-toasts {
   position: absolute;
-  left: 0;
-  right: 0;
+  /* Clear of the status bar on the left and the minimap on the right. */
+  left: calc(var(--u) * 190 + env(safe-area-inset-left, 0px));
+  right: calc(var(--u) * 190 + env(safe-area-inset-right, 0px));
   top: calc(var(--u) * 8 + env(safe-area-inset-top, 0px));
   display: flex;
   flex-direction: column;
@@ -502,20 +503,53 @@ html.ap-compact .ap-detail { width: auto; align-self: stretch; }
   gap: calc(var(--u) * 4);
   pointer-events: none;
 }
+/* On a phone the toasts sit right of the objective card (which ends near x=160) and below the minimap. */
+html.ap-compact.ap-portrait .ap-toasts {
+  top: calc(var(--u) * 116 + env(safe-area-inset-top, 0px));
+  left: calc(var(--u) * 164 + env(safe-area-inset-left, 0px));
+  right: calc(var(--u) * 8 + env(safe-area-inset-right, 0px));
+  align-items: flex-end;
+}
 html.ap-compact .ap-toasts { top: calc(var(--u) * 116 + env(safe-area-inset-top, 0px)); }
+html.ap-compact.ap-portrait .ap-toast { font-size: calc(var(--u) * 10); }
+/* Over a full-screen screen the stack moves into the title strip, which is empty between the title and the close
+   button; only the newest toast shows there, clamped to two lines. On phones the strip is too narrow, so the stack
+   drops to the bottom-left corner instead, beside the touch buttons. Either way it never covers a list or a pane. */
+.ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toasts {
+  top: calc(var(--u) * 5 + env(safe-area-inset-top, 0px));
+  left: 22vw;
+  right: 22vw;
+  align-items: center;
+}
+.ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast:not(:last-child) { display: none; }
+.ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast { font-size: calc(var(--u) * 10); line-height: 1.15; padding-top: calc(var(--u) * 2); padding-bottom: calc(var(--u) * 3); }
+.ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toasts {
+  top: auto;
+  bottom: calc(var(--u) * 8 + env(safe-area-inset-bottom, 0px));
+  left: calc(var(--u) * 10 + env(safe-area-inset-left, 0px));
+  right: auto;
+  width: min(42vw, calc(var(--u) * 190));
+  flex-direction: column-reverse;
+  align-items: flex-start;
+}
+html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast:not(:last-child) { display: flex; }
+html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast { font-size: inherit; line-height: inherit; padding-top: calc(var(--u) * 3); padding-bottom: calc(var(--u) * 4); }
+html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast-text { display: block; -webkit-line-clamp: unset; overflow: visible; }
 .ap-toast {
   --tc: var(--ap-info);
   position: relative;
   display: flex;
   align-items: center;
   gap: calc(var(--u) * 6);
-  max-width: min(calc(100vw - var(--u) * 16), calc(var(--u) * 300));
+  max-width: min(100%, calc(var(--u) * 300));
   padding: calc(var(--u) * 3) calc(var(--u) * 10) calc(var(--u) * 4) calc(var(--u) * 10);
   background: linear-gradient(90deg, rgba(10, 14, 27, 0.95), rgba(18, 25, 45, 0.92));
   border: var(--u) solid var(--ap-gold-dk);
   box-shadow: 0 0 0 var(--u) var(--ap-ink), inset calc(var(--u) * 2) 0 0 var(--tc), 0 calc(var(--u) * 3) calc(var(--u) * 6) rgba(0, 0, 0, 0.35);
   animation: ap-toast-in var(--ap-toast-enter-ms, 180ms) cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
+.ap-toast-text { min-width: 0; overflow-wrap: anywhere; }
 .ap-toast::before {
   content: '';
   flex: none;

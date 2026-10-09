@@ -6,7 +6,7 @@
   "dialogue": {"charsPerSecond": {"slow": 22, "normal": 45, "fast": 110, "instant": 0}, "blip": {"sfx": "select", "everyChars": 3, "volume": 0.22, "pitch": 1.7, "pitchJitter": 0.08}, "pause": {"chars": "，。！？；：…,.!?;:", "ms": 110}, "lingerMs": 90, "portraitFallbackChars": 1},
   "list": {"visibleRows": 8, "compactVisibleRows": 6, "rowHeight": 18, "wrap": true, "pageStep": 5, "minWidth": 160, "detailWidth": 168},
   "prompt": {"shakeMs": 300},
-  "toast": {"max": 4, "durationMs": {"info": 2600, "success": 2600, "warn": 3400, "error": 4200}, "sfx": {"info": "notify", "success": "notify", "warn": "notify", "error": "error"}},
+  "toast": {"max": 2, "durationMs": {"info": 2600, "success": 2600, "warn": 3400, "error": 4200}, "sfx": {"info": "notify", "success": "notify", "warn": "notify", "error": "error"}},
   "bars": {"hp": {"midBelow": 0.5, "lowBelow": 0.2, "drainPerSecond": 0.9, "width": 64}, "exp": {"fillPerSecond": 0.8, "width": 64}},
   "rarity": {"glowMinOrder": 3, "shimmerMinOrder": 4},
   "radar": {"size": 88, "rings": 4, "labelGap": 4, "padX": 46, "padY": 14, "minRatio": 0.04, "labelAnchor": 0.3},
