@@ -70,7 +70,7 @@ export async function bossGeometry(bossId) {
   return { boss: Object.fromEntries(Object.entries(boss).map(([k, v]) => [k, Math.round(v)])), overlaps, contrast }
 }
 
-export const BOSS_IDS = ['astra', 'deepseek', 'kimi', 'minimax', 'qwen', 'cursor', 'claude-code', 'mythos', 'alpha', 'opus', 'chatgpt', 'unitree', 'grok', 'openclaw', 'gemini', 'doubao', 'seedance', 'glm']
+export const BOSS_IDS = ['astra', 'deepseek', 'kimi', 'minimax', 'qwen', 'cursor', 'claude-code', 'mythos', 'alpha', 'opus', 'unitree', 'grok', 'openclaw', 'gemini', 'doubao', 'seedance', 'glm']
 
 export async function runBossAudit({ task, base, phase = 'boss', viewports = VIEWPORTS, bosses = BOSS_IDS, slot = '2032100001', repoRoot = null }) {
   assert.match(phase, /^[a-z0-9-]+$/)

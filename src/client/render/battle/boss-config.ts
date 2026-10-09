@@ -99,6 +99,7 @@ export function validateBossPresentation(c: Pick<Content, 'bosses' | 'species'>,
   for (const [id, b] of Object.entries(p.bosses)) {
     const w = `bosses.${id}`
     const def = c.bosses[id]
+    if (!def) errs.push(`${w}: not in bosses.json (orphaned presentation entry)`)
     if (!c.species[b.species]) errs.push(`${w}.species: unknown species "${b.species}"`)
     else if (def && def.species !== b.species) errs.push(`${w}.species: "${b.species}" differs from bosses.json "${def.species}"`)
     if (!(b.scale >= lo && b.scale <= hi)) errs.push(`${w}.scale: ${b.scale} outside ${lo}..${hi}`)

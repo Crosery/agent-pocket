@@ -61,14 +61,16 @@ test('every recorded clip exists, is a web-ready mp4 under the size cap and its 
   assert.ok(clips >= 1)
 })
 
-test('validation catches a bad scale, an unknown theme and an oversized clip', () => {
+test('validation catches a bad scale, an unknown theme, an oversized clip and an orphaned entry', () => {
   const bad = structuredClone(BOSS_PRES) as BossPresentation
   bad.bosses.astra.scale = 2.4
   bad.bosses.deepseek.theme = 'nope'
+  bad.bosses.chatgpt = structuredClone(bad.bosses.kimi)
   const clip = structuredClone(BOSS_PRES.bosses.kimi.intro!)
   clip.bytes = BOSS_PRES.intro.maxBytes + 1
   bad.bosses.kimi.intro = clip
   const errs = validateBossPresentation(CONTENT, bad).join('\n')
+  assert.match(errs, /bosses\.chatgpt: not in bosses\.json/)
   assert.match(errs, /astra\.scale/)
   assert.match(errs, /deepseek\.theme/)
   assert.match(errs, /kimi\.intro\.bytes/)

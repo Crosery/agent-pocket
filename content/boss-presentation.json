@@ -236,29 +236,6 @@
         }
       }
     },
-    "chatgpt": {
-      "species": "chatgpt",
-      "scale": 1.56,
-      "theme": "ripple",
-      "intro": {
-        "src": "assets/boss-intro/chatgpt.mp4",
-        "poster": "assets/boss-intro/chatgpt.jpg",
-        "bytes": 1239466,
-        "width": 1280,
-        "height": 720,
-        "fps": 24.0,
-        "durationSec": 4.458,
-        "source": {
-          "tool": "xiaochui-video MCP create_video_task",
-          "model": "MiniMax H3 (Hailuo 3.0)",
-          "taskId": "79d5a9ccda3d47f3",
-          "seed": 520437137,
-          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime elegant big-sister concierge with long silver-white hair stands in the center of a dark arena. The camera slowly pushes in. Soft emerald-green and white ripples of light spread across the floor, glowing speech-bubble shaped sparkles float up around her, and she smiles warmly and raises one hand in welcome. Keep her face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
-          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
-          "firstFrame": "assets_src/boss-intro/frames/chatgpt.png"
-        }
-      }
-    },
     "unitree": {
       "species": "unitree-gd01",
       "scale": 1.35,
