@@ -233,44 +233,6 @@ if (uHue != 0.0 || uSaturation != 1.0) {
 }
 
 // ---------------------------------------------------------------------------
-// Shadows: the depth pass rotates each billboard to face the light so its shadow keeps a full silhouette
-// whatever the camera yaw. One shared material; three copies map/alphaTest from the sprite material.
-// ---------------------------------------------------------------------------
-
-export const spriteShadowUniforms = { uSpriteLightXZ: { value: new THREE.Vector2(0, 1) } }
-
-/** Call once per frame with the direction toward the shadow-casting light. */
-export function setSpriteShadowLight(dirToLight: THREE.Vector3): void {
-  const v = spriteShadowUniforms.uSpriteLightXZ.value.set(dirToLight.x, dirToLight.z)
-  if (v.lengthSq() < 1e-6) v.set(0, 1)
-  else v.normalize()
-}
-
-let sharedDepth: THREE.MeshDepthMaterial | null = null
-
-export function spriteDepthMaterial(): THREE.MeshDepthMaterial {
-  if (sharedDepth) return sharedDepth
-  const m = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, side: THREE.DoubleSide })
-  m.onBeforeCompile = (shader) => {
-    Object.assign(shader.uniforms, spriteShadowUniforms)
-    shader.vertexShader = shader.vertexShader
-      .replace('#include <common>', '#include <common>\nuniform vec2 uSpriteLightXZ;')
-      .replace('#include <begin_vertex>', `#include <begin_vertex>
-{
-  vec2 ax = vec2(modelMatrix[0][0], modelMatrix[0][2]);
-  float objYaw = atan(-ax.y, ax.x);
-  float wantYaw = atan(uSpriteLightXZ.x, uSpriteLightXZ.y);
-  float d = wantYaw - objYaw;
-  float c = cos(d), s = sin(d);
-  transformed.xz = vec2(transformed.x * c + transformed.z * s, -transformed.x * s + transformed.z * c);
-}`)
-  }
-  m.customProgramCacheKey = () => 'ap-sprite-depth-v1'
-  sharedDepth = m
-  return m
-}
-
-// ---------------------------------------------------------------------------
 // Billboarding
 // ---------------------------------------------------------------------------
 
