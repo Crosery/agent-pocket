@@ -342,7 +342,9 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   net.on('online', (m) => hud.setNetStatus(net.status, m.count))
   net.on('welcome', (m) => {
     hud.setNetStatus(net.status, m.online)
-    if (m.motd) chat.addMessage({ name: '', channel: 'system', text: m.motd, at: Date.now() })
+    // The server's greeting names the T key; on a phone the same sentence points at the chat icon (only the stock text is swapped).
+    const motd = document.documentElement.dataset.touchControls === 'on' && m.motd === t('net.motd') ? t('net.motdTouch') : m.motd
+    if (motd) chat.addMessage({ name: '', channel: 'system', text: motd, at: Date.now() })
   })
   net.on('chat', (m) => {
     chat.addMessage({ name: m.name, channel: m.channel, text: m.text, at: m.at, self: m.from === net.selfId })

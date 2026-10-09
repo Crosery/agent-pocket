@@ -10,12 +10,18 @@
 // text, controls that overlap each other, model names that wrap past two lines, and pages that scroll sideways.
 // Ellipsis, line clamps, rolling chat lines, tiny text and small touch targets are warnings. Also checks that name tags
 // sit just above the opaque head of their actor, and worst-case battle HUD / effect inspector (status + volatiles + stages).
+// 'hud-phone' (touch viewports only, incl. 932x430) shows every transient overworld HUD piece at once - region banner, toasts, tip,
+// chat lines, quest card, activity chip, online badge, touch pad, DEV badge - and asserts that no two pieces overlap and none
+// covers the player (padding from content/ui.json phoneHud.audit).
 // Fixtures run with the first-run tips hidden (they are audited alone as 'tip'); report stats.scroll is the tallest
 // scroller's content in viewport heights.
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
+import { readFileSync } from 'node:fs'
 import { setHUDViewport } from './qa-hud-layout.mjs'
+
+const UI_PHONE_PAD = JSON.parse(readFileSync(new URL('../content/ui.json', import.meta.url), 'utf8')).phoneHud.audit.playerPadPx
 
 export const VIEWPORTS = [
   { name: 'd1280', width: 1280, height: 720, dpr: 1 },
@@ -23,6 +29,7 @@ export const VIEWPORTS = [
   { name: 'm390', width: 390, height: 844, dpr: 3, touch: true },
   { name: 'm360', width: 360, height: 780, dpr: 3, touch: true },
   { name: 'm844', width: 844, height: 390, dpr: 3, touch: true },
+  { name: 'm932', width: 932, height: 430, dpr: 3, touch: true },
 ]
 
 /** Runs inside the page (serialised by page.evaluate): must not reference anything outside itself. */
@@ -274,12 +281,54 @@ export async function measureNameTags(page) {
   })
 }
 
+/** Runs inside the page: every transient HUD piece that is showing, pairwise overlaps, and what covers the player. */
+export function auditHudZones(opts) {
+  const { pad } = opts
+  const PIECES = [
+    ['plate', '.ap-plate'], ['banner', '.ap-banner'], ['quest', '.ap-quest'], ['objective', '.ap-objective'],
+    ['events', '.ap-evchips'], ['minimap', '.ap-minimap'], ['online', '.ap-net'], ['toast', '.ap-toast'],
+    ['tip', '.ap-tip:not(.is-inline)'], ['chat-log', '.ap-chat:not(.is-open) .ap-chat-log'], ['chat-button', '.ap-chat-bar'],
+    ['dev-badge', '.apd-badge'], ['stick', '.ap-touch__stick'], ['button', '.ap-touch__btn'],
+  ]
+  const items = []
+  for (const [name, sel] of PIECES) {
+    for (const el of document.querySelectorAll(sel)) {
+      if (!el.checkVisibility({ opacityProperty: true, visibilityProperty: true })) continue
+      const r = el.getBoundingClientRect()
+      if (r.width < 2 || r.height < 2) continue
+      const label = name === 'button' ? `button:${el.dataset.action ?? '?'}` : name
+      items.push({ name: label, box: { l: r.left, t: r.top, r: r.right, b: r.bottom } })
+    }
+  }
+  const violations = []
+  const inter = (a, b) => ({ w: Math.min(a.r, b.r) - Math.max(a.l, b.l), h: Math.min(a.b, b.b) - Math.max(a.t, b.t) })
+  for (let i = 0; i < items.length; i++) for (let j = i + 1; j < items.length; j++) {
+    const o = inter(items[i].box, items[j].box)
+    if (o.w > 2 && o.h > 2) violations.push({ type: 'hud-overlap', sel: `${items[i].name} x ${items[j].name}`, text: '', detail: `${o.w.toFixed(0)}x${o.h.toFixed(0)}px` })
+  }
+  const A = window.__AP, p = A.overworld.player
+  const head = A.world.worldToScreen(p.x, p.elev + 1.7, p.y), foot = A.world.worldToScreen(p.x, p.elev, p.y)
+  const body = { l: Math.min(head.x, foot.x) - 14 - pad.x, t: head.y - pad.top, r: Math.max(head.x, foot.x) + 14 + pad.x, b: foot.y + pad.bottom }
+  for (const it of items) {
+    const o = inter(it.box, body)
+    if (o.w > 0 && o.h > 0) violations.push({ type: 'hud-over-player', sel: it.name, text: '', detail: `${o.w.toFixed(0)}x${o.h.toFixed(0)}px over the character` })
+  }
+  const kinds = {}
+  for (const it of items) kinds[it.name.split(':')[0]] = (kinds[it.name.split(':')[0]] ?? 0) + 1
+  const chat = document.querySelector('.ap-chat'), log = chat?.querySelector('.ap-chat-log')
+  const chatState = chat && log ? { cls: chat.className, lines: log.children.length, opacity: getComputedStyle(log).opacity, visibility: getComputedStyle(log).visibility } : null
+  return { violations, warnings: [], stats: { pieces: items.length, kinds, player: [body.l, body.t, body.r, body.b].map(Math.round), chat: chatState } }
+}
+
 // ---- save fixture ----------------------------------------------------------------------------------------------------
 
 /** Longest-named creatures in the party, a stocked bag and box, a full dex: the worst case for every list. */
 async function prepareSave(page) {
   await page.evaluate(async () => {
     const ctx = window.__AP
+    // The first-use stick hint is decorative and timed; a stable layout run starts without it (checked on its own).
+    try { localStorage.setItem('ap.touch.hintDone', '1') } catch { /* private mode */ }
+    document.querySelector('.ap-touch__hint')?.classList.remove('is-on')
     ctx.net.disconnect()
     const { createCreature } = await import('/src/shared/creature.ts')
     const { Rng } = await import('/src/shared/rng.ts')
@@ -335,6 +384,32 @@ async function closeAll(page) {
 
 // ---- screens ---------------------------------------------------------------------------------------------------------
 
+/** Every transient overworld HUD piece at once, in the open overworld; `withTip` keeps the first-run tip card up (it hides the chat ticker). */
+const phoneHudOpen = (withTip) => async (page) => {
+    await page.evaluate(() => window.__ap.tp(513, 877, 'overworld'))
+    await page.waitForFunction(() => { const p = window.__AP.overworld.player; return window.__AP.overworld.free && p.map === 'overworld' && Math.hypot(p.x - 513.5, p.y - 877.5) <= 0.2 }, undefined, { timeout: 40000 })
+    await page.waitForTimeout(1500)
+    await page.evaluate(async () => {
+      const ctx = window.__AP
+      ctx.save.settings.showTips = true
+      ctx.save.quests.main = { stage: 1, done: false }
+      ctx.save.trackedQuest = 'main'
+      for (const id of ['national-day', 'api-rate-limit', 'gpu-shortage']) window.__ap.gameplay.start(id)
+      ctx.hud.showBanner('模型蒸馏潮', '大模型们把知识蒸馏给了小模型——草丛里突然冒出一堆小巧玲珑的初级形态，经验值也更容易拿。')
+      ctx.ui.toast('蒸馏潮来了！草丛里冒出了好多小巧的智灵。', 'info')
+      ctx.ui.toast('价目牌翻到了红色一面：高峰时段，全场价格翻倍。', 'warn')
+      for (const text of ['欢迎来到智灵口袋！和其他训练家一起探索、交换与对战吧。', '系统: 少年训练家 进入了智灵世界', '另一条用来撑满聊天栏的系统消息。']) {
+        ctx.chat.addMessage({ name: '', channel: 'system', text: `${text} #${Date.now() % 10000}`, at: Date.now() })
+      }
+      window.__apOnboarding.debugShow('move')
+    })
+    await page.waitForTimeout(1200)
+  if (!withTip) {
+    await page.evaluate(() => document.querySelector('.ap-tip-close')?.click())
+    await page.waitForTimeout(700)
+  }
+}
+
 const run = (fn) => async (page) => { await page.evaluate(fn) }
 
 export const SCREENS = [
@@ -349,6 +424,9 @@ export const SCREENS = [
     })
     await page.waitForTimeout(1800)
   } },
+  // Touch viewports only: see auditHudZones.
+  { id: 'hud-phone', touchOnly: true, keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', tip: true, hudZones: true, after: toLab, open: phoneHudOpen(true) },
+  { id: 'hud-phone-chat', touchOnly: true, keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', tip: true, hudZones: true, noReshow: true, after: toLab, open: phoneHudOpen(false) },
   { id: 'hud-events', scope: '.ap-evdetails', open: async (page) => { await page.evaluate(() => document.querySelector('.ap-evtoggle')?.click()) }, closeKey: 'Escape' },
   { id: 'pause', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.pauseMenu() }) },
   { id: 'party', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.party('view') }) },
@@ -459,6 +537,15 @@ async function hideTips(page, hide) {
   }, hide)
 }
 
+/** The dev panel's badge is developer tooling (absent from release builds); only the HUD zone cases keep it on screen. */
+async function hideDevBadge(page, hide) {
+  await page.evaluate((h) => {
+    let st = document.getElementById('qa-hide-dev-badge')
+    if (!st) { st = document.createElement('style'); st.id = 'qa-hide-dev-badge'; document.head.append(st) }
+    st.textContent = h ? '.apd-badge { display: none !important }' : ''
+  }, hide)
+}
+
 async function waitHud(page) {
   await page.waitForFunction(() => !!document.querySelector('.apb-status.is-foe:not(.is-away)'), undefined, { timeout: 20000 }).catch(() => {})
   await page.waitForTimeout(500)
@@ -510,7 +597,7 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
   const report = []
   for (const vp of viewports) {
     await mkdir(`${outDir}${vp.name}`, { recursive: true })
-    await page.cdp('Emulation.setDeviceMetricsOverride', { width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr, mobile: false })
+    await page.cdp('Emulation.setDeviceMetricsOverride', { width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr, mobile: !!vp.touch })
     const restore = async () => {
       await page.goto(`${base}/?dev=1&skipTitle=1&reset=1&slot=${slot}&map=overworld&x=526&y=873&t=720`)
       await page.waitForFunction(() => window.__ap && window.__AP && window.__ap.pos().map === 'overworld' && window.__AP.overworld.free, undefined, { timeout: 60000 })
@@ -535,14 +622,25 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
     }
     for (const screen of SCREENS) {
       if (only && !only.includes(screen.id)) continue
+      if (screen.touchOnly && !vp.touch) continue
       try {
         if (!(await closeAll(page))) await restore()
         await screen.open(page)
         if (!screen.keepToasts) await page.evaluate(() => document.querySelectorAll('.ap-toast').forEach((n) => n.remove()))
         await hideTips(page, screen.id !== 'tip' && !screen.tip)
+        await hideDevBadge(page, !screen.hudZones)
         const shot = `${outDir}${vp.name}/${screen.id}.png`
-        await record(screen, await measureScreen(page, screen, shot), shot)
+        // The zone check goes first: tips and toasts time out, and the text audit below takes seconds. The tip is shown again for it.
+        const zones = screen.hudZones ? await page.evaluate(auditHudZones, { pad: UI_PHONE_PAD }) : null
+        if (zones && !screen.noReshow) { await page.evaluate(() => window.__apOnboarding.debugShow('move')); await page.waitForTimeout(600) }
+        const result = await measureScreen(page, screen, shot)
+        if (zones) {
+          result.violations.push(...zones.violations)
+          result.stats = { ...result.stats, ...zones.stats }
+        }
+        await record(screen, result, shot)
         if (screen.closeKey) await page.keyboard.press(screen.closeKey)
+        if (screen.after) await screen.after(page)
       } catch (err) {
         await record(screen, { violations: [{ type: 'harness', sel: screen.id, text: '', detail: String(err.message).slice(0, 200) }], warnings: [], stats: {} }, '')
       }
@@ -556,6 +654,7 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
           if (!(await closeAll(page))) await restore()
           await startBattle(page)
           await hideTips(page, true)
+          await hideDevBadge(page, true)
           for (const screen of BATTLE_SCREENS) {
             if (only && !only.includes(screen.id)) continue
             await hideTips(page, !screen.tip)

@@ -146,7 +146,7 @@ npm start            # 生产模式：服务器同时托管 dist/ 和 WebSocket
 | 跑步 / 自行车 | Shift / B | X / Y |
 | 世界地图 / 小地图 / 聊天 | M / N / T | Select / LB / RB |
 
-手机上会显示虚拟摇杆和按键。全部按键绑定都在 `content/input.json` 里。
+手机上按住屏幕左半边任意位置拖动即可移动（摇杆在手指落下处生成，松手消失；短按是点按移动），右下角是按键。全部按键绑定都在 `content/input.json` 里。
 
 ---
 

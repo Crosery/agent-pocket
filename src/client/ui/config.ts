@@ -24,6 +24,15 @@ export interface MarkerStyle {
   palette?: Record<string, string>
 }
 
+export interface PhoneHudZones {
+  /** Toast lane offsets from the top and the two sides. */
+  toast: { top: number; left: number; right: number }
+  /** Width of the HUD cards under the region plate (quest card), so the toast lane beside them stays clear. */
+  lowerStackWidth: number
+  /** Lines of the region / event banner's subtitle (0 hides it: the headline alone). */
+  bannerSubLines: number
+}
+
 export interface UIConfig {
   scale: { baseWidth: number; baseHeight: number; minCssPerUnit: number; maxDeviceScale: number; compactBelowWidth: number }
   anim: { panelOpenMs: number; panelCloseMs: number; modalOpenMs: number; cursorBobMs: number; toastEnterMs: number; toastLeaveMs: number }
@@ -75,9 +84,22 @@ export interface UIConfig {
     markers: Record<string, MarkerStyle>
     fallbackMarker: string
   }
+  /** Phone HUD zones (UI units unless noted); published as --ap-ph-* by scale.ts, used by phone.css and the layout audit. */
+  phoneHud: {
+    portrait: PhoneHudZones
+    landscape: PhoneHudZones
+    /** Lines a toast may take. */
+    toastLines: number
+    /** CSS px kept free above the bottom edge for the chat button row (landscape tip card rests above it). */
+    chatClearPx: number
+    /** CSS px between a tip's dismiss button and its close button. */
+    tipFootGapPx: number
+    audit: { playerPadPx: { x: number; top: number; bottom: number } }
+  }
   chat: {
     passiveLines: number
     compactPassiveLines: number
+    touchPassiveLines: { portrait: number; landscape: number }
     openLines: number
     maxLines: number
     idleFadeMs: number
@@ -145,6 +167,12 @@ export function validateUIConfig(cfg: UIConfig, knownSfx: readonly string[]): st
   if (cfg.minimap.tilesVisible <= 0) errs.push('ui.minimap.tilesVisible must be > 0')
   if (cfg.chat.tabs.length === 0) errs.push('ui.chat.tabs must not be empty')
   if (!(cfg.focus.stallSec > 0)) errs.push('ui.focus.stallSec must be > 0')
+  for (const o of ['portrait', 'landscape'] as const) {
+    const z = cfg.phoneHud[o]
+    if (!(z.lowerStackWidth > 0) || !(z.bannerSubLines >= 0)) errs.push(`ui.phoneHud.${o}: lowerStackWidth must be positive and bannerSubLines >= 0`)
+    for (const k of ['top', 'left', 'right'] as const) if (!(z.toast[k] >= 0)) errs.push(`ui.phoneHud.${o}.toast.${k} must be >= 0`)
+    if (!(cfg.chat.touchPassiveLines[o] >= 1)) errs.push(`ui.chat.touchPassiveLines.${o} must be >= 1`)
+  }
   if (cfg.focus.escapeOrder.length === 0) errs.push('ui.focus.escapeOrder must not be empty')
   return errs
 }
@@ -154,5 +182,5 @@ export function touchPadHeight(b: InputBindings = INPUT_BINDINGS): number {
   const t = b.touch
   if (!t) return 0
   const buttons = t.buttons.map((x) => x.bottom + (x.size === 'large' ? t.buttonSize : t.smallButtonSize))
-  return (t.margin ?? 0) + Math.max(2 * (t.stickRadius ?? 0), 0, ...buttons)
+  return (t.margin ?? 0) + Math.max(0, ...buttons)
 }

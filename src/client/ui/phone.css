@@ -8,7 +8,7 @@ html:not(.ap-portrait)[data-touch-controls='on'] .aps-foot { display: none; }
 /* Landscape chat log sits between the stick and the buttons even while a first-run tip is up
    (onboarding.css sizes it for the desktop pad), and gives way to the tip card. */
 html:not(.ap-portrait)[data-touch-controls='on'] .ap-chat:not(.is-open) { width: auto !important; }
-html:not(.ap-portrait)[data-touch-controls='on'] .ap-root:has(.ap-l-tips .ap-tip.is-in:not(.is-inline)) .ap-chat:not(.is-open) .ap-chat-log { visibility: hidden; }
+html[data-touch-controls='on'] .ap-root:has(.ap-l-tips:not(.is-top, [hidden]) .ap-tip.is-in:not(.is-inline)) .ap-chat:not(.is-open) .ap-chat-log { visibility: hidden; }
 
 /* The dex number is a label over the sprite cell; keep it above the sprite box. */
 html[data-touch-controls='on'] .aps-dex-no { position: relative; z-index: 1; }
@@ -17,11 +17,11 @@ html[data-touch-controls='on'] .aps-dex-no { position: relative; z-index: 1; }
    key-cap footer and the pad. (!important: the screen/compact variants in styles.css are more specific.) */
 html[data-touch-controls='on'] .ap-toast:nth-last-child(n+3) { display: none !important; }
 html[data-touch-controls='on'] .ap-toast { font-size: calc(var(--u) * 10) !important; line-height: 1.15 !important; padding-top: calc(var(--u) * 2) !important; padding-bottom: calc(var(--u) * 3) !important; }
-html[data-touch-controls='on'] .ap-toast-text { display: -webkit-box !important; -webkit-box-orient: vertical; -webkit-line-clamp: 2 !important; overflow: hidden !important; }
+html[data-touch-controls='on'] .ap-toast-text { display: -webkit-box !important; -webkit-box-orient: vertical; -webkit-line-clamp: var(--ap-ph-toast-lines) !important; overflow: hidden !important; }
 
 /* The chat button is a finger target, and the first-run tip card rests above it instead of on it. */
 html[data-touch-controls='on'] .ap-chat-bar .ap-chat-open { min-width: 44px; min-height: 44px; }
-html:not(.ap-portrait)[data-touch-controls='on'] .ap-l-tips:not(.is-top):not(.is-right):not(.is-battle) .ap-tip:not(.is-inline) { margin-bottom: calc(52px + env(safe-area-inset-bottom, 0px)); }
+html:not(.ap-portrait)[data-touch-controls='on'] .ap-l-tips:not(.is-top):not(.is-right):not(.is-battle) .ap-tip:not(.is-inline) { margin-bottom: calc(var(--ap-ph-chat-clear) + env(safe-area-inset-bottom, 0px)); }
 
 /* The online hub stacks head, tabs, list, emotes and footer: taller than a landscape phone, so its body scrolls. */
 html:not(.ap-portrait)[data-touch-controls='on'] .mp-hub > .ap-panel { display: flex; flex-direction: column; max-height: calc(100% - var(--u) * 12); }
@@ -68,3 +68,34 @@ html:not(.ap-portrait)[data-touch-controls='on'] .aps-box-party { max-height: 10
 
 /* Chat: the Tab / Esc hint is keyboard-only. */
 html[data-touch-controls='on'] .ap-chat-hint { display: none; }
+
+/* ------------------------------------------------------------------ phone HUD zones
+   Numbers live in content/ui.json (phoneHud) and arrive as --ap-ph-* (ui/scale.ts).
+   Top-left stack: plate, banner, quest card, activity chip. Top-right: minimap and online badge.
+   Toast lane: portrait beside the quest card and under the minimap, landscape between the stack and the minimap.
+   Bottom: the tip card (or the chat ticker while no tip is up) above the pad in portrait and above the chat row in landscape. */
+
+html[data-touch-controls='on'] .ap-l-kit:not(:has(> .ap-kit-stack > .aps-screen)) .ap-toasts {
+  top: calc(var(--u) * var(--ap-ph-toast-top) + env(safe-area-inset-top, 0px));
+  left: calc(var(--u) * var(--ap-ph-toast-left) + env(safe-area-inset-left, 0px));
+  right: calc(var(--u) * var(--ap-ph-toast-right) + env(safe-area-inset-right, 0px));
+}
+html[data-touch-controls='on'] .ap-hud-missions { width: calc(var(--u) * var(--ap-ph-lower-w)); max-width: 100%; }
+
+/* The banner is a headline, not a page: tight padding and a clamped subtitle keep the stack short. */
+html[data-touch-controls='on'] .ap-banner { padding: calc(var(--u) * 3) calc(var(--u) * 6); }
+html[data-touch-controls='on'] .ap-banner { gap: 0; }
+html[data-touch-controls='on'] .ap-banner-sub {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: var(--ap-ph-banner-lines);
+  max-height: calc(var(--u) * 14 * var(--ap-ph-banner-lines)); overflow: hidden;
+  margin-top: calc(var(--u) * 2 * min(1, var(--ap-ph-banner-lines)));
+}
+
+/* Tip card: the dismiss button joins the title row (left of the close button), the key-cap line goes, so the card is
+   one finger-row plus its text and stays below the player. */
+html[data-touch-controls='on'] .ap-l-tips:not(.is-battle) .ap-tip:not(.is-inline) .ap-tip-foot {
+  position: absolute; top: calc(var(--u) * 4); right: calc(var(--u) * 6 + 44px + var(--ap-ph-tip-foot-gap)); margin: 0;
+}
+html[data-touch-controls='on'] .ap-l-tips:not(.is-battle) .ap-tip:not(.is-inline) .ap-tip-foot-text { display: none; }
+html[data-touch-controls='on'] .ap-l-tips:not(.is-battle) .ap-tip:not(.is-inline) .ap-tip-title { min-height: 44px; }
+html[data-touch-controls='on'] .ap-l-tips:not(.is-battle) .ap-tip:not(.is-inline) .ap-tip-title-text { margin-right: calc(var(--u) * 52); }
