@@ -100,6 +100,12 @@ export function sampleWalkHeight(sampler: TerrainSampler, x: number, y: number):
   return k === KIND_WATER || k === KIND_LAVA ? base - RENDER.terrain.liquidDrop : base
 }
 
+/** Rendered top of the terrain at float tile coords (stairs are the stepped tops the mesh draws, unlike sampleWalkHeight). */
+export function sampleSurfaceHeight(sampler: TerrainSampler, x: number, y: number): number {
+  const tx = Math.floor(x), ty = Math.floor(y)
+  return sampler.inside(tx, ty) ? sampler.topAt(tx, ty, x - tx, y - ty) : 0
+}
+
 export function createTerrainSampler(map: GameMap): TerrainSampler {
   return map.infinite ? createInfiniteSampler(map, map.infinite) : createFiniteSampler(map)
 }

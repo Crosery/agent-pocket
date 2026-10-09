@@ -172,14 +172,6 @@ export interface BreathDef { hz: number; squash: number; bob: number }
 export interface SpriteCfg {
   /** Horizontal widening per unit of vertical squash (volume preservation). */
   squashWiden: number
-  /** Blob shadow: lift above the ground, shrink / fade per world unit the sprite is lifted, and their floors. */
-  blobLift: number
-  blobLiftShrink: number
-  blobMinScale: number
-  blobLiftFade: number
-  blobMinOpacity: number
-  /** How much the sprite's aspect widens the blob (0 = round blob whatever the width). */
-  blobWidthMix: number
 }
 
 export interface CreatureCfg {
@@ -190,7 +182,6 @@ export interface CreatureCfg {
   sizeClamp: Vec2
   alphaTest: number
   normalTilt: number
-  blob: { size: number; opacity: number }
   breath: BreathDef
   dissolveCells: number
   dissolveEdge: string
@@ -207,7 +198,6 @@ export interface TrainerCfg {
   alphaTest: number
   normalTilt: number
   frame: number
-  blob: { size: number; opacity: number }
   breath: BreathDef
   /** Ball release height as a fraction of the trainer height. */
   handH: number

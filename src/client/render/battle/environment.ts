@@ -6,8 +6,9 @@ import { CONTENT } from '../../../shared/content/index.ts'
 import type { Settings, TimeOfDay, WeatherId } from '../../../shared/types.ts'
 import type { AssetStore, PostParams } from '../../contracts.ts'
 import {
-  RENDER, dirFromAngles, hexToRgb, lerpHex, sampleLighting, sunState, type LightingState, type QualityPreset, type Vec3,
+  RENDER, dirFromAngles, hexToRgb, lerpHex, lightingTier, sampleLighting, sunState, type LightingState, type QualityPreset, type Vec3,
 } from '../config.ts'
+import { updateSpriteShadows } from '../sprite-shadow.ts'
 import { createTerrainAtlas, terrainAtlasKeys } from '../world/atlas.ts'
 import { createGrassLayer, type GrassBender } from '../world/grass.ts'
 import { createLightRig, type LightSource } from '../world/lights.ts'
@@ -264,6 +265,7 @@ export function createEnvironment(scene: THREE.Scene, assets: AssetStore, opts: 
       sky.apply(s, dir, fade * wx.sunMul, origin, f.camera, f.camDistance, time)
       const shadowsOn = f.settings.shadows && q.shadows
       sky.setShadows(shadowsOn, Math.round(CONTENT.config.render.shadowMapSize * q.shadowMapScale), q.shadowRadius)
+      updateSpriteShadows({ dir, light: sky.sun.intensity, moon: false, outdoor: !opts.indoor, cast: shadowsOn && lightingTier(f.settings.quality).spriteCast })
       props.setShadows(shadowsOn && q.propShadows)
       props.setLamps(s.lamps)
       lights.update(dt, time, origin, s.lamps, q.glowSprites, f.pxPerUnit)

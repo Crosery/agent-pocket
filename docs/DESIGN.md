@@ -78,7 +78,8 @@ tests/                                                         per-module tests:
 ## HD-2D look
 
 Low internal resolution (pixelScale) with nearest upscale, pixel-art textures (nearest, no mips), cylindrical
-billboard sprites with real shadows, tilt-shift DOF focused on player, bloom on lights/emissives, vignette + warm
+billboard sprites with soft ground shadows (a contact ellipse under the soles plus a cast silhouette built from the
+sprite alpha, `render.json spriteShadow`; sprites stay out of the sun shadow map), tilt-shift DOF focused on player, bloom on lights/emissives, vignette + warm
 grade, fog, day/night lighting with point lights at night, weather particles, instanced swaying grass.
 
 ### World physics feedback

@@ -23,6 +23,8 @@ export interface ServerOptions {
   host?: string
   /** Inject a PvP module (tests); undefined = load ./pvp.ts, null = disabled. */
   pvp?: PvpModule | null
+  /** Accept clients built with developer tooling (--mode devtools). Off unless AP_DEV is set; production never sets it. */
+  allowDev?: boolean
   /** Inject world bounds (tests); undefined = build from src/shared/world, null = no bounds. */
   world?: WorldInfo | null
   quiet?: boolean
@@ -76,7 +78,7 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
   const world = opts.world !== undefined ? opts.world : await loadWorldInfo(log)
   const pvp = opts.pvp !== undefined ? opts.pvp : await loadPvpModule(log)
   const sanitizer = creatureSanitizer(log)
-  const hub = createHub({ store, world, pvp, sanitizer, log })
+  const hub = createHub({ store, world, pvp, sanitizer, allowDev: opts.allowDev === true, log })
   const startedAt = Date.now()
 
   const handler = createHttpHandler({
@@ -111,7 +113,7 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
   })
   const addr = server.address()
   const port = typeof addr === 'object' && addr ? addr.port : opts.port
-  log(`listening on http://localhost:${port} (ws ${NET.protocol.wsPath}, world bounds ${world ? 'on' : 'off'}, pvp ${pvp ? 'on' : 'off'})`)
+  log(`listening on http://localhost:${port} (ws ${NET.protocol.wsPath}, world bounds ${world ? 'on' : 'off'}, pvp ${pvp ? 'on' : 'off'}, dev ${opts.allowDev ? 'on' : 'off'})`)
 
   let closing: Promise<void> | null = null
   return {
@@ -138,7 +140,8 @@ if (isMain) {
   const dataDir = process.env.AP_DATA_DIR ? resolve(process.env.AP_DATA_DIR) : resolve(PROJECT_ROOT, NET.store.defaultDir)
   const distDir = process.env.AP_DIST_DIR ? resolve(process.env.AP_DIST_DIR) : undefined
   const host = process.env.AP_HOST || undefined
-  startServer({ port, host, dataDir, distDir }).then(
+  const allowDev = /^(1|true|yes|on)$/i.test(process.env.AP_DEV ?? '')
+  startServer({ port, host, dataDir, distDir, allowDev }).then(
     (srv) => {
       const stop = () => { srv.close().then(() => process.exit(0), () => process.exit(1)) }
       process.once('SIGINT', stop)

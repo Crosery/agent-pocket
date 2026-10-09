@@ -126,7 +126,7 @@ test('world player, NPC and remote actors breathe in every direction despite rep
   texture.image = { width: 1024, height: 256 }
   const ctx = {
     assets: { characterTexture: () => texture }, root: new THREE.Group(), registry: new Set(), yaw: { value: 0 },
-    inGrassAt: () => false,
+    inGrassAt: () => false, groundAt: () => 0,
     overlay: { createTag: () => ({ setName() {}, update() {}, dispose() {}, bubble() {} }) },
   } as unknown as ActorContext
   for (const kind of ['player', 'npc', 'remote'] as const) {
@@ -156,7 +156,7 @@ test('an asynchronous world texture resize and same-layout character swap retain
   texture.image = { width: 256, height: 256 }
   const ctx = {
     assets: { characterTexture: () => texture }, root: new THREE.Group(), registry: new Set(), yaw: { value: 0 },
-    inGrassAt: () => false,
+    inGrassAt: () => false, groundAt: () => 0,
     overlay: { createTag: () => ({ setName() {}, update() {}, dispose() {}, bubble() {} }) },
   } as unknown as ActorContext
   const actor = createActorImpl(ctx, { sheet: 'hero_boy', kind: 'npc' })

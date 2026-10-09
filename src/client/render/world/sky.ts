@@ -2,7 +2,6 @@
 // hemisphere ambient and fog — all driven by a LightingState sampled from content/render.json.
 import * as THREE from 'three'
 import { RENDER, hexToRgb, type LightingState, type Vec3 } from '../config.ts'
-import { setSpriteShadowLight } from '../sprite-utils.ts'
 
 export interface SkyRig {
   readonly dome: THREE.Mesh
@@ -108,7 +107,6 @@ void main() {
 
       // shadow frustum follows the focus; snapped to shadow texels in light space so edges don't crawl
       _dir.set(dir[0], dir[1], dir[2]).normalize()
-      setSpriteShadowLight(_dir)
       const want = Math.max(S.shadowExtent, camDistance * S.extentPerDistance)
       if (Math.abs(want - extent) > 0.5) extent = want
       cam.left = -extent; cam.right = extent; cam.top = extent; cam.bottom = -extent

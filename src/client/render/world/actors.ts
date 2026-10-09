@@ -6,8 +6,9 @@ import type { Actor, ActorOptions, AssetStore, CreatureActor } from '../../contr
 import { RENDER, hexToRgb } from '../config.ts'
 import { createCharacterAnimation } from '../character-animation.ts'
 import { applySpriteLighting } from '../sprite-lighting.ts'
+import { createSpriteShadow } from '../sprite-shadow.ts'
 import {
-  billboardPointToWorld, createBillboardGeometry, createBlobShadow, createSpriteMaterial, setGeometryFrame, sheetLayout, spriteDepthMaterial, spriteOpaqueTop,
+  billboardPointToWorld, createBillboardGeometry, createSpriteMaterial, setGeometryFrame, sheetLayout, spriteOpaqueTop,
   type SpriteMaterial,
 } from '../sprite-utils.ts'
 import { applyOcclusion } from './occlusion.ts'
@@ -38,6 +39,8 @@ export interface ActorContext {
   /** Cylindrical billboard yaw (shared, updated by the world view). */
   yaw: { value: number }
   inGrassAt(x: number, y: number): boolean
+  /** Rendered terrain top (world units) at world x, z: the ground the shadows lie on. */
+  groundAt(x: number, z: number): number
 }
 
 /** Same-row tie-break against other sprites (render.json actors.renderOrder / depthBias). */
@@ -70,14 +73,12 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
   const sprite = createSpriteMaterial(ctx.assets.characterTexture(opts.sheet), { alphaTest: A.alphaTest, opacity: opts.kind === 'remote' ? A.remoteAlpha : 1, billboard: RENDER.camera.billboard })
   applySpriteLighting(sprite.material)
   const mesh = new THREE.Mesh(geo, sprite.material)
-  mesh.castShadow = true
   mesh.receiveShadow = false
-  mesh.customDepthMaterial = spriteDepthMaterial()
   mesh.name = `actor:${opts.sheet}`
   layer(mesh, sprite, opts.kind)
-  const blob = createBlobShadow(A.blob.size, A.blob.opacity)
+  const shadow = createSpriteShadow({ geometry: geo, map: () => sprite.material.map, alphaTest: A.alphaTest, ground: ctx.groundAt })
   const object = new THREE.Group()
-  object.add(mesh, blob)
+  object.add(mesh, shadow.object)
   ctx.root.add(object)
   const mirror = attachMirror(mesh, object, sprite.material, { w: A.width, h: A.height }, A.alphaTest)
   const tag = ctx.overlay.createTag()
@@ -175,7 +176,7 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
       mesh.scale.set(sx, sy, 1)
       mesh.position.y = lift
       mesh.rotation.y = ctx.yaw.value
-      blob.scale.setScalar(1 - Math.min(0.5, lift))
+      shadow.update({ x: actor.x, y: actor.elev, z: actor.y, yaw: ctx.yaw.value, scaleX: sx, scaleY: sy, lift })
       // tall grass: the cut sinks in / rises out over grassCutMs; a hop (also one the controller lifts) clears it
       const cutFull = A.grassCut * A.height
       const cutTo = grassManual || (hopT < 0 && ctx.inGrassAt(actor.x, actor.y)) ? cutFull : 0
@@ -189,8 +190,7 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
       mirror.dispose()
       geo.dispose()
       sprite.dispose()
-      blob.geometry.dispose()
-      ;(blob.material as THREE.Material).dispose()
+      shadow.dispose()
       tag.dispose()
     },
   }
@@ -230,15 +230,13 @@ export function createCreatureActorImpl(ctx: ActorContext, speciesId: string, sh
     }
   }
   const mesh = new THREE.Mesh(geo, sprite.material)
-  mesh.castShadow = true
-  mesh.customDepthMaterial = spriteDepthMaterial()
   mesh.name = `creature:${speciesId}`
   layer(mesh, sprite, 'creature')
-  const blob = createBlobShadow(A.blob.size * Math.max(0.6, h / A.height), A.blob.opacity)
+  const shadow = createSpriteShadow({ geometry: geo, map: () => sprite.material.map, alphaTest: C.alphaTest, ground: ctx.groundAt })
   const object = new THREE.Group()
   const body = new THREE.Group()
   body.add(mesh)
-  object.add(body, blob)
+  object.add(body, shadow.object)
   ctx.root.add(object)
   const mirror = attachMirror(mesh, object, sprite.material, { w: h, h }, C.alphaTest)
   const tag = ctx.overlay.createTag()
@@ -383,7 +381,7 @@ void main() {
       mesh.scale.set(1 / Math.sqrt(sy), sy, 1)
       mesh.rotation.y = ctx.yaw.value
       sparkles.rotation.y = ctx.yaw.value
-      blob.scale.setScalar(1 - Math.min(0.4, lift))
+      shadow.update({ x: actor.x, y: actor.elev, z: actor.y, yaw: ctx.yaw.value, scaleX: 1 / Math.sqrt(sy), scaleY: sy, lift })
       const pulse = 0.65 + 0.35 * Math.sin(t * C.aura.pulseHz * Math.PI * 2)
       ringMat.color.copy(auraColor).multiplyScalar(C.aura.intensity * pulse)
       ring.scale.setScalar(0.9 + 0.1 * pulse)
@@ -401,7 +399,7 @@ void main() {
       object.removeFromParent()
       mirror.dispose()
       geo.dispose(); sprite.dispose()
-      blob.geometry.dispose(); (blob.material as THREE.Material).dispose()
+      shadow.dispose()
       sparkleGeo.dispose(); sparkleMat.dispose()
       ringGeo.dispose(); ringMat.dispose(); moteGeo.dispose(); moteMat.dispose()
       tag.dispose()

@@ -49,15 +49,23 @@
   "sky": {"domeRadius": 150, "starDensity": 0.0035, "starColor": "#dfe8ff", "starIntensity": 1.6, "twinkleSpeed": 2.2},
   "lighting": {
     "quality": {
-      "low": {"fieldLights": 0, "cloudShadows": false, "shafts": 0, "spriteRim": false, "spriteShadow": false, "wetGround": false, "splitTone": false},
-      "medium": {"fieldLights": 8, "cloudShadows": true, "shafts": 14, "spriteRim": true, "spriteShadow": false, "wetGround": false, "splitTone": true},
-      "high": {"fieldLights": 12, "cloudShadows": true, "shafts": 24, "spriteRim": true, "spriteShadow": true, "wetGround": true, "splitTone": true},
-      "ultra": {"fieldLights": 16, "cloudShadows": true, "shafts": 40, "spriteRim": true, "spriteShadow": true, "wetGround": true, "splitTone": true}
+      "low": {"fieldLights": 0, "cloudShadows": false, "shafts": 0, "spriteRim": false, "spriteShadow": false, "spriteCast": false, "wetGround": false, "splitTone": false},
+      "medium": {"fieldLights": 8, "cloudShadows": true, "shafts": 14, "spriteRim": true, "spriteShadow": false, "spriteCast": true, "wetGround": false, "splitTone": true},
+      "high": {"fieldLights": 12, "cloudShadows": true, "shafts": 24, "spriteRim": true, "spriteShadow": true, "spriteCast": true, "wetGround": true, "splitTone": true},
+      "ultra": {"fieldLights": 16, "cloudShadows": true, "shafts": 40, "spriteRim": true, "spriteShadow": true, "spriteCast": true, "wetGround": true, "splitTone": true}
     },
     "cloud": {"size": 128, "octaves": 4, "scale": 26, "speed": 0.9, "coverage": 0.56, "softness": 0.2, "strength": 0.55, "ambient": 0.12, "drift": 0.1, "driftSeconds": 420, "detail": 0.35, "detailScale": 2.7, "pixels": 0},
     "shafts": {"props": ["tree_oak", "tree_cherry", "tree_pine", "tree_swamp"], "density": 0.5, "jitter": 1.4, "perChunk": 8, "radius": 15, "fade": 4, "reselectSeconds": 0.5, "width": [0.5, 0.95], "length": 0, "maxLength": 10, "intensity": 0.42, "tipFade": 0.55, "footFade": 0.35, "shimmer": 0.35, "shimmerSpeed": 0.7, "dust": 0.8, "moon": 0.6, "minElevationDeg": 6, "steepDeg": 38},
     "sprite": {"rimPixels": 1.0, "rimStrength": 0.9, "rimMin": 0.15, "shadowRadius": 0.35, "shadowLift": 0.25, "shadowStrength": 0.85, "shadowOffset": 0.18},
     "wet": {"darken": 0.3, "sheen": 1.0, "sheenPower": 2.0, "puddleScale": 0.13, "puddleCoverage": 0.66, "puddleSoftness": 0.1, "reflect": 0.3, "sheenBase": 0.4, "propSheen": 0.18}
+  },
+  "spriteShadow": {
+    "about": "Character / creature shadows (sprite-shadow.ts): a soft contact ellipse under the feet plus a soft cast silhouette built from the sprite alpha, both lying on the rendered terrain. Sprites do not render into the sun shadow map.",
+    "color": "#0c0a1a",
+    "ground": {"lift": 0.012, "offsetFactor": -2, "offsetUnits": -2, "refreshSeconds": 0.5},
+    "contact": {"width": 0.95, "depth": 0.56, "opacity": 0.85, "core": 0.4, "power": 1.2, "footRows": 3, "footFollow": 1, "spanMul": 2.2, "minSpan": 0.7, "liftShrink": 1.2, "minScale": 0.55, "liftFade": 1.1, "minOpacity": 0.4, "grid": 3, "maxSpan": 1.8, "forward": 0.04},
+    "cast": {"opacity": 0.8, "lengthMul": 0.7, "maxSlope": 1.5, "widthMul": 0.9, "tailFade": 0.35, "blurNear": 0.8, "blurFar": 3.2, "cloud": 1},
+    "light": {"min": 0.45, "full": 2.6, "moon": 0.6, "indoor": 0}
   },
   "terrain": {
     "atlasCell": 64,
@@ -260,7 +268,6 @@
     "cardSegments": 8,
     "normalTilt": 0.6,
     "hop": {"height": 0.34, "ms": 300},
-    "blob": {"size": 0.72, "opacity": 0.36},
     "bubbleMs": 1800,
     "remoteAlpha": 1,
     "nameColor": "#ffffff",
@@ -284,7 +291,7 @@
     "bubbleOffsetPx": 14,
     "maxDistance": 40,
     "coverHalfWidth": 0.42,
-    "style": {"tagFontPx": 12, "tagPadding": "2px 4px 1px", "tagBackground": "rgba(10, 12, 24, 0.55)", "tagRadiusPx": 3, "tagTextShadow": "1px 1px 0 rgba(0, 0, 0, 0.85)", "tagDimOpacity": 0.22, "tagDimMs": 140, "bubbleFontPx": 13, "bubblePadding": "4px 7px", "bubbleText": "#1d1a2a", "bubbleBackground": "#fffdf4", "bubbleBorder": "#1d1a2a", "bubbleBorderPx": 2, "bubbleRadiusPx": 6, "bubbleShadow": "2px 2px 0 rgba(0, 0, 0, 0.35)", "bubbleMaxWidthPx": 220, "bubbleTailPx": 5, "popMs": 160}
+    "style": {"tagFontPx": 12, "tagPadding": "2px 4px 1px", "tagBackground": "rgba(10, 12, 24, 0.72)", "tagRadiusPx": 3, "tagTextShadow": "1px 1px 0 rgba(0, 0, 0, 0.85)", "tagDimOpacity": 0.22, "tagDimMs": 140, "bubbleFontPx": 13, "bubblePadding": "4px 7px", "bubbleText": "#1d1a2a", "bubbleBackground": "#fffdf4", "bubbleBorder": "#1d1a2a", "bubbleBorderPx": 2, "bubbleRadiusPx": 6, "bubbleShadow": "2px 2px 0 rgba(0, 0, 0, 0.35)", "bubbleMaxWidthPx": 220, "bubbleTailPx": 5, "popMs": 160}
   },
   "groundItems": {"color": "#ffe27a", "radius": 0.13, "glow": 2.8, "bobAmp": 0.06, "bobHz": 1.3, "height": 0.32, "glowSize": 0.55},
   "fx": {
