@@ -13,8 +13,12 @@
 // scroller's content in viewport heights.
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
+import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { setHUDViewport } from './qa-hud-layout.mjs'
+import { auditBattleSprites } from './qa-battle-layout.mjs'
+
+const BATTLE_UI = JSON.parse(readFileSync(new URL('../content/battle-ui.json', import.meta.url), 'utf8'))
 
 export const VIEWPORTS = [
   { name: 'd1280', width: 1280, height: 720, dpr: 1 },
@@ -494,6 +498,13 @@ export async function measureScreen(page, screen, shot) {
   let result = await run()
   // A screen that is still sliding in is not a layout defect: look once more before calling the scope missing.
   if (result.violations.some((v) => v.type === 'no-scope')) { await page.waitForTimeout(1800); result = await run() }
+  // battle screens: creatures vs windows, bottom anchoring, no overworld pad (qa-battle-layout.mjs)
+  if (screen.scope === '.apb-root') {
+    const sprites = await page.evaluate(auditBattleSprites, { bottomMaxGapPx: BATTLE_UI.layout.bottomMaxGapPx })
+    result.violations.push(...sprites.violations)
+    result.warnings.push(...sprites.warnings)
+    result.stats = { ...result.stats, battle: sprites.stats }
+  }
   await page.screenshot({ path: shot })
   return result
 }

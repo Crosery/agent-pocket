@@ -1,19 +1,35 @@
-/* Battle UI (Octopath-inspired) on top of the HD-2D battle diorama. Built on the ui-kit theme: .ap-panel windows,
-   .ap-row cursor rows, bars and chips. Every size is calc(var(--u) * N). Entity colours (types, statuses,
-   rarities, move categories) are injected inline from content. */
+/* Battle UI on top of the HD-2D battle diorama. Windows are pixel-art 9-slice frames (public/assets/ui/battle, drawn by
+   tools/battle_ui_art.py); every size is calc(var(--u) * N) and every layout number comes from content/battle-ui.json
+   (layout) through the --apb-* variables view.ts sets. Entity colours (types, statuses, rarities) come from content.
+
+   Layout contract: the info cards sit in the corners (foe card top-left, own card at the right end of the bottom bar) and
+   the bar is pinned to the real viewport bottom. Nothing here reserves a fixed 16:9 stage: the stage camera recomposes
+   (battle/index.ts setHud) so that no creature sits under any [data-hud] window. */
 
 html.ap-battle-on .ap-l-hud,
 html.ap-battle-on .ap-l-minimap,
 html.ap-battle-on .ap-l-chat,
 html.ap-battle-on .ap-l-overlay { visibility: hidden; }
-/* The virtual stick has nothing to steer in battle (menus are tappable, A/B stay) and its capture zone sits above
-   the UI layer, where it would swallow taps on the bottom-left menus. */
-html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
+/* Battle has its own touch UI (every window is tappable, sub-menus carry a back button): the overworld pad (stick, A/B,
+   run, menu) is hidden and no space is reserved for it, so the bottom windows sit on the real screen edge. */
+html.ap-battle-on .ap-touch { display: none; }
+html.ap-battle-on[data-touch-controls] { --ap-bottom-inset: 0px; }
 
 .apb-root {
-  --apb-gap: calc(var(--u) * 8);
-  --apb-bottom: calc(var(--u) * 8 + var(--ap-bottom-inset, 0px) + env(safe-area-inset-bottom, 0px));
-  --apb-bar-h: calc(var(--u) * 66);
+  --apb-m: calc(var(--u) * var(--apb-margin, 8));
+  --apb-g: calc(var(--u) * var(--apb-gap, 6));
+  --apb-barh: calc(var(--u) * var(--apb-bar-h, 62));
+  --apb-bottom: calc(var(--apb-m) + env(safe-area-inset-bottom, 0px));
+  --apb-f-main: url('/assets/ui/battle/frame-main.png');
+  --apb-f-foe: url('/assets/ui/battle/frame-foe.png');
+  --apb-f-own: url('/assets/ui/battle/frame-own.png');
+  --apb-f-slot: url('/assets/ui/battle/frame-slot.png');
+  --apb-f-plate: url('/assets/ui/battle/frame-plate.png');
+  --apb-f-plate-red: url('/assets/ui/battle/frame-plate-red.png');
+  --tone-neutral: #c9a85c;
+  --tone-good: #62d65a;
+  --tone-warn: #f4d03f;
+  --tone-bad: #e25b4a;
   position: absolute;
   inset: 0;
   pointer-events: auto;
@@ -24,43 +40,63 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 .apb-root.is-hud-hidden .apb-weather,
 .apb-root.is-hud-hidden .apb-banner { visibility: hidden; }
 
-/* ------------------------------------------------------------------ status panels */
+/* ------------------------------------------------------------------ window frame */
 
-.apb-status {
-  width: calc(var(--u) * 176);
-  padding: calc(var(--u) * 5) calc(var(--u) * 8) calc(var(--u) * 5);
-  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 220ms ease;
+.apb-root .apb-win {
+  --fs: 7;
+  --apb-frame: var(--apb-f-main);
+  box-sizing: border-box;
+  border: calc(var(--u) * var(--fs)) solid transparent;
+  border-image: var(--apb-frame) var(--fs) fill / calc(var(--u) * var(--fs)) / 0 stretch;
+  background: none;
+  box-shadow: none;
+  padding: calc(var(--u) * 1) calc(var(--u) * 2);
+  image-rendering: pixelated;
+  filter: drop-shadow(0 calc(var(--u) * 2) calc(var(--u) * 3) rgba(0, 0, 0, 0.45));
 }
+.apb-root .apb-win::before { display: none; }
+.apb-root .apb-win > .ap-panel-title { display: none; }
+.apb-ico { display: block; width: calc(var(--u) * 14); height: calc(var(--u) * 14); image-rendering: pixelated; flex: none; }
+
+/* ------------------------------------------------------------------ status cards */
+
+.apb-status { width: calc(var(--u) * var(--apb-foe-w, 188)); transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 220ms ease; }
 .apb-status.is-foe {
+  --apb-frame: var(--apb-f-foe);
   position: absolute;
-  left: calc(var(--u) * 8 + env(safe-area-inset-left, 0px));
-  top: calc(var(--u) * 8 + env(safe-area-inset-top, 0px));
+  left: calc(var(--apb-m) + env(safe-area-inset-left, 0px));
+  top: calc(var(--apb-m) + env(safe-area-inset-top, 0px));
 }
-/* The own window sits at the right end of the bottom bar (Octopath-style party status corner). */
-.apb-status.is-own { flex: none; width: calc(var(--u) * 186); }
-.apb-status.is-away.is-foe { transform: translateX(calc(var(--u) * -200)); opacity: 0; }
+.apb-status.is-own { --apb-frame: var(--apb-f-own); grid-column: 3; width: calc(var(--u) * var(--apb-own-w, 188)); min-height: var(--apb-barh); }
+.apb-status.is-away.is-foe { transform: translateX(calc(var(--u) * -220)); opacity: 0; }
 .apb-status.is-away.is-own { opacity: 0.35; }
-/* Before the first send-out the own corner keeps its frame but shows no placeholder content. */
 .apb-status.is-empty > * { visibility: hidden; }
-.apb-st-head { display: flex; flex-wrap: wrap; align-items: flex-start; gap: calc(var(--u) * 1) calc(var(--u) * 4); white-space: normal; min-height: calc(var(--u) * 16); }
-/* A name too long to share the row with the badges keeps its own line; shiny / rarity / Lv drop together to the right of the next one. */
-.apb-st-name { flex: 1 1 auto; min-width: 0; max-width: 100%; color: var(--ap-text); line-height: 1.05; }
-.apb-st-badges { flex: none; margin-left: auto; display: flex; align-items: flex-start; gap: calc(var(--u) * 4); }
+.apb-st-head { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--u) * 1) calc(var(--u) * 4); white-space: normal; min-height: calc(var(--u) * 15); }
+.apb-st-name { flex: 1 1 auto; min-width: 0; max-width: 100%; color: var(--ap-text); line-height: 1.05; text-shadow: 0 var(--u) 0 var(--ap-ink); }
+.apb-st-badges { flex: none; margin-left: auto; display: flex; align-items: center; gap: calc(var(--u) * 4); }
 .apb-st-shiny { color: var(--ap-gold-hi); }
-.apb-st-lv { color: var(--ap-gold-hi); flex: none; }
-.apb-st-tags { display: flex; align-items: center; gap: calc(var(--u) * 4); height: calc(var(--u) * 13); margin: calc(var(--u) * 2) 0; }
-.apb-st-tags .ap-chip, .apb-st-effects .ap-chip { height: calc(var(--u) * 13); min-width: calc(var(--u) * 26); }
-.apb-st-tags .ap-chip--status, .apb-st-effects .ap-chip--status { min-width: calc(var(--u) * 14); }
+.apb-st-lv { color: var(--ap-gold-hi); flex: none; text-shadow: 0 var(--u) 0 var(--ap-ink); }
+.apb-status .ap-rarity { height: calc(var(--u) * 13); padding: 0 calc(var(--u) * 3); }
+.apb-st-tags { display: flex; align-items: center; gap: calc(var(--u) * 3); min-height: calc(var(--u) * 16); margin: calc(var(--u) * 1) 0; }
+.apb-st-taglist { display: flex; align-items: center; flex-wrap: wrap; gap: calc(var(--u) * 2) calc(var(--u) * 3); flex: 1 1 auto; min-width: 0; }
+.apb-st-taglist > * { flex: none; }
+/* type badge: the type's own round pixel icon */
+.apb-ty { display: inline-flex; width: calc(var(--u) * 16); height: calc(var(--u) * 16); flex: none; filter: drop-shadow(0 var(--u) 0 var(--ap-ink)); }
+.apb-ty .apb-ico { width: 100%; height: 100%; image-rendering: auto; }
+/* status / volatile icons: tone underline says whether it helps or hurts */
+.apb-fx { --tone: var(--tone-bad); display: inline-flex; width: calc(var(--u) * 14); height: calc(var(--u) * 14); flex: none; box-shadow: 0 calc(var(--u) * 2) 0 -0px var(--tone); }
+.apb-fx.is-buff { --tone: var(--tone-good); }
+.apb-fx.is-neutral { --tone: var(--tone-neutral); }
 .apb-st-details-btn {
   flex: none;
   min-width: calc(var(--u) * 27);
-  height: calc(var(--u) * 14);
+  height: calc(var(--u) * 15);
   padding: 0 calc(var(--u) * 3);
   color: var(--ap-gold-hi);
   background: rgba(5, 7, 13, 0.72);
   border: var(--u) solid var(--ap-gold-dk);
   font: inherit;
-  line-height: calc(var(--u) * 12);
+  line-height: calc(var(--u) * 13);
   white-space: nowrap;
   cursor: pointer;
 }
@@ -73,7 +109,7 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 .apb-tag {
   display: inline-flex;
   align-items: center;
-  height: calc(var(--u) * 13);
+  height: calc(var(--u) * 14);
   padding: 0 calc(var(--u) * 3);
   color: var(--ap-text);
   background: rgba(5, 7, 13, 0.72);
@@ -83,26 +119,10 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 .apb-tag.is-up { color: #9be7a1; border-color: rgba(130, 224, 140, 0.6); }
 .apb-tag.is-down { color: #ff9f8f; border-color: rgba(255, 107, 91, 0.6); }
 .apb-tag.is-more { color: var(--ap-gold-hi); border-color: var(--ap-gold); }
-.apb-st-hp { display: flex; align-items: center; gap: calc(var(--u) * 4); height: calc(var(--u) * 13); }
-.apb-st-hp .ap-bar-wrap { flex: 1 1 auto; }
-.apb-st-hp .ap-bar-num { min-width: calc(var(--u) * 44); }
-.apb-st-exp { display: flex; align-items: center; gap: calc(var(--u) * 4); height: calc(var(--u) * 9); }
-.apb-st-label { color: var(--ap-gold-hi); width: calc(var(--u) * 22); flex: none; }
-.apb-st-exp .apb-st-label { font-size: calc(var(--u) * 8); line-height: calc(var(--u) * 9); }
-.apb-st-taglist { display: flex; align-items: center; gap: calc(var(--u) * 2); flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; }
-.apb-st-taglist > * { flex: none; }
-/* The floating foe window may grow, so its tags wrap instead of clipping; the own corner has a fixed height. */
-.apb-status .apb-st-tags { height: auto; min-height: calc(var(--u) * 13); align-items: flex-start; }
-.apb-status .apb-st-taglist { flex-wrap: wrap; row-gap: calc(var(--u) * 2); }
-.apb-status.is-foe .apb-balls { margin-top: calc(var(--u) * 3); }
-/* Active effects get a row of their own under the types (one row, two on the foe window); whatever does not fit
-   folds whole into a "+N" tag (status-panel.ts). Only present while there are effects, so the window grows then:
-   the own window is bottom-aligned in the bar and grows upwards. */
-.apb-st-effects { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--u) * 2) calc(var(--u) * 3); max-height: calc(var(--u) * 13); margin: calc(var(--u) * 2) 0; overflow: hidden; }
+.apb-st-effects { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--u) * 3); max-height: calc(var(--u) * 18); margin: calc(var(--u) * 1) 0 calc(var(--u) * 2); overflow: hidden; }
 .apb-st-effects:empty { display: none; }
 .apb-st-effects > * { flex: none; }
-.apb-status.is-foe .apb-st-effects { max-height: calc(var(--u) * 28); }
-.apb-status.is-own { align-self: flex-end; min-height: var(--apb-bar-h); }
+.apb-status.is-foe .apb-st-effects { max-height: calc(var(--u) * 36); }
 .apb-balls { display: flex; flex: none; gap: calc(var(--u) * 2); margin-left: auto; }
 .apb-balls:empty { display: none; }
 .apb-ball {
@@ -115,6 +135,90 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 }
 .apb-ball.is-fainted { --ball-c: #3a4052; box-shadow: none; }
 .apb-ball.is-empty { background: transparent; border-color: rgba(201, 164, 92, 0.45); box-shadow: none; }
+.apb-status.is-foe .apb-balls { margin-top: calc(var(--u) * 3); }
+
+/* segmented HP bar in a sunken trough: the ghost trail shows what the last hit took, the colour follows the tier */
+.apb-st-hp { display: flex; align-items: center; gap: calc(var(--u) * 4); min-height: calc(var(--u) * 13); }
+.apb-st-hp .ap-bar-wrap { flex: 1 1 auto; gap: calc(var(--u) * 4); }
+.apb-st-label { color: var(--ap-gold-hi); width: calc(var(--u) * 16); flex: none; text-shadow: 0 var(--u) 0 var(--ap-ink); }
+.apb-status .ap-bar {
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  width: 100%;
+  height: calc(var(--u) * 11);
+  border: calc(var(--u) * 3) solid transparent;
+  border-image: var(--apb-f-slot) 3 fill / calc(var(--u) * 3) / 0 stretch;
+  box-shadow: none;
+  background: none;
+  image-rendering: pixelated;
+}
+.apb-status .ap-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(var(--u) * 3), rgba(10, 13, 9, 0.8) calc(var(--u) * 3) calc(var(--u) * 4));
+  pointer-events: none;
+}
+.apb-status .ap-bar-ghost { background: #f7e9d2; opacity: 0.85; }
+.apb-status .ap-bar-num { min-width: calc(var(--u) * 42); text-shadow: 0 var(--u) 0 var(--ap-ink); }
+.apb-st-exp { display: flex; align-items: center; gap: calc(var(--u) * 4); min-height: calc(var(--u) * 9); }
+.apb-st-exp .apb-st-label { font-size: calc(var(--u) * 8); line-height: calc(var(--u) * 9); color: var(--ap-exp); }
+.apb-status .ap-exp { height: calc(var(--u) * 7); border-width: calc(var(--u) * 3); }
+.apb-status .ap-exp .ap-bar-fill { box-shadow: inset 0 var(--u) 0 var(--ap-exp-lt); }
+
+/* ------------------------------------------------------------------ boss strip (foe card): title, phase pips, mechanic tiles */
+
+.apb-st-boss { display: flex; flex-direction: column; gap: calc(var(--u) * 3); margin: calc(var(--u) * 1) 0 calc(var(--u) * 3); }
+.apb-st-boss[hidden] { display: none; }
+.apb-boss-head { display: flex; align-items: center; gap: calc(var(--u) * 4); min-width: 0; }
+.apb-boss-tag {
+  flex: none;
+  height: calc(var(--u) * 14);
+  padding: 0 calc(var(--u) * 4);
+  color: #fff;
+  background: linear-gradient(180deg, #e25b4a 0%, #e25b4a 45%, #a83426 46%, #a83426 100%);
+  border: var(--u) solid var(--ap-ink);
+  line-height: calc(var(--u) * 12);
+  text-shadow: 0 var(--u) 0 rgba(0, 0, 0, 0.5);
+}
+.apb-boss-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ap-gold-hi); text-shadow: 0 var(--u) 0 var(--ap-ink); }
+.apb-boss-title.is-readout { color: #fff; }
+.apb-boss-pips { display: flex; flex: none; gap: calc(var(--u) * 2); }
+.apb-pip { width: calc(var(--u) * 6); height: calc(var(--u) * 6); background: rgba(5, 7, 13, 0.8); border: var(--u) solid rgba(226, 91, 74, 0.7); transform: rotate(45deg) scale(0.85); }
+.apb-pip.is-on { background: #e25b4a; border-color: var(--ap-ink); }
+.apb-boss-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(var(--u) * 46), 1fr)); gap: calc(var(--u) * 3); }
+.apb-mt {
+  --tone: var(--tone-neutral);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 3);
+  min-width: 0;
+  padding: calc(var(--u) * 2) calc(var(--u) * 3) calc(var(--u) * 2) calc(var(--u) * 2);
+  background: linear-gradient(180deg, rgba(10, 13, 9, 0.85), rgba(22, 28, 20, 0.85));
+  border: var(--u) solid var(--ap-ink);
+  box-shadow: inset 0 var(--u) 0 rgba(255, 255, 255, 0.07), 0 0 0 var(--u) color-mix(in srgb, var(--tone) 55%, transparent);
+  cursor: pointer;
+  outline: none;
+}
+.apb-mt.is-good { --tone: var(--tone-good); }
+.apb-mt.is-warn { --tone: var(--tone-warn); }
+.apb-mt.is-bad { --tone: var(--tone-bad); }
+.apb-mt:hover, .apb-mt:focus-visible { box-shadow: inset 0 var(--u) 0 rgba(255, 255, 255, 0.12), 0 0 0 var(--u) var(--tone); }
+.apb-mt-body { display: flex; flex-direction: column; justify-content: center; gap: calc(var(--u) * 1); min-width: 0; }
+.apb-mt-label { color: var(--ap-text); line-height: calc(var(--u) * 12); white-space: nowrap; }
+.apb-mt-pips { display: flex; gap: calc(var(--u) * 1); height: calc(var(--u) * 4); }
+.apb-mt-pip { flex: 1 1 0; min-width: calc(var(--u) * 3); max-width: calc(var(--u) * 6); background: #2a3023; box-shadow: 0 0 0 var(--u) var(--ap-ink); }
+.apb-mt-pip.is-on { background: var(--tone); box-shadow: 0 0 0 var(--u) var(--ap-ink), inset 0 var(--u) 0 rgba(255, 255, 255, 0.45); }
+.apb-mt-state { color: var(--tone); line-height: calc(var(--u) * 10); white-space: nowrap; }
+.apb-mt.is-alert { grid-column: 1 / -1; background: rgba(150, 30, 30, 0.9); animation: apb-blink 700ms steps(2) infinite; }
+.apb-mt.is-alert .apb-mt-label, .apb-mt.is-alert .apb-mt-state { color: #fff; }
+.apb-st-boss.is-pulse { animation: apb-boss-pulse 600ms ease-out; }
+.apb-root.has-boss .apb-banner.is-foe { top: calc(var(--u) * 140); }
+@keyframes apb-blink { 50% { background: rgba(60, 12, 12, 0.9); } }
+@keyframes apb-boss-pulse { from { filter: brightness(2.2); transform: translateX(calc(var(--u) * 3)); } to { filter: none; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .apb-mt.is-alert, .apb-st-boss.is-pulse { animation: none; }
+}
 
 /* ------------------------------------------------------------------ readable effect inspector */
 
@@ -195,8 +299,8 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 .apb-weather {
   --wc: var(--ap-gold-hi);
   position: absolute;
-  top: calc(var(--u) * 8 + env(safe-area-inset-top, 0px));
-  right: calc(var(--u) * 8 + env(safe-area-inset-right, 0px));
+  top: calc(var(--apb-m) + env(safe-area-inset-top, 0px));
+  right: calc(var(--apb-m) + env(safe-area-inset-right, 0px));
   padding: calc(var(--u) * 2) calc(var(--u) * 8);
   color: var(--wc);
   background: rgba(8, 11, 22, 0.82);
@@ -206,7 +310,7 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 }
 .apb-timer {
   position: absolute;
-  top: calc(var(--u) * 8 + env(safe-area-inset-top, 0px));
+  top: calc(var(--apb-m) + env(safe-area-inset-top, 0px));
   left: 50%;
   transform: translateX(-50%);
   padding: calc(var(--u) * 2) calc(var(--u) * 8);
@@ -228,38 +332,50 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
   pointer-events: none;
   animation: apb-banner-in 180ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
-.apb-banner.is-foe { left: calc(var(--u) * 8); top: calc(var(--u) * 92); }
-.apb-banner.is-own { right: calc(var(--u) * 8); bottom: calc(var(--apb-bottom) + var(--apb-bar-h) + var(--apb-gap)); }
+.apb-banner.is-foe { left: var(--apb-m); top: calc(var(--u) * 96); }
+.apb-banner.is-own { right: var(--apb-m); bottom: calc(var(--apb-bottom) + var(--apb-barh) + var(--apb-g)); }
 .apb-banner.is-leaving { animation: apb-banner-out 200ms ease-in both; }
 @keyframes apb-banner-in { from { opacity: 0; transform: translateX(calc(var(--u) * -10)); } to { opacity: 1; transform: none; } }
 @keyframes apb-banner-out { from { opacity: 1; } to { opacity: 0; } }
 
-/* ------------------------------------------------------------------ bottom bar: message + menus */
+/* ------------------------------------------------------------------ bottom bar: message + menus + own card, pinned to the screen bottom */
 
 .apb-bar {
   position: absolute;
-  left: calc(var(--u) * 8 + env(safe-area-inset-left, 0px));
-  right: calc(var(--u) * 8 + env(safe-area-inset-right, 0px));
+  left: calc(var(--apb-m) + env(safe-area-inset-left, 0px));
+  right: calc(var(--apb-m) + env(safe-area-inset-right, 0px));
   bottom: var(--apb-bottom);
-  height: var(--apb-bar-h);
-  display: flex;
-  gap: calc(var(--u) * 6);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: stretch;
+  column-gap: var(--apb-g);
   pointer-events: none;
 }
 .apb-bar > * { pointer-events: auto; }
 .apb-msg {
   position: relative;
-  flex: 1 1 auto;
+  grid-column: 1;
   min-width: 0;
-  padding: calc(var(--u) * 10) calc(var(--u) * 16) calc(var(--u) * 8) calc(var(--u) * 14);
+  min-height: var(--apb-barh);
   cursor: pointer;
 }
-.apb-msg-text { white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; }
+.apb-msg-text { white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; line-height: 1.3; text-shadow: 0 var(--u) 0 rgba(10, 13, 9, 0.8); }
 .apb-msg-text .apb-tw-hidden { visibility: hidden; }
+/* the speaker (a boss or trainer talking) gets a plate above the quoted line */
+.apb-msg-name {
+  display: inline-block;
+  margin-bottom: calc(var(--u) * 2);
+  padding: 0 calc(var(--u) * 8) 0 calc(var(--u) * 5);
+  height: calc(var(--u) * 14);
+  line-height: calc(var(--u) * 14);
+  color: var(--ap-gold-hi);
+  background: linear-gradient(90deg, rgba(201, 168, 92, 0.38), rgba(201, 168, 92, 0));
+  border-left: calc(var(--u) * 2) solid var(--ap-gold);
+}
 .apb-msg-adv {
   position: absolute;
-  right: calc(var(--u) * 10);
-  bottom: calc(var(--u) * 6);
+  right: calc(var(--u) * 6);
+  bottom: calc(var(--u) * 4);
   width: calc(var(--u) * var(--ap-g-advance-w, 7));
   height: calc(var(--u) * var(--ap-g-advance-h, 5));
   background: var(--ap-g-advance) center / 100% 100% no-repeat;
@@ -269,44 +385,45 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 }
 .apb-msg-adv.is-on { visibility: visible; }
 
+.apb-menu-wrap { grid-column: 2; position: relative; display: flex; min-width: 0; }
 .apb-menu {
   flex: none;
-  padding: calc(var(--u) * 5) calc(var(--u) * 6);
   display: grid;
   grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
   align-content: center;
   column-gap: calc(var(--u) * 2);
 }
-.apb-menu .ap-row { --row-h: 18; }
-.apb-cmd { width: calc(var(--u) * 132); }
-.apb-moves { width: 100%; }
+.apb-menu .ap-row { --row-h: 20; gap: calc(var(--u) * 4); padding: 0 calc(var(--u) * 3) 0 calc(var(--u) * 14); }
+.apb-menu .ap-row.is-active {
+  color: var(--ap-gold-hi);
+  background: linear-gradient(90deg, rgba(242, 217, 142, 0.32), rgba(242, 217, 142, 0.06));
+  box-shadow: inset 0 var(--u) 0 rgba(255, 255, 255, 0.1), inset 0 calc(var(--u) * -1) 0 var(--ap-gold-dk);
+}
+.apb-cmd { width: calc(var(--u) * var(--apb-cmd-w, 132)); }
+.apb-cmd-ico { display: inline-flex; flex: none; }
+.apb-cmd-row .ap-row-label { overflow: visible; text-shadow: 0 var(--u) 0 var(--ap-ink); }
+.apb-cmd-row.is-disabled .apb-cmd-ico { opacity: 0.45; }
+
+/* choosing a move: the list takes the message's and the commands' place and the move detail the own card's (the card stays
+   laid out, hidden), so the bar keeps its footprint and the camera does not recompose when the menu opens */
+.apb-moves-wrap { display: flex; width: 100%; min-width: 0; }
+.apb-moves { flex: 1 1 auto; min-width: 0; --cols: 2; }
 .apb-bar.is-moves .apb-msg { display: none; }
-.apb-bar.is-moves .apb-menu-wrap { flex: 1 1 auto; min-width: 0; }
-.apb-move-row .apb-move-name { flex: 1 1 auto; min-width: 0; overflow: hidden; }
-.apb-move-row .ap-chip { height: calc(var(--u) * 13); min-width: calc(var(--u) * 26); padding: 0 calc(var(--u) * 2); flex: none; }
+.apb-bar.is-moves .apb-menu-wrap { grid-column: 1 / 3; position: static; }
+.apb-bar.is-moves .apb-status.is-own { visibility: hidden; pointer-events: none; }
+.apb-bar.is-moves .apb-moves { margin-right: calc(var(--apb-g)); }
+.apb-move-row .apb-move-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-shadow: 0 var(--u) 0 var(--ap-ink); }
 .apb-move-row { padding-right: calc(var(--u) * 4); }
 .apb-move-row .apb-move-pp { flex: none; color: var(--ap-text-dim); }
 .apb-move-row.is-active .apb-move-pp { color: #e8d7a8; }
 .apb-move-row .apb-move-pp.is-low { color: var(--ap-warn); }
 .apb-move-row .apb-move-pp.is-out { color: var(--ap-error); }
-.apb-menu-wrap { position: relative; flex: none; display: flex; height: 100%; }
-.apb-back {
-  position: absolute;
-  right: 0;
-  top: calc(var(--u) * -24);
-  min-height: calc(var(--u) * 16);
-  padding: 0 calc(var(--u) * 8);
-}
-.apb-detail {
-  position: absolute;
-  right: 0;
-  bottom: calc(100% + var(--u) * 28);
-  width: min(100%, calc(var(--u) * 280));
-  padding: calc(var(--u) * 6) calc(var(--u) * 9) calc(var(--u) * 7);
-  white-space: normal;
-}
-.apb-detail-head { display: flex; align-items: center; gap: calc(var(--u) * 4); margin-bottom: calc(var(--u) * 4); }
-.apb-detail-name { color: var(--ap-gold-hi); flex: 1 1 auto; min-width: 0; line-height: 1.05; }
+.apb-move-row .apb-ty { width: calc(var(--u) * 14); height: calc(var(--u) * 14); }
+.apb-detail { position: absolute; right: 0; top: 0; bottom: 0; width: calc(var(--u) * var(--apb-own-w, 188)); white-space: normal; overflow: hidden; }
+.apb-detail-head { display: flex; align-items: center; gap: calc(var(--u) * 4); margin-bottom: calc(var(--u) * 2); min-height: calc(var(--u) * 15); }
+.apb-detail-head .ap-chip { height: calc(var(--u) * 13); min-width: calc(var(--u) * 26); padding: 0 calc(var(--u) * 2); flex: none; }
+.apb-detail-name { color: var(--ap-gold-hi); flex: 1 1 auto; min-width: 0; line-height: 1.05; text-shadow: 0 var(--u) 0 var(--ap-ink); }
+.apb-detail .apb-back { position: static; flex: none; min-height: calc(var(--u) * 14); padding: 0 calc(var(--u) * 5); }
 .apb-cat {
   --cat: #888;
   display: inline-flex;
@@ -318,10 +435,17 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
   background: rgba(5, 7, 13, 0.7);
   white-space: nowrap;
 }
-.apb-detail-stats { display: flex; gap: calc(var(--u) * 10); color: var(--ap-text-dim); }
+.apb-detail-stats { display: flex; align-items: center; gap: calc(var(--u) * 8); color: var(--ap-text-dim); white-space: nowrap; }
 .apb-detail-stats b { font-weight: normal; color: var(--ap-text); margin-left: calc(var(--u) * 3); }
-.apb-detail-desc { margin: calc(var(--u) * 4) 0 0; color: var(--ap-text); }
-.apb-eff { margin-top: calc(var(--u) * 4); color: var(--ap-text-dim); }
+.apb-detail-desc {
+  margin: calc(var(--u) * 2) 0 0;
+  color: var(--ap-text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.apb-eff { margin-right: calc(var(--u) * 4); color: var(--ap-text-dim); }
 .apb-eff.is-super { color: #9be7a1; }
 .apb-eff.is-weak { color: #f2c94c; }
 .apb-eff.is-immune { color: #ff8f80; }
@@ -330,81 +454,45 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 
 .apb-levelup {
   position: absolute;
-  right: calc(var(--u) * 8 + env(safe-area-inset-right, 0px));
-  bottom: calc(var(--apb-bottom) + var(--apb-bar-h) + var(--apb-gap));
-  width: calc(var(--u) * 186);
+  right: calc(var(--apb-m) + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--apb-bottom) + var(--apb-barh) + var(--apb-g));
+  width: calc(var(--u) * var(--apb-own-w, 188));
   z-index: 2;
 }
-/* Long creature names wrap instead of pushing the level out of the window. */
 .apb-levelup .ap-panel-title { display: block; white-space: normal; overflow-wrap: anywhere; }
 .apb-lv-row { display: flex; align-items: center; height: calc(var(--u) * 15); }
 .apb-lv-k { flex: 1 1 auto; color: var(--ap-gold-hi); }
 .apb-lv-v { width: calc(var(--u) * 34); text-align: right; }
 .apb-lv-d { width: calc(var(--u) * 34); text-align: right; color: #9be7a1; }
 
-/* ------------------------------------------------------------------ compact / portrait */
+/* ------------------------------------------------------------------ touch, compact, portrait */
 
-html.ap-compact .apb-status.is-foe { width: calc(var(--u) * 160); }
-html.ap-compact .apb-status.is-own { width: calc(var(--u) * 168); }
-html.ap-compact .apb-cmd { width: calc(var(--u) * 112); }
+@media (pointer: coarse) {
+  .apb-menu .ap-row { height: max(32px, calc(var(--u) * var(--row-h, 20))); }
+  .apb-st-details-btn, .apb-detail .apb-back { min-height: 28px; }
+}
+html.ap-compact .apb-status.is-foe { width: calc(var(--u) * var(--apb-foe-w-c, 160)); }
+html.ap-compact .apb-status.is-own { width: calc(var(--u) * var(--apb-own-w-c, 170)); }
+html.ap-compact .apb-cmd { width: calc(var(--u) * var(--apb-cmd-w-c, 116)); }
 
-html.ap-portrait .apb-bar { flex-wrap: wrap; height: auto; align-content: flex-end; }
-html.ap-portrait .apb-status.is-own { order: -1; width: 100%; min-height: 0; }
-html.ap-portrait .apb-msg { min-height: var(--apb-bar-h); flex-basis: 100%; order: 1; }
-html.ap-portrait .apb-menu-wrap { width: 100%; order: 0; }
-html.ap-portrait .apb-cmd { width: 100%; }
-html.ap-portrait .apb-detail { width: 100%; }
+/* Portrait: own card on top, then the commands in one row, then the message, all full width at the screen bottom. */
+html.ap-portrait .apb-bar { grid-template-columns: minmax(0, 1fr); row-gap: var(--apb-g); }
+html.ap-portrait .apb-status.is-own { grid-column: 1; grid-row: 1; width: 100%; min-height: 0; }
+html.ap-portrait .apb-menu-wrap { grid-column: 1; grid-row: 2; width: 100%; }
+html.ap-portrait .apb-msg { grid-column: 1; grid-row: 3; }
+html.ap-portrait .apb-cmd { width: 100%; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+html.ap-portrait .apb-moves { --cols: 2; }
+html.ap-portrait .apb-moves-wrap { flex-direction: column; gap: var(--apb-g); }
+html.ap-portrait .apb-bar.is-moves .apb-menu-wrap { grid-column: 1; grid-row: 2 / 4; }
+html.ap-portrait .apb-bar.is-moves .apb-moves { margin-right: 0; }
+html.ap-portrait .apb-detail { position: static; width: 100%; }
 html.ap-portrait .apb-effects-dialog { width: calc(100% - var(--u) * 12); max-height: calc(100% - var(--u) * 12 - var(--ap-bottom-inset)); }
 html.ap-portrait .apb-effects-columns { grid-template-columns: 1fr; }
 html.ap-portrait .apb-effects-side.is-focused { order: -1; }
 html.ap-portrait .apb-glossary-grid { grid-template-columns: 1fr; }
-/* Stacked layout: the move detail takes the own window's place instead of half-covering it. */
 html.ap-portrait .apb-bar.is-moves .apb-status.is-own { display: none; }
-html.ap-portrait .apb-levelup { bottom: auto; top: calc(var(--u) * 84); }
-html.ap-portrait .apb-banner.is-own { bottom: auto; top: calc(var(--u) * 60); }
-
-/* ------------------------------------------------------------------ boss strip (foe window) */
-
-.apb-st-boss {
-  display: flex;
-  flex-direction: column;
-  gap: calc(var(--u) * 2);
-  margin: calc(var(--u) * 2) 0 calc(var(--u) * 3);
-  padding: calc(var(--u) * 2) calc(var(--u) * 3);
-  background: linear-gradient(90deg, rgba(86, 28, 28, 0.55), rgba(8, 11, 22, 0));
-  border-left: calc(var(--u) * 2) solid #e25b4a;
-}
-.apb-st-boss[hidden] { display: none; }
-.apb-boss-head { display: flex; align-items: center; gap: calc(var(--u) * 4); min-width: 0; }
-.apb-boss-tag { flex: none; padding: 0 calc(var(--u) * 3); color: #fff; background: #b8392b; }
-.apb-boss-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ap-gold-hi); }
-.apb-boss-pips { display: flex; flex: none; gap: calc(var(--u) * 2); }
-.apb-pip { width: calc(var(--u) * 7); height: calc(var(--u) * 7); background: rgba(5, 7, 13, 0.8); border: var(--u) solid rgba(255, 107, 91, 0.7); }
-.apb-pip.is-on { background: #e25b4a; border-color: var(--ap-ink); }
-.apb-boss-chips { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 2); }
-.apb-bchip {
-  --fill: 0%;
-  --tone: rgba(201, 164, 92, 0.6);
-  display: inline-flex;
-  align-items: center;
-  height: calc(var(--u) * 13);
-  padding: 0 calc(var(--u) * 4);
-  color: var(--ap-text);
-  white-space: nowrap;
-  background: linear-gradient(90deg, rgba(201, 164, 92, 0.32) var(--fill), rgba(5, 7, 13, 0.78) var(--fill));
-  border: var(--u) solid var(--tone);
-}
-.apb-bchip.is-good { --tone: rgba(130, 224, 140, 0.7); }
-.apb-bchip.is-warn { --tone: rgba(255, 206, 99, 0.8); }
-.apb-bchip.is-bad { --tone: rgba(255, 107, 91, 0.8); }
-.apb-bchip.is-alert { color: #fff; background: rgba(150, 30, 30, 0.9); animation: apb-blink 700ms steps(2) infinite; }
-.apb-st-boss.is-pulse { animation: apb-boss-pulse 600ms ease-out; }
-.apb-root.has-boss .apb-banner.is-foe { top: calc(var(--u) * 126); }
-@keyframes apb-blink { 50% { background: rgba(60, 12, 12, 0.9); } }
-@keyframes apb-boss-pulse { from { filter: brightness(2.2); transform: translateX(calc(var(--u) * 3)); } to { filter: none; transform: none; } }
-@media (prefers-reduced-motion: reduce) {
-  .apb-bchip.is-alert, .apb-st-boss.is-pulse { animation: none; }
-}
+html.ap-portrait .apb-levelup { bottom: auto; top: calc(var(--u) * 90); width: min(calc(var(--u) * var(--apb-own-w, 188)), calc(100% - var(--apb-m) * 2)); }
+html.ap-portrait .apb-banner.is-own { bottom: auto; top: calc(var(--u) * 66); }
 
 /* ------------------------------------------------------------------ boss intro cut-in (boss-intro.ts) */
 .apb-bi {

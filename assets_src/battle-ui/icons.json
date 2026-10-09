@@ -1,0 +1,80 @@
+{
+  "doc": "Battle UI pixel icons (issue #32). Drawn on a 12x12 grid by tools/battle_ui_art.py, then outlined (1px ink) to 14x14 PNGs in public/assets/ui/battle/icon-<name>.png. Shapes: rect [x0,y0,x1,y1] inclusive, line [x0,y0,x1,y1], poly [[x,y]...], disc [cx,cy,r], px [[x,y]...]; every shape has a colour key into 'palette'.",
+  "palette": {
+    "ink": "#0a0d09", "white": "#f4f0da", "gold": "#c9a85c", "goldhi": "#f2d98e", "golddk": "#766338",
+    "steel": "#b8c0d4", "steeldk": "#6b7590", "brown": "#8a5a2b", "browndk": "#5a3a1a", "tan": "#d9b27c",
+    "red": "#e25b4a", "reddk": "#8e2a22", "orange": "#ff9a3c", "yellow": "#f4d03f", "blue": "#5aa0f0", "bluedk": "#2f5fa8",
+    "cyan": "#7fd3ff", "purple": "#a05fd8", "purpledk": "#5d2f8a", "green": "#62d65a", "greendk": "#2c7a34", "grey": "#9aa5b1", "pink": "#ff8fb8"
+  },
+  "icons": {
+    "fight": [
+      {"c": "steel", "line": [4, 7, 9, 2]}, {"c": "steel", "line": [5, 7, 9, 3]}, {"c": "white", "px": [[9, 2], [8, 3]]},
+      {"c": "gold", "line": [3, 5, 6, 8]}, {"c": "brown", "line": [3, 8, 1, 10]}, {"c": "goldhi", "px": [[0, 11], [1, 11]]}
+    ],
+    "bag": [
+      {"c": "brown", "rect": [2, 4, 9, 10]}, {"c": "tan", "rect": [3, 5, 8, 6]}, {"c": "browndk", "rect": [2, 9, 9, 10]},
+      {"c": "browndk", "rect": [4, 2, 7, 3]}, {"c": "gold", "rect": [5, 7, 6, 8]}
+    ],
+    "party": [
+      {"c": "tan", "disc": [3, 3, 2]}, {"c": "blue", "rect": [1, 6, 5, 10]}, {"c": "tan", "disc": [8, 4, 2]}, {"c": "red", "rect": [6, 7, 10, 10]}
+    ],
+    "run": [
+      {"c": "tan", "disc": [7, 2, 1]}, {"c": "green", "line": [7, 3, 5, 7]}, {"c": "green", "line": [7, 4, 9, 6]}, {"c": "green", "line": [5, 7, 8, 9]},
+      {"c": "green", "line": [5, 7, 2, 8]}, {"c": "steel", "line": [0, 5, 2, 5]}, {"c": "steel", "line": [0, 8, 1, 8]}
+    ],
+    "forfeit": [
+      {"c": "brown", "line": [2, 1, 2, 10]}, {"c": "white", "rect": [3, 2, 9, 6]}, {"c": "steel", "px": [[3, 6], [4, 6], [5, 6]]}
+    ],
+    "burn": [
+      {"c": "red", "poly": [[6, 0], [9, 4], [10, 8], [8, 11], [3, 11], [1, 8], [3, 4], [4, 6]]}, {"c": "orange", "poly": [[6, 4], [8, 7], [8, 10], [4, 10], [3, 8], [5, 7]]}, {"c": "yellow", "poly": [[6, 7], [7, 9], [6, 10], [5, 9]]}
+    ],
+    "paralysis": [
+      {"c": "yellow", "poly": [[7, 0], [2, 6], [5, 6], [3, 11], [9, 4], [6, 4], [8, 0]]}, {"c": "white", "px": [[7, 1], [6, 3]]}
+    ],
+    "sleep": [
+      {"c": "cyan", "rect": [1, 1, 5, 2]}, {"c": "cyan", "line": [5, 2, 1, 6]}, {"c": "cyan", "rect": [1, 6, 5, 7]},
+      {"c": "white", "rect": [6, 5, 10, 6]}, {"c": "white", "line": [10, 6, 6, 10]}, {"c": "white", "rect": [6, 10, 10, 11]}
+    ],
+    "poison": [
+      {"c": "purple", "poly": [[6, 0], [9, 5], [10, 8], [8, 11], [4, 11], [2, 8], [3, 5]]}, {"c": "white", "px": [[4, 7], [4, 8]]},
+      {"c": "purpledk", "px": [[7, 9], [8, 8], [8, 7]]}
+    ],
+    "freeze": [
+      {"c": "cyan", "line": [6, 0, 6, 11]}, {"c": "cyan", "line": [0, 6, 11, 6]}, {"c": "cyan", "line": [1, 1, 10, 10]}, {"c": "cyan", "line": [10, 1, 1, 10]},
+      {"c": "white", "disc": [6, 6, 1]}
+    ],
+    "confusion": [
+      {"c": "yellow", "poly": [[3, 1], [4, 3], [6, 3], [5, 5], [6, 7], [4, 6], [2, 7], [3, 5], [1, 3], [3, 3]]}, {"c": "pink", "disc": [8, 8, 2]}
+    ],
+    "flinch": [
+      {"c": "red", "rect": [5, 1, 6, 7]}, {"c": "red", "rect": [5, 9, 6, 10]}
+    ],
+    "protect": [
+      {"c": "blue", "poly": [[1, 1], [10, 1], [10, 6], [6, 11], [5, 11], [1, 6]]}, {"c": "cyan", "poly": [[3, 3], [8, 3], [8, 5], [6, 8], [5, 8], [3, 5]]}
+    ],
+    "leech": [
+      {"c": "red", "disc": [5, 7, 3]}, {"c": "red", "poly": [[5, 0], [8, 5], [2, 5]]}, {"c": "white", "px": [[3, 7], [3, 8]]}
+    ],
+    "focus": [
+      {"c": "red", "disc": [6, 6, 5]}, {"c": "white", "disc": [6, 6, 3]}, {"c": "red", "disc": [6, 6, 1]}
+    ],
+    "taunt": [
+      {"c": "orange", "rect": [1, 2, 10, 9]}, {"c": "ink", "line": [3, 4, 5, 5]}, {"c": "ink", "line": [8, 4, 6, 5]}, {"c": "ink", "line": [3, 8, 8, 8]}
+    ],
+    "meter-risk": [
+      {"c": "red", "poly": [[6, 0], [11, 10], [1, 10]]}, {"c": "white", "rect": [5, 4, 6, 7]}, {"c": "white", "px": [[5, 9], [6, 9]]}
+    ],
+    "meter-good": [
+      {"c": "green", "disc": [6, 6, 5]}, {"c": "white", "line": [3, 6, 5, 8]}, {"c": "white", "line": [5, 8, 9, 3]}
+    ],
+    "meter-warn": [
+      {"c": "yellow", "disc": [6, 6, 5]}, {"c": "ink", "rect": [5, 3, 6, 7]}, {"c": "ink", "px": [[5, 9], [6, 9]]}
+    ],
+    "meter-bad": [
+      {"c": "red", "disc": [6, 6, 5]}, {"c": "white", "line": [4, 4, 8, 8]}, {"c": "white", "line": [8, 4, 4, 8]}
+    ],
+    "meter-neutral": [
+      {"c": "steel", "disc": [6, 6, 5]}, {"c": "ink", "disc": [6, 6, 2]}
+    ]
+  }
+}

@@ -4,7 +4,8 @@ import type { BattleStatKey, CreatureView } from '../../shared/types.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { creatureName } from '../../shared/creature.ts'
 import { effectBalance, hudEffects, type BattleStatusSnapshot } from './effect-details.ts'
-import { actionKeyLabel, append, el, expBar, hpBar, panel, rarityBadge, statusChip, typeChip, type BarHandle } from '../ui/widgets.ts'
+import { actionKeyLabel, append, el, expBar, hpBar, panel, rarityBadge, type BarHandle } from '../ui/widgets.ts'
+import { effectIcon, meterTile, typeBadge } from './badges.ts'
 import { BATTLE_UI } from './config.ts'
 import type { BossPanelInfo, SlotInfo } from './model.ts'
 
@@ -29,7 +30,7 @@ export interface StatusPanel {
 
 export function createStatusPanel(own: boolean, onInspect: () => void, speed?: () => number): StatusPanel {
   const H = BATTLE_UI.hud
-  const p = panel(null, { className: `apb-status ${own ? 'is-own' : 'is-foe'} is-away is-empty` })
+  const p = panel(null, { className: `apb-win apb-status ${own ? 'is-own' : 'is-foe'} is-away is-empty` })
   const name = el('span', 'apb-st-name ap-model-name')
   const shiny = el('span', { class: 'apb-st-shiny', text: t('ui.shiny') })
   shiny.hidden = true
@@ -107,14 +108,14 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
   const paintTags = () => {
     const snap = snapshot()
     const nodes: HTMLElement[] = []
-    if (H.showTypes) for (const ty of types) nodes.push(typeChip(ty))
+    if (H.showTypes) for (const ty of types) nodes.push(typeBadge(ty))
     foldable = []
     for (const row of snap ? hudEffects(snap) : []) {
       if (row.group === 'stage' && !H.showStages) continue
-      const tag = row.group === 'status' && status
-        ? statusChip(status)
-        : el('span', { class: `apb-tag ${row.polarity === 'buff' ? 'is-up' : 'is-down'}`, text: row.short })
-      tag.title = row.description
+      const tip = t('battleui.effects.tip', { label: row.label, description: row.description })
+      const icon = row.group === 'stage' ? null : effectIcon(row.id.slice(row.id.indexOf(':') + 1), tip, row.polarity)
+      const tag = icon ?? el('span', { class: `apb-tag ${row.polarity === 'buff' ? 'is-up' : 'is-down'}`, text: row.short })
+      tag.title = tip
       foldable.push(tag)
     }
     tags.replaceChildren(...nodes)
@@ -186,13 +187,17 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
       if (!info) { bossBox.replaceChildren(); return }
       const pips = el('span', 'apb-boss-pips', Array.from({ length: info.phases }, (_, i) => el('span', `apb-pip${i < info.phase ? ' is-on' : ''}`)))
       pips.title = t('battleui.boss.phase', { n: info.phase })
-      const head = el('div', 'apb-boss-head', [el('span', { class: 'apb-boss-tag', text: t('battleui.boss.tag') }), el('span', { class: 'apb-boss-title', text: info.title }), pips])
-      const chips = info.chips.map((c) => {
-        const chip = el('span', { class: `apb-bchip is-${c.tone}${c.alert ? ' is-alert' : ''}`, text: c.text })
-        if (c.fill !== null) chip.style.setProperty('--fill', `${Math.round(c.fill * 100)}%`)
-        return chip
-      })
-      bossBox.replaceChildren(head, ...(chips.length ? [el('div', 'apb-boss-chips', chips)] : []))
+      const title = el('span', { class: 'apb-boss-title', text: info.title })
+      let readoutTimer = 0
+      const readout = (text: string) => {
+        title.textContent = text
+        title.classList.add('is-readout')
+        clearTimeout(readoutTimer)
+        readoutTimer = window.setTimeout(() => { title.textContent = info.title; title.classList.remove('is-readout') }, H.meterReadoutMs)
+      }
+      const head = el('div', 'apb-boss-head', [el('span', { class: 'apb-boss-tag', text: t('battleui.boss.tag') }), title, pips])
+      const tiles = info.chips.map((c) => meterTile(c, readout))
+      bossBox.replaceChildren(head, ...(tiles.length ? [el('div', 'apb-boss-tiles', tiles)] : []))
     },
     pulseBoss() {
       bossBox.classList.remove('is-pulse')
