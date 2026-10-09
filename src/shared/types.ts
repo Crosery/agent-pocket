@@ -1302,3 +1302,21 @@ export interface DevScenario {
 
 /** content/dev/acceptance/<issue>.json: the scenarios a worker ships with an issue, shown on the panel's acceptance tab. */
 export interface DevAcceptance { issue: number; titleKey: string; scenarios: string[] }
+
+/**
+ * BattleInit.debug (developer builds only set it): forces the four random rolls of the battle engine. A forced roll still
+ * takes its draw from the seeded stream, so the rest of the fight is the one the natural rolls would have given.
+ * `hit` applies to moves that can miss (always-hit moves and Struggle stay as they are); `damage` picks the end of the
+ * random factor range for every damage calculation; `crit` applies to moves that deal computed damage.
+ */
+export interface DevBattleRolls {
+  hit?: 'always' | 'never'
+  damage?: 'min' | 'max'
+  crit?: 'always' | 'never'
+  catch?: 'success' | 'fail'
+}
+
+export interface DevBattleDebug { rolls?: DevBattleRolls }
+
+// Declaration merging keeps the dev field out of the game's own BattleInit declaration.
+export interface BattleInit { debug?: DevBattleDebug }
