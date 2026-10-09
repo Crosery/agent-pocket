@@ -9,11 +9,10 @@ import { toView } from '../shared/creature.ts'
 import { buildWorld, buildWorldAsync, worldAnchors } from '../shared/world/index.ts'
 import { getMap } from '../shared/world/worldapi.ts'
 import {
-  applyDocumentSettings, createAssetStore, createAudio, createClock, createEventBus, createInput, createSaveManager, isTouchDevice,
+  applyDocumentSettings, createAssetStore, createAudio, createClock, createEventBus, createInput, createSaveManager,
 } from './core/index.ts'
 import { RngHub, randomSeed } from './core/rng-hub.ts'
 import { createRenderer, createWorldView } from './render/index.ts'
-import { defaultQualityFor } from './render/config.ts'
 import { UI_CONFIG, createChatUI, createEscapeStack, createHUD, createMinimap, createUIKit, installEscapeFallback, releaseButtonFocusAfterClick } from './ui/index.ts'
 import { createNetClient } from './net/index.ts'
 import { createOnboarding } from './onboarding/index.ts'
@@ -204,8 +203,6 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   const saves = createSaveManager({ world: () => world, ...(dev?.storage ? { storage: dev.storage } : {}) })
   const stored = saves.load(slot)
   let save: SaveData = stored ?? saves.newGame({ name: '', avatar: '' })
-  // A device without a save yet starts on its own tier (phones: the lighter one); a stored choice always wins.
-  if (!stored) save.settings.quality = defaultQualityFor(isTouchDevice(), save.settings.quality)
   /** Before the world starts only a save that already exists on disk may be written (settings changed on the title). */
   let titleSaveStored = !!stored
   let playing: SaveData | null = null

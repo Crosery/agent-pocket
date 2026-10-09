@@ -5,7 +5,7 @@
     "high": {"shadows": true, "shadowMapScale": 1, "shadowRadius": 2, "shadowHz": 0, "shadowSnapTexels": 1, "dof": true, "dofSamples": 20, "bloom": true, "grassPerTile": 4, "particleScale": 1, "pointLights": 8, "viewRadius": 36, "propShadows": true, "waterSparkles": true, "glowSprites": true, "natureVariants": 4, "decorDensity": 1.0, "terrainFringe": true, "snowDust": true, "maxChunks": 56},
     "ultra": {"shadows": true, "shadowMapScale": 1.5, "shadowRadius": 2.5, "shadowHz": 0, "shadowSnapTexels": 1, "dof": true, "dofSamples": 32, "bloom": true, "grassPerTile": 6, "particleScale": 1.4, "pointLights": 10, "viewRadius": 44, "propShadows": true, "waterSparkles": true, "glowSprites": true, "natureVariants": 5, "decorDensity": 1.35, "terrainFringe": true, "snowDust": true, "maxChunks": 72}
   },
-  "device": {"touchDefaultQuality": "medium", "touchMinInternalHeight": 450},
+  "device": {"touchMinInternalHeight": 450},
   "governor": {
     "enabled": true,
     "storageKey": "ap.render.governor",

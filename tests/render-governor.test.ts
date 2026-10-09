@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { RENDER, defaultQualityFor, governedPreset, governedScaleBias, qualityPreset, validateRenderContent } from '../src/client/render/config.ts'
+import { RENDER, governedPreset, governedScaleBias, qualityPreset, validateRenderContent } from '../src/client/render/config.ts'
 import { createGovernor, type GovernorConfig } from '../src/client/render/governor.ts'
 
 const CFG: GovernorConfig = RENDER.governor
@@ -95,16 +95,11 @@ test('governor steps layer onto the tier and leave level 0 untouched', () => {
   assert.equal(high.dof, true, 'the tier itself is never modified')
 })
 
-test('touch devices start on the configured tier, other devices keep the default', () => {
-  assert.equal(defaultQualityFor(true, 'high'), RENDER.device.touchDefaultQuality)
-  assert.equal(defaultQualityFor(false, 'high'), 'high')
-})
-
 test('render.json governor and device sections validate; bad data is reported', () => {
   assert.deepEqual(validateRenderContent(), [])
-  const bad = { ...RENDER, governor: { ...RENDER.governor, upBelowMs: RENDER.governor.downAboveMs + 1, steps: [{ nope: 1 } as never] }, device: { ...RENDER.device, touchDefaultQuality: 'mega' as never } }
+  const bad = { ...RENDER, governor: { ...RENDER.governor, upBelowMs: RENDER.governor.downAboveMs + 1, steps: [{ nope: 1 } as never] }, device: { ...RENDER.device, touchMinInternalHeight: 0 } }
   const errs = validateRenderContent(bad)
   assert.ok(errs.some((e) => e.includes('flap')), errs.join('\n'))
   assert.ok(errs.some((e) => e.includes('unknown key')))
-  assert.ok(errs.some((e) => e.includes('touchDefaultQuality')))
+  assert.ok(errs.some((e) => e.includes('touchMinInternalHeight')))
 })

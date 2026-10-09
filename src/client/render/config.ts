@@ -765,8 +765,8 @@ export interface GovernorStep extends Partial<Pick<QualityPreset, 'shadowHz' | '
 
 export interface RenderContent {
   quality: Record<QualityId, QualityPreset>
-  /** Touch devices (coarse pointer): the tier a new save starts on and the internal height floor (crisp pixels cost little there). */
-  device: { touchDefaultQuality: QualityId; touchMinInternalHeight: number }
+  /** Touch devices (coarse pointer): the internal height floor (crisp pixels cost little there). The default tier is the touchOnly settings migration in config.json. */
+  device: { touchMinInternalHeight: number }
   governor: GovernorConfig & { steps: GovernorStep[] }
   post: PostConfig
   camera: CameraRenderConfig
@@ -920,11 +920,6 @@ export function sunState(minute: number, s: SunConfig = RENDER.sun): SunState {
 // ---------------------------------------------------------------------------
 // Lookups
 // ---------------------------------------------------------------------------
-
-/** The tier a save starts on for this device (coarse pointers get the lighter one). */
-export function defaultQualityFor(coarsePointer: boolean, fallback: QualityId, r: RenderContent = RENDER): QualityId {
-  return coarsePointer ? r.device.touchDefaultQuality : fallback
-}
 
 /** `preset` with the governor steps 1..level layered on top; level 0 returns the preset itself. Reads through to `preset` so live tuning still shows. */
 export function governedPreset(preset: QualityPreset, level: number, r: RenderContent = RENDER): QualityPreset {
@@ -1166,7 +1161,6 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
   if (!Array.isArray(G.steps)) errs.push('governor.steps: missing list')
   const stepKeys = new Set(['about', 'shadowHz', 'dof', 'bloom', 'dofSamples', 'particleScale', 'scaleBias'])
   for (const [i, step] of (G.steps ?? []).entries()) for (const k of Object.keys(step)) if (!stepKeys.has(k)) errs.push(`governor.steps[${i}]: unknown key "${k}"`)
-  if (!r.quality[r.device.touchDefaultQuality]) errs.push(`device.touchDefaultQuality "${r.device.touchDefaultQuality}" is not a quality tier`)
   if (!(r.device.touchMinInternalHeight > 0)) errs.push('device.touchMinInternalHeight must be positive')
   // quality presets: new large-map knobs
   for (const [id, q] of Object.entries(r.quality)) {
