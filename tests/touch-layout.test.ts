@@ -126,3 +126,9 @@ test('the tutorial text for touch points at the left half, not at a fixed stick'
   assert.match(t('tutorial.manual.move.bodyTouch'), /左半边/)
   assert.doesNotMatch(t('tutorial.device.touch.move'), /摇杆/)
 })
+
+test('the server greeting has a touch variant that names the chat icon, not the T key', () => {
+  assert.match(t('net.motd'), /按 T/)
+  assert.doesNotMatch(t('net.motdTouch'), /\bT\b/)
+  assert.match(t('net.motdTouch'), /聊天图标/)
+})
