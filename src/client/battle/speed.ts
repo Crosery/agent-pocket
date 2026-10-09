@@ -11,9 +11,14 @@ export function battleSpeedScale(s: SpeedSetting): number {
   return C.battleSpeeds.includes(s.battleSpeed) ? s.battleSpeed : C.defaultSettings.battleSpeed
 }
 
+/** Real elapsed seconds -> battle seconds (message typing). */
+export function battleSec(dtSec: number, s: SpeedSetting): number {
+  return dtSec * battleSpeedScale(s)
+}
+
 /** Real elapsed seconds -> battle milliseconds (holds, banners, auto-advance, scene waits). */
 export function battleMs(dtSec: number, s: SpeedSetting): number {
-  return dtSec * 1000 * battleSpeedScale(s)
+  return battleSec(dtSec, s) * 1000
 }
 
 /** Real elapsed seconds -> stage updates: the scaled frame cut into steps of at most `maxStepSec` so fast-forwarded animation stays stable. */

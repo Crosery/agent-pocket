@@ -9,7 +9,8 @@ import { dirname, join } from 'node:path'
 import { CONTENT } from '../src/shared/content/index.ts'
 import { sanitizeSettings } from '../src/client/core/save-sanitize.ts'
 import { BATTLE_UI } from '../src/client/battle/config.ts'
-import { battleMs, battleSpeedScale, createHolds, stageSteps } from '../src/client/battle/speed.ts'
+import { advanceTypewriter, createTypewriter } from '../src/client/ui/textflow.ts'
+import { battleMs, battleSec, battleSpeedScale, createHolds, stageSteps } from '../src/client/battle/speed.ts'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const read = (f: string) => readFileSync(join(ROOT, f), 'utf8')
@@ -32,6 +33,15 @@ test('settings keep a configured speed and fall back to the default otherwise', 
 
 test('battle time is real time times the multiplier', () => {
   for (const v of SCALES) assert.ok(Math.abs(battleMs(0.25, at(v)) - 250 * v) < 1e-9)
+})
+
+test('message typing runs on battle seconds: a faster battle types proportionally more characters per second', () => {
+  const cps = 20
+  for (const v of SCALES) {
+    const tw = createTypewriter('x'.repeat(400))
+    for (let i = 0; i < 10; i++) advanceTypewriter(tw, battleSec(0.1, at(v)), cps, '', 0)
+    assert.ok(Math.abs(tw.shown - cps * v) <= 1.5, `${v}x typed ${tw.shown}`)
+  }
 })
 
 test('scene holds (after-intro, end hold, faint settle, evolution holds) elapse in proportion to the multiplier', async () => {
@@ -79,6 +89,7 @@ test('every battle time consumer takes its clock from the battle speed module', 
   assert.match(view, /createMessageBox\(audio, settings, pace\)/, 'message auto-advance')
   assert.equal((view.match(/barSpeed\)/g) ?? []).length, 2, 'both status panels get the bar speed')
   assert.match(read('src/client/battle/message.ts'), /held \+= battleMs\(dt, pace\(\)\)/)
+  assert.match(read('src/client/battle/message.ts'), /advanceTypewriter\(tw, battleSec\(dt, pace\(\)\)/, 'message typing')
   assert.match(read('src/client/battle/status-panel.ts'), /hpBar\(\{[^}]*speed\s*\}\)/, 'hp bar drain')
   assert.match(read('src/client/battle/status-panel.ts'), /expBar\(\{[^}]*speed\s*\}\)/, 'exp bar fill')
   assert.match(read('src/client/ui/widgets.ts'), /rate \* \(opts\?\.speed\?\.\(\) \?\? 1\) \* dt/)

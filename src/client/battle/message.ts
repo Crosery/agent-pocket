@@ -5,7 +5,7 @@ import type { AudioManager, Input } from '../contracts.ts'
 import { advanceTypewriter, completeTypewriter, createTypewriter, typewriterDone, type TypewriterState } from '../ui/textflow.ts'
 import { el, panel } from '../ui/widgets.ts'
 import { BATTLE_UI } from './config.ts'
-import { battleMs } from './speed.ts'
+import { battleMs, battleSec } from './speed.ts'
 
 /** 'auto': advances by itself after the configured delay (or on confirm); 'confirm': waits for confirm; 'none': resolves once typed. */
 export type MessageWait = 'auto' | 'confirm' | 'none'
@@ -99,7 +99,7 @@ export function createMessageBox(audio: AudioManager, settings: () => Settings, 
       if (!typewriterDone(tw)) {
         const speed = settings().textSpeed
         const before = tw.shown
-        advanceTypewriter(tw, dt, M.charsPerSecond[speed] ?? M.charsPerSecond.normal, M.pause.chars, M.pause.ms)
+        advanceTypewriter(tw, battleSec(dt, pace()), M.charsPerSecond[speed] ?? M.charsPerSecond.normal, M.pause.chars, M.pause.ms)
         let blip = false
         for (let i = before; i < tw.shown; i++) if (!/\s/.test(tw.chars[i]) && blips++ % M.blip.everyChars === 0) blip = true
         if (blip) audio.playSfx(M.blip.sfx, { volume: M.blip.volume, pitch: M.blip.pitch })
