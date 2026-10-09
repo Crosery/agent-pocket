@@ -1,0 +1,19 @@
+{
+  "id": "anchor-network",
+  "titleKey": "dev.scn.anchorNetwork",
+  "extends": "after-gym-3",
+  "then": [
+    {
+      "cmd": "anchor.unlock",
+      "args": {
+        "radius": 450
+      }
+    }
+  ],
+  "expect": [
+    {
+      "path": "/save/badges",
+      "length": 3
+    }
+  ]
+}

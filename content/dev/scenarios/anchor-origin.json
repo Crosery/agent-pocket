@@ -1,0 +1,16 @@
+{
+  "id": "anchor-origin",
+  "titleKey": "dev.scn.anchorOrigin",
+  "extends": "fresh-start",
+  "place": {
+    "map": "overworld",
+    "x": 529,
+    "y": 882
+  },
+  "expect": [
+    {
+      "path": "/save/position/map",
+      "eq": "overworld"
+    }
+  ]
+}

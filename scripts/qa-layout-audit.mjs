@@ -303,6 +303,17 @@ async function prepareSave(page) {
   })
 }
 
+async function prepareAnchors(page) {
+  await page.evaluate(async () => {
+    const { anchorsInRect } = await import('/src/shared/world/anchors.ts')
+    const ctx = window.__AP
+    const p = ctx.overworld.player
+    await window.__ap.v1.cmd('anchor.unlock', { radius: 220 })
+    const known = new Set(ctx.save.anchors.seen)
+    for (const s of anchorsInRect(ctx.data.world.maps[ctx.data.world.startMap], p.x - 420, p.y - 420, p.x + 420, p.y + 420)) if (!known.has(s.id)) ctx.save.anchors.seen.push(s.id)
+  })
+}
+
 async function toLab(page) {
   const target = await page.evaluate(async () => {
     const ctx = window.__AP
@@ -362,6 +373,9 @@ export const SCREENS = [
   { id: 'box', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.box() }) },
   { id: 'shop', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.shop(Object.keys(window.__AP.data.items).slice(0, 40)) }) },
   { id: 'map', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.worldMap({ fly: false }) }) },
+  // Teleport anchors (#38): some activated near the origin, a wider ring only discovered (grey pins).
+  { id: 'map-anchors', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await prepareAnchors(page); await page.evaluate(() => { void window.__AP.screens.worldMap({ fly: false, anchors: true }) }); await page.waitForTimeout(1800) } },
+  { id: 'anchor-picker', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await prepareAnchors(page); await page.evaluate(() => { void window.__AP.screens.anchorPicker({}) }); await page.waitForTimeout(600) } },
   { id: 'quests', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.quests() }) },
   { id: 'settings', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.settings() }) },
   { id: 'online', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.online() }) },
@@ -456,6 +470,10 @@ async function hideTips(page, hide) {
     let st = document.getElementById('qa-hide-tips')
     if (!st) { st = document.createElement('style'); st.id = 'qa-hide-tips'; document.head.append(st) }
     st.textContent = h ? '.ap-tip { display: none !important }' : ''
+    // the developer badge exists only in dev builds: it is not part of the screens under audit
+    let dev = document.getElementById('qa-hide-dev-badge')
+    if (!dev) { dev = document.createElement('style'); dev.id = 'qa-hide-dev-badge'; document.head.append(dev) }
+    dev.textContent = '.apd-badge { display: none !important }'
   }, hide)
 }
 
