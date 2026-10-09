@@ -35,8 +35,9 @@ export interface BattleSprite {
   /** Base visibility; effects (reveal / vanish) toggle it. */
   present: boolean
   readonly fx: SpriteFx
-  /** Nominal world height of the sprite. */
+  /** Nominal world height / width of the sprite card. */
   readonly height: number
+  readonly width: number
   readonly id: string | null
   readonly shiny: boolean
   setCreature(speciesId: string | null, shiny: boolean, sizeMul: number, facesRight: boolean): void
@@ -196,6 +197,7 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
     kind, root, mesh, home, fx,
     present: false,
     get height() { return height },
+    get width() { return width },
     get id() { return id },
     get shiny() { return shiny },
     setCreature(speciesId, isShiny, sizeMul, facesRight) {

@@ -92,8 +92,8 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 .apb-st-taglist { display: flex; align-items: center; gap: calc(var(--u) * 2); flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; }
 .apb-st-taglist > * { flex: none; }
 /* The floating foe window may grow, so its tags wrap instead of clipping; the own corner has a fixed height. */
-.apb-status.is-foe .apb-st-tags { height: auto; min-height: calc(var(--u) * 13); align-items: flex-start; }
-.apb-status.is-foe .apb-st-taglist { flex-wrap: wrap; row-gap: calc(var(--u) * 2); }
+.apb-status .apb-st-tags { height: auto; min-height: calc(var(--u) * 13); align-items: flex-start; }
+.apb-status .apb-st-taglist { flex-wrap: wrap; row-gap: calc(var(--u) * 2); }
 .apb-status.is-foe .apb-balls { margin-top: calc(var(--u) * 3); }
 /* Active effects get a row of their own under the types (one row, two on the foe window); whatever does not fit
    folds whole into a "+N" tag (status-panel.ts). Only present while there are effects, so the window grows then:

@@ -55,5 +55,5 @@
   "ability": {"banner": "{name} 的「{ability}」"},
   "error": {"aborted": "战斗出现异常，已安全结束。"},
   "boss": {"tag": "首领", "meter": "{label} {value}/{max}", "charge": "蓄力：{move}", "enrage": "狂暴 ×{n}", "phase": "第 {n} 阶段", "formBanner": "{from} → {to}"},
-  "bossIntro": {"skip": "跳过", "skipHint": "{key} 跳过", "caption": "{name}", "title": "{title}"}
+  "bossIntro": {"skip": "跳过", "skipHint": "{key} 跳过"}
 }

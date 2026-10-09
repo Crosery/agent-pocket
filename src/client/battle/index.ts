@@ -101,6 +101,8 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         })
         const { stage, view } = scene
         if (bossId) stage.setBoss(1, bossId)
+        // dev automation (layout audit): the live stage, only where window.__AP exists (?dev=1)
+        if (typeof window !== 'undefined' && (window as unknown as { __AP?: unknown }).__AP) (window as unknown as { __apStage?: typeof stage }).__apStage = stage
         const music = opts.music ?? ctx.data.audio.battleMusic[kind]
         if (music) ctx.audio.playBgm(music, { fadeMs: BATTLE_UI.music.fadeMs })
         stage.setTrainer(0, characterOrNull(ctx, init.sides[0].sprite ?? ctx.save.avatar))

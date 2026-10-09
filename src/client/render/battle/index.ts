@@ -41,6 +41,8 @@ export interface BattleStage {
    * and the theme's aura. Call before setCreature(); null returns the slot to a normal creature.
    */
   setBoss(side: 0 | 1, bossId: string | null): void
+  /** Screen rectangle of a creature's sprite card as fractions of the viewport (QA / layout audit); null when hidden. */
+  creatureRect(side: 0 | 1): { left: number; top: number; right: number; bottom: number } | null
   intro(kind: IntroKind): Promise<void>
   sendOut(side: 0 | 1, ballColor?: string): Promise<void>
   recall(side: 0 | 1): Promise<void>
@@ -228,6 +230,8 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
   }
 
   const alive = () => !disposed
+  const _qa = new THREE.Vector3()
+  const _qb = new THREE.Vector3()
 
   // --- boss presentation ------------------------------------------------------
   const bosses: [BossEntry | null, BossEntry | null] = [null, null]
@@ -304,6 +308,22 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
     },
 
     showCreature(side, visible) { creatures[side].present = visible && !!creatures[side].id },
+
+    creatureRect(side) {
+      const sp = creatures[side]
+      if (!sp.present || !sp.id) return null
+      const cam3 = cam.camera
+      const right = _qa.setFromMatrixColumn(cam3.matrixWorld, 0)
+      const half = (sp.width * sp.fx.scale) / 2
+      let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity
+      for (const [h, dx] of [[0, -1], [0, 1], [1, -1], [1, 1]] as const) {
+        sp.pointAt(h, _qb)
+        _qb.addScaledVector(right, dx * half).project(cam3)
+        const x = _qb.x * 0.5 + 0.5, y = 0.5 - _qb.y * 0.5
+        l = Math.min(l, x); r = Math.max(r, x); t = Math.min(t, y); b = Math.max(b, y)
+      }
+      return { left: l, top: t, right: r, bottom: b }
+    },
 
     setBoss(side, bossId) {
       const entry = bossEntry(bossId)

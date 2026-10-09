@@ -34,6 +34,8 @@ export function prefetchBossIntro(bossId: string | null | undefined): BossIntroP
   }
 }
 
+const coarsePointer = () => typeof matchMedia === 'function' && matchMedia('(pointer: coarse)').matches
+
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
 /** Resolves true when the video is playable without waiting (enough data buffered), false on timeout, error or skip. */
@@ -77,7 +79,7 @@ export async function playBossIntro(view: BattleView, bossId: string, prefetch: 
     el('div', { class: 'apb-bi-name ap-model-name', text: species?.nameZh ?? entry.species }),
     el('div', { class: 'apb-bi-title', text: t(def.title) }),
   ])
-  const skip = el('button', { class: 'apb-bi-skip', attrs: { type: 'button' }, text: `${t('battleui.bossIntro.skip')} ${actionKeyLabel('confirm')}` })
+  const skip = el('button', { class: 'apb-bi-skip', attrs: { type: 'button' }, text: coarsePointer() ? t('battleui.bossIntro.skip') : t('battleui.bossIntro.skipHint', { key: actionKeyLabel('confirm') }) })
   const overlay = el('div', 'apb-bi', [poster, caption, skip])
   overlay.style.setProperty('--apb-bi-in', `${C.fadeInMs}ms`)
   overlay.style.setProperty('--apb-bi-out', `${C.fadeOutMs}ms`)
