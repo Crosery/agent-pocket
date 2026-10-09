@@ -6,7 +6,7 @@
 import type { InputAction } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
 import type { InputConfig, TouchStyle } from './input-config.ts'
-import { clampRing, computeTouchLayout, driveStick, mayStartStick, moveOutcome, releaseIsTap, type TouchLayout } from './touch-layout.ts'
+import { clampRing, computeTouchLayout, driveStick, mayStartStick, moveOutcome, releaseIsTap, ringHitsRect, type TouchLayout } from './touch-layout.ts'
 
 export interface TouchCallbacks {
   onButton(action: InputAction, down: boolean): void
@@ -79,9 +79,12 @@ html.ap-ui-blocking .ap-touch__hint,html.ap-battle-on .ap-touch__hint{display:no
 @keyframes ap-touch-hint{0%{opacity:0}15%,70%{opacity:${cfg.hint.opacity}}100%{opacity:0}}
 @keyframes ap-touch-hint-knob{0%,12%{transform:translate(-50%,-50%)}55%,75%{transform:translate(calc(-50% + var(--hint-drag)),-50%)}100%{transform:translate(-50%,-50%)}}
 @media (prefers-reduced-motion:reduce){.ap-touch__hint.is-on,.ap-touch__hint .ap-touch__knob{animation:none}.ap-touch__hint.is-on{opacity:${cfg.hint.opacity}}}
-.ap-touch__ring,.ap-touch__ring-in,.ap-touch__knob,.ap-touch__knob-in{position:absolute;}
-.ap-touch__ring{inset:0;background:${st.frame};}
-.ap-touch__ring-in{inset:${px}px;background:${st.ringFill};box-shadow:inset 0 0 0 ${px}px ${st.ringEdge};}
+.ap-touch__ring,.ap-touch__knob,.ap-touch__knob-in{position:absolute;}
+/* One see-through disc: translucent fill, a thin light rim, then a soft dark outline (each band carries its own alpha). */
+.ap-touch__ring{inset:0;background:radial-gradient(circle closest-side,${st.ringFill} calc(100% - ${px * 2}px),${st.ringEdge} calc(100% - ${px * 2}px) calc(100% - ${px}px),${st.ringOutline} calc(100% - ${px}px));}
+.ap-touch__stick .ap-touch__knob{opacity:${st.knobOpacity};}
+/* A tutorial card the stick would sit under steps aside while the thumb is down. */
+html.ap-stick-clear .ap-tip{opacity:0 !important;pointer-events:none !important;transition:opacity 80ms linear;}
 .ap-touch__knob{left:50%;top:50%;transform:translate(-50%,-50%);background:${st.frame};}
 .ap-touch__knob-in{inset:${px}px;background:linear-gradient(${st.knobHi} 0 45%,${st.knobLo} 45% 100%);}
 .ap-touch__btn{position:absolute;pointer-events:auto;touch-action:none;border:0;padding:0;margin:0;background:${st.frame};cursor:pointer;-webkit-tap-highlight-color:transparent;${btnVars(st.buttonDefault)}}
@@ -122,20 +125,17 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
   const ringParts = () => {
     const ring = document.createElement('div')
     ring.className = 'ap-touch__ring'
-    const ringIn = document.createElement('div')
-    ringIn.className = 'ap-touch__ring-in'
-    ring.appendChild(ringIn)
     const knob = document.createElement('div')
     knob.className = 'ap-touch__knob'
     const knobIn = document.createElement('div')
     knobIn.className = 'ap-touch__knob-in'
     knob.appendChild(knobIn)
-    return { ring, ringIn, knob, knobIn }
+    return { ring, knob, knobIn }
   }
   const stick = document.createElement('div')
   stick.className = 'ap-touch__stick'
   stick.setAttribute('aria-label', t('audio.touch.stick'))
-  const { ring, ringIn, knob, knobIn } = ringParts()
+  const { ring, knob, knobIn } = ringParts()
   stick.append(ring, knob)
   const hint = document.createElement('div')
   hint.className = 'ap-touch__hint'
@@ -151,6 +151,8 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     const c = clampRing(origin, layout.stickRadius, { width: window.innerWidth, height: window.innerHeight }, cfg.stick.edgePadPx)
     stick.style.left = `${c.x}px`
     stick.style.top = `${c.y}px`
+    const tip = document.querySelector('.ap-tip')
+    document.documentElement.classList.toggle('ap-stick-clear', !!tip && ringHitsRect(c, layout.stickRadius, tip.getBoundingClientRect()))
   }
   const placeKnob = (dx: number, dy: number) => { knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))` }
   let fadeTimer: ReturnType<typeof setTimeout> | null = null
@@ -159,6 +161,7 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     stick.classList.remove('is-fading')
   }
   const resetStick = () => {
+    document.documentElement.classList.remove('ap-stick-clear')
     stick.classList.remove('is-active')
     stick.classList.add('is-fading')
     fadeTimer = setTimeout(clearFade, cfg.stick.fadeMs)
@@ -311,9 +314,8 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     const stickSize = layout.stickRadius * 2
     stick.style.width = stick.style.height = `${stickSize}px`
     const knobSize = layout.knobRadius * 2
-    for (const part of [{ ring, ringIn, knob, knobIn }, hintParts]) {
+    for (const part of [{ ring, knob, knobIn }, hintParts]) {
       part.ring.style.clipPath = circle(stickSize)
-      part.ringIn.style.clipPath = circle(stickSize - px * 2)
       part.knob.style.width = part.knob.style.height = `${knobSize}px`
       part.knob.style.clipPath = circle(knobSize)
       part.knobIn.style.clipPath = circle(knobSize - px * 2)
@@ -374,6 +376,7 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
       root.removeEventListener('pointermove', moved)
       root.removeEventListener('pointerup', onRootUp)
       root.removeEventListener('pointercancel', onRootCancel)
+      document.documentElement.classList.remove('ap-stick-clear')
       el.remove()
     },
   }

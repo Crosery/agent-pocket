@@ -49,8 +49,12 @@ export interface HintSpot { x: number; y: number }
 /** CSS colour values for the touch overlay. */
 export interface TouchStyle {
   frame: string
+  /** The stick base is see-through (nothing under the thumb is blacked out): translucent fill, a thin light rim, a soft outline. */
   ringFill: string
   ringEdge: string
+  ringOutline: string
+  /** The knob stays mostly solid. */
+  knobOpacity: number
   knobHi: string
   knobLo: string
   label: string
