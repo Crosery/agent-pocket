@@ -19,7 +19,6 @@ import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { readFileSync } from 'node:fs'
 import { setHUDViewport } from './qa-hud-layout.mjs'
 import { auditBattleSprites } from './qa-battle-layout.mjs'
 
