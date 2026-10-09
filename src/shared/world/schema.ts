@@ -508,3 +508,79 @@ export interface DungeonsFile {
   /** CaveSpec.minFloor for every dungeon floor (core and frontier). */
   minFloor?: number
 }
+
+// ---------------------------------------------------------------------------
+// anchors.json — teleport anchors (grand landmark at every spawn, minor ones spread over the map)
+// ---------------------------------------------------------------------------
+
+export type AnchorKindId = 'grand' | 'minor'
+
+/** Tile-flag names a placement rule can forbid (mapped to the generator's F_* bits in anchor-place.ts). */
+export type AnchorFlagName = 'path' | 'road' | 'reserved' | 'gate' | 'keep' | 'bridge' | 'nest' | 'border' | 'edge' | 'river' | 'lake' | 'sea'
+
+export interface AnchorKindSpec {
+  /** props.json key (footprint = the anchor's footprint). */
+  prop: string
+  /** Free walkable ring kept around the footprint so an anchor never seals a passage. */
+  margin: number
+  /** Distance (tiles, from the footprint centre) at which walking up to it activates it. */
+  unlockRadius: number
+  /** Distance at which it counts as discovered (greyed pin on the map until activated). */
+  seenRadius: number
+  unlockFx: string
+  unlockSfx: string
+  travelFx: string
+  travelSfx: string
+  arriveFx: string
+  /** render.json anchors.beacons key. */
+  beacon: string
+}
+
+export interface AnchorRule {
+  id: string
+  source: 'spawn' | 'town' | 'hamlet' | 'dungeon' | 'poi' | 'route' | 'fill'
+  kind: AnchorKindId
+  /** Search band (Chebyshev tiles) around the rule's target. */
+  min: number
+  max: number
+  /** Skip the placement when any existing anchor is closer than this (Chebyshev tiles). */
+  minSpacing?: number
+  /** source 'spawn': the worldAnchors name the grand anchor stands next to. */
+  anchor?: string
+  /** source 'poi': POI template ids that get an anchor. */
+  templates?: string[]
+  /** source 'route': a candidate every `spacing` path tiles, none within `edgeMargin` of either end. */
+  spacing?: number
+  edgeMargin?: number
+  /** source 'fill': keep every walkable tile within this many steps of an anchor, probing a lattice of this stride. */
+  maxWalk?: number
+  lattice?: number
+  /** The home anchor ("回原点"). */
+  home?: boolean
+}
+
+export interface FrontierAnchorSite { kind: AnchorKindId; min: number; max: number }
+
+export interface AnchorsFile {
+  kinds: Record<AnchorKindId, AnchorKindSpec>
+  preUnlock: { grandWithin: number }
+  /** Caps of the ids kept in a save (older entries beyond it are dropped). */
+  save: { maxUnlocked: number; maxSeen: number }
+  naming: { radius: number }
+  place: {
+    avoidFlags: AnchorFlagName[]
+    ringAvoidFlags: AnchorFlagName[]
+    /** Terrain keys that cost `roadPenalty` extra squared tiles (anchors prefer verges to the road bed). */
+    roadTerrain: string[]
+    roadPenalty: number
+    /** Rings searched past the first hit, to prefer a cheaper tile slightly farther out. */
+    slack: number
+    itemClearance: number
+  }
+  core: { rules: AnchorRule[] }
+  frontier: {
+    /** Per site kind id (frontier sites.json kinds + `gateway` for causeway landings). */
+    sites: Record<string, FrontierAnchorSite>
+    fill: { kind: AnchorKindId; cell: number; jitter: number; siteClearance: number; coreClearance: number; reachTiles: number; search: number; salt: string }
+  }
+}

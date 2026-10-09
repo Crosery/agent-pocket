@@ -62,6 +62,12 @@ export interface ExploreTuning {
     cursorGlyph: string
     placeGlyphs: Record<PlaceKind, string>
     placePalettes: Record<'fly' | 'known' | 'locked', Record<string, string>>
+    /** Teleport-anchor pins: glyph per anchor kind; "off" repaints a discovered-but-inactive anchor grey. */
+    anchorGlyphs: Record<'minor' | 'grand', string>
+    anchorPalettes: Record<'on' | 'off', Record<string, string>>
+    /** Anchor pins of the wild closer than this (UI units; at least `pinTouchPx` CSS px with the touch pad on) to a place, a stronger pin or the map tools are hidden. */
+    pinSpacingUnits: number
+    pinTouchPx: number
     flyList: number
   }
 }
@@ -117,5 +123,9 @@ export function validateExploreContent(e: ExploreTuning = EXPLORE, c: Content = 
   positive('worldMap.cacheTiles', W.cacheTiles)
   positive('worldMap.budgetMs', W.budgetMs)
   for (const k of PLACE_KINDS) if (!W.placeGlyphs[k]) errs.push(`explore.json worldMap.placeGlyphs: missing "${k}"`)
+  for (const k of ['minor', 'grand'] as const) if (!W.anchorGlyphs?.[k]) errs.push(`explore.json worldMap.anchorGlyphs: missing "${k}"`)
+  for (const k of ['on', 'off'] as const) if (!W.anchorPalettes?.[k]) errs.push(`explore.json worldMap.anchorPalettes: missing "${k}"`)
+  positive('worldMap.pinSpacingUnits', W.pinSpacingUnits)
+  positive('worldMap.pinTouchPx', W.pinTouchPx)
   return errs
 }

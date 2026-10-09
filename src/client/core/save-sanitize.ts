@@ -9,6 +9,8 @@ import { sanitizeResearch } from '../../shared/gameplay/research.ts'
 import { sanitizeLegendState } from '../../shared/gameplay/spawns.ts'
 import { frontierQuest } from '../../shared/world/frontier/content/index.ts'
 import { parseFrontierId } from '../../shared/world/frontier/sites.ts'
+import { parseAnchorId, preUnlockedIds } from '../../shared/world/anchors.ts'
+import { WORLD_CONTENT } from '../../shared/world/data.ts'
 import { getMap, isInfinite } from '../../shared/world/worldapi.ts'
 import { FogPages } from '../ui/fog.ts'
 import { EXPLORE } from '../world/explore-config.ts'
@@ -148,6 +150,21 @@ function sanitizeExtras(raw: Obj, townIds: Set<string> | null, c: Content): Part
   return out
 }
 
+/**
+ * Teleport anchors: well-formed ids only, deduplicated and capped (newest kept); the start's grand anchors are always
+ * unlocked, so saves from before anchors existed load with them active. Every unlocked anchor also counts as seen.
+ */
+function sanitizeAnchors(raw: unknown, world: World | null): NonNullable<SaveData['anchors']> {
+  const r = isObj(raw) ? raw : {}
+  const A = WORLD_CONTENT.anchors.save
+  const ok = (id: string) => parseAnchorId(id) !== null
+  const unlocked = uniqueStrings([...(world ? preUnlockedIds(world) : []), ...uniqueStrings(r.unlocked, ok)])
+  const seen = uniqueStrings([...uniqueStrings(r.seen, ok), ...unlocked])
+  const cut = (list: string[], max: number, keep: string[]) => (list.length <= max ? list : [...keep, ...list.filter((x) => !keep.includes(x)).slice(-(max - keep.length))])
+  const pre = world ? preUnlockedIds(world) : []
+  return { unlocked: cut(unlocked, A.maxUnlocked, pre), seen: cut(seen, A.maxSeen, pre) }
+}
+
 function sanitizeBag(raw: unknown, c: Content): Record<string, number> {
   const out: Record<string, number> = {}
   if (!isObj(raw)) return out
@@ -280,6 +297,7 @@ export function sanitizeSaveData(raw: unknown, ctx: SanitizeContext): SaveData |
     stats: sanitizeStats(raw.stats),
     settings: sanitizeSettings(raw.settings, c),
     ...sanitizeExtras(raw, townIds, c),
+    anchors: sanitizeAnchors(raw.anchors, ctx.world),
   }
   if (tracked && tracked in quests) save.trackedQuest = tracked
   return save

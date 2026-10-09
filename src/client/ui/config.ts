@@ -35,6 +35,14 @@ export interface PhoneHudZones {
 
 export interface UIConfig {
   scale: { baseWidth: number; baseHeight: number; minCssPerUnit: number; maxDeviceScale: number; compactBelowWidth: number }
+  /** Layout audit limits (scripts/qa-layout-audit.mjs): text size range per viewport class, scrollers a class may have. */
+  audit: { fontPx: Record<'desktop' | 'phone', { min: number; maxVhFrac: number }>; scrollOk: Record<'desktop' | 'phone', string[]> }
+  /**
+   * Full-screen panels (pause, party, bag, ...) on a pointer device use a finer unit than the HUD so text stays near
+   * bodyHeightFrac of the window height (clamped to min/maxBodyPx) instead of growing with the integer HUD scale.
+   * Device px per unit moves in stepDevicePerUnit steps (never above the HUD's, never below minDevicePerUnit).
+   */
+  screenScale: { bodyUnits: number; bodyHeightFrac: number; minBodyPx: number; maxBodyPx: number; minTextPx: number; tiers: Record<'hero' | 'title' | 'body' | 'label' | 'caption', number>; stepDevicePerUnit: number; minDevicePerUnit: number }
   anim: { panelOpenMs: number; panelCloseMs: number; modalOpenMs: number; cursorBobMs: number; toastEnterMs: number; toastLeaveMs: number }
   fade: { defaultMs: number }
   sfx: { move: string; confirm: string; cancel: string; error: string; open: string; close: string; tab: string }
@@ -173,6 +181,8 @@ export function validateUIConfig(cfg: UIConfig, knownSfx: readonly string[]): st
     for (const k of ['top', 'left', 'right'] as const) if (!(z.toast[k] >= 0)) errs.push(`ui.phoneHud.${o}.toast.${k} must be >= 0`)
     if (!(cfg.chat.touchPassiveLines[o] >= 1)) errs.push(`ui.chat.touchPassiveLines.${o} must be >= 1`)
   }
+  const ss = cfg.screenScale
+  if (!(ss.bodyUnits > 0) || !(ss.bodyHeightFrac > 0) || !(ss.minBodyPx > 0) || !(ss.maxBodyPx >= ss.minBodyPx) || !(ss.minTextPx > 0) || !(ss.tiers.caption > 0 && ss.tiers.caption <= ss.tiers.label && ss.tiers.label <= ss.tiers.body && ss.tiers.body <= ss.tiers.title && ss.tiers.title <= ss.tiers.hero) || !(ss.stepDevicePerUnit > 0) || !(ss.minDevicePerUnit > 0)) errs.push('ui.screenScale: bodyUnits, bodyHeightFrac, steps and px limits must be positive and maxBodyPx >= minBodyPx')
   if (cfg.focus.escapeOrder.length === 0) errs.push('ui.focus.escapeOrder must not be empty')
   return errs
 }

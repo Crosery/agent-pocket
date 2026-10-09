@@ -24,7 +24,7 @@ test('every prop has an explicit procedural style', () => {
 })
 
 test('every WorldFx kind and field weather has render data', () => {
-  const fx: Record<WorldFx, true> = { exclaim: true, question: true, grass: true, dust: true, sparkle: true, splash: true, heart: true, warp: true, levelup: true, shiny: true, tapMarker: true, tapBlocked: true }
+  const fx: Record<WorldFx, true> = { exclaim: true, question: true, grass: true, dust: true, sparkle: true, splash: true, heart: true, warp: true, levelup: true, shiny: true, tapMarker: true, tapBlocked: true, anchorUnlock: true, anchorUnlockGrand: true, anchorDepart: true, anchorArrive: true }
   for (const k of Object.keys(fx)) assert.ok(RENDER.fx.kinds[k]?.length, `fx "${k}" missing`)
   const fieldKinds = ['clear', 'rain', 'snow', 'sand', 'fog', 'aurora', 'ash']
   for (const k of fieldKinds) assert.ok(RENDER.weather[k], `weather "${k}" missing`)

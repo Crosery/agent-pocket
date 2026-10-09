@@ -1250,6 +1250,11 @@ export interface SaveData {
   maxDistance?: number
   /** Explored overworld cells for the world-map fog of war (compact encoding owned by the client save code). */
   explored?: string
+  /**
+   * Teleport anchors (ids `anchor:<kind>:<x>:<y>`, content/world/anchors.json): `unlocked` can be travelled to,
+   * `seen` were merely come close to (greyed pin on the map). The start's grand anchors are always unlocked.
+   */
+  anchors?: { unlocked: string[]; seen: string[] }
 }
 
 // ---------------------------------------------------------------------------

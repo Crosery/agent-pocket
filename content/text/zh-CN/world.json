@@ -9,6 +9,7 @@
   "blackout": {"fainted": "{name}的队伍全部失去了战斗能力！", "money": "{name}慌乱中掉落了 {money} {currency}……", "dark": "{name}眼前一黑……", "recovered": "智灵们恢复了精神。下次要更小心哦！"},
   "remote": {"prompt": "要对{name}做什么？", "inspect": "查看资料", "trade": "交易", "battle": "对战", "cancel": "取消", "offline": "还没有连接到服务器。", "busy": "{name}正在忙。", "inspectFailed": "无法获取{name}的资料。", "profileTitle": "{name}的资料", "profileSub": "徽章 {badges} · 图鉴 {dex} · {wins}胜{losses}负", "partyEmpty": "{name}的队伍中没有智灵。", "partyLevel": "Lv.{level}", "unavailable": "这个功能暂时无法使用。"},
   "fly": {"arrive": "{name}飞往了{town}！", "blocked": "那里附近找不到可以降落的地方。"},
+  "anchor": {"unlocked": "解锁传送锚点：{name}", "unlockedGrand": "解锁大型传送锚点：{name}", "touch": "指尖触到锚点的瞬间，纹路沿着石柱一层层亮了起来。", "touchGrand": "巨大的方碑回应了你，整座基座都亮了起来。", "arrive": "传送到了{place}！", "blocked": "这里无法使用传送锚点。", "noLanding": "那座锚点附近一时找不到落脚的地方。", "needItem": "锚点没有回应……似乎需要先获得{item}。", "needBadges": "锚点没有回应……似乎需要先取得 {badges} 枚徽章。", "fallback": "{region}·{word}", "words": "界碑|石标|驿柱|路标|哨塔|信标|望台", "wild": "荒野", "grandName": "{place}大型锚点"},
   "banner": {"levels": "野生智灵 Lv.{min}–{max}"},
   "quest": {"hud": "{quest}：{stage}"},
   "encounter": {"shiny": "闪闪发光！"},
