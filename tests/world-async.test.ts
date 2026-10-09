@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import type { GameMap, World } from '../src/shared/types.ts'
 import { WORLD_BUILD_STEPS, buildWorld, buildWorldAsync, worldAnchors } from '../src/shared/world/index.ts'
 import { digest } from '../src/shared/dev/diff.ts'
+import { coreAnchors } from '../src/shared/world/anchors.ts'
 
 const SEED = 20261030
 
@@ -14,7 +15,7 @@ function summary(world: World): string {
   })
   return digest({
     maps: Object.fromEntries(Object.entries(world.maps).map(([id, m]) => [id, mapSummary(m)])),
-    towns: world.towns, badges: world.badges, quests: world.quests.length, trainers: Object.keys(world.trainers).sort(), anchors: worldAnchors(world),
+    towns: world.towns, badges: world.badges, quests: world.quests.length, trainers: Object.keys(world.trainers).sort(), anchors: worldAnchors(world), teleportAnchors: coreAnchors(world).map((a) => a.id),
   })
 }
 

@@ -5,13 +5,14 @@
 // overworld (any integer coordinate, negatives included): objects stream in around the player (stream.ts),
 // one-way ledges are jumped with a hop, and exploration (fog pages, milestones, discoveries) lives in explore.ts.
 import type { BattleSideInit, Dir, FieldWeatherKind, GameMap, GroundItemDef, NpcDef, QuestDef, RegionDef, ScriptStep } from '../../shared/types.ts'
-import type { GameContext, MinimapMarker, OverworldController } from '../contracts.ts'
+import type { GameContext, MinimapMarker, OverworldController, WorldFx } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
 import { RngHub } from '../core/rng-hub.ts'
 import { createCreature, creatureName, maxHp, rollShiny } from '../../shared/creature.ts'
 import { propRect } from '../../shared/world/collision.ts'
 import { collisionField, getMap, isInfinite, isLedgeDrop, objectsInRect, regionAt, terrainAt, warpAt } from '../../shared/world/worldapi.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
+import { anchorKindSpec, anchorSpotOf, anchorsInRect, type AnchorSpot } from '../../shared/world/anchors.ts'
 import { frontierTrainer, registerFrontierRefs } from '../../shared/world/frontier/content/index.ts'
 import { decodeExplored, encodeExplored, type MinimapHandle } from '../ui/minimap.ts'
 import { UI_CONFIG } from '../ui/config.ts'
@@ -35,6 +36,7 @@ import { createPresence, type MultiplayerHooks } from './presence.ts'
 import { createRoamingLayer, type Roamer } from './roaming.ts'
 import { addItem, changeMoney, flagSet, healParty, ownedKeyItem, removeItem } from './save-ops.ts'
 import { createScriptRunner, type ScriptHost } from './script.ts'
+import { anchorName, isUnlocked, markSeen, unlockAnchor } from './anchors.ts'
 
 export type MoveMode = 'walk' | 'run' | 'bike' | 'surf'
 
@@ -47,6 +49,8 @@ export interface OverworldOptions {
   questText?: (def: QuestDef, stage: number) => string
   /** Random streams (encounters, battle seeds, scripts, ambient NPCs); a fresh random hub when omitted. */
   rng?: RngHub
+  /** The player used a teleport anchor (game.ts opens the destination picker); resolves when the visit is over. */
+  anchorUse?: (spot: AnchorSpot) => Promise<void>
 }
 
 export interface OverworldExt extends OverworldController {
@@ -128,6 +132,8 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
   let questKey = ''
   let leadKey = ''
   let leadT = 0
+  let anchorT = 0
+  let beaconKey = ''
   let disposed = false
 
   const isFree = () =>
@@ -299,6 +305,9 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     try {
       if (transition) await ctx.ui.fade(true, GAME.warp.fadeMs)
       storeExplored()
+      beaconKey = ''
+      anchorT = 0
+      ctx.world.setBeacons([])
       npcs.clear()
       roaming.clear()
       presence.clear()
@@ -925,6 +934,17 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       case 'script':
         await runScript(cfg.script ?? [], null)
         break
+      case 'anchor': {
+        const spot = anchorSpotOf(prop.placement)
+        if (!spot) break
+        const wasOff = !isUnlocked(ctx.save, spot.id)
+        if (wasOff) {
+          activateAnchor(spot)
+          await say(t(spot.kind === 'grand' ? 'world.anchor.touchGrand' : 'world.anchor.touch'))
+        }
+        await opts.anchorUse?.(spot)
+        break
+      }
     }
   }
 
@@ -1003,6 +1023,48 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     ctx.ui.toast(t(bike ? 'world.bike.on' : 'world.bike.off', { ...params(), item: item.nameZh }), 'info')
   }
 
+  // ---------------------------------------------------------------- teleport anchors
+
+  /** Lights an anchor up: save, effect, sound, toast. False when it already was. */
+  function activateAnchor(spot: AnchorSpot): boolean {
+    if (!unlockAnchor(ctx.save, spot.id)) return false
+    const spec = anchorKindSpec(spot.kind)
+    ctx.world.spawnFx(spec.unlockFx as WorldFx, spot.cx, spot.cy, ctx.world.elevationAt(spot.cx, spot.cy))
+    ctx.audio.playSfx(spec.unlockSfx)
+    ctx.ui.toast(t(spot.kind === 'grand' ? 'world.anchor.unlockedGrand' : 'world.anchor.unlocked', { name: anchorName(ctx.data.world, spot) }), 'success')
+    beaconKey = ''
+    ctx.persist('anchor')
+    return true
+  }
+
+  /** Tiles from the player to the footprint of a spot (0 when standing under it). */
+  const anchorReach = (spot: AnchorSpot) =>
+    Math.hypot(Math.max(spot.x - player.x, 0, player.x - (spot.x + spot.w)), Math.max(spot.y - player.y, 0, player.y - (spot.y + spot.h)))
+
+  /** Anchors near the player: discovered (grey pin) in sight, activated by walking up, beacons while in view. */
+  function scanAnchors(dt: number): void {
+    if (!map) return
+    anchorT -= dt
+    if (anchorT > 0) return
+    anchorT = GAME.anchorTravel.scanSec
+    const R = GAME.anchorTravel.beaconRadius
+    const spots = anchorsInRect(map, Math.floor(player.x - R), Math.floor(player.y - R), Math.ceil(player.x + R), Math.ceil(player.y + R))
+    const auto = !battleActive && !locks.has('warp') && !locks.has('script')
+    const items: { id: string; x: number; y: number; style: string; on: boolean }[] = []
+    for (const spot of spots) {
+      const spec = anchorKindSpec(spot.kind)
+      const reach = anchorReach(spot)
+      if (reach <= spec.seenRadius) markSeen(ctx.save, spot.id)
+      if (auto && reach <= spec.unlockRadius) activateAnchor(spot)
+      if (Math.hypot(spot.cx - player.x, spot.cy - player.y) <= R) items.push({ id: spot.id, x: spot.cx, y: spot.cy, style: spec.beacon, on: isUnlocked(ctx.save, spot.id) })
+    }
+    items.sort((a, b) => (a.id < b.id ? -1 : 1))
+    const key = items.map((i) => `${i.id}${i.on ? '+' : '-'}`).join('|')
+    if (key === beaconKey) return
+    beaconKey = key
+    ctx.world.setBeacons(items)
+  }
+
   // ---------------------------------------------------------------- per-frame
 
   function hiddenGlints(dt: number): void {
@@ -1055,6 +1117,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     follower.update(dt, player.x, player.y, player.elev, player.facing, surf)
     presence.update(dt)
     hiddenGlints(dt)
+    scanAnchors(dt)
     updateLead(dt)
     ctx.world.update(dt, { x: player.x, y: player.y, elev: player.elev }, ctx.clock.minutesOfDay)
     markerT -= dt

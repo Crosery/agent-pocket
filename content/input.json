@@ -21,7 +21,7 @@
     "zoneWidthFraction": 0.5,
     "stick": {"fadeMs": 180, "edgePadPx": 6},
     "hint": {"enabled": true, "storageKey": "ap.touch.hintDone", "portrait": {"x": 0.26, "y": 0.4}, "landscape": {"x": 0.38, "y": 0.38}, "dragPx": 34, "loopMs": 2600, "opacity": 0.42, "startDelayMs": 1200},
-    "tap": {"slopPx": 10, "maxMs": 280, "stickHoldMs": 150},
+    "tap": {"slopPx": 8, "maxMs": 280, "stickHoldMs": 120},
     "haptics": {"button": 10, "toggle": 14, "stick": 5, "tap": 8},
     "sizes": {"small": 0.96, "normal": 1, "large": 1.25},
     "tapMove": {
@@ -51,8 +51,10 @@
     ],
     "style": {
       "frame": "#141026",
-      "ringFill": "rgba(40,36,72,.55)",
-      "ringEdge": "rgba(150,160,220,.35)",
+      "ringFill": "rgba(40,36,72,.4)",
+      "ringEdge": "rgba(226,231,255,.9)",
+      "ringOutline": "rgba(20,16,38,.5)",
+      "knobOpacity": 0.85,
       "knobHi": "#f4f1ff",
       "knobLo": "#c9c3ec",
       "label": "#ffffff",

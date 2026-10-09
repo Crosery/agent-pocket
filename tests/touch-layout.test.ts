@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { CONTENT, t } from '../src/shared/content/index.ts'
 import { sanitizeSettings } from '../src/client/core/save-sanitize.ts'
 import { INPUT_CONFIG } from '../src/client/core/input-config.ts'
-import { buttonRect, clampRing, computeTouchLayout, driveStick, inStickZone, mayStartStick, moveOutcome, rectsOverlap, releaseIsTap } from '../src/client/core/touch-layout.ts'
+import { buttonRect, clampRing, computeTouchLayout, driveStick, inStickZone, mayStartStick, moveOutcome, rectsOverlap, releaseIsTap, ringHitsRect } from '../src/client/core/touch-layout.ts'
 
 const T = INPUT_CONFIG.touch
 const VIEWPORTS = [
@@ -141,6 +141,27 @@ test('gestures: a touch is a tap until it travels past the slop, then a stick in
   assert.equal(releaseIsTap('pending', T.tap.maxMs + 1, T.tap.maxMs, false), false, 'a long press is not a tap')
   assert.equal(releaseIsTap('pending', 50, T.tap.maxMs, true), false, 'a cancelled touch is not a tap')
   for (const mode of ['stick', 'drag'] as const) assert.equal(releaseIsTap(mode, 50, T.tap.maxMs, false), false)
+})
+
+test('stick look and timing: see-through base, solid knob, starts after a small drag or a short hold', () => {
+  const T = INPUT_CONFIG.touch
+  const alpha = (c: string) => Number(/rgba\([^)]*,\s*([\d.]+)\)/.exec(c)?.[1])
+  assert.ok(alpha(T.style.ringFill) >= 0.35 && alpha(T.style.ringFill) <= 0.45, 'the ring fill lets the scene through')
+  assert.ok(alpha(T.style.ringOutline) <= 0.5 && alpha(T.style.ringEdge) >= 0.7, 'soft outline, clearly visible thin light rim')
+  assert.ok(T.style.knobOpacity >= 0.8 && T.style.knobOpacity <= 0.9, 'the knob stays mostly solid')
+  assert.ok(T.tap.slopPx <= 8, 'a drag past about 8px starts the stick at once')
+  assert.ok(T.tap.stickHoldMs <= 120, 'holding still starts it after about 120ms')
+  assert.equal(T.tap.maxMs, 280)
+})
+
+test('a tutorial card under the ring makes the card step aside', () => {
+  const card = { left: 100, top: 250, right: 340, bottom: 330 }
+  const r = INPUT_CONFIG.touch.stickRadius
+  assert.equal(ringHitsRect({ x: 220, y: 290 }, r, card), true, 'ring centred on the card')
+  assert.equal(ringHitsRect({ x: 220, y: 250 - r - 1 }, r, card), false, 'ring just above the card')
+  assert.equal(ringHitsRect({ x: 220, y: 250 - r + 4 }, r, card), true, 'ring edge reaching into the card')
+  assert.equal(ringHitsRect({ x: 340 + r + 1, y: 290 }, r, card), false, 'ring just right of the card')
+  assert.equal(ringHitsRect({ x: 340 + r - 4, y: 330 + r - 4 }, r, card), false, 'corner distance counts, not the bounding box')
 })
 
 test('the tutorial text for touch points at the left half, not at a fixed stick', () => {

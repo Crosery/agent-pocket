@@ -110,6 +110,13 @@ export function clampRing(c: { x: number; y: number }, radius: number, viewport:
   return { x: clamp(c.x, viewport.width), y: clamp(c.y, viewport.height) }
 }
 
+/** Whether a ring of `radius` centred on `c` reaches into `rect` (a card that would sit under the stick). */
+export function ringHitsRect(c: { x: number; y: number }, radius: number, rect: { left: number; top: number; right: number; bottom: number }): boolean {
+  const nx = Math.min(rect.right, Math.max(rect.left, c.x))
+  const ny = Math.min(rect.bottom, Math.max(rect.top, c.y))
+  return (c.x - nx) ** 2 + (c.y - ny) ** 2 < radius * radius
+}
+
 export interface StickDrive {
   /** The logical base: stays where the thumb landed, and trails the thumb once it is dragged past the ring. */
   origin: { x: number; y: number }

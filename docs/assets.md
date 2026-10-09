@@ -419,3 +419,11 @@ height, margins) is `layout` in the same file and reaches the CSS as `--apb-*` v
   2000x1300, 1024x768, 390x844, 844x390). `auditBattleSprites` fails a window over a creature, any other painted element
   over a creature, a window leaving the screen, a bottom gap above `layout.bottomMaxGapPx` and a visible overworld pad;
   `measureScreen` in `qa-layout-audit.mjs` runs it on every battle screen.
+
+## Teleport anchors (props)
+
+The two anchor props are not part of this sprite pipeline: like every prop they are procedural `parts` styles in
+`content/render.json` (`props.styles.warp_anchor`, `warp_anchor_grand`: stone base, rune bands, crystal) lit at night
+by the prop light in `content/props.json`, with the activation glow, beam and sparkles drawn by the fx system
+(`anchors.beacons`). The map pins are 7×9 / 11×12 pixel glyphs (`mAnchor`, `mAnchorGrand` in `content/ui.json`,
+greyed through `worldMap.anchorPalettes.off` in `content/explore.json` while inactive).

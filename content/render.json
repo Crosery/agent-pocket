@@ -316,6 +316,30 @@
     "style": {"tagFontPx": 12, "tagPadding": "2px 4px 1px", "tagBackground": "rgba(10, 12, 24, 0.72)", "tagRadiusPx": 3, "tagTextShadow": "1px 1px 0 rgba(0, 0, 0, 0.85)", "tagDimOpacity": 0.22, "tagDimMs": 140, "bubbleFontPx": 13, "bubblePadding": "4px 7px", "bubbleText": "#1d1a2a", "bubbleBackground": "#fffdf4", "bubbleBorder": "#1d1a2a", "bubbleBorderPx": 2, "bubbleRadiusPx": 6, "bubbleShadow": "2px 2px 0 rgba(0, 0, 0, 0.35)", "bubbleMaxWidthPx": 220, "bubbleTailPx": 5, "popMs": 160}
   },
   "groundItems": {"color": "#ffe27a", "radius": 0.13, "glow": 2.8, "bobAmp": 0.06, "bobHz": 1.3, "height": 0.32, "glowSize": 0.55},
+  "anchors": {
+    "beacons": {
+      "minor": {
+        "color": "#7fe8ff",
+        "ring": {"radius": 0.95, "width": 0.09, "intensity": 1.5, "dormantIntensity": 0.35, "pulseHz": 0.45, "pulseAmp": 0.3, "y": 0.04},
+        "core": {"y": 1.6, "size": 1.4, "intensity": 0.95, "pulseHz": 0.8, "pulseAmp": 0.25},
+        "column": {"from": 1.95, "radius": 0.1, "height": 3.4, "intensity": 0.6, "pulseHz": 0.7, "pulseAmp": 0.25},
+        "idle": {
+          "everySec": 0.55,
+          "burst": {"type": "burst", "count": 2, "colors": ["#ffffff", "#9ff2ff", "#c8a8ff"], "speed": [0.05, 0.25], "up": [0.5, 1.2], "gravity": -0.3, "life": [0.9, 1.5], "size": [2, 3], "glow": 3.2, "shape": "star", "y": 0.5, "radius": 0.28, "drag": 0.6}
+        }
+      },
+      "grand": {
+        "color": "#8ff0ff",
+        "ring": {"radius": 2.5, "width": 0.12, "intensity": 0.9, "dormantIntensity": 0.3, "pulseHz": 0.3, "pulseAmp": 0.3, "y": 0.05},
+        "core": {"y": 2.65, "size": 3.4, "intensity": 0.9, "pulseHz": 0.5, "pulseAmp": 0.25},
+        "column": {"from": 3.3, "radius": 0.13, "height": 8, "intensity": 0.5, "pulseHz": 0.45, "pulseAmp": 0.25},
+        "idle": {
+          "everySec": 0.28,
+          "burst": {"type": "burst", "count": 3, "colors": ["#ffffff", "#9ff2ff", "#c8a8ff"], "speed": [0.1, 0.5], "up": [0.8, 2.2], "gravity": -0.3, "life": [1.1, 1.9], "size": [2, 4], "glow": 3.4, "shape": "star", "y": 0.6, "radius": 1.5, "drag": 0.6}
+        }
+      }
+    }
+  },
   "fx": {
     "poolSize": 700,
     "kinds": {
@@ -361,6 +385,29 @@
       ],
       "tapBlocked": [
         {"type": "ring", "color": "#ff7a6a", "radius": [0.12, 0.5], "life": 0.35, "intensity": 2.4, "width": 0.07, "y": 0.05}
+      ],
+      "anchorUnlock": [
+        {"type": "ring", "color": "#8ff0ff", "radius": [0.2, 2.2], "life": 0.9, "intensity": 2.8, "width": 0.1, "y": 0.05},
+        {"type": "ring", "color": "#c8a8ff", "radius": [0.1, 1.2], "life": 0.6, "intensity": 2.4, "width": 0.08, "y": 0.07},
+        {"type": "column", "color": "#9ff2ff", "radius": 0.5, "height": 4.4, "life": 1.2, "intensity": 2.6},
+        {"type": "burst", "count": 26, "colors": ["#ffffff", "#9ff2ff", "#c8a8ff"], "speed": [0.2, 0.9], "up": [1.4, 3.6], "gravity": -0.6, "life": [0.7, 1.3], "size": [2, 4], "glow": 3.6, "shape": "star", "y": 0.4, "radius": 0.5, "drag": 0.9}
+      ],
+      "anchorUnlockGrand": [
+        {"type": "ring", "color": "#8ff0ff", "radius": [0.4, 6.5], "life": 1.3, "intensity": 3, "width": 0.14, "y": 0.06},
+        {"type": "ring", "color": "#c8a8ff", "radius": [0.3, 4.2], "life": 0.95, "intensity": 2.6, "width": 0.1, "y": 0.08},
+        {"type": "ring", "color": "#ffffff", "radius": [0.2, 2.6], "life": 0.65, "intensity": 2.4, "width": 0.08, "y": 0.1},
+        {"type": "column", "color": "#9ff2ff", "radius": 1.3, "height": 9, "life": 1.7, "intensity": 2.8},
+        {"type": "burst", "count": 70, "colors": ["#ffffff", "#9ff2ff", "#c8a8ff", "#7ad0ff"], "speed": [0.4, 1.6], "up": [2, 6], "gravity": -0.5, "life": [0.9, 1.7], "size": [2, 5], "glow": 3.8, "shape": "star", "y": 0.5, "radius": 1.4, "drag": 0.8}
+      ],
+      "anchorDepart": [
+        {"type": "ring", "color": "#8ad8ff", "radius": [1.0, 0.1], "life": 0.55, "intensity": 2.8, "width": 0.12, "y": 0.04},
+        {"type": "column", "color": "#9ae2ff", "radius": 0.55, "height": 3.6, "life": 0.7, "intensity": 2.6},
+        {"type": "burst", "count": 20, "colors": ["#bfefff", "#ffffff", "#7ad0ff"], "speed": [0.1, 0.5], "up": [2.4, 4.6], "gravity": -1, "life": [0.5, 0.9], "size": [2, 3], "glow": 3.2, "shape": "dot", "y": 0.2, "radius": 0.5, "drag": 0.5}
+      ],
+      "anchorArrive": [
+        {"type": "ring", "color": "#8ad8ff", "radius": [0.1, 1.6], "life": 0.7, "intensity": 2.8, "width": 0.12, "y": 0.04},
+        {"type": "column", "color": "#bff2ff", "radius": 0.6, "height": 4, "life": 0.9, "intensity": 2.6},
+        {"type": "burst", "count": 24, "colors": ["#ffffff", "#9ff2ff", "#c8a8ff"], "speed": [0.2, 0.8], "up": [1.6, 3.4], "gravity": -0.4, "life": [0.6, 1.1], "size": [2, 4], "glow": 3.4, "shape": "star", "y": 0.3, "radius": 0.5, "drag": 0.9}
       ]
     },
     "iconFont": "bold 26px 'Fusion Pixel', 'Fusion Pixel 12px', monospace",
@@ -853,6 +900,52 @@
           {"shape": "cone", "pos": [-0.16, 0.08, 0.1], "size": [0.14, 0.7, 0.14], "color": "#e06a80", "segments": 5, "rot": [-8, 0, 18]},
           {"shape": "cone", "pos": [0.2, 0.06, -0.12], "size": [0.12, 0.55, 0.12], "color": "#ffb05a", "segments": 5, "rot": [10, 0, -20]},
           {"shape": "sphere", "pos": [-0.22, 0.04, -0.2], "size": [0.26, 0.2, 0.26], "color": "#6ad4c4"}
+        ]
+      },
+      "warp_anchor": {
+        "builder": "parts",
+        "randomYaw": false,
+        "modelEmissive": 0.7,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.9, 0.07, 0.9], "color": "#69738f", "pattern": "stone", "segments": 8},
+          {"shape": "cylinder", "pos": [0, 0.07, 0], "size": [0.66, 0.05, 0.66], "color": "#3a4468", "pattern": "panel", "color2": "#1c2240", "segments": 8},
+          {"shape": "cylinder", "pos": [0, 0.115, 0], "size": [0.6, 0.012, 0.6], "color": "#7fe8ff", "emissive": 0.42, "emissiveColor": "#4fd8ff", "segments": 8},
+          {"shape": "box", "pos": [0, 0.12, 0], "size": [0.3, 0.42, 0.3], "color": "#56628c", "pattern": "panel", "color2": "#2c3458", "taper": 0.72},
+          {"shape": "box", "pos": [0, 0.2, 0], "size": [0.33, 0.03, 0.33], "color": "#9ff0ff", "emissive": 0.48, "emissiveColor": "#4fd8ff", "taper": 0.9},
+          {"shape": "box", "pos": [0, 0.33, 0], "size": [0.27, 0.03, 0.27], "color": "#9ff0ff", "emissive": 0.48, "emissiveColor": "#4fd8ff", "taper": 0.8},
+          {"shape": "pyramid", "pos": [0, 0.62, 0], "size": [0.2, 0.15, 0.2], "color": "#c4f8ff", "pattern": "crystal", "emissive": 0.61, "emissiveColor": "#6fe6ff", "glossy": true},
+          {"shape": "pyramid", "pos": [0, 0.62, 0], "size": [0.2, 0.12, 0.2], "color": "#8fe8ff", "pattern": "crystal", "emissive": 0.51, "emissiveColor": "#4fd8ff", "glossy": true, "rot": [180, 0, 0], "pivot": "base"},
+          {"shape": "cone", "pos": [0.27, 0.15, 0.2], "size": [0.1, 0.16, 0.1], "color": "#8fe8ff", "pattern": "crystal", "emissive": 0.38, "emissiveColor": "#4fd8ff", "segments": 4, "rot": [8, 0, -10]},
+          {"shape": "cone", "pos": [-0.25, 0.14, -0.18], "size": [0.08, 0.13, 0.08], "color": "#b6a4ff", "pattern": "crystal", "emissive": 0.38, "emissiveColor": "#9a7cff", "segments": 4, "rot": [-6, 0, 12]}
+        ]
+      },
+      "warp_anchor_grand": {
+        "builder": "parts",
+        "randomYaw": false,
+        "modelEmissive": 0.7,
+        "parts": [
+          {"shape": "cylinder", "pos": [0, 0, 0], "size": [0.98, 0.028, 0.98], "color": "#5a6384", "pattern": "stone", "segments": 20},
+          {"shape": "cylinder", "pos": [0, 0.028, 0], "size": [0.86, 0.014, 0.86], "color": "#8ff0ff", "emissive": 0.48, "emissiveColor": "#4fd8ff", "segments": 20},
+          {"shape": "cylinder", "pos": [0, 0.036, 0], "size": [0.8, 0.014, 0.8], "color": "#3a4468", "pattern": "panel", "color2": "#1c2240", "segments": 20},
+          {"shape": "cylinder", "pos": [0, 0.05, 0], "size": [0.5, 0.02, 0.5], "color": "#6a7498", "pattern": "stone", "segments": 6},
+          {"shape": "cylinder", "pos": [0, 0.07, 0], "size": [0.4, 0.015, 0.4], "color": "#8ff0ff", "emissive": 0.45, "emissiveColor": "#4fd8ff", "segments": 6},
+          {"shape": "box", "pos": [0, 0.085, 0], "size": [0.2, 0.46, 0.2], "color": "#56628c", "pattern": "panel", "color2": "#2c3458", "taper": 0.62},
+          {"shape": "box", "pos": [0, 0.12, 0], "size": [0.21, 0.02, 0.21], "color": "#a8f4ff", "emissive": 0.58, "emissiveColor": "#4fd8ff", "taper": 0.95},
+          {"shape": "box", "pos": [0, 0.22, 0], "size": [0.19, 0.02, 0.19], "color": "#a8f4ff", "emissive": 0.58, "emissiveColor": "#4fd8ff", "taper": 0.9},
+          {"shape": "box", "pos": [0, 0.32, 0], "size": [0.16, 0.02, 0.16], "color": "#c0a8ff", "emissive": 0.58, "emissiveColor": "#9a7cff", "taper": 0.85},
+          {"shape": "box", "pos": [0, 0.42, 0], "size": [0.13, 0.02, 0.13], "color": "#a8f4ff", "emissive": 0.58, "emissiveColor": "#4fd8ff", "taper": 0.8},
+          {"shape": "pyramid", "pos": [0, 0.55, 0], "size": [0.17, 0.2, 0.17], "color": "#d6fbff", "pattern": "crystal", "emissive": 0.67, "emissiveColor": "#6fe6ff", "glossy": true},
+          {"shape": "pyramid", "pos": [0, 0.55, 0], "size": [0.17, 0.14, 0.17], "color": "#9ceeff", "pattern": "crystal", "emissive": 0.58, "emissiveColor": "#4fd8ff", "glossy": true, "rot": [180, 0, 0]},
+          {"shape": "cone", "pos": [0.17, 0.43, 0.12], "size": [0.05, 0.08, 0.05], "color": "#bff6ff", "pattern": "crystal", "emissive": 0.51, "emissiveColor": "#4fd8ff", "segments": 4, "rot": [10, 0, -14]},
+          {"shape": "cone", "pos": [-0.16, 0.5, -0.1], "size": [0.045, 0.07, 0.045], "color": "#cdbbff", "pattern": "crystal", "emissive": 0.51, "emissiveColor": "#9a7cff", "segments": 4, "rot": [-8, 0, 14]},
+          {"shape": "box", "pos": [0.33, 0.04, 0.33], "size": [0.07, 0.15, 0.07], "color": "#56628c", "pattern": "panel", "color2": "#2c3458", "taper": 0.7},
+          {"shape": "box", "pos": [-0.33, 0.04, 0.33], "size": [0.07, 0.15, 0.07], "color": "#56628c", "pattern": "panel", "color2": "#2c3458", "taper": 0.7},
+          {"shape": "box", "pos": [0.33, 0.04, -0.33], "size": [0.07, 0.15, 0.07], "color": "#56628c", "pattern": "panel", "color2": "#2c3458", "taper": 0.7},
+          {"shape": "box", "pos": [-0.33, 0.04, -0.33], "size": [0.07, 0.15, 0.07], "color": "#56628c", "pattern": "panel", "color2": "#2c3458", "taper": 0.7},
+          {"shape": "sphere", "pos": [0.33, 0.19, 0.33], "size": [0.05, 0.014, 0.05], "color": "#bff6ff", "emissive": 0.64, "emissiveColor": "#4fd8ff"},
+          {"shape": "sphere", "pos": [-0.33, 0.19, 0.33], "size": [0.05, 0.014, 0.05], "color": "#bff6ff", "emissive": 0.64, "emissiveColor": "#4fd8ff"},
+          {"shape": "sphere", "pos": [0.33, 0.19, -0.33], "size": [0.05, 0.014, 0.05], "color": "#bff6ff", "emissive": 0.64, "emissiveColor": "#4fd8ff"},
+          {"shape": "sphere", "pos": [-0.33, 0.19, -0.33], "size": [0.05, 0.014, 0.05], "color": "#bff6ff", "emissive": 0.64, "emissiveColor": "#4fd8ff"}
         ]
       },
       "glitch_monolith": {

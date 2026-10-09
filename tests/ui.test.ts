@@ -7,7 +7,7 @@ import type { GameMap, TerrainDef } from '../src/shared/types.ts'
 import { CONTENT } from '../src/shared/content/index.ts'
 import { INPUT_BINDINGS, touchPadHeight, UI_CONFIG, validateUIConfig } from '../src/client/ui/config.ts'
 import { UI_GLYPHS } from '../src/client/ui/glyphs.ts'
-import { computeUIScale } from '../src/client/ui/scale.ts'
+import { computeUIScale, screenDevicePerUnit } from '../src/client/ui/scale.ts'
 import { decodeBits, encodeBits, fogGrid, hasBit, isTileExplored, normalizeBits, revealAround } from '../src/client/ui/fog.ts'
 import { advanceTypewriter, createRateLimiter, createTypewriter, parseChatInput, typewriterDone } from '../src/client/ui/textflow.ts'
 import { parseColor, rasterizeGlyph, rotateRows, shade } from '../src/client/ui/pixel.ts'
@@ -90,6 +90,32 @@ test('computeUIScale keeps one UI pixel an integer number of device pixels', () 
     assert.ok(Number.isInteger(s.deviceScale), `${w}x${h}@${d}`)
     assert.ok(s.cssPerUnit >= UI_CONFIG.scale.minCssPerUnit - 1e-9)
   }
+})
+
+test('full-screen panels keep body text near a window-relative size, never above the HUD unit', () => {
+  const SS = UI_CONFIG.screenScale
+  const body = (w: number, h: number, d: number) => {
+    const s = computeUIScale(w, h, d)
+    return { s, px: (screenDevicePerUnit(h, d, s.deviceScale, false) * SS.bodyUnits) / d }
+  }
+  assert.equal(computeUIScale(1280, 720, 1).screenCssPerUnit, 1.5, '1280x720 gets 18px body, not the 24px of the integer HUD unit')
+  assert.ok(Math.abs(body(1000, 655, 1.25).px - 16.8) < 1e-6)
+  assert.equal(computeUIScale(1000, 655, 2).screenCssPerUnit, 1.375, 'retina laptop window: 2.75 device px per unit')
+  assert.equal(computeUIScale(1920, 1080, 1).screenCssPerUnit, 2)
+  const fits = (w: number, h: number, d: number) => {
+    const { s, px } = body(w, h, d)
+    const steps = screenDevicePerUnit(h, d, s.deviceScale, false) / SS.stepDevicePerUnit
+    assert.ok(Math.abs(steps - Math.round(steps)) < 1e-9, `${w}x${h}@${d} moves in ${SS.stepDevicePerUnit} device px steps`)
+    assert.ok(s.screenCssPerUnit <= s.cssPerUnit + 1e-9, `${w}x${h}@${d} never larger than the HUD unit`)
+    // Small windows are held at the readable floor; large ones may not grow past the cap plus one step.
+    assert.ok(px >= Math.min(SS.minBodyPx, (s.deviceScale * SS.bodyUnits) / d) - 1e-6, `${w}x${h}@${d} body ${px}px`)
+    assert.ok(px <= SS.maxBodyPx + (SS.stepDevicePerUnit * SS.bodyUnits) / d + 1e-6, `${w}x${h}@${d} body ${px}px`)
+  }
+  for (const [w, h, d] of [[1000, 655, 1], [1000, 655, 1.25], [1000, 655, 2], [1024, 576, 1], [1280, 720, 1], [1280, 800, 2], [1366, 768, 1], [1440, 900, 2], [1920, 1080, 1], [2560, 1440, 1], [2560, 1440, 2]] as const) fits(w, h, d)
+  const phone = computeUIScale(390, 844, 3, UI_CONFIG.scale, true)
+  assert.equal(phone.screenCssPerUnit, phone.cssPerUnit, 'touch devices keep the HUD unit')
+  const t = SS.tiers
+  assert.ok(t.caption <= t.label && t.label <= t.body && t.body <= t.title && t.title <= t.hero, 'type tiers keep their order')
 })
 
 test('typewriter reveals at the configured speed with punctuation pauses', () => {

@@ -34,7 +34,7 @@ const MIN_BOUNTIES = 15
 const LEGEND_TABLETS = [3, 5]
 const MIN_HERMITS = 5
 /** applyStory alone on the default world (ms); buildWorld's own budget is asserted in world.test.ts. */
-const STORY_BUDGET_MS = 400
+const STORY_BUDGET_MS = 400 * Number(process.env.AP_PERF_SCALE ?? 1)
 
 const world = buildWorld()
 const anchors = worldAnchors(world)

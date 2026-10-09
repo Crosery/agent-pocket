@@ -1,5 +1,13 @@
 {
   "scale": {"baseWidth": 512, "baseHeight": 288, "minCssPerUnit": 1, "maxDeviceScale": 8, "compactBelowWidth": 480},
+  "audit": {
+    "fontPx": {"desktop": {"min": 10.5, "maxVhFrac": 0.045}, "phone": {"min": 9, "maxVhFrac": 0.11}},
+    "scrollOk": {
+      "desktop": [".aps-rs-levels"],
+      "phone": [".aps-party-grid", ".aps-sum-pagewrap", ".aps-bag-detail", ".aps-dexd-layout", ".aps-dexd-left", ".aps-dexd-mid", ".aps-dexd-right", ".aps-box-party", ".aps-manual-page", ".aps-set-page", ".aps-body", ".aps-rs-detail", ".aps-rs-levels"]
+    }
+  },
+  "screenScale": {"bodyUnits": 12, "bodyHeightFrac": 0.025, "minBodyPx": 14, "maxBodyPx": 24, "minTextPx": 11, "tiers": {"hero": 24, "title": 18, "body": 12, "label": 10, "caption": 9}, "stepDevicePerUnit": 0.25, "minDevicePerUnit": 1},
   "anim": {"panelOpenMs": 180, "panelCloseMs": 140, "modalOpenMs": 120, "cursorBobMs": 560, "toastEnterMs": 180, "toastLeaveMs": 240},
   "fade": {"defaultMs": 420},
   "sfx": {"move": "select", "confirm": "confirm", "cancel": "cancel", "error": "error", "open": "menu_open", "close": "menu_close", "tab": "select"},
@@ -100,6 +108,8 @@
     "mRare": {"rows": ["...o...", "..oyo..", "ooyhyoo", "oyhhhyo", ".oyyyo.", ".oyoyo.", ".oo.oo."]},
     "mItem": {"rows": ["..o..", ".oco.", "ocwco", ".oco.", "..o.."]},
     "mWarp": {"rows": [".ooo.", "oNNNo", "oNnNo", "oNNyo", "oNNNo", "ooooo"]},
+    "mAnchor": {"rows": ["...o...", "..omo..", ".ocmco.", ".ocmco.", ".obcbo.", "..obo..", ".oSSSo.", "oSSSSSo", "ooooooo"]},
+    "mAnchorGrand": {"rows": [".....o.....", "....omo....", "...ocmco...", "..ocmmmco..", "..ocmmmco..", "..obcmcbo..", "...obcbo...", "....obo....", "..oSSSSSo..", ".oSSSSSSSo.", "oSSSSSSSSSo", "ooooooooooo"]},
     "mQuest": {"rows": [".ooo.", "oyyyo", "oyyyo", ".oyo.", ".oyo.", ".ooo.", ".oyo.", ".ooo."]},
     "mCenter": {"rows": ["ooooooo", "owwwwwo", "owwrwwo", "owrrrwo", "owwrwwo", "owwwwwo", "ooooooo"]},
     "mShop": {"rows": ["..ooo..", ".ow.wo.", "ooooooo", "obbbbbo", "obwbbbo", "obbbbBo", "ooooooo"]},

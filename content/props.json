@@ -76,5 +76,7 @@
   {"key": "lab_machine", "model": "lab_machine", "nameZh": "实验仪器", "footprint": [2, 1], "height": 1.8, "collide": true, "light": {"color": "#7fffd4", "intensity": 0.6, "radius": 3, "h": 1.4, "nightOnly": false}},
   {"key": "gym_pillar", "model": "gym_pillar", "nameZh": "道馆立柱", "footprint": [1, 1], "height": 3, "collide": true},
   {"key": "arena_mark", "model": "arena_mark", "nameZh": "对战场地", "footprint": [5, 7], "height": 0.02, "collide": false},
-  {"key": "stairs_down", "model": "stairs_down", "nameZh": "楼梯", "footprint": [1, 1], "height": 0.2, "collide": false}
+  {"key": "stairs_down", "model": "stairs_down", "nameZh": "楼梯", "footprint": [1, 1], "height": 0.2, "collide": false},
+  {"key": "warp_anchor", "model": "warp_anchor", "nameZh": "传送锚点", "footprint": [1, 1], "height": 2.5, "collide": true, "interactable": true, "light": {"color": "#8fe8ff", "intensity": 0.55, "radius": 3.2, "h": 1.1, "nightOnly": true}},
+  {"key": "warp_anchor_grand", "model": "warp_anchor_grand", "nameZh": "大型传送锚点", "footprint": [3, 3], "height": 4.6, "collide": true, "interactable": true, "light": {"color": "#8fe8ff", "intensity": 1.0, "radius": 7, "h": 2.6, "nightOnly": true}}
 ]

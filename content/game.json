@@ -45,7 +45,7 @@
     "tiredBelow": 0.5,
     "sizeCapMapKinds": ["interior", "cave"]
   },
-  "interact": {"reach": 0.85, "radius": 0.62, "reachAcrossProps": ["counter"], "props": {"pc_terminal": {"action": "box"}, "statue": {"action": "statue"}}, "sfx": "select"},
+  "interact": {"reach": 0.85, "radius": 0.62, "reachAcrossProps": ["counter"], "props": {"pc_terminal": {"action": "box"}, "statue": {"action": "statue"}, "warp_anchor": {"action": "anchor"}, "warp_anchor_grand": {"action": "anchor"}}, "sfx": "select"},
   "npc": {
     "showNames": false,
     "walkSpeed": 3.4,
@@ -72,6 +72,7 @@
   "battle": {"sayIntroBefore": true, "sayDefeatTextAfter": true, "lossAbortsScript": true, "afterBattleSettleMs": 120, "fallbackMaxSteps": 1000},
   "blackout": {"fadeMs": 650, "sfx": "faint"},
   "fly": {"minBadges": 1, "keyItemKind": "map", "mapKinds": ["overworld"], "sfx": "door"},
+  "anchorTravel": {"minBadges": 0, "keyItemKind": "", "mapKinds": ["overworld"], "scanSec": 0.25, "beaconRadius": 36},
   "script": {"maxDepth": 48, "healWaitMs": 900, "healSfx": "heal", "moneySfx": "money", "questSfx": "notify", "unlockSfx": "notify", "fadeMs": 420, "moveNpcSpeed": 3.4},
   "presence": {"chatBubbleMs": 3600, "emoteBubbleMs": 2200, "bubbleMaxChars": 22, "interactRadius": 0.9, "followerDistance": 1.0, "followerRate": 8, "leadDebounceSec": 0.5, "inspectTimeoutMs": 5000, "moveMinSpeed": 0.4, "moveHoldMs": 160},
   "markers": {"refreshSec": 0.2, "trainers": true, "quest": true, "others": true, "rares": true, "wild": false, "items": true},

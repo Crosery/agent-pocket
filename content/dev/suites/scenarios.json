@@ -4,6 +4,6 @@
   "viewports": ["d1280"],
   "shotPath": "scenarios/${scenario}.png",
   "cases": [
-    {"id": "${scenario}", "each": {"scenario": ["fresh-start", "tutorial-first-battle", "after-gym-3", "boss-astra-counter", "night-rain-forge", "frontier-far", "ui-worst-case", "determinism-walk", "fake-peers-square"]}, "url": "/?dev=1&scenario=${scenario}", "steps": [{"wait": {"ready": true}}, {"expect": {"scenario": true}}, {"expect": {"noErrors": true}}, {"shot": {"name": "${scenario}", "hideDev": true}}]}
+    {"id": "${scenario}", "each": {"scenario": ["fresh-start", "tutorial-first-battle", "after-gym-3", "boss-astra-counter", "night-rain-forge", "frontier-far", "ui-worst-case", "determinism-walk", "fake-peers-square", "anchor-origin", "anchor-wild", "anchor-network"]}, "url": "/?dev=1&scenario=${scenario}", "steps": [{"wait": {"ready": true}}, {"expect": {"scenario": true}}, {"expect": {"noErrors": true}}, {"shot": {"name": "${scenario}", "hideDev": true}}]}
   ]
 }

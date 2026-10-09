@@ -13,6 +13,7 @@ import type { RoadEdge } from './roads.ts'
 import type { SiteLayout } from './layout.ts'
 import type { FrontierSite } from './sites.ts'
 import { compiledFrontier } from './config.ts'
+import { fillAnchors } from './anchor-fill.ts'
 
 export interface DecorSite {
   site: FrontierSite
@@ -254,5 +255,6 @@ function residents(ctx: InteriorDecorContext): void {
 registerChunkDecorator('fx-villagers', villagers, 0)
 registerChunkDecorator('fx-signposts', signposts, 1)
 registerChunkDecorator('fx-items', groundItems, 2)
+registerChunkDecorator('fx-anchors', fillAnchors, 3)
 registerInteriorDecorator('fx-services', services, 0)
 registerInteriorDecorator('fx-residents', residents, 1)
