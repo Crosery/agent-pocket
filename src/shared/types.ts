@@ -392,6 +392,8 @@ export interface GameConfig {
   camera: { fov: number; pitchDeg: number; zoomDistances: number[]; followDamping: number; lookAhead: number }
   render: { maxPointLights: number; shadowMapSize: number; internalHeight: Record<Settings['quality'], number> }
   defaultSettings: Settings
+  /** Allowed Settings.battleSpeed multipliers, slowest first. */
+  battleSpeeds: number[]
   /** One-time overrides applied once to every save that hasn't seen them (e.g. a new default volume). */
   settingsMigrations?: { id: string; set: Partial<Settings> }[]
 }
@@ -1177,6 +1179,8 @@ export interface Settings {
   bloom: boolean
   shadows: boolean
   textSpeed: 'slow' | 'normal' | 'fast' | 'instant'
+  /** Battle clock multiplier; one of config.battleSpeeds (1 = as authored). */
+  battleSpeed: number
   showMinimap: boolean
   showNames: boolean
   /** Objective tracker in the HUD / one-time contextual tips (content/tutorial.json). */

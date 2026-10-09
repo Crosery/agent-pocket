@@ -6,6 +6,7 @@ import type { AudioManager, Input } from '../contracts.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { el, panel } from '../ui/widgets.ts'
 import { BATTLE_UI } from './config.ts'
+import { battleMs, battleSpeedScale } from './speed.ts'
 import { createBattleEffectsPanel } from './effects-panel.ts'
 import { createMenus, type Menus } from './menus.ts'
 import { createMessageBox, type MessageBox } from './message.ts'
@@ -36,19 +37,21 @@ export interface BattleView {
   update(dtSec: number): void
 }
 
-export function createBattleView(audio: AudioManager, settings: () => Settings): BattleView {
+/** `pace` is the battle-speed source for banners, the level-up panel and message auto-advance (text speed stays on `settings`). */
+export function createBattleView(audio: AudioManager, settings: () => Settings, pace: () => Pick<Settings, 'battleSpeed'> = settings): BattleView {
   const T = BATTLE_UI.timing
   const root = el('div', 'apb-root')
+  const barSpeed = () => battleSpeedScale(pace())
   let openDetails: (side: SideIndex) => void = () => undefined
   const status: [StatusPanel, StatusPanel] = [
-    createStatusPanel(true, () => openDetails(0)),
-    createStatusPanel(false, () => openDetails(1)),
+    createStatusPanel(true, () => openDetails(0), barSpeed),
+    createStatusPanel(false, () => openDetails(1), barSpeed),
   ]
   const weather = el('div', 'apb-weather')
   weather.hidden = true
   const timer = el('div', 'apb-timer')
   timer.hidden = true
-  const message: MessageBox = createMessageBox(audio, settings)
+  const message: MessageBox = createMessageBox(audio, settings, pace)
   const menus: Menus = createMenus(audio)
   const bar = el('div', 'apb-bar', [message.el, menus.el, status[0].el])
   root.append(status[1].el, weather, timer, bar)
@@ -144,12 +147,12 @@ export function createBattleView(audio: AudioManager, settings: () => Settings):
       message.update(dt)
       syncMenuClass()
       if (levelWait) {
-        levelWait.left -= dt * 1000
+        levelWait.left -= battleMs(dt, pace())
         if (levelWait.left <= 0) levelWait.done()
       }
       for (let i = banners.length - 1; i >= 0; i--) {
         const b = banners[i]
-        b.left -= dt * 1000
+        b.left -= battleMs(dt, pace())
         if (b.left > 0) continue
         banners.splice(i, 1)
         b.node.addEventListener('animationend', () => b.node.remove(), { once: true })

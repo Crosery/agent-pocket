@@ -5,6 +5,7 @@ import type { AudioManager, Input } from '../contracts.ts'
 import { advanceTypewriter, completeTypewriter, createTypewriter, typewriterDone, type TypewriterState } from '../ui/textflow.ts'
 import { el, panel } from '../ui/widgets.ts'
 import { BATTLE_UI } from './config.ts'
+import { battleMs } from './speed.ts'
 
 /** 'auto': advances by itself after the configured delay (or on confirm); 'confirm': waits for confirm; 'none': resolves once typed. */
 export type MessageWait = 'auto' | 'confirm' | 'none'
@@ -22,7 +23,7 @@ export interface MessageBox {
   update(dtSec: number): void
 }
 
-export function createMessageBox(audio: AudioManager, settings: () => Settings): MessageBox {
+export function createMessageBox(audio: AudioManager, settings: () => Settings, pace: () => Pick<Settings, 'battleSpeed'> = settings): MessageBox {
   const M = BATTLE_UI.message
   const shown = el('span')
   const hidden = el('span', 'apb-tw-hidden')
@@ -109,7 +110,7 @@ export function createMessageBox(audio: AudioManager, settings: () => Settings):
       if (wait === 'none') { done(); return }
       adv.classList.add('is-on')
       if (wait === 'auto') {
-        held += dt * 1000
+        held += battleMs(dt, pace())
         if (held >= M.autoAdvanceMs[settings().textSpeed]) done()
       }
     },
