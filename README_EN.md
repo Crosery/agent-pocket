@@ -81,7 +81,7 @@ npm start              # production: serves dist/ and the WebSocket endpoint
 ```
 
 - Requires Node.js 24 or later. The server runs `.ts` files directly; development used Node 26.
-- Add `?dev=1` to the URL for debug hooks.
+- Add `?dev=1` to the URL for debug hooks (dev server or `npm run build:devtools` only; the production build has none, and servers refuse devtools clients unless started with `AP_DEV=1`).
 
 **Controls**
 

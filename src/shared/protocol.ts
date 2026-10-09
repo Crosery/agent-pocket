@@ -46,7 +46,7 @@ export type ChatChannel = 'global' | 'local' | 'system' | 'whisper'
 // ----------------------------- client -> server -----------------------------
 
 export type ClientMsg =
-  | { t: 'hello'; v: number; playerId: string; name: string; avatar: string; map: string; x: number; y: number; facing: Dir; lead: PresenceLead | null; profile: PublicProfile }
+  | { t: 'hello'; v: number; playerId: string; name: string; avatar: string; map: string; x: number; y: number; facing: Dir; lead: PresenceLead | null; profile: PublicProfile; build?: { devtools: boolean } }
   | { t: 'move'; map: string; x: number; y: number; facing: Dir; moving: boolean; running: boolean }
   | { t: 'lead'; lead: PresenceLead | null }
   | { t: 'profile'; profile: PublicProfile }

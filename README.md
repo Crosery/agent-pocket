@@ -126,7 +126,7 @@ npm run dev          # 同时启动游戏服务器(:8787) 和 Vite 客户端(:51
 
 浏览器打开 `http://localhost:5173`。只想单机试玩，可以只跑 `npm run dev:client`。
 
-调试入口：在 URL 后加 `?dev=1`，可以跳过标题、传送、直接开战斗（见 `src/client/debug.ts`）。
+调试入口：本地 `npm run dev`（或 `npm run build:devtools` 的调试构建）下，在 URL 后加 `?dev=1`，可以跳过标题、传送、直接开战斗（见 `src/client/dev/params.ts`）。正式构建不含调试代码，官方服务器也会拒绝调试构建的客户端（`AP_DEV=1` 的自建服除外）。
 
 ### 3. 检查与构建
 

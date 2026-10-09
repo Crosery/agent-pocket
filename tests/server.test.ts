@@ -475,6 +475,7 @@ test('http: static dist serving, caching, compression, ranges, traversal, SPA fa
     await mkdir(pathJoin(dist, 'assets'), { recursive: true })
     const js = `console.log(${JSON.stringify('agent pocket '.repeat(400))})\n`
     await writeFile(pathJoin(dist, 'index.html'), '<!doctype html><title>t</title>')
+    await writeFile(pathJoin(dist, 'release.json'), '{"commit":"abc"}')
     await writeFile(pathJoin(dist, 'assets', 'index-AbCd12_9.js'), js)
     await writeFile(pathJoin(dist, 'assets', 'plain.js'), js)
     const bin = Buffer.alloc(4096, 7)
@@ -488,6 +489,7 @@ test('http: static dist serving, caching, compression, ranges, traversal, SPA fa
       const index = await httpGet(PORT, '/')
       assert.equal(index.status, 200)
       assert.equal(index.headers['cache-control'], 'no-cache')
+      assert.equal((await httpGet(PORT, '/release.json')).headers['cache-control'], 'no-cache')
       assert.match(String(index.headers['content-type']), /text\/html/)
       const spa = await httpGet(PORT, '/some/client/route')
       assert.equal(spa.status, 200)

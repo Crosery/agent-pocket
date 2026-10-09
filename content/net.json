@@ -1,7 +1,7 @@
 {
   "protocol": {
     "wsPath": "/ws",
-    "closeCodes": {"shutdown": 1001, "duplicate": 4001, "version": 4002, "flood": 4003, "helloTimeout": 4004, "serverFull": 4005, "slowConsumer": 4006}
+    "closeCodes": {"shutdown": 1001, "duplicate": 4001, "version": 4002, "flood": 4003, "helloTimeout": 4004, "serverFull": 4005, "slowConsumer": 4006, "devNotAllowed": 4007}
   },
   "server": {
     "defaultPort": 8787,
@@ -40,6 +40,7 @@
     "distDir": "dist",
     "publicDir": "public",
     "indexFile": "index.html",
+    "noCacheFiles": ["release.json"],
     "hashedAssetPattern": "-[A-Za-z0-9_-]{8}\\.[A-Za-z0-9]+$",
     "immutableMaxAgeSeconds": 31536000,
     "defaultMaxAgeSeconds": 300,

@@ -13,7 +13,7 @@ export type RateKey =
   | 'message' | 'messageKick' | 'move' | 'jump' | 'emote' | 'profile' | 'inspect' | 'leaderboard'
   | 'tradeRequest' | 'tradeAction' | 'pvp' | 'errors'
 
-export type CloseCodeKey = 'shutdown' | 'duplicate' | 'version' | 'flood' | 'helloTimeout' | 'serverFull' | 'slowConsumer'
+export type CloseCodeKey = 'shutdown' | 'duplicate' | 'version' | 'flood' | 'helloTimeout' | 'serverFull' | 'slowConsumer' | 'devNotAllowed'
 
 /** content/net.json server.world: tile-level movement validation on the (infinite) world. */
 export interface WorldNetConfig {
@@ -84,6 +84,8 @@ export interface NetFile {
     distDir: string
     publicDir: string
     indexFile: string
+    /** Served with no-cache (besides indexFile), e.g. release.json read by deploy checks through the CDN. */
+    noCacheFiles: string[]
     hashedAssetPattern: string
     immutableMaxAgeSeconds: number
     defaultMaxAgeSeconds: number
@@ -127,7 +129,7 @@ const RATE_KEYS: readonly RateKey[] = [
   'message', 'messageKick', 'move', 'jump', 'emote', 'profile', 'inspect', 'leaderboard',
   'tradeRequest', 'tradeAction', 'pvp', 'errors',
 ]
-const CLOSE_KEYS: readonly CloseCodeKey[] = ['shutdown', 'duplicate', 'version', 'flood', 'helloTimeout', 'serverFull', 'slowConsumer']
+const CLOSE_KEYS: readonly CloseCodeKey[] = ['shutdown', 'duplicate', 'version', 'flood', 'helloTimeout', 'serverFull', 'slowConsumer', 'devNotAllowed']
 const SORT_KEYS: readonly LeaderboardSortKey[] = ['dexCaught', 'badges', 'pvpWins', 'pvpLosses', 'maxDistance']
 
 /** Structural validation of content/net.json + content/moderation.json + multiplayer.json presence (empty = OK). */
@@ -175,6 +177,7 @@ export function validateNetContent(net: NetFile = NET, mod: ModerationFile = MOD
   const h = net.http
   for (const k of ['apiPrefix', 'healthPath', 'leaderboardPath'] as const) if (!h?.[k]?.startsWith('/')) errs.push(`net.http.${k}: must start with "/"`)
   if (!h?.distDir || !h?.indexFile || !h?.defaultMime) errs.push('net.http: distDir, indexFile and defaultMime are required')
+  if (!Array.isArray(h?.noCacheFiles) || h.noCacheFiles.some((f) => typeof f !== 'string' || f.includes('/'))) errs.push('net.http.noCacheFiles: array of file names')
   try { new RegExp(h?.hashedAssetPattern ?? '') } catch { errs.push('net.http.hashedAssetPattern: invalid RegExp') }
   for (const k of ['immutableMaxAgeSeconds', 'defaultMaxAgeSeconds', 'compressMinBytes', 'compressCacheBytes'] as const) nonNeg(`net.http.${k}`, h?.[k])
   if (!Number.isInteger(h?.brotliQuality) || h.brotliQuality < 0 || h.brotliQuality > 11) errs.push('net.http.brotliQuality: integer 0-11')

@@ -1,0 +1,33 @@
+// The seam between src/client/game.ts and the developer tooling. Type-only: game.ts imports it with
+// `import type` and loads the implementation (./index.ts) through a dynamic import that exists only when
+// DEVTOOLS is true, so the production bundle holds neither this contract nor anything behind it.
+import type { SaveData, World } from '../../shared/types.ts'
+import type { GameContext, SaveManager, Screens } from '../contracts.ts'
+import type { OverworldExt } from '../world/controller.ts'
+
+export interface DevInstallDeps {
+  ctx: GameContext
+  overworld: OverworldExt
+  world: World
+  onboarding: unknown
+  flyTo(placeId: string): Promise<void>
+}
+
+export interface DevKit {
+  /** Save slot of this tab (several clients share one browser's localStorage). */
+  readonly slot: number
+  /** Start straight in the world with a debug save instead of the title flow. */
+  readonly skipTitle: boolean
+  /** The in-game clock is held still (&t=<minutes>). */
+  clockFrozen(): boolean
+  /** The world is built: content self-checks and the &reset=1 slot wipe. */
+  afterWorld(world: World): void
+  /** A ready-to-play save for an empty slot (skipTitle). */
+  newSave(saves: SaveManager, world: World): SaveData
+  /** Start overrides (position, clock) for the save about to be played. */
+  applyStart(ctx: GameContext, world: World): void
+  /** Console and automation hooks (window.__ap and friends). */
+  install(deps: DevInstallDeps): void
+  /** Post-load actions: forced weather, evolution, a battle, a screen. */
+  runActions(ctx: GameContext, overworld: OverworldExt, world: World, screens: Screens): Promise<void>
+}

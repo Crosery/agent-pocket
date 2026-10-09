@@ -291,7 +291,7 @@
     "bubbleOffsetPx": 14,
     "maxDistance": 40,
     "coverHalfWidth": 0.42,
-    "style": {"tagFontPx": 12, "tagPadding": "2px 4px 1px", "tagBackground": "rgba(10, 12, 24, 0.55)", "tagRadiusPx": 3, "tagTextShadow": "1px 1px 0 rgba(0, 0, 0, 0.85)", "tagDimOpacity": 0.22, "tagDimMs": 140, "bubbleFontPx": 13, "bubblePadding": "4px 7px", "bubbleText": "#1d1a2a", "bubbleBackground": "#fffdf4", "bubbleBorder": "#1d1a2a", "bubbleBorderPx": 2, "bubbleRadiusPx": 6, "bubbleShadow": "2px 2px 0 rgba(0, 0, 0, 0.35)", "bubbleMaxWidthPx": 220, "bubbleTailPx": 5, "popMs": 160}
+    "style": {"tagFontPx": 12, "tagPadding": "2px 4px 1px", "tagBackground": "rgba(10, 12, 24, 0.72)", "tagRadiusPx": 3, "tagTextShadow": "1px 1px 0 rgba(0, 0, 0, 0.85)", "tagDimOpacity": 0.22, "tagDimMs": 140, "bubbleFontPx": 13, "bubblePadding": "4px 7px", "bubbleText": "#1d1a2a", "bubbleBackground": "#fffdf4", "bubbleBorder": "#1d1a2a", "bubbleBorderPx": 2, "bubbleRadiusPx": 6, "bubbleShadow": "2px 2px 0 rgba(0, 0, 0, 0.35)", "bubbleMaxWidthPx": 220, "bubbleTailPx": 5, "popMs": 160}
   },
   "groundItems": {"color": "#ffe27a", "radius": 0.13, "glow": 2.8, "bobAmp": 0.06, "bobHz": 1.3, "height": 0.32, "glowSize": 0.55},
   "fx": {
