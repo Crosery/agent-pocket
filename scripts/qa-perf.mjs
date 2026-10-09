@@ -1,7 +1,7 @@
 // Frame-time benchmark (issue #36). Drives the page through window.__ap.v1 and prints one `PERF {json}` line per run.
 //   node scripts/qa-perf.mjs [--base http://127.0.0.1:5236] [--space ap-36] [--out output/36/raw] [--frames 300]
 //        [--runs 2] [--viewports phone,desktop] [--scenes town-day,night-rain-forge,...] [--label before] [--url-extra "&x=1"]
-//        [--quality low|medium|high|ultra] [--modes stand,walk] [--raf false] [--profile stand|walk]   (profile: CDP CPU sampling of that mode, top functions per frame)
+//        [--first-run 1] [--quality low|medium|high|ultra] [--modes stand,walk] [--raf false] [--raf-max-ms 20000] [--profile stand|walk]   (profile: CDP CPU sampling of that mode, top functions per frame)
 // The browser half is piped into `ego-browser nodejs` with a CONFIG object in front, like scripts/qa/run.mjs.
 import { spawnSync } from 'node:child_process'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -15,6 +15,7 @@ const config = {
   space: args.space ?? 'ap-36',
   frames: Number(args.frames ?? 300),
   runs: Number(args.runs ?? 2),
+  firstRun: Number(args['first-run'] ?? 1),
   settleMs: Number(args.settle ?? 4000),
   label: args.label ?? 'run',
   urlExtra: args['url-extra'] ?? '',
@@ -22,12 +23,13 @@ const config = {
   modes: (args.modes ?? 'stand,walk').split(','),
   raf: args.raf !== 'false',
   stallMs: Number(args.stall ?? 400),
+  rafMaxMs: Number(args['raf-max-ms'] ?? 20000),
   jobs: [],
 }
 const extraSetup = args.quality ? [['settings.set', { key: 'quality', value: args.quality }]] : []
 for (const v of (args.viewports ?? 'phone,desktop').split(',')) {
   for (const s of (args.scenes ?? Object.keys(SCENES).join(',')).split(',')) {
-    for (let r = 1; r <= config.runs; r++) config.jobs.push({ viewport: v, vp: VIEWPORTS[v], scene: s, def: { ...SCENES[s], setup: [...extraSetup, ...SCENES[s].setup] }, run: r })
+    for (let r = config.firstRun; r < config.firstRun + config.runs; r++) config.jobs.push({ viewport: v, vp: VIEWPORTS[v], scene: s, def: { ...SCENES[s], setup: [...extraSetup, ...SCENES[s].setup] }, run: r })
   }
 }
 

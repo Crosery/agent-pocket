@@ -24,7 +24,7 @@ const INSTALL = (sync) => {
   const ow = A.overworld
   const gl = rend.gl.getContext()
   const px = new Uint8Array(4)
-  const P = (window.__perf = { renderEnd: [], render: [], gpu: [], update: [] })
+  const P = (window.__perf = { renderEnd: [], render: [], gpu: [], update: [], calls: [], tris: [] })
   if (!window.__perfOrig) window.__perfOrig = { render: rend.render, update: ow.update }
   const o = window.__perfOrig
   rend.render = function (...a) {
@@ -34,6 +34,7 @@ const INSTALL = (sync) => {
     if (sync) gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, px)
     const e = performance.now()
     P.render.push(m - s); P.gpu.push(e - m); P.renderEnd.push(e)
+    P.calls.push(rend.gl.info.render.calls); P.tris.push(rend.gl.info.render.triangles)
     return r
   }
   ow.update = function (...a) { const s = performance.now(); const r = o.update.apply(this, a); P.update.push(performance.now() - s); return r }
@@ -54,6 +55,7 @@ const SUMMARY = () => {
   return {
     tick: stat(ticks), render: stat(P.render), gpu: stat(P.gpu), update: stat(P.update),
     calls: info.render.calls, triangles: info.render.triangles, points: info.render.points,
+    callsAvg: P.calls.reduce((a, b) => a + b, 0) / Math.max(1, P.calls.length), trisAvg: P.tris.reduce((a, b) => a + b, 0) / Math.max(1, P.tris.length),
     textures: info.memory.textures, geometries: info.memory.geometries, programs: info.programs ? info.programs.length : 0,
     internal: { w: window.__AP.renderer.internal.width, h: window.__AP.renderer.internal.height, scale: window.__AP.renderer.internal.scale },
     quality: window.__AP.save.settings.quality, coarse: matchMedia('(pointer: coarse)').matches, dpr: devicePixelRatio,
@@ -61,8 +63,36 @@ const SUMMARY = () => {
   }
 }
 
+let pumped = false
 async function stepFrames(total, chunk = 30) {
-  for (let done = 0; done < total; done += chunk) await ev((n) => window.__ap.v1.time.step(n, 1 / 60), Math.min(chunk, total - done))
+  for (let done = 0; done < total; done += chunk) {
+    const n = Math.min(chunk, total - done)
+    if (pumped) await ev(PUMP_STEP, n)
+    else await ev((k) => window.__ap.v1.time.step(k, 1 / 60), n)
+  }
+}
+
+/** Scenes that run their own requestAnimationFrame loop (battle) cannot be stepped by the dev clock: take over rAF and call the callbacks by hand. */
+const PUMP_INSTALL = () => {
+  if (window.__pump) return
+  const native = window.requestAnimationFrame.bind(window)
+  window.__pump = { q: [], native, now: performance.now(), id: 0, nativeRaf: window.requestAnimationFrame }
+  window.requestAnimationFrame = (cb) => { window.__pump.q.push(cb); return ++window.__pump.id }
+}
+const PUMP_STEP = (n) => {
+  const p = window.__pump
+  for (let i = 0; i < n; i++) {
+    const cbs = p.q.splice(0)
+    p.now += 1000 / 60
+    for (const cb of cbs) cb(p.now)
+  }
+}
+const PUMP_UNINSTALL = () => {
+  const p = window.__pump
+  if (!p) return
+  window.requestAnimationFrame = p.nativeRaf
+  for (const cb of p.q.splice(0)) p.native(cb)
+  window.__pump = null
 }
 
 function summariseProfile(profile) {
@@ -96,6 +126,9 @@ function summariseProfile(profile) {
   return { totalMsPerFrame: +(total / 1000 / CONFIG.frames).toFixed(2), functions: top(fnSelf, 50), files: top(fileSelf, 30), inclusive: top(incl, 70) }
 }
 
+// The frame-time governor remembers its level per device (localStorage); every run must start from the tier as configured.
+const { identifier: cleanScript } = await page.cdp('Page.addScriptToEvaluateOnNewDocument', { source: "try { localStorage.removeItem('ap.render.governor') } catch (e) {}" })
+
 for (const job of CONFIG.jobs) {
   try {
     await emulate(job.vp)
@@ -115,15 +148,21 @@ for (const job of CONFIG.jobs) {
     await page.waitForTimeout(CONFIG.settleMs)
     const row = { label: CONFIG.label, viewport: job.viewport, sceneId: job.scene, run: job.run, bootMs }
     const overworld = job.def.wait !== 'battle'
+    pumped = false
 
     // collect garbage first so the heap figure is what stays alive
     await page.cdp('HeapProfiler.collectGarbage', {})
     row.heapMB = (await page.cdp('Runtime.getHeapUsage', {})).usedSize / 1048576
     await page.cdp('Performance.enable', {})
 
-    if (overworld) {
-      await ev(() => window.__ap.v1.time.pause())
-      for (const mode of CONFIG.modes) {
+    {
+      if (overworld) await ev(() => window.__ap.v1.time.pause())
+      else {
+        await ev(PUMP_INSTALL)
+        await page.waitForFunction(() => window.__pump && window.__pump.q.length > 0, undefined, { timeout: 30000 })
+        pumped = true
+      }
+      for (const mode of overworld ? CONFIG.modes : ['stand']) {
         await ev(INSTALL, true)
         await stepFrames(20) // warm-up
         await ev(INSTALL, true)
@@ -147,18 +186,20 @@ for (const job of CONFIG.jobs) {
           ...(await ev(SUMMARY)),
           mainThreadMsPerFrame: ((metric(m1, 'TaskDuration') - metric(m0, 'TaskDuration')) * 1000) / CONFIG.frames,
           scriptMsPerFrame: ((metric(m1, 'ScriptDuration') - metric(m0, 'ScriptDuration')) * 1000) / CONFIG.frames,
+          cpuMsPerFrame: ((metric(m1, 'ThreadTime') - metric(m0, 'ThreadTime')) * 1000) / CONFIG.frames,
           heapDeltaKB: (h1 - h0) / 1024,
         }
         if (mode === 'walk') await ev(() => window.__walk)
         await ev(UNINSTALL)
       }
-      await ev(() => window.__ap.v1.time.resume())
+      if (overworld) await ev(() => window.__ap.v1.time.resume())
+      else { await ev(PUMP_UNINSTALL); pumped = false }
     }
 
-    if (CONFIG.raf) {
+    if (CONFIG.raf) try {
       await ev(INSTALL, false)
       await page.waitForTimeout(500)
-      await ev((frames) => {
+      await ev(({ frames, maxMs }) => {
         window.__rafDone = null
         const deltas = []
         const states = new Set()
@@ -167,12 +208,13 @@ for (const job of CONFIG.jobs) {
         const f = (t) => {
           deltas.push(t - last); last = t
           states.add(document.visibilityState)
-          if (++n < frames) requestAnimationFrame(f)
+          if (++n < frames && t - begin < maxMs) requestAnimationFrame(f)
           else window.__rafDone = { deltas, states: [...states] }
         }
+        const begin = performance.now()
         requestAnimationFrame(f)
-      }, CONFIG.frames)
-      await page.waitForFunction(() => window.__rafDone, undefined, { timeout: 240000 })
+      }, { frames: CONFIG.frames, maxMs: CONFIG.rafMaxMs })
+      await page.waitForFunction(() => window.__rafDone, undefined, { timeout: CONFIG.rafMaxMs + 30000 })
       const rafRes = await ev((stallMs) => {
         const r = window.__rafDone
         const stat = (a) => {
@@ -185,7 +227,7 @@ for (const job of CONFIG.jobs) {
         const P = window.__perf
         const info = window.__AP.renderer.gl.info
         return {
-          frame: stat(ok), stalls: d.length - ok.length, over33: ok.filter((x) => x > 33.4).length / Math.max(1, ok.length), states: r.states,
+          frame: stat(ok), frames: ok.length, stalls: d.length - ok.length, over33: ok.filter((x) => x > 33.4).length / Math.max(1, ok.length), states: r.states,
           render: stat(P.render), update: stat(P.update),
           calls: info.render.calls, triangles: info.render.triangles, textures: info.memory.textures, geometries: info.memory.geometries,
           internal: { w: window.__AP.renderer.internal.width, h: window.__AP.renderer.internal.height, scale: window.__AP.renderer.internal.scale },
@@ -195,10 +237,11 @@ for (const job of CONFIG.jobs) {
       }, CONFIG.stallMs)
       row.raf = rafRes
       await ev(UNINSTALL)
-    }
+    } catch (err) { row.rafError = String(err && err.message ? err.message : err).slice(0, 120) }
     console.log('PERF ' + JSON.stringify(row))
   } catch (err) {
     console.log('ERR ' + job.viewport + ' ' + job.scene + ' ' + (err && err.message ? err.message : err))
   }
 }
 await page.cdp('Emulation.setCPUThrottlingRate', { rate: 1 })
+await page.cdp('Page.removeScriptToEvaluateOnNewDocument', { identifier: cleanScript })
