@@ -338,6 +338,21 @@ async function closeAll(page) {
 
 const run = (fn) => async (page) => { await page.evaluate(fn) }
 
+/** Phones: the screens before this one were closed with keys, which makes the game think a keyboard is in use; a tap on the empty header corner restores touch. */
+async function touchActivity(page) {
+  if (!(await page.evaluate(() => matchMedia('(pointer: coarse)').matches))) return
+  await page.cdp('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 2, y: 2, id: 1 }] })
+  await page.waitForTimeout(90)
+  await page.cdp('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+  await page.waitForTimeout(200)
+}
+
+const openChart = (o) => async (page) => {
+  await page.evaluate(({ view, last }) => { void window.__AP.screens.typeChart({ view, type: last ? window.__AP.data.types.at(-1).id : undefined }) }, o)
+  await page.waitForTimeout(600)
+  await touchActivity(page)
+}
+
 export const SCREENS = [
   { id: 'hud', keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', open: async (page) => {
     await page.evaluate(async () => {
@@ -366,10 +381,10 @@ export const SCREENS = [
   { id: 'quests', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.quests() }) },
   { id: 'settings', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.settings() }) },
   // 属性克制表 (issue #37): the three views, the grid with the cursor on its last row (scrolled, sticky headers), and the manual page that links to it.
-  { id: 'typechart-type', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.typeChart({ view: 'type' }) }) },
-  { id: 'typechart-grid', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.typeChart({ view: 'grid' }) }) },
-  { id: 'typechart-grid-end', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.typeChart({ view: 'grid', type: window.__AP.data.types.at(-1).id }) }) },
-  { id: 'typechart-loops', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.typeChart({ view: 'loops' }) }) },
+  { id: 'typechart-type', scope: '.ap-kit-stack > *:last-child', open: openChart({ view: 'type' }) },
+  { id: 'typechart-grid', scope: '.ap-kit-stack > *:last-child', open: openChart({ view: 'grid' }) },
+  { id: 'typechart-grid-end', scope: '.ap-kit-stack > *:last-child', open: openChart({ view: 'grid', last: true }) },
+  { id: 'typechart-loops', scope: '.ap-kit-stack > *:last-child', open: openChart({ view: 'loops' }) },
   { id: 'manual-chart', scope: '.ap-kit-stack > *:last-child', open: async (page) => {
     await page.evaluate(() => { void window.__AP.screens.manual() })
     await page.waitForTimeout(700)

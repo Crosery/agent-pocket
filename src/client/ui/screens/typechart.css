@@ -1,6 +1,11 @@
 /* Agent Pocket — 属性克制表 (src/client/ui/screens/typechart.ts). Every size is calc(var(--u) * N); the cell, header and
    side-pane sizes arrive as --cw-u / --ch-u / --hw / --hh / --side from content/screens.json typeChart.grid. */
 
+/* On a phone the screen owns the whole display (the pause screen does the same): no overworld pad underneath, no reserved strip.
+   Over a battle the pad stays, so the bottom inset stays too. */
+html:not(.ap-battle-on) .aps-typechart { --ap-bottom-inset: 0px; }
+html:not(.ap-battle-on):has(.ap-kit-stack > .aps-typechart):not(:has(.aps-typechart ~ .aps-screen:not(.ap-pushed-out))) .ap-touch { visibility: hidden; }
+.aps-typechart .aps-foot:empty { display: none; }
 .aps-typechart .aps-body { gap: 0; }
 .aps-tc-tabs { flex: none; }
 .aps-tc-tabs.is-focus .ap-tab.is-active { box-shadow: 0 0 0 var(--u) var(--ap-gold-hi); }

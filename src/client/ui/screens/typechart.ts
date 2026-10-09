@@ -58,8 +58,10 @@ export function typeChartScreen(env: ScreenEnv, opts?: TypeChartOptions): Promis
     tabBar.el.addEventListener('pointerdown', () => setZone('tabs'))
     stage.addEventListener('pointerdown', () => setZone('body'))
 
+    let hintDevice = ctx.input.lastDevice
     const paintHints = () => {
-      if (ctx.input.lastDevice === 'touch') { f.setHints([]); return }
+      hintDevice = ctx.input.lastDevice
+      if (hintDevice === 'touch') { f.setHints([]); return }
       const toTabs: Hint[] = [['lr', t('screens.hint.tabs')], ['down', t('screens.typeChart.hint.toContent')], ['cancel', t('screens.hint.back')]]
       f.setHints(zone === 'tabs' ? toTabs : [...views[active].hints(), ['cancel', t('screens.hint.back')]])
     }
@@ -90,6 +92,8 @@ export function typeChartScreen(env: ScreenEnv, opts?: TypeChartOptions): Promis
         }
         if (views[active].input(input) === 'tabs') { uiSfx(env, 'move'); setZone('tabs') }
       },
+      // Hints follow the device the player is using right now (a tap after keys hides the key caps).
+      update() { if (ctx.input.lastDevice !== hintDevice) paintHints() },
       dispose() { offScale() },
     }
   })
