@@ -1,5 +1,5 @@
 // Typed view of content/battle-ui.json (battle client tunables) + validation. Pure module: no DOM.
-import type { MoveCategory, Settings } from '../../shared/types.ts'
+import type { BattleStatKey, MoveCategory, Settings } from '../../shared/types.ts'
 import type { BattleKind } from '../contracts.ts'
 import type { Content } from '../../shared/content/index.ts'
 import battleUiJson from '../../../content/battle-ui.json' with { type: 'json' }
@@ -63,6 +63,8 @@ export interface BattleUiConfig {
     detailWidth: number; bottomMaxGapPx: number
   }
   hud: {
+    /** What a card header drops from a long name (a trailing parenthetical): the full name stays in the tooltip and the status sheet. */
+    shortNamePattern: string
     hpBarWidth: number; expBarWidth: number; foeHpNumbers: boolean; ownHpNumbers: boolean
     showTypes: boolean; showStages: boolean
     /** Boss meter tiles: display width of the label kept (wide characters count 2), cells of the pip row, and how long a tapped tile's full reading stays up. */
@@ -76,6 +78,9 @@ export interface BattleUiConfig {
     commands: Record<CommandId, string>
     effects: string[]
     meterTones: Record<'neutral' | 'good' | 'warn' | 'bad', string>
+    /** Move category icons and stat icons (stat-stage chips). */
+    categories: Record<MoveCategory, string>
+    stats: Record<BattleStatKey, string>
     typeBase: string
   }
   commands: { normal: CommandId[]; pvp: CommandId[]; columns: number }

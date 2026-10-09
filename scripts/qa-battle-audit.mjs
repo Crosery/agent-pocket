@@ -18,7 +18,39 @@ export const BATTLE_SCENARIOS = [
   { id: 'wild', query: 'battle=wild' },
   { id: 'trainer', query: 'battle=trainer&trainer=route-1' },
 ]
-export const BATTLE_STATES = ['msg', 'cmd', 'moves', 'bag', 'party', 'inspect']
+export const BATTLE_STATES = ['msg', 'cmd', 'moves', 'bag', 'party', 'inspect', 'pause']
+
+/** Runs in the page: card and sheet headers keep every part on one line, names clamp instead of wrapping, the command hint fits its window. */
+const textFit = () => {
+  const out = []
+  // glyph runs of one line overlap vertically (mixed fonts shift their tops); a run that starts below the line's bottom opens a new line
+  const lines = (n) => {
+    const r = document.createRange(); r.selectNodeContents(n)
+    const runs = [...r.getClientRects()].filter((q) => q.width > 0 && q.height > 0).sort((a, b) => a.top - b.top)
+    let count = 0, bottom = -Infinity
+    for (const q of runs) { if (q.top >= bottom - q.height * 0.4) { count++; bottom = q.bottom } else bottom = Math.max(bottom, q.bottom) }
+    return count
+  }
+  for (const head of document.querySelectorAll('.apb-st-head, .apb-fx-head, .apb-fx-side-head')) {
+    if (!head.checkVisibility()) continue
+    const kids = [...head.children].filter((c) => c.checkVisibility()).map((c) => c.getBoundingClientRect())
+    const hMax = Math.max(0, ...kids.map((k) => k.height))
+    const mid = kids.map((k) => k.top + k.height / 2)
+    if (kids.length > 1 && Math.max(...mid) - Math.min(...mid) > hMax * 0.5) out.push({ type: 'header-wrap', sel: head.className.slice(0, 40), text: head.textContent.trim().slice(0, 40), detail: 'a part of the header sits on a second line' })
+  }
+  for (const n of document.querySelectorAll('.apb-st-name, .apb-cmd-row .ap-row-label')) {
+    if (n.checkVisibility() && lines(n) > 1) out.push({ type: 'label-wrap', sel: n.className.slice(0, 40), text: n.textContent.trim().slice(0, 40), detail: 'the label wraps instead of clamping' })
+  }
+  for (const h of document.querySelectorAll('.apb-hint-keys, .apb-hint-touch')) {
+    if (!h.checkVisibility()) continue
+    const box = h.parentElement.getBoundingClientRect()
+    const r = document.createRange(); r.selectNodeContents(h)
+    const rect = r.getBoundingClientRect()
+    if (rect.width > box.width + 1 || lines(h) > 1) out.push({ type: 'hint-clipped', sel: h.className, text: h.textContent.trim(), detail: `hint ${Math.round(rect.width)}px in a ${Math.round(box.width)}px window` })
+  }
+  return out
+}
+
 
 export async function runBattleAudit({ task, base, phase = 'audit', viewports = BATTLE_VIEWPORTS, scenarios = BATTLE_SCENARIOS, states = BATTLE_STATES, slot = '2032100003', repoRoot = null }) {
   assert.match(phase, /^[a-z0-9-]+$/)
@@ -57,7 +89,8 @@ export async function runBattleAudit({ task, base, phase = 'audit', viewports = 
         await page.waitForTimeout(1800)
         const measure = async (state) => {
           const r = await measureScreen(page, { scope: '.apb-root', ignore: '' }, `${outDir}${vp.name}/${sc.id}-${state}.png`)
-          record(state, { violations: r.violations, warnings: r.warnings, stats: r.stats?.battle })
+          violations.push(...r.violations, ...(await page.evaluate(textFit)))
+          record(state, { warnings: r.warnings, stats: r.stats?.battle })
         }
         for (const st of states) {
           if (st === 'msg') await measure('msg')
@@ -75,10 +108,11 @@ export async function runBattleAudit({ task, base, phase = 'audit', viewports = 
               v.setWeather('overclock')
             })
             await page.waitForTimeout(500)
+            await page.waitForSelector('.apb-status.is-foe', { timeout: 8000 })
             await page.evaluate(() => document.querySelector('.apb-status.is-foe').click())
             await page.waitForTimeout(900)
             const r = await measureScreen(page, { scope: '.apb-effects-dialog', ignore: '' }, `${outDir}${vp.name}/${sc.id}-inspect.png`)
-            violations.push(...r.violations)
+            violations.push(...r.violations, ...(await page.evaluate(textFit)))
             const fit = await page.evaluate(() => {
               const d = document.querySelector('.apb-effects-dialog')
               const b = d?.querySelector('.apb-fx-body')
@@ -96,6 +130,28 @@ export async function runBattleAudit({ task, base, phase = 'audit', viewports = 
             record('inspect', { warnings: r.warnings })
             await key('KeyX')
             await page.waitForTimeout(500)
+          }
+          if (st === 'pause') {
+            // a message mid-flight, then the tip card with its button and the chart opened from it: the battle clock must stand still until it closes
+            await page.evaluate(() => { window.__AP.save.settings.showTips = true })
+            await page.evaluate(() => { window.__pauseProbe = 0; void window.__apBattleView.message.show('probe', 'auto').then(() => { window.__pauseProbe = 1 }) })
+            await page.evaluate(() => window.__apOnboarding.debugShow('typeMatchup'))
+            await page.waitForFunction(() => { const b = document.querySelector('.ap-tip .ap-tip-open'); return b && !b.hidden && b.checkVisibility() }, undefined, { timeout: 8000 })
+            await page.waitForTimeout(1600)
+            const tipHeld = await page.evaluate(() => window.__pauseProbe)
+            if (vp.touch) await page.evaluate(() => document.querySelector('.ap-tip .ap-tip-open').click())
+            else await key('KeyM')
+            await page.waitForFunction(() => document.querySelector('.aps-typechart'), undefined, { timeout: 8000 })
+            await page.waitForTimeout(2800)
+            const chartHeld = await page.evaluate(() => window.__pauseProbe)
+            await key('KeyX')
+            await page.waitForTimeout(2400)
+            const resumed = await page.evaluate(() => window.__pauseProbe)
+            await page.evaluate(() => { window.__AP.save.settings.showTips = false })
+            if (tipHeld !== 0) violations.push({ type: 'pause-tip', sel: '.ap-tip', text: '', detail: 'the battle kept running behind a tip card with a button' })
+            if (chartHeld !== 0) violations.push({ type: 'pause-chart', sel: '.aps-typechart', text: '', detail: 'the battle kept running behind the type chart' })
+            if (resumed !== 1) violations.push({ type: 'pause-resume', sel: '.apb-root', text: '', detail: 'the battle did not resume after the chart closed' })
+            record('pause')
           }
           if (st === 'bag' || st === 'party') {
             await key('ArrowRight', st === 'bag' ? 1 : 0)

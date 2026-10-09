@@ -6,7 +6,7 @@ import type { MoveDef } from '../../shared/types.ts'
 import type { AudioManager, Input } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
 import { actionKeyLabel, append, button, createGridNav, el, panel, type GridNav } from '../ui/widgets.ts'
-import { commandIcon, typeBadge } from './badges.ts'
+import { categoryIcon, commandIcon, typeBadge } from './badges.ts'
 import { BATTLE_UI, type CommandId, type EffCategory } from './config.ts'
 
 export interface CommandItem { id: CommandId; disabled: boolean }
@@ -97,7 +97,7 @@ export function createMenus(audio: AudioManager): Menus {
         p.el.style.setProperty('--cols', String(BATTLE_UI.commands.columns))
         const rows = items.map((it) => row('apb-cmd-row', [commandIcon(it.id), el('span', { class: 'ap-row-label', text: t(`battleui.cmd.${it.id}`) })], it.disabled))
         const hint = el('div', 'apb-cmd-hint', [
-          el('span', { class: 'apb-hint-keys', text: t('battleui.hint.keys', { confirm: actionKeyLabel('confirm'), cancel: actionKeyLabel('cancel') }) }),
+          el('span', { class: 'apb-hint-keys', text: t('battleui.hint.keys', { confirm: actionKeyLabel('confirm'), menu: actionKeyLabel('menu') }) }),
           el('span', { class: 'apb-hint-touch', text: t('battleui.hint.touch') }),
         ])
         p.body.replaceWith(...rows, hint)
@@ -132,7 +132,7 @@ export function createMenus(audio: AudioManager): Menus {
           const m = it?.def
           if (!m) { detail.el.hidden = true; return }
           detail.el.hidden = false
-          const cat = el('span', { class: 'apb-cat', text: t(`battleui.move.category.${m.category}`) })
+          const cat = categoryIcon(m.category)
           cat.style.setProperty('--cat', BATTLE_UI.moves.categoryColors[m.category])
           const stat = (k: string, v: string) => el('span', {}, [t(k), el('b', { text: v })])
           const priority = m.priority

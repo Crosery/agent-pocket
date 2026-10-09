@@ -8,7 +8,7 @@ import type {
 } from '../../shared/types.ts'
 import { CONTENT, t, typeEffectiveness, type Content } from '../../shared/content/index.ts'
 import { STAT_KEYS, calcStats, expForLevel } from '../../shared/creature.ts'
-import type { EffCategory } from './config.ts'
+import { BATTLE_UI, type EffCategory } from './config.ts'
 
 export type SlotState = 'ok' | 'status' | 'fainted'
 export interface SlotInfo { state: SlotState; status: string | null }
@@ -255,6 +255,12 @@ export function evolutionMoves(cr: Pick<Creature, 'level' | 'moves'>, toSpeciesI
 // Boss HUD
 // ---------------------------------------------------------------------------
 
+
+/** The name for a card header: a trailing parenthetical ("Llama 4 (Scout / Maverick)") is dropped; the full name stays in the status sheet and as the tooltip. */
+export function shortName(name: string): string {
+  const short = name.replace(new RegExp(BATTLE_UI.hud.shortNamePattern), '').trim()
+  return short || name
+}
 
 /** The label cut to a display width (wide characters count 2): "支付" and "juice" both fit, "苹果订阅" becomes "苹果". */
 export function fitLabel(label: string, width: number): string {

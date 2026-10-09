@@ -3,6 +3,7 @@
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { publicAssetUrl } from '../core/assets.ts'
 import { el } from '../ui/widgets.ts'
+import type { BattleStatKey, MoveCategory } from '../../shared/types.ts'
 import { BATTLE_UI, type CommandId } from './config.ts'
 import { fitLabel, type BossChip } from './model.ts'
 
@@ -29,6 +30,17 @@ export function effectIcon(id: string, title: string, polarity: 'buff' | 'debuff
   if (!BATTLE_UI.icons.effects.includes(id)) return null
   const node = el('span', { class: `apb-fx is-${polarity}`, title, attrs: { 'aria-label': title } }, [art(iconUrl(id))])
   return node
+}
+
+/** Move category as its own icon; the name is the tooltip. */
+export function categoryIcon(cat: MoveCategory): HTMLElement {
+  const label = t(`battleui.move.category.${cat}`)
+  return el('span', { class: 'apb-cat-ico', title: label, attrs: { 'aria-label': label } }, [art(iconUrl(BATTLE_UI.icons.categories[cat]))])
+}
+
+/** A stat's icon (stat-stage chips); its name is the caller's tooltip. */
+export function statIcon(stat: BattleStatKey): HTMLElement {
+  return el('span', 'apb-stat-ico', [art(iconUrl(BATTLE_UI.icons.stats[stat]))])
 }
 
 export function commandIcon(id: CommandId): HTMLElement {

@@ -12,7 +12,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const pub = (p: string) => join(ROOT, 'public', p)
 
 test('every icon the HUD references exists', () => {
-  const names = [...Object.values(BATTLE_UI.icons.commands), ...BATTLE_UI.icons.effects, ...Object.values(BATTLE_UI.icons.meterTones)]
+  const names = [...Object.values(BATTLE_UI.icons.commands), ...BATTLE_UI.icons.effects, ...Object.values(BATTLE_UI.icons.meterTones), ...Object.values(BATTLE_UI.icons.categories), ...Object.values(BATTLE_UI.icons.stats)]
   for (const n of names) assert.ok(existsSync(pub(`${BATTLE_UI.icons.base}icon-${n}.png`)), `icon-${n}.png`)
   for (const t of CONTENT.types) assert.ok(t.icon && existsSync(pub(`${BATTLE_UI.icons.typeBase}${t.icon}.png`)), `type icon of ${t.id}`)
 })

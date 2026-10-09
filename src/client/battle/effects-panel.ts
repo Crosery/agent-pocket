@@ -1,12 +1,12 @@
 // Battle status sheet: both sides' current state next to each other (name, level, types, HP, status condition, stat stage
 // chips, volatile chips, ability), then the field row (weather, boss mechanic meters) when there is one. Definitions sit
 // behind a focus / tap on a chip and show in the readout line at the foot, never as a wall of text.
-import type { SideIndex } from '../../shared/types.ts'
-import { t } from '../../shared/content/index.ts'
+import type { BattleStatKey, SideIndex } from '../../shared/types.ts'
 import type { Input } from '../contracts.ts'
-import { actionKeyLabel, button, el, hpBar, panel, typeChip } from '../ui/widgets.ts'
+import { CONTENT, t } from '../../shared/content/index.ts'
+import { actionKeyLabel, button, el, hpBar, panel } from '../ui/widgets.ts'
 import { icon } from '../ui/screens/base.ts'
-import { meterTile, effectIcon } from './badges.ts'
+import { effectIcon, meterTile, statIcon, typeBadge } from './badges.ts'
 import { sideSheet, weatherSheet, type BattleEffectPolarity, type SheetChip } from './effect-details.ts'
 import { BATTLE_UI } from './config.ts'
 import type { BossPanelInfo } from './model.ts'
@@ -42,7 +42,7 @@ function chipTrigger(node: HTMLElement, tip: string, polarity: BattleEffectPolar
 
 function stageChip(c: SheetChip, readout: Readout): HTMLElement {
   return chipTrigger(el('span', `apb-fx-chip is-${c.polarity}`, [
-    el('span', { class: 'apb-fx-chip-label', text: c.label }),
+    statIcon(c.id as BattleStatKey),
     el('span', { class: 'apb-fx-chip-delta', text: c.delta ?? '' }),
     el('span', { class: 'apb-fx-chip-factor', text: c.factor ?? '' }),
   ]), c.tip, c.polarity, readout)
@@ -66,7 +66,7 @@ function renderSide(status: StatusPanel, side: SideIndex, readout: Readout): HTM
     return section
   }
   section.append(el('div', 'apb-fx-meta', [
-    el('span', 'apb-fx-types', snap.types.map((id) => typeChip(id))),
+    el('span', 'apb-fx-types', snap.types.map((id) => chipTrigger(typeBadge(id), CONTENT.typeById[id]?.nameZh ?? id, 'neutral', readout))),
     snap.level ? el('span', { class: 'apb-fx-lv', text: t('battleui.hud.level', { level: snap.level }) }) : null,
   ]))
   if (snap.maxHp) {

@@ -5,9 +5,9 @@ import { CONTENT, t } from '../../shared/content/index.ts'
 import { creatureName } from '../../shared/creature.ts'
 import { effectBalance, hudEffects, type BattleStatusSnapshot } from './effect-details.ts'
 import { actionKeyLabel, append, el, expBar, hpBar, panel, rarityBadge, type BarHandle } from '../ui/widgets.ts'
-import { effectIcon, meterTile, typeBadge } from './badges.ts'
+import { effectIcon, meterTile, statIcon, typeBadge } from './badges.ts'
 import { BATTLE_UI } from './config.ts'
-import type { BossPanelInfo, SlotInfo } from './model.ts'
+import { shortName, type BossPanelInfo, type SlotInfo } from './model.ts'
 
 export interface StatusPanel {
   readonly el: HTMLElement
@@ -44,13 +44,12 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
   const exp: BarHandle | null = own ? expBar({ width: H.expBarWidth, speed }) : null
   const balls = el('div', 'apb-balls')
   const more = el('span', 'apb-tag is-more is-folded')
-  const inspect = el('button', {
+  // The whole card is the control (a finger-sized target on phones, the menu key on a keyboard); the label only says so.
+  const inspect = el('span', {
     class: 'apb-st-details-btn',
-    attrs: { type: 'button', title: t('battleui.effects.openHint', { key: actionKeyLabel('menu') }) },
+    attrs: { title: t('battleui.effects.openHint', { key: actionKeyLabel('menu') }) },
   })
-  inspect.addEventListener('click', (e) => { e.stopPropagation(); onInspect() })
   p.el.addEventListener('click', (e) => {
-    if (e.target instanceof Node && inspect.contains(e.target)) return
     e.stopPropagation()
     onInspect()
   })
@@ -71,13 +70,14 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
   let volatiles: string[] = []
   let stages: Partial<Record<BattleStatKey, number>> = {}
   let abilityId: string | null = null
+  let fullName = ''
   let level = 0
   let hpNow = 0
   let hpMax = 0
   let boss: BossPanelInfo | null = null
 
   const snapshot = (): BattleStatusSnapshot | null => p.el.classList.contains('is-empty') ? null : ({
-    name: name.textContent ?? '',
+    name: fullName,
     level,
     hp: hpNow,
     maxHp: hpMax,
@@ -124,7 +124,10 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
       if (row.group === 'stage' && !H.showStages) continue
       const tip = t('battleui.effects.tip', { label: row.label, description: row.description })
       const icon = row.group === 'stage' ? null : effectIcon(row.id.slice(row.id.indexOf(':') + 1), tip, row.polarity)
-      const tag = icon ?? el('span', { class: `apb-tag ${row.polarity === 'buff' ? 'is-up' : 'is-down'}`, text: row.short })
+      const stat = row.group === 'stage' ? (row.id.slice(row.id.indexOf(':') + 1) as BattleStatKey) : null
+      const tag = icon ?? (stat
+        ? el('span', { class: `apb-tag apb-stg ${row.polarity === 'buff' ? 'is-up' : 'is-down'}` }, [statIcon(stat), el('span', { text: `${row.polarity === 'buff' ? '▲' : '▼'}${row.delta?.slice(1) ?? ''}` })])
+        : el('span', { class: `apb-tag ${row.polarity === 'buff' ? 'is-up' : 'is-down'}`, text: row.short }))
       tag.title = tip
       foldable.push(tag)
     }
@@ -136,8 +139,9 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
       el('span', { text: t('battleui.effects.open') }),
       buff ? el('span', { class: 'apb-st-up', text: t('battleui.hud.up', { n: buff }) }) : null,
       debuff ? el('span', { class: 'apb-st-down', text: t('battleui.hud.down', { n: debuff }) }) : null,
+      el('kbd', { class: 'apb-st-key', text: actionKeyLabel('menu') }),
     ])
-    const who = name.textContent ?? ''
+    const who = fullName
     inspect.setAttribute('aria-label', t('battleui.hud.statusLabel', { name: who }) + (buff || debuff ? ` ${t('battleui.effects.balance', { buff, debuff })}` : ''))
     fold()
   }
@@ -147,10 +151,10 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
     setCreature(v, nextAbilityId) {
       const sp = CONTENT.species[v.speciesId]
       p.el.classList.remove('is-empty')
-      const shownName = creatureName(v)
-      name.textContent = shownName
-      name.title = shownName
-      name.setAttribute('aria-label', shownName)
+      fullName = creatureName(v)
+      name.textContent = shortName(fullName)
+      name.title = fullName
+      name.setAttribute('aria-label', fullName)
       shiny.hidden = !v.shiny
       rarity.replaceChildren(sp ? rarityBadge(sp.rarity) : '')
       lv.textContent = t('battleui.hud.level', { level: v.level })
