@@ -14,7 +14,8 @@
   <style>
     @font-face { font-family: 'FusionPixel'; src: url('/assets/fonts/fusion-pixel-12px-zh_hans.woff2') format('woff2'); font-display: swap; }
     html, body { margin: 0; height: 100%; background: #05060d; overflow: hidden; overscroll-behavior: none; touch-action: none; }
-    body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    img, canvas { -webkit-touch-callout: none; -webkit-user-drag: none; }
     #app { position: fixed; inset: 0; overflow: hidden; }
     #ap-canvas { position: absolute; left: 0; top: 0; display: block; image-rendering: pixelated; outline: none; }
     #ap-ui { position: absolute; inset: 0; pointer-events: none; }

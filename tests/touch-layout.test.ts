@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { t } from '../src/shared/content/index.ts'
+import { CONTENT, t } from '../src/shared/content/index.ts'
+import { sanitizeSettings } from '../src/client/core/save-sanitize.ts'
 import { INPUT_CONFIG } from '../src/client/core/input-config.ts'
 import { buttonRect, computeTouchLayout, rectsOverlap } from '../src/client/core/touch-layout.ts'
 
@@ -61,4 +62,17 @@ test('touch tuning is sane and every button resolves a label', () => {
   for (const b of T.buttons) assert.notEqual(t(b.label), b.label, b.label)
   const seen = new Set<string>()
   for (const b of T.buttons) { assert.ok(!seen.has(b.action), `duplicate ${b.action}`); seen.add(b.action) }
+})
+
+test('phone defaults: touch-only migration lowers quality once, desktop keeps the default', () => {
+  const id = CONTENT.config.settingsMigrations?.find((m) => m.touchOnly)?.id
+  assert.ok(id, 'a touchOnly settings migration exists')
+  const phone = sanitizeSettings({}, CONTENT, true)
+  assert.equal(phone.quality, 'medium')
+  assert.ok(phone.migrations?.includes(id))
+  const desktop = sanitizeSettings({}, CONTENT, false)
+  assert.equal(desktop.quality, CONTENT.config.defaultSettings.quality)
+  assert.ok(!desktop.migrations?.includes(id), 'stays pending so the same save is migrated if it is later opened on a phone')
+  const chosen = sanitizeSettings({ quality: 'high', migrations: phone.migrations }, CONTENT, true)
+  assert.equal(chosen.quality, 'high', 'an applied migration never overrides the player later')
 })
