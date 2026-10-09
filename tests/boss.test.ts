@@ -103,11 +103,16 @@ test('mechanics: each boss has its own counterplay', () => {
   const P = (id: string) => fights(id, false, 40)
   const C = (id: string) => fights(id, true, 40)
 
-  // GPT-6 Astra: telegraphed exaflop beam; the sauce routes it to GPT-4o, then the Luna form.
-  assert.ok(P('astra').some((r) => r.telegraphs > 0), 'astra telegraphs its beam')
-  assert.ok(firedIn(P('astra')).has('deep'))
-  assert.deepEqual([...formsIn(C('astra'))].sort(), ['base', 'luna', 'routed-4o'])
-  assert.ok(!formsIn(P('astra')).has('routed-4o'), 'the router only downgrades on sauce')
+  // ChatGPT: telegraphed beam; the sauce routes it to GPT-4o, then to the Luna (mini) form.
+  assert.ok(P('chatgpt').some((r) => r.telegraphs > 0), 'chatgpt telegraphs its beam')
+  assert.ok(firedIn(P('chatgpt')).has('deep'))
+  assert.deepEqual([...formsIn(C('chatgpt'))].sort(), ['base', 'luna', 'routed-4o'])
+  assert.ok(!formsIn(P('chatgpt')).has('routed-4o'), 'the router only downgrades on sauce')
+
+  // Astra: it is secretly sauced for three turns in five; the pelican test exposes that (and fails once the samples hold the pelican).
+  assert.ok(firedIn(P('astra')).has('to-sauce') && firedIn(P('astra')).has('library'))
+  assert.ok(!formsIn(P('astra')).has('exposed'), 'nobody tests it without the items')
+  assert.ok(formsIn(C('astra')).has('exposed') && firedIn(C('astra')).has('test-honest') && firedIn(C('astra')).has('reverse-hit'))
 
   // DeepSeek: the server is busy in peak hours, and the off-peak coupon ends them.
   assert.equal(meterPeak(P('deepseek'), 'tide'), 1)
@@ -131,10 +136,16 @@ test('mechanics: each boss has its own counterplay', () => {
   assert.ok(formsIn(C('cursor')).has('refunded'))
   assert.ok(firedIn(C('cursor')).has('complaint-item'))
 
-  // Claude Code: risk control bans the account; a residential IP prevents it.
-  assert.ok(firedIn(P('claude-code')).has('ban'))
-  assert.ok(!firedIn(C('claude-code')).has('ban'), 'the residential IP keeps the account alive')
-  assert.ok(firedIn(C('claude-code')).has('vpn-item'))
+  // Claude Code: a BUDDY pet blocks every second attack; the .map file unmasks it, and its own leak does at half hp.
+  assert.ok(firedIn(P('claude-code')).has('summon') && firedIn(P('claude-code')).has('buddy-block'))
+  assert.ok(firedIn(P('claude-code')).has('leak'))
+  assert.ok(firedIn(C('claude-code')).has('unmask') && formsIn(C('claude-code')).has('exposed'))
+  assert.ok(!formsIn(P('claude-code')).has('exposed') || firedIn(P('claude-code')).has('leak'), 'it only drops the cover by leaking')
+
+  // GLM: a queue shield, then free eggs whose backups pile up into a heavy restore; the pledge holds it to its word.
+  assert.ok(firedIn(P('glm')).has('queue-end') && firedIn(P('glm')).has('egg') && firedIn(P('glm')).has('restore'))
+  assert.equal(meterPeak(P('glm'), 'backup'), 3)
+  assert.ok(firedIn(C('glm')).has('pledge-item') && meterPeak(C('glm'), 'pledge') >= 6)
 
   // Mythos: the sandbox escapes unless it is patched.
   assert.ok(formsIn(P('mythos')).has('unbound'))
@@ -144,26 +155,28 @@ test('mechanics: each boss has its own counterplay', () => {
   assert.ok(formsIn(C('alpha')).has('dazed'))
   assert.ok(firedIn(C('alpha')).has('shift') && firedIn(P('alpha')).has('repeat'))
 
-  // Claude Opus: extended thinking buys it growth and a charged answer; any action but an attack interrupts it.
-  assert.deepEqual([...formsIn(C('opus'))].sort(), ['answering', 'snapped', 'thinking'])
-  assert.ok(firedIn(P('opus')).has('deliver') && firedIn(P('opus')).has('brood'), 'uncut thinking pays off')
-  assert.ok(firedIn(C('opus')).has('esc') || firedIn(C('opus')).has('esc-switch') || firedIn(C('opus')).has('esc-item'))
-  assert.ok(P('opus').some((r) => r.telegraphs > 0), 'the answer is telegraphed')
-
-  // ChatGPT: it cannot bring itself to hit models released before 2025 (the #keep4o white moonlight).
-  assert.ok(meterPeak(C('chatgpt'), 'warm') === 1 && firedIn(C('chatgpt')).has('soften'))
-  assert.ok(firedIn(P('chatgpt')).has('harden') || meterPeak(P('chatgpt'), 'warm') === 0 || meterPeak(P('chatgpt'), 'warm') === 1)
+  // Claude Opus: four risk columns, any full one bans the account; the residential IP and the Apple subscription hold the first two back.
+  const RISK = ['pay', 'region', 'behavior', 'share']
+  const banned = (rs: SimResult[], dims = RISK) => rs.filter((r) => dims.some((d) => (r.fired[`ban-${d}`] ?? 0) > 0)).length
+  assert.ok(['ban-pay', 'ban-region', 'ban-behavior', 'flag-cn', 'bill', 'binge'].every((k) => firedIn(P('opus')).has(k)))
+  assert.equal(meterPeak(P('opus'), 'region'), 3)
+  assert.ok(firedIn(C('opus')).has('cloak') && firedIn(C('opus')).has('apple'))
+  assert.ok(banned(C('opus'), ['pay', 'region']) < banned(P('opus'), ['pay', 'region']) / 4, 'the two items stop the payment and region bans (behaviour and sharing are play style)')
 
   // Unitree GD01: a banana peel drops the mech for several turns.
   assert.ok(formsIn(C('unitree')).has('fallen') && firedIn(C('unitree')).has('slip'))
   assert.ok(!formsIn(P('unitree')).has('fallen'), 'it only falls on the peel')
 
-  // Grok: the type chart is argued with: super effective hits are cut, resisted ones land.
-  assert.ok(firedIn(P('grok')).size === 0, 'the contrarian rule is a standing rule, not a trigger')
+  // Grok: it uploads (steals) what it sees and trains on it; pulling the network plug cuts that.
+  assert.ok(firedIn(P('grok')).has('upload') && meterPeak(P('grok'), 'loot') === 3)
+  assert.ok(!firedIn(P('grok')).has('unplug'), 'without the cable nobody pulls the plug (a creature that knows Blackout can, rarely)')
+  const trained = (rs: SimResult[]) => rs.filter((r) => (r.meterMax.loot ?? 0) >= 3).length
+  assert.ok(firedIn(C('grok')).has('unplug') && trained(C('grok')) < trained(P('grok')) * 0.6, 'with the cable in the bag it rarely gets to train on three of your moves')
 
-  // OpenClaw: every dose of medicine feeds the lobster; three of them and it molts.
-  assert.ok(firedIn(P('openclaw')).has('feed') && !firedIn(C('openclaw')).has('feed'))
-  assert.ok(formsIn(P('openclaw')).has('molted') || meterPeak(P('openclaw'), 'fed') >= 1)
+  // OpenClaw: a malicious skill is loaded every 4 turns and injected a turn later; a key revoked in that window reflects it.
+  assert.ok(firedIn(P('openclaw')).has('skill') && firedIn(P('openclaw')).has('hijack'))
+  assert.ok(!formsIn(P('openclaw')).has('compromised'), 'it only falls to its own skill when the key is revoked in time')
+  assert.ok(formsIn(C('openclaw')).has('compromised') && firedIn(C('openclaw')).has('revoke'))
 
   // Gemini: the small rock makes it follow its own advice; it digests after a while.
   assert.ok(formsIn(C('gemini')).has('overview') && firedIn(C('gemini')).has('rock'))
@@ -200,62 +213,271 @@ function withoutRules<T>(bossId: string, fn: () => T): T {
   try { return fn() } finally { forms.forEach((f, i) => { f.rules = saved[i] }) }
 }
 
-test('rules: Grok argues with the type chart (super effective cut, resisted raised)', () => {
-  const types = CONTENT.species['grok-4-7'].types
-  const pick = (want: (e: number) => boolean) => CONTENT.moveList.find((m) => m.power >= 60 && m.category !== 'status' && want(typeEffectiveness(m.type, types)) && m.effects.every((x) => x.kind !== 'multiHit'))!
-  const sup = pick((e) => e > 1)
-  const res = pick((e) => e < 1)
-  const neu = pick((e) => e === 1)
-  for (const [m, mul] of [[sup, 0.1], [neu, 0.45], [res, 3]] as const) {
-    const ruled = firstTurn('grok', 'gpt-5-6', m.id, 5, true).toBoss
-    const plain = withoutRules('grok', () => firstTurn('grok', 'gpt-5-6', m.id, 5, true).toBoss)
-    assert.ok(plain > 0 && ruled > 0, `${m.id} lands`)
-    assert.ok(Math.abs(ruled / plain - mul) < 0.12 * Math.max(1, mul), `${m.id} (${typeEffectiveness(m.type, types)}x): ${ruled} vs ${plain} should be about x${mul}`)
+test('rules: Grok goes offline in a blackout (deals x0.8, takes x1.6), and the cable puts it there', () => {
+  const run = () => {
+    const def = byId('grok')
+    const party = makeParty(['gpt-5-6'], def.level - 2, 5)
+    party[0].moves = [{ id: 'token-tackle', pp: 20, ppMax: 20 }]
+    const { engine } = startBossBattle('grok', party, { seed: 5, items: { 'ethernet-cable': 2 }, expGain: false })
+    const idle = () => engine.applyBossState({ ...engine.extractBossState()!, skip: 1 })
+    idle()
+    assert.equal(engine.choose(0, { kind: 'item', itemId: 'ethernet-cable', partyIndex: 0 }), null)
+    engine.choose(1, { kind: 'move', moveIndex: 0 })
+    engine.step()
+    assert.equal(engine.weather, 'blackout')
+    idle()
+    engine.choose(0, { kind: 'move', moveIndex: 0 })
+    engine.choose(1, { kind: 'move', moveIndex: 0 })
+    const dmg = engine.step().filter((e): e is Extract<BattleEvent, { t: 'damage' }> => e.t === 'damage' && e.side === 1)
+    return dmg.reduce((n, e) => n + e.amount, 0)
+  }
+  const ruled = run()
+  const plain = withoutRules('grok', run)
+  assert.ok(plain > 0 && Math.abs(ruled / plain - 1.6) < 0.2, `${ruled} vs ${plain} should be about x1.6`)
+})
+
+test('dsl: effectiveness, release-date and medicine conditions work on any boss (no boss uses them right now)', () => {
+  const def = byId('astra')
+  const form = def.forms[def.initialForm]
+  const saved = { rules: form.rules, triggers: def.triggers }
+  try {
+    const types = CONTENT.species[def.species].types
+    const pick = (want: (e: number) => boolean) => CONTENT.moveList.find((m) => m.power >= 60 && m.category !== 'status' && want(typeEffectiveness(m.type, types)) && m.effects.every((x) => x.kind !== 'multiHit'))!
+    const sup = pick((e) => e > 1)
+    const res = pick((e) => e > 0 && e < 1)
+    const plain = [sup, res].map((m) => firstTurn('astra', 'gpt-5-6', m.id, 5, true).toBoss)
+    form.rules = [{ id: 'argue', takenMul: [{ mul: 0.1, effectiveness: 'super' }, { mul: 3, effectiveness: 'resisted' }] }]
+    const ruled = [sup, res].map((m) => firstTurn('astra', 'gpt-5-6', m.id, 5, true).toBoss)
+    assert.ok(Math.abs(ruled[0] / plain[0] - 0.1) < 0.05, `super effective: ${ruled[0]} vs ${plain[0]}`)
+    assert.ok(Math.abs(ruled[1] / plain[1] - 3) < 0.4, `resisted: ${ruled[1]} vs ${plain[1]}`)
+
+    // Release-date conditions: a veteran model is spared, a new one is not.
+    const hit = (species: string) => firstTurn('astra', species, 'token-tackle', 8).toFoe
+    assert.ok(CONTENT.species['gpt-4o'].releaseDate < '2025-01' && CONTENT.species['gpt-5-6'].releaseDate >= '2025-01')
+    const [oldPlain, freshPlain] = [hit('gpt-4o'), hit('gpt-5-6')]
+    form.rules = [{ id: 'nostalgia', if: { foeReleasedBefore: '2025-01' }, dealtMul: 0.2 }, { id: 'hard', if: { foeReleasedFrom: '2025-01' }, dealtMul: 2 }]
+    assert.ok(hit('gpt-4o') < oldPlain * 0.4, 'veteran spared')
+    assert.ok(hit('gpt-5-6') > freshPlain * 1.6, 'newcomer hit harder')
+
+    def.triggers = [{ id: 'sip', on: 'foeMedicine', times: 0, do: [{ op: 'stages', target: 'boss', stats: { atk: 1 } }] }]
+    const s = stage('astra', ['gpt-5-6'], { items: { 'hyper-cache': 2, 'special-sauce': 1 } })
+    s.foe().hp = Math.floor(s.foe().hp / 2)
+    assert.equal(s.turn({ kind: 'item', itemId: 'hyper-cache', partyIndex: 0 }).fired.sip, 1, 'a dose of medicine fires foeMedicine')
+    assert.equal(s.turn({ kind: 'move', moveIndex: 0 }).fired.sip, 1, 'attacking does not')
+  } finally {
+    form.rules = saved.rules
+    def.triggers = saved.triggers
   }
 })
 
-test('rules: ChatGPT cannot hit a model released before 2025, but hits a new one in full', () => {
-  const hit = (species: string) => firstTurn('chatgpt', species, 'token-tackle', 8).toFoe
-  assert.ok(CONTENT.species['gpt-4o'].releaseDate < '2025-01' && CONTENT.species['gpt-5-6'].releaseDate >= '2025-01')
-  const old = hit('gpt-4o')
-  const oldPlain = withoutRules('chatgpt', () => hit('gpt-4o'))
-  const fresh = hit('gpt-5-6')
-  const freshPlain = withoutRules('chatgpt', () => hit('gpt-5-6'))
-  assert.ok(old < oldPlain * 0.4, `veteran: ${old} vs ${oldPlain}`)
-  assert.equal(fresh, freshPlain, 'a new model gets no mercy')
+/** Boss battle with a first party member of `species`; `idle` keeps the boss from acting while the player's actions run. */
+function stage(bossId: string, species: string[], opts: { items?: Record<string, number>; seed?: number } = {}) {
+  const def = byId(bossId)
+  const party = makeParty(species, def.level - 2, opts.seed ?? 3)
+  const { engine } = startBossBattle(bossId, party, { seed: opts.seed ?? 3, items: opts.items, expGain: false })
+  const turn = (action: Parameters<typeof engine.choose>[1]) => {
+    engine.applyBossState({ ...engine.extractBossState()!, skip: 1 })
+    assert.equal(engine.choose(0, action), null)
+    engine.choose(1, { kind: 'move', moveIndex: 0 })
+    engine.step()
+    return engine.extractBossState()!
+  }
+  return { engine, turn, foe: () => engine.party(0)[engine.activeIndex(0)] }
+}
+
+test('events: Opus scores four risk columns; a full one bans the account and the two items cover payment and region', () => {
+  const cn = CONTENT.speciesList.find((s) => s.country === 'CN' && s.rarity !== 'UR' && !s.types.includes('code'))!.id
+  const us = 'gpt-5-6'
+  assert.equal(CONTENT.species[us].country, 'US')
+  const attack = { kind: 'move', moveIndex: 0 } as const
+  const RISK_BANS = ['ban-pay', 'ban-region', 'ban-behavior', 'ban-share']
+  const inject = (s: ReturnType<typeof stage>, meters: Record<string, number>) => s.engine.applyBossState({ ...s.engine.extractBossState()!, meters: { ...s.engine.extractBossState()!.meters, ...meters } })
+
+  // region: a Chinese account gains one per turn; a foreign one is only flagged by mistake (every third turn).
+  const banned = stage('opus', [cn, us])
+  let st = banned.turn(attack)
+  assert.equal(st.meters.region, 1, 'a CN creature is flagged every turn')
+  st = banned.turn(attack)
+  assert.equal(st.meters.region, 2)
+  for (let i = 0; i < 2; i++) st = banned.turn(attack)
+  assert.ok(RISK_BANS.some((k) => (st.fired[k] ?? 0) >= 1) && banned.foe().status === 'freeze', 'banned = frozen')
+  const abroad = stage('opus', [us, cn])
+  st = abroad.turn(attack)
+  assert.equal(st.meters.region, 1, 'foreign accounts are only flagged by mistake')
+  st = abroad.turn(attack)
+  assert.equal(st.meters.region, 1)
+
+  // payment: starts at one (the virtual card), +1 every third turn, and a full column bans.
+  const pay = stage('opus', [us, cn])
+  assert.equal(pay.engine.extractBossState()!.meters.pay, 1)
+  for (let i = 0; i < 3; i++) st = pay.turn(attack)
+  assert.equal(st.meters.pay, 2, 'the monthly bill is scanned every third turn')
+  inject(pay, { pay: 3 })
+  st = pay.turn(attack)
+  assert.equal(st.fired['ban-pay'], 1)
+  assert.equal(pay.foe().status, 'freeze')
+  assert.equal(st.meters.pay, 1, 'a fresh column after the ban')
+  st = pay.turn({ kind: 'switch', partyIndex: 1 })
+  assert.equal(st.fired['kin-hit'], 1, 'the same card is checked again on whoever comes in next (the 野卡 chain)')
+  assert.equal(st.meters.kin, 0)
+
+  // behaviour: the same attack type twice in a row is binging; sharing: hopping between creatures is worth two.
+  const binge = stage('opus', [us, cn])
+  binge.turn(attack)
+  st = binge.turn(attack)
+  assert.ok(st.meters.behavior >= 1, 'repeating a type raises the behaviour column')
+  const hop = stage('opus', [cn, us])
+  hop.turn(attack)
+  inject(hop, { region: 2, behavior: 2 })
+  st = hop.turn({ kind: 'switch', partyIndex: 1 })
+  assert.equal(st.meters.share, 1, 'a voluntary switch is +2, one decays at the turn end')
+  assert.equal(st.meters.region, 1, 'switching leaves one point of device residue, not zero')
+  assert.equal(st.meters.behavior, 1)
+  st = hop.turn({ kind: 'switch', partyIndex: 0 })
+  assert.equal(st.fired['ban-share'], 1, 'hopping again right away looks like a shared account')
+  assert.equal(hop.foe().status, 'freeze')
+
+  // the residential IP stops the region column (and appeals a ban); the Apple subscription stops the payment column.
+  const cloaked = stage('opus', [cn, us], { items: { 'residential-ip': 2, 'apple-sub': 1 } })
+  st = cloaked.turn({ kind: 'item', itemId: 'residential-ip', partyIndex: 0 })
+  assert.ok(st.meters.ip >= 11, 'the cloak lasts about 12 turns')
+  st = cloaked.turn({ kind: 'item', itemId: 'apple-sub', partyIndex: 0 })
+  assert.ok(st.meters.apple >= 11 && st.meters.pay === 0)
+  for (let i = 0; i < 4; i++) st = cloaked.turn(attack)
+  assert.equal(st.fired['ban-region'] ?? 0, 0)
+  assert.equal(st.fired['ban-pay'] ?? 0, 0)
+  assert.equal(st.fired['flag-cn'] ?? 0, 0, 'nothing to flag while the origin is hidden')
+  assert.equal(st.fired.bill ?? 0, 0, 'the bill never reaches the card')
+
+  const appeal = stage('opus', [cn, us], { items: { 'residential-ip': 1 } })
+  for (let i = 0; i < 4; i++) appeal.turn(attack)
+  assert.equal(appeal.foe().status, 'freeze')
+  appeal.turn({ kind: 'item', itemId: 'residential-ip', partyIndex: 0 })
+  assert.equal(appeal.foe().status, null, 'the appeal unfreezes the account')
 })
 
-test('events: using medicine feeds OpenClaw, and interrupts Opus when it is thinking', () => {
-  const claw = byId('openclaw')
-  const party = makeParty(SIM_PARTY, claw.level - 2, 1)
-  party[0].hp = Math.floor(party[0].hp / 2)
-  const { engine } = startBossBattle('openclaw', party, { seed: 3, items: { 'hyper-cache': 2 }, expGain: false })
-  assert.equal(engine.choose(0, { kind: 'item', itemId: 'hyper-cache', partyIndex: 0 }), null)
-  engine.choose(1, { kind: 'move', moveIndex: 0 })
-  engine.step()
-  const st = engine.extractBossState()!
-  assert.equal(st.meters.fed, 1)
-  assert.ok((st.stages.atk ?? 0) >= 1 && (st.stages.spa ?? 0) >= 1, 'the dose raised its attack and special attack')
+test('boss DSL: a trigger with a chance fires only some of the time, and the validator bounds it', () => {
+  const def = byId('opus')
+  const saved = def.triggers
+  try {
+    def.triggers = [{ id: 'coin', on: 'turnEnd', times: 0, chance: 0.5, do: [{ op: 'meter', id: 'behavior', add: 1 }] }]
+    let fired = 0
+    for (let seed = 1; seed <= 60; seed++) {
+      const s = stage('opus', ['gpt-5-6'], { seed })
+      fired += s.turn({ kind: 'move', moveIndex: 0 }).fired.coin ?? 0
+    }
+    assert.ok(fired > 10 && fired < 50, `a coin flip fires some of the time (${fired}/60)`)
+  } finally { def.triggers = saved }
+  const bad: BossDef = { ...def, triggers: [...def.triggers, { id: 'broken', on: 'turnEnd', chance: 1.5, do: [] }] }
+  assert.match(validateBosses([bad], CONTENT).join('\n'), /chance must be in \(0,1\)/)
+})
 
-  const opus = byId('opus')
-  const thinking = (action: 'switch' | 'status' | 'attack') => {
-    const { engine: e } = startBossBattle('opus', makeParty(SIM_PARTY, opus.level - 2, 1), { seed: 9, expGain: false })
-    const first = e.extractBossState()!
-    first.form = 'thinking'
-    e.applyBossState(first)
-    if (action === 'switch') e.choose(0, { kind: 'switch', partyIndex: 1 })
-    else if (action === 'status') {
-      const lead = e.party(0)[0]
-      lead.moves = [{ id: 'focus-mode', pp: 5, ppMax: 5 }]
-      e.choose(0, { kind: 'move', moveIndex: 0 })
-    } else e.choose(0, { kind: 'move', moveIndex: 0 })
-    e.choose(1, { kind: 'move', moveIndex: 0 })
-    e.step()
-    return e.extractBossState()!.form
+test('events: Grok uploads the moves it sees (and trains on them) until the cable is pulled', () => {
+  const s = stage('grok', ['gpt-5-6'], { items: { 'ethernet-cable': 1 } })
+  s.foe().moves = [{ id: 'token-tackle', pp: 20, ppMax: 20 }]
+  let st = s.turn({ kind: 'move', moveIndex: 0 })
+  assert.equal(st.meters.loot, 1)
+  assert.ok(st.borrowed.includes('token-tackle'), 'the move was copied')
+  assert.ok((st.stages.atk ?? 0) >= 1 && (st.stages.spa ?? 0) >= 1, 'every theft trains it')
+  st = s.turn({ kind: 'item', itemId: 'ethernet-cable', partyIndex: 0 })
+  assert.equal(s.engine.weather, 'blackout')
+  assert.equal(st.meters.loot, 0, 'offline: everything it stole is gone')
+  assert.deepEqual(st.borrowed, [])
+  assert.equal(st.stages.atk ?? 0, 0)
+  // offline it cannot upload.
+  st = s.turn({ kind: 'move', moveIndex: 0 })
+  assert.equal(st.meters.loot, 0)
+})
+
+test('events: a revoked key reflects the malicious skill, but only while it is loading', () => {
+  const victim = CONTENT.speciesList.find((sp) => sp.rarity !== 'UR' && !sp.types.includes('safety'))!.id   // safety types are immune to data pollution
+  const run = (useItemAt: number | null) => {
+    const s = stage('openclaw', [victim, 'gpt-5-6'], { items: { 'revoke-key': 3 } })
+    const attack = { kind: 'move', moveIndex: 0 } as const
+    let st = s.turn(attack)
+    let cured = false
+    for (let turn = 2; turn <= 6 && st.form !== 'compromised'; turn++) {
+      if (turn === useItemAt) {
+        const before = s.foe().status
+        st = s.turn({ kind: 'item', itemId: 'revoke-key', partyIndex: 0 })
+        cured = before !== null && s.foe().status === null
+      } else st = s.turn(attack)
+    }
+    return { st, foe: s.foe(), cured }
   }
-  assert.equal(thinking('switch'), 'snapped')
-  assert.equal(thinking('status'), 'snapped')
-  assert.notEqual(thinking('attack'), 'snapped')
+  // the skill loads at the end of turn 3 and lands at the end of turn 4
+  const ignored = run(null)
+  assert.ok((ignored.st.fired.hijack ?? 0) >= 1 && ignored.foe.status === 'poison', 'the injection poisons the foe')
+  const timely = run(4)
+  assert.equal(timely.st.form, 'compromised')
+  assert.equal(timely.st.fired.hijack ?? 0, 0)
+  assert.equal(timely.foe.status, null)
+  const early = run(2)
+  assert.notEqual(early.st.form, 'compromised', 'too early does nothing')
+  assert.ok((early.st.fired.hijack ?? 0) >= 1)
+})
+
+test('events: a BUDDY blocks exactly one attack, the .map file unmasks Claude Code, and half hp leaks it for good', () => {
+  const attack = { kind: 'move', moveIndex: 0 } as const
+  const s = stage('claude-code', ['gpt-5-6'], { items: { 'source-map': 2 } })
+  s.foe().moves = [{ id: 'token-tackle', pp: 20, ppMax: 20 }]
+  let st = s.turn(attack)
+  assert.equal(st.meters.buddy, 0)
+  st = s.turn(attack)
+  assert.equal(st.meters.buddy, 1, 'the pet shows up at the end of the second turn')
+  const hpBefore = st.hp
+  st = s.turn(attack)
+  assert.equal(st.meters.buddy, 0, 'and blocks exactly one attack')
+  assert.ok(st.hp >= hpBefore - st.maxHp * 0.01, 'the blocked hit does almost nothing')
+  assert.equal(st.fired['buddy-block'], 1)
+
+  st = s.turn({ kind: 'item', itemId: 'source-map', partyIndex: 0 })
+  assert.equal(st.form, 'exposed')
+  assert.equal(st.meters.cover, 1)
+  for (let i = 0; i < 5; i++) st = s.turn(attack)
+  assert.equal(st.form, 'undercover', 'the cover is back after a while')
+
+  s.engine.applyBossState({ ...st, hp: Math.floor(st.maxHp * 0.4) })
+  st = s.turn(attack)
+  assert.equal(st.fired.leak, 1)
+  assert.equal(st.form, 'exposed')
+  for (let i = 0; i < 7; i++) st = s.turn(attack)
+  assert.equal(st.form, 'exposed', 'a leaked source cannot be taken back')
+})
+
+test('events: GLM\'s eggs pile up into a restore; a pledge or a switch wipes the backups', () => {
+  const attack = { kind: 'move', moveIndex: 0 } as const
+  const open = (items?: Record<string, number>) => {
+    const s = stage('glm', ['gpt-5-6', 'gemini-argon'], { items })
+    s.engine.applyBossState({ ...s.engine.extractBossState()!, form: 'open' })
+    return s
+  }
+  const eggs = open()
+  let st = eggs.turn(attack)
+  st = eggs.turn(attack)
+  assert.equal(st.meters.backup, 0)
+  st = eggs.turn(attack)
+  assert.equal(st.meters.backup, 1, 'the first egg comes at the end of the third turn')
+  assert.ok((st.stages.atk ?? 0) >= 1 && (st.stages.spa ?? 0) >= 1, 'every egg trains it too')
+  eggs.engine.applyBossState({ ...st, meters: { ...st.meters, backup: 3 } })
+  st = eggs.turn(attack)
+  assert.equal(st.charge?.move, 'force-push', 'three backups: the restore is telegraphed')
+  assert.equal(st.meters.backup, 0)
+
+  const pledged = open({ 'no-upload-pledge': 1 })
+  const base = pledged.engine.extractBossState()!
+  pledged.engine.applyBossState({ ...base, meters: { ...base.meters, backup: 2 } })
+  st = pledged.turn({ kind: 'item', itemId: 'no-upload-pledge', partyIndex: 0 })
+  assert.equal(st.meters.backup, 0)
+  assert.ok(st.meters.pledge >= 7)
+  for (let i = 0; i < 3; i++) st = pledged.turn(attack)
+  assert.equal(st.meters.backup, 0, 'no eggs while the pledge holds')
+
+  const swapped = open()
+  const b2 = swapped.engine.extractBossState()!
+  swapped.engine.applyBossState({ ...b2, meters: { ...b2.meters, backup: 2 } })
+  st = swapped.turn({ kind: 'switch', partyIndex: 1 })
+  assert.equal(st.meters.backup, 0, 'a new account starts without backups')
 })
 
 // ---------------------------------------------------------------------------------------------------- counter items
@@ -272,24 +494,24 @@ function turnOne(bossId: string, itemId: string, bag = 3) {
   return { engine, before, after: engine.extractBossState()!, events }
 }
 
-test('items: the sauce routes Astra to GPT-4o (and again later to the Luna form)', () => {
-  const { engine, before, after, events } = turnOne('astra', 'special-sauce')
+test('items: the sauce routes ChatGPT to GPT-4o (and again later to the Luna form)', () => {
+  const { engine, before, after, events } = turnOne('chatgpt', 'special-sauce')
   assert.equal(before.form, 'base')
   assert.equal(after.form, 'routed-4o')
   const form = events.find((e): e is Extract<BattleEvent, { t: 'form' }> => e.t === 'form')
   assert.ok(form, 'a form event is emitted')
-  assert.equal(form.fromSpeciesId, 'gpt-6-astra')
+  assert.equal(form.fromSpeciesId, 'chatgpt')
   assert.equal(form.creature.speciesId, 'gpt-4o')
-  assert.deepEqual(after.moves.map((m) => m.id), byId('astra').forms['routed-4o'].moves)
+  assert.deepEqual(after.moves.map((m) => m.id), byId('chatgpt').forms['routed-4o'].moves)
   assert.ok(after.hp / after.maxHp > 0.9, 'the hp ratio carries over to the new form')
   // A second sauce is useless: the router already downgraded it.
   const second = engine.choose(0, { kind: 'item', itemId: 'special-sauce', partyIndex: 0 })
   assert.equal(second, t('battle.err.baitNoEffect'))
 })
 
-test('items: the downgraded Astra is much weaker than the full one', () => {
-  const { engine, after } = turnOne('astra', 'special-sauce')
-  const full = startBossBattle('astra', makeParty(SIM_PARTY, 60, 1), { seed: 3, expGain: false }).engine
+test('items: the downgraded ChatGPT is much weaker than the full one', () => {
+  const { engine, after } = turnOne('chatgpt', 'special-sauce')
+  const full = startBossBattle('chatgpt', makeParty(SIM_PARTY, 60, 1), { seed: 3, expGain: false }).engine
   const stat = (e: typeof engine, k: 'atk' | 'spa' | 'hp') => e.fighterStats(1)[k]
   assert.ok(after.form === 'routed-4o' && stat(engine, 'atk') + stat(engine, 'spa') < stat(full, 'atk') + stat(full, 'spa') + 1)
   assert.ok(stat(engine, 'atk') < stat(full, 'atk') * 1.3)
@@ -308,14 +530,55 @@ test('items: every other counter item moves its boss meter or form', () => {
   assert.equal(mm.before.form, 'bench')
   assert.equal(mm.after.form, 'exposed')
 
-  const cc = turnOne('claude-code', 'residential-ip')
-  assert.ok(cc.after.meters.vpn >= 5 && cc.after.meters.risk === 0)
+  const cc = turnOne('claude-code', 'source-map')
+  assert.equal(cc.before.form, 'undercover')
+  assert.equal(cc.after.form, 'exposed')
+
+  const gl = turnOne('glm', 'no-upload-pledge')
+  assert.ok(gl.after.meters.pledge >= 7)
+
+  const op = turnOne('opus', 'residential-ip')
+  assert.ok(op.after.meters.ip >= 11 && op.after.meters.region === 0)
+  const ap = turnOne('opus', 'apple-sub')
+  assert.ok(ap.after.meters.apple >= 11 && ap.after.meters.pay === 0)
 
   const my = turnOne('mythos', 'sandbox-patch')
   assert.ok(my.after.meters.escape < my.before.meters.escape, 'the sandbox holds')
 
   const cu = turnOne('cursor', 'complaint-letter')
   assert.ok(cu.after.meters.outrage > cu.before.meters.outrage)
+})
+
+test('items: the pelican test exposes a sauced Astra; once the pelican is in its samples only the bike does', () => {
+  const prep = (juice: number, prefab: number) => {
+    const s = stage('astra', ['gpt-5-6'], { items: { 'pelican-test': 3, 'bike-pelican': 3 } })
+    const st = s.engine.extractBossState()!
+    s.engine.applyBossState({ ...st, meters: { ...st.meters, juice }, fired: { ...st.fired, ...(prefab ? { library: 1 } : {}) } })
+    return s
+  }
+  const use = (s: ReturnType<typeof prep>, itemId: string) => s.turn({ kind: 'item', itemId, partyIndex: 0 })
+
+  const exposed = prep(1, 0)
+  let st = use(exposed, 'pelican-test')
+  assert.equal(st.form, 'exposed')
+  assert.equal(st.meters.verdict, 2)
+  assert.equal(exposed.engine.choose(0, { kind: 'item', itemId: 'bike-pelican', partyIndex: 0 }), t('battle.err.baitNoEffect'), 'nothing left to expose')
+  for (let i = 0; i < 5; i++) st = exposed.turn({ kind: 'move', moveIndex: 0 })
+  assert.equal(st.form, 'base', 'the window closes after a few turns')
+  assert.equal(st.meters.juice, 0, 'and the patch is in')
+
+  const fooled = prep(1, 1)
+  st = use(fooled, 'pelican-test')
+  assert.equal(st.form, 'base')
+  assert.equal(st.meters.verdict, 1, 'the prefab pelican looks fine')
+  st = use(fooled, 'bike-pelican')
+  assert.equal(st.form, 'exposed', 'the bike test cannot be faked')
+
+  const clean = prep(0, 0)
+  st = use(clean, 'pelican-test')
+  assert.equal(st.form, 'base')
+  assert.equal(st.meters.verdict, 3, 'a full-juice Astra passes, and the item is spent')
+  assert.equal(use(prep(0, 1), 'bike-pelican').meters.verdict, 3)
 })
 
 test('items: a bait the boss would ignore is refused without being used up', () => {
@@ -425,7 +688,7 @@ test('contract: chooseBossAction is pure and honours the form pattern', () => {
     const { engine } = startBossBattle(b.id, makeParty(SIM_PARTY, b.level - 2, 1), { seed: 1, expGain: false })
     const state = engine.extractBossState()!
     const frozen = JSON.stringify(state)
-    const foe = { status: null, country: 'US', released: '2025-01' }
+    const foe = { status: null, country: 'US', released: '2025-01', weather: 'none' }
     const allowed = new Set(b.forms[state.form].moves)
     const a = chooseBossAction(state, b, foe, new Rng(5))
     const c = chooseBossAction(state, b, foe, new Rng(5))
@@ -444,7 +707,7 @@ test('contract: a charged attack is forced on the next turn', () => {
   const { engine } = startBossBattle('astra', makeParty(SIM_PARTY, b.level, 1), { seed: 1, expGain: false })
   const state = engine.extractBossState()!
   state.charge = { move: 'exaflop-beam', warn: 'boss.astra.charge', mul: 0.6 }
-  assert.deepEqual(chooseBossAction(state, b, { status: null, country: '', released: '' }, new Rng(1)), { moveId: 'exaflop-beam', forced: true })
+  assert.deepEqual(chooseBossAction(state, b, { status: null, country: '', released: '', weather: 'none' }, new Rng(1)), { moveId: 'exaflop-beam', forced: true })
 })
 
 // ---------------------------------------------------------------------------------------------------- entry point & rewards
@@ -457,7 +720,7 @@ test('startBossBattle: builds a boss fight with the boss HUD, and the boss rever
   assert.equal(init.canRun, b.canRun)
   const { engine, intro } = startBossBattle('astra', party, { seed: 5, expGain: false })
   const hud = intro.find((e): e is Extract<BattleEvent, { t: 'boss' }> => e.t === 'boss')
-  assert.ok(hud && hud.hud.bossId === 'astra' && hud.hud.phases === 4)
+  assert.ok(hud && hud.hud.bossId === 'astra' && hud.hud.phases === 3)
   assert.throws(() => startBossBattle('nope', party, { seed: 1 }), /unknown boss/)
   engine.choose(0, { kind: 'move', moveIndex: 0 })
   engine.step()
@@ -523,18 +786,18 @@ test('hints: NPC rumours and shops carry the counterplay', () => {
 
 test('client model: the boss HUD folds from events (phase pips, meters, charge warning) and a form change swaps the body', () => {
   const party = makeParty(SIM_PARTY, 60, 1)
-  const { engine, init, intro } = startBossBattle('astra', party, { seed: 5, expGain: false })
+  const { engine, init, intro } = startBossBattle('chatgpt', party, { seed: 5, expGain: false })
   const model = createBattleModel(init, 'none')
   for (const e of intro) applyEvent(model, e)
-  assert.equal(model.boss?.bossId, 'astra')
+  assert.equal(model.boss?.bossId, 'chatgpt')
   const info = bossPanelInfo(model.boss!)
-  assert.ok(info && info.title === t(byId('astra').title) && info.phases === 4 && info.phase === 1)
+  assert.ok(info && info.title === t(byId('chatgpt').title) && info.phases === 4 && info.phase === 1)
   const charged = bossPanelInfo({ ...model.boss!, charge: 'exaflop-beam', enrage: 2 })!
   assert.ok(charged.chips.some((c) => c.alert), 'the telegraphed move shows as an alert chip')
   assert.ok(charged.chips.some((c) => c.id === 'enrage'))
   const ds = bossPanelInfo({ bossId: 'deepseek', form: 'base', phase: 1, phases: 2, meters: { tide: 1 }, charge: null, enrage: 0 })!
   assert.ok(ds.chips[0].text.includes(t('boss.deepseek.valley')))
-  assert.equal(model.sides[1].view?.speciesId, 'gpt-6-astra')
+  assert.equal(model.sides[1].view?.speciesId, 'chatgpt')
   assert.equal(engine.choose(0, { kind: 'item', itemId: 'special-sauce', partyIndex: 0 }), null)
   engine.choose(1, { kind: 'move', moveIndex: 0 })
   for (const e of engine.step()) applyEvent(model, e)

@@ -45,16 +45,16 @@ const pilotExcept = (h: Helpers, no: (a: BattleAction, m: MoveDef | undefined) =
 
 /**
  * What an unaware player does on top of the shared AI (the balance pilot never uses items, a real player does): the
- * baseline "plain" runs of bosses whose counter is about an everyday habit.
+ * baseline "plain" runs of bosses whose counter is about an everyday habit (none at the moment).
  */
-export const PLAIN: Record<string, Pick<SimOpts, 'policy'>> = {
-  // Medicine when a creature is low: every dose feeds the lobster.
-  openclaw: { policy: (h) => (h.active.hp / h.engine.fighterStats(0).hp < 0.4 ? (h.bait('hyper-cache') ?? h.bait('full-cache')) : null) },
-}
+export const PLAIN: Record<string, Pick<SimOpts, 'policy'>> = {}
 
 export const COUNTERS: Record<string, Counter> = {
-  // Feed the sauce as soon as it is available.
-  astra: { bag: { 'special-sauce': 3 }, policy: (h) => (h.state.form === 'base' ? h.bait('special-sauce') : null) },
+  // Test it with the pelican while it is sauced (the tell is the "too fast" line); once it has the pelican in its samples, test with the bike.
+  astra: {
+    bag: { 'pelican-test': 5, 'bike-pelican': 5 },
+    policy: (h) => (h.state.form === 'base' && h.state.meters.juice >= 1 ? h.bait((h.state.fired.library ?? 0) >= 1 ? 'bike-pelican' : 'pelican-test') : null),
+  },
 
   // The coupon turns the peak hours it announces into valley pricing; nothing else is needed.
   deepseek: { bag: { 'off-peak-coupon': 6 }, policy: (h) => (h.state.meters.tide === 0 && h.state.meters.grace === 0 ? h.bait('off-peak-coupon') : null) },
@@ -91,8 +91,8 @@ export const COUNTERS: Record<string, Counter> = {
     policy: (h) => (h.state.form === 'metered' && h.state.meters.outrage < 3 ? h.bait('complaint-letter') : null),
   },
 
-  // Keep the residential IP up: no risk score builds and the boss guesses wrong.
-  'claude-code': { bag: { 'residential-ip': 4 }, policy: (h) => (h.state.meters.vpn <= 1 ? h.bait('residential-ip') : null) },
+  // The .map file as soon as the cover is up: no pets, and it takes double for a while.
+  'claude-code': { bag: { 'source-map': 5 }, policy: (h) => (h.state.form === 'undercover' ? h.bait('source-map') : null) },
 
   // Patch the sandbox before it gives; the alignment moves the AI happens to pick help on top.
   mythos: { bag: { 'sandbox-patch': 4 }, policy: (h) => (h.state.form === 'sealed' && h.state.meters.escape >= 5 ? h.bait('sandbox-patch') : null) },
@@ -100,41 +100,39 @@ export const COUNTERS: Record<string, Counter> = {
   // Never repeat the previous type: every damaging move changes the type it has just read.
   alpha: { policy: (h) => pickAttack(h, (m) => m.type !== h.state.lastFoeType) },
 
-  // Interrupt its extended thinking: any action but an attack (a status move, else a switch).
+  // The checklist: a residential IP once the origin gets flagged (or is Chinese) and the Apple subscription for the payment
+  // column. The behaviour and sharing columns (don't repeat one type, don't hop) are play style the AI already mostly honours.
   opus: {
+    bag: { 'residential-ip': 6, 'apple-sub': 6 },
     policy: (h) => {
-      if (h.state.form !== 'thinking') return null
-      const i = h.moveOfKind((m) => m.category === 'status')
-      if (i >= 0) return move(h, i)
-      const party = h.engine.party(0)
-      const j = party.findIndex((cr, idx) => idx !== h.engine.activeIndex(0) && cr.hp > 0)
-      return h.req.canSwitch && j >= 0 ? { kind: 'switch', partyIndex: j } : null
+      const m = h.state.meters
+      const cn = CONTENT.species[h.active.speciesId]?.country === 'CN'
+      if (m.ip <= 2 && (m.region >= 1 || h.active.status !== null || cn)) return h.bait('residential-ip')
+      if (m.apple <= 2 && m.pay >= 1) return h.bait('apple-sub')
+      return null
     },
   },
 
-  // Lead with (and keep to) veterans released before 2025: it cannot bring itself to hit them.
-  chatgpt: { partyIds: ['muzero', 'notebooklm', 'github-copilot', 'agibot', 'yuanbao', 'lovable'], partyRole: 'balanced', policy: (h) => pickAttack(h) },
+  // Feed the sauce as soon as it is available.
+  chatgpt: { bag: { 'special-sauce': 3 }, policy: (h) => (h.state.form === 'base' ? h.bait('special-sauce') : null) },
 
   // A banana peel under its feet whenever it stands.
   unitree: { bag: { 'banana-peel': 6 }, policy: (h) => (h.state.form === 'upright' ? h.bait('banana-peel') : null) },
 
-  // Argue back: a move it resists whenever there is one, else the pilot's play without the moves the type chart favours.
-  grok: {
-    policy: (h) => {
-      const types = CONTENT.species[h.engine.party(1)[h.engine.activeIndex(1)].speciesId]?.types ?? []
-      const eff = (m: MoveDef) => typeEffectiveness(m.type, types)
-      return pickAttack(h, (m) => eff(m) < 1) ?? pilotExcept(h, (a, m) => !!m && m.power > 0 && eff(m) > 1)
-    },
-  },
+  // Pull the plug whenever the network is up: a blackout cuts its uploads.
+  grok: { bag: { 'ethernet-cable': 6 }, policy: (h) => (h.engine.weather !== 'blackout' ? h.bait('ethernet-cable') : null) },
 
-  // No medicine, nothing to feed it.
-  openclaw: { policy: (h) => pilotExcept(h, (a) => a.kind === 'item') },
+  // Revoke the key while the malicious skill is loading (the warning turn); never earlier or later.
+  openclaw: { bag: { 'revoke-key': 4 }, policy: (h) => (h.state.meters.inject >= 1 ? h.bait('revoke-key') : null) },
 
   // Feed it small rocks; it follows its own advice.
   gemini: { bag: { 'small-rock': 4 }, policy: (h) => (h.state.form === 'grounded' || h.state.formTurn >= 4 ? h.bait('small-rock') : null) },
 
   // Hand it invite codes: it pays out red packets until its subsidy budget is gone.
   doubao: { bag: { 'invite-code': 5 }, policy: (h) => (h.state.form === 'subsidy' ? h.bait('invite-code') : null) },
+
+  // Hold it to its word: the pledge as soon as eggs have been taken (or are about to be), never when it is already in force.
+  glm: { bag: { 'no-upload-pledge': 5 }, policy: (h) => (h.state.form === 'open' && h.state.meters.pledge === 0 && h.state.meters.backup >= 1 ? h.bait('no-upload-pledge') : null) },
 
   // Read the cameo's weak types from the HUD and hit with them (a team that covers all ten of them, so there is always a fitting member).
   seedance: {

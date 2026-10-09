@@ -57,12 +57,19 @@
     "long-document": "a very long cream paper scroll covered in tiny lines of text with a curled bottom edge and wooden rods",
     "holdout-set": "a blue clipboard with a checklist of brand-new test questions, one green tick and one red question mark",
     "residential-ip": "a small cozy house with a red roof and cyan wifi signal arcs above it",
+    "apple-sub": "a shiny red apple with a green leaf and a small white credit card tucked in front of it",
     "sandbox-patch": "a square sandbox full of sand with a large green plus-shaped repair patch stuck across it",
     "complaint-letter": "a cream envelope sealed with a red wax seal stamped with a white exclamation mark",
     "off-peak-coupon": "a golden-yellow ticket coupon with a dark blue crescent moon on the left and a perforated tear-off edge",
     "small-rock": "a single smooth grey pebble with a light top-left highlight and a tiny yellow sparkle beside it",
     "banana-peel": "a single yellow banana peel lying flat with three curled-open flaps and a small brown tip",
-    "invite-code": "a glossy red envelope with a gold circular seal and a tiny white chain-link symbol in the corner"
+    "invite-code": "a glossy red envelope with a gold circular seal and a tiny white chain-link symbol in the corner",
+    "ethernet-cable": "a coiled blue ethernet cable with a clear plastic RJ45 plug on one end and the other end unplugged and dangling",
+    "revoke-key": "a small golden key with a red diagonal prohibition slash across it and a few sparkles around the broken teeth",
+    "pelican-test": "a white pelican with an orange pouch beak riding a small blue bicycle, side view, tiny wobbly wheels",
+    "bike-pelican": "a small blue bicycle balanced on the back of a white pelican with an orange pouch beak, side view",
+    "no-upload-pledge": "a parchment scroll with a blue cloud crossed out by a red slash and a red wax stamp",
+    "source-map": "a white document page with a folded corner, a few code lines and a small blue treasure-map frame with a red X"
   },
   "chips": {}
 }
