@@ -10,7 +10,11 @@
   "concurrency": 8,
   "verifyConcurrency": 12,
   "verifyTimeoutMs": 15000,
-  "uploadTimeoutMs": 60000,
+  "verifyRecheckRounds": 3,
+  "verifyRecheckDelayMs": 20000,
+  "verifyRecheckConcurrency": 2,
+  "uploadTimeoutMs": 30000,
+  "uploadMinBytesPerSec": 8000,
   "verifyRetries": 5,
   "verifyBackoffMs": 500,
   "mime": {
