@@ -4,7 +4,9 @@
 import type { BattleResult, Dir, FieldWeatherKind, ItemDef, NpcDef, ScriptStep } from '../../shared/types.ts'
 import type { DialogueLine, GameContext } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
+import type { IRng } from '../../shared/contracts.ts'
 import { Rng } from '../../shared/rng.ts'
+import { randomSeed } from '../core/rng-hub.ts'
 import { createCreature, creatureName, rollShiny } from '../../shared/creature.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
 import { dayOf, expandFlag, realDateOf } from '../../shared/gameplay/events.ts'
@@ -19,6 +21,8 @@ export type ScriptOutcome = 'done' | 'end' | 'abort'
 /** World services the runner drives (implemented by the overworld controller). */
 export interface ScriptHost {
   readonly ctx: GameContext
+  /** Stream for script rolls (gifted creatures); random when absent. */
+  readonly rng?: IRng
   moveNpc(id: string, path: Dir[], speed: number): Promise<void>
   faceNpc(id: string, dir: Dir): void
   setNpcHidden(id: string, hidden: boolean): void
@@ -46,7 +50,7 @@ const ballId = (ctx: GameContext): string | undefined => ctx.data.itemList.find(
 
 export function createScriptRunner(host: ScriptHost) {
   const { ctx } = host
-  const rng = new Rng((Date.now() ^ Math.floor(Math.random() * 0x7fffffff)) >>> 0)
+  const rng = host.rng ?? new Rng(randomSeed())
   const params = () => ({ name: ctx.save.name, currency: t('common.money') })
 
   const line = (text: string, speaker?: string, portrait?: string): DialogueLine => {

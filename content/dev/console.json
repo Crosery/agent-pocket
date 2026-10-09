@@ -1,5 +1,5 @@
 {
-  "limits": {"eventBuffer": 500, "logLines": 400, "waitTimeoutMs": 15000, "waitPollMs": 40, "dumpMaxChars": 4000},
+  "limits": {"eventBuffer": 500, "logLines": 400, "waitTimeoutMs": 15000, "waitPollMs": 40, "dumpMaxChars": 4000, "stepDt": 0.016667, "maxScale": 20, "maxStepFrames": 3600},
   "commands": {
     "tp.xy": {
       "titleKey": "dev.cmd.tpXy",
@@ -23,7 +23,22 @@
       "args": [
         {"name": "kind", "type": "string", "optional": true, "enumRef": "weather", "labelKey": "dev.arg.weather"}
       ]
-    }
+    },
+    "time.pause": {"titleKey": "dev.cmd.timePause", "group": "time", "mutates": false, "needs": "live", "args": []},
+    "time.resume": {"titleKey": "dev.cmd.timeResume", "group": "time", "mutates": false, "needs": "live", "args": []},
+    "time.step": {
+      "titleKey": "dev.cmd.timeStep",
+      "group": "time",
+      "mutates": false,
+      "needs": "live",
+      "args": [
+        {"name": "frames", "type": "integer", "labelKey": "dev.arg.frames"},
+        {"name": "dt", "type": "number", "optional": true, "labelKey": "dev.arg.dt"}
+      ]
+    },
+    "time.scale": {"titleKey": "dev.cmd.timeScale", "group": "time", "mutates": false, "needs": "live", "args": [{"name": "scale", "type": "number", "labelKey": "dev.arg.scale"}]},
+    "time.fixed": {"titleKey": "dev.cmd.timeFixed", "group": "time", "mutates": false, "needs": "live", "args": [{"name": "dt", "type": "number", "optional": true, "labelKey": "dev.arg.dtFixed"}]},
+    "rng.seed": {"titleKey": "dev.cmd.rngSeed", "group": "rng", "mutates": false, "needs": "live", "args": [{"name": "seed", "type": "integer", "labelKey": "dev.arg.seed"}]}
   },
   "legacy": {"pos": "state.dump(['runtime'])", "tp": "cmd('tp.xy', {x, y, map})", "region": "state.dump(['runtime'])", "gates": "state.dump(['world'])", "places": "cmd('tp.xy')", "discover": "cmd('discover', {place})", "fly": "cmd('fly', {place})", "fog": "state.dump(['save'])", "boss": "cmd('battle.boss')", "distance": "state.dump(['save'])", "clock": "cmd('clock.set', {minutes})", "weather": "cmd('weather.set', {kind})", "roamers": "state.dump(['runtime'])"}
 }

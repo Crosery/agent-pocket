@@ -29,8 +29,8 @@ export function createApiV1({ host, registry, log, extras }: ApiDeps) {
       commit: typeof __AP_COMMIT__ === 'string' ? __AP_COMMIT__ : 'unknown',
       contentHash: (contentHash ??= digest(CONTENT)),
       worldSeed: host.world.seed,
+      rngSeed: host.rng.seed,
       taint: { ...registry.taint },
-      ...extras(),
     }),
     cmd: (id: string, args?: Record<string, unknown>) => registry.run(id, args),
     cmds: () => registry.describe(),
@@ -38,6 +38,21 @@ export function createApiV1({ host, registry, log, extras }: ApiDeps) {
       dump,
       diff: (a: unknown, b: unknown) => diff(a, b),
       digest: (s?: Section | readonly Section[]) => digest(dump(s)),
+    },
+    time: {
+      pause: () => registry.run('time.pause'),
+      resume: () => registry.run('time.resume'),
+      /** Runs `frames` game frames of `dt` seconds (default 1/60) right now; pause first for a fully manual clock. */
+      step: (frames: number, dt?: number) => registry.run('time.step', { frames, dt }),
+      scale: (x: number) => registry.run('time.scale', { scale: x }),
+      /** Every real frame advances exactly `dt` seconds (null = real time). */
+      fixed: (dt: number | null = null) => registry.run('time.fixed', { dt }),
+      state: () => host.clock.state(),
+    },
+    rng: {
+      seed: (n: number) => registry.run('rng.seed', { seed: n }),
+      /** Draws taken from each random stream since the last (re)seed. */
+      cursor: () => host.rng.cursors(),
     },
     wait,
     expect: {

@@ -14,6 +14,8 @@ import { installDevText } from '../src/client/dev/text.ts'
 import { poll } from '../src/client/dev/wait.ts'
 import { createApiV1 } from '../src/client/dev/api.ts'
 import type { DevHost } from '../src/client/dev/kit.ts'
+import { RngHub } from '../src/client/core/rng-hub.ts'
+import { createDevClock } from '../src/client/dev/clock.ts'
 
 const root = new URL('../', import.meta.url)
 before(() => installDevText())
@@ -204,6 +206,9 @@ function fakeHost() {
     world: { seed: 1, maps: {}, towns: [], startMap: 'origin' },
     onboarding: { objectiveId: 'obj-1' },
     flyTo: async () => {},
+    tick: () => {},
+    rng: new RngHub(7),
+    clock: createDevClock(),
   } as unknown as DevHost
   return { host, save, events, classes, g }
 }
@@ -253,6 +258,7 @@ test('api v1: dump sections, digest, the "buy a potion" diff, expect.state, noEr
 
   assert.deepEqual(api.events.since(0).events.map((e) => e.type), ['battle:start', 'toast', 'toast'])
   assert.equal(api.info().worldSeed, 1)
+  assert.equal(api.info().rngSeed, 7)
   assert.equal(api.info().commit, 'unknown')
   assert.equal(api.info().contentHash.length, 14)
   delete g.document

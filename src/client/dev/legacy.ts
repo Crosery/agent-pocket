@@ -7,7 +7,7 @@
 import type { FieldWeatherKind, SaveData, World } from '../../shared/types.ts'
 import type { GameContext, SaveManager, Screens } from '../contracts.ts'
 import { CONTENT } from '../../shared/content/index.ts'
-import { Rng } from '../../shared/rng.ts'
+import type { IRng } from '../../shared/contracts.ts'
 import { createCreature, maxHp } from '../../shared/creature.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
 import { distanceFromOrigin, getMap, isInfinite, regionAt } from '../../shared/world/worldapi.ts'
@@ -33,11 +33,10 @@ export function installDevLog(): void {
 }
 
 /** A ready-to-play save: random party at debug.partyLevel, key items by capability, stocked bag. */
-export function debugSave(saves: SaveManager, world: World, _dbg: DebugParams): SaveData {
+export function debugSave(saves: SaveManager, world: World, rng: IRng): SaveData {
   const D = GAME.debug
   const avatar = CONTENT.characters.find((c) => c.playable) ?? CONTENT.characters[0]
   const s = saves.newGame({ name: avatar?.nameZh ?? '', avatar: avatar?.id ?? '' })
-  const rng = new Rng((Date.now() ^ 0x5eed) >>> 0)
   const pool = CONTENT.speciesList
   const ball = CONTENT.itemList.find((it) => it.effect.kind === 'ball')?.id
   if (pool.length) {
@@ -74,7 +73,7 @@ async function startBossSandbox(ctx: GameContext, ow: OverworldExt, bossId: stri
   if (!def) return false
   const D = GAME.debug.boss
   const bossLevel = Math.max(1, Math.floor(level ?? def.level))
-  const rng = new Rng((Date.now() ^ 0xb055) >>> 0)
+  const rng = ow.devHandles().rng.stream('debug')
   ctx.save.party = D.party.filter((id) => CONTENT.species[id]).map((id) => {
     const cr = createCreature(id, Math.max(1, bossLevel + D.levelOffset), { rng, otName: ctx.save.name, otId: ctx.save.playerId, caughtMap: ctx.save.position.map })
     for (const k of Object.keys(cr.ivs) as (keyof typeof cr.ivs)[]) cr.ivs[k] = CONTENT.config.creature.ivMax

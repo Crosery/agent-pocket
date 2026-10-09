@@ -6,6 +6,7 @@
 //   &battle=wild|trainer [&species=<id>&level=<n> | &trainer=<id>]
 //   &battle=boss&boss=<bossId> [&level=<n>]   boss sandbox: sensible team + counter items, boss at its recommended level
 //   &screen=party|bag|dex|box|map|quests|settings|shop
+//   &seed=<n>                    world seed              &rng=<n>       master random seed (encounters, battles, scripts)
 import type { FieldWeatherKind } from '../../shared/types.ts'
 import { GAME } from '../world/config.ts'
 
@@ -26,6 +27,10 @@ export interface DebugParams {
   trainer: string | null
   screen: string | null
   evolve: boolean
+  /** World seed (default: config.world.seed). */
+  seed: number | null
+  /** Master random seed for encounters, battles and scripts (default: random per session). */
+  rng: number | null
 }
 
 export function readDebugParams(search: string): DebugParams {
@@ -36,6 +41,10 @@ export function readDebugParams(search: string): DebugParams {
     if (v === null || v.trim() === '') return null
     const n = Number(v)
     return Number.isFinite(n) ? n : null
+  }
+  const seedParam = (k: string): number | null => {
+    const n = num(k)
+    return n !== null && Number.isInteger(n) && n >= 0 && n <= 0xffffffff ? n : null
   }
   const flag = (k: string) => dev && q.get(k) === '1'
   const str = (k: string) => (dev ? q.get(k) : null)
@@ -59,5 +68,7 @@ export function readDebugParams(search: string): DebugParams {
     trainer: str('trainer'),
     screen: str('screen'),
     evolve: flag('evolve'),
+    seed: dev ? seedParam('seed') : null,
+    rng: dev ? seedParam('rng') : null,
   }
 }

@@ -1,7 +1,7 @@
 {
-  "cmd": {"tpXy": "传送到坐标", "fly": "飞往地点", "discover": "标记地点为已发现", "clockSet": "设置时间", "weatherSet": "设置天气"},
-  "arg": {"x": "X", "y": "Y", "map": "地图（默认大地图）", "place": "地点 id", "minutes": "分钟数", "weather": "天气（留空为取消）"},
-  "err": {"unknownCmd": "未知命令：{id}", "missingArg": "缺少参数：{arg}", "badArg": "参数 {arg} 无效：{why}", "extraArgs": "多余的参数：{args}", "notNumber": "需要数字", "notInteger": "需要整数", "notBoolean": "需要 true 或 false", "notOneOf": "只能是：{list}", "unknownPlace": "找不到地点：{place}", "notInWorld": "还没有进入世界", "emptyLine": "命令为空"},
+  "cmd": {"tpXy": "传送到坐标", "fly": "飞往地点", "discover": "标记地点为已发现", "clockSet": "设置时间", "weatherSet": "设置天气", "timePause": "暂停时间", "timeResume": "继续时间", "timeStep": "步进帧", "timeScale": "时间倍率", "timeFixed": "固定步长", "rngSeed": "设置随机种子"},
+  "arg": {"x": "X", "y": "Y", "map": "地图（默认大地图）", "place": "地点 id", "minutes": "分钟数", "weather": "天气（留空为取消）", "frames": "帧数", "dt": "每帧秒数（默认 1/60）", "scale": "倍率", "dtFixed": "每帧秒数（留空为取消固定）", "seed": "种子（整数）"},
+  "err": {"unknownCmd": "未知命令：{id}", "missingArg": "缺少参数：{arg}", "badArg": "参数 {arg} 无效：{why}", "extraArgs": "多余的参数：{args}", "notNumber": "需要数字", "notInteger": "需要整数", "notBoolean": "需要 true 或 false", "notOneOf": "只能是：{list}", "unknownPlace": "找不到地点：{place}", "notInWorld": "还没有进入世界", "emptyLine": "命令为空", "scaleRange": "倍率须在 0 到 {max} 之间", "framesRange": "帧数须在 1 到 {max} 之间", "dtRange": "每帧秒数须大于 0 且不超过 {max}", "seedRange": "种子须为 0 到 4294967295 的整数"},
   "wait": {"timeout": "等待超时（{what}，{ms} ms）"},
   "expect": {"missing": "路径不存在：{path}", "failed": "{path} 不满足 {matcher}（实际：{actual}）", "errorsFound": "页面记录了 {n} 条错误"},
   "deprecated": "window.__ap.{name} 已弃用，请改用 window.__ap.v1：{use}"
