@@ -767,6 +767,11 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       fx.setGroundItems(items.map((i) => ({ id: i.id, x: i.x + 0.5, z: i.y + 0.5, y: s ? sampleWalkHeight(s, i.x + 0.5, i.y + 0.5) : 0 })))
     },
 
+    setBeacons(items) {
+      const s = sampler
+      fx.setBeacons(items.map((i) => ({ id: i.id, x: i.x, z: i.y, y: s ? sampleWalkHeight(s, i.x, i.y) : 0, style: i.style, on: i.on })))
+    },
+
     setQuestPath(path) {
       questTrail.set(path, (x, y) => sampler ? sampleWalkHeight(sampler, x, y) : 0)
     },
