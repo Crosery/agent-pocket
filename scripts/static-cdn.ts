@@ -4,7 +4,7 @@
 //   node scripts/static-cdn.ts verify                          CI: HEADs keys through the CDN (200, size, CORS): every key uploaded
 //                                                              by this run's upload, plus a sample of the unchanged public set
 // CI needs STATIC_CDN_BASE and STATIC_CDN_UPLOAD_TOKEN. The token can never overwrite or delete anything.
-import { createHmac } from 'node:crypto'
+import { createHash, createHmac } from 'node:crypto'
 import { setDefaultResultOrder } from 'node:dns'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -57,14 +57,30 @@ function token(): string {
 // limit grows with the file size.
 const uploadTimeout = (bytes: number) => CDN.uploadTimeoutMs + Math.ceil((bytes / CDN.uploadMinBytesPerSec) * 1000)
 
+// Qiniu's etag ("qetag"): 4 MiB blocks; one block -> 0x16 + sha1(data), more -> 0x96 + sha1(concat of block sha1s).
+const QETAG_BLOCK = 4 * 1024 * 1024
+function qetag(data: Buffer): string {
+  const sha1 = (b: Buffer) => createHash('sha1').update(b).digest()
+  if (data.length <= QETAG_BLOCK) return b64url(Buffer.concat([Buffer.from([0x16]), sha1(data)]))
+  const blocks: Buffer[] = []
+  for (let i = 0; i < data.length; i += QETAG_BLOCK) blocks.push(sha1(data.subarray(i, i + QETAG_BLOCK)))
+  return b64url(Buffer.concat([Buffer.from([0x96]), sha1(Buffer.concat(blocks))]))
+}
+
+// The upload response carries the stored object's etag, which confirms the bytes at the storage end; this is what lets
+// verify sample the CDN instead of HEADing every new key across the border (v0.2.0-rc.11).
 async function put(tok: string, it: { key: string; body: Buffer; type: string }): Promise<void> {
   for (let attempt = 0; ; attempt++) {
     const form = new FormData()
     form.set('token', tok)
     form.set('key', it.key)
     form.set('file', new Blob([new Uint8Array(it.body)], { type: it.type }), it.key.split('/').pop())
-    const res = await fetch(CDN.uploadUrl, { method: 'POST', body: form, signal: AbortSignal.timeout(uploadTimeout(it.body.length)) }).catch((e: Error) => ({ ok: false, status: 0, text: async () => e.message }))
-    if (res.ok) return
+    const res = await fetch(CDN.uploadUrl, { method: 'POST', body: form, signal: AbortSignal.timeout(uploadTimeout(it.body.length)) }).catch((e: Error) => ({ ok: false, status: 0, text: async () => e.message, json: async () => ({}) }))
+    if (res.ok) {
+      const got = ((await res.json().catch(() => ({}))) as { hash?: string }).hash
+      if (got !== qetag(it.body)) die(`upload ${it.key}: stored etag ${got ?? '(none)'} != local ${qetag(it.body)}`)
+      return
+    }
     if (res.status === 614) return // key exists: content-addressed, so it is already the same bytes
     if (attempt >= 2 || (res.status > 0 && res.status < 500)) die(`upload ${it.key} failed: ${res.status} ${await res.text()}`)
   }
@@ -93,7 +109,7 @@ async function upload(): Promise<void> {
   const items = [...p.bundles, ...(pubDone ? [] : p.pub)]
   await pool(items, (it) => put(tok, { key: it.key, body: readFileSync(it.file), type: mime(it.file) }))
   if (!pubDone) await put(tok, { key: p.marker, body: Buffer.from(`${p.hash}\n`), type: 'text/plain' })
-  writeFileSync(UPLOADED, JSON.stringify({ hash: p.hash, pub: !pubDone }))
+  writeFileSync(UPLOADED, JSON.stringify({ hash: p.hash, pub: !pubDone, etagChecked: true }))
   console.log(`static-cdn: uploaded ${items.length} files (public ${p.hash} ${pubDone ? 'already on CDN' : 'uploaded'})`)
 }
 
@@ -101,12 +117,13 @@ async function verify(): Promise<void> {
   const p = plan()
   // An unchanged public set was uploaded and verified by an earlier release under the same content hash and is never
   // overwritten, so re-HEADing all ~860 keys from a US runner only adds cross-border timeouts (v0.2.0-rc.6). Sample it.
-  const handoff = existsSync(UPLOADED) ? (JSON.parse(readFileSync(UPLOADED, 'utf8')) as { hash: string; pub: boolean }) : null
-  const pubFull = !handoff || handoff.hash !== p.hash || handoff.pub
+  // Freshly uploaded public keys were confirmed by etag at upload time, so they are sampled like an unchanged set.
+  const handoff = existsSync(UPLOADED) ? (JSON.parse(readFileSync(UPLOADED, 'utf8')) as { hash: string; pub: boolean; etagChecked?: boolean }) : null
+  const pubFull = !handoff || handoff.hash !== p.hash || (handoff.pub && !handoff.etagChecked)
   const step = Math.max(1, Math.floor(p.pub.length / CDN.verifySample))
   const pub = pubFull ? p.pub : p.pub.filter((_, i) => i % step === 0).slice(0, CDN.verifySample)
   const all = [...p.bundles, ...pub]
-  console.log(`static-cdn: verifying ${p.bundles.length} bundle keys + ${pub.length}/${p.pub.length} public keys (${pubFull ? 'full' : 'sample, public set unchanged'})`)
+  console.log(`static-cdn: verifying ${p.bundles.length} bundle keys + ${pub.length}/${p.pub.length} public keys (${pubFull ? 'full' : handoff?.pub ? 'sample, new public set confirmed by etag at upload' : 'sample, public set unchanged'})`)
   // status 0 = the runner could not reach the CDN at all (connect reset / timeout), not a CDN answer. Those keys get slower
   // re-check rounds; only real answers (404, wrong size, missing CORS) or keys still unreachable after every round fail.
   const check = async (items: typeof all, width: number, log: boolean): Promise<{ bad: string[]; unreachable: typeof all }> => {
