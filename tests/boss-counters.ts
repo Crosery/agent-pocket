@@ -50,10 +50,16 @@ const pilotExcept = (h: Helpers, no: (a: BattleAction, m: MoveDef | undefined) =
 export const PLAIN: Record<string, Pick<SimOpts, 'policy'>> = {}
 
 export const COUNTERS: Record<string, Counter> = {
-  // Test it with the pelican while it is sauced (the tell is the "too fast" line); once it has the pelican in its samples, test with the bike.
+  // Sauce first (the router goes mad and the tests become reliable), then test whenever the window is closed: the pelican
+  // while it still passes, the bike once the pelican is in its samples.
   astra: {
-    bag: { 'pelican-test': 5, 'bike-pelican': 5 },
-    policy: (h) => (h.state.form === 'base' && h.state.meters.juice >= 1 ? h.bait((h.state.fired.library ?? 0) >= 1 ? 'bike-pelican' : 'pelican-test') : null),
+    bag: { 'special-sauce': 2, 'pelican-test': 6, 'bike-pelican': 6 },
+    policy: (h) => {
+      const m = h.state.meters
+      if (h.state.form === 'base' && !(h.state.fired.sauce ?? 0)) return h.bait('special-sauce')
+      if (m.juice >= 1 && m.exposed === 0 && m.patch === 0) return h.bait((h.state.fired.library ?? 0) >= 1 ? 'bike-pelican' : 'pelican-test')
+      return null
+    },
   },
 
   // The coupon turns the peak hours it announces into valley pricing; nothing else is needed.
@@ -112,9 +118,6 @@ export const COUNTERS: Record<string, Counter> = {
       return null
     },
   },
-
-  // Feed the sauce as soon as it is available.
-  chatgpt: { bag: { 'special-sauce': 3 }, policy: (h) => (h.state.form === 'base' ? h.bait('special-sauce') : null) },
 
   // A banana peel under its feet whenever it stands.
   unitree: { bag: { 'banana-peel': 6 }, policy: (h) => (h.state.form === 'upright' ? h.bait('banana-peel') : null) },
