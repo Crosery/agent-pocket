@@ -534,6 +534,15 @@ async function hideTips(page, hide) {
   }, hide)
 }
 
+/** The dev panel's badge is developer tooling (absent from release builds); only the HUD zone cases keep it on screen. */
+async function hideDevBadge(page, hide) {
+  await page.evaluate((h) => {
+    let st = document.getElementById('qa-hide-dev-badge')
+    if (!st) { st = document.createElement('style'); st.id = 'qa-hide-dev-badge'; document.head.append(st) }
+    st.textContent = h ? '.apd-badge { display: none !important }' : ''
+  }, hide)
+}
+
 async function waitHud(page) {
   await page.waitForFunction(() => !!document.querySelector('.apb-status.is-foe:not(.is-away)'), undefined, { timeout: 20000 }).catch(() => {})
   await page.waitForTimeout(500)
@@ -616,6 +625,7 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
         await screen.open(page)
         if (!screen.keepToasts) await page.evaluate(() => document.querySelectorAll('.ap-toast').forEach((n) => n.remove()))
         await hideTips(page, screen.id !== 'tip' && !screen.tip)
+        await hideDevBadge(page, !screen.hudZones)
         const shot = `${outDir}${vp.name}/${screen.id}.png`
         // The zone check goes first: tips and toasts time out, and the text audit below takes seconds. The tip is shown again for it.
         const zones = screen.hudZones ? await page.evaluate(auditHudZones, { pad: UI_PHONE_PAD }) : null
@@ -641,6 +651,7 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
           if (!(await closeAll(page))) await restore()
           await startBattle(page)
           await hideTips(page, true)
+          await hideDevBadge(page, true)
           for (const screen of BATTLE_SCREENS) {
             if (only && !only.includes(screen.id)) continue
             await hideTips(page, !screen.tip)
