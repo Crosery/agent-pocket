@@ -168,7 +168,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   let playing: SaveData | null = null
 
   const events = createEventBus<GameEvents>()
-  const input = createInput(appRoot)
+  const input = dev ? dev.wrapInput(createInput(appRoot)) : createInput(appRoot)
   const audio: AudioManager = createAudio(assets)
   const clockHolder = createClockHolder(save)
 

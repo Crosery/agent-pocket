@@ -1,5 +1,5 @@
 {
-  "limits": {"eventBuffer": 500, "logLines": 400, "waitTimeoutMs": 15000, "waitPollMs": 40, "dumpMaxChars": 4000, "stepDt": 0.016667, "maxScale": 20, "maxStepFrames": 3600, "expectSettleMs": 4000, "reloadSlot": 9090909090},
+  "limits": {"eventBuffer": 500, "logLines": 400, "waitTimeoutMs": 15000, "waitPollMs": 40, "dumpMaxChars": 4000, "stepDt": 0.016667, "maxScale": 20, "maxStepFrames": 3600, "expectSettleMs": 4000, "reloadSlot": 9090909090, "shotSettleFrames": 20, "shotIdleTimeoutMs": 20000, "touchMinPx": 44, "overlapMinArea": 16, "layoutIssueMax": 40, "inputMaxFrames": 36000},
   "commands": {
     "tp.xy": {
       "titleKey": "dev.cmd.tpXy",

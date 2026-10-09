@@ -9,8 +9,10 @@ import type { OverworldExt } from '../world/controller.ts'
 import type { StorageLike } from '../core/save.ts'
 import type { DevClock } from './clock.ts'
 import type { DevContent } from './content.ts'
+import type { Input } from '../contracts.ts'
 import type { Editor } from './editor/index.ts'
 import type { NetSim } from './net-sim.ts'
+import type { InputTap } from './replay.ts'
 
 /** What game.ts hands to the developer tooling: the live game objects and one frame of the main loop. */
 export interface GameHost {
@@ -32,6 +34,8 @@ export interface DevHost extends GameHost {
   net: NetSim
   /** The world editor (select, drag, rotate, delete, place, write back). */
   editor: Editor
+  /** The game's Input with recording and scripted playback. */
+  input: InputTap
   /** Which scenario the session is in (info(), scenario.check()). */
   session: { scenario: string | null }
   /** Runs one command through the registry (scenarios and the command line use it). */
@@ -51,6 +55,8 @@ export interface DevKit {
   readonly worldSeed: number | null
   /** Pinned master random seed (&rng=), or null for a random one per session. */
   readonly rngSeed: number | null
+  /** Wraps the game's Input (recording, scripted playback); called once, before anything reads it. */
+  wrapInput(input: Input): Input
   /** Seconds to simulate for a real frame, or null while the developer paused time. */
   frameDt(realDtSec: number): number | null
   /** The in-game clock is held still (&t=<minutes>). */

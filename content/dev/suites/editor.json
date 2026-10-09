@@ -1,0 +1,11 @@
+{
+  "id": "editor",
+  "title": "Editor: drag a building, the file changes and validates, the position survives a reload, reverting restores the exact bytes",
+  "viewports": ["d1280"],
+  "shotPath": "editor/${case}.png",
+  "guard": {"cleanGit": ["content/world"]},
+  "cases": [
+    {"id": "move-and-undo", "url": "/?dev=1&scenario=fresh-start", "steps": [{"wait": {"ready": true}}, {"record": {"fileHash": "content/world/layouts/towns.json", "as": "h0"}}, {"cmd": "editor.open"}, {"cmd": "editor.select", "args": {"x": 499, "y": 870}}, {"expect": {"state": ["/runtime/editor/selected/label", "lab"]}}, {"cmd": "editor.move", "args": {"x": 499, "y": 869}}, {"expect": {"state": ["/runtime/editor/selected/y", 869]}}, {"record": {"fileHash": "content/world/layouts/towns.json", "as": "h1"}}, {"assert": {"notEqual": ["h0", "h1"]}}, {"shot": {"name": "after-move", "hideDev": false}}, {"cmd": "editor.undo"}, {"expect": {"state": ["/runtime/editor/selected/y", 868]}}, {"record": {"fileHash": "content/world/layouts/towns.json", "as": "h2"}}, {"assert": {"equal": ["h0", "h2"]}}]},
+    {"id": "survives-reload", "url": "/?dev=1&scenario=fresh-start&editor-reload", "steps": [{"wait": {"ready": true}}, {"record": {"fileHash": "content/world/layouts/towns.json", "as": "h0"}}, {"cmd": "editor.open"}, {"cmd": "editor.select", "args": {"x": 499, "y": 870}}, {"cmd": "editor.move", "args": {"x": 499, "y": 869}}, {"reload": true}, {"wait": {"ready": true}}, {"cmd": "editor.open"}, {"cmd": "editor.select", "args": {"x": 499, "y": 872}}, {"expect": {"state": ["/runtime/editor/selected/y", 869]}}, {"shot": {"name": "after-reload", "hideDev": false}}, {"cmd": "editor.move", "args": {"x": 499, "y": 868}}, {"record": {"fileHash": "content/world/layouts/towns.json", "as": "h1"}}, {"assert": {"equal": ["h0", "h1"]}}]}
+  ]
+}

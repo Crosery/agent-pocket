@@ -58,6 +58,8 @@ export interface ConsoleFile {
     expectSettleMs: number
     /** Save slot the developer's seed reloads go through (never the player's own slots). */
     reloadSlot: number
+    /** Screenshot settle frames and idle timeout; layout audit thresholds; longest scripted input. */
+    shotSettleFrames: number; shotIdleTimeoutMs: number; touchMinPx: number; overlapMinArea: number; layoutIssueMax: number; inputMaxFrames: number
   }
   commands: Record<string, CommandMeta>
   panel: PanelFile

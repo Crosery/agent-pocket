@@ -18,6 +18,7 @@ import type { DevHost, DevKit } from './kit.ts'
 import { applyDebugStart, debugSave, installDebugHooks, installDevLog, runDebugActions } from './legacy.ts'
 import { createNetSim, type SocketCtor } from './net-sim.ts'
 import { NET_SIM } from './net-config.ts'
+import { createInputTap, type InputTap } from './replay.ts'
 import { readDebugParams } from './params.ts'
 import { CONSOLE, createRegistry } from './registry.ts'
 import { prepareScenario, runScenarioCommands, settleScenario } from './scenario.ts'
@@ -48,6 +49,9 @@ export function createDevKit(search: string): DevKit | null {
   /** The game's random hub, known once the overworld exists (install); a throwaway one before that. */
   let hub: RngHub | null = null
   let host: DevHost | null = null
+  let tap: InputTap | null = null
+  /** dt the game runs the current frame with (recorded next to the input). */
+  let lastDt = 0
   let prepared: ScenarioResult | null = null
   /** Where the scenario puts the player: the title flow's new-game start would otherwise overwrite the save's position. */
   let placed: Pick<ScenarioResult['save'], 'position' | 'respawn'> | null = null
@@ -57,7 +61,18 @@ export function createDevKit(search: string): DevKit | null {
     storage: scenario && !dbg.slotExplicit ? memoryStorage() : null,
     worldSeed: dbg.seed ?? scenario?.seed ?? null,
     rngSeed: dbg.rng ?? scenario?.rng ?? null,
-    frameDt: (real) => clock.frameDt(real),
+    wrapInput(input) {
+      tap = createInputTap(input, () => lastDt)
+      return tap
+    },
+    frameDt(real) {
+      const base = clock.frameDt(real)
+      // Scripted input runs on its own fixed step; it still waits while the clock is paused.
+      const dt = base === null ? null : tap?.playing ? tap.currentDt() ?? base : base
+      tap?.setArmed(dt !== null)
+      lastDt = dt ?? 0
+      return dt
+    },
     clockFrozen: () => clock.held() || (dbg.time !== null && GAME.debug.freezeClockWithTime),
     afterWorld(world) {
       for (const e of validateTutorial(world, worldAnchors(world))) console.warn(`[onboarding] ${e}`)
@@ -92,7 +107,9 @@ export function createDevKit(search: string): DevKit | null {
       net.install(window)
       const extras = () => ({ rng: { seed: h.rng.seed, cursors: h.rng.cursors() }, time: clock.state(), scenario: h.session.scenario, netSim: net.state(), editor: h.editor?.info() ?? null })
       const h: DevHost = {
-        ...game, rng: hub, clock, content, net, session: { scenario: null },
+        ...game, rng: hub, clock, content, net, input: tap as InputTap, session: { scenario: null },
+        // Frames the developer steps by hand tick the game too, so scripted input advances with them.
+        tick: (dt: number) => { const was = tap?.armed ?? true; tap?.setArmed(true); try { game.tick(dt) } finally { tap?.setArmed(was) } },
         run: (call) => registry.run(call.cmd, call.args),
         dump: (sections) => dumpState(h, log, extras, sections),
       } as DevHost

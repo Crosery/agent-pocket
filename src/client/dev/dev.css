@@ -49,7 +49,7 @@
   font: inherit; color: var(--apd-ink); box-sizing: border-box; min-height: var(--apd-hit);
   background: rgba(27, 31, 61, 0.9); border: 1px solid var(--apd-edge);
 }
-.apd-btn { padding: 0 12px; cursor: pointer; }
+.apd-btn { min-width: var(--apd-hit); padding: 0 12px; cursor: pointer; }
 .apd-btn:hover, .apd-row:hover, .apd-tab:hover { border-color: var(--apd-gold); }
 .apd-btn:active, .apd-row:active { background: var(--apd-edge); }
 .apd-btn--go { color: #0b0d1a; background: var(--apd-gold); border-color: #f3ecd2; }
@@ -129,3 +129,7 @@ html.apd-on .apd-badge { opacity: 0.5; }
 .apd-ed__btn { --apd-hit: 32px; min-width: 44px; min-height: 32px; }
 @media (pointer: coarse), (max-width: 700px) { .apd-ed__btn { --apd-hit: 44px; min-height: 44px; } }
 .apd-pal { display: flex; flex-direction: column; gap: 4px; padding: 6px; background: rgba(27, 31, 61, 0.45); border: 1px solid #3a2d6b; }
+
+/* Screenshot mode (shot.prepare): the developer UI and, on request, the HUD are out of the picture. */
+html.apd-shot .apd, html.apd-shot .apd-badge, html.apd-shot .apd-ed__svg, html.apd-shot .apd-ed__bar, html.apd-shot .apd-ed__hit, html.apd-shot #ap-debug { visibility: hidden !important; }
+html.apd-shot-hud #ap-ui { visibility: hidden !important; }

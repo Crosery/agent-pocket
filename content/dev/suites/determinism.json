@@ -1,0 +1,9 @@
+{
+  "id": "determinism",
+  "title": "The same scenario, seed and scripted input give the same state twice",
+  "viewports": ["d1280"],
+  "shotPath": "determinism/${case}.png",
+  "cases": [
+    {"id": "walk-twice", "url": "/?dev=1&scenario=determinism-walk", "steps": [{"wait": {"ready": true}}, {"cmd": "time.fixed", "args": {"dt": 0.016666}}, {"input": {"axis": [0, 1, 120]}}, {"input": {"axis": [1, 0, 90]}}, {"input": {"axis": [0, 1, 120]}}, {"digest": {"as": "first", "pointers": ["/runtime/position", "/runtime/rng/cursors", "/runtime/battle", "/save/money", "/save/bag"], "events": ["battle:start"]}}, {"reload": true}, {"wait": {"ready": true}}, {"cmd": "time.fixed", "args": {"dt": 0.016666}}, {"input": {"axis": [0, 1, 120]}}, {"input": {"axis": [1, 0, 90]}}, {"input": {"axis": [0, 1, 120]}}, {"digest": {"as": "second", "pointers": ["/runtime/position", "/runtime/rng/cursors", "/runtime/battle", "/save/money", "/save/bag"], "events": ["battle:start"]}}, {"assert": {"equal": ["first", "second"]}}, {"shot": {"name": "end", "hideDev": true}}]}
+  ]
+}
