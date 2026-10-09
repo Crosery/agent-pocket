@@ -95,13 +95,14 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number): 
         infoRow(t('screens.summary.dexNo'), sp ? t('screens.common.dexNo', { n: String(sp.dexNo).padStart(3, '0') }) : t('screens.common.dash')),
         infoRow(t('screens.summary.species'), sp ? (extraEnglishName(sp) ? t('screens.common.nameBoth', { zh: sp.nameZh, en: sp.nameEn }) : sp.nameZh) : c.speciesId),
         infoRow(t('screens.summary.company'), sp ? t('screens.common.companyCountry', { company: sp.company, country: textOrKey(`screens.country.${sp.country}`) }) : t('screens.common.dash')),
-        infoRow(t('screens.summary.ot'), t('screens.summary.otValue', { name: c.otName || t('screens.common.dash'), id: (c.otId || '').slice(0, 6).toUpperCase() || t('screens.common.dash') })),
-        infoRow(t('screens.summary.caughtAt'), caught ?? t('screens.summary.unknownPlace')),
-        infoRow(t('screens.summary.ball'), ball ? [el('img', { class: 'aps-inline-icon', attrs: { src: ctx.assets.itemIconUrl(ball.id), alt: '' } }), ball.nameZh] : t('screens.common.dash')),
+        // Rows with nothing to say (no trainer, unknown place, no ball) and the internal trainer id are left out.
+        c.otName ? infoRow(t('screens.summary.ot'), c.otName) : null,
+        caught ? infoRow(t('screens.summary.caughtAt'), caught) : null,
+        ball ? infoRow(t('screens.summary.ball'), [el('img', { class: 'aps-inline-icon', attrs: { src: ctx.assets.itemIconUrl(ball.id), alt: '' } }), ball.nameZh]) : null,
         infoRow(t('screens.summary.friendship'), meterIcons(hearts, fs.friendshipHearts, 'heart', 'heartOff')),
         infoRow(t('screens.summary.personality'), sp?.personality ?? t('screens.common.dash')),
         infoRow(t('screens.summary.held'), c.heldItem && CONTENT.items[c.heldItem] ? CONTENT.items[c.heldItem].nameZh : t('screens.summary.none')),
-      ]
+      ].filter((r): r is HTMLElement => r !== null)
     }
 
     const statsPage = (c: Creature): HTMLElement[] => {

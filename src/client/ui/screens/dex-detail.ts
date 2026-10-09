@@ -59,7 +59,7 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
         caught ? el('p', 'aps-dexd-persona', [el('span', { class: 'ap-gold', text: t('screens.starter.personality') }), sp.personality]) : null,
         ...bossBlock(sp),
       ])
-      right.replaceChildren(sectionTitle(t('screens.dex.baseStats')), caught ? statsBlock(sp) : el('p', { class: 'ap-dim', text: t('screens.dex.lockedStats') }), sectionTitle(t('screens.dex.evolution')), evoBlock(sp), researchBlock(sp))
+      right.replaceChildren(sectionTitle(t('screens.dex.baseStats')), caught ? statsBlock(sp) : el('p', { class: 'ap-dim', text: t('screens.dex.lockedStats') }), sectionTitle(t('screens.dex.evolution')), evoBlock(sp), ...researchBlock(sp))
       f.setHints([['ud', t('screens.dex.hint.browse')], ...(caught ? [['lr', t('screens.dex.hint.shiny')] as ['lr', string]] : []), ['confirm', t('screens.dex.hint.cry')], ['cancel', t('screens.hint.back')]])
     }
 
@@ -88,8 +88,10 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
       ])
     }
 
-    const researchBlock = (sp: SpeciesDef): HTMLElement => {
+    // Species without a research record would only show game-internal filler (family id, stage, 'in-game setting'): no block.
+    const researchBlock = (sp: SpeciesDef): HTMLElement[] => {
       const r = CONTENT.dexResearch[sp.id]
+      if (!r) return []
       const status = r ? (r.evidence === 'checked' ? 'verified' : 'review') : 'game'
       const iconId = r?.eventTitles.length
         ? 'dex-event-pulse-v1'
@@ -99,7 +101,7 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
       const date = CONTENT.dexResearchMeta.lineageDate || '—'
       const events = r?.eventTitles ?? []
       const statusClass = status === 'verified' ? 'is-ok' : status === 'review' ? 'is-main' : ''
-      return el('div', 'aps-dexd-research', [
+      return [el('div', 'aps-dexd-research', [
         el('div', 'aps-dexd-research-head', [
           iconUrl ? el('img', { class: 'aps-dexd-research-icon', attrs: { src: iconUrl, alt: '', draggable: 'false' } }) : null,
           el('div', 'aps-dexd-research-heading', [
@@ -126,7 +128,7 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
           ]),
           el('ul', 'aps-dexd-research-event-list', events.map((title) => el('li', { text: title, title }))),
         ]) : null,
-      ])
+      ])]
     }
 
     const evoBlock = (sp: SpeciesDef): HTMLElement => {
