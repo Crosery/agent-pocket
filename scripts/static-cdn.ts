@@ -49,13 +49,17 @@ function token(): string {
   return t
 }
 
+// CI runners upload to Qiniu z2 at tens of KB/s: a flat limit aborted the 1.7 MB main bundle (v0.2.0-rc.2), so the
+// limit grows with the file size.
+const uploadTimeout = (bytes: number) => CDN.uploadTimeoutMs + Math.ceil((bytes / CDN.uploadMinBytesPerSec) * 1000)
+
 async function put(tok: string, it: { key: string; body: Buffer; type: string }): Promise<void> {
   for (let attempt = 0; ; attempt++) {
     const form = new FormData()
     form.set('token', tok)
     form.set('key', it.key)
     form.set('file', new Blob([new Uint8Array(it.body)], { type: it.type }), it.key.split('/').pop())
-    const res = await fetch(CDN.uploadUrl, { method: 'POST', body: form, signal: AbortSignal.timeout(CDN.uploadTimeoutMs) }).catch((e: Error) => ({ ok: false, status: 0, text: async () => e.message }))
+    const res = await fetch(CDN.uploadUrl, { method: 'POST', body: form, signal: AbortSignal.timeout(uploadTimeout(it.body.length)) }).catch((e: Error) => ({ ok: false, status: 0, text: async () => e.message }))
     if (res.ok) return
     if (res.status === 614) return // key exists: content-addressed, so it is already the same bytes
     if (attempt >= 2 || (res.status > 0 && res.status < 500)) die(`upload ${it.key} failed: ${res.status} ${await res.text()}`)
