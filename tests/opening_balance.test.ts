@@ -11,6 +11,7 @@ import { computeDamage, emptyStages, type Fighter } from '../src/shared/battle/f
 import { buildWorld } from '../src/shared/world/index.ts'
 import { rivalTrainerId, starterSpecies } from '../src/shared/world/story.ts'
 import { levelForm } from '../src/shared/world/pick.ts'
+import { WORLD_CONTENT } from '../src/shared/world/data.ts'
 
 const SEEDS = 200
 const RIVAL_MIN_WIN = 0.9
@@ -180,6 +181,30 @@ test('gym 1 trainers and leader: >=70% naive win rate with a level-appropriate s
       check(win >= EARLY_MIN_WIN, `${sp.id} vs ${id}: win rate ${win}`)
     }
   }
+})
+
+test('every species the early-game cap allows is a fair opponent, so no roster change can break the opening', () => {
+  // The cap (content/world/world.json encounters.rarityLevelCaps) is what wild tables and `earlyCaps` picks draw from.
+  const cap = WORLD_CONTENT.world.encounters.rarityLevelCaps?.[0]
+  assert.ok(cap, 'an early-game cap exists')
+  const allowed = (s: SpeciesDef) => (CONTENT.rarityById[s.rarity]?.order ?? 0) <= cap.maxOrder && (!cap.onlyTypes || s.types.every((t) => cap.onlyTypes!.includes(t)))
+  const pool = CONTENT.speciesList.filter((s) => !s.starter && allowed(s))
+  assert.ok(pool.length >= 5, `early pool has ${pool.length} species`)
+  const bad: string[] = []
+  for (const level of [3, 6, cap.maxLevel]) {
+    for (const sp of pool) {
+      const form = levelForm(sp, level)
+      if (!allowed(form)) continue
+      const opp: Opponent = { label: form.id, party: [{ species: form.id, level }], aiLevel: 0, wild: false }
+      for (const st of starters) {
+        const plv = Math.max(CONTENT.config.creature.starterLevel, level)
+        const hit = maxHitFraction(st, plv, opp)
+        const win = winRate(st, plv, opp)
+        if (hit >= 1 || win < EARLY_MIN_WIN) bad.push(`${st.id} vs ${form.id} L${level}: win ${win}, max hit ${hit.toFixed(2)}`)
+      }
+    }
+  }
+  assert.deepEqual(bad, [])
 })
 
 test('opening balance summary', () => {

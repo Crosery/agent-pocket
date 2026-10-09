@@ -33,6 +33,14 @@ export function consumeItem(ctx: SaveCtx, itemId: string): boolean {
   return true
 }
 
+/** Puts boss loot into the bag; false for an unknown item. */
+export function addBagItem(ctx: SaveCtx, itemId: string, qty: number): boolean {
+  if (!ctx.data.items[itemId] || !(qty > 0)) return false
+  ctx.save.bag[itemId] = (ctx.save.bag[itemId] ?? 0) + Math.floor(qty)
+  ctx.events.emit('bag:changed', {})
+  return true
+}
+
 /** Applies a money delta (never below zero); returns the delta actually applied. */
 export function changeMoney(ctx: SaveCtx, delta: number): number {
   const before = ctx.save.money

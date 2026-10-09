@@ -115,7 +115,7 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number): 
         el('span', { class: 'aps-stat-v', text: k === 'hp' ? t('screens.summary.hpValue', { hp: c.hp, max: stats.hp }) : String(stats[k]) }),
         meterIcons(ivStars(c.ivs[k] ?? 0, ivMax, SCREENS.summary.ivStars), SCREENS.summary.ivStars, 'star', 'starOff'),
       ]))
-      return [el('div', 'aps-stats-layout', [el('div', 'aps-stat-table', [el('div', 'aps-stat-row is-head', [el('span', { text: t('screens.summary.stat') }), el('span', { text: t('screens.summary.value') }), el('span', { text: t('screens.summary.potential') })]), ...rows]), radar.el])]
+      return [el('div', 'aps-stats-layout', [el('div', 'aps-stat-table', [el('div', 'aps-stat-row is-head', [el('span', { text: t('screens.summary.stat') }), el('span', { text: t('screens.summary.value') }), el('span', { text: t('screens.summary.potential') })]), ...rows, el('div', 'aps-stat-help', keys.map((k) => el('div', { class: 'ap-dim', text: t('screens.summary.statHelp', { name: CONTENT.statByKey[k]?.nameZh ?? k, desc: CONTENT.statByKey[k]?.desc ?? '' }) })))]), radar.el])]
     }
 
     let moveRows: HTMLElement[] = []

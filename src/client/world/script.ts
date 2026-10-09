@@ -12,6 +12,7 @@ import { GAME, textOrKey } from './config.ts'
 import { addCreature, addItem, applyQuest, changeMoney, flagSet, healParty, markSeen, removeItem, rewardText } from './save-ops.ts'
 import { presentArrival } from './rarity-spawns.ts'
 import { scriptResearch } from './research.ts'
+import { TUTORIAL } from '../onboarding/config.ts'
 
 export type ScriptOutcome = 'done' | 'end' | 'abort'
 
@@ -208,6 +209,18 @@ export function createScriptRunner(host: ScriptHost) {
           await ctx.screens.shop(ids, Object.keys(priceMul).length ? { priceMul } : undefined)
         }
         return 'done'
+      case 'exchange':
+        await ctx.screens.exchange(s.desk)
+        return 'done'
+      case 'teach': {
+        const flag = `${TUTORIAL.curriculum.flagPrefix}${s.lesson}`
+        if (!ctx.save.flags[flag]) {
+          ctx.save.flags[flag] = true
+          ctx.audio.playSfx(GAME.script.questSfx)
+          ctx.ui.toast(t('tutorial.taught', { lesson: t(`tutorial.manual.${s.lesson}.title`) }), 'info')
+        }
+        return 'done'
+      }
       case 'openBox':
         await ctx.screens.box()
         host.onWorldChanged()

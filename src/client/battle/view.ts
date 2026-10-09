@@ -9,7 +9,7 @@ import { BATTLE_UI } from './config.ts'
 import { createBattleEffectsPanel } from './effects-panel.ts'
 import { createMenus, type Menus } from './menus.ts'
 import { createMessageBox, type MessageBox } from './message.ts'
-import type { StatDelta } from './model.ts'
+import type { BossPanelInfo, StatDelta } from './model.ts'
 import { createStatusPanel, type StatusPanel } from './status-panel.ts'
 import './battle.css'
 
@@ -22,11 +22,13 @@ export interface BattleView {
   /** PvP decision countdown (seconds left) or null to hide. */
   setTimer(secondsLeft: number | null): void
   banner(side: SideIndex, text: string): void
+  /** Boss strip of the foe window (null when it is not a boss fight). */
+  setBoss(info: BossPanelInfo | null): void
   /** Level-up stat window; resolves on confirm or after the configured time. */
   levelUp(title: string, deltas: StatDelta[]): Promise<void>
   /** Hides status windows (evolution, end of battle). */
   setHudVisible(on: boolean): void
-  /** Hides the bottom bar (message, menus, own status) while screens / kit dialogues are on top. */
+  /** Hides the bottom bar (message, menus, own status) and the foe window while screens / kit dialogues are on top. */
   setBarVisible(on: boolean): void
   /** Extra handler that sees input first (e.g. evolution cancel). */
   setInterceptor(fn: ((inp: Input) => boolean) | null): void
@@ -85,6 +87,10 @@ export function createBattleView(audio: AudioManager, settings: () => Settings):
       root.append(node)
       banners.push({ node, left: T.abilityBannerMs })
     },
+    setBoss(info) {
+      status[1].setBoss(info)
+      root.classList.toggle('has-boss', info !== null)
+    },
     levelUp(title, deltas) {
       const p = panel(title, { className: 'apb-levelup ap-anim-in' })
       for (const d of deltas) {
@@ -108,7 +114,10 @@ export function createBattleView(audio: AudioManager, settings: () => Settings):
       })
     },
     setHudVisible(on) { root.classList.toggle('is-hud-hidden', !on) },
-    setBarVisible(on) { bar.style.visibility = on ? '' : 'hidden' },
+    setBarVisible(on) {
+      bar.style.visibility = on ? '' : 'hidden'
+      root.classList.toggle('is-covered', !on)
+    },
     setInterceptor(fn) { interceptor = fn },
     input(inp) {
       if (interceptor?.(inp)) return true

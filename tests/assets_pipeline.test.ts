@@ -12,6 +12,7 @@ import { CONTENT } from '../src/shared/content/index.ts'
 import pipelineJson from '../assets_src/pipeline.json' with { type: 'json' }
 import templatesJson from '../assets_src/prompts/templates.json' with { type: 'json' }
 import jobsJson from '../assets_src/prompts/jobs.json' with { type: 'json' }
+import sprite2dJson from '../assets_src/sprite2d.json' with { type: 'json' }
 import { buildCharacterIdleAtlas, type CharacterPixels } from '../src/client/render/character-idle.ts'
 
 interface SourceSpec { file: string; id: string; path?: string; where?: Record<string, unknown>; exclude?: string[]; fields?: Record<string, string>; groupCount?: Record<string, string> }
@@ -342,18 +343,26 @@ test('every character has four articulated idle loops with planted shoes and unc
       const tag = `${character.id}/${dir}`
       const neutral = crop(source, 0, row)
       if (authored) {
-        // Motion-transfer atlases (tools/motion_transfer.py) ship real idle and walk poses; only the contract applies.
+        // sprite2d atlases (tools/sprite2d.py) ship their own idle and walk poses; only the contract applies.
+        // Motion may not detach more pixels than the drawn base frames already had loose (a hovering drone).
+        let loose = detached(neutral)
+        const basePath = join(ROOT, sprite2dJson.baseDir, `${character.id}.png`)
+        if (existsSync(basePath)) {
+          const base = readPng(basePath, true)
+          const img = { width: base.width, height: base.height, data: base.rgba! }
+          for (let col = 0; col < base.width / cell; col++) loose = Math.max(loose, detached(crop(img, col, row)))
+        }
         const poses = new Set<string>()
         for (let col = 0; col < sprites.sheetIdleFrames + sprites.sheetWalkFrames; col++) {
           const pose = crop(atlas, col, row)
           if (col < sprites.sheetIdleFrames) poses.add(Buffer.from(pose).toString('base64'))
-          assert.ok(detached(pose) <= Math.max(2, detached(neutral)), `${tag}/${col}: disconnected body part`)
+          assert.ok(detached(pose) <= Math.max(2, loose), `${tag}/${col}: disconnected body part`)
           for (let i = 3; i < pose.length; i += 4) assert.ok(pose[i] === 0 || pose[i] === 255, `${tag}: preserve pixel alpha`)
         }
         assert.ok(poses.size >= 4, `${tag}: only ${poses.size} distinct idle poses`)
         const walk = new Set<string>()
         for (let col = 0; col < sprites.sheetWalkFrames; col++) walk.add(Buffer.from(crop(atlas, col + sprites.sheetIdleFrames, row)).toString('base64'))
-        assert.ok(walk.size >= 6, `${tag}: walk cycle has only ${walk.size} distinct poses`)
+        assert.ok(walk.size >= 4, `${tag}: walk cycle has only ${walk.size} distinct poses`)
         continue
       }
       const top = Math.floor(neutral.findIndex((value, i) => i % 4 === 3 && value === 255) / (cell * 4))

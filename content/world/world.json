@@ -94,6 +94,7 @@
     "stairsTerrain": "stairs",
     "accessStairSpacing": 18,
     "accessStairMarker": "lamp",
+    "levelMap": [0, 1, 1, 1, 1, 2, 2, 3, 4, 5, 6, 7, 8],
     "access": {"minPocket": 16, "maxRepairs": 900, "propCost": 4}
   },
   "encounters": {
@@ -101,6 +102,7 @@
     "maxSpecies": 12,
     "rareMinOrder": 2,
     "nightPhase": "night",
+    "coverage": {"maxOrder": 3},
     "rarityLevelCaps": [
       {"maxLevel": 9, "maxOrder": 0, "onlyTypes": ["chat", "write", "sound", "vision", "motion"]},
       {"maxLevel": 14, "maxOrder": 1}

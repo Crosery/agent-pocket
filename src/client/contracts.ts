@@ -37,6 +37,10 @@ export interface GameEvents {
   'battle:end': { kind: BattleKind; result: BattleResult }
   /** Every batch of battle events as the battle client plays it (research / roaming-legend hp tracking). */
   'battle:events': { kind: BattleKind; events: readonly BattleEvent[] }
+  /** A full-screen panel opened (id = its aps-<id> class; 'online' for the multiplayer hub). Drives teaching tips. */
+  'screen:opened': { screen: string }
+  /** A world event became active (events-runtime). */
+  'world:event': { id: string; hidden: boolean }
   'settings:changed': { settings: Settings }
   'net:status': { status: NetStatus }
   'chat:message': { from: string; name: string; channel: ChatChannel; text: string; at: number }
@@ -162,6 +166,10 @@ export interface PostParams {
   exposure: number
   pixelScale: number          // internal res divisor
   flash: number               // 0..1 white flash overlay (animated by flash())
+  /** Split toning: RGB multipliers for shadows / highlights blended by `split` (0 = off, 1 = full). */
+  shadowTint?: [number, number, number]
+  highlightTint?: [number, number, number]
+  split?: number
 }
 
 export interface RenderView {
@@ -232,6 +240,8 @@ export interface CreatureActor {
   setShiny(s: boolean): void
   /** Rarity aura (glow ring/particles) for SR+ wild creatures. */
   setAura(color: string | null): void
+  /** The player's follower: drawn after everything but the player and never over them, however close or large. */
+  setCompanion?(on: boolean): void
   bubble(text: string, ms?: number): void
   update(dtSec: number): void
   dispose(): void
@@ -352,6 +362,10 @@ export interface Screens {
   dex(): Promise<void>
   /** priceMul: buy-price multiplier per item id (active world events, e.g. sales); absent = list price. */
   shop(itemIds: string[], opts?: { priceMul?: Record<string, number> }): Promise<void>
+  /** Barter screen of an exchange desk (content/exchange.json). */
+  exchange(desk: string): Promise<void>
+  /** 教学手册: every curriculum lesson, re-readable (content/tutorial.json curriculum). */
+  manual(): Promise<void>
   box(): Promise<void>
   worldMap(opts: { fly: boolean }): Promise<string | null>  // town id for fly
   quests(): Promise<void>

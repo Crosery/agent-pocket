@@ -1,0 +1,266 @@
+#!/usr/bin/env python3
+"""2D pixel-puppet motion for the drawn character sheets: 4-frame walk sheet -> 8 idle + 8 walk atlas.
+
+The look stays the original 2D drawing: pixels are only moved or duplicated, never resampled or redrawn.
+
+Rig per frame: head / body / legs bands (neck = narrowest row inside `bands.neckBand`, legs = bottom `bands.legFrac`),
+arms = body pixels outside the legs' columns below `arms.topFrac`, legs split at their middle column. Pieces not
+connected to the figure (a hovering drone) move rigidly with the body.
+  idle  the stand pose (front / back: both feet planted first) breathing: the body sinks 1 px over `idle.body`, the
+        head follows `idle.headLag` frames later
+  walk  front / back: from the planted stand pose, one foot lifted per step (`walk.front`), the arms counter-swinging
+        `arms.swing` px; side: the drawn strides (`walk.sidePoses`). Each pose is shown twice, first with the head
+        still at the previous pose's height (at most 1 px off the body), then settled
+A band moved down covers the band below; a band moved up leaves a seam row that is filled by stretching the row
+under it, only where the drawing had pixels and both neighbours are opaque. Every frame keeps a foot on the baseline.
+
+Parameters: assets_src/sprite2d.json. Layout: content/config.json `sprites`.
+Usage: python3 tools/sprite2d.py build <id ...|all>
+       python3 tools/sprite2d.py review <id ...|all>   (4x sheet + idle/walk GIFs per id in review.dir)
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+
+import numpy as np
+from assetlib import ROOT, content_json, hex_rgb, load_json, save_png
+from PIL import Image
+
+CFG = load_json(ROOT / "assets_src/sprite2d.json")
+SPRITES = content_json("content/config.json")["sprites"]
+CELL = SPRITES["sheetCell"]
+ROWS = sorted(SPRITES["sheetRows"].values())
+
+
+def _opaque(f: np.ndarray) -> np.ndarray:
+    return f[..., 3] > 0
+
+
+def _top(f: np.ndarray) -> int:
+    return int(np.nonzero(_opaque(f).any(axis=1))[0].min())
+
+
+def rig(f: np.ndarray) -> dict:
+    """Bands of one frame: neck / arm / hip rows and the legs' column extent (split at legMid into left / right)."""
+    b = CFG["bands"]
+    op = _opaque(f)
+    ys = np.nonzero(op.any(axis=1))[0]
+    top, bot = int(ys.min()), int(ys.max())
+    h = bot - top + 1
+    lo, hi = top + round(b["neckBand"][0] * h), top + round(b["neckBand"][1] * h)
+    neck = lo + int(np.argmin(op.sum(axis=1)[lo : hi + 1]))
+    hip = max(bot + 1 - max(b["minLegRows"], round(b["legFrac"] * h)), neck + 1)
+    xs = np.nonzero(op[hip])[0]
+    leg_l, leg_r = int(xs.min()), int(xs.max())
+    arm_top = neck + round(CFG["arms"]["topFrac"] * (hip - neck))
+    return {"neck": neck, "hip": hip, "armTop": arm_top, "legL": leg_l, "legR": leg_r, "legMid": (leg_l + leg_r + 1) // 2}
+
+
+def _floating(op: np.ndarray) -> np.ndarray:
+    """Pixels not 8-connected to the largest piece (a hovering drone, a loose ribbon): they move rigidly."""
+    h, w = op.shape
+    lab = np.full((h, w), -1, np.int32)
+    sizes: list[int] = []
+    for y0, x0 in zip(*np.nonzero(op), strict=True):
+        if lab[y0, x0] >= 0:
+            continue
+        n, todo = len(sizes), [(y0, x0)]
+        lab[y0, x0] = n
+        for y, x in todo:
+            for ny in range(max(y - 1, 0), min(y + 2, h)):
+                for nx in range(max(x - 1, 0), min(x + 2, w)):
+                    if op[ny, nx] and lab[ny, nx] < 0:
+                        lab[ny, nx] = n
+                        todo.append((ny, nx))
+        sizes.append(len(todo))
+    return op & (lab != int(np.argmax(sizes)))
+
+
+def _blit(dst: np.ndarray, src: np.ndarray, mask: np.ndarray, dy: int) -> None:
+    ys, xs = np.nonzero(mask)
+    ty = ys + dy
+    ok = (ty >= 0) & (ty < dst.shape[0])
+    dst[ty[ok], xs[ok]] = src[ys[ok], xs[ok]]
+
+
+def pose(
+    f: np.ndarray, d_head: int, d_body: int, d_arms: tuple[int, int] = (0, 0), d_legs: tuple[int, int] = (0, 0)
+) -> np.ndarray:
+    """Redraws f with the head band moved d_head px, the body band d_body px, the left / right arm (body pixels
+    outside the legs' columns, below armTop) a further d_arms px and the left / right leg d_legs px (negative =
+    foot lifted; the planted leg stays on the baseline)."""
+    if d_head == 0 and d_body == 0 and d_arms == (0, 0) and d_legs == (0, 0):
+        return f.copy()
+    g = rig(f)
+    whole = _opaque(f)
+    loose = _floating(whole)
+    op = whole & ~loose
+    rows = np.arange(f.shape[0])[:, None]
+    cols = np.arange(f.shape[1])[None, :]
+    body = op & (rows >= g["neck"]) & (rows < g["hip"])
+    lower = body & (rows >= g["armTop"])
+    arm_l, arm_r = lower & (cols < g["legL"]), lower & (cols > g["legR"])
+    out = np.zeros_like(f)
+    legs = op & (rows >= g["hip"])
+    _blit(out, f, legs & (cols < g["legMid"]), d_legs[0])
+    _blit(out, f, legs & (cols >= g["legMid"]), d_legs[1])
+    _blit(out, f, body & ~arm_l & ~arm_r, d_body)
+    _blit(out, f, arm_l, d_body + d_arms[0])
+    _blit(out, f, arm_r, d_body + d_arms[1])
+    _blit(out, f, op & (rows < g["neck"]), d_head)
+    _blit(out, f, loose, d_body)
+    for seam in (g["neck"], g["armTop"], g["hip"]):
+        for y in range(seam + 1, seam - 3, -1):
+            if not 1 <= y < f.shape[0] - 1:
+                continue
+            fill = op[y] & ~_opaque(out[y]) & _opaque(out[y + 1]) & _opaque(out[y - 1])
+            out[y, fill] = out[y + 1, fill]
+    return out
+
+
+def plant(f: np.ndarray) -> np.ndarray:
+    """Front / back stand pose with both feet on the baseline: a leg half drawn in the air (left over from the
+    sheet's own walk) is moved down onto it, up to walk.front.maxPlant px, its top stretched under the hem."""
+    g = rig(f)
+    op = _opaque(f)
+    bot = int(np.nonzero(op.any(axis=1))[0].max())
+    d = []
+    for x0, x1 in ((g["legL"], g["legMid"]), (g["legMid"], g["legR"] + 1)):
+        m = op[g["hip"] :, x0:x1]
+        low = g["hip"] + int(np.nonzero(m.any(axis=1))[0].max()) if m.any() else bot
+        d.append(min(bot - low, CFG["walk"]["front"]["maxPlant"]))
+    return pose(f, 0, 0, (0, 0), (d[0], d[1]))
+
+
+def idle_frames(stand: np.ndarray) -> list[np.ndarray]:
+    i = CFG["idle"]
+    body, lag = i["body"], i["headLag"]
+    return [pose(stand, body[(k - lag) % len(body)], body[k]) for k in range(len(body))]
+
+
+def _low(f: np.ndarray) -> int:
+    return int(np.nonzero(_opaque(f).any(axis=1))[0].max())
+
+
+def walk_frames(cells: list[np.ndarray], row: str) -> list[np.ndarray]:
+    """Side rows: the drawn strides (walk.sidePoses, their bob is drawn in). Front / back rows: built from the planted
+    stand pose, one foot lifted per step with the arms counter-swinging (walk.front); the lift shrinks until a foot
+    is still on the baseline (legs drawn as one block under a skirt). Each pose is shown twice, the first time with
+    the head still at the previous pose's height."""
+    w = CFG["walk"]
+    if row in w["sideRows"]:
+        seq = [cells[p] for p in w["sidePoses"]]
+        out = []
+        for k, cur in enumerate(seq):
+            lag = max(-1, min(1, _top(seq[k - 1]) - _top(cur)))
+            out += [pose(cur, lag, 0), cur.copy()]
+        return out
+    fr, swing = w["front"], CFG["arms"]["swing"][row]
+    stand = plant(cells[0])
+    ground = _low(stand)
+    out = []
+    for k, (body, foot) in enumerate(zip(fr["body"], fr["foot"], strict=True)):
+        arms = (-foot * swing, foot * swing)
+        prev = fr["body"][k - 1]
+        pair: list[np.ndarray] = []
+        for lift in range(fr["lift"], -1, -1):
+            legs = (-lift if foot < 0 else 0, -lift if foot > 0 else 0)
+            pair = [pose(stand, prev, body, arms, legs), pose(stand, body, body, arms, legs)]
+            if all(_low(f) == ground for f in pair):
+                break
+        out += pair
+    return out
+
+
+def build_sheet(base: np.ndarray) -> np.ndarray:
+    nb = base.shape[1] // CELL
+    names = {v: k for k, v in SPRITES["sheetRows"].items()}
+    rows = []
+    for r in ROWS:
+        cells = [base[r * CELL : (r + 1) * CELL, c * CELL : (c + 1) * CELL] for c in range(nb)]
+        stand = cells[0] if names[r] in CFG["walk"]["sideRows"] else plant(cells[0])
+        frames = idle_frames(stand) + walk_frames(cells, names[r])
+        rows.append(np.concatenate(frames, axis=1))
+    sheet = np.concatenate(rows, axis=0)
+    want = SPRITES["sheetIdleFrames"] + SPRITES["sheetWalkFrames"]
+    if sheet.shape[1] != want * CELL:
+        raise ValueError(f"atlas has {sheet.shape[1] // CELL} columns, config wants {want}")
+    return sheet
+
+
+def _ids(args: list[str]) -> list[str]:
+    if args == ["all"]:
+        return sorted(p.stem for p in (ROOT / CFG["baseDir"]).glob("*.png"))
+    return args
+
+
+def _load(path) -> np.ndarray:
+    return np.array(Image.open(path).convert("RGBA"))
+
+
+def build(ids: list[str]) -> None:
+    for i in ids:
+        sheet = build_sheet(_load(ROOT / CFG["baseDir"] / f"{i}.png"))
+        save_png(Image.fromarray(sheet, "RGBA"), ROOT / CFG["outDir"] / f"{i}.png")
+        print(f"{i}: {sheet.shape[1]}x{sheet.shape[0]}")
+
+
+def review(ids: list[str]) -> None:
+    rv = CFG["review"]
+    s, bg = rv["scale"], (*hex_rgb(rv["background"]), 255)
+    out = ROOT / rv["dir"]
+    n_idle = SPRITES["sheetIdleFrames"]
+    for i in ids:
+        sheet = build_sheet(_load(ROOT / CFG["baseDir"] / f"{i}.png"))
+        img = Image.new("RGBA", (sheet.shape[1], sheet.shape[0]), bg)
+        img.alpha_composite(Image.fromarray(sheet, "RGBA"))
+        save_png(
+            img.resize((img.width * s, img.height * s), Image.Resampling.NEAREST),
+            out / f"{i}_sheet.png",
+        )
+        for name, c0, n in (
+            ("idle", 0, n_idle),
+            ("walk", n_idle, SPRITES["sheetWalkFrames"]),
+        ):
+            frames = []
+            for k in range(n):
+                strip = Image.new("RGBA", (CELL * len(ROWS), CELL), bg)
+                for j, r in enumerate(ROWS):
+                    cell = sheet[
+                        r * CELL : (r + 1) * CELL, (c0 + k) * CELL : (c0 + k + 1) * CELL
+                    ]
+                    strip.alpha_composite(
+                        Image.fromarray(np.ascontiguousarray(cell), "RGBA"),
+                        (j * CELL, 0),
+                    )
+                frames.append(
+                    strip.resize(
+                        (strip.width * s, strip.height * s), Image.Resampling.NEAREST
+                    ).convert("RGB")
+                )
+            out.mkdir(parents=True, exist_ok=True)
+            frames[0].save(
+                out / f"{i}_{name}.gif",
+                save_all=True,
+                append_images=frames[1:],
+                duration=rv["gifMs"][name],
+                loop=0,
+            )
+        print(f"{i}: {out}")
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    ap.add_argument("cmd", choices=["build", "review"])
+    ap.add_argument("ids", nargs="+")
+    a = ap.parse_args()
+    (build if a.cmd == "build" else review)(_ids(a.ids))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

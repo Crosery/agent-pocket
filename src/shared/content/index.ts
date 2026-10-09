@@ -2,7 +2,7 @@
 // This is the ONLY place game data enters the code. Everything else looks data up by id via CONTENT.
 // World/story JSON (content/world/**) is loaded by src/shared/world/ itself.
 import type {
-  AbilityDef, AudioFile, BiomeDef, CharacterSheetDef, GameConfig, ItemDef, MoveDef, PropDef, RarityDef,
+  AbilityDef, AudioFile, BiomeDef, BossDef, BossFile, CharacterSheetDef, GameConfig, ItemDef, MoveDef, PropDef, RarityDef,
   DexResearchEntry, SpeciesDef, StatDef, StatusDef, TerrainDef, TextTable, TimeOfDay, TypeChart, TypeDef, TypeId, TypesFile,
   VolatileDef, WeatherDef,
 } from '../types.ts'
@@ -17,6 +17,7 @@ import weathersJson from '../../../content/weathers.json' with { type: 'json' }
 import abilitiesJson from '../../../content/abilities.json' with { type: 'json' }
 import movesJson from '../../../content/moves.json' with { type: 'json' }
 import itemsJson from '../../../content/items.json' with { type: 'json' }
+import bossesJson from '../../../content/bosses.json' with { type: 'json' }
 import speciesJson from '../../../content/species.json' with { type: 'json' }
 import dexResearchJson from '../../../content/dex-research.json' with { type: 'json' }
 import biomesJson from '../../../content/biomes.json' with { type: 'json' }
@@ -39,10 +40,12 @@ import textMultiplayer from '../../../content/text/zh-CN/multiplayer.json' with 
 import textEvents from '../../../content/text/zh-CN/events.json' with { type: 'json' }
 import textResearch from '../../../content/text/zh-CN/research.json' with { type: 'json' }
 import textTutorial from '../../../content/text/zh-CN/tutorial.json' with { type: 'json' }
+import textBoss from '../../../content/text/zh-CN/boss.json' with { type: 'json' }
 // Gameplay content (content/events/**, content/research.json) is loaded by src/shared/gameplay/data.ts; only its
 // reference checks are hooked in here (both modules import JSON/types only, so there is no cycle).
 import { GAMEPLAY } from '../gameplay/data.ts'
 import { validateGameplay } from '../gameplay/validate.ts'
+import { validateBosses } from '../battle/boss-validate.ts'
 
 export interface Content {
   config: GameConfig
@@ -68,6 +71,10 @@ export interface Content {
   species: Record<string, SpeciesDef>
   /** Sorted by dexNo. */
   speciesList: SpeciesDef[]
+  /** Boss battle definitions (content/bosses.json) by id / by the species that carries them. */
+  bosses: Record<string, BossDef>
+  bossList: BossDef[]
+  bossBySpecies: Record<string, BossDef>
   /** Research metadata matched to the playable Dex roster from local lineage/event dossiers. */
   dexResearch: Record<string, DexResearchEntry>
   dexResearchMeta: { source: string; lineageDate: string; eventsCheckedAt: string; entryCount: number }
@@ -114,6 +121,7 @@ function build(): Content {
     meta: { source: string; lineageDate: string; eventsCheckedAt: string; entryCount: number }
     entries: Record<string, DexResearchEntry>
   }
+  const bossList: BossDef[] = Object.entries((bossesJson as unknown as BossFile).bosses).map(([id, b]) => ({ ...b, id }))
   return {
     config: configJson as unknown as GameConfig,
     types: types.types,
@@ -137,6 +145,9 @@ function build(): Content {
     itemList,
     species: byId(speciesList, 'id'),
     speciesList,
+    bosses: byId(bossList, 'id'),
+    bossList,
+    bossBySpecies: byId(bossList, 'species'),
     dexResearch: dexResearchFile.entries,
     dexResearchMeta: dexResearchFile.meta,
     biomes,
@@ -150,7 +161,7 @@ function build(): Content {
     text: flattenText({
       common: textCommon, battle: textBattle, ui: textUi, hud: textHud, screens: textScreens, world: textWorld,
       net: textNet, game: textGame, items: textItems, audio: textAudio, battleui: textBattleUi, multiplayer: textMultiplayer,
-      events: textEvents, research: textResearch, tutorial: textTutorial,
+      events: textEvents, research: textResearch, tutorial: textTutorial, boss: textBoss,
     }),
   }
 }
@@ -275,5 +286,6 @@ export function validateContent(c: Content = CONTENT): string[] {
   for (const p of Object.values(c.props)) if (p.footprint.length !== 2) errs.push(`prop ${p.key}: footprint must be [w,d]`)
   for (const k of Object.values(c.audio.battleMusic)) if (!c.audio.bgm.some((b) => b.id === k)) errs.push(`audio.battleMusic: unknown track "${k}"`)
   errs.push(...validateGameplay(GAMEPLAY, c))
+  errs.push(...validateBosses(c.bossList, c))
   return errs
 }

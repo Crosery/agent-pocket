@@ -14,8 +14,8 @@
     "maxChips": 3,
     "refreshSec": 0.5,
     "overlayFadeMs": 900,
-    "chipTags": ["festival", "culture", "legend", "chain", "stele", "hidden", "easter", "rumor"],
-    "tagColors": {"festival": "#ff7ab0", "culture": "#7ad8ff", "legend": "#ff5c5c", "chain": "#ffe66b", "stele": "#ffe66b", "hidden": "#b07cff", "easter": "#b07cff", "rumor": "#9fe0a8"},
+    "chipTags": ["festival", "culture", "legend", "chain", "stele", "hidden", "easter", "rumor", "buzz"],
+    "tagColors": {"festival": "#ff7ab0", "culture": "#7ad8ff", "legend": "#ff5c5c", "chain": "#ffe66b", "stele": "#ffe66b", "hidden": "#b07cff", "easter": "#b07cff", "buzz": "#7ad8ff", "rumor": "#9fe0a8"},
     "defaultColor": "#7ad8ff"
   },
   "intel": {"calendarDays": 60, "maxNews": 40, "maxRumors": 80, "visibleRows": 8, "compactVisibleRows": 5},

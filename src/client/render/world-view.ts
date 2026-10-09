@@ -10,27 +10,33 @@ import { CONTENT } from '../../shared/content/index.ts'
 import type { GameMap } from '../../shared/types.ts'
 import type { ActorOptions, AssetStore, HD2DRenderer, PostParams, RenderView, WorldView, WorldWeather } from '../contracts.ts'
 import {
-  RENDER, dirFromAngles, hexToRgb, lerpHex, qualityPreset, sampleLighting, sunState,
+  RENDER, dirFromAngles, hexToRgb, lerpHex, lightingTier, qualityPreset, sampleLighting, sunState,
   type LightingState, type QualityPreset, type StaticLighting, type Vec3,
 } from './config.ts'
 import { isHD2DRendererExt } from './hd2d.ts'
+import { updateSpriteLighting } from './sprite-lighting.ts'
 import { cameraPitch, cameraYaw } from './sprite-utils.ts'
 import { createActorImpl, createCreatureActorImpl, type ActorContext, type ActorEntry } from './world/actors.ts'
 import { createTerrainAtlas, terrainAtlasKeys } from './world/atlas.ts'
 import { createCameraRig, type CameraBounds } from './world/camera.ts'
-import { applySnowDust, bindClimate, createClimate, type ClimateGrid } from './world/climate.ts'
+import { applySnowDust, bindClimate, createClimate, setSnowCover, type ClimateGrid } from './world/climate.ts'
 import { tileOf } from './world/coords.ts'
 import { createDecorLayer } from './world/decor.ts'
 import { createFringeLayer } from './world/fringe.ts'
+import { createFootsteps, type StepActor } from './world/footsteps.ts'
+import { createReflections } from './world/reflections.ts'
 import { createFxSystem } from './world/fx.ts'
 import { createGrassLayer, type GrassBender } from './world/grass.ts'
+import { createLeafSystem } from './world/leaves.ts'
 import { createLightRig, type LightSource } from './world/lights.ts'
 import { createLiquidMaterials } from './world/liquids.ts'
 import { applyOcclusion, bindOcclusion, setOcclusionView } from './world/occlusion.ts'
 import { createOverlayLayer } from './world/overlay.ts'
 import { createAurora, createParticleField, type ParticleField } from './world/particles.ts'
-import { createPropLayer, type PropChunk } from './world/props.ts'
+import { createPropLayer, type Canopy, type PropChunk, type ShaftAnchor } from './world/props.ts'
 import { createQuestTrail } from './world/quest-trail.ts'
+import { applySceneLight, createSceneLight, patchSceneLight, sceneLightUniforms } from './world/scene-light.ts'
+import { createShafts } from './world/shafts.ts'
 import { createSkyRig } from './world/sky.ts'
 import { createStreamer, type ChunkSlot, type StreamFrame, type Streamer, type StreamStats } from './world/streamer.ts'
 import { buildChunk, createHeightField, createTerrainSampler, sampleWalkHeight, type HeightField, type TerrainSampler } from './world/terrain.ts'
@@ -44,6 +50,8 @@ interface ChunkData {
   decor: THREE.InstancedMesh[]
   props: PropChunk | null
   lights: LightSource[]
+  /** Tree gaps where light shafts can fall (from the prop stage). */
+  anchors: ShaftAnchor[]
   /** Shader programs of the finished chunk are linked (compileAsync): shown only then, so a material seen for the
    * first time never stalls a frame on a synchronous compile. */
   ready: boolean
@@ -61,6 +69,8 @@ export interface WorldViewExt extends WorldView {
   readonly worldGen: { prefetched: number; ensured: number; lastMs: number; maxMs: number; retainMs: number } | null
   /** Chunks shown by the compile timeout before their programs were linked (should stay 0). */
   readonly compileTimeouts: number
+  /** Lighting diagnostics (automation / dev overlay): light-field lights in use, cloud shadow strength, wetness, light shafts shown. */
+  readonly lightDebug: { fieldLights: number; sources: number; cloud: number; wet: number; shafts: number; lamps: number }
   /** Re-reads tiles / objects of the loaded map (after runtime edits such as an opened gate) and rebuilds chunks. */
   invalidateMap(): void
 }
@@ -84,18 +94,23 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   const sky = createSkyRig(scene)
   const atlas = createTerrainAtlas(assets, terrainAtlasKeys())
   // terrain takes the occlusion cutaway too: cave wall masses and cliffs south of the player would hide it
-  const matte = applyOcclusion(applySnowDust(new THREE.MeshLambertMaterial({ map: atlas.texture, vertexColors: true }), false))
-  const glossy = applyOcclusion(applySnowDust(new THREE.MeshPhongMaterial({
+  const matte = applySceneLight(applyOcclusion(applySnowDust(new THREE.MeshLambertMaterial({ map: atlas.texture, vertexColors: true }), false)), true)
+  const glossy = applySceneLight(applyOcclusion(applySnowDust(new THREE.MeshPhongMaterial({
     map: atlas.texture, vertexColors: true, shininess: RENDER.terrain.glossy.shininess,
     specular: new THREE.Color().setRGB(...hexToRgb(RENDER.terrain.glossy.specular), THREE.SRGBColorSpace),
-  }), false))
+  }), false)), true)
   const liquids = createLiquidMaterials()
-  const grass = createGrassLayer(assets, atlas)
+  const grass = createGrassLayer(assets, atlas, { trample: true })
   const props = createPropLayer(assets, { occlusion: true })
   const decor = createDecorLayer()
   const fringe = createFringeLayer(atlas.texture)
   const lights = createLightRig()
+  const sceneLight = createSceneLight()
+  const shafts = createShafts()
   const fx = createFxSystem()
+  const leaves = createLeafSystem(Math.max(...Object.values(RENDER.physics.tiers).map((t) => t.leaves)))
+  const footsteps = createFootsteps((x, z, _y, amp) => liquids.ripple(x, z, amp))
+  const reflections = createReflections()
   const questTrail = createQuestTrail()
   const overlayLayer = createOverlayLayer(overlay)
   const aurora = createAurora()
@@ -103,7 +118,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   chunkRoot.name = 'chunks'
   const actorsGroup = new THREE.Group()
   actorsGroup.name = 'actors'
-  scene.add(chunkRoot, lights.group, fx.group, actorsGroup, aurora.mesh, questTrail.glow, questTrail.mesh)
+  scene.add(chunkRoot, lights.group, shafts.mesh, fx.group, footsteps.group, leaves.mesh, actorsGroup, aurora.mesh, questTrail.glow, questTrail.mesh)
   bindOcclusion(scene)
 
   const registry = new Set<ActorEntry>()
@@ -138,7 +153,14 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   /** First update after a map load: weather and ambient particles start at full level instead of fading in. */
   let snapAmbience = false
   let shadowsCast = true
+  let debugLamps = 0
+  let physicsTier = ''
+  /** Snow built up by the weather, 0..1 of render.json snowCover.max. */
+  let snowLevel = 0
+  let canopyT = 0
   const post: Partial<PostParams> = {}
+  const stepActors = new WeakMap<ActorEntry, StepActor>()
+  const stepList: StepActor[] = []
 
   const actorCtx: ActorContext = {
     assets,
@@ -186,7 +208,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
         chunkRoot.add(group)
         // infinite maps: lights are read in the props stage (after the world chunks exist)
         if (!infinite) lightsDirty = true
-        return { group, terrain: [], grass: [], decor: [], props: null, lights: infinite ? [] : props.lightsOf(cx, cy), ready: false, compiling: false, disposed: false }
+        return { group, terrain: [], grass: [], decor: [], props: null, lights: infinite ? [] : props.lightsOf(cx, cy), anchors: [], ready: false, compiling: false, disposed: false }
       },
       stages: [
         // world chunks this render chunk reads (neighbour tiles, prop footprints, lights); generation is budgeted
@@ -222,11 +244,13 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
           }
           for (const mesh of meshes) { mesh.name = 'terrain'; slot.data.group.add(mesh) }
           slot.data.terrain = meshes
+          patchSceneLight(slot.data.group)
           return true
         },
         (slot) => {
           slot.data.grass = grass.buildChunk(s, slot.cx, slot.cy, chunkSize, builtGrassPerTile, climate)
           for (const mesh of slot.data.grass) slot.data.group.add(mesh)
+          patchSceneLight(slot.data.group)
           return true
         },
         (slot, deadline) => {
@@ -235,12 +259,16 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
           slot.data.props = c
           props.applyShadows(c)
           for (const mesh of c.meshes) slot.data.group.add(mesh)
-          if (infinite) { slot.data.lights = props.lightsOf(slot.cx, slot.cy); lightsDirty = true }
+          patchSceneLight(slot.data.group)
+          slot.data.anchors = c.anchors
+          if (infinite) slot.data.lights = props.lightsOf(slot.cx, slot.cy)
+          lightsDirty = true
           return true
         },
         (slot) => {
           slot.data.decor = decor.build(s, slot.cx, slot.cy, chunkSize, climate, props.blockedIn(slot.cx, slot.cy), builtDecor, (k) => atlas.averageColor(k))
           for (const mesh of slot.data.decor) slot.data.group.add(mesh)
+          patchSceneLight(slot.data.group)
           return true
         },
       ],
@@ -287,9 +315,14 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   function updateLights(): void {
     if (!streamer || !lightsDirty) return
     lightsDirty = false
-    const list: LightSource[] = []
-    for (const slot of streamer.slots.values()) for (const l of slot.data.lights) list.push(l)
+    const list: LightSource[] = [], anchors: ShaftAnchor[] = []
+    for (const slot of streamer.slots.values()) {
+      for (const l of slot.data.lights) list.push(l)
+      for (const a of slot.data.anchors) anchors.push(a)
+    }
     lights.setSources(list)
+    sceneLight.setSources(list)
+    shafts.setAnchors(anchors)
   }
 
   /** Infinite maps, per frame after streaming: world-chunk prefetch ring ahead of the player (only when nothing
@@ -317,6 +350,11 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
 
   function clearMap(): void {
     questTrail.set([], () => 0)
+    grass.clearTrample()
+    footsteps.setEnv(null)
+    reflections.setEnv(null)
+    leaves.reset()
+    leaves.setCanopies([])
     streamer?.clear()
     streamer = null
     props.clear()
@@ -328,6 +366,8 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
     climate = null
     bindClimate(null, false)
     lights.setSources([])
+    sceneLight.setSources([])
+    shafts.setAnchors([])
   }
 
   function roomBounds(m: GameMap, s: TerrainSampler): CameraBounds {
@@ -345,6 +385,8 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
     if (f) return f
     const def = RENDER.particles[kind]
     if (!def) return null
+    // leaves / petals are simulated per leaf (leaves.ts) while the quality tier allows it
+    if (RENDER.leaves.kinds[kind] && (RENDER.physics.tiers[settings().quality]?.leaves ?? 0) > 0) return null
     f = createParticleField(kind, def, heights?.texture ?? null, mapSize, fieldScale, heights?.wrap ?? false)
     f.target = 0
     fields.set(kind, f)
@@ -360,7 +402,8 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
 
   function applySettingsChange(): void {
     const q = quality()
-    const pool = Math.min(CONTENT.config.render.maxPointLights, q.pointLights)
+    // the light field replaces the PointLight pool on the tiers that have it
+    const pool = lightingTier(settings().quality).fieldLights > 0 ? 0 : Math.min(CONTENT.config.render.maxPointLights, q.pointLights)
     if (pool !== poolSize) { poolSize = pool; lights.setPoolSize(pool); lightsDirty = true }
     let rebuild = props.setNatureVariants(q.natureVariants)
     if (Math.round(q.grassPerTile) !== builtGrassPerTile) { builtGrassPerTile = Math.round(q.grassPerTile); rebuild = true }
@@ -379,16 +422,16 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   applySettingsChange()
 
   // --- lighting composition -------------------------------------------------
-  const lightState = (): { s: LightingState; dir: Vec3; fade: number } => {
+  const lightState = (): { s: LightingState; dir: Vec3; fade: number; moon: boolean } => {
     const preset = staticPreset()
-    if (preset) return { s: { ...preset }, dir: dirFromAngles(preset.sunElevationDeg, preset.sunAzimuthDeg), fade: 1 }
+    if (preset) return { s: { ...preset }, dir: dirFromAngles(preset.sunElevationDeg, preset.sunAzimuthDeg), fade: 1, moon: false }
     const sun = sunState(minutes)
-    return { s: sampleLighting(minutes), dir: sun.dir, fade: sun.fade }
+    return { s: sampleLighting(minutes), dir: sun.dir, fade: sun.fade, moon: sun.moon }
   }
 
   /** Applies active weather grades (blended by their fade levels) onto a lighting state. */
-  function applyWeather(s: LightingState): { sunMul: number; wind: number; aurora: number; ambient: number } {
-    let sunMul = 1, wind = 1, auroraLevel = 0, ambient = 1
+  function applyWeather(s: LightingState): { sunMul: number; wind: number; aurora: number; ambient: number; wet: number } {
+    let sunMul = 1, wind = 1, auroraLevel = 0, ambient = 1, wet = 0
     for (const [kind, level] of weatherLevels) {
       const def = RENDER.weather[kind]
       if (!def || level <= 0.001) continue
@@ -402,6 +445,11 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       s.fogFar = mix(s.fogFar, g.fogFar)
       s.hemiIntensity = mix(s.hemiIntensity, g.hemi)
       s.bloomStrength = mix(s.bloomStrength, g.bloomStrength)
+      s.cloud = mix(s.cloud, g.cloud)
+      s.shaft = mix(s.shaft, g.shaft)
+      s.rim = mix(s.rim, g.rim)
+      s.split = mix(s.split, g.split)
+      if (g.wet !== undefined) wet = Math.max(wet, g.wet * w)
       if (g.warmth !== undefined) s.warmth += g.warmth * w
       if (g.vignette !== undefined) s.vignette += g.vignette * w
       if (g.lamps !== undefined) s.lamps = Math.max(s.lamps, g.lamps * w)
@@ -417,11 +465,18 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       if (def.aurora) auroraLevel = Math.max(auroraLevel, w)
       ambient *= 1 + ((def.ambientScale ?? 1) - 1) * w
     }
-    return { sunMul, wind, aurora: auroraLevel, ambient }
+    return { sunMul, wind, aurora: auroraLevel, ambient, wet }
   }
 
   const _v = new THREE.Vector3()
   const _head = new THREE.Vector3()
+  /** '#rrggbb' split-tone colour -> luminance-neutral RGB multipliers (#808080 = no tint): the tint shifts hue only. */
+  const tint = (hex: string, out: Vec3 = [1, 1, 1]): Vec3 => {
+    const c = hexToRgb(hex)
+    const luma = Math.max(1e-3, 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2])
+    out[0] = c[0] / luma; out[1] = c[1] / luma; out[2] = c[2] / luma
+    return out
+  }
 
   const view: WorldViewExt = {
     scene,
@@ -431,6 +486,12 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
     get loadMs() { return loadMs },
     get worldGen() { return map?.infinite ? { ...gen } : null },
     get compileTimeouts() { return compileTimeouts },
+    get lightDebug() {
+      return {
+        fieldLights: sceneLightUniforms.uApLfCount.value, sources: sceneLight.sourceCount, cloud: sceneLightUniforms.uApCloud.value.x,
+        wet: sceneLightUniforms.uApWet.value.x, shafts: shafts.shown, lamps: debugLamps,
+      }
+    },
 
     invalidateMap() {
       if (!map || !sampler) return
@@ -456,6 +517,18 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       bindClimate(climate, quality().snowDust)
       heights = createHeightField(s, IS.heightWindow)
       mapSize.copy(heights.size)
+      footsteps.setEnv({
+        terrainKey: (tx, ty) => s.terrain(tx, ty)?.key ?? null,
+        isLiquid: (tx, ty) => s.isLiquid(tx, ty),
+        liquidY: (tx, ty) => s.liquidY(tx, ty),
+        groundY: (x, z) => sampleWalkHeight(s, x, z),
+        snowAt: (x, z) => climate?.sample('snow', x, z) ?? 0,
+      })
+      reflections.setEnv({ waterY: (tx, ty) => (s.isLiquid(tx, ty) ? s.liquidY(tx, ty) : null), heights })
+      leaves.setGround(
+        (x, z) => (s.isLiquid(Math.floor(x), Math.floor(z)) ? s.liquidY(Math.floor(x), Math.floor(z)) : sampleWalkHeight(s, x, z)),
+        (x, z) => s.isLiquid(Math.floor(x), Math.floor(z)),
+      )
       gen.prefetched = 0; gen.ensured = 0; gen.lastMs = 0; gen.maxMs = 0; gen.retainMs = 0
       retainT = IS.retainSeconds
       decor.setMap(m)
@@ -521,9 +594,10 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
         else weatherLevels.set(k, next)
       }
 
-      const { s, dir, fade: sunFade } = lightState()
+      const { s, dir, fade: sunFade, moon } = lightState()
       // time-of-day night factor before weather raises the lamps (night-only particles follow the clock, not the clouds)
       const night = s.lamps
+      debugLamps = s.lamps
       const wx = applyWeather(s)
       sky.apply(s, dir, sunFade * wx.sunMul, rig.target, camera, rig.distance, time)
       const shadowsOn = st.shadows && q.shadows
@@ -538,6 +612,17 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
 
       const pxPerUnit = (ext?.internal.height ?? renderer.canvas.height) / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2))
       lights.update(dt, time, focus, s.lamps, q.glowSprites, pxPerUnit)
+      // light field (lamps, windows, fires), cloud shadows and wet ground: shared uniforms of every lit material
+      const lightTier = lightingTier(st.quality)
+      sceneLight.update({ dt, time, focus, quality: st.quality, state: s, wet: wx.wet, wind: wx.wind, sky: sky.hemi.color, outdoor })
+      updateSpriteLighting({
+        dir, sunColor: sky.sun.color, sunMul: sunFade, state: s, rim: 1, quality: st.quality, camera,
+        shadowUv: 1 / (sky.sun.shadow.camera.right - sky.sun.shadow.camera.left), shadows: shadowsOn, outdoor,
+      })
+      shafts.update({
+        dt, time, focus, count: outdoor ? lightTier.shafts : 0, dir, color: sky.sun.color, moon,
+        strength: s.shaft * (moon ? RENDER.lighting.shafts.moon : 1) * sunFade,
+      })
       liquids.update(time, sky.ambientLight, q.waterSparkles)
       updateWind(time, wx.wind)
 
@@ -557,7 +642,42 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
         benders.push({ x: p.x, y: p.y, z: p.z, r: e.bendRadius })
       }
       benders.sort((a, b) => (a.x - focus.x) ** 2 + (a.z - focus.z) ** 2 - ((b.x - focus.x) ** 2 + (b.z - focus.z) ** 2))
-      grass.setBenders(benders)
+      const tier = RENDER.physics.tiers[st.quality] ?? RENDER.physics.tiers.medium
+      if (st.quality !== physicsTier) {
+        physicsTier = st.quality
+        footsteps.configure(tier)
+        if (tier.leaves > 0) for (const k of Object.keys(RENDER.leaves.kinds)) { const old = fields.get(k); if (old) { scene.remove(old.points); old.dispose(); fields.delete(k) } }
+      }
+      if (tier.trample) {
+        const lh = CONTENT.config.world.levelHeight * 1.5
+        grass.updateTrample(dt, focus.x, focus.z, benders, (x, z, y) => !sampler || Math.abs(sampleWalkHeight(sampler, x, z) - y) < lh)
+      } else {
+        grass.clearTrample()
+        grass.setBenders(benders)
+      }
+
+      leaves.setLimit(tier.leaves)
+      canopyT -= dt
+      if (canopyT <= 0 && streamer) {
+        canopyT = 0.4
+        const near: Canopy[] = []
+        for (const slot of streamer.slots.values()) {
+          const list = slot.data.props?.canopies
+          if (!list?.length) continue
+          for (const c of list) if (Math.hypot(c.x - focus.x, c.z - focus.z) < RENDER.leaves.reach) near.push(c)
+        }
+        leaves.setCanopies(near)
+      }
+
+      stepList.length = 0
+      for (const e of registry) {
+        let a = stepActors.get(e)
+        if (!a) { a = { id: e, x: 0, y: 0, z: 0, visible: true, kind: e.stepKind, scale: e.stepScale }; stepActors.set(e, a) }
+        const p = e.object.position
+        a.x = p.x; a.y = p.y; a.z = p.z
+        a.visible = e.isVisible()
+        stepList.push(a)
+      }
 
       atlasT -= dt
       if (atlasT <= 0) { atlasT = 0.5; if (atlas.refresh()) grass.refresh() }
@@ -571,9 +691,16 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
         for (const [k, lvl] of weatherLevels) for (const p of RENDER.weather[k]?.particles ?? []) wanted.set(p, Math.max(wanted.get(p) ?? 0, lvl))
       }
       for (const k of wanted.keys()) field(k)
+      const leafLevels: Record<string, number> = {}
+      for (const k of Object.keys(RENDER.leaves.kinds)) {
+        const d = RENDER.particles[k]
+        leafLevels[k] = (wanted.get(k) ?? 0) * (d?.time === 'night' ? night : d?.time === 'day' ? 1 - night : 1)
+      }
+      leaves.setLevels(leafLevels)
       const windVec = new THREE.Vector2(...RENDER.wind.dir).normalize().multiplyScalar(wx.wind)
       for (const [k, fl] of fields) {
         fl.target = wanted.get(k) ?? 0
+        fl.impactOn = tier.impacts
         if (snap) fl.level = fl.target
         const def = RENDER.particles[k]
         const tf = def.time === 'night' ? night : def.time === 'day' ? 1 - night : 1
@@ -581,6 +708,16 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
         if (fl.target === 0 && fl.level < 0.002) { scene.remove(fl.points); fl.dispose(); fields.delete(k) }
       }
       aurora.update(time, camera, wx.aurora * (RENDER.aurora.nightOnly ? s.lamps : 1))
+      leaves.update(dt, time, focus, sky.ambientLight)
+      footsteps.update(dt, time, focus, stepList, sky.ambientLight, pxPerUnit)
+      reflections.update(time, sky.ambientLight, focus, registry, tier.reflections && outdoor)
+      liquids.setRipples(tier.ripples, weatherLevels.get('rain') ?? 0)
+      {
+        const C = RENDER.snowCover
+        const snowing = weatherLevels.get(C.weather) ?? 0
+        snowLevel = Math.min(1, Math.max(0, snowLevel + (snowing > 0.3 ? (dt / C.buildSec) * snowing : -dt / C.meltSec)))
+        setSnowCover(tier.snowCover && outdoor ? snowLevel * C.max : 0)
+      }
       fx.update(dt, time, camera, pxPerUnit)
       questTrail.update(time, reducedMotion.matches)
 
@@ -590,6 +727,9 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       post.warmth = s.warmth
       post.bloomStrength = s.bloomStrength
       post.vignette = s.vignette
+      post.split = lightTier.splitTone ? s.split : 0
+      post.shadowTint = tint(s.shadowTint, post.shadowTint)
+      post.highlightTint = tint(s.highlightTint, post.highlightTint)
     },
 
     setWeather(w) {
@@ -613,7 +753,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       return { x: (_v.x * 0.5 + 0.5) * w, y: (0.5 - _v.y * 0.5) * h, visible }
     },
 
-    spawnFx(kind, x, y, elev) { fx.spawn(kind, x, elev, y) },
+    spawnFx(kind, x, y, elev) { if (!footsteps.route(kind, x, elev, y)) fx.spawn(kind, x, elev, y) },
 
     setGroundItems(items) {
       // ground items are given as tile indices (GroundItemDef): orbs float over the tile centre
@@ -643,8 +783,8 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       clearMap()
       for (const e of [...registry]) e.object.removeFromParent()
       registry.clear()
-      grass.dispose(); props.dispose(); decor.dispose(); fringe.dispose(); lights.dispose(); fx.dispose(); questTrail.dispose(); aurora.dispose(); sky.dispose()
-      liquids.dispose(); atlas.dispose(); matte.dispose(); glossy.dispose(); overlayLayer.dispose()
+      grass.dispose(); props.dispose(); decor.dispose(); fringe.dispose(); lights.dispose(); sceneLight.dispose(); shafts.dispose(); fx.dispose(); questTrail.dispose(); aurora.dispose(); sky.dispose()
+      liquids.dispose(); footsteps.dispose(); leaves.dispose(); atlas.dispose(); matte.dispose(); glossy.dispose(); overlayLayer.dispose()
       map = null
       sampler = null
     },

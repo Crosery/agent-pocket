@@ -47,4 +47,4 @@ npm run typecheck && npm test && npm run build
 
 ## 文档地图
 
-`docs/DESIGN.md` 设计总览 · `docs/world.md` 世界 · `docs/battle-rules.md` 战斗 · `docs/story.md` 剧情 · `docs/roster.md` 智灵名册 · `docs/assets.md` 美术管线 · `docs/music.md` 音乐 · `docs/RELEASING.md` 分支与发布 · `docs/conventions/` issue / 追踪 / PR / 审查规范。
+`docs/DESIGN.md` 设计总览 · `docs/world.md` 世界 · `docs/battle-rules.md` 战斗 · `docs/balance.md` 数值框架 · `docs/story.md` 剧情 · `docs/roster.md` 智灵名册 · `docs/assets.md` 美术管线 · `docs/music.md` 音乐 · `docs/RELEASING.md` 分支与发布 · `docs/adr/` 架构决策 · `docs/conventions/` issue / 追踪 / PR / 审查规范。

@@ -5,11 +5,13 @@ import type { Dir } from '../../../shared/types.ts'
 import type { Actor, ActorOptions, AssetStore, CreatureActor } from '../../contracts.ts'
 import { RENDER, hexToRgb } from '../config.ts'
 import { createCharacterAnimation } from '../character-animation.ts'
+import { applySpriteLighting } from '../sprite-lighting.ts'
 import {
   billboardPointToWorld, createBillboardGeometry, createBlobShadow, createSpriteMaterial, setGeometryFrame, sheetLayout, spriteDepthMaterial, spriteOpaqueTop,
   type SpriteMaterial,
 } from '../sprite-utils.ts'
 import { applyOcclusion } from './occlusion.ts'
+import { attachMirror, type Mirror } from './reflections.ts'
 import type { OverlayLayer, OverlayTag } from './overlay.ts'
 
 /** What the world view needs from every live actor each frame. */
@@ -20,6 +22,11 @@ export interface ActorEntry {
   head(out: THREE.Vector3, pitch?: number): THREE.Vector3
   /** Grass bend radius (world units) or 0. */
   readonly bendRadius: number
+  /** Footstep feedback (footsteps.ts): characters step by walked distance, creatures hop; size multiplier of the marks. */
+  readonly stepKind: 'foot' | 'hop'
+  readonly stepScale: number
+  /** Reflection card in water (reflections.ts). */
+  readonly mirror: Mirror
   isVisible(): boolean
 }
 
@@ -61,6 +68,7 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
   const cell = CONTENT.config.sprites.sheetCell
   const geo = createBillboardGeometry(A.width, A.height, A.normalTilt, (A.footInset * A.height) / cell, A.cardSegments)
   const sprite = createSpriteMaterial(ctx.assets.characterTexture(opts.sheet), { alphaTest: A.alphaTest, opacity: opts.kind === 'remote' ? A.remoteAlpha : 1, billboard: RENDER.camera.billboard })
+  applySpriteLighting(sprite.material)
   const mesh = new THREE.Mesh(geo, sprite.material)
   mesh.castShadow = true
   mesh.receiveShadow = false
@@ -71,6 +79,7 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
   const object = new THREE.Group()
   object.add(mesh, blob)
   ctx.root.add(object)
+  const mirror = attachMirror(mesh, object, sprite.material, { w: A.width, h: A.height }, A.alphaTest)
   const tag = ctx.overlay.createTag()
   tag.setName(opts.name ?? null, opts.nameColor ?? A.nameColor)
 
@@ -154,10 +163,12 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
         lift += step * M.stepBounce * (running ? M.runBounceMul : 1)
         sy += (step - 0.5) * M.stepSquash
       } else if (layout.idleFrames === 1) sy += Math.sin(lifeT * M.breatheHz * Math.PI * 2) * M.breathe
+      // stretch while rising / falling (none at the apex), then a damped spring on touch-down: squash, overshoot, settle
+      if (hopT >= 0) sy += Math.abs(1 - 2 * hopT) * M.hopStretch
       if (landT >= 0) {
         landT += dt / (M.landMs / 1000)
         if (landT >= 1) landT = -1
-        else sy -= Math.sin(landT * Math.PI) * M.landSquash
+        else sy -= Math.exp(-M.landDamp * landT) * Math.cos(landT * M.landCycles * Math.PI * 2) * M.landSquash
       }
       let sx = 1 / Math.sqrt(sy)
       if (M.snapTexels) { sy = snapScale(sy, cell); sx = snapScale(sx, cell) }
@@ -175,6 +186,7 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
     dispose() {
       ctx.registry.delete(entry)
       object.removeFromParent()
+      mirror.dispose()
       geo.dispose()
       sprite.dispose()
       blob.geometry.dispose()
@@ -190,6 +202,9 @@ export function createActorImpl(ctx: ActorContext, opts: ActorOptions): Actor {
       return billboardPointToWorld(out, mesh, pitch, RENDER.camera.billboard)
     },
     bendRadius: 1,
+    stepKind: 'foot',
+    stepScale: 1,
+    mirror,
     isVisible: () => visible,
   }
   ctx.registry.add(entry)
@@ -202,6 +217,7 @@ export function createCreatureActorImpl(ctx: ActorContext, speciesId: string, sh
   const h = (species?.size ?? 1) * A.height * C.height
   const geo = createBillboardGeometry(h, h, A.normalTilt, (C.footInset * h) / CONTENT.config.sprites.creatureSize, A.cardSegments)
   const sprite = createSpriteMaterial(ctx.assets.creatureTexture(speciesId), { alphaTest: C.alphaTest, billboard: RENDER.camera.billboard })
+  applySpriteLighting(sprite.material)
   // a creature between the camera and the player (the follower walking north of it) is screen-door thinned around
   // the player like occluding props, but keeps occlusionKeep of its coverage
   const occShape = { value: new THREE.Vector2(RENDER.occlusion.soft, C.occlusionKeep) }
@@ -224,6 +240,7 @@ export function createCreatureActorImpl(ctx: ActorContext, speciesId: string, sh
   body.add(mesh)
   object.add(body, blob)
   ctx.root.add(object)
+  const mirror = attachMirror(mesh, object, sprite.material, { w: h, h }, C.alphaTest)
   const tag = ctx.overlay.createTag()
 
   // shiny sparkles: a few twinkling points around the body
@@ -323,6 +340,10 @@ void main() {
     },
     setMoving(m) { moving = m },
     setVisible(v) { visible = v; object.visible = v },
+    setCompanion(on) {
+      sprite.material.depthWrite = !on
+      layer(mesh, sprite, on ? 'companion' : 'creature')
+    },
     setShiny(s) {
       sprite.uniforms.uHue.value = s ? C.shiny.hue : 0
       sprite.uniforms.uSaturation.value = s ? C.shiny.saturation : 1
@@ -378,6 +399,7 @@ void main() {
     dispose() {
       ctx.registry.delete(entry)
       object.removeFromParent()
+      mirror.dispose()
       geo.dispose(); sprite.dispose()
       blob.geometry.dispose(); (blob.material as THREE.Material).dispose()
       sparkleGeo.dispose(); sparkleMat.dispose()
@@ -394,6 +416,9 @@ void main() {
       return billboardPointToWorld(out, mesh, pitch, RENDER.camera.billboard)
     },
     bendRadius: Math.max(0.5, h / A.height),
+    stepKind: 'hop',
+    stepScale: Math.max(0.6, h / A.height),
+    mirror,
     isVisible: () => visible,
   }
   ctx.registry.add(entry)

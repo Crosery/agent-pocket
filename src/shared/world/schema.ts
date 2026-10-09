@@ -117,6 +117,8 @@ export interface OverworldSpec {
    * Level basin around the start town: nothing above `level` within `radius` tiles (radius wobbled by `jitter` tiles of
    * Perlin noise), then the cap rises smoothly to the world's own relief over `transition` tiles. Isolated terraces under `minPatch` tiles inside that reach are levelled too.
    */
+  /** Post-pass terrace compression: level `i` becomes `levelMap[i]` (non-decreasing, steps of at most one). */
+  levelMap?: number[]
   startFlat?: { radius: number; transition: number; level: number; jitter: number; noise: NoiseSpec; minPatch: number }
   maxLevel: number; seaLevel: number; seaTerrain: string; seaShallowTerrain: string; seaShallowWidth: number
   outOfBounds: string
@@ -167,6 +169,8 @@ export interface EncounterRules {
   /** Early-game fairness: tables whose top level is <= maxLevel only hold species of rarity order <= maxOrder and,
    * when `onlyTypes` is set, whose types are all listed (first matching entry wins). */
   rarityLevelCaps?: { maxLevel: number; maxOrder: number; onlyTypes?: string[] }[]
+  /** Every non-starter base form up to this rarity order must sit in at least one wild table (see ensureEncounterCoverage). */
+  coverage?: { maxOrder: number }
 }
 
 export interface WorldSpec {

@@ -1,7 +1,7 @@
 {
   "statFormula": {"baseMul": 2, "levelDivisor": 100, "hpFlat": 10, "otherFlat": 5},
   "growthExponent": 3,
-  "damageFormula": {"levelMul": 2, "levelDivisor": 5, "levelAdd": 2, "divisor": 50, "add": 2, "minDamage": 1},
+  "damageFormula": {"levelMul": 2, "levelDivisor": 5, "levelAdd": 2, "divisor": 80, "add": 2, "minDamage": 1},
   "stageBase": {"stat": 2, "accEva": 3},
   "highCritStages": 1,
   "minHpChange": 1,

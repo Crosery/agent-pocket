@@ -4,7 +4,7 @@
 import type { BattleInit, BattleModifiers, BattleSideInit, Creature, FieldWeatherKind, GameMap, NpcDef, TrainerDef } from '../../shared/types.ts'
 import type { BattleKind, BattleOutcome, GameContext } from '../contracts.ts'
 import type { IRng } from '../../shared/contracts.ts'
-import { createCreature } from '../../shared/creature.ts'
+import { createCreature, maxHp } from '../../shared/creature.ts'
 import { modifierValue, type EventModifiers } from '../../shared/gameplay/events.ts'
 import { regionAt } from '../../shared/world/worldapi.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
@@ -120,18 +120,26 @@ export function createBattleFlow(deps: BattleFlowDeps) {
   async function wild(cr: Creature, opts: { music?: string; scripted?: boolean; flee?: BattleSideInit['flee'] } = {}): Promise<BattleOutcome> {
     await transition()
     const name = ctx.data.species[cr.speciesId]?.nameZh ?? cr.speciesId
+    // A species with a boss definition (content/bosses.json) is fought with its boss rules; bosses never flee.
+    const boss = ctx.data.bossBySpecies[cr.speciesId]
     const init: BattleInit = {
       seed: rng.int(1, 0x7fffffff),
-      sides: [playerSide(), { kind: 'wild', name, party: [cr], ...(opts.flee ? { flee: opts.flee } : {}) }],
+      sides: [playerSide(), boss
+        ? { kind: 'wild', name, party: [cr], aiLevel: 3, boss: boss.id }
+        : { kind: 'wild', name, party: [cr], ...(opts.flee ? { flee: opts.flee } : {}) }],
       isWild: true,
-      canRun: opts.scripted ? GAME.encounters.scriptedCanRun : true,
+      canRun: (opts.scripted ? GAME.encounters.scriptedCanRun : true) && (boss?.canRun ?? true),
       canCatch: true,
       expGain: true,
       ...arena(),
     }
     const mods = battleMods(cr)
     if (mods) init.mods = mods
-    return run(init, { kind: wildKind(cr), ...(opts.music ? { music: opts.music } : {}) })
+    if (boss) cr.hp = maxHp(cr, ctx.data)
+    const outcome = await run(init, { kind: wildKind(cr), ...(opts.music ? { music: opts.music } : {}) })
+    // Defeating (or taming) a boss unlocks the full counterplay hint in its dex entry.
+    if (boss && (outcome.result === 'win' || outcome.result === 'caught')) ctx.save.flags[GAME.flags.bossWonPrefix + boss.id] = true
+    return outcome
   }
 
   function trainerParty(tr: TrainerDef): Creature[] {

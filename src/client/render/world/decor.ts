@@ -12,6 +12,7 @@ import { hash2 } from './coords.ts'
 import { addBlob, addShard, addTube, GeoBuf } from './nature.ts'
 import { patternTexture } from './patterns.ts'
 import { TERRAIN_KIND, terrainTint, type TerrainSampler } from './terrain.ts'
+import { trampleShader, trampleUniforms } from './trample.ts'
 import { applyWind } from './wind.ts'
 
 export interface DecorLayer {
@@ -257,7 +258,12 @@ function decorMaterial(id: string, k: DecorKind, own: THREE.Texture[]): THREE.Ma
   m.name = `decor:${id}`
   TINT_PATCH(m)
   if (card) KEEP_NORMAL_PATCH(m)
-  if (k.sway) applyWind(m, `decor-${k.shape}`)
+  if (k.sway) {
+    // ground sprigs lie down under trampled cells like the tall-grass tufts (unit card height 1)
+    const T = RENDER.grass.trample
+    const bend = k.shape === 'sprig' ? trampleShader('1.0', T.decor.strength.toFixed(3), T.decor.sink.toFixed(3)) : null
+    applyWind(m, `decor-${k.shape}${bend ? '-tr' : ''}`, bend ? { ...bend, uniforms: trampleUniforms } : undefined)
+  }
   return m
 }
 

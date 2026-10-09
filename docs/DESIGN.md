@@ -81,6 +81,30 @@ Low internal resolution (pixelScale) with nearest upscale, pixel-art textures (n
 billboard sprites with real shadows, tilt-shift DOF focused on player, bloom on lights/emissives, vignette + warm
 grade, fog, day/night lighting with point lights at night, weather particles, instanced swaying grass.
 
+### World physics feedback
+
+The world answers to everything that moves in it. Every number is in `content/render.json`; the quality tier
+(`physics.tiers`) switches each effect and caps its pools (the lowest tier keeps only dust puffs).
+
+- **Wind** (`wind`, `render/world/wind.ts`): one field of gust fronts travelling along `wind.dir`. Grass, canopies, sprigs, the
+  GPU particle fields and the CPU leaves / dust all read it (GLSL and TypeScript twins), so a gust reaches all of them
+  at the same moment and place.
+- **Trample** (`grass.trample`, `trample.ts`): a toroidal map around the camera; actors stamp the direction away from
+  them, the CPU decays it over `recoverSec`, grass and ground sprigs bend and sink where it is set.
+- **Footsteps** (`footsteps`, `footsteps.ts`): per walked stride (hop for creatures) by terrain class: dust, sand grains,
+  powder, mud, splash; fading footprints on snow / sand / ash / mud; ripple rings in shallows. The climate snow field and
+  the weather snow cover (`snowCover`) turn ordinary ground into snow. Ledge landings route through the same system.
+- **Water** (`water.interact`, `liquids.ts`): ring uniforms from footsteps and the shore, rain rings, foam lines washing
+  up the shore; `reflections` + `reflections.ts` mirror every actor in water (flipped card, drawn only over water tiles,
+  depth of the water point, so props and grass in front still hide it).
+- **Leaves and petals** (`leaves`, `leaves.ts`): shed by the canopies of the props listed per kind (`props.ts` records
+  them), fall with gravity, drag, flutter and gust lift, land, rest and fade; they float on water.
+- **Rain and snow** (`impacts`): drops that reach the ground splash (rings on water) from the same closed-form path
+  the vertex shader flies.
+- **Actors** (`actors.motion`, `world/follower.ts`): hop stretch and a damped-spring landing squash; the follower is a
+  critically damped spring on the player's trail, spawns already clear of the camera, and is drawn as a companion
+  (after everything but the player, no depth write) so it is never over them.
+
 ## Assets (all optional — every asset has a procedural fallback)
 
 | kind | path | spec |
