@@ -8,7 +8,7 @@ import type {
 } from '../../shared/types.ts'
 import { CONTENT, t, typeEffectiveness, type Content } from '../../shared/content/index.ts'
 import { STAT_KEYS, calcStats, expForLevel } from '../../shared/creature.ts'
-import type { EffCategory } from './config.ts'
+import { BATTLE_UI, type EffCategory } from './config.ts'
 
 export type SlotState = 'ok' | 'status' | 'fainted'
 export interface SlotInfo { state: SlotState; status: string | null }
@@ -255,8 +255,44 @@ export function evolutionMoves(cr: Pick<Creature, 'level' | 'moves'>, toSpeciesI
 // Boss HUD
 // ---------------------------------------------------------------------------
 
+
+/** The name for a card header: a trailing parenthetical ("Llama 4 (Scout / Maverick)") is dropped; the full name stays in the status sheet and as the tooltip. */
+export function shortName(name: string): string {
+  const short = name.replace(new RegExp(BATTLE_UI.hud.shortNamePattern), '').trim()
+  return short || name
+}
+
+/** The label cut to a display width (wide characters count 2): "支付" and "juice" both fit, "苹果订阅" becomes "苹果". */
+export function fitLabel(label: string, width: number): string {
+  let used = 0
+  let out = ''
+  for (const ch of label.trim().split(/\s+/)[0]) {
+    const w = /[\u2e80-\u9fff\uff00-\uffef]/.test(ch) ? 2 : 1
+    if (used + w > width) break
+    used += w
+    out += ch
+  }
+  return out
+}
+
 export type BossChipTone = 'neutral' | 'good' | 'warn' | 'bad'
-export interface BossChip { id: string; text: string; tone: BossChipTone; /** Fill ratio for counter-like meters, null for state / alert chips. */ fill: number | null; alert: boolean }
+export interface BossChip {
+  id: string
+  /** The one-line reading ("支付 1/3", "蓄力：…"). */
+  text: string
+  tone: BossChipTone
+  /** Fill ratio for counter-like meters, null for state / alert chips. */
+  fill: number | null
+  alert: boolean
+  /** The mechanic's name alone, for the compact tile. */
+  label: string
+  /** Full reading shown when the tile is hovered or tapped (same as `text`). */
+  readout: string
+  /** Counter meters: the maximum; null otherwise. */
+  max: number | null
+  /** State-word meters: the current state's word. */
+  stateText: string | null
+}
 export interface BossPanelInfo { bossId: string; title: string; phase: number; phases: number; chips: BossChip[] }
 
 /** The boss HUD before the first engine snapshot (shown the moment the boss appears). */
@@ -277,11 +313,22 @@ export function bossPanelInfo(hud: BossHud, c: Content = CONTENT): BossPanelInfo
     if (!m.show) continue
     const value = Math.min(m.max, Math.max(0, Math.round(hud.meters[m.id] ?? 0)))
     const label = t(m.label)
-    chips.push(m.states
-      ? { id: m.id, text: `${label} ${t(m.states[value] ?? '')}`, tone: m.tone ?? 'neutral', fill: null, alert: false }
-      : { id: m.id, text: t('battleui.boss.meter', { label, value, max: m.max }), tone: m.tone ?? 'neutral', fill: value / m.max, alert: false })
+    if (m.states) {
+      const word = t(m.states[value] ?? '')
+      const text = `${label} ${word}`
+      chips.push({ id: m.id, text, tone: m.tone ?? 'neutral', fill: null, alert: false, label, readout: text, max: null, stateText: word })
+    } else {
+      const text = t('battleui.boss.meter', { label, value, max: m.max })
+      chips.push({ id: m.id, text, tone: m.tone ?? 'neutral', fill: value / m.max, alert: false, label, readout: text, max: m.max, stateText: null })
+    }
   }
-  if (hud.charge) chips.push({ id: 'charge', text: t('battleui.boss.charge', { move: c.moves[hud.charge]?.nameZh ?? hud.charge }), tone: 'bad', fill: null, alert: true })
-  if (hud.enrage > 0) chips.push({ id: 'enrage', text: t('battleui.boss.enrage', { n: hud.enrage }), tone: 'bad', fill: null, alert: false })
+  if (hud.charge) {
+    const text = t('battleui.boss.charge', { move: c.moves[hud.charge]?.nameZh ?? hud.charge })
+    chips.push({ id: 'charge', text, tone: 'bad', fill: null, alert: true, label: t('battleui.boss.chargeLabel'), readout: text, max: null, stateText: null })
+  }
+  if (hud.enrage > 0) {
+    const text = t('battleui.boss.enrage', { n: hud.enrage })
+    chips.push({ id: 'enrage', text, tone: 'bad', fill: null, alert: false, label: t('battleui.boss.enrageLabel'), readout: text, max: null, stateText: `×${hud.enrage}` })
+  }
   return { bossId: hud.bossId, title: t(def.title), phase: hud.phase, phases: hud.phases, chips }
 }

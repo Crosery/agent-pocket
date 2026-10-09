@@ -1,5 +1,6 @@
 {
   "cmd": {"fight": "战斗", "bag": "背包", "party": "队伍", "run": "逃跑", "forfeit": "投降"},
+  "hint": {"keys": "{confirm} 确定 {menu} 状态", "touch": "点状态卡看详情"},
   "prompt": {"command": "要让 {name} 做什么？", "move": "要使用哪个招式？", "forcedSwitch": "要让哪只智灵上场？", "switchTitle": "要换上哪只智灵？", "waiting": "正在等待 {name} 行动……", "timer": "{sec} 秒"},
   "move": {"pp": "{pp}/{max}", "power": "威力", "accuracy": "命中", "category": {"physical": "物理", "special": "特殊", "status": "变化"}, "none": "—", "never": "必中", "priority": "先制 {n}", "back": "返回"},
   "eff": {"immune": "没有效果", "weak": "效果不理想", "normal": "效果一般", "super": "效果绝佳", "unknown": "效果未知"},
@@ -8,17 +9,17 @@
     "title": "战斗状态详情",
     "close": "关闭状态详情",
     "sideOwn": "我方",
-    "sideFoe": "对手",
+    "sideFoe": "对方",
     "ability": "特性",
-    "types": "属性",
-    "statusTitle": "异常状态",
-    "volatileTitle": "临时效果",
-    "stageTitle": "能力等级",
-    "glossary": "基础能力说明",
-    "buff": "增益",
-    "debuff": "减益",
-    "neutral": "被动",
-    "empty": "当前没有增益或减益。",
+    "noEffects": "没有增益或减益",
+    "hintKeys": "{cancel} 关闭  Tab 切换标签",
+    "hintTouch": "轻点标签查看说明",
+    "fieldTitle": "场地",
+    "weatherPower": "{types} ×{n}",
+    "weatherChip": "每回合损耗 {n}",
+    "weatherHeal": "{types} 每回合回复 {n}",
+    "weatherJoin": " · ",
+    "typesJoin": "、",
     "emptySide": "暂未登场",
     "more": "还有 {n} 项，打开详情查看。",
     "open": "状态",
@@ -26,9 +27,8 @@
     "multiplier": "实际倍率 ×{n}",
     "factor": "×{n}",
     "balance": "增益 {buff} · 减益 {debuff}",
-    "balanceBuff": "增益 {n}",
-    "balanceDebuff": "减益 {n}",
     "openHint": "查看双方状态（{key}）",
+    "tip": "{label}：{description}",
     "status": {
       "burn": "每回合结束损失最大上下文的 1/16；物理招式威力 ×0.5。",
       "paralysis": "有 25% 概率无法行动；速度 ×0.5。",
@@ -43,6 +43,13 @@
       "leech": "每回合结束损失最大上下文的 1/8，对手恢复等量。",
       "focus": "要害等级 +2，更容易打出要害。",
       "taunt": "持续 3 回合，无法使用变化招式。"
+    },
+    "statusShort": {
+      "burn": "每回合 -1/16，物理伤害 ×0.5",
+      "paralysis": "25% 无法行动，速度 ×0.5",
+      "sleep": "无法行动，持续 2～4 回合",
+      "poison": "每回合 -1/8",
+      "freeze": "无法行动，每回合 20% 解除"
     }
   },
   "levelUp": {"title": "{name} 升到了 Lv.{level}", "delta": "+{n}"},
@@ -54,5 +61,6 @@
   "evolve": {"start": "咦？{name} 的样子……", "done": "恭喜！{name} 进化成了 {to}！", "donePostTraining": "后训练完成！{name} 进化成了 {to}！", "cancelled": "咦？{name} 停止了进化。", "hint": "按 {key} 键中止进化", "newDexToast": "图鉴新增：{name}"},
   "ability": {"banner": "{name} 的「{ability}」"},
   "error": {"aborted": "战斗出现异常，已安全结束。"},
-  "boss": {"tag": "首领", "meter": "{label} {value}/{max}", "charge": "蓄力：{move}", "enrage": "狂暴 ×{n}", "phase": "第 {n} 阶段", "formBanner": "{from} → {to}"}
+  "boss": {"tag": "首领", "meter": "{label} {value}/{max}", "charge": "蓄力：{move}", "enrage": "狂暴 ×{n}", "chargeLabel": "蓄力", "enrageLabel": "狂暴", "phase": "第 {n} 阶段", "formBanner": "{from} → {to}"},
+  "bossIntro": {"skip": "跳过", "skipHint": "{key} 跳过"}
 }

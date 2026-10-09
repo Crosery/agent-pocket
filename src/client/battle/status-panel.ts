@@ -4,9 +4,10 @@ import type { BattleStatKey, CreatureView } from '../../shared/types.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { creatureName } from '../../shared/creature.ts'
 import { effectBalance, hudEffects, type BattleStatusSnapshot } from './effect-details.ts'
-import { actionKeyLabel, append, el, expBar, hpBar, panel, rarityBadge, statusChip, typeChip, type BarHandle } from '../ui/widgets.ts'
+import { actionKeyLabel, append, el, expBar, hpBar, panel, rarityBadge, type BarHandle } from '../ui/widgets.ts'
+import { effectIcon, meterTile, statIcon, typeBadge } from './badges.ts'
 import { BATTLE_UI } from './config.ts'
-import type { BossPanelInfo, SlotInfo } from './model.ts'
+import { shortName, type BossPanelInfo, type SlotInfo } from './model.ts'
 
 export interface StatusPanel {
   readonly el: HTMLElement
@@ -17,6 +18,8 @@ export interface StatusPanel {
   setVolatiles(ids: readonly string[]): void
   setStages(stages: Partial<Record<BattleStatKey, number>>): void
   getSnapshot(): BattleStatusSnapshot | null
+  /** Foe window only: the boss info last given to `setBoss`. */
+  getBoss(): BossPanelInfo | null
   /** Own panel only: exp bar ratio (0..1). */
   setExp(ratio: number, animate: boolean): Promise<void>
   setSlots(slots: readonly SlotInfo[] | null, size: number): void
@@ -29,7 +32,7 @@ export interface StatusPanel {
 
 export function createStatusPanel(own: boolean, onInspect: () => void, speed?: () => number): StatusPanel {
   const H = BATTLE_UI.hud
-  const p = panel(null, { className: `apb-status ${own ? 'is-own' : 'is-foe'} is-away is-empty` })
+  const p = panel(null, { className: `apb-win apb-status ${own ? 'is-own' : 'is-foe'} is-away is-empty` })
   const name = el('span', 'apb-st-name ap-model-name')
   const shiny = el('span', { class: 'apb-st-shiny', text: t('ui.shiny') })
   shiny.hidden = true
@@ -41,13 +44,12 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
   const exp: BarHandle | null = own ? expBar({ width: H.expBarWidth, speed }) : null
   const balls = el('div', 'apb-balls')
   const more = el('span', 'apb-tag is-more is-folded')
-  const inspect = el('button', {
+  // The whole card is the control (a finger-sized target on phones, the menu key on a keyboard); the label only says so.
+  const inspect = el('span', {
     class: 'apb-st-details-btn',
-    attrs: { type: 'button', title: t('battleui.effects.openHint', { key: actionKeyLabel('menu') }) },
+    attrs: { title: t('battleui.effects.openHint', { key: actionKeyLabel('menu') }) },
   })
-  inspect.addEventListener('click', (e) => { e.stopPropagation(); onInspect() })
   p.el.addEventListener('click', (e) => {
-    if (e.target instanceof Node && inspect.contains(e.target)) return
     e.stopPropagation()
     onInspect()
   })
@@ -68,9 +70,17 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
   let volatiles: string[] = []
   let stages: Partial<Record<BattleStatKey, number>> = {}
   let abilityId: string | null = null
+  let fullName = ''
+  let level = 0
+  let hpNow = 0
+  let hpMax = 0
+  let boss: BossPanelInfo | null = null
 
   const snapshot = (): BattleStatusSnapshot | null => p.el.classList.contains('is-empty') ? null : ({
-    name: name.textContent ?? '',
+    name: fullName,
+    level,
+    hp: hpNow,
+    maxHp: hpMax,
     abilityId,
     types: [...types],
     status,
@@ -108,14 +118,17 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
   const paintTags = () => {
     const snap = snapshot()
     const nodes: HTMLElement[] = []
-    if (H.showTypes) for (const ty of types) nodes.push(typeChip(ty))
+    if (H.showTypes) for (const ty of types) nodes.push(typeBadge(ty))
     foldable = []
     for (const row of snap ? hudEffects(snap) : []) {
       if (row.group === 'stage' && !H.showStages) continue
-      const tag = row.group === 'status' && status
-        ? statusChip(status)
-        : el('span', { class: `apb-tag ${row.polarity === 'buff' ? 'is-up' : 'is-down'}`, text: row.short })
-      tag.title = row.description
+      const tip = t('battleui.effects.tip', { label: row.label, description: row.description })
+      const icon = row.group === 'stage' ? null : effectIcon(row.id.slice(row.id.indexOf(':') + 1), tip, row.polarity)
+      const stat = row.group === 'stage' ? (row.id.slice(row.id.indexOf(':') + 1) as BattleStatKey) : null
+      const tag = icon ?? (stat
+        ? el('span', { class: `apb-tag apb-stg ${row.polarity === 'buff' ? 'is-up' : 'is-down'}` }, [statIcon(stat), el('span', { text: `${row.polarity === 'buff' ? '▲' : '▼'}${row.delta?.slice(1) ?? ''}` })])
+        : el('span', { class: `apb-tag ${row.polarity === 'buff' ? 'is-up' : 'is-down'}`, text: row.short }))
+      tag.title = tip
       foldable.push(tag)
     }
     tags.replaceChildren(...nodes)
@@ -126,8 +139,9 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
       el('span', { text: t('battleui.effects.open') }),
       buff ? el('span', { class: 'apb-st-up', text: t('battleui.hud.up', { n: buff }) }) : null,
       debuff ? el('span', { class: 'apb-st-down', text: t('battleui.hud.down', { n: debuff }) }) : null,
+      el('kbd', { class: 'apb-st-key', text: actionKeyLabel('menu') }),
     ])
-    const who = name.textContent ?? ''
+    const who = fullName
     inspect.setAttribute('aria-label', t('battleui.hud.statusLabel', { name: who }) + (buff || debuff ? ` ${t('battleui.effects.balance', { buff, debuff })}` : ''))
     fold()
   }
@@ -137,13 +151,16 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
     setCreature(v, nextAbilityId) {
       const sp = CONTENT.species[v.speciesId]
       p.el.classList.remove('is-empty')
-      const shownName = creatureName(v)
-      name.textContent = shownName
-      name.title = shownName
-      name.setAttribute('aria-label', shownName)
+      fullName = creatureName(v)
+      name.textContent = shortName(fullName)
+      name.title = fullName
+      name.setAttribute('aria-label', fullName)
       shiny.hidden = !v.shiny
       rarity.replaceChildren(sp ? rarityBadge(sp.rarity) : '')
       lv.textContent = t('battleui.hud.level', { level: v.level })
+      level = v.level
+      hpNow = v.hp
+      hpMax = v.maxHp
       types = sp ? [...sp.types] : []
       status = v.status
       volatiles = []
@@ -152,8 +169,10 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
       paintTags()
       hp.set(v.hp, v.maxHp, false)
     },
-    setLevel(level) { lv.textContent = t('battleui.hud.level', { level }) },
+    setLevel(next) { level = next; lv.textContent = t('battleui.hud.level', { level: next }) },
     setHp(value, max, animate) {
+      hpNow = value
+      hpMax = max
       hp.set(value, max, animate)
       return animate ? hp.settled() : Promise.resolve()
     },
@@ -161,6 +180,7 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
     setVolatiles(ids) { volatiles = [...ids]; paintTags() },
     setStages(s) { stages = { ...s }; paintTags() },
     getSnapshot: snapshot,
+    getBoss: () => boss,
     setExp(ratio, animate) {
       if (!exp) return Promise.resolve()
       exp.set(ratio, 1, animate)
@@ -182,18 +202,23 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
     },
     setAway(away) { p.el.classList.toggle('is-away', away) },
     setBoss(info) {
+      boss = info
       p.el.classList.toggle('is-boss', info !== null)
       bossBox.hidden = info === null
       if (!info) { bossBox.replaceChildren(); return }
       const pips = el('span', 'apb-boss-pips', Array.from({ length: info.phases }, (_, i) => el('span', `apb-pip${i < info.phase ? ' is-on' : ''}`)))
       pips.title = t('battleui.boss.phase', { n: info.phase })
-      const head = el('div', 'apb-boss-head', [el('span', { class: 'apb-boss-tag', text: t('battleui.boss.tag') }), el('span', { class: 'apb-boss-title', text: info.title }), pips])
-      const chips = info.chips.map((c) => {
-        const chip = el('span', { class: `apb-bchip is-${c.tone}${c.alert ? ' is-alert' : ''}`, text: c.text })
-        if (c.fill !== null) chip.style.setProperty('--fill', `${Math.round(c.fill * 100)}%`)
-        return chip
-      })
-      bossBox.replaceChildren(head, ...(chips.length ? [el('div', 'apb-boss-chips', chips)] : []))
+      const title = el('span', { class: 'apb-boss-title', text: info.title })
+      let readoutTimer = 0
+      const readout = (text: string) => {
+        title.textContent = text
+        title.classList.add('is-readout')
+        clearTimeout(readoutTimer)
+        readoutTimer = window.setTimeout(() => { title.textContent = info.title; title.classList.remove('is-readout') }, H.meterReadoutMs)
+      }
+      const head = el('div', 'apb-boss-head', [el('span', { class: 'apb-boss-tag', text: t('battleui.boss.tag') }), title, pips])
+      const tiles = info.chips.map((c) => meterTile(c, readout))
+      bossBox.replaceChildren(head, ...(tiles.length ? [el('div', 'apb-boss-tiles', tiles)] : []))
     },
     pulseBoss() {
       bossBox.classList.remove('is-pulse')

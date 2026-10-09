@@ -1,10 +1,15 @@
-// Readable battle-state inspector. The compact status windows stay quiet; this panel is the single place where
-// all active passives, statuses, volatiles and stage changes are expanded for both sides.
-import type { SideIndex } from '../../shared/types.ts'
-import { t } from '../../shared/content/index.ts'
+// Battle status sheet: both sides' current state next to each other (name, level, types, HP, status condition, stat stage
+// chips, volatile chips, ability), then the field row (weather, boss mechanic meters) when there is one. Definitions sit
+// behind a focus / tap on a chip and show in the readout line at the foot, never as a wall of text.
+import type { BattleStatKey, SideIndex } from '../../shared/types.ts'
 import type { Input } from '../contracts.ts'
-import { el, panel, typeChip } from '../ui/widgets.ts'
-import { battleStatGlossary, describeBattleEffects, effectBalance, type BattleEffectDetail } from './effect-details.ts'
+import { CONTENT, t } from '../../shared/content/index.ts'
+import { actionKeyLabel, button, el, hpBar, panel } from '../ui/widgets.ts'
+import { icon } from '../ui/screens/base.ts'
+import { effectIcon, meterTile, statIcon, typeBadge } from './badges.ts'
+import { sideSheet, weatherSheet, type BattleEffectPolarity, type SheetChip } from './effect-details.ts'
+import { BATTLE_UI } from './config.ts'
+import type { BossPanelInfo } from './model.ts'
 import type { StatusPanel } from './status-panel.ts'
 
 export interface BattleEffectsPanel {
@@ -17,98 +22,124 @@ export interface BattleEffectsPanel {
   input(inp: Input): boolean
 }
 
-const groupKey: Record<BattleEffectDetail['group'], string> = {
-  ability: 'battleui.effects.ability',
-  status: 'battleui.effects.statusTitle',
-  volatile: 'battleui.effects.volatileTitle',
-  stage: 'battleui.effects.stageTitle',
+/** What belongs to the whole field rather than to one side. */
+export interface FieldInfo { weather: string | null; boss: BossPanelInfo | null }
+
+type Readout = (text: string, polarity?: BattleEffectPolarity) => void
+
+/** A focusable label that explains itself in the readout line (hover, focus or tap) and as a tooltip. */
+function chipTrigger(node: HTMLElement, tip: string, polarity: BattleEffectPolarity, readout: Readout): HTMLElement {
+  node.title = tip
+  node.tabIndex = 0
+  node.setAttribute('role', 'button')
+  node.setAttribute('aria-label', tip)
+  const show = () => readout(tip, polarity)
+  node.addEventListener('pointerenter', show)
+  node.addEventListener('click', (e) => { e.stopPropagation(); show() })
+  node.onfocus = show
+  return node
 }
 
-function renderRow(row: BattleEffectDetail): HTMLElement {
-  const value = row.value ? el('span', { class: 'apb-effect-value', text: row.value }) : null
-  return el('div', `apb-effect-row is-${row.polarity}`, [
-    el('div', 'apb-effect-row-head', [
-      el('span', { class: 'apb-effect-label', text: row.label }),
-      el('span', { class: 'apb-effect-kind', text: t(`battleui.effects.${row.polarity}`) }),
-      value,
-    ]),
-    el('div', { class: 'apb-effect-description', text: row.description }),
+function stageChip(c: SheetChip, readout: Readout): HTMLElement {
+  return chipTrigger(el('span', `apb-fx-chip is-${c.polarity}`, [
+    statIcon(c.id as BattleStatKey),
+    el('span', { class: 'apb-fx-chip-delta', text: c.delta ?? '' }),
+    el('span', { class: 'apb-fx-chip-factor', text: c.factor ?? '' }),
+  ]), c.tip, c.polarity, readout)
+}
+
+function volatileChip(c: SheetChip, readout: Readout): HTMLElement {
+  const ico = effectIcon(c.id, c.tip, c.polarity)
+  return chipTrigger(el('span', `apb-fx-chip is-${c.polarity}`, [ico, el('span', { class: 'apb-fx-chip-label', text: c.label })]), c.tip, c.polarity, readout)
+}
+
+function renderSide(status: StatusPanel, side: SideIndex, readout: Readout): HTMLElement {
+  const kind = side === 0 ? 'own' : 'foe'
+  const snap = status.getSnapshot()
+  const head = el('div', 'apb-fx-side-head', [
+    el('span', { class: 'apb-fx-tag', text: t(side === 0 ? 'battleui.effects.sideOwn' : 'battleui.effects.sideFoe') }),
+    el('span', { class: 'apb-fx-name ap-model-name', text: snap?.name || t('battleui.effects.emptySide') }),
   ])
-}
-
-/** Stat stages are one-liners: what they mean is in the glossary below, so the chip only carries step and factor. */
-function renderStage(row: BattleEffectDetail): HTMLElement {
-  return el('div', { class: `apb-stage is-${row.polarity}`, title: row.description }, [
-    el('span', { class: 'apb-stage-label', text: row.label }),
-    el('span', { class: 'apb-stage-delta', text: row.delta ?? '' }),
-    el('span', { class: 'apb-stage-factor', text: row.factor ?? '' }),
-  ])
-}
-
-function renderSide(panel: StatusPanel, side: SideIndex): HTMLElement {
-  const snap = panel.getSnapshot()
-  const label = side === 0 ? t('battleui.effects.sideOwn') : t('battleui.effects.sideFoe')
-  const title = snap?.name || t('battleui.effects.emptySide')
-  const body: HTMLElement[] = [
-    el('div', 'apb-effects-side-head', [
-      el('span', { class: 'apb-effects-side-label', text: label }),
-      el('span', { class: 'apb-effects-side-name ap-model-name', text: title }),
-    ]),
-  ]
+  const section = el('section', `apb-fx-side is-${kind}`, [head])
   if (!snap) {
-    body.push(el('div', { class: 'apb-effects-empty', text: t('battleui.effects.emptySide') }))
-    return el('section', `apb-effects-side is-${side === 0 ? 'own' : 'foe'}`, body)
+    section.append(el('div', { class: 'apb-fx-quiet', text: t('battleui.effects.emptySide') }))
+    return section
+  }
+  section.append(el('div', 'apb-fx-meta', [
+    el('span', 'apb-fx-types', snap.types.map((id) => chipTrigger(typeBadge(id), CONTENT.typeById[id]?.nameZh ?? id, 'neutral', readout))),
+    snap.level ? el('span', { class: 'apb-fx-lv', text: t('battleui.hud.level', { level: snap.level }) }) : null,
+  ]))
+  if (snap.maxHp) {
+    const hp = hpBar({ width: BATTLE_UI.inspector.hpBarWidth, numbers: side === 0 ? BATTLE_UI.hud.ownHpNumbers : BATTLE_UI.hud.foeHpNumbers })
+    hp.set(snap.hp ?? 0, snap.maxHp, false)
+    section.append(el('div', 'apb-fx-hp', [el('span', { class: 'apb-fx-hp-label', text: t('battleui.hud.hp') }), hp.el]))
   }
 
-  const { buff, debuff } = effectBalance(snap)
-  body.push(el('div', {
-    class: 'apb-effects-balance',
-    attrs: { 'aria-label': t('battleui.effects.balance', { buff, debuff }) },
-  }, [
-    el('span', { class: `apb-balance is-buff${buff ? '' : ' is-zero'}`, text: t('battleui.effects.balanceBuff', { n: buff }) }),
-    el('span', { class: `apb-balance is-debuff${debuff ? '' : ' is-zero'}`, text: t('battleui.effects.balanceDebuff', { n: debuff }) }),
-  ]))
-  if (snap.types.length) {
-    body.push(el('div', 'apb-effects-types', [
-      el('span', { class: 'apb-effects-section-label', text: t('battleui.effects.types') }),
-      el('span', 'apb-effects-type-list', snap.types.map((id) => typeChip(id))),
-    ]))
+  const sheet = sideSheet(snap)
+  if (sheet.status) {
+    const s = sheet.status
+    const ico = effectIcon(s.id, s.tip, 'debuff')
+    section.append(chipTrigger(el('div', 'apb-fx-status', [
+      ico,
+      el('span', { class: 'apb-fx-status-name', text: s.label }),
+      el('span', { class: 'apb-fx-status-line', text: s.line }),
+    ]), s.tip, 'debuff', readout))
   }
-  const rows = describeBattleEffects(snap)
-  if (!rows.length) {
-    body.push(el('div', { class: 'apb-effects-empty', text: t('battleui.effects.empty') }))
-  } else {
-    for (const group of ['ability', 'status', 'volatile', 'stage'] as const) {
-      const groupRows = rows.filter((row) => row.group === group)
-      if (!groupRows.length) continue
-      body.push(el('div', { class: 'apb-effects-group-title', text: t(groupKey[group]) }))
-      if (group === 'stage') body.push(el('div', 'apb-stage-grid', groupRows.map(renderStage)))
-      else body.push(...groupRows.map(renderRow))
-    }
+  const chips = [...sheet.stages.map((c) => stageChip(c, readout)), ...sheet.volatiles.map((c) => volatileChip(c, readout))]
+  if (chips.length) section.append(el('div', 'apb-fx-chips', chips))
+  if (sheet.quiet) section.append(el('div', { class: 'apb-fx-quiet', text: t('battleui.effects.noEffects') }))
+  if (sheet.ability) {
+    section.append(chipTrigger(el('div', 'apb-fx-ability', [
+      el('span', { class: 'apb-fx-ability-tag', text: t('battleui.effects.ability') }),
+      el('span', { class: 'apb-fx-ability-name', text: sheet.ability.label }),
+      el('span', { class: 'apb-fx-ability-line', text: sheet.ability.line }),
+    ]), sheet.ability.tip, 'neutral', readout))
   }
-  return el('section', `apb-effects-side is-${side === 0 ? 'own' : 'foe'}`, body)
+  return section
 }
 
-export function createBattleEffectsPanel(root: HTMLElement, statuses: readonly [StatusPanel, StatusPanel]): BattleEffectsPanel {
+function renderField(field: FieldInfo | null, readout: Readout): HTMLElement | null {
+  const weather = weatherSheet(field?.weather)
+  const chips = field?.boss?.chips ?? []
+  if (!weather && !chips.length) return null
+  const row = el('div', 'apb-fx-field', [el('span', { class: 'apb-fx-field-title', text: t('battleui.effects.fieldTitle') })])
+  if (weather) {
+    const node = el('span', 'apb-fx-weather', [
+      el('span', { class: 'apb-fx-weather-name', text: weather.label }),
+      el('span', { class: 'apb-fx-weather-line', text: weather.line }),
+    ])
+    node.style.setProperty('--wc', weather.color)
+    row.append(chipTrigger(node, t('battleui.effects.tip', { label: weather.label, description: weather.line }), 'neutral', readout))
+  }
+  if (chips.length) row.append(el('div', 'apb-fx-meters', chips.map((c) => meterTile(c, (text) => readout(text, 'neutral')))))
+  return row
+}
+
+export function createBattleEffectsPanel(root: HTMLElement, statuses: readonly [StatusPanel, StatusPanel], field: () => FieldInfo | null = () => null): BattleEffectsPanel {
   const backdrop = el('div', { class: 'apb-effects-backdrop', attrs: { 'aria-hidden': 'true' } })
-  const p = panel(t('battleui.effects.title'), { className: 'apb-effects-dialog ap-anim-in' })
+  const p = panel(null, { className: 'apb-win apb-effects-dialog ap-anim-in' })
   p.el.setAttribute('role', 'dialog')
   p.el.setAttribute('aria-modal', 'true')
   p.el.setAttribute('aria-label', t('battleui.effects.title'))
-  const close = el('button', {
-    class: 'apb-effects-close',
-    attrs: { type: 'button', 'aria-label': t('battleui.effects.close') },
-  }, [t('battleui.effects.close')])
-  p.titleEl.append(close)
-  const columns = el('div', 'apb-effects-columns')
-  const glossary = el('section', 'apb-effects-glossary', [
-    el('div', { class: 'apb-effects-group-title', text: t('battleui.effects.glossary') }),
-    el('div', 'apb-glossary-grid', battleStatGlossary().map((row) => el('div', 'apb-glossary-row', [
-      el('span', { class: 'apb-glossary-label', text: row.label }),
-      el('span', { class: 'apb-glossary-description', text: row.description }),
-    ]))),
+  // The same square ✕ as every other screen's header.
+  const close = button('', undefined, { className: 'aps-close apb-fx-close' })
+  close.setAttribute('aria-label', t('battleui.effects.close'))
+  close.append(icon('close'))
+  const body = el('div', 'apb-fx-body')
+  const hintDefault = el('span', 'apb-fx-hint', [
+    el('span', { class: 'apb-hint-keys', text: t('battleui.effects.hintKeys', { cancel: actionKeyLabel('cancel') }) }),
+    el('span', { class: 'apb-hint-touch', text: t('battleui.effects.hintTouch') }),
   ])
-  p.body.append(columns, glossary)
+  const readoutBox = el('div', 'apb-fx-readout', [hintDefault])
+  const readout: Readout = (text, polarity = 'neutral') => {
+    readoutBox.className = `apb-fx-readout is-${polarity}`
+    readoutBox.replaceChildren(text)
+  }
+  p.body.replaceWith(el('div', 'apb-fx-frame', [
+    el('header', 'apb-fx-head', [el('h2', { class: 'apb-fx-title', text: t('battleui.effects.title') }), close]),
+    body,
+    readoutBox,
+  ]))
   root.append(backdrop, p.el)
   backdrop.hidden = true
   p.el.hidden = true
@@ -118,11 +149,14 @@ export function createBattleEffectsPanel(root: HTMLElement, statuses: readonly [
   let focusSide: SideIndex = 0
   let signature = ''
 
+  const state = () => JSON.stringify([statuses[0].getSnapshot(), statuses[1].getSnapshot(), field()])
   const render = () => {
-    const snaps = [statuses[0].getSnapshot(), statuses[1].getSnapshot()]
-    signature = JSON.stringify(snaps)
-    columns.replaceChildren(renderSide(statuses[0], 0), renderSide(statuses[1], 1))
-    columns.querySelector<HTMLElement>(`.apb-effects-side.is-${focusSide === 0 ? 'own' : 'foe'}`)?.classList.add('is-focused')
+    signature = state()
+    readoutBox.className = 'apb-fx-readout'
+    readoutBox.replaceChildren(hintDefault)
+    const sides = el('div', 'apb-fx-sides', [renderSide(statuses[0], 0, readout), renderSide(statuses[1], 1, readout)])
+    sides.querySelector(`.apb-fx-side.is-${focusSide === 0 ? 'own' : 'foe'}`)?.classList.add('is-focused')
+    body.replaceChildren(sides, ...[renderField(field(), readout)].filter((n): n is HTMLElement => !!n))
   }
 
   const closePanel = () => {
@@ -137,7 +171,7 @@ export function createBattleEffectsPanel(root: HTMLElement, statuses: readonly [
     previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     focusSide = side
     render()
-    p.body.scrollTop = 0
+    body.scrollTop = 0
     shown = true
     backdrop.hidden = false
     p.el.hidden = false
@@ -158,7 +192,7 @@ export function createBattleEffectsPanel(root: HTMLElement, statuses: readonly [
     get open() { return shown },
     show: showPanel,
     sync() {
-      if (shown && JSON.stringify([statuses[0].getSnapshot(), statuses[1].getSnapshot()]) !== signature) render()
+      if (shown && state() !== signature) render()
     },
     close: closePanel,
     input(inp) {

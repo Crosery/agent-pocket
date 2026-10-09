@@ -20,9 +20,12 @@
 // scroller's content in viewport heights.
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
-import { fileURLToPath } from 'node:url'
 import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { setHUDViewport } from './qa-hud-layout.mjs'
+import { auditBattleSprites } from './qa-battle-layout.mjs'
+
+const BATTLE_UI = JSON.parse(readFileSync(new URL('../content/battle-ui.json', import.meta.url), 'utf8'))
 
 const UI_JSON = JSON.parse(readFileSync(new URL('../content/ui.json', import.meta.url), 'utf8'))
 const UI_PHONE_PAD = UI_JSON.phoneHud.audit.playerPadPx
@@ -696,6 +699,13 @@ export async function measureScreen(page, screen, shot) {
     const moved = result.violations.filter((v) => screen.demote.includes(v.type))
     result.violations = result.violations.filter((v) => !screen.demote.includes(v.type))
     result.warnings = [...result.warnings, ...moved.map((v) => ({ ...v, type: `${v.type}*` }))]
+  }
+  // battle screens: creatures vs windows, bottom anchoring, no overworld pad (qa-battle-layout.mjs)
+  if (screen.scope === '.apb-root') {
+    const sprites = await page.evaluate(auditBattleSprites, { bottomMaxGapPx: BATTLE_UI.layout?.bottomMaxGapPx ?? 24 })
+    result.violations.push(...sprites.violations)
+    result.warnings.push(...sprites.warnings)
+    result.stats = { ...result.stats, battle: sprites.stats }
   }
   await page.screenshot({ path: shot })
   return result

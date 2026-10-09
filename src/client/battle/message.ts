@@ -23,14 +23,22 @@ export interface MessageBox {
   update(dtSec: number): void
 }
 
+/** A boss or trainer speaking ("Name: 「line」") splits into the speaker's plate and the quoted line. */
+export function splitSpeaker(text: string): { speaker: string | null; line: string } {
+  const m = new RegExp(BATTLE_UI.message.speakerPattern).exec(text)
+  return m ? { speaker: m[1], line: text.slice(m[0].length) } : { speaker: null, line: text }
+}
+
 export function createMessageBox(audio: AudioManager, settings: () => Settings, pace: () => Pick<Settings, 'battleSpeed'> = settings): MessageBox {
   const M = BATTLE_UI.message
   const shown = el('span')
   const hidden = el('span', 'apb-tw-hidden')
   const text = el('div', { class: 'apb-msg-text', attrs: { 'aria-live': 'polite' } }, [shown, hidden])
   const adv = el('div', 'apb-msg-adv')
-  const p = panel(null, { className: 'apb-msg' })
-  p.body.append(text)
+  const p = panel(null, { className: 'apb-win apb-msg' })
+  const speaker = el('div', 'apb-msg-name')
+  speaker.hidden = true
+  p.body.append(speaker, text)
   p.el.append(adv)
 
   let tw: TypewriterState = createTypewriter('')
@@ -54,7 +62,11 @@ export function createMessageBox(audio: AudioManager, settings: () => Settings, 
   }
   const setText = (s: string, instant: boolean) => {
     done()
-    tw = createTypewriter(s)
+    const split = splitSpeaker(s)
+    speaker.hidden = !split.speaker
+    speaker.textContent = split.speaker ?? ''
+    p.el.classList.toggle('has-speaker', !!split.speaker)
+    tw = createTypewriter(split.line)
     lastShown = -1
     held = 0
     blips = 0

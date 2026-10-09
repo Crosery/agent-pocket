@@ -13,11 +13,14 @@ import { isHD2DRendererExt } from '../hd2d.ts'
 import { cameraYaw } from '../sprite-utils.ts'
 import { createCaptureBall } from './ball.ts'
 import { createBattleCamera } from './camera.ts'
-import { STAGE, expandSteps, otherSide, shotFor, timelineLength, type SideIndex, type VfxStep } from './config.ts'
+import { solveFraming, type Box, type Solution } from './framing.ts'
+import { STAGE, expandSteps, otherSide, shotFor, timelineLength, type ShotDef, type SideIndex, type VfxStep } from './config.ts'
 import { createEnvironment } from './environment.ts'
 import { createSharedGeometries } from './meshes.ts'
 import { createGlyphAtlas, createParticlePool } from './particles.ts'
 import { colorHex, spawnStep, type Effect, type FxCtx, type FxHost } from './primitives.ts'
+import { BOSS_PRES, bossEntry, bossTheme, themeGlyphs, type BossEntry } from './boss-config.ts'
+import { createSideMarkers } from './markers.ts'
 import { createBattleSprite, type BattleSprite } from './sprites.ts'
 import { createScheduler, ease } from './timeline.ts'
 
@@ -35,6 +38,22 @@ export interface BattleStage {
   /** Shows / hides a slot's creature instantly (no effect). */
   showCreature(side: 0 | 1, visible: boolean): void
   setTrainer(side: 0 | 1, sheet: string | null): void
+  /**
+   * Marks a slot as holding a boss (content/boss-presentation.json): scaled sprite, boss camera base shot, idle float
+   * and the theme's aura. Call before setCreature(); null returns the slot to a normal creature.
+   */
+  setBoss(side: 0 | 1, bossId: string | null): void
+  /** Screen rectangle of a creature's sprite card as fractions of the viewport (QA / layout audit); null when hidden. */
+  creatureRect(side: 0 | 1): { left: number; top: number; right: number; bottom: number } | null
+  /**
+   * The HUD's windows (CSS pixels, relative to the viewport) and the viewport size: the camera recomposes (zoom +
+   * shift) so that no creature at rest sits under a window or off screen. Call whenever a window moves or resizes.
+   */
+  setHud(layout: HudLayout | null): void
+  /** Where each creature rests under the base shot at neutral framing (QA; viewport fractions). */
+  restBoxes(): { left: number; top: number; right: number; bottom: number }[]
+  /** What the last composition decided (QA). */
+  readonly composition: Solution & { framing: { zoom: number; dx: number; dy: number } }
   intro(kind: IntroKind): Promise<void>
   sendOut(side: 0 | 1, ballColor?: string): Promise<void>
   recall(side: 0 | 1): Promise<void>
@@ -57,6 +76,14 @@ export interface BattleStage {
   cancelEvolve(): void
   update(dt: number): void
   dispose(): void
+}
+
+export interface HudLayout {
+  width: number
+  height: number
+  /** CSS pixels per UI pixel. */
+  unit: number
+  rects: { left: number; top: number; right: number; bottom: number }[]
 }
 
 const srgb = (hex: string, out = new THREE.Color()) => out.setRGB(...hexToRgb(hex), THREE.SRGBColorSpace)
@@ -93,6 +120,7 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
   const evolveSprite = createBattleSprite('creature', assets, evolveHome, S.evolve.breathPhase)
   for (const s of [...creatures, ...trainers, evolveSprite]) scene.add(s.root)
   let evolveActive = false
+  const markers = createSideMarkers(scene, creatureHomes)
 
   // --- vfx -----------------------------------------------------------------
   const vfxGroup = new THREE.Group()
@@ -101,6 +129,7 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
   const geos = createSharedGeometries(S.vfx.geometry)
   const chars = new Set<string>(S.vfx.glyphChars)
   collectChars(T, chars)
+  for (const ch of themeGlyphs()) chars.add(ch)
   const atlas = createGlyphAtlas([...chars].join(''), S.vfx.glyphFont, S.vfx.glyphCell)
   const additive = createParticlePool(S.vfx.pool.add, true, atlas, S.vfx.look.particles)
   const alpha = createParticlePool(S.vfx.pool.alpha, false, atlas, S.vfx.look.particles)
@@ -221,6 +250,104 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
   }
 
   const alive = () => !disposed
+  const _qa = new THREE.Vector3()
+  const _qb = new THREE.Vector3()
+
+  // --- boss presentation ------------------------------------------------------
+  const bosses: [BossEntry | null, BossEntry | null] = [null, null]
+  const bossAura = [0, 0]
+  const slotScale = (side: SideIndex) => S.slots[side].scale * (bosses[side]?.scale ?? 1)
+  const expandedAura = new Map<string, VfxStep[]>()
+  const auraSteps = (theme: string, steps: readonly VfxStep[]) => {
+    let list = expandedAura.get(theme)
+    if (!list) { list = expandSteps(steps, null); expandedAura.set(theme, list) }
+    return list
+  }
+  function bossIdle(dt: number): void {
+    for (const side of [0, 1] as const) {
+      const boss = bosses[side]
+      const theme = boss && BOSS_PRES.themes[boss.theme]
+      const sp = creatures[side]
+      if (!boss || !theme || !sp.present || !sp.id || sp.fx.dissolve > 0.5 || (evolveActive && side === 0)) continue
+      bossAura[side] += dt * 1000
+      if (bossAura[side] < theme.everyMs) continue
+      bossAura[side] %= theme.everyMs
+      const ctx = ctxFor(side, null, typeColor(sp.id))
+      for (const st of auraSteps(boss.theme, theme.steps)) spawnStep(st, ctx, host)?.dispose()
+    }
+  }
+
+  // --- screen composition (HUD-aware framing) ------------------------------------
+  let hud: HudLayout | null = null
+  let lastSolution: Solution = { framing: { zoom: 1, dx: 0, dy: 0 }, clear: true, overlap: 0 }
+  let fitted = false
+  const probe = new THREE.PerspectiveCamera()
+
+  /** The sprite's opaque part as a viewport box when seen through `camera`; `lift` raises it (idle float, as a fraction of its height). */
+  function projectBox(sp: BattleSprite, camera: THREE.PerspectiveCamera, scale: number, lift: number): Box {
+    const right = _qa.setFromMatrixColumn(camera.matrixWorld, 0)
+    const o = sp.opaque
+    let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity
+    for (const h of [1 - o.y1, 1 - o.y0 + lift]) {
+      for (const f of [o.x0, o.x1]) {
+        sp.pointAt(h, _qb)
+        _qb.addScaledVector(right, (f - 0.5) * sp.width * scale).project(camera)
+        const x = _qb.x * 0.5 + 0.5, y = 0.5 - _qb.y * 0.5
+        l = Math.min(l, x); r = Math.max(r, x); t = Math.min(t, y); b = Math.max(b, y)
+      }
+    }
+    return { left: l, top: t, right: r, bottom: b }
+  }
+
+  /** Where each creature rests when seen through the base shot at neutral framing. */
+  function restBoxes(width: number, height: number): Box[] {
+    const C = S.camera
+    const b = cam.base
+    probe.aspect = width / height
+    const widen = Math.max(1, C.refAspect / probe.aspect)
+    probe.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(b.fov) / 2) * widen))
+    probe.near = C.near
+    probe.far = C.far
+    probe.position.copy(b.pos)
+    probe.lookAt(b.look)
+    probe.updateProjectionMatrix()
+    probe.updateMatrixWorld()
+    const boxes: Box[] = []
+    for (const side of [0, 1] as const) {
+      const sp = creatures[side]
+      if (!sp.id) continue
+      const boss = bosses[side]
+      const theme = boss ? BOSS_PRES.themes[boss.theme] : undefined
+      boxes.push(projectBox(sp, probe, 1, C.framing.idlePad + (theme?.bob.amp ?? 0)))
+    }
+    return boxes
+  }
+
+  /** The shot the camera rests on: the boss one while a boss is out, and the tall-screen variant on a portrait viewport. */
+  function restShot(): ShotDef {
+    const portrait = !!hud && hud.width < hud.height
+    if (bosses[1]) return (portrait ? BOSS_PRES.framing.basePortrait : BOSS_PRES.framing.base) as ShotDef
+    return (portrait ? S.camera.shots.basePortrait : S.camera.shots.base) as ShotDef
+  }
+
+  /** Re-seats the camera on `restShot()`: a cut before the first fit (the intro has not started), an ease after. */
+  function syncBase(): void {
+    const shot = restShot()
+    if (shot === cam.baseShot) return
+    cam.setBase(shot)
+    if (fitted) cam.home(S.camera.framing.baseBlendSec)
+    else cam.cut(shot)
+  }
+
+  function refit(): void {
+    if (!hud || hud.width < 1 || hud.height < 1) return
+    const F = S.camera.framing
+    const boxes = restBoxes(hud.width, hud.height)
+    const frac = hud.rects.map((r) => ({ left: r.left / hud!.width, right: r.right / hud!.width, top: r.top / hud!.height, bottom: r.bottom / hud!.height }))
+    lastSolution = solveFraming(boxes, frac, { w: hud.width, h: hud.height, unit: hud.unit }, F)
+    cam.setFraming(lastSolution.framing, !fitted)
+    fitted = true
+  }
 
   // --- evolution helpers -------------------------------------------------------
   /** Holds a sprite's flash at a level (silhouette) until stopped; `fadeOut` ramps it down. */
@@ -267,12 +394,43 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
     setCreature(side, speciesId, shiny) {
       const sp = creatures[side]
       const sl = S.slots[side]
-      if (!speciesId) { sp.setCreature(null, false, sl.scale, sl.facesRight); sp.present = false; return }
-      sp.setCreature(speciesId, shiny, sl.scale, sl.facesRight)
+      if (!speciesId) { sp.setCreature(null, false, slotScale(side), sl.facesRight); sp.present = false; return }
+      sp.setCreature(speciesId, shiny, slotScale(side), sl.facesRight)
       if (side === 1) ball.setVisible(false)
+      refit()
     },
 
     showCreature(side, visible) { creatures[side].present = visible && !!creatures[side].id },
+
+    creatureRect(side) {
+      const sp = creatures[side]
+      if (!sp.present || !sp.id) return null
+      return projectBox(sp, cam.camera, sp.fx.scale, 0)
+    },
+
+    setHud(layout) {
+      hud = layout
+      syncBase()
+      refit()
+    },
+    restBoxes() { return hud ? restBoxes(hud.width, hud.height) : [] },
+    get composition() { return { ...lastSolution, framing: { ...cam.framing } } },
+
+    setBoss(side, bossId) {
+      const entry = bossEntry(bossId)
+      bosses[side] = entry
+      bossAura[side] = 0
+      const theme = bossTheme(bossId)
+      creatures[side].setIdleMotion(theme ? { breath: theme.breath, floatAmp: theme.bob.amp, floatHz: theme.bob.hz } : null)
+      if (side === 1) {
+        const shot = restShot()
+        cam.setBase(shot)
+        cam.cut(shot)
+      }
+      const sp = creatures[side]
+      if (sp.id) sp.setCreature(sp.id, sp.shiny, slotScale(side), S.slots[side].facesRight)
+      refit()
+    },
 
     setTrainer(side, sheet) {
       const tr = trainers[side]
@@ -303,6 +461,8 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
       void run(T.sendOut.throw, ctx)
       await ballFlight(from, to, S.ball.sendOutDur, S.ball.sendOutArc)
       if (!alive()) return
+      // the player's own trainer stands just off screen; once the throw is done it would only peek in when the composition shifts
+      if (side === 0) trainers[0].present = false
       ball.setVisible(false)
       await run(T.sendOut.open, ctx)
       if (!alive()) return
@@ -514,6 +674,8 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
       for (const s of creatures) s.update(dt, time, yaw)
       for (const s of trainers) s.update(dt, time, yaw)
       evolveSprite.update(dt, time, yaw)
+      bossIdle(dt)
+      markers.update(creatures, [slotScale(0), slotScale(1)], time)
       const q = quality()
       const internalH = ext?.internal.height ?? renderer.canvas.height
       const pxPerUnit = internalH / (2 * Math.tan(THREE.MathUtils.degToRad(cam.camera.fov) / 2))
@@ -542,6 +704,7 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
       effects.length = 0
       for (const s of [...creatures, ...trainers, evolveSprite]) s.dispose()
       for (const l of vfxLights) { l.light.removeFromParent(); l.light.dispose() }
+      markers.dispose()
       additive.dispose()
       alpha.dispose()
       atlas.dispose()
