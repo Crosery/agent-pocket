@@ -305,7 +305,7 @@ export interface ActorsConfig {
   renderOrder: ActorKinds<number>
   depthBias: ActorKinds<number>
   cardSegments: number
-  normalTilt: number; hop: { height: number; ms: number }; blob: { size: number; opacity: number }
+  normalTilt: number; hop: { height: number; ms: number }
   bubbleMs: number; remoteAlpha: number; nameColor: string
   /** One footstep per `stride` tiles, with two footsteps per complete cycle. Rates are specified for the
    * legacy four-pose cycle and scaled to the loaded walk-pose count. Jumps >= teleportTiles are ignored. */
@@ -685,6 +685,8 @@ export interface LightingTier {
   spriteRim: boolean
   /** Sprites sample the sun shadow map under their feet. */
   spriteShadow: boolean
+  /** Sprites also cast the soft silhouette shadow (the contact ellipse is always on). */
+  spriteCast: boolean
   wetGround: boolean
   splitTone: boolean
 }
@@ -723,6 +725,28 @@ export interface LightingConfig {
   wet: { darken: number; sheen: number; sheenPower: number; sheenBase: number; propSheen: number; puddleScale: number; puddleCoverage: number; puddleSoftness: number; reflect: number }
 }
 
+/** Character / creature shadows (sprite-shadow.ts). */
+export interface SpriteShadowConfig {
+  color: string
+  /** Lift above the rendered terrain (world units), polygon offset against it and how often a resting sprite re-reads the ground (s). */
+  ground: { lift: number; offsetFactor: number; offsetUnits: number; refreshSeconds: number }
+  /** Contact ellipse: size (world units) and strength at the soles, radial `core` (flat share) and falloff `power`,
+   * how the soles are measured from the lowest `footRows` opaque rows (`footFollow` = share of the sideways offset
+   * followed, `spanMul` x measured foot span, kept within `minSpan`..`maxSpan`; `width` / `depth` give the nominal size and
+   * aspect; `forward` moves it toward the camera so more of it shows around the legs), shrink / fade per world unit the body is lifted (stopping at `minScale` / `minOpacity`) and the grid vertices
+   * per side that hug the ground. */
+  contact: {
+    width: number; depth: number; opacity: number; core: number; power: number
+    footRows: number; footFollow: number; spanMul: number; minSpan: number; maxSpan: number; forward: number
+    liftShrink: number; minScale: number; liftFade: number; minOpacity: number; grid: number
+  }
+  /** Cast silhouette: strength, shadow length per unit height (`lengthMul` x cot(elevation), at most `maxSlope`), width,
+   * fade toward the tip, blur radius (sprite texels) at the soles and at the head, share of the cloud shadow that removes it. */
+  cast: { opacity: number; lengthMul: number; maxSlope: number; widthMul: number; tailFade: number; blurNear: number; blurFar: number; cloud: number }
+  /** Light intensity range mapped to 0..1 cast strength, share kept under the moon and indoors. */
+  light: { min: number; full: number; moon: number; indoor: number }
+}
+
 export interface SkyConfig { domeRadius: number; starDensity: number; starColor: string; starIntensity: number; twinkleSpeed: number }
 
 export interface RenderContent {
@@ -735,6 +759,7 @@ export interface RenderContent {
   cave: StaticLighting
   sky: SkyConfig
   lighting: LightingConfig
+  spriteShadow: SpriteShadowConfig
   terrain: TerrainRenderConfig
   water: WaterConfig
   lava: LavaConfig
@@ -993,15 +1018,35 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
     for (const [q, t] of Object.entries(Lq)) {
       if (!(Number.isInteger(t.fieldLights) && t.fieldLights >= 0 && t.fieldLights <= F.max)) errs.push(`lighting.quality.${q}.fieldLights: integer 0..lights.field.max`)
       if (!(Number.isInteger(t.shafts) && t.shafts >= 0)) errs.push(`lighting.quality.${q}.shafts: integer >= 0`)
-      for (const k of ['cloudShadows', 'spriteRim', 'spriteShadow', 'wetGround', 'splitTone'] as const) if (typeof t[k] !== 'boolean') errs.push(`lighting.quality.${q}.${k}: must be a boolean`)
+      for (const k of ['cloudShadows', 'spriteRim', 'spriteShadow', 'spriteCast', 'wetGround', 'splitTone'] as const) if (typeof t[k] !== 'boolean') errs.push(`lighting.quality.${q}.${k}: must be a boolean`)
     }
     const low = Lq.low
-    if (low && (low.fieldLights || low.shafts || low.cloudShadows || low.spriteRim || low.spriteShadow || low.wetGround || low.splitTone)) errs.push('lighting.quality.low: new lighting effects must be off at the lowest tier')
+    if (low && (low.fieldLights || low.shafts || low.cloudShadows || low.spriteRim || low.spriteShadow || low.spriteCast || low.wetGround || low.splitTone)) errs.push('lighting.quality.low: new lighting effects must be off at the lowest tier')
     for (const k of r.lighting.shafts.props) if (!r.nature.props[k]) errs.push(`lighting.shafts.props: "${k}" is not a nature prop`)
     const Cl = r.lighting.cloud
     if (!(Cl.size >= 16 && Cl.size <= 512)) errs.push('lighting.cloud.size: 16..512')
     if (!(Cl.softness > 0)) errs.push('lighting.cloud.softness: must be > 0')
     if (!(r.lighting.shafts.width[0] > 0 && r.lighting.shafts.width[1] >= r.lighting.shafts.width[0])) errs.push('lighting.shafts.width: [min, max] > 0')
+  }
+  {
+    const S = r.spriteShadow
+    color('spriteShadow.color', S?.color)
+    const num = (where: string, v: unknown, lo: number, hi = Infinity) => { if (!(typeof v === 'number' && v >= lo && v <= hi)) errs.push(`spriteShadow.${where}: must be a number in ${lo}..${hi}`) }
+    num('ground.lift', S.ground?.lift, 0, 0.2)
+    num('ground.refreshSeconds', S.ground?.refreshSeconds, 0.05)
+    for (const k of ['width', 'depth', 'core', 'power', 'footRows', 'footFollow', 'spanMul', 'minSpan', 'maxSpan', 'forward', 'liftShrink', 'liftFade'] as const) num(`contact.${k}`, S.contact?.[k], 0)
+    for (const k of ['opacity', 'minScale', 'minOpacity'] as const) num(`contact.${k}`, S.contact?.[k], 0, 1)
+    if (!(S.contact?.width > 0 && S.contact?.depth > 0)) errs.push('spriteShadow.contact: width and depth must be > 0')
+    if (!(S.contact?.core < 1)) errs.push('spriteShadow.contact.core: must be < 1')
+    if (!(S.contact?.maxSpan >= S.contact?.minSpan)) errs.push('spriteShadow.contact: maxSpan must be >= minSpan')
+    if (!(Number.isInteger(S.contact?.grid) && S.contact.grid >= 2 && S.contact.grid <= 8)) errs.push('spriteShadow.contact.grid: integer 2..8')
+    if (!(Number.isInteger(S.contact?.footRows) && S.contact.footRows >= 1)) errs.push('spriteShadow.contact.footRows: integer >= 1')
+    for (const k of ['opacity', 'tailFade', 'cloud'] as const) num(`cast.${k}`, S.cast?.[k], 0, 1)
+    for (const k of ['lengthMul', 'maxSlope', 'widthMul', 'blurNear', 'blurFar'] as const) num(`cast.${k}`, S.cast?.[k], 0)
+    if (!(S.cast?.maxSlope > 0 && S.cast?.widthMul > 0)) errs.push('spriteShadow.cast: maxSlope and widthMul must be > 0')
+    for (const k of ['min', 'full'] as const) num(`light.${k}`, S.light?.[k], 0)
+    for (const k of ['moon', 'indoor'] as const) num(`light.${k}`, S.light?.[k], 0, 1)
+    if (!(S.light?.full > S.light?.min)) errs.push('spriteShadow.light: full must be above min')
   }
   const textureKeys = new Set([...c.terrain.map((t) => t.key), ...c.biomes.map((b) => b.cliff), r.terrain.defaultCliff])
   const checkSurfaces = (where: string, list: Record<string, SurfaceDef>) => {

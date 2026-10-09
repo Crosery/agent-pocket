@@ -79,26 +79,30 @@ export const sceneLightUniforms = {
   uApWetSky: { value: new THREE.Color(1, 1, 1) },
 }
 
-const PARS = /* glsl */`
-#define AP_LF_MAX ${LF.max}
-uniform int uApLfCount;
-uniform vec4 uApLfPos[AP_LF_MAX];
-uniform vec3 uApLfCol[AP_LF_MAX];
-uniform vec4 uApLfShape;
+/** Cloud mask (1 = under a cloud) at a world xz position; for shaders outside the patched lit materials (sprite shadows). */
+export const CLOUD_GLSL = /* glsl */`
 uniform sampler2D uApCloudMap;
 uniform vec4 uApCloud;
 uniform vec4 uApCloudScroll;
 uniform vec3 uApCloudMix;
-uniform vec4 uApWet;
-uniform vec4 uApWetShape;
-uniform vec3 uApWetFres;
-uniform vec3 uApWetSky;
 float apCloudMask(vec2 p) {
   vec2 uv = p * uApCloud.y;
   float n = mix(texture2D(uApCloudMap, uv + uApCloudScroll.xy).r, texture2D(uApCloudMap, uv * uApCloudMix.z + uApCloudScroll.zw).r, uApCloudMix.y);
   return smoothstep(uApCloud.z - uApCloud.w, uApCloud.z + uApCloud.w, n);
 }
 `
+
+const PARS = /* glsl */`
+#define AP_LF_MAX ${LF.max}
+uniform int uApLfCount;
+uniform vec4 uApLfPos[AP_LF_MAX];
+uniform vec3 uApLfCol[AP_LF_MAX];
+uniform vec4 uApLfShape;
+uniform vec4 uApWet;
+uniform vec4 uApWetShape;
+uniform vec3 uApWetFres;
+uniform vec3 uApWetSky;
+${CLOUD_GLSL}`
 
 /** After the albedo is final and before lighting reads it: wet ground darkens. Returns the puddle mask in apPuddle. */
 const WET_ALBEDO = /* glsl */`

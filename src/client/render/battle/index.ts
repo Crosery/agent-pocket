@@ -519,8 +519,6 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
       const pxPerUnit = internalH / (2 * Math.tan(THREE.MathUtils.degToRad(cam.camera.fov) / 2))
       additive.update(dt, cam.camera, pxPerUnit)
       alpha.update(dt, cam.camera, pxPerUnit)
-      const shadows = settings().shadows && q.shadows
-      for (const s of [...creatures, ...trainers, evolveSprite]) s.setShadows(shadows)
       env.setPointLightPool(Math.min(CONTENT.config.render.maxPointLights, q.pointLights, S.lighting.propLightPool))
       const benders = [...creatures, ...trainers].filter((s) => s.present && s.id).map((s) => {
         const p = s.pointAt(0, new THREE.Vector3())

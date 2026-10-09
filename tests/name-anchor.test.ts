@@ -24,7 +24,7 @@ test('character head anchors exclude transparent atlas rows and the sole pivot',
     texture.image = { width: 1024, height: 256, getContext: () => ({ getImageData: () => ({ data }) }) }
     const ctx = {
       assets: { characterTexture: () => texture }, root: new THREE.Group(), registry: new Set(), yaw: { value: 0 },
-      inGrassAt: () => false,
+      inGrassAt: () => false, groundAt: () => 0,
       overlay: { createTag: () => ({ setName() {}, update() {}, dispose() {}, bubble() {} }) },
     } as unknown as ActorContext
     for (const kind of ['player', 'npc', 'remote'] as const) {

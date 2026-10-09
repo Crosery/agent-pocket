@@ -38,8 +38,9 @@ import { createQuestTrail } from './world/quest-trail.ts'
 import { applySceneLight, createSceneLight, patchSceneLight, sceneLightUniforms } from './world/scene-light.ts'
 import { createShafts } from './world/shafts.ts'
 import { createSkyRig } from './world/sky.ts'
+import { updateSpriteShadows } from './sprite-shadow.ts'
 import { createStreamer, type ChunkSlot, type StreamFrame, type Streamer, type StreamStats } from './world/streamer.ts'
-import { buildChunk, createHeightField, createTerrainSampler, sampleWalkHeight, type HeightField, type TerrainSampler } from './world/terrain.ts'
+import { buildChunk, createHeightField, createTerrainSampler, sampleSurfaceHeight, sampleWalkHeight, type HeightField, type TerrainSampler } from './world/terrain.ts'
 import { updateWind } from './world/wind.ts'
 
 /** Everything built for one terrain chunk. */
@@ -169,6 +170,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
     registry,
     yaw,
     inGrassAt: (x, y) => !!sampler && !!sampler.terrain(tileOf(x), tileOf(y))?.tallGrass,
+    groundAt: (x, z) => (sampler ? sampleSurfaceHeight(sampler, x, z) : 0),
   }
 
   const staticPreset = (): StaticLighting | null => {
@@ -618,6 +620,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       // light field (lamps, windows, fires), cloud shadows and wet ground: shared uniforms of every lit material
       const lightTier = lightingTier(st.quality)
       sceneLight.update({ dt, time, focus, quality: st.quality, state: s, wet: wx.wet, wind: wx.wind, sky: sky.hemi.color, outdoor })
+      updateSpriteShadows({ dir, light: sky.sun.intensity, moon, outdoor, cast: shadowsOn && lightTier.spriteCast })
       updateSpriteLighting({
         dir, sunColor: sky.sun.color, sunMul: sunFade, state: s, rim: 1, quality: st.quality, camera,
         shadowUv: 1 / (sky.sun.shadow.camera.right - sky.sun.shadow.camera.left), shadows: shadowsOn, outdoor,
