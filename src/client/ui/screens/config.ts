@@ -154,14 +154,9 @@ export interface ScreensConfig {
     unvisitedPalette: Record<string, string>
     minLabelTiles: number
     padUnits: number
-    /** The side panel: sizes in UI units (px floors for phones), what counts as "nearby", and which services a place can offer. */
+    /** The side panel: its width in UI units (type sizes are the screen type tiers), what counts as "nearby", and which services a place can offer. */
     panel: {
       widthUnits: number
-      nameUnits: number
-      bodyUnits: number
-      chipUnits: number
-      minPx: number
-      chipMinPx: number
       /** Tiles: the nearest place named in "you are here" / an open quest target counts as at a place. */
       nearRadius: number
       questRadius: number

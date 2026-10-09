@@ -32,7 +32,7 @@ export const VIEWPORTS = [
   { name: 'd1000', width: 1000, height: 655, dpr: 1.25 },
   { name: 'd1280', width: 1280, height: 720, dpr: 1 },
   { name: 'd1920', width: 1920, height: 1080, dpr: 1 },
-  { name: 'd1000', width: 1000, height: 655, dpr: 2 },
+  { name: 'd1000r', width: 1000, height: 655, dpr: 2 },
   { name: 'm390', width: 390, height: 844, dpr: 3, touch: true },
   { name: 'm360', width: 360, height: 780, dpr: 3, touch: true },
   { name: 'm844', width: 844, height: 390, dpr: 3, touch: true },
@@ -41,7 +41,7 @@ export const VIEWPORTS = [
 
 /** Runs inside the page (serialised by page.evaluate): must not reference anything outside itself. */
 export function auditLayout(opts) {
-  const { scopeSel, ignoreSel, minFont, limits = null, screenScrollOk = [], noScrollSel = '' } = opts
+  const { scopeSel, ignoreSel, minFont, noScrollSel, limits = null, screenScrollOk = [] } = opts
   const cls = matchMedia('(pointer: coarse)').matches ? 'phone' : 'desktop'
   // Text range (px) and the scrollers this viewport class may have (content/ui.json audit); the max follows the window height.
   const fontPx = limits ? { min: limits.fontPx[cls].min, max: Math.max(limits.fontPx[cls].min, innerHeight * limits.fontPx[cls].maxVhFrac) } : null
@@ -522,10 +522,10 @@ export const SCREENS = [
   { id: 'dex-detail', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await page.evaluate(() => { void window.__AP.screens.dex() }); await page.waitForTimeout(700); await page.keyboard.press('KeyZ') } },
   { id: 'box', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.box() }) },
   { id: 'shop', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.shop(Object.keys(window.__AP.data.items).slice(0, 40)) }) },
-  { id: 'map', demote: ['font-size'], scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: run(() => { void window.__AP.screens.worldMap({ fly: false }) }) },
-  { id: 'map-fly', demote: ['font-size'], scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: run(() => { void window.__AP.screens.worldMap({ fly: true }) }) },
+  { id: 'map', scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: run(() => { void window.__AP.screens.worldMap({ fly: false }) }) },
+  { id: 'map-fly', scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: run(() => { void window.__AP.screens.worldMap({ fly: true }) }) },
   // Teleport anchors (#38): some activated near the origin, a wider ring only discovered (grey pins).
-  { id: 'map-anchors', demote: ['font-size'], scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: async (page) => { await prepareAnchors(page); await page.evaluate(() => { void window.__AP.screens.worldMap({ fly: false, anchors: true }) }); await page.waitForTimeout(1800) } },
+  { id: 'map-anchors', scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: async (page) => { await prepareAnchors(page); await page.evaluate(() => { void window.__AP.screens.worldMap({ fly: false, anchors: true }) }); await page.waitForTimeout(1800) } },
   { id: 'anchor-picker', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await prepareAnchors(page); await page.evaluate(() => { void window.__AP.screens.anchorPicker({}) }); await page.waitForTimeout(600) } },
   { id: 'quests', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.quests() }) },
   { id: 'settings', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.settings() }) },
@@ -687,7 +687,7 @@ export async function measureScreen(page, screen, shot) {
   await page.waitForTimeout(500)
   // a map or scene fade that is still going would "cover" the whole page
   await page.waitForFunction(() => { const f = document.querySelector('.ap-fade'); return !f || parseFloat(getComputedStyle(f).opacity) < 0.02 }, undefined, { timeout: 8000 }).catch(() => {})
-  const run = () => page.evaluate(auditLayout, { scopeSel: screen.scope, ignoreSel: screen.ignore ?? '', minFont: 9, limits: UI_AUDIT, screenScrollOk: screen.scrollOk ?? [], noScrollSel: screen.noScroll ?? '' })
+  const run = () => page.evaluate(auditLayout, { scopeSel: screen.scope, ignoreSel: screen.ignore ?? '', minFont: 9, noScrollSel: screen.noScroll ?? '', limits: UI_AUDIT, screenScrollOk: screen.scrollOk ?? [] })
   let result = await run()
   // A screen that is still sliding in is not a layout defect: look once more before calling the scope missing.
   if (result.violations.some((v) => v.type === 'no-scope')) { await page.waitForTimeout(1800); result = await run() }
