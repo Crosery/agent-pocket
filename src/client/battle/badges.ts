@@ -4,7 +4,7 @@ import { CONTENT, t } from '../../shared/content/index.ts'
 import { publicAssetUrl } from '../core/assets.ts'
 import { el } from '../ui/widgets.ts'
 import { BATTLE_UI, type CommandId } from './config.ts'
-import type { BossChip } from './model.ts'
+import { fitLabel, type BossChip } from './model.ts'
 
 const iconUrl = (name: string) => publicAssetUrl(`${BATTLE_UI.icons.base}icon-${name}.png`)
 
@@ -41,7 +41,8 @@ export function commandIcon(id: CommandId): HTMLElement {
  */
 export function meterTile(chip: BossChip, onReadout: (text: string) => void): HTMLElement {
   const H = BATTLE_UI.hud
-  const label = [...chip.label.replace(/\s+/g, '')].slice(0, H.meterLabelChars).join('')
+  const label = fitLabel(chip.label, H.meterLabelWidth)
+  const state = !chip.alert && chip.fill === null
   const body: (HTMLElement | string)[] = [el('span', { class: 'apb-mt-label', text: label })]
   if (chip.alert) {
     body.push(el('span', { class: 'apb-mt-state', text: chip.readout }))
@@ -53,7 +54,7 @@ export function meterTile(chip: BossChip, onReadout: (text: string) => void): HT
     body.push(el('span', { class: 'apb-mt-state', text: chip.stateText ?? '' }))
   }
   const tile = el('span', {
-    class: `apb-mt is-${chip.tone}${chip.alert ? ' is-alert' : ''}`,
+    class: `apb-mt is-${chip.tone}${chip.alert ? ' is-alert' : ''}${state ? ' is-state' : ''}`,
     title: chip.readout,
     attrs: { role: 'button', tabindex: '0', 'aria-label': chip.readout },
     data: { meter: chip.id },

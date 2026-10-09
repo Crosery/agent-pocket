@@ -8,8 +8,8 @@
   "channel": {"maxAutoSteps": 64},
   "sfx": {"hit": {"immune": "hit_weak", "weak": "hit_weak", "normal": "hit", "super": "hit_super"}, "crit": "hit_super", "miss": "cancel", "faint": "faint", "throwBall": "ball_throw", "catch": "catch", "catchFail": "cancel", "heal": "heal", "levelUp": "levelup", "item": "item", "money": "money", "evolveStart": "evolve", "evolveDone": "levelup", "evolveCancel": "cancel", "run": "run", "statUp": "stat_up", "statDown": "stat_down", "status": "status", "learn": "levelup", "ability": "notify", "select": "select", "confirm": "confirm", "cancel": "cancel", "error": "error", "advance": "select"},
   "cry": {"onSendOut": true, "onFaint": true, "faintPitch": 0.72, "evolvePitch": 1.12},
-  "layout": {"syncSec": 0.1, "margin": 8, "gap": 6, "barHeight": 72, "foeWidth": 188, "ownWidth": 188, "cmdWidth": 132, "compactFoeWidth": 160, "compactOwnWidth": 170, "compactCmdWidth": 116, "detailWidth": 190, "bottomMaxGapPx": 24},
-  "hud": {"hpBarWidth": 92, "expBarWidth": 128, "foeHpNumbers": true, "ownHpNumbers": true, "showTypes": true, "showStages": true, "meterLabelChars": 2, "meterPipCells": 6, "meterReadoutMs": 2600},
+  "layout": {"syncSec": 0.1, "margin": 8, "gap": 6, "barHeight": 76, "foeWidth": 188, "ownWidth": 188, "cmdWidth": 132, "compactFoeWidth": 160, "compactOwnWidth": 170, "compactCmdWidth": 116, "detailWidth": 190, "bottomMaxGapPx": 24},
+  "hud": {"hpBarWidth": 92, "expBarWidth": 128, "foeHpNumbers": true, "ownHpNumbers": true, "showTypes": true, "showStages": true, "meterLabelWidth": 5, "meterPipCells": 6, "meterReadoutMs": 2600},
   "icons": {
     "base": "assets/ui/battle/",
     "commands": {"fight": "fight", "bag": "bag", "party": "party", "run": "run", "forfeit": "forfeit"},

@@ -65,8 +65,8 @@ export interface BattleUiConfig {
   hud: {
     hpBarWidth: number; expBarWidth: number; foeHpNumbers: boolean; ownHpNumbers: boolean
     showTypes: boolean; showStages: boolean
-    /** Boss meter tiles: characters of the label kept, cells of the pip row, and how long a tapped tile's full reading stays up. */
-    meterLabelChars: number; meterPipCells: number; meterReadoutMs: number
+    /** Boss meter tiles: display width of the label kept (wide characters count 2), cells of the pip row, and how long a tapped tile's full reading stays up. */
+    meterLabelWidth: number; meterPipCells: number; meterReadoutMs: number
   }
   /** Pixel icons (files under `base`, named icon-<id>.png); type badges use each type's own `icon` file under `typeBase`. */
   icons: {

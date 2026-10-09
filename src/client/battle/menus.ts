@@ -5,7 +5,7 @@
 import type { MoveDef } from '../../shared/types.ts'
 import type { AudioManager, Input } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
-import { append, button, createGridNav, el, panel, typeChip, type GridNav } from '../ui/widgets.ts'
+import { actionKeyLabel, append, button, createGridNav, el, panel, type GridNav } from '../ui/widgets.ts'
 import { commandIcon, typeBadge } from './badges.ts'
 import { BATTLE_UI, type CommandId, type EffCategory } from './config.ts'
 
@@ -96,7 +96,11 @@ export function createMenus(audio: AudioManager): Menus {
         const p = panel(null, { className: 'apb-win apb-menu apb-cmd' })
         p.el.style.setProperty('--cols', String(BATTLE_UI.commands.columns))
         const rows = items.map((it) => row('apb-cmd-row', [commandIcon(it.id), el('span', { class: 'ap-row-label', text: t(`battleui.cmd.${it.id}`) })], it.disabled))
-        p.body.replaceWith(...rows)
+        const hint = el('div', 'apb-cmd-hint', [
+          el('span', { class: 'apb-hint-keys', text: t('battleui.hint.keys', { confirm: actionKeyLabel('confirm'), cancel: actionKeyLabel('cancel') }) }),
+          el('span', { class: 'apb-hint-touch', text: t('battleui.hint.touch') }),
+        ])
+        p.body.replaceWith(...rows, hint)
         const nav = createGridNav({ count: items.length, cols: BATTLE_UI.commands.columns, initial, audio, onChange: paint })
         install([p.el], rows, {
           mode: 'commands',
@@ -130,16 +134,14 @@ export function createMenus(audio: AudioManager): Menus {
           detail.el.hidden = false
           const cat = el('span', { class: 'apb-cat', text: t(`battleui.move.category.${m.category}`) })
           cat.style.setProperty('--cat', BATTLE_UI.moves.categoryColors[m.category])
-          const backBtn = back
           const stat = (k: string, v: string) => el('span', {}, [t(k), el('b', { text: v })])
           const priority = m.priority
             ? el('span', { text: t('battleui.move.priority', { n: m.priority > 0 ? `+${m.priority}` : String(m.priority) }) })
             : null
           detail.body.replaceChildren()
           append(detail.body, [
-            el('div', 'apb-detail-head', [typeChip(m.type), el('span', { class: 'apb-detail-name', text: m.nameZh }), backBtn]),
+            el('div', 'apb-detail-head', [typeBadge(m.type), el('span', { class: 'apb-detail-name', text: m.nameZh }), cat, back]),
             el('div', 'apb-detail-stats', [
-              cat,
               stat('battleui.move.power', m.power > 0 ? String(m.power) : t('battleui.move.none')),
               stat('battleui.move.accuracy', m.accuracy === 0 ? t('battleui.move.never') : String(m.accuracy)),
               priority,

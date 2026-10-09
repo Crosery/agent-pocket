@@ -255,6 +255,20 @@ export function evolutionMoves(cr: Pick<Creature, 'level' | 'moves'>, toSpeciesI
 // Boss HUD
 // ---------------------------------------------------------------------------
 
+
+/** The label cut to a display width (wide characters count 2): "支付" and "juice" both fit, "苹果订阅" becomes "苹果". */
+export function fitLabel(label: string, width: number): string {
+  let used = 0
+  let out = ''
+  for (const ch of label.trim().split(/\s+/)[0]) {
+    const w = /[\u2e80-\u9fff\uff00-\uffef]/.test(ch) ? 2 : 1
+    if (used + w > width) break
+    used += w
+    out += ch
+  }
+  return out
+}
+
 export type BossChipTone = 'neutral' | 'good' | 'warn' | 'bad'
 export interface BossChip {
   id: string

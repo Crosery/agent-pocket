@@ -6,6 +6,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { CONTENT } from '../src/shared/content/index.ts'
 import { BATTLE_UI } from '../src/client/battle/config.ts'
+import { fitLabel } from '../src/client/battle/model.ts'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const pub = (p: string) => join(ROOT, 'public', p)
@@ -38,6 +39,11 @@ test('layout numbers are positive and the compact widths are narrower', () => {
   assert.ok(L.compactFoeWidth <= L.foeWidth && L.compactOwnWidth <= L.ownWidth && L.compactCmdWidth <= L.cmdWidth)
 })
 
-test('the boss meter labels shorten to the configured number of characters', () => {
-  assert.ok(BATTLE_UI.hud.meterLabelChars >= 1 && BATTLE_UI.hud.meterPipCells >= 2)
+test('boss meter labels shorten by display width', () => {
+  const W = BATTLE_UI.hud.meterLabelWidth
+  assert.ok(W >= 2 && BATTLE_UI.hud.meterPipCells >= 2)
+  assert.equal(fitLabel('苹果订阅', W), '苹果')
+  assert.equal(fitLabel('住宅 IP', W), '住宅')
+  assert.equal(fitLabel('juice', W), 'juice')
+  assert.equal(fitLabel('supercalifragilistic', W).length, W)
 })

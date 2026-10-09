@@ -209,7 +209,11 @@ html.ap-battle-on[data-touch-controls] { --ap-bottom-inset: 0px; }
 .apb-mt-pips { display: flex; gap: calc(var(--u) * 1); height: calc(var(--u) * 4); }
 .apb-mt-pip { flex: 1 1 0; min-width: calc(var(--u) * 3); max-width: calc(var(--u) * 6); background: #2a3023; box-shadow: 0 0 0 var(--u) var(--ap-ink); }
 .apb-mt-pip.is-on { background: var(--tone); box-shadow: 0 0 0 var(--u) var(--ap-ink), inset 0 var(--u) 0 rgba(255, 255, 255, 0.45); }
-.apb-mt-state { color: var(--tone); line-height: calc(var(--u) * 10); white-space: nowrap; }
+.apb-mt-state { color: var(--tone); line-height: calc(var(--u) * 12); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+/* state-word meters read "label word" on one line across two columns; the full reading is the tap / hover readout */
+.apb-mt.is-state { grid-column: span 2; }
+.apb-mt.is-state .apb-mt-body { flex-direction: row; align-items: center; gap: calc(var(--u) * 4); min-width: 0; flex: 1 1 auto; }
+.apb-mt.is-state .apb-mt-label { flex: none; }
 .apb-mt.is-alert { grid-column: 1 / -1; background: rgba(150, 30, 30, 0.9); animation: apb-blink 700ms steps(2) infinite; }
 .apb-mt.is-alert .apb-mt-label, .apb-mt.is-alert .apb-mt-state { color: #fff; }
 .apb-st-boss.is-pulse { animation: apb-boss-pulse 600ms ease-out; }
@@ -403,6 +407,9 @@ html.ap-battle-on[data-touch-controls] { --ap-bottom-inset: 0px; }
 .apb-cmd-ico { display: inline-flex; flex: none; }
 .apb-cmd-row .ap-row-label { overflow: visible; text-shadow: 0 var(--u) 0 var(--ap-ink); }
 .apb-cmd-row.is-disabled .apb-cmd-ico { opacity: 0.45; }
+.apb-cmd-hint { grid-column: 1 / -1; margin-top: calc(var(--u) * 1); padding-top: calc(var(--u) * 2); border-top: var(--u) solid rgba(201, 168, 92, 0.3); color: var(--ap-text-dim); line-height: calc(var(--u) * 11); text-align: center; white-space: nowrap; }
+@media (pointer: coarse) { .apb-hint-keys { display: none; } }
+@media (pointer: fine), (hover: hover) and (pointer: fine) { .apb-hint-touch { display: none; } }
 
 /* choosing a move: the list takes the message's and the commands' place and the move detail the own card's (the card stays
    laid out, hidden), so the bar keeps its footprint and the camera does not recompose when the menu opens */
@@ -420,10 +427,10 @@ html.ap-battle-on[data-touch-controls] { --ap-bottom-inset: 0px; }
 .apb-move-row .apb-move-pp.is-out { color: var(--ap-error); }
 .apb-move-row .apb-ty { width: calc(var(--u) * 14); height: calc(var(--u) * 14); }
 .apb-detail { position: absolute; right: 0; top: 0; bottom: 0; width: calc(var(--u) * var(--apb-own-w, 188)); white-space: normal; overflow: hidden; }
-.apb-detail-head { display: flex; align-items: center; gap: calc(var(--u) * 4); margin-bottom: calc(var(--u) * 2); min-height: calc(var(--u) * 15); }
+.apb-detail-head { display: flex; align-items: center; gap: calc(var(--u) * 4); margin-bottom: calc(var(--u) * 1); height: calc(var(--u) * 14); }
 .apb-detail-head .ap-chip { height: calc(var(--u) * 13); min-width: calc(var(--u) * 26); padding: 0 calc(var(--u) * 2); flex: none; }
 .apb-detail-name { color: var(--ap-gold-hi); flex: 1 1 auto; min-width: 0; line-height: 1.05; text-shadow: 0 var(--u) 0 var(--ap-ink); }
-.apb-detail .apb-back { position: static; flex: none; min-height: calc(var(--u) * 14); padding: 0 calc(var(--u) * 5); }
+.apb-detail .apb-back { position: static; flex: none; height: calc(var(--u) * 14); min-height: 0; line-height: calc(var(--u) * 12); padding: 0 calc(var(--u) * 5); }
 .apb-cat {
   --cat: #888;
   display: inline-flex;
@@ -435,10 +442,12 @@ html.ap-battle-on[data-touch-controls] { --ap-bottom-inset: 0px; }
   background: rgba(5, 7, 13, 0.7);
   white-space: nowrap;
 }
-.apb-detail-stats { display: flex; align-items: center; gap: calc(var(--u) * 8); color: var(--ap-text-dim); white-space: nowrap; }
+.apb-detail-stats { display: flex; align-items: center; gap: calc(var(--u) * 6); height: calc(var(--u) * 12); color: var(--ap-text-dim); white-space: nowrap; }
 .apb-detail-stats b { font-weight: normal; color: var(--ap-text); margin-left: calc(var(--u) * 3); }
 .apb-detail-desc {
-  margin: calc(var(--u) * 2) 0 0;
+  margin: 0;
+  line-height: calc(var(--u) * 14);
+  max-height: calc(var(--u) * 28);
   color: var(--ap-text);
   display: -webkit-box;
   -webkit-line-clamp: 2;

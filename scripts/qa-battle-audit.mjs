@@ -16,7 +16,7 @@ export const BATTLE_SCENARIOS = [
   { id: 'opus', query: 'battle=boss&boss=opus' },
   { id: 'astra', query: 'battle=boss&boss=astra' },
   { id: 'wild', query: 'battle=wild' },
-  { id: 'trainer', query: 'battle=trainer' },
+  { id: 'trainer', query: 'battle=trainer&trainer=route-1' },
 ]
 export const BATTLE_STATES = ['msg', 'cmd', 'moves', 'bag', 'party']
 
@@ -35,7 +35,13 @@ export async function runBattleAudit({ task, base, phase = 'audit', viewports = 
       try {
         await page.cdp('Emulation.setDeviceMetricsOverride', { width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr, mobile: false })
         await page.goto(`${base}/?dev=1&skipTitle=1&reset=1&slot=${slot}&${sc.query}&t=720`)
-        await page.waitForFunction(() => window.__AP && document.querySelector('.apb-root'), undefined, { timeout: 60000 })
+        await page.waitForFunction(() => window.__AP, undefined, { timeout: 60000 })
+        // a trainer talks before the battle opens: confirm through the dialogue
+        for (let i = 0; i < 40 && !(await page.evaluate(() => !!document.querySelector('.apb-root'))); i++) {
+          if (await page.evaluate(() => !!document.querySelector('.ap-dlg'))) await key('KeyZ')
+          else await page.waitForTimeout(500)
+        }
+        await page.waitForFunction(() => document.querySelector('.apb-root'), undefined, { timeout: 30000 })
         await setBattleViewport(page, vp)
         await page.evaluate(() => { window.__AP.save.settings.showTips = false })
         const intro = await page.waitForFunction(() => document.querySelector('.apb-bi.is-playing, .apb-bi.is-static'), undefined, { timeout: 4000 }).then(() => true).catch(() => false)

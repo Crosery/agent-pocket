@@ -68,7 +68,7 @@ export function auditBattleSprites(opts) {
     return f ? { side, box: { left: f.left * vw, right: f.right * vw, top: f.top * vh, bottom: f.bottom * vh } } : null
   }).filter(Boolean)
 
-  const huds = [...root.querySelectorAll('[data-hud]')].filter((e) => e.checkVisibility({ visibilityProperty: true }) && e.offsetWidth > 1 && shown(e))
+  const huds = [...root.querySelectorAll('[data-hud], .apb-status, .apb-msg, .apb-menu-wrap, .apb-levelup')].filter((e) => e.checkVisibility({ visibilityProperty: true }) && e.offsetWidth > 1 && shown(e))
   for (const e of huds) {
     const r = rectOf(e)
     for (const s of sprites) {
