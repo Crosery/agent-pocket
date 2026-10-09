@@ -159,7 +159,7 @@ for (const job of CONFIG.jobs) {
       if (overworld) await ev(() => window.__ap.v1.time.pause())
       else {
         await ev(PUMP_INSTALL)
-        await page.waitForFunction(() => window.__pump && window.__pump.q.length > 0, undefined, { timeout: 30000 })
+        for (let i = 0; i < 150 && !(await ev(() => window.__pump.q.length)); i++) await page.waitForTimeout(200) // not waitForFunction: it may poll on requestAnimationFrame
         pumped = true
       }
       for (const mode of overworld ? CONFIG.modes : ['stand']) {

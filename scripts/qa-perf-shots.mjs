@@ -1,6 +1,6 @@
 // Screenshots of the benchmark scenes for before/after comparison (issue #36): same scenario, same fixed frame count, HUD hidden.
 //   node scripts/qa-perf-shots.mjs --label before [--base http://127.0.0.1:5236] [--space ap-36] [--viewports phone,desktop]
-//        [--scenes town-day,...] [--frames 90] [--quality medium] [--out output/36/shots]
+//        [--scenes town-day,...] [--frames 90] [--quality medium] [--battle-frames 240] [--out output/36/shots]
 import { spawnSync } from 'node:child_process'
 import { mkdirSync } from 'node:fs'
 import { SCENES, VIEWPORTS } from './qa-perf-scenes.mjs'
@@ -13,6 +13,7 @@ const config = {
   space: args.space ?? 'ap-36',
   label: args.label ?? 'shot',
   frames: Number(args.frames ?? 90),
+  battleFrames: Number(args['battle-frames'] ?? 240),
   out: new URL(`../${out}/`, import.meta.url).pathname,
   quality: args.quality ?? '',
   jobs: [],
@@ -28,6 +29,8 @@ const emulate = async (vp) => {
   await page.cdp('Emulation.setDeviceMetricsOverride', { width: vp.width, height: vp.height, deviceScaleFactor: vp.deviceScaleFactor, mobile: vp.mobile })
   await page.cdp('Emulation.setTouchEmulationEnabled', { enabled: vp.touch, maxTouchPoints: vp.touch ? 5 : 1 })
 }
+// The governor remembers its level per device; a screenshot must show the tier as configured.
+const { identifier: cleanScript } = await page.cdp('Page.addScriptToEvaluateOnNewDocument', { source: "try { localStorage.removeItem('ap.render.governor') } catch (e) {}" })
 for (const job of CONFIG.jobs) {
   try {
     await emulate(job.vp)
@@ -43,19 +46,35 @@ for (const job of CONFIG.jobs) {
     }, job.def, { timeout: 120000 })
     const setup = (CONFIG.quality ? [['settings.set', { key: 'quality', value: CONFIG.quality }]] : []).concat(job.def.setup)
     await ev(async (setup) => { for (const [id, a] of setup) await window.__ap.v1.cmd(id, a) }, setup)
-    await page.waitForTimeout(job.def.wait === 'battle' ? 9000 : 4000)
+    await page.waitForTimeout(job.def.wait === 'battle' ? 3000 : 4000)
     if (job.def.wait !== 'battle') {
       await ev((n) => { window.__ap.v1.time.pause(); window.__ap.v1.time.step(n, 1 / 60) }, CONFIG.frames)
+    } else {
+      // a battle runs its own requestAnimationFrame loop: take it over and advance a fixed number of frames
+      await ev(() => {
+        const native = window.requestAnimationFrame.bind(window)
+        const q = []
+        window.__pump = { q, native, orig: window.requestAnimationFrame, now: performance.now() }
+        window.requestAnimationFrame = (cb) => { q.push(cb); return q.length }
+      })
+      for (let i = 0; i < 150 && !(await ev(() => window.__pump.q.length)); i++) await page.waitForTimeout(200) // not waitForFunction: it polls on requestAnimationFrame
+      for (let done = 0; done < CONFIG.battleFrames; done += 20) {
+        await ev((n) => { const p = window.__pump; for (let i = 0; i < n; i++) { const cbs = p.q.splice(0); p.now += 1000 / 60; for (const cb of cbs) cb(p.now) } window.__AP.renderer.gl.getContext().finish() }, Math.min(20, CONFIG.battleFrames - done))
+      }
     }
-    await ev(() => window.__ap.v1.shot.prepare({ hideDev: true, hideHud: true }))
+    // prepare() ticks and waits for a frame several times: with rAF taken over in a battle the pump has to deliver them
+    await ev(() => { window.__prepDone = false; window.__ap.v1.shot.prepare({ hideDev: true, hideHud: true }).then(() => { window.__prepDone = true }) })
+    for (let i = 0; i < 400 && !(await ev(() => { const p = window.__pump; if (p) { const cbs = p.q.splice(0); p.now += 1000 / 60; for (const cb of cbs) cb(p.now) } return window.__prepDone })); i++) await page.waitForTimeout(10)
     const path = CONFIG.out + CONFIG.label + '-' + job.viewport + '-' + job.scene + '.png'
     await page.screenshot({ path })
+    if (job.def.wait === 'battle') await ev(() => { const p = window.__pump; window.requestAnimationFrame = p.orig; for (const cb of p.q.splice(0)) p.native(cb) })
     await ev(() => window.__ap.v1.shot.release())
     console.log('SHOT ' + path)
   } catch (err) {
     console.log('ERR ' + job.viewport + ' ' + job.scene + ' ' + (err && err.message ? err.message : err))
   }
 }
+await page.cdp('Page.removeScriptToEvaluateOnNewDocument', { identifier: cleanScript })
 `
 const res = spawnSync('ego-browser', ['nodejs'], { input: `const CONFIG = ${JSON.stringify(config)}\n${browser}`, encoding: 'utf8', maxBuffer: 1 << 26, timeout: 1_800_000 })
 const text = `${res.stdout ?? ''}\n${res.stderr ?? ''}`
