@@ -579,6 +579,7 @@ html.ap-compact .aps-pc-avatar { width: calc(var(--u) * 48); height: calc(var(--
 .aps-party-name { line-height: 1.1; }
 .aps-party-lv { flex: none; color: var(--ap-gold-hi); white-space: nowrap; }
 .aps-party-lvbox { display: inline-flex; align-items: center; gap: calc(var(--u) * 4); flex: none; }
+.aps-party-lvbox .ap-grade { --gh: 1.6em; }
 .aps-party-hp, .aps-party-exp { display: flex; }
 .aps-party-hp .ap-bar, .aps-party-exp .ap-bar { flex: 1; }
 .aps-party-hp .ap-bar-label, .aps-party-exp .ap-bar-label { min-width: calc(var(--u) * 38); }
@@ -917,7 +918,7 @@ html.ap-compact .aps-dexd-left, html.ap-compact .aps-dexd-mid, html.ap-compact .
 .aps-box-tool.is-on { color: #10131c; background: var(--ap-gold-hi); text-shadow: none; }
 .aps-box-cell { position: relative; }
 .aps-box-g { position: absolute; right: calc(var(--u) * 1); bottom: calc(var(--u) * 1); pointer-events: none; }
-.aps-box-g .ap-chip { min-width: 0; height: calc(var(--u) * 11); padding: 0 calc(var(--u) * 2); font-size: var(--ap-fs-caption); line-height: 1; }
+.aps-box-g .ap-grade { --gh: calc(var(--u) * 15); font-size: var(--ap-fs-caption); }
 .aps-box-grid {
   display: grid;
   grid-template-columns: repeat(var(--cols, 6), calc(var(--u) * 36));

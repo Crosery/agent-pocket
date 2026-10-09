@@ -19,43 +19,22 @@
 .aps-rv-name { max-width: 100%; font-size: var(--ap-fs-body); }
 .aps-rv-lv { font-size: var(--ap-fs-label); color: var(--ap-text-dim); }
 .aps-rv-gradebox { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 3); }
-.aps-rv-letter {
-  --gc: #9aa5b1;
+.aps-rv-letterbox {
+  --glow: calc(var(--u) * 8);
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: calc(var(--u) * 36);
-  height: calc(var(--u) * 36);
-  font-size: var(--ap-fs-title);
-  line-height: 1;
-  color: #10131c;
-  background: var(--gc);
-  border: calc(var(--u) * 2) solid var(--ap-ink);
-  box-shadow: 0 0 0 var(--u) var(--gc), 0 0 calc(var(--u) * 10) color-mix(in srgb, var(--gc) 75%, transparent);
+  filter: drop-shadow(0 0 var(--glow) color-mix(in srgb, var(--gc, #9aa5b1) 70%, transparent));
   animation: aps-rv-pop 300ms steps(6) 140ms both;
 }
+/* The same shield as the small badges, just scaled up by the title tier. */
+.aps-rv-letter { --gh: calc(var(--u) * 44); font-size: var(--ap-fs-title); padding-bottom: calc(var(--gh) * 0.14); }
 .aps-rv-nick { font-size: var(--ap-fs-caption); color: var(--ap-text-dim); }
 .aps-rv-ladder { display: flex; gap: calc(var(--u) * 3); }
-.aps-rv-step {
-  --gc: #9aa5b1;
-  min-width: calc(var(--u) * 22);
-  height: calc(var(--u) * 12);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--ap-fs-caption);
-  color: rgba(244, 240, 218, 0.4);
-  background: rgba(255, 255, 255, 0.07);
-  border: var(--u) solid rgba(5, 7, 13, 0.85);
-  text-shadow: none;
-}
-.aps-rv-step.is-now {
-  color: #10131c;
-  background: var(--gc);
-  box-shadow: 0 0 0 var(--u) var(--ap-ink), 0 0 calc(var(--u) * 6) color-mix(in srgb, var(--gc) 75%, transparent);
-  animation: aps-rv-now 260ms steps(4) calc(var(--i) * 70ms + 150ms) both;
-}
-.aps-rv-step.is-lit:not(.is-now) { animation: aps-rv-sweep 220ms steps(3) calc(var(--i) * 70ms + 100ms) both; }
+.aps-rv-step { --gh: calc(var(--u) * 20); font-size: var(--ap-fs-caption); }
+.ap-grade.aps-rv-step:not(.is-now) { color: rgba(244, 240, 218, 0.45); text-shadow: none; }
+.ap-grade.aps-rv-step::before { background: rgba(255, 255, 255, 0.1); }
+.aps-rv-step.is-now { animation: aps-rv-now 260ms steps(4) calc(var(--i) * 70ms + 150ms) both; }
+.ap-grade.aps-rv-step.is-now::before { background: var(--gc); }
+.ap-grade.aps-rv-step.is-lit:not(.is-now)::before { animation: aps-rv-sweep 220ms steps(3) calc(var(--i) * 70ms + 100ms) both; }
 .aps-rv-hint { font-size: var(--ap-fs-caption); color: var(--ap-gold-hi); }
 .aps-rv-rows { display: flex; flex-direction: column; gap: calc(var(--u) * 3); }
 .aps-rv-row { display: flex; align-items: center; gap: calc(var(--u) * 6); min-height: calc(var(--u) * 14); padding: 0 calc(var(--u) * 4); background: rgba(255, 255, 255, 0.05); }
@@ -80,7 +59,7 @@
 @keyframes aps-rv-in { from { opacity: 0; transform: translateY(calc(var(--u) * 8)) scale(0.94); } to { opacity: 1; transform: none; } }
 @keyframes aps-rv-pop { from { opacity: 0; transform: scale(2.2); } to { opacity: 1; transform: none; } }
 @keyframes aps-rv-now { from { filter: brightness(2.2); } to { filter: none; } }
-@keyframes aps-rv-sweep { 0% { background: rgba(255, 255, 255, 0.07); } 40% { background: rgba(255, 255, 255, 0.45); color: #10131c; } 100% { background: rgba(255, 255, 255, 0.07); } }
+@keyframes aps-rv-sweep { 0% { background: rgba(255, 255, 255, 0.1); } 40% { background: rgba(255, 255, 255, 0.5); } 100% { background: rgba(255, 255, 255, 0.1); } }
 
 /* Portrait phones: sprite and grade stack, the stat grid drops to two columns. */
 html.ap-compact.ap-portrait .aps-rv-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -88,8 +67,8 @@ html.ap-compact.ap-portrait .aps-rv-stats { grid-template-columns: repeat(2, min
 html.ap-compact:not(.ap-portrait) .aps-reveal .aps-rv-card { width: min(calc(var(--u) * 360), calc(100% - var(--u) * 16)); }
 html.ap-compact:not(.ap-portrait) .aps-rv-sprite { width: calc(var(--u) * 44); height: calc(var(--u) * 44); }
 html.ap-compact:not(.ap-portrait) .aps-rv-who { width: calc(var(--u) * 64); }
-html.ap-compact:not(.ap-portrait) .aps-rv-letter { width: calc(var(--u) * 28); height: calc(var(--u) * 28); }
+html.ap-compact:not(.ap-portrait) .aps-rv-letter { --gh: calc(var(--u) * 34); }
 
 @media (prefers-reduced-motion: reduce) {
-  .aps-reveal .aps-rv-card, .aps-rv-letter, .aps-rv-step { animation: none !important; }
+  .aps-reveal .aps-rv-card, .aps-rv-letterbox, .aps-rv-step, .aps-rv-step::before { animation: none !important; }
 }

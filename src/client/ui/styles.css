@@ -620,7 +620,36 @@ html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast-text { di
 .ap-chip.is-dark-ink { color: #10131c; text-shadow: none; }
 .ap-chip.is-light-ink { color: #ffffff; text-shadow: var(--u) var(--u) 0 rgba(0, 0, 0, 0.45); }
 .ap-chip--status { min-width: calc(var(--u) * 18); }
-.ap-chip--grade { min-width: calc(var(--u) * 14); padding: 0 calc(var(--u) * 3); }
+/* Quality grade: a pixel-outlined shield (flat top, pointed bottom) so it never reads as the rectangular rarity chip next to it. */
+.ap-grade {
+  --gc: #9aa5b1;
+  --gh: 1.9em;
+  --shield: polygon(0 0, 100% 0, 100% 56%, 50% 100%, 0 56%);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: calc(var(--gh) * 0.9);
+  height: var(--gh);
+  padding: 0 0.34em 0.5em;
+  line-height: 1;
+  color: #10131c;
+  background: var(--ap-ink, #05070d);
+  clip-path: var(--shield);
+  white-space: nowrap;
+  vertical-align: middle;
+  text-shadow: none;
+}
+.ap-grade::before {
+  content: '';
+  position: absolute;
+  inset: var(--u);
+  z-index: -1;
+  background: var(--gc);
+  clip-path: var(--shield);
+}
+.ap-grade.is-light-ink { color: #ffffff; text-shadow: var(--u) var(--u) 0 rgba(0, 0, 0, 0.45); }
 
 .ap-rarity {
   --rc: #ccc;

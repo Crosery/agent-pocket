@@ -66,11 +66,17 @@ function fullCard(ctx: GameContext, cr: Creature, grade: GradeDef): Promise<void
   const ability = CONTENT.abilities[cr.abilityId]
   const touch = ctx.input.lastDevice === 'touch'
 
-  const ladder = el('div', { class: 'aps-rv-ladder', attrs: { 'aria-hidden': 'true' } }, Q.grades.map((g, i) => el('span', {
-    class: `aps-rv-step${g.id === grade.id ? ' is-now' : ''}${i <= Q.grades.findIndex((x) => x.id === grade.id) ? ' is-lit' : ''}`,
-    text: g.id,
-    vars: { '--gc': g.color, '--i': i },
-  })))
+  const nowIndex = Q.grades.findIndex((x) => x.id === grade.id)
+  const ladder = el('div', { class: 'aps-rv-ladder', attrs: { 'aria-hidden': 'true' } }, Q.grades.map((g, i) => {
+    const step = gradeChip(g.id)
+    step.classList.add('aps-rv-step')
+    step.classList.toggle('is-now', i === nowIndex)
+    step.classList.toggle('is-lit', i <= nowIndex)
+    step.style.setProperty('--i', String(i))
+    return step
+  }))
+  const letter = gradeChip(grade.id)
+  letter.classList.add('aps-rv-letter')
   const stats = el('div', 'aps-rv-stats', STAT_KEYS.map((k: StatKey) => {
     const arrow = arrows[k]
     return el('div', { class: `aps-rv-stat${k === best ? ' is-best' : ''}` }, [
@@ -88,7 +94,7 @@ function fullCard(ctx: GameContext, cr: Creature, grade: GradeDef): Promise<void
         el('div', { class: 'aps-rv-lv', text: t('screens.common.level', { level: cr.level }) }),
       ]),
       el('div', 'aps-rv-gradebox', [
-        el('div', { class: 'aps-rv-letter', text: grade.id, vars: { '--gc': grade.color } }),
+        el('div', { class: 'aps-rv-letterbox', vars: { '--gc': grade.color } }, [letter]),
         el('div', { class: 'aps-rv-nick', text: gradeNick(grade.id) }),
         ladder,
         showHint ? el('div', { class: 'aps-rv-hint', text: t('screens.quality.reveal.ladderHint') }) : null,

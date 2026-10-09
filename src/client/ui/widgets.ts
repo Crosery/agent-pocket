@@ -231,13 +231,16 @@ export function statusChip(statusId: string): HTMLElement {
   return chip
 }
 
-/** Quality grade as a coloured letter chip (grade colours: content/quality.json); the nickname is its tooltip. */
+/** Quality grade as a coloured shield badge (grade colours: content/quality.json); the nickname is its tooltip. Shape, not text, tells it from the rarity chip. */
 export function gradeChip(gradeId: string): HTMLElement {
   ensureUIEnvironment()
   const def = CONTENT.quality.grades.find((g) => g.id === gradeId)
-  const chip = colorChip(gradeId, def?.color, 'ap-chip--grade', def ? t(`screens.quality.grade.${gradeId}`) : undefined)
-  chip.dataset.grade = gradeId
-  return chip
+  const badge = el('span', { class: 'ap-grade', text: gradeId, title: def ? t(`screens.quality.grade.${gradeId}`) : undefined, data: { grade: gradeId } })
+  if (def) {
+    badge.style.setProperty('--gc', def.color)
+    badge.classList.add(prefersDarkInk(def.color, UI_CONFIG.widgets.chipDarkInkAboveLuminance) ? 'is-dark-ink' : 'is-light-ink')
+  }
+  return badge
 }
 
 export function rarityBadge(rarityId: string, opts?: { label?: 'id' | 'name' }): HTMLElement {
