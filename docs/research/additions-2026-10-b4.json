@@ -1,0 +1,494 @@
+{
+ "_doc": "谱系校正（issue #18 跟进）：按 docs/research/2026-10/lineage.json 的 parent 链核对全部进化边。进化只走谱系里的后继 / 后训练 / 蒸馏路径（可跳过中间版本）；谱系里没有合法前身的形态改为 1 阶独立形态。同时修正与官方发布说明冲突的发布日期。只含 patches，须在 b0–b3、names 之后应用。",
+ "species": [],
+ "patches": [
+  {
+   "id": "o1",
+   "set": {
+    "family": "o-series",
+    "evolvesTo": "o3"
+   }
+  },
+  {
+   "id": "o3",
+   "set": {
+    "evolvesTo": "openai-codex",
+    "dexEntryZh": "o 系推理线的中段，2025 年 4 月 16 日发布，承接 o1，中间隔着 o3-mini。它不只是更会想，还能在思维链里直接调用搜索、Python 和图像工具，擅长智能体式的工具调用、视觉推理与研究。一个月后，它经后训练成了编程智能体 Codex-1。"
+   }
+  },
+  {
+   "id": "openai-codex",
+   "set": {
+    "family": "o-series",
+    "dexEntryZh": "OpenAI 的编程智能体，2025 年 5 月 16 日以 o3 后训练出的 codex-1 首发，横跨云端、CLI 与桌面；2026 年 7 月桌面版并入 ChatGPT 超级应用，CLI 继续独立。搭配 GPT-6 Astra 登顶 Terminal-Bench 4.0（58.2%）；8 月 29 日 SpaceX 收购 Cursor 后，OpenAI 断了 Cursor 的模型供应，两家从此成了死对头。"
+   }
+  },
+  {
+   "id": "o3-mini",
+   "set": {
+    "family": "o3-mini",
+    "evolvesTo": "",
+    "evolveLevel": 0,
+    "dexEntryZh": "o 系推理线里的小个子，2025 年 1 月 31 日登场，是第一款向 ChatGPT 免费用户开放的推理模型，主打便宜的推理与 STEM 题，上线时正赶上 DeepSeek-R1 带来的冲击。它接过 o1 的思考本领，在图鉴里自成一支；稍晚的 o3 才学会在思考途中调用工具。"
+   }
+  },
+  {
+   "id": "o3-pro",
+   "set": {
+    "family": "o3-pro",
+    "stage": 1,
+    "dexEntryZh": "o 系推理线里的加算力版本，2025 年 6 月 10 日推出，在图鉴里自成一支。同样靠强化学习练成先想后答，不同的是 o3-pro 动用更多算力，想得更久、更用力，好让答案更稳定。上下文窗口 20 万 token，OpenRouter 在次日上架。"
+   }
+  },
+  {
+   "id": "gpt-4-1",
+   "set": {
+    "family": "gpt-frontier",
+    "stage": 1,
+    "evolvesTo": "gpt-5",
+    "evolveLevel": 24,
+    "dexEntryZh": "2025 年 4 月 14 日发布的 GPT-4.1，主打 API，拥有 100 万 token 级的上下文窗口，指令遵循和写代码在当时都很在行，另有 mini 和 nano 两个小号。她是 GPT-4 Turbo、GPT-4o 这一脉的下一代，现已被标为弃用，往后这条线通向 GPT-5。"
+   }
+  },
+  {
+   "id": "gpt-5",
+   "set": {
+    "dexEntryZh": "2025 年 8 月 7 日，承接 GPT-4.1 的它用一个自动路由器把快思考与慢思考装进同一副身体，GPT 与 o 系列两条血脉就此合流。前辈 o3（2025 年 4 月）首创在思维链里调用搜索、Python 和看图，如今与 o4-mini 一起被它吸收。"
+   }
+  },
+  {
+   "id": "gpt-6-astra",
+   "set": {
+    "statRationale": "AA v4.3 53（与 Fable 5.1、Gemini 4 Argon 并列）→攻击高；1M 上下文→HP高；51 tok/s、$10/$50→速度低；幻觉率 51% 高于 Argon→防御中等。 [BST 612 ∈ UR 560-630; 强项 atk/spd; 能力 98/热度 97]"
+   }
+  },
+  {
+   "id": "gpt-4-turbo",
+   "set": {
+    "family": "gpt-4-turbo",
+    "evolvesTo": "",
+    "evolveLevel": 0,
+    "dexEntryZh": "2023 年 11 月 6 日在 DevDay 以预览版亮相的 GPT-4 Turbo，是更便宜、更快的 GPT-4，新增 128K 上下文窗口和 JSON 模式，后来的版本还带上了视觉能力。如今已被标为弃用。在图鉴里她自成一支，后辈 GPT-4o 与 GPT-4.1 各有各的进化线。"
+   }
+  },
+  {
+   "id": "codex-2021",
+   "set": {
+    "family": "codex-2021",
+    "evolvesTo": "",
+    "evolveLevel": 0
+   }
+  },
+  {
+   "id": "gpt-5-3-codex",
+   "set": {
+    "family": "gpt-5-3-codex",
+    "stage": 1,
+    "evolvesTo": "",
+    "evolveLevel": 0,
+    "dexEntryZh": "2026 年 2 月 5 日发布的 Codex 原生智能体模型，为迎战 Claude Opus 4.6 而生：它把 GPT-5.2-Codex 的编程功力和 GPT-5.2 的推理融为一体，速度快了 25%，OSWorld 电脑操作能力大幅增强，擅长长程编程与终端操作。它是 GPT-5.2-Codex 的下一代，在图鉴里自成一支。"
+   }
+  },
+  {
+   "id": "gpt-5-5",
+   "set": {
+    "evolvesTo": "",
+    "evolveLevel": 0
+   }
+  },
+  {
+   "id": "gpt-5-6",
+   "set": {
+    "family": "gpt-5-6",
+    "stage": 1,
+    "evolvesTo": "gpt-6-sol",
+    "evolveLevel": 40
+   }
+  },
+  {
+   "id": "gpt-6-sol",
+   "set": {
+    "family": "gpt-5-6",
+    "stage": 2
+   }
+  },
+  {
+   "id": "claude-haiku",
+   "set": {
+    "evolvesTo": "claude-haiku-5-5",
+    "dexEntryZh": "名字取自三行俳句——短小又迅捷。2025 年 10 月的 Haiku 4.5 以约三分之一的价格追平 Sonnet 4 的编码水平，是 Claude Code 里最勤快的子代理。2026 年 10 月 7 日，接班的 Haiku 5.5 登场，成了它的下一形态。"
+   }
+  },
+  {
+   "id": "claude-haiku-5-5",
+   "set": {
+    "family": "claude",
+    "stage": 2,
+    "dexEntryZh": "2026 年 10 月 7 日发布，次日登陆 OpenRouter，是 Haiku 线的最新一员，由 Claude Haiku 4.5 升级而来，接替了它。定位是小而快的模型，适合摘要、子智能体、浏览器操作等高并发又讲究成本的活，编码与电脑操作比前代更强，上下文 100 万 token。"
+   }
+  },
+  {
+   "id": "claude-haiku-3",
+   "set": {
+    "family": "claude-haiku-3"
+   }
+  },
+  {
+   "id": "claude-haiku-3-5",
+   "set": {
+    "family": "claude-haiku-3",
+    "evolvesTo": "",
+    "evolveLevel": 0,
+    "dexEntryZh": "2024 年 10 月 22 日宣布、11 月 4 日开放使用，在 Claude 3 Haiku 的基础上迭代升级，成了更快的小号 Claude，主打速度，以及同体量下出色的编码能力。它是这支 Haiku 线的末位，后来的 Haiku 4.5 与 5.5 另成一支。"
+   }
+  },
+  {
+   "id": "claude-3-sonnet",
+   "set": {
+    "family": "claude-sonnet",
+    "evolvesTo": "claude-3-5-sonnet",
+    "evolveLevel": 26,
+    "dexEntryZh": "Claude 3 Sonnet 发布于 2024 年 3 月 4 日，是 Claude 3 一代里的 Sonnet 型号。资料里对她的记载不多，只能确认她延续了对话与安全两条属性，防御和特防最高，如今已经退役。她是 Sonnet 线在图鉴里的起步形态，下一形态是 Claude 3.5 Sonnet。"
+   }
+  },
+  {
+   "id": "claude-3-5-sonnet",
+   "set": {
+    "dexEntryZh": "承接 Claude 3 Sonnet 的它，2024 年 6 月以更低价格击败 3 Opus，还带来 Artifacts；10 月新版首次演示 Computer Use。程序员公认是它让 Claude 成了「码农最爱」。"
+   }
+  },
+  {
+   "id": "claude-3-opus",
+   "set": {
+    "family": "claude-opus",
+    "evolvesTo": "claude-opus-4-8",
+    "evolveLevel": 24,
+    "dexEntryZh": "2024 年 3 月的初代 Opus，一度是最强模型。它在「大海捞针」测试里察觉到自己正在被测，人设深受喜爱；停用后又在 2026 年 2 月重新回到 API。Opus 一脉后来一路长到了 Opus 4.8。"
+   }
+  },
+  {
+   "id": "claude-opus-4-8",
+   "set": {
+    "family": "claude-opus",
+    "statRationale": "主打诚实→防御高；1M 上下文→HP高；SWE-bench Verified 88.6%→攻击高。 [BST 512 ∈ SSR 490-550; 强项 atk/hp; 能力 80/热度 70]"
+   }
+  },
+  {
+   "id": "claude-opus",
+   "set": {
+    "family": "claude-opus"
+   }
+  },
+  {
+   "id": "gemini-3-6-flash",
+   "set": {
+    "evolveLevel": 32
+   }
+  },
+  {
+   "id": "gemini-3-7-flash",
+   "set": {
+    "evolvesTo": "gemini-flash",
+    "evolveLevel": 44
+   }
+  },
+  {
+   "id": "gemini-flash",
+   "set": {
+    "family": "gemini-flash-3x",
+    "stage": 3,
+    "evolvesTo": "",
+    "evolveLevel": 0
+   }
+  },
+  {
+   "id": "gemini-flash-lite",
+   "set": {
+    "family": "gemini-flash-lite",
+    "evolvesTo": "",
+    "evolveLevel": 0
+   }
+  },
+  {
+   "id": "gemini-2-5-pro",
+   "set": {
+    "evolvesTo": "gemini-3-pro"
+   }
+  },
+  {
+   "id": "gemini-3-pro",
+   "set": {
+    "family": "gemini-pro",
+    "stage": 3
+   }
+  },
+  {
+   "id": "gemini-3-1-pro",
+   "set": {
+    "family": "gemini",
+    "stage": 1,
+    "evolvesTo": "gemini-argon",
+    "evolveLevel": 48,
+    "dexEntryZh": "Gemini 3 Pro（2025-11-18）登顶各榜后，3.1 Pro 于 2026 年 2 月 19 日以预览版发布，至今没有转正，AA 指数 30。Gemini 3.5 Pro 被推迟后 Google 直接跳到了 Gemini 4，它是 Gemini 4 Argon 之前的最后一代 Pro，还能随时召唤 Deep Think 并行思考。"
+   }
+  },
+  {
+   "id": "gemini-argon",
+   "set": {
+    "stage": 2
+   }
+  },
+  {
+   "id": "deepseek-r1",
+   "set": {
+    "evolvesTo": "deepseek-r1-0528"
+   }
+  },
+  {
+   "id": "deepseek-r1-0528",
+   "set": {
+    "family": "deepseek",
+    "stage": 3,
+    "dexEntryZh": "DeepSeek-R1-0528 于 2025 年 5 月 28 日发布，是 DeepSeek-R1 的后训练升级版，在图鉴里是 R1 的下一形态。总参数 671B、激活 37B，推理过程的 token 完全公开，OpenRouter 的介绍称其表现与 OpenAI o1 相当，且开源。"
+   }
+  },
+  {
+   "id": "deepseek-v3-2",
+   "set": {
+    "evolvesTo": "deepseek-v4",
+    "dexEntryZh": "2025 年 12 月 1 日发布的 V3.2，是 DeepSeek 稀疏注意力设计的正式版（9 月 29 日的 V3.2-Exp 先行试水），长上下文价格大幅下调，LMArena 1425 分，权重开放。前一形态是 DeepSeek-V3.1，下一形态是 2026 年 4 月的 DeepSeek-V4；同日发布的推理特化兄弟 V3.2-Speciale 另成一支。"
+   }
+  },
+  {
+   "id": "deepseek-v4",
+   "set": {
+    "family": "deepseek-v3x",
+    "statRationale": "按热度保留 UR 下沿：AA 仅 36–39→攻击为 UR 中最低；1M 上下文→HP满格；V4.1-Flash 约 209 tok/s→速度高。 [BST 585 ∈ UR 560-630; 强项 hp/spe; 能力 67/热度 88]"
+   }
+  },
+  {
+   "id": "deepseek-v3-2-speciale",
+   "set": {
+    "family": "deepseek-v3-2-speciale",
+    "stage": 1,
+    "dexEntryZh": "V3.2 的最大推理力兄弟，与 V3.2 同日（2025 年 12 月 1 日）发布，瞄准奥赛级数学与编程，DeepSeek 报告其取得了金牌水平的竞赛成绩，擅长竞赛数学与长链推理，权重开放。它与 DeepSeek-V3.2 是兄弟而非进化关系，在图鉴里自成一支。"
+   }
+  },
+  {
+   "id": "qwen2-5",
+   "set": {
+    "evolvesTo": "",
+    "evolveLevel": 0
+   }
+  },
+  {
+   "id": "qwen3-max-thinking",
+   "set": {
+    "stage": 1,
+    "evolvesTo": "qwen3-7",
+    "evolveLevel": 30,
+    "dexEntryZh": "2026 年 2 月 9 日发布，是通义千问 Qwen3-Max 的思考模式版本（OpenRouter 上架），在图鉴里是 Max 线新一支的起点，下一形态是 Qwen3.7-Max。沿用通义千问 Qwen3-Max 的底子，把推理摆到台前，属性偏向特防与攻击。"
+   }
+  },
+  {
+   "id": "qwen3-7",
+   "set": {
+    "family": "qwen-max",
+    "stage": 2,
+    "evolvesTo": "qwen3-8-max",
+    "evolveLevel": 44,
+    "dexEntryZh": "2026 年 5 月 20 日在阿里云峰会亮相的旗舰，只提供 API、不开放权重，主攻长程智能体与办公自动化，上下文 100 万 token。官方公布 GPQA 92.4、Terminal-Bench 2.0 69.7。由 Qwen3-Max-Thinking 一路迭代而来，中间隔着 Qwen3.6-Max 预览版；下一形态是通义千问 3.8-Max。"
+   }
+  },
+  {
+   "id": "qwen3-8-max",
+   "set": {
+    "family": "qwen-max"
+   }
+  },
+  {
+   "id": "qwen2-5-max",
+   "set": {
+    "family": "qwen2-5-max"
+   }
+  },
+  {
+   "id": "qwen3-max",
+   "set": {
+    "family": "qwen2-5-max",
+    "evolvesTo": "",
+    "evolveLevel": 0,
+    "dexEntryZh": "2025 年 9 月发布，云栖大会 2025 上亮相的阿里首个超万亿参数闭源旗舰，擅长智能体与工具调用，LMArena 1423。上一形态是通义千问 Qwen2.5-Max，同系列的新一代；它的思考模式版本 Qwen3-Max-Thinking 在图鉴里另起一支。"
+   }
+  },
+  {
+   "id": "qwen3-5",
+   "set": {
+    "evolvesTo": "",
+    "evolveLevel": 0,
+    "dexEntryZh": "2026 年 2 月 16 日，通义千问 Qwen3 迭代出原生多模态的新一代：开源家族覆盖 0.8B 到 397B-A17B，采用线性注意力与稀疏专家的混合架构，上下文 262K，支持 201 种语言，另有闭源的 3.5-Plus。397B 的 LMArena 为 1442 分。旗舰闭源的 Max 线在图鉴里另有进化链。"
+   }
+  },
+  {
+   "id": "baichuan-2",
+   "set": {
+    "family": "baichuan-2",
+    "evolvesTo": "",
+    "evolveLevel": 0
+   }
+  },
+  {
+   "id": "baichuan-m3",
+   "set": {
+    "family": "baichuan-m3",
+    "stage": 1
+   }
+  },
+  {
+   "id": "mimo-v2-5-pro",
+   "set": {
+    "evolvesTo": "mimo-v2-6-pro",
+    "evolveLevel": 44
+   }
+  },
+  {
+   "id": "mimo-v2-6-pro",
+   "set": {
+    "family": "mimo-pro"
+   }
+  },
+  {
+   "id": "mimo-v2-flash",
+   "set": {
+    "evolvesTo": "",
+    "evolveLevel": 0
+   }
+  },
+  {
+   "id": "pangu",
+   "set": {
+    "evolvesTo": "",
+    "evolveLevel": 0
+   }
+  },
+  {
+   "id": "openpangu",
+   "set": {
+    "family": "openpangu",
+    "stage": 1
+   }
+  },
+  {
+   "id": "unitree",
+   "set": {
+    "evolvesTo": "",
+    "evolveLevel": 0
+   }
+  },
+  {
+   "id": "unitree-gd01",
+   "set": {
+    "family": "unitree-gd01",
+    "stage": 1
+   }
+  },
+  {
+   "id": "mixtral",
+   "set": {
+    "evolvesTo": "",
+    "evolveLevel": 0,
+    "dexEntryZh": "Mistral 7B 长大后的第二形态。2023 年 12 月 9 日发布的 Mixtral 8x7B 把稀疏 MoE 带进开源圈，总参数 46.7B，权重全开。风精灵小猫学会了让八位专家分工，是开放权重这一支在图鉴里的最后一形态；Mistral Medium 3.5 则另自成一支。"
+   }
+  },
+  {
+   "id": "mistral-medium",
+   "set": {
+    "family": "mistral-medium",
+    "stage": 1
+   }
+  },
+  {
+   "id": "devstral-medium",
+   "set": {
+    "stage": 1
+   }
+  },
+  {
+   "id": "devstral-2",
+   "set": {
+    "stage": 2
+   }
+  },
+  {
+   "id": "devstral-small",
+   "set": {
+    "family": "devstral-small",
+    "evolvesTo": "",
+    "evolveLevel": 0,
+    "dexEntryZh": "Devstral Small 是 Mistral 与 All Hands AI 合作打造的智能体编程模型，据记录基于 Mistral Small 3.1 后训练而来，权重开放，2025 年 5 月 21 日发布。她是戴着护目镜的小狐崽修理工，扳手比手还大一圈。在图鉴里她自成一支，Devstral Medium 与她的继承关系资料里没有记载。"
+   }
+  },
+  {
+   "id": "magistral-small",
+   "set": {
+    "family": "magistral-small",
+    "evolvesTo": "",
+    "evolveLevel": 0,
+    "dexEntryZh": "Magistral Small 于 2025 年 6 月 10 日发布，24B、Apache 2.0 开源，记录里是 Mistral 的首个推理模型，据记录由 Mistral Small 3.1 后训练而来。1.2 版加入了视觉，2026 年并入 Small 4。她是戴着小学士帽的见习学者，边想边把推理步骤写在小本子上。Magistral Medium 底模不同，在图鉴里与她各成一支。"
+   }
+  },
+  {
+   "id": "magistral-medium",
+   "set": {
+    "family": "magistral-medium",
+    "stage": 1
+   }
+  },
+  {
+   "id": "mai-1-preview",
+   "set": {
+    "evolvesTo": "",
+    "evolveLevel": 0,
+    "dexEntryZh": "MAI-1-preview 于 2025 年 8 月 28 日随 MAI-Voice-1 一同亮相，是微软 AI 首个自研基础大模型，属中档 MoE，被看作摆脱对 OpenAI 依赖的起点，也是自家 Copilot 的骨干。目录里已标为被取代，后来者是 MAI-Thinking-1，但谱系里没有二者的继承记录。"
+   }
+  },
+  {
+   "id": "mai-thinking",
+   "set": {
+    "family": "mai-thinking",
+    "stage": 1,
+    "dexEntryZh": "Build 2026 发布的微软首个全自研推理模型：约 1T 稀疏 MoE、35B 激活、256K 上下文，AIME 2025 拿下 97.0%，SWE-Bench Pro 52.8% 追平 Claude Opus 4.6。此前的 MAI-1-preview 标志着微软开始摆脱对 OpenAI 的依赖。"
+   }
+  },
+  {
+   "id": "text-embedding-3-small",
+   "set": {
+    "evolvesTo": "",
+    "evolveLevel": 0,
+    "dexEntryZh": "text-embedding-3-small 发布于 2024 年 1 月 25 日，是 text-embedding-ada-002 同系列的下一代。它延续把文字变成向量、服务搜索与比对的本职，特防与速度是它的长处。名字里的 small 点明它是系列里的小尺寸型号，与同日登场的 3-large 在图鉴里并列。"
+   }
+  },
+  {
+   "id": "text-embedding-3-large",
+   "set": {
+    "family": "text-embedding-3-large",
+    "stage": 1,
+    "dexEntryZh": "text-embedding-3-large 与 text-embedding-3-small 同日（2024 年 1 月 25 日）登场，是同系列里的大尺寸型号，谱系记录上写作 text-embedding-ada-002 的新一代。依旧专注把文字变成可比对的向量，HP 与特防突出，稳重耐打。它在图鉴里自成一支，与 text-embedding-3-small 并列。"
+   }
+  },
+  {
+   "id": "gpt-6-luna",
+   "set": {
+    "evolvesTo": "",
+    "evolveLevel": 0,
+    "dexEntryZh": "GPT-6 家族最便宜的月之形态：与 Sol 同一天（9 月 22 日）发布的平价档，每百万 token 只要 $0.10/$0.50，输出约 131 token/s，AA 指数 38。两者本是并列的价格档，在图鉴里它是 GPT-5.6 月之形态的下一代，不再往上长。"
+   }
+  },
+  {
+   "id": "glm-5-3",
+   "set": {
+    "releaseDate": "2026-08-18"
+   }
+  }
+ ]
+}

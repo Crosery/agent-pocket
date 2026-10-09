@@ -62,7 +62,7 @@
   "id": "o1",
   "nameEn": "o1",
   "nameZh": "o1",
-  "family": "gpt-frontier",
+  "family": "o-series",
   "stage": 1,
   "types": [
    "logic"
@@ -121,8 +121,8 @@
   "id": "gpt-5-6",
   "nameEn": "GPT-5.6 (Sol / Terra / Luna)",
   "nameZh": "GPT-5.6（日 / 地 / 月）",
-  "family": "gpt-5x",
-  "stage": 3,
+  "family": "gpt-5-6",
+  "stage": 1,
   "types": [
    "logic",
    "safety"
@@ -151,8 +151,8 @@
   "id": "gpt-6-sol",
   "nameEn": "GPT-6.1 Sol",
   "nameZh": "GPT-6.1 Sol（日）",
-  "family": "gpt-6",
-  "stage": 3,
+  "family": "gpt-5-6",
+  "stage": 2,
   "types": [
    "code",
    "logic"
@@ -166,7 +166,7 @@
   "id": "codex-2021",
   "nameEn": "OpenAI Codex (2021)",
   "nameZh": "Codex 初代",
-  "family": "codex",
+  "family": "codex-2021",
   "stage": 1,
   "types": [
    "code"
@@ -180,7 +180,7 @@
   "id": "openai-codex",
   "nameEn": "OpenAI Codex",
   "nameZh": "OpenAI Codex（编程智能体）",
-  "family": "codex",
+  "family": "o-series",
   "stage": 3,
   "types": [
    "code",
@@ -297,7 +297,7 @@
   "id": "claude-opus-4-8",
   "nameEn": "Claude Opus 4.8",
   "nameZh": "Claude Opus 4.8",
-  "family": "claude",
+  "family": "claude-opus",
   "stage": 2,
   "types": [
    "code",
@@ -327,7 +327,7 @@
   "id": "claude-opus",
   "nameEn": "Claude Opus 5.5",
   "nameZh": "Claude Opus 5.5",
-  "family": "claude",
+  "family": "claude-opus",
   "stage": 3,
   "types": [
    "code",
@@ -342,7 +342,7 @@
   "id": "claude-3-opus",
   "nameEn": "Claude 3 Opus",
   "nameZh": "Claude 3 Opus",
-  "family": "claude-sonnet",
+  "family": "claude-opus",
   "stage": 1,
   "types": [
    "write",
@@ -447,7 +447,7 @@
   "id": "gemini-flash-lite",
   "nameEn": "Gemini 3.5 Flash-Lite",
   "nameZh": "Gemini 3.5 Flash-Lite",
-  "family": "gemini",
+  "family": "gemini-flash-lite",
   "stage": 1,
   "types": [
    "compute"
@@ -461,8 +461,8 @@
   "id": "gemini-flash",
   "nameEn": "Gemini 3.8 Flash",
   "nameZh": "Gemini 3.8 Flash",
-  "family": "gemini",
-  "stage": 2,
+  "family": "gemini-flash-3x",
+  "stage": 3,
   "types": [
    "compute",
    "logic"
@@ -477,7 +477,7 @@
   "nameEn": "Gemini 4 Argon",
   "nameZh": "Gemini 4 Argon（氩）",
   "family": "gemini",
-  "stage": 3,
+  "stage": 2,
   "types": [
    "logic",
    "safety"
@@ -536,8 +536,8 @@
   "id": "gemini-3-1-pro",
   "nameEn": "Gemini 3.1 Pro Preview",
   "nameZh": "Gemini 3.1 Pro Preview",
-  "family": "gemini-pro",
-  "stage": 3,
+  "family": "gemini",
+  "stage": 1,
   "types": [
    "logic",
    "vision"
@@ -894,8 +894,8 @@
   "id": "mistral-medium",
   "nameEn": "Mistral Medium 3.5",
   "nameZh": "Mistral Medium 3.5",
-  "family": "mistral",
-  "stage": 3,
+  "family": "mistral-medium",
+  "stage": 1,
   "types": [
    "open",
    "code"
@@ -924,8 +924,8 @@
   "id": "mai-thinking",
   "nameEn": "MAI-Thinking-1",
   "nameZh": "MAI-Thinking-1",
-  "family": "mai",
-  "stage": 2,
+  "family": "mai-thinking",
+  "stage": 1,
   "types": [
    "logic",
    "code"
@@ -1655,7 +1655,7 @@
   "id": "deepseek-v4",
   "nameEn": "DeepSeek-V4 (Pro) / V4.1-Flash",
   "nameZh": "DeepSeek-V4 / V4.1",
-  "family": "deepseek",
+  "family": "deepseek-v3x",
   "stage": 3,
   "types": [
    "open",
@@ -1714,7 +1714,7 @@
   "id": "qwen3-8-max",
   "nameEn": "Qwen3.8-Max",
   "nameZh": "通义千问 3.8-Max",
-  "family": "qwen",
+  "family": "qwen-max",
   "stage": 3,
   "types": [
    "logic",
@@ -2371,7 +2371,7 @@
   "id": "baichuan-2",
   "nameEn": "Baichuan 2",
   "nameZh": "百川 2",
-  "family": "baichuan",
+  "family": "baichuan-2",
   "stage": 1,
   "types": [
    "chat",
@@ -2386,8 +2386,8 @@
   "id": "baichuan-m3",
   "nameEn": "Baichuan-M3",
   "nameZh": "百川 M3",
-  "family": "baichuan",
-  "stage": 2,
+  "family": "baichuan-m3",
+  "stage": 1,
   "types": [
    "safety",
    "search"
@@ -2431,7 +2431,7 @@
   "id": "mimo-v2-6-pro",
   "nameEn": "MiMo-V2.6-Pro",
   "nameZh": "MiMo-V2.6-Pro",
-  "family": "mimo",
+  "family": "mimo-pro",
   "stage": 3,
   "types": [
    "open",
@@ -2610,8 +2610,8 @@
   "id": "openpangu",
   "nameEn": "openPangu 2.0 Pro",
   "nameZh": "华为 openPangu 2.0 Pro",
-  "family": "pangu",
-  "stage": 2,
+  "family": "openpangu",
+  "stage": 1,
   "types": [
    "open",
    "compute"
@@ -2803,8 +2803,8 @@
   "id": "unitree-gd01",
   "nameEn": "Unitree GD01",
   "nameZh": "宇树 GD01 载人机甲",
-  "family": "unitree",
-  "stage": 3,
+  "family": "unitree-gd01",
+  "stage": 1,
   "types": [
    "compute",
    "agent"
@@ -2833,7 +2833,7 @@
   "id": "o3-mini",
   "nameEn": "o3-mini",
   "nameZh": "o3-mini",
-  "family": "o-series",
+  "family": "o3-mini",
   "stage": 1,
   "types": [
    "logic"
@@ -2863,8 +2863,8 @@
   "id": "o3-pro",
   "nameEn": "o3-pro",
   "nameZh": "o3-pro",
-  "family": "o-series",
-  "stage": 3,
+  "family": "o3-pro",
+  "stage": 1,
   "types": [
    "logic",
    "compute"
@@ -2895,8 +2895,8 @@
   "id": "gpt-5-3-codex",
   "nameEn": "GPT-5.3-Codex",
   "nameZh": "GPT-5.3-Codex",
-  "family": "codex",
-  "stage": 2,
+  "family": "gpt-5-3-codex",
+  "stage": 1,
   "types": [
    "code",
    "agent"
@@ -3036,7 +3036,7 @@
   "id": "claude-haiku-3",
   "nameEn": "Claude 3 Haiku",
   "nameZh": "Claude 3 Haiku",
-  "family": "claude-haiku-5",
+  "family": "claude-haiku-3",
   "stage": 1,
   "types": [
    "code"
@@ -3050,7 +3050,7 @@
   "id": "claude-haiku-3-5",
   "nameEn": "Claude 3.5 Haiku",
   "nameZh": "Claude 3.5 Haiku",
-  "family": "claude-haiku-5",
+  "family": "claude-haiku-3",
   "stage": 2,
   "types": [
    "code"
@@ -3065,8 +3065,8 @@
   "id": "claude-haiku-5-5",
   "nameEn": "Claude Haiku 5.5",
   "nameZh": "Claude Haiku 5.5",
-  "family": "claude-haiku-5",
-  "stage": 3,
+  "family": "claude",
+  "stage": 2,
   "types": [
    "code",
    "agent"
@@ -3347,7 +3347,7 @@
   "nameEn": "Devstral 2",
   "nameZh": "Devstral 2",
   "family": "devstral",
-  "stage": 3,
+  "stage": 2,
   "types": [
    "code",
    "open"
@@ -3502,8 +3502,8 @@
   "id": "deepseek-v3-2-speciale",
   "nameEn": "DeepSeek-V3.2-Speciale",
   "nameZh": "DeepSeek-V3.2-Speciale",
-  "family": "deepseek-v3x",
-  "stage": 3,
+  "family": "deepseek-v3-2-speciale",
+  "stage": 1,
   "types": [
    "logic",
    "open"
@@ -3564,8 +3564,8 @@
   "id": "qwen3-7",
   "nameEn": "Qwen3.7-Max",
   "nameZh": "通义千问 Qwen3.7-Max",
-  "family": "qwen3",
-  "stage": 3,
+  "family": "qwen-max",
+  "stage": 2,
   "types": [
    "open",
    "logic"
@@ -3847,7 +3847,7 @@
   "id": "gpt-4-turbo",
   "nameEn": "GPT-4 Turbo",
   "nameZh": "GPT-4 Turbo",
-  "family": "gpt-4x",
+  "family": "gpt-4-turbo",
   "stage": 1,
   "types": [
    "chat",
@@ -3862,8 +3862,8 @@
   "id": "gpt-4-1",
   "nameEn": "GPT-4.1",
   "nameZh": "GPT-4.1",
-  "family": "gpt-4x",
-  "stage": 2,
+  "family": "gpt-frontier",
+  "stage": 1,
   "types": [
    "code",
    "chat"
@@ -4172,7 +4172,7 @@
   "id": "claude-3-sonnet",
   "nameEn": "Claude 3 Sonnet",
   "nameZh": "Claude 3 Sonnet",
-  "family": "claude-3-sonnet",
+  "family": "claude-sonnet",
   "stage": 1,
   "types": [
    "chat",
@@ -4531,7 +4531,7 @@
   "id": "devstral-small",
   "nameEn": "Devstral Small",
   "nameZh": "Devstral Small",
-  "family": "devstral",
+  "family": "devstral-small",
   "stage": 1,
   "types": [
    "code",
@@ -4548,7 +4548,7 @@
   "nameEn": "Devstral Medium",
   "nameZh": "Devstral Medium",
   "family": "devstral",
-  "stage": 2,
+  "stage": 1,
   "types": [
    "code",
    "open"
@@ -4563,7 +4563,7 @@
   "id": "magistral-small",
   "nameEn": "Magistral Small",
   "nameZh": "Magistral Small",
-  "family": "magistral",
+  "family": "magistral-small",
   "stage": 1,
   "types": [
    "logic",
@@ -4578,8 +4578,8 @@
   "id": "magistral-medium",
   "nameEn": "Magistral Medium",
   "nameZh": "Magistral Medium",
-  "family": "magistral",
-  "stage": 2,
+  "family": "magistral-medium",
+  "stage": 1,
   "types": [
    "logic",
    "open"
@@ -4718,8 +4718,8 @@
   "id": "gemini-3-pro",
   "nameEn": "Gemini 3 Pro",
   "nameZh": "Gemini 3 Pro",
-  "family": "gemini-3-pro",
-  "stage": 1,
+  "family": "gemini-pro",
+  "stage": 3,
   "types": [
    "logic",
    "vision"
@@ -5211,8 +5211,8 @@
   "id": "text-embedding-3-large",
   "nameEn": "text-embedding-3-large",
   "nameZh": "text-embedding-3-large",
-  "family": "text-embedding",
-  "stage": 3,
+  "family": "text-embedding-3-large",
+  "stage": 1,
   "types": [
    "search",
    "compute"
@@ -5693,7 +5693,7 @@
   "id": "qwen2-5-max",
   "nameEn": "Qwen2.5-Max",
   "nameZh": "通义千问 Qwen2.5-Max",
-  "family": "qwen-max",
+  "family": "qwen2-5-max",
   "stage": 1,
   "types": [
    "chat",
@@ -5708,7 +5708,7 @@
   "id": "qwen3-max",
   "nameEn": "Qwen3-Max",
   "nameZh": "通义千问 Qwen3-Max",
-  "family": "qwen-max",
+  "family": "qwen2-5-max",
   "stage": 2,
   "types": [
    "chat",
@@ -5725,7 +5725,7 @@
   "nameEn": "Qwen3-Max-Thinking",
   "nameZh": "通义千问 Qwen3-Max-Thinking",
   "family": "qwen-max",
-  "stage": 3,
+  "stage": 1,
   "types": [
    "logic",
    "chat"
@@ -5896,8 +5896,8 @@
   "id": "deepseek-r1-0528",
   "nameEn": "DeepSeek-R1-0528",
   "nameZh": "DeepSeek-R1-0528",
-  "family": "deepseek-r1-0528",
-  "stage": 1,
+  "family": "deepseek",
+  "stage": 3,
   "types": [
    "logic",
    "open"
