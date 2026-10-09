@@ -1,7 +1,13 @@
-// Code-side option lists that console.json arguments refer to by name (ArgSpec.enumRef).
+// Option lists that console.json arguments refer to by name (ArgSpec.enumRef).
+import { CONTENT } from '../../shared/content/index.ts'
 import { GAME } from '../world/config.ts'
+import type { DevContent } from './content.ts'
 import type { EnumRefs } from './registry.ts'
 
-export const ENUMS: EnumRefs = {
-  weather: () => Object.keys(GAME.region.weatherIntensity),
+export function devEnums(content: Pick<DevContent, 'scenarios'>): EnumRefs {
+  return {
+    weather: () => Object.keys(GAME.region.weatherIntensity),
+    boss: () => Object.keys(CONTENT.bosses),
+    scenario: () => Object.keys(content.scenarios).sort(),
+  }
 }

@@ -32,6 +32,8 @@ export interface ConsoleFile {
     eventBuffer: number; logLines: number; waitTimeoutMs: number; waitPollMs: number; dumpMaxChars: number
     /** Default seconds per stepped frame, largest time scale, most frames per step command. */
     stepDt: number; maxScale: number; maxStepFrames: number
+    /** How long a scenario's expectations may take to become true after its commands ran (a battle needs a moment to open). */
+    expectSettleMs: number
   }
   commands: Record<string, CommandMeta>
   /** Deprecated window.__ap.<name> hooks -> what to use instead (printed once per name). */

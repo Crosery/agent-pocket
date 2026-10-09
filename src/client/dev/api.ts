@@ -1,10 +1,11 @@
 // window.__ap.v1: the stable automation surface (ADR 0002 §4.1). Everything that changes state goes through cmd().
 import { CONTENT, t } from '../../shared/content/index.ts'
-import { diff, digest, describeMatcher, getPointer, matches } from './diff.ts'
+import { diff, digest, describeMatcher, getPointer, matches } from '../../shared/dev/diff.ts'
 import type { EventLog } from './events.ts'
 import type { DevHost } from './kit.ts'
 import { CONSOLE, type Registry } from './registry.ts'
 import { dumpState, SECTIONS, type RuntimeExtras, type Section } from './state.ts'
+import { checkScenario, scenarioList } from './scenario.ts'
 import { createWaiters } from './wait.ts'
 
 declare const __AP_COMMIT__: string | undefined
@@ -30,6 +31,7 @@ export function createApiV1({ host, registry, log, extras }: ApiDeps) {
       contentHash: (contentHash ??= digest(CONTENT)),
       worldSeed: host.world.seed,
       rngSeed: host.rng.seed,
+      scenario: host.session.scenario,
       taint: { ...registry.taint },
     }),
     cmd: (id: string, args?: Record<string, unknown>) => registry.run(id, args),
@@ -53,6 +55,12 @@ export function createApiV1({ host, registry, log, extras }: ApiDeps) {
       seed: (n: number) => registry.run('rng.seed', { seed: n }),
       /** Draws taken from each random stream since the last (re)seed. */
       cursor: () => host.rng.cursors(),
+    },
+    scenario: {
+      list: () => scenarioList(host),
+      load: (id: string) => registry.run('scenario.load', { id }),
+      /** Evaluates the loaded scenario's expectations against the live state. */
+      check: () => checkScenario(host),
     },
     wait,
     expect: {

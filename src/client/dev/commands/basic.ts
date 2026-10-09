@@ -28,6 +28,8 @@ export const basicCommands: Record<string, CommandRun> = {
     ctx.clock.minutes = Math.max(0, a.minutes as number)
     return { label: ctx.clock.label(), minutes: ctx.clock.minutes }
   },
+  /** Holds the in-game clock still (or releases it); time.* controls frames, this controls the day/night clock. */
+  'clock.freeze': ({ clock }, a) => { clock.hold(a.on as boolean); return { held: clock.held() } },
   'weather.set': ({ overworld }, a) => {
     overworld.setWeatherOverride((a.kind as string | undefined ?? null) as never)
     return { weather: a.kind ?? null }

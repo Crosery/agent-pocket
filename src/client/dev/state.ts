@@ -2,7 +2,7 @@
 import { worldBuildInfo } from '../../shared/world/index.ts'
 import { regionAt } from '../../shared/world/worldapi.ts'
 import { getMap } from '../../shared/world/worldapi.ts'
-import { canonical, digest } from './diff.ts'
+import { canonical, digest } from '../../shared/dev/diff.ts'
 import type { EventLog } from './events.ts'
 import type { DevHost } from './kit.ts'
 
@@ -22,6 +22,9 @@ export function runtimeState(host: DevHost, log: EventLog, extras: RuntimeExtras
   const nav = ow.questNavigation
   const events = log.since(0).events
   const lastStart = [...events].reverse().find((e) => e.type === 'battle:start')
+  const bossId = events.filter((e) => e.seq > (lastStart?.seq ?? 0) && e.type === 'battle:events')
+    .flatMap((e) => (e.payload as { events?: { t: string; hud?: { bossId?: string } }[] }).events ?? [])
+    .find((ev) => ev.t === 'boss')?.hud?.bossId ?? null
   const lastEnd = [...events].reverse().find((e) => e.type === 'battle:end')
   const html = document.documentElement
   const battleUp = ow.battleActive || html.classList.contains('ap-battle-on')
@@ -36,6 +39,7 @@ export function runtimeState(host: DevHost, log: EventLog, extras: RuntimeExtras
     battle: {
       active: battleUp,
       kind: battleUp ? ((lastStart?.payload as { kind?: string } | undefined)?.kind ?? null) : null,
+      boss: battleUp ? bossId : null,
       lastKind: (lastEnd?.payload as { kind?: string } | undefined)?.kind ?? null,
       lastResult: (lastEnd?.payload as { result?: unknown } | undefined)?.result ?? null,
     },

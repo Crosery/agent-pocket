@@ -1,5 +1,5 @@
 {
-  "limits": {"eventBuffer": 500, "logLines": 400, "waitTimeoutMs": 15000, "waitPollMs": 40, "dumpMaxChars": 4000, "stepDt": 0.016667, "maxScale": 20, "maxStepFrames": 3600},
+  "limits": {"eventBuffer": 500, "logLines": 400, "waitTimeoutMs": 15000, "waitPollMs": 40, "dumpMaxChars": 4000, "stepDt": 0.016667, "maxScale": 20, "maxStepFrames": 3600, "expectSettleMs": 4000},
   "commands": {
     "tp.xy": {
       "titleKey": "dev.cmd.tpXy",
@@ -38,7 +38,19 @@
     },
     "time.scale": {"titleKey": "dev.cmd.timeScale", "group": "time", "mutates": false, "needs": "live", "args": [{"name": "scale", "type": "number", "labelKey": "dev.arg.scale"}]},
     "time.fixed": {"titleKey": "dev.cmd.timeFixed", "group": "time", "mutates": false, "needs": "live", "args": [{"name": "dt", "type": "number", "optional": true, "labelKey": "dev.arg.dtFixed"}]},
-    "rng.seed": {"titleKey": "dev.cmd.rngSeed", "group": "rng", "mutates": false, "needs": "live", "args": [{"name": "seed", "type": "integer", "labelKey": "dev.arg.seed"}]}
+    "rng.seed": {"titleKey": "dev.cmd.rngSeed", "group": "rng", "mutates": false, "needs": "live", "args": [{"name": "seed", "type": "integer", "labelKey": "dev.arg.seed"}]},
+    "clock.freeze": {"titleKey": "dev.cmd.clockFreeze", "group": "env", "mutates": false, "needs": "live", "args": [{"name": "on", "type": "boolean", "labelKey": "dev.arg.on"}]},
+    "scenario.load": {"titleKey": "dev.cmd.scenarioLoad", "group": "scenario", "mutates": true, "needs": "live", "args": [{"name": "id", "type": "string", "enumRef": "scenario", "labelKey": "dev.arg.scenario"}]},
+    "battle.boss": {
+      "titleKey": "dev.cmd.battleBoss",
+      "group": "battle",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "boss", "type": "string", "enumRef": "boss", "labelKey": "dev.arg.boss"},
+        {"name": "level", "type": "integer", "optional": true, "labelKey": "dev.arg.bossLevel"}
+      ]
+    }
   },
   "legacy": {"pos": "state.dump(['runtime'])", "tp": "cmd('tp.xy', {x, y, map})", "region": "state.dump(['runtime'])", "gates": "state.dump(['world'])", "places": "cmd('tp.xy')", "discover": "cmd('discover', {place})", "fly": "cmd('fly', {place})", "fog": "state.dump(['save'])", "boss": "cmd('battle.boss')", "distance": "state.dump(['save'])", "clock": "cmd('clock.set', {minutes})", "weather": "cmd('weather.set', {kind})", "roamers": "state.dump(['runtime'])"}
 }

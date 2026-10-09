@@ -160,7 +160,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   const world = buildWorld(dev?.worldSeed ?? undefined)
   const data: GameData = { ...CONTENT, world }
   dev?.afterWorld(world)
-  const saves = createSaveManager({ world })
+  const saves = createSaveManager({ world, ...(dev?.storage ? { storage: dev.storage } : {}) })
   const stored = saves.load(slot)
   let save: SaveData = stored ?? saves.newGame({ name: '', avatar: '' })
   /** Before the world starts only a save that already exists on disk may be written (settings changed on the title). */

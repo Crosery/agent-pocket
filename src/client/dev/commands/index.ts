@@ -2,5 +2,6 @@
 import type { CommandRun } from '../registry.ts'
 import { basicCommands } from './basic.ts'
 import { determinismCommands } from './determinism.ts'
+import { scenarioCommands } from './scenario.ts'
 
-export const COMMANDS: Record<string, CommandRun> = { ...basicCommands, ...determinismCommands }
+export const COMMANDS: Record<string, CommandRun> = { ...basicCommands, ...determinismCommands, ...scenarioCommands }

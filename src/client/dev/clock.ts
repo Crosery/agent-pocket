@@ -14,6 +14,9 @@ export interface DevClock {
   fixed(dt: number | null): void
   /** Runs `frames` game frames of `dt` seconds each through `tick`, regardless of pause. */
   step(frames: number, dt: number, tick: (dtSec: number) => void): number
+  /** Holds the in-game day clock (the HUD clock stops advancing) while frames keep running. */
+  hold(on: boolean): void
+  held(): boolean
   state(): DevClockState
 }
 
@@ -22,7 +25,10 @@ export function createDevClock(): DevClock {
   let scale = 1
   let fixed: number | null = null
   let stepped = 0
+  let held = false
   return {
+    hold: (on) => { held = on },
+    held: () => held,
     frameDt: (real) => (paused ? null : fixed ?? real * scale),
     pause: () => { paused = true },
     resume: () => { paused = false },

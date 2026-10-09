@@ -55,10 +55,10 @@ test('vite.config.ts defines __AP_DEVTOOLS__ from devtoolsBuild and game.ts guar
   assert.match(game, /typeof __AP_DEVTOOLS__ !== 'undefined' && __AP_DEVTOOLS__\s*\?\s*await loadDevKit\(\)\s*:\s*null/)
 })
 
-test('src/client/dev is reachable only through the guarded dynamic import (types aside)', () => {
+test('src/client/dev and src/shared/dev are reachable only through the guarded dynamic import (types aside)', () => {
   const offenders: string[] = []
   for (const f of sourceFiles('src/')) {
-    if (f.startsWith('src/client/dev/')) continue
+    if (f.startsWith('src/client/dev/') || f.startsWith('src/shared/dev/')) continue
     const text = read(f)
     for (const m of text.matchAll(/^\s*(?:import|export)\s+(?!type\b)[^;\n]*?from\s+'([^']*\/dev\/[^']*)'/gm)) offenders.push(`${f}: ${m[1]}`)
     for (const m of text.matchAll(/import\(\s*'([^']*\/dev\/[^']*)'\s*\)/g)) if (f !== 'src/client/game.ts') offenders.push(`${f}: dynamic ${m[1]}`)
@@ -66,8 +66,9 @@ test('src/client/dev is reachable only through the guarded dynamic import (types
   assert.deepEqual(offenders, [])
 })
 
-test('content/dev is read only by the dev tooling, never by shipped source', () => {
-  const offenders = sourceFiles('src/').filter((f) => !f.startsWith('src/client/dev/') && /content\/dev\//.test(read(f)))
+test('content/dev is imported only by the dev tooling, never by shipped source', () => {
+  const isDev = (f: string) => f.startsWith('src/client/dev/') || f.startsWith('src/shared/dev/')
+  const offenders = sourceFiles('src/').filter((f) => !isDev(f) && /(?:from|import\()\s*'[^']*content\/dev\//.test(read(f)))
   assert.deepEqual(offenders, [])
 })
 
@@ -87,7 +88,7 @@ test('bundle check: flags tooling in a production bundle, passes a clean one, an
     const clean = join(dir, 'clean'), dirty = join(dir, 'dirty'), dev = join(dir, 'dev'), vacuous = join(dir, 'vacuous')
     writeBundle(clean, { 'index.html': '<html></html>', 'assets/a.js': 'let t=`__ap_probe__`;export{t}', 'assets/logo.png': '__ap skipTitle' })
     writeBundle(dirty, { 'assets/a.js': 'window.__ap={pos(){}}', 'assets/b.js': 'x.skipTitle', 'assets/c.js': '"__AP_DEV_SENTINEL"' })
-    writeBundle(dev, { 'assets/dev.js': 'window.__ap={};window.__AP=1;x.skipTitle;"__AP_DEV_SENTINEL"' })
+    writeBundle(dev, { 'assets/dev.js': 'window.__ap={};window.__AP=1;x.skipTitle;"__AP_DEV_SENTINEL";{"../../../content/dev/scenarios/a.json":1}' })
     writeBundle(vacuous, { 'assets/dev.js': 'nothing here' })
 
     assert.deepEqual(productionProblems(clean), [], 'binary assets are not scanned and the storage probe is not a hook')

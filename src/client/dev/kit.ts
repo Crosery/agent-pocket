@@ -1,12 +1,14 @@
 // The seam between src/client/game.ts and the developer tooling. Type-only: game.ts imports it with
 // `import type` and loads the implementation (./index.ts) through a dynamic import that exists only when
 // DEVTOOLS is true, so the production bundle holds neither this contract nor anything behind it.
-import type { SaveData, World } from '../../shared/types.ts'
+import type { DevCommandCall, SaveData, World } from '../../shared/types.ts'
 import type { GameContext, SaveManager, Screens } from '../contracts.ts'
 import type { RngHub } from '../core/rng-hub.ts'
 import type { Onboarding } from '../onboarding/index.ts'
 import type { OverworldExt } from '../world/controller.ts'
+import type { StorageLike } from '../core/save.ts'
 import type { DevClock } from './clock.ts'
+import type { DevContent } from './content.ts'
 
 /** What game.ts hands to the developer tooling: the live game objects and one frame of the main loop. */
 export interface GameHost {
@@ -23,6 +25,13 @@ export interface GameHost {
 export interface DevHost extends GameHost {
   rng: RngHub
   clock: DevClock
+  content: DevContent
+  /** Which scenario the session is in (info(), scenario.check()). */
+  session: { scenario: string | null }
+  /** Runs one command through the registry (scenarios and the command line use it). */
+  run(call: DevCommandCall): Promise<unknown>
+  /** The state document ({ save, runtime, world }); `sections` limits the work. */
+  dump(sections?: readonly ('save' | 'runtime' | 'world')[]): Record<string, unknown>
 }
 
 export interface DevKit {
@@ -30,7 +39,9 @@ export interface DevKit {
   readonly slot: number
   /** Start straight in the world with a debug save instead of the title flow. */
   readonly skipTitle: boolean
-  /** Pinned world seed (&seed=), or null for the configured one. */
+  /** Scenario mode keeps the save in memory (no slot is touched) unless &slot was given. */
+  readonly storage: StorageLike | null
+  /** Pinned world seed (&seed=, else the scenario's), or null for the configured one. */
   readonly worldSeed: number | null
   /** Pinned master random seed (&rng=), or null for a random one per session. */
   readonly rngSeed: number | null

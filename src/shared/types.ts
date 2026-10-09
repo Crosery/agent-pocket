@@ -1232,3 +1232,70 @@ export interface SaveData {
   /** Explored overworld cells for the world-map fog of war (compact encoding owned by the client save code). */
   explored?: string
 }
+
+// ---------------------------------------------------------------------------
+// Developer mode (content/dev/**, src/shared/dev, src/client/dev) — append-only section
+// ---------------------------------------------------------------------------
+
+/** One call of a developer command (see content/dev/console.json). */
+export interface DevCommandCall { cmd: string; args?: Record<string, unknown> }
+
+/** A check on the state dump: `path` is an RFC 6901 pointer, the remaining key is one matcher (eq, gt, in, ...). */
+export interface DevExpectation { path: string; [matcher: string]: unknown }
+
+/** Where to stand: an anchor id (`town:forge`) or an explicit tile. */
+export type DevPlace = string | { map: string; x: number; y: number }
+
+/** One party member: a preset team (content/dev/teams.json) or a single creature. */
+export interface DevPartyEntry {
+  team?: string
+  species?: string
+  level?: number
+  nickname?: string
+  status?: StatusId
+  /** Fraction of max HP left (default full). */
+  hp?: number
+  shiny?: boolean
+}
+
+export interface DevTeamMember { species: string; nickname?: string; status?: StatusId; hp?: number; shiny?: boolean }
+
+/** content/dev/teams.json entry. */
+export interface DevTeam { level: number; members: DevTeamMember[] }
+
+/** content/dev/beats.json entry: a point in the story as a save patch (applied before the scenario's own fields). */
+export interface DevBeat {
+  titleKey: string
+  place?: DevPlace
+  badges?: string[]
+  /** Trainer ids already defeated (set as flags with the story's trainerWon prefix). */
+  trainers?: string[]
+  quests?: Record<string, { stage: number; done: boolean }>
+  flags?: Record<string, boolean | number | string>
+}
+
+/** content/dev/scenarios/<id>.json: a one-click game state with a URL (?dev=1&scenario=<id>). */
+export interface DevScenario {
+  id: string
+  titleKey: string
+  /** Another scenario this one builds on; fields below override, bag/flags/quests merge, then/expect concatenate. */
+  extends?: string
+  beat?: string
+  /** World seed and master random seed. */
+  seed?: number
+  rng?: number
+  place?: DevPlace
+  party?: DevPartyEntry[]
+  bag?: Record<string, number>
+  /** Every item at this quantity. */
+  bagAll?: number
+  money?: number
+  badges?: string[]
+  flags?: Record<string, boolean | number | string>
+  quests?: Record<string, { stage: number; done: boolean }>
+  clock?: { minutes: number; frozen?: boolean }
+  weather?: string | null
+  /** Commands to run once the state is applied (battle, effects, ...). */
+  then?: DevCommandCall[]
+  expect?: DevExpectation[]
+}

@@ -5,11 +5,12 @@ import assert from 'node:assert/strict'
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import type { EventBus, GameEvents } from '../src/client/contracts.ts'
 import { CONTENT, t } from '../src/shared/content/index.ts'
-import { canonical, diff, digest, getPointer, matches, partialMatch, pointer } from '../src/client/dev/diff.ts'
+import { canonical, diff, digest, getPointer, matches, partialMatch, pointer } from '../src/shared/dev/diff.ts'
 import { createEventLog } from '../src/client/dev/events.ts'
 import { createRegistry, CONSOLE, DevError, tokenize, type CommandMeta, type CommandRun } from '../src/client/dev/registry.ts'
 import { COMMANDS } from '../src/client/dev/commands/index.ts'
-import { ENUMS } from '../src/client/dev/enums.ts'
+import { devEnums } from '../src/client/dev/enums.ts'
+import { devContentFromDisk } from './dev-content.ts'
 import { installDevText } from '../src/client/dev/text.ts'
 import { poll } from '../src/client/dev/wait.ts'
 import { createApiV1 } from '../src/client/dev/api.ts'
@@ -120,7 +121,7 @@ test('console.json: handlers and metadata line up one to one, enum refs exist, t
       assert.ok(!names.has(a.name), `${id}: duplicate arg ${a.name}`)
       names.add(a.name)
       if (a.labelKey) assert.notEqual(t(a.labelKey), a.labelKey, `${id}.${a.name}: missing text ${a.labelKey}`)
-      if (a.enumRef) assert.ok(ENUMS[a.enumRef]?.().length, `${id}.${a.name}: unknown enumRef ${a.enumRef}`)
+      if (a.enumRef) assert.ok(devEnums(devContentFromDisk())[a.enumRef]?.().length, `${id}.${a.name}: unknown enumRef ${a.enumRef}`)
     }
   }
   assert.ok(Object.values(CONSOLE.legacy).every((v) => v.length > 0))
@@ -209,6 +210,8 @@ function fakeHost() {
     tick: () => {},
     rng: new RngHub(7),
     clock: createDevClock(),
+    content: { scenarios: {}, beats: {}, teams: {} },
+    session: { scenario: null },
   } as unknown as DevHost
   return { host, save, events, classes, g }
 }
@@ -241,7 +244,11 @@ test('api v1: dump sections, digest, the "buy a potion" diff, expect.state, noEr
 
   classes.add('ap-battle-on')
   events.emit('battle:start', { kind: 'boss' } as never)
-  assert.deepEqual((api.state.dump(['runtime']).runtime as Record<string, any>).battle, { active: true, kind: 'boss', lastKind: null, lastResult: null })
+  assert.deepEqual((api.state.dump(['runtime']).runtime as Record<string, any>).battle, { active: true, kind: 'boss', boss: null, lastKind: null, lastResult: null })
+
+  events.emit('battle:events', { kind: 'wild', events: [{ t: 'boss', side: 1, hud: { bossId: 'astra' } }] } as never)
+  assert.equal(((api.state.dump(['runtime']).runtime as Record<string, any>).battle).boss, 'astra', 'the boss id comes from the battle events of the current fight')
+  assert.equal(api.expect.state('/runtime/battle/boss', 'astra'), true)
 
   assert.equal(api.expect.noErrors(), true)
   ;(g.window as { __AP_LOG: string[] }).__AP_LOG.push('warn: fine', 'error: boom')
@@ -256,7 +263,7 @@ test('api v1: dump sections, digest, the "buy a potion" diff, expect.state, noEr
   assert.equal(await api.wait.map('origin-home', { timeoutMs: 50 }), 'origin-home')
   await assert.rejects(api.wait.map('elsewhere', { timeoutMs: 30 }), /map elsewhere/)
 
-  assert.deepEqual(api.events.since(0).events.map((e) => e.type), ['battle:start', 'toast', 'toast'])
+  assert.deepEqual(api.events.since(0).events.map((e) => e.type), ['battle:start', 'battle:events', 'toast', 'toast'])
   assert.equal(api.info().worldSeed, 1)
   assert.equal(api.info().rngSeed, 7)
   assert.equal(api.info().commit, 'unknown')

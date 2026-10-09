@@ -1,7 +1,7 @@
 // Condition waits for automation (window.__ap.v1.wait): no fixed sleeps, a timeout that explains itself.
 import { t } from '../../shared/content/index.ts'
 import type { EventLog, LoggedEvent } from './events.ts'
-import { partialMatch } from './diff.ts'
+import { partialMatch } from '../../shared/dev/diff.ts'
 import type { DevHost } from './kit.ts'
 
 export interface WaitOpts { timeoutMs?: number }

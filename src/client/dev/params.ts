@@ -6,6 +6,7 @@
 //   &battle=wild|trainer [&species=<id>&level=<n> | &trainer=<id>]
 //   &battle=boss&boss=<bossId> [&level=<n>]   boss sandbox: sensible team + counter items, boss at its recommended level
 //   &screen=party|bag|dex|box|map|quests|settings|shop
+//   &scenario=<id>               load a scenario from content/dev/scenarios (enables dev; in-memory save unless &slot is given)
 //   &seed=<n>                    world seed              &rng=<n>       master random seed (encounters, battles, scripts)
 import type { FieldWeatherKind } from '../../shared/types.ts'
 import { GAME } from '../world/config.ts'
@@ -31,11 +32,16 @@ export interface DebugParams {
   seed: number | null
   /** Master random seed for encounters, battles and scripts (default: random per session). */
   rng: number | null
+  /** Scenario id (content/dev/scenarios); implies dev. */
+  scenario: string | null
+  /** &slot was given explicitly. */
+  slotExplicit: boolean
 }
 
 export function readDebugParams(search: string): DebugParams {
   const q = new URLSearchParams(search)
-  const dev = q.get('dev') === '1'
+  const scenario = q.get('scenario')
+  const dev = q.get('dev') === '1' || !!scenario
   const num = (k: string): number | null => {
     const v = q.get(k)
     if (v === null || v.trim() === '') return null
@@ -70,5 +76,7 @@ export function readDebugParams(search: string): DebugParams {
     evolve: flag('evolve'),
     seed: dev ? seedParam('seed') : null,
     rng: dev ? seedParam('rng') : null,
+    scenario: scenario || null,
+    slotExplicit: dev && q.has('slot'),
   }
 }
