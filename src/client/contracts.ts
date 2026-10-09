@@ -336,7 +336,10 @@ export interface HUD {
   showBanner(title: string, subtitle?: string): void
   setClock(label: string, tod: TimeOfDay): void
   setMoney(money: number): void
-  setQuest(text: string | null, summary?: string): void
+  /** `stage` is the bare current-stage sentence inside `text`; the quest row hides while the objective card shows the same one. */
+  setQuest(text: string | null, summary?: string, stage?: string): void
+  /** Sentence the objective card is showing (null = card hidden); see setQuest. */
+  setObjective(text: string | null): void
   setNetStatus(status: NetStatus, online: number): void
   /** The menu has something waiting: shows (or hides) the menu chip with a red dot; `device` picks the key cap on it. */
   setMenuAlert(on: boolean, device: Input['lastDevice']): void

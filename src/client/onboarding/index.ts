@@ -59,6 +59,7 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
     const route = overworld.questNavigation
     const on = visible && settings().showObjective && overworld.mapId !== null && route !== null
     objective.setVisible(on)
+    ctx.hud.setObjective(on && route ? route.text : null)
     if (!on) { objectiveRule = ''; return }
     if (!route) return
     objectiveRule = route.questId

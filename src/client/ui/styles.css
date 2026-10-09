@@ -906,6 +906,8 @@ html.ap-attn-menu .ap-touch__btn[data-action='menu']::after {
   animation: ap-hud-reveal 220ms ease-out both;
 }
 .ap-quest[hidden] { display: none; }
+/* Shown next to an objective that says something else: keep the "current quest" label while collapsed so the two rows read as different things. */
+.ap-quest.is-aside.is-collapsed .ap-quest-title { display: inline; flex: none; }
 .ap-quest-toggle { display: flex; align-items: center; gap: calc(var(--u) * 5); width: 100%; min-height: max(28px, calc(var(--u) * 20)); padding: calc(var(--u) * 3) calc(var(--u) * 8); border: 0; background: none; font: inherit; text-shadow: inherit; text-align: left; color: var(--ap-text-dim); cursor: pointer; }
 .ap-quest-toggle:hover { background: var(--ap-sel); }
 .ap-quest-toggle:focus-visible, .ap-quest-details:focus-visible { outline: var(--u) solid var(--ap-gold-hi); outline-offset: calc(var(--u) * -1); }

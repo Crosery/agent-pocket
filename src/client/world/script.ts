@@ -3,7 +3,7 @@
 // content tables and content/game.json — never from ids in code.
 import type { BattleResult, Creature, Dir, FieldWeatherKind, ItemDef, NpcDef, ScriptStep } from '../../shared/types.ts'
 import type { DialogueLine, GameContext } from '../contracts.ts'
-import { t } from '../../shared/content/index.ts'
+import { CONTENT, t } from '../../shared/content/index.ts'
 import type { IRng } from '../../shared/contracts.ts'
 import { Rng } from '../../shared/rng.ts'
 import { randomSeed } from '../core/rng-hub.ts'
@@ -54,10 +54,12 @@ const ballId = (ctx: GameContext): string | undefined => ctx.data.itemList.find(
 export function createScriptRunner(host: ScriptHost) {
   const { ctx } = host
   const rng = host.rng ?? new Rng(randomSeed())
-  const params = () => ({ name: ctx.save.name, currency: t('common.money') })
+  const params = () => ({ name: ctx.save.name, currency: t('common.money'), touchConfirm: t('audio.touch.confirm') })
 
+  /** `<key>Touch` replaces a key's text (keyboard wording) while the player's last input was touch. */
+  const deviceKey = (text: string) => (ctx.input?.lastDevice === 'touch' && `${text}Touch` in CONTENT.text ? `${text}Touch` : text)
   const line = (text: string, speaker?: string, portrait?: string): DialogueLine => {
-    const out: DialogueLine = { text: textOrKey(text, params()) }
+    const out: DialogueLine = { text: textOrKey(deviceKey(text), params()) }
     if (speaker) out.speaker = textOrKey(speaker, params())
     if (portrait) out.portrait = portrait
     return out

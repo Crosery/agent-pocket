@@ -425,14 +425,16 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     applyWeather()
   }
 
-  function questLine(): { text: string; title: string } | null {
+  function questLine(): { text: string; title: string; stage: string } | null {
     const id = ctx.save.trackedQuest
     const q = id ? ctx.data.world.quests.find((x) => x.id === id) : undefined
     const st = q ? ctx.save.quests[q.id] : undefined
     if (!q || !st || st.done) return null
+    const stage = q.stages[Math.min(st.stage, q.stages.length - 1)]?.text ?? ''
     return {
-      text: opts.questText ? opts.questText(q, st.stage) : t('world.quest.hud', { quest: q.nameZh, stage: q.stages[Math.min(st.stage, q.stages.length - 1)]?.text ?? '' }),
+      text: opts.questText ? opts.questText(q, st.stage) : t('world.quest.hud', { quest: q.nameZh, stage }),
       title: q.nameZh,
+      stage,
     }
   }
 
@@ -448,7 +450,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       if (key !== questKey) {
         questKey = key
         const line = questLine()
-        ctx.hud.setQuest(line?.text ?? null, line?.title)
+        ctx.hud.setQuest(line?.text ?? null, line?.title, line?.stage)
       }
     }
     ambienceT -= dt
