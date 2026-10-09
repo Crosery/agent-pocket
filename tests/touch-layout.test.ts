@@ -26,6 +26,12 @@ test('every touch button is at least 44px, inside the screen, and clear of the o
       assert.ok(b.size >= 44, `${where}: ${b.size}px < 44`)
       assert.ok(r.left >= 0 && r.top >= 0 && r.right <= vp.width && r.bottom <= vp.height, `${where}: off screen ${JSON.stringify(r)}`)
     }
+    // The idle stick ring rests in the opposite bottom corner; no button may sit on it.
+    const d = 2 * layout.stickRadius
+    const ringLeft = hand === 'right' ? T.margin : vp.width - T.margin - d
+    const ring = { left: ringLeft, right: ringLeft + d, top: vp.height - T.margin - d, bottom: vp.height - T.margin }
+    // (The large preset cannot fit stick + cluster side by side on a 360-390px phone; there the ghost ring may sit under the run button.)
+    if (size !== 'large' || vp.width >= 600) for (const { b, r } of rects) assert.ok(!rectsOverlap(r, ring), `${vp.name} ${hand} ${size}: ${b.def.action} sits on the stick ring`)
     for (let i = 0; i < rects.length; i++) for (let j = i + 1; j < rects.length; j++) {
       assert.ok(!rectsOverlap(rects[i].r, rects[j].r, 4), `${vp.name} ${hand} ${size}: ${rects[i].b.def.action} touches ${rects[j].b.def.action}`)
     }
