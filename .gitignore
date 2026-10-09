@@ -1,5 +1,6 @@
 node_modules/
 dist/
+dist-devtools/
 data/server/
 assets_src/raw/
 assets_src/tmp/

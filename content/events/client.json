@@ -20,7 +20,6 @@
   },
   "intel": {"calendarDays": 60, "maxNews": 40, "maxRumors": 80, "visibleRows": 8, "compactVisibleRows": 5},
   "markers": {"legendRoamer": "legend", "eventRoamer": "rare", "revealPin": "event", "senseClampTiles": 40},
-  "debug": {"global": "__ap", "key": "gameplay"},
   "cues": {
     "aura-soft": {"color": "#b07cff"},
     "aura-epic": {"color": "#ffb43c"},

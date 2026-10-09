@@ -13,7 +13,7 @@ export type RateKey =
   | 'message' | 'messageKick' | 'move' | 'jump' | 'emote' | 'profile' | 'inspect' | 'leaderboard'
   | 'tradeRequest' | 'tradeAction' | 'pvp' | 'errors'
 
-export type CloseCodeKey = 'shutdown' | 'duplicate' | 'version' | 'flood' | 'helloTimeout' | 'serverFull' | 'slowConsumer'
+export type CloseCodeKey = 'shutdown' | 'duplicate' | 'version' | 'flood' | 'helloTimeout' | 'serverFull' | 'slowConsumer' | 'devNotAllowed'
 
 /** content/net.json server.world: tile-level movement validation on the (infinite) world. */
 export interface WorldNetConfig {
@@ -127,7 +127,7 @@ const RATE_KEYS: readonly RateKey[] = [
   'message', 'messageKick', 'move', 'jump', 'emote', 'profile', 'inspect', 'leaderboard',
   'tradeRequest', 'tradeAction', 'pvp', 'errors',
 ]
-const CLOSE_KEYS: readonly CloseCodeKey[] = ['shutdown', 'duplicate', 'version', 'flood', 'helloTimeout', 'serverFull', 'slowConsumer']
+const CLOSE_KEYS: readonly CloseCodeKey[] = ['shutdown', 'duplicate', 'version', 'flood', 'helloTimeout', 'serverFull', 'slowConsumer', 'devNotAllowed']
 const SORT_KEYS: readonly LeaderboardSortKey[] = ['dexCaught', 'badges', 'pvpWins', 'pvpLosses', 'maxDistance']
 
 /** Structural validation of content/net.json + content/moderation.json + multiplayer.json presence (empty = OK). */

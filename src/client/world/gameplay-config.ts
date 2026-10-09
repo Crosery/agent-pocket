@@ -59,7 +59,6 @@ export interface GameplayClientConfig {
   markers: { legendRoamer: MinimapMarker['kind']; eventRoamer: MinimapMarker['kind']; revealPin: MinimapMarker['kind']; senseClampTiles: number }
   /** Cue (ping group) used for each map ping kind. */
   pings: Record<'legend' | 'mythic' | 'event' | 'place', string>
-  debug: { global: string; key: string }
   cues: Record<string, CueDef>
 }
 

@@ -15,11 +15,11 @@ import { createRenderer, createWorldView } from './render/index.ts'
 import { UI_CONFIG, createChatUI, createEscapeStack, createHUD, createMinimap, createUIKit, installEscapeFallback, releaseButtonFocusAfterClick } from './ui/index.ts'
 import { createNetClient } from './net/index.ts'
 import { createOnboarding } from './onboarding/index.ts'
-import { validateTutorial } from './onboarding/config.ts'
-import { createFallbackBattleRunner, createFallbackScreens, createOverworld, GAME, validateGameContent, type MultiplayerHooks, type OverworldExt } from './world/index.ts'
+import { createFallbackBattleRunner, createFallbackScreens, createOverworld, GAME, type MultiplayerHooks, type OverworldExt } from './world/index.ts'
 import { ownedKeyItem } from './world/save-ops.ts'
 import { flyLanding, resolvePlace } from './world/explore.ts'
-import { applyDebugStart, createDebugOverlay, debugSave, installDebugHooks, installDevLog, readDebugParams, runDebugActions, type DebugParams } from './debug.ts'
+import { createDebugOverlay } from './debug-overlay.ts'
+import type { DevKit } from './dev/kit.ts'
 
 type Mutable<T> = { -readonly [K in keyof T]: T[K] }
 type Loader = () => Promise<unknown>
@@ -133,12 +133,17 @@ export async function startGame(): Promise<void> {
   }
 }
 
+/** Compile-time switch (vite.config.ts define): the dev server and `vite build --mode devtools` only. */
+declare const __AP_DEVTOOLS__: boolean | undefined
+
+/** Developer tooling for this page (?dev=1); null in the production build, which never contains src/client/dev. */
+async function loadDevKit(): Promise<DevKit | null> {
+  return (await import('./dev/index.ts')).createDevKit(location.search)
+}
+
 async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
-  const dbg: DebugParams = readDebugParams(location.search)
-  if (dbg.dev) {
-    installDevLog()
-    for (const e of validateGameContent()) console.warn(`[game] ${e}`)
-  }
+  const dev = typeof __AP_DEVTOOLS__ !== 'undefined' && __AP_DEVTOOLS__ ? await loadDevKit() : null
+  const slot = dev?.slot ?? 0
   const appRoot = document.getElementById('app') ?? document.body
   const canvas = document.getElementById('ap-canvas') as HTMLCanvasElement | null
   const uiRoot = document.getElementById('ap-ui') ?? appRoot
@@ -153,10 +158,9 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   await new Promise((r) => setTimeout(r, 0))
   const world = buildWorld()
   const data: GameData = { ...CONTENT, world }
-  if (dbg.dev) for (const e of validateTutorial(world, worldAnchors(world))) console.warn(`[onboarding] ${e}`)
+  dev?.afterWorld(world)
   const saves = createSaveManager({ world })
-  if (dbg.dev && dbg.reset) localStorage.removeItem(`${CONTENT.config.save.storagePrefix}${dbg.slot}`)
-  const stored = saves.load(dbg.slot)
+  const stored = saves.load(slot)
   let save: SaveData = stored ?? saves.newGame({ name: '', avatar: '' })
   /** Before the world starts only a save that already exists on disk may be written (settings changed on the title). */
   let titleSaveStored = !!stored
@@ -219,6 +223,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     return {
       t: 'hello', v: data.config.net.protocolVersion, playerId: ctx.save.playerId, name: ctx.save.name, avatar: ctx.save.avatar,
       map: p.map, x: p.x, y: p.y, facing: p.facing, lead: leadOf(ctx.save.party), profile: profile(),
+      build: { devtools: typeof __AP_DEVTOOLS__ !== 'undefined' && __AP_DEVTOOLS__ },
     }
   })
 
@@ -235,7 +240,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     renderer, world: worldView, ui, hud, minimap, chat, net,
     persist(reason: string) {
       if (!inWorld) {
-        if (titleSaveStored && !saves.write(ctx.save, dbg.slot)) ui.toast(t('game.save.failed'), 'error')
+        if (titleSaveStored && !saves.write(ctx.save, slot)) ui.toast(t('game.save.failed'), 'error')
         return
       }
       if (ctx.save === playing) {
@@ -243,7 +248,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         const p = overworld.player
         ctx.save.position = { map: p.map, x: Math.floor(p.x), y: Math.floor(p.y), facing: p.facing }
       }
-      if (!saves.write(ctx.save, dbg.slot)) ui.toast(t('game.save.failed'), 'error')
+      if (!saves.write(ctx.save, slot)) ui.toast(t('game.save.failed'), 'error')
       lastPersistAt = performance.now()
       net.updateProfile(profile())
       events.emit('save:changed', { reason })
@@ -324,7 +329,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   const debugOverlay = createDebugOverlay(ctx, overworld, appRoot)
   let autosaveT = data.config.save.autosaveSeconds
   let modal = false
-  const clockFrozen = () => dbg.dev && dbg.time !== null && GAME.debug.freezeClockWithTime
+  const clockFrozen = () => !!dev?.clockFrozen()
 
   async function runModal(fn: () => Promise<unknown>): Promise<void> {
     modal = true
@@ -405,9 +410,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     input.endFrame()
   }
   requestAnimationFrame(frame)
-  if (dbg.dev) (window as unknown as { __AP: GameContext }).__AP = ctx
-  if (dbg.dev) (window as unknown as { __apOnboarding: typeof onboarding }).__apOnboarding = onboarding
-  if (dbg.dev) installDebugHooks(ctx, overworld, world, { flyTo: (id) => runModal(() => flyTo(id)) })
+  dev?.install({ ctx, overworld, world, onboarding, flyTo: (id) => runModal(() => flyTo(id)) })
 
   // ---- title flow ---------------------------------------------------------
   hud.setVisible(false)
@@ -435,17 +438,17 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   }
 
   async function titleFlow(): Promise<{ save: SaveData; isNew: boolean }> {
-    if (dbg.dev && dbg.skipTitle) {
-      const existing = saves.load(dbg.slot)
-      const s = existing ?? debugSave(saves, world, dbg)
+    if (dev?.skipTitle) {
+      const existing = saves.load(slot)
+      const s = existing ?? dev.newSave(saves, world)
       if (!existing) applyNewGameStart(s)
       return { save: s, isNew: false }
     }
     for (;;) {
-      const hasSave = saves.hasSave(dbg.slot)
+      const hasSave = saves.hasSave(slot)
       const choice = await screens.title(hasSave)
       if (choice === 'continue') {
-        const s = saves.load(dbg.slot)
+        const s = saves.load(slot)
         if (s) return { save: s, isNew: false }
       } else if (choice === 'new') {
         if (hasSave && !(await ui.confirm(t('game.title.overwrite')))) continue
@@ -460,7 +463,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         if (s) {
           // Settings are per device: an imported save keeps this device's current ones.
           s.settings = { ...ctx.save.settings }
-          saves.write(s, dbg.slot)
+          saves.write(s, slot)
           ui.toast(t('game.title.imported', { name: s.name }), 'success')
           return { save: s, isNew: false }
         }
@@ -473,7 +476,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   const start = await titleFlow()
   ctx.save = start.save
   playing = start.save
-  if (dbg.dev) applyDebugStart(ctx, world, dbg)
+  dev?.applyStart(ctx, world)
   applySettings(ctx.save.settings)
   audio.stopBgm(GAME.region.musicFadeMs)
   await ui.fade(true, GAME.warp.fadeMs)
@@ -491,5 +494,5 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   net.connect()
   await ui.fade(false, GAME.warp.fadeMs)
   if (start.isNew) await overworld.playIntro()
-  if (dbg.dev) await runDebugActions(ctx, overworld, world, dbg, screens)
+  await dev?.runActions(ctx, overworld, world, screens)
 }

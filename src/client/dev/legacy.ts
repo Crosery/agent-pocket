@@ -1,78 +1,21 @@
-// Dev automation (?dev=1) and the F3 debug overlay.
-//   &skipTitle=1                 start straight in the world (debug save: random party from content/game.json debug)
-//   &slot=<n> &reset=1           save slot (two clients in one browser) / wipe that slot first
-//   &map=<id>&x=<n>&y=<n>        start position          &t=<minutes>   clock (frozen per debug.freezeClockWithTime)
-//   &weather=<kind>              force field weather     &evolve=1      evolution cutscene for the party lead
-//   &battle=wild|trainer [&species=<id>&level=<n> | &trainer=<id>]
-//   &battle=boss&boss=<bossId> [&level=<n>]   boss sandbox: sensible team + counter items, boss at its recommended level
-//   &screen=party|bag|dex|box|map|quests|settings|shop
+// The pre-registry debug surface (?dev=1 automation): debug save, start overrides, post-load actions and the
+// window.__ap console hooks. Kept as aliases while QA scripts migrate to the command registry.
 // Infinite overworld: &map=<overworld>&x/y accept any integer tile (negative included). window.__ap (dev only):
 //   boss(id, level?) · pos() · tp(x, y, map?) · region() · gates() · places(radius?) · discover(id) · fly(id) · fog() · distance() · roamers()
 //   clock(minutes?) sets / reads the in-game clock (load with &t=<minutes> to keep it frozen) · weather(kind|null) forces field weather
-import type { FieldWeatherKind, SaveData, World } from '../shared/types.ts'
-import type { GameContext, SaveManager, Screens } from './contracts.ts'
-import { CONTENT, t } from '../shared/content/index.ts'
-import { Rng } from '../shared/rng.ts'
-import { createCreature, maxHp } from '../shared/creature.ts'
-import { STORY_CONTENT } from '../shared/world/story.ts'
-import { distanceFromOrigin, getMap, isInfinite, regionAt } from '../shared/world/worldapi.ts'
-import { fogPagesFor, resolvePlace } from './world/explore.ts'
-import { GAME } from './world/config.ts'
-import type { OverworldExt } from './world/controller.ts'
-import { keyItemOf } from './world/save-ops.ts'
-
-export interface DebugParams {
-  dev: boolean
-  skipTitle: boolean
-  slot: number
-  reset: boolean
-  map: string | null
-  x: number | null
-  y: number | null
-  time: number | null
-  weather: FieldWeatherKind | null
-  battle: 'wild' | 'trainer' | 'boss' | null
-  species: string | null
-  boss: string | null
-  level: number | null
-  trainer: string | null
-  screen: string | null
-  evolve: boolean
-}
-
-export function readDebugParams(search: string): DebugParams {
-  const q = new URLSearchParams(search)
-  const dev = q.get('dev') === '1'
-  const num = (k: string): number | null => {
-    const v = q.get(k)
-    if (v === null || v.trim() === '') return null
-    const n = Number(v)
-    return Number.isFinite(n) ? n : null
-  }
-  const flag = (k: string) => dev && q.get(k) === '1'
-  const str = (k: string) => (dev ? q.get(k) : null)
-  const weather = str('weather')
-  const battle = str('battle')
-  return {
-    dev,
-    skipTitle: flag('skipTitle'),
-    slot: dev ? Math.max(0, Math.floor(num('slot') ?? 0)) : 0,
-    reset: flag('reset'),
-    map: str('map'),
-    x: dev ? num('x') : null,
-    y: dev ? num('y') : null,
-    time: dev ? num('t') : null,
-    // Field weather kinds the game tunes (content/game.json region.weatherIntensity).
-    weather: weather && weather in GAME.region.weatherIntensity ? (weather as FieldWeatherKind) : null,
-    battle: battle === 'wild' || battle === 'trainer' || battle === 'boss' ? battle : null,
-    species: str('species'),
-    boss: str('boss'),
-    level: dev ? num('level') : null,
-    trainer: str('trainer'),
-    screen: str('screen'),
-    evolve: flag('evolve'),
-  }
-}
+//   gameplay: the event runtime hooks (start / end / spawn / summon / legends ...)
+import type { FieldWeatherKind, SaveData, World } from '../../shared/types.ts'
+import type { GameContext, SaveManager, Screens } from '../contracts.ts'
+import { CONTENT } from '../../shared/content/index.ts'
+import { Rng } from '../../shared/rng.ts'
+import { createCreature, maxHp } from '../../shared/creature.ts'
+import { STORY_CONTENT } from '../../shared/world/story.ts'
+import { distanceFromOrigin, getMap, isInfinite, regionAt } from '../../shared/world/worldapi.ts'
+import { fogPagesFor, resolvePlace } from '../world/explore.ts'
+import { GAME } from '../world/config.ts'
+import type { OverworldExt } from '../world/controller.ts'
+import { keyItemOf } from '../world/save-ops.ts'
+import type { DebugParams } from './params.ts'
 
 /** Dev only: mirrors console errors/warnings and uncaught errors into window.__AP_LOG for automation. */
 export function installDevLog(): void {
@@ -222,51 +165,6 @@ export function installDebugHooks(ctx: GameContext, ow: OverworldExt, world: Wor
     /** Visible roamers with their species country and distance to the player. */
     roamers: () => ow.roamerInfo().map((r) => ({ ...r, country: CONTENT.species[r.speciesId]?.country ?? '', dist: Math.hypot(r.x - ow.player.x, r.y - ow.player.y) })),
   }
-  ;(window as unknown as { __ap: typeof hooks }).__ap = hooks
-}
-
-/** F3 overlay: fps, draw calls, position, region, terrain, time, weather, network. */
-export function createDebugOverlay(ctx: GameContext, ow: OverworldExt, root: HTMLElement) {
-  const el = document.createElement('pre')
-  el.id = 'ap-debug'
-  el.hidden = true
-  root.append(el)
-  let frames = 0
-  let acc = 0
-  let refresh = 0
-  let fps = 0
-  let frameMs = 0
-
-  const render = () => {
-    const info = ctx.renderer.gl.info.render
-    const p = ow.player
-    const region = ow.region
-    el.textContent = [
-      t('game.debug.title'),
-      t('game.debug.fps', { fps: fps.toFixed(0), ms: frameMs.toFixed(1) }),
-      t('game.debug.calls', { calls: info.calls, tris: (info.triangles / 1000).toFixed(1) }),
-      t('game.debug.pos', { map: p.map, x: p.x.toFixed(2), y: p.y.toFixed(2), elev: p.elev.toFixed(2) }),
-      t('game.debug.region', { region: region?.nameZh ?? '-', terrain: ow.terrainName || '-' }),
-      t('game.debug.time', { clock: ctx.clock.label(), tod: t(`hud.tod.${ctx.clock.timeOfDay}`), weather: t(`game.weather.${ow.weather}`) }),
-      t('game.debug.net', { status: t(`hud.net.${ctx.net.status}`), n: ctx.net.online, near: ctx.net.remotePlayers().size }),
-      t('game.debug.player', { mode: t(`game.mode.${ow.mode}`), repel: ctx.save.repelSteps, roamers: ow.roamerCount }),
-    ].join('\n')
-  }
-
-  return {
-    el,
-    toggle(): void { el.hidden = !el.hidden; if (!el.hidden) render() },
-    update(dt: number): void {
-      frames++
-      acc += dt
-      if (el.hidden) return
-      refresh -= dt * 1000
-      if (refresh > 0) return
-      refresh = GAME.debug.overlayRefreshMs
-      if (acc > 0) { fps = frames / acc; frameMs = (acc / frames) * 1000 }
-      frames = 0
-      acc = 0
-      render()
-    },
-  }
+  const gameplay = ow.devHandles().gameplayHooks
+  ;(window as unknown as { __ap: typeof hooks & { gameplay?: Record<string, unknown> } }).__ap = gameplay ? { ...hooks, gameplay } : hooks
 }

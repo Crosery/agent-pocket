@@ -28,7 +28,8 @@ test('every world./game. text key referenced by overworld code exists', () => {
   const files = [
     ...readdirSync(new URL('src/client/world/', root)).filter((f) => f.endsWith('.ts')).map((f) => `src/client/world/${f}`),
     'src/client/game.ts',
-    'src/client/debug.ts',
+    'src/client/debug-overlay.ts',
+    'src/client/dev/legacy.ts',
   ]
   const missing: string[] = []
   for (const f of files) {
