@@ -1,0 +1,8 @@
+{
+  "cmd": {"tpXy": "传送到坐标", "fly": "飞往地点", "discover": "标记地点为已发现", "clockSet": "设置时间", "weatherSet": "设置天气"},
+  "arg": {"x": "X", "y": "Y", "map": "地图（默认大地图）", "place": "地点 id", "minutes": "分钟数", "weather": "天气（留空为取消）"},
+  "err": {"unknownCmd": "未知命令：{id}", "missingArg": "缺少参数：{arg}", "badArg": "参数 {arg} 无效：{why}", "extraArgs": "多余的参数：{args}", "notNumber": "需要数字", "notInteger": "需要整数", "notBoolean": "需要 true 或 false", "notOneOf": "只能是：{list}", "unknownPlace": "找不到地点：{place}", "notInWorld": "还没有进入世界", "emptyLine": "命令为空"},
+  "wait": {"timeout": "等待超时（{what}，{ms} ms）"},
+  "expect": {"missing": "路径不存在：{path}", "failed": "{path} 不满足 {matcher}（实际：{actual}）", "errorsFound": "页面记录了 {n} 条错误"},
+  "deprecated": "window.__ap.{name} 已弃用，请改用 window.__ap.v1：{use}"
+}

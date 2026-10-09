@@ -94,7 +94,7 @@ export interface Content {
 const byId = <T, K extends keyof T>(list: T[], key: K): Record<string, T> =>
   Object.fromEntries(list.map((x) => [String(x[key]), x]))
 
-function flattenText(namespaces: Record<string, unknown>): TextTable {
+export function flattenText(namespaces: Record<string, unknown>): TextTable {
   const out: TextTable = {}
   const walk = (prefix: string, v: unknown) => {
     if (typeof v === 'string') out[prefix] = v

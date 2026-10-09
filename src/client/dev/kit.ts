@@ -3,13 +3,15 @@
 // DEVTOOLS is true, so the production bundle holds neither this contract nor anything behind it.
 import type { SaveData, World } from '../../shared/types.ts'
 import type { GameContext, SaveManager, Screens } from '../contracts.ts'
+import type { Onboarding } from '../onboarding/index.ts'
 import type { OverworldExt } from '../world/controller.ts'
 
-export interface DevInstallDeps {
+/** What developer commands may touch: the live game, nothing else. */
+export interface DevHost {
   ctx: GameContext
   overworld: OverworldExt
   world: World
-  onboarding: unknown
+  onboarding: Onboarding
   flyTo(placeId: string): Promise<void>
 }
 
@@ -27,7 +29,7 @@ export interface DevKit {
   /** Start overrides (position, clock) for the save about to be played. */
   applyStart(ctx: GameContext, world: World): void
   /** Console and automation hooks (window.__ap and friends). */
-  install(deps: DevInstallDeps): void
+  install(host: DevHost): void
   /** Post-load actions: forced weather, evolution, a battle, a screen. */
   runActions(ctx: GameContext, overworld: OverworldExt, world: World, screens: Screens): Promise<void>
 }

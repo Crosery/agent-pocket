@@ -1,0 +1,29 @@
+{
+  "limits": {"eventBuffer": 500, "logLines": 400, "waitTimeoutMs": 15000, "waitPollMs": 40, "dumpMaxChars": 4000},
+  "commands": {
+    "tp.xy": {
+      "titleKey": "dev.cmd.tpXy",
+      "group": "jump",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "x", "type": "number", "labelKey": "dev.arg.x"},
+        {"name": "y", "type": "number", "labelKey": "dev.arg.y"},
+        {"name": "map", "type": "string", "optional": true, "labelKey": "dev.arg.map"}
+      ]
+    },
+    "fly": {"titleKey": "dev.cmd.fly", "group": "jump", "mutates": true, "needs": "live", "args": [{"name": "place", "type": "string", "labelKey": "dev.arg.place"}]},
+    "discover": {"titleKey": "dev.cmd.discover", "group": "jump", "mutates": true, "needs": "live", "args": [{"name": "place", "type": "string", "labelKey": "dev.arg.place"}]},
+    "clock.set": {"titleKey": "dev.cmd.clockSet", "group": "env", "mutates": true, "needs": "live", "args": [{"name": "minutes", "type": "number", "labelKey": "dev.arg.minutes"}]},
+    "weather.set": {
+      "titleKey": "dev.cmd.weatherSet",
+      "group": "env",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "kind", "type": "string", "optional": true, "enumRef": "weather", "labelKey": "dev.arg.weather"}
+      ]
+    }
+  },
+  "legacy": {"pos": "state.dump(['runtime'])", "tp": "cmd('tp.xy', {x, y, map})", "region": "state.dump(['runtime'])", "gates": "state.dump(['world'])", "places": "cmd('tp.xy')", "discover": "cmd('discover', {place})", "fly": "cmd('fly', {place})", "fog": "state.dump(['save'])", "boss": "cmd('battle.boss')", "distance": "state.dump(['save'])", "clock": "cmd('clock.set', {minutes})", "weather": "cmd('weather.set', {kind})", "roamers": "state.dump(['runtime'])"}
+}
