@@ -99,7 +99,13 @@ export function createDecider(env: DecideEnv): Decider {
     const items = moveItems(cr)
     if (!items.some((m) => !m.disabled)) return { kind: 'move', moveIndex: 0 }
     view.message.hold(t('battleui.prompt.move'))
-    const i = await view.menus.openMoves(items, Math.min(lastMove, items.length - 1))
+    // The type chart opens over the battle (it pauses, see battle-ui.json pause.selectors); closing it lands back on the list.
+    const openChart = (at: number) => {
+      const type = items[at]?.def?.type
+      view.setBarVisible(false)
+      void ctx.screens.typeChart({ view: BATTLE_UI.moves.chart.view, ...(type ? { type } : {}) }).finally(() => view.setBarVisible(true))
+    }
+    const i = await view.menus.openMoves(items, Math.min(lastMove, items.length - 1), openChart)
     if (i < 0) return null
     lastMove = i
     const it = items[i]

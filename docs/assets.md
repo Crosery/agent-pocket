@@ -414,6 +414,9 @@ height, margins) is `layout` in the same file and reaches the CSS as `--apb-*` v
   Window width, HP bar and side accents are `inspector` in `content/battle-ui.json`; the audit's `inspect` state builds the
   worst case (both sides with a status, 3-4 stages, 2 volatiles, weather, boss meters) and fails on scrolling or clipping.
 - The overworld touch pad is hidden in battle (`html.ap-battle-on`) and no bottom space is reserved for it.
+- Until our creature is out the own card keeps its place (so the bar and the camera do not move) but draws nothing (`.is-empty`:
+  opacity 0, no pointer events) and fades in with the send-out; the audit's `opening` state (wild battle, battle clock held on
+  the first message) fails on any empty window that is drawn.
 - Cards show the short name (`hud.shortNamePattern` drops a trailing parenthetical) on one line with an ellipsis; the full name
   is the tooltip and the status sheet's. The 状态 control on each card carries the menu key on desktop, and the command hint and
   the first battle tip name it, because the key opens the sheet.

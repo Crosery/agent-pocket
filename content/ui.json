@@ -120,5 +120,11 @@
     "mLegend": {"rows": ["..ooo..", ".orrro.", "orRwRro", "orwwwro", "orRwRro", ".orrro.", "..ooo.."]},
     "mEvent": {"rows": ["...o...", "..oco..", ".occco.", "occwcco", ".occco.", "..oco..", "...o..."], "palette": {"c": "#b07cff"}}
   },
+  "attention": {
+    "pollSec": 0.5,
+    "sources": [
+      {"id": "research", "provider": "researchClaim", "entry": "research", "guideFlag": "attn:guided:research", "detail": "hud.attention.research.detail"}
+    ]
+  },
   "widgets": {"creatureIconSize": 32, "tooltipOffsetPx": 12, "chipDarkInkAboveLuminance": 0.42}
 }

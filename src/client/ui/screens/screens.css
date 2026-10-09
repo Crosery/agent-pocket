@@ -521,6 +521,12 @@ html:not(.ap-battle-on):has(.ap-kit-stack > .aps-pause):not(:has(.aps-pause ~ .a
 }
 .aps-pause-icon { width: calc(var(--u) * 11) !important; height: calc(var(--u) * 11) !important; background-size: contain; background-position: center; }
 .aps-pause-row.is-active { box-shadow: inset var(--u) 0 0 var(--ap-gold-hi); }
+.aps-pause-row .ap-attn-dot { margin-left: auto; margin-right: calc(var(--u) * 6); }
+/* First time something is waiting behind an entry: its row breathes until the player has opened it. */
+.aps-pause-row.is-guide { animation: aps-guide 1.2s ease-in-out infinite; }
+@keyframes aps-guide { 0%, 100% { background: none; } 50% { background: rgba(242, 217, 142, 0.18); } }
+@media (prefers-reduced-motion: reduce) { .aps-pause-row.is-guide { animation: none; background: rgba(242, 217, 142, 0.12); } }
+.aps-pause-detail-note { margin: calc(var(--u) * 6) 0 0; color: var(--ap-gold-hi); }
 .aps-pause-row.is-disabled { opacity: 0.5; }
 .aps-pause-detail { flex: 1; padding: calc(var(--u) * 8) calc(var(--u) * 10); border: var(--u) solid var(--ap-hud-edge); background: rgba(26, 35, 51, 0.94); }
 .aps-pause-detail-title { display: flex; align-items: center; gap: calc(var(--u) * 6); color: var(--ap-gold-hi); }

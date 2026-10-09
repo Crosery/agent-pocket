@@ -23,7 +23,11 @@ npm ci --omit=dev --ignore-scripts --no-audit --no-fund --loglevel=error
 activate "releases/$SHA"
 if healthy "$SHA"; then
   log "deployed $SHA"
-  ls -1dt "$BASE"/releases/*/ | tail -n +$((KEEP + 1)) | xargs -r rm -rf
+  # Pruning is housekeeping: a leftover file it cannot delete must not turn a healthy, already-live release into a failed deploy.
+  if ! ls -1dt "$BASE"/releases/*/ | tail -n +$((KEEP + 1)) | xargs -r rm -rf; then
+    log "WARNING: could not prune old releases (check ownership under $BASE/releases)"
+    echo "::warning::could not prune old releases under $BASE/releases"
+  fi
 else
   log "FAILED $SHA, rolled back to ${PREV:-nothing}"
   [ -n "$PREV" ] && activate "$PREV"

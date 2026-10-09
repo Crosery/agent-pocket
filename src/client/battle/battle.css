@@ -70,6 +70,8 @@ html.ap-battle-on[data-touch-controls] { --ap-bottom-inset: 0px; }
 .apb-status.is-own { --apb-frame: var(--apb-f-own); grid-column: 3; width: calc(var(--u) * var(--apb-own-w, 188)); min-height: var(--apb-barh); }
 .apb-status.is-away.is-foe { transform: translateX(calc(var(--u) * -220)); opacity: 0; }
 .apb-status.is-away.is-own { opacity: 0.35; }
+/* before our creature has been sent out the own card is only a frame: no frame, no click target; it keeps its place so the bar and the camera do not move when it fades in */
+.apb-status.is-away.is-own.is-empty { opacity: 0; pointer-events: none; }
 .apb-status.is-empty > * { visibility: hidden; }
 .apb-st-head { display: flex; flex-wrap: nowrap; align-items: center; gap: calc(var(--u) * 4); white-space: nowrap; min-height: calc(var(--u) * 15); }
 /* one line, always: the card shows the short name, the full one is the tooltip and the status sheet's */
@@ -456,6 +458,10 @@ html.ap-compact :is(.apb-fx-chip, .apb-fx-status-line, .apb-fx-ability-tag, .apb
 .apb-detail-head .ap-chip { height: calc(var(--u) * 13); min-width: calc(var(--u) * 26); padding: 0 calc(var(--u) * 2); flex: none; }
 .apb-detail-name { color: var(--ap-gold-hi); flex: 1 1 auto; min-width: 0; line-height: 1.05; text-shadow: 0 var(--u) 0 var(--ap-ink); }
 .apb-detail .apb-back { position: static; flex: none; height: calc(var(--u) * 14); min-height: 0; line-height: calc(var(--u) * 12); padding: 0 calc(var(--u) * 5); }
+.apb-detail .apb-chart { position: static; flex: none; display: inline-flex; align-items: center; gap: calc(var(--u) * 3); height: calc(var(--u) * 14); min-height: 0; padding: 0 calc(var(--u) * 4); }
+.apb-chart-ico { width: calc(var(--u) * 10) !important; height: calc(var(--u) * 10) !important; background-size: contain; }
+.apb-chart .ap-key { color: inherit; vertical-align: baseline; }
+.apb-chart .ap-key kbd { height: calc(var(--u) * 10); line-height: calc(var(--u) * 8); }
 .apb-detail-stats { display: flex; align-items: center; gap: calc(var(--u) * 6); height: calc(var(--u) * 12); color: var(--ap-text-dim); white-space: nowrap; }
 .apb-detail-stats b { font-weight: normal; color: var(--ap-text); margin-left: calc(var(--u) * 3); }
 .apb-detail-desc {
@@ -492,7 +498,9 @@ html.ap-compact :is(.apb-fx-chip, .apb-fx-status-line, .apb-fx-ability-tag, .apb
 
 @media (pointer: coarse) {
   .apb-menu .ap-row { height: max(32px, calc(var(--u) * var(--row-h, 20))); }
-  .apb-detail .apb-back { min-height: 28px; }
+  .apb-detail .apb-back, .apb-detail .apb-chart { min-height: 28px; }
+  .apb-detail .apb-chart { min-width: 28px; justify-content: center; }
+  .apb-chart .ap-key { display: none; }
 }
 html.ap-compact .apb-status.is-foe { width: calc(var(--u) * var(--apb-foe-w-c, 160)); }
 html.ap-compact .apb-status.is-own { width: calc(var(--u) * var(--apb-own-w-c, 170)); }

@@ -41,6 +41,8 @@ export interface GameEvents {
   'screen:opened': { screen: string }
   /** A world event became active (events-runtime). */
   'world:event': { id: string; hidden: boolean }
+  /** Something the player can act on appeared (an attention source went from nothing to something; see attention/). */
+  'attention:raised': { id: string }
   'settings:changed': { settings: Settings }
   'net:status': { status: NetStatus }
   'chat:message': { from: string; name: string; channel: ChatChannel; text: string; at: number }
@@ -336,6 +338,8 @@ export interface HUD {
   setMoney(money: number): void
   setQuest(text: string | null, summary?: string): void
   setNetStatus(status: NetStatus, online: number): void
+  /** The menu has something waiting: shows (or hides) the menu chip with a red dot; `device` picks the key cap on it. */
+  setMenuAlert(on: boolean, device: Input['lastDevice']): void
   /** Name tags / speech bubbles over 3D actors are positioned by world/ using this layer. */
   readonly overlay: HTMLElement
 }

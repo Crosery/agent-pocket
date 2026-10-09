@@ -56,6 +56,7 @@
   --ap-success: #82e08c;
   --ap-warn: #f2c94c;
   --ap-error: #ff6b5b;
+  --ap-alert: #ff2b2b;
   --ap-net-online: #6fe07a;
   --ap-net-connecting: #f2c94c;
   --ap-net-offline: #7b8194;
@@ -847,6 +848,50 @@ html.ap-compact :is(.ap-btn, .ap-tab, .aps-filter, .aps-arrow, .aps-small-btn, .
 .ap-hud-stat { display: inline-flex; align-items: center; gap: calc(var(--u) * 3); padding-left: calc(var(--u) * 5); border-left: var(--u) solid var(--ap-line); color: var(--ap-text); }
 .ap-hud-stat .ap-lbl { display: none; }
 .ap-money-val { font-variant-numeric: tabular-nums; }
+
+/* Red dot: something here is waiting for the player (attention/). Same dot on the menu key, menu rows and claimable entries. */
+.ap-attn-dot {
+  display: inline-block;
+  flex: none;
+  box-sizing: border-box;
+  width: max(10px, calc(var(--u) * 6));
+  height: max(10px, calc(var(--u) * 6));
+  background: var(--ap-alert);
+  border: max(1px, var(--u)) solid var(--ap-ink);
+  border-radius: 50%;
+  box-shadow: inset calc(var(--u)) calc(var(--u)) 0 rgba(255, 255, 255, 0.6);
+  vertical-align: middle;
+}
+.ap-attn-dot[hidden] { display: none; }
+.ap-menu-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 4);
+  max-width: 100%;
+  padding: calc(var(--u) * 2) calc(var(--u) * 6);
+  color: var(--ap-gold-hi);
+  background: var(--ap-hud-bg);
+  border: var(--u) solid var(--ap-hud-edge);
+  white-space: nowrap;
+}
+.ap-menu-chip[hidden], html[data-touch-controls='on'] .ap-menu-chip { display: none; }
+.ap-menu-chip .ap-key { color: inherit; vertical-align: baseline; }
+.ap-menu-chip .ap-key kbd { height: calc(var(--u) * 11); line-height: calc(var(--u) * 9); }
+/* Phones have no chip: the pad's own menu key wears the dot (inside the key's round clip, upper right). */
+html.ap-attn-menu .ap-touch__btn[data-action='menu']::after {
+  content: '';
+  position: absolute;
+  top: 9%;
+  right: 9%;
+  width: 13px;
+  height: 13px;
+  box-sizing: border-box;
+  background: var(--ap-alert);
+  border: 2px solid var(--ap-ink);
+  border-radius: 50%;
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+}
 
 .ap-hud-missions { width: 100%; min-width: 0; }
 .ap-hud-missions:not(:has(> :not([hidden]))) { display: none; }

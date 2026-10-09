@@ -22,7 +22,7 @@
     "typeBase": "assets/ui/"
   },
   "commands": {"normal": ["fight", "bag", "party", "run"], "pvp": ["fight", "bag", "party", "forfeit"], "columns": 2},
-  "moves": {"columns": 2, "hintRequiresSeen": true, "categoryColors": {"physical": "#e8823a", "special": "#5aa0f0", "status": "#a0a6b8"}},
+  "moves": {"columns": 2, "hintRequiresSeen": true, "categoryColors": {"physical": "#e8823a", "special": "#5aa0f0", "status": "#a0a6b8"}, "chart": {"action": "map", "view": "type"}},
   "catch": {"nicknamePrompt": true},
   "evolve": {"startHoldMs": 400, "endHoldMs": 600}
 }
