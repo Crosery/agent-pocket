@@ -1,5 +1,5 @@
-// Layout audit for every screen at 1280x720, 1920x1080 and the phone viewports 390x844, 360x780 (portrait) and 844x390
-// (landscape), all at DPR 3 with touch emulation (issues #29, #33).
+// Layout audit for every screen at 1280x720, 1920x1080 and the phone viewports 390x844, 360x780 (portrait) and 844x390,
+// 932x430 (landscape), all at DPR 3 with touch emulation (issues #29, #33, #37).
 // Run through ego-browser against a dev server (?dev=1) in its own TaskSpace and an isolated save slot:
 //   ego-browser nodejs <<'JS'
 //   const { runLayoutAudit } = await import('file:///<repo>/scripts/qa-layout-audit.mjs')
@@ -23,6 +23,7 @@ export const VIEWPORTS = [
   { name: 'm390', width: 390, height: 844, dpr: 3, touch: true },
   { name: 'm360', width: 360, height: 780, dpr: 3, touch: true },
   { name: 'm844', width: 844, height: 390, dpr: 3, touch: true },
+  { name: 'm932', width: 932, height: 430, dpr: 3, touch: true },
 ]
 
 /** Runs inside the page (serialised by page.evaluate): must not reference anything outside itself. */
@@ -364,6 +365,19 @@ export const SCREENS = [
   { id: 'map', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.worldMap({ fly: false }) }) },
   { id: 'quests', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.quests() }) },
   { id: 'settings', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.settings() }) },
+  // 属性克制表 (issue #37): the three views, the grid with the cursor on its last row (scrolled, sticky headers), and the manual page that links to it.
+  { id: 'typechart-type', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.typeChart({ view: 'type' }) }) },
+  { id: 'typechart-grid', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.typeChart({ view: 'grid' }) }) },
+  { id: 'typechart-grid-end', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.typeChart({ view: 'grid', type: window.__AP.data.types.at(-1).id }) }) },
+  { id: 'typechart-loops', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.typeChart({ view: 'loops' }) }) },
+  { id: 'manual-chart', scope: '.ap-kit-stack > *:last-child', open: async (page) => {
+    await page.evaluate(() => { void window.__AP.screens.manual() })
+    await page.waitForTimeout(700)
+    await page.evaluate(() => { [...document.querySelectorAll('.aps-manual .ap-tab')][1]?.click() })
+    await page.waitForTimeout(400)
+    await page.evaluate(() => { [...document.querySelectorAll('.aps-manual .ap-row')].find((r) => r.textContent.includes('属性克制'))?.click() })
+    await page.waitForTimeout(400)
+  } },
   { id: 'online', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.online() }) },
   { id: 'learn-move', scope: '.ap-kit-stack > *:last-child', open: run(() => {
     const cr = window.__AP.save.party[0]
@@ -455,7 +469,8 @@ async function hideTips(page, hide) {
   await page.evaluate((h) => {
     let st = document.getElementById('qa-hide-tips')
     if (!st) { st = document.createElement('style'); st.id = 'qa-hide-tips'; document.head.append(st) }
-    st.textContent = h ? '.ap-tip { display: none !important }' : ''
+    // The developer badge (?dev=1) floats over the bottom centre; it is not part of the game's UI.
+    st.textContent = `.apd-badge { display: none !important }${h ? ' .ap-tip { display: none !important }' : ''}`
   }, hide)
 }
 
