@@ -8,7 +8,9 @@
   "tokenMinRemainingHours": 2,
   "fsizeLimit": 20971520,
   "concurrency": 8,
-  "verifyConcurrency": 4,
+  "verifyConcurrency": 12,
+  "verifyTimeoutMs": 15000,
+  "uploadTimeoutMs": 60000,
   "verifyRetries": 5,
   "verifyBackoffMs": 500,
   "mime": {
