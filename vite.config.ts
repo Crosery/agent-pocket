@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import { execFileSync } from 'node:child_process'
+import { devApiPlugin } from './scripts/vite-dev-api.ts'
 import { devtoolsBuild } from './scripts/dev-gate.ts'
 import { CDN, cdnBase, publicHash } from './scripts/static-cdn-base.ts'
 
@@ -15,6 +16,8 @@ const PUBLIC_BASE = CDN_BASE ? `${CDN_BASE}${CDN.publicDir}${publicHash('public'
 export default defineConfig(({ command, mode }) => ({
   root: '.',
   publicDir: 'public',
+  // The editor's write-back endpoint exists only on the dev server (apply: 'serve').
+  plugins: [devApiPlugin()],
   // __AP_DEVTOOLS__ (src/client/devtools-flag.ts): developer tooling exists only in `vite` and `vite build --mode devtools`.
   define: { __AP_PUBLIC_BASE__: JSON.stringify(PUBLIC_BASE), __AP_DEVTOOLS__: JSON.stringify(devtoolsBuild(command, mode)), __AP_COMMIT__: JSON.stringify(COMMIT) },
   server: {

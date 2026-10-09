@@ -35,6 +35,7 @@ export type PanelControl =
   | { kind: 'readout'; pointer: string; labelKey: string }
   | { kind: 'list'; source: string; cmd: string; argName: string; limit: number; args?: Record<string, unknown> }
   | { kind: 'acceptance' }
+  | { kind: 'palette' }
 
 export interface PanelFile {
   /** KeyboardEvent.code that opens and closes the panel. */

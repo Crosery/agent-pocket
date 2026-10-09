@@ -5,6 +5,7 @@ import { t } from '../../../shared/content/index.ts'
 import type { DevHost } from '../kit.ts'
 import { CONSOLE, type CommandArgs, type CommandInfo, type Registry } from '../registry.ts'
 import type { Section } from '../state.ts'
+import type { InputGate } from './gate.ts'
 import { buildControl, readoutSection, type Built, type PanelEnv } from './controls.ts'
 import { h } from './dom.ts'
 import '../dev.css'
@@ -36,7 +37,7 @@ function summarize(id: string, result: unknown): string {
   return result === null || result === undefined ? t('dev.ui.ok') : JSON.stringify(result)
 }
 
-export function mountPanel(host: DevHost, registry: Registry): Panel {
+export function mountPanel(host: DevHost, registry: Registry, gate: InputGate): Panel {
   const P = CONSOLE.panel
   const commands = new Map<string, CommandInfo>(registry.describe().map((c) => [c.id, c]))
   const out: OutLine[] = []
@@ -127,8 +128,7 @@ export function mountPanel(host: DevHost, registry: Registry): Panel {
     root.hidden = false
     root.dataset.open = 'true'
     html.classList.add('apd-on')
-    host.overworld.setControlEnabled(false)
-    host.ctx.input.setTouchControlsVisible(false)
+    gate.hold('panel')
     selectTab(activeTab)
     timer = setInterval(refresh, P.readoutMs)
   }
@@ -140,8 +140,7 @@ export function mountPanel(host: DevHost, registry: Registry): Panel {
     html.classList.remove('apd-on')
     if (timer) { clearInterval(timer); timer = null }
     if (document.activeElement instanceof HTMLElement && root.contains(document.activeElement)) document.activeElement.blur()
-    host.overworld.setControlEnabled(true)
-    host.ctx.input.setTouchControlsVisible(html.dataset.touchControls === 'on')
+    gate.release('panel')
   }
   const toggle = () => (isOpen ? closePanel() : open())
 

@@ -23,6 +23,8 @@ import { CONSOLE, createRegistry } from './registry.ts'
 import { prepareScenario, runScenarioCommands, settleScenario } from './scenario.ts'
 import { dumpState } from './state.ts'
 import { installDevText } from './text.ts'
+import { createEditor } from './editor/index.ts'
+import { createInputGate } from './ui/gate.ts'
 import { mountPanel } from './ui/panel.ts'
 
 /** Marks the devtools bundle (content/dev/gate.json `sentinel`): required there by scripts/check-dev-gate.mjs, forbidden in the production build. */
@@ -88,12 +90,14 @@ export function createDevKit(search: string): DevKit | null {
         avatars: CONTENT.characters.filter((c) => c.playable).map((c) => c.id),
       })
       net.install(window)
-      const extras = () => ({ rng: { seed: h.rng.seed, cursors: h.rng.cursors() }, time: clock.state(), scenario: h.session.scenario, netSim: net.state() })
+      const extras = () => ({ rng: { seed: h.rng.seed, cursors: h.rng.cursors() }, time: clock.state(), scenario: h.session.scenario, netSim: net.state(), editor: h.editor?.info() ?? null })
       const h: DevHost = {
         ...game, rng: hub, clock, content, net, session: { scenario: null },
         run: (call) => registry.run(call.cmd, call.args),
         dump: (sections) => dumpState(h, log, extras, sections),
-      }
+      } as DevHost
+      const gate = createInputGate(h)
+      h.editor = createEditor(h, gate)
       host = h
       const { ctx, overworld, world, onboarding, flyTo } = h
       const w = window as unknown as Record<string, unknown>
@@ -103,7 +107,7 @@ export function createDevKit(search: string): DevKit | null {
       ;(w.__ap as Record<string, unknown>).build = { devtools: true, sentinel: DEV_SENTINEL }
       const registry = createRegistry(h, COMMANDS, { enums: devEnums(content) })
       mountApi(createApiV1({ host: h, registry, log, extras }))
-      mountPanel(h, registry)
+      mountPanel(h, registry, gate)
     },
     async runActions(ctx, overworld, world, screens) {
       if (host && prepared) {

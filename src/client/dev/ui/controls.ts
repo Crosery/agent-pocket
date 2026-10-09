@@ -1,12 +1,13 @@
 // The panel's building blocks. Every actionable element carries data-dev-cmd (a registry command id, or panel.* for
 // the panel's own chrome) so automation and tests can find it, and data-dev-args when the command has fixed arguments.
-import { t } from '../../../shared/content/index.ts'
+import { CONTENT, t } from '../../../shared/content/index.ts'
 import type { DevAcceptance } from '../../../shared/types.ts'
 import { getPointer } from '../../../shared/dev/diff.ts'
 import type { DevHost } from '../kit.ts'
 import { listEntries, type ListEntry } from '../lists.ts'
 import { CONSOLE, type ArgSpec, type CommandArgs, type CommandInfo, type PanelControl } from '../registry.ts'
 import type { Section } from '../state.ts'
+import { EDITOR } from '../editor/config.ts'
 import { h } from './dom.ts'
 
 export interface PanelEnv {
@@ -145,6 +146,18 @@ function acceptance(env: PanelEnv): Built {
   return { el: h('div', { class: 'apd-accs' }, btn('scenario.check', {}, t('dev.ui.check'), 'apd-btn--go'), ...issues.map(block)) }
 }
 
+/** The editor's prop palette (content/dev/editor.json): each button arms placement of that prop. */
+function palette(env: PanelEnv): Built {
+  const cats = EDITOR.palette.map((cat) => h('div', { class: 'apd-pal' },
+    h('div', { class: 'apd-cmd__head' }, h('span', { class: 'apd-cmd__t' }, t(cat.titleKey))),
+    h('div', { class: 'apd-sec__c' }, ...cat.props.map((prop) => {
+      const b = h('button', { type: 'button', class: 'apd-btn', 'data-dev-cmd': 'editor.place', 'data-dev-args': JSON.stringify({ prop }) }, CONTENT.props[prop]?.nameZh ?? prop)
+      b.addEventListener('click', () => { void env.exec('editor.place', { prop }) })
+      return b
+    }))))
+  return { el: h('div', { class: 'apd-accs' }, ...cats) }
+}
+
 export function buildControl(env: PanelEnv, c: PanelControl): Built {
   switch (c.kind) {
     case 'readout': return readout(c)
@@ -152,5 +165,6 @@ export function buildControl(env: PanelEnv, c: PanelControl): Built {
     case 'list': return list(env, c)
     case 'cmd': return cmd(env, c)
     case 'acceptance': return acceptance(env)
+    case 'palette': return palette(env)
   }
 }

@@ -3,6 +3,7 @@ import type { CommandRun } from '../registry.ts'
 import { basicCommands } from './basic.ts'
 import { battleCommands } from './battle.ts'
 import { determinismCommands } from './determinism.ts'
+import { editorCommands } from './editor.ts'
 import { envCommands } from './env.ts'
 import { eventCommands } from './events.ts'
 import { itemCommands } from './items.ts'
@@ -15,5 +16,5 @@ import { worldCommands } from './world.ts'
 
 export const COMMANDS: Record<string, CommandRun> = {
   ...basicCommands, ...determinismCommands, ...scenarioCommands, ...worldCommands, ...storyCommands, ...eventCommands,
-  ...partyCommands, ...itemCommands, ...battleCommands, ...envCommands, ...onboardingCommands, ...netCommands,
+  ...partyCommands, ...itemCommands, ...battleCommands, ...envCommands, ...onboardingCommands, ...netCommands, ...editorCommands,
 }

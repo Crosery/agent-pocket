@@ -11,7 +11,7 @@ import { GAME } from '../world/config.ts'
 import type { DevHost } from './kit.ts'
 
 export interface ListEntry { id: string; label: string; info?: Record<string, unknown> }
-export const LIST_SOURCES = ['anchors', 'places', 'species', 'items', 'quests', 'flags', 'events', 'bosses', 'trainers', 'badges', 'statuses', 'weathers', 'scenarios', 'beats', 'teams', 'tips', 'roamers'] as const
+export const LIST_SOURCES = ['anchors', 'places', 'species', 'items', 'quests', 'flags', 'events', 'bosses', 'trainers', 'badges', 'statuses', 'weathers', 'scenarios', 'beats', 'teams', 'tips', 'roamers', 'props'] as const
 export type ListSource = (typeof LIST_SOURCES)[number]
 
 /** Every string under a key that looks like a flag reference, anywhere in the story data. */
@@ -57,6 +57,7 @@ function entries(host: DevHost, source: ListSource): ListEntry[] {
     case 'beats': return Object.entries(host.content.beats).map(([id, b]) => ({ id, label: t(b.titleKey) }))
     case 'teams': return Object.entries(host.content.teams).map(([id, tm]) => ({ id, label: id, info: { level: tm.level, members: tm.members.length } }))
     case 'tips': return TUTORIAL.tips.list.map((tip) => ({ id: tip.id, label: tip.id, info: { seen: tipSeen(ctx.save, tip.id), live: tipLive(tip, ctx.save) } }))
+    case 'props': return Object.values(CONTENT.props).map((p) => ({ id: p.key, label: p.nameZh, info: { footprint: p.footprint.join('x') } }))
     case 'roamers': return overworld.roamerInfo().map((r, i) => ({ id: String(i), label: `${CONTENT.species[r.speciesId]?.nameZh ?? r.speciesId} Lv${r.level}`, info: { x: Math.round(r.x), y: Math.round(r.y), mood: r.mood } }))
   }
 }

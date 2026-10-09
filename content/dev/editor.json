@@ -1,0 +1,12 @@
+{
+  "files": ["content/world/layouts/towns.json", "content/world/layouts/interiors.json", "content/world/layouts/gyms.json"],
+  "endpoint": {"path": "/__ap/dev/content", "tokenHeader": "x-ap-dev-token", "tokenMeta": "ap-dev-token", "maxBodyBytes": 65536, "maxOps": 64, "validateTimeoutMs": 90000},
+  "undoDepth": 50,
+  "pick": {"searchRadiusTiles": 32},
+  "problemLines": 6,
+  "palette": [
+    {"id": "town", "titleKey": "dev.ed.cat.town", "props": ["bench", "lamp", "fountain", "well", "stall", "statue", "crate", "barrel", "mailbox", "flower_pot", "fence", "campfire"]},
+    {"id": "nature", "titleKey": "dev.ed.cat.nature", "props": ["tree_oak", "tree_pine", "tree_cherry", "bush", "flower_patch", "rock_small", "rock_large", "stump", "log"]},
+    {"id": "indoor", "titleKey": "dev.ed.cat.indoor", "props": ["table", "chair", "bookshelf", "shelf", "bed", "plant", "tv", "rug", "counter", "pc_terminal", "server_rack"]}
+  ]
+}
