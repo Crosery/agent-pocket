@@ -1,0 +1,20 @@
+{
+  "id": "boss-astra-counter",
+  "titleKey": "dev.scn.bossAstraCounter",
+  "extends": "after-gym-3",
+  "seed": 20261002,
+  "rng": 7,
+  "party": [
+    {"team": "boss-counter:astra"}
+  ],
+  "bag": {"special-sauce": 3},
+  "flags": {"tip:battle": true},
+  "then": [
+    {"cmd": "battle.boss", "args": {"boss": "astra"}}
+  ],
+  "expect": [
+    {"path": "/save/bag/special-sauce", "eq": 3},
+    {"path": "/save/party", "length": 4},
+    {"path": "/runtime/battle/boss", "eq": "astra"}
+  ]
+}

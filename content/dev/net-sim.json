@@ -1,0 +1,25 @@
+{
+  "link": {"latencyMs": 0, "jitterMs": 0, "stallChance": 0, "stallMs": [200, 1200]},
+  "limits": {"latencyMs": 10000, "jitterMs": 5000, "stallMs": 30000, "peers": 200},
+  "presets": {"off": {"latencyMs": 0, "jitterMs": 0, "stallChance": 0}, "good": {"latencyMs": 40, "jitterMs": 10, "stallChance": 0}, "mobile": {"latencyMs": 120, "jitterMs": 60, "stallChance": 0.02, "stallMs": [300, 900]}, "bad": {"latencyMs": 300, "jitterMs": 150, "stallChance": 0.08, "stallMs": [400, 2000]}},
+  "fake": {
+    "selfId": "dev-self",
+    "snapshotHz": 10,
+    "onlineSeconds": 5,
+    "peers": 12,
+    "radiusTiles": 7,
+    "positionDecimals": 2,
+    "busyEvery": 5,
+    "dexMax": 150,
+    "badgesMax": 8,
+    "pvpMax": 40,
+    "patterns": [
+      {"kind": "circle", "radius": 3.5, "speed": 1.8},
+      {"kind": "line", "axis": "x", "length": 8, "speed": 1.5},
+      {"kind": "wander", "radius": 3, "turnEverySec": 4},
+      {"kind": "line", "axis": "y", "length": 6, "speed": 1.2},
+      {"kind": "idle"},
+      {"kind": "circle", "radius": 2, "speed": 1.1}
+    ]
+  }
+}

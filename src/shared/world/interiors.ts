@@ -2,9 +2,11 @@
 // overworld door that leads into them and to each other (multi-floor buildings via stairs warps).
 import type { PropPlacement, RegionDef } from '../types.ts'
 import { F_RESERVED, addFlag, canPlace, fmt, idx, newDraft, placeProp, type MapDraft } from './grid.ts'
+import { interiorFileOf, type WorldContent } from './data.ts'
+import { provenanceSink } from './provenance.ts'
+import { propSize } from './collision.ts'
 import type { InteriorTemplate } from './schema.ts'
 import { addAnchor, tid, type AnchorMap, type DoorLink } from './ctx.ts'
-import type { WorldContent } from './data.ts'
 import { resolveToken } from './towns.ts'
 
 /** Stamps one interior template into a fresh draft (also used for lazily generated frontier interiors). */
@@ -28,12 +30,20 @@ export function stampInterior(wc: WorldContent, tplId: string, tpl: InteriorTemp
       }
     }
   }
-  for (const pr of tpl.props) {
+  const prov = provenanceSink()
+  const file = prov ? interiorFileOf(tplId) : null
+  if (prov && file) prov.region({ map: mapId, template: tplId, file, x: 0, y: 0, w: tpl.w, h: tpl.h, mirror: false })
+  for (const [pi, pr] of tpl.props.entries()) {
     const p: PropPlacement = { prop: pr.prop, x: pr.x, y: pr.y, rot: pr.rot ?? 0 }
     if (pr.scale !== undefined) p.scale = pr.scale
     if (pr.variant !== undefined) p.variant = pr.variant
-    if (canPlace(d, p, { anyTerrain: true })) placeProp(d, p)
-    else problems.push(`${where}: prop ${pr.prop} at ${pr.x},${pr.y} does not fit`)
+    if (canPlace(d, p, { anyTerrain: true })) {
+      placeProp(d, p)
+      if (prov && file) {
+        const [fw, fh] = propSize(p.prop, p.rot)
+        prov.add({ kind: 'prop', map: mapId, x: p.x, y: p.y, w: fw, h: fh, label: p.prop, rot: p.rot, template: tplId, file, pointer: `/templates/${tplId}/props/${pi}`, transform: { ox: 0, oy: 0, mirror: false, tw: tpl.w, fw } })
+      }
+    } else problems.push(`${where}: prop ${pr.prop} at ${pr.x},${pr.y} does not fit`)
   }
   d.regions = [region]
   d.spawn = { x: tpl.arrive[0], y: tpl.arrive[1], facing: 'up' }

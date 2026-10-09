@@ -1,0 +1,16 @@
+{
+  "id": "tutorial-first-battle",
+  "titleKey": "dev.scn.tutorialFirstBattle",
+  "extends": "fresh-start",
+  "place": "wild:wild-meadow-1:1",
+  "party": [
+    {"species": "claude-haiku"}
+  ],
+  "flags": {"intro:mom": true, "ob:route1": true, "tip:move": true, "tip:talk": true, "tip:objective": true, "tip:signs": true, "tip:groundItem": true, "tip:menuHint": true, "tip:menu": true, "tip:hud": true},
+  "expect": [
+    {"path": "/save/party", "length": 1},
+    {"path": "/save/party/0/speciesId", "eq": "claude-haiku"},
+    {"path": "/save/flags/tip:grass", "exists": false},
+    {"path": "/save/flags/tip:battle", "exists": false}
+  ]
+}

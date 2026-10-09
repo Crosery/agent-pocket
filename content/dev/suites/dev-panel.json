@@ -1,0 +1,9 @@
+{
+  "id": "dev-panel",
+  "title": "Developer panel: every category on the desktop drawer and the touch bottom sheet",
+  "viewports": ["d1280", "m390"],
+  "shotPath": "panel/${viewport}/${tab}.png",
+  "cases": [
+    {"id": "${tab}", "each": {"tab": ["world", "jump", "story", "events", "party", "items", "battle", "env", "editor", "encounter", "net", "onboarding", "acceptance"]}, "url": "/?dev=1&scenario=fresh-start", "steps": [{"wait": {"ready": true}}, {"panel": {"tab": "${tab}"}}, {"expect": {"layout": ".apd"}}, {"shot": {"name": "${tab}", "hideDev": false}}, {"expect": {"noErrors": true}}]}
+  ]
+}

@@ -7,7 +7,7 @@
 import type { BattleSideInit, Dir, FieldWeatherKind, GameMap, GroundItemDef, NpcDef, QuestDef, RegionDef, ScriptStep } from '../../shared/types.ts'
 import type { GameContext, MinimapMarker, OverworldController } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
-import { Rng } from '../../shared/rng.ts'
+import { RngHub } from '../core/rng-hub.ts'
 import { createCreature, creatureName, maxHp, rollShiny } from '../../shared/creature.ts'
 import { propRect } from '../../shared/world/collision.ts'
 import { collisionField, getMap, isInfinite, isLedgeDrop, objectsInRect, regionAt, terrainAt, warpAt } from '../../shared/world/worldapi.ts'
@@ -43,6 +43,8 @@ export interface OverworldOptions {
   onLoadProgress?: (p: number | null, mapName: string) => void
   /** Quest tracker text (defaults to t('world.quest.hud')). */
   questText?: (def: QuestDef, stage: number) => string
+  /** Random streams (encounters, battle seeds, scripts, ambient NPCs); a fresh random hub when omitted. */
+  rng?: RngHub
 }
 
 export interface OverworldExt extends OverworldController {
@@ -58,7 +60,7 @@ export interface OverworldExt extends OverworldController {
   /** Dev automation: the visible roamers (species, level, mood, position, whether they noticed the player). */
   roamerInfo(): { speciesId: string; level: number; mood: string; noticed: boolean; x: number; y: number; target: { x: number; y: number } | null; region: string }[]
   /** Dev tooling only (src/client/dev): internals of the overworld services. */
-  devHandles(): { gameplayHooks: Record<string, unknown> | null }
+  devHandles(): { gameplayHooks: Record<string, unknown> | null; rng: RngHub; forceEncounter(spec: { species: string; level: number; shiny?: boolean } | null): void }
   readonly weather: FieldWeatherKind
   readonly questNavigation: QuestNavigation | null
   setWeatherOverride(kind: FieldWeatherKind | null): void
@@ -75,7 +77,9 @@ type Lock = 'external' | 'script' | 'warp' | 'battle' | 'prompt'
 
 export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): OverworldExt {
   const P = GAME.player
-  const rng = new Rng((Date.now() ^ Math.floor(Math.random() * 0x7fffffff)) >>> 0)
+  const hub = opts.rng ?? new RngHub()
+  /** Encounters, wild and roaming spawns, event spawns. NPC wandering (cosmetic) and battle seeds have their own streams. */
+  const rng = hub.stream('encounter')
   const locks = new Set<Lock>()
   const stream = createObjectStream()
   const navigator = createQuestNavigator(ctx.data.world, TUTORIAL.objective.navigation)
@@ -144,7 +148,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
 
   // ---------------------------------------------------------------- sub-systems
 
-  const npcs = createNpcLayer({ ctx, playerTile, field: () => grid?.field ?? null, rng })
+  const npcs = createNpcLayer({ ctx, playerTile, field: () => grid?.field ?? null, rng: hub.stream('cosmetic') })
   const follower = createFollower(ctx, {
     // walkable from the player's tile one tile step at a time (the spot can be two tiles off)
     canStand: (x, y) => {
@@ -168,7 +172,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     cue: (key, at) => gameplay.cue(key, at),
   })
   const battles = createBattleFlow({
-    ctx, rng,
+    ctx, rng: hub.stream('battle'),
     place: () => (map ? { map, x: player.x, y: player.y } : null),
     setBattleActive: (on) => { battleActive = on },
     afterBattle: () => {
@@ -182,6 +186,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
   })
 
   const host: ScriptHost = {
+    rng: hub.stream('script'),
     ctx,
     async moveNpc(id, path, speed) {
       const n = npcs.get(id)
@@ -634,6 +639,9 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
 
   // ---------------------------------------------------------------- encounters & battles
 
+  /** Developer tooling: the next tall-grass encounter, regardless of the roll (src/client/dev/commands/env.ts). */
+  let forcedEncounter: { species: string; level: number; shiny?: boolean } | null = null
+
   async function tryEncounter(tx: number, ty: number): Promise<void> {
     if (!map || !regionDef || battleActive) return
     const tt = terrainAtTile(tx, ty)
@@ -641,6 +649,12 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     if (!eligible) return
     const l = lead()
     if (GAME.encounters.requireConsciousParty && !l) return
+    const forced = forcedEncounter
+    if (forced && ctx.data.species[forced.species]) {
+      forcedEncounter = null
+      await wildEncounter(createCreature(forced.species, forced.level, { rng, shiny: forced.shiny ?? rollShiny(rng, ctx.data), caughtMap: map.id }, ctx.data), null, {})
+      return
+    }
     const pick = gameplay.rollGrass(regionDef, { repelActive: ctx.save.repelSteps > 0, leadLevel: l?.level ?? 0 })
     if (!pick) return
     const cr = createCreature(pick.speciesId, pick.level, { rng, shiny: pick.shiny, caughtMap: map.id }, ctx.data)
@@ -992,7 +1006,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     get region() { return regionDef },
     get terrainName() { return terrainAtTile(tile.x, tile.y)?.nameZh ?? '' },
     get roamerCount() { return roaming.list.length },
-    devHandles: () => ({ gameplayHooks: gameplay.debugHooks }),
+    devHandles: () => ({ gameplayHooks: gameplay.debugHooks, rng: hub, forceEncounter: (spec) => { forcedEncounter = spec } }),
     roamerInfo: () => roaming.list.map((r) => ({ speciesId: r.creature.speciesId, level: r.creature.level, mood: r.mood, noticed: r.noticed, x: r.x, y: r.y, target: r.target, region: r.region })),
     get weather() { return weatherKind },
     get questNavigation() { return navigator.state },

@@ -19,6 +19,27 @@ import wildsJson from '../../../content/world/wilds.json' with { type: 'json' }
 import poisJson from '../../../content/world/pois.json' with { type: 'json' }
 import dungeonsJson from '../../../content/world/dungeons.json' with { type: 'json' }
 
+/** Repo-relative files the layout templates are read from (the editor writes edits back to them). */
+export const LAYOUT_FILES = {
+  towns: 'content/world/layouts/towns.json',
+  interiors: 'content/world/layouts/interiors.json',
+  gyms: 'content/world/layouts/gyms.json',
+} as const
+
+/** The parsed documents behind LAYOUT_FILES, by file: the very objects the loaders share, so patching them in place changes what buildWorld() sees. */
+export const LAYOUT_DOCS: Record<string, unknown> = {
+  [LAYOUT_FILES.towns]: townLayoutsJson,
+  [LAYOUT_FILES.interiors]: interiorLayoutsJson,
+  [LAYOUT_FILES.gyms]: gymLayoutsJson,
+}
+
+/** File an interior template id lives in (gym templates are merged into the interior list), or null for unknown ids. */
+export function interiorFileOf(id: string): string | null {
+  if (id in (gymLayoutsJson as unknown as LayoutFile<InteriorTemplate>).templates) return LAYOUT_FILES.gyms
+  if (id in (interiorLayoutsJson as unknown as LayoutFile<InteriorTemplate>).templates) return LAYOUT_FILES.interiors
+  return null
+}
+
 export interface WorldContent {
   world: WorldSpec
   regions: RegionSpec[]
@@ -36,7 +57,7 @@ export interface WorldContent {
   dungeons: DungeonsFile
 }
 
-function mergeInteriors(a: LayoutFile<InteriorTemplate>, b: LayoutFile<InteriorTemplate>): LayoutFile<InteriorTemplate> {
+export function mergeInteriors(a: LayoutFile<InteriorTemplate>, b: LayoutFile<InteriorTemplate>): LayoutFile<InteriorTemplate> {
   return {
     legend: { ...a.legend, ...b.legend },
     palette: { ...a.palette, ...b.palette },
