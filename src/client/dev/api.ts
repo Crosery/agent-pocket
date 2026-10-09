@@ -5,6 +5,7 @@ import type { EventLog } from './events.ts'
 import type { DevHost } from './kit.ts'
 import { CONSOLE, type Registry } from './registry.ts'
 import { dumpState, SECTIONS, type RuntimeExtras, type Section } from './state.ts'
+import { listEntries } from './lists.ts'
 import { checkScenario, scenarioList } from './scenario.ts'
 import { createWaiters } from './wait.ts'
 
@@ -56,6 +57,8 @@ export function createApiV1({ host, registry, log, extras }: ApiDeps) {
       /** Draws taken from each random stream since the last (re)seed. */
       cursor: () => host.rng.cursors(),
     },
+    /** Pick lists: species, items, anchors, flags, ... (`query` filters by id or name, `limit` caps the result). */
+    list: (source: string, query?: string, limit?: number) => listEntries(host, source, query, limit),
     scenario: {
       list: () => scenarioList(host),
       load: (id: string) => registry.run('scenario.load', { id }),

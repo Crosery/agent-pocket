@@ -14,6 +14,8 @@ export interface ArgSpec {
   optional?: boolean
   /** Name of a code-side enum list (EnumRefs); the value must be one of its entries. */
   enumRef?: string
+  /** Name of a pick list (lists.ts) the panel offers for this argument; not enforced. */
+  list?: string
   labelKey?: string
 }
 
@@ -34,6 +36,8 @@ export interface ConsoleFile {
     stepDt: number; maxScale: number; maxStepFrames: number
     /** How long a scenario's expectations may take to become true after its commands ran (a battle needs a moment to open). */
     expectSettleMs: number
+    /** Save slot the developer's seed reloads go through (never the player's own slots). */
+    reloadSlot: number
   }
   commands: Record<string, CommandMeta>
   /** Deprecated window.__ap.<name> hooks -> what to use instead (printed once per name). */

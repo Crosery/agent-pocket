@@ -60,7 +60,7 @@ export interface OverworldExt extends OverworldController {
   /** Dev automation: the visible roamers (species, level, mood, position, whether they noticed the player). */
   roamerInfo(): { speciesId: string; level: number; mood: string; noticed: boolean; x: number; y: number; target: { x: number; y: number } | null; region: string }[]
   /** Dev tooling only (src/client/dev): internals of the overworld services. */
-  devHandles(): { gameplayHooks: Record<string, unknown> | null; rng: RngHub }
+  devHandles(): { gameplayHooks: Record<string, unknown> | null; rng: RngHub; forceEncounter(spec: { species: string; level: number; shiny?: boolean } | null): void }
   readonly weather: FieldWeatherKind
   readonly questNavigation: QuestNavigation | null
   setWeatherOverride(kind: FieldWeatherKind | null): void
@@ -639,6 +639,9 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
 
   // ---------------------------------------------------------------- encounters & battles
 
+  /** Developer tooling: the next tall-grass encounter, regardless of the roll (src/client/dev/commands/env.ts). */
+  let forcedEncounter: { species: string; level: number; shiny?: boolean } | null = null
+
   async function tryEncounter(tx: number, ty: number): Promise<void> {
     if (!map || !regionDef || battleActive) return
     const tt = terrainAtTile(tx, ty)
@@ -646,6 +649,12 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     if (!eligible) return
     const l = lead()
     if (GAME.encounters.requireConsciousParty && !l) return
+    const forced = forcedEncounter
+    if (forced && ctx.data.species[forced.species]) {
+      forcedEncounter = null
+      await wildEncounter(createCreature(forced.species, forced.level, { rng, shiny: forced.shiny ?? rollShiny(rng, ctx.data), caughtMap: map.id }, ctx.data), null, {})
+      return
+    }
     const pick = gameplay.rollGrass(regionDef, { repelActive: ctx.save.repelSteps > 0, leadLevel: l?.level ?? 0 })
     if (!pick) return
     const cr = createCreature(pick.speciesId, pick.level, { rng, shiny: pick.shiny, caughtMap: map.id }, ctx.data)
@@ -997,7 +1006,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     get region() { return regionDef },
     get terrainName() { return terrainAtTile(tile.x, tile.y)?.nameZh ?? '' },
     get roamerCount() { return roaming.list.length },
-    devHandles: () => ({ gameplayHooks: gameplay.debugHooks, rng: hub }),
+    devHandles: () => ({ gameplayHooks: gameplay.debugHooks, rng: hub, forceEncounter: (spec) => { forcedEncounter = spec } }),
     roamerInfo: () => roaming.list.map((r) => ({ speciesId: r.creature.speciesId, level: r.creature.level, mood: r.mood, noticed: r.noticed, x: r.x, y: r.y, target: r.target, region: r.region })),
     get weather() { return weatherKind },
     get questNavigation() { return navigator.state },

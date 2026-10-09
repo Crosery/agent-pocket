@@ -77,6 +77,14 @@ function buildMember(entry: DevPartyEntry & { species: string }, level: number, 
   return cr
 }
 
+/** A beat's save patch: badges, beaten trainers, quest stages and flags (the position is the caller's business). */
+export function applyBeat(save: SaveData, beat: DevBeat): void {
+  save.badges = [...new Set([...save.badges, ...(beat.badges ?? [])])]
+  for (const tr of beat.trainers ?? []) save.flags[STORY_CONTENT.meta.flags.trainerWon + tr] = true
+  Object.assign(save.quests, structuredClone(beat.quests ?? {}))
+  Object.assign(save.flags, beat.flags)
+}
+
 /** Applies the beat and the scenario fields to a copy of `deps.base`. */
 export function applyScenario(id: string, deps: ScenarioDeps): ScenarioResult {
   const c = deps.content ?? CONTENT
@@ -87,12 +95,7 @@ export function applyScenario(id: string, deps: ScenarioDeps): ScenarioResult {
   const save: SaveData = structuredClone(deps.base)
   const rng = deps.rng
 
-  if (beat) {
-    save.badges = [...new Set([...save.badges, ...(beat.badges ?? [])])]
-    for (const tr of beat.trainers ?? []) save.flags[STORY_CONTENT.meta.flags.trainerWon + tr] = true
-    Object.assign(save.quests, beat.quests)
-    Object.assign(save.flags, beat.flags)
-  }
+  if (beat) applyBeat(save, beat)
   if (sc.badges) save.badges = [...new Set(sc.badges)]
   if (sc.money !== undefined) save.money = Math.max(0, Math.floor(sc.money))
   if (sc.bagAll !== undefined) for (const it of c.itemList) save.bag[it.id] = Math.max(1, Math.floor(sc.bagAll))

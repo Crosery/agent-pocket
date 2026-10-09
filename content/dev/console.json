@@ -1,5 +1,5 @@
 {
-  "limits": {"eventBuffer": 500, "logLines": 400, "waitTimeoutMs": 15000, "waitPollMs": 40, "dumpMaxChars": 4000, "stepDt": 0.016667, "maxScale": 20, "maxStepFrames": 3600, "expectSettleMs": 4000},
+  "limits": {"eventBuffer": 500, "logLines": 400, "waitTimeoutMs": 15000, "waitPollMs": 40, "dumpMaxChars": 4000, "stepDt": 0.016667, "maxScale": 20, "maxStepFrames": 3600, "expectSettleMs": 4000, "reloadSlot": 9090909090},
   "commands": {
     "tp.xy": {
       "titleKey": "dev.cmd.tpXy",
@@ -47,10 +47,170 @@
       "mutates": true,
       "needs": "live",
       "args": [
-        {"name": "boss", "type": "string", "enumRef": "boss", "labelKey": "dev.arg.boss"},
+        {"name": "boss", "type": "string", "enumRef": "boss", "labelKey": "dev.arg.boss", "list": "bosses"},
         {"name": "level", "type": "integer", "optional": true, "labelKey": "dev.arg.bossLevel"}
       ]
-    }
+    },
+    "world.seed": {"titleKey": "dev.cmd.worldSeed", "group": "world", "mutates": false, "needs": "reload", "args": [{"name": "seed", "type": "integer", "labelKey": "dev.arg.seed"}]},
+    "world.seedRandom": {"titleKey": "dev.cmd.worldSeedRandom", "group": "world", "mutates": false, "needs": "reload", "args": []},
+    "tp.anchor": {"titleKey": "dev.cmd.tpAnchor", "group": "jump", "mutates": true, "needs": "live", "args": [{"name": "anchor", "type": "string", "list": "anchors", "labelKey": "dev.arg.anchor"}]},
+    "tp.place": {"titleKey": "dev.cmd.tpPlace", "group": "jump", "mutates": true, "needs": "live", "args": [{"name": "place", "type": "string", "list": "places", "labelKey": "dev.arg.place"}]},
+    "beat.apply": {
+      "titleKey": "dev.cmd.beatApply",
+      "group": "story",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "beat", "type": "string", "list": "beats", "labelKey": "dev.arg.beat"},
+        {"name": "stay", "type": "boolean", "optional": true, "labelKey": "dev.arg.stay"}
+      ]
+    },
+    "flag.set": {
+      "titleKey": "dev.cmd.flagSet",
+      "group": "story",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "flag", "type": "string", "list": "flags", "labelKey": "dev.arg.flag"},
+        {"name": "value", "type": "string", "optional": true, "labelKey": "dev.arg.value"}
+      ]
+    },
+    "quest.set": {
+      "titleKey": "dev.cmd.questSet",
+      "group": "story",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "quest", "type": "string", "list": "quests", "labelKey": "dev.arg.quest"},
+        {"name": "stage", "type": "integer", "labelKey": "dev.arg.stage"},
+        {"name": "done", "type": "boolean", "optional": true, "labelKey": "dev.arg.done"}
+      ]
+    },
+    "quest.clear": {"titleKey": "dev.cmd.questClear", "group": "story", "mutates": true, "needs": "live", "args": [{"name": "quest", "type": "string", "list": "quests", "labelKey": "dev.arg.quest"}]},
+    "event.start": {"titleKey": "dev.cmd.eventStart", "group": "events", "mutates": true, "needs": "live", "args": [{"name": "event", "type": "string", "list": "events", "labelKey": "dev.arg.event"}]},
+    "event.end": {"titleKey": "dev.cmd.eventEnd", "group": "events", "mutates": true, "needs": "live", "args": [{"name": "event", "type": "string", "list": "events", "labelKey": "dev.arg.event"}]},
+    "event.reset": {"titleKey": "dev.cmd.eventReset", "group": "events", "mutates": true, "needs": "live", "args": []},
+    "legend.summon": {
+      "titleKey": "dev.cmd.legendSummon",
+      "group": "events",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "species", "type": "string", "optional": true, "list": "species", "labelKey": "dev.arg.species"}
+      ]
+    },
+    "party.add": {
+      "titleKey": "dev.cmd.partyAdd",
+      "group": "party",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "species", "type": "string", "list": "species", "labelKey": "dev.arg.species"},
+        {"name": "level", "type": "integer", "optional": true, "labelKey": "dev.arg.level"}
+      ]
+    },
+    "party.set": {
+      "titleKey": "dev.cmd.partySet",
+      "group": "party",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "index", "type": "integer", "labelKey": "dev.arg.index"},
+        {"name": "field", "type": "string", "enumRef": "partyField", "labelKey": "dev.arg.field"},
+        {"name": "value", "type": "string", "optional": true, "labelKey": "dev.arg.value"}
+      ]
+    },
+    "party.heal": {"titleKey": "dev.cmd.partyHeal", "group": "party", "mutates": true, "needs": "live", "args": []},
+    "party.remove": {"titleKey": "dev.cmd.partyRemove", "group": "party", "mutates": true, "needs": "live", "args": [{"name": "index", "type": "integer", "labelKey": "dev.arg.index"}]},
+    "party.toBox": {"titleKey": "dev.cmd.partyToBox", "group": "party", "mutates": true, "needs": "live", "args": [{"name": "index", "type": "integer", "labelKey": "dev.arg.index"}]},
+    "party.evolve": {"titleKey": "dev.cmd.partyEvolve", "group": "party", "mutates": true, "needs": "live", "args": [{"name": "index", "type": "integer", "labelKey": "dev.arg.index"}]},
+    "party.team": {
+      "titleKey": "dev.cmd.partyTeam",
+      "group": "party",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "team", "type": "string", "list": "teams", "labelKey": "dev.arg.team"},
+        {"name": "level", "type": "integer", "optional": true, "labelKey": "dev.arg.level"}
+      ]
+    },
+    "item.give": {
+      "titleKey": "dev.cmd.itemGive",
+      "group": "items",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "item", "type": "string", "list": "items", "labelKey": "dev.arg.item"},
+        {"name": "qty", "type": "integer", "optional": true, "labelKey": "dev.arg.qty"}
+      ]
+    },
+    "money.set": {"titleKey": "dev.cmd.moneySet", "group": "items", "mutates": true, "needs": "live", "args": [{"name": "money", "type": "integer", "labelKey": "dev.arg.money"}]},
+    "badge.set": {
+      "titleKey": "dev.cmd.badgeSet",
+      "group": "items",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "badge", "type": "string", "list": "badges", "labelKey": "dev.arg.badge"},
+        {"name": "on", "type": "boolean", "optional": true, "labelKey": "dev.arg.on"}
+      ]
+    },
+    "dex.fill": {
+      "titleKey": "dev.cmd.dexFill",
+      "group": "items",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "mode", "type": "string", "enumRef": "dexMode", "labelKey": "dev.arg.mode"},
+        {"name": "type", "type": "string", "optional": true, "labelKey": "dev.arg.type"}
+      ]
+    },
+    "battle.wild": {
+      "titleKey": "dev.cmd.battleWild",
+      "group": "battle",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "species", "type": "string", "list": "species", "labelKey": "dev.arg.species"},
+        {"name": "level", "type": "integer", "optional": true, "labelKey": "dev.arg.level"}
+      ]
+    },
+    "battle.trainer": {"titleKey": "dev.cmd.battleTrainer", "group": "battle", "mutates": true, "needs": "live", "args": [{"name": "trainer", "type": "string", "list": "trainers", "labelKey": "dev.arg.trainer"}]},
+    "settings.set": {
+      "titleKey": "dev.cmd.settingsSet",
+      "group": "env",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "key", "type": "string", "labelKey": "dev.arg.key"},
+        {"name": "value", "type": "string", "labelKey": "dev.arg.value"}
+      ]
+    },
+    "render.tune": {
+      "titleKey": "dev.cmd.renderTune",
+      "group": "env",
+      "mutates": false,
+      "needs": "live",
+      "args": [
+        {"name": "key", "type": "string", "enumRef": "lodKey", "labelKey": "dev.arg.key"},
+        {"name": "value", "type": "number", "labelKey": "dev.arg.value"}
+      ]
+    },
+    "encounter.rate": {"titleKey": "dev.cmd.encounterRate", "group": "encounter", "mutates": false, "needs": "live", "args": [{"name": "mult", "type": "number", "labelKey": "dev.arg.mult"}]},
+    "encounter.repel": {"titleKey": "dev.cmd.encounterRepel", "group": "encounter", "mutates": true, "needs": "live", "args": [{"name": "on", "type": "boolean", "optional": true, "labelKey": "dev.arg.on"}]},
+    "encounter.next": {
+      "titleKey": "dev.cmd.encounterNext",
+      "group": "encounter",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "species", "type": "string", "list": "species", "labelKey": "dev.arg.species"},
+        {"name": "level", "type": "integer", "optional": true, "labelKey": "dev.arg.level"},
+        {"name": "shiny", "type": "boolean", "optional": true, "labelKey": "dev.arg.shiny"}
+      ]
+    },
+    "onboard.reset": {"titleKey": "dev.cmd.onboardReset", "group": "onboarding", "mutates": true, "needs": "live", "args": []},
+    "onboard.show": {"titleKey": "dev.cmd.onboardShow", "group": "onboarding", "mutates": false, "needs": "live", "args": [{"name": "tip", "type": "string", "list": "tips", "labelKey": "dev.arg.tip"}]}
   },
   "legacy": {"pos": "state.dump(['runtime'])", "tp": "cmd('tp.xy', {x, y, map})", "region": "state.dump(['runtime'])", "gates": "state.dump(['world'])", "places": "cmd('tp.xy')", "discover": "cmd('discover', {place})", "fly": "cmd('fly', {place})", "fog": "state.dump(['save'])", "boss": "cmd('battle.boss')", "distance": "state.dump(['save'])", "clock": "cmd('clock.set', {minutes})", "weather": "cmd('weather.set', {kind})", "roamers": "state.dump(['runtime'])"}
 }
