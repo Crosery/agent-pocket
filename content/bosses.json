@@ -328,12 +328,12 @@
       "gossip": ["boss.claude-code.gossip1", "boss.claude-code.gossip2"],
       "canRun": true,
       "expMul": 2.5,
-      "initialForm": "base",
+      "initialForm": "undercover",
       "forms": {
-        "base": {
+        "undercover": {
           "species": "claude-code",
           "moves": ["code-review", "recursion-slash", "plan-execute", "stack-overflow"],
-          "statMul": {"hp": 8.53, "atk": 0.85, "spa": 0.85},
+          "statMul": {"hp": 7.25, "atk": 0.85, "spa": 0.85},
           "pattern": [
             {"move": "code-review", "weight": 18, "if": {"foeStatus": false}},
             {"move": "recursion-slash", "weight": 30},
@@ -342,27 +342,42 @@
           ],
           "rules": [
             {"id": "cap", "hitCap": 0.3},
-            {"id": "blind", "if": {"meter": {"id": "vpn", "atLeast": 1}}, "dealtMul": 0.8, "takenMul": [{"mul": 2.0, "note": "boss.claude-code.blind"}]}
+            {"id": "buddy", "if": {"meter": {"id": "buddy", "atLeast": 1}}, "takenMul": [{"mul": 0.08, "note": "boss.claude-code.blocked"}]}
+          ]
+        },
+        "exposed": {
+          "species": "claude-code",
+          "moves": ["code-review", "recursion-slash", "plan-execute", "stack-overflow"],
+          "statMul": {"hp": 7.25, "atk": 0.85, "spa": 0.85},
+          "banner": "boss.claude-code.exposedBanner",
+          "pattern": [
+            {"move": "code-review", "weight": 18, "if": {"foeStatus": false}},
+            {"move": "recursion-slash", "weight": 30},
+            {"move": "plan-execute", "weight": 26},
+            {"move": "stack-overflow", "weight": 26}
+          ],
+          "rules": [
+            {"id": "cap", "hitCap": 0.3},
+            {"id": "naked", "dealtMul": 0.8, "takenMul": [{"mul": 2.0, "note": "boss.claude-code.naked"}]}
           ]
         }
       },
       "meters": [
-        {"id": "risk", "max": 4, "start": 0, "label": "boss.claude-code.risk", "show": true, "tone": "bad"},
-        {"id": "vpn", "max": 8, "start": 0, "label": "boss.claude-code.vpn", "show": true, "tone": "good", "decay": 1}
+        {"id": "buddy", "max": 1, "start": 0, "label": "boss.claude-code.buddy", "show": true, "tone": "good"},
+        {"id": "cover", "max": 1, "start": 0, "label": "boss.claude-code.cover", "show": true, "tone": "warn", "states": ["boss.claude-code.cover0", "boss.claude-code.cover1"]}
       ],
       "triggers": [
-        {"id": "risk-up", "on": "turnEnd", "times": 0, "if": {"foeCountry": ["CN"], "meter": {"id": "vpn", "atMost": 0}}, "do": [{"op": "meter", "id": "risk", "add": 1}]},
-        {"id": "risk-slow", "on": "turnEnd", "times": 0, "if": {"foeNotCountry": ["CN"], "turnCycle": {"period": 3, "from": 0, "to": 1}, "meter": {"id": "vpn", "atMost": 0}}, "do": [{"op": "meter", "id": "risk", "add": 1}]},
-        {"id": "risk-clear", "on": "foeSwitch", "times": 0, "do": [{"op": "meter", "id": "risk", "set": 0}]},
-        {"id": "vpn-item", "on": "foeItem", "tag": "vpn", "times": 0, "do": [{"op": "say", "text": "boss.claude-code.vpnOn"}, {"op": "meter", "id": "vpn", "set": 8}, {"op": "meter", "id": "risk", "set": 0}]},
-        {"id": "ban", "on": "afterAction", "times": 0, "if": {"meter": {"id": "risk", "atLeast": 3}}, "do": [{"op": "say", "text": "boss.claude-code.ban"}, {"op": "status", "target": "foe", "status": "sleep"}, {"op": "meter", "id": "risk", "set": 0}]},
-        {"id": "leak", "on": "afterAction", "phase": true, "if": {"hpBelow": 0.5}, "do": [{"op": "say", "text": "boss.claude-code.leak"}, {"op": "stages", "target": "boss", "stats": {"def": -1, "spd": -1}}]}
+        {"id": "summon", "on": "turnEnd", "times": 0, "do": [{"op": "say", "text": "boss.claude-code.summon"}, {"op": "meter", "id": "buddy", "set": 1}], "if": {"form": ["undercover"], "meter": {"id": "buddy", "atMost": 0}, "turnCycle": {"period": 2, "from": 1, "to": 2}}},
+        {"id": "buddy-block", "on": "foeMove", "times": 0, "do": [{"op": "say", "text": "boss.claude-code.block"}, {"op": "meter", "id": "buddy", "set": 0}], "if": {"meter": {"id": "buddy", "atLeast": 1}}, "categories": ["physical", "special"]},
+        {"id": "unmask", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.claude-code.unmask"}, {"op": "form", "form": "exposed"}, {"op": "meter", "id": "cover", "set": 1}, {"op": "meter", "id": "buddy", "set": 0}], "if": {"form": ["undercover"]}, "tag": "sourcemap"},
+        {"id": "recover", "on": "turnEnd", "times": 0, "do": [{"op": "say", "text": "boss.claude-code.recover"}, {"op": "form", "form": "undercover"}, {"op": "meter", "id": "cover", "set": 0}], "if": {"form": ["exposed"], "notPhase": "leak", "formTurnAtLeast": 5}},
+        {"id": "leak", "on": "afterAction", "times": 1, "do": [{"op": "say", "text": "boss.claude-code.leak"}, {"op": "form", "form": "exposed"}, {"op": "meter", "id": "cover", "set": 1}, {"op": "meter", "id": "buddy", "set": 0}, {"op": "stages", "target": "boss", "stats": {"def": -1, "spd": -1}}], "if": {"hpBelow": 0.5}, "phase": true}
       ],
       "gates": [
         {"phase": "leak", "floor": 0.5}
       ],
       "catchRateMul": 0.6,
-      "reward": {"money": 7000, "items": {"chip-hotfix": 1, "residential-ip": 2}},
+      "reward": {"money": 7000, "items": {"chip-hotfix": 1, "source-map": 2}},
       "enrage": {"turn": 18, "warnBefore": 3, "stages": {"atk": 1, "spe": 1}, "max": 4, "warn": "boss.claude-code.enrageWarn", "start": "boss.claude-code.enrageStart", "tick": "boss.claude-code.enrageTick"}
     },
     "mythos": {
@@ -935,6 +950,68 @@
       "catchRateMul": 0.6,
       "reward": {"money": 10000, "items": {"chip-director-cut": 1, "rare-dataset": 1}},
       "enrage": {"turn": 24, "warnBefore": 3, "stages": {"spa": 1, "spe": 1}, "max": 4, "warn": "boss.seedance.enrageWarn", "start": "boss.seedance.enrageStart", "tick": "boss.seedance.enrageTick"}
+    },
+    "glm": {
+      "species": "glm-5-3",
+      "level": 62,
+      "title": "boss.glm.title",
+      "taunt": ["boss.glm.taunt1", "boss.glm.taunt2"],
+      "hint": {"seen": "boss.glm.hintSeen", "won": "boss.glm.hintWon"},
+      "gossip": ["boss.glm.gossip1", "boss.glm.gossip2"],
+      "canRun": true,
+      "expMul": 2.5,
+      "initialForm": "queue",
+      "forms": {
+        "queue": {
+          "species": "glm-5-3",
+          "moves": ["distill-strike", "merge-rush", "compile-cannon", "community-power"],
+          "statMul": {"hp": 3.3, "atk": 1.04, "spa": 1.04},
+          "pattern": [
+            {"move": "distill-strike", "weight": 30},
+            {"move": "merge-rush", "weight": 28},
+            {"move": "compile-cannon", "weight": 24},
+            {"move": "community-power", "weight": 18}
+          ],
+          "rules": [
+            {"id": "queue", "dealtMul": 0.5, "takenMul": [{"mul": 0.25, "note": "boss.glm.queue"}]}
+          ]
+        },
+        "open": {
+          "species": "glm-5-3",
+          "moves": ["distill-strike", "merge-rush", "compile-cannon", "community-power"],
+          "statMul": {"hp": 3.3, "atk": 1.04, "spa": 1.04},
+          "banner": "boss.glm.openBanner",
+          "pattern": [
+            {"move": "distill-strike", "weight": 30},
+            {"move": "merge-rush", "weight": 28},
+            {"move": "compile-cannon", "weight": 24},
+            {"move": "community-power", "weight": 18}
+          ],
+          "rules": [
+            {"id": "cap", "hitCap": 0.3},
+            {"id": "embarrassed", "if": {"meter": {"id": "pledge", "atLeast": 1}}, "dealtMul": 0.7, "takenMul": [{"mul": 1.5, "note": "boss.glm.embarrassed"}]}
+          ]
+        }
+      },
+      "meters": [
+        {"id": "backup", "max": 3, "start": 0, "label": "boss.glm.backup", "show": true, "tone": "bad"},
+        {"id": "pledge", "max": 8, "start": 0, "label": "boss.glm.pledge", "show": true, "tone": "good", "decay": 1}
+      ],
+      "triggers": [
+        {"id": "queue-end", "on": "turnEnd", "times": 1, "do": [{"op": "say", "text": "boss.glm.queueEnd"}, {"op": "form", "form": "open"}], "if": {"form": ["queue"], "formTurnAtLeast": 1}, "phase": true},
+        {"id": "egg", "on": "turnEnd", "times": 0, "do": [{"op": "say", "text": "boss.glm.egg"}, {"op": "heal", "target": "foe", "fraction": 0.1}, {"op": "stages", "target": "boss", "stats": {"atk": 1, "spa": 1}}, {"op": "meter", "id": "backup", "add": 1}], "if": {"form": ["open"], "notPhase": "trust", "meter": {"id": "pledge", "atMost": 0}, "turnCycle": {"period": 3, "from": 2, "to": 3}}},
+        {"id": "egg-double", "on": "turnEnd", "times": 0, "do": [{"op": "say", "text": "boss.glm.egg"}, {"op": "heal", "target": "foe", "fraction": 0.1}, {"op": "stages", "target": "boss", "stats": {"atk": 1, "spa": 1}}, {"op": "meter", "id": "backup", "add": 1}], "if": {"form": ["open"], "phase": "trust", "meter": {"id": "pledge", "atMost": 0}, "turnCycle": {"period": 2, "from": 0, "to": 1}}},
+        {"id": "restore", "on": "turnEnd", "times": 0, "do": [{"op": "charge", "move": "force-push", "warn": "boss.glm.restore", "mul": 2.0}, {"op": "meter", "id": "backup", "set": 0}], "if": {"form": ["open"], "meter": {"id": "backup", "atLeast": 3}}},
+        {"id": "switch-clear", "on": "foeSwitch", "times": 0, "do": [{"op": "say", "text": "boss.glm.cleared"}, {"op": "meter", "id": "backup", "set": 0}], "if": {"meter": {"id": "backup", "atLeast": 1}}, "voluntary": true},
+        {"id": "pledge-item", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.glm.pledgeSaid"}, {"op": "meter", "id": "pledge", "set": 8}, {"op": "meter", "id": "backup", "set": 0}, {"op": "cancelCharge"}], "tag": "pledge"},
+        {"id": "trust", "on": "afterAction", "times": 1, "do": [{"op": "say", "text": "boss.glm.trust"}, {"op": "cancelCharge"}, {"op": "loseTurn", "turns": 1}, {"op": "heal", "target": "foe", "fraction": 0.2}, {"op": "meter", "id": "backup", "add": 1}], "if": {"form": ["open"], "hpBelow": 0.5}, "phase": true}
+      ],
+      "gates": [
+        {"phase": "trust", "floor": 0.5}
+      ],
+      "catchRateMul": 0.6,
+      "reward": {"money": 10000, "items": {"chip-community-support": 1, "no-upload-pledge": 3}},
+      "enrage": {"turn": 20, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.glm.enrageWarn", "start": "boss.glm.enrageStart", "tick": "boss.glm.enrageTick"}
     }
   }
 }

@@ -91,8 +91,8 @@ export const COUNTERS: Record<string, Counter> = {
     policy: (h) => (h.state.form === 'metered' && h.state.meters.outrage < 3 ? h.bait('complaint-letter') : null),
   },
 
-  // Keep the residential IP up: no risk score builds and the boss guesses wrong.
-  'claude-code': { bag: { 'residential-ip': 4 }, policy: (h) => (h.state.meters.vpn <= 1 ? h.bait('residential-ip') : null) },
+  // The .map file as soon as the cover is up: no pets, and it takes double for a while.
+  'claude-code': { bag: { 'source-map': 5 }, policy: (h) => (h.state.form === 'undercover' ? h.bait('source-map') : null) },
 
   // Patch the sandbox before it gives; the alignment moves the AI happens to pick help on top.
   mythos: { bag: { 'sandbox-patch': 4 }, policy: (h) => (h.state.form === 'sealed' && h.state.meters.escape >= 5 ? h.bait('sandbox-patch') : null) },
@@ -123,6 +123,9 @@ export const COUNTERS: Record<string, Counter> = {
 
   // Hand it invite codes: it pays out red packets until its subsidy budget is gone.
   doubao: { bag: { 'invite-code': 5 }, policy: (h) => (h.state.form === 'subsidy' ? h.bait('invite-code') : null) },
+
+  // Hold it to its word: the pledge as soon as eggs have been taken (or are about to be), never when it is already in force.
+  glm: { bag: { 'no-upload-pledge': 5 }, policy: (h) => (h.state.form === 'open' && h.state.meters.pledge === 0 && h.state.meters.backup >= 1 ? h.bait('no-upload-pledge') : null) },
 
   // Read the cameo's weak types from the HUD and hit with them (a team that covers all ten of them, so there is always a fitting member).
   seedance: {

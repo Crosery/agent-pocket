@@ -66,7 +66,9 @@
     "ethernet-cable": "a coiled blue ethernet cable with a clear plastic RJ45 plug on one end and the other end unplugged and dangling",
     "revoke-key": "a small golden key with a red diagonal prohibition slash across it and a few sparkles around the broken teeth",
     "pelican-test": "a white pelican with an orange pouch beak riding a small blue bicycle, side view, tiny wobbly wheels",
-    "bike-pelican": "a small blue bicycle balanced on the back of a white pelican with an orange pouch beak, side view"
+    "bike-pelican": "a small blue bicycle balanced on the back of a white pelican with an orange pouch beak, side view",
+    "no-upload-pledge": "a parchment scroll with a blue cloud crossed out by a red slash and a red wax stamp",
+    "source-map": "a white document page with a folded corner, a few code lines and a small blue treasure-map frame with a red X"
   },
   "chips": {}
 }

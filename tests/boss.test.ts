@@ -136,10 +136,16 @@ test('mechanics: each boss has its own counterplay', () => {
   assert.ok(formsIn(C('cursor')).has('refunded'))
   assert.ok(firedIn(C('cursor')).has('complaint-item'))
 
-  // Claude Code: risk control bans the account; a residential IP prevents it.
-  assert.ok(firedIn(P('claude-code')).has('ban'))
-  assert.ok(!firedIn(C('claude-code')).has('ban'), 'the residential IP keeps the account alive')
-  assert.ok(firedIn(C('claude-code')).has('vpn-item'))
+  // Claude Code: a BUDDY pet blocks every second attack; the .map file unmasks it, and its own leak does at half hp.
+  assert.ok(firedIn(P('claude-code')).has('summon') && firedIn(P('claude-code')).has('buddy-block'))
+  assert.ok(firedIn(P('claude-code')).has('leak'))
+  assert.ok(firedIn(C('claude-code')).has('unmask') && formsIn(C('claude-code')).has('exposed'))
+  assert.ok(!formsIn(P('claude-code')).has('exposed') || firedIn(P('claude-code')).has('leak'), 'it only drops the cover by leaking')
+
+  // GLM: a queue shield, then free eggs whose backups pile up into a heavy restore; the pledge holds it to its word.
+  assert.ok(firedIn(P('glm')).has('queue-end') && firedIn(P('glm')).has('egg') && firedIn(P('glm')).has('restore'))
+  assert.equal(meterPeak(P('glm'), 'backup'), 3)
+  assert.ok(firedIn(C('glm')).has('pledge-item') && meterPeak(C('glm'), 'pledge') >= 6)
 
   // Mythos: the sandbox escapes unless it is patched.
   assert.ok(formsIn(P('mythos')).has('unbound'))
@@ -354,6 +360,69 @@ test('events: a revoked key reflects the malicious skill, but only while it is l
   assert.ok((early.st.fired.hijack ?? 0) >= 1)
 })
 
+test('events: a BUDDY blocks exactly one attack, the .map file unmasks Claude Code, and half hp leaks it for good', () => {
+  const attack = { kind: 'move', moveIndex: 0 } as const
+  const s = stage('claude-code', ['gpt-5-6'], { items: { 'source-map': 2 } })
+  s.foe().moves = [{ id: 'token-tackle', pp: 20, ppMax: 20 }]
+  let st = s.turn(attack)
+  assert.equal(st.meters.buddy, 0)
+  st = s.turn(attack)
+  assert.equal(st.meters.buddy, 1, 'the pet shows up at the end of the second turn')
+  const hpBefore = st.hp
+  st = s.turn(attack)
+  assert.equal(st.meters.buddy, 0, 'and blocks exactly one attack')
+  assert.ok(st.hp >= hpBefore - st.maxHp * 0.01, 'the blocked hit does almost nothing')
+  assert.equal(st.fired['buddy-block'], 1)
+
+  st = s.turn({ kind: 'item', itemId: 'source-map', partyIndex: 0 })
+  assert.equal(st.form, 'exposed')
+  assert.equal(st.meters.cover, 1)
+  for (let i = 0; i < 5; i++) st = s.turn(attack)
+  assert.equal(st.form, 'undercover', 'the cover is back after a while')
+
+  s.engine.applyBossState({ ...st, hp: Math.floor(st.maxHp * 0.4) })
+  st = s.turn(attack)
+  assert.equal(st.fired.leak, 1)
+  assert.equal(st.form, 'exposed')
+  for (let i = 0; i < 7; i++) st = s.turn(attack)
+  assert.equal(st.form, 'exposed', 'a leaked source cannot be taken back')
+})
+
+test('events: GLM\'s eggs pile up into a restore; a pledge or a switch wipes the backups', () => {
+  const attack = { kind: 'move', moveIndex: 0 } as const
+  const open = (items?: Record<string, number>) => {
+    const s = stage('glm', ['gpt-5-6', 'gemini-argon'], { items })
+    s.engine.applyBossState({ ...s.engine.extractBossState()!, form: 'open' })
+    return s
+  }
+  const eggs = open()
+  let st = eggs.turn(attack)
+  st = eggs.turn(attack)
+  assert.equal(st.meters.backup, 0)
+  st = eggs.turn(attack)
+  assert.equal(st.meters.backup, 1, 'the first egg comes at the end of the third turn')
+  assert.ok((st.stages.atk ?? 0) >= 1 && (st.stages.spa ?? 0) >= 1, 'every egg trains it too')
+  eggs.engine.applyBossState({ ...st, meters: { ...st.meters, backup: 3 } })
+  st = eggs.turn(attack)
+  assert.equal(st.charge?.move, 'force-push', 'three backups: the restore is telegraphed')
+  assert.equal(st.meters.backup, 0)
+
+  const pledged = open({ 'no-upload-pledge': 1 })
+  const base = pledged.engine.extractBossState()!
+  pledged.engine.applyBossState({ ...base, meters: { ...base.meters, backup: 2 } })
+  st = pledged.turn({ kind: 'item', itemId: 'no-upload-pledge', partyIndex: 0 })
+  assert.equal(st.meters.backup, 0)
+  assert.ok(st.meters.pledge >= 7)
+  for (let i = 0; i < 3; i++) st = pledged.turn(attack)
+  assert.equal(st.meters.backup, 0, 'no eggs while the pledge holds')
+
+  const swapped = open()
+  const b2 = swapped.engine.extractBossState()!
+  swapped.engine.applyBossState({ ...b2, meters: { ...b2.meters, backup: 2 } })
+  st = swapped.turn({ kind: 'switch', partyIndex: 1 })
+  assert.equal(st.meters.backup, 0, 'a new account starts without backups')
+})
+
 // ---------------------------------------------------------------------------------------------------- counter items
 
 function turnOne(bossId: string, itemId: string, bag = 3) {
@@ -404,8 +473,15 @@ test('items: every other counter item moves its boss meter or form', () => {
   assert.equal(mm.before.form, 'bench')
   assert.equal(mm.after.form, 'exposed')
 
-  const cc = turnOne('claude-code', 'residential-ip')
-  assert.ok(cc.after.meters.vpn >= 5 && cc.after.meters.risk === 0)
+  const cc = turnOne('claude-code', 'source-map')
+  assert.equal(cc.before.form, 'undercover')
+  assert.equal(cc.after.form, 'exposed')
+
+  const gl = turnOne('glm', 'no-upload-pledge')
+  assert.ok(gl.after.meters.pledge >= 7)
+
+  const op = turnOne('opus', 'residential-ip')
+  assert.ok(op.after.meters.ip >= 7 && op.after.meters.risk === 0)
 
   const my = turnOne('mythos', 'sandbox-patch')
   assert.ok(my.after.meters.escape < my.before.meters.escape, 'the sandbox holds')
