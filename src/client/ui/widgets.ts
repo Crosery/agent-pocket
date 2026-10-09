@@ -33,6 +33,7 @@ import { glyphEl } from './glyphs.ts'
 import { createBitmap, drawLine, fillPolygon, parseColor, prefersDarkInk } from './pixel.ts'
 import { ensureUIEnvironment } from './scale.ts'
 import './styles.css'
+import './phone.css'
 
 export { glyphEl }
 
@@ -433,6 +434,8 @@ export function actionKeyLabel(action: InputAction, device: Input['lastDevice'] 
   if (device === 'touch') {
     const btn = INPUT_BINDINGS.touch.buttons.find((b) => b.action === action)
     if (btn) return t(btn.label)
+    // No pad button (chat, minimap): name the on-screen control instead of a key that does not exist here.
+    if (`audio.touch.${action}` in CONTENT.text) return t(`audio.touch.${action}`)
   }
   const code = INPUT_BINDINGS.keyboard[action]?.[0]
   return code ? named(`ui.keyNames.${code}`, code.replace(/^(Key|Digit)/, '')) : ''

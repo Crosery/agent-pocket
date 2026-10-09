@@ -99,6 +99,10 @@ export function createInput(root: HTMLElement, cfg: InputConfig = INPUT_CONFIG):
     if (!textInput && !isEditable(e.target)) e.preventDefault()
   }
   const onBlur = () => releaseAll()
+  // Long-press on the canvas / sprites would open the browser's image or context menu over the game.
+  const onContextMenu = (e: Event) => {
+    if (document.documentElement.dataset.touchControls === 'on' && !isEditable(e.target)) e.preventDefault()
+  }
   const onVisibility = () => { if (document.hidden) releaseAll() }
   const onPointerDown = (e: PointerEvent) => {
     if (e.pointerType !== 'touch') return
@@ -135,6 +139,7 @@ export function createInput(root: HTMLElement, cfg: InputConfig = INPUT_CONFIG):
   window.addEventListener('keydown', onKeyDown)
   window.addEventListener('keyup', onKeyUp)
   window.addEventListener('blur', onBlur)
+  window.addEventListener('contextmenu', onContextMenu)
   document.addEventListener('visibilitychange', onVisibility)
   root.addEventListener('pointerdown', onPointerDown, { capture: true })
 

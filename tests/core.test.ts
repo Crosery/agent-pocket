@@ -16,9 +16,9 @@ import { cryRecipe } from '../src/client/core/audio-cry.ts'
 import { INPUT_CONFIG, boundActions } from '../src/client/core/input-config.ts'
 import { computeUiScale } from '../src/client/core/settings.ts'
 
-/** config.defaultSettings with the one-time settings migrations applied (what a fresh save holds). */
+/** config.defaultSettings with the one-time settings migrations applied (what a fresh save holds); touchOnly ones need a phone. */
 function expectedDefaults(cfg = CONTENT.config) {
-  const ms = cfg.settingsMigrations ?? []
+  const ms = (cfg.settingsMigrations ?? []).filter((m) => !m.touchOnly)
   return { ...cfg.defaultSettings, ...Object.assign({}, ...ms.map((m) => m.set)), migrations: ms.map((m) => m.id) }
 }
 import { PH } from '../src/client/core/placeholders-data.ts'

@@ -221,7 +221,7 @@ export function createUIKit(root: HTMLElement, input: Input, audio: AudioManager
       el('div', { class: 'ap-prompt-text', text }),
       el('div', 'ap-field-row', [field, counter]),
       error,
-      el('div', 'ap-btn-row', [el('span', { class: 'ap-dim', text: t('ui.prompt.hint') }), cancel, ok]),
+      el('div', 'ap-btn-row', [el('span', { class: 'ap-dim', text: document.documentElement.dataset.touchControls === 'on' ? '' : t('ui.prompt.hint') }), cancel, ok]),
     )
     const center = el('div', 'ap-modal-center', [win.el])
     let done = false

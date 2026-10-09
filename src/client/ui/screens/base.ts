@@ -449,7 +449,8 @@ export function keepTabVisible(strip: HTMLElement, index: number): void {
   if (!markedStrips.has(strip)) {
     markedStrips.add(strip)
     strip.addEventListener('scroll', () => markOverflow(strip), { passive: true })
-    new ResizeObserver(() => markOverflow(strip)).observe(strip)
+    // Deferred: toggling the fade classes inside the callback re-triggers the observer ("ResizeObserver loop" error).
+    new ResizeObserver(() => requestAnimationFrame(() => markOverflow(strip))).observe(strip)
   }
   markOverflow(strip)
   const child = strip.children[index] as HTMLElement | undefined

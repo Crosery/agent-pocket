@@ -8,13 +8,19 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="智灵口袋" />
+  <!-- The manifest stays on the origin (start_url / scope must match the page); vite-ignore keeps the CDN rewrite off it. -->
+  <link rel="manifest" href="/manifest.webmanifest" vite-ignore />
+  <link rel="icon" type="image/png" href="/assets/pwa/icon-192.png" />
+  <link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png" />
   <meta name="description" content="智灵口袋 · Agent Pocket —— 收集当下最火的 AI 智灵，在 HD-2D 像素开放世界里冒险、对战、交易。" />
   <title>智灵口袋 · Agent Pocket</title>
   <link rel="preload" href="/assets/fonts/fusion-pixel-12px-zh_hans.woff2" as="font" type="font/woff2" crossorigin />
   <style>
     @font-face { font-family: 'FusionPixel'; src: url('/assets/fonts/fusion-pixel-12px-zh_hans.woff2') format('woff2'); font-display: swap; }
     html, body { margin: 0; height: 100%; background: #05060d; overflow: hidden; overscroll-behavior: none; touch-action: none; }
-    body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+    body { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    img, canvas { -webkit-touch-callout: none; -webkit-user-drag: none; }
     #app { position: fixed; inset: 0; overflow: hidden; }
     #ap-canvas { position: absolute; left: 0; top: 0; display: block; image-rendering: pixelated; outline: none; }
     #ap-ui { position: absolute; inset: 0; pointer-events: none; }

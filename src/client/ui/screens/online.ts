@@ -9,7 +9,7 @@ import { creatureName } from '../../../shared/creature.ts'
 import { getMap } from '../../../shared/world/worldapi.ts'
 import multiplayerJson from '../../../../content/multiplayer.json' with { type: 'json' }
 import { UI_CONFIG } from '../config.ts'
-import { createRowMenu, type RowMenu } from '../menu.ts'
+import { createRowMenu, listMetrics, type RowMenu } from '../menu.ts'
 import { actionKeyLabel, append, button, creatureIcon, el, formatNumber, keyHint, panel, tabs, type TabsHandle } from '../widgets.ts'
 import { challengePvp } from '../../net/pvp-channel.ts'
 import { injectStyle, startTradeFlow, trackOnlineRoster, type RosterEntry } from '../../net/trade-flow.ts'
@@ -20,6 +20,8 @@ export interface OnlineHubRules {
   /** Actions offered on an online player, in menu order. */
   playerActions: PlayerAction[]
   visibleRows: number
+  /** CSS px the hub's emote bar, footer and tabs take besides the list (touch rows fit around them). */
+  touchReservePx: number
   listWidth: number
   avatarIconSize: number
   partyIconSize: number
@@ -224,7 +226,8 @@ export async function openOnline(ctx: GameContext): Promise<void> {
     audio: ctx.audio,
     onChange: () => { rowsKey = ''; if (zone === 'list' && !currentHasList()) zone = 'tabs'; render() },
   })
-  const body = el('div', { class: 'mp-hub-body', vars: { '--mp-rows': RULES.visibleRows, '--row-h': UI_CONFIG.list.rowHeight } })
+  const metrics = listMetrics(RULES.visibleRows, RULES.touchReservePx)
+  const body = el('div', { class: 'mp-hub-body', vars: { '--mp-rows': metrics.rows, '--row-h': metrics.rowH } })
   const emoteButtons = emoteIds.map((id, i) => {
     const b = button(t(`multiplayer.emote.${id}.symbol`), () => { emoteIndex = i; sendEmote(id) })
     b.title = t(`multiplayer.emote.${id}.label`)
@@ -361,6 +364,7 @@ export async function openOnline(ctx: GameContext): Promise<void> {
     const initial = Math.max(0, prevLabel === null ? 0 : rows.findIndex((r) => r.item.label === prevLabel))
     menu = createRowMenu(rows.map((r) => r.item), {
       visibleRows: RULES.visibleRows,
+      reservePx: RULES.touchReservePx,
       initial,
       audio: ctx.audio,
       onPick: (i) => { zone = 'list'; void activateRow(i) },

@@ -102,7 +102,8 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
       first--
     }
   }
-  new ResizeObserver(fold).observe(effects)
+  // Deferred a frame: folding tags resizes the strip inside the callback ("ResizeObserver loop" error).
+  new ResizeObserver(() => requestAnimationFrame(fold)).observe(effects)
 
   const paintTags = () => {
     const snap = snapshot()

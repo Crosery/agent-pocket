@@ -46,7 +46,7 @@
       {"action": "menu", "label": "audio.touch.menu", "size": "small", "right": 6, "bottom": 116},
       {"action": "bag", "label": "audio.touch.bag", "size": "small", "right": 82, "bottom": 76, "worldOnly": true},
       {"action": "map", "label": "audio.touch.map", "size": "small", "right": 136, "bottom": 70, "worldOnly": true},
-      {"action": "bike", "label": "audio.touch.bike", "size": "small", "right": 6, "bottom": 170, "worldOnly": true}
+      {"action": "bike", "label": "audio.touch.bike", "size": "small", "right": 190, "bottom": 62, "worldOnly": true}
     ],
     "style": {
       "idleOpacity": 0.72,

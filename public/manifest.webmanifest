@@ -1,0 +1,20 @@
+{
+  "id": "/",
+  "name": "智灵口袋 · Agent Pocket",
+  "short_name": "智灵口袋",
+  "description": "收集当下最火的 AI 智灵，在 HD-2D 像素开放世界里冒险、对战、交易。",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "any",
+  "background_color": "#0b0d1a",
+  "theme_color": "#0b0d1a",
+  "categories": ["games"],
+  "icons": [
+    {"src": "/assets/pwa/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/assets/pwa/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "/assets/pwa/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}
