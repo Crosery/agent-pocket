@@ -106,6 +106,26 @@ The world answers to everything that moves in it. Every number is in `content/re
   critically damped spring on the player's trail, spawns already clear of the camera, and is drawn as a companion
   (after everything but the player, no depth write) so it is never over them.
 
+### Performance
+
+Budget: a phone (coarse pointer) holds 30 fps with a 95th-percentile frame under 40 ms at 4x CPU throttle; a desktop holds 60.
+Every knob is in `content/render.json` (tiers, `device`, `governor`) or `content/game.json` (`loading`).
+
+- **Tiers** (`quality.<tier>`): `shadowHz` is how often the sun shadow map is redrawn (0 = every frame), `shadowSnapTexels`
+  how coarsely its frustum follows the camera (a coarser snap redraws less while walking). Touch devices start on `medium`
+  through the `touchOnly` settings migration in `config.json`; `device.touchMinInternalHeight` keeps their pixel grid crisp.
+- **Frame-time governor** (`governor`, `render/governor.ts`): watches the real frame interval and the work time, sheds the
+  listed `steps` in order when frames run long (slower tree shadows, no DOF/bloom, bigger pixels, fewer particles) and
+  restores them with hysteresis. The level is remembered per device (localStorage `ap.render.governor`); picking a tier in
+  the settings resets it.
+- **Static geometry**: chunk transforms are frozen once built (`settleChunk`); sway, bend and water run in shaders.
+- **Boot**: the title appears first, the world is generated in the background in `loading.worldSliceMs` slices, battle and
+  multiplayer code load on demand, and the production bundle drops tooling-only content (`content/build.json`).
+- **Measure**: `scripts/qa-perf.mjs` (frame times, draw calls, heap), `qa-perf-ab.mjs` (two builds back to back),
+  `qa-perf-compare.mjs` (tables), `qa-perf-boot.mjs` (title / in-world times), `qa-perf-shots.mjs` (screenshot pairs).
+  Per-frame code must not read canvases or rebuild what a cache already holds: `spriteOpaqueTop` once cost 9 ms/frame at 4x
+  throttle when two actors measured one atlas with different grids and evicted each other's entry.
+
 ## Assets (all optional — every asset has a procedural fallback)
 
 | kind | path | spec |

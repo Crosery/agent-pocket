@@ -1,0 +1,6 @@
+{
+  "about": "Build-time switches read by vite.config.ts (not part of CONTENT). clientStrip: fields dropped from a content file in production bundles only; the server, tests and tools read the full file.",
+  "clientStrip": [
+    {"file": "species.json", "fields": ["designPrompt"], "why": "sprite generation prompts, used by tools/ only (about a third of the file)"}
+  ]
+}

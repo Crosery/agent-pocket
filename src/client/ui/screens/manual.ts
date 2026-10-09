@@ -1,6 +1,6 @@
 // 教学手册: the curriculum (content/tutorial.json curriculum) as a browsable manual, one tab per group. Pages are
 // t('tutorial.manual.<id>.title|body'); a lesson shows as learnt once an NPC taught it or one of its tips appeared.
-import { t } from '../../../shared/content/index.ts'
+import { CONTENT, t } from '../../../shared/content/index.ts'
 import { TUTORIAL, type LessonDef } from '../../onboarding/config.ts'
 import { lessonLearned } from '../../onboarding/logic.ts'
 import { richText } from '../../onboarding/view.ts'
@@ -8,6 +8,10 @@ import { createRowMenu, type RowMenu } from '../menu.ts'
 import { button, el, keyHint, tabs } from '../widgets.ts'
 import { backPressed, frame, isCompact, openScreen, pressed, setChildren, type ScreenEnv } from './base.ts'
 import { SCREENS } from './config.ts'
+
+/** The manual page body for the device in hand: a `bodyTouch` variant when there is one. */
+const manualBodyKey = (id: string, device: string): string =>
+  device === 'touch' && `tutorial.manual.${id}.bodyTouch` in CONTENT.text ? `tutorial.manual.${id}.bodyTouch` : `tutorial.manual.${id}.body`
 
 export function manualScreen(env: ScreenEnv): Promise<void> {
   const { ctx } = env
@@ -41,7 +45,7 @@ export function manualScreen(env: ScreenEnv): Promise<void> {
         el('div', { class: 'aps-item-name ap-gold', text: t(`tutorial.manual.${l.id}.title`) }),
         el('div', { class: 'ap-dim', text: t(learnt(l) ? 'screens.manual.learnt' : 'screens.manual.unlearnt') }),
         l.chart ? chartButton(l) : null,
-        el('p', { class: 'aps-manual-body' }, richText(t(`tutorial.manual.${l.id}.body`), ctx.input.lastDevice)),
+        el('p', { class: 'aps-manual-body' }, richText(t(manualBodyKey(l.id, ctx.input.lastDevice)), ctx.input.lastDevice)),
       ])
     }
     const rebuild = (keep: number) => {
