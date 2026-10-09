@@ -102,6 +102,7 @@
       {"id": "quests", "action": "quests", "label": "screens.pause.quests", "glyph": "quests"},
       {"id": "research", "action": "research", "label": "screens.pause.research", "glyph": "research"},
       {"id": "intel", "action": "intel", "label": "screens.pause.intel", "glyph": "intel"},
+      {"id": "manual", "action": "manual", "label": "screens.pause.manual", "glyph": "quests"},
       {"id": "online", "action": "online", "label": "screens.pause.online", "glyph": "online"},
       {"id": "save", "action": "save", "label": "screens.pause.save", "glyph": "save"},
       {"id": "settings", "action": "settings", "label": "screens.pause.settings", "glyph": "settings"},

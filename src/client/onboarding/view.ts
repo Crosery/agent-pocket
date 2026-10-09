@@ -129,12 +129,14 @@ export function createObjectiveView(uiRoot: HTMLElement) {
   }
 }
 
-export interface TipState { textKey: string; device: Device; place?: 'top' | 'bottom' | 'right' | 'menu' }
+export interface TipState { textKey: string; device: Device; place?: 'top' | 'bottom' | 'right' | 'menu' | 'battle' }
 
 export function createTipView(uiRoot: HTMLElement, input: Input) {
   const title = el('span', 'ap-tip-title-text')
   const body = el('div', 'ap-tip-body')
-  const foot = el('div', 'ap-tip-foot')
+  const footText = el('span', 'ap-tip-foot-text')
+  const off = el('button', { class: 'ap-tip-off', attrs: { type: 'button' }, text: t('tutorial.tip.off') })
+  const foot = el('div', 'ap-tip-foot', [footText, off])
   const close = el('button', { class: 'ap-tip-close', attrs: { type: 'button', 'aria-label': t('tutorial.tip.close') } }, [glyphEl('close')])
   const progress = el('div', { class: 'ap-tip-progress', attrs: { 'aria-hidden': 'true' } })
   const card = el('div', { class: 'ap-panel ap-tip ap-hud-frame', attrs: { role: 'status', 'aria-live': 'polite' } }, [
@@ -153,6 +155,9 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
   card.addEventListener('pointerdown', (e) => { e.stopPropagation(); clicked = true })
   close.addEventListener('click', () => { clicked = true })
   nativeActivation(close)
+  let offAsked = false
+  off.addEventListener('click', () => { offAsked = true; clicked = true })
+  nativeActivation(off)
   let hideTimer = 0
   let expireTimer = 0
   const api = {
@@ -164,13 +169,15 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
       const touchBody = `${s.textKey}.bodyTouch`
       const bodyKey = s.device === 'touch' && touchBody in CONTENT.text ? touchBody : `${s.textKey}.body`
       body.replaceChildren(...richText(t(bodyKey), s.device))
-      foot.replaceChildren(...richText(t(s.device === 'touch' ? 'tutorial.tip.skipTouch' : 'tutorial.tip.skip'), s.device))
+      offAsked = false
+      footText.replaceChildren(...richText(t(s.device === 'touch' ? 'tutorial.tip.skipTouch' : 'tutorial.tip.skip'), s.device))
       const host = s.place === 'menu' ? uiRoot.querySelector<HTMLElement>('.aps-pause-detail') : null
       card.classList.toggle('is-inline', !!host)
       if (host) host.prepend(card)
       else layer.append(card)
       layer.hidden = false
-      layer.classList.toggle('is-top', s.place === 'top')
+      layer.classList.toggle('is-top', s.place === 'top' || s.place === 'battle')
+      layer.classList.toggle('is-battle', s.place === 'battle')
       layer.classList.toggle('is-right', s.place === 'right')
       card.hidden = false
       card.classList.remove('is-out')
@@ -193,6 +200,12 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
         card.hidden = true
         layer.hidden = true
       }, TUTORIAL.tips.layer.fadeMs)
+    },
+    /** True (once) when the player pressed 「不再提示」. */
+    disableRequested(): boolean {
+      const v = offAsked
+      offAsked = false
+      return v
     },
     /** True once the player clicked the card or pressed the cancel key while it is up. */
     dismissed(): boolean {

@@ -210,6 +210,7 @@ export function openScreen<T>(env: ScreenEnv, className: string, build: (api: Sc
       }
     })
     env.ctx.ui.pushPanel(ui)
+    env.ctx.events.emit('screen:opened', { screen: (className.split(' ')[0] ?? '').replace(/^aps-/, '') })
     const first = root.querySelector<HTMLElement>('button.is-active, [tabindex="0"].is-active') ??
       root.querySelector<HTMLElement>('input:not([disabled]), button:not([disabled])') ?? root
     first.focus({ preventScroll: true })

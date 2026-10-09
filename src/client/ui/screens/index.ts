@@ -13,6 +13,8 @@ import { summaryScreen } from './summary.ts'
 import { bagScreen } from './bag.ts'
 import { dexScreen } from './dex.ts'
 import { shopScreen } from './shop.ts'
+import { exchangeScreen } from './exchange.ts'
+import { manualScreen } from './manual.ts'
 import { boxScreen } from './box.ts'
 import { worldMapScreen } from './worldmap.ts'
 import { questsScreen, questHudText } from './quests.ts'
@@ -61,6 +63,8 @@ export function createScreens(ctx: GameContext): ScreensHandle {
     bag: (mode) => bagScreen(env, mode),
     dex: () => dexScreen(env),
     shop: (itemIds, opts) => shopScreen(env, itemIds, opts),
+    exchange: (desk) => exchangeScreen(env, desk),
+    manual: () => manualScreen(env),
     box: () => boxScreen(env),
     worldMap: (opts) => worldMapScreen(env, opts),
     quests: () => questsScreen(env),

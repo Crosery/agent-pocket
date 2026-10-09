@@ -258,6 +258,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     const map = p.map
     const a = actionsFor(ev, map)
     for (const f of a.flags) ctx.save.flags[expand(f.flag)] = f.value
+    ctx.events.emit('world:event', { id: def.id, hidden: def.hidden })
     const title = eventTitle(def)
     const S = GPC.start
     if (def.hidden) {

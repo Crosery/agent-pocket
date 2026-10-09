@@ -17,6 +17,7 @@ import type {
   Dir, GameMap, NpcDef, NpcRole, QuestDef, ScriptStep, SpeciesDef, SpeciesPick, TrainerDef, TrainerPartyEntry, World,
 } from '../types.ts'
 import { CONTENT, terrainId, typeEffectiveness } from '../content/index.ts'
+import { EXCHANGE } from '../gameplay/exchange.ts'
 import { worldAnchors, worldBuildInfo } from './index.ts'
 import { WORLD_CONTENT } from './data.ts'
 import { COLLISION_FREE, COLLISION_WATER, DIR_DX, DIR_DY, DIRS, buildCollision, canStep, inBounds } from './collision.ts'
@@ -35,9 +36,15 @@ import questsJson from '../../../content/world/story/quests.json' with { type: '
 import npcsTownsJson from '../../../content/world/story/npcs/towns.json' with { type: 'json' }
 import npcsStoryJson from '../../../content/world/story/npcs/story.json' with { type: 'json' }
 import npcsQuestsJson from '../../../content/world/story/npcs/quests.json' with { type: 'json' }
+import npcsTutorialJson from '../../../content/world/story/npcs/tutorial.json' with { type: 'json' }
+import npcsBranchesJson from '../../../content/world/story/npcs/branches.json' with { type: 'json' }
+import npcsHiddenJson from '../../../content/world/story/npcs/hidden.json' with { type: 'json' }
 import trainersRoutesJson from '../../../content/world/story/trainers/routes.json' with { type: 'json' }
 import trainersGymsJson from '../../../content/world/story/trainers/gyms.json' with { type: 'json' }
 import trainersStoryJson from '../../../content/world/story/trainers/story.json' with { type: 'json' }
+import trainersTutorialJson from '../../../content/world/story/trainers/tutorial.json' with { type: 'json' }
+import trainersBranchesJson from '../../../content/world/story/trainers/branches.json' with { type: 'json' }
+import trainersHiddenJson from '../../../content/world/story/trainers/hidden.json' with { type: 'json' }
 import populationJson from '../../../content/world/story/population.json' with { type: 'json' }
 import legendsJson from '../../../content/world/story/legends.json' with { type: 'json' }
 import bountiesJson from '../../../content/world/story/bounties.json' with { type: 'json' }
@@ -276,8 +283,8 @@ export const STORY_CONTENT: StoryContent = {
   services: servicesJson as unknown as ServicesFile,
   rival: rivalJson as unknown as RivalFile,
   quests: questsJson as unknown as QuestSpec[],
-  npcGroups: mergeGroups('npcs', [npcsTownsJson, npcsStoryJson, npcsQuestsJson] as unknown as Record<string, NpcSpec[]>[], LOAD_PROBLEMS),
-  trainerGroups: mergeGroups('trainers', [trainersRoutesJson, trainersGymsJson, trainersStoryJson] as unknown as Record<string, TrainerGroup>[], LOAD_PROBLEMS),
+  npcGroups: mergeGroups('npcs', [npcsTownsJson, npcsStoryJson, npcsQuestsJson, npcsTutorialJson, npcsBranchesJson, npcsHiddenJson] as unknown as Record<string, NpcSpec[]>[], LOAD_PROBLEMS),
+  trainerGroups: mergeGroups('trainers', [trainersRoutesJson, trainersGymsJson, trainersStoryJson, trainersTutorialJson, trainersBranchesJson, trainersHiddenJson] as unknown as Record<string, TrainerGroup>[], LOAD_PROBLEMS),
   population: populationJson as unknown as PopulationFile,
   legends: legendsJson as unknown as LegendsFile,
   bounties: bountiesJson as unknown as BountiesFile,
@@ -1224,6 +1231,8 @@ class StoryBuilder implements PopHost {
             case 'wait': if (typeof s.ms !== 'number' || s.ms < 0) bad('bad ms'); break
             case 'fade': if (typeof s.out !== 'boolean') bad('fade.out must be boolean'); break
             case 'unlockTown': if (!w.towns.some((t) => t.id === s.town)) bad(`unknown town "${s.town}"`); break
+            case 'exchange': if (!EXCHANGE.desks[s.desk]) bad(`unknown exchange desk "${s.desk}"`); break
+            case 'teach': if (typeof s.lesson !== 'string' || !s.lesson) bad('teach needs a lesson id'); break
             case 'chooseStarter': case 'heal': case 'openBox': case 'setRespawn': case 'end': break
             default: bad('unknown op')
           }
