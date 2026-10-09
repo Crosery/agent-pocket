@@ -1,5 +1,5 @@
-// Layout audit for every screen at 1280x720, 1920x1080 and the phone viewports 390x844, 360x780 (portrait) and 844x390
-// (landscape), all at DPR 3 with touch emulation (issues #29, #33).
+// Layout audit for every screen at 1000x655 (DPR 1.25), 1280x720, 1920x1080 and the phone viewports 390x844, 360x780
+// (portrait), 844x390 and 932x430 (landscape), phones at DPR 3 with touch emulation (issues #29, #33, #39).
 // Run through ego-browser against a dev server (?dev=1) in its own TaskSpace and an isolated save slot:
 //   ego-browser nodejs <<'JS'
 //   const { runLayoutAudit } = await import('file:///<repo>/scripts/qa-layout-audit.mjs')
@@ -8,6 +8,9 @@
 // Writes output/29/<phase>/<viewport>/<screen>.png plus report.json and report.md (screen x viewport matrix).
 // The in-page auditor (auditLayout) flags text that is clipped, cut by the viewport, covered, or overlapping other
 // text, controls that overlap each other, model names that wrap past two lines, and pages that scroll sideways.
+// Issue #39 limits (content/ui.json audit): text outside the size range of its viewport class (font-size), text spilling out of
+// the button or frame it sits in (text-spill), and scrollers a viewport class does not list (primary-overflow). A case's
+// demote list turns a finding in a screen another issue owns into a '*' warning.
 // Ellipsis, line clamps, rolling chat lines, tiny text and small touch targets are warnings. Also checks that name tags
 // sit just above the opaque head of their actor, and worst-case battle HUD / effect inspector (status + volatiles + stages).
 // 'hud-phone' (touch viewports only, incl. 932x430) shows every transient overworld HUD piece at once - region banner, toasts, tip,
@@ -21,9 +24,12 @@ import { fileURLToPath } from 'node:url'
 import { readFileSync } from 'node:fs'
 import { setHUDViewport } from './qa-hud-layout.mjs'
 
-const UI_PHONE_PAD = JSON.parse(readFileSync(new URL('../content/ui.json', import.meta.url), 'utf8')).phoneHud.audit.playerPadPx
+const UI_JSON = JSON.parse(readFileSync(new URL('../content/ui.json', import.meta.url), 'utf8'))
+const UI_PHONE_PAD = UI_JSON.phoneHud.audit.playerPadPx
+const UI_AUDIT = UI_JSON.audit
 
 export const VIEWPORTS = [
+  { name: 'd1000', width: 1000, height: 655, dpr: 1.25 },
   { name: 'd1280', width: 1280, height: 720, dpr: 1 },
   { name: 'd1920', width: 1920, height: 1080, dpr: 1 },
   { name: 'm390', width: 390, height: 844, dpr: 3, touch: true },
@@ -34,7 +40,12 @@ export const VIEWPORTS = [
 
 /** Runs inside the page (serialised by page.evaluate): must not reference anything outside itself. */
 export function auditLayout(opts) {
-  const { scopeSel, ignoreSel, minFont } = opts
+  const { scopeSel, ignoreSel, minFont, limits = null, screenScrollOk = [] } = opts
+  const cls = matchMedia('(pointer: coarse)').matches ? 'phone' : 'desktop'
+  // Text range (px) and the scrollers this viewport class may have (content/ui.json audit); the max follows the window height.
+  const fontPx = limits ? { min: limits.fontPx[cls].min, max: Math.max(limits.fontPx[cls].min, innerHeight * limits.fontPx[cls].maxVhFrac) } : null
+  const scrollOk = limits ? [...limits.scrollOk[cls], ...screenScrollOk] : []
+  const fontSeen = { min: Infinity, max: 0 }
   const vw = innerWidth, vh = innerHeight
   const eps = 1.5
   const ROLLING = '.ap-chat-log' // windows that roll old lines off by design
@@ -156,7 +167,30 @@ export function auditLayout(opts) {
     if (vis && (vis.l < -eps || vis.t < -eps || vis.r > vw + eps || vis.b > vh + eps)) violations.push({ type: 'offscreen', sel, text, detail: `[${Math.round(vis.l)},${Math.round(vis.t)} .. ${Math.round(vis.r)},${Math.round(vis.b)}] in ${vw}x${vh}` })
     if (!vis) continue
     const fs = parseFloat(cs.fontSize)
-    if (fs < minFont) warnings.push({ type: 'small-text', sel, text, detail: `${fs.toFixed(1)}px` })
+    fontSeen.min = Math.min(fontSeen.min, fs); fontSeen.max = Math.max(fontSeen.max, fs)
+    if (fontPx && (fs > fontPx.max + 0.05 || fs < fontPx.min - 0.05)) violations.push({ type: 'font-size', sel, text, detail: `${fs.toFixed(1)}px outside ${fontPx.min}-${fontPx.max}px` })
+    else if (!fontPx && fs < minFont) warnings.push({ type: 'small-text', sel, text, detail: `${fs.toFixed(1)}px` })
+    // Text that spills out of the button or frame it sits in without being clipped: the nearest bordered/filled ancestor
+    // (scroll containers are skipped, their clipping is judged above).
+    const framed = (a) => {
+      const c = getComputedStyle(a)
+      if (a.tagName === 'BUTTON' && (c.backgroundImage !== 'none' || Number((c.backgroundColor.match(/[\d.]+/g) ?? [])[3] ?? 1) > 0.05 || parseFloat(c.borderTopWidth) > 0)) return true
+      const bg = c.backgroundColor.match(/[\d.]+/g) ?? []
+      if (bg.length >= 4 ? Number(bg[3]) > 0.25 : bg.length === 3) return true
+      return ['Top', 'Right', 'Bottom', 'Left'].some((k) => parseFloat(c[`border${k}Width`]) > 0 && !/rgba\(\d+, \d+, \d+, 0\)/.test(c[`border${k}Color`]))
+    }
+    let frame = null
+    for (let a = el; a && roots.some((r) => r.contains(a)) && !a.classList.contains('aps-screen'); a = a.parentElement) {
+      const c = getComputedStyle(a)
+      if (['auto', 'scroll'].includes(c.overflowY) || ['auto', 'scroll'].includes(c.overflowX)) break
+      if (framed(a)) { frame = a; break }
+    }
+    if (frame && frame !== el.closest('.aps-frame')) {
+      const fr = frame.getBoundingClientRect()
+      let worst = 0
+      for (const q of x.lines) worst = Math.max(worst, fr.left - q.l, q.r - fr.right, fr.top - q.t, q.b - fr.bottom)
+      if (worst > 2 && !cl.some((c) => c.a === frame && (c.hx || c.hy))) violations.push({ type: 'text-spill', sel, text, detail: `${worst.toFixed(1)}px outside ${label(frame)}` })
+    }
     // Five probes over the first and last visible line: text half hidden under something is as bad as fully hidden.
     const first = x.lines[0], last = x.lines[x.lines.length - 1]
     const probes = [[(first.l + first.r) / 2, (first.t + first.b) / 2], [first.l + 2, first.t + 2], [first.r - 2, first.b - 2], [last.l + 2, last.b - 2], [last.r - 2, last.t + 2]]
@@ -224,7 +258,18 @@ export function auditLayout(opts) {
     const screens = el.scrollHeight / vh
     if (!scroll || screens > scroll.screens) scroll = { sel: label(el), screens: Math.round(screens * 100) / 100 }
   }
-  return { violations: uniq(violations), warnings: uniq(warnings), stats: { texts: texts.length, controls: controls.length, scroll } }
+  // Every scroller that holds more than its box: only list-like regions the screen names as scrollable may do so.
+  const scrollers = []
+  for (const el of all) {
+    const cs = getComputedStyle(el)
+    if (!['auto', 'scroll'].includes(cs.overflowY) || !shown(el) || el.scrollHeight <= el.clientHeight + 4) continue
+    const ratio = Math.round((el.scrollHeight / el.clientHeight) * 100) / 100
+    const ok = scrollOk.length > 0 && !!el.closest(scrollOk.join(','))
+    scrollers.push({ sel: label(el), ratio, ok })
+    if (!ok) violations.push({ type: 'primary-overflow', sel: label(el), text: '', detail: `content is ${ratio}x its box (${el.clientHeight}px)` })
+  }
+  const fontStats = texts.length && isFinite(fontSeen.min) ? { min: Math.round(fontSeen.min * 10) / 10, max: Math.round(fontSeen.max * 10) / 10 } : null
+  return { violations: uniq(violations), warnings: uniq(warnings), stats: { texts: texts.length, controls: controls.length, scroll, scrollers, font: fontStats } }
 }
 
 // ---- name tags ---------------------------------------------------------------------------------------------------------
@@ -411,6 +456,12 @@ const phoneHudOpen = (withTip) => async (page) => {
 }
 
 const run = (fn) => async (page) => { await page.evaluate(fn) }
+const viaPause = (label) => async (page) => {
+  await page.evaluate(() => { void window.__AP.screens.pauseMenu() })
+  await page.waitForTimeout(800)
+  await page.evaluate((text) => { [...document.querySelectorAll('.aps-pause-row')].find((r) => r.textContent.trim() === text)?.click() }, label)
+  await page.waitForTimeout(700)
+}
 
 export const SCREENS = [
   { id: 'hud', keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', open: async (page) => {
@@ -427,7 +478,7 @@ export const SCREENS = [
   // Touch viewports only: see auditHudZones.
   { id: 'hud-phone', touchOnly: true, keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', tip: true, hudZones: true, after: toLab, open: phoneHudOpen(true) },
   { id: 'hud-phone-chat', touchOnly: true, keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', tip: true, hudZones: true, noReshow: true, after: toLab, open: phoneHudOpen(false) },
-  { id: 'hud-events', scope: '.ap-evdetails', open: async (page) => { await page.evaluate(() => document.querySelector('.ap-evtoggle')?.click()) }, closeKey: 'Escape' },
+  { id: 'hud-events', scrollOk: ['.ap-evbody'], scope: '.ap-evdetails', open: async (page) => { await page.evaluate(() => document.querySelector('.ap-evtoggle')?.click()) }, closeKey: 'Escape' },
   { id: 'pause', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.pauseMenu() }) },
   { id: 'party', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.party('view') }) },
   { id: 'party-select', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.party('select', { title: '选择要出战的智灵' }) }) },
@@ -439,17 +490,23 @@ export const SCREENS = [
   { id: 'dex-detail', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await page.evaluate(() => { void window.__AP.screens.dex() }); await page.waitForTimeout(700); await page.keyboard.press('KeyZ') } },
   { id: 'box', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.box() }) },
   { id: 'shop', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.shop(Object.keys(window.__AP.data.items).slice(0, 40)) }) },
-  { id: 'map', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.worldMap({ fly: false }) }) },
+  { id: 'map', demote: ['font-size'], scrollOk: ['.aps-map-side'], scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.worldMap({ fly: false }) }) },
   { id: 'quests', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.quests() }) },
   { id: 'settings', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.settings() }) },
-  { id: 'online', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.online() }) },
+  { id: 'online', scrollOk: ['.ap-panel-body'], scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.online() }) },
+  // Pause-menu entries opened by clicking their row.
+  { id: 'research', scope: '.ap-kit-stack > *:last-child', open: viaPause('智灵研究') },
+  { id: 'intel', scope: '.ap-kit-stack > *:last-child', open: viaPause('情报') },
+  { id: 'manual', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await page.evaluate(() => { void window.__AP.screens.manual() }) } },
+  { id: 'save', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await page.evaluate(() => { void window.__AP.screens.settings() }); await page.waitForTimeout(700); await page.keyboard.press('KeyW') } },
+  { id: 'save-code', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.importSave() }) },
   { id: 'learn-move', scope: '.ap-kit-stack > *:last-child', open: run(() => {
     const cr = window.__AP.save.party[0]
     const moveId = Object.values(window.__AP.data.moves).find((m) => !cr.moves.some((s) => s.id === m.id))?.id
     void window.__AP.screens.learnMove(cr, moveId)
   }) },
-  { id: 'newgame', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.newGame() }) },
-  { id: 'starter', scope: '.ap-kit-stack > *:last-child', open: run(() => {
+  { id: 'newgame', demote: ['font-size'], scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.newGame() }) },
+  { id: 'starter', demote: ['font-size'], scope: '.ap-kit-stack > *:last-child', open: run(() => {
     const ctx = window.__AP
     const weight = (s) => Math.max([...s.nameZh].length, s.nameEn.length * 0.6)
     void ctx.screens.starter([...ctx.data.speciesList].sort((a, b) => weight(b) - weight(a)).slice(0, 3))
@@ -475,18 +532,18 @@ export const SCREENS = [
 ]
 
 const BATTLE_SCREENS = [
-  { id: 'battle-command', scope: '.apb-root', open: async (page) => { await waitCommand(page); await waitHud(page) } },
-  { id: 'battle-moves', scope: '.apb-root', open: async (page) => { await waitCommand(page); await page.keyboard.press('KeyZ'); await page.waitForTimeout(700) } },
+  { id: 'battle-command', demote: ['font-size'], scope: '.apb-root', open: async (page) => { await waitCommand(page); await waitHud(page) } },
+  { id: 'battle-moves', demote: ['font-size'], scope: '.apb-root', open: async (page) => { await waitCommand(page); await page.keyboard.press('KeyZ'); await page.waitForTimeout(700) } },
   // The longest battle-phase tip (typeMatchup) docked in the top strip, audited with the whole battle UI (status windows, message box, command bar).
-  { id: 'battle-tip', scope: null, ignore: '.ap-l-chat, .ap-l-overlay canvas', tip: true, open: async (page) => {
+  { id: 'battle-tip', demote: ['font-size'], scope: null, ignore: '.ap-l-chat, .ap-l-overlay canvas', tip: true, open: async (page) => {
     await closeInspector(page)
     await page.evaluate(() => { window.__AP.save.settings.showTips = true; window.__apOnboarding.debugShow('typeMatchup') })
     await page.waitForTimeout(1200)
   } },
-  { id: 'battle-effects', scope: '.apb-effects-dialog', open: async (page) => { await page.keyboard.press('KeyX'); await page.waitForTimeout(300); await page.keyboard.press('Tab'); await page.waitForTimeout(700) } },
+  { id: 'battle-effects', demote: ['text-spill', 'font-size', 'primary-overflow'], scope: '.apb-effects-dialog', open: async (page) => { await page.keyboard.press('KeyX'); await page.waitForTimeout(300); await page.keyboard.press('Tab'); await page.waitForTimeout(700) } },
   // Worst case: a status, four volatiles and all seven stat stages on both sides, built on real status panels.
-  { id: 'battle-hud-heavy', scope: '.apb-root', open: async (page) => { await closeInspector(page); await mountHeavy(page, false) } },
-  { id: 'battle-effects-heavy', scope: '.apb-effects-dialog', open: async (page) => { await closeInspector(page); await mountHeavy(page, true) } },
+  { id: 'battle-hud-heavy', demote: ['font-size'], scope: '.apb-root', open: async (page) => { await closeInspector(page); await mountHeavy(page, false) } },
+  { id: 'battle-effects-heavy', demote: ['text-spill', 'font-size', 'primary-overflow'], scrollOk: ['.ap-panel-body'], scope: '.apb-effects-dialog', open: async (page) => { await closeInspector(page); await mountHeavy(page, true) } },
 ]
 
 async function closeInspector(page) {
@@ -580,10 +637,16 @@ export async function measureScreen(page, screen, shot) {
   await page.waitForTimeout(500)
   // a map or scene fade that is still going would "cover" the whole page
   await page.waitForFunction(() => { const f = document.querySelector('.ap-fade'); return !f || parseFloat(getComputedStyle(f).opacity) < 0.02 }, undefined, { timeout: 8000 }).catch(() => {})
-  const run = () => page.evaluate(auditLayout, { scopeSel: screen.scope, ignoreSel: screen.ignore ?? '', minFont: 9 })
+  const run = () => page.evaluate(auditLayout, { scopeSel: screen.scope, ignoreSel: screen.ignore ?? '', minFont: 9, limits: UI_AUDIT, screenScrollOk: screen.scrollOk ?? [] })
   let result = await run()
   // A screen that is still sliding in is not a layout defect: look once more before calling the scope missing.
   if (result.violations.some((v) => v.type === 'no-scope')) { await page.waitForTimeout(1800); result = await run() }
+  // Findings in screens another issue owns are listed as warnings until that issue lands (screen.demote: violation types).
+  if (screen.demote?.length) {
+    const moved = result.violations.filter((v) => screen.demote.includes(v.type))
+    result.violations = result.violations.filter((v) => !screen.demote.includes(v.type))
+    result.warnings = [...result.warnings, ...moved.map((v) => ({ ...v, type: `${v.type}*` }))]
+  }
   await page.screenshot({ path: shot })
   return result
 }
