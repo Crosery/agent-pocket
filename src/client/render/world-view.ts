@@ -31,7 +31,7 @@ import { createLeafSystem } from './world/leaves.ts'
 import { createLightRig, type LightSource } from './world/lights.ts'
 import { createLiquidMaterials } from './world/liquids.ts'
 import { applyOcclusion, bindOcclusion, setOcclusionView } from './world/occlusion.ts'
-import { createOverlayLayer } from './world/overlay.ts'
+import { createOverlayLayer, tagOverSprite, type SpriteFootprint } from './world/overlay.ts'
 import { createAurora, createParticleField, type ParticleField } from './world/particles.ts'
 import { createPropLayer, type Canopy, type PropChunk, type ShaftAnchor } from './world/props.ts'
 import { createQuestTrail } from './world/quest-trail.ts'
@@ -470,6 +470,9 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
 
   const _v = new THREE.Vector3()
   const _head = new THREE.Vector3()
+  const _foot = new THREE.Vector3()
+  /** Per-frame screen footprint of each live actor (name-tag overlap test); entries are reused. */
+  const covers: (SpriteFootprint & { e: ActorEntry })[] = []
   /** '#rrggbb' split-tone colour -> luminance-neutral RGB multipliers (#808080 = no tint): the tint shifts hue only. */
   const tint = (hex: string, out: Vec3 = [1, 1, 1]): Vec3 => {
     const c = hexToRgb(hex)
@@ -769,11 +772,23 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       const showNames = settings().showNames
       const maxD = RENDER.overlay.maxDistance
       const pitch = cameraPitch(camera)
+      let n = 0
       for (const e of registry) {
         e.head(_head, pitch)
         const sp = view.worldToScreen(_head.x, _head.y, _head.z)
         const near = _head.distanceTo(camera.position) < maxD
-        e.tag.place(sp.x, sp.y, sp.visible && near && e.isVisible(), showNames)
+        const on = sp.visible && near && e.isVisible()
+        e.tag.place(sp.x, sp.y, on, showNames)
+        _foot.setFromMatrixPosition(e.object.matrixWorld)
+        const c = (covers[n] ??= { e, x: 0, top: 0, bottom: 0, on: false })
+        c.e = e; c.x = sp.x; c.top = sp.y; c.bottom = view.worldToScreen(_foot.x, _foot.y, _foot.z).y; c.on = on
+        n++
+      }
+      // a name tag lying over another actor's sprite fades so that actor (the follower behind the player) stays readable
+      for (let i = 0; i < n; i++) {
+        const c = covers[i]
+        const r = c.on ? c.e.tag.rect() : null
+        c.e.tag.dim(!!r && tagOverSprite(r, covers, n, i, RENDER.overlay.coverHalfWidth))
       }
       return { scene, camera, focus, post }
     },

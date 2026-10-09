@@ -55,7 +55,7 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
   const bossBox = el('div', 'apb-st-boss')
   bossBox.hidden = true
   append(p.body, [
-    el('div', 'apb-st-head', [name, shiny, rarity, lv]),
+    el('div', 'apb-st-head', [name, el('span', 'apb-st-badges', [shiny, rarity, lv])]),
     bossBox,
     tagRow,
     effects,

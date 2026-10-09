@@ -42,8 +42,10 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 .apb-status.is-away.is-own { opacity: 0.35; }
 /* Before the first send-out the own corner keeps its frame but shows no placeholder content. */
 .apb-status.is-empty > * { visibility: hidden; }
-.apb-st-head { display: flex; align-items: flex-start; gap: calc(var(--u) * 4); white-space: normal; min-height: calc(var(--u) * 16); }
-.apb-st-name { flex: 1 1 auto; min-width: 0; color: var(--ap-text); line-height: 1.05; }
+.apb-st-head { display: flex; flex-wrap: wrap; align-items: flex-start; gap: calc(var(--u) * 1) calc(var(--u) * 4); white-space: normal; min-height: calc(var(--u) * 16); }
+/* A name too long to share the row with the badges keeps its own line; shiny / rarity / Lv drop together to the right of the next one. */
+.apb-st-name { flex: 1 1 auto; min-width: 0; max-width: 100%; color: var(--ap-text); line-height: 1.05; }
+.apb-st-badges { flex: none; margin-left: auto; display: flex; align-items: flex-start; gap: calc(var(--u) * 4); }
 .apb-st-shiny { color: var(--ap-gold-hi); }
 .apb-st-lv { color: var(--ap-gold-hi); flex: none; }
 .apb-st-tags { display: flex; align-items: center; gap: calc(var(--u) * 4); height: calc(var(--u) * 13); margin: calc(var(--u) * 2) 0; }

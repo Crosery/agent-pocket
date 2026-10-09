@@ -47,7 +47,7 @@ html.ap-battle-on .ap-objective { display: none; }
 .ap-l-tips.is-right { justify-content: flex-end; }
 .ap-l-tips.is-right .ap-tip { width: calc(var(--u) * 176); margin: 0 calc(var(--u) * 8 + env(safe-area-inset-right, 0px)) max(calc(var(--u) * 86), calc(var(--ap-bottom-inset, 0px) + var(--u) * 8 + env(safe-area-inset-bottom, 0px))) 0; }
 /* In battle the card docks in the top strip right of the foe's status window: above both creatures, clear of the HP windows and the command bar. */
-.ap-l-tips.is-battle .ap-tip { width: calc(100% - var(--u) * 200 - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); max-width: calc(var(--u) * 340); }
+.ap-l-tips.is-battle .ap-tip { width: calc(100% - var(--u) * 200 - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); max-width: calc(var(--u) * 420); }
 html.ap-compact .ap-l-tips.is-battle .ap-tip { width: calc(100% - var(--u) * 184 - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); }
 .ap-l-tips.is-battle .ap-tip-foot { position: absolute; top: calc(var(--u) * 4); right: calc(var(--u) * 10 + max(24px, calc(var(--u) * 16))); margin: 0; }
 .ap-l-tips.is-battle .ap-tip-foot-text { display: none; }
