@@ -17,8 +17,8 @@ import { parseRegionId, provincePoint } from '../src/shared/world/frontier/regio
 import type { FrontierSite } from '../src/shared/world/frontier/sites.ts'
 
 // Budgets (generous for slow CI; typical numbers are reported in docs/world.md).
-const CHUNK_BUDGET_MS = 8
-const SAMPLE_BUDGET_MS = 600
+const CHUNK_BUDGET_MS = 8 * Number(process.env.AP_PERF_SCALE ?? 1)
+const SAMPLE_BUDGET_MS = 600 * Number(process.env.AP_PERF_SCALE ?? 1)
 
 const world = buildWorld()
 const info = worldBuildInfo(world)
