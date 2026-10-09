@@ -144,11 +144,11 @@ test('mechanics: each boss has its own counterplay', () => {
   assert.ok(formsIn(C('alpha')).has('dazed'))
   assert.ok(firedIn(C('alpha')).has('shift') && firedIn(P('alpha')).has('repeat'))
 
-  // Claude Opus: extended thinking buys it growth and a charged answer; any action but an attack interrupts it.
-  assert.deepEqual([...formsIn(C('opus'))].sort(), ['answering', 'snapped', 'thinking'])
-  assert.ok(firedIn(P('opus')).has('deliver') && firedIn(P('opus')).has('brood'), 'uncut thinking pays off')
-  assert.ok(firedIn(C('opus')).has('esc') || firedIn(C('opus')).has('esc-switch') || firedIn(C('opus')).has('esc-item'))
-  assert.ok(P('opus').some((r) => r.telegraphs > 0), 'the answer is telegraphed')
+  // Claude Opus: the risk control flags and bans the account (CN faster); the residential IP prevents that.
+  assert.ok(firedIn(P('opus')).has('ban') && firedIn(P('opus')).has('flag-cn'))
+  assert.ok(meterPeak(P('opus'), 'risk') === 3)
+  assert.ok(firedIn(C('opus')).has('cloak'))
+  assert.ok(C('opus').filter((r) => r.fired.ban > 0).length < P('opus').filter((r) => r.fired.ban > 0).length / 2, 'the IP keeps most accounts alive')
 
   // ChatGPT: it cannot bring itself to hit models released before 2025 (the #keep4o white moonlight).
   assert.ok(meterPeak(C('chatgpt'), 'warm') === 1 && firedIn(C('chatgpt')).has('soften'))
@@ -158,12 +158,15 @@ test('mechanics: each boss has its own counterplay', () => {
   assert.ok(formsIn(C('unitree')).has('fallen') && firedIn(C('unitree')).has('slip'))
   assert.ok(!formsIn(P('unitree')).has('fallen'), 'it only falls on the peel')
 
-  // Grok: the type chart is argued with: super effective hits are cut, resisted ones land.
-  assert.ok(firedIn(P('grok')).size === 0, 'the contrarian rule is a standing rule, not a trigger')
+  // Grok: it uploads (steals) what it sees and trains on it; pulling the network plug cuts that.
+  assert.ok(firedIn(P('grok')).has('upload') && meterPeak(P('grok'), 'loot') === 3)
+  assert.ok(!firedIn(P('grok')).has('unplug'), 'without the cable nobody pulls the plug (a creature that knows Blackout can, rarely)')
+  assert.ok(firedIn(C('grok')).has('unplug') && meterPeak(C('grok'), 'loot') < 3, 'with the network down it never gets to train on three of your moves')
 
-  // OpenClaw: every dose of medicine feeds the lobster; three of them and it molts.
-  assert.ok(firedIn(P('openclaw')).has('feed') && !firedIn(C('openclaw')).has('feed'))
-  assert.ok(formsIn(P('openclaw')).has('molted') || meterPeak(P('openclaw'), 'fed') >= 1)
+  // OpenClaw: a malicious skill is loaded every 4 turns and injected a turn later; a key revoked in that window reflects it.
+  assert.ok(firedIn(P('openclaw')).has('skill') && firedIn(P('openclaw')).has('hijack'))
+  assert.ok(!formsIn(P('openclaw')).has('compromised'), 'it only falls to its own skill when the key is revoked in time')
+  assert.ok(formsIn(C('openclaw')).has('compromised') && firedIn(C('openclaw')).has('revoke'))
 
   // Gemini: the small rock makes it follow its own advice; it digests after a while.
   assert.ok(formsIn(C('gemini')).has('overview') && firedIn(C('gemini')).has('rock'))
@@ -200,17 +203,52 @@ function withoutRules<T>(bossId: string, fn: () => T): T {
   try { return fn() } finally { forms.forEach((f, i) => { f.rules = saved[i] }) }
 }
 
-test('rules: Grok argues with the type chart (super effective cut, resisted raised)', () => {
-  const types = CONTENT.species['grok-4-7'].types
-  const pick = (want: (e: number) => boolean) => CONTENT.moveList.find((m) => m.power >= 60 && m.category !== 'status' && want(typeEffectiveness(m.type, types)) && m.effects.every((x) => x.kind !== 'multiHit'))!
-  const sup = pick((e) => e > 1)
-  const res = pick((e) => e < 1)
-  const neu = pick((e) => e === 1)
-  for (const [m, mul] of [[sup, 0.1], [neu, 0.45], [res, 3]] as const) {
-    const ruled = firstTurn('grok', 'gpt-5-6', m.id, 5, true).toBoss
-    const plain = withoutRules('grok', () => firstTurn('grok', 'gpt-5-6', m.id, 5, true).toBoss)
-    assert.ok(plain > 0 && ruled > 0, `${m.id} lands`)
-    assert.ok(Math.abs(ruled / plain - mul) < 0.12 * Math.max(1, mul), `${m.id} (${typeEffectiveness(m.type, types)}x): ${ruled} vs ${plain} should be about x${mul}`)
+test('rules: Grok goes offline in a blackout (half damage, takes x2.5), and the cable puts it there', () => {
+  const run = () => {
+    const def = byId('grok')
+    const party = makeParty(['gpt-5-6'], def.level - 2, 5)
+    party[0].moves = [{ id: 'token-tackle', pp: 20, ppMax: 20 }]
+    const { engine } = startBossBattle('grok', party, { seed: 5, items: { 'ethernet-cable': 2 }, expGain: false })
+    const idle = () => engine.applyBossState({ ...engine.extractBossState()!, skip: 1 })
+    idle()
+    assert.equal(engine.choose(0, { kind: 'item', itemId: 'ethernet-cable', partyIndex: 0 }), null)
+    engine.choose(1, { kind: 'move', moveIndex: 0 })
+    engine.step()
+    assert.equal(engine.weather, 'blackout')
+    idle()
+    engine.choose(0, { kind: 'move', moveIndex: 0 })
+    engine.choose(1, { kind: 'move', moveIndex: 0 })
+    const dmg = engine.step().filter((e): e is Extract<BattleEvent, { t: 'damage' }> => e.t === 'damage' && e.side === 1)
+    return dmg.reduce((n, e) => n + e.amount, 0)
+  }
+  const ruled = run()
+  const plain = withoutRules('grok', run)
+  assert.ok(plain > 0 && Math.abs(ruled / plain - 2.5) < 0.3, `${ruled} vs ${plain} should be about x2.5`)
+})
+
+test('dsl: type-effectiveness rules and foeMedicine triggers work on any boss (no boss uses them right now)', () => {
+  const def = byId('astra')
+  const form = def.forms[def.initialForm]
+  const saved = { rules: form.rules, triggers: def.triggers }
+  try {
+    const types = CONTENT.species[def.species].types
+    const pick = (want: (e: number) => boolean) => CONTENT.moveList.find((m) => m.power >= 60 && m.category !== 'status' && want(typeEffectiveness(m.type, types)) && m.effects.every((x) => x.kind !== 'multiHit'))!
+    const sup = pick((e) => e > 1)
+    const res = pick((e) => e > 0 && e < 1)
+    const plain = [sup, res].map((m) => firstTurn('astra', 'gpt-5-6', m.id, 5, true).toBoss)
+    form.rules = [{ id: 'argue', takenMul: [{ mul: 0.1, effectiveness: 'super' }, { mul: 3, effectiveness: 'resisted' }] }]
+    const ruled = [sup, res].map((m) => firstTurn('astra', 'gpt-5-6', m.id, 5, true).toBoss)
+    assert.ok(Math.abs(ruled[0] / plain[0] - 0.1) < 0.05, `super effective: ${ruled[0]} vs ${plain[0]}`)
+    assert.ok(Math.abs(ruled[1] / plain[1] - 3) < 0.4, `resisted: ${ruled[1]} vs ${plain[1]}`)
+
+    def.triggers = [{ id: 'sip', on: 'foeMedicine', times: 0, do: [{ op: 'stages', target: 'boss', stats: { atk: 1 } }] }]
+    const s = stage('astra', ['gpt-5-6'], { items: { 'hyper-cache': 2, 'special-sauce': 1 } })
+    s.foe().hp = Math.floor(s.foe().hp / 2)
+    assert.equal(s.turn({ kind: 'item', itemId: 'hyper-cache', partyIndex: 0 }).fired.sip, 1, 'a dose of medicine fires foeMedicine')
+    assert.equal(s.turn({ kind: 'move', moveIndex: 0 }).fired.sip, 1, 'attacking does not')
+  } finally {
+    form.rules = saved.rules
+    def.triggers = saved.triggers
   }
 })
 
@@ -225,37 +263,97 @@ test('rules: ChatGPT cannot hit a model released before 2025, but hits a new one
   assert.equal(fresh, freshPlain, 'a new model gets no mercy')
 })
 
-test('events: using medicine feeds OpenClaw, and interrupts Opus when it is thinking', () => {
-  const claw = byId('openclaw')
-  const party = makeParty(SIM_PARTY, claw.level - 2, 1)
-  party[0].hp = Math.floor(party[0].hp / 2)
-  const { engine } = startBossBattle('openclaw', party, { seed: 3, items: { 'hyper-cache': 2 }, expGain: false })
-  assert.equal(engine.choose(0, { kind: 'item', itemId: 'hyper-cache', partyIndex: 0 }), null)
-  engine.choose(1, { kind: 'move', moveIndex: 0 })
-  engine.step()
-  const st = engine.extractBossState()!
-  assert.equal(st.meters.fed, 1)
-  assert.ok((st.stages.atk ?? 0) >= 1 && (st.stages.spa ?? 0) >= 1, 'the dose raised its attack and special attack')
-
-  const opus = byId('opus')
-  const thinking = (action: 'switch' | 'status' | 'attack') => {
-    const { engine: e } = startBossBattle('opus', makeParty(SIM_PARTY, opus.level - 2, 1), { seed: 9, expGain: false })
-    const first = e.extractBossState()!
-    first.form = 'thinking'
-    e.applyBossState(first)
-    if (action === 'switch') e.choose(0, { kind: 'switch', partyIndex: 1 })
-    else if (action === 'status') {
-      const lead = e.party(0)[0]
-      lead.moves = [{ id: 'focus-mode', pp: 5, ppMax: 5 }]
-      e.choose(0, { kind: 'move', moveIndex: 0 })
-    } else e.choose(0, { kind: 'move', moveIndex: 0 })
-    e.choose(1, { kind: 'move', moveIndex: 0 })
-    e.step()
-    return e.extractBossState()!.form
+/** Boss battle with a first party member of `species`; `idle` keeps the boss from acting while the player's actions run. */
+function stage(bossId: string, species: string[], opts: { items?: Record<string, number>; seed?: number } = {}) {
+  const def = byId(bossId)
+  const party = makeParty(species, def.level - 2, opts.seed ?? 3)
+  const { engine } = startBossBattle(bossId, party, { seed: opts.seed ?? 3, items: opts.items, expGain: false })
+  const turn = (action: Parameters<typeof engine.choose>[1]) => {
+    engine.applyBossState({ ...engine.extractBossState()!, skip: 1 })
+    assert.equal(engine.choose(0, action), null)
+    engine.choose(1, { kind: 'move', moveIndex: 0 })
+    engine.step()
+    return engine.extractBossState()!
   }
-  assert.equal(thinking('switch'), 'snapped')
-  assert.equal(thinking('status'), 'snapped')
-  assert.notEqual(thinking('attack'), 'snapped')
+  return { engine, turn, foe: () => engine.party(0)[engine.activeIndex(0)] }
+}
+
+test('events: Opus bans a Chinese account in two turns, a foreign one only by mistake, and a residential IP stops both', () => {
+  const cn = CONTENT.speciesList.find((s) => s.country === 'CN' && s.rarity !== 'UR' && !s.types.includes('code'))!.id
+  const us = 'gpt-5-6'
+  assert.equal(CONTENT.species[us].country, 'US')
+  const attack = { kind: 'move', moveIndex: 0 } as const
+
+  const banned = stage('opus', [cn, us])
+  let st = banned.turn(attack)
+  assert.equal(st.meters.risk, 2, 'a CN creature is flagged fast')
+  st = banned.turn(attack)
+  st = banned.turn(attack)
+  assert.ok((st.fired.ban ?? 0) >= 1 && banned.foe().status === 'freeze', 'banned = frozen')
+
+  const abroad = stage('opus', [us, cn])
+  st = abroad.turn(attack)
+  assert.equal(st.meters.risk, 1, 'foreign accounts are only flagged by mistake (every third turn)')
+  st = abroad.turn(attack)
+  assert.equal(st.meters.risk, 1)
+
+  const cloaked = stage('opus', [cn, us], { items: { 'residential-ip': 2 } })
+  st = cloaked.turn({ kind: 'item', itemId: 'residential-ip', partyIndex: 0 })
+  assert.ok(st.meters.ip >= 7, 'the cloak lasts about 8 turns')
+  for (let i = 0; i < 4; i++) st = cloaked.turn(attack)
+  assert.equal(st.fired.ban ?? 0, 0)
+  assert.equal(st.meters.risk, 0, 'nothing to flag while the origin is hidden')
+
+  const appeal = stage('opus', [cn, us], { items: { 'residential-ip': 1 } })
+  for (let i = 0; i < 3; i++) appeal.turn(attack)
+  assert.equal(appeal.foe().status, 'freeze')
+  appeal.turn({ kind: 'item', itemId: 'residential-ip', partyIndex: 0 })
+  assert.equal(appeal.foe().status, null, 'the appeal unfreezes the account')
+})
+
+test('events: Grok uploads the moves it sees (and trains on them) until the cable is pulled', () => {
+  const s = stage('grok', ['gpt-5-6'], { items: { 'ethernet-cable': 1 } })
+  s.foe().moves = [{ id: 'token-tackle', pp: 20, ppMax: 20 }]
+  let st = s.turn({ kind: 'move', moveIndex: 0 })
+  assert.equal(st.meters.loot, 1)
+  assert.ok(st.borrowed.includes('token-tackle'), 'the move was copied')
+  assert.ok((st.stages.atk ?? 0) >= 1 && (st.stages.spa ?? 0) >= 1, 'every theft trains it')
+  st = s.turn({ kind: 'item', itemId: 'ethernet-cable', partyIndex: 0 })
+  assert.equal(s.engine.weather, 'blackout')
+  assert.equal(st.meters.loot, 0, 'offline: everything it stole is gone')
+  assert.deepEqual(st.borrowed, [])
+  assert.equal(st.stages.atk ?? 0, 0)
+  // offline it cannot upload.
+  st = s.turn({ kind: 'move', moveIndex: 0 })
+  assert.equal(st.meters.loot, 0)
+})
+
+test('events: a revoked key reflects the malicious skill, but only while it is loading', () => {
+  const victim = CONTENT.speciesList.find((sp) => sp.rarity !== 'UR' && !sp.types.includes('safety'))!.id   // safety types are immune to data pollution
+  const run = (useItemAt: number | null) => {
+    const s = stage('openclaw', [victim, 'gpt-5-6'], { items: { 'revoke-key': 3 } })
+    const attack = { kind: 'move', moveIndex: 0 } as const
+    let st = s.turn(attack)
+    let cured = false
+    for (let turn = 2; turn <= 6 && st.form !== 'compromised'; turn++) {
+      if (turn === useItemAt) {
+        const before = s.foe().status
+        st = s.turn({ kind: 'item', itemId: 'revoke-key', partyIndex: 0 })
+        cured = before !== null && s.foe().status === null
+      } else st = s.turn(attack)
+    }
+    return { st, foe: s.foe(), cured }
+  }
+  // the skill loads at the end of turn 3 and lands at the end of turn 4
+  const ignored = run(null)
+  assert.ok((ignored.st.fired.hijack ?? 0) >= 1 && ignored.foe.status === 'poison', 'the injection poisons the foe')
+  const timely = run(4)
+  assert.equal(timely.st.form, 'compromised')
+  assert.equal(timely.st.fired.hijack ?? 0, 0)
+  assert.equal(timely.foe.status, null)
+  const early = run(2)
+  assert.notEqual(early.st.form, 'compromised', 'too early does nothing')
+  assert.ok((early.st.fired.hijack ?? 0) >= 1)
 })
 
 // ---------------------------------------------------------------------------------------------------- counter items
@@ -425,7 +523,7 @@ test('contract: chooseBossAction is pure and honours the form pattern', () => {
     const { engine } = startBossBattle(b.id, makeParty(SIM_PARTY, b.level - 2, 1), { seed: 1, expGain: false })
     const state = engine.extractBossState()!
     const frozen = JSON.stringify(state)
-    const foe = { status: null, country: 'US', released: '2025-01' }
+    const foe = { status: null, country: 'US', released: '2025-01', weather: 'none' }
     const allowed = new Set(b.forms[state.form].moves)
     const a = chooseBossAction(state, b, foe, new Rng(5))
     const c = chooseBossAction(state, b, foe, new Rng(5))
@@ -444,7 +542,7 @@ test('contract: a charged attack is forced on the next turn', () => {
   const { engine } = startBossBattle('astra', makeParty(SIM_PARTY, b.level, 1), { seed: 1, expGain: false })
   const state = engine.extractBossState()!
   state.charge = { move: 'exaflop-beam', warn: 'boss.astra.charge', mul: 0.6 }
-  assert.deepEqual(chooseBossAction(state, b, { status: null, country: '', released: '' }, new Rng(1)), { moveId: 'exaflop-beam', forced: true })
+  assert.deepEqual(chooseBossAction(state, b, { status: null, country: '', released: '', weather: 'none' }, new Rng(1)), { moveId: 'exaflop-beam', forced: true })
 })
 
 // ---------------------------------------------------------------------------------------------------- entry point & rewards

@@ -45,12 +45,9 @@ const pilotExcept = (h: Helpers, no: (a: BattleAction, m: MoveDef | undefined) =
 
 /**
  * What an unaware player does on top of the shared AI (the balance pilot never uses items, a real player does): the
- * baseline "plain" runs of bosses whose counter is about an everyday habit.
+ * baseline "plain" runs of bosses whose counter is about an everyday habit (none at the moment).
  */
-export const PLAIN: Record<string, Pick<SimOpts, 'policy'>> = {
-  // Medicine when a creature is low: every dose feeds the lobster.
-  openclaw: { policy: (h) => (h.active.hp / h.engine.fighterStats(0).hp < 0.4 ? (h.bait('hyper-cache') ?? h.bait('full-cache')) : null) },
-}
+export const PLAIN: Record<string, Pick<SimOpts, 'policy'>> = {}
 
 export const COUNTERS: Record<string, Counter> = {
   // Feed the sauce as soon as it is available.
@@ -100,16 +97,10 @@ export const COUNTERS: Record<string, Counter> = {
   // Never repeat the previous type: every damaging move changes the type it has just read.
   alpha: { policy: (h) => pickAttack(h, (m) => m.type !== h.state.lastFoeType) },
 
-  // Interrupt its extended thinking: any action but an attack (a status move, else a switch).
+  // A residential IP as soon as the risk control has noticed the active creature (or it is from CN and still unflagged).
   opus: {
-    policy: (h) => {
-      if (h.state.form !== 'thinking') return null
-      const i = h.moveOfKind((m) => m.category === 'status')
-      if (i >= 0) return move(h, i)
-      const party = h.engine.party(0)
-      const j = party.findIndex((cr, idx) => idx !== h.engine.activeIndex(0) && cr.hp > 0)
-      return h.req.canSwitch && j >= 0 ? { kind: 'switch', partyIndex: j } : null
-    },
+    bag: { 'residential-ip': 6 },
+    policy: (h) => (h.state.meters.ip === 0 && (h.state.meters.risk >= 1 || h.active.status !== null || CONTENT.species[h.active.speciesId]?.country === 'CN') ? h.bait('residential-ip') : null),
   },
 
   // Lead with (and keep to) veterans released before 2025: it cannot bring itself to hit them.
@@ -118,17 +109,11 @@ export const COUNTERS: Record<string, Counter> = {
   // A banana peel under its feet whenever it stands.
   unitree: { bag: { 'banana-peel': 6 }, policy: (h) => (h.state.form === 'upright' ? h.bait('banana-peel') : null) },
 
-  // Argue back: a move it resists whenever there is one, else the pilot's play without the moves the type chart favours.
-  grok: {
-    policy: (h) => {
-      const types = CONTENT.species[h.engine.party(1)[h.engine.activeIndex(1)].speciesId]?.types ?? []
-      const eff = (m: MoveDef) => typeEffectiveness(m.type, types)
-      return pickAttack(h, (m) => eff(m) < 1) ?? pilotExcept(h, (a, m) => !!m && m.power > 0 && eff(m) > 1)
-    },
-  },
+  // Pull the plug whenever the network is up: a blackout cuts its uploads.
+  grok: { bag: { 'ethernet-cable': 6 }, policy: (h) => (h.engine.weather !== 'blackout' ? h.bait('ethernet-cable') : null) },
 
-  // No medicine, nothing to feed it.
-  openclaw: { policy: (h) => pilotExcept(h, (a) => a.kind === 'item') },
+  // Revoke the key while the malicious skill is loading (the warning turn); never earlier or later.
+  openclaw: { bag: { 'revoke-key': 4 }, policy: (h) => (h.state.meters.inject >= 1 ? h.bait('revoke-key') : null) },
 
   // Feed it small rocks; it follows its own advice.
   gemini: { bag: { 'small-rock': 4 }, policy: (h) => (h.state.form === 'grounded' || h.state.formTurn >= 4 ? h.bait('small-rock') : null) },

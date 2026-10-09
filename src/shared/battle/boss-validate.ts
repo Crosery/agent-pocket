@@ -53,6 +53,7 @@ export function validateBosses(list: readonly BossDef[], c: Content): string[] {
       if (k.meter && !meters.has(k.meter.id)) errs.push(`${where}: unknown meter "${k.meter.id}"`)
       if (k.turnCycle && !(k.turnCycle.period >= 1 && k.turnCycle.from >= 0 && k.turnCycle.to > k.turnCycle.from)) errs.push(`${where}: bad turnCycle`)
       if (typeof k.foeStatus === 'string' && !c.statusById[k.foeStatus]) errs.push(`${where}: unknown status "${k.foeStatus}"`)
+      for (const wid of [...(k.weather ?? []), ...(k.notWeather ?? [])]) if (wid !== 'none' && !c.weatherById[wid]) errs.push(`${where}: unknown weather "${wid}"`)
       for (const d of [k.foeReleasedBefore, k.foeReleasedFrom]) if (d !== undefined && !/^\d{4}-\d{2}(-\d{2})?$/.test(d)) errs.push(`${where}: release date needs YYYY-MM[-DD]`)
     }
     const type = (where: string, ids: readonly string[] | undefined) => {
@@ -68,6 +69,7 @@ export function validateBosses(list: readonly BossDef[], c: Content): string[] {
         case 'meter': if (!meters.has(o.id)) errs.push(`${where}: unknown meter "${o.id}"`); break
         case 'charge': move(where, o.move); text(where, o.warn); break
         case 'learn': text(where, o.say); break
+        case 'weather': if (o.weather !== 'none' && !c.weatherById[o.weather]) errs.push(`${where}: unknown weather "${o.weather}"`); break
         default: break
       }
     }

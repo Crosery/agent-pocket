@@ -44,12 +44,15 @@ export interface BossHost {
   status(side: SideIndex, id: StatusId): void
   cure(side: SideIndex): void
   volatile(side: SideIndex, id: string): void
+  /** The field weather ('none' = clear) and a way to change it. */
+  weather(): string
+  setWeather(id: string, turns?: number): void
   battler(): { stages: Record<string, number>; volatiles: Record<string, number>; recharging: boolean }
   setBattler(b: { stages: Record<string, number>; volatiles: Record<string, number>; recharging: boolean }): void
 }
 
 /** What the boss's decision needs to know about its opponent. */
-export interface BossFoeView { status: StatusId | null; country: string; released: string }
+export interface BossFoeView { status: StatusId | null; country: string; released: string; weather: string }
 export interface BossDecision { moveId: string; forced: boolean }
 
 interface CondCtx { core: Core; hpRatio: number; foe: BossFoeView; turn: number }
@@ -85,6 +88,8 @@ export function bossCondHolds(cond: BossCond | undefined, x: CondCtx): boolean {
   if (cond.foeNotCountry?.includes(x.foe.country)) return false
   if (cond.foeReleasedBefore !== undefined && !(x.foe.released !== '' && x.foe.released < cond.foeReleasedBefore)) return false
   if (cond.foeReleasedFrom !== undefined && !(x.foe.released !== '' && x.foe.released >= cond.foeReleasedFrom)) return false
+  if (cond.weather && !cond.weather.includes(x.foe.weather)) return false
+  if (cond.notWeather?.includes(x.foe.weather)) return false
   return true
 }
 
@@ -174,7 +179,7 @@ export class BossDirector {
   private foeView(): BossFoeView {
     const foe = this.host.foe()
     const sp = this.host.c.species[foe.speciesId]
-    return { status: foe.status, country: sp?.country ?? '', released: sp?.releaseDate ?? '' }
+    return { status: foe.status, country: sp?.country ?? '', released: sp?.releaseDate ?? '', weather: this.host.weather() }
   }
 
   private ctx(hpMax?: number): CondCtx {
@@ -456,6 +461,9 @@ export class BossDirector {
         break
       case 'forget':
         this.forget()
+        break
+      case 'weather':
+        h.setWeather(op.weather, op.turns)
         break
     }
   }

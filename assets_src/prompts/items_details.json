@@ -62,7 +62,9 @@
     "off-peak-coupon": "a golden-yellow ticket coupon with a dark blue crescent moon on the left and a perforated tear-off edge",
     "small-rock": "a single smooth grey pebble with a light top-left highlight and a tiny yellow sparkle beside it",
     "banana-peel": "a single yellow banana peel lying flat with three curled-open flaps and a small brown tip",
-    "invite-code": "a glossy red envelope with a gold circular seal and a tiny white chain-link symbol in the corner"
+    "invite-code": "a glossy red envelope with a gold circular seal and a tiny white chain-link symbol in the corner",
+    "ethernet-cable": "a coiled blue ethernet cable with a clear plastic RJ45 plug on one end and the other end unplugged and dangling",
+    "revoke-key": "a small golden key with a red diagonal prohibition slash across it and a few sparkles around the broken teeth"
   },
   "chips": {}
 }

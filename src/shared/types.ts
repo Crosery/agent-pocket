@@ -513,6 +513,9 @@ export interface BossCond {
   foeReleasedBefore?: string
   /** The foe's active creature was released on or after this date. */
   foeReleasedFrom?: string
+  /** The field weather is / is not one of these (content/weathers.json ids; 'none' = clear). */
+  weather?: WeatherId[]
+  notWeather?: WeatherId[]
 }
 
 export type BossEventKind = 'start' | 'turnStart' | 'turnEnd' | 'afterAction' | 'foeMove' | 'foeItem' | 'foeMedicine' | 'foeSwitch'
@@ -539,6 +542,8 @@ export type BossOp =
   | { op: 'forget' }
   /** Forget which move types the foe has used so far (they count as new again). */
   | { op: 'forgetTypes' }
+  /** Changes the field weather (`turns` default: the usual weather length). */
+  | { op: 'weather'; weather: WeatherId; turns?: number }
 
 export interface BossTrigger {
   id: string
