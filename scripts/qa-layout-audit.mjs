@@ -326,6 +326,9 @@ export function auditHudZones(opts) {
 async function prepareSave(page) {
   await page.evaluate(async () => {
     const ctx = window.__AP
+    // The first-use stick hint is decorative and timed; a stable layout run starts without it (checked on its own).
+    try { localStorage.setItem('ap.touch.hintDone', '1') } catch { /* private mode */ }
+    document.querySelector('.ap-touch__hint')?.classList.remove('is-on')
     ctx.net.disconnect()
     const { createCreature } = await import('/src/shared/creature.ts')
     const { Rng } = await import('/src/shared/rng.ts')
