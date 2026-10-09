@@ -66,7 +66,10 @@ export function anchorPickerScreen(env: ScreenEnv, opts: { hereId?: string }): P
     const listBox = el('div', 'aps-bag-list ap-panel')
     left.append(...(homeBtn ? [homeBtn] : []), ...(list.groups.length ? [tabBar.el, listBox] : []))
 
+    let hintDevice = ctx.input.lastDevice
     const paintHints = () => {
+      hintDevice = ctx.input.lastDevice
+      if (hintDevice === 'touch') { f.setHints([]); return }
       f.setHints([
         ['ud', t('screens.hint.choose')],
         ...(list.groups.length > 1 ? [['lr', t('screens.hint.tabs')] as ['lr', string]] : []),
@@ -95,7 +98,6 @@ export function anchorPickerScreen(env: ScreenEnv, opts: { hereId?: string }): P
         sectionTitle(t('screens.anchor.detail')),
         infoRow(t('screens.anchor.region'), dest.region),
         infoRow(t('screens.anchor.away'), dest.here ? t('screens.anchor.here') : t('screens.anchor.distance', { distance: Math.round(dest.dist) })),
-        infoRow(t('screens.anchor.coords'), `${Math.round(dest.x)}, ${Math.round(dest.y)}`),
       ])
     }
 
@@ -108,7 +110,8 @@ export function anchorPickerScreen(env: ScreenEnv, opts: { hereId?: string }): P
         disabled: d.here,
       })), {
         visibleRows: rows,
-        reservePx: (list.home ? SCREENS.anchors.reserveUnits.home : SCREENS.anchors.reserveUnits.base) * getUIScale().cssPerUnit,
+        reservePx: (list.home ? SCREENS.anchors.padFreeReserveUnits.home : SCREENS.anchors.padFreeReserveUnits.base) * getUIScale().cssPerUnit,
+        padFree: true,
         initial: Math.min(keep, Math.max(0, shown.length - 1)),
         wrap: true,
         audio: ctx.audio,
@@ -126,6 +129,7 @@ export function anchorPickerScreen(env: ScreenEnv, opts: { hereId?: string }): P
     if (list.groups.length) rebuild(0)
     else paintDetail(list.home)
     return {
+      update() { if (ctx.input.lastDevice !== hintDevice) paintHints() },
       onInput(input) {
         if (backPressed(input)) { api.close(null); return }
         if (pressed(input, 'run') && list.home) { pick(list.home); return }

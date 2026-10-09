@@ -8,7 +8,7 @@
 // activated teleport anchor does (discovered-but-inactive anchors are pinned grey); else null.
 import type { ChunkProvider, GameMap, RegionDef, TownDef } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
-import { distanceFromOrigin, isInfinite } from '../../../shared/world/worldapi.ts'
+import { isInfinite } from '../../../shared/world/worldapi.ts'
 import { anchorSpotFromId, type AnchorSpot } from '../../../shared/world/anchors.ts'
 import { anchorGroup, anchorName, anchorPlace, isUnlocked, travelDestinations } from '../../world/anchors.ts'
 import { EXPLORE, type PlaceKind } from '../../world/explore-config.ts'
@@ -22,9 +22,10 @@ import { parseColor, type Bitmap, type RGBA } from '../pixel.ts'
 import { getUIScale, onUIScaleChange } from '../scale.ts'
 import { button, el } from '../widgets.ts'
 import { provincesIn, quickSample, regionUnder, type ProvinceLabel } from '../worldgeo.ts'
-import { backPressed, frame, icon, infoRow, meterIcons, openScreen, pressed, sectionTitle, setChildren, uiSfx, type ScreenEnv } from './base.ts'
+import { backPressed, frame, icon, meterIcons, openScreen, pressed, setChildren, uiSfx, type Hint, type ScreenEnv } from './base.ts'
 import { SCREENS } from './config.ts'
 import { overworldPosition } from './logic.ts'
+import { humanDistance, placeFacts } from './placeinfo.ts'
 import './gameplay.css'
 
 const WM = EXPLORE.worldMap
@@ -194,12 +195,24 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean; anchors?: b
     const stage = el('div', 'aps-map-stage is-free', [cv, labels, markers, cursor, tools])
     const view = el('div', 'aps-map-view ap-panel', [stage])
     const side = el('div', 'aps-map-side ap-panel')
-    f.body.append(el('div', 'aps-map-layout', [view, side]))
-    f.setHints([
-      ['lr', t('screens.map.hint.pan')], ['minimap', t('screens.map.hint.zoomIn')], ['bike', t('screens.map.hint.zoomOut')],
-      ['run', t('screens.map.hint.next')], ...(travel ? [['confirm', t(anchorsOn ? 'screens.map.hint.warp' : 'screens.map.hint.fly')] as ['confirm', string]] : []),
-      ['cancel', t('screens.hint.back')],
-    ])
+    const P = cfg.panel
+    f.body.append(el('div', {
+      class: 'aps-map-layout',
+      vars: { '--wm-side': P.widthUnits, '--wm-name': P.nameUnits, '--wm-body': P.bodyUnits, '--wm-chip': P.chipUnits, '--wm-min': `${P.minPx}px`, '--wm-chip-min': `${P.chipMinPx}px`, '--wm-desc-open': P.descLinesOpen },
+    }, [view, side]))
+    // Key caps and pad names mean nothing to a finger: touch gets no footer (the close button, pins and the action button do the work).
+    let hintDevice = ctx.input.lastDevice
+    const paintHints = () => {
+      hintDevice = ctx.input.lastDevice
+      if (hintDevice === 'touch') { f.setHints([]); return }
+      const hints: Hint[] = [
+        ['lr', t('screens.map.hint.pan')], ['minimap', t('screens.map.hint.zoomIn')], ['bike', t('screens.map.hint.zoomOut')],
+        ['run', t('screens.map.hint.next')], ...(travel ? [['confirm', t(anchorsOn ? 'screens.map.hint.warp' : 'screens.map.hint.fly')] as Hint] : []),
+        ['cancel', t('screens.hint.back')],
+      ]
+      f.setHints(hints)
+    }
+    paintHints()
     api.root.append(f.el)
 
     // ------------------------------------------------------------------ camera
@@ -463,7 +476,19 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean; anchors?: b
 
     // Labels yield to place names, the player marker and each other (core regions after provinces).
     const declutter = () => {
-      const placed: DOMRect[] = []
+      // The zoom / home / legend buttons sit over the map: no label may end up half behind them.
+      const toolBox = tools.getBoundingClientRect()
+      const placed: DOMRect[] = toolBox.width ? [new DOMRect(toolBox.left - 4, toolBox.top - 4, toolBox.width + 8, toolBox.height + 8)] : []
+      const clear = (r: DOMRect) => r.left < toolBox.right + 4 && r.right > toolBox.left - 4 && r.top < toolBox.bottom + 4 && r.bottom > toolBox.top - 4
+      for (const n of markers.querySelectorAll<HTMLElement>('.aps-map-town-name')) n.classList.toggle('is-cluttered', n.offsetParent !== null && clear(n.getBoundingClientRect()))
+      // Event-ping labels are cut by the map's edge or sit behind the tools: show them only when whole.
+      const box = stage.getBoundingClientRect()
+      for (const pg of pings) {
+        const label = pg.el.querySelector<HTMLElement>('.aps-map-ping-label')
+        if (!label || label.offsetParent === null) continue
+        const r = label.getBoundingClientRect()
+        pg.el.classList.toggle('is-cluttered', r.left < box.left || r.right > box.right || r.top < box.top || r.bottom > box.bottom || clear(r))
+      }
       const hits = (r: DOMRect) => placed.some((p) => r.left < p.right && r.right > p.left && r.top < p.bottom && r.bottom > p.top)
       for (const n of markers.querySelectorAll<HTMLElement>('.aps-map-town:not([hidden]) .ap-glyph, .aps-map-town.is-named:not([hidden]) .aps-map-town-name, .aps-map-player:not([hidden])')) {
         const r = n.getBoundingClientRect()
@@ -527,9 +552,6 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean; anchors?: b
     const flyList = opts.fly && !anchorsOn ? nearest(marks.filter(goes)).slice(0, WM.flyList) : []
     let lastInfoKey = ''
 
-    const dangerRow = (r: RegionDef) => r.danger === undefined ? null
-      : infoRow(t('screens.map.danger'), meterIcons(Math.min(EXPLORE.banner.dangerTiers, r.danger + 1), EXPLORE.banner.dangerTiers, 'star', 'starOff'))
-
     const anchorBtns: HTMLElement[] = []
     if (anchorsOn) {
       if (homeDest) {
@@ -547,69 +569,91 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean; anchors?: b
       anchorBtns.push(b)
     }
 
+    // ------------------------------------------------------------------ side panel: what the cursor is on, nothing more
+    let descOpen = false
+    const chip = (glyph: string | null, text: string, cls = '', palette?: Record<string, string>) =>
+      el('span', { class: `aps-fact${cls ? ` ${cls}` : ''}` }, [glyph ? icon(glyph, palette ? { palette } : undefined) : null, el('span', { text })])
+    const levelsChip = (r: [number, number] | undefined | null) =>
+      r ? chip(P.glyphs.levels, t('screens.map.fact.levels', { min: r[0], max: r[1] })) : null
+    const stars = (r: RegionDef | null) => r && r.danger !== undefined
+      ? el('span', 'aps-wm-danger', [meterIcons(Math.min(EXPLORE.banner.dangerTiers, r.danger + 1), EXPLORE.banner.dangerTiers, 'star', 'starOff')])
+      : null
+
+    /** "You are in {region}, near {place}": one line, from where the player really stands. */
+    const youLine = (): string => {
+      if (!player) return t('screens.map.youAway')
+      const region = regionUnder(map, Math.floor(player.x), Math.floor(player.y))?.nameZh
+      let near: PlaceMark | null = null
+      let best = P.nearRadius
+      for (const m of marks) {
+        if (!m.place) continue
+        const d = Math.hypot(m.x - player.x, m.y - player.y)
+        if (d <= best) { best = d; near = m }
+      }
+      if (region && near && near.name !== region) return t('screens.map.youNear', { region, place: near.name })
+      return t('screens.map.youIn', { region: region ?? near?.name ?? '' })
+    }
+
+    const selectedCard = (m: PlaceMark): HTMLElement[] => {
+      const reg = regionUnder(map, Math.floor(m.x), Math.floor(m.y))
+      const facts = m.place ? placeFacts(world, ctx.save, m.place) : null
+      const isVisited = !!m.place && ctx.save.visitedTowns.includes(m.id)
+      const known = !m.place || m.fly || isVisited || m.kind !== 'town'
+      const chips: (HTMLElement | null)[] = [
+        m.fly ? el('span', { class: 'aps-tag is-ok', text: t('screens.map.flyable') }) : null,
+        m.place && !m.fly && m.kind === 'town' ? el('span', { class: 'aps-tag is-bad', text: t(isVisited ? 'screens.map.visited' : 'screens.map.notVisited') }) : null,
+        ...(facts?.services.map((id) => {
+          const sv = P.services.find((x) => x.id === id)!
+          return chip(sv.glyph, t(sv.text))
+        }) ?? []),
+        facts?.gym ? chip(P.glyphs.gym, t(facts.gym.won ? 'screens.map.fact.gymWon' : 'screens.map.fact.gymOpen'), facts.gym.won ? 'is-ok' : '') : null,
+        m.anchor ? chip(P.glyphs.anchor, t(m.on ? 'screens.map.fact.anchorOn' : 'screens.map.fact.anchorOff'), m.on ? 'is-ok' : 'is-off', WM.anchorPalettes[m.on ? 'on' : 'off']) : null,
+        facts?.quest ? chip(P.glyphs.quest, t('screens.map.fact.quest'), 'is-quest') : null,
+        levelsChip(facts?.levels ?? reg?.levelRange),
+      ]
+      const away = player ? el('span', { class: 'aps-wm-away ap-dim', text: t('screens.map.away', { distance: humanDistance(Math.hypot(m.x - player.x, m.y - player.y)) }) }) : null
+      const act = goes(m) ? button(t(anchorsOn ? 'screens.map.hint.warp' : 'screens.map.hint.fly'), api.guard(() => { void fly() }), { className: 'aps-wm-act' }) : null
+      const text = m.place
+        ? (known ? m.place.description : t('screens.map.unknownTown'))
+        : t(m.on ? 'screens.map.anchorDesc' : 'screens.map.anchorLockedDesc', { region: anchorGroup(world, m.anchor!) })
+      const desc = el('p', { class: `aps-wm-desc${descOpen ? ' is-open' : ''}`, text, attrs: { title: text, 'data-expandable': '' } })
+      desc.addEventListener('click', api.guard(() => { descOpen = !descOpen; lastInfoKey = ''; sideT = 0 }))
+      return [
+        el('div', 'aps-wm-head', [el('span', { class: 'aps-wm-name ap-gold', text: m.name }), el('span', { class: 'aps-tag', text: t(`screens.map.kind.${m.kind}`) })]),
+        el('div', 'aps-wm-chips', chips),
+        el('div', 'aps-wm-row', [away, act]),
+        desc,
+      ]
+    }
+
+    /** Nothing selected: the area under the cursor. */
+    const areaCard = (tx: number, ty: number): HTMLElement[] => {
+      if (!fog.tileExplored(tx, ty)) return [el('div', { class: 'aps-wm-name ap-dim', text: t('screens.map.unexplored') })]
+      const r = regionUnder(map, tx, ty)
+      if (!r) return []
+      return [
+        el('div', 'aps-wm-head', [el('span', { class: 'aps-wm-name ap-gold', text: r.nameZh }), stars(r)]),
+        el('div', 'aps-wm-chips', [levelsChip(r.levelRange)]),
+      ]
+    }
+
     const paintSide = () => {
       const tx = Math.floor(cam.x), ty = Math.floor(cam.y)
-      const key = `${sel?.id ?? ''}|${tx >> 3}|${ty >> 3}|${fog.version}`
+      const key = `${sel?.id ?? ''}|${descOpen ? 1 : 0}|${tx >> 3}|${ty >> 3}|${fog.version}`
       if (key === lastInfoKey) return
       lastInfoKey = key
       const parts: (HTMLElement | null)[] = []
       if (anchorBtns.length) parts.push(el('div', 'aps-map-anchorbar', anchorBtns))
-      if (sel && !sel.place && sel.anchor) {
-        parts.push(
-          sectionTitle(t('screens.map.selected')),
-          el('div', { class: 'aps-map-tname ap-gold', text: sel.name }),
-          el('div', 'aps-chips', [
-            el('span', { class: 'aps-tag', text: t(`screens.map.kind.${sel.kind}`) }),
-            el('span', { class: `aps-tag ${sel.on ? 'is-ok' : 'is-bad'}`, text: t(sel.on ? 'screens.map.anchorOn' : 'screens.map.anchorOff') }),
-          ]),
-          el('p', { class: 'aps-map-desc', text: sel.on ? t('screens.map.anchorDesc', { region: anchorGroup(world, sel.anchor) }) : t('screens.map.anchorLockedDesc') }),
-        )
-      } else if (sel?.place) {
-        const isVisited = ctx.save.visitedTowns.includes(sel.id)
-        parts.push(
-          sectionTitle(t('screens.map.selected')),
-          el('div', { class: 'aps-map-tname ap-gold', text: sel.name }),
-          el('div', 'aps-chips', [
-            el('span', { class: 'aps-tag', text: t(`screens.map.kind.${sel.kind}`) }),
-            sel.fly ? el('span', { class: 'aps-tag is-ok', text: t('screens.map.flyable') }) : null,
-            sel.anchor ? el('span', { class: `aps-tag ${sel.on ? 'is-ok' : 'is-bad'}`, text: t(sel.on ? 'screens.map.placeAnchorOn' : 'screens.map.placeAnchorOff') }) : null,
-            !sel.fly && sel.kind === 'town' ? el('span', { class: 'aps-tag is-bad', text: t(isVisited ? 'screens.map.visited' : 'screens.map.notVisited') }) : null,
-          ]),
-          el('p', { class: 'aps-map-desc', text: sel.fly || isVisited || sel.kind !== 'town' ? sel.place.description : t('screens.map.unknownTown') }),
-        )
-      }
-      parts.push(sectionTitle(t('screens.map.here')))
-      if (fog.tileExplored(tx, ty)) {
-        const r = regionUnder(map, tx, ty)
-        if (r) {
-          parts.push(el('div', { class: 'aps-map-rname', text: r.nameZh }), dangerRow(r))
-          if (r.levelRange) parts.push(el('div', { class: 'ap-dim', text: t('screens.map.levels', { min: r.levelRange[0], max: r.levelRange[1] }) }))
-        }
-      } else parts.push(el('div', { class: 'ap-dim', text: t('screens.map.unexplored') }))
-      parts.push(
-        el('div', { class: 'ap-dim', text: t('screens.map.distance', { distance: Math.round(distanceFromOrigin(world, tx, ty)) }) }),
-        el('div', { class: 'ap-dim', text: t('screens.map.coords', { x: tx, y: ty }) }),
-        el('div', { class: 'ap-dim', text: t('screens.map.maxDistance', { distance: ctx.save.maxDistance ?? 0 }) }),
-      )
+      parts.push(el('div', 'aps-wm-card', sel ? selectedCard(sel) : areaCard(tx, ty)))
       if (flyList.length) {
-        parts.push(sectionTitle(t('screens.map.flyList')), el('div', 'aps-map-flylist', flyList.map((m) => {
+        parts.push(el('div', 'aps-map-flylist', flyList.slice(0, P.flyChips).map((m) => {
           const b = button('', api.guard(() => { if (sel === m) void fly(); else focusPlace(m) }), { className: `aps-map-flyitem${m === sel ? ' is-active' : ''}` })
           b.append(icon(WM.placeGlyphs[m.kind as PlaceKind], { palette: WM.placePalettes.fly }), el('span', { text: m.name }))
           return b
         })))
       }
-      parts.push(
-        sectionTitle(t('screens.map.legend')),
-        el('div', 'aps-map-legend', [
-          el('span', 'ap-legend-item', [icon(cfg.townGlyph, { palette: WM.placePalettes.fly }), t(opts.fly ? 'screens.map.legendFly' : 'screens.map.legendVisited')]),
-          el('span', 'ap-legend-item', [icon(cfg.townGlyph, { palette: opts.fly ? WM.placePalettes.locked : WM.placePalettes.known }), t(opts.fly ? 'screens.map.legendUnvisited' : 'screens.map.legendKnown')]),
-          marks.some((m) => m.anchor && m.on) ? el('span', 'ap-legend-item', [icon(WM.anchorGlyphs.minor, { palette: WM.anchorPalettes.on }), t('screens.map.legendAnchorOn')]) : null,
-          marks.some((m) => m.anchor && !m.on) ? el('span', 'ap-legend-item', [icon(WM.anchorGlyphs.minor, { palette: WM.anchorPalettes.off }), t('screens.map.legendAnchorOff')]) : null,
-          player ? el('span', 'ap-legend-item', [icon(cfg.playerGlyph), t('screens.map.legendPlayer')]) : null,
-          ...[...new Map(pings.map((x) => [x.p.kind === 'legend' ? 'legend' : 'event', x.p.color])).entries()].map(([k, color]) => el('span', 'ap-legend-item', [el('span', { class: 'aps-legend-ping', vars: { '--pc': color } }), t(`hud.minimap.legend.${k}`)])),
-        ]),
-      )
-      setChildren(side, parts)
+      parts.push(el('div', { class: 'aps-wm-you ap-dim', text: youLine() }))
+      setChildren(side, [el('div', 'aps-map-sidebody', parts)])
     }
 
     const fly = () => api.run(async () => {
@@ -632,7 +676,20 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean; anchors?: b
     zin.setAttribute('aria-label', t('screens.map.zoomIn'))
     zout.setAttribute('aria-label', t('screens.map.zoomOut'))
     homeBtn.setAttribute('aria-label', t('screens.map.home'))
-    tools.append(zin, zout, homeBtn)
+    // The legend is one tap away instead of a block of the panel: a "?" among the tools opens an icon key over the map.
+    const legendItems: (HTMLElement | null)[] = [
+      el('span', 'ap-legend-item', [icon(cfg.townGlyph, { palette: WM.placePalettes.fly }), t(opts.fly ? 'screens.map.legendFly' : 'screens.map.legendVisited')]),
+      el('span', 'ap-legend-item', [icon(cfg.townGlyph, { palette: opts.fly ? WM.placePalettes.locked : WM.placePalettes.known }), t(opts.fly ? 'screens.map.legendUnvisited' : 'screens.map.legendKnown')]),
+      marks.some((m) => m.anchor && m.on) ? el('span', 'ap-legend-item', [icon(WM.anchorGlyphs.minor, { palette: WM.anchorPalettes.on }), t('screens.map.legendAnchorOn')]) : null,
+      marks.some((m) => m.anchor && !m.on) ? el('span', 'ap-legend-item', [icon(WM.anchorGlyphs.minor, { palette: WM.anchorPalettes.off }), t('screens.map.legendAnchorOff')]) : null,
+      player ? el('span', 'ap-legend-item', [icon(cfg.playerGlyph), t('screens.map.legendPlayer')]) : null,
+      ...[...new Map(pings.map((x) => [x.p.kind === 'legend' ? 'legend' : 'event', x.p.color])).entries()].map(([k, color]) => el('span', 'ap-legend-item', [el('span', { class: 'aps-legend-ping', vars: { '--pc': color } }), t(`hud.minimap.legend.${k}`)])),
+    ]
+    const legendPop = el('div', 'aps-map-legendpop ap-panel', legendItems)
+    legendPop.hidden = true
+    const legendBtn = button('?', api.guard(() => { legendPop.hidden = !legendPop.hidden; legendBtn.classList.toggle('is-on', !legendPop.hidden) }), { className: 'aps-map-tool' })
+    legendBtn.setAttribute('aria-label', t('screens.map.legend'))
+    tools.append(zin, zout, homeBtn, legendBtn, legendPop)
 
     const pointers = new Map<number, { x: number; y: number }>()
     let drag: { x: number; y: number; moved: boolean } | null = null
@@ -723,6 +780,7 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean; anchors?: b
         if (dirty) { dirty = false; render() }
         if (overlayDirty) { overlayDirty = false; layoutOverlay(); if (snap()) layoutOverlay() }
         if (declutterT > 0) { declutterT -= dt; if (declutterT <= 0) declutter() }
+        if (ctx.input.lastDevice !== hintDevice) paintHints()
         sideT -= dt
         if (sideT <= 0) { sideT = 0.12; paintSide() }
       },

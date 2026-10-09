@@ -26,6 +26,7 @@ const UI_PHONE_PAD = JSON.parse(readFileSync(new URL('../content/ui.json', impor
 export const VIEWPORTS = [
   { name: 'd1280', width: 1280, height: 720, dpr: 1 },
   { name: 'd1920', width: 1920, height: 1080, dpr: 1 },
+  { name: 'd1000', width: 1000, height: 655, dpr: 2 },
   { name: 'm390', width: 390, height: 844, dpr: 3, touch: true },
   { name: 'm360', width: 360, height: 780, dpr: 3, touch: true },
   { name: 'm844', width: 844, height: 390, dpr: 3, touch: true },
@@ -34,7 +35,7 @@ export const VIEWPORTS = [
 
 /** Runs inside the page (serialised by page.evaluate): must not reference anything outside itself. */
 export function auditLayout(opts) {
-  const { scopeSel, ignoreSel, minFont } = opts
+  const { scopeSel, ignoreSel, minFont, noScrollSel } = opts
   const vw = innerWidth, vh = innerHeight
   const eps = 1.5
   const ROLLING = '.ap-chat-log' // windows that roll old lines off by design
@@ -138,7 +139,8 @@ export function auditLayout(opts) {
           partial++; worst = Math.max(worst, over)
         }
         if (partial || (hidden && hidden < cur.length)) {
-          if (c.a === el && selfTrim) warnings.push({ type: cs.textOverflow === 'ellipsis' ? 'ellipsis' : 'line-clamp', sel, text, detail: `${worst.toFixed(0)}px beyond the box` })
+          // data-expandable: trimmed on purpose, a tap opens the whole text
+          if (c.a === el && selfTrim) { if (!el.closest('[data-expandable]')) warnings.push({ type: cs.textOverflow === 'ellipsis' ? 'ellipsis' : 'line-clamp', sel, text, detail: `${worst.toFixed(0)}px beyond the box` }) }
           else if (partial || hiddenSideways) violations.push({ type: 'clipped', sel, text, detail: `cut by ${label(c.a)} by ${worst.toFixed(1)}px` })
           else if (c.a.matches(ROLLING)) warnings.push({ type: 'hidden-lines', sel, text, detail: `${hidden} line(s) rolled out of ${label(c.a)}` })
           else violations.push({ type: 'clipped', sel, text, detail: `${hidden} line(s) cut off by ${label(c.a)}` })
@@ -210,6 +212,10 @@ export function auditLayout(opts) {
       if (o.w * o.h < 0.15 * small) continue
       violations.push({ type: 'control-overlap', sel: label(a.el), text: a.el.textContent.trim().slice(0, 20), detail: `with ${label(b.el)} "${b.el.textContent.trim().slice(0, 20)}"` })
     }
+  }
+  // Panels that must show everything at once (no scrollbar, nothing below the fold).
+  if (noScrollSel) for (const n of document.querySelectorAll(noScrollSel)) {
+    if (n.scrollHeight > n.clientHeight + 1) violations.push({ type: 'panel-overflow', sel: noScrollSel, text: '', detail: `scrollHeight ${n.scrollHeight} > clientHeight ${n.clientHeight}` })
   }
   if (document.documentElement.scrollWidth > vw + 1) violations.push({ type: 'page-overflow', sel: 'html', text: '', detail: `scrollWidth ${document.documentElement.scrollWidth} > ${vw}` })
   const touch = matchMedia('(pointer: coarse)').matches
@@ -465,9 +471,10 @@ export const SCREENS = [
   { id: 'dex-detail', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await page.evaluate(() => { void window.__AP.screens.dex() }); await page.waitForTimeout(700); await page.keyboard.press('KeyZ') } },
   { id: 'box', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.box() }) },
   { id: 'shop', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.shop(Object.keys(window.__AP.data.items).slice(0, 40)) }) },
-  { id: 'map', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.worldMap({ fly: false }) }) },
+  { id: 'map', scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: run(() => { void window.__AP.screens.worldMap({ fly: false }) }) },
+  { id: 'map-fly', scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: run(() => { void window.__AP.screens.worldMap({ fly: true }) }) },
   // Teleport anchors (#38): some activated near the origin, a wider ring only discovered (grey pins).
-  { id: 'map-anchors', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await prepareAnchors(page); await page.evaluate(() => { void window.__AP.screens.worldMap({ fly: false, anchors: true }) }); await page.waitForTimeout(1800) } },
+  { id: 'map-anchors', scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: async (page) => { await prepareAnchors(page); await page.evaluate(() => { void window.__AP.screens.worldMap({ fly: false, anchors: true }) }); await page.waitForTimeout(1800) } },
   { id: 'anchor-picker', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await prepareAnchors(page); await page.evaluate(() => { void window.__AP.screens.anchorPicker({}) }); await page.waitForTimeout(600) } },
   { id: 'quests', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.quests() }) },
   { id: 'settings', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.settings() }) },
@@ -623,7 +630,7 @@ export async function measureScreen(page, screen, shot) {
   await page.waitForTimeout(500)
   // a map or scene fade that is still going would "cover" the whole page
   await page.waitForFunction(() => { const f = document.querySelector('.ap-fade'); return !f || parseFloat(getComputedStyle(f).opacity) < 0.02 }, undefined, { timeout: 8000 }).catch(() => {})
-  const run = () => page.evaluate(auditLayout, { scopeSel: screen.scope, ignoreSel: screen.ignore ?? '', minFont: 9 })
+  const run = () => page.evaluate(auditLayout, { scopeSel: screen.scope, ignoreSel: screen.ignore ?? '', minFont: 9, noScrollSel: screen.noScroll ?? '' })
   let result = await run()
   // A screen that is still sliding in is not a layout defect: look once more before calling the scope missing.
   if (result.violations.some((v) => v.type === 'no-scope')) { await page.waitForTimeout(1800); result = await run() }
