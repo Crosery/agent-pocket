@@ -13,6 +13,7 @@ import { createCreature, expForLevel, maxHp } from '../src/shared/creature.ts'
 import { BattleEngine } from '../src/shared/battle/engine.ts'
 import { chooseAiAction } from '../src/shared/battle/ai.ts'
 import { BATTLE_UI, validateBattleUi } from '../src/client/battle/config.ts'
+import { INPUT_BINDINGS } from '../src/client/ui/config.ts'
 import { createLocalChannel, isLocalChannel } from '../src/client/battle/channel.ts'
 import {
   applyEvent, catchPlacement, createBattleModel, effCategory, evolutionMoves, expRatio, expSegments, finalResult, levelUpStats, moveEffectiveness, shortName,
@@ -66,6 +67,17 @@ function fakeCtx(save: Partial<SaveData> = {}) {
 
 test('battle-ui.json validates against the loaded content', () => {
   assert.deepEqual(validateBattleUi(CONTENT), [])
+})
+
+test('the move list offers the type chart: a bound key, a real view, and the validator catches a bad one', () => {
+  const chart = BATTLE_UI.moves.chart
+  assert.ok(['type', 'grid', 'loops'].includes(chart.view))
+  assert.ok(INPUT_BINDINGS.keyboard[chart.action]?.length, 'the key is a real binding')
+  assert.ok(!['confirm', 'cancel', 'menu', 'up', 'down', 'left', 'right'].includes(chart.action), 'it must not steal a key the battle menus use')
+  const bad = { ...BATTLE_UI, moves: { ...BATTLE_UI.moves, chart: { action: 'nope', view: 'sideways' } } } as unknown as typeof BATTLE_UI
+  const errs = validateBattleUi(CONTENT, bad).join('\n')
+  assert.match(errs, /moves\.chart\.view/)
+  assert.match(errs, /moves\.chart\.action/)
 })
 
 test('every battleui text key used by the client exists, and every defined key is used', () => {

@@ -1,7 +1,8 @@
 // Typed view of content/battle-ui.json (battle client tunables) + validation. Pure module: no DOM.
 import type { BattleStatKey, MoveCategory, Settings } from '../../shared/types.ts'
-import type { BattleKind } from '../contracts.ts'
+import type { BattleKind, InputAction } from '../contracts.ts'
 import type { Content } from '../../shared/content/index.ts'
+import { INPUT_BINDINGS } from '../ui/config.ts'
 import battleUiJson from '../../../content/battle-ui.json' with { type: 'json' }
 
 export type TransitionKind = 'fade' | 'battle' | 'iris'
@@ -86,7 +87,13 @@ export interface BattleUiConfig {
     typeBase: string
   }
   commands: { normal: CommandId[]; pvp: CommandId[]; columns: number }
-  moves: { columns: number; hintRequiresSeen: boolean; categoryColors: Record<MoveCategory, string> }
+  moves: {
+    columns: number
+    hintRequiresSeen: boolean
+    categoryColors: Record<MoveCategory, string>
+    /** The type chart entry of the move list: the key that opens it (an InputAction) and the view it opens on. */
+    chart: { action: InputAction; view: 'type' | 'grid' | 'loops' }
+  }
   catch: { nicknamePrompt: boolean }
   evolve: { startHoldMs: number; endHoldMs: number }
 }
@@ -149,6 +156,8 @@ export function validateBattleUi(c: Content, cfg: BattleUiConfig = BATTLE_UI): s
   num('commands.columns', cfg.commands.columns, 1)
   num('moves.columns', cfg.moves.columns, 1)
   for (const cat of CATEGORIES) if (typeof cfg.moves.categoryColors[cat] !== 'string') errs.push(`battle-ui moves.categoryColors.${cat} missing`)
+  if (!['type', 'grid', 'loops'].includes(cfg.moves.chart?.view)) errs.push('battle-ui moves.chart.view: expected type, grid or loops')
+  if (!INPUT_BINDINGS.keyboard[cfg.moves.chart?.action]) errs.push('battle-ui moves.chart.action: expected an action with a keyboard binding')
   num('evolve.startHoldMs', cfg.evolve.startHoldMs)
   num('evolve.endHoldMs', cfg.evolve.endHoldMs)
   return errs

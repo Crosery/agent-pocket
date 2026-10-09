@@ -621,6 +621,8 @@ export const SCREENS = [
 const BATTLE_SCREENS = [
   { id: 'battle-command', demote: ['font-size'], scope: '.apb-root', open: async (page) => { await waitCommand(page); await waitHud(page) } },
   { id: 'battle-moves', demote: ['font-size'], scope: '.apb-root', open: async (page) => { await waitCommand(page); await page.keyboard.press('KeyZ'); await page.waitForTimeout(700) } },
+  // The move list's type chart entry, and the chart opened from it (the battle pauses behind it).
+  { id: 'battle-chart', demote: ['font-size'], scope: '.ap-kit-stack > *:last-child', open: async (page) => { await waitCommand(page); await page.keyboard.press('KeyZ'); await page.waitForTimeout(700); await page.keyboard.press('KeyM'); await page.waitForTimeout(900); await touchActivity(page) } },
   // The longest battle-phase tip (typeMatchup) docked in the top strip, audited with the whole battle UI (status windows, message box, command bar).
   { id: 'battle-tip', demote: ['font-size'], scope: null, ignore: '.ap-l-chat, .ap-l-overlay canvas', tip: true, open: async (page) => {
     await closeInspector(page)
