@@ -216,7 +216,7 @@ export interface CameraCfg {
    * towards `target` (viewport fractions) and its width stays within `fill` of the screen (landscape, portrait). `padU` keeps that many UI pixels between a creature and a window, `edgeU` between a
    * creature and the screen edge; `idlePad` (fraction of sprite height) covers the float / breathing swing.
    */
-  framing: { rate: number; minZoom: number; maxZoom: number; zoomStep: number; shiftStep: number; shiftMax: number; target: [number, number]; targetPortrait: [number, number]; fill: [number, number]; padU: number; edgeU: number; idlePad: number }
+  framing: { rate: number; minZoom: number; maxZoom: number; zoomStep: number; shiftStep: number; shiftMax: number; target: [number, number]; targetPortrait: [number, number]; fill: [number, number]; padU: number; edgeU: number; idlePad: number; baseBlendSec: number }
   near: number
   far: number
   /** Idle sway amplitudes / frequencies; `phase` offsets the three axes; `rate` = how fast setSway() levels ease (1/s). */
@@ -511,11 +511,32 @@ export interface Timelines {
   evolve: { start: VfxStep[]; swap: VfxStep[]; finish: VfxStep[]; cancel: VfxStep[] }
 }
 
+/** Floor rings that mark which creature belongs to which side (markers.ts). */
+export interface MarkersCfg {
+  /** Ring radius in world units per unit of creature scale. */
+  radius: number
+  /** Ring thickness as a fraction of the radius. */
+  width: number
+  segments: number
+  /** Height above the floor. */
+  lift: number
+  /** Opacity of the ring and of the disc inside it. */
+  ring: number
+  disc: number
+  /** Breathing of the radius (fraction) and its rate (Hz). */
+  pulse: number
+  hz: number
+  renderOrder: number
+  /** Colour per side: [own, foe]. */
+  colors: [string, string]
+}
+
 export interface BattleStageContent {
   maxDt: number
   readyTimeoutMs: number
   timeMinutes: Record<TimeOfDay, number>
   slots: [SlotDef, SlotDef]
+  markers: MarkersCfg
   sprite: SpriteCfg
   creature: CreatureCfg
   trainer: TrainerCfg
@@ -649,6 +670,7 @@ export function validateBattleStageContent(s: BattleStageContent = STAGE, c: Con
   color('creature.dissolveEdge', s.creature.dissolveEdge)
   for (const k of ['white', 'band', 'button', 'defaultColor'] as const) color(`ball.${k}`, s.ball[k])
   color('vfx.neutral', s.vfx.neutral)
+  s.markers.colors.forEach((c, i) => color(`markers.colors[${i}]`, c))
   color('evolve.silhouetteColor', s.evolve.silhouetteColor)
   if (!s.vfx.glyphChars) errs.push('vfx.glyphChars: empty')
 
@@ -657,7 +679,7 @@ export function validateBattleStageContent(s: BattleStageContent = STAGE, c: Con
     const list = Array.isArray(v) ? v : [v]
     list.forEach((sh, i) => { vec(`camera.shots.${name}[${i}].pos`, sh.pos, 3); vec(`camera.shots.${name}[${i}].look`, sh.look, 3) })
   }
-  if (!s.camera.shots.base) errs.push('camera.shots: missing "base"')
+  for (const need of ['base', 'basePortrait']) if (!s.camera.shots[need]) errs.push(`camera.shots: missing "${need}"`)
   if (!(s.camera.refAspect > 0)) errs.push(`camera.refAspect: must be > 0, got ${s.camera.refAspect}`)
   if (!shotFor(s.evolve.shot, 0, s)) errs.push(`evolve.shot: unknown shot "${s.evolve.shot}"`)
 

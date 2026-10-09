@@ -27,6 +27,7 @@ export async function setBattleViewport(page, vp) {
     const { computeUIScale } = await import('/src/client/ui/scale.ts')
     const { applyDocumentSettings } = await import('/src/client/core/settings.ts')
     window.__AP.save.settings.touchControls = v.touch ? 'on' : 'off'
+    document.documentElement.classList.add('apd-shot')
     applyDocumentSettings(window.__AP.save.settings)
     window.dispatchEvent(new Event('resize'))
     return computeUIScale(v.width, v.height, v.dpr)

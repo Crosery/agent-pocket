@@ -64,7 +64,7 @@ export interface BossIntroConfig {
 export interface BossPresentation {
   frames: Record<string, unknown>
   scaleRange: [number, number]
-  framing: { base: ShotDef }
+  framing: { base: ShotDef; basePortrait: ShotDef }
   intro: BossIntroConfig
   themes: Record<string, BossTheme>
   bosses: Record<string, BossEntry>
@@ -95,6 +95,7 @@ export function validateBossPresentation(c: Pick<Content, 'bosses' | 'species'>,
   const errs: string[] = []
   const [lo, hi] = p.scaleRange
   if (!(lo >= 1 && hi >= lo)) errs.push(`scaleRange: bad range ${lo}..${hi}`)
+  for (const k of ['base', 'basePortrait'] as const) if (!p.framing[k]) errs.push(`framing.${k}: missing`)
   for (const id of Object.keys(c.bosses)) if (!p.bosses[id]) errs.push(`bosses.${id}: no presentation entry`)
   for (const [id, b] of Object.entries(p.bosses)) {
     const w = `bosses.${id}`

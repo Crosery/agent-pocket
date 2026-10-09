@@ -6,18 +6,20 @@
     {"creature": [-2.1, 1.7], "trainer": [-4.6, 4.4], "scale": 1.35, "facesRight": true, "trainerRow": "up", "ballFrom": [-3.5, 1.6, 5.5]},
     {"creature": [2.3, -2.3], "trainer": [4.3, -4.5], "scale": 1.4, "facesRight": false, "trainerRow": "down", "ballFrom": [4.5, 1.8, -6.0]}
   ],
+  "markers": {"radius": 0.68, "width": 0.09, "segments": 56, "lift": 0.03, "ring": 0.7, "disc": 0.1, "pulse": 0.04, "hz": 0.45, "renderOrder": 2, "colors": ["#58b0ff", "#f0b45a"]},
   "sprite": {"squashWiden": 0.5},
   "creature": {"height": 1.25, "sizeInfluence": 0.5, "sizeClamp": [0.8, 1.3], "alphaTest": 0.45, "normalTilt": 0.55, "breath": {"hz": 0.55, "squash": 0.025, "bob": 0.015}, "dissolveCells": 40, "dissolveEdge": "#ffffff", "dissolveEdgeGlow": 2.5, "dissolveEdgeWidth": 0.08, "bend": 0.45, "breathPhase": [0.0, 2.1]},
   "trainer": {"height": 1.75, "alphaTest": 0.5, "normalTilt": 0.55, "frame": 0, "breath": {"hz": 0.4, "squash": 0.012, "bob": 0.008}, "handH": 0.62, "breathPhase": [0.7, 2.0]},
   "camera": {
     "fov": 30,
     "refAspect": 1.7778,
-    "framing": {"rate": 5, "minZoom": 0.5, "maxZoom": 2.2, "zoomStep": 0.02, "shiftStep": 0.01, "shiftMax": 0.45, "target": [0.5, 0.42], "targetPortrait": [0.5, 0.5], "fill": [0.6, 0.86], "padU": 5, "edgeU": 3, "idlePad": 0.04},
+    "framing": {"rate": 5, "minZoom": 0.5, "maxZoom": 3.2, "zoomStep": 0.02, "shiftStep": 0.01, "shiftMax": 0.45, "target": [0.5, 0.42], "targetPortrait": [0.5, 0.5], "fill": [0.6, 0.94], "padU": 5, "edgeU": 3, "idlePad": 0.04, "baseBlendSec": 0.5},
     "near": 0.3,
     "far": 220,
     "sway": {"pos": [0.22, 0.07, 0.12], "look": [0.06, 0.03, 0.05], "hz": [0.045, 0.07, 0.057], "phase": 1.7, "rate": 2.0},
     "shots": {
       "base": {"pos": [-2.05, 2.38, 11.19], "look": [-0.12, 0.7, -0.34], "fov": 24.3},
+      "basePortrait": {"pos": [-5.97, 2.7, 9.79], "look": [-0.12, 0.7, -0.34], "fov": 24.3},
       "wide": {"pos": [0.0, 4.2, 12.5], "look": [0.2, 0.6, -1.5], "fov": 34},
       "attack": [
         {"pos": [-1.86, 1.81, 8.0], "look": [0.03, 0.38, -2.73]},

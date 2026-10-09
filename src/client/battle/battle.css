@@ -315,8 +315,10 @@ html.ap-battle-on[data-touch-controls] { --ap-bottom-inset: 0px; }
 .apb-timer {
   position: absolute;
   top: calc(var(--apb-m) + env(safe-area-inset-top, 0px));
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin-inline: auto;
+  width: max-content;
   padding: calc(var(--u) * 2) calc(var(--u) * 8);
   color: var(--ap-text);
   background: rgba(8, 11, 22, 0.82);
@@ -484,14 +486,14 @@ html.ap-compact .apb-status.is-foe { width: calc(var(--u) * var(--apb-foe-w-c, 1
 html.ap-compact .apb-status.is-own { width: calc(var(--u) * var(--apb-own-w-c, 170)); }
 html.ap-compact .apb-cmd { width: calc(var(--u) * var(--apb-cmd-w-c, 116)); }
 
-/* Portrait: own card on top, then the commands in one row, then the message, all full width at the screen bottom. */
+/* Portrait: own card on top, then the message, and the commands in one row at the very bottom (thumb reach), all full width. */
 html.ap-portrait .apb-bar { grid-template-columns: minmax(0, 1fr); row-gap: var(--apb-g); }
 html.ap-portrait .apb-status.is-own { grid-column: 1; grid-row: 1; width: 100%; min-height: 0; }
-html.ap-portrait .apb-menu-wrap { grid-column: 1; grid-row: 2; width: 100%; }
-html.ap-portrait .apb-msg { grid-column: 1; grid-row: 3; }
+html.ap-portrait .apb-msg { grid-column: 1; grid-row: 2; }
+html.ap-portrait .apb-menu-wrap { grid-column: 1; grid-row: 3; width: 100%; }
 html.ap-portrait .apb-cmd { width: 100%; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 html.ap-portrait .apb-moves { --cols: 2; }
-html.ap-portrait .apb-moves-wrap { flex-direction: column; gap: var(--apb-g); }
+html.ap-portrait .apb-moves-wrap { flex-direction: column-reverse; gap: var(--apb-g); }
 html.ap-portrait .apb-bar.is-moves .apb-menu-wrap { grid-column: 1; grid-row: 2 / 4; }
 html.ap-portrait .apb-bar.is-moves .apb-moves { margin-right: 0; }
 html.ap-portrait .apb-detail { position: static; width: 100%; }

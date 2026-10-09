@@ -396,8 +396,13 @@ height, margins) is `layout` in the same file and reaches the CSS as `--apb-*` v
 ### Battle screen layout contract
 
 - The info cards sit in the corners: the foe card top-left, the own card at the right end of the bottom bar, the bar
-  (message | commands | own card; in portrait own card, commands, message) pinned to the real viewport bottom plus the
-  safe-area inset. Nothing reserves a fixed 16:9 stage.
+  (message | commands | own card; in portrait own card, message, commands) pinned to the real viewport bottom plus the
+  safe-area inset; in portrait the command row is the lowest row, in thumb reach. Nothing reserves a fixed 16:9 stage.
+- Our creature is always the near-left slot and the foe the far-right one (wild, trainer, boss alike); the floor marker
+  under each (`markers` in `content/battle-stage.json`: blue ring = ours, gold ring = the foe's) ties it to its card.
+- A portrait screen rests on its own shot (`camera.shots.basePortrait`, `boss-presentation.json` `framing.basePortrait`):
+  the camera is swung about 30 degrees so the two creatures overlap less sideways and the solver can zoom them up to
+  fill the free band between the foe card and the bar.
 - Every window carries `data-hud`; `BattleView.layout()` reports their rectangles and the scene feeds them to
   `stage.setHud()`. The stage projects both creatures' opaque pixels through the base shot and `render/battle/framing.ts`
   picks a zoom and a lens shift (`camera.framing` in `content/battle-stage.json`) so that no creature touches a window

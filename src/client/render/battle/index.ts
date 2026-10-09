@@ -20,6 +20,7 @@ import { createSharedGeometries } from './meshes.ts'
 import { createGlyphAtlas, createParticlePool } from './particles.ts'
 import { colorHex, spawnStep, type Effect, type FxCtx, type FxHost } from './primitives.ts'
 import { BOSS_PRES, bossEntry, bossTheme, themeGlyphs, type BossEntry } from './boss-config.ts'
+import { createSideMarkers } from './markers.ts'
 import { createBattleSprite, type BattleSprite } from './sprites.ts'
 import { createScheduler, ease } from './timeline.ts'
 
@@ -119,6 +120,7 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
   const evolveSprite = createBattleSprite('creature', assets, evolveHome, S.evolve.breathPhase)
   for (const s of [...creatures, ...trainers, evolveSprite]) scene.add(s.root)
   let evolveActive = false
+  const markers = createSideMarkers(scene, creatureHomes)
 
   // --- vfx -----------------------------------------------------------------
   const vfxGroup = new THREE.Group()
@@ -321,6 +323,22 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
     return boxes
   }
 
+  /** The shot the camera rests on: the boss one while a boss is out, and the tall-screen variant on a portrait viewport. */
+  function restShot(): ShotDef {
+    const portrait = !!hud && hud.width < hud.height
+    if (bosses[1]) return (portrait ? BOSS_PRES.framing.basePortrait : BOSS_PRES.framing.base) as ShotDef
+    return (portrait ? S.camera.shots.basePortrait : S.camera.shots.base) as ShotDef
+  }
+
+  /** Re-seats the camera on `restShot()`: a cut before the first fit (the intro has not started), an ease after. */
+  function syncBase(): void {
+    const shot = restShot()
+    if (shot === cam.baseShot) return
+    cam.setBase(shot)
+    if (fitted) cam.home(S.camera.framing.baseBlendSec)
+    else cam.cut(shot)
+  }
+
   function refit(): void {
     if (!hud || hud.width < 1 || hud.height < 1) return
     const F = S.camera.framing
@@ -392,6 +410,7 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
 
     setHud(layout) {
       hud = layout
+      syncBase()
       refit()
     },
     restBoxes() { return hud ? restBoxes(hud.width, hud.height) : [] },
@@ -404,9 +423,9 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
       const theme = bossTheme(bossId)
       creatures[side].setIdleMotion(theme ? { breath: theme.breath, floatAmp: theme.bob.amp, floatHz: theme.bob.hz } : null)
       if (side === 1) {
-        const base = (entry ? BOSS_PRES.framing.base : S.camera.shots.base) as ShotDef
-        cam.setBase(base)
-        cam.cut(base)
+        const shot = restShot()
+        cam.setBase(shot)
+        cam.cut(shot)
       }
       const sp = creatures[side]
       if (sp.id) sp.setCreature(sp.id, sp.shiny, slotScale(side), S.slots[side].facesRight)
@@ -656,6 +675,7 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
       for (const s of trainers) s.update(dt, time, yaw)
       evolveSprite.update(dt, time, yaw)
       bossIdle(dt)
+      markers.update(creatures, [slotScale(0), slotScale(1)], time)
       const q = quality()
       const internalH = ext?.internal.height ?? renderer.canvas.height
       const pxPerUnit = internalH / (2 * Math.tan(THREE.MathUtils.degToRad(cam.camera.fov) / 2))
@@ -684,6 +704,7 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
       effects.length = 0
       for (const s of [...creatures, ...trainers, evolveSprite]) s.dispose()
       for (const l of vfxLights) { l.light.removeFromParent(); l.light.dispose() }
+      markers.dispose()
       additive.dispose()
       alpha.dispose()
       atlas.dispose()

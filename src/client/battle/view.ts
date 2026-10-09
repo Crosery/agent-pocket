@@ -63,7 +63,7 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
   const message: MessageBox = createMessageBox(audio, settings, pace)
   const menus: Menus = createMenus(audio)
   const bar = el('div', 'apb-bar', [message.el, menus.el, status[0].el])
-  for (const n of [status[1].el, status[0].el, message.el, menus.el, weather]) n.dataset.hud = ''
+  for (const n of [status[1].el, status[0].el, message.el, menus.el, weather, timer]) n.dataset.hud = ''
   root.append(status[1].el, weather, timer, bar)
   const effects = createBattleEffectsPanel(root, status)
   openDetails = (side) => effects.show(side)

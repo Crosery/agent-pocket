@@ -405,7 +405,7 @@
     }
   },
   "scaleRange": [1.3, 1.6],
-  "framing": {"about": "Boss battle camera base shot (replaces camera.shots.base while a boss is on the field): wider and higher so the scaled boss stays between the two info windows.", "base": {"pos": [-2.05, 2.55, 12.2], "look": [0.1, 0.95, -0.34], "fov": 27.5}},
+  "framing": {"about": "Boss battle camera base shot (replaces camera.shots.base while a boss is on the field): wider and higher so the scaled boss stays between the two info windows.", "base": {"pos": [-2.05, 2.55, 12.2], "look": [0.1, 0.95, -0.34], "fov": 27.5}, "basePortrait": {"pos": [-6.25, 2.9, 10.66], "look": [0.1, 0.95, -0.34], "fov": 27.5}},
   "intro": {"maxBytes": 2000000, "loadTimeoutMs": 9000, "stallMs": 3500, "fadeInMs": 260, "fadeOutMs": 320, "holdLastMs": 120, "captionDelayMs": 700, "staticHoldMs": 1900, "prefetch": true, "skipOnSaveData": true, "slowConnections": ["slow-2g", "2g"]},
   "themes": {
     "starlight": {
