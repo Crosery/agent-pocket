@@ -19,7 +19,7 @@
     ]
   },
   "tips": {
-    "layer": {"ttlSec": 7, "fadeMs": 220, "gapSec": 3, "staleSec": 20},
+    "layer": {"ttlSec": 7, "fadeMs": 220, "gapSec": 20, "staleSec": 20},
     "list": [
       {"id": "move", "trigger": {"kind": "free", "delaySec": 1.2}, "text": "tutorial.tip.move", "expires": {"flag": ["starter"]}, "doneOn": "moved"},
       {"id": "talk", "trigger": {"kind": "npcNear", "radius": 2}, "text": "tutorial.tip.talk", "expires": {"flag": ["rival:lab"]}, "doneOn": "dialogue"},
