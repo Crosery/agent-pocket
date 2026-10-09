@@ -49,7 +49,7 @@ export function titleScreen(env: ScreenEnv, hasSave: boolean): Promise<TitleChoi
         el('div', { class: 'aps-title-logo-main', text: t('screens.title.logo') }),
         el('div', { class: 'aps-title-logo-sub', text: t('screens.title.subtitle') }),
       ])
-    const press = el('div', { class: 'aps-title-press', text: t('screens.title.press'), vars: { '--blink-ms': `${SCREENS.anim.pressBlinkMs}ms` } })
+    const press = el('div', { class: 'aps-title-press', text: t(document.documentElement.dataset.touchControls === 'on' ? 'screens.title.pressTouch' : 'screens.title.press'), vars: { '--blink-ms': `${SCREENS.anim.pressBlinkMs}ms` } })
     const entries = cfg.menu.filter((m) => !m.needsSave || hasSave)
     const menu = createRowMenu(entries.map((m) => ({ label: t(m.label) })), {
       visibleRows: entries.length,

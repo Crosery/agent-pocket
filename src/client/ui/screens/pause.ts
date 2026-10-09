@@ -81,7 +81,7 @@ export function pauseScreen(env: ScreenEnv): Promise<void> {
     f.body.append(el('div', 'aps-pause-layout', [cardSlot, menu]))
     api.root.append(f.el)
 
-    const makeNav = (initial = 0) => createGridNav({ count: entries.length, cols: isCompact() ? 2 : 1, initial, audio: ctx.audio, onChange: () => paint() })
+    const makeNav = (initial = 0) => createGridNav({ count: entries.length, cols: isCompact() || document.documentElement.dataset.touchControls === 'on' ? 2 : 1, initial, audio: ctx.audio, onChange: () => paint() })
     let nav = makeNav()
     const paint = () => {
       rowsEl.forEach((r, i) => {

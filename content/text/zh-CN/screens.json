@@ -6,6 +6,7 @@
     "logo": "智灵口袋",
     "subtitle": "AGENT POCKET",
     "press": "按任意键开始",
+    "pressTouch": "点击屏幕开始",
     "menuLabel": "主菜单",
     "version": "版本 {v}",
     "online": "在线 {n} 人",

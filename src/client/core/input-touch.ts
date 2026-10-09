@@ -60,6 +60,8 @@ html[data-touch-controls="off"] .ap-touch,.ap-touch.is-hidden{display:none;}
 /* While a modal UI owns input the stick zone must not swallow taps on lists / choices / chat, and the world-only buttons do nothing. */
 html.ap-ui-blocking .ap-touch__zone{pointer-events:none;visibility:hidden;}
 html.ap-ui-blocking .ap-touch__btn[data-world-only]{display:none;}
+/* Landscape has no free strip under the content: menus, dialogue and battles are driven by taps, the pad steps aside. */
+html:not(.ap-portrait).ap-ui-blocking .ap-touch__btns,html:not(.ap-portrait).ap-battle-on .ap-touch__btns{display:none;}
 .ap-touch__zone{position:absolute;bottom:0;pointer-events:auto;touch-action:none;}
 .ap-touch__stick{position:absolute;transform:translate(-50%,-50%);opacity:${st.idleOpacity};transition:opacity .15s;}
 .ap-touch__stick.is-active{opacity:1;}
