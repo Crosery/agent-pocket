@@ -620,6 +620,7 @@ html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast-text { di
 .ap-chip.is-dark-ink { color: #10131c; text-shadow: none; }
 .ap-chip.is-light-ink { color: #ffffff; text-shadow: var(--u) var(--u) 0 rgba(0, 0, 0, 0.45); }
 .ap-chip--status { min-width: calc(var(--u) * 18); }
+.ap-chip--grade { min-width: calc(var(--u) * 14); padding: 0 calc(var(--u) * 3); }
 
 .ap-rarity {
   --rc: #ccc;

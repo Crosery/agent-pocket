@@ -1,6 +1,6 @@
 // High-level screens (Screens contract). Every method is its own module; all labels, menus, tabs, filters,
 // credits and tunables come from content/screens.json + t('screens.*').
-import type { SaveData } from '../../../shared/types.ts'
+import type { Creature, SaveData } from '../../../shared/types.ts'
 import type { GameContext, Screens } from '../../contracts.ts'
 import { t } from '../../../shared/content/index.ts'
 import type { ScreenEnv, ScreenInternals } from './base.ts'
@@ -22,6 +22,7 @@ import { anchorPickerScreen } from './anchorpicker.ts'
 import { questsScreen, questHudText } from './quests.ts'
 import { settingsScreen } from './settings.ts'
 import { learnMoveScreen } from './learnmove.ts'
+import { natureScreen } from './nature.ts'
 import { promptSaveCode } from './savecode.ts'
 import './screens.css'
 
@@ -30,6 +31,10 @@ export interface ScreensHandle extends Screens {
   importSave(): Promise<SaveData | null>
   /** Badge case (also reachable from the badge-case key item). */
   badges(): Promise<void>
+  /** The summary opened on page `page` (dev tooling and screenshots). */
+  summaryAt(creature: Creature, page: number): Promise<void>
+  /** Nature grid of the persona card: resolves the picked nature id, null when closed. */
+  pickNature(creature: Creature): Promise<string | null>
 }
 
 export { questHudText }
@@ -86,6 +91,8 @@ export function createScreens(ctx: GameContext): ScreensHandle {
     learnMove: (creature, moveId) => learnMoveScreen(env, creature, moveId),
     importSave: () => promptSaveCode(env),
     badges: () => badgeCaseScreen(env),
+    pickNature: (creature) => natureScreen(env, creature),
+    summaryAt: (creature, page) => summaryScreen(env, ctx.save.party.includes(creature) ? ctx.save.party : [creature], Math.max(0, ctx.save.party.indexOf(creature)), page),
   }
   const env: ScreenEnv = { ctx, screens, internal, state: { depth: 0, leave: false, after: null } }
   return screens

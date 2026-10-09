@@ -6,6 +6,8 @@ import { creatureName, evolutionTarget, evolve, expForLevel, gainExp, maxHp } fr
 import { getMap } from '../../../shared/world/worldapi.ts'
 import { actionKeyLabel } from '../widgets.ts'
 import { leaveAllScreens, sfx, type ScreenEnv } from './base.ts'
+import { natureScreen } from './nature.ts'
+import { natureName } from '../quality-text.ts'
 import { SCREENS } from './config.ts'
 import { addItem, applyMedicine, medicineBlocker, needsMovePick, needsTarget, overworldExit, teachState } from './logic.ts'
 
@@ -105,6 +107,17 @@ async function applyToCreature(env: ScreenEnv, item: ItemDef, partyIndex: number
     }
     case 'chip':
       return teachMove(env, c, e.move)
+    case 'nature': {
+      const pick = await natureScreen(env, c)
+      if (!pick) return false
+      if (pick === c.nature) { sfx(env, 'error'); await say(env, t('screens.quality.pickSame', { name, nature: natureName(pick) })); return false }
+      if (!await ctx.ui.confirm(t('screens.quality.pickConfirm', { name, nature: natureName(pick) }))) return false
+      c.nature = pick
+      sfx(env, 'useItem')
+      await say(env, t('screens.quality.pickDone', { name, nature: natureName(pick) }))
+      ctx.events.emit('party:changed', {})
+      return true
+    }
     default:
       return false
   }

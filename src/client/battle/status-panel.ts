@@ -4,13 +4,14 @@ import type { BattleStatKey, CreatureView } from '../../shared/types.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { creatureName } from '../../shared/creature.ts'
 import { effectBalance, hudEffects, type BattleStatusSnapshot } from './effect-details.ts'
-import { actionKeyLabel, append, el, expBar, hpBar, panel, rarityBadge, statusChip, typeChip, type BarHandle } from '../ui/widgets.ts'
+import { actionKeyLabel, append, el, expBar, gradeChip, hpBar, panel, rarityBadge, statusChip, typeChip, type BarHandle } from '../ui/widgets.ts'
 import { BATTLE_UI } from './config.ts'
 import type { BossPanelInfo, SlotInfo } from './model.ts'
 
 export interface StatusPanel {
   readonly el: HTMLElement
-  setCreature(v: CreatureView, abilityId?: string): void
+  /** `gradeId`: quality letter next to the level (wild foes of species the player has caught). */
+  setCreature(v: CreatureView, abilityId?: string, gradeId?: string): void
   setLevel(level: number): void
   setHp(hp: number, maxHp: number, animate: boolean): Promise<void>
   setStatus(status: string | null): void
@@ -34,6 +35,7 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
   const shiny = el('span', { class: 'apb-st-shiny', text: t('ui.shiny') })
   shiny.hidden = true
   const rarity = el('span')
+  const grade = el('span', 'apb-st-grade')
   const lv = el('span', 'apb-st-lv')
   const tags = el('span', 'apb-st-taglist')
   const effects = el('div', 'apb-st-effects')
@@ -55,7 +57,7 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
   const bossBox = el('div', 'apb-st-boss')
   bossBox.hidden = true
   append(p.body, [
-    el('div', 'apb-st-head', [name, el('span', 'apb-st-badges', [shiny, rarity, lv])]),
+    el('div', 'apb-st-head', [name, el('span', 'apb-st-badges', [shiny, rarity, grade, lv])]),
     bossBox,
     tagRow,
     effects,
@@ -134,7 +136,7 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
 
   return {
     el: p.el,
-    setCreature(v, nextAbilityId) {
+    setCreature(v, nextAbilityId, gradeId) {
       const sp = CONTENT.species[v.speciesId]
       p.el.classList.remove('is-empty')
       const shownName = creatureName(v)
@@ -143,6 +145,7 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
       name.setAttribute('aria-label', shownName)
       shiny.hidden = !v.shiny
       rarity.replaceChildren(sp ? rarityBadge(sp.rarity) : '')
+      grade.replaceChildren(...(gradeId ? [gradeChip(gradeId)] : []))
       lv.textContent = t('battleui.hud.level', { level: v.level })
       types = sp ? [...sp.types] : []
       status = v.status

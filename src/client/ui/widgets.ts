@@ -231,6 +231,15 @@ export function statusChip(statusId: string): HTMLElement {
   return chip
 }
 
+/** Quality grade as a coloured letter chip (grade colours: content/quality.json); the nickname is its tooltip. */
+export function gradeChip(gradeId: string): HTMLElement {
+  ensureUIEnvironment()
+  const def = CONTENT.quality.grades.find((g) => g.id === gradeId)
+  const chip = colorChip(gradeId, def?.color, 'ap-chip--grade', def ? t(`screens.quality.grade.${gradeId}`) : undefined)
+  chip.dataset.grade = gradeId
+  return chip
+}
+
 export function rarityBadge(rarityId: string, opts?: { label?: 'id' | 'name' }): HTMLElement {
   ensureUIEnvironment()
   const def = CONTENT.rarityById[rarityId]

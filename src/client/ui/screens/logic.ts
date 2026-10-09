@@ -1,8 +1,9 @@
 // Pure game-screen logic (no DOM): dex filters, shop prices, item effects in the field, box moves, map
 // navigation, quest lists. Everything reads data from CONTENT / SaveData; failures return text keys.
-import type { Creature, Dir, GameMap, ItemDef, QuestDef, SaveData, SpeciesDef, StatKey, StatusId, TypeId, Warp, World } from '../../../shared/types.ts'
+import type { Creature, Dir, GameMap, ItemDef, NatureDef, QuestDef, SaveData, SpeciesDef, StatKey, StatusId, TypeId, Warp, World } from '../../../shared/types.ts'
 import { CONTENT, typeEffectiveness, type Content } from '../../../shared/content/index.ts'
-import { expForLevel, legalMoves, maxHp } from '../../../shared/creature.ts'
+import { STAT_KEYS, expForLevel, legalMoves, maxHp } from '../../../shared/creature.ts'
+import { gradeOf, gradeRank } from '../../../shared/gameplay/quality.ts'
 import { getMap } from '../../../shared/world/worldapi.ts'
 import type { ScreensConfig, SettingsField } from './config.ts'
 
@@ -162,6 +163,8 @@ export function medicineBlocker(cr: Creature, item: ItemDef, c: Content = CONTEN
       const s = teachState(cr, e.move, c)
       return s === 'ok' ? null : s === 'known' ? 'screens.use.known' : 'screens.use.cannotLearn'
     }
+    case 'nature':
+      return null
     default:
       return 'screens.use.noEffect'
   }
@@ -169,7 +172,7 @@ export function medicineBlocker(cr: Creature, item: ItemDef, c: Content = CONTEN
 
 /** Effects that need a target creature when used from the bag. */
 export const needsTarget = (item: ItemDef): boolean =>
-  ['heal', 'cure', 'healCure', 'revive', 'pp', 'levelUp', 'evolve', 'chip'].includes(item.effect.kind)
+  ['heal', 'cure', 'healCure', 'revive', 'pp', 'levelUp', 'evolve', 'chip', 'nature'].includes(item.effect.kind)
 
 /** Single-move PP items need the player to pick a move. */
 export const needsMovePick = (item: ItemDef): boolean => item.effect.kind === 'pp' && !item.effect.all
@@ -440,4 +443,34 @@ export function stepSetting(f: SettingsField, value: unknown, dir: number): unkn
   const v = typeof value === 'number' ? value : min
   const next = Math.round((v + dir * step) / step) * step
   return Math.min(max, Math.max(min, Number(next.toFixed(6))))
+}
+
+const ivTotal = (c: Creature): number => STAT_KEYS.reduce((s, k) => s + (c.ivs[k] ?? 0), 0)
+
+/** Display order of a box: indices into `items`, filtered and sorted per the toolbar (stable, so ties keep their slots). */
+export function boxView(items: readonly Creature[], opts: { sortByGrade: boolean; onlyTop: boolean }): number[] {
+  const min = gradeRank(CONTENT.quality.box.filterMinGrade)
+  let idx = items.map((_, i) => i)
+  if (opts.onlyTop) idx = idx.filter((i) => gradeRank(gradeOf(items[i].ivs).id) >= min)
+  if (opts.sortByGrade) idx.sort((a, b) => ivTotal(items[b]) - ivTotal(items[a]) || a - b)
+  return idx
+}
+
+/** Stats a nature can raise or lower, in the order the content lists them. */
+export function natureAxis(): StatKey[] {
+  const out: StatKey[] = []
+  for (const n of CONTENT.quality.natures) if (n.up && !out.includes(n.up)) out.push(n.up)
+  return out
+}
+
+/** Grid cells row-major: [raised][lowered]; the diagonal takes the neutral natures in content order. */
+export function natureGrid(): NatureDef[] {
+  const axis = natureAxis()
+  const neutral = CONTENT.quality.natures.filter((n) => n.up === null)
+  const out: NatureDef[] = []
+  axis.forEach((up, r) => axis.forEach((down, c) => {
+    const n = r === c ? neutral[r] : CONTENT.quality.natures.find((x) => x.up === up && x.down === down)
+    if (n) out.push(n)
+  }))
+  return out
 }

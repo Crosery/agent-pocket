@@ -3,15 +3,19 @@
 import type { Creature } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
 import { creatureName, maxHp } from '../../../shared/creature.ts'
-import { button, creatureIcon, el, hpBar, rarityBadge, statusChip, typeChip } from '../widgets.ts'
+import { gradeOf } from '../../../shared/gameplay/quality.ts'
+import { button, creatureIcon, el, gradeChip, hpBar, rarityBadge, statusChip, typeChip } from '../widgets.ts'
 import { backPressed, frame, isCompact, openScreen, popupMenu, pressed, sfx, uiSfx, type ScreenEnv, setChildren , arrowButton } from './base.ts'
 import { SCREENS } from './config.ts'
-import { creatureAt, moveCreature, releaseCreature, type Slot } from './logic.ts'
+import { boxView, creatureAt, moveCreature, releaseCreature, type Slot } from './logic.ts'
 import { creatureImg } from './sprites.ts'
 
 type Zone = 'party' | 'head' | 'box'
 
 let lastBox = 0
+/** Box toolbar state lives for the session only (never in the save). */
+const view = { sortByGrade: false, onlyTop: false }
+export const boxToolbar = view
 
 export function boxScreen(env: ScreenEnv): Promise<void> {
   const { ctx } = env
@@ -46,16 +50,23 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
     const prevBtn = arrowButton('left', t('screens.box.prev'), api.guard(() => switchBox(-1)))
     const nextBtn = arrowButton('right', t('screens.box.next'), api.guard(() => switchBox(1)))
     const boxName = el('div', 'aps-box-name')
+    const sortBtn = button('', api.guard(() => toggleSort()), { className: 'aps-box-tool' })
+    const topBtn = button('', api.guard(() => toggleTop()), { className: 'aps-box-tool' })
     const head = el('div', 'aps-box-head', [prevBtn, boxName, nextBtn])
     head.addEventListener('mouseenter', api.guard(() => { if (zone !== 'head') { zone = 'head'; paint() } }))
     const grid = el('div', { class: 'aps-box-grid', vars: { '--cols': cols, '--rows': rows }, attrs: { role: 'grid' } }, boxCells)
     const partyCol = el('div', 'aps-box-party ap-panel', [el('div', { class: 'aps-sec', text: t('screens.box.party') }), el('div', 'aps-box-plist', partyCells)])
     const main = el('div', 'aps-box-main', [head, grid])
     const side = el('div', 'aps-box-side ap-panel')
-    f.body.append(el('div', 'aps-box-layout', [partyCol, main, side]))
+    // The toolbar sits under the detail panel, not in the header: a wider header would take the width the party names need.
+    const aside = el('div', 'aps-box-aside', [side, el('div', 'aps-box-tools', [sortBtn, topBtn])])
+    f.body.append(el('div', 'aps-box-layout', [partyCol, main, aside]))
     api.root.append(f.el)
 
-    const curSlot = (): Slot => (zone === 'party' ? { area: 'party', box, index: pIndex } : { area: 'box', box, index: bIndex })
+    /** Display cell -> real slot of the current box; a cell past the shown creatures maps to the list end (always empty). */
+    let shown: number[] = []
+    const realIndex = (i: number): number => shown[i] ?? (save.boxes[box]?.length ?? 0)
+    const curSlot = (): Slot => (zone === 'party' ? { area: 'party', box, index: pIndex } : { area: 'box', box, index: realIndex(bIndex) })
     const sameSlot = (a: Slot | null, b: Slot) => !!a && a.area === b.area && a.index === b.index && (a.area === 'party' || a.box === b.box)
 
     const fill = (cell: HTMLElement, c: Creature | undefined, slot: Slot, withName: boolean) => {
@@ -73,7 +84,7 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
           : creatureIcon(ctx.assets.creatureImageUrl(c.speciesId), c.shiny, SCREENS.box.cellIconSize),
         withName ? el('span', 'aps-box-pinfo', [
           el('span', { class: 'aps-box-pname ap-model-name', text: creatureName(c), title: creatureName(c), attrs: { 'aria-label': creatureName(c) } }),
-        ]) : null,
+        ]) : el('span', 'aps-box-g', [gradeChip(gradeOf(c.ivs).id)]),
       ] : [])
     }
 
@@ -82,6 +93,11 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
       grid.style.setProperty('--wp1', wp[0])
       grid.style.setProperty('--wp2', wp[1])
       const items = save.boxes[box] ?? []
+      shown = boxView(items, view)
+      sortBtn.textContent = t(view.sortByGrade ? 'screens.quality.box.sortGrade' : 'screens.quality.box.sortDefault')
+      sortBtn.classList.toggle('is-on', view.sortByGrade)
+      topBtn.textContent = t('screens.quality.box.onlyGrade', { grade: CONTENT.quality.box.filterMinGrade })
+      topBtn.classList.toggle('is-on', view.onlyTop)
       boxName.textContent = t('screens.box.name', { n: box + 1, count: items.length, size: P.boxSize })
       head.classList.toggle('is-active', zone === 'head')
       partyCells.forEach((cell, i) => {
@@ -89,7 +105,7 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
         cell.classList.toggle('is-active', zone === 'party' && i === pIndex)
       })
       boxCells.forEach((cell, i) => {
-        fill(cell, items[i], { area: 'box', box, index: i }, false)
+        fill(cell, items[shown[i]], { area: 'box', box, index: realIndex(i) }, false)
         cell.classList.toggle('is-active', zone === 'box' && i === bIndex)
       })
       const stored = save.boxes.reduce((s, b) => s + b.length, 0)
@@ -98,7 +114,7 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
       f.setHints(held
         ? [['confirm', t('screens.box.hint.place')], ['cancel', t('screens.box.hint.putBack')]]
         : zone === 'head'
-          ? [['lr', t('screens.box.hint.switchBox')], ['down', t('screens.box.hint.toBox')], ['cancel', t('screens.hint.back')]]
+          ? [['lr', t('screens.box.hint.switchBox')], ['confirm', t('screens.quality.box.menuTitle')], ['down', t('screens.box.hint.toBox')], ['cancel', t('screens.hint.back')]]
           : [['confirm', t('screens.hint.select')], ['up', t('screens.box.hint.toHead')], ['cancel', t('screens.hint.back')]])
     }
 
@@ -121,12 +137,16 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
             el('span', { class: 'ap-model-name', text: creatureName(show), title: creatureName(show), attrs: { 'aria-label': creatureName(show) } }),
             el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: show.level }) }),
           ]),
-          el('div', 'aps-chips', [...(sp?.types ?? []).map((ty) => typeChip(ty)), sp ? rarityBadge(sp.rarity) : null, show.status ? statusChip(show.status) : null]),
+          // The narrow side panel keeps the long model names on two lines: the grade rides with the type chips instead of the level.
+          el('div', 'aps-chips', [gradeChip(gradeOf(show.ivs).id), ...(sp?.types ?? []).map((ty) => typeChip(ty)), sp ? rarityBadge(sp.rarity) : null, show.status ? statusChip(show.status) : null]),
           bar.el,
         )
       } else if (!heldC) parts.push(el('div', { class: 'aps-empty', text: zone === 'head' ? t('screens.box.headNote') : t('screens.box.emptySlot') }))
       setChildren(side, parts)
     }
+
+    const toggleSort = () => { view.sortByGrade = !view.sortByGrade; uiSfx(env, 'confirm'); paint() }
+    const toggleTop = () => { view.onlyTop = !view.onlyTop; uiSfx(env, 'confirm'); paint() }
 
     const switchBox = (d: number) => {
       box = (box + d + P.boxCount) % P.boxCount
@@ -147,7 +167,12 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
     }
 
     const activate = () => api.run(async () => {
-      if (zone === 'head') return
+      if (zone === 'head') {
+        const pick = await popupMenu(env, [{ label: sortBtn.textContent ?? '' }, { label: topBtn.textContent ?? '' }], { anchor: head, title: t('screens.quality.box.menuTitle') })
+        if (pick === 0) toggleSort()
+        else if (pick === 1) toggleTop()
+        return
+      }
       const slot = curSlot()
       if (held) { place(slot); return }
       const c = creatureAt(save, slot)

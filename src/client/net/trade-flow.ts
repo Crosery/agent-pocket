@@ -6,6 +6,8 @@ import type { ServerMsg } from '../../shared/protocol.ts'
 import type { Creature, SaveData } from '../../shared/types.ts'
 import { CONTENT, t, type Content } from '../../shared/content/index.ts'
 import { STAT_KEYS, creatureName, newUid } from '../../shared/creature.ts'
+import { gradeOf } from '../../shared/gameplay/quality.ts'
+import { natureName } from '../ui/quality-text.ts'
 import { Rng, hashString } from '../../shared/rng.ts'
 import multiplayerJson from '../../../content/multiplayer.json' with { type: 'json' }
 import netJson from '../../../content/net.json' with { type: 'json' }
@@ -257,7 +259,7 @@ const STYLE = `
   100% { transform: translate(calc(var(--mp-swap-dx) * -1), 0); } }
 `
 
-/** Creature summary card: sprite, name, Lv, types, rarity, IV stars, original trainer. */
+/** Creature summary card: sprite, name, Lv, types, rarity, IV stars with grade and nature, original trainer. */
 export function creatureCard(w: Widgets, ctx: Pick<GameContext, 'assets'>, cr: Creature | null, iconSize = TRADE_RULES.cardIconSize): HTMLElement {
   if (!cr) return w.el('div', { class: 'mp-card is-empty', text: t('multiplayer.card.empty') })
   const sp = CONTENT.species[cr.speciesId]
@@ -273,6 +275,8 @@ export function creatureCard(w: Widgets, ctx: Pick<GameContext, 'assets'>, cr: C
     w.el('div', 'mp-card-row', [
       w.el('span', { class: 'ap-dim', text: t('multiplayer.card.iv') }),
       w.el('span', { class: 'mp-card-stars', text: t('multiplayer.card.starOn').repeat(stars) + t('multiplayer.card.starOff').repeat(TRADE_RULES.ivStars - stars) }),
+      w.gradeChip(gradeOf(cr.ivs).id),
+      w.el('span', { class: 'mp-card-nature', text: natureName(cr.nature) }),
     ]),
     w.el('div', { class: 'mp-card-ot', text: cr.otName ? t('multiplayer.card.ot', { name: cr.otName }) : t('multiplayer.card.otUnknown') }),
   ])

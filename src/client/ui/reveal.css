@@ -1,0 +1,95 @@
+/* Appraisal card (reveal.ts). Runs on the full-screen panel unit (--u of .aps-screen) and its type tiers. */
+
+.aps-screen.aps-reveal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 8, 15, 0.9);
+  cursor: pointer;
+  user-select: none;
+}
+.aps-reveal .aps-rv-card {
+  width: min(calc(var(--u) * 296), calc(100% - var(--u) * 16));
+  animation: aps-rv-in 150ms steps(5) both;
+}
+.aps-reveal .aps-rv-card .ap-panel-body { display: flex; flex-direction: column; gap: calc(var(--u) * 6); }
+.aps-rv-top { display: flex; align-items: center; gap: calc(var(--u) * 10); }
+.aps-rv-who { flex: none; width: calc(var(--u) * 84); display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.aps-rv-sprite { width: calc(var(--u) * 64); height: calc(var(--u) * 64); object-fit: contain; image-rendering: pixelated; }
+.aps-rv-name { max-width: 100%; font-size: var(--ap-fs-body); }
+.aps-rv-lv { font-size: var(--ap-fs-label); color: var(--ap-text-dim); }
+.aps-rv-gradebox { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 3); }
+.aps-rv-letter {
+  --gc: #9aa5b1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(var(--u) * 36);
+  height: calc(var(--u) * 36);
+  font-size: var(--ap-fs-title);
+  line-height: 1;
+  color: #10131c;
+  background: var(--gc);
+  border: calc(var(--u) * 2) solid var(--ap-ink);
+  box-shadow: 0 0 0 var(--u) var(--gc), 0 0 calc(var(--u) * 10) color-mix(in srgb, var(--gc) 75%, transparent);
+  animation: aps-rv-pop 300ms steps(6) 140ms both;
+}
+.aps-rv-nick { font-size: var(--ap-fs-caption); color: var(--ap-text-dim); }
+.aps-rv-ladder { display: flex; gap: calc(var(--u) * 3); }
+.aps-rv-step {
+  --gc: #9aa5b1;
+  min-width: calc(var(--u) * 22);
+  height: calc(var(--u) * 12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--ap-fs-caption);
+  color: rgba(244, 240, 218, 0.4);
+  background: rgba(255, 255, 255, 0.07);
+  border: var(--u) solid rgba(5, 7, 13, 0.85);
+  text-shadow: none;
+}
+.aps-rv-step.is-now {
+  color: #10131c;
+  background: var(--gc);
+  box-shadow: 0 0 0 var(--u) var(--ap-ink), 0 0 calc(var(--u) * 6) color-mix(in srgb, var(--gc) 75%, transparent);
+  animation: aps-rv-now 260ms steps(4) calc(var(--i) * 70ms + 150ms) both;
+}
+.aps-rv-step.is-lit:not(.is-now) { animation: aps-rv-sweep 220ms steps(3) calc(var(--i) * 70ms + 100ms) both; }
+.aps-rv-hint { font-size: var(--ap-fs-caption); color: var(--ap-gold-hi); }
+.aps-rv-rows { display: flex; flex-direction: column; gap: calc(var(--u) * 3); }
+.aps-rv-row { display: flex; align-items: center; gap: calc(var(--u) * 6); min-height: calc(var(--u) * 14); padding: 0 calc(var(--u) * 4); background: rgba(255, 255, 255, 0.05); }
+.aps-rv-k { flex: none; min-width: calc(var(--u) * 30); font-size: var(--ap-fs-label); color: var(--ap-gold-hi); }
+.aps-rv-v { min-width: 0; font-size: var(--ap-fs-body); }
+.aps-rv-natstats { display: inline-flex; gap: calc(var(--u) * 5); margin-left: auto; font-size: var(--ap-fs-label); white-space: nowrap; }
+.aps-rv-natstats .is-up, .aps-rv-arrow.is-up { color: #7be37b; }
+.aps-rv-natstats .is-down, .aps-rv-arrow.is-down { color: #ff7b6b; }
+.aps-rv-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(var(--u) * 3) calc(var(--u) * 6); }
+.aps-rv-stat { display: flex; align-items: center; gap: calc(var(--u) * 3); min-width: 0; padding: calc(var(--u) * 1) calc(var(--u) * 3); }
+.aps-rv-stat .aps-meter { margin-left: auto; }
+.aps-rv-statname { font-size: var(--ap-fs-label); color: var(--ap-text-dim); white-space: nowrap; }
+.aps-rv-stat.is-best { background: rgba(242, 217, 142, 0.16); box-shadow: inset 0 0 0 var(--u) rgba(242, 217, 142, 0.55); }
+.aps-rv-stat.is-best .aps-rv-statname { color: var(--ap-gold-hi); }
+.aps-rv-skip { font-size: var(--ap-fs-caption); color: var(--ap-text-dim); text-align: center; }
+
+/* The one-line chip lives in the toast stack (outside any screen unit): plain em spacing. */
+.aps-rv-chipline { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 0.25em 0.7em; }
+.aps-rv-chipnat { display: inline-flex; align-items: center; gap: 0.4em; white-space: nowrap; }
+.aps-rv-chipline .aps-rv-v, .aps-rv-chipline .aps-rv-natstats { font-size: inherit; margin-left: 0; gap: 0.3em; }
+
+@keyframes aps-rv-in { from { opacity: 0; transform: translateY(calc(var(--u) * 8)) scale(0.94); } to { opacity: 1; transform: none; } }
+@keyframes aps-rv-pop { from { opacity: 0; transform: scale(2.2); } to { opacity: 1; transform: none; } }
+@keyframes aps-rv-now { from { filter: brightness(2.2); } to { filter: none; } }
+@keyframes aps-rv-sweep { 0% { background: rgba(255, 255, 255, 0.07); } 40% { background: rgba(255, 255, 255, 0.45); color: #10131c; } 100% { background: rgba(255, 255, 255, 0.07); } }
+
+/* Portrait phones: sprite and grade stack, the stat grid drops to two columns. */
+html.ap-compact.ap-portrait .aps-rv-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* Landscape phones are short: the card spends its height on one band of two columns. */
+html.ap-compact:not(.ap-portrait) .aps-reveal .aps-rv-card { width: min(calc(var(--u) * 360), calc(100% - var(--u) * 16)); }
+html.ap-compact:not(.ap-portrait) .aps-rv-sprite { width: calc(var(--u) * 44); height: calc(var(--u) * 44); }
+html.ap-compact:not(.ap-portrait) .aps-rv-who { width: calc(var(--u) * 64); }
+html.ap-compact:not(.ap-portrait) .aps-rv-letter { width: calc(var(--u) * 28); height: calc(var(--u) * 28); }
+
+@media (prefers-reduced-motion: reduce) {
+  .aps-reveal .aps-rv-card, .aps-rv-letter, .aps-rv-step { animation: none !important; }
+}

@@ -218,6 +218,7 @@
       {"key": "showNames", "kind": "toggle", "section": "game"},
       {"key": "showObjective", "kind": "toggle", "section": "game"},
       {"key": "showTips", "kind": "toggle", "section": "game"},
+      {"key": "showIvNumbers", "kind": "toggle", "section": "game"},
       {"key": "quality", "kind": "choice", "section": "video", "options": ["low", "medium", "high", "ultra"]},
       {"key": "pixelScale", "kind": "choice", "section": "video", "options": [1, 2, 3, 4], "format": "screens.settings.scaleValue"},
       {"key": "dof", "kind": "toggle", "section": "video"},
