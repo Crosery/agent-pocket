@@ -4,6 +4,7 @@ import { CONTENT, t } from '../../shared/content/index.ts'
 import type { Content } from '../../shared/content/index.ts'
 import { preUnlockedIds } from '../../shared/world/anchors.ts'
 import { decodeSaveCode, encodeSaveCode } from './save-codec.ts'
+import { migrateSave } from './save-migrate.ts'
 import { playableAvatars, sanitizeName, sanitizeSaveData, sanitizeSettings, worldSpawn } from './save-sanitize.ts'
 import type { SanitizeContext } from './save-sanitize.ts'
 import { defaultBuildWorld, defaultSanitizeCreature } from './shared-deps.ts'
@@ -57,7 +58,7 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
       let text: string | null
       try { text = storage.getItem(key(slot)) } catch { return null }
       if (text === null) return null
-      try { return sanitize(JSON.parse(text)) } catch { return null }
+      try { return sanitize(migrateSave(JSON.parse(text), c)) } catch { return null }
     },
     write(save: SaveData, slot = 0) {
       try {
@@ -107,7 +108,7 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
     },
     importCode(code: string) {
       const decoded = decodeSaveCode(code)
-      return decoded ? sanitize(decoded.data) : null
+      return decoded ? sanitize(migrateSave(decoded.data, c)) : null
     },
     defaultSettings(): Settings {
       return sanitizeSettings(c.config.defaultSettings, c)

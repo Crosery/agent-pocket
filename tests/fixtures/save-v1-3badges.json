@@ -1,0 +1,368 @@
+{
+ "version": 1,
+ "playerId": "fixture-player-0001",
+ "name": "老训练家",
+ "avatar": "hero_boy",
+ "createdAt": 1700000000000,
+ "playTimeSec": 0,
+ "money": 12000,
+ "badges": [
+  "badge-code",
+  "badge-vision",
+  "badge-sound"
+ ],
+ "party": [
+  {
+   "uid": "71f0wbsz0uti",
+   "speciesId": "o1",
+   "level": 30,
+   "exp": 33750,
+   "ivs": {
+    "hp": 10,
+    "atk": 0,
+    "def": 23,
+    "spa": 24,
+    "spd": 1,
+    "spe": 10
+   },
+   "moves": [
+    {
+     "id": "debug-strike",
+     "pp": 20,
+     "ppMax": 20
+    },
+    {
+     "id": "deductive-slash",
+     "pp": 15,
+     "ppMax": 15
+    },
+    {
+     "id": "chain-of-thought",
+     "pp": 15,
+     "ppMax": 15
+    },
+    {
+     "id": "eureka",
+     "pp": 20,
+     "ppMax": 20
+    }
+   ],
+   "hp": 71,
+   "status": null,
+   "statusTurns": 0,
+   "abilityId": "deep-think",
+   "shiny": false,
+   "friendship": 70,
+   "ballId": "prompt-ball",
+   "caughtMap": "overworld",
+   "otName": "老训练家",
+   "otId": "fixture-player-0001"
+  },
+  {
+   "uid": "byfeyl8u9j4g",
+   "speciesId": "deepseek-v3",
+   "level": 30,
+   "exp": 33750,
+   "ivs": {
+    "hp": 20,
+    "atk": 23,
+    "def": 18,
+    "spa": 3,
+    "spd": 30,
+    "spe": 6
+   },
+   "moves": [
+    {
+     "id": "thermal-spike",
+     "pp": 20,
+     "ppMax": 20
+    },
+    {
+     "id": "null-pointer",
+     "pp": 25,
+     "ppMax": 25
+    },
+    {
+     "id": "heat-sink-slam",
+     "pp": 20,
+     "ppMax": 20
+    },
+    {
+     "id": "distill-strike",
+     "pp": 20,
+     "ppMax": 20
+    }
+   ],
+   "hp": 82,
+   "status": null,
+   "statusTurns": 0,
+   "abilityId": "mixture-of-experts",
+   "shiny": false,
+   "friendship": 70,
+   "ballId": "prompt-ball",
+   "caughtMap": "overworld",
+   "otName": "老训练家",
+   "otId": "fixture-player-0001"
+  },
+  {
+   "uid": "zrhcjw2j0kv0",
+   "speciesId": "kling-4",
+   "level": 30,
+   "exp": 33750,
+   "ivs": {
+    "hp": 5,
+    "atk": 17,
+    "def": 24,
+    "spa": 7,
+    "spd": 15,
+    "spe": 5
+   },
+   "moves": [
+    {
+     "id": "frame-interpolation",
+     "pp": 20,
+     "ppMax": 20
+    },
+    {
+     "id": "pixel-beam",
+     "pp": 30,
+     "ppMax": 30
+    },
+    {
+     "id": "dolly-zoom",
+     "pp": 20,
+     "ppMax": 20
+    },
+    {
+     "id": "text-to-video",
+     "pp": 15,
+     "ppMax": 15
+    }
+   ],
+   "hp": 102,
+   "status": null,
+   "statusTurns": 0,
+   "abilityId": "render-farm",
+   "shiny": false,
+   "friendship": 70,
+   "ballId": "prompt-ball",
+   "caughtMap": "overworld",
+   "otName": "老训练家",
+   "otId": "fixture-player-0001"
+  },
+  {
+   "uid": "wcmx9w3ccu7c",
+   "speciesId": "qwen-audio",
+   "level": 30,
+   "exp": 33750,
+   "ivs": {
+    "hp": 20,
+    "atk": 23,
+    "def": 17,
+    "spa": 16,
+    "spd": 29,
+    "spe": 26
+   },
+   "moves": [
+    {
+     "id": "morning-greeting",
+     "pp": 30,
+     "ppMax": 30
+    },
+    {
+     "id": "ink-splash",
+     "pp": 30,
+     "ppMax": 30
+    },
+    {
+     "id": "sample-steal",
+     "pp": 15,
+     "ppMax": 15
+    },
+    {
+     "id": "synth-chord",
+     "pp": 20,
+     "ppMax": 20
+    }
+   ],
+   "hp": 91,
+   "status": null,
+   "statusTurns": 0,
+   "abilityId": "resonance",
+   "shiny": false,
+   "friendship": 70,
+   "ballId": "prompt-ball",
+   "caughtMap": "overworld",
+   "otName": "老训练家",
+   "otId": "fixture-player-0001"
+  }
+ ],
+ "boxes": [
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  []
+ ],
+ "bag": {
+  "prompt-ball": 20,
+  "cache-potion": 8
+ },
+ "dexSeen": [
+  "o1",
+  "deepseek-v3",
+  "kling-4",
+  "qwen-audio"
+ ],
+ "dexCaught": [
+  "o1",
+  "deepseek-v3",
+  "kling-4",
+  "qwen-audio"
+ ],
+ "position": {
+  "map": "overworld",
+  "x": 172,
+  "y": 599,
+  "facing": "down"
+ },
+ "respawn": {
+  "map": "overworld",
+  "x": 172,
+  "y": 599,
+  "facing": "down"
+ },
+ "flags": {
+  "trainer:gc-xiaoma": true,
+  "trainer:gc-ace": true,
+  "trainer:gc-xiaoyuan": true,
+  "trainer:leader_code": true,
+  "trainer:gv-xiaocai": true,
+  "trainer:gv-kuaimen": true,
+  "trainer:gv-atong": true,
+  "trainer:leader_vision": true,
+  "trainer:gs-xiaodiao": true,
+  "trainer:gs-apu": true,
+  "trainer:gs-shengsheng": true,
+  "trainer:leader_sound": true,
+  "intro:mom": true,
+  "rival:lab": true,
+  "ob:route1": true,
+  "ob:healed": true,
+  "tip:move": true,
+  "tip:talk": true,
+  "tip:objective": true,
+  "tip:signs": true,
+  "tip:groundItem": true,
+  "tip:grass": true,
+  "tip:menuHint": true,
+  "tip:menu": true,
+  "tip:save": true,
+  "tip:hud": true,
+  "tip:battle": true,
+  "tip:moveInfo": true,
+  "tip:typeMatchup": true,
+  "tip:superEffective": true,
+  "tip:resisted": true,
+  "tip:immune": true,
+  "tip:doubleType": true,
+  "tip:stab": true,
+  "tip:statGlossary": true,
+  "tip:battleEffects": true,
+  "tip:status": true,
+  "tip:crit": true,
+  "tip:weather": true,
+  "tip:ability": true,
+  "tip:catch": true,
+  "tip:caught": true,
+  "tip:catchFail": true,
+  "tip:trainer": true,
+  "tip:takenSuper": true,
+  "tip:faintOwn": true,
+  "tip:levelUp": true,
+  "tip:moveLearn": true,
+  "tip:evolve": true,
+  "tip:party": true,
+  "tip:teamBuild": true,
+  "tip:bag": true,
+  "tip:shop": true,
+  "tip:exchange": true,
+  "tip:chips": true,
+  "tip:bike": true,
+  "tip:surf": true,
+  "tip:hurt": true,
+  "tip:center": true,
+  "tip:gym": true,
+  "tip:badge": true,
+  "tip:worldMap": true,
+  "tip:fly": true,
+  "tip:quests": true,
+  "tip:sideQuest": true,
+  "tip:worldEvent": true,
+  "tip:rarity": true,
+  "tip:timeWeather": true,
+  "tip:research": true,
+  "tip:dex": true,
+  "tip:online": true,
+  "tip:chat": true,
+  "tip:tradePvp": true,
+  "starter": "o1"
+ },
+ "quests": {
+  "main": {
+   "stage": 4,
+   "done": false
+  }
+ },
+ "visitedTowns": [],
+ "exploredChunks": {},
+ "repelSteps": 0,
+ "clockMinutes": 600,
+ "stats": {
+  "battlesWon": 0,
+  "caught": 0,
+  "steps": 0,
+  "pvpWins": 0,
+  "pvpLosses": 0,
+  "trades": 0,
+  "shiniesFound": 0
+ },
+ "settings": {
+  "bgmVolume": 0,
+  "sfxVolume": 0.8,
+  "quality": "high",
+  "pixelScale": 2,
+  "dof": true,
+  "bloom": true,
+  "shadows": true,
+  "textSpeed": "normal",
+  "battleSpeed": 1,
+  "showMinimap": true,
+  "showNames": true,
+  "showObjective": true,
+  "showTips": true,
+  "autoRun": false,
+  "touchControls": "auto",
+  "touchHand": "right",
+  "touchSize": "normal",
+  "haptics": true,
+  "migrations": [
+   "bgm-mute-20261003"
+  ]
+ },
+ "anchors": {
+  "unlocked": [
+   "anchor:grand:525:877"
+  ],
+  "seen": [
+   "anchor:grand:525:877"
+  ]
+ }
+}
