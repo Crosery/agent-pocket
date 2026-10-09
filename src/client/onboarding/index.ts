@@ -6,6 +6,7 @@ import type { OverworldExt } from '../world/controller.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { maxHp } from '../../shared/creature.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
+import { attentionCounts } from '../attention/logic.ts'
 import { ON_EVENTS, TUTORIAL, type TipDef } from './config.ts'
 import { afterDone, battleCues, condHolds, enrich, isTallGrassName, matchPayload, tipFlag, tipLive, type LiveView, type Place } from './logic.ts'
 import { createObjectiveView, createTipView } from './view.ts'
@@ -201,6 +202,11 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
     }
     if (clock < nextAllowed || !settings().showTips) return
     pending = pending.filter((p) => !(phaseOf(p.tip) !== 'field' && clock - p.born > cfg.tips.layer.staleSec))
+    // A prompt about something waiting for the player is moot once they have dealt with it.
+    if (pending.some((p) => p.tip.whileAttention)) {
+      const counts = attentionCounts(ctx.save)
+      pending = pending.filter((p) => !p.tip.whileAttention || counts[p.tip.whileAttention] > 0)
+    }
     const eligible = pending.filter((p) => p.at <= clock && tipEligible(p.tip, free, inBattle, blocking))
     if (!eligible.length) return
     const next = eligible.reduce((a, b) => ((orderOf.get(a.tip.id) ?? 0) <= (orderOf.get(b.tip.id) ?? 0) ? a : b))

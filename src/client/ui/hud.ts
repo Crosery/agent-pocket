@@ -6,7 +6,7 @@ import { t } from '../../shared/content/index.ts'
 import { UI_CONFIG } from './config.ts'
 import { glyphEl } from './glyphs.ts'
 import { ensureUIEnvironment, prepareRoot } from './scale.ts'
-import { el, formatNumber } from './widgets.ts'
+import { attentionDot, el, formatNumber, keyHint } from './widgets.ts'
 
 export interface HUDHandle extends HUD {
   readonly el: HTMLElement
@@ -80,7 +80,12 @@ export function createHUD(root: HTMLElement): HUDHandle {
   const netText = el('span')
   const net = el('div', { class: 'ap-net', data: { status: 'offline' } }, [netDot, netText])
 
-  const hud = el('div', 'ap-layer ap-l-hud ap-hud', [el('div', 'ap-hud-tl', [plate, banner, missions]), net])
+  const menuChipKey = el('span', 'ap-menu-chip-key')
+  const menuChip = el('div', { class: 'ap-menu-chip', attrs: { role: 'status' } }, [attentionDot(), menuChipKey, el('span', { text: t('hud.attention.menu') })])
+  menuChip.hidden = true
+  let chipDevice = ''
+
+  const hud = el('div', 'ap-layer ap-l-hud ap-hud', [el('div', 'ap-hud-tl', [plate, menuChip, banner, missions]), net])
   root.append(overlay, hud)
 
   let regionName = ''
@@ -175,6 +180,12 @@ export function createHUD(root: HTMLElement): HUDHandle {
       net.dataset.status = status
       netText.textContent = status === 'online' ? t('hud.net.count', { n: online }) : t(`hud.net.${status}`)
       net.title = t(`hud.net.${status}`)
+    },
+    setMenuAlert(on: boolean, device) {
+      menuChip.hidden = !on
+      if (!on || device === chipDevice) return
+      chipDevice = device
+      menuChipKey.replaceChildren(keyHint('menu', { device }))
     },
     dispose() {
       if (moneyRaf) cancelAnimationFrame(moneyRaf)

@@ -245,7 +245,7 @@ html.ap-compact .aps-tc-legend { flex: none; padding-top: calc(var(--u) * 5); pa
 html.ap-compact .aps-tc-legend .ap-panel-title, html.ap-compact .aps-tc-axis { display: none; }
 html.ap-compact .aps-tc-loop-detail { flex-direction: column; align-items: stretch; gap: calc(var(--u) * 8); }
 html.ap-compact .aps-tc-loop-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-html.ap-compact .aps-tc-row-label { width: calc(var(--u) * 76); }
+html.ap-compact .aps-tc-row-label { width: calc(var(--u) * 82); }
 html.ap-compact .aps-tc-example { flex-basis: 100%; }
 html[data-touch-controls='on'] :is(.aps-tc-tile, .aps-tc-loop-tab, .aps-tc-open) { min-height: 44px; }
 /* Finger-sized cells call for larger header icons. */

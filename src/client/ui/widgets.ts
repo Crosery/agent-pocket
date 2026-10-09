@@ -231,6 +231,11 @@ export function statusChip(statusId: string): HTMLElement {
   return chip
 }
 
+/** Red dot: "there is something here for you" (menu key, menu rows, claimable entries). Decoration; the row keeps its own label. */
+export function attentionDot(className = ''): HTMLElement {
+  return el('span', { class: `ap-attn-dot ${className}`.trim(), attrs: { role: 'img', 'aria-label': t('hud.attention.dot') } })
+}
+
 export function rarityBadge(rarityId: string, opts?: { label?: 'id' | 'name' }): HTMLElement {
   ensureUIEnvironment()
   const def = CONTENT.rarityById[rarityId]

@@ -4,7 +4,8 @@ import type { BadgeDef } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
 import { getMap, regionAt } from '../../../shared/world/worldapi.ts'
 import { parseColor, shade } from '../pixel.ts'
-import { createGridNav, el, keyHint, typeChip } from '../widgets.ts'
+import { attentionCounts, entrySources, guidedSource, markEntryOpened } from '../../attention/logic.ts'
+import { attentionDot, createGridNav, el, keyHint, typeChip } from '../widgets.ts'
 import { onUIScaleChange } from '../scale.ts'
 import { backPressed, frame, H, icon, infoRow, isCompact, moneyEl, openScreen, pressed, sfx, uiSfx, type ScreenEnv } from './base.ts'
 import { SCREENS } from './config.ts'
@@ -64,13 +65,17 @@ export function pauseScreen(env: ScreenEnv): Promise<void> {
     const cardSlot = el('div', 'aps-pause-cardslot')
     const detailTitle = el('div', 'aps-pause-detail-title')
     const detailText = el('p', 'aps-pause-detail-text')
+    const detailNote = el('p', 'aps-pause-detail-note')
     const detailHint = el('div', 'aps-pause-detail-hint', [keyHint('confirm', { label: t('screens.hint.select'), device: ctx.input.lastDevice })])
-    const detail = el('section', { class: 'aps-pause-detail', attrs: { 'aria-live': 'polite' } }, [detailTitle, detailText, detailHint])
+    const detail = el('section', { class: 'aps-pause-detail', attrs: { 'aria-live': 'polite' } }, [detailTitle, detailText, detailNote, detailHint])
     const enabled = (i: number) => entries[i].requires !== 'party' || ctx.save.party.length > 0
+    const dots = entries.map(() => attentionDot())
+    dots.forEach((d) => { d.hidden = true })
     const rowsEl = entries.map((e, i) => {
       const r = el('button', { class: 'aps-pause-row ap-row ap-cursor-host', attrs: { type: 'button' } }, [
         e.glyph ? icon(e.glyph, { className: 'aps-pause-icon' }) : null,
         el('span', { class: 'ap-row-label', text: t(e.label) }),
+        dots[i],
       ])
       r.addEventListener('mouseenter', api.guard(() => { if (nav.index !== i) { nav.index = i; uiSfx(env, 'move'); paint() } }))
       r.addEventListener('focus', api.guard(() => { nav.index = i; paint() }))
@@ -82,9 +87,15 @@ export function pauseScreen(env: ScreenEnv): Promise<void> {
     api.root.append(f.el)
 
     const makeNav = (initial = 0) => createGridNav({ count: entries.length, cols: isCompact() || document.documentElement.dataset.touchControls === 'on' ? 2 : 1, initial, audio: ctx.audio, onChange: () => paint() })
-    let nav = makeNav()
+    // First time something waits behind an entry, the cursor starts on it.
+    const waiting0 = attentionCounts(ctx.save)
+    let nav = makeNav(Math.max(0, entries.findIndex((e) => guidedSource(ctx.save, waiting0, e.action))))
     const paint = () => {
+      const waiting = attentionCounts(ctx.save)
       rowsEl.forEach((r, i) => {
+        const pending = entrySources(waiting, entries[i].action)
+        dots[i].hidden = !pending.length
+        r.classList.toggle('is-guide', !!guidedSource(ctx.save, waiting, entries[i].action))
         r.classList.toggle('is-active', i === nav.index)
         r.classList.toggle('is-disabled', !enabled(i))
         r.setAttribute('aria-disabled', String(!enabled(i)))
@@ -94,6 +105,9 @@ export function pauseScreen(env: ScreenEnv): Promise<void> {
       const e = entries[nav.index]
       detailTitle.replaceChildren(...(e.glyph ? [icon(e.glyph)] : []), t(e.label))
       detailText.textContent = enabled(nav.index) ? t(`screens.pause.description.${e.action}`) : t('screens.pause.noParty')
+      const note = entrySources(waiting, e.action)[0]
+      detailNote.textContent = note ? t(note.detail) : ''
+      detailNote.hidden = !note
       detailHint.hidden = !enabled(nav.index) || ctx.input.lastDevice === 'touch'
     }
     const refresh = () => {
@@ -105,6 +119,7 @@ export function pauseScreen(env: ScreenEnv): Promise<void> {
     const activate = (i: number) => api.run(async () => {
       const e = entries[i]
       if (!enabled(i)) { sfx(env, 'error'); ctx.ui.toast(t('screens.pause.noParty'), 'warn'); return }
+      markEntryOpened(ctx.save, e.action)
       switch (e.action) {
         case 'dex': await env.screens.dex(); break
         case 'party': await env.screens.party('view'); break
