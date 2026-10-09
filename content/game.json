@@ -58,8 +58,8 @@
   "encounters": {
     "requireConsciousParty": true,
     "surfEncounters": true,
-    "grassRateMultiplier": 0.45,
-    "graceSteps": 2,
+    "grassRateMultiplier": 0.18,
+    "graceSteps": 8,
     "transition": {"kind": "battle", "inMs": 950, "flashColor": "#ffffff", "flashMs": 140, "sfx": "encounter", "fx": "exclaim"},
     "legendRarityOrder": 4,
     "scriptedCanRun": true,
