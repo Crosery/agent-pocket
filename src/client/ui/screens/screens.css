@@ -440,6 +440,7 @@ html.ap-compact .aps-newgame .aps-title, html.ap-compact .aps-pause .aps-title {
   margin-left: calc(var(--u) * -40);
   background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 100%);
 }
+.aps-starter-name, .aps-starter-en { max-width: 100%; text-align: center; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
 .aps-starter-name { font-size: calc(var(--u) * 12); line-height: 1.15; color: #fffaf0; }
 .aps-starter-card.is-active .aps-starter-name { color: var(--ap-gold-hi); }
 .aps-starter-en { line-height: 1.1; }
