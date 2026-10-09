@@ -468,7 +468,7 @@ html.ap-battle-on[data-touch-controls] { --ap-bottom-inset: 0px; }
   width: calc(var(--u) * var(--apb-own-w, 188));
   z-index: 2;
 }
-.apb-levelup .ap-panel-title { display: block; white-space: normal; overflow-wrap: anywhere; }
+.apb-root .apb-levelup.apb-win > .ap-panel-title { display: block; white-space: normal; overflow-wrap: anywhere; color: var(--ap-gold-hi); }
 .apb-lv-row { display: flex; align-items: center; height: calc(var(--u) * 15); }
 .apb-lv-k { flex: 1 1 auto; color: var(--ap-gold-hi); }
 .apb-lv-v { width: calc(var(--u) * 34); text-align: right; }

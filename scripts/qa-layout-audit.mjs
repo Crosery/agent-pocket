@@ -500,7 +500,7 @@ export async function measureScreen(page, screen, shot) {
   if (result.violations.some((v) => v.type === 'no-scope')) { await page.waitForTimeout(1800); result = await run() }
   // battle screens: creatures vs windows, bottom anchoring, no overworld pad (qa-battle-layout.mjs)
   if (screen.scope === '.apb-root') {
-    const sprites = await page.evaluate(auditBattleSprites, { bottomMaxGapPx: BATTLE_UI.layout.bottomMaxGapPx })
+    const sprites = await page.evaluate(auditBattleSprites, { bottomMaxGapPx: BATTLE_UI.layout?.bottomMaxGapPx ?? 24 })
     result.violations.push(...sprites.violations)
     result.warnings.push(...sprites.warnings)
     result.stats = { ...result.stats, battle: sprites.stats }

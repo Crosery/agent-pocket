@@ -105,7 +105,7 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
       root.classList.toggle('has-boss', info !== null)
     },
     levelUp(title, deltas) {
-      const p = panel(title, { className: 'apb-levelup ap-anim-in' })
+      const p = panel(title, { className: 'apb-win apb-levelup ap-anim-in' })
       for (const d of deltas) {
         p.body.append(el('div', 'apb-lv-row', [
           el('span', { class: 'apb-lv-k', text: CONTENT.statByKey[d.key as StatKey]?.nameZh ?? d.key }),
