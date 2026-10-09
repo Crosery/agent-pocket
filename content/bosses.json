@@ -504,7 +504,7 @@
         "open": {
           "species": "claude-opus",
           "moves": ["debug-strike", "qed", "context-slam", "stack-overflow"],
-          "statMul": {"hp": 5.52},
+          "statMul": {"hp": 4.8},
           "pattern": [
             {"move": "debug-strike", "weight": 28},
             {"move": "qed", "weight": 30},
@@ -512,25 +512,44 @@
             {"move": "stack-overflow", "weight": 20}
           ],
           "rules": [
-            {"id": "fooled", "if": {"meter": {"id": "ip", "atLeast": 1}}, "dealtMul": 0.75, "takenMul": [{"mul": 2.0, "note": "boss.opus.fooled"}]}
+            {"id": "fooled", "if": {"meter": {"id": "ip", "atLeast": 1}}, "dealtMul": 0.85, "takenMul": [{"mul": 1.6, "note": "boss.opus.fooled"}]},
+            {"id": "settled", "if": {"meter": {"id": "apple", "atLeast": 1}}, "dealtMul": 0.85, "takenMul": [{"mul": 1.5, "note": "boss.opus.settled"}]}
           ]
         }
       },
       "meters": [
-        {"id": "risk", "max": 3, "start": 0, "label": "boss.opus.risk", "show": true, "tone": "bad"},
-        {"id": "ip", "max": 8, "start": 0, "label": "boss.opus.ip", "show": true, "tone": "good", "decay": 1}
+        {"id": "pay", "max": 3, "start": 1, "label": "boss.opus.pay", "show": true, "tone": "bad"},
+        {"id": "region", "max": 3, "start": 0, "label": "boss.opus.region", "show": true, "tone": "bad"},
+        {"id": "behavior", "max": 3, "start": 0, "label": "boss.opus.behavior", "show": true, "tone": "bad"},
+        {"id": "share", "max": 3, "start": 0, "label": "boss.opus.share", "show": true, "tone": "bad", "decay": 1},
+        {"id": "ip", "max": 12, "start": 0, "label": "boss.opus.ip", "show": true, "tone": "good", "decay": 1},
+        {"id": "apple", "max": 12, "start": 0, "label": "boss.opus.apple", "show": true, "tone": "good", "decay": 1}
       ],
       "triggers": [
-        {"id": "flag-cn", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "risk", "add": 2}], "if": {"foeCountry": ["CN"], "meter": {"id": "ip", "atMost": 0}}},
-        {"id": "flag-other", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "risk", "add": 1}], "if": {"foeNotCountry": ["CN"], "turnCycle": {"period": 2, "from": 0, "to": 1}, "meter": {"id": "ip", "atMost": 0}}},
-        {"id": "watch", "on": "turnEnd", "times": 1, "do": [{"op": "say", "text": "boss.opus.watch"}], "if": {"meter": {"id": "risk", "atLeast": 2}}},
-        {"id": "risk-clear", "on": "foeSwitch", "times": 0, "do": [{"op": "meter", "id": "risk", "set": 0}]},
-        {"id": "cloak", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.opus.cloak"}, {"op": "cure", "target": "foe"}, {"op": "meter", "id": "ip", "set": 8}, {"op": "meter", "id": "risk", "set": 0}], "tag": "vpn"},
-        {"id": "ban", "on": "afterAction", "times": 0, "do": [{"op": "say", "text": "boss.opus.ban"}, {"op": "status", "target": "foe", "status": "freeze"}, {"op": "meter", "id": "risk", "set": 0}], "if": {"meter": {"id": "risk", "atLeast": 3}, "foeStatus": false}, "phase": true}
+        {"id": "flag-cn", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "region", "add": 1}], "if": {"foeCountry": ["CN"], "meter": {"id": "ip", "atMost": 0}}},
+        {"id": "flag-other", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "region", "add": 1}], "if": {"foeNotCountry": ["CN"], "turnCycle": {"period": 3, "from": 0, "to": 1}, "meter": {"id": "ip", "atMost": 0}}},
+        {"id": "bill", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "pay", "add": 1}], "if": {"turnCycle": {"period": 3, "from": 2, "to": 3}, "meter": {"id": "apple", "atMost": 0}}},
+        {"id": "binge", "on": "foeMove", "times": 0, "do": [{"op": "meter", "id": "behavior", "add": 1}], "typeShift": false},
+        {"id": "varied", "on": "foeMove", "times": 0, "do": [{"op": "meter", "id": "behavior", "add": -1}], "typeShift": true},
+        {"id": "hop", "on": "foeSwitch", "times": 0, "do": [{"op": "meter", "id": "share", "add": 2}], "voluntary": true},
+        {"id": "fresh-region", "on": "foeSwitch", "times": 0, "do": [{"op": "meter", "id": "region", "set": 1}], "if": {"meter": {"id": "region", "atLeast": 2}}},
+        {"id": "fresh-behavior", "on": "foeSwitch", "times": 0, "do": [{"op": "meter", "id": "behavior", "set": 1}], "if": {"meter": {"id": "behavior", "atLeast": 2}}},
+        {"id": "warn-pay", "on": "turnEnd", "times": 2, "do": [{"op": "say", "text": "boss.opus.warn_pay"}], "if": {"meter": {"id": "pay", "atLeast": 2, "atMost": 2}}},
+        {"id": "warn-region", "on": "turnEnd", "times": 2, "do": [{"op": "say", "text": "boss.opus.warn_region"}], "if": {"meter": {"id": "region", "atLeast": 2, "atMost": 2}}},
+        {"id": "warn-behavior", "on": "turnEnd", "times": 2, "do": [{"op": "say", "text": "boss.opus.warn_behavior"}], "if": {"meter": {"id": "behavior", "atLeast": 2, "atMost": 2}}},
+        {"id": "warn-share", "on": "turnEnd", "times": 2, "do": [{"op": "say", "text": "boss.opus.warn_share"}], "if": {"meter": {"id": "share", "atLeast": 2, "atMost": 2}}},
+        {"id": "cloak", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.opus.cloak"}, {"op": "cure", "target": "foe"}, {"op": "meter", "id": "ip", "set": 12}, {"op": "meter", "id": "region", "set": 0}], "tag": "vpn", "if": {"meter": {"id": "ip", "atMost": 3}}},
+        {"id": "apple", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.opus.paid"}, {"op": "meter", "id": "apple", "set": 12}, {"op": "meter", "id": "pay", "set": 0}], "tag": "pay-apple", "if": {"meter": {"id": "apple", "atMost": 3}}},
+        {"id": "unionpay", "on": "turnEnd", "times": 0, "do": [{"op": "say", "text": "boss.opus.unionpay"}, {"op": "meter", "id": "pay", "add": -1}, {"op": "meter", "id": "region", "add": -1}], "if": {"turnCycle": {"period": 8, "from": 4, "to": 5}}},
+        {"id": "ban-pay", "on": "afterAction", "times": 0, "do": [{"op": "say", "text": "boss.opus.ban_pay"}, {"op": "status", "target": "foe", "status": "freeze"}, {"op": "meter", "id": "pay", "set": 1}, {"op": "meter", "id": "region", "set": 0}, {"op": "meter", "id": "behavior", "set": 0}, {"op": "meter", "id": "share", "set": 0}], "phase": true, "if": {"foeStatus": false, "meter": {"id": "pay", "atLeast": 3}}},
+        {"id": "ban-region", "on": "afterAction", "times": 0, "do": [{"op": "say", "text": "boss.opus.ban_region"}, {"op": "status", "target": "foe", "status": "freeze"}, {"op": "meter", "id": "pay", "set": 1}, {"op": "meter", "id": "region", "set": 0}, {"op": "meter", "id": "behavior", "set": 0}, {"op": "meter", "id": "share", "set": 0}], "phase": true, "if": {"foeStatus": false, "meter": {"id": "region", "atLeast": 3}}},
+        {"id": "ban-behavior", "on": "afterAction", "times": 0, "do": [{"op": "say", "text": "boss.opus.ban_behavior"}, {"op": "status", "target": "foe", "status": "freeze"}, {"op": "meter", "id": "pay", "set": 1}, {"op": "meter", "id": "region", "set": 0}, {"op": "meter", "id": "behavior", "set": 0}, {"op": "meter", "id": "share", "set": 0}], "phase": true, "if": {"foeStatus": false, "meter": {"id": "behavior", "atLeast": 3}}},
+        {"id": "ban-share", "on": "afterAction", "times": 0, "do": [{"op": "say", "text": "boss.opus.ban_share"}, {"op": "status", "target": "foe", "status": "freeze"}, {"op": "meter", "id": "pay", "set": 1}, {"op": "meter", "id": "region", "set": 0}, {"op": "meter", "id": "behavior", "set": 0}, {"op": "meter", "id": "share", "set": 0}], "if": {"foeStatus": false, "meter": {"id": "share", "atLeast": 3}}},
+        {"id": "mood", "on": "turnEnd", "times": 0, "do": [{"op": "say", "text": "boss.opus.mood"}, {"op": "status", "target": "foe", "status": "freeze"}, {"op": "meter", "id": "pay", "set": 1}, {"op": "meter", "id": "region", "set": 0}, {"op": "meter", "id": "behavior", "set": 0}, {"op": "meter", "id": "share", "set": 0}], "chance": 0.03, "if": {"foeStatus": false, "turnAtLeast": 3}}
       ],
       "gates": [],
       "catchRateMul": 0.6,
-      "reward": {"money": 12000, "items": {"chip-long-reasoning": 1, "residential-ip": 3}},
+      "reward": {"money": 12000, "items": {"chip-long-reasoning": 1, "residential-ip": 3, "apple-sub": 3}},
       "enrage": {"turn": 20, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.opus.enrageWarn", "start": "boss.opus.enrageStart", "tick": "boss.opus.enrageTick"}
     },
     "chatgpt": {
@@ -678,7 +697,7 @@
             {"move": "$borrowed", "weight": 55}
           ],
           "rules": [
-            {"id": "offline", "if": {"weather": ["blackout"]}, "dealtMul": 0.5, "takenMul": [{"mul": 2.5, "note": "boss.grok.offline"}]}
+            {"id": "offline", "if": {"weather": ["blackout"]}, "dealtMul": 0.8, "takenMul": [{"mul": 1.6, "note": "boss.grok.offline"}]}
           ]
         }
       },
@@ -687,7 +706,7 @@
       ],
       "triggers": [
         {"id": "upload", "on": "foeMove", "times": 0, "do": [{"op": "learn", "max": 3, "say": "boss.grok.learned"}, {"op": "stages", "target": "boss", "stats": {"atk": 1, "spa": 1}}, {"op": "meter", "id": "loot", "add": 1}], "if": {"notWeather": ["blackout"], "meter": {"id": "loot", "atMost": 2}}, "categories": ["physical", "special"]},
-        {"id": "unplug", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.grok.unplug"}, {"op": "weather", "weather": "blackout"}], "phase": true, "tag": "unplug"},
+        {"id": "unplug", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.grok.unplug"}, {"op": "weather", "weather": "blackout", "turns": 3}], "phase": true, "tag": "unplug"},
         {"id": "lost", "on": "turnEnd", "times": 0, "do": [{"op": "say", "text": "boss.grok.lost"}, {"op": "forget"}, {"op": "clearStages", "target": "boss"}, {"op": "meter", "id": "loot", "set": 0}], "if": {"weather": ["blackout"], "meter": {"id": "loot", "atLeast": 1}}}
       ],
       "gates": [],

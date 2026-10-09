@@ -100,10 +100,17 @@ export const COUNTERS: Record<string, Counter> = {
   // Never repeat the previous type: every damaging move changes the type it has just read.
   alpha: { policy: (h) => pickAttack(h, (m) => m.type !== h.state.lastFoeType) },
 
-  // A residential IP as soon as the risk control has noticed the active creature (or it is from CN and still unflagged).
+  // The checklist: a residential IP once the origin gets flagged (or is Chinese), the Apple subscription for the payment
+  // column, and never the same attack type twice in a row. (Sharing is avoided by not hopping, which the AI mostly does.)
   opus: {
-    bag: { 'residential-ip': 6 },
-    policy: (h) => (h.state.meters.ip === 0 && (h.state.meters.risk >= 1 || h.active.status !== null || CONTENT.species[h.active.speciesId]?.country === 'CN') ? h.bait('residential-ip') : null),
+    bag: { 'residential-ip': 6, 'apple-sub': 6 },
+    policy: (h) => {
+      const m = h.state.meters
+      const cn = CONTENT.species[h.active.speciesId]?.country === 'CN'
+      if (m.ip <= 2 && (m.region >= 1 || h.active.status !== null || cn)) return h.bait('residential-ip')
+      if (m.apple <= 2 && m.pay >= 1) return h.bait('apple-sub')
+      return pickAttack(h, (mv) => mv.type !== h.state.lastFoeType)
+    },
   },
 
   // Feed the sauce as soon as it is available.

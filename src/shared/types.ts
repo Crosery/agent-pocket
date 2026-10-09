@@ -565,6 +565,8 @@ export interface BossTrigger {
   times?: number
   /** Counts as a phase pip (BossHud.phase) when it fires. */
   phase?: boolean
+  /** Chance (0..1, rolled by the battle's rng) that the trigger fires once every other test passed (default: always). */
+  chance?: number
   do: BossOp[]
 }
 

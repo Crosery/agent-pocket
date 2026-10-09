@@ -155,11 +155,13 @@ test('mechanics: each boss has its own counterplay', () => {
   assert.ok(formsIn(C('alpha')).has('dazed'))
   assert.ok(firedIn(C('alpha')).has('shift') && firedIn(P('alpha')).has('repeat'))
 
-  // Claude Opus: the risk control flags and bans the account (CN faster); the residential IP prevents that.
-  assert.ok(firedIn(P('opus')).has('ban') && firedIn(P('opus')).has('flag-cn'))
-  assert.ok(meterPeak(P('opus'), 'risk') === 3)
-  assert.ok(firedIn(C('opus')).has('cloak'))
-  assert.ok(C('opus').filter((r) => r.fired.ban > 0).length < P('opus').filter((r) => r.fired.ban > 0).length / 2, 'the IP keeps most accounts alive')
+  // Claude Opus: four risk columns, any full one bans the account; the residential IP and the Apple subscription hold the first two back.
+  const RISK = ['pay', 'region', 'behavior', 'share']
+  const banned = (rs: SimResult[]) => rs.filter((r) => RISK.some((d) => (r.fired[`ban-${d}`] ?? 0) > 0)).length
+  assert.ok(['ban-pay', 'ban-region', 'ban-behavior', 'flag-cn', 'bill', 'binge'].every((k) => firedIn(P('opus')).has(k)))
+  assert.equal(meterPeak(P('opus'), 'region'), 3)
+  assert.ok(firedIn(C('opus')).has('cloak') && firedIn(C('opus')).has('apple'))
+  assert.ok(banned(C('opus')) < banned(P('opus')) / 4, 'the checklist keeps most accounts alive')
 
   // Unitree GD01: a banana peel drops the mech for several turns.
   assert.ok(formsIn(C('unitree')).has('fallen') && firedIn(C('unitree')).has('slip'))
@@ -168,7 +170,8 @@ test('mechanics: each boss has its own counterplay', () => {
   // Grok: it uploads (steals) what it sees and trains on it; pulling the network plug cuts that.
   assert.ok(firedIn(P('grok')).has('upload') && meterPeak(P('grok'), 'loot') === 3)
   assert.ok(!firedIn(P('grok')).has('unplug'), 'without the cable nobody pulls the plug (a creature that knows Blackout can, rarely)')
-  assert.ok(firedIn(C('grok')).has('unplug') && meterPeak(C('grok'), 'loot') < 3, 'with the network down it never gets to train on three of your moves')
+  const trained = (rs: SimResult[]) => rs.filter((r) => (r.meterMax.loot ?? 0) >= 3).length
+  assert.ok(firedIn(C('grok')).has('unplug') && trained(C('grok')) < trained(P('grok')) * 0.6, 'with the cable in the bag it rarely gets to train on three of your moves')
 
   // OpenClaw: a malicious skill is loaded every 4 turns and injected a turn later; a key revoked in that window reflects it.
   assert.ok(firedIn(P('openclaw')).has('skill') && firedIn(P('openclaw')).has('hijack'))
@@ -210,7 +213,7 @@ function withoutRules<T>(bossId: string, fn: () => T): T {
   try { return fn() } finally { forms.forEach((f, i) => { f.rules = saved[i] }) }
 }
 
-test('rules: Grok goes offline in a blackout (half damage, takes x2.5), and the cable puts it there', () => {
+test('rules: Grok goes offline in a blackout (deals x0.8, takes x1.6), and the cable puts it there', () => {
   const run = () => {
     const def = byId('grok')
     const party = makeParty(['gpt-5-6'], def.level - 2, 5)
@@ -230,7 +233,7 @@ test('rules: Grok goes offline in a blackout (half damage, takes x2.5), and the 
   }
   const ruled = run()
   const plain = withoutRules('grok', run)
-  assert.ok(plain > 0 && Math.abs(ruled / plain - 2.5) < 0.3, `${ruled} vs ${plain} should be about x2.5`)
+  assert.ok(plain > 0 && Math.abs(ruled / plain - 1.6) < 0.2, `${ruled} vs ${plain} should be about x1.6`)
 })
 
 test('dsl: effectiveness, release-date and medicine conditions work on any boss (no boss uses them right now)', () => {
@@ -282,37 +285,88 @@ function stage(bossId: string, species: string[], opts: { items?: Record<string,
   return { engine, turn, foe: () => engine.party(0)[engine.activeIndex(0)] }
 }
 
-test('events: Opus bans a Chinese account in two turns, a foreign one only by mistake, and a residential IP stops both', () => {
+test('events: Opus scores four risk columns; a full one bans the account and the two items cover payment and region', () => {
   const cn = CONTENT.speciesList.find((s) => s.country === 'CN' && s.rarity !== 'UR' && !s.types.includes('code'))!.id
   const us = 'gpt-5-6'
   assert.equal(CONTENT.species[us].country, 'US')
   const attack = { kind: 'move', moveIndex: 0 } as const
+  const RISK_BANS = ['ban-pay', 'ban-region', 'ban-behavior', 'ban-share']
+  const inject = (s: ReturnType<typeof stage>, meters: Record<string, number>) => s.engine.applyBossState({ ...s.engine.extractBossState()!, meters: { ...s.engine.extractBossState()!.meters, ...meters } })
 
+  // region: a Chinese account gains one per turn; a foreign one is only flagged by mistake (every third turn).
   const banned = stage('opus', [cn, us])
   let st = banned.turn(attack)
-  assert.equal(st.meters.risk, 2, 'a CN creature is flagged fast')
+  assert.equal(st.meters.region, 1, 'a CN creature is flagged every turn')
   st = banned.turn(attack)
-  st = banned.turn(attack)
-  assert.ok((st.fired.ban ?? 0) >= 1 && banned.foe().status === 'freeze', 'banned = frozen')
-
+  assert.equal(st.meters.region, 2)
+  for (let i = 0; i < 2; i++) st = banned.turn(attack)
+  assert.ok(RISK_BANS.some((k) => (st.fired[k] ?? 0) >= 1) && banned.foe().status === 'freeze', 'banned = frozen')
   const abroad = stage('opus', [us, cn])
   st = abroad.turn(attack)
-  assert.equal(st.meters.risk, 1, 'foreign accounts are only flagged by mistake (every third turn)')
+  assert.equal(st.meters.region, 1, 'foreign accounts are only flagged by mistake')
   st = abroad.turn(attack)
-  assert.equal(st.meters.risk, 1)
+  assert.equal(st.meters.region, 1)
 
-  const cloaked = stage('opus', [cn, us], { items: { 'residential-ip': 2 } })
+  // payment: starts at one (the virtual card), +1 every third turn, and a full column bans.
+  const pay = stage('opus', [us, cn])
+  assert.equal(pay.engine.extractBossState()!.meters.pay, 1)
+  for (let i = 0; i < 3; i++) st = pay.turn(attack)
+  assert.equal(st.meters.pay, 2, 'the monthly bill is scanned every third turn')
+  inject(pay, { pay: 3 })
+  st = pay.turn(attack)
+  assert.equal(st.fired['ban-pay'], 1)
+  assert.equal(pay.foe().status, 'freeze')
+  assert.equal(st.meters.pay, 1, 'a fresh column after the ban')
+
+  // behaviour: the same attack type twice in a row is binging; sharing: hopping between creatures is worth two.
+  const binge = stage('opus', [us, cn])
+  binge.turn(attack)
+  st = binge.turn(attack)
+  assert.ok(st.meters.behavior >= 1, 'repeating a type raises the behaviour column')
+  const hop = stage('opus', [cn, us])
+  hop.turn(attack)
+  inject(hop, { region: 2, behavior: 2 })
+  st = hop.turn({ kind: 'switch', partyIndex: 1 })
+  assert.equal(st.meters.share, 1, 'a voluntary switch is +2, one decays at the turn end')
+  assert.equal(st.meters.region, 1, 'switching leaves one point of device residue, not zero')
+  assert.equal(st.meters.behavior, 1)
+  st = hop.turn({ kind: 'switch', partyIndex: 0 })
+  assert.equal(st.fired['ban-share'], 1, 'hopping again right away looks like a shared account')
+  assert.equal(hop.foe().status, 'freeze')
+
+  // the residential IP stops the region column (and appeals a ban); the Apple subscription stops the payment column.
+  const cloaked = stage('opus', [cn, us], { items: { 'residential-ip': 2, 'apple-sub': 1 } })
   st = cloaked.turn({ kind: 'item', itemId: 'residential-ip', partyIndex: 0 })
-  assert.ok(st.meters.ip >= 7, 'the cloak lasts about 8 turns')
+  assert.ok(st.meters.ip >= 11, 'the cloak lasts about 12 turns')
+  st = cloaked.turn({ kind: 'item', itemId: 'apple-sub', partyIndex: 0 })
+  assert.ok(st.meters.apple >= 11 && st.meters.pay === 0)
   for (let i = 0; i < 4; i++) st = cloaked.turn(attack)
-  assert.equal(st.fired.ban ?? 0, 0)
-  assert.equal(st.meters.risk, 0, 'nothing to flag while the origin is hidden')
+  assert.equal(st.fired['ban-region'] ?? 0, 0)
+  assert.equal(st.fired['ban-pay'] ?? 0, 0)
+  assert.equal(st.fired['flag-cn'] ?? 0, 0, 'nothing to flag while the origin is hidden')
+  assert.equal(st.fired.bill ?? 0, 0, 'the bill never reaches the card')
 
   const appeal = stage('opus', [cn, us], { items: { 'residential-ip': 1 } })
-  for (let i = 0; i < 3; i++) appeal.turn(attack)
+  for (let i = 0; i < 4; i++) appeal.turn(attack)
   assert.equal(appeal.foe().status, 'freeze')
   appeal.turn({ kind: 'item', itemId: 'residential-ip', partyIndex: 0 })
   assert.equal(appeal.foe().status, null, 'the appeal unfreezes the account')
+})
+
+test('boss DSL: a trigger with a chance fires only some of the time, and the validator bounds it', () => {
+  const def = byId('opus')
+  const saved = def.triggers
+  try {
+    def.triggers = [{ id: 'coin', on: 'turnEnd', times: 0, chance: 0.5, do: [{ op: 'meter', id: 'behavior', add: 1 }] }]
+    let fired = 0
+    for (let seed = 1; seed <= 60; seed++) {
+      const s = stage('opus', ['gpt-5-6'], { seed })
+      fired += s.turn({ kind: 'move', moveIndex: 0 }).fired.coin ?? 0
+    }
+    assert.ok(fired > 10 && fired < 50, `a coin flip fires some of the time (${fired}/60)`)
+  } finally { def.triggers = saved }
+  const bad: BossDef = { ...def, triggers: [...def.triggers, { id: 'broken', on: 'turnEnd', chance: 1.5, do: [] }] }
+  assert.match(validateBosses([bad], CONTENT).join('\n'), /chance must be in \(0,1\)/)
 })
 
 test('events: Grok uploads the moves it sees (and trains on them) until the cable is pulled', () => {
@@ -481,7 +535,9 @@ test('items: every other counter item moves its boss meter or form', () => {
   assert.ok(gl.after.meters.pledge >= 7)
 
   const op = turnOne('opus', 'residential-ip')
-  assert.ok(op.after.meters.ip >= 7 && op.after.meters.risk === 0)
+  assert.ok(op.after.meters.ip >= 11 && op.after.meters.region === 0)
+  const ap = turnOne('opus', 'apple-sub')
+  assert.ok(ap.after.meters.apple >= 11 && ap.after.meters.pay === 0)
 
   const my = turnOne('mythos', 'sandbox-patch')
   assert.ok(my.after.meters.escape < my.before.meters.escape, 'the sandbox holds')

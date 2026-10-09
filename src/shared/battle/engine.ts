@@ -342,6 +342,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
       volatile: (side, id) => { this.applyVolatile(side, id, BOSS_SIDE, true) },
       weather: () => this.weatherId,
       setWeather: (id, turns) => { this.setWeather(id, turns ?? this.c.config.battle.weatherTurns) },
+      roll: (p) => this.rng.chance(p),
       battler: () => {
         const b = stageOf(BOSS_SIDE)
         return { stages: { ...b.stages }, volatiles: Object.fromEntries(b.volatiles), recharging: b.recharging }

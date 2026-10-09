@@ -47,6 +47,8 @@ export interface BossHost {
   /** The field weather ('none' = clear) and a way to change it. */
   weather(): string
   setWeather(id: string, turns?: number): void
+  /** A roll of the battle's rng: true with probability p. */
+  roll(p: number): boolean
   battler(): { stages: Record<string, number>; volatiles: Record<string, number>; recharging: boolean }
   setBattler(b: { stages: Record<string, number>; volatiles: Record<string, number>; recharging: boolean }): void
 }
@@ -388,6 +390,7 @@ export class BossDirector {
         if (tr.typeShift !== undefined && (tr.typeShift ? !info.shift : !info.repeat)) continue
       }
       if (!bossCondHolds(tr.if, this.ctx())) continue
+      if (tr.chance !== undefined && !this.host.roll(tr.chance)) continue
       this.core.fired[tr.id] = hit(this.core.fired[tr.id]) + 1
       if (tr.phase) this.core.phase += 1
       this.run(tr.do)

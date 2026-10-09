@@ -112,6 +112,7 @@ export function validateBosses(list: readonly BossDef[], c: Content): string[] {
         if (tr.tag === undefined) errs.push(`${tw}: foeItem trigger needs a bait tag`)
         else if (!baitTags.has(tr.tag)) errs.push(`${tw}: no bait item provides tag "${tr.tag}"`)
       }
+      if (tr.chance !== undefined && !(tr.chance > 0 && tr.chance < 1)) errs.push(`${tw}: chance must be in (0,1)`)
       for (const o of tr.do) op(tw, o)
     }
     for (const g of b.gates) {
