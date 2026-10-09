@@ -10,6 +10,7 @@ import { BattleEngine } from '../../shared/battle/engine.ts'
 import { getMap, regionAt } from '../../shared/world/worldapi.ts'
 import { RULES } from '../../shared/battle/rules.ts'
 import { BATTLE_UI } from './config.ts'
+import { playBossIntro, prefetchBossIntro } from './boss-intro.ts'
 import { createLocalChannel, type LocalChannel } from './channel.ts'
 import { createDecider } from './decide.ts'
 import { playEvolution } from './evolution.ts'
@@ -85,6 +86,8 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
       let caught: Creature | undefined
       let stored = false
       ctx.events.emit('battle:start', { kind })
+      const bossId = init.sides[1].boss ?? null
+      const introClip = prefetchBossIntro(bossId)
 
       try {
         engine = remote ? null : new BattleEngine(init, ctx.data)
@@ -97,6 +100,7 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
           biome: init.biome, timeOfDay: init.timeOfDay, indoor: !remote && currentPlace(ctx).indoor, cover,
         })
         const { stage, view } = scene
+        if (bossId) stage.setBoss(1, bossId)
         const music = opts.music ?? ctx.data.audio.battleMusic[kind]
         if (music) ctx.audio.playBgm(music, { fadeMs: BATTLE_UI.music.fadeMs })
         stage.setTrainer(0, characterOrNull(ctx, init.sides[0].sprite ?? ctx.save.avatar))
@@ -116,6 +120,7 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
           }
         }
         await scene.settle(stage.ready)
+        if (bossId) await playBossIntro(view, bossId, introClip).catch((err: unknown) => { console.warn('[battle] boss intro failed', err); return 'none' })
         await Promise.all([scene.reveal(), scene.settle(stage.intro(BATTLE_UI.introByKind[kind]))])
         await scene.wait(BATTLE_UI.timing.afterIntroMs)
         await presenter.play(batch.events)

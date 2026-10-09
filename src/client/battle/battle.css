@@ -405,3 +405,54 @@ html.ap-portrait .apb-banner.is-own { bottom: auto; top: calc(var(--u) * 60); }
 @media (prefers-reduced-motion: reduce) {
   .apb-bchip.is-alert, .apb-st-boss.is-pulse { animation: none; }
 }
+
+/* ------------------------------------------------------------------ boss intro cut-in (boss-intro.ts) */
+.apb-bi {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 60%, #121626 0%, #05060c 75%);
+  opacity: 0;
+  transition: opacity var(--apb-bi-in, 260ms) linear;
+}
+.apb-bi.is-in { opacity: 1; }
+.apb-bi.is-out { opacity: 0; transition-duration: var(--apb-bi-out, 320ms); pointer-events: none; }
+.apb-bi-video, .apb-bi-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; }
+/* A portrait screen would crop the 16:9 clip to its middle quarter: show the whole frame instead. */
+@media (orientation: portrait) { .apb-bi-video, .apb-bi-poster { object-fit: contain; } }
+.apb-bi.is-static .apb-bi-poster { animation: apb-bi-drift 2400ms ease-out both; }
+@keyframes apb-bi-drift { from { transform: scale(1); } to { transform: scale(1.06); } }
+.apb-bi-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: calc(var(--u) * 28) calc(var(--u) * 12) calc(var(--u) * 14 + var(--ap-bottom-inset, 0px) + env(safe-area-inset-bottom, 0px));
+  text-align: center;
+  background: linear-gradient(to top, rgba(3, 4, 10, 0.82), rgba(3, 4, 10, 0));
+  opacity: 0;
+  transition: opacity 420ms ease;
+  pointer-events: none;
+}
+.apb-bi-caption.is-on { opacity: 1; }
+.apb-bi-name { font-size: calc(var(--u) * 16); line-height: 1.15; color: #fff; text-shadow: 0 calc(var(--u) * 1) 0 #000, 0 0 calc(var(--u) * 6) rgba(0, 0, 0, 0.9); }
+.apb-bi-title { margin-top: calc(var(--u) * 3); font-size: calc(var(--u) * 10); line-height: 1.3; color: var(--ap-gold-hi); text-shadow: 0 calc(var(--u) * 1) 0 #000, 0 0 calc(var(--u) * 5) rgba(0, 0, 0, 0.9); }
+.apb-bi-skip {
+  position: absolute;
+  top: calc(var(--u) * 8 + env(safe-area-inset-top, 0px));
+  right: calc(var(--u) * 8 + env(safe-area-inset-right, 0px));
+  min-width: max(24px, calc(var(--u) * 36));
+  min-height: max(24px, calc(var(--u) * 16));
+  padding: 0 calc(var(--u) * 6);
+  color: var(--ap-text);
+  background: rgba(5, 7, 13, 0.62);
+  border: var(--u) solid var(--ap-gold-dk);
+  font: inherit;
+  font-size: calc(var(--u) * 9);
+  cursor: pointer;
+}
+.apb-bi-skip:hover, .apb-bi-skip:focus-visible { color: var(--ap-gold-hi); border-color: var(--ap-gold-hi); outline: none; }

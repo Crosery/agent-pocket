@@ -34,6 +34,11 @@ function baseUrl(): string {
   return b.endsWith('/') ? b : `${b}/`
 }
 
+/** URL of a file under public/ (content-addressed CDN prefix in static CDN builds, else the Vite base). */
+export function publicAssetUrl(path: string): string {
+  return `${baseUrl()}${path.replace(/^\/+/, '')}`
+}
+
 /** Manifest entries may be ids, file names or paths relative to the kind's directory. */
 function normalizeEntry(kind: Kind, raw: string): { id: string; file: string } | null {
   let e = raw.trim().replace(/\\/g, '/').replace(/^\/+/, '')

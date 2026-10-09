@@ -16,6 +16,7 @@ assets_src/backup_cute_pass/
 assets_src/logs/
 *.mp4
 !docs/readme/*.mp4
+!public/assets/boss-intro/*.mp4
 promo/audio/raw/
 # private / machine-local (security)
 assets_src/pipeline.local.json
