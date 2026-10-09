@@ -7,7 +7,7 @@ import { levelRewards, speciesResearch } from '../../../shared/gameplay/research
 import { GPC } from '../../world/gameplay-config.ts'
 import { claimResearchRewards, researchState, researchSummary, rewardLabel } from '../../world/research.ts'
 import { createRowMenu, type RowMenu } from '../menu.ts'
-import { el, rarityBadge } from '../widgets.ts'
+import { attentionDot, el, rarityBadge } from '../widgets.ts'
 import { backPressed, frame, icon, isCompact, openScreen, sectionTitle, setChildren, sfx, uiSfx, type ScreenEnv } from './base.ts'
 import './gameplay.css'
 
@@ -59,7 +59,7 @@ export function researchScreen(env: ScreenEnv): Promise<void> {
         bar(fill, 'is-level'),
         el('div', { class: 'aps-rs-next ap-dim', text: s.nextAt === null ? t('research.ui.max') : t('research.ui.next', { points: fmt(s.nextAt - s.points) }) }),
         s.canClaim
-          ? el('div', { class: 'aps-rs-claim is-ready', text: t('research.ui.claimable', { reward: rewardLabel(s.claimable, ctx) || t('research.ui.noReward') }) })
+          ? el('div', 'aps-rs-claim is-ready', [attentionDot(), t('research.ui.claimable', { reward: rewardLabel(s.claimable, ctx) || t('research.ui.noReward') })])
           : el('div', { class: 'aps-rs-claim ap-dim', text: s.nextAt === null ? t('research.ui.claimedAll') : t('research.ui.nextReward', { level: s.level + 1, reward: nextText }) }),
       ])
     }
@@ -70,7 +70,7 @@ export function researchScreen(env: ScreenEnv): Promise<void> {
       rows = [{ kind: 'claim' } as Row, ...speciesIds().map((id) => ({ kind: 'species', id }) as Row)]
       const visible = isCompact() ? GPC.research.compactVisibleRows : GPC.research.visibleRows
       menu = createRowMenu(rows.map((r) => {
-        if (r.kind === 'claim') return s.canClaim ? { label: t('research.ui.claim'), sub: rewardLabel(s.claimable, ctx) } : { label: t('research.ui.levelRewards'), sub: t('research.ui.level', { level: s.level }) }
+        if (r.kind === 'claim') return s.canClaim ? { label: t('research.ui.claim'), sub: '' } : { label: t('research.ui.levelRewards'), sub: t('research.ui.level', { level: s.level }) }
         const sr = speciesResearch(state, r.id)
         const sp = ctx.data.species[r.id]
         return {
@@ -88,7 +88,10 @@ export function researchScreen(env: ScreenEnv): Promise<void> {
       })
       menu.el.querySelectorAll<HTMLElement>('.ap-row').forEach((row, i) => {
         const r = rows[i]
-        if (r?.kind === 'claim') row.classList.add('aps-rs-claimrow', ...(s.canClaim ? ['is-ready'] : []))
+        if (r?.kind === 'claim') {
+          row.classList.add('aps-rs-claimrow', ...(s.canClaim ? ['is-ready'] : []))
+          if (s.canClaim) row.prepend(attentionDot())
+        }
         else if (r && speciesResearch(state, r.id).complete) row.prepend(icon('check', { className: 'aps-rs-done' }))
       })
       listBox.replaceChildren(...(rows.length > 1 ? [menu.el] : [menu.el, el('div', { class: 'aps-empty', text: t('research.ui.listEmpty') })]))

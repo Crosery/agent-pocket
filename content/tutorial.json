@@ -21,6 +21,7 @@
   "tips": {
     "layer": {"ttlSec": 7, "fadeMs": 220, "gapSec": 20, "staleSec": 20},
     "list": [
+      {"id": "researchReward", "trigger": {"kind": "on", "on": "attention:raised", "phase": "field", "match": {"id": "research"}, "delaySec": 1.5}, "text": "tutorial.tip.researchReward", "whileAttention": "research"},
       {"id": "move", "trigger": {"kind": "free", "delaySec": 1.2}, "text": "tutorial.tip.move", "expires": {"flag": ["starter"]}, "doneOn": "moved"},
       {"id": "talk", "trigger": {"kind": "npcNear", "radius": 2}, "text": "tutorial.tip.talk", "expires": {"flag": ["rival:lab"]}, "doneOn": "dialogue"},
       {"id": "objective", "trigger": {"kind": "free", "delaySec": 3, "needs": {"flag": ["intro:mom"]}}, "text": "tutorial.tip.objective", "expires": {"flag": ["starter"]}, "after": ["talk"]},
@@ -132,7 +133,7 @@
       {"id": "worldEvent", "group": "world", "tips": ["worldEvent"]},
       {"id": "rarity", "group": "world", "tips": ["rarity"]},
       {"id": "timeWeather", "group": "world", "tips": ["timeWeather"]},
-      {"id": "research", "group": "world", "tips": ["research"]},
+      {"id": "research", "group": "world", "tips": ["research", "researchReward"]},
       {"id": "dex", "group": "world", "tips": ["dex"]},
       {"id": "online", "group": "online", "tips": ["online"]},
       {"id": "chat", "group": "online", "tips": ["chat"]},

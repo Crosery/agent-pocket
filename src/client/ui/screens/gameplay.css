@@ -12,6 +12,8 @@
 .aps-rs-list .ap-row-icon { width: calc(var(--u) * 16); height: calc(var(--u) * 16); image-rendering: pixelated; }
 .aps-rs-claimrow .ap-row-label { color: var(--ap-gold-hi); }
 .aps-rs-claimrow.is-ready .ap-row-label { color: var(--ap-success); }
+.aps-rs-claim.is-ready .ap-attn-dot { margin-right: calc(var(--u) * 4); }
+.aps-rs-claimrow .ap-attn-dot { margin-right: calc(var(--u) * 6); }
 .aps-rs-levels { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 3); }
 /* The reward ladder is the only part of the claim page that scrolls: the claimable reward and the hint stay put. */
 .aps-rs-detail:has(> .aps-rs-levels) { overflow: hidden; }

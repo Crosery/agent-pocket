@@ -483,19 +483,33 @@ const viaPause = (label) => async (page) => {
   await page.waitForTimeout(700)
 }
 
-/** Phones: the screens before this one were closed with keys, which makes the game think a keyboard is in use; a tap on the empty header corner restores touch. */
+/** Phones: the screens before this one were closed with keys, which makes the game think a keyboard is in use. A touch pointerdown on a HUD layer (not the canvas, so no world tap) restores touch. */
 async function touchActivity(page) {
   if (!(await page.evaluate(() => matchMedia('(pointer: coarse)').matches))) return
-  await page.cdp('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 2, y: 2, id: 1 }] })
-  await page.waitForTimeout(90)
-  await page.cdp('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
-  await page.waitForTimeout(200)
+  await page.evaluate(() => { (document.querySelector('.ap-l-hud') ?? document.body).dispatchEvent(new PointerEvent('pointerdown', { pointerType: 'touch', bubbles: true, cancelable: true })) })
+  await page.waitForTimeout(250)
 }
 
 const openChart = (o) => async (page) => {
   await page.evaluate(({ view, last }) => { void window.__AP.screens.typeChart({ view, type: last ? window.__AP.data.types.at(-1).id : undefined }) }, o)
   await page.waitForTimeout(600)
   await touchActivity(page)
+}
+
+/** A save whose research level has a reward waiting (the red dots and the first-time prompt are about it). */
+const giveReward = async (page) => {
+  await page.evaluate(() => {
+    const A = window.__AP
+    const state = {}
+    // One species, just past level 1: the first reward a player really sees.
+    for (const id of Object.keys(A.data.species).slice(0, 1)) state[id] = { see: 15, catch: 25, defeat: 50 }
+    A.save.research = state
+  })
+  await page.waitForTimeout(900)
+}
+const clearReward = async (page) => {
+  await page.evaluate(() => { window.__AP.save.research = {}; for (const k of Object.keys(window.__AP.save.flags)) if (k.startsWith('attn:')) delete window.__AP.save.flags[k] })
+  await page.waitForTimeout(700)
 }
 
 export const SCREENS = [
@@ -515,6 +529,27 @@ export const SCREENS = [
   { id: 'hud-phone-chat', touchOnly: true, keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', tip: true, hudZones: true, noReshow: true, after: toLab, open: phoneHudOpen(false) },
   { id: 'hud-events', scrollOk: ['.ap-evbody'], scope: '.ap-evdetails', open: async (page) => { await page.evaluate(() => document.querySelector('.ap-evtoggle')?.click()) }, closeKey: 'Escape' },
   { id: 'pause', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.pauseMenu() }) },
+  // A research reward is waiting: red dot on the menu row, the cursor starts on it (first time), the detail pane names it.
+  { id: 'pause-reward', scope: '.ap-kit-stack > *:last-child', after: clearReward, open: async (page) => { await giveReward(page); await page.evaluate(() => { void window.__AP.screens.pauseMenu() }); await page.waitForTimeout(700); await touchActivity(page) } },
+  { id: 'research-reward', scope: '.ap-kit-stack > *:last-child', after: clearReward, open: async (page) => { await giveReward(page); await viaPause('智灵研究')(page); await touchActivity(page) } },
+  // The world with the dot on the menu key (phones) or the menu chip under the region plate (desktop).
+  { id: 'hud-reward', keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', after: clearReward, open: async (page) => {
+    await giveReward(page)
+    await page.evaluate(async () => {
+      const ctx = window.__AP
+      const { regionSubtitle } = await import('/src/client/world/explore.ts')
+      ctx.hud.showBanner(ctx.overworld.region.nameZh, regionSubtitle(ctx.data.world, ctx.overworld.region))
+    })
+    await page.waitForTimeout(900)
+    await touchActivity(page)
+  } },
+  // The first-time prompt itself (queued until the player is free in the world).
+  { id: 'tip-reward', scope: null, ignore: '.ap-l-overlay canvas', tip: true, after: clearReward, open: async (page) => {
+    await giveReward(page)
+    await page.evaluate(() => { window.__AP.save.settings.showTips = true; window.__apOnboarding.debugShow('researchReward') })
+    await page.waitForTimeout(1200)
+    await touchActivity(page)
+  } },
   { id: 'party', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.party('view') }) },
   { id: 'party-select', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.party('select', { title: '选择要出战的智灵' }) }) },
   { id: 'summary', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.summary(window.__AP.save.party[3]) }) },
