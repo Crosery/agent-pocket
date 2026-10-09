@@ -19,6 +19,7 @@ import { applyStory } from './story.ts'
 import { FrontierProvider } from './frontier/provider.ts'
 import type { Gate } from './frontier/sites.ts'
 import type { AnchorMap, DoorLink } from './ctx.ts'
+import type { PlacedAnchor } from './anchor-place.ts'
 import type { Vec2 } from './schema.ts'
 
 export type { AnchorMap, AnchorPoint } from './ctx.ts'
@@ -38,6 +39,8 @@ export interface WorldFeatures {
   lakes: number
   /** Causeways from the core coast into the infinite frontier (gateway hamlet centres). */
   gates: Gate[]
+  /** Teleport anchors of the core continent, in placement order. */
+  anchors: PlacedAnchor[]
 }
 
 export interface WorldBuildInfo {
@@ -175,6 +178,7 @@ function buildWorldInner(seed: number): World {
     rivers: ow.ctx.macro.hydro.rivers,
     lakes: wc.world.overworld.lakes.length + ow.ctx.macro.hydro.lakes,
     gates: ow.gates,
+    anchors: ow.anchors,
   }
   const world: World = { seed, maps, trainers: {}, towns, quests: [], badges, startMap: owId }
   const info: WorldBuildInfo = { anchors, problems, walkReach: ow.walkReach, surfReach: ow.surfReach, features, buildMs: 0 }

@@ -28,6 +28,7 @@ import { buildDungeons, linkDungeons, type BuiltDungeon } from './dungeons.ts'
 import { computeWilds, type WildRegion } from './wilds.ts'
 import type { Vec2 } from './schema.ts'
 import { stampCauseways } from './frontier/causeways.ts'
+import { placeCoreAnchors, type PlacedAnchor } from './anchor-place.ts'
 import type { Gate } from './frontier/sites.ts'
 
 export interface OverworldResult {
@@ -48,6 +49,8 @@ export interface OverworldResult {
   islands: IslandInfo[]
   /** Overworld region index per wild region (parallel to `wilds`). */
   wildBase: number
+  /** Teleport anchors of the core continent (props already placed in the draft). */
+  anchors: PlacedAnchor[]
 }
 
 function baseTerrain(ctx: OwCtx): void {
@@ -422,7 +425,9 @@ export function buildOverworld(seed: number, wc: WorldContent, anchors: AnchorMa
   const placedVis = d.items.slice(before).filter((x) => !x.hidden).length, placedHid = d.items.length - before - placedVis
   const areas = overworldItemAreas(ctx, surfReach, { visible: Math.max(0, budget.visible - placedVis), hidden: Math.max(0, budget.hidden - placedHid) })
   placeGroundItems(areas, wc.items, rng, itemCounter)
+  // Teleport anchors after the items, so which items exist and where never depends on them.
+  const warpAnchors = placeCoreAnchors({ ctx, towns, routes, hamlets, pois, dungeons, walkReach })
   // Last: causeways into the frontier (only open sea changes, so every earlier stage is unaffected).
   const gates = stampCauseways(ctx, walkReach)
-  return { draft: d, ctx, towns, routes, townRegion, walkReach, surfReach, hamlets, gates, pois, dungeons, wilds, islands: macro.islands, wildBase }
+  return { draft: d, ctx, towns, routes, townRegion, walkReach, surfReach, hamlets, gates, pois, dungeons, wilds, islands: macro.islands, wildBase, anchors: warpAnchors }
 }

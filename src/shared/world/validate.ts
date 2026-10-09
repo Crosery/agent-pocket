@@ -4,8 +4,64 @@ import { CONTENT, type Content } from '../content/index.ts'
 import { WORLD_CONTENT, mirrorTownTemplate, type WorldContent } from './data.ts'
 import { propSize } from './collision.ts'
 import type { InteriorTemplate, LegendEntry, TownTemplate } from './schema.ts'
+import { FRONTIER_CONTENT } from './frontier/config.ts'
 import { validateFrontierContent } from './frontier/validate.ts'
 import { validateFrontierPack } from './frontier/content/validate.ts'
+
+const ANCHOR_SOURCES = ['spawn', 'town', 'hamlet', 'dungeon', 'poi', 'route', 'fill']
+const ANCHOR_FLAGS = ['path', 'road', 'reserved', 'gate', 'keep', 'bridge', 'nest', 'border', 'edge', 'river', 'lake', 'sea']
+
+/** content/world/anchors.json: prop, sound and rule references, number sanity. */
+export function validateAnchorsContent(wc: WorldContent = WORLD_CONTENT, c: Content = CONTENT): string[] {
+  const errs: string[] = []
+  const A = wc.anchors
+  const sfx = new Set(c.audio.sfx)
+  const kinds = Object.keys(A.kinds)
+  for (const [id, k] of Object.entries(A.kinds)) {
+    const w = `anchors.kinds.${id}`
+    const def = c.props[k.prop]
+    if (!def) errs.push(`${w}: unknown prop "${k.prop}"`)
+    else if (!def.collide || !def.interactable) errs.push(`${w}: prop "${k.prop}" must collide and be interactable`)
+    for (const s of [k.unlockSfx, k.travelSfx]) if (!sfx.has(s)) errs.push(`${w}: unknown sfx "${s}"`)
+    if (!(k.unlockRadius > 0 && k.seenRadius >= k.unlockRadius)) errs.push(`${w}: needs 0 < unlockRadius <= seenRadius`)
+    if (!Number.isInteger(k.margin) || k.margin < 0) errs.push(`${w}: margin must be a whole number >= 0`)
+  }
+  for (const [what, list] of [['avoidFlags', A.place.avoidFlags], ['ringAvoidFlags', A.place.ringAvoidFlags]] as const) {
+    for (const f of list) if (!ANCHOR_FLAGS.includes(f)) errs.push(`anchors.place.${what}: unknown flag "${f}"`)
+  }
+  for (const key of A.place.roadTerrain) if (!c.terrainByKey[key]) errs.push(`anchors.place.roadTerrain: unknown terrain "${key}"`)
+  if (!(A.preUnlock.grandWithin >= 0)) errs.push('anchors.preUnlock.grandWithin must be >= 0')
+  if (!(A.save.maxUnlocked > 0 && A.save.maxSeen >= A.save.maxUnlocked)) errs.push('anchors.save: needs 0 < maxUnlocked <= maxSeen')
+  if (!(A.naming.radius > 0)) errs.push('anchors.naming.radius must be > 0')
+  const ids = new Set<string>()
+  const templates = new Set(Object.keys(wc.pois.templates))
+  let homes = 0
+  for (const r of A.core.rules) {
+    const w = `anchors.core.rules.${r.id}`
+    if (ids.has(r.id)) errs.push(`${w}: duplicate id`)
+    ids.add(r.id)
+    if (!ANCHOR_SOURCES.includes(r.source)) errs.push(`${w}: unknown source "${r.source}"`)
+    if (!kinds.includes(r.kind)) errs.push(`${w}: unknown kind "${r.kind}"`)
+    if (!(r.min >= 0 && r.max >= r.min)) errs.push(`${w}: bad min/max`)
+    if (r.source === 'poi') for (const tpl of r.templates ?? []) if (!templates.has(tpl)) errs.push(`${w}: unknown poi template "${tpl}"`)
+    if (r.source === 'route' && !(r.spacing && r.spacing > 0 && (r.edgeMargin ?? 0) >= 0)) errs.push(`${w}: needs spacing > 0`)
+    if (r.source === 'fill' && !(r.maxWalk && r.maxWalk > 0 && r.lattice && r.lattice > 0)) errs.push(`${w}: needs maxWalk > 0 and lattice > 0`)
+    if (r.source === 'spawn' && !r.anchor) errs.push(`${w}: needs the worldAnchors name of the spawn`)
+    if (r.home) homes++
+  }
+  if (homes !== 1) errs.push(`anchors.core.rules: exactly one rule must set home (found ${homes})`)
+  const siteKinds = new Set([...FRONTIER_CONTENT.sites.kinds.map((k) => k.id), 'gateway'])
+  for (const [id, s] of Object.entries(A.frontier.sites)) {
+    if (!siteKinds.has(id)) errs.push(`anchors.frontier.sites: unknown site kind "${id}"`)
+    if (!kinds.includes(s.kind)) errs.push(`anchors.frontier.sites.${id}: unknown kind "${s.kind}"`)
+    if (!(s.min >= 0 && s.max >= s.min)) errs.push(`anchors.frontier.sites.${id}: bad min/max`)
+  }
+  const F = A.frontier.fill
+  if (!kinds.includes(F.kind)) errs.push(`anchors.frontier.fill: unknown kind "${F.kind}"`)
+  for (const k of ['cell', 'reachTiles', 'search'] as const) if (!(F[k] > 0)) errs.push(`anchors.frontier.fill.${k} must be > 0`)
+  if (!(F.jitter >= 0 && F.jitter <= 1)) errs.push('anchors.frontier.fill.jitter must be within 0..1')
+  return errs
+}
 
 export function validateWorldContent(wc: WorldContent = WORLD_CONTENT, c: Content = CONTENT): string[] {
   const errs: string[] = []
@@ -330,6 +386,7 @@ export function validateWorldContent(wc: WorldContent = WORLD_CONTENT, c: Conten
     }
   }
   dup('map ids', mapIds)
+  errs.push(...validateAnchorsContent(wc, c))
   errs.push(...validateFrontierContent(undefined, wc, c))
   errs.push(...validateFrontierPack(undefined, c))
   return errs
