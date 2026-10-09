@@ -1,0 +1,19 @@
+{
+  "id": "fake-peers-square",
+  "titleKey": "dev.scn.fakePeersSquare",
+  "extends": "after-gym-3",
+  "place": "town:origin",
+  "seed": 20261002,
+  "rng": 31,
+  "clock": {"minutes": 720, "frozen": true},
+  "weather": "clear",
+  "then": [
+    {"cmd": "net.fake", "args": {"on": true, "peers": 12}}
+  ],
+  "expect": [
+    {"path": "/runtime/netSim/mode", "eq": "fake"},
+    {"path": "/runtime/netSim/peers", "eq": 12},
+    {"path": "/runtime/net/status", "eq": "online"},
+    {"path": "/runtime/net/online", "eq": 13}
+  ]
+}

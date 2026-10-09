@@ -6,7 +6,7 @@
 
 ### Catch today's hottest AIs, in your browser
 
-<p>Agent Pocket is an HD-2D pixel creature-collecting RPG that runs entirely on the web. Each of its 190 creatures is a real AI model, Chinese or international, drawn as a cute anime chibi. Each creature's rarity and stats follow that model's real capability.</p>
+<p>Agent Pocket is an HD-2D pixel creature-collecting RPG that runs entirely on the web. Each of its 448 creatures is a real AI model, Chinese or international, drawn as a cute anime chibi. Each creature's rarity and stats follow that model's real capability.</p>
 
 <p>
   <a href="README.md"><b>中文</b></a>
@@ -28,7 +28,7 @@
 
 ## Features
 
-- **190 creatures in 121 evolution families.**
+- **448 creatures in 232 evolution families.**
   - Six rarity tiers: N, R, SR, SSR, UR and MYTHIC.
   - A custom type chart.
   - Moves and abilities defined in a declarative DSL.
@@ -81,7 +81,7 @@ npm start              # production: serves dist/ and the WebSocket endpoint
 ```
 
 - Requires Node.js 24 or later. The server runs `.ts` files directly; development used Node 26.
-- Add `?dev=1` to the URL for debug hooks.
+- Add `?dev=1` to the URL for debug hooks (dev server or `npm run build:devtools` only; the production build has none, and servers refuse devtools clients unless started with `AP_DEV=1`).
 
 **Controls**
 

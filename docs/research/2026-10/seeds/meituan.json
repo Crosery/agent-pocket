@@ -1,0 +1,81 @@
+{
+ "vendor": "meituan",
+ "count": 2,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "longcat20",
+   "names": [
+    "Meituan: LongCat 2.0",
+    "LongCat 2.0",
+    "LongCat-2.0",
+    "LongCat-2.0 Free"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-07-20",
+    "modelsdev:nano-gpt": "2026-06-30",
+    "modelsdev:siliconflow": "2026-06-30",
+    "modelsdev:aihubmix": "2026-06-30",
+    "modelsdev:opencode-go": "2026-06-30",
+    "modelsdev:longcat": "2026-06-30",
+    "modelsdev:opencode": "2026-06-30"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "meituan/longcat-2.0"
+    ],
+    "modelsdev:nano-gpt": [
+     "longcat-2.0"
+    ],
+    "modelsdev:siliconflow": [
+     "meituan-longcat/LongCat-2.0"
+    ],
+    "modelsdev:aihubmix": [
+     "longcat-2.0"
+    ],
+    "modelsdev:opencode-go": [
+     "longcat-2.0"
+    ],
+    "modelsdev:longcat": [
+     "LongCat-2.0"
+    ],
+    "modelsdev:opencode": [
+     "longcat-2.0-free"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "longcat25preview",
+   "names": [
+    "LongCat 2.5 Preview",
+    "LongCat 2.5 Preview Free"
+   ],
+   "releaseDateHints": {
+    "modelsdev:nano-gpt": "2026-09-25",
+    "modelsdev:opencode-go": "2026-09-25",
+    "modelsdev:opencode": "2026-09-25"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "modelsdev:nano-gpt": [
+     "longcat-2.5-preview"
+    ],
+    "modelsdev:opencode-go": [
+     "longcat-2.5-preview-free"
+    ],
+    "modelsdev:opencode": [
+     "longcat-2.5-preview-free"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

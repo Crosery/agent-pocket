@@ -14,20 +14,22 @@
   },
   "sprites": {"sheetCell": 64, "sheetFrames": 4, "sheetWalkFrames": 8, "sheetIdleFrames": 8, "idleFps": 3.2, "idleSettleMs": 250, "sheetRows": {"down": 0, "left": 1, "right": 2, "up": 3}, "creatureSize": 128},
   "net": {"tickHz": 10, "viewRadius": 48, "protocolVersion": 1, "chatMaxLen": 120, "chatRate": {"count": 5, "perSeconds": 5}, "localChatRadius": 24, "pvpLevelCap": 50, "pvpTurnSeconds": 60, "tradeTimeoutSeconds": 180, "nameMaxLen": 16},
-  "battle": {"stab": 1.5, "critMultiplier": 1.5, "critChanceByStage": [0.0417, 0.125, 0.5, 1], "randomMin": 0.85, "randomMax": 1.0, "statStageLimit": 6, "struggle": {"power": 50, "recoilFraction": 0.25}, "confusionSelfHitPower": 40, "runBase": 128, "runAttemptBonus": 30, "protectChainDecay": 0.5, "weatherTurns": 5, "trainerExpMultiplier": 1.5, "expDivisor": 7, "shinyRate": 0.00390625},
+  "battle": {"stab": 1.5, "critMultiplier": 1.5, "critChanceByStage": [0.0417, 0.125, 0.5, 1], "randomMin": 0.85, "randomMax": 1.0, "statStageLimit": 6, "struggle": {"power": 50, "recoilFraction": 0.25}, "confusionSelfHitPower": 40, "runBase": 128, "runAttemptBonus": 30, "protectChainDecay": 0.5, "weatherTurns": 5, "trainerExpMultiplier": 1.25, "expDivisor": 7, "shinyRate": 0.00390625},
   "catch": {
     "shakeChecks": 4,
     "ballBonus": {"night": 3.5, "quick": 4, "status": 2.5, "lowLevel": 3, "lowLevelMax": 20, "rare": 3, "rareMinRarityOrder": 2}
   },
   "growth": {"fast": {"mul": 0.8}, "medium": {"mul": 1.0}, "slow": {"mul": 1.25}},
   "encounters": {"stageWeight": [1, 0.35, 0.08], "nightTypeBoost": {"chaos": 2.0, "sound": 1.3}, "roamingMax": 10, "roamingRadius": 18},
-  "economy": {"startMoney": 3000, "blackoutMoneyLoss": 0.5, "sellRatio": 0.5, "startItems": {}},
+  "economy": {"startMoney": 3000, "blackoutMoneyLoss": 0.25, "sellRatio": 0.5, "startItems": {}},
   "creature": {"ivMax": 31, "startFriendship": 70, "secondAbilityChance": 0.2, "starterLevel": 5, "levelUpFriendship": 3},
   "save": {"autosaveSeconds": 60, "storagePrefix": "agent-pocket/save/", "version": 1},
-  "camera": {"fov": 32, "pitchDeg": 36, "zoomDistances": [11, 16, 24], "followDamping": 6, "lookAhead": 1.2},
+  "camera": {"fov": 32, "pitchDeg": 36, "zoomDistances": [11, 16, 24], "followDamping": 6, "lookAhead": 1.2, "minViewTilesWide": 7},
   "render": {"maxPointLights": 10, "shadowMapSize": 2048, "internalHeight": {"low": 300, "medium": 360, "high": 450, "ultra": 540}},
   "settingsMigrations": [
-    {"id": "bgm-mute-20261003", "set": {"bgmVolume": 0}}
+    {"id": "bgm-mute-20261003", "set": {"bgmVolume": 0}},
+    {"id": "phone-quality-20261009", "touchOnly": true, "set": {"quality": "medium"}}
   ],
-  "defaultSettings": {"bgmVolume": 0, "sfxVolume": 0.8, "quality": "high", "pixelScale": 2, "dof": true, "bloom": true, "shadows": true, "textSpeed": "normal", "showMinimap": true, "showNames": true, "showObjective": true, "showTips": true, "autoRun": false, "touchControls": "auto"}
+  "battleSpeeds": [1, 1.5, 2],
+  "defaultSettings": {"bgmVolume": 0, "sfxVolume": 0.8, "quality": "high", "pixelScale": 2, "dof": true, "bloom": true, "shadows": true, "textSpeed": "normal", "battleSpeed": 1, "showMinimap": true, "showNames": true, "showObjective": true, "showTips": true, "autoRun": false, "touchControls": "auto", "touchHand": "right", "touchSize": "normal", "haptics": true}
 }

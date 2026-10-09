@@ -22,6 +22,7 @@ let resizeBound = false
  * Reflects settings onto <html> as CSS custom properties and data attributes:
  *   --ui-scale, --pixel-scale, --bgm-volume, --sfx-volume
  *   data-quality, data-text-speed, data-show-names, data-show-minimap, data-dof, data-bloom, data-shadows,
+ *   data-touch-hand (right|left), data-touch-size (small|normal|large), data-haptics,
  *   data-touch-pref (auto|on|off), data-touch-controls (resolved on|off; 'auto' follows the device or a
  *   touch already seen by the input module).
  */
@@ -45,6 +46,9 @@ export function applyDocumentSettings(s: Settings): void {
   html.dataset.bloom = String(s.bloom)
   html.dataset.shadows = String(s.shadows)
   html.dataset.touchPref = s.touchControls
+  html.dataset.touchHand = s.touchHand
+  html.dataset.touchSize = s.touchSize
+  html.dataset.haptics = String(s.haptics)
   const autoOn = isTouchDevice() || html.dataset.touchSeen === 'true'
   html.dataset.touchControls = s.touchControls === 'auto' ? (autoOn ? 'on' : 'off') : s.touchControls
 }

@@ -121,8 +121,15 @@ Level: `BattleSideInit.aiLevel`, else wild by `wildLevelByRarityOrder[rarity.ord
 accuracy), status-move evaluation, heal/cure items below `healItemBelowHpRatio`, defensive switching against
 `switchThreatEffectiveness`, damage estimation with KO bonus, replacement ordering. All scores/thresholds are keys of `ai`.
 
+## Bosses (`BattleSideInit.boss`)
+
+A side-1 creature with `boss: "<id>"` follows `content/bosses.json`: its action comes from the boss pattern
+(`chooseBossAction`) instead of the generic AI, the boss rules multiply damage taken/dealt, form switches change its
+species/moves/stats in place (reverted in `finish`), `bait` items trigger counters, and telegraphed attacks are forced on
+the next turn. Boss state is `extractBossState()` / `applyBossState()`. Full reference: [bosses.md](bosses.md).
+
 ## Determinism & perspective
 
 All randomness comes from `new Rng(init.seed)` (sfc32). Events use absolute sides (side 0 = local player).
 `perspective(events, 1)` flips sides and results, drops side-0 progression events, and swaps in side-1 wording for
-viewer-relative messages (kept off the event object; pass the original event objects, not JSON copies).
+viewer-relative messages (kept off the event object; pass the original event objects, not JSON copies). Boss loot events are side-0 private.

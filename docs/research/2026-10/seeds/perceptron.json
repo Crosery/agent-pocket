@@ -1,0 +1,45 @@
+{
+ "vendor": "perceptron",
+ "count": 2,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "perceptronmk1",
+   "names": [
+    "Perceptron: Perceptron Mk1"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-05-12"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+video->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "perceptron/perceptron-mk1"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "perceptronmk15",
+   "names": [
+    "Perceptron: Perceptron Mk1.5"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-25"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text+image+video+audio->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "perceptron/perceptron-mk1.5"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

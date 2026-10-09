@@ -1,6 +1,6 @@
 {
   "name": "agent-pocket",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "Agent Pocket · 智灵口袋 — HD-2D open-world pixel creature-collecting game where the creatures are today's AIs. Multiplayer, pure web.",
@@ -9,6 +9,8 @@
     "dev:client": "vite",
     "dev:server": "node --watch src/server/index.ts",
     "build": "vite build",
+    "build:devtools": "vite build --mode devtools --outDir dist-devtools",
+    "check:devgate": "node scripts/check-dev-gate.mjs",
     "start": "node src/server/index.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "node --test \"tests/**/*.test.ts\""

@@ -35,6 +35,7 @@ const item = (id: string, effect: ItemDef['effect']): ItemDef => ({
 const TYPES: TypeDef[] = ['n', 'a', 'b', 'g'].map((id) => ({ id, nameZh: `${id}系`, color: '#fff' }))
 const MOVES: MoveDef[] = [
   mv('tackle'),
+  mv('tackle2x', { power: 80 }),
   mv('zap', { type: 'a', category: 'special', power: 60 }),
   mv('hydro', { type: 'b', category: 'special', power: 60 }),
   mv('ghostly', { type: 'g', power: 40 }),
@@ -326,13 +327,13 @@ test('trainer replaces fainted creature immediately and pays money on defeat', (
 test('exp is split among participants; level up learns moves and flags evolution', () => {
   const sa = mon(C, 'sa', 15, ['tackle'])
   const sa2 = mon(C, 'sa', 15, ['tackle', 'growl', 'swords', 'harden'])
-  const foe = mon(C, 'rich', 30, ['growl'])
+  const foe = mon(C, 'rich', 32, ['growl'])
   const e = battle(C, [sa, sa2], [foe], { expGain: true, isWild: false, foeSide: { aiLevel: 0 } })
   turn(e, { kind: 'switch', partyIndex: 1 }, M(0))
   turn(e, { kind: 'switch', partyIndex: 0 }, M(0))
   e.party(1)[0].hp = 1
   const evs = turn(e, M(0), M(0))
-  const share = Math.floor(Math.floor((255 * 30) / C.config.battle.expDivisor * C.config.battle.trainerExpMultiplier) / 2)
+  const share = Math.floor(Math.floor((255 * 32) / C.config.battle.expDivisor * C.config.battle.trainerExpMultiplier) / 2)
   const exps = evs.filter((x) => x.t === 'exp')
   assert.deepEqual(exps.map((x) => (x.t === 'exp' ? [x.partyIndex, x.amount] : [])), [[0, share], [1, share]])
   assert.ok(has(evs, (x) => x.t === 'levelUp' && x.partyIndex === 0 && x.level === 16))
@@ -727,7 +728,9 @@ test('ability: powerMul (conditional, announced) and damageTakenMul', () => {
   e.party(0)[0].hp = 1
   const pinch = turn(e, M(0), M(0))
   assert.ok(abilityFired(pinch, 0, 'pinch'))
-  assert.ok(Math.abs(damageTo(pinch, 1) - base * 2) <= 2)
+  // powerMul scales the move's power before the integer chain, so it equals a move of double power exactly (no tolerance).
+  const doubled = damageTo(turn(duel(C, 'none', 'none', ['tackle2x'], ['growl']), M(0), M(0)), 1)
+  assert.equal(damageTo(pinch, 1), doubled)
   const full = duel(C, 'pinch', 'none', ['tackle'], ['growl'])
   assert.equal(damageTo(turn(full, M(0), M(0)), 1), base)
   const scaled = turn(duel(C, 'none', 'scale', ['tackle'], ['growl']), M(0), M(0))

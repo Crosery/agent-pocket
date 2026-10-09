@@ -31,7 +31,7 @@ import { GAMEPLAY } from './data.ts'
 import { NO_MODIFIERS, dayOf, evaluateCondition, modifierValue, type EventContext, type EventModifiers, type SpawnEffect } from './events.ts'
 import { pickSpecies } from './picks.ts'
 import { researchComplete, type ResearchState } from './research.ts'
-import type { GameplayData, MythicChainDef, MythicChainStep, RoamingLegendDef } from './schema.ts'
+import type { GameplayData, MythicChainDef, MythicChainStep, RoamingLegendDef, RoamingPolicy, RoamingStance } from './schema.ts'
 
 const MINUTES_PER_HOUR = 60
 const DEG = Math.PI / 180
@@ -72,6 +72,20 @@ export function behaviorOf(rarity: Rarity, c: Content = CONTENT): ResolvedBehavi
 
 export function speciesBehavior(speciesId: string, c: Content = CONTENT): ResolvedBehavior {
   return behaviorOf(c.species[speciesId]?.rarity ?? '', c)
+}
+
+export type RoamingDisposition = RoamingStance
+
+/**
+ * Overworld attitude of a roaming wild creature that has noticed the player. The table is data
+ * (content/events/spawn.json `roamingPolicy`): per country, one stance while the wild creature is at least as
+ * strong as the player's strongest party member and one once the player outlevels it. Countries without an entry
+ * use `default`.
+ */
+export function roamingDisposition(country: string | undefined, wildLevel: number, playerMaxLevel: number, rules: RoamingPolicy = GAMEPLAY.spawn.roamingPolicy): RoamingDisposition {
+  const code = country?.trim().toUpperCase() ?? ''
+  const stances = rules.countries[code] ?? rules.default
+  return playerMaxLevel > wildLevel ? stances.outleveled : stances.base
 }
 
 // ---------------------------------------------------------------------------------------------- conditions

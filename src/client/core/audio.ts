@@ -7,6 +7,7 @@ import type { CompiledSong } from './audio-sequencer.ts'
 import { createSynth } from './audio-synth.ts'
 import type { Synth } from './audio-synth.ts'
 import { cryRecipe } from './audio-cry.ts'
+import { isTouchDevice } from './settings.ts'
 import type { SfxDef } from './audio-data.ts'
 
 interface Playing {
@@ -171,17 +172,22 @@ export function createAudio(assets: AssetStore): AudioManager {
   }
 
   if (typeof window !== 'undefined') {
+    const gestures = ['pointerdown', 'keydown', 'touchend'] as const
     const gesture = () => {
       unlock()
-      if (running()) {
-        window.removeEventListener('pointerdown', gesture, true)
-        window.removeEventListener('keydown', gesture, true)
-        window.removeEventListener('touchend', gesture, true)
-      }
+      if (running()) for (const ev of gestures) window.removeEventListener(ev, gesture, true)
     }
-    window.addEventListener('pointerdown', gesture, true)
-    window.addEventListener('keydown', gesture, true)
-    window.addEventListener('touchend', gesture, true)
+    const arm = () => { for (const ev of gestures) window.addEventListener(ev, gesture, true) }
+    arm()
+    // A phone suspends audio in the background (iOS also reports 'interrupted' after calls); coming back needs a fresh gesture.
+    if (isTouchDevice()) {
+      document.addEventListener('visibilitychange', () => {
+        if (!graph) return
+        if (document.hidden) { graph.ctx.suspend().catch(() => { /* already closed */ }); return }
+        arm()
+        unlock()
+      })
+    }
   }
 
   return {

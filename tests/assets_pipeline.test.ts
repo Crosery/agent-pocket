@@ -12,6 +12,7 @@ import { CONTENT } from '../src/shared/content/index.ts'
 import pipelineJson from '../assets_src/pipeline.json' with { type: 'json' }
 import templatesJson from '../assets_src/prompts/templates.json' with { type: 'json' }
 import jobsJson from '../assets_src/prompts/jobs.json' with { type: 'json' }
+import sprite2dJson from '../assets_src/sprite2d.json' with { type: 'json' }
 import { buildCharacterIdleAtlas, type CharacterPixels } from '../src/client/render/character-idle.ts'
 
 interface SourceSpec { file: string; id: string; path?: string; where?: Record<string, unknown>; exclude?: string[]; fields?: Record<string, string>; groupCount?: Record<string, string> }
@@ -188,7 +189,7 @@ test('creature prompts: every (stage, family size) in the roster has its own sta
   const spec = templates.kinds.creature
   const hint: LookupSpec | undefined = spec?.lookups?.stageHint
   assert.ok(spec?.source && hint, 'creature kind with a stageHint lookup')
-  const roster = JSON.parse(readFileSync(join(ROOT, spec.source.file), 'utf8')) as { id: string; family: string; stage: number; design: string }[]
+  const roster = JSON.parse(readFileSync(join(ROOT, spec.source.file), 'utf8')) as { id: string; family: string; stage: number; design: string; lineRef?: string }[]
   const family = new Map<string, number>()
   for (const r of roster) family.set(r.family, (family.get(r.family) ?? 0) + 1)
   for (const r of roster) {
@@ -202,9 +203,12 @@ test('creature prompts: every (stage, family size) in the roster has its own sta
     assert.equal(j.out, `public/assets/creatures/${j.id}.png`)
     // reference images: the style anchor always, plus the family identity sheet when one exists
     // (refs are private and absent from other checkouts; there only check jobs.json names a subset, in order)
-    const fam = roster.find((r) => r.id === j.id)!.family
-    const cand = ['assets_src/refs/creature/_style.png', `assets_src/refs/creature/${fam}.png`]
+    const rec = roster.find((r) => r.id === j.id)!
+    const cand = ['assets_src/refs/creature/_style.png', `assets_src/refs/creature/${rec.family}.png`]
     const want = existsSync(join(ROOT, 'assets_src/refs')) ? cand.filter((p) => existsSync(join(ROOT, p))) : cand.filter((p) => (j.images ?? []).includes(p))
+    // the neighbouring evolution form's raw render (lineRef) is gitignored: it counts when it exists here or jobs.json names it
+    const line = rec.lineRef ? `assets_src/raw/creature/${rec.lineRef}.png` : ''
+    if (line && (existsSync(join(ROOT, line)) || (j.images ?? []).includes(line))) want.push(line)
     assert.deepEqual(j.images, want, `${j.id}: reference images`)
     assert.ok(j.prompt.startsWith('REFERENCE IMAGES: Image 1 '), `${j.id}: prompt must explain its reference images`)
   }
@@ -244,7 +248,8 @@ test('processed assets match their specs', (t) => {
     if (sprite) assert.equal(png.colorType, 6, `${tag}: must be RGBA`)
     if (j.process === 'sheet') {
       const cols = png.width / sheetCell
-      assert.ok(cols === sheetFrames || cols === sheetWalkFrames + 1, `${tag}: unsupported sheet columns`)
+      const { sheetIdleFrames } = CONTENT.config.sprites
+      assert.ok(cols === sheetFrames || cols === sheetWalkFrames + 1 || cols === sheetIdleFrames + sheetWalkFrames, `${tag}: unsupported sheet columns`)
       assert.equal(png.height, sheetCell * rows, `${tag}: sheet rows`)
       const rgba = png.rgba!
       for (let r = 0; r < rows; r++) {
@@ -333,9 +338,33 @@ test('every character has four articulated idle loops with planted shoes and unc
       }
       return sizes.reduce((sum, size) => sum + size, 0) - Math.max(0, ...sizes)
     }
+    const authored = source.width === cell * (sprites.sheetIdleFrames + sprites.sheetWalkFrames)
     for (const [dir, row] of Object.entries(sprites.sheetRows)) {
       const tag = `${character.id}/${dir}`
       const neutral = crop(source, 0, row)
+      if (authored) {
+        // sprite2d atlases (tools/sprite2d.py) ship their own idle and walk poses; only the contract applies.
+        // Motion may not detach more pixels than the drawn base frames already had loose (a hovering drone).
+        let loose = detached(neutral)
+        const basePath = join(ROOT, sprite2dJson.baseDir, `${character.id}.png`)
+        if (existsSync(basePath)) {
+          const base = readPng(basePath, true)
+          const img = { width: base.width, height: base.height, data: base.rgba! }
+          for (let col = 0; col < base.width / cell; col++) loose = Math.max(loose, detached(crop(img, col, row)))
+        }
+        const poses = new Set<string>()
+        for (let col = 0; col < sprites.sheetIdleFrames + sprites.sheetWalkFrames; col++) {
+          const pose = crop(atlas, col, row)
+          if (col < sprites.sheetIdleFrames) poses.add(Buffer.from(pose).toString('base64'))
+          assert.ok(detached(pose) <= Math.max(2, loose), `${tag}/${col}: disconnected body part`)
+          for (let i = 3; i < pose.length; i += 4) assert.ok(pose[i] === 0 || pose[i] === 255, `${tag}: preserve pixel alpha`)
+        }
+        assert.ok(poses.size >= 4, `${tag}: only ${poses.size} distinct idle poses`)
+        const walk = new Set<string>()
+        for (let col = 0; col < sprites.sheetWalkFrames; col++) walk.add(Buffer.from(crop(atlas, col + sprites.sheetIdleFrames, row)).toString('base64'))
+        assert.ok(walk.size >= 4, `${tag}: walk cycle has only ${walk.size} distinct poses`)
+        continue
+      }
       const top = Math.floor(neutral.findIndex((value, i) => i % 4 === 3 && value === 255) / (cell * 4))
       const bodyStart = Math.ceil(top + (62 - top) * 0.48)
       let bodyMotion = 0

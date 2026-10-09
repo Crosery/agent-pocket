@@ -2,8 +2,9 @@
 // signs, anchors and exits. Templates and per-town palettes come from content/world.
 import type { Dir, PropPlacement } from '../types.ts'
 import { CONTENT } from '../content/index.ts'
-import { mirrorTownTemplate } from './data.ts'
-import { DIR_DX, DIR_DY, opposite, propDoors, propSize } from './collision.ts'
+import { LAYOUT_FILES, mirrorTownTemplate } from './data.ts'
+import { provenanceSink, type ProvTransform } from './provenance.ts'
+import { DIR_DX, DIR_DY, opposite, propDoors, propRect, propSize } from './collision.ts'
 import { F_KEEP, F_PATH, F_RESERVED, F_TOWN, addFlag, canPlace, fmt, idx, inside, placeProp } from './grid.ts'
 import { townRect, type TownPad } from './macro.ts'
 import type { InteriorTemplate, TownSpec, TownTemplate } from './schema.ts'
@@ -101,11 +102,20 @@ export function stampTowns(ctx: OwCtx): StampedTown[] {
       }
     }
 
-    for (const b of tpl.buildings) {
+    const prov = provenanceSink()
+    prov?.region({ map: d.id, template: spec.layout, file: LAYOUT_FILES.towns, x: rect.x, y: rect.y, w: tpl.w, h: tpl.h, mirror: !!spec.mirror })
+    const base = (k: string) => `/templates/${spec.layout}/${k}`
+    const tf = (fw: number): ProvTransform => ({ ox: rect.x, oy: rect.y, mirror: !!spec.mirror, tw: tpl.w, fw })
+
+    for (const [bi, b] of tpl.buildings.entries()) {
       const bs = spec.buildings?.[b.slot]
       const p: PropPlacement = { prop: bs?.prop ?? b.prop, x: rect.x + b.x, y: rect.y + b.y, rot: 0 }
       if (!canPlace(d, p, { anyTerrain: true })) { ctx.problems.push(`${where}: building ${b.slot} does not fit`); continue }
       placeProp(d, p)
+      if (prov) {
+        const [fw, fh] = propSize(p.prop, 0)
+        prov.add({ kind: 'building', map: d.id, x: p.x, y: p.y, w: fw, h: fh, label: b.slot, rot: 0, template: spec.layout, file: LAYOUT_FILES.towns, pointer: base(`buildings/${bi}`), transform: tf(fw) })
+      }
       const entries = propDoors(p)
       const door = entries[0]
       if (!door) continue
@@ -130,18 +140,24 @@ export function stampTowns(ctx: OwCtx): StampedTown[] {
       }
     }
 
-    for (const pr of tpl.props) {
+    for (const [pi, pr] of tpl.props.entries()) {
       const p: PropPlacement = { prop: pr.prop, x: rect.x + pr.x, y: rect.y + pr.y, rot: pr.rot ?? 0 }
       if (pr.scale !== undefined) p.scale = pr.scale
       if (pr.variant !== undefined) p.variant = pr.variant
-      if (canPlace(d, p, { anyTerrain: true })) placeProp(d, p)
-      else ctx.problems.push(`${where}: prop ${pr.prop} at ${pr.x},${pr.y} does not fit`)
+      if (canPlace(d, p, { anyTerrain: true })) {
+        placeProp(d, p)
+        if (prov) {
+          const [fw, fh] = propSize(p.prop, p.rot)
+          prov.add({ kind: 'prop', map: d.id, x: p.x, y: p.y, w: fw, h: fh, label: p.prop, rot: p.rot, template: spec.layout, file: LAYOUT_FILES.towns, pointer: base(`props/${pi}`), transform: tf(fw) })
+        }
+      } else ctx.problems.push(`${where}: prop ${pr.prop} at ${pr.x},${pr.y} does not fit`)
     }
 
-    for (const s of tpl.signs) {
+    for (const [si, s] of tpl.signs.entries()) {
       const text = signText(ctx, spec, s.slot)
       if (text === null) { ctx.problems.push(`${where}: no text for sign "${s.slot}"`); continue }
       if (!placeSign(ctx, rect.x + s.x, rect.y + s.y, text, s.kind)) ctx.problems.push(`${where}: sign ${s.slot} does not fit`)
+      else prov?.add({ kind: 'sign', map: d.id, x: rect.x + s.x, y: rect.y + s.y, w: 1, h: 1, label: s.slot, rot: 0, template: spec.layout, file: LAYOUT_FILES.towns, pointer: base(`signs/${si}`), transform: tf(1) })
     }
 
     const square = { x: rect.x + tpl.square[0], y: rect.y + tpl.square[1] }
@@ -149,6 +165,7 @@ export function stampTowns(ctx: OwCtx): StampedTown[] {
     for (const [name, [ax, ay]] of Object.entries(tpl.anchors)) {
       addAnchor(ctx.anchors, ctx.problems, `${anchorBase}:${name}`, d.id, rect.x + ax, rect.y + ay)
       addFlag(d, idx(d, rect.x + ax, rect.y + ay), F_RESERVED)
+      prov?.add({ kind: 'anchor', map: d.id, x: rect.x + ax, y: rect.y + ay, w: 1, h: 1, label: name, rot: 0, template: spec.layout, file: LAYOUT_FILES.towns, pointer: base(`anchors/${name}`), transform: tf(1) })
     }
 
     const exits: Record<string, TownExit> = {}

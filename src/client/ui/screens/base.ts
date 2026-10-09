@@ -210,6 +210,7 @@ export function openScreen<T>(env: ScreenEnv, className: string, build: (api: Sc
       }
     })
     env.ctx.ui.pushPanel(ui)
+    env.ctx.events.emit('screen:opened', { screen: (className.split(' ')[0] ?? '').replace(/^aps-/, '') })
     const first = root.querySelector<HTMLElement>('button.is-active, [tabindex="0"].is-active') ??
       root.querySelector<HTMLElement>('input:not([disabled]), button:not([disabled])') ?? root
     first.focus({ preventScroll: true })
@@ -448,7 +449,8 @@ export function keepTabVisible(strip: HTMLElement, index: number): void {
   if (!markedStrips.has(strip)) {
     markedStrips.add(strip)
     strip.addEventListener('scroll', () => markOverflow(strip), { passive: true })
-    new ResizeObserver(() => markOverflow(strip)).observe(strip)
+    // Deferred: toggling the fade classes inside the callback re-triggers the observer ("ResizeObserver loop" error).
+    new ResizeObserver(() => requestAnimationFrame(() => markOverflow(strip))).observe(strip)
   }
   markOverflow(strip)
   const child = strip.children[index] as HTMLElement | undefined

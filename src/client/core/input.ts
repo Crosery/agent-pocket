@@ -36,6 +36,7 @@ export function createInput(root: HTMLElement, cfg: InputConfig = INPUT_CONFIG):
   let padAxis = { x: 0, y: 0 }
   let padDpad = { x: 0, y: 0 }
   let touchAxis = { x: 0, y: 0 }
+  const tapListeners = new Set<(p: { x: number; y: number }) => void>()
   let frame = 0
   let polledFrame = -1
   let textInput = false
@@ -98,6 +99,10 @@ export function createInput(root: HTMLElement, cfg: InputConfig = INPUT_CONFIG):
     if (!textInput && !isEditable(e.target)) e.preventDefault()
   }
   const onBlur = () => releaseAll()
+  // Long-press on the canvas / sprites would open the browser's image or context menu over the game.
+  const onContextMenu = (e: Event) => {
+    if (document.documentElement.dataset.touchControls === 'on' && !isEditable(e.target)) e.preventDefault()
+  }
   const onVisibility = () => { if (document.hidden) releaseAll() }
   const onPointerDown = (e: PointerEvent) => {
     if (e.pointerType !== 'touch') return
@@ -128,11 +133,13 @@ export function createInput(root: HTMLElement, cfg: InputConfig = INPUT_CONFIG):
       for (const d of DIRS) setSet(stickHeld, d, dirs.has(d))
     },
     onActivity: () => { lastDevice = 'touch' },
+    onTap: (p) => { lastDevice = 'touch'; for (const fn of tapListeners) fn(p) },
   })
 
   window.addEventListener('keydown', onKeyDown)
   window.addEventListener('keyup', onKeyUp)
   window.addEventListener('blur', onBlur)
+  window.addEventListener('contextmenu', onContextMenu)
   document.addEventListener('visibilitychange', onVisibility)
   root.addEventListener('pointerdown', onPointerDown, { capture: true })
 
@@ -231,5 +238,7 @@ export function createInput(root: HTMLElement, cfg: InputConfig = INPUT_CONFIG):
     },
     get lastDevice() { return lastDevice },
     setTouchControlsVisible(visible: boolean) { touch.setVisible(visible) },
+    refreshTouchLayout() { touch.relayout() },
+    onWorldTap(fn) { tapListeners.add(fn); return () => { tapListeners.delete(fn) } },
   }
 }

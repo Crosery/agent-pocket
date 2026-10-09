@@ -1,0 +1,5 @@
+{
+  "issue": 30,
+  "titleKey": "dev.acc.i30",
+  "scenarios": ["fresh-start", "tutorial-first-battle", "after-gym-3", "boss-astra-counter", "night-rain-forge", "frontier-far", "ui-worst-case", "determinism-walk", "fake-peers-square"]
+}

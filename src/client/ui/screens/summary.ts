@@ -8,7 +8,7 @@ import { getMap } from '../../../shared/world/worldapi.ts'
 import { button, el, expBar, hpBar, rarityBadge, statRadar, statusChip, tabs, typeChip } from '../widgets.ts'
 import { backPressed, frame, icon, infoRow, meterIcons, openScreen, pressed, sectionTitle, sfx, textOrKey, uiSfx, type ScreenEnv, setChildren , arrowButton } from './base.ts'
 import { SCREENS } from './config.ts'
-import { defensiveProfile, expProgress, ivStars, statKeys } from './logic.ts'
+import { defensiveProfile, expProgress, extraEnglishName, ivStars, statKeys } from './logic.ts'
 import { creatureImg } from './sprites.ts'
 
 export function moveDetail(m: MoveDef | undefined, pp?: { pp: number; ppMax: number }): HTMLElement {
@@ -72,8 +72,11 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number): 
       exp.set(prog.into, prog.need)
       setChildren(left, [
         el('div', 'aps-sum-stage', [el('div', 'aps-sum-pedestal'), creatureImg(ctx.assets, c.speciesId, { shiny: c.shiny, className: 'aps-sum-sprite' }), c.shiny ? icon('shine', { className: 'aps-sum-shine' }) : null]),
-        el('div', 'aps-sum-name', [el('span', { text: creatureName(c) }), el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) })]),
-        c.nickname && sp ? el('div', { class: 'ap-dim aps-sum-species', text: sp.nameZh }) : null,
+        el('div', 'aps-sum-name', [
+          el('span', { class: 'ap-model-name', text: creatureName(c), title: creatureName(c), attrs: { 'aria-label': creatureName(c) } }),
+          el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) }),
+        ]),
+        c.nickname && sp ? el('div', { class: 'ap-dim ap-model-name aps-sum-species', text: sp.nameZh, title: sp.nameZh }) : null,
         el('div', 'aps-chips', [...(sp?.types ?? []).map((ty) => typeChip(ty)), sp ? rarityBadge(sp.rarity, { label: 'name' }) : null, c.status ? statusChip(c.status) : null]),
         hp.el,
         exp.el,
@@ -90,7 +93,7 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number): 
       const hearts = Math.round((Math.min(fs.friendshipMax, c.friendship) / fs.friendshipMax) * fs.friendshipHearts)
       return [
         infoRow(t('screens.summary.dexNo'), sp ? t('screens.common.dexNo', { n: String(sp.dexNo).padStart(3, '0') }) : t('screens.common.dash')),
-        infoRow(t('screens.summary.species'), sp ? t('screens.common.nameBoth', { zh: sp.nameZh, en: sp.nameEn }) : c.speciesId),
+        infoRow(t('screens.summary.species'), sp ? (extraEnglishName(sp) ? t('screens.common.nameBoth', { zh: sp.nameZh, en: sp.nameEn }) : sp.nameZh) : c.speciesId),
         infoRow(t('screens.summary.company'), sp ? t('screens.common.companyCountry', { company: sp.company, country: textOrKey(`screens.country.${sp.country}`) }) : t('screens.common.dash')),
         infoRow(t('screens.summary.ot'), t('screens.summary.otValue', { name: c.otName || t('screens.common.dash'), id: (c.otId || '').slice(0, 6).toUpperCase() || t('screens.common.dash') })),
         infoRow(t('screens.summary.caughtAt'), caught ?? t('screens.summary.unknownPlace')),
@@ -112,7 +115,7 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number): 
         el('span', { class: 'aps-stat-v', text: k === 'hp' ? t('screens.summary.hpValue', { hp: c.hp, max: stats.hp }) : String(stats[k]) }),
         meterIcons(ivStars(c.ivs[k] ?? 0, ivMax, SCREENS.summary.ivStars), SCREENS.summary.ivStars, 'star', 'starOff'),
       ]))
-      return [el('div', 'aps-stats-layout', [el('div', 'aps-stat-table', [el('div', 'aps-stat-row is-head', [el('span', { text: t('screens.summary.stat') }), el('span', { text: t('screens.summary.value') }), el('span', { text: t('screens.summary.potential') })]), ...rows]), radar.el])]
+      return [el('div', 'aps-stats-layout', [el('div', 'aps-stat-table', [el('div', 'aps-stat-row is-head', [el('span', { text: t('screens.summary.stat') }), el('span', { text: t('screens.summary.value') }), el('span', { text: t('screens.summary.potential') })]), ...rows, el('div', 'aps-stat-help', keys.map((k) => el('div', { class: 'ap-dim', text: t('screens.summary.statHelp', { name: CONTENT.statByKey[k]?.nameZh ?? k, desc: CONTENT.statByKey[k]?.desc ?? '' }) })))]), radar.el])]
     }
 
     let moveRows: HTMLElement[] = []

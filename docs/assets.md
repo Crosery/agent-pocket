@@ -69,7 +69,7 @@ fix, walk cycle synthesis, H3 clip cycle pick, end-to-end sheet on `assets_src/w
 
 | kind | path | spec |
 |---|---|---|
-| character sheet | `public/assets/characters/<id>.png` | Source anchors: 576×256 RGBA, rows down/left/right/up, column 0 neutral standing, columns 1–8 full-body walk. On load, the shared idle builder expands this to 1024×256: idle columns 0–7, byte-identical walk columns 8–15. Legacy 256×256 sources and procedural fallbacks expand to 768×256 (eight idle + four walk). Every cell is 64×64, soles on row 61, binary alpha |
+| character sheet | `public/assets/characters/<id>.png` | 1024×256 RGBA built by `tools/sprite2d.py` from the 2D base sheet (see 2D Character Motion): rows down/left/right/up, idle columns 0–7, walk columns 8–15, used as-is. Legacy 576×256 sources (neutral + 8 walk) are still expanded to 1024×256 on load; 256×256 sources and procedural fallbacks expand to 768×256 (eight idle + four walk). Every cell is 64×64, soles on row 61, binary alpha |
 | creature | `public/assets/creatures/<id>.png` | `sprites.creatureSize` (128) square RGBA, true pixel art, feet on row `size-1-creature.bottomMargin`, ≤ `creature.palette` colours, binary alpha |
 | portrait | `public/assets/portraits/<id>.png` | 256×256 RGBA bust (128 native, nearest ×2) |
 | terrain | `public/assets/textures/terrain/<key>.png` (+ `cliff_*`) | 32×32 opaque, seamless, ≤16 colours |
@@ -88,7 +88,7 @@ fix, walk cycle synthesis, H3 clip cycle pick, end-to-end sheet on `assets_src/w
 
 ## Creatures
 
-Roster source: `assets_src/prompts/creatures.json` (190 records: `id`, `nameEn`, `nameZh`, `family`, `stage`, `types`,
+Roster source: `assets_src/prompts/creatures.json` (448 records: `id`, `nameEn`, `nameZh`, `family`, `stage`, `types`,
 `rarity`, `design`, `lookZh`, `personality`). The `creature` template wraps each `design` in a shared kawaii wrapper:
 a single full-body moe chibi mascot personification (gacha/mascot chibi look) whose **cuteness rules override any
 proportion, age or mood wording in the design** — ~2 heads tall with an oversized round head, huge sparkly eyes,
@@ -109,11 +109,20 @@ persona lines: claude, deepseek, gemini, glm, gpt, grok, kimi, minimax, qwen; co
 set, flattened onto white). Jobs with `images` go to the AIGW `/v1/images/edits` endpoint. To give another family a
 canon look, drop `<family>.png` into that folder and re-run its ids with `--force`.
 
+A third, optional reference is the neighbouring evolution form: a `creatures.json` record may carry `lineRef`
+(the id of the earlier form when drawing a later one, or of the later form when drawing a new earlier one); its raw
+render `assets_src/raw/creature/<lineRef>.png` is attached with a "same character, other evolution stage" note so
+the new form reads as the same character grown up. Draw forms in chain order (the reference must exist first); the
+raw renders are gitignored, so `tests/assets_pipeline.test.ts` only demands the path when the file exists or
+`jobs.json` already names it.
+
 ```bash
 python3 tools/run_pipeline.py --kind creature --only gpt-35,deepseek-v3,kling-1,suno-v3   # a batch of ids
 python3 tools/run_pipeline.py --kind creature                                              # every missing creature
 python3 tools/run_pipeline.py --kind creature --only kling-1 --force kling-1              # re-roll one render
 python3 tools/contact_sheet.py public/assets/creatures --scale 2 --cols 6 --out /tmp/creatures.png   # QA
+python3 tools/roster_sheets.py --out docs/previews/creatures                              # numbered 8x6 sheets of every species
+python3 tools/roster_sheets.py --ids a,b,c --out output/18/new-creatures                  # only these ids (dex order)
 ```
 
 `process_creature.py` (parameters in `pipeline.json` `creature`, canvas = `content/config.json` `sprites.creatureSize`):
@@ -279,6 +288,31 @@ software keyboards, live remote multiplayer sessions, online-avatar UI and the f
 been visually verified in this pass. Battle observation covers one encounter, not every character/battle pairing.
 The tutorial hint was observed to auto-hide; its exact seven-second expiry was covered by onboarding tests, not a
 strict wall-clock browser measurement.
+
+## 2D Character Motion
+
+The 33 character sheets keep the original 2D pixel drawings. Their motion is built in-house by moving the drawn
+pixels, not by an image or video model and not by a 3D render.
+
+```bash
+python3 tools/sprite2d.py build <id...|all>    # assets_src/sprite2d/base/<id>.png -> public/assets/characters/<id>.png
+python3 tools/sprite2d.py review <id...|all>   # 4x sheet + idle/walk GIFs in output/sprite2d/
+```
+
+- **Base art.** `assets_src/sprite2d/base/<id>.png` is the original 4-frame 2D walk sheet (256×256), frozen. Edit
+  or replace a drawing there.
+- **Rig.** Each frame splits into bands: head, body, arms and left/right legs. The neck is the narrowest row in
+  `bands.neckBand`, the legs are the bottom `bands.legFrac`, and the arms are the body pixels outside the legs'
+  columns below `arms.topFrac`. A band that moves down covers the band below it. A band that moves up leaves a seam
+  row, filled by stretching the row under it. Hands move with their arm, so they never detach.
+- **Idle (8 frames, all 4 directions).** From the stand pose, with both feet planted first. The body sinks 1 px
+  over `idle.body` (a slight knee bend), and the head follows one frame later.
+- **Walk (8 frames).** Front/back rows are built from the planted stand pose: one foot lifts `walk.front.lift` px
+  per step, the body dips, and the arms counter-swing 1 px (`arms.swing`). Side rows use the drawn strides
+  (`walk.sidePoses`). Every pose is shown twice, the first time with the head still at the previous pose's height,
+  so the head trails the bob.
+- `process_all.py` skips `sheet` jobs that have a base sheet, so `run_pipeline.py --all` cannot overwrite them.
+  Portraits are unchanged.
 
 ## Field HUD Reference Frames
 

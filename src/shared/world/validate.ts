@@ -46,6 +46,27 @@ export function validateWorldContent(wc: WorldContent = WORLD_CONTENT, c: Conten
   collider1('world.overworld.hydrology.rapidsProp', ow.hydrology.rapidsProp)
   for (const k of [ow.hydrology.riverTerrain, ow.hydrology.bankTerrain, ow.hydrology.lakeTerrain, ow.hydrology.lakeRimTerrain]) terrain('world.overworld.hydrology', k)
   if (!(ow.coarse >= 1)) errs.push('world.overworld: coarse must be >= 1')
+  if (ow.levelMap) {
+    const lm = ow.levelMap
+    if (lm.length !== ow.maxLevel + 1 || lm.some((v) => !Number.isInteger(v)) || lm[0] !== 0) {
+      errs.push('world.overworld.levelMap: needs maxLevel + 1 integers starting at 0')
+    } else {
+      for (let i = 1; i < lm.length; i++) if (lm[i] < lm[i - 1] || lm[i] - lm[i - 1] > 1) errs.push(`world.overworld.levelMap: step ${i - 1} -> ${i} must rise by 0 or 1`)
+      if (ow.seaLevel + 1 <= ow.maxLevel && lm[ow.seaLevel + 1] !== ow.seaLevel + 1) errs.push('world.overworld.levelMap: the first level above the sea is kept (coast cliffs and islands stand on it)')
+    }
+  }
+  if (ow.startFlat) {
+    const sf = ow.startFlat
+    const finite = [sf.radius, sf.transition, sf.level, sf.jitter, sf.minPatch, sf.noise?.scale].every((v) => Number.isFinite(v))
+    if (!finite || sf.radius < 0 || sf.jitter < 0 || sf.minPatch < 0 || !(sf.transition > 0) || !(sf.noise.scale > 0)) {
+      errs.push('world.overworld.startFlat: radius, jitter, minPatch >= 0, transition > 0 and a noise scale are required')
+    } else {
+      if (sf.level < 0 || sf.level > ow.maxLevel) errs.push('world.overworld.startFlat: level must be within maxLevel')
+      // The smoothstep cap climbs at most 1.5 * rise / transition per tile; it must stay inside the slope envelope.
+      const rise = ow.maxLevel + 0.5 - (sf.level + 0.99)
+      if ((1.5 * rise) / sf.transition > ow.slope / Math.SQRT2) errs.push('world.overworld.startFlat: transition too short for the slope envelope')
+    }
+  }
   if (!wc.world.text.dungeonSign) errs.push('world.text: missing dungeonSign')
   for (const k of [ow.seaTerrain, ow.seaShallowTerrain, ow.outOfBounds, ow.beach.terrain, ow.exitStubTerrain, ow.bridgeTerrain, ow.stairsTerrain]) terrain('world.overworld', k)
   if (c.terrainByKey[ow.stairsTerrain] && !c.terrainByKey[ow.stairsTerrain].stairs) errs.push(`world.overworld: stairsTerrain "${ow.stairsTerrain}" lacks the stairs flag`)

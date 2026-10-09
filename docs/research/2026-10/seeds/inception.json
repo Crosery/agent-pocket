@@ -1,0 +1,74 @@
+{
+ "vendor": "inception",
+ "count": 3,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "mercury2",
+   "names": [
+    "Inception: Mercury 2",
+    "Mercury 2"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-03-04",
+    "modelsdev:inception": "2026-02-24"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "inception/mercury-2"
+    ],
+    "modelsdev:inception": [
+     "mercury-2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mercuryedit2",
+   "names": [
+    "Mercury Edit 2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:inception": "2026-03-30"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:inception": [
+     "mercury-edit-2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "mercury25",
+   "names": [
+    "Inception: Mercury 2.5",
+    "Mercury 2.5"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-09-08",
+    "modelsdev:inception": "2026-09-08"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "inception/mercury-2.5"
+    ],
+    "modelsdev:inception": [
+     "mercury-2.5"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

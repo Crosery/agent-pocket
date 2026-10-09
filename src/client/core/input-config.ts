@@ -12,13 +12,42 @@ export interface TouchButtonDef {
   bottom: number
   /** Latches on tap instead of acting while held. */
   toggle?: boolean
+  /** Only shown while the world is free to roam (hidden under menus, dialogue and battles). */
+  worldOnly?: boolean
+}
+
+/** Tap-to-move tuning (world/tap-move.ts). Distances in tiles unless noted. */
+export interface TapMoveConfig {
+  /** A tap grabs the nearest NPC / item / door / prop whose body is within this many CSS px. */
+  pickRadiusPx: number
+  /** Height (world units) above the ground of the point of a body that is hit-tested. */
+  bodyLift: number
+  /** Only things this close to the player are hit-tested. */
+  candidateTiles: number
+  maxNodes: number
+  marginTiles: number
+  /** The route waypoint advances when the body is this close to its tile centre. */
+  waypointReach: number
+  finalReach: number
+  /** No progress for stuckSec seconds (moved less than stuckMinMove) re-plans, up to `replans` times, then gives up. */
+  stuckSec: number
+  stuckMinMove: number
+  replans: number
+  /** Refinements of the ground hit against the real terrain height. */
+  elevationPasses: number
+  /** Pixels subtracted from a candidate's screen distance by kind (bigger = easier to grab). */
+  kindBiasPx: Record<string, number>
+  markerFx: string
+  blockedFx: string
 }
 
 export interface TouchButtonColors { hi: string; base: string; lo: string }
 
+/** A screen position as fractions of the viewport. */
+export interface HintSpot { x: number; y: number }
+
 /** CSS colour values for the touch overlay. */
 export interface TouchStyle {
-  idleOpacity: number
   frame: string
   ringFill: string
   ringEdge: string
@@ -51,8 +80,23 @@ export interface InputConfig {
     pixel: number
     /** Label font size as a fraction of the button size. */
     labelScale: Record<TouchButtonDef['size'], number>
+    /** The stick base follows a thumb dragged past the ring instead of letting it run away from the knob. */
+    follow: boolean
+    /** CSS px kept between the pad and the UI above it (portrait). */
+    insetGap: number
+    /** The stick starts anywhere on this share of the screen width, full height, on the side opposite the buttons. */
     zoneWidthFraction: number
-    zoneHeightFraction: number
+    /** The ring fades out on release (fadeMs) and stays edgePadPx inside the screen edges. */
+    stick: { fadeMs: number; edgePadPx: number }
+    /** One-time faint drag animation in the stick zone until the stick has been used once (flag kept in localStorage). */
+    hint: { enabled: boolean; storageKey: string; portrait: HintSpot; landscape: HintSpot; dragPx: number; loopMs: number; opacity: number; startDelayMs: number }
+    /** A touch is a world tap when it moves less than slopPx and ends within maxMs; a hold of stickHoldMs starts the stick. */
+    tap: { slopPx: number; maxMs: number; stickHoldMs: number }
+    /** navigator.vibrate durations (ms). */
+    haptics: { button: number; toggle: number; stick: number; tap: number }
+    /** Button size presets (Settings.touchSize) as a factor of the sizes above. */
+    sizes: Record<'small' | 'normal' | 'large', number>
+    tapMove: TapMoveConfig
     buttons: TouchButtonDef[]
     style: TouchStyle
   }

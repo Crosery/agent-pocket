@@ -4,13 +4,15 @@
 import type { BadgeDef, GameMap, RegionDef, TownDef, World } from '../types.ts'
 import { CONTENT } from '../content/index.ts'
 import { WORLD_CONTENT, scaleLayout } from './data.ts'
+import { withProvenance, type ProvenanceSink } from './provenance.ts'
 import { buildCollision } from './collision.ts'
 import { buildCave, caveAnchors } from './caves.ts'
-import { computeEncounters } from './encounters.ts'
+import { computeEncounters, ensureEncounterCoverage } from './encounters.ts'
 import { F_KEEP, F_PATH, F_RESERVED, draftView, finalizeDraft, type MapDraft } from './grid.ts'
 import { buildInteriors } from './interiors.ts'
 import { placeGroundItems } from './items.ts'
-import { buildOverworld } from './overworld.ts'
+import { buildOverworldSteps } from './overworld.ts'
+import { drain, type Steps } from './steps.ts'
 import { finishDungeons } from './dungeons.ts'
 import { floodReach } from './reach.ts'
 import { rngFor } from './random.ts'
@@ -77,7 +79,44 @@ function caveItemsArea(d: MapDraft, levelRange: Vec2, items: { visible: number; 
   return { draft: d, tiles, levelMid: Math.round((levelRange[0] + levelRange[1]) / 2), visible: items.visible, hidden: items.hidden }
 }
 
-export function buildWorld(seed: number = CONTENT.config.world.seed): World {
+export function buildWorld(seed: number = CONTENT.config.world.seed, opts: { provenance?: ProvenanceSink } = {}): World {
+  return withProvenance(opts.provenance, () => drain(buildWorldSteps(seed)))
+}
+
+/** How many times buildWorldSteps hands the thread back (guarded by tests/world-async.test.ts); only used for a progress bar. */
+export const WORLD_BUILD_STEPS = 32
+
+export interface WorldAsyncOptions {
+  /** Called after every step with the fraction done (0..1). */
+  onProgress?: (fraction: number) => void
+  /** Hands the thread back (a macrotask, so input and paint run); defaults to setTimeout 0. */
+  yieldNow?: () => Promise<void>
+  /** Steps run back to back until this many ms passed since the last hand-back (0 = hand back after every step). */
+  sliceMs?: number
+}
+
+/**
+ * The same world as buildWorld(seed), generated in slices that hand the thread back between stages. The stages and their
+ * order are identical, so the result is too; provenance recording is not available here (it needs one uninterrupted call).
+ */
+export async function buildWorldAsync(seed: number = CONTENT.config.world.seed, o: WorldAsyncOptions = {}): Promise<World> {
+  const yieldNow = o.yieldNow ?? (() => new Promise<void>((resolve) => setTimeout(resolve, 0)))
+  const steps = buildWorldSteps(seed)
+  let done = 0
+  let sliceStart = performance.now()
+  for (;;) {
+    const r = steps.next()
+    if (r.done) { o.onProgress?.(1); return r.value }
+    done++
+    o.onProgress?.(Math.min(0.99, done / (WORLD_BUILD_STEPS + 1)))
+    if (performance.now() - sliceStart >= (o.sliceMs ?? 0)) {
+      await yieldNow()
+      sliceStart = performance.now()
+    }
+  }
+}
+
+function* buildWorldSteps(seed: number): Steps<World> {
   const t0 = performance.now()
   const wc = scaleLayout(WORLD_CONTENT)
   const owId = wc.world.overworld.id
@@ -89,7 +128,8 @@ export function buildWorld(seed: number = CONTENT.config.world.seed): World {
   const caves = wc.caves.caves.map((spec) => buildCave(spec, seed, owId))
   const caveItems = wc.caves.caves.reduce((s, c) => ({ visible: s.visible + c.items.visible, hidden: s.hidden + c.items.hidden }), { visible: 0, hidden: 0 })
   const budget = { visible: Math.max(0, wc.items.visible - caveItems.visible), hidden: Math.max(0, wc.items.hidden - caveItems.hidden) }
-  const ow = buildOverworld(seed, wc, anchors, problems, caves, counter, budget, usedNames)
+  yield
+  const ow = yield* buildOverworldSteps(seed, wc, anchors, problems, caves, counter, budget, usedNames)
 
   for (const cave of caves) {
     const s = cave.spec
@@ -122,8 +162,10 @@ export function buildWorld(seed: number = CONTENT.config.world.seed): World {
       encounters: [], encounterRate: 0, roamingDensity: 0, isTown: true, townId: link.townId,
     }
   }
+  yield
   const interiors = buildInteriors(wc, ow.ctx.doors, owId, townRegionDef, anchors, problems)
 
+  yield
   const maps: Record<string, GameMap> = {}
   const add = (m: GameMap) => {
     if (maps[m.id]) problems.push(`duplicate map id "${m.id}"`)
@@ -133,7 +175,13 @@ export function buildWorld(seed: number = CONTENT.config.world.seed): World {
   for (const c of caves) add(finalizeDraft(c.draft))
   for (const dn of ow.dungeons) for (const f of dn.floors) add(finalizeDraft(f.draft))
   for (const d of interiors) add(finalizeDraft(d))
+  const unplaced = ensureEncounterCoverage(
+    Object.values(maps).flatMap((m) => m.regions.map((r) => ({ key: `${m.id}/${r.id}`, biome: r.biome, encounters: r.encounters, levelRange: r.levelRange }))),
+    wc.world.encounters, seed,
+  )
+  for (const id of unplaced) problems.push(`encounter coverage: no wild table can hold base form "${id}"`)
 
+  yield
   const levelAt = (x: number, y: number): Vec2 | undefined => owDraft.regions[owDraft.region[y * owDraft.w + x]]?.levelRange
   const towns: TownDef[] = ow.towns.map((t) => ({
     id: t.spec.id, nameZh: t.spec.nameZh, map: owId, x: t.square.x, y: t.square.y, description: t.spec.description,
@@ -170,7 +218,9 @@ export function buildWorld(seed: number = CONTENT.config.world.seed): World {
   const info: WorldBuildInfo = { anchors, problems, walkReach: ow.walkReach, surfReach: ow.surfReach, features, buildMs: 0 }
   INFO.set(world, info)
   BY_SEED.set(seed, info)
+  yield
   applyStory(world)
+  yield
   // The overworld is unbounded: the core continent above plus the procedural frontier around it.
   const core = maps[owId]
   core.infinite = new FrontierProvider({

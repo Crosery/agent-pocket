@@ -46,6 +46,11 @@ html.ap-battle-on .ap-objective { display: none; }
 .ap-l-tips.is-top { align-items: flex-start; }
 .ap-l-tips.is-right { justify-content: flex-end; }
 .ap-l-tips.is-right .ap-tip { width: calc(var(--u) * 176); margin: 0 calc(var(--u) * 8 + env(safe-area-inset-right, 0px)) max(calc(var(--u) * 86), calc(var(--ap-bottom-inset, 0px) + var(--u) * 8 + env(safe-area-inset-bottom, 0px))) 0; }
+/* In battle the card docks in the top strip right of the foe's status window: above both creatures, clear of the HP windows and the command bar. */
+.ap-l-tips.is-battle .ap-tip { width: calc(100% - var(--u) * 200 - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); max-width: calc(var(--u) * 420); }
+html.ap-compact .ap-l-tips.is-battle .ap-tip { width: calc(100% - var(--u) * 184 - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); }
+.ap-l-tips.is-battle .ap-tip-foot { position: absolute; top: calc(var(--u) * 4); right: calc(var(--u) * 10 + max(24px, calc(var(--u) * 16))); margin: 0; }
+.ap-l-tips.is-battle .ap-tip-foot-text { display: none; }
 .ap-tip {
   position: relative;
   margin: calc(var(--u) * 8 + env(safe-area-inset-top, 0px)) calc(var(--u) * 8 + env(safe-area-inset-right, 0px)) calc(var(--u) * 8 + var(--ap-bottom-inset, 0px) + env(safe-area-inset-bottom, 0px)) calc(var(--u) * 8 + env(safe-area-inset-left, 0px));
@@ -59,8 +64,12 @@ html.ap-battle-on .ap-objective { display: none; }
   cursor: pointer;
   opacity: 0;
 }
+/* Over a full-screen page the card sits above the footer key hints instead of hiding them. */
+.ap-root:has(.aps-screen) .ap-l-tips:not(.is-top) .ap-tip:not(.is-inline) { margin-bottom: calc(var(--u) * 30 + var(--ap-bottom-inset, 0px) + env(safe-area-inset-bottom, 0px)); }
 .ap-tip[hidden] { display: none; }
 .ap-root:has(.ap-evdetails:not([hidden]), .ap-chat.is-open) .ap-tip:not(.is-inline) { visibility: hidden; pointer-events: none !important; }
+/* A field tip docks bottom-right: the rolling chat log narrows to the left of the card instead of running under it (matters on phones, where both span the width). */
+.ap-root:has(.ap-l-tips:not(.is-top, [hidden]) .ap-tip.is-in:not(.is-inline)) .ap-chat:not(.is-open) { width: min(calc(100% - var(--u) * 16), calc(var(--u) * 244), calc(100% - var(--u) * 228 - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px))); }
 .ap-tip.is-in { animation: ap-rise var(--ap-tip-fade) ease-out both; opacity: 1; }
 .ap-tip.is-out { opacity: 0; transition: opacity var(--ap-tip-fade); pointer-events: none !important; }
 .ap-tip.is-inline { width: 100%; max-width: none; margin: 0 0 calc(var(--u) * 6); padding: 0 0 calc(var(--u) * 4); background: none; border: 0; border-bottom: var(--u) solid var(--ap-line); box-shadow: none; }
@@ -78,10 +87,13 @@ html.ap-compact .ap-tip.is-inline { margin-bottom: 0; border-bottom: 0; }
 .ap-tip-progress { height: var(--u); margin: calc(var(--u) * 4) 0 calc(var(--u) * -3); background: var(--ap-gold); transform-origin: left; }
 .ap-tip.is-in .ap-tip-progress { animation: ap-tip-countdown var(--ap-tip-duration) linear forwards; }
 @keyframes ap-tip-countdown { to { transform: scaleX(0); } }
-.ap-tip-body { white-space: normal; overflow-wrap: anywhere; line-height: calc(var(--u) * 14); }
+.ap-tip-body { white-space: pre-wrap; overflow-wrap: break-word; word-break: normal; line-height: calc(var(--u) * 14); }
 .ap-tip-body .ap-key, .ap-tip-foot .ap-key { color: inherit; vertical-align: baseline; }
 .ap-tip-body .ap-key kbd, .ap-tip-foot .ap-key kbd { height: calc(var(--u) * 12); line-height: calc(var(--u) * 10); }
-.ap-tip-foot { margin-top: calc(var(--u) * 3); color: var(--ap-text-dim); font-size: calc(var(--u) * 9); text-align: right; }
+.ap-tip-foot { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--u) * 6); margin-top: calc(var(--u) * 3); color: var(--ap-text-dim); font-size: calc(var(--u) * 9); text-align: right; }
+.ap-tip-foot-text { flex: 1 1 auto; }
+.ap-tip-off { flex: none; min-height: max(24px, calc(var(--u) * 14)); padding: 0 calc(var(--u) * 4); border: var(--u) solid var(--ap-line); background: none; color: inherit; font: inherit; cursor: pointer; }
+.ap-tip-off:hover, .ap-tip-off:focus-visible { color: var(--ap-gold-hi); border-color: var(--ap-gold-dk); }
 html:not(.ap-portrait)[data-touch-controls='on'] .ap-l-tips:not(.is-top):not(.is-right) {
   justify-content: center;
   padding-left: calc(var(--ap-touch-left-inset, 0px) + env(safe-area-inset-left, 0px));
@@ -94,3 +106,11 @@ html:not(.ap-portrait)[data-touch-controls='on'] .ap-l-tips:not(.is-top):not(.is
   .ap-tip.is-in, .ap-objective.is-new, .ap-tip.is-in .ap-tip-progress { animation: none; }
   .ap-objective-arrow { transition: none; }
 }
+
+/* A tip that offers a screen (the type chart) carries its button under the text. */
+.ap-tip-open { display: inline-flex; align-items: center; gap: calc(var(--u) * 4); margin-top: calc(var(--u) * 4); min-height: max(24px, calc(var(--u) * 16)); padding: 0 calc(var(--u) * 6); color: var(--ap-gold-hi); font: inherit; background: rgba(201, 164, 92, 0.14); border: var(--u) solid var(--ap-gold-dk); cursor: pointer; }
+.ap-tip-open[hidden] { display: none; }
+.ap-tip-open:hover, .ap-tip-open:focus-visible { border-color: var(--ap-gold-hi); }
+.ap-tip-open .ap-key { color: inherit; vertical-align: baseline; }
+.ap-tip-open .ap-key kbd { height: calc(var(--u) * 12); line-height: calc(var(--u) * 10); }
+html[data-touch-controls='on'] .ap-tip-open { min-height: 44px; }

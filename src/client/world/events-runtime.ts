@@ -33,7 +33,7 @@ import {
 import { distanceFromOrigin, regionAt, worldOrigin } from '../../shared/world/worldapi.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
 import { createEventHud } from '../ui/event-hud.ts'
-import { textOrKey } from './config.ts'
+import { grassEncounterRate, textOrKey } from './config.ts'
 import { auraCueColor, cueDef, GPC, pingColor } from './gameplay-config.ts'
 import { placeById, placesNear, realPlaceId, revealedPlaces } from './places.ts'
 import {
@@ -43,6 +43,9 @@ import { createResearchObserver, researchState, researchSummary, scriptResearch 
 import type { RoamPick } from './roaming.ts'
 import { addItem } from './save-ops.ts'
 import { eventBenefits } from './event-details.ts'
+
+/** Compile-time switch (vite.config.ts define): the dev server and `vite build --mode devtools` only; undefined under Node. */
+declare const __AP_DEVTOOLS__: boolean | undefined
 
 export interface GameplayPlace { map: GameMap; x: number; y: number; region: RegionDef | null }
 
@@ -258,6 +261,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     const map = p.map
     const a = actionsFor(ev, map)
     for (const f of a.flags) ctx.save.flags[expand(f.flag)] = f.value
+    ctx.events.emit('world:event', { id: def.id, hidden: def.hidden })
     const title = eventTitle(def)
     const S = GPC.start
     if (def.hidden) {
@@ -597,7 +601,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     itemsTick(dt, p, o.free)
     ambience.update(dt, p)
     hudT -= dt
-    if (hudT <= 0) { hudT = GPC.hud.refreshSec; hudTick(p); attachDebug() }
+    if (hudT <= 0) { hudT = GPC.hud.refreshSec; hudTick(p) }
   }
 
   // -------------------------------------------------------------------------------------------- encounters
@@ -605,7 +609,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
   /** Tall-grass step encounter (replaces encounters.rollEncounter): rate x event modifier, rarity weighting, flee. */
   function rollGrass(region: RegionDef, o: { repelActive: boolean; leadLevel: number }): WildPick | null {
     if (!(region.encounterRate > 0) || !region.encounters.length) return null
-    if (!rng.chance(Math.min(1, region.encounterRate * modifierValue(mods, 'encounterRate')))) return null
+    if (!rng.chance(grassEncounterRate(region.encounterRate, modifierValue(mods, 'encounterRate')))) return null
     const p = deps.place()
     const ectx = p ? contextAt(p, region) : lastCtx
     if (!ectx) return null
@@ -659,7 +663,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
 
   // -------------------------------------------------------------------------------------------- dev hooks
 
-  /** Dev hooks (?dev=1) at window[debug.global][debug.key]; re-attached when the global is replaced (debug.ts). */
+  /** Dev hooks (?dev=1), mounted on window.__ap.gameplay by src/client/dev/legacy.ts. Compiled out of the production build. */
   function createDebug(): Record<string, unknown> | null {
     if (typeof location === 'undefined' || new URLSearchParams(location.search).get('dev') !== '1') return null
     return {
@@ -746,18 +750,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
       state: () => ({ events: ctx.save.events, legends: ctx.save.legends, research: ctx.save.research, discovered: ctx.save.discoveredPlaces }),
     }
   }
-  const debugHooks = createDebug()
-  const debugRoot = () => globalThis as unknown as Record<string, Record<string, unknown> | undefined>
-  function attachDebug(): void {
-    if (!debugHooks) return
-    const g = debugRoot()
-    const root = (g[GPC.debug.global] ??= {})
-    if (root[GPC.debug.key] !== debugHooks) root[GPC.debug.key] = debugHooks
-  }
-  const offDebug = () => {
-    const root = debugRoot()[GPC.debug.global]
-    if (root && root[GPC.debug.key] === debugHooks) delete root[GPC.debug.key]
-  }
+  const debugHooks = typeof __AP_DEVTOOLS__ !== 'undefined' && __AP_DEVTOOLS__ ? createDebug() : null
 
   return {
     update,
@@ -772,11 +765,12 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     /** Modifiers for prices and battle rewards (see valueMods). */
     get valueMods(): EventModifiers { return valueMods },
     triggerEvent: scriptTriggerEvent,
+    /** window.__ap.gameplay hooks; null unless this is a devtools build opened with ?dev=1. */
+    get debugHooks(): Record<string, unknown> | null { return debugHooks },
     revealPlace: async (ref: string) => revealPlace(ref),
     research,
     dispose(): void {
       offMap()
-      offDebug()
       research.dispose()
       special.clear()
       hud.dispose()

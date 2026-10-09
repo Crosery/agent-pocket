@@ -129,17 +129,22 @@ export function createObjectiveView(uiRoot: HTMLElement) {
   }
 }
 
-export interface TipState { textKey: string; device: Device; place?: 'top' | 'bottom' | 'right' | 'menu' }
+export interface TipState { textKey: string; device: Device; place?: 'top' | 'bottom' | 'right' | 'menu' | 'battle'; /** Text key of the open-a-screen button (<key>Touch on phones). */ openKey?: string }
 
 export function createTipView(uiRoot: HTMLElement, input: Input) {
   const title = el('span', 'ap-tip-title-text')
   const body = el('div', 'ap-tip-body')
-  const foot = el('div', 'ap-tip-foot')
+  const footText = el('span', 'ap-tip-foot-text')
+  const open = el('button', { class: 'ap-tip-open', attrs: { type: 'button' } })
+  open.hidden = true
+  const off = el('button', { class: 'ap-tip-off', attrs: { type: 'button' }, text: t('tutorial.tip.off') })
+  const foot = el('div', 'ap-tip-foot', [footText, off])
   const close = el('button', { class: 'ap-tip-close', attrs: { type: 'button', 'aria-label': t('tutorial.tip.close') } }, [glyphEl('close')])
   const progress = el('div', { class: 'ap-tip-progress', attrs: { 'aria-hidden': 'true' } })
   const card = el('div', { class: 'ap-panel ap-tip ap-hud-frame', attrs: { role: 'status', 'aria-live': 'polite' } }, [
     el('div', 'ap-tip-title', [glyphEl('quest'), title, close]),
     body,
+    open,
     foot,
     progress,
   ])
@@ -150,9 +155,17 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
   card.style.setProperty('--ap-tip-fade', `${TUTORIAL.tips.layer.fadeMs}ms`)
   card.style.setProperty('--ap-tip-duration', `${TUTORIAL.tips.layer.ttlSec}s`)
   let clicked = false
-  card.addEventListener('pointerdown', (e) => { e.stopPropagation(); clicked = true })
+  // A press on the card dismisses it; a press on one of its buttons waits for that button's click (a card that is
+  // already fading out would swallow the click).
+  card.addEventListener('pointerdown', (e) => { e.stopPropagation(); if (!(e.target as Element).closest('button')) clicked = true })
   close.addEventListener('click', () => { clicked = true })
   nativeActivation(close)
+  let offAsked = false
+  off.addEventListener('click', () => { offAsked = true; clicked = true })
+  nativeActivation(off)
+  let openAsked = false
+  open.addEventListener('click', () => { openAsked = true; clicked = true })
+  nativeActivation(open)
   let hideTimer = 0
   let expireTimer = 0
   const api = {
@@ -164,13 +177,18 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
       const touchBody = `${s.textKey}.bodyTouch`
       const bodyKey = s.device === 'touch' && touchBody in CONTENT.text ? touchBody : `${s.textKey}.body`
       body.replaceChildren(...richText(t(bodyKey), s.device))
-      foot.replaceChildren(...richText(t(s.device === 'touch' ? 'tutorial.tip.skipTouch' : 'tutorial.tip.skip'), s.device))
+      offAsked = false
+      openAsked = false
+      open.hidden = !s.openKey
+      if (s.openKey) open.replaceChildren(...richText(t(s.device === 'touch' ? `${s.openKey}Touch` : s.openKey), s.device))
+      footText.replaceChildren(...richText(t(s.device === 'touch' ? 'tutorial.tip.skipTouch' : 'tutorial.tip.skip'), s.device))
       const host = s.place === 'menu' ? uiRoot.querySelector<HTMLElement>('.aps-pause-detail') : null
       card.classList.toggle('is-inline', !!host)
       if (host) host.prepend(card)
       else layer.append(card)
       layer.hidden = false
-      layer.classList.toggle('is-top', s.place === 'top')
+      layer.classList.toggle('is-top', s.place === 'top' || s.place === 'battle')
+      layer.classList.toggle('is-battle', s.place === 'battle')
       layer.classList.toggle('is-right', s.place === 'right')
       card.hidden = false
       card.classList.remove('is-out')
@@ -193,6 +211,18 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
         card.hidden = true
         layer.hidden = true
       }, TUTORIAL.tips.layer.fadeMs)
+    },
+    /** True (once) when the player pressed 「不再提示」. */
+    disableRequested(): boolean {
+      const v = offAsked
+      offAsked = false
+      return v
+    },
+    /** True (once) when the player tapped the card's open-a-screen button. */
+    openRequested(): boolean {
+      const v = openAsked
+      openAsked = false
+      return v
     },
     /** True once the player clicked the card or pressed the cancel key while it is up. */
     dismissed(): boolean {

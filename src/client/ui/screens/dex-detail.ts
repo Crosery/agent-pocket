@@ -5,8 +5,9 @@ import type { SpeciesDef } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
 import { button, el, rarityBadge, statRadar, typeChip } from '../widgets.ts'
 import { backPressed, frame, infoRow, openScreen, pressed, sectionTitle, sfx, textOrKey, uiSfx, type ScreenEnv, setChildren , arrowButton } from './base.ts'
+import { GAME } from '../../world/config.ts'
 import { SCREENS } from './config.ts'
-import { dexState, evolutionChain, statKeys } from './logic.ts'
+import { dexState, evolutionChain, extraEnglishName, statKeys } from './logic.ts'
 import { creatureImg } from './sprites.ts'
 
 const pad3 = (n: number) => String(n).padStart(3, '0')
@@ -38,10 +39,12 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
       shinyBtn.disabled = !caught
       left.replaceChildren(
         el('div', 'aps-dexd-stage', [el('div', 'aps-sum-pedestal'), creatureImg(ctx.assets, sp.id, { shiny, silhouette: !caught, className: 'aps-dexd-sprite' })]),
-        el('div', { class: 'aps-dexd-name', text: sp.nameZh }),
-        el('div', { class: 'ap-dim aps-dexd-en', text: sp.nameEn }),
+        el('div', { class: 'aps-dexd-name ap-model-name', text: sp.nameZh, title: sp.nameZh, attrs: { 'aria-label': sp.nameZh } }),
+        ...(extraEnglishName(sp) ? [el('div', { class: 'ap-dim aps-dexd-en ap-model-name', text: sp.nameEn, title: sp.nameEn, attrs: { 'aria-label': sp.nameEn } })] : []),
         el('div', 'aps-chips', [...sp.types.map((ty) => typeChip(ty)), rarityBadge(sp.rarity, { label: 'name' })]),
         el('div', 'aps-dexd-btns', [cryBtn, shinyBtn]),
+        // The radar lives under the portrait: the data columns have no room left for it beside the bars.
+        ...(caught ? [statRadar(sp.baseStats, Math.max(...statKeys().map((k) => sp.baseStats[k]), 1), { size: cfg.radarSize, values: false }).el] : []),
       )
       const habitats = el('div', 'aps-chips', sp.habitats.map((b) => el('span', { class: 'aps-tag', text: CONTENT.biomeById[b]?.nameZh ?? b })))
       setChildren(mid, [
@@ -54,9 +57,22 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
         sectionTitle(t('screens.dex.entry')),
         caught ? el('p', { class: 'aps-dexd-entry', text: sp.dexEntry }) : el('p', { class: 'aps-dexd-entry ap-dim', text: t('screens.dex.lockedEntry') }),
         caught ? el('p', 'aps-dexd-persona', [el('span', { class: 'ap-gold', text: t('screens.starter.personality') }), sp.personality]) : null,
+        ...bossBlock(sp),
       ])
-      right.replaceChildren(sectionTitle(t('screens.dex.baseStats')), caught ? statsBlock(sp) : el('p', { class: 'ap-dim', text: t('screens.dex.lockedStats') }), sectionTitle(t('screens.dex.evolution')), evoBlock(sp))
+      right.replaceChildren(sectionTitle(t('screens.dex.baseStats')), caught ? statsBlock(sp) : el('p', { class: 'ap-dim', text: t('screens.dex.lockedStats') }), sectionTitle(t('screens.dex.evolution')), evoBlock(sp), researchBlock(sp))
       f.setHints([['ud', t('screens.dex.hint.browse')], ...(caught ? [['lr', t('screens.dex.hint.shiny')] as ['lr', string]] : []), ['confirm', t('screens.dex.hint.cry')], ['cancel', t('screens.hint.back')]])
+    }
+
+    /** Boss species: the sighting hint once seen, the full counterplay once the boss has been beaten or tamed. */
+    const bossBlock = (sp: SpeciesDef): (HTMLElement | null)[] => {
+      const boss = CONTENT.bossBySpecies[sp.id]
+      if (!boss || dexState(ctx.save, sp.id) === 'unseen') return []
+      const beaten = ctx.save.flags[GAME.flags.bossWonPrefix + boss.id] === true
+      return [
+        sectionTitle(t('screens.dex.bossHints')),
+        el('p', { class: 'aps-dexd-entry', text: t(boss.hint.seen) }),
+        beaten ? el('p', { class: 'aps-dexd-entry', text: t(boss.hint.won) }) : el('p', { class: 'aps-dexd-entry ap-dim', text: t('screens.dex.bossHintLocked') }),
+      ]
     }
 
     const statsBlock = (sp: SpeciesDef): HTMLElement => {
@@ -67,10 +83,49 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
         el('span', { class: 'aps-bstat-v', text: String(sp.baseStats[k]) }),
         el('span', { class: 'aps-bstat-bar', vars: { '--p': Math.min(1, sp.baseStats[k] / cfg.statBarMax) } }),
       ]))
-      const radar = statRadar(sp.baseStats, Math.max(...keys.map((k) => sp.baseStats[k]), 1), { size: cfg.radarSize, values: false })
       return el('div', 'aps-bstats', [
         el('div', 'aps-bstat-list', [...bars, el('div', 'aps-bstat is-total', [el('span', { class: 'aps-bstat-k', text: t('screens.dex.total') }), el('span', { class: 'aps-bstat-v ap-gold', text: String(total) })])]),
-        radar.el,
+      ])
+    }
+
+    const researchBlock = (sp: SpeciesDef): HTMLElement => {
+      const r = CONTENT.dexResearch[sp.id]
+      const status = r ? (r.evidence === 'checked' ? 'verified' : 'review') : 'game'
+      const iconId = r?.eventTitles.length
+        ? 'dex-event-pulse-v1'
+        : sp.evolvesTo || sp.evolvesFrom ? 'dex-evolution-core-v1' : 'dex-research-seal-v1'
+      const iconUrl = ctx.assets.uiUrl(iconId)
+      const eventIconUrl = ctx.assets.uiUrl('dex-event-pulse-v1')
+      const date = CONTENT.dexResearchMeta.lineageDate || '—'
+      const events = r?.eventTitles ?? []
+      const statusClass = status === 'verified' ? 'is-ok' : status === 'review' ? 'is-main' : ''
+      return el('div', 'aps-dexd-research', [
+        el('div', 'aps-dexd-research-head', [
+          iconUrl ? el('img', { class: 'aps-dexd-research-icon', attrs: { src: iconUrl, alt: '', draggable: 'false' } }) : null,
+          el('div', 'aps-dexd-research-heading', [
+            el('div', 'aps-dexd-research-title', [
+              el('span', { class: 'aps-dexd-research-label', text: t('screens.dex.research') }),
+              el('span', { class: `aps-tag ${statusClass}`.trim(), text: t(`screens.dex.research${status[0].toUpperCase()}${status.slice(1)}`) }),
+            ]),
+            el('div', { class: 'aps-dexd-research-source ap-dim', text: t('screens.dex.researchSource', { date }) }),
+          ]),
+        ]),
+        el('div', 'aps-dexd-research-grid', [
+          infoRow(t('screens.dex.researchFamily'), r?.family ?? sp.family),
+          infoRow(t('screens.dex.researchGeneration'), r?.generation ?? t('screens.dex.researchStage', { stage: sp.stage })),
+          infoRow(t('screens.dex.researchAccess'), r?.access ?? t('screens.dex.researchGame')),
+        ]),
+        r ? el('div', 'aps-dexd-research-kind', [
+          el('span', { class: 'aps-dexd-research-k ap-dim', text: `${t('screens.dex.researchKind')}:` }),
+          el('span', { text: r.kind }),
+        ]) : null,
+        events.length ? el('div', 'aps-dexd-research-events', [
+          el('div', 'aps-dexd-research-events-head', [
+            eventIconUrl ? el('img', { attrs: { src: eventIconUrl, alt: '', draggable: 'false' } }) : null,
+            el('span', { text: t('screens.dex.researchEvents') }),
+          ]),
+          el('ul', 'aps-dexd-research-event-list', events.map((title) => el('li', { text: title, title }))),
+        ]) : null,
       ])
     }
 
@@ -80,13 +135,23 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
       const parts: HTMLElement[] = []
       chain.forEach((s, i) => {
         if (i > 0) {
-          const lv = chain[i - 1].evolvesTo?.level
-          parts.push(el('div', 'aps-evo-arrow', [el('span', { text: lv ? t('screens.common.level', { level: lv }) : '' })]))
+          const evo = chain[i - 1].evolvesTo
+          const lv = evo?.level
+          const kind = evo?.kind === 'version' ? t('screens.dex.versionEvolution') : t('screens.dex.postTrainingEvolution')
+          parts.push(el('div', 'aps-evo-arrow', [
+            el('span', { class: 'aps-evo-kind', text: kind }),
+            el('span', { text: lv ? t('screens.common.level', { level: lv }) : '' }),
+          ]))
         }
         const st = dexState(ctx.save, s.id)
         parts.push(el('div', `aps-evo-node${s.id === sp.id ? ' is-current' : ''}`, [
           st === 'unseen' ? el('span', { class: 'aps-dex-unknown', text: t('screens.dex.unknownMark') }) : creatureImg(ctx.assets, s.id, { silhouette: st === 'seen', className: 'aps-evo-sprite' }),
-          el('span', { class: 'aps-evo-name', text: st === 'unseen' ? t('screens.dex.unknownName') : s.nameZh }),
+          el('span', {
+            class: 'aps-evo-name ap-model-name',
+            text: st === 'unseen' ? t('screens.dex.unknownName') : s.nameZh,
+            title: st === 'unseen' ? t('screens.dex.unknownName') : s.nameZh,
+            attrs: { 'aria-label': st === 'unseen' ? t('screens.dex.unknownName') : s.nameZh },
+          }),
         ]))
       })
       return el('div', 'aps-evo', parts)

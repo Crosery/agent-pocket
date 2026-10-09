@@ -33,6 +33,7 @@ import { glyphEl } from './glyphs.ts'
 import { createBitmap, drawLine, fillPolygon, parseColor, prefersDarkInk } from './pixel.ts'
 import { ensureUIEnvironment } from './scale.ts'
 import './styles.css'
+import './phone.css'
 
 export { glyphEl }
 
@@ -123,7 +124,8 @@ export interface BarHandle {
   settled(): Promise<void>
 }
 
-interface BarOpts { width?: number; numbers?: boolean; label?: string; className?: string }
+/** `speed`: live multiplier on the drain/fill rate (battle speed); absent = 1. */
+interface BarOpts { width?: number; numbers?: boolean; label?: string; className?: string; speed?: () => number }
 
 function createBar(kind: 'hp' | 'exp', opts: BarOpts | undefined): BarHandle {
   ensureUIEnvironment()
@@ -166,7 +168,7 @@ function createBar(kind: 'hp' | 'exp', opts: BarOpts | undefined): BarHandle {
   const tick = (now: number) => {
     const dt = Math.min(0.1, (now - last) / 1000)
     last = now
-    const step = rate * dt
+    const step = rate * (opts?.speed?.() ?? 1) * dt
     shown = shown < target ? Math.min(target, shown + step) : Math.max(target, shown - step)
     // The damage trail waits while the main bar drains, then catches up.
     if (shown === target) trail = Math.max(shown, trail - step * 1.5)
@@ -432,6 +434,8 @@ export function actionKeyLabel(action: InputAction, device: Input['lastDevice'] 
   if (device === 'touch') {
     const btn = INPUT_BINDINGS.touch.buttons.find((b) => b.action === action)
     if (btn) return t(btn.label)
+    // No pad button (chat, minimap): name the on-screen control instead of a key that does not exist here.
+    if (`audio.touch.${action}` in CONTENT.text) return t(`audio.touch.${action}`)
   }
   const code = INPUT_BINDINGS.keyboard[action]?.[0]
   return code ? named(`ui.keyNames.${code}`, code.replace(/^(Key|Digit)/, '')) : ''

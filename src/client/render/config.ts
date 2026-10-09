@@ -4,6 +4,8 @@
 import renderJson from '../../../content/render.json' with { type: 'json' }
 import { CONTENT, type Content } from '../../shared/content/index.ts'
 import type { GameMap, Settings } from '../../shared/types.ts'
+import type { GovernorConfig } from './governor.ts'
+import { validatePhysics, type FootstepsConfig, type ImpactKind, type LeavesConfig, type PhysicsConfig, type ReflectionsConfig, type SnowCoverConfig, type WaterFxConfig } from './physics-config.ts'
 
 export type Vec2 = [number, number]
 export type Vec3 = [number, number, number]
@@ -13,6 +15,10 @@ export interface QualityPreset {
   shadows: boolean
   shadowMapScale: number
   shadowRadius: number
+  /** Shadow map redraws per second while nothing moved (0 = every frame); casters are static, only tree sway changes. */
+  shadowHz: number
+  /** The shadow frustum centre snaps to this many shadow texels, so walking redraws the map less often (1 = every texel). */
+  shadowSnapTexels: number
   dof: boolean
   dofSamples: number
   bloom: boolean
@@ -56,6 +62,8 @@ export interface PostConfig {
   toneMapping: 'neutral' | 'aces' | 'agx' | 'none'
   lift: Vec3
   gain: Vec3
+  /** Split toning (LightingState.shadowTint / highlightTint / split): luminance window over which shadows blend into highlights. */
+  split: { lo: number; hi: number }
   minScale: number
   flash: { color: string; ms: number; strength: number }
   shake: { frequency: number; rollDeg: number }
@@ -86,9 +94,13 @@ export interface BillboardConfig { lean: number; compensate: number }
 
 export interface SunConfig {
   distance: number; shadowExtent: number; shadowNear: number; shadowFar: number; bias: number; normalBias: number
+  /** Squared distance between the unit sun directions of two shadow map draws that forces a new draw. */
+  shadowDirEpsilon: number
   sunrise: number; sunset: number; switchFadeMinutes: number; switchFloor: number
   minElevationDeg: number; maxElevationDeg: number; azimuthRiseDeg: number; azimuthSetDeg: number
-  moonElevationDeg: number; moonAzimuthDeg: number
+  /** The light acts as the moon between sunset and sunrise: it climbs from moonMinElevationDeg to moonMaxElevationDeg
+   * and back while its azimuth sweeps moonAzimuthRiseDeg -> moonAzimuthSetDeg, so night shadows keep moving. */
+  moonMinElevationDeg: number; moonMaxElevationDeg: number; moonAzimuthRiseDeg: number; moonAzimuthSetDeg: number
   /** Shadow frustum half-extent grows with camera distance by this factor. */
   extentPerDistance: number
 }
@@ -104,6 +116,12 @@ export interface LightingState {
   /** 0..1 how much night-only lights / emissive windows are on. */
   lamps: number
   stars: number
+  /** Split toning: '#rrggbb' tints (their hue only: normalised to the same luminance, so #808080 is neutral) for shadows and highlights, blended by `split` (0..1). */
+  shadowTint: string; highlightTint: string; split: number
+  /** Sprite-only ambient fill (so characters stay readable at night) and rim light strength (0..1). */
+  spriteFill: string; spriteFillIntensity: number; rim: number
+  /** 0..1 strength of cloud shadows and of light shafts at this time of day. */
+  cloud: number; shaft: number
 }
 export interface LightingKey extends LightingState { minute: number }
 export interface StaticLighting extends LightingState { sunElevationDeg: number; sunAzimuthDeg: number; ambient: string[] }
@@ -179,30 +197,66 @@ export interface WaterConfig {
   /** Pixel ripples: noise frequency per tile, scroll speed, trough/crest thresholds (0..1) and their strength. */
   rippleScale: number; rippleSpeed: number; troughLevel: number; troughShade: number; crestLevel: number; crestAmount: number
   falls: FallsConfig
+  /** Actor / rain rings and washing foam (render.json water.interact). */
+  interact: WaterFxConfig
 }
 export interface LavaConfig {
   hot: string; mid: string; crust: string; emissive: number; pixelsPerTile: number
   flowSpeed: number; crustAmount: number; pulseSpeed: number
 }
-export interface WindConfig { dir: Vec2; strength: number; speed: number; gust: number; gustSpeed: number; swayHeight: number }
+export interface WindConfig {
+  dir: Vec2; strength: number; speed: number; gust: number; swayHeight: number
+  /** Extra downwind lean of swaying geometry at full gust, in units of `strength`. */
+  gustLean: number
+  /** Gust fronts travelling along `dir`: wavelength (tiles), front speed (tiles/s), peak sharpness (power), front
+   * warp (rad), calm floor of the slow strength envelope and its rate (rad/s) and spatial phase (rad/tile). */
+  field: { wavelength: number; speed: number; sharp: number; warp: number; calm: number; envelopeRate: number; envelopeSpace: number }
+  /** Particle / leaf drift: base air speed (tiles/s at strength 1) and how far gusts modulate it (0..1). */
+  drift: { base: number; gust: number }
+}
 export interface GrassConfig {
   height: number; width: number; planes: number; jitter: number; colorJitter: number; scaleJitter: number
   bendRadius: number; bendStrength: number; sway: number; texSize: number; blades: number
   rootShade: number; tipLight: number; maxBenders: number; alphaTest: number; bendSink: number; bendCore: number
+  /** Lingering bend: grid cells per tile, window size (tiles) around the focus, seconds until a trampled cell is back
+   * up (to ~5 %), actors stamped per frame, fade of the window edge (tiles); strength / sink / darken = tip push (tuft
+   * heights), flatten and crushed-blade darkening of trampled tufts; decor = bend / flatten of ground sprigs. */
+  trample: { cellsPerTile: number; window: number; recoverSec: number; maxBenders: number; edgeFade: number; strength: number; sink: number; darken: number; decor: { strength: number; sink: number } }
   /** Tall-grass keys drawn with the asset store's tuft texture (placeholder art included) instead of blades derived
    * from the ground texture's average colour. */
   assetTufts?: string[]
 }
 export interface LightsConfig {
   pointIntensity: number; decay: number; distanceMul: number; glowSize: number; glowIntensity: number
-  glowFlicker: number; flickerSpeed: number; reassignSeconds: number; fadeSpeed: number
+  reassignSeconds: number; fadeSpeed: number
   emissiveNight: number; emissiveDay: number; emissiveAlways: number; frontOffset: number
+  /** Light field (overworld, quality tiers with lighting.quality.<tier>.fieldLights > 0): up to `max` world-space lights
+   * evaluated in the lit materials' shaders instead of PointLights. Colour * intensity * `intensity` is the radiance
+   * scale (sun-light units); `radiusMul` x a source's radius is its reach; `falloff` is the exponent of (1 - d/r);
+   * `wrap` blends Lambert toward half-Lambert (0..1) so pools light up faces turned away from the lamp. */
+  field: {
+    max: number; intensity: number; radiusMul: number; falloff: number; wrap: number; selectRadius: number; reassignSeconds: number; fadeSpeed: number
+    /** Night-only lamps follow lamps^lampsPower (they come on late and go off early); other lights keep `dayShare` by day. */
+    lampsPower: number; dayShare: number
+    /** Fraction of the reach inside which the falloff stays flat (no hot spot at the source). */
+    core: number
+    /** Surfaces that glow by themselves (lit windows) take 1 / (1 + emissive * selfLit) of the field light: they never clip. */
+    selfLit: number
+    /** Intensity multiplier per light kind (prop key): lights hung right in front of a facade would blow it out. */
+    kindScale: Record<string, number>
+  }
+  /** Flicker per light kind (prop key, or "map" for map.lights); `default` for the rest. Amount = fraction of the intensity. */
+  flicker: Record<string, { amount: number; speed: number }>
+  /** Lights for props that have none in props.json (lit windows spill light on the street): same shape as PropLight. */
+  windowLights: Record<string, { color: string; intensity: number; radius: number; h: number; nightOnly: boolean }>
 }
 
 export interface WeatherGrade {
   exposure?: number; saturation?: number; contrast?: number; warmth?: number
   fogNear?: number; fogFar?: number; sun?: number; hemi?: number; lamps?: number
   bloomStrength?: number; tint?: string; tintAmount?: number; vignette?: number
+  /** Multipliers on the time-of-day cloud-shadow / light-shaft / sprite-rim / split-tone strength; `wet` = ground wetness 0..1. */
+  cloud?: number; shaft?: number; rim?: number; split?: number; wet?: number
 }
 export interface WeatherRenderDef {
   particles: string[]; grade: WeatherGrade; wind?: number; aurora?: boolean
@@ -242,7 +296,7 @@ export interface ParticleKindDef {
 }
 
 /** Per actor kind: player, other characters, creatures. */
-export interface ActorKinds<T> { player: T; npc: T; remote: T; creature: T }
+export interface ActorKinds<T> { player: T; npc: T; remote: T; creature: T; companion: T }
 export interface ActorsConfig {
   height: number; width: number; alphaTest: number; walkFps: number; runFps: number
   /** Tall grass hides the body up to this fraction of `height` above the soles (eased in/out over grassCutMs;
@@ -252,22 +306,27 @@ export interface ActorsConfig {
   footInset: number
   /** Two cards on the same row share a depth: renderOrder draws the higher kind later and depthBias (world units
    * away from the camera, negative = toward it) settles what is left of the per-band depth error, so the player is
-   * never painted over by a follower or NPC standing level with it. cardSegments = horizontal bands per card. */
+   * never painted over by a follower or NPC standing level with it. The companion (the player's follower) draws
+   * just before the player and writes no depth, so the player always paints over it. cardSegments = horizontal
+   * bands per card. */
   renderOrder: ActorKinds<number>
   depthBias: ActorKinds<number>
   cardSegments: number
-  normalTilt: number; hop: { height: number; ms: number }; blob: { size: number; opacity: number }
+  normalTilt: number; hop: { height: number; ms: number }
   bubbleMs: number; remoteAlpha: number; nameColor: string
   /** One footstep per `stride` tiles, with two footsteps per complete cycle. Rates are specified for the
    * legacy four-pose cycle and scaled to the loaded walk-pose count. Jumps >= teleportTiles are ignored. */
   walkCycle: { stride: { walk: number; run: number }; maxFps: number; teleportTiles: number }
   /** Chibi motion on top of the sheet (which already bakes a 1-texel step bob): extra step bounce (world units,
    * x runBounceMul when running) and squash per walk step (stepsPerCycle steps per sheet cycle), idle breathing
-   * (scale amplitude, Hz), landing squash after a hop. snapTexels rounds every scale to whole sheet texels so the
-   * pixel art never re-samples a fraction of a row (shimmer). */
+   * (scale amplitude, Hz). A hop stretches the card up by hopStretch at launch and touch-down (0 at the apex); the
+   * landing is a damped spring of landSquash amplitude over landMs: landCycles oscillations, decay landDamp (e-folds
+   * per landMs). snapTexels rounds every scale to whole sheet texels so the pixel art never re-samples a fraction
+   * of a row (shimmer). */
   motion: {
     stepBounce: number; runBounceMul: number; stepSquash: number; stepsPerCycle: number
-    breathe: number; breatheHz: number; landSquash: number; landMs: number; snapTexels: boolean
+    breathe: number; breatheHz: number; hopStretch: number
+    landSquash: number; landMs: number; landCycles: number; landDamp: number; snapTexels: boolean
   }
 }
 export interface CreaturesConfig {
@@ -290,10 +349,13 @@ export interface CreaturesConfig {
 }
 export interface OverlayStyle {
   tagFontPx: number; tagPadding: string; tagBackground: string; tagRadiusPx: number; tagTextShadow: string
+  /** A name tag lying over another actor's sprite fades to dimOpacity over dimMs so the actor stays readable. */
+  tagDimOpacity: number; tagDimMs: number
   bubbleFontPx: number; bubblePadding: string; bubbleText: string; bubbleBackground: string; bubbleBorder: string
   bubbleBorderPx: number; bubbleRadiusPx: number; bubbleShadow: string; bubbleMaxWidthPx: number; bubbleTailPx: number; popMs: number
 }
-export interface OverlayConfig { nameOffsetPx: number; bubbleOffsetPx: number; maxDistance: number; style: OverlayStyle }
+/** coverHalfWidth: half the width of an actor's on-screen sprite as a fraction of its head-to-foot height (tag overlap test). */
+export interface OverlayConfig { nameOffsetPx: number; bubbleOffsetPx: number; maxDistance: number; coverHalfWidth: number; style: OverlayStyle }
 export interface GroundItemsConfig { color: string; radius: number; glow: number; bobAmp: number; bobHz: number; height: number; glowSize: number }
 
 export interface FxIcon { type: 'icon'; glyph: string; color: string; outline: string; size: number; y: number; rise: number; life: number; pop: number }
@@ -620,10 +682,92 @@ export interface OcclusionConfig {
   fade: number
 }
 
+/** Per quality tier switches of the lighting effects added on top of the base renderer; `low` keeps the old look. */
+export interface LightingTier {
+  /** Light-field lights (0 = off: the overworld falls back to the quality.pointLights PointLight pool). */
+  fieldLights: number
+  cloudShadows: boolean
+  /** Light shaft billboards (0 = off). */
+  shafts: number
+  spriteRim: boolean
+  /** Sprites sample the sun shadow map under their feet. */
+  spriteShadow: boolean
+  /** Sprites also cast the soft silhouette shadow (the contact ellipse is always on). */
+  spriteCast: boolean
+  wetGround: boolean
+  splitTone: boolean
+}
+
+export interface LightingConfig {
+  quality: Record<QualityId, LightingTier>
+  /** Cloud shadows: a tileable noise map scrolled along the wind dims the sun's direct light. `scale` = world units per
+   * texture repeat, `speed` = world units / s (x wind multiplier), `coverage` / `softness` = noise threshold and edge width,
+   * `strength` = how much of the sun a cloud takes (0..1), `ambient` = how much of the sky light it takes. `drift` = slow
+   * swing of the coverage over `driftSeconds` (some stretches are cloudier). */
+  cloud: {
+    size: number; octaves: number; scale: number; speed: number; coverage: number; softness: number; strength: number
+    ambient: number; drift: number; driftSeconds: number; detail: number; detailScale: number; pixels: number
+  }
+  /** Light shafts through tree canopies. */
+  shafts: {
+    /** Tree props whose placements anchor shafts, the share of them that gets one, jitter around the trunk (tiles). */
+    props: string[]; density: number; jitter: number
+    /** Per anchor-chunk cap, how far around the focus shafts show / fade out, and the reselection period (s). */
+    perChunk: number; radius: number; fade: number; reselectSeconds: number
+    /** Beam width range (world units), longest beam, base brightness, fade fractions at the canopy end and at the ground. */
+    width: Vec2; maxLength: number; intensity: number; tipFade: number; footFade: number
+    shimmer: number; shimmerSpeed: number; dust: number
+    /** Share of the strength kept while the light is the moon, the light elevation under which beams fade out and the
+     * steepest-floor elevation the beam geometry is drawn at (stylised: low suns would otherwise lay the beam flat). */
+    moon: number; minElevationDeg: number; steepDeg: number
+  }
+  sprite: {
+    /** Rim light thickness in internal pixels, strength, how far the sun side wraps, night fill share of the moon colour. */
+    rimPixels: number; rimStrength: number; rimMin: number
+    /** Soles shadow lookup: blur radius (world units), lift above the soles, nudge toward the light, share of the sun taken. */
+    shadowRadius: number; shadowLift: number; shadowOffset: number; shadowStrength: number
+  }
+  /** Wet ground: albedo darkening, sky sheen strength, its fresnel power and head-on reflectance, puddle noise scale (1 / world
+   * units), coverage and edge softness, how much of the sky colour puddles reflect and the sheen share left on props. */
+  wet: { darken: number; sheen: number; sheenPower: number; sheenBase: number; propSheen: number; puddleScale: number; puddleCoverage: number; puddleSoftness: number; reflect: number }
+}
+
+/** Character / creature shadows (sprite-shadow.ts). */
+export interface SpriteShadowConfig {
+  color: string
+  /** Lift above the rendered terrain (world units), polygon offset against it and how often a resting sprite re-reads the ground (s). */
+  ground: { lift: number; offsetFactor: number; offsetUnits: number; refreshSeconds: number }
+  /** Contact ellipse: size (world units) and strength at the soles, radial `core` (flat share) and falloff `power`,
+   * how the soles are measured from the lowest `footRows` opaque rows (`footFollow` = share of the sideways offset
+   * followed, `spanMul` x measured foot span, kept within `minSpan`..`maxSpan`; `width` / `depth` give the nominal size and
+   * aspect; `forward` moves it toward the camera so more of it shows around the legs), shrink / fade per world unit the body is lifted (stopping at `minScale` / `minOpacity`) and the grid vertices
+   * per side that hug the ground. */
+  contact: {
+    width: number; depth: number; opacity: number; core: number; power: number
+    footRows: number; footFollow: number; spanMul: number; minSpan: number; maxSpan: number; forward: number
+    liftShrink: number; minScale: number; liftFade: number; minOpacity: number; grid: number
+  }
+  /** Cast silhouette: strength, shadow length per unit height (`lengthMul` x cot(elevation), at most `maxSlope`), width,
+   * fade toward the tip, blur radius (sprite texels) at the soles and at the head, share of the cloud shadow that removes it. */
+  cast: { opacity: number; lengthMul: number; maxSlope: number; widthMul: number; tailFade: number; blurNear: number; blurFar: number; cloud: number }
+  /** Light intensity range mapped to 0..1 cast strength, share kept under the moon and indoors. */
+  light: { min: number; full: number; moon: number; indoor: number }
+}
+
 export interface SkyConfig { domeRadius: number; starDensity: number; starColor: string; starIntensity: number; twinkleSpeed: number }
+
+/** What the frame-time governor may change at one step (the keys are applied on top of the tier's preset). */
+export interface GovernorStep extends Partial<Pick<QualityPreset, 'shadowHz' | 'dof' | 'bloom' | 'dofSamples' | 'particleScale'>> {
+  about?: string
+  /** Extra integer steps of internal pixel size (fewer pixels to fill). */
+  scaleBias?: number
+}
 
 export interface RenderContent {
   quality: Record<QualityId, QualityPreset>
+  /** Touch devices (coarse pointer): the internal height floor (crisp pixels cost little there). The default tier is the touchOnly settings migration in config.json. */
+  device: { touchMinInternalHeight: number }
+  governor: GovernorConfig & { steps: GovernorStep[] }
   post: PostConfig
   camera: CameraRenderConfig
   sun: SunConfig
@@ -631,11 +775,21 @@ export interface RenderContent {
   interior: StaticLighting
   cave: StaticLighting
   sky: SkyConfig
+  lighting: LightingConfig
+  spriteShadow: SpriteShadowConfig
   terrain: TerrainRenderConfig
   water: WaterConfig
   lava: LavaConfig
   wind: WindConfig
   grass: GrassConfig
+  /** World physics feedback (footsteps, leaves, rain splashes, reflections, quality tiers). */
+  physics: PhysicsConfig
+  footsteps: FootstepsConfig
+  leaves: LeavesConfig
+  /** Splashes where the drops of a particle field (rain, snow) land, keyed by the field's kind. */
+  impacts: Record<string, ImpactKind>
+  snowCover: SnowCoverConfig
+  reflections: ReflectionsConfig
   lights: LightsConfig
   weather: Record<string, WeatherRenderDef>
   weatherFadeSeconds: number
@@ -750,7 +904,12 @@ export function sunState(minute: number, s: SunConfig = RENDER.sun): SunState {
   const day = s.sunrise <= s.sunset ? m >= s.sunrise && m < s.sunset : m >= s.sunrise || m < s.sunset
   const fadeDist = Math.min(circDist(m, s.sunrise), circDist(m, s.sunset))
   const fade = s.switchFadeMinutes > 0 ? Math.min(1, Math.max(s.switchFloor, fadeDist / s.switchFadeMinutes)) : 1
-  if (!day) return { dir: dirFromAngles(s.moonElevationDeg, s.moonAzimuthDeg), moon: true, fade }
+  if (!day) {
+    const night = wrapMinute(s.sunrise - s.sunset) || MINUTES_PER_DAY
+    const mt = wrapMinute(m - s.sunset) / night
+    const mel = s.moonMinElevationDeg + (s.moonMaxElevationDeg - s.moonMinElevationDeg) * Math.sin(Math.PI * mt)
+    return { dir: dirFromAngles(mel, s.moonAzimuthRiseDeg + (s.moonAzimuthSetDeg - s.moonAzimuthRiseDeg) * mt), moon: true, fade }
+  }
   const span = wrapMinute(s.sunset - s.sunrise) || MINUTES_PER_DAY
   const t = wrapMinute(m - s.sunrise) / span
   const el = s.minElevationDeg + (s.maxElevationDeg - s.minElevationDeg) * Math.sin(Math.PI * t)
@@ -762,8 +921,31 @@ export function sunState(minute: number, s: SunConfig = RENDER.sun): SunState {
 // Lookups
 // ---------------------------------------------------------------------------
 
+/** `preset` with the governor steps 1..level layered on top; level 0 returns the preset itself. Reads through to `preset` so live tuning still shows. */
+export function governedPreset(preset: QualityPreset, level: number, r: RenderContent = RENDER): QualityPreset {
+  if (level <= 0) return preset
+  const out = Object.create(preset) as QualityPreset
+  for (const step of r.governor.steps.slice(0, level)) {
+    const { about: _about, scaleBias: _scaleBias, ...keys } = step
+    Object.assign(out, keys)
+  }
+  return out
+}
+
+/** Sum of the scaleBias of steps 1..level. */
+export function governedScaleBias(level: number, r: RenderContent = RENDER): number {
+  let bias = 0
+  for (const step of r.governor.steps.slice(0, Math.max(0, level))) bias += step.scaleBias ?? 0
+  return bias
+}
+
 export function qualityPreset(q: QualityId, r: RenderContent = RENDER): QualityPreset {
   return r.quality[q] ?? r.quality.high
+}
+
+/** Lighting-effect switches of a quality tier (render.json lighting.quality). */
+export function lightingTier(q: QualityId, r: RenderContent = RENDER): LightingTier {
+  return r.lighting.quality[q] ?? r.lighting.quality.high
 }
 
 /** Procedural fallback style for a prop key (render.json styles, else the generic default). */
@@ -822,12 +1004,12 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
     if (!(A.grassCut >= 0 && A.grassCut < 1)) errs.push('actors.grassCut: must be a fraction of the height in 0..1')
     nonNeg('actors.grassCutMs', A.grassCutMs)
     if (!(A.footInset >= 0 && A.footInset < c.config.sprites.sheetCell / 2)) errs.push('actors.footInset: texels in 0..sheetCell/2')
-    for (const k of ['player', 'npc', 'remote', 'creature'] as const) {
+    for (const k of ['player', 'npc', 'remote', 'creature', 'companion'] as const) {
       if (!Number.isInteger(A.renderOrder?.[k])) errs.push(`actors.renderOrder.${k}: must be an integer`)
       if (!(typeof A.depthBias?.[k] === 'number' && Math.abs(A.depthBias[k]) < 0.1)) errs.push(`actors.depthBias.${k}: world units, |bias| < 0.1 (more sinks feet into the ground)`)
     }
     if (!(Number.isInteger(A.cardSegments) && A.cardSegments >= 1 && A.cardSegments <= 16)) errs.push('actors.cardSegments: integer 1..16')
-    for (const k of ['stepBounce', 'runBounceMul', 'stepSquash', 'breathe', 'breatheHz', 'landSquash', 'landMs'] as const) nonNeg(`actors.motion.${k}`, A.motion[k])
+    for (const k of ['stepBounce', 'runBounceMul', 'stepSquash', 'breathe', 'breatheHz', 'hopStretch', 'landSquash', 'landMs', 'landCycles', 'landDamp'] as const) nonNeg(`actors.motion.${k}`, A.motion[k])
     if (!(A.motion.stepsPerCycle >= 1)) errs.push('actors.motion.stepsPerCycle: must be >= 1')
     if (typeof A.motion.snapTexels !== 'boolean') errs.push('actors.motion.snapTexels: must be a boolean')
     if (!(A.walkCycle.stride.walk > 0 && A.walkCycle.stride.run > 0 && A.walkCycle.maxFps > 0)) errs.push('actors.walkCycle: stride and maxFps must be > 0')
@@ -845,10 +1027,61 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
   keys.forEach((k, i) => {
     if (k.minute < 0 || k.minute >= MINUTES_PER_DAY) errs.push(`timeOfDay[${i}]: minute out of range`)
     if (i > 0 && keys[i - 1].minute >= k.minute) errs.push(`timeOfDay[${i}]: minutes must increase`)
-    for (const f of ['skyTop', 'skyHorizon', 'skyBottom', 'sun', 'hemiSky', 'hemiGround', 'fog'] as const) color(`timeOfDay[${i}].${f}`, k[f])
+    for (const f of ['skyTop', 'skyHorizon', 'skyBottom', 'sun', 'hemiSky', 'hemiGround', 'fog', 'shadowTint', 'highlightTint', 'spriteFill'] as const) color(`timeOfDay[${i}].${f}`, k[f])
+    for (const f of ['split', 'cloud', 'shaft', 'rim', 'spriteFillIntensity'] as const) if (!(typeof k[f] === 'number' && k[f] >= 0)) errs.push(`timeOfDay[${i}].${f}: must be a number >= 0`)
   })
   for (const [name, s] of [['interior', r.interior], ['cave', r.cave]] as const) {
     for (const a of s.ambient) if (!r.particles[a]) errs.push(`${name}.ambient: unknown particle kind "${a}"`)
+    for (const f of ['shadowTint', 'highlightTint', 'spriteFill'] as const) color(`${name}.${f}`, s[f])
+    for (const f of ['split', 'cloud', 'shaft', 'rim', 'spriteFillIntensity'] as const) if (!(typeof s[f] === 'number' && s[f] >= 0)) errs.push(`${name}.${f}: must be a number >= 0`)
+  }
+  {
+    const F = r.lights.field
+    for (const k of ['max', 'intensity', 'radiusMul', 'falloff', 'wrap', 'selectRadius', 'reassignSeconds', 'fadeSpeed', 'lampsPower', 'dayShare', 'core', 'selfLit'] as const) if (!(typeof F?.[k] === 'number' && F[k] >= 0)) errs.push(`lights.field.${k}: must be a number >= 0`)
+    if (!(F.max >= 1 && F.max <= 32)) errs.push('lights.field.max: 1..32 (uniform array size)')
+    for (const [k, v] of Object.entries(F.kindScale ?? {})) if (!(v >= 0)) errs.push(`lights.field.kindScale.${k}: must be a number >= 0`)
+    if (!(F.wrap >= 0 && F.wrap <= 1)) errs.push('lights.field.wrap: 0..1')
+    if (!r.lights.flicker?.default) errs.push('lights.flicker: needs a "default" entry')
+    for (const [k, f] of Object.entries(r.lights.flicker ?? {})) if (!(f.amount >= 0 && f.speed >= 0)) errs.push(`lights.flicker.${k}: amount and speed must be >= 0`)
+    for (const [k, l] of Object.entries(r.lights.windowLights ?? {})) {
+      if (!c.props[k]) errs.push(`lights.windowLights: unknown prop "${k}"`)
+      color(`lights.windowLights.${k}.color`, l.color)
+      for (const f of ['intensity', 'radius', 'h'] as const) if (!(typeof l[f] === 'number' && l[f] >= 0)) errs.push(`lights.windowLights.${k}.${f}: must be a number >= 0`)
+    }
+    const Lq = r.lighting.quality
+    for (const q of Object.keys(r.quality)) if (!Lq[q as QualityId]) errs.push(`lighting.quality: missing tier "${q}"`)
+    for (const [q, t] of Object.entries(Lq)) {
+      if (!(Number.isInteger(t.fieldLights) && t.fieldLights >= 0 && t.fieldLights <= F.max)) errs.push(`lighting.quality.${q}.fieldLights: integer 0..lights.field.max`)
+      if (!(Number.isInteger(t.shafts) && t.shafts >= 0)) errs.push(`lighting.quality.${q}.shafts: integer >= 0`)
+      for (const k of ['cloudShadows', 'spriteRim', 'spriteShadow', 'spriteCast', 'wetGround', 'splitTone'] as const) if (typeof t[k] !== 'boolean') errs.push(`lighting.quality.${q}.${k}: must be a boolean`)
+    }
+    const low = Lq.low
+    if (low && (low.fieldLights || low.shafts || low.cloudShadows || low.spriteRim || low.spriteShadow || low.spriteCast || low.wetGround || low.splitTone)) errs.push('lighting.quality.low: new lighting effects must be off at the lowest tier')
+    for (const k of r.lighting.shafts.props) if (!r.nature.props[k]) errs.push(`lighting.shafts.props: "${k}" is not a nature prop`)
+    const Cl = r.lighting.cloud
+    if (!(Cl.size >= 16 && Cl.size <= 512)) errs.push('lighting.cloud.size: 16..512')
+    if (!(Cl.softness > 0)) errs.push('lighting.cloud.softness: must be > 0')
+    if (!(r.lighting.shafts.width[0] > 0 && r.lighting.shafts.width[1] >= r.lighting.shafts.width[0])) errs.push('lighting.shafts.width: [min, max] > 0')
+  }
+  {
+    const S = r.spriteShadow
+    color('spriteShadow.color', S?.color)
+    const num = (where: string, v: unknown, lo: number, hi = Infinity) => { if (!(typeof v === 'number' && v >= lo && v <= hi)) errs.push(`spriteShadow.${where}: must be a number in ${lo}..${hi}`) }
+    num('ground.lift', S.ground?.lift, 0, 0.2)
+    num('ground.refreshSeconds', S.ground?.refreshSeconds, 0.05)
+    for (const k of ['width', 'depth', 'core', 'power', 'footRows', 'footFollow', 'spanMul', 'minSpan', 'maxSpan', 'forward', 'liftShrink', 'liftFade'] as const) num(`contact.${k}`, S.contact?.[k], 0)
+    for (const k of ['opacity', 'minScale', 'minOpacity'] as const) num(`contact.${k}`, S.contact?.[k], 0, 1)
+    if (!(S.contact?.width > 0 && S.contact?.depth > 0)) errs.push('spriteShadow.contact: width and depth must be > 0')
+    if (!(S.contact?.core < 1)) errs.push('spriteShadow.contact.core: must be < 1')
+    if (!(S.contact?.maxSpan >= S.contact?.minSpan)) errs.push('spriteShadow.contact: maxSpan must be >= minSpan')
+    if (!(Number.isInteger(S.contact?.grid) && S.contact.grid >= 2 && S.contact.grid <= 8)) errs.push('spriteShadow.contact.grid: integer 2..8')
+    if (!(Number.isInteger(S.contact?.footRows) && S.contact.footRows >= 1)) errs.push('spriteShadow.contact.footRows: integer >= 1')
+    for (const k of ['opacity', 'tailFade', 'cloud'] as const) num(`cast.${k}`, S.cast?.[k], 0, 1)
+    for (const k of ['lengthMul', 'maxSlope', 'widthMul', 'blurNear', 'blurFar'] as const) num(`cast.${k}`, S.cast?.[k], 0)
+    if (!(S.cast?.maxSlope > 0 && S.cast?.widthMul > 0)) errs.push('spriteShadow.cast: maxSlope and widthMul must be > 0')
+    for (const k of ['min', 'full'] as const) num(`light.${k}`, S.light?.[k], 0)
+    for (const k of ['moon', 'indoor'] as const) num(`light.${k}`, S.light?.[k], 0, 1)
+    if (!(S.light?.full > S.light?.min)) errs.push('spriteShadow.light: full must be above min')
   }
   const textureKeys = new Set([...c.terrain.map((t) => t.key), ...c.biomes.map((b) => b.cliff), r.terrain.defaultCliff])
   const checkSurfaces = (where: string, list: Record<string, SurfaceDef>) => {
@@ -878,6 +1111,7 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
   for (const [k, w] of Object.entries(r.weather)) {
     for (const p of w.particles) if (!r.particles[p]) errs.push(`weather.${k}: unknown particle kind "${p}"`)
     if (w.grade.tint) color(`weather.${k}.grade.tint`, w.grade.tint)
+    for (const f of ['cloud', 'shaft', 'rim', 'split', 'wet'] as const) if (w.grade[f] !== undefined && !(w.grade[f]! >= 0)) errs.push(`weather.${k}.grade.${f}: must be a number >= 0`)
   }
   for (const [k, p] of Object.entries(r.particles)) {
     if (!PARTICLE_SHAPES.includes(p.shape)) errs.push(`particles.${k}: bad shape "${p.shape}"`)
@@ -917,9 +1151,21 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
     } else if (s.builder === 'billboard') { color(where, s.color); s.colors?.forEach((x) => color(where, x)) }
     else errs.push(`${where}: unknown builder`)
   }
+  const G = r.governor
+  if (typeof G.storageKey !== 'string' || !G.storageKey) errs.push('governor.storageKey: missing string')
+  for (const k of ['windowFrames', 'skipAboveMs', 'downAboveMs', 'downWorkMs', 'hardAboveMs', 'upBelowMs', 'upBelowWorkMs', 'downWindows', 'upWindows', 'cooldownSeconds', 'upLockSeconds'] as const) {
+    if (typeof G[k] !== 'number' || !(G[k] >= 0)) errs.push(`governor.${k}: missing non-negative number`)
+  }
+  if (G.upBelowMs >= G.downAboveMs) errs.push('governor: upBelowMs must stay under downAboveMs (else the level would flap)')
+  if (G.windowFrames < 1 || G.downWindows < 1 || G.upWindows < 1) errs.push('governor: windowFrames / downWindows / upWindows must be >= 1')
+  if (!Array.isArray(G.steps)) errs.push('governor.steps: missing list')
+  const stepKeys = new Set(['about', 'shadowHz', 'dof', 'bloom', 'dofSamples', 'particleScale', 'scaleBias'])
+  for (const [i, step] of (G.steps ?? []).entries()) for (const k of Object.keys(step)) if (!stepKeys.has(k)) errs.push(`governor.steps[${i}]: unknown key "${k}"`)
+  if (!(r.device.touchMinInternalHeight > 0)) errs.push('device.touchMinInternalHeight must be positive')
   // quality presets: new large-map knobs
   for (const [id, q] of Object.entries(r.quality)) {
-    for (const k of ['natureVariants', 'decorDensity', 'maxChunks'] as const) if (typeof q[k] !== 'number') errs.push(`quality.${id}.${k}: missing number`)
+    for (const k of ['natureVariants', 'decorDensity', 'maxChunks', 'shadowHz', 'shadowSnapTexels'] as const) if (typeof q[k] !== 'number') errs.push(`quality.${id}.${k}: missing number`)
+    if (q.shadowHz < 0 || q.shadowSnapTexels < 1) errs.push(`quality.${id}: shadowHz must be >= 0 and shadowSnapTexels >= 1`)
     for (const k of ['terrainFringe', 'snowDust'] as const) if (typeof q[k] !== 'boolean') errs.push(`quality.${id}.${k}: missing boolean`)
     const reach = q.viewRadius + c.config.world.chunk * 0.75
     const wanted = Math.PI * reach * reach / (c.config.world.chunk * c.config.world.chunk)
@@ -1024,5 +1270,6 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
     if (!c.props[k]) errs.push(`props.styles: unknown prop "${k}"`)
     checkStyle(`props.styles.${k}`, s)
   }
+  errs.push(...validatePhysics(r, c, color))
   return errs
 }

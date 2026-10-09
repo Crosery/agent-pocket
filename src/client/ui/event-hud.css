@@ -100,6 +100,7 @@ html.ap-battle-on .ap-l-evfx, html.ap-battle-on .ap-l-evhud, html.ap-battle-on .
   pointer-events: auto;
   box-sizing: border-box;
 }
+html.ap-portrait .ap-evdetails { max-height: calc(100dvh - var(--u) * 120 - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); }
 .ap-evdetails::backdrop { background: rgba(6, 9, 7, 0.65); }
 .ap-evdetails.ap-pushed { position: fixed; }
 .ap-evdetails::before, .ap-evdetails::after { display: none; }

@@ -1,7 +1,7 @@
 // Integer UI scaling + shared CSS custom properties.
 // One UI pixel ("--u") is always an integer number of DEVICE pixels, so the 12px pixel font and 1-unit borders stay
 // crisp on any DPR. Base resolution, limits and animation timings come from content/ui.json.
-import { INPUT_BINDINGS, touchPadHeight, UI_CONFIG, type UIConfig } from './config.ts'
+import { UI_CONFIG, type UIConfig } from './config.ts'
 import { glyphDims, glyphUrl } from './glyphs.ts'
 
 export interface UIScale {
@@ -43,6 +43,12 @@ function apply(): void {
   root.style.setProperty('--ap-ui-scale', String(s.cssPerUnit))
   root.classList.toggle('ap-compact', s.compact)
   root.classList.toggle('ap-portrait', s.portrait)
+  const z = UI_CONFIG.phoneHud[s.portrait ? 'portrait' : 'landscape']
+  root.style.setProperty('--ap-ph-toast-top', String(z.toast.top))
+  root.style.setProperty('--ap-ph-toast-left', String(z.toast.left))
+  root.style.setProperty('--ap-ph-toast-right', String(z.toast.right))
+  root.style.setProperty('--ap-ph-lower-w', String(z.lowerStackWidth))
+  root.style.setProperty('--ap-ph-banner-lines', String(z.bannerSubLines))
   if (changed) for (const fn of listeners) fn(s)
 }
 
@@ -55,11 +61,10 @@ function setStaticVars(): void {
   root.setProperty('--ap-cursor-bob-ms', `${a.cursorBobMs}ms`)
   root.setProperty('--ap-toast-enter-ms', `${a.toastEnterMs}ms`)
   root.setProperty('--ap-toast-leave-ms', `${a.toastLeaveMs}ms`)
-  root.setProperty('--ap-touch-inset', `${touchPadHeight() + UI_CONFIG.scale.touchInsetGapCss}px`)
-  const touch = INPUT_BINDINGS.touch
-  root.setProperty('--ap-touch-left-inset', `${touch.margin + 2 * touch.stickRadius}px`)
-  root.setProperty('--ap-touch-zone-width', `${touch.zoneWidthFraction * 100}vw`)
-  root.setProperty('--ap-touch-right-inset', `${touch.margin + Math.max(0, ...touch.buttons.map(b => b.right + (b.size === 'large' ? touch.buttonSize : touch.smallButtonSize)))}px`)
+  // --ap-touch-inset / -left-inset / -right-inset belong to the touch pad (core/input-touch.ts publishes them per orientation).
+  root.setProperty('--ap-ph-toast-lines', String(UI_CONFIG.phoneHud.toastLines))
+  root.setProperty('--ap-ph-chat-clear', `${UI_CONFIG.phoneHud.chatClearPx}px`)
+  root.setProperty('--ap-ph-tip-foot-gap', `${UI_CONFIG.phoneHud.tipFootGapPx}px`)
   root.setProperty('--ap-minimap-size', String(UI_CONFIG.minimap.size))
   root.setProperty('--ap-minimap-compact-size', String(UI_CONFIG.minimap.compactSize))
   root.setProperty('--ap-minimap-ring', String(UI_CONFIG.minimap.ring))
@@ -110,7 +115,7 @@ export function onUIScaleChange(fn: (s: UIScale) => void): () => void {
 
 /**
  * Overrides the bottom space (CSS px) reserved under dialogue/chat. By default it follows
- * html[data-touch-controls="on"] (set by core/): pad height from content/input.json + scale.touchInsetGapCss.
+ * html[data-touch-controls="on"] (set by core/): pad height from content/input.json + touch.insetGap.
  * null restores that default.
  */
 export function setUIBottomInset(cssPx: number | null): void {

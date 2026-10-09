@@ -243,6 +243,8 @@ export type ItemEffect =
   | { kind: 'levelUp' }
   | { kind: 'evolve' }
   | { kind: 'battleBoost'; stat: BattleStatKey; stages: number }
+  /** Thrown at the foe in battle: only a boss that listens for this `tag` reacts (BossTrigger on 'foeItem'). */
+  | { kind: 'bait'; tag: string }
   | { kind: 'repel'; steps: number }
   | { kind: 'escape' }
   | { kind: 'chip'; move: string }
@@ -263,6 +265,8 @@ export interface ItemDef {
 
 export interface LearnsetEntry { level: number; move: string }
 
+export type EvolutionKind = 'post-training' | 'version'
+
 export interface SpeciesDef {
   id: string                 // ascii kebab-case; sprite file name
   dexNo: number
@@ -273,7 +277,7 @@ export interface SpeciesDef {
   category: string
   family: string
   stage: number
-  evolvesTo?: { id: string; level: number }
+  evolvesTo?: { id: string; level: number; kind?: EvolutionKind }
   evolvesFrom?: string
   types: TypeId[]            // 1..2
   rarity: Rarity
@@ -291,6 +295,18 @@ export interface SpeciesDef {
   size: number               // world sprite scale (1 = player height)
   starter?: boolean
   designPrompt?: string      // sprite generation prompt (tools only)
+}
+
+/** Curated research metadata derived from the local model-lineage and event dossiers. */
+export interface DexResearchEntry {
+  officialName: string
+  family: string
+  generation: string
+  kind: string
+  access: string
+  evidence: string
+  release: string | null
+  eventTitles: string[]
 }
 
 // ---------------------------------------------------------------------------
@@ -373,11 +389,13 @@ export interface GameConfig {
   economy: { startMoney: number; blackoutMoneyLoss: number; sellRatio: number; startItems: Record<string, number> }
   creature: { ivMax: number; startFriendship: number; secondAbilityChance: number; starterLevel: number; levelUpFriendship: number }
   save: { autosaveSeconds: number; storagePrefix: string; version: number }
-  camera: { fov: number; pitchDeg: number; zoomDistances: number[]; followDamping: number; lookAhead: number }
+  camera: { fov: number; pitchDeg: number; zoomDistances: number[]; followDamping: number; lookAhead: number; /** Outdoor view is never narrower than this many tiles across (portrait phones pull the camera back). */ minViewTilesWide: number }
   render: { maxPointLights: number; shadowMapSize: number; internalHeight: Record<Settings['quality'], number> }
   defaultSettings: Settings
+  /** Allowed Settings.battleSpeed multipliers, slowest first. */
+  battleSpeeds: number[]
   /** One-time overrides applied once to every save that hasn't seen them (e.g. a new default volume). */
-  settingsMigrations?: { id: string; set: Partial<Settings> }[]
+  settingsMigrations?: { id: string; set: Partial<Settings>; /** Only applied on touch devices. */ touchOnly?: boolean }[]
 }
 
 export type TextTable = Record<string, string>
@@ -437,6 +455,8 @@ export interface BattleSideInit {
   sprite?: string
   aiLevel?: 0 | 1 | 2 | 3
   items?: Record<string, number>
+  /** BossDef id (content/bosses.json): the party member of the boss species fights with its boss rules. */
+  boss?: string
 }
 
 export interface BattleInit {
@@ -458,6 +478,252 @@ export interface BattleInit {
 }
 
 export interface BattleModifiers { expByParty?: number[]; catchRate?: number; friendship?: number }
+
+// ---------------------------------------------------------------------------
+// Boss battles (content/bosses.json, engine module src/shared/battle/boss.ts)
+// A boss is a normal creature fought with a data-driven rule set: named forms (species + moves + pattern), HP
+// phases, counter triggers (bait items, move types, switching ...), meters, charged attacks and an enrage timer.
+// Everything the rules need is serialisable in BossState so a boss can be saved, replayed or shared by a raid.
+// ---------------------------------------------------------------------------
+
+export type BossTarget = 'boss' | 'foe'
+
+/** Situation test over the boss state and the foe; every given field must hold. */
+export interface BossCond {
+  form?: string[]
+  notForm?: string[]
+  /** A trigger with this id has fired / has not fired. */
+  phase?: string
+  notPhase?: string
+  /** Boss hp ratio <= value / > value. */
+  hpBelow?: number
+  hpAbove?: number
+  turnAtLeast?: number
+  turnAtMost?: number
+  /** Turns spent in the current form. */
+  formTurnAtLeast?: number
+  /** (turn - 1) % period lies in [from, to). */
+  turnCycle?: { period: number; from: number; to: number }
+  meter?: { id: string; atLeast?: number; atMost?: number }
+  /** The boss currently carries moves copied from the foe. */
+  hasBorrowed?: boolean
+  /** true = the foe has any major status, or exactly this status. */
+  foeStatus?: boolean | StatusId
+  foeCountry?: string[]
+  foeNotCountry?: string[]
+  /** The foe's active creature was released before this date (YYYY-MM or YYYY-MM-DD). */
+  foeReleasedBefore?: string
+  /** The foe's active creature was released on or after this date. */
+  foeReleasedFrom?: string
+  /** The field weather is / is not one of these (content/weathers.json ids; 'none' = clear). */
+  weather?: WeatherId[]
+  notWeather?: WeatherId[]
+}
+
+export type BossEventKind = 'start' | 'turnStart' | 'turnEnd' | 'afterAction' | 'foeMove' | 'foeItem' | 'foeMedicine' | 'foeSwitch'
+
+/** Declarative side effect of a trigger; interpreted by the engine, never code per boss. */
+export type BossOp =
+  | { op: 'say'; text: string }
+  | { op: 'form'; form: string }
+  | { op: 'heal'; target: BossTarget; fraction: number }
+  | { op: 'stages'; target: BossTarget; stats: StatChanges }
+  | { op: 'clearStages'; target: BossTarget }
+  | { op: 'status'; target: BossTarget; status: StatusId }
+  | { op: 'cure'; target: BossTarget }
+  | { op: 'volatile'; target: BossTarget; volatile: VolatileId }
+  | { op: 'meter'; id: string; add?: number; set?: number }
+  /** The boss skips its next `turns` actions. */
+  | { op: 'loseTurn'; turns: number }
+  /** Telegraph: warn now, the boss uses `move` (even if it is not in its move list) on its next action, its damage times `mul`. */
+  | { op: 'charge'; move: string; warn: string; mul?: number }
+  | { op: 'cancelCharge' }
+  /** Distillation: copy the foe's last damaging move into a borrowed slot (at most `max` at a time); `say` gets {move}. */
+  | { op: 'learn'; max: number; say?: string }
+  /** Drop the borrowed moves. */
+  | { op: 'forget' }
+  /** Forget which move types the foe has used so far (they count as new again). */
+  | { op: 'forgetTypes' }
+  /** Changes the field weather (`turns` default: the usual weather length). */
+  | { op: 'weather'; weather: WeatherId; turns?: number }
+
+export interface BossTrigger {
+  id: string
+  on: BossEventKind | BossEventKind[]
+  /** foeItem: the bait tag. */
+  tag?: string
+  /** foeMove filters: the move must match every filter given. */
+  moveTypes?: TypeId[]
+  moves?: string[]
+  categories?: MoveCategory[]
+  /** foeMove: this move type has not been used against the boss before. */
+  novelType?: boolean
+  /** foeMove: true = the damaging move has another type than the foe's previous one; false = the same type again. */
+  typeShift?: boolean
+  /** foeSwitch: only a switch the foe chose, not the replacement after a faint. */
+  voluntary?: boolean
+  if?: BossCond
+  /** Firings allowed per battle (default 1; 0 = unlimited). */
+  times?: number
+  /** Counts as a phase pip (BossHud.phase) when it fires. */
+  phase?: boolean
+  /** Chance (0..1, rolled by the battle's rng) that the trigger fires once every other test passed (default: always). */
+  chance?: number
+  do: BossOp[]
+}
+
+export interface BossTakenMul {
+  mul: number
+  moveTypes?: TypeId[]
+  notMoveTypes?: TypeId[]
+  categories?: MoveCategory[]
+  moves?: string[]
+  /** The move has the same type as the foe's previous damaging move. */
+  sameTypeAsLast?: boolean
+  /** The move's type effectiveness against the boss's current species (super > 1, resisted < 1). */
+  effectiveness?: 'super' | 'neutral' | 'resisted'
+  /** Text key said when this entry reduces or raises a hit (once per action). */
+  note?: string
+}
+
+/** State-based modifier, active while its condition holds. */
+export interface BossRule {
+  id: string
+  if?: BossCond
+  /** Multipliers on damage the boss takes; all matching entries multiply. */
+  takenMul?: BossTakenMul[]
+  /** Multiplier on damage the boss deals. */
+  dealtMul?: number
+  /** One hit can take at most this fraction of the boss's max hp. */
+  hitCap?: number
+  /** The boss acts a second time every `every` turns. */
+  extraAction?: { every: number }
+  /** Extra PP the foe's moves cost while this holds. */
+  foePpCost?: number
+  statMul?: Partial<Record<'atk' | 'def' | 'spa' | 'spd' | 'spe', number>>
+  /** The boss cannot be given a major status. */
+  noStatus?: boolean
+}
+
+export interface BossFormDef {
+  species: string
+  moves: string[]
+  ability?: string
+  /** Multipliers on the form's computed stats (hp = the boss's absolute hp pool). */
+  statMul?: Partial<Stats>
+  /** Weighted action table; move '$borrowed' picks one of the moves copied from the foe. */
+  pattern: { move: string; weight: number; if?: BossCond }[]
+  rules?: BossRule[]
+  /** Text key of the banner shown when the form takes over. */
+  banner?: string
+  /** Keep stat stages across the switch (default: reset). */
+  keepStages?: boolean
+}
+
+export interface BossMeterDef {
+  id: string
+  max: number
+  start?: number
+  /** Text key of the HUD label. */
+  label: string
+  /** Shown in the HUD (hidden meters are pure bookkeeping). */
+  show?: boolean
+  /** Lowered by this much at every turn end. */
+  decay?: number
+  /** Text keys by value (0..max) for state-like meters such as peak/valley. */
+  states?: string[]
+  tone?: 'good' | 'warn' | 'bad'
+}
+
+export interface BossEnrage {
+  /** First turn of the enrage; each turn from then on applies `stages` once, up to `max` stacks. */
+  turn: number
+  /** Turns of notice before it starts. */
+  warnBefore: number
+  stages: StatChanges
+  max: number
+  warn: string
+  start: string
+  tick: string
+}
+
+export interface BossReward { money?: number; items?: Record<string, number> }
+
+export interface BossDef {
+  id: string
+  /** Species of the boss creature in the party that carries the boss rules. */
+  species: string
+  /** Recommended level (dev hooks and sandboxes). */
+  level: number
+  /** Text keys. */
+  title: string
+  taunt: string[]
+  /** Dex hints: after seeing / after defeating the boss. */
+  hint: { seen: string; won: string }
+  /** NPC rumour lines (the content that places them lives with the NPCs; listed here for validation). */
+  gossip: string[]
+  canRun: boolean
+  expMul: number
+  initialForm: string
+  forms: Record<string, BossFormDef>
+  meters: BossMeterDef[]
+  triggers: BossTrigger[]
+  /** The boss cannot fall below `floor` (hp ratio) until trigger `phase` has fired: phases always get shown. */
+  gates: { phase: string; floor: number }[]
+  enrage?: BossEnrage
+  /** Catch odds multiplier on top of the current form's species catch rate. */
+  catchRateMul: number
+  reward: BossReward
+}
+
+/** content/bosses.json: bosses keyed by id (the key is the BossDef id). */
+export interface BossFile { bosses: Record<string, Omit<BossDef, 'id'>> }
+
+/** HUD view of a boss (sent as the 'boss' battle event). */
+export interface BossHud {
+  bossId: string
+  form: string
+  /** Phase pips reached, of `phases` in total (the opening phase counts as 1). */
+  phase: number
+  phases: number
+  meters: Record<string, number>
+  /** Move id of the pending charged attack, or null. */
+  charge: string | null
+  enrage: number
+}
+
+/**
+ * Everything that makes a boss fight resumable: extractBossState()/applyBossState() on the engine. Plain JSON,
+ * so a raid coordinator can merge, store and replay it.
+ */
+export interface BossState {
+  bossId: string
+  form: string
+  turn: number
+  formTurn: number
+  /** Trigger id -> number of firings. */
+  fired: Record<string, number>
+  phase: number
+  meters: Record<string, number>
+  enrage: number
+  charge: { move: string; warn: string; mul: number } | null
+  skip: number
+  borrowed: string[]
+  lastFoeType: TypeId | null
+  lastFoeMove: string | null
+  seenTypes: TypeId[]
+  speciesId: string
+  abilityId: string
+  hp: number
+  maxHp: number
+  stages: Record<BattleStatKey, number>
+  status: StatusId | null
+  statusTurns: number
+  /** Volatile id -> end-of-turn ticks left (-1 = until switch-out). */
+  volatiles: Record<string, number>
+  moves: MoveSlot[]
+  recharging: boolean
+}
 
 export type BattleAction =
   | { kind: 'move'; moveIndex: number }
@@ -498,6 +764,14 @@ export type BattleEvent =
   | { t: 'money'; amount: number }
   /** A wild creature with BattleSideInit.flee: 'warn' when its flee window opens, 'fled' right before the 'end' event. */
   | { t: 'flee'; side: SideIndex; stage: 'warn' | 'fled' }
+  /** Boss HUD snapshot (BossDef battles): sent on entry and whenever phase, meters, charge or enrage change. */
+  | { t: 'boss'; side: SideIndex; hud: BossHud }
+  /** The boss changed form: its species, stats and moves are those of `creature` from now on. */
+  | { t: 'form'; side: SideIndex; form: string; fromSpeciesId: string; creature: CreatureView }
+  /** Warning one turn before a charged attack lands (the matching message follows). */
+  | { t: 'telegraph'; side: SideIndex; move: string }
+  /** Item drop for the winner of a boss battle (BossDef.reward). */
+  | { t: 'loot'; itemId: string; qty: number }
   | { t: 'end'; result: BattleResult; winner: SideIndex | -1 }
 
 // ---------------------------------------------------------------------------
@@ -563,6 +837,12 @@ export type ScriptStep =
   | { op: 'heal' }
   | { op: 'shop'; items: string[] }
   | { op: 'openBox' }
+  /** Opens the barter screen of a desk in content/exchange.json. */
+  | { op: 'exchange'; desk: string }
+  /** Records that this NPC delivered a curriculum lesson (content/tutorial.json): the manual marks it learnt. */
+  | { op: 'teach'; lesson: string }
+  /** Opens the type chart (属性克制表), optionally on a view and a type. */
+  | { op: 'openTypeChart'; view?: 'type' | 'grid' | 'loops'; type?: string }
   | { op: 'quest'; quest: string; stage: number; done?: boolean }
   | { op: 'warp'; map: string; x: number; y: number; facing: Dir }
   | { op: 'moveNpc'; npc: string; path: Dir[] }
@@ -914,6 +1194,8 @@ export interface Settings {
   bloom: boolean
   shadows: boolean
   textSpeed: 'slow' | 'normal' | 'fast' | 'instant'
+  /** Battle clock multiplier; one of config.battleSpeeds (1 = as authored). */
+  battleSpeed: number
   showMinimap: boolean
   showNames: boolean
   /** Objective tracker in the HUD / one-time contextual tips (content/tutorial.json). */
@@ -921,6 +1203,12 @@ export interface Settings {
   showTips: boolean
   autoRun: boolean
   touchControls: 'auto' | 'on' | 'off'
+  /** Which thumb owns the stick: 'left' mirrors the pad (stick right, buttons left). */
+  touchHand: 'right' | 'left'
+  /** Size preset of the on-screen buttons (config input.touch.sizes). */
+  touchSize: 'small' | 'normal' | 'large'
+  /** Vibrate on touch buttons / taps where navigator.vibrate exists. */
+  haptics: boolean
   /** Ids of one-time settings migrations (config.settingsMigrations) already applied to this save. */
   migrations?: string[]
 }
@@ -963,3 +1251,91 @@ export interface SaveData {
   /** Explored overworld cells for the world-map fog of war (compact encoding owned by the client save code). */
   explored?: string
 }
+
+// ---------------------------------------------------------------------------
+// Developer mode (content/dev/**, src/shared/dev, src/client/dev) — append-only section
+// ---------------------------------------------------------------------------
+
+/** One call of a developer command (see content/dev/console.json). */
+export interface DevCommandCall { cmd: string; args?: Record<string, unknown> }
+
+/** A check on the state dump: `path` is an RFC 6901 pointer, the remaining key is one matcher (eq, gt, in, ...). */
+export interface DevExpectation { path: string; [matcher: string]: unknown }
+
+/** Where to stand: an anchor id (`town:forge`) or an explicit tile. */
+export type DevPlace = string | { map: string; x: number; y: number }
+
+/** One party member: a preset team (content/dev/teams.json) or a single creature. */
+export interface DevPartyEntry {
+  team?: string
+  species?: string
+  level?: number
+  nickname?: string
+  status?: StatusId
+  /** Fraction of max HP left (default full). */
+  hp?: number
+  shiny?: boolean
+}
+
+export interface DevTeamMember { species: string; nickname?: string; status?: StatusId; hp?: number; shiny?: boolean }
+
+/** content/dev/teams.json entry. */
+export interface DevTeam { level: number; members: DevTeamMember[] }
+
+/** content/dev/beats.json entry: a point in the story as a save patch (applied before the scenario's own fields). */
+export interface DevBeat {
+  titleKey: string
+  place?: DevPlace
+  badges?: string[]
+  /** Trainer ids already defeated (set as flags with the story's trainerWon prefix). */
+  trainers?: string[]
+  quests?: Record<string, { stage: number; done: boolean }>
+  flags?: Record<string, boolean | number | string>
+}
+
+/** content/dev/scenarios/<id>.json: a one-click game state with a URL (?dev=1&scenario=<id>). */
+export interface DevScenario {
+  id: string
+  titleKey: string
+  /** Another scenario this one builds on; fields below override, bag/flags/quests merge, then/expect concatenate. */
+  extends?: string
+  beat?: string
+  /** World seed and master random seed. */
+  seed?: number
+  rng?: number
+  place?: DevPlace
+  party?: DevPartyEntry[]
+  bag?: Record<string, number>
+  /** Every item at this quantity. */
+  bagAll?: number
+  money?: number
+  badges?: string[]
+  flags?: Record<string, boolean | number | string>
+  quests?: Record<string, { stage: number; done: boolean }>
+  clock?: { minutes: number; frozen?: boolean }
+  weather?: string | null
+  /** Commands to run once the state is applied (battle, effects, ...). */
+  then?: DevCommandCall[]
+  expect?: DevExpectation[]
+}
+
+/** content/dev/acceptance/<issue>.json: the scenarios a worker ships with an issue, shown on the panel's acceptance tab. */
+export interface DevAcceptance { issue: number; titleKey: string; scenarios: string[] }
+
+/**
+ * BattleInit.debug (developer builds only set it): forces the four random rolls of the battle engine. A forced roll still
+ * takes its draw from the seeded stream, so the rest of the fight is the one the natural rolls would have given.
+ * `hit` applies to moves that can miss (always-hit moves and Struggle stay as they are); `damage` picks the end of the
+ * random factor range for every damage calculation; `crit` applies to moves that deal computed damage.
+ */
+export interface DevBattleRolls {
+  hit?: 'always' | 'never'
+  damage?: 'min' | 'max'
+  crit?: 'always' | 'never'
+  catch?: 'success' | 'fail'
+}
+
+export interface DevBattleDebug { rolls?: DevBattleRolls }
+
+// Declaration merging keeps the dev field out of the game's own BattleInit declaration.
+export interface BattleInit { debug?: DevBattleDebug }

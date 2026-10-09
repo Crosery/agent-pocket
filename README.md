@@ -8,7 +8,7 @@
 
 <p>一款跑在浏览器里的 HD-2D 像素收集 RPG。你遇到、收服、培养的每一只「智灵」，都是一位真实存在的 AI 化身的二次元 Q 版美少女。</p>
 
-<p><b>English intro:</b> Agent Pocket is a browser-based HD-2D pixel creature-collecting RPG. The 190 creatures are today's hottest AI models (Chinese and international), drawn as cute anime chibis. Their rarity follows each AI's real capability. The game has an infinite Perlin-noise world, hidden world events and online multiplayer, and runs entirely on the web.</p>
+<p><b>English intro:</b> Agent Pocket is a browser-based HD-2D pixel creature-collecting RPG. The 448 creatures are today's hottest AI models (Chinese and international), drawn as cute anime chibis. Their rarity follows each AI's real capability. The game has an infinite Perlin-noise world, hidden world events and online multiplayer, and runs entirely on the web.</p>
 
 <p>
   <a href="README.md"><b>中文</b></a>
@@ -61,7 +61,7 @@
 ## 玩什么
 
 1. **出发**：在研究所从 DeepSeek-V3、Claude Haiku 4.5、o1 三只里挑一只作为第一只智灵（三者属性互相克制），然后和劲敌打第一场对战
-2. **收集**：在草丛、海岸、城市、雪山里遇见野生智灵，把它们打弱后收服进口袋，填满 190 格图鉴
+2. **收集**：在草丛、海岸、城市、雪山里遇见野生智灵，把它们打弱后收服进口袋，填满 448 格图鉴
 3. **培养**：升级、学习招式、进化，按属性克制组一支自己的队伍，挑战各地道馆
 4. **探索**：走过海堤离开大陆，前面是没有尽头的前线。越往外走越危险，遇到的智灵也越稀有
 5. **追踪**：顺着传闻和石碑线索，去碰只在暴雨夜、凌晨或节日才出现的 SSR，追踪四处游荡的 UR 传说，解开 MYTHIC 的隐藏事件链
@@ -71,7 +71,7 @@
 
 ## 核心特性
 
-- **190 只智灵** — 121 个进化家族，6 档稀有度，自定义属性克制，招式和特性用声明式 DSL 描述
+- **448 只智灵** — 232 个进化家族，6 档稀有度，自定义属性克制，招式和特性用声明式 DSL 描述
 - **无限世界** — 1024² 的剧情大陆，外围是向四面八方无限延伸的柏林噪声前线：30 种生物群系，山脉、峡谷、单向跳坎、河流、群岛、村落、多层地下城、地标
 - **稀有度玩法** — N/R 在草丛里遇到；SR 在大地图上可见，带光环；SSR 只在特定时间、天气、地形下出现，还会逃跑；UR 是在各地游荡的传说；MYTHIC 只能靠隐藏事件链拿到
 - **世界事件** — 99 个事件，其中 28 个隐藏：节日（含农历）、AI 圈梗、石碑谜题、彩蛋、传说追踪；另有每只智灵的研究任务和研究等级奖励
@@ -82,7 +82,7 @@
 
 <div align="center">
 <img src="docs/readme/creatures.jpg" alt="智灵图鉴（节选）" width="100%" />
-<sub>智灵图鉴（节选，共 190 只）</sub>
+<sub>智灵图鉴（节选，共 448 只）</sub>
 </div>
 
 <div align="center">
@@ -126,7 +126,7 @@ npm run dev          # 同时启动游戏服务器(:8787) 和 Vite 客户端(:51
 
 浏览器打开 `http://localhost:5173`。只想单机试玩，可以只跑 `npm run dev:client`。
 
-调试入口：在 URL 后加 `?dev=1`，可以跳过标题、传送、直接开战斗（见 `src/client/debug.ts`）。
+调试入口：本地 `npm run dev`（或 `npm run build:devtools` 的调试构建）下，在 URL 后加 `?dev=1`，可以跳过标题、传送、直接开战斗（见 `src/client/dev/params.ts`）。正式构建不含调试代码，官方服务器也会拒绝调试构建的客户端（`AP_DEV=1` 的自建服除外）。
 
 ### 3. 检查与构建
 
@@ -146,7 +146,7 @@ npm start            # 生产模式：服务器同时托管 dist/ 和 WebSocket
 | 跑步 / 自行车 | Shift / B | X / Y |
 | 世界地图 / 小地图 / 聊天 | M / N / T | Select / LB / RB |
 
-手机上会显示虚拟摇杆和按键。全部按键绑定都在 `content/input.json` 里。
+手机上按住屏幕左半边任意位置拖动即可移动（摇杆在手指落下处生成，松手消失；短按是点按移动），右下角是按键。全部按键绑定都在 `content/input.json` 里。
 
 ---
 

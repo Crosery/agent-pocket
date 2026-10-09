@@ -12,7 +12,7 @@ export interface PropInteraction { action: 'box' | 'statue' | 'text' | 'script';
 
 export interface GameTuning {
   loop: { maxDtSec: number; pauseWhenHidden: boolean }
-  loading: { showAfterMs: number; fadeOutMs: number; steps: string[] }
+  loading: { showAfterMs: number; fadeOutMs: number; steps: string[]; worldSliceMs: number }
   title: { importCodeMaxLen: number }
   newGame: { startAnchor: string; facing: Dir; respawnAtStart: boolean; introScript: ScriptStep[] }
   player: {
@@ -37,7 +37,8 @@ export interface GameTuning {
     /** Personal space (tiles, + the same size extra): a follower in the player's way walks round its side at up to
      * sidestepSpeed (tiles/s along the circle) instead of being walked through. */
     minGap: number; sidestepSpeed: number
-    /** Sideways gap (tiles) kept from the player while trailing on the camera side: base + perSize * species size.
+    /** Sideways gap (tiles) kept from the player while trailing on the camera side: base (the player's half width) +
+     * perSize (half the card width of a size-1 lead) * species size, so even a wide lead never covers the player.
      * sideDeadzone: lateral offset (tiles) below which the follower keeps its current side; blendPerSec: how fast the
      * swing aside eases in / out (full swings per second); tries: swing shares tested (1, 1 - 1/tries, ...) when the
      * full swing would put it in a wall; dropBack: extra trail distance (base + perSize * size) taken when walls leave
@@ -47,7 +48,10 @@ export interface GameTuning {
     maxSpeed: number; catchUpMul: number
     /** |sin| of the angle off the player's path above which the follower keeps its current side when pushed aside. */
     sideBias: number
-    trailSpacing: number; maxTrail: number; indoorMaxSize: number; followRate: number
+    trailSpacing: number; maxTrail: number; indoorMaxSize: number
+    /** Follower position is a critically damped spring on its trail target: natural frequency (rad/s), so it settles
+     * in about 4 / springOmega seconds without overshooting and never starts or stops with a jolt. */
+    springOmega: number
     /** Hop gait below moveMinSpeed (tiles/s); mirror flips need flipMinSpeed sideways (tiles/s). */
     teleportDistance: number; moveMinSpeed: number; flipMinSpeed: number
     mapKinds: MapKind[]; interactRadius: number; fx: WorldFx; cryPitch: number
@@ -62,14 +66,16 @@ export interface GameTuning {
     trainer: { exclaimMs: number; approachSpeed: number; sfx: string; fx: WorldFx; bubble: string; cooldownSec: number }
   }
   encounters: {
-    requireConsciousParty: boolean; surfEncounters: boolean; graceSteps: number
+    requireConsciousParty: boolean; surfEncounters: boolean; grassRateMultiplier: number; graceSteps: number
     transition: { kind: 'fade' | 'battle' | 'iris'; inMs: number; flashColor: string; flashMs: number; sfx: string; fx: WorldFx }
     legendRarityOrder: number; scriptedCanRun: boolean; repelOfferRefill: boolean
   }
   roaming: {
     mapKinds: MapKind[]; spawnIntervalSec: number; spawnTries: number; minSpawnDistance: number; despawnMargin: number
     lifetimeSec: Range; idleSec: Range; wanderRadius: number; speed: number; fleeSpeed: number; chaseSpeed: number
-    touchRadius: number; noticeRange: number; fleeChance: number; rareFleeChance: number; chaseChance: number
+    touchRadius: number; noticeRange: number
+    /** Radians a cornered fleeing roamer turns to slide along a wall. */
+    fleeSlideRad: number
     noticeBubble: string; noticeBubbleMs: number; fleeBubble: string; despawnFx: WorldFx; spawnFx: WorldFx
     requireEncounterTerrain: boolean; cullDistance: number; arriveEpsilon: number
     /** Terrain keys no roamer or event creature spawns on (1-tile causeways would force the battle). */
@@ -101,10 +107,12 @@ export interface GameTuning {
   fog: { mapKinds: MapKind[] }
   autosave: { events: string[]; minIntervalSec: number; onHidden: boolean }
   hud: { moneyCheckSec: number }
-  flags: { badgePrefix: string }
+  flags: { badgePrefix: string; bossWonPrefix: string }
   debug: {
     partySize: number; partyLevel: number; money: number; keyItemKinds: string[]
     categoryQty: Record<string, number>; freezeClockWithTime: boolean; overlayRefreshMs: number; battleLevel: number
+    /** ?dev=1 boss sandbox: a sensible team (party level = boss level + levelOffset) and counter items in the bag. */
+    boss: { party: string[]; levelOffset: number; counterQty: number }
   }
 }
 
@@ -192,9 +200,13 @@ export function validateGameContent(g: GameTuning = GAME, c: Content = CONTENT):
   checkFx('npc.trainer.fx', g.npc.trainer.fx)
   checkSfx('encounters.transition.sfx', g.encounters.transition.sfx)
   checkFx('encounters.transition.fx', g.encounters.transition.fx)
+  if (!(g.encounters.grassRateMultiplier > 0 && g.encounters.grassRateMultiplier <= 1)) {
+    errs.push('game.json encounters.grassRateMultiplier must be in (0, 1]')
+  }
   checkKinds('roaming.mapKinds', g.roaming.mapKinds)
   checkRange('roaming.lifetimeSec', g.roaming.lifetimeSec)
   checkRange('roaming.idleSec', g.roaming.idleSec)
+  if (!(g.roaming.fleeSlideRad > 0 && g.roaming.fleeSlideRad < Math.PI)) errs.push('game.json roaming.fleeSlideRad must be in (0, pi)')
   checkFx('roaming.despawnFx', g.roaming.despawnFx)
   checkFx('roaming.spawnFx', g.roaming.spawnFx)
   for (const key of g.roaming.avoidTerrain ?? []) if (!c.terrainByKey[key]) errs.push(`game.json roaming.avoidTerrain: unknown terrain "${key}"`)
@@ -214,9 +226,16 @@ export function validateGameContent(g: GameTuning = GAME, c: Content = CONTENT):
   if (!(g.region.defaultWeather in g.region.weatherIntensity)) errs.push(`game.json region.defaultWeather: "${g.region.defaultWeather}" has no weatherIntensity`)
   for (const e of g.autosave.events) if (!GAME_EVENTS.includes(e)) errs.push(`game.json autosave.events: unknown event "${e}"`)
   for (const cat of Object.keys(g.debug.categoryQty)) if (!c.itemList.some((it) => it.category === cat)) errs.push(`game.json debug.categoryQty: no items in category "${cat}"`)
+  for (const id of g.debug.boss.party) if (!c.species[id]) errs.push(`game.json debug.boss.party: unknown species "${id}"`)
   for (const step of g.newGame.introScript) {
     if (step.op === 'say' && !(step.text in c.text)) errs.push(`game.json newGame.introScript: missing text key "${step.text}"`)
     if (step.op === 'sfx') checkSfx('newGame.introScript', step.id)
   }
   return errs
+}
+
+/** Final tall-grass roll rate after the global comfort multiplier and active event modifiers. */
+export function grassEncounterRate(base: number, eventMultiplier = 1, g: GameTuning = GAME): number {
+  const rate = Math.max(0, base) * Math.max(0, g.encounters.grassRateMultiplier) * Math.max(0, eventMultiplier)
+  return Math.min(1, rate)
 }

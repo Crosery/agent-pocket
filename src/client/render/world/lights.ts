@@ -10,6 +10,8 @@ export interface LightSource {
   radius: number
   nightOnly: boolean
   phase: number
+  /** Flicker class (render.json lights.flicker): the emitting prop's key, "map" for map lights; default when absent. */
+  kind?: string
 }
 
 export interface LightRig {
@@ -36,21 +38,20 @@ export function createLightRig(): LightRig {
       uTime: { value: 0 },
       uScale: { value: 300 },
       uIntensity: { value: L.glowIntensity },
-      uFlicker: { value: L.glowFlicker },
-      uFlickerSpeed: { value: L.flickerSpeed },
     },
     vertexShader: /* glsl */`
-uniform float uLamps, uTime, uScale, uFlicker, uFlickerSpeed;
+uniform float uLamps, uTime, uScale;
 attribute vec3 aColor;
 attribute float aSize;
 attribute float aNight;
 attribute float aPhase;
+attribute vec2 aFlick;
 varying vec3 vColor;
 varying float vOn;
 void main() {
   vec4 mv = modelViewMatrix * vec4(position, 1.0);
   float on = mix(1.0, uLamps, aNight);
-  float fl = 1.0 + uFlicker * (sin(uTime * uFlickerSpeed + aPhase) * 0.6 + sin(uTime * uFlickerSpeed * 2.7 + aPhase * 1.3) * 0.4);
+  float fl = 1.0 + aFlick.x * (sin(uTime * aFlick.y + aPhase) * 0.6 + sin(uTime * aFlick.y * 2.7 + aPhase * 1.3) * 0.4);
   vOn = on * fl;
   vColor = aColor;
   gl_PointSize = on > 0.01 ? max(1.0, aSize * uScale / -mv.z) : 0.0;
@@ -96,7 +97,10 @@ void main() {
       sources = list
       const n = list.length
       const pos = new Float32Array(n * 3), col = new Float32Array(n * 3), size = new Float32Array(n), night = new Float32Array(n), phase = new Float32Array(n)
+      const flick = new Float32Array(n * 2)
       list.forEach((s, i) => {
+        const f = L.flicker[s.kind ?? 'default'] ?? L.flicker.default
+        flick.set([f.amount, f.speed], i * 2)
         pos.set([s.x, s.y, s.z], i * 3)
         col.set([s.color.r * Math.min(2, s.intensity), s.color.g * Math.min(2, s.intensity), s.color.b * Math.min(2, s.intensity)], i * 3)
         size[i] = L.glowSize * Math.sqrt(Math.max(0.1, s.radius))
@@ -110,6 +114,7 @@ void main() {
       glowGeo.setAttribute('aSize', new THREE.BufferAttribute(size, 1))
       glowGeo.setAttribute('aNight', new THREE.BufferAttribute(night, 1))
       glowGeo.setAttribute('aPhase', new THREE.BufferAttribute(phase, 1))
+      glowGeo.setAttribute('aFlick', new THREE.BufferAttribute(flick, 2))
       glowGeo.setDrawRange(0, n)
       // streamed chunks swap sources in and out: lights whose source survives keep their slot and level (no flicker)
       const alive = new Set(list)
@@ -150,7 +155,8 @@ void main() {
       for (const p of pool) {
         const target = p.src ? effective(p.src, lamps) : 0
         p.level += (target - p.level) * k
-        const fl = p.src ? 1 + L.glowFlicker * Math.sin(time * L.flickerSpeed + p.src.phase) : 1
+        const pf = p.src ? L.flicker[p.src.kind ?? 'default'] ?? L.flicker.default : L.flicker.default
+        const fl = p.src ? 1 + pf.amount * Math.sin(time * pf.speed + p.src.phase) : 1
         p.light.intensity = p.level * L.pointIntensity * fl
         p.light.visible = true
       }

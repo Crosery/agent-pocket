@@ -22,7 +22,7 @@
   {"id": 20, "key": "cave", "nameZh": "洞窟", "walkable": true, "swim": false, "encounter": true, "tallGrass": false, "minimap": "#5a5160", "speed": 1},
   {"id": 21, "key": "ruin", "nameZh": "遗迹石砖", "walkable": true, "swim": false, "encounter": false, "tallGrass": false, "minimap": "#a69f8a", "speed": 1},
   {"id": 22, "key": "tall_snowgrass", "nameZh": "雪原草", "walkable": true, "swim": false, "encounter": true, "tallGrass": true, "minimap": "#cfe0e6", "speed": 0.85},
-  {"id": 23, "key": "stairs", "nameZh": "台阶", "walkable": true, "swim": false, "encounter": false, "tallGrass": false, "minimap": "#cbbfae", "speed": 0.9, "stairs": true},
+  {"id": 23, "key": "stairs", "nameZh": "台阶", "walkable": true, "swim": false, "encounter": false, "tallGrass": false, "minimap": "#ffd45f", "speed": 0.9, "stairs": true},
   {"id": 24, "key": "dark_grass", "nameZh": "暗草丛", "walkable": true, "swim": false, "encounter": true, "tallGrass": true, "minimap": "#4a3a5c", "speed": 0.9},
   {"id": 25, "key": "ash", "nameZh": "火山灰", "walkable": true, "swim": false, "encounter": false, "tallGrass": false, "minimap": "#5e5552", "speed": 0.95},
   {"id": 26, "key": "crystal_floor", "nameZh": "晶石地", "walkable": true, "swim": false, "encounter": false, "tallGrass": false, "minimap": "#8fd3e8", "speed": 1},

@@ -80,9 +80,19 @@ jobs:
           if [ -n "$BASE" ] && [ "$HAS_TOKEN" = true ]; then echo "STATIC_CDN_BASE=$BASE" >> "$GITHUB_ENV"
           elif [ -n "$BASE" ]; then echo "::warning::STATIC_CDN_UPLOAD_TOKEN missing: building same-origin"; fi
 
-      - run: npm run build
+      # Preview ships the devtools build (ADR 0002 §9): scenario links for acceptance on a phone. Production ships the plain
+      # build and fails the deploy when the gate finds developer tooling in it.
+      - name: Build
+        run: |
+          if [ "$ENVIRONMENT" = preview ]; then
+            npm run build -- --mode devtools
+            echo "DEVTOOLS=true" >> "$GITHUB_ENV"
+          else
+            npm run build
+            npm run check:devgate
+          fi
       - name: Release stamp
-        run: node -e 'const e=process.env; require("fs").writeFileSync("dist/release.json", JSON.stringify({environment:e.ENVIRONMENT, version:e.VERSION, commit:e.SHA}))'
+        run: node -e 'const e=process.env; require("fs").writeFileSync("dist/release.json", JSON.stringify({environment:e.ENVIRONMENT, version:e.VERSION, commit:e.SHA, devtools:e.DEVTOOLS==="true"}))'
 
       - name: Upload static assets to Qiniu CDN
         if: env.STATIC_CDN_BASE != ''

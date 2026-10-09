@@ -2,6 +2,7 @@
 import type { SaveData } from '../../../shared/types.ts'
 import { t } from '../../../shared/content/index.ts'
 import type { UIPanel } from '../../contracts.ts'
+import { bindTextField } from '../focus.ts'
 import { button, el, panel } from '../widgets.ts'
 import { backPressed, pressed, uiSfx, type ScreenEnv } from './base.ts'
 import { SCREENS } from './config.ts'
@@ -11,17 +12,12 @@ function codePanel(env: ScreenEnv, build: (finish: () => void, area: HTMLTextAre
   return new Promise<void>((resolve) => {
     let done = false
     const area = el('textarea', { class: 'aps-code-area', attrs: { spellcheck: 'false', autocomplete: 'off', 'aria-label': t('screens.code.label') } })
-    const setText = (on: boolean) => {
-      if (on) ctx.input.setTextInputActive(true)
-      else requestAnimationFrame(() => requestAnimationFrame(() => { if (document.activeElement !== area) ctx.input.setTextInputActive(false) }))
-    }
-    area.addEventListener('focus', () => setText(true))
-    area.addEventListener('blur', () => setText(false))
+    const textMode = bindTextField(ctx.input, area)
     const finish = () => {
       if (done) return
       done = true
       area.blur()
-      setText(false)
+      textMode.release()
       ctx.ui.popPanel(p)
       resolve()
     }

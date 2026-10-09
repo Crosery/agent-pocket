@@ -2,6 +2,7 @@
 // applied), save (info + export / import code), key help (bindings from content/input.json), credits.
 import type { Settings } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
+import { fullscreenAvailable, isFullscreen, toggleFullscreen } from '../../core/fullscreen.ts'
 import { applyDocumentSettings } from '../../core/settings.ts'
 import { INPUT_BINDINGS } from '../config.ts'
 import { actionKeyLabel, button, el, tabs } from '../widgets.ts'
@@ -102,6 +103,19 @@ export function settingsScreen(env: ScreenEnv): Promise<void> {
         }))
         rows.push({ el: node, activate: () => set(stepSetting(fd, v, 1)), step: (d) => set(stepSetting(fd, v, d)) })
         group.append(node)
+      }
+      if (fullscreenAvailable() && document.documentElement.dataset.touchControls === 'on') {
+        const on = isFullscreen()
+        const node = el('div', { class: 'aps-set-row ap-cursor-host', attrs: { role: 'option' } }, [
+          el('span', { class: 'aps-set-label', text: t('screens.settings.field.fullscreen') }),
+          el('div', `aps-toggle${on ? ' is-on' : ''}`, [el('span', 'aps-toggle-knob'), el('span', { class: 'aps-set-val', text: t(on ? 'screens.settings.on' : 'screens.settings.off') })]),
+        ])
+        const flip = () => void toggleFullscreen().then(() => { uiSfx(env, 'move'); render() })
+        const idx = rows.length
+        node.addEventListener('mouseenter', api.guard(() => { if (zone !== 'content' || row !== idx) { zone = 'content'; row = idx; paintCursor() } }))
+        node.addEventListener('click', api.guard(() => { zone = 'content'; row = idx; flip() }))
+        rows.push({ el: node, activate: flip, step: flip })
+        group?.append(node)
       }
       const reset = el('div', { class: 'aps-set-row aps-set-action ap-cursor-host', attrs: { role: 'option' } }, [el('span', { class: 'aps-set-label', text: t('screens.settings.resetDefaults') })])
       const doReset = () => api.run(async () => {

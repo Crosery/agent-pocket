@@ -100,6 +100,12 @@ export function sampleWalkHeight(sampler: TerrainSampler, x: number, y: number):
   return k === KIND_WATER || k === KIND_LAVA ? base - RENDER.terrain.liquidDrop : base
 }
 
+/** Rendered top of the terrain at float tile coords (stairs are the stepped tops the mesh draws, unlike sampleWalkHeight). */
+export function sampleSurfaceHeight(sampler: TerrainSampler, x: number, y: number): number {
+  const tx = Math.floor(x), ty = Math.floor(y)
+  return sampler.inside(tx, ty) ? sampler.topAt(tx, ty, x - tx, y - ty) : 0
+}
+
 export function createTerrainSampler(map: GameMap): TerrainSampler {
   return map.infinite ? createInfiniteSampler(map, map.infinite) : createFiniteSampler(map)
 }
@@ -607,7 +613,9 @@ export function buildChunk(ctx: ChunkContext, cx: number, cy: number, size: numb
         const lo = ramp.dir > 0 ? sA : 1 - sB, hi = ramp.dir > 0 ? sB : 1 - sA
         const [lx0, lz0, lx1, lz1] = ramp.axis === 'x' ? [lo, 0, hi, 1] : [0, lo, 1, hi]
         const h = sampler.topAt(tx, ty, (lx0 + lx1) / 2, (lz0 + lz1) / 2)
-        hface(matte, tx, ty, lx0, lz0, lx1, lz1, h, t.key, t.key, null)
+        // Stairs are the authored traversal affordance; a warm highlight keeps each tread readable
+        // against the surrounding cliff without changing the HD-2D material or camera style.
+        hface(matte, tx, ty, lx0, lz0, lx1, lz1, h, t.key, t.key, null, [1.16, 1.06, 0.84])
         if (i > 0) {
           const prev = sampler.topAt(tx, ty, ramp.axis === 'x' ? (ramp.dir > 0 ? lx0 - 0.01 : lx1 + 0.01) : 0.5, ramp.axis === 'y' ? (ramp.dir > 0 ? lz0 - 0.01 : lz1 + 0.01) : 0.5)
           const bnd = ramp.dir > 0 ? sA : 1 - sA

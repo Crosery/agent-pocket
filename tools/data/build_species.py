@@ -11,6 +11,7 @@ Output is laid out by tools/content_fmt.py; --check exits 1 if species.json / ro
 
 import hashlib
 import json
+import math
 import pathlib
 import re
 import subprocess
@@ -562,21 +563,73 @@ def size_for(s):
     return round(clamp(v, z["min"], z["max"]), z["round"])
 
 
+def scale_to(stats, target):
+    total = sum(stats[k] for k in STAT_KEYS)
+    f = target / total
+    out = {k: max(1, round(stats[k] * f)) for k in STAT_KEYS}
+    drift = target - sum(out.values())
+    big = max(STAT_KEYS, key=lambda k: out[k])
+    out[big] += drift
+    return out
+
+
 def fit_bst(s):
+    """Rarity band fit: researched stats outside [floor, hi] are scaled proportionally to the nearest edge.
+    The floor sits `bandFloor` of the way up the band so no species is a weak outlier of its rarity."""
     lo, hi = RARITY[s["rarity"]]["bst"]
+    lo = lo + RULES["statShape"]["bandFloor"] * (hi - lo)
     total = bst(s)
     if lo <= total <= hi:
         return dict(s["baseStats"])
-    target = clamp(total, lo, hi)
-    f = target / total
-    stats = {k: max(1, round(s["baseStats"][k] * f)) for k in STAT_KEYS}
-    drift = target - sum(stats.values())
-    big = max(STAT_KEYS, key=lambda k: stats[k])
-    stats[big] += drift
+    target = round(clamp(total, lo, hi))
     NOTES.append(
-        f"{s['id']}: BST {total} outside {s['rarity']} [{lo},{hi}] -> scaled to {target}"
+        f"{s['id']}: BST {total} outside {s['rarity']} [{round(lo)},{hi}] -> scaled to {target}"
     )
-    return stats
+    return scale_to(s["baseStats"], target)
+
+
+def enforce_evolution(fitted, roster):
+    """Evolution step rule (statShape.evolutionStep): an evolved form is `min`..`max` times its pre-evolution's BST.
+    The side that can move inside its rarity band does; links no band combination can satisfy are left as researched."""
+    ss = RULES["statShape"]
+    es = ss["evolutionStep"]
+    by_id = {s["id"]: s for s in roster}
+    links = [(s["id"], s["evolvesTo"]) for s in roster if s.get("evolvesTo")]
+
+    def edges(sid):
+        lo, hi = RARITY[by_id[sid]["rarity"]]["bst"]
+        return lo + ss["bandFloor"] * (hi - lo), hi
+
+    for _ in range(3):
+        for a, e in links:
+            fa, ha = edges(a)
+            fe, he = edges(e)
+            ba, be = sum(fitted[a].values()), sum(fitted[e].values())
+            na, ne = ba, be
+            if be < ba * es["min"]:
+                ne = min(he, max(be, math.ceil(ba * es["min"])))
+                na = max(fa, min(ba, math.floor(ne / es["min"])))
+            elif be > ba * es["max"]:
+                na = max(ba, min(ha, math.ceil(be / es["max"])))
+                ne = max(fe, min(be, math.floor(na * es["max"])))
+            if (na, ne) != (ba, be):
+                fitted[a] = scale_to(fitted[a], int(na))
+                fitted[e] = scale_to(fitted[e], int(ne))
+                NOTES.append(f"{a} -> {e}: evolution step set to BST {int(na)} -> {int(ne)}")
+    return fitted
+
+
+def shape_stats(stats):
+    """Speed band (species_rules.json statShape): compress speed toward the pivot, refund the difference."""
+    sb = RULES["statShape"]["speedBand"]
+    out = dict(stats)
+    delta = round((out["spe"] - sb["pivot"]) * (1 - sb["keep"]))
+    out["spe"] -= delta
+    refund = sb["refund"]
+    share, rest = divmod(delta, len(refund))
+    for i, k in enumerate(refund):
+        out[k] += share + (1 if i < rest else 0)
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -626,8 +679,9 @@ def build():
     learnsets = {}
     out = []
     starters = set(RULES["starters"])
+    fitted = enforce_evolution({s["id"]: fit_bst(s) for s in roster}, roster)
     for dex, s in enumerate(order, start=1):
-        s = {**s, "baseStats": fit_bst(s)}
+        s = {**s, "baseStats": shape_stats(fitted[s["id"]])}
         for t in s["types"]:
             if t not in TYPE_IDS:
                 raise SystemExit(f"{s['id']}: unknown type {t}")
@@ -659,7 +713,11 @@ def build():
             "stage": s["stage"],
         }
         if s.get("evolvesTo"):
-            sp["evolvesTo"] = {"id": s["evolvesTo"], "level": s["evolveLevel"]}
+            evo = RULES.get("evolution", {})
+            kind = s.get("evolutionKind") or evo.get("defaultKind", "post-training")
+            if kind not in {"post-training", "version"}:
+                raise SystemExit(f"{s['id']}: invalid evolutionKind {kind!r}")
+            sp["evolvesTo"] = {"id": s["evolvesTo"], "level": s["evolveLevel"], "kind": kind}
         if p:
             sp["evolvesFrom"] = p
         sp.update(

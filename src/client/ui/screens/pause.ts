@@ -81,7 +81,7 @@ export function pauseScreen(env: ScreenEnv): Promise<void> {
     f.body.append(el('div', 'aps-pause-layout', [cardSlot, menu]))
     api.root.append(f.el)
 
-    const makeNav = (initial = 0) => createGridNav({ count: entries.length, cols: isCompact() ? 2 : 1, initial, audio: ctx.audio, onChange: () => paint() })
+    const makeNav = (initial = 0) => createGridNav({ count: entries.length, cols: isCompact() || document.documentElement.dataset.touchControls === 'on' ? 2 : 1, initial, audio: ctx.audio, onChange: () => paint() })
     let nav = makeNav()
     const paint = () => {
       rowsEl.forEach((r, i) => {
@@ -113,7 +113,9 @@ export function pauseScreen(env: ScreenEnv): Promise<void> {
         case 'quests': await env.screens.quests(); break
         case 'research': await researchScreen(env); break
         case 'intel': await intelScreen(env); break
-        case 'online': await env.screens.online(); break
+        case 'manual': await env.screens.manual(); break
+        case 'typeChart': await env.screens.typeChart(); break
+        case 'online': ctx.events.emit('screen:opened', { screen: 'online' }); await env.screens.online(); break
         case 'settings': await env.screens.settings(); break
         case 'save':
           if (await ctx.ui.confirm(t('screens.pause.saveConfirm'))) {

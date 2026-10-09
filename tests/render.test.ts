@@ -3,7 +3,9 @@ import assert from 'node:assert/strict'
 import { CONTENT } from '../src/shared/content/index.ts'
 import type { GameMap, TerrainDef, WeatherId } from '../src/shared/types.ts'
 import type { WorldFx } from '../src/client/contracts.ts'
-import { RENDER, propStyle, sampleLighting, sunState, validateRenderContent, type LightingState } from '../src/client/render/config.ts'
+import { RENDER, lightingTier, propStyle, sampleLighting, sunState, validateRenderContent, type LightingState } from '../src/client/render/config.ts'
+import { createCloudTexture, rankSources } from '../src/client/render/world/scene-light.ts'
+import type { LightSource } from '../src/client/render/world/lights.ts'
 import { doorOffsetX, footprintCenter, footprintRect, stairsRamp, tileOf, walkHeight } from '../src/client/render/world/coords.ts'
 import { buildChunk, createTerrainSampler } from '../src/client/render/world/terrain.ts'
 import { createCameraRig } from '../src/client/render/world/camera.ts'
@@ -22,7 +24,7 @@ test('every prop has an explicit procedural style', () => {
 })
 
 test('every WorldFx kind and field weather has render data', () => {
-  const fx: Record<WorldFx, true> = { exclaim: true, question: true, grass: true, dust: true, sparkle: true, splash: true, heart: true, warp: true, levelup: true, shiny: true }
+  const fx: Record<WorldFx, true> = { exclaim: true, question: true, grass: true, dust: true, sparkle: true, splash: true, heart: true, warp: true, levelup: true, shiny: true, tapMarker: true, tapBlocked: true }
   for (const k of Object.keys(fx)) assert.ok(RENDER.fx.kinds[k]?.length, `fx "${k}" missing`)
   const fieldKinds = ['clear', 'rain', 'snow', 'sand', 'fog', 'aurora', 'ash']
   for (const k of fieldKinds) assert.ok(RENDER.weather[k], `weather "${k}" missing`)
@@ -153,4 +155,62 @@ test('camera rig: near map edges the focus stays inside the render.json focus-sa
       assert.ok(p.y <= safe.north + 1e-3 && p.y >= -safe.south - 1e-3, `zoom ${zoom} focus ${x},${z}: y ${p.y.toFixed(3)}`)
     }
   }
+})
+
+test('the moon travels across the night and the sun keeps a low-sun floor', () => {
+  const S = RENDER.sun
+  const night = (m: number) => sunState(m)
+  const a = night(S.sunset + 30), b = night(S.sunset + (1440 - S.sunset + S.sunrise) / 2), c = night(S.sunrise - 30)
+  for (const s of [a, b, c]) {
+    assert.equal(s.moon, true)
+    const el = Math.asin(s.dir[1]) * 180 / Math.PI
+    assert.ok(el >= S.moonMinElevationDeg - 0.01 && el <= S.moonMaxElevationDeg + 0.01, `moon elevation ${el}`)
+  }
+  assert.ok(Math.abs(a.dir[0] - c.dir[0]) > 0.3, 'moon azimuth must sweep between dusk and dawn')
+  assert.ok(b.dir[1] > a.dir[1] && b.dir[1] > c.dir[1], 'moon is highest mid-night')
+  const noon = sunState(720)
+  assert.ok(Math.asin(sunState(S.sunrise + 1).dir[1]) * 180 / Math.PI >= S.minElevationDeg - 0.01)
+  assert.ok(noon.dir[1] > sunState(S.sunrise + 60).dir[1])
+})
+
+test('time-of-day keys carry the lighting extras and golden hour is warmer than noon', () => {
+  const noon = sampleLighting(720), dusk = sampleLighting(1110), night = sampleLighting(0)
+  assert.ok(dusk.warmth > noon.warmth)
+  assert.ok(dusk.rim >= noon.rim && dusk.shaft > noon.shaft, 'rim light and shafts peak at dawn / dusk')
+  assert.ok(night.cloud === 0, 'no cloud shadows at night')
+  assert.ok(night.spriteFillIntensity > noon.spriteFillIntensity, 'sprites get a night fill')
+  assert.ok(night.sun !== noon.sun)
+})
+
+test('lighting tiers: the lowest tier keeps every new effect off, higher tiers scale up', () => {
+  const low = lightingTier('low'), high = lightingTier('high'), ultra = lightingTier('ultra')
+  assert.deepEqual([low.fieldLights, low.shafts, low.cloudShadows, low.spriteRim, low.spriteShadow, low.wetGround, low.splitTone], [0, 0, false, false, false, false, false])
+  assert.ok(high.fieldLights > 0 && high.shafts > 0 && high.cloudShadows)
+  assert.ok(ultra.fieldLights >= high.fieldLights && ultra.fieldLights <= RENDER.lights.field.max)
+})
+
+test('light field picks the nearest active sources and drops night-only lamps by day', () => {
+  const mk = (x: number, nightOnly: boolean, intensity = 1): LightSource => ({ x, y: 1, z: 0, color: null as never, intensity, radius: 4, nightOnly, phase: 0 })
+  const list = [mk(30, false), mk(2, true), mk(5, false), mk(9, true), mk(100, false), mk(1, false, 0)]
+  const day = rankSources(list, 0, 0, 0, 0, 40, 3)
+  assert.deepEqual(day.map((s) => s.x), [5, 30], 'lamps are off at noon, the dead one never ranks, far ones fall outside the radius')
+  const night = rankSources(list, 1, 0, 0, 0, 40, 3)
+  assert.deepEqual(night.map((s) => s.x), [2, 5, 9], 'nearest three at night')
+  assert.equal(rankSources(list, 1, 0, 0, 0, 40, 0).length, 0)
+})
+
+test('cloud texture tiles seamlessly and spans the coverage range', () => {
+  const size = 64
+  const tex = createCloudTexture(size, 3, 11)
+  const d = tex.image.data as Uint8Array
+  let lo = 255, hi = 0
+  for (const v of d) { lo = Math.min(lo, v); hi = Math.max(hi, v) }
+  assert.ok(lo < 90 && hi > 165, `texture range ${lo}..${hi} must cross the coverage threshold`)
+  // neighbouring texels (also across the wrap seam) differ by little: the noise is continuous and periodic
+  let worst = 0
+  for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+    worst = Math.max(worst, Math.abs(d[y * size + x] - d[y * size + (x + 1) % size]), Math.abs(d[y * size + x] - d[((y + 1) % size) * size + x]))
+  }
+  assert.ok(worst < 40, `max neighbour step ${worst}`)
+  assert.ok(RENDER.lighting.cloud.coverage > lo / 255 && RENDER.lighting.cloud.coverage < hi / 255)
 })

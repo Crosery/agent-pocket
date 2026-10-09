@@ -36,6 +36,7 @@
     "archipelago": {"count": 14, "radius": [6, 14], "level": 1, "noise": 0.4, "minGap": 7, "spacing": 44, "tries": 6000, "idPrefix": "isle-"},
     "islandNoise": {"scale": 12, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "islands"},
     "lakeNoise": {"scale": 12, "octaves": 3, "gain": 0.5, "lacunarity": 2, "salt": "lakes"},
+    "startFlat": {"radius": 72, "transition": 72, "level": 0, "jitter": 14, "minPatch": 60, "noise": {"scale": 36, "octaves": 2, "gain": 0.5, "lacunarity": 2, "salt": "start-flat"}},
     "islands": [
       {"id": "island-1", "region": "sea", "x": 243, "y": 150, "radius": 7, "level": 1, "noise": 0.3},
       {"id": "island-2", "region": "sea", "x": 240, "y": 212, "radius": 6, "level": 1, "noise": 0.3},
@@ -92,8 +93,20 @@
     "bridgeTerrain": "bridge",
     "stairsTerrain": "stairs",
     "accessStairSpacing": 18,
+    "accessStairMarker": "lamp",
+    "levelMap": [0, 1, 1, 1, 1, 2, 2, 3, 4, 5, 6, 7, 8],
     "access": {"minPocket": 16, "maxRepairs": 900, "propCost": 4}
   },
-  "encounters": {"minSlots": 4, "maxSpecies": 10, "rareMinOrder": 2, "nightPhase": "night", "rarityLevelCaps": [{"maxLevel": 9, "maxOrder": 0, "onlyTypes": ["chat", "write", "sound", "vision", "motion"]}, {"maxLevel": 14, "maxOrder": 1}]},
+  "encounters": {
+    "minSlots": 4,
+    "maxSpecies": 12,
+    "rareMinOrder": 2,
+    "nightPhase": "night",
+    "coverage": {"maxOrder": 3},
+    "rarityLevelCaps": [
+      {"maxLevel": 9, "maxOrder": 0, "onlyTypes": ["chat", "write", "sound", "vision", "motion"]},
+      {"maxLevel": 14, "maxOrder": 1}
+    ]
+  },
   "text": {"gymSign": "{town}道馆\n{type}系 · {leader}", "routeSign": "{route}\n{from} ⇄ {to}", "caveSign": "{cave}\n通往{region}", "dungeonSign": "{dungeon}\n共 {floors} 层 · 推荐 Lv.{level}+"}
 }

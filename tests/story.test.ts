@@ -1,3 +1,4 @@
+import { TUTORIAL } from '../src/client/onboarding/config.ts'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { CONTENT, typeEffectiveness, type Content } from '../src/shared/content/index.ts'
@@ -122,7 +123,7 @@ test('trainers: references, resolved species, levels, sprites', () => {
 const KNOWN_OPS = new Set([
   'say', 'choice', 'setFlag', 'ifFlag', 'ifBadges', 'ifItem', 'ifCaught', 'giveItem', 'takeItem', 'giveMoney', 'takeMoney',
   'giveCreature', 'chooseStarter', 'battle', 'wildBattle', 'heal', 'shop', 'openBox', 'quest', 'warp', 'moveNpc', 'faceNpc',
-  'hideNpc', 'showNpc', 'sfx', 'bgm', 'wait', 'fade', 'unlockTown', 'setRespawn', 'end',
+  'hideNpc', 'showNpc', 'sfx', 'bgm', 'wait', 'fade', 'unlockTown', 'setRespawn', 'end', 'exchange', 'teach', 'openTypeChart',
 ])
 
 test('scripts are well-formed recursively and every reference resolves', () => {
@@ -186,6 +187,7 @@ test('flags read by scripts are written somewhere or are client conventions', ()
   const f = STORY_CONTENT.meta.flags
   const written = new Set(everyStep.filter(({ s }) => s.op === 'setFlag').map(({ s }) => (s as { flag: string }).flag))
   for (const { s } of everyStep) if (s.op === 'battle' && s.lossFlag) written.add(s.lossFlag)
+  for (const { s } of everyStep) if (s.op === 'teach') written.add(`${TUTORIAL.curriculum.flagPrefix}${s.lesson}`)
   const groundItems = new Set(Object.values(world.maps).flatMap((m) => m.items.map((i) => i.id)))
   const ok = (flag: string) => written.has(flag) || flag === f.starter
     || (flag.startsWith(f.trainerWon) && !!world.trainers[flag.slice(f.trainerWon.length)])

@@ -19,6 +19,9 @@ export function shopBuyPrice(item: ItemDef, mul = 1): number {
   return mul === 1 ? item.price : Math.max(1, Math.round(item.price * mul))
 }
 
+/** The English name when it adds something (75 of 190 species are named identically in both languages). */
+export const extraEnglishName = (sp: Pick<SpeciesDef, 'nameZh' | 'nameEn'>): string | null => (sp.nameEn && sp.nameEn !== sp.nameZh ? sp.nameEn : null)
+
 export const canSell = (item: ItemDef): boolean => item.category !== 'key' && item.price > 0
 
 /** Largest quantity purchasable with `money` (0 when unaffordable). */

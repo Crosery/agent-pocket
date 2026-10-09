@@ -4,7 +4,7 @@
 import type { EventBus, GameEvents, NetClient, NetStatus } from '../contracts.ts'
 import type { ClientMsg, LeaderboardEntry, PlayerState, PublicProfile, ServerMsg } from '../../shared/protocol.ts'
 import type { Dir } from '../../shared/types.ts'
-import { CONTENT } from '../../shared/content/index.ts'
+import { CONTENT, t } from '../../shared/content/index.ts'
 import { NET_CLIENT } from './config.ts'
 import { pushSample, sampleAt, type Sample } from './interp.ts'
 
@@ -155,10 +155,11 @@ export function createNetClient(
     clearRemotes()
     flushLeaderboardWaiters(null)
     if (!wanted) { setStatus('offline'); return }
-    if (code === codes.duplicate || code === codes.version) {
-      // Another tab took over this player, or the client is outdated: retrying would only fight it.
+    if (code === codes.duplicate || code === codes.version || code === codes.devNotAllowed) {
+      // Another tab took over this player, the client is outdated, or this devtools build is refused: retrying would only fight it.
       wanted = false
       setStatus('error')
+      if (code === codes.devNotAllowed) events.emit('toast', { text: t('net.error.dev_not_allowed'), kind: 'warn' })
       return
     }
     scheduleReconnect()

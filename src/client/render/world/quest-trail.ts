@@ -76,8 +76,9 @@ export function createQuestTrail() {
           compose(glow, i, (isArrived ? 0.48 : next ? 0.48 : 0.38) + pulse * (next ? 0.15 : 0.09), 0.058)
           compose(mesh, i, (isArrived ? 0.34 : next ? 0.24 : 0.21) + pulse * (next ? 0.07 : 0.035), 0.074)
         }
-        glowMaterial.opacity = 0.12 + Math.sin(time * 4.6) * 0.12 + 0.12
-        material.opacity = 0.72 + Math.sin(time * 4.6) * 0.16 + 0.08
+        const routePulse = (Math.sin(time * 5.6) + 1) * 0.5
+        glowMaterial.opacity = 0.2 + routePulse * 0.4
+        material.opacity = 0.78 + routePulse * 0.22
       }
       glow.instanceMatrix.needsUpdate = true
       mesh.instanceMatrix.needsUpdate = true

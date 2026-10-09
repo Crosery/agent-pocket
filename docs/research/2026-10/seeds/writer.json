@@ -1,0 +1,26 @@
+{
+ "vendor": "writer",
+ "count": 1,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "palmyrax5",
+   "names": [
+    "Writer: Palmyra X5"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-01-21"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "writer/palmyra-x5"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

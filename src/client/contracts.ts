@@ -37,6 +37,10 @@ export interface GameEvents {
   'battle:end': { kind: BattleKind; result: BattleResult }
   /** Every batch of battle events as the battle client plays it (research / roaming-legend hp tracking). */
   'battle:events': { kind: BattleKind; events: readonly BattleEvent[] }
+  /** A full-screen panel opened (id = its aps-<id> class; 'online' for the multiplayer hub). Drives teaching tips. */
+  'screen:opened': { screen: string }
+  /** A world event became active (events-runtime). */
+  'world:event': { id: string; hidden: boolean }
   'settings:changed': { settings: Settings }
   'net:status': { status: NetStatus }
   'chat:message': { from: string; name: string; channel: ChatChannel; text: string; at: number }
@@ -59,6 +63,7 @@ export type InputAction =
   | 'chat'         // T (Enter when chat focused sends)
   | 'minimap'      // N toggles minimap size
   | 'bike'         // B
+  | 'bag'          // touch button only (opens the field bag)
   | 'quickSave'    // F5
   | 'debug'        // F3
 
@@ -78,6 +83,10 @@ export interface Input {
   readonly lastDevice: 'keyboard' | 'gamepad' | 'touch'
   /** Show/hide on-screen touch controls (virtual stick + A/B/Menu). */
   setTouchControlsVisible(visible: boolean): void
+  /** Re-places the touch pad after a settings change (hand, size) or a rotation; publishes the --ap-touch-* insets. */
+  refreshTouchLayout(): void
+  /** A short, still touch on the game surface (client px). Fires only while the touch pad owns the screen. */
+  onWorldTap(fn: (p: { x: number; y: number }) => void): () => void
 }
 
 export interface AudioManager {
@@ -162,6 +171,10 @@ export interface PostParams {
   exposure: number
   pixelScale: number          // internal res divisor
   flash: number               // 0..1 white flash overlay (animated by flash())
+  /** Split toning: RGB multipliers for shadows / highlights blended by `split` (0 = off, 1 = full). */
+  shadowTint?: [number, number, number]
+  highlightTint?: [number, number, number]
+  split?: number
 }
 
 export interface RenderView {
@@ -232,12 +245,14 @@ export interface CreatureActor {
   setShiny(s: boolean): void
   /** Rarity aura (glow ring/particles) for SR+ wild creatures. */
   setAura(color: string | null): void
+  /** The player's follower: drawn after everything but the player and never over them, however close or large. */
+  setCompanion?(on: boolean): void
   bubble(text: string, ms?: number): void
   update(dtSec: number): void
   dispose(): void
 }
 
-export type WorldFx = 'exclaim' | 'question' | 'grass' | 'dust' | 'sparkle' | 'splash' | 'heart' | 'warp' | 'levelup' | 'shiny'
+export type WorldFx = 'exclaim' | 'question' | 'grass' | 'dust' | 'sparkle' | 'splash' | 'heart' | 'warp' | 'levelup' | 'shiny' | 'tapMarker' | 'tapBlocked'
 
 export interface WorldWeather { kind: FieldWeatherKind; intensity: number }
 
@@ -340,6 +355,12 @@ export interface ChatUI {
   setVisible(v: boolean): void
 }
 
+export interface TypeChartOptions {
+  view?: 'type' | 'grid' | 'loops'
+  /** Type shown first (per-type view) or under the cursor (grid view). */
+  type?: string
+}
+
 /** High-level screens (src/client/ui/screens/*). All resolve when closed. */
 export interface Screens {
   title(hasSave: boolean): Promise<'continue' | 'new' | 'import' | 'settings'>
@@ -352,6 +373,12 @@ export interface Screens {
   dex(): Promise<void>
   /** priceMul: buy-price multiplier per item id (active world events, e.g. sales); absent = list price. */
   shop(itemIds: string[], opts?: { priceMul?: Record<string, number> }): Promise<void>
+  /** Barter screen of an exchange desk (content/exchange.json). */
+  exchange(desk: string): Promise<void>
+  /** 教学手册: every curriculum lesson, re-readable (content/tutorial.json curriculum). */
+  manual(): Promise<void>
+  /** 属性克制表: per-type matchups, the full grid and the memory loops, all read from content/types.json. */
+  typeChart(opts?: TypeChartOptions): Promise<void>
   box(): Promise<void>
   worldMap(opts: { fly: boolean }): Promise<string | null>  // town id for fly
   quests(): Promise<void>

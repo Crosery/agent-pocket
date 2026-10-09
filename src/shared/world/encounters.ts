@@ -42,6 +42,19 @@ function nightBoost(s: SpeciesDef, c: Content): number {
 
 interface Candidate { s: SpeciesDef; min: number; max: number; w: number }
 
+/** One slot per species, or a day and a night slot when the species has a night-time type boost. */
+function slotsOf(x: Candidate, rules: EncounterRules, c: Content): (EncounterSlot & { order: number })[] {
+  const night = rules.nightPhase as TimeOfDay
+  const notNight = c.config.time.phases.map((p) => p.id).filter((p) => p !== night)
+  const order = c.rarityById[x.s.rarity]?.order ?? 0
+  const boost = nightBoost(x.s, c)
+  if (boost === 1) return [{ species: x.s.id, minLevel: x.min, maxLevel: x.max, weight: x.w, order }]
+  return [
+    { species: x.s.id, minLevel: x.min, maxLevel: x.max, weight: x.w, time: notNight, order },
+    { species: x.s.id, minLevel: x.min, maxLevel: x.max, weight: x.w * boost, time: [night], order },
+  ]
+}
+
 function candidates(biomes: string[], range: Vec2, c: Content, allowStarters: boolean, cap?: { maxOrder: number; onlyTypes?: string[] }): Candidate[] {
   const out: Candidate[] = []
   for (const s of c.speciesList) {
@@ -79,19 +92,9 @@ export function computeEncounters(q: EncounterQuery, rules: EncounterRules, seed
     }
     if (picked.size > 0) break
   }
-  const night = rules.nightPhase as TimeOfDay
-  const notNight = c.config.time.phases.map((p) => p.id).filter((p) => p !== night)
   type Slot = EncounterSlot & { order: number }
   let slots: Slot[] = []
-  for (const x of [...picked.values()].sort((a, b) => a.s.dexNo - b.s.dexNo)) {
-    const order = c.rarityById[x.s.rarity]?.order ?? 0
-    const boost = nightBoost(x.s, c)
-    if (boost === 1) slots.push({ species: x.s.id, minLevel: x.min, maxLevel: x.max, weight: x.w, order })
-    else {
-      slots.push({ species: x.s.id, minLevel: x.min, maxLevel: x.max, weight: x.w, time: notNight, order })
-      slots.push({ species: x.s.id, minLevel: x.min, maxLevel: x.max, weight: x.w * boost, time: [night], order })
-    }
-  }
+  for (const x of [...picked.values()].sort((a, b) => a.s.dexNo - b.s.dexNo)) slots.push(...slotsOf(x, rules, c))
   // Too few species overall: split the widest level bands so the table still has enough slots.
   while (slots.length > 0 && slots.length < rules.minSlots) {
     let wi = 0
@@ -109,4 +112,59 @@ export function computeEncounters(q: EncounterQuery, rules: EncounterRules, seed
     slots = slots.map((s) => (s.order >= rules.rareMinOrder || (!anyRare && maxOrder > minOrder && s.order === maxOrder) ? { ...s, rare: true, weight: s.weight * boost } : s))
   }
   return slots.map(({ order: _o, ...rest }) => rest)
+}
+
+export interface CoverageTable {
+  key: string
+  biome: string
+  /** Mutated in place: missing species are appended. */
+  encounters: EncounterSlot[]
+  levelRange?: Vec2
+}
+
+/**
+ * World-level guarantee that every wild-obtainable base form appears in at least one encounter table, so adding
+ * species cannot make any of them unobtainable. Base forms (no pre-evolution) up to `rules.coverage.maxOrder`
+ * that are in no table are appended to the smallest eligible table (habitat, level and early-game rarity caps
+ * as in `computeEncounters`). Starters are gifts, not wild. Returns the species no table could take.
+ */
+export function ensureEncounterCoverage(tables: CoverageTable[], rules: EncounterRules, seed: number, c: Content = CONTENT): string[] {
+  const maxOrder = rules.coverage?.maxOrder
+  if (maxOrder === undefined) return []
+  const wild = tables.filter((t) => t.encounters.length > 0)
+  const seen = new Set<string>()
+  const size = new Map<CoverageTable, number>()
+  for (const t of wild) {
+    const own = new Set(t.encounters.map((e) => e.species))
+    size.set(t, own.size)
+    for (const id of own) seen.add(id)
+  }
+  const unplaced: string[] = []
+  for (const s of c.speciesList) {
+    if (s.evolvesFrom || s.starter || seen.has(s.id) || (c.rarityById[s.rarity]?.order ?? 0) > maxOrder) continue
+    const w = baseWeight(s, c)
+    const order = c.rarityById[s.rarity]?.order ?? 0
+    const sid = hashString(s.id)
+    let best: { t: CoverageTable; x: Candidate; size: number; h: number } | undefined
+    if (w > 0) {
+      for (const t of wild) {
+        if (!s.habitats.includes(t.biome)) continue
+        const lo = t.levelRange?.[0] ?? Math.min(...t.encounters.map((e) => e.minLevel))
+        const hi = t.levelRange?.[1] ?? Math.max(...t.encounters.map((e) => e.maxLevel))
+        const cap = rules.rarityLevelCaps?.find((x) => hi <= x.maxLevel)
+        if (cap && (order > cap.maxOrder || (cap.onlyTypes && !s.types.every((ty) => cap.onlyTypes!.includes(ty))))) continue
+        const min = Math.max(lo, wildMinLevel(s, c))
+        if (min > hi) continue
+        const n = size.get(t)!
+        const h = hash3(seed, sid, hashString(t.key))
+        if (!best || n < best.size || (n === best.size && h < best.h)) best = { t, x: { s, min, max: hi, w }, size: n, h }
+      }
+    }
+    if (!best) { unplaced.push(s.id); continue }
+    const rare = order >= rules.rareMinOrder
+    for (const { order: _o, ...slot } of slotsOf(best.x, rules, c)) best.t.encounters.push(rare ? { ...slot, rare: true } : slot)
+    size.set(best.t, best.size + 1)
+    seen.add(s.id)
+  }
+  return unplaced
 }

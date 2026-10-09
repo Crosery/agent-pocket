@@ -24,7 +24,7 @@
     "requestAbortErrors": ["not_found", "busy", "self_busy", "self_target", "trade_pending", "rate_limited", "trade_unavailable", "trade_not_found", "too_far"],
     "sessionErrors": ["trade_invalid_creature", "trade_incomplete", "trade_not_found", "trade_unavailable", "rate_limited"]
   },
-  "online": {"tabs": ["players", "leaderboard", "profile"], "playerActions": ["whisper", "inspect", "trade", "battle"], "visibleRows": 7, "listWidth": 300, "avatarIconSize": 16, "partyIconSize": 28, "profileAvatarSize": 64, "inspectTimeoutMs": 5000, "inspectAbortErrors": ["not_found", "rate_limited"], "leaderboardMaxAgeSeconds": 20, "statusRefreshMs": 500},
+  "online": {"tabs": ["players", "leaderboard", "profile"], "playerActions": ["whisper", "inspect", "trade", "battle"], "visibleRows": 7, "touchReservePx": 130, "listWidth": 300, "avatarIconSize": 16, "partyIconSize": 28, "profileAvatarSize": 64, "inspectTimeoutMs": 5000, "inspectAbortErrors": ["not_found", "rate_limited"], "leaderboardMaxAgeSeconds": 20, "statusRefreshMs": 500},
   "emotes": ["greet", "happy", "love", "surprise", "question", "awkward", "angry", "music", "thanks", "gg"],
   "presence": {"viewRadiusTiles": 48, "leaveMarginTiles": 6, "tradeRangeTiles": 64, "pvpRangeTiles": 64}
 }

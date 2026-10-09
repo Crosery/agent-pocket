@@ -1,0 +1,365 @@
+{
+ "vendor": "stepfun",
+ "count": 8,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "step132k",
+   "names": [
+    "Step 1 (32K)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:stepfun-ai": "2025-01-01",
+    "modelsdev:stepfun": "2025-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:stepfun-ai": [
+     "step-1-32k"
+    ],
+    "modelsdev:stepfun": [
+     "step-1-32k"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "step216k",
+   "names": [
+    "Step 2 (16K)"
+   ],
+   "releaseDateHints": {
+    "modelsdev:stepfun-ai": "2025-01-01",
+    "modelsdev:stepfun": "2025-01-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:stepfun-ai": [
+     "step-2-16k"
+    ],
+    "modelsdev:stepfun": [
+     "step-2-16k"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "step35flash",
+   "names": [
+    "StepFun: Step 3.5 Flash",
+    "Step 3.5 Flash",
+    "Step 3.5 Flash 2603",
+    "Step 3.5 Flash (Deep Infra)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-01-29",
+    "modelsdev:empiriolabs": "2026-04-02",
+    "modelsdev:nano-gpt": "2026-01-29",
+    "modelsdev:stepfun-ai-step-plan": "2026-01-29",
+    "modelsdev:kilo": "2026-01-29",
+    "modelsdev:stepfun-step-plan": "2026-01-29",
+    "modelsdev:openrouter": "2026-01-29",
+    "modelsdev:huggingface": "2026-01-29",
+    "modelsdev:stepfun-ai": "2026-04-02",
+    "modelsdev:edenai": "2026-01-29",
+    "modelsdev:stepfun": "2026-01-29"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "stepfun/step-3.5-flash"
+    ],
+    "modelsdev:empiriolabs": [
+     "step-3-5-flash",
+     "step-3-5-flash-2603"
+    ],
+    "modelsdev:nano-gpt": [
+     "stepfun-ai/step-3.5-flash-2603",
+     "stepfun-ai/step-3.5-flash"
+    ],
+    "modelsdev:stepfun-ai-step-plan": [
+     "step-3.5-flash-2603",
+     "step-3.5-flash"
+    ],
+    "modelsdev:kilo": [
+     "stepfun/step-3.5-flash"
+    ],
+    "modelsdev:stepfun-step-plan": [
+     "step-3.5-flash-2603",
+     "step-3.5-flash"
+    ],
+    "modelsdev:openrouter": [
+     "stepfun/step-3.5-flash"
+    ],
+    "modelsdev:huggingface": [
+     "stepfun-ai/Step-3.5-Flash"
+    ],
+    "modelsdev:stepfun-ai": [
+     "step-3.5-flash",
+     "step-3.5-flash-2603"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/stepfun-ai/Step-3.5-Flash"
+    ],
+    "modelsdev:stepfun": [
+     "step-3.5-flash-2603",
+     "step-3.5-flash"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "steptts2",
+   "names": [
+    "Step TTS 2"
+   ],
+   "releaseDateHints": {
+    "modelsdev:stepfun-ai": "2026-03-01",
+    "modelsdev:stepfun": "2026-03-01"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->audio"
+   ],
+   "catalogIds": {
+    "modelsdev:stepfun-ai": [
+     "step-tts-2"
+    ],
+    "modelsdev:stepfun": [
+     "step-tts-2"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "stepaudio25tts",
+   "names": [
+    "StepAudio 2.5 TTS"
+   ],
+   "releaseDateHints": {
+    "modelsdev:stepfun-ai": "2026-04-16",
+    "modelsdev:stepfun": "2026-04-16"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->audio"
+   ],
+   "catalogIds": {
+    "modelsdev:stepfun-ai": [
+     "stepaudio-2.5-tts"
+    ],
+    "modelsdev:stepfun": [
+     "stepaudio-2.5-tts"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "stepaudio25asr",
+   "names": [
+    "StepAudio 2.5 ASR"
+   ],
+   "releaseDateHints": {
+    "modelsdev:stepfun-ai": "2026-04-24",
+    "modelsdev:stepfun": "2026-04-24"
+   },
+   "openWeights": false,
+   "modalities": [
+    "audio->text"
+   ],
+   "catalogIds": {
+    "modelsdev:stepfun-ai": [
+     "stepaudio-2.5-asr"
+    ],
+    "modelsdev:stepfun": [
+     "stepaudio-2.5-asr"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "step37flash",
+   "names": [
+    "StepFun: Step 3.7 Flash",
+    "Step 3.7 Flash",
+    "Step 3.7 Flash (NovitaAI)",
+    "Step 3.7 Flash (Deep Infra)",
+    "Step 3.7 Flash (FlexAI)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-05-28",
+    "modelsdev:deepinfra": "2026-05-29",
+    "modelsdev:empiriolabs": "2026-05-29",
+    "modelsdev:stepfun-ai-step-plan": "2026-05-29",
+    "modelsdev:llmgateway-providers": "2026-05-29",
+    "modelsdev:kilo": "2026-05-29",
+    "modelsdev:stepfun-step-plan": "2026-05-29",
+    "modelsdev:openrouter": "2026-05-29",
+    "modelsdev:zenmux": "2026-05-29",
+    "modelsdev:huggingface": "2026-05-29",
+    "modelsdev:ambient": "2026-05-29",
+    "modelsdev:vercel": "2026-05-29",
+    "modelsdev:stepfun-ai": "2026-05-29",
+    "modelsdev:aihubmix": "2026-05-29",
+    "modelsdev:edenai": "2026-05-29",
+    "modelsdev:stepfun": "2026-05-29",
+    "modelsdev:kenari": "2026-05-29",
+    "modelsdev:requesty": "2026-05-29",
+    "modelsdev:llmgateway": "2026-05-29"
+   },
+   "openWeights": true,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text,image->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "stepfun/step-3.7-flash"
+    ],
+    "modelsdev:deepinfra": [
+     "stepfun-ai/Step-3.7-Flash"
+    ],
+    "modelsdev:empiriolabs": [
+     "step-3-7-flash"
+    ],
+    "modelsdev:stepfun-ai-step-plan": [
+     "step-3.7-flash"
+    ],
+    "modelsdev:llmgateway-providers": [
+     "novita/step-3.7-flash"
+    ],
+    "modelsdev:kilo": [
+     "stepfun/step-3.7-flash"
+    ],
+    "modelsdev:stepfun-step-plan": [
+     "step-3.7-flash"
+    ],
+    "modelsdev:openrouter": [
+     "stepfun/step-3.7-flash"
+    ],
+    "modelsdev:zenmux": [
+     "stepfun/step-3.7-flash"
+    ],
+    "modelsdev:huggingface": [
+     "stepfun-ai/Step-3.7-Flash"
+    ],
+    "modelsdev:ambient": [
+     "stepfun/step-3.7-flash"
+    ],
+    "modelsdev:vercel": [
+     "stepfun/step-3.7-flash"
+    ],
+    "modelsdev:stepfun-ai": [
+     "step-3.7-flash"
+    ],
+    "modelsdev:aihubmix": [
+     "step-3.7-flash"
+    ],
+    "modelsdev:edenai": [
+     "deepinfra/stepfun-ai/Step-3.7-Flash",
+     "flexai/Step-3.7-Flash"
+    ],
+    "modelsdev:stepfun": [
+     "step-3.7-flash"
+    ],
+    "modelsdev:kenari": [
+     "step-3-7-flash"
+    ],
+    "modelsdev:requesty": [
+     "step-3.7-flash"
+    ],
+    "modelsdev:llmgateway": [
+     "step-3.7-flash"
+    ]
+   },
+   "deprecated": true
+  },
+  {
+   "key": "step5preview",
+   "names": [
+    "StepFun: Step 5 Preview",
+    "Step 5 Preview",
+    "Step 5 Preview Free",
+    "Step 5 Preview (Tencent)"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2026-10-08",
+    "modelsdev:empiriolabs": "2026-09-16",
+    "modelsdev:nano-gpt": "2026-09-16",
+    "modelsdev:stepfun-ai-step-plan": "2026-09-16",
+    "modelsdev:kilo": "2026-09-16",
+    "modelsdev:stepfun-step-plan": "2026-09-16",
+    "modelsdev:openrouter": "2026-09-16",
+    "modelsdev:vercel": "2026-09-16",
+    "modelsdev:stepfun-ai": "2026-09-16",
+    "modelsdev:aihubmix": "2026-09-16",
+    "modelsdev:opencode-go": "2026-09-16",
+    "modelsdev:edenai": "2026-09-16",
+    "modelsdev:stepfun": "2026-09-16",
+    "modelsdev:opencode": "2026-09-16"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text+image+video->text",
+    "text,image,video->text",
+    "text,image->text",
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "stepfun/step-5-preview"
+    ],
+    "modelsdev:empiriolabs": [
+     "step-5-preview"
+    ],
+    "modelsdev:nano-gpt": [
+     "stepfun/step-5-preview"
+    ],
+    "modelsdev:stepfun-ai-step-plan": [
+     "step-5-preview"
+    ],
+    "modelsdev:kilo": [
+     "stepfun/step-5-preview"
+    ],
+    "modelsdev:stepfun-step-plan": [
+     "step-5-preview"
+    ],
+    "modelsdev:openrouter": [
+     "stepfun/step-5-preview"
+    ],
+    "modelsdev:vercel": [
+     "stepfun/step-5-preview"
+    ],
+    "modelsdev:stepfun-ai": [
+     "step-5-preview"
+    ],
+    "modelsdev:aihubmix": [
+     "step-5-preview"
+    ],
+    "modelsdev:opencode-go": [
+     "step-5-preview-free"
+    ],
+    "modelsdev:edenai": [
+     "tencent/step-5-preview"
+    ],
+    "modelsdev:stepfun": [
+     "step-5-preview"
+    ],
+    "modelsdev:opencode": [
+     "step-5-preview-free"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

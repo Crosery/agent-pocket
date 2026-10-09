@@ -4,7 +4,9 @@
 import type { BattleResult, Dir, FieldWeatherKind, ItemDef, NpcDef, ScriptStep } from '../../shared/types.ts'
 import type { DialogueLine, GameContext } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
+import type { IRng } from '../../shared/contracts.ts'
 import { Rng } from '../../shared/rng.ts'
+import { randomSeed } from '../core/rng-hub.ts'
 import { createCreature, creatureName, rollShiny } from '../../shared/creature.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
 import { dayOf, expandFlag, realDateOf } from '../../shared/gameplay/events.ts'
@@ -12,12 +14,15 @@ import { GAME, textOrKey } from './config.ts'
 import { addCreature, addItem, applyQuest, changeMoney, flagSet, healParty, markSeen, removeItem, rewardText } from './save-ops.ts'
 import { presentArrival } from './rarity-spawns.ts'
 import { scriptResearch } from './research.ts'
+import { TUTORIAL } from '../onboarding/config.ts'
 
 export type ScriptOutcome = 'done' | 'end' | 'abort'
 
 /** World services the runner drives (implemented by the overworld controller). */
 export interface ScriptHost {
   readonly ctx: GameContext
+  /** Stream for script rolls (gifted creatures); random when absent. */
+  readonly rng?: IRng
   moveNpc(id: string, path: Dir[], speed: number): Promise<void>
   faceNpc(id: string, dir: Dir): void
   setNpcHidden(id: string, hidden: boolean): void
@@ -45,7 +50,7 @@ const ballId = (ctx: GameContext): string | undefined => ctx.data.itemList.find(
 
 export function createScriptRunner(host: ScriptHost) {
   const { ctx } = host
-  const rng = new Rng((Date.now() ^ Math.floor(Math.random() * 0x7fffffff)) >>> 0)
+  const rng = host.rng ?? new Rng(randomSeed())
   const params = () => ({ name: ctx.save.name, currency: t('common.money') })
 
   const line = (text: string, speaker?: string, portrait?: string): DialogueLine => {
@@ -207,6 +212,21 @@ export function createScriptRunner(host: ScriptHost) {
           if (host.shopPriceMul) for (const id of ids) { const m = host.shopPriceMul(ctx.data.items[id]); if (m !== 1) priceMul[id] = m }
           await ctx.screens.shop(ids, Object.keys(priceMul).length ? { priceMul } : undefined)
         }
+        return 'done'
+      case 'exchange':
+        await ctx.screens.exchange(s.desk)
+        return 'done'
+      case 'teach': {
+        const flag = `${TUTORIAL.curriculum.flagPrefix}${s.lesson}`
+        if (!ctx.save.flags[flag]) {
+          ctx.save.flags[flag] = true
+          ctx.audio.playSfx(GAME.script.questSfx)
+          ctx.ui.toast(t('tutorial.taught', { lesson: t(`tutorial.manual.${s.lesson}.title`) }), 'info')
+        }
+        return 'done'
+      }
+      case 'openTypeChart':
+        await ctx.screens.typeChart({ view: s.view, type: s.type })
         return 'done'
       case 'openBox':
         await ctx.screens.box()

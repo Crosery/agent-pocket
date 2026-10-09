@@ -52,6 +52,9 @@
     },
     "intel": {
       "rows": [".ooooooooo.", "ommmmmmmmmo", "omooooommmo", "ommmmmmmmmo", "omoooommyyo", "ommmmmmmyyo", "omooooommmo", "ommmmmmmmmo", "omoooommmmo", "ommmmmmmmmo", ".ooooooooo."]
+    },
+    "typeChart": {
+      "rows": ["oooooooooo", "oeeonnoSSo", "oeeonnoSSo", "oooooooooo", "onnoSSoeeo", "onnoSSoeeo", "oooooooooo", "oSSoeeonno", "oSSoeeonno", "oooooooooo"]
     }
   },
   "glyphPalette": {"p": "#c58cff", "P": "#7a4ab8"},
@@ -100,6 +103,8 @@
       {"id": "bag", "action": "bag", "label": "screens.pause.bag", "glyph": "bag"},
       {"id": "map", "action": "map", "label": "screens.pause.map", "glyph": "map"},
       {"id": "quests", "action": "quests", "label": "screens.pause.quests", "glyph": "quests"},
+      {"id": "manual", "action": "manual", "label": "screens.pause.manual", "glyph": "quests"},
+      {"id": "typeChart", "action": "typeChart", "label": "screens.pause.typeChart", "glyph": "typeChart"},
       {"id": "research", "action": "research", "label": "screens.pause.research", "glyph": "research"},
       {"id": "intel", "action": "intel", "label": "screens.pause.intel", "glyph": "intel"},
       {"id": "online", "action": "online", "label": "screens.pause.online", "glyph": "online"},
@@ -169,7 +174,7 @@
     "searchMaxLen": 16,
     "companiesFromSeenOnly": true,
     "statBarMax": 180,
-    "radarSize": 60,
+    "radarSize": 46,
     "cryOnOpen": true
   },
   "shop": {"tabs": [{"id": "buy", "label": "screens.shop.tab.buy"}, {"id": "sell", "label": "screens.shop.tab.sell"}], "qtyMax": 99, "qtyBigStep": 10, "visibleRows": 11, "compactVisibleRows": 10},
@@ -206,6 +211,7 @@
       {"key": "bgmVolume", "kind": "slider", "section": "audio", "min": 0, "max": 1, "step": 0.1},
       {"key": "sfxVolume", "kind": "slider", "section": "audio", "min": 0, "max": 1, "step": 0.1},
       {"key": "textSpeed", "kind": "choice", "section": "game", "options": ["slow", "normal", "fast", "instant"]},
+      {"key": "battleSpeed", "kind": "choice", "section": "game", "options": [1, 1.5, 2], "format": "screens.settings.speedValue"},
       {"key": "autoRun", "kind": "toggle", "section": "game"},
       {"key": "showMinimap", "kind": "toggle", "section": "game"},
       {"key": "showNames", "kind": "toggle", "section": "game"},
@@ -216,7 +222,10 @@
       {"key": "dof", "kind": "toggle", "section": "video"},
       {"key": "bloom", "kind": "toggle", "section": "video"},
       {"key": "shadows", "kind": "toggle", "section": "video"},
-      {"key": "touchControls", "kind": "choice", "section": "control", "options": ["auto", "on", "off"]}
+      {"key": "touchControls", "kind": "choice", "section": "control", "options": ["auto", "on", "off"]},
+      {"key": "touchHand", "kind": "choice", "section": "control", "options": ["right", "left"]},
+      {"key": "touchSize", "kind": "choice", "section": "control", "options": ["small", "normal", "large"]},
+      {"key": "haptics", "kind": "toggle", "section": "control"}
     ],
     "saveActions": [
       {"id": "export", "label": "screens.settings.saveAction.export"},
@@ -234,6 +243,26 @@
     ]
   },
   "learnMove": {},
+  "typeChart": {
+    "views": ["type", "grid", "loops"],
+    "tones": {"good": {"bg": "#2f7d4f", "fg": "#ecfff2"}, "warn": {"bg": "#9a5a20", "fg": "#fff0dc"}, "bad": {"bg": "#a8372f", "fg": "#ffe6e2"}, "null": {"bg": "#2a2a37", "fg": "#d0d0dc"}},
+    "matchups": {
+      "attack": [
+        {"id": "strong", "mul": 2, "tone": "good"},
+        {"id": "resist", "mul": 0.5, "tone": "warn"},
+        {"id": "immune", "mul": 0, "tone": "null"}
+      ],
+      "defend": [
+        {"id": "weak", "mul": 2, "tone": "bad"},
+        {"id": "resist", "mul": 0.5, "tone": "good"},
+        {"id": "immune", "mul": 0, "tone": "null"}
+      ]
+    },
+    "picker": {"cols": 13, "compactCols": 7, "tileH": 32, "icon": 16},
+    "chip": {"icon": 14},
+    "grid": {"cellW": 26, "cellH": 16, "headW": 64, "headH": 24, "icon": 14, "sideW": 196},
+    "loops": {"ring": {"w": 150, "h": 140, "radius": 50, "node": 32, "gap": 3, "stroke": 2, "head": 7, "label": 14}}
+  },
   "moveCategoryColors": {"physical": "#ff9a7a", "special": "#8fc8ff", "status": "#c9c9d6"},
   "badges": {"tintLight": 0.55, "tintDark": -0.45, "cols": 4, "compactCols": 2}
 }

@@ -7,7 +7,7 @@ import { CONTENT, typeEffectiveness, validateContent } from '../src/shared/conte
 import type { SpeciesDef, StatKey } from '../src/shared/types.ts'
 import rules from '../tools/data/species_rules.json' with { type: 'json' }
 
-const ROSTER_SIZE = 190
+const ROSTER_SIZE = 448
 const STARTER_COUNT = 3
 const LEARNSET_SIZE: [number, number] = [10, 16]
 const LEVEL1_MOVES = 2
@@ -63,6 +63,7 @@ test('evolution chains are consistent', () => {
       assert.equal(to.stage, s.stage + 1, `${to.id} stage`)
       assert.equal(to.family, s.family, `${to.id} family`)
       assert.ok(s.evolvesTo.level > 1 && s.evolvesTo.level <= CONTENT.config.party.maxLevel, `${s.id} evolve level`)
+      assert.equal(s.evolvesTo.kind, 'post-training', `${s.id}: evolution should remain playable as post-training`)
       if (s.evolvesFrom) assert.ok(s.evolvesTo.level > byId[s.evolvesFrom].evolvesTo!.level, `${s.id}: evolve levels must increase`)
     }
     if (s.evolvesFrom) {
@@ -70,6 +71,14 @@ test('evolution chains are consistent', () => {
       assert.ok(from, `${s.id} <- missing ${s.evolvesFrom}`)
       assert.equal(from.evolvesTo?.id, s.id, `${from.id}.evolvesTo`)
     } else assert.equal(s.stage, 1, `${s.id}: stage ${s.stage} without a pre-evolution`)
+  }
+})
+
+test('no evolution leads into a species that is only reachable through its MYTHIC chain', () => {
+  const eventOnly = new Set(CONTENT.rarities.filter((r) => r.behavior?.spawn.length === 1 && r.behavior.spawn[0] === 'event').map((r) => r.id))
+  assert.ok(eventOnly.size > 0, 'event-only rarity tier')
+  for (const s of list) {
+    if (s.evolvesTo) assert.ok(!eventOnly.has(byId[s.evolvesTo.id].rarity), `${s.id} -> ${s.evolvesTo.id} bypasses the hidden chain`)
   }
 })
 

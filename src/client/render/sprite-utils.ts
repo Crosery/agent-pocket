@@ -48,16 +48,19 @@ export function sheetLayout(c: Content = CONTENT, texture?: THREE.Texture | null
   return { ...characterFrames(texture ? textureSize(texture).w : 0, s), rows, rowOf: s.sheetRows }
 }
 
-const opaqueTops = new WeakMap<object, { key: string; tops: Float32Array }>()
+/** Per image and per measuring grid: two actors may cut the same atlas differently, and one must not evict the other. */
+const opaqueTops = new WeakMap<object, Map<string, Float32Array>>()
 
-/** Top opaque texel of a cell, measured as a fraction above the card bottom. Read each loaded atlas only once. */
+/** Top opaque texel of a cell, measured as a fraction above the card bottom. Read each loaded atlas only once per grid. */
 export function spriteOpaqueTop(texture: THREE.Texture | null, col = 0, row = 0, cols = 1, rows = 1, alphaTest = 0.5): number {
   const image = texture?.image as HTMLCanvasElement | undefined
   if (!image || !(image.width > 0 && image.height > 0)) return 1
   const key = `${image.width}/${image.height}/${cols}/${rows}/${alphaTest}`
-  let cached = opaqueTops.get(image)
-  if (!cached || cached.key !== key) {
-    const tops = new Float32Array(cols * rows).fill(1)
+  let grids = opaqueTops.get(image)
+  if (!grids) opaqueTops.set(image, (grids = new Map()))
+  let tops = grids.get(key)
+  if (!tops) {
+    tops = new Float32Array(cols * rows).fill(1)
     try {
       const canvas = typeof image.getContext === 'function' ? image : createCanvas(image.width, image.height)
       const g = canvas.getContext('2d', { willReadFrequently: true })!
@@ -78,10 +81,9 @@ export function spriteOpaqueTop(texture: THREE.Texture | null, col = 0, row = 0,
     } catch {
       // A loading placeholder or unreadable cross-origin image keeps the full-card fallback.
     }
-    cached = { key, tops }
-    opaqueTops.set(image, cached)
+    grids.set(key, tops)
   }
-  return cached.tops[row * cols + col] ?? 1
+  return tops[row * cols + col] ?? 1
 }
 
 /**
@@ -230,44 +232,6 @@ if (uHue != 0.0 || uSaturation != 1.0) {
     setMap(m) { if (material.map !== m) { material.map = m; material.needsUpdate = true } },
     dispose() { material.dispose() },
   }
-}
-
-// ---------------------------------------------------------------------------
-// Shadows: the depth pass rotates each billboard to face the light so its shadow keeps a full silhouette
-// whatever the camera yaw. One shared material; three copies map/alphaTest from the sprite material.
-// ---------------------------------------------------------------------------
-
-export const spriteShadowUniforms = { uSpriteLightXZ: { value: new THREE.Vector2(0, 1) } }
-
-/** Call once per frame with the direction toward the shadow-casting light. */
-export function setSpriteShadowLight(dirToLight: THREE.Vector3): void {
-  const v = spriteShadowUniforms.uSpriteLightXZ.value.set(dirToLight.x, dirToLight.z)
-  if (v.lengthSq() < 1e-6) v.set(0, 1)
-  else v.normalize()
-}
-
-let sharedDepth: THREE.MeshDepthMaterial | null = null
-
-export function spriteDepthMaterial(): THREE.MeshDepthMaterial {
-  if (sharedDepth) return sharedDepth
-  const m = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, side: THREE.DoubleSide })
-  m.onBeforeCompile = (shader) => {
-    Object.assign(shader.uniforms, spriteShadowUniforms)
-    shader.vertexShader = shader.vertexShader
-      .replace('#include <common>', '#include <common>\nuniform vec2 uSpriteLightXZ;')
-      .replace('#include <begin_vertex>', `#include <begin_vertex>
-{
-  vec2 ax = vec2(modelMatrix[0][0], modelMatrix[0][2]);
-  float objYaw = atan(-ax.y, ax.x);
-  float wantYaw = atan(uSpriteLightXZ.x, uSpriteLightXZ.y);
-  float d = wantYaw - objYaw;
-  float c = cos(d), s = sin(d);
-  transformed.xz = vec2(transformed.x * c + transformed.z * s, -transformed.x * s + transformed.z * c);
-}`)
-  }
-  m.customProgramCacheKey = () => 'ap-sprite-depth-v1'
-  sharedDepth = m
-  return m
 }
 
 // ---------------------------------------------------------------------------

@@ -4,6 +4,7 @@
   "rumor": {"hiddenWeight": 2, "visibleWeight": 1, "chainWeight": 3, "legendWeight": 1.5, "flagPrefix": "rumor:", "heardWeightMul": 0.3},
   "visible": {"areaTiles": 48, "conditionBonus": 1.4},
   "legends": {"bandEdges": [0, 380, 900, 1600, 2600], "bandStep": 1200, "rotationDays": 3, "hopMinutes": 240, "blinkDivisor": 4, "appearRadius": 26, "senseRadius": 90, "pingFuzz": 48, "pingSlotMinutes": 120, "fleeRestMinutes": 180, "levelByBand": [40, 50, 58, 66, 74], "levelPerExtraBand": 4, "snapRadius": 12, "edgeMargin": 0.08},
+  "roamingPolicy": {"default": {"base": "neutral", "outleveled": "flee"}, "countries": {"US": {"base": "chase", "outleveled": "flee"}, "CN": {"base": "neutral", "outleveled": "neutral"}}},
   "typeAffinity": {
     "time": {"night": {"chaos": 1.3, "code": 1.25, "sound": 1.15}, "dawn": {"safety": 1.3, "logic": 1.25, "write": 1.1}, "dusk": {"write": 1.3, "sound": 1.25, "motion": 1.2}, "day": {"chat": 1.2, "agent": 1.2, "vision": 1.2, "search": 1.1}},
     "weather": {"clear": {"vision": 1.15, "chat": 1.1}, "rain": {"open": 1.4, "write": 1.3, "sound": 1.15}, "fog": {"chaos": 1.6, "search": 1.3}, "snow": {"safety": 1.35, "logic": 1.2}, "sand": {"search": 1.4, "motion": 1.3, "agent": 1.1}, "aurora": {"safety": 1.7, "logic": 1.4, "vision": 1.2}, "ash": {"compute": 1.7, "code": 1.35}}

@@ -1,12 +1,12 @@
 {
-  "scale": {"baseWidth": 512, "baseHeight": 288, "minCssPerUnit": 1, "maxDeviceScale": 8, "compactBelowWidth": 480, "touchInsetGapCss": 6},
+  "scale": {"baseWidth": 512, "baseHeight": 288, "minCssPerUnit": 1, "maxDeviceScale": 8, "compactBelowWidth": 480},
   "anim": {"panelOpenMs": 180, "panelCloseMs": 140, "modalOpenMs": 120, "cursorBobMs": 560, "toastEnterMs": 180, "toastLeaveMs": 240},
   "fade": {"defaultMs": 420},
   "sfx": {"move": "select", "confirm": "confirm", "cancel": "cancel", "error": "error", "open": "menu_open", "close": "menu_close", "tab": "select"},
   "dialogue": {"charsPerSecond": {"slow": 22, "normal": 45, "fast": 110, "instant": 0}, "blip": {"sfx": "select", "everyChars": 3, "volume": 0.22, "pitch": 1.7, "pitchJitter": 0.08}, "pause": {"chars": "，。！？；：…,.!?;:", "ms": 110}, "lingerMs": 90, "portraitFallbackChars": 1},
-  "list": {"visibleRows": 8, "compactVisibleRows": 6, "rowHeight": 18, "wrap": true, "pageStep": 5, "minWidth": 160, "detailWidth": 168},
+  "list": {"visibleRows": 8, "compactVisibleRows": 6, "rowHeight": 18, "wrap": true, "pageStep": 5, "minWidth": 160, "detailWidth": 168, "touchRowCss": 44, "touchReservePx": {"portrait": 500, "landscape": 150}, "minTouchRows": 3},
   "prompt": {"shakeMs": 300},
-  "toast": {"max": 4, "durationMs": {"info": 2600, "success": 2600, "warn": 3400, "error": 4200}, "sfx": {"info": "notify", "success": "notify", "warn": "notify", "error": "error"}},
+  "toast": {"max": 2, "durationMs": {"info": 2600, "success": 2600, "warn": 3400, "error": 4200}, "sfx": {"info": "notify", "success": "notify", "warn": "notify", "error": "error"}},
   "bars": {"hp": {"midBelow": 0.5, "lowBelow": 0.2, "drainPerSecond": 0.9, "width": 64}, "exp": {"fillPerSecond": 0.8, "width": 64}},
   "rarity": {"glowMinOrder": 3, "shimmerMinOrder": 4},
   "radar": {"size": 88, "rings": 4, "labelGap": 4, "padX": 46, "padY": 14, "minRatio": 0.04, "labelAnchor": 0.3},
@@ -42,6 +42,7 @@
   "chat": {
     "passiveLines": 5,
     "compactPassiveLines": 3,
+    "touchPassiveLines": {"portrait": 2, "landscape": 2},
     "openLines": 9,
     "maxLines": 150,
     "idleFadeMs": 9000,
@@ -53,6 +54,15 @@
     "channelColors": {"global": "#f3dca0", "local": "#ffffff", "whisper": "#ff9fd0", "system": "#8fd3ff"},
     "commands": {"whisper": ["/w", "/m", "/tell"], "reply": ["/r"], "global": ["/g", "/world"], "local": ["/l", "/s"]}
   },
+  "phoneHud": {
+    "portrait": {"toast": {"top": 116, "left": 164, "right": 8}, "lowerStackWidth": 150, "bannerSubLines": 2},
+    "landscape": {"toast": {"top": 8, "left": 190, "right": 190}, "lowerStackWidth": 176, "bannerSubLines": 0},
+    "toastLines": 2,
+    "chatClearPx": 56,
+    "tipFootGapPx": 4,
+    "audit": {"playerPadPx": {"x": 6, "top": 26, "bottom": 6}}
+  },
+  "focus": {"stallSec": 1.5, "escapeOrder": ["chat"], "releaseClickScopes": [".ap-chat-bar"]},
   "glyphPalette": {"o": "#0d0a08", "g": "#c9a45c", "h": "#f3dca0", "d": "#7a5a26", "w": "#ffffff", "k": "#0e1424", "r": "#e0524a", "R": "#9c2a26", "b": "#5a9cf0", "B": "#2a5596", "c": "#8fe6ff", "y": "#ffd84a", "n": "#ffa53a", "N": "#b4562a", "e": "#5ccf6a", "E": "#2a7a3a", "s": "#b8c0d0", "S": "#6b7488", "m": "#e8eeff"},
   "glyphs": {
     "cursor": {"rows": ["oo....", "ohoo..", "ohhgo.", "ohgggo", "ohgdo.", "oddo..", "oo...."]},

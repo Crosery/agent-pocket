@@ -90,7 +90,7 @@
     "candidates": 24,
     "spacing": 24
   },
-  "encounters": {"minSlots": 4, "maxSpecies": 10, "rareMinOrder": 2, "nightPhase": "night"},
+  "encounters": {"minSlots": 4, "maxSpecies": 12, "rareMinOrder": 2, "nightPhase": "night"},
   "rarityDefaults": {
     "N": {"spawn": ["grass", "visible"], "minDistance": 0, "distanceWeightPer1000": -0.08, "fleeChancePerTurn": 0, "fleeAfterTurn": 99, "roamSpeed": 1, "avoidPlayer": false, "cue": "none"},
     "R": {"spawn": ["grass", "visible"], "minDistance": 0, "distanceWeightPer1000": 0.1, "fleeChancePerTurn": 0, "fleeAfterTurn": 99, "roamSpeed": 1, "avoidPlayer": false, "cue": "none"},

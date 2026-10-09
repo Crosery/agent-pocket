@@ -1,0 +1,309 @@
+{
+  "limits": {"eventBuffer": 500, "logLines": 400, "waitTimeoutMs": 15000, "waitPollMs": 40, "dumpMaxChars": 4000, "stepDt": 0.016667, "maxScale": 20, "maxStepFrames": 3600, "expectSettleMs": 4000, "reloadSlot": 9090909090, "shotSettleFrames": 20, "shotIdleTimeoutMs": 20000, "touchMinPx": 44, "overlapMinArea": 16, "layoutIssueMax": 40, "inputMaxFrames": 36000},
+  "commands": {
+    "tp.xy": {
+      "titleKey": "dev.cmd.tpXy",
+      "group": "jump",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "x", "type": "number", "labelKey": "dev.arg.x"},
+        {"name": "y", "type": "number", "labelKey": "dev.arg.y"},
+        {"name": "map", "type": "string", "optional": true, "labelKey": "dev.arg.map"}
+      ]
+    },
+    "fly": {"titleKey": "dev.cmd.fly", "group": "jump", "mutates": true, "needs": "live", "args": [{"name": "place", "type": "string", "labelKey": "dev.arg.place"}]},
+    "discover": {"titleKey": "dev.cmd.discover", "group": "jump", "mutates": true, "needs": "live", "args": [{"name": "place", "type": "string", "labelKey": "dev.arg.place"}]},
+    "clock.set": {"titleKey": "dev.cmd.clockSet", "group": "env", "mutates": true, "needs": "live", "args": [{"name": "minutes", "type": "number", "labelKey": "dev.arg.minutes"}]},
+    "weather.set": {
+      "titleKey": "dev.cmd.weatherSet",
+      "group": "env",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "kind", "type": "string", "optional": true, "enumRef": "weather", "labelKey": "dev.arg.weather"}
+      ]
+    },
+    "time.pause": {"titleKey": "dev.cmd.timePause", "group": "time", "mutates": false, "needs": "live", "args": []},
+    "time.resume": {"titleKey": "dev.cmd.timeResume", "group": "time", "mutates": false, "needs": "live", "args": []},
+    "time.step": {
+      "titleKey": "dev.cmd.timeStep",
+      "group": "time",
+      "mutates": false,
+      "needs": "live",
+      "args": [
+        {"name": "frames", "type": "integer", "labelKey": "dev.arg.frames"},
+        {"name": "dt", "type": "number", "optional": true, "labelKey": "dev.arg.dt"}
+      ]
+    },
+    "time.scale": {"titleKey": "dev.cmd.timeScale", "group": "time", "mutates": false, "needs": "live", "args": [{"name": "scale", "type": "number", "labelKey": "dev.arg.scale"}]},
+    "time.fixed": {"titleKey": "dev.cmd.timeFixed", "group": "time", "mutates": false, "needs": "live", "args": [{"name": "dt", "type": "number", "optional": true, "labelKey": "dev.arg.dtFixed"}]},
+    "rng.seed": {"titleKey": "dev.cmd.rngSeed", "group": "rng", "mutates": false, "needs": "live", "args": [{"name": "seed", "type": "integer", "labelKey": "dev.arg.seed"}]},
+    "clock.freeze": {"titleKey": "dev.cmd.clockFreeze", "group": "env", "mutates": false, "needs": "live", "args": [{"name": "on", "type": "boolean", "labelKey": "dev.arg.on"}]},
+    "scenario.load": {"titleKey": "dev.cmd.scenarioLoad", "group": "scenario", "mutates": true, "needs": "live", "args": [{"name": "id", "type": "string", "enumRef": "scenario", "labelKey": "dev.arg.scenario"}]},
+    "scenario.open": {"titleKey": "dev.cmd.scenarioOpen", "group": "scenario", "mutates": false, "needs": "reload", "args": [{"name": "id", "type": "string", "enumRef": "scenario", "labelKey": "dev.arg.scenario"}]},
+    "scenario.check": {"titleKey": "dev.cmd.scenarioCheck", "group": "scenario", "mutates": false, "needs": "live", "args": []},
+    "battle.boss": {
+      "titleKey": "dev.cmd.battleBoss",
+      "group": "battle",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "boss", "type": "string", "enumRef": "boss", "labelKey": "dev.arg.boss", "list": "bosses"},
+        {"name": "level", "type": "integer", "optional": true, "labelKey": "dev.arg.bossLevel"}
+      ]
+    },
+    "world.seed": {"titleKey": "dev.cmd.worldSeed", "group": "world", "mutates": false, "needs": "reload", "args": [{"name": "seed", "type": "integer", "labelKey": "dev.arg.seed"}]},
+    "world.seedRandom": {"titleKey": "dev.cmd.worldSeedRandom", "group": "world", "mutates": false, "needs": "reload", "args": []},
+    "tp.anchor": {"titleKey": "dev.cmd.tpAnchor", "group": "jump", "mutates": true, "needs": "live", "args": [{"name": "anchor", "type": "string", "list": "anchors", "labelKey": "dev.arg.anchor"}]},
+    "tp.place": {"titleKey": "dev.cmd.tpPlace", "group": "jump", "mutates": true, "needs": "live", "args": [{"name": "place", "type": "string", "list": "places", "labelKey": "dev.arg.place"}]},
+    "beat.apply": {
+      "titleKey": "dev.cmd.beatApply",
+      "group": "story",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "beat", "type": "string", "list": "beats", "labelKey": "dev.arg.beat"},
+        {"name": "stay", "type": "boolean", "optional": true, "labelKey": "dev.arg.stay"}
+      ]
+    },
+    "flag.set": {
+      "titleKey": "dev.cmd.flagSet",
+      "group": "story",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "flag", "type": "string", "list": "flags", "labelKey": "dev.arg.flag"},
+        {"name": "value", "type": "string", "optional": true, "labelKey": "dev.arg.value"}
+      ]
+    },
+    "quest.set": {
+      "titleKey": "dev.cmd.questSet",
+      "group": "story",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "quest", "type": "string", "list": "quests", "labelKey": "dev.arg.quest"},
+        {"name": "stage", "type": "integer", "labelKey": "dev.arg.stage"},
+        {"name": "done", "type": "boolean", "optional": true, "labelKey": "dev.arg.done"}
+      ]
+    },
+    "quest.clear": {"titleKey": "dev.cmd.questClear", "group": "story", "mutates": true, "needs": "live", "args": [{"name": "quest", "type": "string", "list": "quests", "labelKey": "dev.arg.quest"}]},
+    "event.start": {"titleKey": "dev.cmd.eventStart", "group": "events", "mutates": true, "needs": "live", "args": [{"name": "event", "type": "string", "list": "events", "labelKey": "dev.arg.event"}]},
+    "event.end": {"titleKey": "dev.cmd.eventEnd", "group": "events", "mutates": true, "needs": "live", "args": [{"name": "event", "type": "string", "list": "events", "labelKey": "dev.arg.event"}]},
+    "event.reset": {"titleKey": "dev.cmd.eventReset", "group": "events", "mutates": true, "needs": "live", "args": []},
+    "legend.summon": {
+      "titleKey": "dev.cmd.legendSummon",
+      "group": "events",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "species", "type": "string", "optional": true, "list": "species", "labelKey": "dev.arg.species"}
+      ]
+    },
+    "party.add": {
+      "titleKey": "dev.cmd.partyAdd",
+      "group": "party",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "species", "type": "string", "list": "species", "labelKey": "dev.arg.species"},
+        {"name": "level", "type": "integer", "optional": true, "labelKey": "dev.arg.level"}
+      ]
+    },
+    "party.set": {
+      "titleKey": "dev.cmd.partySet",
+      "group": "party",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "index", "type": "integer", "labelKey": "dev.arg.index"},
+        {"name": "field", "type": "string", "enumRef": "partyField", "labelKey": "dev.arg.field"},
+        {"name": "value", "type": "string", "optional": true, "labelKey": "dev.arg.value"}
+      ]
+    },
+    "party.heal": {"titleKey": "dev.cmd.partyHeal", "group": "party", "mutates": true, "needs": "live", "args": []},
+    "party.remove": {"titleKey": "dev.cmd.partyRemove", "group": "party", "mutates": true, "needs": "live", "args": [{"name": "index", "type": "integer", "labelKey": "dev.arg.index"}]},
+    "party.toBox": {"titleKey": "dev.cmd.partyToBox", "group": "party", "mutates": true, "needs": "live", "args": [{"name": "index", "type": "integer", "labelKey": "dev.arg.index"}]},
+    "party.evolve": {"titleKey": "dev.cmd.partyEvolve", "group": "party", "mutates": true, "needs": "live", "args": [{"name": "index", "type": "integer", "labelKey": "dev.arg.index"}]},
+    "party.team": {
+      "titleKey": "dev.cmd.partyTeam",
+      "group": "party",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "team", "type": "string", "list": "teams", "labelKey": "dev.arg.team"},
+        {"name": "level", "type": "integer", "optional": true, "labelKey": "dev.arg.level"}
+      ]
+    },
+    "item.give": {
+      "titleKey": "dev.cmd.itemGive",
+      "group": "items",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "item", "type": "string", "list": "items", "labelKey": "dev.arg.item"},
+        {"name": "qty", "type": "integer", "optional": true, "labelKey": "dev.arg.qty"}
+      ]
+    },
+    "money.set": {"titleKey": "dev.cmd.moneySet", "group": "items", "mutates": true, "needs": "live", "args": [{"name": "money", "type": "integer", "labelKey": "dev.arg.money"}]},
+    "badge.set": {
+      "titleKey": "dev.cmd.badgeSet",
+      "group": "items",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "badge", "type": "string", "list": "badges", "labelKey": "dev.arg.badge"},
+        {"name": "on", "type": "boolean", "optional": true, "labelKey": "dev.arg.on"}
+      ]
+    },
+    "dex.fill": {
+      "titleKey": "dev.cmd.dexFill",
+      "group": "items",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "mode", "type": "string", "enumRef": "dexMode", "labelKey": "dev.arg.mode"},
+        {"name": "type", "type": "string", "optional": true, "labelKey": "dev.arg.type"}
+      ]
+    },
+    "battle.wild": {
+      "titleKey": "dev.cmd.battleWild",
+      "group": "battle",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "species", "type": "string", "list": "species", "labelKey": "dev.arg.species"},
+        {"name": "level", "type": "integer", "optional": true, "labelKey": "dev.arg.level"}
+      ]
+    },
+    "battle.trainer": {"titleKey": "dev.cmd.battleTrainer", "group": "battle", "mutates": true, "needs": "live", "args": [{"name": "trainer", "type": "string", "list": "trainers", "labelKey": "dev.arg.trainer"}]},
+    "settings.set": {
+      "titleKey": "dev.cmd.settingsSet",
+      "group": "env",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "key", "type": "string", "labelKey": "dev.arg.key"},
+        {"name": "value", "type": "string", "labelKey": "dev.arg.value"}
+      ]
+    },
+    "render.tune": {
+      "titleKey": "dev.cmd.renderTune",
+      "group": "env",
+      "mutates": false,
+      "needs": "live",
+      "args": [
+        {"name": "key", "type": "string", "enumRef": "lodKey", "labelKey": "dev.arg.key"},
+        {"name": "value", "type": "number", "labelKey": "dev.arg.value"}
+      ]
+    },
+    "encounter.rate": {"titleKey": "dev.cmd.encounterRate", "group": "encounter", "mutates": false, "needs": "live", "args": [{"name": "mult", "type": "number", "labelKey": "dev.arg.mult"}]},
+    "encounter.repel": {"titleKey": "dev.cmd.encounterRepel", "group": "encounter", "mutates": true, "needs": "live", "args": [{"name": "on", "type": "boolean", "optional": true, "labelKey": "dev.arg.on"}]},
+    "encounter.next": {
+      "titleKey": "dev.cmd.encounterNext",
+      "group": "encounter",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "species", "type": "string", "list": "species", "labelKey": "dev.arg.species"},
+        {"name": "level", "type": "integer", "optional": true, "labelKey": "dev.arg.level"},
+        {"name": "shiny", "type": "boolean", "optional": true, "labelKey": "dev.arg.shiny"}
+      ]
+    },
+    "onboard.reset": {"titleKey": "dev.cmd.onboardReset", "group": "onboarding", "mutates": true, "needs": "live", "args": []},
+    "onboard.show": {"titleKey": "dev.cmd.onboardShow", "group": "onboarding", "mutates": false, "needs": "live", "args": [{"name": "tip", "type": "string", "list": "tips", "labelKey": "dev.arg.tip"}]},
+    "net.preset": {"titleKey": "dev.cmd.netPreset", "group": "net", "mutates": false, "needs": "live", "args": [{"name": "name", "type": "string", "labelKey": "dev.arg.preset", "enumRef": "netPreset"}]},
+    "net.link": {
+      "titleKey": "dev.cmd.netLink",
+      "group": "net",
+      "mutates": false,
+      "needs": "live",
+      "args": [
+        {"name": "latencyMs", "type": "number", "optional": true, "labelKey": "dev.arg.latencyMs"},
+        {"name": "jitterMs", "type": "number", "optional": true, "labelKey": "dev.arg.jitterMs"},
+        {"name": "stallChance", "type": "number", "optional": true, "labelKey": "dev.arg.stallChance"},
+        {"name": "stallMinMs", "type": "number", "optional": true, "labelKey": "dev.arg.stallMinMs"},
+        {"name": "stallMaxMs", "type": "number", "optional": true, "labelKey": "dev.arg.stallMaxMs"}
+      ]
+    },
+    "net.drop": {"titleKey": "dev.cmd.netDrop", "group": "net", "mutates": false, "needs": "live", "args": []},
+    "net.offline": {"titleKey": "dev.cmd.netOffline", "group": "net", "mutates": false, "needs": "live", "args": []},
+    "net.reconnect": {"titleKey": "dev.cmd.netReconnect", "group": "net", "mutates": false, "needs": "live", "args": []},
+    "net.fake": {
+      "titleKey": "dev.cmd.netFake",
+      "group": "net",
+      "mutates": false,
+      "needs": "live",
+      "args": [
+        {"name": "on", "type": "boolean", "optional": true, "labelKey": "dev.arg.on"},
+        {"name": "peers", "type": "integer", "optional": true, "labelKey": "dev.arg.peers"}
+      ]
+    },
+    "net.peers": {"titleKey": "dev.cmd.netPeers", "group": "net", "mutates": false, "needs": "live", "args": [{"name": "n", "type": "integer", "labelKey": "dev.arg.peers"}]},
+    "editor.open": {"titleKey": "dev.cmd.editorOpen", "group": "editor", "mutates": false, "needs": "live", "args": []},
+    "editor.close": {"titleKey": "dev.cmd.editorClose", "group": "editor", "mutates": false, "needs": "live", "args": []},
+    "editor.select": {
+      "titleKey": "dev.cmd.editorSelect",
+      "group": "editor",
+      "mutates": false,
+      "needs": "live",
+      "args": [
+        {"name": "x", "type": "number", "labelKey": "dev.arg.x"},
+        {"name": "y", "type": "number", "labelKey": "dev.arg.y"},
+        {"name": "map", "type": "string", "optional": true, "labelKey": "dev.arg.map"}
+      ]
+    },
+    "editor.move": {
+      "titleKey": "dev.cmd.editorMove",
+      "group": "editor",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "x", "type": "number", "labelKey": "dev.arg.x"},
+        {"name": "y", "type": "number", "labelKey": "dev.arg.y"}
+      ]
+    },
+    "editor.rotate": {"titleKey": "dev.cmd.editorRotate", "group": "editor", "mutates": true, "needs": "live", "args": []},
+    "editor.delete": {"titleKey": "dev.cmd.editorDelete", "group": "editor", "mutates": true, "needs": "live", "args": []},
+    "editor.place": {
+      "titleKey": "dev.cmd.editorPlace",
+      "group": "editor",
+      "mutates": true,
+      "needs": "live",
+      "args": [
+        {"name": "prop", "type": "string", "optional": true, "labelKey": "dev.arg.prop", "list": "props"},
+        {"name": "x", "type": "number", "optional": true, "labelKey": "dev.arg.x"},
+        {"name": "y", "type": "number", "optional": true, "labelKey": "dev.arg.y"},
+        {"name": "rot", "type": "integer", "optional": true, "labelKey": "dev.arg.rot"}
+      ]
+    },
+    "editor.undo": {"titleKey": "dev.cmd.editorUndo", "group": "editor", "mutates": true, "needs": "live", "args": []},
+    "editor.redo": {"titleKey": "dev.cmd.editorRedo", "group": "editor", "mutates": true, "needs": "live", "args": []},
+    "editor.reload": {"titleKey": "dev.cmd.editorReload", "group": "editor", "mutates": false, "needs": "reload", "args": []}
+  },
+  "legacy": {"pos": "state.dump(['runtime'])", "tp": "cmd('tp.xy', {x, y, map})", "region": "state.dump(['runtime'])", "gates": "state.dump(['world'])", "places": "cmd('tp.xy')", "discover": "cmd('discover', {place})", "fly": "cmd('fly', {place})", "fog": "state.dump(['save'])", "boss": "cmd('battle.boss')", "distance": "state.dump(['save'])", "clock": "cmd('clock.set', {minutes})", "weather": "cmd('weather.set', {kind})", "roamers": "state.dump(['runtime'])"},
+  "panel": {
+    "toggleCode": "Backquote",
+    "readoutMs": 500,
+    "listLimit": 400,
+    "outputLines": 12,
+    "outputChars": 260,
+    "compactMaxWidth": 700,
+    "tabs": [
+      {"id": "world", "titleKey": "dev.tab.world", "sections": [{"titleKey": "dev.sec.seeds", "controls": [{"kind": "readout", "pointer": "/world/seed", "labelKey": "dev.ro.worldSeed"}, {"kind": "readout", "pointer": "/runtime/rng/seed", "labelKey": "dev.ro.rngSeed"}, {"kind": "readout", "pointer": "/runtime/scenario", "labelKey": "dev.ro.scenario"}, {"kind": "cmd", "cmd": "world.seed"}, {"kind": "cmd", "cmd": "world.seedRandom"}, {"kind": "cmd", "cmd": "rng.seed"}]}, {"titleKey": "dev.sec.time", "controls": [{"kind": "readout", "pointer": "/runtime/time/paused", "labelKey": "dev.ro.paused"}, {"kind": "readout", "pointer": "/runtime/time/stepped", "labelKey": "dev.ro.stepped"}, {"kind": "preset", "cmd": "time.pause", "args": {}, "labelKey": "dev.preset.pause"}, {"kind": "preset", "cmd": "time.resume", "args": {}, "labelKey": "dev.preset.resume"}, {"kind": "preset", "cmd": "time.step", "args": {"frames": 60}, "labelKey": "dev.preset.step60"}, {"kind": "preset", "cmd": "time.scale", "args": {"scale": 4}, "labelKey": "dev.preset.scale4"}, {"kind": "preset", "cmd": "time.scale", "args": {"scale": 1}, "labelKey": "dev.preset.scale1"}, {"kind": "cmd", "cmd": "time.step"}, {"kind": "cmd", "cmd": "time.fixed"}]}]},
+      {"id": "jump", "titleKey": "dev.tab.jump", "sections": [{"titleKey": "dev.sec.quick", "controls": [{"kind": "readout", "pointer": "/runtime/map", "labelKey": "dev.ro.map"}, {"kind": "readout", "pointer": "/runtime/region/nameZh", "labelKey": "dev.ro.region"}, {"kind": "preset", "cmd": "tp.anchor", "args": {"anchor": "town:origin"}, "labelKey": "dev.preset.anchor_town_origin"}, {"kind": "preset", "cmd": "tp.anchor", "args": {"anchor": "town:forge"}, "labelKey": "dev.preset.anchor_town_forge"}, {"kind": "preset", "cmd": "tp.anchor", "args": {"anchor": "town:chord"}, "labelKey": "dev.preset.anchor_town_chord"}, {"kind": "preset", "cmd": "tp.anchor", "args": {"anchor": "town:frostshield"}, "labelKey": "dev.preset.anchor_town_frostshield"}]}, {"titleKey": "dev.sec.search", "controls": [{"kind": "cmd", "cmd": "tp.anchor"}, {"kind": "cmd", "cmd": "tp.place"}, {"kind": "cmd", "cmd": "tp.xy"}, {"kind": "cmd", "cmd": "fly"}, {"kind": "cmd", "cmd": "discover"}]}]},
+      {"id": "story", "titleKey": "dev.tab.story", "sections": [{"titleKey": "dev.sec.beats", "controls": [{"kind": "list", "source": "beats", "cmd": "beat.apply", "argName": "beat", "limit": 8}, {"kind": "cmd", "cmd": "beat.apply"}]}, {"titleKey": "dev.sec.flags", "controls": [{"kind": "cmd", "cmd": "flag.set"}, {"kind": "list", "source": "flags", "cmd": "flag.set", "argName": "flag", "limit": 8, "args": {"value": "true"}}]}, {"titleKey": "dev.sec.quests", "controls": [{"kind": "cmd", "cmd": "quest.set"}, {"kind": "cmd", "cmd": "quest.clear"}, {"kind": "list", "source": "quests", "cmd": "quest.set", "argName": "quest", "limit": 8, "args": {"stage": 0}}]}]},
+      {"id": "events", "titleKey": "dev.tab.events", "sections": [{"titleKey": "dev.sec.events", "controls": [{"kind": "list", "source": "events", "cmd": "event.start", "argName": "event", "limit": 12}, {"kind": "cmd", "cmd": "event.end"}, {"kind": "cmd", "cmd": "event.reset"}, {"kind": "cmd", "cmd": "legend.summon"}]}]},
+      {"id": "party", "titleKey": "dev.tab.party", "sections": [{"titleKey": "dev.sec.teams", "controls": [{"kind": "list", "source": "teams", "cmd": "party.team", "argName": "team", "limit": 6}, {"kind": "preset", "cmd": "party.heal", "args": {}, "labelKey": "dev.preset.heal"}]}, {"titleKey": "dev.sec.edit", "controls": [{"kind": "cmd", "cmd": "party.add"}, {"kind": "cmd", "cmd": "party.set"}, {"kind": "cmd", "cmd": "party.remove"}, {"kind": "cmd", "cmd": "party.toBox"}, {"kind": "cmd", "cmd": "party.evolve"}]}]},
+      {"id": "items", "titleKey": "dev.tab.items", "sections": [{"titleKey": "dev.sec.money", "controls": [{"kind": "readout", "pointer": "/save/money", "labelKey": "dev.ro.money"}, {"kind": "preset", "cmd": "money.set", "args": {"money": 99999}, "labelKey": "dev.preset.money99999"}, {"kind": "cmd", "cmd": "money.set"}]}, {"titleKey": "dev.sec.bag", "controls": [{"kind": "preset", "cmd": "item.give", "args": {"item": "special-sauce", "qty": 3}, "labelKey": "dev.preset.sauce"}, {"kind": "cmd", "cmd": "item.give"}]}, {"titleKey": "dev.sec.badges", "controls": [{"kind": "list", "source": "badges", "cmd": "badge.set", "argName": "badge", "limit": 8}, {"kind": "preset", "cmd": "dex.fill", "args": {"mode": "all"}, "labelKey": "dev.preset.dexAll"}, {"kind": "preset", "cmd": "dex.fill", "args": {"mode": "none"}, "labelKey": "dev.preset.dexNone"}, {"kind": "cmd", "cmd": "dex.fill"}]}]},
+      {"id": "battle", "titleKey": "dev.tab.battle", "sections": [{"titleKey": "dev.sec.bosses", "controls": [{"kind": "list", "source": "bosses", "cmd": "battle.boss", "argName": "boss", "limit": 8}]}, {"titleKey": "dev.sec.fights", "controls": [{"kind": "cmd", "cmd": "battle.wild"}, {"kind": "cmd", "cmd": "battle.trainer"}, {"kind": "cmd", "cmd": "battle.boss"}]}]},
+      {"id": "env", "titleKey": "dev.tab.env", "sections": [{"titleKey": "dev.sec.clock", "controls": [{"kind": "readout", "pointer": "/runtime/clock/label", "labelKey": "dev.ro.clock"}, {"kind": "readout", "pointer": "/runtime/weather", "labelKey": "dev.ro.weather"}, {"kind": "preset", "cmd": "clock.set", "args": {"minutes": 360}, "labelKey": "dev.preset.dawn"}, {"kind": "preset", "cmd": "clock.set", "args": {"minutes": 720}, "labelKey": "dev.preset.noon"}, {"kind": "preset", "cmd": "clock.set", "args": {"minutes": 1080}, "labelKey": "dev.preset.dusk"}, {"kind": "preset", "cmd": "clock.set", "args": {"minutes": 1380}, "labelKey": "dev.preset.night"}, {"kind": "preset", "cmd": "clock.freeze", "args": {"on": true}, "labelKey": "dev.preset.freeze"}, {"kind": "preset", "cmd": "clock.freeze", "args": {"on": false}, "labelKey": "dev.preset.thaw"}, {"kind": "cmd", "cmd": "clock.set"}]}, {"titleKey": "dev.sec.weather", "controls": [{"kind": "preset", "cmd": "weather.set", "args": {"kind": "clear"}, "labelKey": "dev.preset.weather_clear"}, {"kind": "preset", "cmd": "weather.set", "args": {"kind": "rain"}, "labelKey": "dev.preset.weather_rain"}, {"kind": "preset", "cmd": "weather.set", "args": {"kind": "snow"}, "labelKey": "dev.preset.weather_snow"}, {"kind": "preset", "cmd": "weather.set", "args": {"kind": "sand"}, "labelKey": "dev.preset.weather_sand"}, {"kind": "preset", "cmd": "weather.set", "args": {"kind": "fog"}, "labelKey": "dev.preset.weather_fog"}, {"kind": "preset", "cmd": "weather.set", "args": {"kind": "aurora"}, "labelKey": "dev.preset.weather_aurora"}, {"kind": "preset", "cmd": "weather.set", "args": {"kind": "ash"}, "labelKey": "dev.preset.weather_ash"}]}, {"titleKey": "dev.sec.quality", "controls": [{"kind": "preset", "cmd": "settings.set", "args": {"key": "quality", "value": "low"}, "labelKey": "dev.preset.quality_low"}, {"kind": "preset", "cmd": "settings.set", "args": {"key": "quality", "value": "medium"}, "labelKey": "dev.preset.quality_medium"}, {"kind": "preset", "cmd": "settings.set", "args": {"key": "quality", "value": "high"}, "labelKey": "dev.preset.quality_high"}, {"kind": "preset", "cmd": "settings.set", "args": {"key": "quality", "value": "ultra"}, "labelKey": "dev.preset.quality_ultra"}, {"kind": "cmd", "cmd": "settings.set"}, {"kind": "cmd", "cmd": "render.tune"}]}]},
+      {"id": "editor", "titleKey": "dev.tab.editor", "sections": [{"titleKey": "dev.sec.editor", "controls": [{"kind": "readout", "pointer": "/runtime/editor/active", "labelKey": "dev.ro.edActive"}, {"kind": "readout", "pointer": "/runtime/editor/selected/label", "labelKey": "dev.ro.edSelected"}, {"kind": "readout", "pointer": "/runtime/editor/selected/sharedBy", "labelKey": "dev.ro.edShared"}, {"kind": "readout", "pointer": "/runtime/editor/written", "labelKey": "dev.ro.edWritten"}, {"kind": "preset", "cmd": "editor.open", "args": {}, "labelKey": "dev.preset.edOpen"}, {"kind": "preset", "cmd": "editor.close", "args": {}, "labelKey": "dev.preset.edClose"}, {"kind": "preset", "cmd": "editor.rotate", "args": {}, "labelKey": "dev.preset.edRotate"}, {"kind": "preset", "cmd": "editor.delete", "args": {}, "labelKey": "dev.preset.edDelete"}, {"kind": "preset", "cmd": "editor.undo", "args": {}, "labelKey": "dev.preset.edUndo"}, {"kind": "preset", "cmd": "editor.redo", "args": {}, "labelKey": "dev.preset.edRedo"}, {"kind": "preset", "cmd": "editor.reload", "args": {}, "labelKey": "dev.preset.edReload"}]}, {"titleKey": "dev.sec.palette", "controls": [{"kind": "palette"}]}, {"titleKey": "dev.sec.editorExact", "controls": [{"kind": "cmd", "cmd": "editor.select"}, {"kind": "cmd", "cmd": "editor.move"}, {"kind": "cmd", "cmd": "editor.place"}]}]},
+      {"id": "encounter", "titleKey": "dev.tab.encounter", "sections": [{"titleKey": "dev.sec.rate", "controls": [{"kind": "preset", "cmd": "encounter.rate", "args": {"mult": 0}, "labelKey": "dev.preset.rate0"}, {"kind": "preset", "cmd": "encounter.rate", "args": {"mult": 1}, "labelKey": "dev.preset.rate1"}, {"kind": "preset", "cmd": "encounter.rate", "args": {"mult": 10}, "labelKey": "dev.preset.rate10"}, {"kind": "preset", "cmd": "encounter.repel", "args": {}, "labelKey": "dev.preset.repelOn"}, {"kind": "preset", "cmd": "encounter.repel", "args": {"on": false}, "labelKey": "dev.preset.repelOff"}]}, {"titleKey": "dev.sec.next", "controls": [{"kind": "cmd", "cmd": "encounter.next"}]}]},
+      {"id": "net", "titleKey": "dev.tab.net", "sections": [{"titleKey": "dev.sec.link", "controls": [{"kind": "readout", "pointer": "/runtime/net/status", "labelKey": "dev.ro.netStatus"}, {"kind": "readout", "pointer": "/runtime/net/online", "labelKey": "dev.ro.netOnline"}, {"kind": "readout", "pointer": "/runtime/netSim/mode", "labelKey": "dev.ro.netMode"}, {"kind": "readout", "pointer": "/runtime/netSim/link/latencyMs", "labelKey": "dev.ro.netLatency"}, {"kind": "preset", "cmd": "net.preset", "args": {"name": "off"}, "labelKey": "dev.preset.net_off"}, {"kind": "preset", "cmd": "net.preset", "args": {"name": "good"}, "labelKey": "dev.preset.net_good"}, {"kind": "preset", "cmd": "net.preset", "args": {"name": "mobile"}, "labelKey": "dev.preset.net_mobile"}, {"kind": "preset", "cmd": "net.preset", "args": {"name": "bad"}, "labelKey": "dev.preset.net_bad"}, {"kind": "cmd", "cmd": "net.link"}]}, {"titleKey": "dev.sec.conn", "controls": [{"kind": "preset", "cmd": "net.drop", "args": {}, "labelKey": "dev.preset.netDrop"}, {"kind": "preset", "cmd": "net.offline", "args": {}, "labelKey": "dev.preset.netOffline"}, {"kind": "preset", "cmd": "net.reconnect", "args": {}, "labelKey": "dev.preset.netReconnect"}]}, {"titleKey": "dev.sec.peers", "controls": [{"kind": "readout", "pointer": "/runtime/netSim/peers", "labelKey": "dev.ro.netPeers"}, {"kind": "preset", "cmd": "net.fake", "args": {"on": true, "peers": 12}, "labelKey": "dev.preset.fakeOn"}, {"kind": "preset", "cmd": "net.fake", "args": {"on": false}, "labelKey": "dev.preset.fakeOff"}, {"kind": "cmd", "cmd": "net.peers"}, {"kind": "cmd", "cmd": "net.fake"}]}]},
+      {"id": "onboarding", "titleKey": "dev.tab.onboarding", "sections": [{"titleKey": "dev.sec.tips", "controls": [{"kind": "preset", "cmd": "onboard.reset", "args": {}, "labelKey": "dev.preset.resetTips"}, {"kind": "list", "source": "tips", "cmd": "onboard.show", "argName": "tip", "limit": 12}]}]},
+      {"id": "acceptance", "titleKey": "dev.tab.acceptance", "sections": [{"titleKey": "dev.sec.scenarios", "controls": [{"kind": "acceptance"}]}]}
+    ]
+  }
+}

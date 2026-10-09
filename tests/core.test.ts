@@ -16,9 +16,9 @@ import { cryRecipe } from '../src/client/core/audio-cry.ts'
 import { INPUT_CONFIG, boundActions } from '../src/client/core/input-config.ts'
 import { computeUiScale } from '../src/client/core/settings.ts'
 
-/** config.defaultSettings with the one-time settings migrations applied (what a fresh save holds). */
+/** config.defaultSettings with the one-time settings migrations applied (what a fresh save holds); touchOnly ones need a phone. */
 function expectedDefaults(cfg = CONTENT.config) {
-  const ms = cfg.settingsMigrations ?? []
+  const ms = (cfg.settingsMigrations ?? []).filter((m) => !m.touchOnly)
   return { ...cfg.defaultSettings, ...Object.assign({}, ...ms.map((m) => m.set)), migrations: ms.map((m) => m.id) }
 }
 import { PH } from '../src/client/core/placeholders-data.ts'
@@ -318,8 +318,10 @@ test('cries are deterministic per species and differ between species', () => {
 
 test('input.json binds every action and touch labels resolve', () => {
   const actions: InputAction[] = ['up', 'down', 'left', 'right', 'confirm', 'cancel', 'menu', 'run', 'map', 'chat', 'minimap', 'bike', 'quickSave', 'debug']
+  const touchOnly: InputAction[] = ['bag']
   for (const a of actions) assert.ok(INPUT_CONFIG.keyboard[a]?.length, `keyboard binding for ${a}`)
-  assert.deepEqual(new Set(boundActions()), new Set(actions))
+  for (const a of touchOnly) assert.ok(INPUT_CONFIG.touch.buttons.some((b) => b.action === a) && !INPUT_CONFIG.keyboard[a], `${a} is a touch button without a key`)
+  assert.deepEqual(new Set(boundActions()), new Set([...actions, ...touchOnly]))
   assert.ok(INPUT_CONFIG.repeat.delayMs > 0 && INPUT_CONFIG.repeat.intervalMs > 0)
   for (const b of INPUT_CONFIG.touch.buttons) assert.notEqual(t(b.label), b.label, `text ${b.label}`)
   assert.notEqual(t('audio.save.defaultName'), 'audio.save.defaultName')

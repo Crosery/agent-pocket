@@ -1,0 +1,83 @@
+{
+ "vendor": "microsoft",
+ "count": 4,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "wizardlm28x22b",
+   "names": [
+    "WizardLM-2 8x22B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-04-16"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "microsoft/wizardlm-2-8x22b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "phi4",
+   "names": [
+    "Microsoft: Phi 4"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-01-10"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "microsoft/phi-4"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "maicode1flash",
+   "names": [
+    "MAI-Code-1-Flash"
+   ],
+   "releaseDateHints": {
+    "modelsdev:github-copilot": "2026-06-02"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "modelsdev:github-copilot": [
+     "mai-code-1-flash-picker"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "maicode11flash",
+   "names": [
+    "MAI-Code-1.1-Flash"
+   ],
+   "releaseDateHints": {
+    "modelsdev:github-copilot": "2026-08-11"
+   },
+   "openWeights": false,
+   "modalities": [
+    "text,image,pdf->text"
+   ],
+   "catalogIds": {
+    "modelsdev:github-copilot": [
+     "mai-code-1.1-flash"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

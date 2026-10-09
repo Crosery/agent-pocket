@@ -1,0 +1,64 @@
+{
+ "vendor": "nous",
+ "count": 3,
+ "note": "candidates from OpenRouter+models.dev; verify against official sources",
+ "candidates": [
+  {
+   "key": "hermes3llama31405b",
+   "names": [
+    "Nous: Hermes 3 405B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-08-16"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "nousresearch/hermes-3-llama-3.1-405b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "hermes3llama3170b",
+   "names": [
+    "Nous: Hermes 3 70B Instruct"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2024-08-18"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "nousresearch/hermes-3-llama-3.1-70b"
+    ]
+   },
+   "deprecated": false
+  },
+  {
+   "key": "hermes4405b",
+   "names": [
+    "Nous: Hermes 4 405B"
+   ],
+   "releaseDateHints": {
+    "openrouter": "2025-08-26"
+   },
+   "openWeights": null,
+   "modalities": [
+    "text->text"
+   ],
+   "catalogIds": {
+    "openrouter": [
+     "nousresearch/hermes-4-405b"
+    ]
+   },
+   "deprecated": false
+  }
+ ]
+}

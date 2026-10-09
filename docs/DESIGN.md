@@ -78,8 +78,53 @@ tests/                                                         per-module tests:
 ## HD-2D look
 
 Low internal resolution (pixelScale) with nearest upscale, pixel-art textures (nearest, no mips), cylindrical
-billboard sprites with real shadows, tilt-shift DOF focused on player, bloom on lights/emissives, vignette + warm
+billboard sprites with soft ground shadows (a contact ellipse under the soles plus a cast silhouette built from the
+sprite alpha, `render.json spriteShadow`; sprites stay out of the sun shadow map), tilt-shift DOF focused on player, bloom on lights/emissives, vignette + warm
 grade, fog, day/night lighting with point lights at night, weather particles, instanced swaying grass.
+
+### World physics feedback
+
+The world answers to everything that moves in it. Every number is in `content/render.json`; the quality tier
+(`physics.tiers`) switches each effect and caps its pools (the lowest tier keeps only dust puffs).
+
+- **Wind** (`wind`, `render/world/wind.ts`): one field of gust fronts travelling along `wind.dir`. Grass, canopies, sprigs, the
+  GPU particle fields and the CPU leaves / dust all read it (GLSL and TypeScript twins), so a gust reaches all of them
+  at the same moment and place.
+- **Trample** (`grass.trample`, `trample.ts`): a toroidal map around the camera; actors stamp the direction away from
+  them, the CPU decays it over `recoverSec`, grass and ground sprigs bend and sink where it is set.
+- **Footsteps** (`footsteps`, `footsteps.ts`): per walked stride (hop for creatures) by terrain class: dust, sand grains,
+  powder, mud, splash; fading footprints on snow / sand / ash / mud; ripple rings in shallows. The climate snow field and
+  the weather snow cover (`snowCover`) turn ordinary ground into snow. Ledge landings route through the same system.
+- **Water** (`water.interact`, `liquids.ts`): ring uniforms from footsteps and the shore, rain rings, foam lines washing
+  up the shore; `reflections` + `reflections.ts` mirror every actor in water (flipped card, drawn only over water tiles,
+  depth of the water point, so props and grass in front still hide it).
+- **Leaves and petals** (`leaves`, `leaves.ts`): shed by the canopies of the props listed per kind (`props.ts` records
+  them), fall with gravity, drag, flutter and gust lift, land, rest and fade; they float on water.
+- **Rain and snow** (`impacts`): drops that reach the ground splash (rings on water) from the same closed-form path
+  the vertex shader flies.
+- **Actors** (`actors.motion`, `world/follower.ts`): hop stretch and a damped-spring landing squash; the follower is a
+  critically damped spring on the player's trail, spawns already clear of the camera, and is drawn as a companion
+  (after everything but the player, no depth write) so it is never over them.
+
+### Performance
+
+Budget: a phone (coarse pointer) holds 30 fps with a 95th-percentile frame under 40 ms at 4x CPU throttle; a desktop holds 60.
+Every knob is in `content/render.json` (tiers, `device`, `governor`) or `content/game.json` (`loading`).
+
+- **Tiers** (`quality.<tier>`): `shadowHz` is how often the sun shadow map is redrawn (0 = every frame), `shadowSnapTexels`
+  how coarsely its frustum follows the camera (a coarser snap redraws less while walking). Touch devices start on `medium`
+  through the `touchOnly` settings migration in `config.json`; `device.touchMinInternalHeight` keeps their pixel grid crisp.
+- **Frame-time governor** (`governor`, `render/governor.ts`): watches the real frame interval and the work time, sheds the
+  listed `steps` in order when frames run long (slower tree shadows, no DOF/bloom, bigger pixels, fewer particles) and
+  restores them with hysteresis. The level is remembered per device (localStorage `ap.render.governor`); picking a tier in
+  the settings resets it.
+- **Static geometry**: chunk transforms are frozen once built (`settleChunk`); sway, bend and water run in shaders.
+- **Boot**: the title appears first, the world is generated in the background in `loading.worldSliceMs` slices, battle and
+  multiplayer code load on demand, and the production bundle drops tooling-only content (`content/build.json`).
+- **Measure**: `scripts/qa-perf.mjs` (frame times, draw calls, heap), `qa-perf-ab.mjs` (two builds back to back),
+  `qa-perf-compare.mjs` (tables), `qa-perf-boot.mjs` (title / in-world times), `qa-perf-shots.mjs` (screenshot pairs).
+  Per-frame code must not read canvases or rebuild what a cache already holds: `spriteOpaqueTop` once cost 9 ms/frame at 4x
+  throttle when two actors measured one atlas with different grids and evicted each other's entry.
 
 ## Assets (all optional — every asset has a procedural fallback)
 

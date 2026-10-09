@@ -1,0 +1,16 @@
+{
+  "id": "ui-worst-case",
+  "titleKey": "dev.scn.uiWorstCase",
+  "extends": "fresh-start",
+  "place": "town:origin:center",
+  "badges": ["badge-code", "badge-vision", "badge-sound", "badge-search", "badge-compute", "badge-safety", "badge-agent", "badge-logic"],
+  "party": [
+    {"team": "worst-case"}
+  ],
+  "bagAll": 99,
+  "money": 999999,
+  "expect": [
+    {"path": "/save/badges", "length": 8},
+    {"path": "/save/party", "length": 6}
+  ]
+}

@@ -51,10 +51,15 @@ export function createCameraRig(): CameraRig {
     return Math.max(byW, byD)
   }
 
+  /** Distance at which the view across the target is `C.minViewTilesWide` tiles wide (narrow portrait screens). */
+  function widthDistance(): number {
+    return C.minViewTilesWide / (2 * Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * camera.aspect)
+  }
+
   function desiredDistance(): number {
     const z = zoomDistance(zoom)
     if (interior && bounds) return Math.max(C.zoomDistances[0], Math.min(z, fitDistance(bounds)))
-    return z
+    return Math.max(z, widthDistance())
   }
 
   /**
