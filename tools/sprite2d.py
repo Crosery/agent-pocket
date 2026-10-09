@@ -58,8 +58,8 @@ def rig(f: np.ndarray) -> dict:
     return {"neck": neck, "hip": hip, "armTop": arm_top, "legL": leg_l, "legR": leg_r, "legMid": (leg_l + leg_r + 1) // 2}
 
 
-def _floating(op: np.ndarray) -> np.ndarray:
-    """Pixels not 8-connected to the largest piece (a hovering drone, a loose ribbon): they move rigidly."""
+def _label8(op: np.ndarray) -> tuple[np.ndarray, list[int]]:
+    """8-connected labelling: (labels, -1 = background; size per label)."""
     h, w = op.shape
     lab = np.full((h, w), -1, np.int32)
     sizes: list[int] = []
@@ -75,6 +75,12 @@ def _floating(op: np.ndarray) -> np.ndarray:
                         lab[ny, nx] = n
                         todo.append((ny, nx))
         sizes.append(len(todo))
+    return lab, sizes
+
+
+def _floating(op: np.ndarray) -> np.ndarray:
+    """Pixels not 8-connected to the largest piece (a hovering drone, a loose ribbon): they move rigidly."""
+    lab, sizes = _label8(op)
     return op & (lab != int(np.argmax(sizes)))
 
 
@@ -140,18 +146,95 @@ def idle_frames(stand: np.ndarray) -> list[np.ndarray]:
     return [pose(stand, body[(k - lag) % len(body)], body[k]) for k in range(len(body))]
 
 
+def stride_legs(f: np.ndarray, forward_left: bool) -> tuple[np.ndarray, np.ndarray] | None:
+    """(forward leg, back leg) masks of a drawn side stride: the two pieces the legs split into below the crotch
+    (the highest row from which down the leg region is still two pieces of at least side.minLegPx)."""
+    sd = CFG["walk"]["side"]
+    op = _opaque(f)
+    top, bot = _top(f), _low(f)
+    lo = bot - round(sd["maxLegFrac"] * (bot - top + 1))
+    found = None
+    for y0 in range(bot - 1, lo - 1, -1):
+        lab, sizes = _label8(op[y0 : bot + 1])
+        big = [i for i, n in enumerate(sizes) if n >= sd["minLegPx"]]
+        if len(big) == 2:
+            found = (y0, lab, big)
+        elif found:
+            break
+    if not found:
+        return _split_legs(f, forward_left)
+    y0, lab, big = found
+    legs = []
+    for i in big:
+        m = np.zeros_like(op)
+        m[y0 : bot + 1] = lab == i
+        legs.append(m)
+    legs.sort(key=lambda m: float(np.nonzero(m)[1].mean()), reverse=not forward_left)
+    return legs[0], legs[1]
+
+
+def _split_legs(f: np.ndarray, forward_left: bool) -> tuple[np.ndarray, np.ndarray] | None:
+    """Legs drawn touching: cut the legs band along the line from its top-row centre to the gap (or the middle)
+    between the two lowest runs. None when the feet are not two runs either."""
+    op = _opaque(f)
+    hip, bot = rig(f)["hip"], _low(f)
+    runs, foot_y = [], bot
+    for y in range(bot, hip, -1):
+        xs = np.nonzero(op[y])[0]
+        breaks = np.nonzero(np.diff(xs) > 1)[0]
+        if len(breaks) == 1:
+            runs = [xs[breaks[0]], xs[breaks[0] + 1]]
+            foot_y = y
+            break
+    if not runs:
+        return None
+    top_xs = np.nonzero(op[hip])[0]
+    x_top, x_bot = (top_xs.min() + top_xs.max()) / 2, (runs[0] + runs[1]) / 2
+    rows = np.arange(f.shape[0])[:, None]
+    cols = np.arange(f.shape[1])[None, :]
+    t = np.clip((rows - hip) / max(foot_y - hip, 1), 0, 1)
+    left = cols < x_top + (x_bot - x_top) * t
+    band = op & (rows >= hip)
+    fwd, back = band & left, band & ~left
+    return (fwd, back) if forward_left else (back, fwd)
+
+
+def shade_far(f: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    """The far limb a step darker and cooler (each pixel's own colour mixed toward side.farTint);
+    near-black outline pixels stay."""
+    sd = CFG["walk"]["side"]
+    out = f.copy()
+    m = mask & _opaque(f) & (f[..., :3].max(axis=2) >= sd["keepBelow"])
+    tint = np.array(hex_rgb(sd["farTint"]), np.float32)
+    mixed = f[m][:, :3].astype(np.float32) * sd["farShade"] + tint * (1 - sd["farShade"])
+    out[m, :3] = np.rint(mixed).astype(np.uint8)
+    return out
+
+
+def side_strides(f: np.ndarray, row: str) -> tuple[np.ndarray, np.ndarray]:
+    """The drawn stride twice: back leg far (shaded), then forward leg far, so the steps alternate legs."""
+    legs = stride_legs(f, CFG["walk"]["side"]["forwardLeft"][row])
+    if legs is None:
+        return f.copy(), f.copy()
+    fwd, back = legs
+    return shade_far(f, back), shade_far(f, fwd)
+
+
 def _low(f: np.ndarray) -> int:
     return int(np.nonzero(_opaque(f).any(axis=1))[0].max())
 
 
 def walk_frames(cells: list[np.ndarray], row: str) -> list[np.ndarray]:
-    """Side rows: the drawn strides (walk.sidePoses, their bob is drawn in). Front / back rows: built from the planted
+    """Side rows: the drawn stride twice with the near / far leg swapped, between the drawn passing poses (their bob
+    is drawn in). Front / back rows: built from the planted
     stand pose, one foot lifted per step with the arms counter-swinging (walk.front); the lift shrinks until a foot
     is still on the baseline (legs drawn as one block under a skirt). Each pose is shown twice, the first time with
     the head still at the previous pose's height."""
     w = CFG["walk"]
     if row in w["sideRows"]:
-        seq = [cells[p] for p in w["sidePoses"]]
+        sd = w["side"]
+        step_a, step_b = side_strides(cells[sd["stride"]], row)
+        seq = [step_a, cells[sd["pass"][0]], step_b, cells[sd["pass"][1]]]
         out = []
         for k, cur in enumerate(seq):
             lag = max(-1, min(1, _top(seq[k - 1]) - _top(cur)))

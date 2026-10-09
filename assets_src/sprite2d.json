@@ -5,6 +5,10 @@
   "bands": {"neckBand": [0.38, 0.62], "legFrac": 0.2, "minLegRows": 5},
   "arms": {"topFrac": 0.35, "swing": {"down": -1, "up": 1}},
   "idle": {"body": [0, 0, 0, 1, 1, 1, 1, 0], "headLag": 1},
-  "walk": {"sideRows": ["left", "right"], "sidePoses": [1, 2, 3, 0], "front": {"body": [1, 0, 1, 0], "foot": [-1, 0, 1, 0], "lift": 2, "maxPlant": 3}},
+  "walk": {
+    "sideRows": ["left", "right"],
+    "side": {"stride": 1, "pass": [2, 0], "forwardLeft": {"left": true, "right": false}, "maxLegFrac": 0.3, "minLegPx": 6, "farShade": 0.72, "farTint": "#2B2346", "keepBelow": 48},
+    "front": {"body": [1, 0, 1, 0], "foot": [-1, 0, 1, 0], "lift": 2, "maxPlant": 3}
+  },
   "review": {"dir": "output/sprite2d", "scale": 4, "background": "#4F6B4A", "gifMs": {"idle": 312, "walk": 143}}
 }
