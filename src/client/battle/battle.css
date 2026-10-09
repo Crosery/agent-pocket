@@ -123,10 +123,10 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 .apb-effects-dialog {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: calc((100% - var(--ap-bottom-inset)) / 2);
   z-index: 15;
-  width: min(calc(100% - var(--u) * 18), calc(var(--u) * 420));
-  max-height: calc(100% - var(--u) * 20);
+  width: min(calc(100% - var(--u) * 18), calc(var(--u) * 520));
+  max-height: calc(100% - var(--u) * 20 - var(--ap-bottom-inset));
   padding: calc(var(--u) * 8) calc(var(--u) * 10);
   transform: translate(-50%, -50%);
   overflow: hidden;
@@ -146,7 +146,7 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
   cursor: pointer;
 }
 .apb-effects-close:hover, .apb-effects-close:focus-visible { color: var(--ap-text); border-color: var(--ap-gold-hi); outline: none; }
-.apb-effects-dialog > .ap-panel-body { max-height: calc(100dvh - var(--u) * 66); overflow-y: auto; padding-right: calc(var(--u) * 2); }
+.apb-effects-dialog > .ap-panel-body { max-height: calc(100dvh - var(--u) * 66 - var(--ap-bottom-inset)); overflow-y: auto; padding-right: calc(var(--u) * 2); }
 .apb-effects-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--u) * 8); }
 .apb-effects-side { min-width: 0; padding: calc(var(--u) * 5); background: rgba(5, 7, 13, 0.4); border: var(--u) solid rgba(201, 164, 92, 0.35); }
 .apb-effects-side.is-focused { border-color: var(--ap-gold-hi); box-shadow: inset 0 0 0 var(--u) rgba(242, 217, 142, 0.2); }
@@ -172,14 +172,14 @@ html.ap-battle-on .ap-touch__zone { visibility: hidden; pointer-events: none; }
 .apb-stage.is-buff .apb-stage-delta { color: #9be7a1; }
 .apb-stage.is-debuff .apb-stage-delta { color: #ff9f8f; }
 .apb-stage-factor { flex: none; color: var(--ap-text-dim); }
-.apb-effect-row { margin-top: calc(var(--u) * 3); padding: calc(var(--u) * 3) calc(var(--u) * 4); background: rgba(5, 7, 13, 0.45); border-left: calc(var(--u) * 2) solid var(--ap-gold-dk); }
+.apb-effect-row { margin-top: calc(var(--u) * 3); padding: calc(var(--u) * 2) calc(var(--u) * 4); background: rgba(5, 7, 13, 0.45); border-left: calc(var(--u) * 2) solid var(--ap-gold-dk); }
 .apb-effect-row.is-buff { border-left-color: var(--ap-success); }
 .apb-effect-row.is-debuff { border-left-color: var(--ap-error); }
 .apb-effect-row-head { display: flex; align-items: baseline; gap: calc(var(--u) * 4); }
 .apb-effect-label { color: var(--ap-text); flex: 1 1 auto; min-width: 0; }
 .apb-effect-kind { flex: none; color: var(--ap-text-dim); font-size: calc(var(--u) * 9); }
 .apb-effect-value { flex: none; color: var(--ap-gold-hi); }
-.apb-effect-description, .apb-effects-empty { margin-top: calc(var(--u) * 1); color: var(--ap-text-dim); white-space: normal; overflow-wrap: anywhere; }
+.apb-effect-description, .apb-effects-empty { margin-top: calc(var(--u) * 1); font-size: calc(var(--u) * 9); line-height: 1.25; color: var(--ap-text-dim); white-space: normal; overflow-wrap: anywhere; }
 .apb-effects-glossary { margin-top: calc(var(--u) * 8); padding-top: calc(var(--u) * 4); border-top: var(--u) solid var(--ap-line); }
 .apb-glossary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--u) * 2) calc(var(--u) * 8); }
 .apb-glossary-row { display: grid; grid-template-columns: auto 1fr; gap: calc(var(--u) * 4); min-width: 0; padding-top: calc(var(--u) * 3); }
@@ -350,7 +350,7 @@ html.ap-portrait .apb-msg { min-height: var(--apb-bar-h); flex-basis: 100%; orde
 html.ap-portrait .apb-menu-wrap { width: 100%; order: 0; }
 html.ap-portrait .apb-cmd { width: 100%; }
 html.ap-portrait .apb-detail { width: 100%; }
-html.ap-portrait .apb-effects-dialog { width: calc(100% - var(--u) * 12); max-height: calc(100% - var(--u) * 12); }
+html.ap-portrait .apb-effects-dialog { width: calc(100% - var(--u) * 12); max-height: calc(100% - var(--u) * 12 - var(--ap-bottom-inset)); }
 html.ap-portrait .apb-effects-columns { grid-template-columns: 1fr; }
 html.ap-portrait .apb-effects-side.is-focused { order: -1; }
 html.ap-portrait .apb-glossary-grid { grid-template-columns: 1fr; }
