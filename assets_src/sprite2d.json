@@ -1,0 +1,10 @@
+{
+  "about": "2D pixel-puppet motion for the drawn character sheets (tools/sprite2d.py). Base art: assets_src/sprite2d/base/<id>.png, the original 4-frame 2D walk sheets. Offsets in px, + = down.",
+  "baseDir": "assets_src/sprite2d/base",
+  "outDir": "public/assets/characters",
+  "bands": {"neckBand": [0.38, 0.62], "legFrac": 0.2, "minLegRows": 5},
+  "arms": {"topFrac": 0.35, "swing": {"down": -1, "up": 1}},
+  "idle": {"body": [0, 0, 0, 1, 1, 1, 1, 0], "headLag": 1},
+  "walk": {"sideRows": ["left", "right"], "sidePoses": [1, 2, 3, 0], "front": {"body": [1, 0, 1, 0], "foot": [-1, 0, 1, 0], "lift": 2, "maxPlant": 3}},
+  "review": {"dir": "output/sprite2d", "scale": 4, "background": "#4F6B4A", "gifMs": {"idle": 312, "walk": 143}}
+}
