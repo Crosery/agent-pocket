@@ -13,6 +13,7 @@
   "verifyRecheckRounds": 3,
   "verifyRecheckDelayMs": 20000,
   "verifyRecheckConcurrency": 2,
+  "verifySample": 40,
   "uploadTimeoutMs": 30000,
   "uploadMinBytesPerSec": 8000,
   "verifyRetries": 5,
