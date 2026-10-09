@@ -93,7 +93,8 @@ export function createHttpHandler(opts: HttpOptions): (req: IncomingMessage, res
   }
 
   function cacheControl(rel: string): string {
-    if (basename(rel) === h.indexFile) return 'no-cache'
+    const name = basename(rel)
+    if (name === h.indexFile || h.noCacheFiles.includes(name)) return 'no-cache'
     if (isHashed(rel)) return `public, max-age=${h.immutableMaxAgeSeconds}, immutable`
     return `public, max-age=${h.defaultMaxAgeSeconds}`
   }
