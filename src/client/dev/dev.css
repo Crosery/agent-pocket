@@ -106,6 +106,10 @@
   color: var(--apd-gold); background: rgba(11, 13, 26, 0.82); border: 1px solid var(--apd-edge); cursor: pointer; opacity: 0.85;
 }
 .apd-badge--compact { min-height: var(--apd-hit); }
+/* Touch: the bottom edge belongs to the stick and action buttons, so the badge sits mid-left (free in portrait and landscape). */
+@media (pointer: coarse) {
+  .apd-badge { left: calc(env(safe-area-inset-left, 0px) + 6px); top: 50%; bottom: auto; transform: translateY(-50%); max-width: 42vw; }
+}
 .apd-badge:hover { opacity: 1; border-color: var(--apd-gold); }
 html.apd-on .apd-badge { opacity: 0.5; }
 
