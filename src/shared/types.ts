@@ -389,13 +389,13 @@ export interface GameConfig {
   economy: { startMoney: number; blackoutMoneyLoss: number; sellRatio: number; startItems: Record<string, number> }
   creature: { ivMax: number; startFriendship: number; secondAbilityChance: number; starterLevel: number; levelUpFriendship: number }
   save: { autosaveSeconds: number; storagePrefix: string; version: number }
-  camera: { fov: number; pitchDeg: number; zoomDistances: number[]; followDamping: number; lookAhead: number }
+  camera: { fov: number; pitchDeg: number; zoomDistances: number[]; followDamping: number; lookAhead: number; /** Outdoor view is never narrower than this many tiles across (portrait phones pull the camera back). */ minViewTilesWide: number }
   render: { maxPointLights: number; shadowMapSize: number; internalHeight: Record<Settings['quality'], number> }
   defaultSettings: Settings
   /** Allowed Settings.battleSpeed multipliers, slowest first. */
   battleSpeeds: number[]
   /** One-time overrides applied once to every save that hasn't seen them (e.g. a new default volume). */
-  settingsMigrations?: { id: string; set: Partial<Settings> }[]
+  settingsMigrations?: { id: string; set: Partial<Settings>; /** Only applied on touch devices. */ touchOnly?: boolean }[]
 }
 
 export type TextTable = Record<string, string>
@@ -1201,6 +1201,12 @@ export interface Settings {
   showTips: boolean
   autoRun: boolean
   touchControls: 'auto' | 'on' | 'off'
+  /** Which thumb owns the stick: 'left' mirrors the pad (stick right, buttons left). */
+  touchHand: 'right' | 'left'
+  /** Size preset of the on-screen buttons (config input.touch.sizes). */
+  touchSize: 'small' | 'normal' | 'large'
+  /** Vibrate on touch buttons / taps where navigator.vibrate exists. */
+  haptics: boolean
   /** Ids of one-time settings migrations (config.settingsMigrations) already applied to this save. */
   migrations?: string[]
 }

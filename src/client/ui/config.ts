@@ -25,8 +25,7 @@ export interface MarkerStyle {
 }
 
 export interface UIConfig {
-  /** touchInsetGapCss: CSS px kept between the virtual pad (layout from content/input.json) and bottom UI. */
-  scale: { baseWidth: number; baseHeight: number; minCssPerUnit: number; maxDeviceScale: number; compactBelowWidth: number; touchInsetGapCss: number }
+  scale: { baseWidth: number; baseHeight: number; minCssPerUnit: number; maxDeviceScale: number; compactBelowWidth: number }
   anim: { panelOpenMs: number; panelCloseMs: number; modalOpenMs: number; cursorBobMs: number; toastEnterMs: number; toastLeaveMs: number }
   fade: { defaultMs: number }
   sfx: { move: string; confirm: string; cancel: string; error: string; open: string; close: string; tab: string }

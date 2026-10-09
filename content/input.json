@@ -11,18 +11,42 @@
     "knobRadius": 22,
     "deadzone": 0.16,
     "digitalThreshold": 0.55,
+    "follow": true,
+    "insetGap": 6,
     "margin": 22,
     "buttonSize": 64,
     "smallButtonSize": 46,
     "pixel": 3,
     "labelScale": {"large": 0.38, "small": 0.3},
     "zoneWidthFraction": 0.5,
-    "zoneHeightFraction": 0.6,
+    "zoneHeightFraction": {"portrait": 0.72, "landscape": 0.5},
+    "tap": {"slopPx": 10, "maxMs": 280, "stickHoldMs": 150},
+    "haptics": {"button": 10, "toggle": 14, "stick": 5, "tap": 8},
+    "sizes": {"small": 0.96, "normal": 1, "large": 1.25},
+    "tapMove": {
+      "pickRadiusPx": 38,
+      "bodyLift": 0.8,
+      "candidateTiles": 14,
+      "maxNodes": 6000,
+      "marginTiles": 12,
+      "waypointReach": 0.45,
+      "finalReach": 0.2,
+      "stuckSec": 0.8,
+      "stuckMinMove": 0.15,
+      "replans": 1,
+      "elevationPasses": 2,
+      "kindBiasPx": {"npc": 10, "item": 8, "sign": 6, "prop": 4, "warp": 6},
+      "markerFx": "tapMarker",
+      "blockedFx": "tapBlocked"
+    },
     "buttons": [
       {"action": "confirm", "label": "audio.touch.confirm", "size": "large", "right": 0, "bottom": 34},
       {"action": "cancel", "label": "audio.touch.cancel", "size": "large", "right": 76, "bottom": 0},
       {"action": "run", "label": "audio.touch.run", "size": "small", "right": 148, "bottom": 8, "toggle": true},
-      {"action": "menu", "label": "audio.touch.menu", "size": "small", "right": 6, "bottom": 116}
+      {"action": "menu", "label": "audio.touch.menu", "size": "small", "right": 6, "bottom": 116},
+      {"action": "bag", "label": "audio.touch.bag", "size": "small", "right": 82, "bottom": 76, "worldOnly": true},
+      {"action": "map", "label": "audio.touch.map", "size": "small", "right": 136, "bottom": 70, "worldOnly": true},
+      {"action": "bike", "label": "audio.touch.bike", "size": "small", "right": 6, "bottom": 170, "worldOnly": true}
     ],
     "style": {
       "idleOpacity": 0.72,
@@ -34,7 +58,7 @@
       "label": "#ffffff",
       "labelShadow": "#000000aa",
       "toggleGlow": "#ffe66baa",
-      "buttons": {"confirm": {"hi": "#ff8f80", "base": "#e0473f", "lo": "#a42a33"}, "cancel": {"hi": "#ffe08a", "base": "#f0b232", "lo": "#b8741c"}, "menu": {"hi": "#9fe3ff", "base": "#4aa3d8", "lo": "#2c6797"}, "run": {"hi": "#b6f59a", "base": "#5cbf4a", "lo": "#357a35"}},
+      "buttons": {"confirm": {"hi": "#ff8f80", "base": "#e0473f", "lo": "#a42a33"}, "cancel": {"hi": "#ffe08a", "base": "#f0b232", "lo": "#b8741c"}, "menu": {"hi": "#9fe3ff", "base": "#4aa3d8", "lo": "#2c6797"}, "run": {"hi": "#b6f59a", "base": "#5cbf4a", "lo": "#357a35"}, "bag": {"hi": "#e8c8ff", "base": "#a46ad6", "lo": "#6a3f94"}, "map": {"hi": "#bff0c8", "base": "#4cae78", "lo": "#2b7050"}, "bike": {"hi": "#ffd2a8", "base": "#e68a45", "lo": "#a85a25"}},
       "buttonDefault": {"hi": "#d8d4f0", "base": "#8f8ab8", "lo": "#5b5684"}
     }
   },

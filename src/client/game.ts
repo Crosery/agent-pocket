@@ -287,6 +287,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     audio.setVolumes(s.bgmVolume, s.sfxVolume)
     applyDocumentSettings(s)
     input.setTouchControlsVisible(document.documentElement.dataset.touchControls === 'on')
+    input.refreshTouchLayout()
     minimap.setVisible(inWorld && s.showMinimap)
     resize()
   }
@@ -369,6 +370,9 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         const town = await screens.worldMap({ fly })
         if (town && fly) await flyTo(town)
       })
+    } else if (input.pressed('bag')) {
+      input.consume('bag')
+      void runModal(async () => { await screens.bag('field') })
     } else if (input.pressed('minimap')) {
       input.consume('minimap')
       const mm = minimap as Minimap & { expanded?: boolean }
