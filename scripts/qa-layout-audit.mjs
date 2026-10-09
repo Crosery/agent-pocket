@@ -388,12 +388,20 @@ export const SCREENS = [
     await page.evaluate(() => { for (const [k, t] of [['info', 'MiniMax Speech 2.6 的研究有了进展（+7.2 点）'], ['success', '研究等级提升到了 Lv.1！'], ['info', '打开菜单里的「智灵研究」就能领取等级奖励。']]) window.__AP.ui.toast(t, k) })
   } },
   { id: 'chat', scope: '.ap-chat', open: async (page) => { await page.keyboard.press('KeyT'); await page.waitForTimeout(700) }, closeKey: 'Escape' },
+  // The tutorial layer on top of the live HUD (whole page; statGlossary is the longest field-phase tip): the card must not cover HUD cards, minimap, chat or touch controls.
+  { id: 'tip-world', scope: null, ignore: '.ap-l-overlay canvas', tip: true, open: async (page) => { await page.evaluate(() => { window.__AP.save.settings.showTips = true; window.__apOnboarding.debugShow('statGlossary') }); await page.waitForTimeout(1200) } },
   { id: 'tip', scope: '.ap-tip', open: async (page) => { await page.evaluate(() => { window.__AP.save.settings.showTips = true; window.__apOnboarding.debugShow('menuHint') }); await page.waitForTimeout(1200) } },
 ]
 
 const BATTLE_SCREENS = [
   { id: 'battle-command', scope: '.apb-root', open: async (page) => { await waitCommand(page); await waitHud(page) } },
   { id: 'battle-moves', scope: '.apb-root', open: async (page) => { await waitCommand(page); await page.keyboard.press('KeyZ'); await page.waitForTimeout(700) } },
+  // The longest battle-phase tip (typeMatchup) docked in the top strip, audited with the whole battle UI (status windows, message box, command bar).
+  { id: 'battle-tip', scope: null, ignore: '.ap-l-chat, .ap-l-overlay canvas', tip: true, open: async (page) => {
+    await closeInspector(page)
+    await page.evaluate(() => { window.__AP.save.settings.showTips = true; window.__apOnboarding.debugShow('typeMatchup') })
+    await page.waitForTimeout(1200)
+  } },
   { id: 'battle-effects', scope: '.apb-effects-dialog', open: async (page) => { await page.keyboard.press('KeyX'); await page.waitForTimeout(300); await page.keyboard.press('Tab'); await page.waitForTimeout(700) } },
   // Worst case: a status, four volatiles and all seven stat stages on both sides, built on real status panels.
   { id: 'battle-hud-heavy', scope: '.apb-root', open: async (page) => { await closeInspector(page); await mountHeavy(page, false) } },
@@ -526,7 +534,7 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
         if (!(await closeAll(page))) await restore()
         await screen.open(page)
         if (!screen.keepToasts) await page.evaluate(() => document.querySelectorAll('.ap-toast').forEach((n) => n.remove()))
-        await hideTips(page, screen.id !== 'tip')
+        await hideTips(page, screen.id !== 'tip' && !screen.tip)
         const shot = `${outDir}${vp.name}/${screen.id}.png`
         await record(screen, await measureScreen(page, screen, shot), shot)
         if (screen.closeKey) await page.keyboard.press(screen.closeKey)
@@ -545,6 +553,7 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
           await hideTips(page, true)
           for (const screen of BATTLE_SCREENS) {
             if (only && !only.includes(screen.id)) continue
+            await hideTips(page, !screen.tip)
             if (screen.open) await screen.open(page)
             const shot = `${outDir}${vp.name}/${screen.id}.png`
             const result = await measureScreen(page, screen, shot)
