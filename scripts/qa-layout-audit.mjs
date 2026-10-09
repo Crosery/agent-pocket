@@ -488,6 +488,8 @@ async function startBattle(page) {
 
 export async function measureScreen(page, screen, shot) {
   await page.waitForTimeout(500)
+  // a map or scene fade that is still going would "cover" the whole page
+  await page.waitForFunction(() => { const f = document.querySelector('.ap-fade'); return !f || parseFloat(getComputedStyle(f).opacity) < 0.02 }, undefined, { timeout: 8000 }).catch(() => {})
   const run = () => page.evaluate(auditLayout, { scopeSel: screen.scope, ignoreSel: screen.ignore ?? '', minFont: 9 })
   let result = await run()
   // A screen that is still sliding in is not a layout defect: look once more before calling the scope missing.
