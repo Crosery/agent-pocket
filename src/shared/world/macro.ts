@@ -19,6 +19,7 @@ import { noiseField, rngFor, seedFor } from './random.ts'
 import { lockBounds, runHydrology, type Hydrology } from './hydro.ts'
 import { chooseSites, type Site, type SiteInput } from './sites.ts'
 import type { WorldContent } from './data.ts'
+import { drain, type Steps } from './steps.ts'
 
 export interface Rect { x: number; y: number; w: number; h: number }
 
@@ -372,7 +373,7 @@ function mergeZoneFragments(W: number, H: number, sea: Uint8Array, zoneRaw: Uint
   }
 }
 
-export function buildMacro(inp: MacroInput): Macro {
+export function* buildMacroSteps(inp: MacroInput): Steps<Macro> {
   const { seed, wc } = inp
   const spec = wc.world.overworld
   const regions: RegionSpec[] = wc.regions
@@ -413,6 +414,7 @@ export function buildMacro(inp: MacroInput): Macro {
     pads.push({ town, rect, level: 0, region: ri })
   }
 
+  yield
   // --- core / wilderness ---------------------------------------------------------------------------
   // Core = around the towns and each zone's anchor point; the rest of every zone is wilderness.
   const corePts: { x: number; y: number }[] = []
@@ -436,6 +438,7 @@ export function buildMacro(inp: MacroInput): Macro {
     return smoothstep(cc.radius[0], cc.radius[1], d)
   })
 
+  yield
   // --- climate fields (lattice) --------------------------------------------------------------------
   const { gw, gh } = latticeSize(W, H, C)
   const lat = (fill: (x: number, y: number, gi: number) => number): Float32Array => {
@@ -468,6 +471,7 @@ export function buildMacro(inp: MacroInput): Macro {
   const moist = upsample(moistL, gw, C, W, H)
   const weird = upsample(weirdL, gw, C, W, H)
 
+  yield
   // --- height --------------------------------------------------------------------------------------
   const baseL = boxBlur(lat((x, y) => regions[zoneAt(x, y)].level), gw, gh, Math.max(1, Math.round(spec.blur.radius / C)), spec.blur.passes)
   const reliefL = boxBlur(lat((x, y) => regions[zoneAt(x, y)].relief), gw, gh, Math.max(1, Math.round(spec.blur.radius / C)), spec.blur.passes)
@@ -531,6 +535,7 @@ export function buildMacro(inp: MacroInput): Macro {
       }
     }
   }
+  yield
   // --- sea: authored water zone + ocean ring, one continent ------------------------------------------
   const seaH = spec.seaLevel + 0.5
   const oc = spec.ocean
@@ -574,6 +579,7 @@ export function buildMacro(inp: MacroInput): Macro {
   for (let i = 0; i < N; i++) if (sea[i]) hf[i] = seaH
   mergeZoneFragments(W, H, sea, zoneRaw, zoneAll, pads)
 
+  yield
   // --- islands (authored + procedural archipelago, surf only) -----------------------------------------
   const island = new Uint8Array(N)
   const islands: IslandInfo[] = []
@@ -611,6 +617,7 @@ export function buildMacro(inp: MacroInput): Macro {
     }
   }
 
+  yield
   // --- beaches and cliff coasts ----------------------------------------------------------------------
   const seaCap = 64
   let seaDist = bfsDistance(W, H, (i) => sea[i] === 1, seaCap)
@@ -631,10 +638,12 @@ export function buildMacro(inp: MacroInput): Macro {
     }
   }
 
+  yield
   // --- zones per tile (sea and islands belong to the water zone) ------------------------------------
   const wild = new Uint8Array(N)
   for (let i = 0; i < N; i++) wild[i] = sea[i] || island[i] ? (seaZone >= 0 ? seaZone : zoneAll[i]) : (water[zoneAll[i]] ? zoneRaw[i] : zoneAll[i])
 
+  yield
   // --- provisional biomes for site selection --------------------------------------------------------
   const rules = compileBiomeRules(climate)
   const zoneBiome = regions.map((r) => biomeIdx(r.biome))
@@ -646,6 +655,7 @@ export function buildMacro(inp: MacroInput): Macro {
     return classifyBiome(rules, temp[i] - climate.temperature.lapse * level, moist[i] + extraM, weird[i], level, seaDist[i], zoneBiome[wild[i]])
   }
 
+  yield
   // --- flattened pads: authored lakes, towns, POI sites --------------------------------------------
   const locked = new Uint8Array(N)
   const locks: LockGroup[] = []
@@ -737,6 +747,7 @@ export function buildMacro(inp: MacroInput): Macro {
   }
   applyLocks(spec, W, H, hf, sea, locked, locks)
 
+  yield
   // --- hydrology: basin lakes and rivers carve the continuous field --------------------------------
   const hydro = runHydrology({
     seed, spec, W, H, C, hf, sea, locked, lake, lakeRim, island, moist, zoneRaw, cliffZone,
@@ -745,6 +756,7 @@ export function buildMacro(inp: MacroInput): Macro {
   for (const g of hydro.lockGroups) g.T = capBySea(g.cells, g.T)
   if (hydro.lockGroups.length) applyLocks(spec, W, H, hf, sea, locked, hydro.lockGroups)
 
+  yield
   // --- start basin: nothing above `startFlat.level` around the start town -------------------------------
   // Applied after hydrology on purpose: rivers, lakes, sites and biomes are decided from the uncapped field, so the
   // world keeps its layout and only the terraces near the start are levelled. The cap rises smoothly (Perlin-wobbled
@@ -781,6 +793,7 @@ export function buildMacro(inp: MacroInput): Macro {
     }
   }
 
+  yield
   // --- slope-limited lower envelope (two-pass chamfer) -------------------------------------------
   const s = spec.slope
   const e = hf
@@ -837,6 +850,7 @@ export function buildMacro(inp: MacroInput): Macro {
   }
   seaDist = bfsDistance(W, H, (i) => sea[i] === 1, seaCap)
 
+  yield
   // --- final biomes (moisture rises near rivers and lakes) -------------------------------------------
   const mw = climate.moisture.water
   const waterDist = bfsDistance(W, H, (i) => hydro.river[i] === 1 || lake[i] !== 0, Math.max(1, mw.distance) + 1)
@@ -846,6 +860,7 @@ export function buildMacro(inp: MacroInput): Macro {
     biome[i] = biomeAt(i, level[i], wb)
   }
 
+  yield
   // --- terrace compression: fewer, lower highlands without moving anything ----------------------------------------
   // Biomes above were read from the full-height field, and the map is monotone with steps of at most one, so slopes
   // stay legal, flat pads stay flat and every feature keeps its place; only the number of terraces above the plains drops.
@@ -860,4 +875,9 @@ export function buildMacro(inp: MacroInput): Macro {
     w: W, h: H, wild, zoneRaw, wildness, coreDist, core, biome, temp, moist, weird, level, sea, seaDist, island, islands,
     lake, lakeRim, lakeTerrains, crater, craterTerrains, beach, locked, river: hydro.river, pads, sites, hydro,
   }
+}
+
+/** buildMacroSteps run to completion. */
+export function buildMacro(inp: MacroInput): Macro {
+  return drain(buildMacroSteps(inp))
 }

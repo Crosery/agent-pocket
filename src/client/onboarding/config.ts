@@ -65,6 +65,20 @@ export type TipTrigger =
    */
   | { kind: 'on'; on: string; match?: Record<string, Matcher>; delaySec?: number; phase: 'battle' | 'field' | 'screen'; needs?: Cond }
 
+/** Where a tip card or manual page can send the player: the type chart, on a view and optionally a type. */
+export interface ChartLink {
+  view?: 'type' | 'grid' | 'loops'
+  type?: string
+}
+
+export interface LoopDef {
+  id: string
+  /** Types in order: each one's moves are super effective (x2) against the next, the last against the first. */
+  types: string[]
+  /** The ring is the starter triangle (shown with that tag). */
+  starter?: boolean
+}
+
 export interface TipDef {
   id: string
   trigger: TipTrigger
@@ -77,6 +91,8 @@ export interface TipDef {
   place?: 'top' | 'bottom' | 'right'
   /** The tip closes by itself once the player does what it explains. */
   doneOn?: 'moved' | 'dialogue'
+  /** Offers a screen: a button on the card and a key (battle tips only, the card is out of the way of the battle UI). */
+  open?: { screen: 'typeChart'; action: (typeof KEY_PLACEHOLDERS)[number]; /** Button label key; <text>Touch is the phone variant (no key cap). */ text: string }
 }
 
 export interface LessonDef {
@@ -86,6 +102,8 @@ export interface LessonDef {
   tips?: string[]
   /** NPCs whose script runs {op:'teach', lesson: <id>}. */
   npcs?: string[]
+  /** The manual page offers a button that opens the type chart here. */
+  chart?: ChartLink
 }
 
 export interface TutorialConfig {
@@ -99,6 +117,8 @@ export interface TutorialConfig {
   }
   tips: { layer: { ttlSec: number; fadeMs: number; gapSec: number; staleSec: number }; list: TipDef[] }
   curriculum: { flagPrefix: string; groups: { id: string }[]; lessons: LessonDef[] }
+  /** The memory loops the type chart screen draws as rings (every edge must be x2 in content/types.json). */
+  typeChart: { loops: LoopDef[] }
 }
 
 export const TUTORIAL = tutorialJson as unknown as TutorialConfig
@@ -155,6 +175,12 @@ export function validateTutorial(world: World, anchors: Record<string, unknown>,
     if (tip.trigger.kind === 'free') cond(tip.trigger.needs, where)
     const tr = tip.trigger
     for (const a of tip.after ?? []) if (!cfg.tips.list.some((x) => x.id === a)) errs.push(`${where}: unknown "after" tip "${a}"`)
+    if (tip.open) {
+      if (!(KEY_PLACEHOLDERS as readonly string[]).includes(tip.open.action)) errs.push(`${where}: open.action "${tip.open.action}" is not a key placeholder`)
+      if (tr.kind !== 'battle' && !(tr.kind === 'on' && tr.phase === 'battle')) errs.push(`${where}: open is for battle tips only`)
+      text(tip.open.text, where)
+      text(`${tip.open.text}Touch`, where)
+    }
     if (tr.kind === 'battle') cond(tr.needs, where)
     if (tr.kind === 'on') {
       cond(tr.needs, where)
@@ -166,6 +192,31 @@ export function validateTutorial(world: World, anchors: Record<string, unknown>,
   text('tutorial.tip.skip', 'tips')
   text('tutorial.tip.skipTouch', 'tips')
   text('tutorial.tip.close', 'tips')
+  errs.push(...validateTypeChartTeaching(cfg))
+  return errs
+}
+
+/** The loops the chart screen draws and the manual links to: real types, closed rings, and every arrow a real x2. */
+export function validateTypeChartTeaching(cfg: TutorialConfig = TUTORIAL, c: typeof CONTENT = CONTENT): string[] {
+  const errs: string[] = []
+  const ids = new Set<string>()
+  for (const loop of cfg.typeChart.loops) {
+    const where = `typeChart loop ${loop.id}`
+    if (ids.has(loop.id)) errs.push(`${where}: duplicate id`)
+    ids.add(loop.id)
+    if (!(`screens.typeChart.loops.${loop.id}.title` in c.text)) errs.push(`${where}: missing title text`)
+    if (loop.types.length < 3 || new Set(loop.types).size !== loop.types.length) errs.push(`${where}: needs at least three different types`)
+    for (const id of loop.types) if (!c.typeById[id]) errs.push(`${where}: unknown type "${id}"`)
+    loop.types.forEach((from, i) => {
+      const to = loop.types[(i + 1) % loop.types.length]
+      if (c.typeById[from] && c.typeById[to] && (c.typeChart[from]?.[to] ?? 1) !== 2) errs.push(`${where}: ${from} -> ${to} is not super effective`)
+    })
+  }
+  for (const l of cfg.curriculum.lessons) {
+    if (!l.chart) continue
+    if (l.chart.type && !c.typeById[l.chart.type]) errs.push(`lesson ${l.id}: chart type "${l.chart.type}" is unknown`)
+    if (l.chart.view && !['type', 'grid', 'loops'].includes(l.chart.view)) errs.push(`lesson ${l.id}: chart view "${l.chart.view}" is unknown`)
+  }
   return errs
 }
 

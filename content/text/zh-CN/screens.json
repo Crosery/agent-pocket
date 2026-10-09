@@ -41,8 +41,9 @@
     "titleConfirm": "返回标题画面？上次存档之后的进度将会丢失。",
     "research": "智灵研究",
     "intel": "情报",
-    "description": {"dex": "查看已发现的智灵，记录捕获进度与栖息地。", "party": "查看搭档的状态与招式，调整出战顺序。", "bag": "整理旅途中的道具，使用药品或提示词球。", "map": "查看当前位置、城镇与尚未探索的道路。", "quests": "查看当前任务、下一步目标与完成奖励。", "research": "查看研究记录与智灵的成长资料。", "intel": "查看世界动态与最新情报。", "online": "查看在线训练家与联机功能。", "save": "保存当前位置和进度，稍后继续这段旅程。", "settings": "调整声音、画面、操作与提示显示。", "title": "结束本次旅程并返回标题。未保存的进度会丢失。", "manual": "随时回看所有教学：操作、属性克制、基础能力、捕获、兑换、联机……"},
-    "manual": "教学手册"
+    "description": {"dex": "查看已发现的智灵，记录捕获进度与栖息地。", "party": "查看搭档的状态与招式，调整出战顺序。", "bag": "整理旅途中的道具，使用药品或提示词球。", "map": "查看当前位置、城镇与尚未探索的道路。", "quests": "查看当前任务、下一步目标与完成奖励。", "research": "查看研究记录与智灵的成长资料。", "intel": "查看世界动态与最新情报。", "online": "查看在线训练家与联机功能。", "save": "保存当前位置和进度，稍后继续这段旅程。", "settings": "调整声音、画面、操作与提示显示。", "title": "结束本次旅程并返回标题。未保存的进度会丢失。", "manual": "随时回看所有教学：操作、属性克制、基础能力、捕获、兑换、联机……", "typeChart": "一张图看懂属性克制：单个属性、完整表格、克制闭环。"},
+    "manual": "教学手册",
+    "typeChart": "属性克制表"
   },
   "badges": {"title": "徽章盒", "locked": "？？？", "town": "{town}", "leader": "{leader}", "none": "这个世界还没有道馆"},
   "party": {
@@ -301,5 +302,42 @@
   },
   "category": {"llm": "大语言模型", "chat": "对话助手", "assistant": "智能助手", "reasoning": "推理模型", "code": "编程助手", "agent": "智能体", "search": "AI 搜索", "image": "图像生成", "video": "视频生成", "audio": "语音音频", "music": "音乐生成", "voice": "语音合成", "multimodal": "多模态模型", "open": "开源模型", "robot": "具身智能", "3d": "3D 生成", "translate": "翻译", "writing": "写作助手", "design": "设计工具", "embodied": "具身智能", "other": "其他"},
   "country": {"CN": "中国", "US": "美国", "FR": "法国", "GB": "英国", "UK": "英国", "CA": "加拿大", "IL": "以色列", "JP": "日本", "KR": "韩国", "DE": "德国", "AE": "阿联酋", "SG": "新加坡", "IN": "印度", "HK": "中国香港", "TW": "中国台湾", "SE": "瑞典", "AT": "奥地利", "INTL": "国际"},
-  "manual": {"title": "教学手册", "empty": "这一类还没有内容", "learnt": "已学过", "unlearnt": "还没遇到——到时会自动提示你", "mark": "已学", "count": "已学 {n} / {total}"}
+  "manual": {"title": "教学手册", "empty": "这一类还没有内容", "learnt": "已学过", "unlearnt": "还没遇到——到时会自动提示你", "mark": "已学", "count": "已学 {n} / {total}", "openChart": "打开克制表"},
+  "typeChart": {
+    "title": "属性克制表",
+    "view": {"type": "单个属性", "grid": "完整表格", "loops": "克制闭环"},
+    "hint": {"pick": "选属性", "move": "移动", "loop": "选闭环", "open": "详解", "toTabs": "视图", "toContent": "内容"},
+    "attack": {"title": "进攻：它的招式打别人", "strong": "克制 ×{mul}", "resist": "效果不佳 ×{mul}", "immune": "无效 ×{mul}"},
+    "defend": {"title": "防守：别人的招式打它", "weak": "弱点 ×{mul}", "resist": "抵抗 ×{mul}", "immune": "免疫 ×{mul}"},
+    "none": "没有",
+    "example": "{atk} 招式打 {def} → 伤害 ×{mul}",
+    "exampleLabel": "举个例子",
+    "pair": "{atk} 招式打 {def}",
+    "verdict": {"strong": "效果拔群，伤害 ×{mul}", "resist": "效果不佳，伤害 ×{mul}", "immune": "没有效果，伤害 ×{mul}", "neutral": "效果普通，伤害 ×1"},
+    "cell": {"strong": "×2", "resist": "×½", "immune": "×0"},
+    "corner": "攻↓ 防→",
+    "axis": "行 = 出招方，列 = 挨打方",
+    "legend": {"title": "图例", "strong": "效果拔群", "resist": "效果不佳", "immune": "没有效果", "neutral": "普通 ×1"},
+    "openType": "查看{name}详解",
+    "edge": "{atk} → {def}",
+    "join": "，",
+    "cellLabel": "{pair}：{verdict}",
+    "loopHint": "箭头 A → B：A 的招式克制 B（×2）。三个属性首尾相接，绕成一圈。",
+    "loops": {"info": {"title": "信息环"}, "hardware": {"title": "硬件环", "tag": "初始三角"}, "media": {"title": "媒体环"}, "governance": {"title": "治理环"}},
+    "reason": {
+      "chat": {"search": "对话式问答直接给出答案，取代了传统搜索。", "agent": "人在回路：一句话就能叫停、纠正失控的智能体。", "chaos": "多轮追问让一本正经的胡话自相矛盾。"},
+      "logic": {"chaos": "严谨推理识破幻觉。", "chat": "深度思考碾压闲聊。", "compute": "以巧破力：推理时扩展让小模型胜过单纯堆算力。"},
+      "code": {"logic": "代码解释器的精确执行胜过心算推理。", "search": "爬虫与脚本把检索结果批量抓空。", "safety": "漏洞利用脚本绕过安全护栏。"},
+      "write": {"motion": "剧本先行，影像只能跟着剧本走。", "sound": "歌词赋予旋律灵魂。"},
+      "vision": {"write": "一图胜千言。", "agent": "验证码挡住自动化智能体。", "safety": "对抗样本图片骗过安全过滤器。"},
+      "motion": {"vision": "动态画面胜过静态图像。", "chat": "短视频夺走了聊天的注意力。"},
+      "sound": {"motion": "配乐决定一段影像的情绪。", "chat": "实时语音交互取代打字聊天。"},
+      "search": {"logic": "事实胜于空想。", "write": "查重与事实核查识破洗稿。", "sound": "听歌识曲，一秒报出曲名。"},
+      "agent": {"code": "智能体自主编程，代码只是它的产出。", "compute": "自动调度任务，把算力集群当工具使唤。"},
+      "open": {"compute": "效率胜过规模：开源小模型以小博大。", "code": "足够多的眼睛，让 bug 无处藏身。"},
+      "compute": {"code": "规模碾压一切技巧。", "motion": "视频生成拼的就是算力。", "vision": "万卡集群让扩散渲染一瞬完成。"},
+      "chaos": {"search": "虚假信息污染检索结果。", "write": "胡编乱造与洗稿淹没原创。", "open": "数据投毒与供应链攻击防不胜防。"},
+      "safety": {"chaos": "对齐训练约束幻觉。", "agent": "护栏约束智能体的自主行动。", "open": "合规审查让开源发布步步受限。"}
+    }
+  }
 }

@@ -225,6 +225,9 @@ export function createScriptRunner(host: ScriptHost) {
         }
         return 'done'
       }
+      case 'openTypeChart':
+        await ctx.screens.typeChart({ view: s.view, type: s.type })
+        return 'done'
       case 'openBox':
         await ctx.screens.box()
         host.onWorldChanged()

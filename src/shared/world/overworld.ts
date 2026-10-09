@@ -10,7 +10,8 @@ import {
   F_BEACH, F_CRATER, F_GATE, F_ISLAND, F_KEEP, F_LAKE, F_LOCK, F_PATH, F_RESERVED, F_RIVER, F_SEA, F_SITE, F_TOWN,
   addFlag, distanceField, draftView, hasFlag, idx, inside, newDraft, type MapDraft,
 } from './grid.ts'
-import { buildMacro, townRect, type IslandInfo } from './macro.ts'
+import { buildMacroSteps, townRect, type IslandInfo } from './macro.ts'
+import { drain, type Steps } from './steps.ts'
 import { carveRivers } from './water.ts'
 import { stampTowns, stubUnusedExits, townTemplate, type StampedTown } from './towns.ts'
 import { carveRoutes, connectToPaths, markBands, type CarvedRoute } from './routes.ts'
@@ -333,9 +334,9 @@ export function overworldItemAreas(ctx: OwCtx, reach: Uint8Array, total: { visib
 
 export interface ItemBudget { visible: number; hidden: number }
 
-export function buildOverworld(seed: number, wc: WorldContent, anchors: AnchorMap, problems: string[], caves: BuiltCave[], itemCounter: { next: number }, budget: ItemBudget, usedNames: Set<string>): OverworldResult {
+export function* buildOverworldSteps(seed: number, wc: WorldContent, anchors: AnchorMap, problems: string[], caves: BuiltCave[], itemCounter: { next: number }, budget: ItemBudget, usedNames: Set<string>): Steps<OverworldResult> {
   const spec = wc.world.overworld
-  const macro = buildMacro({
+  const macro = yield* buildMacroSteps({
     seed, wc,
     towns: wc.towns.map((town) => {
       const t = townTemplate(town, wc.townLayouts.templates)
@@ -345,6 +346,7 @@ export function buildOverworld(seed: number, wc: WorldContent, anchors: AnchorMa
   const d = newDraft({ id: spec.id, nameZh: spec.nameZh, kind: 'overworld', w: spec.width, h: spec.height, fill: 0, outdoor: true, music: spec.music })
   const ctx: OwCtx = { seed, wc, spec, d, macro, regionIdx: new Map(wc.regions.map((r, i) => [r.id, i])), anchors, doors: [], problems }
   baseTerrain(ctx)
+  yield
   carveRivers(ctx)
   const towns = stampTowns(ctx)
   for (const t of towns) {
@@ -357,6 +359,7 @@ export function buildOverworld(seed: number, wc: WorldContent, anchors: AnchorMa
   markBands(ctx)
   const used = new Set<string>()
   const routes = carveRoutes(ctx, towns, used)
+  yield
   stubUnusedExits(ctx, towns, used)
   ctx.pathHeur = distanceField(d, (i) => hasFlag(d, i, F_PATH), 0xffff)
   linkCaves(ctx, caves)
@@ -367,35 +370,44 @@ export function buildOverworld(seed: number, wc: WorldContent, anchors: AnchorMa
     if (!connectToPaths(ctx, h.center.y * d.w + h.center.x, h.site.zone, wc.pois.hamlets.road)) problems.push(`hamlet ${h.id}: no trail to the path network`)
   }
   const pois = stampPois(ctx, macro.sites, usedNames)
+  yield
   const dungeons = linkDungeons(ctx, buildDungeons(seed, wc, macro.sites, spec.id, usedNames))
+  yield
   const dgFloors = dungeons.reduce((n, dn) => n + dn.floors.length, 0)
   budget = { visible: Math.max(0, budget.visible - dgFloors * wc.dungeons.items.visible), hidden: Math.max(0, budget.hidden - dgFloors * wc.dungeons.items.hidden) }
   ctx.pathHeur = undefined
   const pathDist = distanceField(d, (i) => hasFlag(d, i, F_PATH), spec.pathDistCap)
   paintLayers(ctx, pathDist)
+  yield
   accessStairs(ctx)
   borderWalls(ctx)
   repairAccess(ctx, null)
+  yield
   const scatterFrom = d.props.length
   scatterProps(ctx, pathDist)
+  yield
   const targets: number[] = []
   for (const h of hamlets) { targets.push(h.center.y * d.w + h.center.x); for (const dr of h.doors) targets.push(dr.front.y * d.w + dr.front.x) }
   for (const p of pois) { targets.push(p.center.y * d.w + p.center.x); for (const s of p.spots) targets.push(s.y * d.w + s.x) }
   for (const dn of dungeons) if (dn.mouth) targets.push(dn.mouth.y * d.w + dn.mouth.x)
   const stuck = repairAccess(ctx, scatterFrom, targets)
+  yield
   for (const t of stuck) problems.push(`unreachable feature tile at ${t % d.w},${Math.floor(t / d.w)}`)
 
   const start = towns.find((t) => t.spec.start)?.square ?? { x: d.spawn.x, y: d.spawn.y }
   const { regions: wilds, tileWild } = computeWilds(ctx, start, usedNames)
+  yield
   const { townRegion, wildBase } = buildRegions(ctx, towns, routes, wilds, tileWild, hamlets, pois)
 
   const view = draftView(d)
   const col = buildCollision(view)
   const walkReach = floodReach(view, col, d.spawn.x, d.spawn.y, false)
   const surfReach = floodReach(view, col, d.spawn.x, d.spawn.y, true)
+  yield
   trainerSpots(ctx, routes, walkReach)
   spotAnchors(ctx, surfReach)
   wildSpots(ctx, wilds, wildBase, walkReach, surfReach)
+  yield
 
   // Ground items: POI quotas first, the rest spread over the overworld regions.
   const rng = rngFor(seed, 'ground-items')
@@ -422,7 +434,13 @@ export function buildOverworld(seed: number, wc: WorldContent, anchors: AnchorMa
   const placedVis = d.items.slice(before).filter((x) => !x.hidden).length, placedHid = d.items.length - before - placedVis
   const areas = overworldItemAreas(ctx, surfReach, { visible: Math.max(0, budget.visible - placedVis), hidden: Math.max(0, budget.hidden - placedHid) })
   placeGroundItems(areas, wc.items, rng, itemCounter)
+  yield
   // Last: causeways into the frontier (only open sea changes, so every earlier stage is unaffected).
   const gates = stampCauseways(ctx, walkReach)
   return { draft: d, ctx, towns, routes, townRegion, walkReach, surfReach, hamlets, gates, pois, dungeons, wilds, islands: macro.islands, wildBase }
+}
+
+/** buildOverworldSteps run to completion. */
+export function buildOverworld(...args: Parameters<typeof buildOverworldSteps>): OverworldResult {
+  return drain(buildOverworldSteps(...args))
 }

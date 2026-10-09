@@ -215,7 +215,7 @@ export async function runHUDDensityQA({ task, slot, phase = 'after' }) {
 
 export async function setHUDViewport(page, vp) {
   await page.cdp('Emulation.setDeviceMetricsOverride', {
-    width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr, mobile: false,
+    width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr, mobile: !!vp.touch,
   })
   await page.cdp('Emulation.setTouchEmulationEnabled', { enabled: !!vp.touch, maxTouchPoints: vp.touch ? 5 : 1 })
   await page.waitForFunction(({ width, height, dpr }) =>

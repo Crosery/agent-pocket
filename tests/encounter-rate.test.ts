@@ -5,15 +5,16 @@ import { Rng } from '../src/shared/rng.ts'
 import { buildWorld } from '../src/shared/world/index.ts'
 
 test('grass encounters use the reduced comfort rate while preserving event modifiers', () => {
-  assert.equal(GAME.encounters.grassRateMultiplier, 0.45)
-  assert.ok(Math.abs(grassEncounterRate(0.1) - 0.045) < 1e-12)
-  assert.ok(Math.abs(grassEncounterRate(0.1, 2) - 0.09) < 1e-12)
-  assert.ok(Math.abs(grassEncounterRate(2) - 0.9) < 1e-12)
+  assert.equal(GAME.encounters.grassRateMultiplier, 0.18)
+  assert.ok(Math.abs(grassEncounterRate(0.1) - 0.018) < 1e-12)
+  assert.ok(Math.abs(grassEncounterRate(0.1, 2) - 0.036) < 1e-12)
+  assert.ok(Math.abs(grassEncounterRate(6) - 1) < 1e-12)
 })
 
 // ---- before / after, per tall-grass step ---------------------------------------------------------------------
 // Before the comfort multiplier a step rolled `region.encounterRate x event modifier`; the owner found grass
-// "almost every time" (10 % per step = a battle every ~10 steps, 65 % of crossing a 10-tile patch).
+// "almost every time" (10 % per step = a battle every ~10 steps, 65 % of crossing a 10-tile patch). A first cut to
+// x0.45 was still "too high" (owner, 2026-10-09: 「草丛偶遇概率太高了，这些要大降」), so it is now x0.18.
 
 const before = (rate: number, mod = 1) => Math.min(1, rate * mod)
 const after = (rate: number, mod = 1) => grassEncounterRate(rate, mod)
@@ -27,8 +28,8 @@ test('per-step grass encounter probability: clearly lower than before, never zer
   for (const r of regions) {
     const b = before(r.encounterRate), a = after(r.encounterRate)
     assert.ok(a > 0, `${r.id} still encounters`)
-    assert.ok(a <= b * 0.5, `${r.id}: ${a} vs ${b} is not clearly lower`)
-    assert.ok(a >= b * 0.3, `${r.id}: ${a} vs ${b} is too suppressed`)
+    assert.ok(a <= b * 0.25, `${r.id}: ${a} vs ${b} is not clearly lower`)
+    assert.ok(a >= b * 0.1, `${r.id}: ${a} vs ${b} is too suppressed`)
     if (r.id === 'meadow') rows.push(`meadow: ${(b * 100).toFixed(1)}% -> ${(a * 100).toFixed(1)}% per step; ~${(1 / b).toFixed(0)} -> ~${(1 / a).toFixed(0)} steps per battle; crossing 10 tiles ${(crossing(b, 10) * 100).toFixed(0)}% -> ${(crossing(a, 10) * 100).toFixed(0)}%, 25 tiles ${(crossing(b, 25) * 100).toFixed(0)}% -> ${(crossing(a, 25) * 100).toFixed(0)}%`)
   }
   console.log(rows.join('\n'))

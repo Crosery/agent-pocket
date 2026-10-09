@@ -1,5 +1,6 @@
 {
   "motd": "欢迎来到智灵口袋！按 T 打开聊天，和其他训练家一起探索、交换与对战吧。",
+  "motdTouch": "欢迎来到智灵口袋！点聊天图标就能聊天，和其他训练家一起探索、交换与对战吧。",
   "system": {"name": "系统", "join": "{name} 进入了智灵世界", "leave": "{name} 离开了智灵世界"},
   "chat": {"whisperTo": "→ {name}"},
   "name": {"fallback": "训练家{tag}", "duplicate": "{name}#{tag}"},
