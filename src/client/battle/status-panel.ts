@@ -11,7 +11,7 @@ import { shortName, type BossPanelInfo, type SlotInfo } from './model.ts'
 
 export interface StatusPanel {
   readonly el: HTMLElement
-  /** `gradeId`: quality letter next to the level (wild foes of species the player has caught). */
+  /** `gradeId`: quality letter in front of the tag row (wild foes of species the player has caught). */
   setCreature(v: CreatureView, abilityId?: string, gradeId?: string): void
   setLevel(level: number): void
   setHp(hp: number, maxHp: number, animate: boolean): Promise<void>
@@ -55,11 +55,12 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
     e.stopPropagation()
     onInspect()
   })
-  const tagRow = el('div', 'apb-st-tags', [tags, balls, inspect])
+  // The quality letter rides in front of the tags: on a portrait phone the name row has no width to spare ("Claude Haiku 4.5" fits to the pixel).
+  const tagRow = el('div', 'apb-st-tags', [grade, tags, balls, inspect])
   const bossBox = el('div', 'apb-st-boss')
   bossBox.hidden = true
   append(p.body, [
-    el('div', 'apb-st-head', [name, el('span', 'apb-st-badges', [shiny, rarity, grade, lv])]),
+    el('div', 'apb-st-head', [name, el('span', 'apb-st-badges', [shiny, rarity, lv])]),
     bossBox,
     tagRow,
     effects,
