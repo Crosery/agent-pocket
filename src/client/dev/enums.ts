@@ -4,6 +4,7 @@ import { GAME } from '../world/config.ts'
 import { PARTY_FIELDS } from './commands/party.ts'
 import { LOD_KEYS } from './commands/env.ts'
 import type { DevContent } from './content.ts'
+import { NET_SIM } from './net-config.ts'
 import type { EnumRefs } from './registry.ts'
 
 export function devEnums(content: Pick<DevContent, 'scenarios'>): EnumRefs {
@@ -14,5 +15,6 @@ export function devEnums(content: Pick<DevContent, 'scenarios'>): EnumRefs {
     partyField: () => [...PARTY_FIELDS],
     dexMode: () => ['all', 'type', 'none'],
     lodKey: () => [...LOD_KEYS],
+    netPreset: () => Object.keys(NET_SIM.presets),
   }
 }

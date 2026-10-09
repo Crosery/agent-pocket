@@ -1,7 +1,7 @@
 // Developer tooling entry. Loaded by src/client/game.ts through a dynamic import behind __AP_DEVTOOLS__, so it lives
 // in its own chunk that the production build never emits. Even in a devtools build it stays dormant until
 // the page is opened with ?dev=1 or &scenario=<id> (readDebugParams).
-import { CONTENT } from '../../shared/content/index.ts'
+import { CONTENT, t } from '../../shared/content/index.ts'
 import { flattenScenario, type ScenarioResult } from '../../shared/dev/scenario.ts'
 import { worldAnchors } from '../../shared/world/index.ts'
 import type { StorageLike } from '../core/save.ts'
@@ -16,6 +16,8 @@ import { devEnums } from './enums.ts'
 import { createEventLog } from './events.ts'
 import type { DevHost, DevKit } from './kit.ts'
 import { applyDebugStart, debugSave, installDebugHooks, installDevLog, runDebugActions } from './legacy.ts'
+import { createNetSim, type SocketCtor } from './net-sim.ts'
+import { NET_SIM } from './net-config.ts'
 import { readDebugParams } from './params.ts'
 import { CONSOLE, createRegistry } from './registry.ts'
 import { prepareScenario, runScenarioCommands, settleScenario } from './scenario.ts'
@@ -78,9 +80,17 @@ export function createDevKit(search: string): DevKit | null {
     install(game) {
       hub = game.overworld.devHandles().rng
       const log = createEventLog(game.ctx.events, CONSOLE.limits.eventBuffer)
-      const extras = () => ({ rng: { seed: h.rng.seed, cursors: h.rng.cursors() }, time: clock.state(), scenario: h.session.scenario })
+      // Installed before net.connect(): the client then opens DevSockets, which pass straight through until a link or the fake server is asked for.
+      const net = createNetSim({
+        Real: (window.WebSocket as unknown as SocketCtor | undefined) ?? null,
+        config: NET_SIM,
+        text: { motd: t('dev.net.motd'), peerName: (n) => t('dev.net.peerName', { n }), unsupported: t('dev.net.unsupported') },
+        avatars: CONTENT.characters.filter((c) => c.playable).map((c) => c.id),
+      })
+      net.install(window)
+      const extras = () => ({ rng: { seed: h.rng.seed, cursors: h.rng.cursors() }, time: clock.state(), scenario: h.session.scenario, netSim: net.state() })
       const h: DevHost = {
-        ...game, rng: hub, clock, content, session: { scenario: null },
+        ...game, rng: hub, clock, content, net, session: { scenario: null },
         run: (call) => registry.run(call.cmd, call.args),
         dump: (sections) => dumpState(h, log, extras, sections),
       }

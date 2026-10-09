@@ -9,6 +9,7 @@ import type { OverworldExt } from '../world/controller.ts'
 import type { StorageLike } from '../core/save.ts'
 import type { DevClock } from './clock.ts'
 import type { DevContent } from './content.ts'
+import type { NetSim } from './net-sim.ts'
 
 /** What game.ts hands to the developer tooling: the live game objects and one frame of the main loop. */
 export interface GameHost {
@@ -26,6 +27,8 @@ export interface DevHost extends GameHost {
   rng: RngHub
   clock: DevClock
   content: DevContent
+  /** The WebSocket replacement: link quality, forced drops, the fake server. */
+  net: NetSim
   /** Which scenario the session is in (info(), scenario.check()). */
   session: { scenario: string | null }
   /** Runs one command through the registry (scenarios and the command line use it). */

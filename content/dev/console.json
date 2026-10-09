@@ -212,7 +212,35 @@
       ]
     },
     "onboard.reset": {"titleKey": "dev.cmd.onboardReset", "group": "onboarding", "mutates": true, "needs": "live", "args": []},
-    "onboard.show": {"titleKey": "dev.cmd.onboardShow", "group": "onboarding", "mutates": false, "needs": "live", "args": [{"name": "tip", "type": "string", "list": "tips", "labelKey": "dev.arg.tip"}]}
+    "onboard.show": {"titleKey": "dev.cmd.onboardShow", "group": "onboarding", "mutates": false, "needs": "live", "args": [{"name": "tip", "type": "string", "list": "tips", "labelKey": "dev.arg.tip"}]},
+    "net.preset": {"titleKey": "dev.cmd.netPreset", "group": "net", "mutates": false, "needs": "live", "args": [{"name": "name", "type": "string", "labelKey": "dev.arg.preset", "enumRef": "netPreset"}]},
+    "net.link": {
+      "titleKey": "dev.cmd.netLink",
+      "group": "net",
+      "mutates": false,
+      "needs": "live",
+      "args": [
+        {"name": "latencyMs", "type": "number", "optional": true, "labelKey": "dev.arg.latencyMs"},
+        {"name": "jitterMs", "type": "number", "optional": true, "labelKey": "dev.arg.jitterMs"},
+        {"name": "stallChance", "type": "number", "optional": true, "labelKey": "dev.arg.stallChance"},
+        {"name": "stallMinMs", "type": "number", "optional": true, "labelKey": "dev.arg.stallMinMs"},
+        {"name": "stallMaxMs", "type": "number", "optional": true, "labelKey": "dev.arg.stallMaxMs"}
+      ]
+    },
+    "net.drop": {"titleKey": "dev.cmd.netDrop", "group": "net", "mutates": false, "needs": "live", "args": []},
+    "net.offline": {"titleKey": "dev.cmd.netOffline", "group": "net", "mutates": false, "needs": "live", "args": []},
+    "net.reconnect": {"titleKey": "dev.cmd.netReconnect", "group": "net", "mutates": false, "needs": "live", "args": []},
+    "net.fake": {
+      "titleKey": "dev.cmd.netFake",
+      "group": "net",
+      "mutates": false,
+      "needs": "live",
+      "args": [
+        {"name": "on", "type": "boolean", "optional": true, "labelKey": "dev.arg.on"},
+        {"name": "peers", "type": "integer", "optional": true, "labelKey": "dev.arg.peers"}
+      ]
+    },
+    "net.peers": {"titleKey": "dev.cmd.netPeers", "group": "net", "mutates": false, "needs": "live", "args": [{"name": "n", "type": "integer", "labelKey": "dev.arg.peers"}]}
   },
   "legacy": {"pos": "state.dump(['runtime'])", "tp": "cmd('tp.xy', {x, y, map})", "region": "state.dump(['runtime'])", "gates": "state.dump(['world'])", "places": "cmd('tp.xy')", "discover": "cmd('discover', {place})", "fly": "cmd('fly', {place})", "fog": "state.dump(['save'])", "boss": "cmd('battle.boss')", "distance": "state.dump(['save'])", "clock": "cmd('clock.set', {minutes})", "weather": "cmd('weather.set', {kind})", "roamers": "state.dump(['runtime'])"},
   "panel": {
@@ -232,6 +260,7 @@
       {"id": "battle", "titleKey": "dev.tab.battle", "sections": [{"titleKey": "dev.sec.bosses", "controls": [{"kind": "list", "source": "bosses", "cmd": "battle.boss", "argName": "boss", "limit": 8}]}, {"titleKey": "dev.sec.fights", "controls": [{"kind": "cmd", "cmd": "battle.wild"}, {"kind": "cmd", "cmd": "battle.trainer"}, {"kind": "cmd", "cmd": "battle.boss"}]}]},
       {"id": "env", "titleKey": "dev.tab.env", "sections": [{"titleKey": "dev.sec.clock", "controls": [{"kind": "readout", "pointer": "/runtime/clock/label", "labelKey": "dev.ro.clock"}, {"kind": "readout", "pointer": "/runtime/weather", "labelKey": "dev.ro.weather"}, {"kind": "preset", "cmd": "clock.set", "args": {"minutes": 360}, "labelKey": "dev.preset.dawn"}, {"kind": "preset", "cmd": "clock.set", "args": {"minutes": 720}, "labelKey": "dev.preset.noon"}, {"kind": "preset", "cmd": "clock.set", "args": {"minutes": 1080}, "labelKey": "dev.preset.dusk"}, {"kind": "preset", "cmd": "clock.set", "args": {"minutes": 1380}, "labelKey": "dev.preset.night"}, {"kind": "preset", "cmd": "clock.freeze", "args": {"on": true}, "labelKey": "dev.preset.freeze"}, {"kind": "preset", "cmd": "clock.freeze", "args": {"on": false}, "labelKey": "dev.preset.thaw"}, {"kind": "cmd", "cmd": "clock.set"}]}, {"titleKey": "dev.sec.weather", "controls": [{"kind": "preset", "cmd": "weather.set", "args": {"kind": "clear"}, "labelKey": "dev.preset.weather_clear"}, {"kind": "preset", "cmd": "weather.set", "args": {"kind": "rain"}, "labelKey": "dev.preset.weather_rain"}, {"kind": "preset", "cmd": "weather.set", "args": {"kind": "snow"}, "labelKey": "dev.preset.weather_snow"}, {"kind": "preset", "cmd": "weather.set", "args": {"kind": "sand"}, "labelKey": "dev.preset.weather_sand"}, {"kind": "preset", "cmd": "weather.set", "args": {"kind": "fog"}, "labelKey": "dev.preset.weather_fog"}, {"kind": "preset", "cmd": "weather.set", "args": {"kind": "aurora"}, "labelKey": "dev.preset.weather_aurora"}, {"kind": "preset", "cmd": "weather.set", "args": {"kind": "ash"}, "labelKey": "dev.preset.weather_ash"}]}, {"titleKey": "dev.sec.quality", "controls": [{"kind": "preset", "cmd": "settings.set", "args": {"key": "quality", "value": "low"}, "labelKey": "dev.preset.quality_low"}, {"kind": "preset", "cmd": "settings.set", "args": {"key": "quality", "value": "medium"}, "labelKey": "dev.preset.quality_medium"}, {"kind": "preset", "cmd": "settings.set", "args": {"key": "quality", "value": "high"}, "labelKey": "dev.preset.quality_high"}, {"kind": "preset", "cmd": "settings.set", "args": {"key": "quality", "value": "ultra"}, "labelKey": "dev.preset.quality_ultra"}, {"kind": "cmd", "cmd": "settings.set"}, {"kind": "cmd", "cmd": "render.tune"}]}]},
       {"id": "encounter", "titleKey": "dev.tab.encounter", "sections": [{"titleKey": "dev.sec.rate", "controls": [{"kind": "preset", "cmd": "encounter.rate", "args": {"mult": 0}, "labelKey": "dev.preset.rate0"}, {"kind": "preset", "cmd": "encounter.rate", "args": {"mult": 1}, "labelKey": "dev.preset.rate1"}, {"kind": "preset", "cmd": "encounter.rate", "args": {"mult": 10}, "labelKey": "dev.preset.rate10"}, {"kind": "preset", "cmd": "encounter.repel", "args": {}, "labelKey": "dev.preset.repelOn"}, {"kind": "preset", "cmd": "encounter.repel", "args": {"on": false}, "labelKey": "dev.preset.repelOff"}]}, {"titleKey": "dev.sec.next", "controls": [{"kind": "cmd", "cmd": "encounter.next"}]}]},
+      {"id": "net", "titleKey": "dev.tab.net", "sections": [{"titleKey": "dev.sec.link", "controls": [{"kind": "readout", "pointer": "/runtime/net/status", "labelKey": "dev.ro.netStatus"}, {"kind": "readout", "pointer": "/runtime/net/online", "labelKey": "dev.ro.netOnline"}, {"kind": "readout", "pointer": "/runtime/netSim/mode", "labelKey": "dev.ro.netMode"}, {"kind": "readout", "pointer": "/runtime/netSim/link/latencyMs", "labelKey": "dev.ro.netLatency"}, {"kind": "preset", "cmd": "net.preset", "args": {"name": "off"}, "labelKey": "dev.preset.net_off"}, {"kind": "preset", "cmd": "net.preset", "args": {"name": "good"}, "labelKey": "dev.preset.net_good"}, {"kind": "preset", "cmd": "net.preset", "args": {"name": "mobile"}, "labelKey": "dev.preset.net_mobile"}, {"kind": "preset", "cmd": "net.preset", "args": {"name": "bad"}, "labelKey": "dev.preset.net_bad"}, {"kind": "cmd", "cmd": "net.link"}]}, {"titleKey": "dev.sec.conn", "controls": [{"kind": "preset", "cmd": "net.drop", "args": {}, "labelKey": "dev.preset.netDrop"}, {"kind": "preset", "cmd": "net.offline", "args": {}, "labelKey": "dev.preset.netOffline"}, {"kind": "preset", "cmd": "net.reconnect", "args": {}, "labelKey": "dev.preset.netReconnect"}]}, {"titleKey": "dev.sec.peers", "controls": [{"kind": "readout", "pointer": "/runtime/netSim/peers", "labelKey": "dev.ro.netPeers"}, {"kind": "preset", "cmd": "net.fake", "args": {"on": true, "peers": 12}, "labelKey": "dev.preset.fakeOn"}, {"kind": "preset", "cmd": "net.fake", "args": {"on": false}, "labelKey": "dev.preset.fakeOff"}, {"kind": "cmd", "cmd": "net.peers"}, {"kind": "cmd", "cmd": "net.fake"}]}]},
       {"id": "onboarding", "titleKey": "dev.tab.onboarding", "sections": [{"titleKey": "dev.sec.tips", "controls": [{"kind": "preset", "cmd": "onboard.reset", "args": {}, "labelKey": "dev.preset.resetTips"}, {"kind": "list", "source": "tips", "cmd": "onboard.show", "argName": "tip", "limit": 12}]}]},
       {"id": "acceptance", "titleKey": "dev.tab.acceptance", "sections": [{"titleKey": "dev.sec.scenarios", "controls": [{"kind": "acceptance"}]}]}
     ]

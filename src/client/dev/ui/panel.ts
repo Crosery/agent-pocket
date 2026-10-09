@@ -97,11 +97,15 @@ export function mountPanel(host: DevHost, registry: Registry): Panel {
     refresh()
   }
 
-  function refresh(): void {
+  function refreshBadge(): void {
     const seed = t('dev.ui.seed', { w: host.world.seed, r: host.rng.seed })
     const sc = host.session.scenario
     seeds.textContent = seed
     badge.textContent = `DEV ${seed}${sc ? ` · ${t('dev.ui.scenarioTag', { id: sc })}` : ''}`
+  }
+
+  function refresh(): void {
+    refreshBadge()
     if (!isOpen) return
     const wanted = new Set<Section>()
     for (const c of P.tabs.find((x) => x.id === activeTab)?.sections.flatMap((s) => s.controls) ?? []) {
@@ -159,11 +163,13 @@ export function mountPanel(host: DevHost, registry: Registry): Panel {
   window.addEventListener('keydown', onKey, true)
 
   document.body.append(badge, root)
-  refresh()
+  refreshBadge()
+  // The scenario id and seeds change outside the panel's own commands (scenario boot, console).
+  const badgeTimer = setInterval(refreshBadge, P.readoutMs * 2)
   return {
     get isOpen() { return isOpen },
     open, close: closePanel, toggle, refresh,
     tab: (id) => { open(); selectTab(id) },
-    destroy() { closePanel(); window.removeEventListener('keydown', onKey, true); compact.removeEventListener('change', layout); badge.remove(); root.remove() },
+    destroy() { closePanel(); clearInterval(badgeTimer); window.removeEventListener('keydown', onKey, true); compact.removeEventListener('change', layout); badge.remove(); root.remove() },
   }
 }
