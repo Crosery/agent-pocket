@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import { devtoolsBuild } from './scripts/dev-gate.ts'
 import { CDN, cdnBase, publicHash } from './scripts/static-cdn-base.ts'
 
 const SERVER_PORT = Number(process.env.AP_SERVER_PORT ?? 8787)
@@ -6,10 +7,11 @@ const SERVER_PORT = Number(process.env.AP_SERVER_PORT ?? 8787)
 const CDN_BASE = cdnBase()
 const PUBLIC_BASE = CDN_BASE ? `${CDN_BASE}${CDN.publicDir}${publicHash('public')}/` : null
 
-export default defineConfig({
+export default defineConfig(({ command, mode }) => ({
   root: '.',
   publicDir: 'public',
-  define: { __AP_PUBLIC_BASE__: JSON.stringify(PUBLIC_BASE) },
+  // __AP_DEVTOOLS__ (src/client/devtools-flag.ts): developer tooling exists only in `vite` and `vite build --mode devtools`.
+  define: { __AP_PUBLIC_BASE__: JSON.stringify(PUBLIC_BASE), __AP_DEVTOOLS__: JSON.stringify(devtoolsBuild(command, mode)) },
   server: {
     port: 5173,
     host: true,
@@ -26,4 +28,4 @@ export default defineConfig({
   experimental: CDN_BASE && PUBLIC_BASE
     ? { renderBuiltUrl: (file, { type }) => (type === 'public' ? PUBLIC_BASE : CDN_BASE) + file.replace(/^\//, '') }
     : {},
-})
+}))
