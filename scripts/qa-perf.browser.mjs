@@ -57,6 +57,7 @@ const SUMMARY = () => {
     textures: info.memory.textures, geometries: info.memory.geometries, programs: info.programs ? info.programs.length : 0,
     internal: { w: window.__AP.renderer.internal.width, h: window.__AP.renderer.internal.height, scale: window.__AP.renderer.internal.scale },
     quality: window.__AP.save.settings.quality, coarse: matchMedia('(pointer: coarse)').matches, dpr: devicePixelRatio,
+    governor: window.__AP.renderer.governorLevel,
   }
 }
 
@@ -189,6 +190,7 @@ for (const job of CONFIG.jobs) {
           calls: info.render.calls, triangles: info.render.triangles, textures: info.memory.textures, geometries: info.memory.geometries,
           internal: { w: window.__AP.renderer.internal.width, h: window.__AP.renderer.internal.height, scale: window.__AP.renderer.internal.scale },
           quality: window.__AP.save.settings.quality, coarse: matchMedia('(pointer: coarse)').matches, dpr: devicePixelRatio,
+          governor: window.__AP.renderer.governorLevel,
         }
       }, CONFIG.stallMs)
       row.raf = rafRes

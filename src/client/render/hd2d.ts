@@ -11,7 +11,9 @@ import type { WebGLRenderTarget } from 'three'
 import { CONTENT } from '../../shared/content/index.ts'
 import type { Settings } from '../../shared/types.ts'
 import type { HD2DRenderer, PostParams, RenderView } from '../contracts.ts'
-import { RENDER, hexToRgb, qualityPreset, type QualityPreset } from './config.ts'
+import { RENDER, governedPreset, governedScaleBias, hexToRgb, qualityPreset, type QualityPreset } from './config.ts'
+import { createGovernor } from './governor.ts'
+import { isTouchDevice } from '../core/settings.ts'
 import { DofShader, GradeShader, TRANSITION_KIND } from './post-shaders.ts'
 
 export interface InternalSize { width: number; height: number; scale: number }
@@ -24,6 +26,10 @@ export interface HD2DRendererExt extends HD2DRenderer {
   /** Seconds accumulated through render(dt). */
   readonly time: number
   onSettingsChanged(fn: (s: Settings) => void): () => void
+  /** Frame-time governor level (0 = the tier as chosen; higher = more cost shed, render.json governor.steps). */
+  readonly governorLevel: number
+  /** Called once per rendered world frame with the animation-frame timestamp the frame began at; feeds the governor. */
+  noteFrame(frameStartMs: number): void
   dispose(): void
 }
 
@@ -64,7 +70,14 @@ function basePost(settings: Settings, q: QualityPreset): PostParams {
 export function createRenderer(canvas: HTMLCanvasElement, settings: Settings): HD2DRendererExt {
   const P = RENDER.post
   let current: Settings = { ...settings }
-  let quality = qualityPreset(current.quality)
+  const G = RENDER.governor
+  const governor = createGovernor(G, G.steps.length)
+  const storage = (() => { try { return window.localStorage } catch { return null } })()
+  try {
+    const saved = Number(storage?.getItem(G.storageKey))
+    if (Number.isInteger(saved) && saved > 0) governor.reset(saved)
+  } catch { /* storage unavailable */ }
+  let quality = governedPreset(qualityPreset(current.quality), governor.level)
 
   const gl = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance', alpha: false, stencil: false })
   gl.setPixelRatio(1)
@@ -142,8 +155,10 @@ export function createRenderer(canvas: HTMLCanvasElement, settings: Settings): H
     const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1
     const devW = Math.max(1, Math.round(cssW * dpr))
     const devH = Math.max(1, Math.round(cssH * dpr))
-    const maxH = CONTENT.config.render.internalHeight[current.quality] ?? devH
-    const scale = Math.max(P.minScale, Math.round(current.pixelScale) || 1, Math.ceil(devH / maxH))
+    let maxH = CONTENT.config.render.internalHeight[current.quality] ?? devH
+    // Touch devices keep the high-tier pixel grid: a small screen costs little to fill, and chunkier pixels look blurry there.
+    if (isTouchDevice()) maxH = Math.max(maxH, RENDER.device.touchMinInternalHeight)
+    const scale = Math.max(P.minScale, Math.round(current.pixelScale) || 1, Math.ceil(devH / maxH)) + governedScaleBias(governor.level)
     internal.width = Math.max(1, Math.round(devW / scale))
     internal.height = Math.max(1, Math.round(devH / scale))
     internal.scale = scale
@@ -156,13 +171,32 @@ export function createRenderer(canvas: HTMLCanvasElement, settings: Settings): H
   }
 
   function applyQuality(): void {
-    quality = qualityPreset(current.quality)
+    quality = governedPreset(qualityPreset(current.quality), governor.level)
     Object.assign(post, basePost(current, quality), { flash: post.flash })
     const samples = Math.max(1, Math.round(quality.dofSamples))
     if (dofPass.material.defines.SAMPLES !== samples) {
       dofPass.material.defines.SAMPLES = samples
       dofPass.material.needsUpdate = true
     }
+  }
+
+  function remember(): void {
+    try { if (governor.level > 0) storage?.setItem(G.storageKey, String(governor.level)); else storage?.removeItem(G.storageKey) } catch { /* storage unavailable */ }
+  }
+
+  let lastFrameStart = 0
+  let lastLevel = governor.level
+  function noteFrame(frameStartMs: number): void {
+    const interval = lastFrameStart > 0 ? frameStartMs - lastFrameStart : 0
+    lastFrameStart = frameStartMs
+    const now = performance.now()
+    const level = governor.feed(interval, now - frameStartMs, now / 1000)
+    if (level === null || level === lastLevel) return
+    const biasChanged = governedScaleBias(level) !== governedScaleBias(lastLevel)
+    lastLevel = level
+    applyQuality()
+    if (biasChanged) layout()
+    remember()
   }
 
   layout()
@@ -176,6 +210,8 @@ export function createRenderer(canvas: HTMLCanvasElement, settings: Settings): H
     get quality() { return quality },
     internal,
     get time() { return time },
+    get governorLevel() { return governor.level },
+    noteFrame,
 
     resize(width: number, height: number) {
       cssW = Math.max(1, Math.round(width))
@@ -185,6 +221,8 @@ export function createRenderer(canvas: HTMLCanvasElement, settings: Settings): H
 
     applySettings(s: Settings) {
       const relayout = s.quality !== current.quality || s.pixelScale !== current.pixelScale
+      // a deliberate change of tier starts the governor over
+      if (s.quality !== current.quality && governor.level !== 0) { governor.reset(0); remember() }
       current = { ...s }
       applyQuality()
       if (relayout) layout()

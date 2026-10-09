@@ -9,10 +9,11 @@ import { toView } from '../shared/creature.ts'
 import { buildWorld, worldAnchors } from '../shared/world/index.ts'
 import { getMap } from '../shared/world/worldapi.ts'
 import {
-  applyDocumentSettings, createAssetStore, createAudio, createClock, createEventBus, createInput, createSaveManager,
+  applyDocumentSettings, createAssetStore, createAudio, createClock, createEventBus, createInput, createSaveManager, isTouchDevice,
 } from './core/index.ts'
 import { RngHub, randomSeed } from './core/rng-hub.ts'
 import { createRenderer, createWorldView } from './render/index.ts'
+import { defaultQualityFor } from './render/config.ts'
 import { UI_CONFIG, createChatUI, createEscapeStack, createHUD, createMinimap, createUIKit, installEscapeFallback, releaseButtonFocusAfterClick } from './ui/index.ts'
 import { createNetClient } from './net/index.ts'
 import { createOnboarding } from './onboarding/index.ts'
@@ -203,6 +204,8 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     net.send(msg)
   })
   // Focus hand-over: Esc always closes the topmost overlay, a click on the game view returns to the game,
+  // A device without a save yet starts on its own tier (phones: the lighter one); a stored choice always wins.
+  if (!stored) save.settings.quality = defaultQualityFor(isTouchDevice(), save.settings.quality)
   // and HUD buttons let go of focus after a pointer click (see ui/focus-guard.ts).
   const escapes = createEscapeStack(UI_CONFIG.focus.escapeOrder)
   escapes.register({ id: 'chat', isOpen: () => chat.isOpen, dismiss: () => chat.close() })
@@ -421,19 +424,24 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         onboarding.update(dt)
         autosaveT -= dt
         if (autosaveT <= 0) { autosaveT = data.config.save.autosaveSeconds; ctx.persist('auto') }
-        if (!battleUp && worldView.map) renderer.render(worldView.renderView(), dt)
+        if (!battleUp && worldView.map) { renderer.render(worldView.renderView(), dt); worldRendered = true }
         debugOverlay.update(dt)
       }
     } catch (err) {
       console.error('[game] frame error', err)
+  /** Set by tick() when it drew the overworld; frame() then reports the frame to the governor. */
+  let worldRendered = false
+
     }
     input.endFrame()
+    worldRendered = false
   }
   requestAnimationFrame(frame)
   dev?.install({ ctx, overworld, world, onboarding, flyTo: (id) => runModal(() => flyTo(id)), tick })
 
   // ---- title flow ---------------------------------------------------------
   hud.setVisible(false)
+    if (worldRendered) renderer.noteFrame(now)
   minimap.setVisible(false)
   chat.setVisible(false)
   loader.step('ready')

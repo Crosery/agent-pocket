@@ -1,25 +1,14 @@
 // Frame-time benchmark (issue #36). Drives the page through window.__ap.v1 and prints one `PERF {json}` line per run.
 //   node scripts/qa-perf.mjs [--base http://127.0.0.1:5236] [--space ap-36] [--out output/36/raw] [--frames 300]
 //        [--runs 2] [--viewports phone,desktop] [--scenes town-day,night-rain-forge,...] [--label before] [--url-extra "&x=1"]
-//        [--modes stand,walk] [--raf false] [--profile stand|walk]   (profile: CDP CPU sampling of that mode, top functions per frame)
+//        [--quality low|medium|high|ultra] [--modes stand,walk] [--raf false] [--profile stand|walk]   (profile: CDP CPU sampling of that mode, top functions per frame)
 // The browser half is piped into `ego-browser nodejs` with a CONFIG object in front, like scripts/qa/run.mjs.
 import { spawnSync } from 'node:child_process'
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+import { SCENES, VIEWPORTS } from './qa-perf-scenes.mjs'
 
 const args = Object.fromEntries(process.argv.slice(2).reduce((acc, a, i, all) => (a.startsWith('--') ? [...acc, [a.slice(2), all[i + 1] && !all[i + 1].startsWith('--') ? all[i + 1] : 'true']] : acc), []))
-
-const VIEWPORTS = {
-  phone: { width: 390, height: 844, deviceScaleFactor: 3, mobile: true, touch: true, throttle: 4 },
-  desktop: { width: 1280, height: 720, deviceScaleFactor: 1, mobile: false, touch: false, throttle: 1 },
-}
-const SCENES = {
-  'town-day': { scenario: 'fresh-start', setup: [['clock.set', { minutes: 720 }], ['clock.freeze', { on: true }], ['weather.set', { kind: 'clear' }]], wait: 'free' },
-  'night-rain-forge': { scenario: 'night-rain-forge', setup: [], wait: 'free' },
-  'frontier-far': { scenario: 'frontier-far', setup: [['clock.set', { minutes: 720 }], ['clock.freeze', { on: true }]], wait: 'free' },
-  'boss-battle': { scenario: 'boss-astra-counter', setup: [], wait: 'battle' },
-  'peers-square': { scenario: 'fake-peers-square', setup: [], wait: 'free' },
-}
 
 const config = {
   base: args.base ?? 'http://127.0.0.1:5236',
@@ -35,9 +24,10 @@ const config = {
   stallMs: Number(args.stall ?? 400),
   jobs: [],
 }
+const extraSetup = args.quality ? [['settings.set', { key: 'quality', value: args.quality }]] : []
 for (const v of (args.viewports ?? 'phone,desktop').split(',')) {
   for (const s of (args.scenes ?? Object.keys(SCENES).join(',')).split(',')) {
-    for (let r = 1; r <= config.runs; r++) config.jobs.push({ viewport: v, vp: VIEWPORTS[v], scene: s, def: SCENES[s], run: r })
+    for (let r = 1; r <= config.runs; r++) config.jobs.push({ viewport: v, vp: VIEWPORTS[v], scene: s, def: { ...SCENES[s], setup: [...extraSetup, ...SCENES[s].setup] }, run: r })
   }
 }
 
