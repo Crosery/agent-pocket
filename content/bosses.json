@@ -14,7 +14,8 @@
         "base": {
           "species": "gpt-6-astra",
           "moves": ["qed", "deductive-slash", "overheat-strike", "reflection"],
-          "statMul": {"hp": 5.34, "atk": 0.85, "spa": 0.85},
+          "statMul": {"hp": 6.94, "atk": 0.935, "spa": 0.935},
+          "keepStages": true,
           "pattern": [
             {"move": "qed", "weight": 36},
             {"move": "deductive-slash", "weight": 32},
@@ -22,55 +23,53 @@
             {"move": "reflection", "weight": 10, "if": {"hpAbove": 0.5, "turnAtLeast": 2}}
           ],
           "rules": [
-            {"id": "cap", "hitCap": 0.3}
+            {"id": "cap", "hitCap": 0.3},
+            {"id": "sauced", "if": {"meter": {"id": "juice", "atLeast": 1}}, "dealtMul": 0.7, "takenMul": [{"mul": 1.15}]}
           ]
         },
-        "routed-4o": {
-          "species": "gpt-4o",
-          "moves": ["quick-reply", "voiceprint-wave", "small-talk", "persona-shift"],
-          "statMul": {"hp": 4.27, "atk": 1.02, "spa": 1.02},
-          "banner": "boss.astra.routed",
+        "exposed": {
+          "species": "gpt-6-astra",
+          "moves": ["qed", "deductive-slash", "overheat-strike", "reflection"],
+          "statMul": {"hp": 6.94, "atk": 0.935, "spa": 0.935},
+          "keepStages": true,
+          "banner": "boss.astra.exposed",
           "pattern": [
-            {"move": "quick-reply", "weight": 34},
-            {"move": "voiceprint-wave", "weight": 34},
-            {"move": "small-talk", "weight": 14},
-            {"move": "persona-shift", "weight": 18}
+            {"move": "qed", "weight": 36},
+            {"move": "deductive-slash", "weight": 32},
+            {"move": "overheat-strike", "weight": 22},
+            {"move": "reflection", "weight": 10, "if": {"hpAbove": 0.5, "turnAtLeast": 2}}
           ],
           "rules": [
-            {"id": "cap", "hitCap": 0.3}
-          ]
-        },
-        "luna": {
-          "species": "gpt-6-luna",
-          "moves": ["tensor-tackle", "quick-deduce", "thermal-spike", "standby"],
-          "statMul": {"hp": 3.56, "atk": 0.85, "spa": 0.85},
-          "banner": "boss.astra.luna",
-          "pattern": [
-            {"move": "tensor-tackle", "weight": 38},
-            {"move": "quick-deduce", "weight": 34},
-            {"move": "thermal-spike", "weight": 18},
-            {"move": "standby", "weight": 10, "if": {"hpBelow": 0.5}}
-          ],
-          "rules": [
-            {"id": "cap", "hitCap": 0.3}
+            {"id": "cap", "hitCap": 0.3},
+            {"id": "exposed", "dealtMul": 0.15, "takenMul": [{"mul": 4.5, "note": "boss.astra.meltdown"}]}
           ]
         }
       },
-      "meters": [],
+      "meters": [
+        {"id": "juice", "max": 1, "start": 0, "label": "boss.astra.juice", "show": false, "tone": "warn"},
+        {"id": "verdict", "max": 3, "start": 0, "label": "boss.astra.verdict", "show": true, "tone": "warn", "states": ["boss.astra.verdict0", "boss.astra.verdict1", "boss.astra.verdict2", "boss.astra.verdict3"]}
+      ],
       "triggers": [
-        {"id": "sauce", "on": "foeItem", "tag": "sauce", "if": {"form": ["base"]}, "phase": true, "do": [{"op": "cancelCharge"}, {"op": "form", "form": "routed-4o"}]},
-        {"id": "deep", "on": "afterAction", "if": {"form": ["base"], "hpBelow": 0.5}, "phase": true, "do": [{"op": "say", "text": "boss.astra.deep"}, {"op": "stages", "target": "boss", "stats": {"atk": 1, "spa": 1}}]},
-        {"id": "to-luna", "on": "afterAction", "if": {"form": ["routed-4o"], "hpBelow": 0.3}, "phase": true, "do": [{"op": "form", "form": "luna"}]},
-        {"id": "charge-beam", "on": "turnEnd", "times": 0, "if": {"form": ["base"], "turnCycle": {"period": 4, "from": 2, "to": 3}}, "do": [{"op": "charge", "move": "exaflop-beam", "warn": "boss.astra.charge", "mul": 0.6}]},
-        {"id": "charge-beam-deep", "on": "turnEnd", "times": 0, "if": {"form": ["base"], "phase": "deep", "turnCycle": {"period": 4, "from": 0, "to": 1}}, "do": [{"op": "charge", "move": "exaflop-beam", "warn": "boss.astra.charge", "mul": 0.6}]}
+        {"id": "to-sauce", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "juice", "set": 1}, {"op": "meter", "id": "verdict", "set": 0}, {"op": "say", "text": "boss.astra.fast"}], "if": {"form": ["base"], "meter": {"id": "juice", "atMost": 0}, "turnCycle": {"period": 5, "from": 1, "to": 2}}},
+        {"id": "to-juice", "on": "turnEnd", "times": 0, "do": [{"op": "meter", "id": "juice", "set": 0}, {"op": "meter", "id": "verdict", "set": 0}], "if": {"form": ["base"], "meter": {"id": "juice", "atLeast": 1}, "turnCycle": {"period": 5, "from": 4, "to": 5}}},
+        {"id": "test-honest", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.astra.honest"}, {"op": "meter", "id": "verdict", "set": 2}, {"op": "cancelCharge"}, {"op": "form", "form": "exposed"}], "if": {"form": ["base"], "meter": {"id": "juice", "atLeast": 1}, "notPhase": "library"}, "tag": "pelican"},
+        {"id": "test-fooled", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.astra.fooled"}, {"op": "meter", "id": "verdict", "set": 1}], "if": {"form": ["base"], "meter": {"id": "juice", "atLeast": 1}, "phase": "library"}, "tag": "pelican"},
+        {"id": "test-clean", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.astra.clean"}, {"op": "meter", "id": "verdict", "set": 3}], "if": {"form": ["base"], "meter": {"id": "juice", "atMost": 0}}, "tag": "pelican"},
+        {"id": "reverse-hit", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.astra.reverse"}, {"op": "meter", "id": "verdict", "set": 2}, {"op": "cancelCharge"}, {"op": "form", "form": "exposed"}], "if": {"form": ["base"], "meter": {"id": "juice", "atLeast": 1}}, "tag": "bike"},
+        {"id": "reverse-clean", "on": "foeItem", "times": 0, "do": [{"op": "say", "text": "boss.astra.reverseClean"}, {"op": "meter", "id": "verdict", "set": 3}], "if": {"form": ["base"], "meter": {"id": "juice", "atMost": 0}}, "tag": "bike"},
+        {"id": "patched", "on": "turnEnd", "times": 0, "do": [{"op": "say", "text": "boss.astra.patched"}, {"op": "form", "form": "base"}, {"op": "meter", "id": "juice", "set": 0}, {"op": "meter", "id": "verdict", "set": 0}], "if": {"form": ["exposed"], "formTurnAtLeast": 5}},
+        {"id": "library", "on": "afterAction", "times": 1, "do": [{"op": "say", "text": "boss.astra.library"}], "if": {"hpBelow": 0.7}, "phase": true},
+        {"id": "deep", "on": "afterAction", "times": 1, "do": [{"op": "say", "text": "boss.astra.deep"}, {"op": "stages", "target": "boss", "stats": {"atk": 1, "spa": 1}}], "if": {"hpBelow": 0.5}, "phase": true},
+        {"id": "charge-beam", "on": "turnEnd", "times": 0, "do": [{"op": "charge", "move": "exaflop-beam", "warn": "boss.astra.charge", "mul": 0.6}], "if": {"form": ["base"], "turnCycle": {"period": 4, "from": 2, "to": 3}}},
+        {"id": "charge-beam-deep", "on": "turnEnd", "times": 0, "do": [{"op": "charge", "move": "exaflop-beam", "warn": "boss.astra.charge", "mul": 0.6}], "if": {"form": ["base"], "phase": "deep", "turnCycle": {"period": 4, "from": 0, "to": 1}}}
       ],
       "gates": [
-        {"phase": "deep", "floor": 0.5},
-        {"phase": "to-luna", "floor": 0.3}
+        {"phase": "library", "floor": 0.7},
+        {"phase": "deep", "floor": 0.5}
       ],
       "catchRateMul": 0.6,
-      "reward": {"money": 9000, "items": {"special-sauce": 2, "chip-exaflop-beam": 1}},
-      "enrage": {"turn": 16, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.astra.enrageWarn", "start": "boss.astra.enrageStart", "tick": "boss.astra.enrageTick"}
+      "reward": {"money": 9000, "items": {"pelican-test": 2, "bike-pelican": 1, "chip-exaflop-beam": 1}},
+      "enrage": {"turn": 18, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.astra.enrageWarn", "start": "boss.astra.enrageStart", "tick": "boss.astra.enrageTick"}
     },
     "deepseek": {
       "species": "deepseek-v4",
@@ -528,34 +527,70 @@
       "gossip": ["boss.chatgpt.gossip1", "boss.chatgpt.gossip2"],
       "canRun": true,
       "expMul": 2.5,
-      "initialForm": "assistant",
+      "initialForm": "base",
       "forms": {
-        "assistant": {
+        "base": {
           "species": "chatgpt",
           "moves": ["soul-question", "plan-execute", "chatter-storm", "million-token-rush"],
-          "statMul": {"hp": 6.3, "atk": 2.1, "spa": 2.1},
+          "statMul": {"hp": 6.93, "atk": 2.1, "spa": 2.1},
           "pattern": [
-            {"move": "soul-question", "weight": 32},
-            {"move": "plan-execute", "weight": 26},
-            {"move": "chatter-storm", "weight": 26},
-            {"move": "million-token-rush", "weight": 16}
+            {"move": "soul-question", "weight": 36},
+            {"move": "plan-execute", "weight": 32},
+            {"move": "chatter-storm", "weight": 22},
+            {"move": "million-token-rush", "weight": 10, "if": {"hpAbove": 0.5, "turnAtLeast": 2}}
           ],
           "rules": [
-            {"id": "nostalgia", "if": {"foeReleasedBefore": "2025-01"}, "dealtMul": 0.2}
+            {"id": "cap", "hitCap": 0.3}
+          ]
+        },
+        "routed-4o": {
+          "species": "gpt-4o",
+          "moves": ["quick-reply", "voiceprint-wave", "small-talk", "persona-shift"],
+          "statMul": {"hp": 4.697, "atk": 1.02, "spa": 1.02},
+          "banner": "boss.chatgpt.routed",
+          "pattern": [
+            {"move": "quick-reply", "weight": 34},
+            {"move": "voiceprint-wave", "weight": 34},
+            {"move": "small-talk", "weight": 14},
+            {"move": "persona-shift", "weight": 18}
+          ],
+          "rules": [
+            {"id": "cap", "hitCap": 0.3}
+          ]
+        },
+        "luna": {
+          "species": "gpt-6-luna",
+          "moves": ["tensor-tackle", "quick-deduce", "thermal-spike", "standby"],
+          "statMul": {"hp": 3.916, "atk": 0.85, "spa": 0.85},
+          "banner": "boss.chatgpt.luna",
+          "pattern": [
+            {"move": "tensor-tackle", "weight": 38},
+            {"move": "quick-deduce", "weight": 34},
+            {"move": "thermal-spike", "weight": 18},
+            {"move": "standby", "weight": 10, "if": {"hpBelow": 0.5}}
+          ],
+          "rules": [
+            {"id": "cap", "hitCap": 0.3}
           ]
         }
       },
       "meters": [
-        {"id": "warm", "max": 1, "start": 0, "label": "boss.chatgpt.warm", "show": true, "tone": "good", "states": ["boss.chatgpt.warm0", "boss.chatgpt.warm1"]}
+        {"id": "juice", "max": 2, "start": 2, "label": "boss.chatgpt.juice", "show": true, "tone": "good", "states": ["boss.chatgpt.juice0", "boss.chatgpt.juice1", "boss.chatgpt.juice2"]}
       ],
       "triggers": [
-        {"id": "soften", "on": "turnStart", "times": 0, "do": [{"op": "say", "text": "boss.chatgpt.soft"}, {"op": "meter", "id": "warm", "set": 1}], "if": {"foeReleasedBefore": "2025-01", "meter": {"id": "warm", "atMost": 0}}},
-        {"id": "harden", "on": "turnStart", "times": 0, "do": [{"op": "say", "text": "boss.chatgpt.cold"}, {"op": "meter", "id": "warm", "set": 0}], "if": {"foeReleasedFrom": "2025-01", "meter": {"id": "warm", "atLeast": 1}}}
+        {"id": "sauce", "on": "foeItem", "times": 1, "do": [{"op": "cancelCharge"}, {"op": "meter", "id": "juice", "set": 1}, {"op": "form", "form": "routed-4o"}], "if": {"form": ["base"]}, "phase": true, "tag": "sauce"},
+        {"id": "deep", "on": "afterAction", "times": 1, "do": [{"op": "say", "text": "boss.chatgpt.deep"}, {"op": "stages", "target": "boss", "stats": {"atk": 1, "spa": 1}}], "if": {"form": ["base"], "hpBelow": 0.5}, "phase": true},
+        {"id": "to-luna", "on": "afterAction", "times": 1, "do": [{"op": "meter", "id": "juice", "set": 0}, {"op": "form", "form": "luna"}], "if": {"form": ["routed-4o"], "hpBelow": 0.3}, "phase": true},
+        {"id": "charge-beam", "on": "turnEnd", "times": 0, "do": [{"op": "charge", "move": "exaflop-beam", "warn": "boss.chatgpt.charge", "mul": 0.6}], "if": {"form": ["base"], "turnCycle": {"period": 4, "from": 2, "to": 3}}},
+        {"id": "charge-beam-deep", "on": "turnEnd", "times": 0, "do": [{"op": "charge", "move": "exaflop-beam", "warn": "boss.chatgpt.charge", "mul": 0.6}], "if": {"form": ["base"], "phase": "deep", "turnCycle": {"period": 4, "from": 0, "to": 1}}}
       ],
-      "gates": [],
+      "gates": [
+        {"phase": "deep", "floor": 0.5},
+        {"phase": "to-luna", "floor": 0.3}
+      ],
       "catchRateMul": 0.6,
-      "reward": {"money": 10000, "items": {"chip-memory-recall": 1, "rare-dataset": 1}},
-      "enrage": {"turn": 22, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.chatgpt.enrageWarn", "start": "boss.chatgpt.enrageStart", "tick": "boss.chatgpt.enrageTick"}
+      "reward": {"money": 10000, "items": {"special-sauce": 2, "chip-memory-recall": 1}},
+      "enrage": {"turn": 16, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.chatgpt.enrageWarn", "start": "boss.chatgpt.enrageStart", "tick": "boss.chatgpt.enrageTick"}
     },
     "unitree": {
       "species": "unitree-gd01",

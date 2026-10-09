@@ -50,8 +50,11 @@ const pilotExcept = (h: Helpers, no: (a: BattleAction, m: MoveDef | undefined) =
 export const PLAIN: Record<string, Pick<SimOpts, 'policy'>> = {}
 
 export const COUNTERS: Record<string, Counter> = {
-  // Feed the sauce as soon as it is available.
-  astra: { bag: { 'special-sauce': 3 }, policy: (h) => (h.state.form === 'base' ? h.bait('special-sauce') : null) },
+  // Test it with the pelican while it is sauced (the tell is the "too fast" line); once it has the pelican in its samples, test with the bike.
+  astra: {
+    bag: { 'pelican-test': 5, 'bike-pelican': 5 },
+    policy: (h) => (h.state.form === 'base' && h.state.meters.juice >= 1 ? h.bait((h.state.fired.library ?? 0) >= 1 ? 'bike-pelican' : 'pelican-test') : null),
+  },
 
   // The coupon turns the peak hours it announces into valley pricing; nothing else is needed.
   deepseek: { bag: { 'off-peak-coupon': 6 }, policy: (h) => (h.state.meters.tide === 0 && h.state.meters.grace === 0 ? h.bait('off-peak-coupon') : null) },
@@ -103,8 +106,8 @@ export const COUNTERS: Record<string, Counter> = {
     policy: (h) => (h.state.meters.ip === 0 && (h.state.meters.risk >= 1 || h.active.status !== null || CONTENT.species[h.active.speciesId]?.country === 'CN') ? h.bait('residential-ip') : null),
   },
 
-  // Lead with (and keep to) veterans released before 2025: it cannot bring itself to hit them.
-  chatgpt: { partyIds: ['muzero', 'notebooklm', 'github-copilot', 'agibot', 'yuanbao', 'lovable'], partyRole: 'balanced', policy: (h) => pickAttack(h) },
+  // Feed the sauce as soon as it is available.
+  chatgpt: { bag: { 'special-sauce': 3 }, policy: (h) => (h.state.form === 'base' ? h.bait('special-sauce') : null) },
 
   // A banana peel under its feet whenever it stands.
   unitree: { bag: { 'banana-peel': 6 }, policy: (h) => (h.state.form === 'upright' ? h.bait('banana-peel') : null) },
