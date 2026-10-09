@@ -93,6 +93,7 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         if (!channel) throw new Error('battle channel missing')
         const cover: CoverMode = coveredByCaller(ctx) ? 'covered' : 'transition'
         scene = await openScene(ctx, {
+          paced: true,
           biome: init.biome, timeOfDay: init.timeOfDay, indoor: !remote && currentPlace(ctx).indoor, cover,
         })
         const { stage, view } = scene

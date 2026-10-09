@@ -123,7 +123,8 @@ export interface BarHandle {
   settled(): Promise<void>
 }
 
-interface BarOpts { width?: number; numbers?: boolean; label?: string; className?: string }
+/** `speed`: live multiplier on the drain/fill rate (battle speed); absent = 1. */
+interface BarOpts { width?: number; numbers?: boolean; label?: string; className?: string; speed?: () => number }
 
 function createBar(kind: 'hp' | 'exp', opts: BarOpts | undefined): BarHandle {
   ensureUIEnvironment()
@@ -166,7 +167,7 @@ function createBar(kind: 'hp' | 'exp', opts: BarOpts | undefined): BarHandle {
   const tick = (now: number) => {
     const dt = Math.min(0.1, (now - last) / 1000)
     last = now
-    const step = rate * dt
+    const step = rate * (opts?.speed?.() ?? 1) * dt
     shown = shown < target ? Math.min(target, shown + step) : Math.max(target, shown - step)
     // The damage trail waits while the main bar drains, then catches up.
     if (shown === target) trail = Math.max(shown, trail - step * 1.5)

@@ -83,6 +83,7 @@ export function sanitizeSettings(raw: unknown, c: Content): Settings {
     bloom: bool(r.bloom, d.bloom),
     shadows: bool(r.shadows, d.shadows),
     textSpeed: oneOf(r.textSpeed, TEXT_SPEEDS, d.textSpeed),
+    battleSpeed: c.config.battleSpeeds.find((v) => v === r.battleSpeed) ?? d.battleSpeed,
     showMinimap: bool(r.showMinimap, d.showMinimap),
     showNames: bool(r.showNames, d.showNames),
     showObjective: bool(r.showObjective, d.showObjective),

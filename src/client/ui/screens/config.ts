@@ -221,6 +221,7 @@ export function validateScreensConfig(cfg: ScreensConfig, c: Content, ui: { glyp
       if (!f.options?.length) errs.push(`settings.fields.${f.key}: choice needs options`)
       else if (!f.options.includes(defaults[f.key] as string | number)) errs.push(`settings.fields.${f.key}: default value not among options`)
       if (f.format) text(`settings.fields.${f.key}.format`, f.format)
+      if (f.key === 'battleSpeed' && JSON.stringify(f.options) !== JSON.stringify(c.config.battleSpeeds)) errs.push('settings.fields.battleSpeed: options must equal config.battleSpeeds')
     }
     if (f.kind === 'slider' && !(f.min !== undefined && f.max !== undefined && f.step && f.max > f.min)) errs.push(`settings.fields.${f.key}: slider needs min < max and step`)
     if (f.kind === 'toggle' && typeof defaults[f.key] !== 'boolean') errs.push(`settings.fields.${f.key}: toggle on a non-boolean setting`)

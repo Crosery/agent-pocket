@@ -342,10 +342,13 @@ export interface CreaturesConfig {
 }
 export interface OverlayStyle {
   tagFontPx: number; tagPadding: string; tagBackground: string; tagRadiusPx: number; tagTextShadow: string
+  /** A name tag lying over another actor's sprite fades to dimOpacity over dimMs so the actor stays readable. */
+  tagDimOpacity: number; tagDimMs: number
   bubbleFontPx: number; bubblePadding: string; bubbleText: string; bubbleBackground: string; bubbleBorder: string
   bubbleBorderPx: number; bubbleRadiusPx: number; bubbleShadow: string; bubbleMaxWidthPx: number; bubbleTailPx: number; popMs: number
 }
-export interface OverlayConfig { nameOffsetPx: number; bubbleOffsetPx: number; maxDistance: number; style: OverlayStyle }
+/** coverHalfWidth: half the width of an actor's on-screen sprite as a fraction of its head-to-foot height (tag overlap test). */
+export interface OverlayConfig { nameOffsetPx: number; bubbleOffsetPx: number; maxDistance: number; coverHalfWidth: number; style: OverlayStyle }
 export interface GroundItemsConfig { color: string; radius: number; glow: number; bobAmp: number; bobHz: number; height: number; glowSize: number }
 
 export interface FxIcon { type: 'icon'; glyph: string; color: string; outline: string; size: number; y: number; rise: number; life: number; pop: number }
