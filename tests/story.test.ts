@@ -34,7 +34,7 @@ const MIN_BOUNTIES = 15
 const LEGEND_TABLETS = [3, 5]
 const MIN_HERMITS = 5
 /** applyStory alone on the default world (ms); buildWorld's own budget is asserted in world.test.ts. */
-const STORY_BUDGET_MS = 400
+const STORY_BUDGET_MS = 400 * Number(process.env.AP_PERF_SCALE ?? 1)
 
 const world = buildWorld()
 const anchors = worldAnchors(world)
@@ -123,7 +123,7 @@ test('trainers: references, resolved species, levels, sprites', () => {
 const KNOWN_OPS = new Set([
   'say', 'choice', 'setFlag', 'ifFlag', 'ifBadges', 'ifItem', 'ifCaught', 'giveItem', 'takeItem', 'giveMoney', 'takeMoney',
   'giveCreature', 'chooseStarter', 'battle', 'wildBattle', 'heal', 'shop', 'openBox', 'quest', 'warp', 'moveNpc', 'faceNpc',
-  'hideNpc', 'showNpc', 'sfx', 'bgm', 'wait', 'fade', 'unlockTown', 'setRespawn', 'end', 'exchange', 'teach',
+  'hideNpc', 'showNpc', 'sfx', 'bgm', 'wait', 'fade', 'unlockTown', 'setRespawn', 'end', 'exchange', 'teach', 'openTypeChart',
 ])
 
 test('scripts are well-formed recursively and every reference resolves', () => {

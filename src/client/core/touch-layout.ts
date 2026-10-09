@@ -20,10 +20,8 @@ export interface TouchLayout {
   scale: number
   stickRadius: number
   knobRadius: number
-  /** Stick ghost centre from the stick corner (left corner for right-handed). */
-  stickRest: { side: number; bottom: number }
   buttons: PlacedButton[]
-  /** CSS px the pad keeps free: `bottom` only in portrait (the pad sits under the content there), `left` / `right` always. */
+  /** CSS px the pad keeps free: `bottom` only in portrait (the pad sits under the content there); `left` / `right` are the button cluster's side (the stick has no resting place and reserves nothing). */
   insets: { bottom: number; left: number; right: number }
 }
 
@@ -41,10 +39,9 @@ export function computeTouchLayout(
   const buttons: PlacedButton[] = cfg.buttons.map((def) => ({ def, size: px(def), side: def.right * scale, bottom: def.bottom * scale }))
   const stickRadius = cfg.stickRadius * scale
   const clusterWidth = cfg.margin + Math.max(0, ...buttons.map((b) => b.side + b.size))
-  const stickWidth = cfg.margin + 2 * stickRadius
   // Content that must stay clear of the pad when the pad overlays the bottom of the screen (portrait): world-only
   // buttons vanish under menus, so they never reserve space.
-  const reserved = cfg.margin + Math.max(2 * stickRadius, ...buttons.filter((b) => !b.def.worldOnly).map((b) => b.bottom + b.size))
+  const reserved = cfg.margin + Math.max(0, ...buttons.filter((b) => !b.def.worldOnly).map((b) => b.bottom + b.size))
   const buttonSide = hand === 'right' ? 'right' : 'left'
   return {
     portrait,
@@ -52,12 +49,11 @@ export function computeTouchLayout(
     scale,
     stickRadius,
     knobRadius: cfg.knobRadius * scale,
-    stickRest: { side: cfg.margin + stickRadius, bottom: cfg.margin + stickRadius },
     buttons,
     insets: {
       bottom: portrait ? reserved + gap : 0,
-      left: buttonSide === 'right' ? stickWidth : clusterWidth,
-      right: buttonSide === 'right' ? clusterWidth : stickWidth,
+      left: buttonSide === 'right' ? 0 : clusterWidth,
+      right: buttonSide === 'right' ? clusterWidth : 0,
     },
   }
 }
@@ -81,4 +77,66 @@ export function buttonRect(
 
 export function rectsOverlap(a: Rect, b: Rect, pad = 0): boolean {
   return a.left < b.right + pad && b.left < a.right + pad && a.top < b.bottom + pad && b.top < a.bottom + pad
+}
+
+/** Whether a touch at `x` may start the stick: the whole half (zone fraction) of the screen opposite the buttons, any height. */
+export function inStickZone(x: number, width: number, hand: Settings['touchHand'], fraction: number): boolean {
+  return hand === 'right' ? x < width * fraction : x > width * (1 - fraction)
+}
+
+/**
+ * A touch may begin a stick only when it lands on the bare canvas (a HUD control under the thumb keeps its own touch),
+ * no menu, dialogue or battle owns input, and it falls inside the stick half.
+ */
+export function mayStartStick(o: { onCanvas: boolean; modalOpen: boolean; x: number; width: number; hand: Settings['touchHand']; fraction: number }): boolean {
+  return o.onCanvas && !o.modalOpen && inStickZone(o.x, o.width, o.hand, o.fraction)
+}
+
+/** What a pending touch becomes once it has travelled `distPx`: still undecided inside the slop, else a stick (in the zone) or a drag. */
+export function moveOutcome(stickCapable: boolean, distPx: number, slopPx: number): 'pending' | 'stick' | 'drag' {
+  if (distPx <= slopPx) return 'pending'
+  return stickCapable ? 'stick' : 'drag'
+}
+
+/** A release is a world tap only when the touch never became a stick or drag, was not cancelled, and was brief. */
+export function releaseIsTap(mode: 'pending' | 'stick' | 'drag', heldMs: number, maxMs: number, cancelled: boolean): boolean {
+  return mode === 'pending' && !cancelled && heldMs <= maxMs
+}
+
+/** Where the ring is drawn: its centre kept `radius + pad` inside the viewport so it never leaves the screen. */
+export function clampRing(c: { x: number; y: number }, radius: number, viewport: { width: number; height: number }, pad: number): { x: number; y: number } {
+  const m = radius + pad
+  const clamp = (v: number, size: number) => (size <= 2 * m ? size / 2 : Math.min(size - m, Math.max(m, v)))
+  return { x: clamp(c.x, viewport.width), y: clamp(c.y, viewport.height) }
+}
+
+/** Whether a ring of `radius` centred on `c` reaches into `rect` (a card that would sit under the stick). */
+export function ringHitsRect(c: { x: number; y: number }, radius: number, rect: { left: number; top: number; right: number; bottom: number }): boolean {
+  const nx = Math.min(rect.right, Math.max(rect.left, c.x))
+  const ny = Math.min(rect.bottom, Math.max(rect.top, c.y))
+  return (c.x - nx) ** 2 + (c.y - ny) ** 2 < radius * radius
+}
+
+export interface StickDrive {
+  /** The logical base: stays where the thumb landed, and trails the thumb once it is dragged past the ring. */
+  origin: { x: number; y: number }
+  /** Knob offset from the base, limited to the radius. */
+  dx: number
+  dy: number
+  dist: number
+}
+
+/** One stick step for a thumb at `finger`. With `follow`, the base trails the thumb, so reversing needs only a ring's travel. */
+export function driveStick(origin: { x: number; y: number }, finger: { x: number; y: number }, radius: number, follow: boolean): StickDrive {
+  let o = origin
+  let dx = finger.x - o.x
+  let dy = finger.y - o.y
+  let dist = Math.hypot(dx, dy)
+  if (dist > radius) {
+    if (follow) o = { x: o.x + (dx / dist) * (dist - radius), y: o.y + (dy / dist) * (dist - radius) }
+    dx = (dx / dist) * radius
+    dy = (dy / dist) * radius
+    dist = radius
+  }
+  return { origin: o, dx, dy, dist }
 }

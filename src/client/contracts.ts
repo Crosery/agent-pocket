@@ -253,6 +253,7 @@ export interface CreatureActor {
 }
 
 export type WorldFx = 'exclaim' | 'question' | 'grass' | 'dust' | 'sparkle' | 'splash' | 'heart' | 'warp' | 'levelup' | 'shiny' | 'tapMarker' | 'tapBlocked'
+  | 'anchorUnlock' | 'anchorUnlockGrand' | 'anchorDepart' | 'anchorArrive'
 
 export interface WorldWeather { kind: FieldWeatherKind; intensity: number }
 
@@ -276,6 +277,8 @@ export interface WorldView {
   spawnFx(kind: WorldFx, x: number, y: number, elev: number): void
   /** Mark a ground item / hidden item sparkle etc. */
   setGroundItems(items: { id: string; x: number; y: number }[]): void
+  /** Teleport-anchor glow: tile positions of the anchors near the player; `on` = activated (column + sparkles). */
+  setBeacons(items: { id: string; x: number; y: number; style: string; on: boolean }[]): void
   /** Walkable tiles of the currently tracked, accepted quest (empty clears the trail). */
   setQuestPath(path: readonly { x: number; y: number }[]): void
   /** Hide a prop instance at tile (e.g. after cutting/item pickup). */
@@ -355,6 +358,12 @@ export interface ChatUI {
   setVisible(v: boolean): void
 }
 
+export interface TypeChartOptions {
+  view?: 'type' | 'grid' | 'loops'
+  /** Type shown first (per-type view) or under the cursor (grid view). */
+  type?: string
+}
+
 /** High-level screens (src/client/ui/screens/*). All resolve when closed. */
 export interface Screens {
   title(hasSave: boolean): Promise<'continue' | 'new' | 'import' | 'settings'>
@@ -371,8 +380,13 @@ export interface Screens {
   exchange(desk: string): Promise<void>
   /** 教学手册: every curriculum lesson, re-readable (content/tutorial.json curriculum). */
   manual(): Promise<void>
+  /** 属性克制表: per-type matchups, the full grid and the memory loops, all read from content/types.json. */
+  typeChart(opts?: TypeChartOptions): Promise<void>
   box(): Promise<void>
-  worldMap(opts: { fly: boolean }): Promise<string | null>  // town id for fly
+  /** fly: pick a town to fly to; anchors: pick an activated teleport anchor. Resolves a place id / anchor id, null when closed. */
+  worldMap(opts: { fly: boolean; anchors?: boolean }): Promise<string | null>
+  /** Destination picker of the teleport anchors; hereId: the anchor the player stands at. Resolves the anchor id to go to. */
+  anchorPicker(opts: { hereId?: string }): Promise<string | null>
   quests(): Promise<void>
   settings(): Promise<void>
   online(): Promise<void>                                     // multiplayer hub: online list, leaderboard, trade/pvp entry

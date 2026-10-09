@@ -33,9 +33,9 @@
       {"id": "hud", "trigger": {"kind": "free", "delaySec": 4, "needs": {"flag": ["ob:route1"]}}, "text": "tutorial.tip.hud", "expires": {"minBadges": 1}, "after": ["grass"]},
       {"id": "battle", "trigger": {"kind": "battle", "delaySec": 1.6}, "text": "tutorial.tip.battle", "expires": {"minStat": {"battlesWon": 3}}},
       {"id": "moveInfo", "trigger": {"kind": "on", "on": "turn", "phase": "battle", "match": {"turn": 2}, "delaySec": 0.8}, "text": "tutorial.tip.moveInfo", "expires": {"minStat": {"battlesWon": 2}}, "after": ["typeMatchup"]},
-      {"id": "typeMatchup", "trigger": {"kind": "battle", "battleKinds": ["wild", "trainer", "gym", "legend"], "delaySec": 2.1}, "text": "tutorial.tip.typeMatchup", "expires": {"minStat": {"battlesWon": 1}}, "after": ["battle"]},
-      {"id": "superEffective", "trigger": {"kind": "on", "on": "superEffective", "phase": "battle", "match": {"side": 1}, "delaySec": 0.6}, "text": "tutorial.tip.superEffective", "expires": {"minStat": {"battlesWon": 5}}},
-      {"id": "resisted", "trigger": {"kind": "on", "on": "resisted", "phase": "battle", "match": {"side": 1}, "delaySec": 0.6}, "text": "tutorial.tip.resisted", "expires": {"minStat": {"battlesWon": 5}}},
+      {"id": "typeMatchup", "trigger": {"kind": "battle", "battleKinds": ["wild", "trainer", "gym", "legend"], "delaySec": 2.1}, "text": "tutorial.tip.typeMatchup", "expires": {"minStat": {"battlesWon": 1}}, "after": ["battle"], "open": {"screen": "typeChart", "action": "map", "text": "tutorial.tip.openChart"}},
+      {"id": "superEffective", "trigger": {"kind": "on", "on": "superEffective", "phase": "battle", "match": {"side": 1}, "delaySec": 0.6}, "text": "tutorial.tip.superEffective", "expires": {"minStat": {"battlesWon": 5}}, "open": {"screen": "typeChart", "action": "map", "text": "tutorial.tip.openChart"}},
+      {"id": "resisted", "trigger": {"kind": "on", "on": "resisted", "phase": "battle", "match": {"side": 1}, "delaySec": 0.6}, "text": "tutorial.tip.resisted", "expires": {"minStat": {"battlesWon": 5}}, "open": {"screen": "typeChart", "action": "map", "text": "tutorial.tip.openChart"}},
       {"id": "immune", "trigger": {"kind": "on", "on": "immune", "phase": "battle", "delaySec": 0.6, "needs": {"minStat": {"battlesWon": 1}}}, "text": "tutorial.tip.immune"},
       {"id": "doubleType", "trigger": {"kind": "on", "on": "doubleSuper", "phase": "battle", "delaySec": 0.6, "needs": {"minStat": {"battlesWon": 1}}}, "text": "tutorial.tip.doubleType"},
       {"id": "stab", "trigger": {"kind": "battle", "battleKinds": ["wild", "trainer", "gym"], "delaySec": 3, "needs": {"minStat": {"battlesWon": 1}}}, "text": "tutorial.tip.stab", "expires": {"minStat": {"battlesWon": 4}}, "after": ["moveInfo"]},
@@ -100,8 +100,8 @@
       {"id": "hud", "group": "basics", "tips": ["hud"]},
       {"id": "battle", "group": "battle", "tips": ["battle"]},
       {"id": "moveInfo", "group": "battle", "tips": ["moveInfo"]},
-      {"id": "typeChart", "group": "battle", "tips": ["typeMatchup", "superEffective", "resisted"], "npcs": ["aide-types"]},
-      {"id": "typeImmune", "group": "battle", "tips": ["immune"]},
+      {"id": "typeChart", "group": "battle", "tips": ["typeMatchup", "superEffective", "resisted"], "npcs": ["aide-types"], "chart": {"view": "type"}},
+      {"id": "typeImmune", "group": "battle", "tips": ["immune"], "chart": {"view": "type", "type": "compute"}},
       {"id": "dualType", "group": "battle", "tips": ["doubleType"]},
       {"id": "stab", "group": "battle", "tips": ["stab"]},
       {"id": "stats", "group": "battle", "tips": ["statGlossary"]},
@@ -138,6 +138,14 @@
       {"id": "chat", "group": "online", "tips": ["chat"]},
       {"id": "trade", "group": "online", "tips": ["tradePvp"]},
       {"id": "pvp", "group": "online", "tips": ["tradePvp"]}
+    ]
+  },
+  "typeChart": {
+    "loops": [
+      {"id": "info", "types": ["logic", "chaos", "search"]},
+      {"id": "hardware", "types": ["compute", "code", "logic"], "starter": true},
+      {"id": "media", "types": ["write", "motion", "vision"]},
+      {"id": "governance", "types": ["safety", "open", "code"]}
     ]
   }
 }

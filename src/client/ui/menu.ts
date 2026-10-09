@@ -20,6 +20,8 @@ export interface RowMenuOptions {
   visibleRows: number
   /** CSS px of chrome beside the list that touch rows must leave room for (added to the screen's own reserve). */
   reservePx?: number
+  /** The screen hides the touch pad: `reservePx` is then the whole chrome height, not just the extra beside the list. */
+  padFree?: boolean
   initial?: number
   wrap?: boolean
   audio: AudioManager
@@ -36,11 +38,11 @@ function rowUnits(): number {
 }
 
 /** With touch rows a list may no longer fit its screen: show fewer rows and scroll the rest (`extraPx`: more chrome around it). */
-function fitRows(wanted: number, rowH: number, extraPx = 0): number {
+function fitRows(wanted: number, rowH: number, extraPx = 0, padFree = false): number {
   const L = UI_CONFIG.list
   if (document.documentElement.dataset.touchControls !== 'on') return wanted
   const s = getUIScale()
-  const reserve = s.portrait ? L.touchReservePx.portrait : L.touchReservePx.landscape
+  const reserve = padFree ? 0 : s.portrait ? L.touchReservePx.portrait : L.touchReservePx.landscape
   return Math.min(wanted, Math.max(L.minTouchRows, Math.floor((window.innerHeight - reserve - extraPx) / (rowH * s.cssPerUnit))))
 }
 
@@ -53,7 +55,7 @@ export function listMetrics(wanted: number, extraPx = 0): { rows: number; rowH: 
 export function createRowMenu(items: ListItem[], o: RowMenuOptions): RowMenu {
   const count = items.length
   const ROW_UNITS = rowUnits()
-  const visible = Math.max(1, Math.min(fitRows(o.visibleRows, ROW_UNITS, o.reservePx), Math.max(1, count)))
+  const visible = Math.max(1, Math.min(fitRows(o.visibleRows, ROW_UNITS, o.reservePx, o.padFree), Math.max(1, count)))
   const wrap = o.wrap ?? UI_CONFIG.list.wrap
   const sfx = (k: keyof typeof UI_CONFIG.sfx) => o.audio.playSfx(UI_CONFIG.sfx[k])
 

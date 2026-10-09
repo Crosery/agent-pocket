@@ -14,9 +14,21 @@ export interface UIScale {
   unitsH: number
   compact: boolean
   portrait: boolean
+  /** CSS pixels per unit inside full-screen panels (--ap-screen-scale); equals cssPerUnit on touch devices. */
+  screenCssPerUnit: number
 }
 
-export function computeUIScale(vw: number, vh: number, dpr: number, cfg: UIConfig['scale'] = UI_CONFIG.scale): UIScale {
+/** Device px per UI unit for full-screen panels: text lands near the window-relative body size, in half-pixel steps. */
+export function screenDevicePerUnit(vh: number, dpr: number, deviceScale: number, coarse: boolean, cfg: UIConfig['screenScale'] = UI_CONFIG.screenScale): number {
+  if (coarse) return deviceScale
+  const d = dpr > 0 ? dpr : 1
+  const bodyCss = Math.min(cfg.maxBodyPx, Math.max(cfg.minBodyPx, vh * cfg.bodyHeightFrac))
+  let e = Math.round((bodyCss * d) / cfg.bodyUnits / cfg.stepDevicePerUnit) * cfg.stepDevicePerUnit
+  if ((e * cfg.bodyUnits) / d < cfg.minBodyPx - 1e-6) e += cfg.stepDevicePerUnit
+  return Math.min(deviceScale, Math.max(cfg.minDevicePerUnit, e))
+}
+
+export function computeUIScale(vw: number, vh: number, dpr: number, cfg: UIConfig['scale'] = UI_CONFIG.scale, coarse = false): UIScale {
   const portrait = vh > vw
   const bw = portrait ? cfg.baseHeight : cfg.baseWidth
   const bh = portrait ? cfg.baseWidth : cfg.baseHeight
@@ -27,7 +39,7 @@ export function computeUIScale(vw: number, vh: number, dpr: number, cfg: UIConfi
   const cssPerUnit = deviceScale / d
   const unitsW = vw / cssPerUnit
   const unitsH = vh / cssPerUnit
-  return { deviceScale, cssPerUnit, unitsW, unitsH, compact: unitsW < cfg.compactBelowWidth, portrait }
+  return { deviceScale, cssPerUnit, unitsW, unitsH, compact: unitsW < cfg.compactBelowWidth, portrait, screenCssPerUnit: screenDevicePerUnit(vh, d, deviceScale, coarse) / d }
 }
 
 let current: UIScale | null = null
@@ -35,14 +47,21 @@ let installed = false
 const listeners = new Set<(s: UIScale) => void>()
 
 function apply(): void {
-  const s = computeUIScale(window.innerWidth, window.innerHeight, window.devicePixelRatio || 1)
+  const s = computeUIScale(window.innerWidth, window.innerHeight, window.devicePixelRatio || 1, UI_CONFIG.scale, window.matchMedia('(pointer: coarse)').matches)
   const changed = !current || current.deviceScale !== s.deviceScale || current.cssPerUnit !== s.cssPerUnit ||
-    current.compact !== s.compact || current.unitsW !== s.unitsW || current.unitsH !== s.unitsH
+    current.compact !== s.compact || current.screenCssPerUnit !== s.screenCssPerUnit || current.unitsW !== s.unitsW || current.unitsH !== s.unitsH
   current = s
   const root = document.documentElement
   root.style.setProperty('--ap-ui-scale', String(s.cssPerUnit))
+  root.style.setProperty('--ap-screen-scale', String(s.screenCssPerUnit))
   root.classList.toggle('ap-compact', s.compact)
   root.classList.toggle('ap-portrait', s.portrait)
+  const z = UI_CONFIG.phoneHud[s.portrait ? 'portrait' : 'landscape']
+  root.style.setProperty('--ap-ph-toast-top', String(z.toast.top))
+  root.style.setProperty('--ap-ph-toast-left', String(z.toast.left))
+  root.style.setProperty('--ap-ph-toast-right', String(z.toast.right))
+  root.style.setProperty('--ap-ph-lower-w', String(z.lowerStackWidth))
+  root.style.setProperty('--ap-ph-banner-lines', String(z.bannerSubLines))
   if (changed) for (const fn of listeners) fn(s)
 }
 
@@ -56,6 +75,11 @@ function setStaticVars(): void {
   root.setProperty('--ap-toast-enter-ms', `${a.toastEnterMs}ms`)
   root.setProperty('--ap-toast-leave-ms', `${a.toastLeaveMs}ms`)
   // --ap-touch-inset / -left-inset / -right-inset belong to the touch pad (core/input-touch.ts publishes them per orientation).
+  root.setProperty('--ap-ph-toast-lines', String(UI_CONFIG.phoneHud.toastLines))
+  root.setProperty('--ap-ph-chat-clear', `${UI_CONFIG.phoneHud.chatClearPx}px`)
+  root.setProperty('--ap-ph-tip-foot-gap', `${UI_CONFIG.phoneHud.tipFootGapPx}px`)
+  root.setProperty('--ap-min-text', `${UI_CONFIG.screenScale.minTextPx}px`)
+  for (const [tier, units] of Object.entries(UI_CONFIG.screenScale.tiers)) root.setProperty(`--ap-t-${tier}`, String(units))
   root.setProperty('--ap-minimap-size', String(UI_CONFIG.minimap.size))
   root.setProperty('--ap-minimap-compact-size', String(UI_CONFIG.minimap.compactSize))
   root.setProperty('--ap-minimap-ring', String(UI_CONFIG.minimap.ring))

@@ -1,6 +1,6 @@
 {
   "loop": {"maxDtSec": 0.1, "pauseWhenHidden": true},
-  "loading": {"showAfterMs": 220, "fadeOutMs": 420, "steps": ["content", "assets", "world", "renderer", "ui", "modules", "ready"]},
+  "loading": {"showAfterMs": 220, "fadeOutMs": 420, "worldSliceMs": 12, "steps": ["content", "assets", "world", "renderer", "ui", "modules", "ready"]},
   "newGame": {
     "startAnchor": "origin-home:wake",
     "facing": "down",
@@ -22,8 +22,30 @@
     "surf": {"sfx": "splash", "volume": 0.16, "pitch": 1.25},
     "terrain": {"grass": {"sfx": "step", "volume": 0.24, "pitch": 0.92}, "tall_grass": {"sfx": "step", "volume": 0.34, "pitch": 0.78, "fx": "grass"}, "dark_grass": {"sfx": "step", "volume": 0.34, "pitch": 0.72, "fx": "grass"}, "tall_snowgrass": {"sfx": "step", "volume": 0.3, "pitch": 0.7, "fx": "grass"}, "tall_reeds": {"sfx": "step", "volume": 0.32, "pitch": 0.8, "fx": "grass"}, "desert_grass": {"sfx": "step", "volume": 0.3, "pitch": 0.84, "fx": "grass"}, "flowers": {"sfx": "step", "volume": 0.22, "pitch": 0.98}, "forest_floor": {"sfx": "step", "volume": 0.26, "pitch": 0.86}, "path": {"sfx": "step", "volume": 0.3, "pitch": 1.0}, "sand": {"sfx": "step", "volume": 0.26, "pitch": 0.74}, "ash": {"sfx": "step", "volume": 0.26, "pitch": 0.7}, "snow": {"sfx": "step", "volume": 0.28, "pitch": 0.66}, "ice": {"sfx": "step", "volume": 0.3, "pitch": 1.35}, "mud": {"sfx": "splash", "volume": 0.18, "pitch": 0.7}, "shallow": {"sfx": "splash", "volume": 0.22, "pitch": 1.1}, "rock": {"sfx": "step", "volume": 0.34, "pitch": 1.1}, "cobble": {"sfx": "step", "volume": 0.34, "pitch": 1.16}, "ruin": {"sfx": "step", "volume": 0.34, "pitch": 1.08}, "cave": {"sfx": "step", "volume": 0.36, "pitch": 0.94}, "crystal_floor": {"sfx": "step", "volume": 0.32, "pitch": 1.4}, "tech": {"sfx": "step", "volume": 0.34, "pitch": 1.28}, "wood": {"sfx": "step", "volume": 0.34, "pitch": 1.2}, "bridge": {"sfx": "step", "volume": 0.36, "pitch": 1.18}, "tile_floor": {"sfx": "step", "volume": 0.3, "pitch": 1.24}, "carpet": {"sfx": "step", "volume": 0.16, "pitch": 0.9}, "stairs": {"sfx": "step", "volume": 0.34, "pitch": 1.12}}
   },
-  "follower": {"distance": 1.05, "distancePerSize": 0.5, "minGap": 0.8, "sidestepSpeed": 6, "cameraClear": {"base": 0.5, "perSize": 0.78, "sideDeadzone": 0.15, "blendPerSec": 4, "tries": 4, "dropBack": {"base": 0.2, "perSize": 0.65}}, "maxSpeed": 6.5, "catchUpMul": 1.25, "sideBias": 0.35, "trailSpacing": 0.1, "maxTrail": 80, "indoorMaxSize": 1.3, "springOmega": 20, "teleportDistance": 5, "moveMinSpeed": 0.3, "flipMinSpeed": 0.6, "mapKinds": ["overworld", "cave", "interior"], "interactRadius": 0.75, "fx": "heart", "cryPitch": 1, "tiredBelow": 0.5, "sizeCapMapKinds": ["interior", "cave"]},
-  "interact": {"reach": 0.85, "radius": 0.62, "reachAcrossProps": ["counter"], "props": {"pc_terminal": {"action": "box"}, "statue": {"action": "statue"}}, "sfx": "select"},
+  "follower": {
+    "distance": 1.05,
+    "distancePerSize": 0.5,
+    "minGap": 0.8,
+    "sidestepSpeed": 6,
+    "cameraClear": {"base": 0.5, "perSize": 0.78, "sideDeadzone": 0.15, "blendPerSec": 4, "tries": 4, "dropBack": {"base": 0.2, "perSize": 0.65}},
+    "maxSpeed": 6.5,
+    "catchUpMul": 1.25,
+    "sideBias": 0.35,
+    "trailSpacing": 0.1,
+    "maxTrail": 80,
+    "indoorMaxSize": 1.3,
+    "springOmega": 20,
+    "teleportDistance": 5,
+    "moveMinSpeed": 0.3,
+    "flipMinSpeed": 0.6,
+    "mapKinds": ["overworld", "cave", "interior"],
+    "interactRadius": 0.75,
+    "fx": "heart",
+    "cryPitch": 1,
+    "tiredBelow": 0.5,
+    "sizeCapMapKinds": ["interior", "cave"]
+  },
+  "interact": {"reach": 0.85, "radius": 0.62, "reachAcrossProps": ["counter"], "props": {"pc_terminal": {"action": "box"}, "statue": {"action": "statue"}, "warp_anchor": {"action": "anchor"}, "warp_anchor_grand": {"action": "anchor"}}, "sfx": "select"},
   "npc": {
     "showNames": false,
     "walkSpeed": 3.4,
@@ -36,8 +58,8 @@
   "encounters": {
     "requireConsciousParty": true,
     "surfEncounters": true,
-    "grassRateMultiplier": 0.45,
-    "graceSteps": 2,
+    "grassRateMultiplier": 0.18,
+    "graceSteps": 8,
     "transition": {"kind": "battle", "inMs": 950, "flashColor": "#ffffff", "flashMs": 140, "sfx": "encounter", "fx": "exclaim"},
     "legendRarityOrder": 4,
     "scriptedCanRun": true,
@@ -50,6 +72,7 @@
   "battle": {"sayIntroBefore": true, "sayDefeatTextAfter": true, "lossAbortsScript": true, "afterBattleSettleMs": 120, "fallbackMaxSteps": 1000},
   "blackout": {"fadeMs": 650, "sfx": "faint"},
   "fly": {"minBadges": 1, "keyItemKind": "map", "mapKinds": ["overworld"], "sfx": "door"},
+  "anchorTravel": {"minBadges": 0, "keyItemKind": "", "mapKinds": ["overworld"], "scanSec": 0.25, "beaconRadius": 36},
   "script": {"maxDepth": 48, "healWaitMs": 900, "healSfx": "heal", "moneySfx": "money", "questSfx": "notify", "unlockSfx": "notify", "fadeMs": 420, "moveNpcSpeed": 3.4},
   "presence": {"chatBubbleMs": 3600, "emoteBubbleMs": 2200, "bubbleMaxChars": 22, "interactRadius": 0.9, "followerDistance": 1.0, "followerRate": 8, "leadDebounceSec": 0.5, "inspectTimeoutMs": 5000, "moveMinSpeed": 0.4, "moveHoldMs": 160},
   "markers": {"refreshSec": 0.2, "trainers": true, "quest": true, "others": true, "rares": true, "wild": false, "items": true},
@@ -57,6 +80,16 @@
   "autosave": {"events": ["badge:earned", "dex:caught", "quest:updated", "battle:end", "map:entered"], "minIntervalSec": 6, "onHidden": true},
   "hud": {"moneyCheckSec": 0.5},
   "flags": {"badgePrefix": "badge:", "bossWonPrefix": "bossWon:"},
-  "debug": {"partySize": 6, "partyLevel": 30, "money": 99999, "keyItemKinds": ["bike", "surf", "map", "dex", "badgeCase"], "categoryQty": {"ball": 20, "medicine": 10, "battle": 3}, "freezeClockWithTime": true, "overlayRefreshMs": 250, "battleLevel": 10, "boss": {"party": ["gpt-5-6", "kling-4", "google-antigravity", "qwen-audio"], "levelOffset": -2, "counterQty": 6}},
+  "debug": {
+    "partySize": 6,
+    "partyLevel": 30,
+    "money": 99999,
+    "keyItemKinds": ["bike", "surf", "map", "dex", "badgeCase"],
+    "categoryQty": {"ball": 20, "medicine": 10, "battle": 3},
+    "freezeClockWithTime": true,
+    "overlayRefreshMs": 250,
+    "battleLevel": 10,
+    "boss": {"party": ["gpt-5-6", "kling-4", "google-antigravity", "qwen-audio"], "levelOffset": -2, "counterQty": 6}
+  },
   "title": {"importCodeMaxLen": 200000}
 }

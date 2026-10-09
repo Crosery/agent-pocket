@@ -1,0 +1,260 @@
+/* Agent Pocket — 属性克制表 (src/client/ui/screens/typechart.ts). Every size is calc(var(--u) * N); the cell, header and
+   side-pane sizes arrive as --cw-u / --ch-u / --hw / --hh / --side from content/screens.json typeChart.grid. */
+
+/* On a phone the screen owns the whole display (the pause screen does the same): no overworld pad underneath, no reserved strip.
+   Over a battle the pad stays, so the bottom inset stays too. */
+html:not(.ap-battle-on) .aps-typechart { --ap-bottom-inset: 0px; }
+html:not(.ap-battle-on):has(.ap-kit-stack > .aps-typechart):not(:has(.aps-typechart ~ .aps-screen:not(.ap-pushed-out))) .ap-touch { visibility: hidden; }
+.aps-typechart .aps-foot:empty { display: none; }
+.aps-typechart .aps-body { gap: 0; }
+.aps-tc-tabs { flex: none; }
+.aps-tc-tabs.is-focus .ap-tab.is-active { box-shadow: 0 0 0 var(--u) var(--ap-gold-hi); }
+.aps-tc-stage { flex: 1; min-height: 0; display: flex; flex-direction: column; padding-top: calc(var(--u) * 6); }
+.aps-tc-stage > [hidden] { display: none; }
+
+/* ------------------------------------------------------------------ icon + name tag */
+
+.aps-tc-icon { flex: none; display: inline-flex; width: calc(var(--u) * var(--sz)); height: calc(var(--u) * var(--sz)); }
+.aps-tc-icon img { width: 100%; height: 100%; image-rendering: auto; }
+.aps-tc-icon.is-missing { border-radius: 50%; background: var(--tc); box-shadow: inset 0 0 0 var(--u) var(--ap-ink); }
+.aps-tc-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 2);
+  height: calc(var(--u) * 18);
+  padding: 0 calc(var(--u) * 4) 0 calc(var(--u) * 2);
+  color: var(--ap-text);
+  background: rgba(5, 7, 13, 0.72);
+  border: var(--u) solid var(--tc);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* ------------------------------------------------------------------ per-type view */
+
+.aps-tc-typeview { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 6); }
+.aps-tc-picker { flex: none; display: grid; grid-template-columns: repeat(var(--cols, 13), minmax(0, 1fr)); gap: calc(var(--u) * 3); }
+.aps-tc-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--u);
+  min-height: calc(var(--u) * var(--tile-h));
+  min-width: 0;
+  padding: calc(var(--u) * 2) 0;
+  color: var(--ap-text-dim);
+  background: linear-gradient(180deg, rgba(10, 14, 27, 0.8), rgba(21, 29, 44, 0.95));
+  border: var(--u) solid rgba(107, 80, 36, 0.7);
+  border-radius: 0;
+  cursor: pointer;
+  outline: none;
+}
+.aps-tc-tile:hover { color: var(--ap-text); border-color: var(--ap-gold-dk); }
+.aps-tc-tile.is-active {
+  color: #fffaf0;
+  border-color: var(--tc);
+  background: linear-gradient(180deg, rgba(60, 50, 26, 0.95), rgba(22, 28, 48, 0.95));
+  box-shadow: 0 0 0 var(--u) var(--tc), 0 0 0 calc(var(--u) * 2) var(--ap-ink);
+}
+.aps-tc-tile-name { font-size: calc(var(--u) * 10); line-height: calc(var(--u) * 11); white-space: nowrap; }
+
+.aps-tc-detail { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: calc(var(--u) * 8); padding: calc(var(--u) * 3); }
+.aps-tc-head { flex: none; display: flex; align-items: center; flex-wrap: wrap; gap: calc(var(--u) * 6) calc(var(--u) * 10); }
+.aps-tc-name {
+  font-size: calc(var(--u) * 16);
+  line-height: calc(var(--u) * 20);
+  color: #fffaf0;
+  padding-bottom: var(--u);
+  border-bottom: calc(var(--u) * 2) solid var(--tc);
+  text-shadow: var(--u) var(--u) 0 var(--ap-ink);
+}
+.aps-tc-example {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: calc(var(--u) * 3) calc(var(--u) * 6);
+  padding: calc(var(--u) * 3) calc(var(--u) * 8);
+  background: rgba(201, 164, 92, 0.12);
+  border-left: calc(var(--u) * 2) solid var(--ap-gold);
+}
+.aps-tc-example-v { display: inline-flex; align-items: center; flex-wrap: wrap; gap: calc(var(--u) * 4); white-space: normal; }
+.aps-tc-sides { flex: 1 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: calc(var(--u) * 10); align-items: stretch; }
+.aps-tc-side { display: flex; flex-direction: column; }
+.aps-tc-side .ap-panel-body { flex: 1; display: flex; flex-direction: column; }
+.aps-tc-row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 6);
+  flex: 1;
+  min-height: calc(var(--u) * 24);
+  padding: calc(var(--u) * 3) 0;
+  border-bottom: var(--u) solid rgba(201, 164, 92, 0.14);
+}
+.aps-tc-row:last-child { border-bottom: 0; }
+.aps-tc-row-label {
+  flex: none;
+  width: calc(var(--u) * 84);
+  padding: var(--u) calc(var(--u) * 3);
+  text-align: center;
+  white-space: nowrap;
+  color: var(--tone-fg);
+  background: var(--tone-bg);
+  border: var(--u) solid rgba(5, 7, 13, 0.55);
+}
+.aps-tc-chips { min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--u) * 3); }
+.aps-tc-none { padding-left: calc(var(--u) * 2); }
+.aps-tc-row.is-empty .aps-tc-row-label { opacity: 0.55; }
+
+/* ------------------------------------------------------------------ full grid view */
+
+.aps-tc-gridview {
+  --cw: calc(var(--u) * var(--cw-u));
+  --ch: calc(var(--u) * var(--ch-u));
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) calc(var(--u) * var(--side));
+  gap: calc(var(--u) * 8);
+}
+html[data-touch-controls='on'] .aps-tc-gridview { --cw: max(calc(var(--u) * var(--cw-u)), 44px); --ch: max(calc(var(--u) * var(--ch-u)), 44px); }
+.aps-tc-gridpanel { min-width: 0; min-height: 0; display: flex; padding: calc(var(--u) * 3); }
+/* Cells never shrink below --cw x --ch (the cell box scrolls then); with room to spare they stretch to fill the panel. */
+.aps-tc-grid {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: calc(var(--u) * var(--hw)) minmax(0, 1fr);
+  grid-template-rows: calc(var(--u) * var(--hh)) minmax(0, 1fr);
+}
+.aps-tc-cols, .aps-tc-rows, .aps-tc-cells { min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: none; }
+.aps-tc-cols::-webkit-scrollbar, .aps-tc-rows::-webkit-scrollbar, .aps-tc-cells::-webkit-scrollbar { display: none; }
+.aps-tc-cols, .aps-tc-rows { pointer-events: none; }
+.aps-tc-cols { display: grid; grid-template-columns: repeat(var(--n), minmax(var(--cw), 1fr)); grid-template-rows: minmax(0, 1fr); }
+.aps-tc-rows { display: grid; grid-template-rows: repeat(var(--n), minmax(var(--ch), 1fr)); }
+.aps-tc-cells { display: grid; grid-template-columns: repeat(var(--n), minmax(var(--cw), 1fr)); grid-template-rows: repeat(var(--n), minmax(var(--ch), 1fr)); }
+.aps-tc-corner, .aps-tc-colhead, .aps-tc-rowhead { display: flex; align-items: center; background: #141c2d; color: var(--ap-text-dim); }
+.aps-tc-corner { justify-content: center; font-size: calc(var(--u) * 10); white-space: nowrap; border-right: var(--u) solid var(--ap-gold-dk); border-bottom: var(--u) solid var(--ap-gold-dk); }
+.aps-tc-colhead { justify-content: center; border-bottom: var(--u) solid var(--ap-gold-dk); }
+.aps-tc-rowhead { gap: calc(var(--u) * 3); padding-left: calc(var(--u) * 3); border-right: var(--u) solid var(--ap-gold-dk); }
+.aps-tc-rowname { white-space: nowrap; font-size: calc(var(--u) * 12); }
+.aps-tc-colhead.is-on, .aps-tc-rowhead.is-on { color: var(--ap-gold-hi); background: #2a2f24; }
+.aps-tc-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--tone-fg, var(--ap-text));
+  background: var(--tone-bg, rgba(255, 255, 255, 0.025));
+  border: 0;
+  border-right: var(--u) solid rgba(5, 7, 13, 0.55);
+  border-bottom: var(--u) solid rgba(5, 7, 13, 0.55);
+  border-radius: 0;
+  cursor: pointer;
+  outline: none;
+  white-space: nowrap;
+}
+.aps-tc-cell.is-row::after, .aps-tc-cell.is-col::after { content: ''; position: absolute; inset: 0; background: rgba(243, 220, 160, 0.16); pointer-events: none; }
+.aps-tc-cell.is-cursor { z-index: 1; outline: calc(var(--u) * 2) solid var(--ap-gold-hi); outline-offset: calc(var(--u) * -2); }
+
+.aps-tc-gridside { min-width: 0; min-height: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 8); overflow-y: auto; padding: calc(var(--u) * 3); }
+.aps-tc-pair { display: flex; flex-wrap: wrap; align-items: center; gap: calc(var(--u) * 3) calc(var(--u) * 4); white-space: normal; }
+.aps-tc-verdict { margin-top: calc(var(--u) * 5); padding: calc(var(--u) * 2) calc(var(--u) * 6); color: var(--tone-fg, var(--ap-text)); background: var(--tone-bg, rgba(255, 255, 255, 0.06)); border: var(--u) solid rgba(5, 7, 13, 0.55); white-space: normal; }
+.aps-tc-reason { margin: calc(var(--u) * 5) 0 0; color: var(--ap-text-dim); white-space: normal; }
+.aps-tc-open { margin-top: calc(var(--u) * 6); width: 100%; white-space: normal; }
+.aps-tc-legend .ap-panel-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: calc(var(--u) * 6); }
+.aps-tc-legend { flex: 1; }
+.aps-tc-legend-row { display: flex; align-items: center; gap: calc(var(--u) * 5); min-height: calc(var(--u) * 18); white-space: nowrap; }
+.aps-tc-swatch {
+  flex: none;
+  width: calc(var(--u) * 26);
+  height: calc(var(--u) * 16);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tone-fg);
+  background: var(--tone-bg);
+  border: var(--u) solid rgba(5, 7, 13, 0.55);
+}
+.aps-tc-swatch.is-blank { background: rgba(255, 255, 255, 0.025); border-color: rgba(201, 164, 92, 0.3); }
+.aps-tc-axis { grid-column: 1 / -1; margin-top: calc(var(--u) * 4); white-space: normal; }
+
+/* ------------------------------------------------------------------ loops view */
+
+.aps-tc-loopview { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 6); }
+.aps-tc-loop-picker { flex: none; display: grid; grid-template-columns: repeat(var(--loops, 4), minmax(0, 1fr)); gap: calc(var(--u) * 3); }
+.aps-tc-loop-tab {
+  min-height: calc(var(--u) * 24);
+  padding: calc(var(--u) * 2) calc(var(--u) * 4);
+  color: var(--ap-text-dim);
+  background: linear-gradient(180deg, rgba(10, 14, 27, 0.8), rgba(21, 29, 44, 0.95));
+  border: var(--u) solid rgba(107, 80, 36, 0.7);
+  border-radius: 0;
+  cursor: pointer;
+  outline: none;
+  white-space: nowrap;
+}
+.aps-tc-loop-tab:hover { color: var(--ap-text); border-color: var(--ap-gold-dk); }
+.aps-tc-loop-tab.is-active { color: var(--ap-gold-hi); border-color: var(--ap-gold); background: linear-gradient(180deg, rgba(60, 50, 26, 0.95), rgba(22, 28, 48, 0.95)); }
+.aps-tc-looppanel { flex: 1; min-height: 0; display: flex; padding: calc(var(--u) * 3); }
+.aps-tc-loop-detail { flex: 1; min-width: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; display: flex; align-items: safe center; gap: calc(var(--u) * 16); padding: calc(var(--u) * 4) calc(var(--u) * 8); }
+.aps-tc-loop-ring { flex: none; display: flex; justify-content: center; }
+.aps-tc-ring { display: block; flex: none; overflow: visible; }
+.aps-tc-ring .aps-tc-node { image-rendering: auto; }
+.aps-tc-arrow, .aps-tc-arrow-head { shape-rendering: crispEdges; }
+.aps-tc-arrow-edge { stroke: var(--ap-ink); fill: var(--ap-ink); shape-rendering: crispEdges; stroke-linejoin: miter; }
+.aps-tc-arrow { stroke-linecap: butt; }
+.aps-tc-ring-label {
+  fill: #fffaf0;
+  font-size: 12px;
+  stroke: var(--ap-ink);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}
+.aps-tc-loop-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 8); }
+.aps-tc-loop-title { display: flex; align-items: center; flex-wrap: wrap; gap: calc(var(--u) * 6); font-size: calc(var(--u) * 14); line-height: calc(var(--u) * 18); }
+.aps-tc-edges { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 7); }
+.aps-tc-edge { display: flex; flex-direction: column; gap: calc(var(--u) * 3); }
+.aps-tc-edge-pair { display: flex; align-items: center; flex-wrap: wrap; gap: calc(var(--u) * 4); }
+.aps-tc-edge-arrow { color: var(--ap-gold-hi); }
+.aps-tc-why { padding-left: calc(var(--u) * 3); color: var(--ap-text-dim); white-space: normal; }
+.aps-tc-loop-hint { margin: 0; white-space: normal; }
+
+/* The 教学手册 page: the open-chart button sits above the lesson text. */
+.aps-manual-open { width: 100%; margin: calc(var(--u) * 6) 0; white-space: normal; display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 6); }
+
+/* ------------------------------------------------------------------ phones */
+
+html.ap-compact .aps-tc-sides { grid-template-columns: minmax(0, 1fr); }
+html.ap-compact .aps-tc-gridview { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: calc(var(--u) * 6); }
+/* The pair under the cursor keeps the screen: tags on top, verdict and the open button side by side, the legend two by two. */
+html.ap-compact .aps-tc-gridside { overflow: visible; padding: 0; gap: calc(var(--u) * 6); }
+html.ap-compact .aps-tc-caption .ap-panel-body { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: calc(var(--u) * 4) calc(var(--u) * 6); }
+html.ap-compact .aps-tc-pair { grid-column: 1 / -1; }
+html.ap-compact .aps-tc-verdict { grid-row: 2; grid-column: 1; margin: 0; }
+html.ap-compact .aps-tc-open { grid-row: 2; grid-column: 2; width: auto; margin: 0; padding: 0 calc(var(--u) * 6); }
+html.ap-compact .aps-tc-reason { grid-column: 1 / -1; margin: 0; }
+html.ap-compact .aps-tc-legend { flex: none; padding-top: calc(var(--u) * 5); padding-bottom: calc(var(--u) * 5); }
+html.ap-compact .aps-tc-legend .ap-panel-title, html.ap-compact .aps-tc-axis { display: none; }
+html.ap-compact .aps-tc-loop-detail { flex-direction: column; align-items: stretch; gap: calc(var(--u) * 8); }
+html.ap-compact .aps-tc-loop-picker { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+html.ap-compact .aps-tc-row-label { width: calc(var(--u) * 76); }
+html.ap-compact .aps-tc-example { flex-basis: 100%; }
+html[data-touch-controls='on'] :is(.aps-tc-tile, .aps-tc-loop-tab, .aps-tc-open) { min-height: 44px; }
+/* Finger-sized cells call for larger header icons. */
+html[data-touch-controls='on'] .aps-tc-gridview .aps-tc-icon { --sz: 20; }
+
+/* A landscape phone has height for four rows only: the legend drops its title and the axis note (the corner label says it). */
+@media (max-height: 480px) {
+  .aps-tc-gridside { gap: calc(var(--u) * 6); }
+  .aps-tc-legend { flex: none; padding-top: calc(var(--u) * 5); padding-bottom: calc(var(--u) * 5); }
+  .aps-tc-legend .ap-panel-title, .aps-tc-axis { display: none; }
+}
+html[data-touch-controls='on'] .aps-manual-open { min-height: 44px; }

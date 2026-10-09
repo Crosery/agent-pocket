@@ -49,13 +49,17 @@ function token(): string {
   return t
 }
 
+// CI runners upload to Qiniu z2 at tens of KB/s: a flat limit aborted the 1.7 MB main bundle (v0.2.0-rc.2), so the
+// limit grows with the file size.
+const uploadTimeout = (bytes: number) => CDN.uploadTimeoutMs + Math.ceil((bytes / CDN.uploadMinBytesPerSec) * 1000)
+
 async function put(tok: string, it: { key: string; body: Buffer; type: string }): Promise<void> {
   for (let attempt = 0; ; attempt++) {
     const form = new FormData()
     form.set('token', tok)
     form.set('key', it.key)
     form.set('file', new Blob([new Uint8Array(it.body)], { type: it.type }), it.key.split('/').pop())
-    const res = await fetch(CDN.uploadUrl, { method: 'POST', body: form }).catch((e: Error) => ({ ok: false, status: 0, text: async () => e.message }))
+    const res = await fetch(CDN.uploadUrl, { method: 'POST', body: form, signal: AbortSignal.timeout(uploadTimeout(it.body.length)) }).catch((e: Error) => ({ ok: false, status: 0, text: async () => e.message }))
     if (res.ok) return
     if (res.status === 614) return // key exists: content-addressed, so it is already the same bytes
     if (attempt >= 2 || (res.status > 0 && res.status < 500)) die(`upload ${it.key} failed: ${res.status} ${await res.text()}`)
@@ -65,10 +69,11 @@ async function put(tok: string, it: { key: string; body: Buffer; type: string })
 const mime = (f: string) => (CDN.mime as Record<string, string>)[extname(f).toLowerCase()] ?? 'application/octet-stream'
 
 async function head(url: string): Promise<{ ok: boolean; status: number; headers: Headers }> {
-  // CI runners reach the CDN over a lossy path: retry network errors and 5xx with backoff.
+  // CI runners reach the CDN over a lossy path: retry network errors and 5xx with backoff. Without a per-request
+  // timeout one stalled connection hung verify until the 30-minute job limit (v0.2.0-rc.1).
   for (let attempt = 0; ; attempt++) {
     try {
-      const res = await fetch(url, { method: 'HEAD', headers: { Origin: 'https://cdn-check.invalid', 'Accept-Encoding': 'identity' } })
+      const res = await fetch(url, { method: 'HEAD', headers: { Origin: 'https://cdn-check.invalid', 'Accept-Encoding': 'identity' }, signal: AbortSignal.timeout(CDN.verifyTimeoutMs) })
       if (res.status < 500 || attempt >= CDN.verifyRetries) return res
     } catch (e) {
       if (attempt >= CDN.verifyRetries) return { ok: false, status: 0, headers: new Headers({ 'x-error': String((e as Error).cause ?? e) }) }
@@ -89,14 +94,33 @@ async function upload(): Promise<void> {
 
 async function verify(): Promise<void> {
   const p = plan()
-  const bad: string[] = []
-  await pool([...p.bundles, ...p.pub], async (it) => {
-    const res = await head(cdnUrl(it.key))
-    const size = readFileSync(it.file).length
-    if (!res.ok) bad.push(`${res.status} ${it.key}${res.headers.get('x-error') ? ` (${res.headers.get('x-error')})` : ''}`)
-    else if (Number(res.headers.get('content-length')) !== size) bad.push(`size ${res.headers.get('content-length')} != ${size} ${it.key}`)
-    else if (!res.headers.get('access-control-allow-origin')) bad.push(`no CORS ${it.key}`)
-  }, CDN.verifyConcurrency)
+  const all = [...p.bundles, ...p.pub]
+  // status 0 = the runner could not reach the CDN at all (connect reset / timeout), not a CDN answer. Those keys get slower
+  // re-check rounds; only real answers (404, wrong size, missing CORS) or keys still unreachable after every round fail.
+  const check = async (items: typeof all, width: number, log: boolean): Promise<{ bad: string[]; unreachable: typeof all }> => {
+    const bad: string[] = []
+    const unreachable: typeof all = []
+    let done = 0
+    await pool(items, async (it) => {
+      const res = await head(cdnUrl(it.key))
+      if (log && (++done % 100 === 0 || done === items.length)) console.log(`static-cdn: verified ${done}/${items.length}`)
+      const size = readFileSync(it.file).length
+      if (res.status === 0) unreachable.push(it)
+      else if (!res.ok) bad.push(`${res.status} ${it.key}`)
+      else if (Number(res.headers.get('content-length')) !== size) bad.push(`size ${res.headers.get('content-length')} != ${size} ${it.key}`)
+      else if (!res.headers.get('access-control-allow-origin')) bad.push(`no CORS ${it.key}`)
+    }, width)
+    return { bad, unreachable }
+  }
+  let { bad, unreachable } = await check(all, CDN.verifyConcurrency, true)
+  for (let round = 1; unreachable.length && round <= CDN.verifyRecheckRounds; round++) {
+    console.log(`static-cdn: ${unreachable.length} keys unreachable, re-check round ${round} in ${CDN.verifyRecheckDelayMs} ms`)
+    await new Promise((r) => setTimeout(r, CDN.verifyRecheckDelayMs))
+    const next = await check(unreachable, CDN.verifyRecheckConcurrency, false)
+    bad = [...bad, ...next.bad]
+    unreachable = next.unreachable
+  }
+  bad = [...bad, ...unreachable.map((it) => `0 ${it.key} (unreachable after ${CDN.verifyRecheckRounds} re-check rounds)`)]
   if (bad.length) die(`verify failed for ${bad.length} keys:\n${bad.slice(0, 20).join('\n')}`)
   console.log(`static-cdn: verified ${p.bundles.length + p.pub.length} keys via ${p.base}`)
 }

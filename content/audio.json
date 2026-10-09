@@ -29,7 +29,7 @@
     {"id": "cyber", "nameZh": "数据荒原"},
     {"id": "skyland", "nameZh": "云海高原"}
   ],
-  "sfx": ["select", "confirm", "cancel", "error", "step", "bump", "door", "encounter", "hit", "hit_super", "hit_weak", "faint", "ball_throw", "ball_shake", "catch", "heal", "levelup", "item", "money", "evolve", "run", "stat_up", "stat_down", "status", "chat", "notify", "save", "menu_open", "menu_close", "exclaim", "splash"],
+  "sfx": ["select", "confirm", "cancel", "error", "step", "bump", "door", "encounter", "hit", "hit_super", "hit_weak", "faint", "ball_throw", "ball_shake", "catch", "heal", "levelup", "item", "money", "evolve", "run", "stat_up", "stat_down", "status", "chat", "notify", "save", "menu_open", "menu_close", "exclaim", "splash", "anchor_on", "anchor_warp"],
   "battleMusic": {"wild": "battle_wild", "trainer": "battle_trainer", "gym": "battle_gym", "legend": "battle_legend", "pvp": "battle_trainer"},
   "nightTrack": "night"
 }

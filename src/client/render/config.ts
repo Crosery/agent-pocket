@@ -3,7 +3,9 @@
 // helpers run in node tests.
 import renderJson from '../../../content/render.json' with { type: 'json' }
 import { CONTENT, type Content } from '../../shared/content/index.ts'
+import { WORLD_CONTENT } from '../../shared/world/data.ts'
 import type { GameMap, Settings } from '../../shared/types.ts'
+import type { GovernorConfig } from './governor.ts'
 import { validatePhysics, type FootstepsConfig, type ImpactKind, type LeavesConfig, type PhysicsConfig, type ReflectionsConfig, type SnowCoverConfig, type WaterFxConfig } from './physics-config.ts'
 
 export type Vec2 = [number, number]
@@ -14,6 +16,10 @@ export interface QualityPreset {
   shadows: boolean
   shadowMapScale: number
   shadowRadius: number
+  /** Shadow map redraws per second while nothing moved (0 = every frame); casters are static, only tree sway changes. */
+  shadowHz: number
+  /** The shadow frustum centre snaps to this many shadow texels, so walking redraws the map less often (1 = every texel). */
+  shadowSnapTexels: number
   dof: boolean
   dofSamples: number
   bloom: boolean
@@ -89,6 +95,8 @@ export interface BillboardConfig { lean: number; compensate: number }
 
 export interface SunConfig {
   distance: number; shadowExtent: number; shadowNear: number; shadowFar: number; bias: number; normalBias: number
+  /** Squared distance between the unit sun directions of two shadow map draws that forces a new draw. */
+  shadowDirEpsilon: number
   sunrise: number; sunset: number; switchFadeMinutes: number; switchFloor: number
   minElevationDeg: number; maxElevationDeg: number; azimuthRiseDeg: number; azimuthSetDeg: number
   /** The light acts as the moon between sunset and sunrise: it climbs from moonMinElevationDeg to moonMaxElevationDeg
@@ -359,6 +367,18 @@ export interface FxBurst {
 export interface FxRing { type: 'ring'; color: string; radius: Vec2; life: number; intensity: number; width: number; y: number }
 export interface FxColumn { type: 'column'; color: string; radius: number; height: number; life: number; intensity: number }
 export type FxEmitter = FxIcon | FxBurst | FxRing | FxColumn
+export interface BeaconStyle {
+  color: string
+  /** Ground ring under the anchor; `dormantIntensity` while it is still locked. */
+  ring: { radius: number; width: number; intensity: number; dormantIntensity: number; pulseHz: number; pulseAmp: number; y: number }
+  /** Light column of an activated anchor. */
+  column: { from: number; radius: number; height: number; intensity: number; pulseHz: number; pulseAmp: number }
+  /** Soft glow around the crystal of an activated anchor (billboard at `y` tiles above the ground, `size` tiles wide). */
+  core: { y: number; size: number; intensity: number; pulseHz: number; pulseAmp: number }
+  /** Sparkles rising from an activated anchor every `everySec`. */
+  idle: { everySec: number; burst: FxBurst }
+}
+export interface AnchorsRenderConfig { beacons: Record<string, BeaconStyle> }
 export interface FxConfig { poolSize: number; iconFont: string; iconTexSize: number; kinds: Record<string, FxEmitter[]> }
 
 export type PartShape = 'box' | 'cylinder' | 'cone' | 'pyramid' | 'sphere' | 'dome' | 'prism' | 'plane' | 'torus' | 'rock'
@@ -749,8 +769,18 @@ export interface SpriteShadowConfig {
 
 export interface SkyConfig { domeRadius: number; starDensity: number; starColor: string; starIntensity: number; twinkleSpeed: number }
 
+/** What the frame-time governor may change at one step (the keys are applied on top of the tier's preset). */
+export interface GovernorStep extends Partial<Pick<QualityPreset, 'shadowHz' | 'dof' | 'bloom' | 'dofSamples' | 'particleScale'>> {
+  about?: string
+  /** Extra integer steps of internal pixel size (fewer pixels to fill). */
+  scaleBias?: number
+}
+
 export interface RenderContent {
   quality: Record<QualityId, QualityPreset>
+  /** Touch devices (coarse pointer): the internal height floor (crisp pixels cost little there). The default tier is the touchOnly settings migration in config.json. */
+  device: { touchMinInternalHeight: number }
+  governor: GovernorConfig & { steps: GovernorStep[] }
   post: PostConfig
   camera: CameraRenderConfig
   sun: SunConfig
@@ -785,6 +815,7 @@ export interface RenderContent {
   creatures: CreaturesConfig
   overlay: OverlayConfig
   groundItems: GroundItemsConfig
+  anchors: AnchorsRenderConfig
   fx: FxConfig
   props: PropsRenderConfig
   streaming: StreamingConfig
@@ -904,6 +935,24 @@ export function sunState(minute: number, s: SunConfig = RENDER.sun): SunState {
 // Lookups
 // ---------------------------------------------------------------------------
 
+/** `preset` with the governor steps 1..level layered on top; level 0 returns the preset itself. Reads through to `preset` so live tuning still shows. */
+export function governedPreset(preset: QualityPreset, level: number, r: RenderContent = RENDER): QualityPreset {
+  if (level <= 0) return preset
+  const out = Object.create(preset) as QualityPreset
+  for (const step of r.governor.steps.slice(0, level)) {
+    const { about: _about, scaleBias: _scaleBias, ...keys } = step
+    Object.assign(out, keys)
+  }
+  return out
+}
+
+/** Sum of the scaleBias of steps 1..level. */
+export function governedScaleBias(level: number, r: RenderContent = RENDER): number {
+  let bias = 0
+  for (const step of r.governor.steps.slice(0, Math.max(0, level))) bias += step.scaleBias ?? 0
+  return bias
+}
+
 export function qualityPreset(q: QualityId, r: RenderContent = RENDER): QualityPreset {
   return r.quality[q] ?? r.quality.high
 }
@@ -986,6 +1035,25 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
     if (!(M.minHz > 0 && M.maxHz >= M.minHz)) errs.push('creatures.move: need 0 < minHz <= maxHz')
     nonNeg('creatures.move.hopHeight', M.hopHeight)
     nonNeg('creatures.move.blendMs', M.blendMs)
+  }
+  for (const [id, b] of Object.entries(r.anchors?.beacons ?? {})) {
+    color(`anchors.beacons.${id}.color`, b.color)
+    for (const k of ['radius', 'width', 'intensity', 'dormantIntensity', 'pulseHz', 'pulseAmp', 'y'] as const) {
+      if (!(typeof b.ring[k] === 'number' && b.ring[k] >= 0)) errs.push(`anchors.beacons.${id}.ring.${k}: must be a number >= 0`)
+    }
+    for (const k of ['from', 'radius', 'height', 'intensity', 'pulseHz', 'pulseAmp'] as const) {
+      if (!(typeof b.column[k] === 'number' && b.column[k] >= 0)) errs.push(`anchors.beacons.${id}.column.${k}: must be a number >= 0`)
+    }
+    for (const k of ['y', 'size', 'intensity', 'pulseHz', 'pulseAmp'] as const) {
+      if (!(typeof b.core?.[k] === 'number' && b.core[k] >= 0)) errs.push(`anchors.beacons.${id}.core.${k}: must be a number >= 0`)
+    }
+    if (!(b.idle.everySec > 0)) errs.push(`anchors.beacons.${id}.idle.everySec: must be > 0`)
+    if (b.idle.burst.type !== 'burst') errs.push(`anchors.beacons.${id}.idle.burst: must be a burst emitter`)
+  }
+  for (const [id, k] of Object.entries(WORLD_CONTENT.anchors.kinds)) {
+    if (!r.anchors?.beacons?.[k.beacon]) errs.push(`anchors.kinds.${id}: unknown beacon style "${k.beacon}"`)
+    for (const fx of [k.unlockFx, k.travelFx, k.arriveFx]) if (!r.fx.kinds[fx]) errs.push(`anchors.kinds.${id}: unknown fx "${fx}"`)
+    if (!r.props.styles[k.prop]) errs.push(`anchors.kinds.${id}: prop "${k.prop}" has no render style`)
   }
   const keys = r.timeOfDay
   if (!keys.length) errs.push('timeOfDay: needs at least one key')
@@ -1116,9 +1184,21 @@ export function validateRenderContent(r: RenderContent = RENDER, c: Content = CO
     } else if (s.builder === 'billboard') { color(where, s.color); s.colors?.forEach((x) => color(where, x)) }
     else errs.push(`${where}: unknown builder`)
   }
+  const G = r.governor
+  if (typeof G.storageKey !== 'string' || !G.storageKey) errs.push('governor.storageKey: missing string')
+  for (const k of ['windowFrames', 'skipAboveMs', 'downAboveMs', 'downWorkMs', 'hardAboveMs', 'upBelowMs', 'upBelowWorkMs', 'downWindows', 'upWindows', 'cooldownSeconds', 'upLockSeconds'] as const) {
+    if (typeof G[k] !== 'number' || !(G[k] >= 0)) errs.push(`governor.${k}: missing non-negative number`)
+  }
+  if (G.upBelowMs >= G.downAboveMs) errs.push('governor: upBelowMs must stay under downAboveMs (else the level would flap)')
+  if (G.windowFrames < 1 || G.downWindows < 1 || G.upWindows < 1) errs.push('governor: windowFrames / downWindows / upWindows must be >= 1')
+  if (!Array.isArray(G.steps)) errs.push('governor.steps: missing list')
+  const stepKeys = new Set(['about', 'shadowHz', 'dof', 'bloom', 'dofSamples', 'particleScale', 'scaleBias'])
+  for (const [i, step] of (G.steps ?? []).entries()) for (const k of Object.keys(step)) if (!stepKeys.has(k)) errs.push(`governor.steps[${i}]: unknown key "${k}"`)
+  if (!(r.device.touchMinInternalHeight > 0)) errs.push('device.touchMinInternalHeight must be positive')
   // quality presets: new large-map knobs
   for (const [id, q] of Object.entries(r.quality)) {
-    for (const k of ['natureVariants', 'decorDensity', 'maxChunks'] as const) if (typeof q[k] !== 'number') errs.push(`quality.${id}.${k}: missing number`)
+    for (const k of ['natureVariants', 'decorDensity', 'maxChunks', 'shadowHz', 'shadowSnapTexels'] as const) if (typeof q[k] !== 'number') errs.push(`quality.${id}.${k}: missing number`)
+    if (q.shadowHz < 0 || q.shadowSnapTexels < 1) errs.push(`quality.${id}: shadowHz must be >= 0 and shadowSnapTexels >= 1`)
     for (const k of ['terrainFringe', 'snowDust'] as const) if (typeof q[k] !== 'boolean') errs.push(`quality.${id}.${k}: missing boolean`)
     const reach = q.viewRadius + c.config.world.chunk * 0.75
     const wanted = Math.PI * reach * reach / (c.config.world.chunk * c.config.world.chunk)

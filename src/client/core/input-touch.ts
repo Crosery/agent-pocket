@@ -1,10 +1,12 @@
-// On-screen touch controls: a floating virtual stick (thumb zone), pixel-styled action buttons, and world taps.
+// On-screen touch controls: a floating virtual stick, pixel-styled action buttons, and world taps.
 // Placement comes from touch-layout.ts (content/input.json): orientation, hand, size preset; labels from the audio
-// text namespace. A touch in the stick zone is a stick drag, or a world tap when it stays put and ends quickly.
+// text namespace. The stick has no resting place: a touch on the game surface anywhere in the stick half of the screen
+// (full height; HUD elements keep their own touches) is a stick drag that spawns under the thumb, or a world tap when
+// it stays put and ends quickly. The ring fades out on release.
 import type { InputAction } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
 import type { InputConfig, TouchStyle } from './input-config.ts'
-import { computeTouchLayout, type TouchLayout } from './touch-layout.ts'
+import { clampRing, computeTouchLayout, driveStick, mayStartStick, moveOutcome, releaseIsTap, ringHitsRect, type TouchLayout } from './touch-layout.ts'
 
 export interface TouchCallbacks {
   onButton(action: InputAction, down: boolean): void
@@ -46,7 +48,7 @@ export function pixelCirclePath(size: number, px: number): string {
   return `polygon(${[...right, ...left].join(',')})`
 }
 
-function injectStyle(px: number, st: TouchStyle): void {
+function injectStyle(px: number, st: TouchStyle, cfg: InputConfig['touch']): void {
   if (typeof document === 'undefined' || document.getElementById(STYLE_ID)) return
   const btnVars = (c: { hi: string; base: string; lo: string }) => `--btn-hi:${c.hi};--btn-base:${c.base};--btn-lo:${c.lo};`
   const perAction = Object.entries(st.buttons)
@@ -57,17 +59,32 @@ function injectStyle(px: number, st: TouchStyle): void {
   style.textContent = `
 .ap-touch{position:fixed;inset:0;z-index:60;pointer-events:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none;font-family:var(--ap-font,inherit);}
 html[data-touch-controls="off"] .ap-touch,.ap-touch.is-hidden{display:none;}
-/* While a modal UI owns input the stick zone must not swallow taps on lists / choices / chat, and the world-only buttons do nothing. */
-html.ap-ui-blocking .ap-touch__zone{pointer-events:none;visibility:hidden;}
+/* While a modal UI owns input the world-only buttons do nothing. */
 html.ap-ui-blocking .ap-touch__btn[data-world-only]{display:none;}
-/* Landscape has no free strip under the content: menus, dialogue and battles are driven by taps, the pad steps aside. */
-html:not(.ap-portrait).ap-ui-blocking .ap-touch__btns,html:not(.ap-portrait).ap-battle-on .ap-touch__btns{display:none;}
-.ap-touch__zone{position:absolute;bottom:0;pointer-events:auto;touch-action:none;}
-.ap-touch__stick{position:absolute;transform:translate(-50%,-50%);opacity:${st.idleOpacity};transition:opacity .15s;}
-.ap-touch__stick.is-active{opacity:1;}
-.ap-touch__ring,.ap-touch__ring-in,.ap-touch__knob,.ap-touch__knob-in{position:absolute;}
-.ap-touch__ring{inset:0;background:${st.frame};}
-.ap-touch__ring-in{inset:${px}px;background:${st.ringFill};box-shadow:inset 0 0 0 ${px}px ${st.ringEdge};}
+/* Landscape has no free strip under the content: menus and dialogue are driven by taps, the pad steps aside. */
+html:not(.ap-portrait).ap-ui-blocking .ap-touch__btns{display:none;}
+/* Battles are tap-driven in both orientations: no overworld buttons, and no strip reserved for them under the panels. */
+html.ap-battle-on .ap-touch__btns{display:none;}
+html.ap-battle-on[data-touch-controls='on']{--ap-bottom-inset:0px;}
+.ap-touch__stick{position:absolute;transform:translate(-50%,-50%);display:none;pointer-events:none;}
+/* Nothing is laid out at rest: the ring exists only while a thumb holds it and for the fade after release. */
+.ap-touch__stick.is-active{display:block;}
+.ap-touch__stick.is-fading{display:block;animation:ap-touch-stick-out ${cfg.stick.fadeMs}ms linear forwards;}
+@keyframes ap-touch-stick-out{from{opacity:1}to{opacity:0}}
+/* First-use hint: a faint ring with a knob that drags to the side, in the stick half; gone for good once the stick was used. */
+.ap-touch__hint{position:absolute;transform:translate(-50%,-50%);display:none;pointer-events:none;opacity:0;}
+.ap-touch__hint.is-on{display:block;animation:ap-touch-hint ${cfg.hint.loopMs}ms ease-in-out infinite;}
+.ap-touch__hint .ap-touch__knob{animation:ap-touch-hint-knob ${cfg.hint.loopMs}ms ease-in-out infinite;}
+html.ap-ui-blocking .ap-touch__hint,html.ap-battle-on .ap-touch__hint{display:none;}
+@keyframes ap-touch-hint{0%{opacity:0}15%,70%{opacity:${cfg.hint.opacity}}100%{opacity:0}}
+@keyframes ap-touch-hint-knob{0%,12%{transform:translate(-50%,-50%)}55%,75%{transform:translate(calc(-50% + var(--hint-drag)),-50%)}100%{transform:translate(-50%,-50%)}}
+@media (prefers-reduced-motion:reduce){.ap-touch__hint.is-on,.ap-touch__hint .ap-touch__knob{animation:none}.ap-touch__hint.is-on{opacity:${cfg.hint.opacity}}}
+.ap-touch__ring,.ap-touch__knob,.ap-touch__knob-in{position:absolute;}
+/* One see-through disc: translucent fill, a thin light rim, then a soft dark outline (each band carries its own alpha). */
+.ap-touch__ring{inset:0;background:radial-gradient(circle closest-side,${st.ringFill} calc(100% - ${px * 2}px),${st.ringEdge} calc(100% - ${px * 2}px) calc(100% - ${px}px),${st.ringOutline} calc(100% - ${px}px));}
+.ap-touch__stick .ap-touch__knob{opacity:${st.knobOpacity};}
+/* A tutorial card the stick would sit under steps aside while the thumb is down. */
+html.ap-stick-clear .ap-tip{opacity:0 !important;pointer-events:none !important;transition:opacity 80ms linear;}
 .ap-touch__knob{left:50%;top:50%;transform:translate(-50%,-50%);background:${st.frame};}
 .ap-touch__knob-in{inset:${px}px;background:linear-gradient(${st.knobHi} 0 45%,${st.knobLo} 45% 100%);}
 .ap-touch__btn{position:absolute;pointer-events:auto;touch-action:none;border:0;padding:0;margin:0;background:${st.frame};cursor:pointer;-webkit-tap-highlight-color:transparent;${btnVars(st.buttonDefault)}}
@@ -94,7 +111,7 @@ const safeInset = (side: 'left' | 'right' | 'bottom') => `env(safe-area-inset-${
 
 export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch'], cb: TouchCallbacks): TouchControls {
   const px = cfg.pixel
-  injectStyle(px, cfg.style)
+  injectStyle(px, cfg.style, cfg)
   const circle = (size: number) => pixelCirclePath(size, px)
   const el = document.createElement('div')
   el.className = 'ap-touch'
@@ -105,71 +122,75 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
   }
 
   // --- stick -------------------------------------------------------------
-  const zone = document.createElement('div')
-  zone.className = 'ap-touch__zone'
-  zone.setAttribute('aria-label', t('audio.touch.stick'))
+  const ringParts = () => {
+    const ring = document.createElement('div')
+    ring.className = 'ap-touch__ring'
+    const knob = document.createElement('div')
+    knob.className = 'ap-touch__knob'
+    const knobIn = document.createElement('div')
+    knobIn.className = 'ap-touch__knob-in'
+    knob.appendChild(knobIn)
+    return { ring, knob, knobIn }
+  }
   const stick = document.createElement('div')
   stick.className = 'ap-touch__stick'
-  const ring = document.createElement('div')
-  ring.className = 'ap-touch__ring'
-  const ringIn = document.createElement('div')
-  ringIn.className = 'ap-touch__ring-in'
-  ring.appendChild(ringIn)
-  const knob = document.createElement('div')
-  knob.className = 'ap-touch__knob'
-  const knobIn = document.createElement('div')
-  knobIn.className = 'ap-touch__knob-in'
-  knob.appendChild(knobIn)
+  stick.setAttribute('aria-label', t('audio.touch.stick'))
+  const { ring, knob, knobIn } = ringParts()
   stick.append(ring, knob)
-  zone.appendChild(stick)
+  const hint = document.createElement('div')
+  hint.className = 'ap-touch__hint'
+  hint.setAttribute('aria-hidden', 'true')
+  const hintParts = ringParts()
+  hint.append(hintParts.ring, hintParts.knob)
 
-  type Gesture = { id: number; x0: number; y0: number; t0: number; mode: 'pending' | 'stick' | 'drag'; timer: ReturnType<typeof setTimeout> | null; host: HTMLElement }
+  type Gesture = { id: number; x0: number; y0: number; t0: number; mode: 'pending' | 'stick' | 'drag'; timer: ReturnType<typeof setTimeout> | null; host: HTMLElement; stickCapable: boolean }
   let gesture: Gesture | null = null
-  let center = { x: 0, y: 0 }
-  const restPosition = () => {
-    const r = zone.getBoundingClientRect()
-    const side = layout.stickRest.side
-    return { x: layout.hand === 'right' ? side : r.width - side, y: r.height - layout.stickRest.bottom }
+  /** Logical base of the stick in client px (where the thumb landed, trailing it past the ring). */
+  let origin = { x: 0, y: 0 }
+  const placeStick = () => {
+    const c = clampRing(origin, layout.stickRadius, { width: window.innerWidth, height: window.innerHeight }, cfg.stick.edgePadPx)
+    stick.style.left = `${c.x}px`
+    stick.style.top = `${c.y}px`
+    const tip = document.querySelector('.ap-tip')
+    document.documentElement.classList.toggle('ap-stick-clear', !!tip && ringHitsRect(c, layout.stickRadius, tip.getBoundingClientRect()))
   }
-  const placeStick = (x: number, y: number) => { stick.style.left = `${x}px`; stick.style.top = `${y}px` }
   const placeKnob = (dx: number, dy: number) => { knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))` }
+  let fadeTimer: ReturnType<typeof setTimeout> | null = null
+  const clearFade = () => {
+    if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null }
+    stick.classList.remove('is-fading')
+  }
   const resetStick = () => {
+    document.documentElement.classList.remove('ap-stick-clear')
     stick.classList.remove('is-active')
-    const rest = restPosition()
-    placeStick(rest.x, rest.y)
-    placeKnob(0, 0)
+    stick.classList.add('is-fading')
+    fadeTimer = setTimeout(clearFade, cfg.stick.fadeMs)
     cb.onStick(0, 0)
   }
   const updateStick = (clientX: number, clientY: number) => {
-    const r = zone.getBoundingClientRect()
-    let dx = clientX - r.left - center.x
-    let dy = clientY - r.top - center.y
-    let dist = Math.hypot(dx, dy)
     const max = layout.stickRadius
-    if (dist > max) {
-      if (cfg.follow) {
-        // The base trails the thumb, so reversing direction needs only a ring's worth of travel.
-        center = { x: center.x + (dx / dist) * (dist - max), y: center.y + (dy / dist) * (dist - max) }
-        placeStick(center.x, center.y)
-      }
-      dx = (dx / dist) * max
-      dy = (dy / dist) * max
-      dist = max
-    }
-    placeKnob(dx, dy)
-    const mag = Math.min(1, dist / max)
-    if (mag < cfg.deadzone || dist === 0) { cb.onStick(0, 0); return }
+    const d = driveStick(origin, { x: clientX, y: clientY }, max, cfg.follow)
+    if (d.origin !== origin) { origin = d.origin; placeStick() }
+    placeKnob(d.dx, d.dy)
+    const mag = Math.min(1, d.dist / max)
+    if (mag < cfg.deadzone || d.dist === 0) { cb.onStick(0, 0); return }
     const scaled = (mag - cfg.deadzone) / (1 - cfg.deadzone)
-    cb.onStick((dx / dist) * scaled, (dy / dist) * scaled)
+    cb.onStick((d.dx / d.dist) * scaled, (d.dy / d.dist) * scaled)
+  }
+  const hintDone = () => {
+    try { return localStorage.getItem(cfg.hint.storageKey) === '1' } catch { return true }
   }
   const startStick = (g: Gesture) => {
     g.mode = 'stick'
     if (g.timer) { clearTimeout(g.timer); g.timer = null }
-    // The stick base floats to where the thumb landed, so the first contact is always neutral.
-    const r = zone.getBoundingClientRect()
-    center = { x: g.x0 - r.left, y: g.y0 - r.top }
-    placeStick(center.x, center.y)
+    // The base spawns exactly where the thumb landed, so the first contact is neutral; the ring itself stays on screen.
+    origin = { x: g.x0, y: g.y0 }
+    placeStick()
+    placeKnob(0, 0)
+    clearFade()
     stick.classList.add('is-active')
+    hint.classList.remove('is-on')
+    if (!hintDone()) { try { localStorage.setItem(cfg.hint.storageKey, '1') } catch { /* private mode */ } }
     buzz(cfg.haptics.stick)
   }
   const finish = (e: PointerEvent, cancelled: boolean) => {
@@ -178,7 +199,7 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     gesture = null
     if (g.timer) clearTimeout(g.timer)
     if (g.mode === 'stick') resetStick()
-    else if (g.mode === 'pending' && !cancelled && e.timeStamp - g.t0 <= cfg.tap.maxMs && documentTouchOn()) {
+    else if (releaseIsTap(g.mode, e.timeStamp - g.t0, cfg.tap.maxMs, cancelled) && documentTouchOn()) {
       buzz(cfg.haptics.tap)
       cb.onTap({ x: e.clientX, y: e.clientY })
     }
@@ -188,7 +209,7 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     if (gesture) return
     if (e.pointerType === 'mouse' && e.button !== 0) return
     cb.onActivity()
-    gesture = { id: e.pointerId, x0: e.clientX, y0: e.clientY, t0: e.timeStamp, mode: 'pending', timer: null, host }
+    gesture = { id: e.pointerId, x0: e.clientX, y0: e.clientY, t0: e.timeStamp, mode: 'pending', timer: null, host, stickCapable }
     host.setPointerCapture?.(e.pointerId)
     const g = gesture
     if (stickCapable) g.timer = setTimeout(() => { if (gesture === g && g.mode === 'pending') { startStick(g); updateStick(g.x0, g.y0) } }, cfg.tap.stickHoldMs)
@@ -196,23 +217,29 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
   const moved = (e: PointerEvent) => {
     const g = gesture
     if (!g || e.pointerId !== g.id) return
-    if (g.mode === 'pending' && Math.hypot(e.clientX - g.x0, e.clientY - g.y0) > cfg.tap.slopPx) {
-      if (g.host === zone) startStick(g)
-      else g.mode = 'drag'
+    if (g.mode === 'pending') {
+      const next = moveOutcome(g.stickCapable, Math.hypot(e.clientX - g.x0, e.clientY - g.y0), cfg.tap.slopPx)
+      if (next === 'stick') startStick(g)
+      else if (next === 'drag') g.mode = 'drag'
     }
     if (g.mode === 'stick') { e.preventDefault(); updateStick(e.clientX, e.clientY) }
   }
-  zone.addEventListener('pointerdown', (e) => { e.preventDefault(); begin(e, zone, true) })
-  zone.addEventListener('pointermove', moved)
-  zone.addEventListener('pointerup', (e) => finish(e, false))
-  zone.addEventListener('pointercancel', (e) => finish(e, true))
-  zone.addEventListener('lostpointercapture', (e) => finish(e, true))
-  // Outside the zone the canvas itself receives the touch (HUD layers let it through): taps only.
+  // A touch that reaches the canvas has no HUD element on it (those layers only catch their own controls), so it may
+  // start the stick anywhere in the stick half; menus, dialogue and battles are driven by taps and never start it.
   const canvas = root.querySelector('canvas')
-  const onCanvasDown = (e: PointerEvent) => {
-    if (e.pointerType === 'mouse' || e.target !== canvas) return
-    begin(e, canvas as HTMLElement, false)
+  const modalOpen = () => {
+    const c = document.documentElement.classList
+    return c.contains('ap-ui-blocking') || c.contains('ap-battle-on')
   }
+  const onCanvasDown = (e: PointerEvent) => {
+    if (e.pointerType === 'mouse') return
+    const onCanvas = e.target === canvas
+    const stickCapable = mayStartStick({ onCanvas, modalOpen: modalOpen(), x: e.clientX, width: window.innerWidth, hand: layout.hand, fraction: cfg.zoneWidthFraction })
+    if (!onCanvas) return
+    if (stickCapable) e.preventDefault()
+    begin(e, canvas as HTMLElement, stickCapable)
+  }
+  root.addEventListener('lostpointercapture', (e) => finish(e, true))
   root.addEventListener('pointerdown', onCanvasDown)
   root.addEventListener('pointermove', moved)
   const onRootUp = (e: PointerEvent) => finish(e, false)
@@ -275,7 +302,7 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     btns.appendChild(btn)
   }
 
-  el.append(zone, btns)
+  el.append(hint, stick, btns)
   root.appendChild(el)
 
   /** Applies hand / size / orientation: zone, stick, buttons and the published --ap-touch-* insets. */
@@ -284,18 +311,20 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     haptics = prefs.haptics
     layout = computeTouchLayout(cfg, { width: window.innerWidth, height: window.innerHeight }, prefs.hand, prefs.size, cfg.insetGap)
     const left = layout.hand === 'right'
-    zone.style.left = left ? '0' : 'auto'
-    zone.style.right = left ? 'auto' : '0'
-    zone.style.width = `${cfg.zoneWidthFraction * 100}%`
-    zone.style.height = `${(layout.portrait ? cfg.zoneHeightFraction.portrait : cfg.zoneHeightFraction.landscape) * 100}%`
     const stickSize = layout.stickRadius * 2
     stick.style.width = stick.style.height = `${stickSize}px`
-    ring.style.clipPath = circle(stickSize)
-    ringIn.style.clipPath = circle(stickSize - px * 2)
     const knobSize = layout.knobRadius * 2
-    knob.style.width = knob.style.height = `${knobSize}px`
-    knob.style.clipPath = circle(knobSize)
-    knobIn.style.clipPath = circle(knobSize - px * 2)
+    for (const part of [{ ring, knob, knobIn }, hintParts]) {
+      part.ring.style.clipPath = circle(stickSize)
+      part.knob.style.width = part.knob.style.height = `${knobSize}px`
+      part.knob.style.clipPath = circle(knobSize)
+      part.knobIn.style.clipPath = circle(knobSize - px * 2)
+    }
+    hint.style.width = hint.style.height = `${stickSize}px`
+    const spot = window.innerHeight > window.innerWidth ? cfg.hint.portrait : cfg.hint.landscape
+    hint.style.left = `${(left ? spot.x : 1 - spot.x) * window.innerWidth}px`
+    hint.style.top = `${spot.y * window.innerHeight}px`
+    hint.style.setProperty('--hint-drag', `${(left ? 1 : -1) * cfg.hint.dragPx}px`)
     for (const b of layout.buttons) {
       const btn = buttonEls.get(b.def.action)
       if (!btn) continue
@@ -313,7 +342,6 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     html.setProperty('--ap-touch-inset', `${layout.insets.bottom}px`)
     html.setProperty('--ap-touch-left-inset', `${layout.insets.left}px`)
     html.setProperty('--ap-touch-right-inset', `${layout.insets.right}px`)
-    zone.style.visibility = ''
     if (!gesture) resetStick()
   }
   const onResize = () => relayout()
@@ -321,6 +349,7 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
   window.addEventListener('orientationchange', onResize)
   relayout()
   requestAnimationFrame(() => relayout())
+  const hintTimer = cfg.hint.enabled && !hintDone() ? window.setTimeout(() => { if (!hintDone()) hint.classList.add('is-on') }, cfg.hint.startDelayMs) : 0
 
   return {
     el,
@@ -340,12 +369,14 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     },
     relayout,
     dispose() {
+      if (hintTimer) clearTimeout(hintTimer)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('orientationchange', onResize)
       root.removeEventListener('pointerdown', onCanvasDown)
       root.removeEventListener('pointermove', moved)
       root.removeEventListener('pointerup', onRootUp)
       root.removeEventListener('pointercancel', onRootCancel)
+      document.documentElement.classList.remove('ap-stick-clear')
       el.remove()
     },
   }

@@ -157,6 +157,20 @@
         {"wave": "triangle", "at": 0.05, "freq": 1650, "dur": 0.04, "env": [0.002, 0.03, 0.3, 0.03], "gain": 0.12}
       ]
     },
+    "anchor_on": {
+      "layers": [
+        {"wave": "pulse", "duty": 0.5, "notes": ["E5", "B5", "E6", "G#6", "B6"], "step": 0.07, "dur": 0.1, "env": [0.002, 0.05, 0.5, 0.08], "gain": 0.13},
+        {"wave": "sine", "at": 0.3, "note": "B6", "dur": 0.55, "env": [0.005, 0.15, 0.5, 0.35], "gain": 0.14, "fm": {"ratio": 3.5, "index": 1.4}},
+        {"wave": "triangle", "notes": ["E3", "B3", "E4"], "step": 0.2, "dur": 0.28, "env": [0.005, 0.08, 0.7, 0.18], "gain": 0.24}
+      ]
+    },
+    "anchor_warp": {
+      "layers": [
+        {"wave": "noise", "dur": 0.55, "env": [0.05, 0.2, 0.4, 0.2], "gain": 0.24, "filter": {"type": "bandpass", "freq": 400, "to": 4200, "q": 1.2}},
+        {"wave": "sine", "freq": 220, "to": 880, "dur": 0.45, "env": [0.01, 0.15, 0.5, 0.2], "gain": 0.18},
+        {"wave": "pulse", "duty": 0.25, "at": 0.3, "notes": ["C6", "G6", "C7"], "step": 0.06, "dur": 0.08, "env": [0.002, 0.04, 0.5, 0.06], "gain": 0.1}
+      ]
+    },
     "notify": {
       "layers": [
         {"wave": "triangle", "notes": ["E6", "B6"], "step": 0.1, "dur": 0.12, "env": [0.002, 0.06, 0.5, 0.12], "gain": 0.22},

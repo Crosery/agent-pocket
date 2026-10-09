@@ -1,5 +1,5 @@
-// Layout audit for every screen at 1280x720, 1920x1080 and the phone viewports 390x844, 360x780 (portrait) and 844x390
-// (landscape), all at DPR 3 with touch emulation (issues #29, #33).
+// Layout audit for every screen at 1000x655 (DPR 1.25), 1280x720, 1920x1080 and the phone viewports 390x844, 360x780
+// (portrait), 844x390 and 932x430 (landscape), phones at DPR 3 with touch emulation (issues #29, #33, #37, #39).
 // Run through ego-browser against a dev server (?dev=1) in its own TaskSpace and an isolated save slot:
 //   ego-browser nodejs <<'JS'
 //   const { runLayoutAudit } = await import('file:///<repo>/scripts/qa-layout-audit.mjs')
@@ -8,26 +8,45 @@
 // Writes output/29/<phase>/<viewport>/<screen>.png plus report.json and report.md (screen x viewport matrix).
 // The in-page auditor (auditLayout) flags text that is clipped, cut by the viewport, covered, or overlapping other
 // text, controls that overlap each other, model names that wrap past two lines, and pages that scroll sideways.
+// Issue #39 limits (content/ui.json audit): text outside the size range of its viewport class (font-size), text spilling out of
+// the button or frame it sits in (text-spill), and scrollers a viewport class does not list (primary-overflow). A case's
+// demote list turns a finding in a screen another issue owns into a '*' warning.
 // Ellipsis, line clamps, rolling chat lines, tiny text and small touch targets are warnings. Also checks that name tags
 // sit just above the opaque head of their actor, and worst-case battle HUD / effect inspector (status + volatiles + stages).
+// 'hud-phone' (touch viewports only, incl. 932x430) shows every transient overworld HUD piece at once - region banner, toasts, tip,
+// chat lines, quest card, activity chip, online badge, touch pad, DEV badge - and asserts that no two pieces overlap and none
+// covers the player (padding from content/ui.json phoneHud.audit).
 // Fixtures run with the first-run tips hidden (they are audited alone as 'tip'); report stats.scroll is the tallest
 // scroller's content in viewport heights.
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
+import { readFileSync } from 'node:fs'
 import { setHUDViewport } from './qa-hud-layout.mjs'
 
+const UI_JSON = JSON.parse(readFileSync(new URL('../content/ui.json', import.meta.url), 'utf8'))
+const UI_PHONE_PAD = UI_JSON.phoneHud.audit.playerPadPx
+const UI_AUDIT = UI_JSON.audit
+
 export const VIEWPORTS = [
+  { name: 'd1000', width: 1000, height: 655, dpr: 1.25 },
   { name: 'd1280', width: 1280, height: 720, dpr: 1 },
   { name: 'd1920', width: 1920, height: 1080, dpr: 1 },
+  { name: 'd1000r', width: 1000, height: 655, dpr: 2 },
   { name: 'm390', width: 390, height: 844, dpr: 3, touch: true },
   { name: 'm360', width: 360, height: 780, dpr: 3, touch: true },
   { name: 'm844', width: 844, height: 390, dpr: 3, touch: true },
+  { name: 'm932', width: 932, height: 430, dpr: 3, touch: true },
 ]
 
 /** Runs inside the page (serialised by page.evaluate): must not reference anything outside itself. */
 export function auditLayout(opts) {
-  const { scopeSel, ignoreSel, minFont } = opts
+  const { scopeSel, ignoreSel, minFont, noScrollSel, limits = null, screenScrollOk = [] } = opts
+  const cls = matchMedia('(pointer: coarse)').matches ? 'phone' : 'desktop'
+  // Text range (px) and the scrollers this viewport class may have (content/ui.json audit); the max follows the window height.
+  const fontPx = limits ? { min: limits.fontPx[cls].min, max: Math.max(limits.fontPx[cls].min, innerHeight * limits.fontPx[cls].maxVhFrac) } : null
+  const scrollOk = limits ? [...limits.scrollOk[cls], ...screenScrollOk] : []
+  const fontSeen = { min: Infinity, max: 0 }
   const vw = innerWidth, vh = innerHeight
   const eps = 1.5
   const ROLLING = '.ap-chat-log' // windows that roll old lines off by design
@@ -131,7 +150,8 @@ export function auditLayout(opts) {
           partial++; worst = Math.max(worst, over)
         }
         if (partial || (hidden && hidden < cur.length)) {
-          if (c.a === el && selfTrim) warnings.push({ type: cs.textOverflow === 'ellipsis' ? 'ellipsis' : 'line-clamp', sel, text, detail: `${worst.toFixed(0)}px beyond the box` })
+          // data-expandable: trimmed on purpose, a tap opens the whole text
+          if (c.a === el && selfTrim) { if (!el.closest('[data-expandable]')) warnings.push({ type: cs.textOverflow === 'ellipsis' ? 'ellipsis' : 'line-clamp', sel, text, detail: `${worst.toFixed(0)}px beyond the box` }) }
           else if (partial || hiddenSideways) violations.push({ type: 'clipped', sel, text, detail: `cut by ${label(c.a)} by ${worst.toFixed(1)}px` })
           else if (c.a.matches(ROLLING)) warnings.push({ type: 'hidden-lines', sel, text, detail: `${hidden} line(s) rolled out of ${label(c.a)}` })
           else violations.push({ type: 'clipped', sel, text, detail: `${hidden} line(s) cut off by ${label(c.a)}` })
@@ -149,7 +169,30 @@ export function auditLayout(opts) {
     if (vis && (vis.l < -eps || vis.t < -eps || vis.r > vw + eps || vis.b > vh + eps)) violations.push({ type: 'offscreen', sel, text, detail: `[${Math.round(vis.l)},${Math.round(vis.t)} .. ${Math.round(vis.r)},${Math.round(vis.b)}] in ${vw}x${vh}` })
     if (!vis) continue
     const fs = parseFloat(cs.fontSize)
-    if (fs < minFont) warnings.push({ type: 'small-text', sel, text, detail: `${fs.toFixed(1)}px` })
+    fontSeen.min = Math.min(fontSeen.min, fs); fontSeen.max = Math.max(fontSeen.max, fs)
+    if (fontPx && (fs > fontPx.max + 0.05 || fs < fontPx.min - 0.05)) violations.push({ type: 'font-size', sel, text, detail: `${fs.toFixed(1)}px outside ${fontPx.min}-${fontPx.max}px` })
+    else if (!fontPx && fs < minFont) warnings.push({ type: 'small-text', sel, text, detail: `${fs.toFixed(1)}px` })
+    // Text that spills out of the button or frame it sits in without being clipped: the nearest bordered/filled ancestor
+    // (scroll containers are skipped, their clipping is judged above).
+    const framed = (a) => {
+      const c = getComputedStyle(a)
+      if (a.tagName === 'BUTTON' && (c.backgroundImage !== 'none' || Number((c.backgroundColor.match(/[\d.]+/g) ?? [])[3] ?? 1) > 0.05 || parseFloat(c.borderTopWidth) > 0)) return true
+      const bg = c.backgroundColor.match(/[\d.]+/g) ?? []
+      if (bg.length >= 4 ? Number(bg[3]) > 0.25 : bg.length === 3) return true
+      return ['Top', 'Right', 'Bottom', 'Left'].some((k) => parseFloat(c[`border${k}Width`]) > 0 && !/rgba\(\d+, \d+, \d+, 0\)/.test(c[`border${k}Color`]))
+    }
+    let frame = null
+    for (let a = el; a && roots.some((r) => r.contains(a)) && !a.classList.contains('aps-screen'); a = a.parentElement) {
+      const c = getComputedStyle(a)
+      if (['auto', 'scroll'].includes(c.overflowY) || ['auto', 'scroll'].includes(c.overflowX)) break
+      if (framed(a)) { frame = a; break }
+    }
+    if (frame && frame !== el.closest('.aps-frame')) {
+      const fr = frame.getBoundingClientRect()
+      let worst = 0
+      for (const q of x.lines) worst = Math.max(worst, fr.left - q.l, q.r - fr.right, fr.top - q.t, q.b - fr.bottom)
+      if (worst > 2 && !cl.some((c) => c.a === frame && (c.hx || c.hy))) violations.push({ type: 'text-spill', sel, text, detail: `${worst.toFixed(1)}px outside ${label(frame)}` })
+    }
     // Five probes over the first and last visible line: text half hidden under something is as bad as fully hidden.
     const first = x.lines[0], last = x.lines[x.lines.length - 1]
     const probes = [[(first.l + first.r) / 2, (first.t + first.b) / 2], [first.l + 2, first.t + 2], [first.r - 2, first.b - 2], [last.l + 2, last.b - 2], [last.r - 2, last.t + 2]]
@@ -204,6 +247,10 @@ export function auditLayout(opts) {
       violations.push({ type: 'control-overlap', sel: label(a.el), text: a.el.textContent.trim().slice(0, 20), detail: `with ${label(b.el)} "${b.el.textContent.trim().slice(0, 20)}"` })
     }
   }
+  // Panels that must show everything at once (no scrollbar, nothing below the fold).
+  if (noScrollSel) for (const n of document.querySelectorAll(noScrollSel)) {
+    if (n.scrollHeight > n.clientHeight + 1) violations.push({ type: 'panel-overflow', sel: noScrollSel, text: '', detail: `scrollHeight ${n.scrollHeight} > clientHeight ${n.clientHeight}` })
+  }
   if (document.documentElement.scrollWidth > vw + 1) violations.push({ type: 'page-overflow', sel: 'html', text: '', detail: `scrollWidth ${document.documentElement.scrollWidth} > ${vw}` })
   const touch = matchMedia('(pointer: coarse)').matches
   if (touch) for (const c of controls) if (c.w < 44 || c.h < 44) warnings.push({ type: 'small-target', sel: label(c.el), text: c.el.textContent.trim().slice(0, 20), detail: `${c.w.toFixed(0)}x${c.h.toFixed(0)}px` })
@@ -217,7 +264,18 @@ export function auditLayout(opts) {
     const screens = el.scrollHeight / vh
     if (!scroll || screens > scroll.screens) scroll = { sel: label(el), screens: Math.round(screens * 100) / 100 }
   }
-  return { violations: uniq(violations), warnings: uniq(warnings), stats: { texts: texts.length, controls: controls.length, scroll } }
+  // Every scroller that holds more than its box: only list-like regions the screen names as scrollable may do so.
+  const scrollers = []
+  for (const el of all) {
+    const cs = getComputedStyle(el)
+    if (!['auto', 'scroll'].includes(cs.overflowY) || !shown(el) || el.scrollHeight <= el.clientHeight + 4) continue
+    const ratio = Math.round((el.scrollHeight / el.clientHeight) * 100) / 100
+    const ok = scrollOk.length > 0 && !!el.closest(scrollOk.join(','))
+    scrollers.push({ sel: label(el), ratio, ok })
+    if (!ok) violations.push({ type: 'primary-overflow', sel: label(el), text: '', detail: `content is ${ratio}x its box (${el.clientHeight}px)` })
+  }
+  const fontStats = texts.length && isFinite(fontSeen.min) ? { min: Math.round(fontSeen.min * 10) / 10, max: Math.round(fontSeen.max * 10) / 10 } : null
+  return { violations: uniq(violations), warnings: uniq(warnings), stats: { texts: texts.length, controls: controls.length, scroll, scrollers, font: fontStats } }
 }
 
 // ---- name tags ---------------------------------------------------------------------------------------------------------
@@ -274,12 +332,54 @@ export async function measureNameTags(page) {
   })
 }
 
+/** Runs inside the page: every transient HUD piece that is showing, pairwise overlaps, and what covers the player. */
+export function auditHudZones(opts) {
+  const { pad } = opts
+  const PIECES = [
+    ['plate', '.ap-plate'], ['banner', '.ap-banner'], ['quest', '.ap-quest'], ['objective', '.ap-objective'],
+    ['events', '.ap-evchips'], ['minimap', '.ap-minimap'], ['online', '.ap-net'], ['toast', '.ap-toast'],
+    ['tip', '.ap-tip:not(.is-inline)'], ['chat-log', '.ap-chat:not(.is-open) .ap-chat-log'], ['chat-button', '.ap-chat-bar'],
+    ['dev-badge', '.apd-badge'], ['stick', '.ap-touch__stick'], ['button', '.ap-touch__btn'],
+  ]
+  const items = []
+  for (const [name, sel] of PIECES) {
+    for (const el of document.querySelectorAll(sel)) {
+      if (!el.checkVisibility({ opacityProperty: true, visibilityProperty: true })) continue
+      const r = el.getBoundingClientRect()
+      if (r.width < 2 || r.height < 2) continue
+      const label = name === 'button' ? `button:${el.dataset.action ?? '?'}` : name
+      items.push({ name: label, box: { l: r.left, t: r.top, r: r.right, b: r.bottom } })
+    }
+  }
+  const violations = []
+  const inter = (a, b) => ({ w: Math.min(a.r, b.r) - Math.max(a.l, b.l), h: Math.min(a.b, b.b) - Math.max(a.t, b.t) })
+  for (let i = 0; i < items.length; i++) for (let j = i + 1; j < items.length; j++) {
+    const o = inter(items[i].box, items[j].box)
+    if (o.w > 2 && o.h > 2) violations.push({ type: 'hud-overlap', sel: `${items[i].name} x ${items[j].name}`, text: '', detail: `${o.w.toFixed(0)}x${o.h.toFixed(0)}px` })
+  }
+  const A = window.__AP, p = A.overworld.player
+  const head = A.world.worldToScreen(p.x, p.elev + 1.7, p.y), foot = A.world.worldToScreen(p.x, p.elev, p.y)
+  const body = { l: Math.min(head.x, foot.x) - 14 - pad.x, t: head.y - pad.top, r: Math.max(head.x, foot.x) + 14 + pad.x, b: foot.y + pad.bottom }
+  for (const it of items) {
+    const o = inter(it.box, body)
+    if (o.w > 0 && o.h > 0) violations.push({ type: 'hud-over-player', sel: it.name, text: '', detail: `${o.w.toFixed(0)}x${o.h.toFixed(0)}px over the character` })
+  }
+  const kinds = {}
+  for (const it of items) kinds[it.name.split(':')[0]] = (kinds[it.name.split(':')[0]] ?? 0) + 1
+  const chat = document.querySelector('.ap-chat'), log = chat?.querySelector('.ap-chat-log')
+  const chatState = chat && log ? { cls: chat.className, lines: log.children.length, opacity: getComputedStyle(log).opacity, visibility: getComputedStyle(log).visibility } : null
+  return { violations, warnings: [], stats: { pieces: items.length, kinds, player: [body.l, body.t, body.r, body.b].map(Math.round), chat: chatState } }
+}
+
 // ---- save fixture ----------------------------------------------------------------------------------------------------
 
 /** Longest-named creatures in the party, a stocked bag and box, a full dex: the worst case for every list. */
 async function prepareSave(page) {
   await page.evaluate(async () => {
     const ctx = window.__AP
+    // The first-use stick hint is decorative and timed; a stable layout run starts without it (checked on its own).
+    try { localStorage.setItem('ap.touch.hintDone', '1') } catch { /* private mode */ }
+    document.querySelector('.ap-touch__hint')?.classList.remove('is-on')
     ctx.net.disconnect()
     const { createCreature } = await import('/src/shared/creature.ts')
     const { Rng } = await import('/src/shared/rng.ts')
@@ -300,6 +400,17 @@ async function prepareSave(page) {
     ctx.save.money = 123456
     ctx.save.settings.showTips = false
     ctx.save.settings.autoRun = false
+  })
+}
+
+async function prepareAnchors(page) {
+  await page.evaluate(async () => {
+    const { anchorsInRect } = await import('/src/shared/world/anchors.ts')
+    const ctx = window.__AP
+    const p = ctx.overworld.player
+    await window.__ap.v1.cmd('anchor.unlock', { radius: 220 })
+    const known = new Set(ctx.save.anchors.seen)
+    for (const s of anchorsInRect(ctx.data.world.maps[ctx.data.world.startMap], p.x - 420, p.y - 420, p.x + 420, p.y + 420)) if (!known.has(s.id)) ctx.save.anchors.seen.push(s.id)
   })
 }
 
@@ -335,7 +446,54 @@ async function closeAll(page) {
 
 // ---- screens ---------------------------------------------------------------------------------------------------------
 
+/** Every transient overworld HUD piece at once, in the open overworld; `withTip` keeps the first-run tip card up (it hides the chat ticker). */
+const phoneHudOpen = (withTip) => async (page) => {
+    await page.evaluate(() => window.__ap.tp(513, 877, 'overworld'))
+    await page.waitForFunction(() => { const p = window.__AP.overworld.player; return window.__AP.overworld.free && p.map === 'overworld' && Math.hypot(p.x - 513.5, p.y - 877.5) <= 0.2 }, undefined, { timeout: 40000 })
+    await page.waitForTimeout(1500)
+    await page.evaluate(async () => {
+      const ctx = window.__AP
+      ctx.save.settings.showTips = true
+      ctx.save.quests.main = { stage: 1, done: false }
+      ctx.save.trackedQuest = 'main'
+      for (const id of ['national-day', 'api-rate-limit', 'gpu-shortage']) window.__ap.gameplay.start(id)
+      ctx.hud.showBanner('模型蒸馏潮', '大模型们把知识蒸馏给了小模型——草丛里突然冒出一堆小巧玲珑的初级形态，经验值也更容易拿。')
+      ctx.ui.toast('蒸馏潮来了！草丛里冒出了好多小巧的智灵。', 'info')
+      ctx.ui.toast('价目牌翻到了红色一面：高峰时段，全场价格翻倍。', 'warn')
+      for (const text of ['欢迎来到智灵口袋！和其他训练家一起探索、交换与对战吧。', '系统: 少年训练家 进入了智灵世界', '另一条用来撑满聊天栏的系统消息。']) {
+        ctx.chat.addMessage({ name: '', channel: 'system', text: `${text} #${Date.now() % 10000}`, at: Date.now() })
+      }
+      window.__apOnboarding.debugShow('move')
+    })
+    await page.waitForTimeout(1200)
+  if (!withTip) {
+    await page.evaluate(() => document.querySelector('.ap-tip-close')?.click())
+    await page.waitForTimeout(700)
+  }
+}
+
 const run = (fn) => async (page) => { await page.evaluate(fn) }
+const viaPause = (label) => async (page) => {
+  await page.evaluate(() => { void window.__AP.screens.pauseMenu() })
+  await page.waitForTimeout(800)
+  await page.evaluate((text) => { [...document.querySelectorAll('.aps-pause-row')].find((r) => r.textContent.trim() === text)?.click() }, label)
+  await page.waitForTimeout(700)
+}
+
+/** Phones: the screens before this one were closed with keys, which makes the game think a keyboard is in use; a tap on the empty header corner restores touch. */
+async function touchActivity(page) {
+  if (!(await page.evaluate(() => matchMedia('(pointer: coarse)').matches))) return
+  await page.cdp('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 2, y: 2, id: 1 }] })
+  await page.waitForTimeout(90)
+  await page.cdp('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+  await page.waitForTimeout(200)
+}
+
+const openChart = (o) => async (page) => {
+  await page.evaluate(({ view, last }) => { void window.__AP.screens.typeChart({ view, type: last ? window.__AP.data.types.at(-1).id : undefined }) }, o)
+  await page.waitForTimeout(600)
+  await touchActivity(page)
+}
 
 export const SCREENS = [
   { id: 'hud', keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', open: async (page) => {
@@ -349,7 +507,10 @@ export const SCREENS = [
     })
     await page.waitForTimeout(1800)
   } },
-  { id: 'hud-events', scope: '.ap-evdetails', open: async (page) => { await page.evaluate(() => document.querySelector('.ap-evtoggle')?.click()) }, closeKey: 'Escape' },
+  // Touch viewports only: see auditHudZones.
+  { id: 'hud-phone', touchOnly: true, keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', tip: true, hudZones: true, after: toLab, open: phoneHudOpen(true) },
+  { id: 'hud-phone-chat', touchOnly: true, keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', tip: true, hudZones: true, noReshow: true, after: toLab, open: phoneHudOpen(false) },
+  { id: 'hud-events', scrollOk: ['.ap-evbody'], scope: '.ap-evdetails', open: async (page) => { await page.evaluate(() => document.querySelector('.ap-evtoggle')?.click()) }, closeKey: 'Escape' },
   { id: 'pause', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.pauseMenu() }) },
   { id: 'party', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.party('view') }) },
   { id: 'party-select', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.party('select', { title: '选择要出战的智灵' }) }) },
@@ -361,17 +522,40 @@ export const SCREENS = [
   { id: 'dex-detail', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await page.evaluate(() => { void window.__AP.screens.dex() }); await page.waitForTimeout(700); await page.keyboard.press('KeyZ') } },
   { id: 'box', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.box() }) },
   { id: 'shop', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.shop(Object.keys(window.__AP.data.items).slice(0, 40)) }) },
-  { id: 'map', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.worldMap({ fly: false }) }) },
+  { id: 'map', scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: run(() => { void window.__AP.screens.worldMap({ fly: false }) }) },
+  { id: 'map-fly', scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: run(() => { void window.__AP.screens.worldMap({ fly: true }) }) },
+  // Teleport anchors (#38): some activated near the origin, a wider ring only discovered (grey pins).
+  { id: 'map-anchors', scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: async (page) => { await prepareAnchors(page); await page.evaluate(() => { void window.__AP.screens.worldMap({ fly: false, anchors: true }) }); await page.waitForTimeout(1800) } },
+  { id: 'anchor-picker', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await prepareAnchors(page); await page.evaluate(() => { void window.__AP.screens.anchorPicker({}) }); await page.waitForTimeout(600) } },
   { id: 'quests', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.quests() }) },
   { id: 'settings', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.settings() }) },
-  { id: 'online', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.online() }) },
+  // 属性克制表 (issue #37): the three views, the grid with the cursor on its last row (scrolled, sticky headers), and the manual page that links to it.
+  { id: 'typechart-type', scope: '.ap-kit-stack > *:last-child', open: openChart({ view: 'type' }) },
+  { id: 'typechart-grid', scope: '.ap-kit-stack > *:last-child', open: openChart({ view: 'grid' }) },
+  { id: 'typechart-grid-end', scope: '.ap-kit-stack > *:last-child', open: openChart({ view: 'grid', last: true }) },
+  { id: 'typechart-loops', scope: '.ap-kit-stack > *:last-child', open: openChart({ view: 'loops' }) },
+  { id: 'manual-chart', scope: '.ap-kit-stack > *:last-child', open: async (page) => {
+    await page.evaluate(() => { void window.__AP.screens.manual() })
+    await page.waitForTimeout(700)
+    await page.evaluate(() => { [...document.querySelectorAll('.aps-manual .ap-tab')][1]?.click() })
+    await page.waitForTimeout(400)
+    await page.evaluate(() => { [...document.querySelectorAll('.aps-manual .ap-row')].find((r) => r.textContent.includes('属性克制'))?.click() })
+    await page.waitForTimeout(400)
+  } },
+  { id: 'online', scrollOk: ['.ap-panel-body'], scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.online() }) },
+  // Pause-menu entries opened by clicking their row.
+  { id: 'research', scope: '.ap-kit-stack > *:last-child', open: viaPause('智灵研究') },
+  { id: 'intel', scope: '.ap-kit-stack > *:last-child', open: viaPause('情报') },
+  { id: 'manual', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await page.evaluate(() => { void window.__AP.screens.manual() }) } },
+  { id: 'save', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await page.evaluate(() => { void window.__AP.screens.settings() }); await page.waitForTimeout(700); await page.keyboard.press('KeyW') } },
+  { id: 'save-code', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.importSave() }) },
   { id: 'learn-move', scope: '.ap-kit-stack > *:last-child', open: run(() => {
     const cr = window.__AP.save.party[0]
     const moveId = Object.values(window.__AP.data.moves).find((m) => !cr.moves.some((s) => s.id === m.id))?.id
     void window.__AP.screens.learnMove(cr, moveId)
   }) },
-  { id: 'newgame', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.newGame() }) },
-  { id: 'starter', scope: '.ap-kit-stack > *:last-child', open: run(() => {
+  { id: 'newgame', demote: ['font-size'], scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.newGame() }) },
+  { id: 'starter', demote: ['font-size'], scope: '.ap-kit-stack > *:last-child', open: run(() => {
     const ctx = window.__AP
     const weight = (s) => Math.max([...s.nameZh].length, s.nameEn.length * 0.6)
     void ctx.screens.starter([...ctx.data.speciesList].sort((a, b) => weight(b) - weight(a)).slice(0, 3))
@@ -397,18 +581,18 @@ export const SCREENS = [
 ]
 
 const BATTLE_SCREENS = [
-  { id: 'battle-command', scope: '.apb-root', open: async (page) => { await waitCommand(page); await waitHud(page) } },
-  { id: 'battle-moves', scope: '.apb-root', open: async (page) => { await waitCommand(page); await page.keyboard.press('KeyZ'); await page.waitForTimeout(700) } },
+  { id: 'battle-command', demote: ['font-size'], scope: '.apb-root', open: async (page) => { await waitCommand(page); await waitHud(page) } },
+  { id: 'battle-moves', demote: ['font-size'], scope: '.apb-root', open: async (page) => { await waitCommand(page); await page.keyboard.press('KeyZ'); await page.waitForTimeout(700) } },
   // The longest battle-phase tip (typeMatchup) docked in the top strip, audited with the whole battle UI (status windows, message box, command bar).
-  { id: 'battle-tip', scope: null, ignore: '.ap-l-chat, .ap-l-overlay canvas', tip: true, open: async (page) => {
+  { id: 'battle-tip', demote: ['font-size'], scope: null, ignore: '.ap-l-chat, .ap-l-overlay canvas', tip: true, open: async (page) => {
     await closeInspector(page)
     await page.evaluate(() => { window.__AP.save.settings.showTips = true; window.__apOnboarding.debugShow('typeMatchup') })
     await page.waitForTimeout(1200)
   } },
-  { id: 'battle-effects', scope: '.apb-effects-dialog', open: async (page) => { await page.keyboard.press('KeyX'); await page.waitForTimeout(300); await page.keyboard.press('Tab'); await page.waitForTimeout(700) } },
+  { id: 'battle-effects', demote: ['text-spill', 'font-size', 'primary-overflow'], scope: '.apb-effects-dialog', open: async (page) => { await page.keyboard.press('KeyX'); await page.waitForTimeout(300); await page.keyboard.press('Tab'); await page.waitForTimeout(700) } },
   // Worst case: a status, four volatiles and all seven stat stages on both sides, built on real status panels.
-  { id: 'battle-hud-heavy', scope: '.apb-root', open: async (page) => { await closeInspector(page); await mountHeavy(page, false) } },
-  { id: 'battle-effects-heavy', scope: '.apb-effects-dialog', open: async (page) => { await closeInspector(page); await mountHeavy(page, true) } },
+  { id: 'battle-hud-heavy', demote: ['font-size'], scope: '.apb-root', open: async (page) => { await closeInspector(page); await mountHeavy(page, false) } },
+  { id: 'battle-effects-heavy', demote: ['text-spill', 'font-size', 'primary-overflow'], scrollOk: ['.ap-panel-body'], scope: '.apb-effects-dialog', open: async (page) => { await closeInspector(page); await mountHeavy(page, true) } },
 ]
 
 async function closeInspector(page) {
@@ -455,7 +639,17 @@ async function hideTips(page, hide) {
   await page.evaluate((h) => {
     let st = document.getElementById('qa-hide-tips')
     if (!st) { st = document.createElement('style'); st.id = 'qa-hide-tips'; document.head.append(st) }
-    st.textContent = h ? '.ap-tip { display: none !important }' : ''
+    // The developer badge (?dev=1) floats over the bottom centre; it is not part of the game's UI.
+    st.textContent = `.apd-badge { display: none !important }${h ? ' .ap-tip { display: none !important }' : ''}`
+  }, hide)
+}
+
+/** The dev panel's badge is developer tooling (absent from release builds); only the HUD zone cases keep it on screen. */
+async function hideDevBadge(page, hide) {
+  await page.evaluate((h) => {
+    let st = document.getElementById('qa-hide-dev-badge')
+    if (!st) { st = document.createElement('style'); st.id = 'qa-hide-dev-badge'; document.head.append(st) }
+    st.textContent = h ? '.apd-badge { display: none !important }' : ''
   }, hide)
 }
 
@@ -493,10 +687,16 @@ export async function measureScreen(page, screen, shot) {
   await page.waitForTimeout(500)
   // a map or scene fade that is still going would "cover" the whole page
   await page.waitForFunction(() => { const f = document.querySelector('.ap-fade'); return !f || parseFloat(getComputedStyle(f).opacity) < 0.02 }, undefined, { timeout: 8000 }).catch(() => {})
-  const run = () => page.evaluate(auditLayout, { scopeSel: screen.scope, ignoreSel: screen.ignore ?? '', minFont: 9 })
+  const run = () => page.evaluate(auditLayout, { scopeSel: screen.scope, ignoreSel: screen.ignore ?? '', minFont: 9, noScrollSel: screen.noScroll ?? '', limits: UI_AUDIT, screenScrollOk: screen.scrollOk ?? [] })
   let result = await run()
   // A screen that is still sliding in is not a layout defect: look once more before calling the scope missing.
   if (result.violations.some((v) => v.type === 'no-scope')) { await page.waitForTimeout(1800); result = await run() }
+  // Findings in screens another issue owns are listed as warnings until that issue lands (screen.demote: violation types).
+  if (screen.demote?.length) {
+    const moved = result.violations.filter((v) => screen.demote.includes(v.type))
+    result.violations = result.violations.filter((v) => !screen.demote.includes(v.type))
+    result.warnings = [...result.warnings, ...moved.map((v) => ({ ...v, type: `${v.type}*` }))]
+  }
   await page.screenshot({ path: shot })
   return result
 }
@@ -510,7 +710,7 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
   const report = []
   for (const vp of viewports) {
     await mkdir(`${outDir}${vp.name}`, { recursive: true })
-    await page.cdp('Emulation.setDeviceMetricsOverride', { width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr, mobile: false })
+    await page.cdp('Emulation.setDeviceMetricsOverride', { width: vp.width, height: vp.height, deviceScaleFactor: vp.dpr, mobile: !!vp.touch })
     const restore = async () => {
       await page.goto(`${base}/?dev=1&skipTitle=1&reset=1&slot=${slot}&map=overworld&x=526&y=873&t=720`)
       await page.waitForFunction(() => window.__ap && window.__AP && window.__ap.pos().map === 'overworld' && window.__AP.overworld.free, undefined, { timeout: 60000 })
@@ -535,14 +735,25 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
     }
     for (const screen of SCREENS) {
       if (only && !only.includes(screen.id)) continue
+      if (screen.touchOnly && !vp.touch) continue
       try {
         if (!(await closeAll(page))) await restore()
         await screen.open(page)
         if (!screen.keepToasts) await page.evaluate(() => document.querySelectorAll('.ap-toast').forEach((n) => n.remove()))
         await hideTips(page, screen.id !== 'tip' && !screen.tip)
+        await hideDevBadge(page, !screen.hudZones)
         const shot = `${outDir}${vp.name}/${screen.id}.png`
-        await record(screen, await measureScreen(page, screen, shot), shot)
+        // The zone check goes first: tips and toasts time out, and the text audit below takes seconds. The tip is shown again for it.
+        const zones = screen.hudZones ? await page.evaluate(auditHudZones, { pad: UI_PHONE_PAD }) : null
+        if (zones && !screen.noReshow) { await page.evaluate(() => window.__apOnboarding.debugShow('move')); await page.waitForTimeout(600) }
+        const result = await measureScreen(page, screen, shot)
+        if (zones) {
+          result.violations.push(...zones.violations)
+          result.stats = { ...result.stats, ...zones.stats }
+        }
+        await record(screen, result, shot)
         if (screen.closeKey) await page.keyboard.press(screen.closeKey)
+        if (screen.after) await screen.after(page)
       } catch (err) {
         await record(screen, { violations: [{ type: 'harness', sel: screen.id, text: '', detail: String(err.message).slice(0, 200) }], warnings: [], stats: {} }, '')
       }
@@ -556,6 +767,7 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
           if (!(await closeAll(page))) await restore()
           await startBattle(page)
           await hideTips(page, true)
+          await hideDevBadge(page, true)
           for (const screen of BATTLE_SCREENS) {
             if (only && !only.includes(screen.id)) continue
             await hideTips(page, !screen.tip)

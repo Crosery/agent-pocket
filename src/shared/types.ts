@@ -841,6 +841,8 @@ export type ScriptStep =
   | { op: 'exchange'; desk: string }
   /** Records that this NPC delivered a curriculum lesson (content/tutorial.json): the manual marks it learnt. */
   | { op: 'teach'; lesson: string }
+  /** Opens the type chart (属性克制表), optionally on a view and a type. */
+  | { op: 'openTypeChart'; view?: 'type' | 'grid' | 'loops'; type?: string }
   | { op: 'quest'; quest: string; stage: number; done?: boolean }
   | { op: 'warp'; map: string; x: number; y: number; facing: Dir }
   | { op: 'moveNpc'; npc: string; path: Dir[] }
@@ -1248,6 +1250,11 @@ export interface SaveData {
   maxDistance?: number
   /** Explored overworld cells for the world-map fog of war (compact encoding owned by the client save code). */
   explored?: string
+  /**
+   * Teleport anchors (ids `anchor:<kind>:<x>:<y>`, content/world/anchors.json): `unlocked` can be travelled to,
+   * `seen` were merely come close to (greyed pin on the map). The start's grand anchors are always unlocked.
+   */
+  anchors?: { unlocked: string[]; seen: string[] }
 }
 
 // ---------------------------------------------------------------------------

@@ -1,0 +1,32 @@
+{
+  "kinds": {
+    "grand": {"prop": "warp_anchor_grand", "margin": 1, "unlockRadius": 5, "seenRadius": 16, "unlockFx": "anchorUnlockGrand", "unlockSfx": "anchor_on", "travelFx": "anchorDepart", "travelSfx": "anchor_warp", "arriveFx": "anchorArrive", "beacon": "grand"},
+    "minor": {"prop": "warp_anchor", "margin": 1, "unlockRadius": 2.6, "seenRadius": 11, "unlockFx": "anchorUnlock", "unlockSfx": "anchor_on", "travelFx": "anchorDepart", "travelSfx": "anchor_warp", "arriveFx": "anchorArrive", "beacon": "minor"}
+  },
+  "preUnlock": {"grandWithin": 48},
+  "save": {"maxUnlocked": 600, "maxSeen": 600},
+  "naming": {"radius": 22},
+  "place": {
+    "avoidFlags": ["path", "road", "reserved", "gate", "keep", "bridge", "nest", "border", "edge", "river", "lake", "sea"],
+    "ringAvoidFlags": ["gate", "bridge", "river", "lake", "sea"],
+    "roadTerrain": ["cobble", "path", "bridge", "wood", "tile_floor", "stairs"],
+    "roadPenalty": 9,
+    "slack": 2,
+    "itemClearance": 1
+  },
+  "core": {
+    "rules": [
+      {"id": "start", "source": "spawn", "kind": "grand", "anchor": "spawn", "min": 4, "max": 16, "home": true},
+      {"id": "town", "source": "town", "kind": "minor", "min": 3, "max": 11, "minSpacing": 22},
+      {"id": "hamlet", "source": "hamlet", "kind": "minor", "min": 2, "max": 11, "minSpacing": 14},
+      {"id": "dungeon", "source": "dungeon", "kind": "minor", "min": 3, "max": 9, "minSpacing": 14},
+      {"id": "poi", "source": "poi", "kind": "minor", "templates": ["shrine", "monolith", "datacenter", "ruins", "oasis", "hotspring", "lighthouse", "grove"], "min": 3, "max": 10, "minSpacing": 46},
+      {"id": "route", "source": "route", "kind": "minor", "spacing": 64, "edgeMargin": 22, "min": 2, "max": 6, "minSpacing": 40},
+      {"id": "fill", "source": "fill", "kind": "minor", "maxWalk": 130, "lattice": 12, "min": 0, "max": 14}
+    ]
+  },
+  "frontier": {
+    "sites": {"gateway": {"kind": "grand", "min": 5, "max": 18}, "hamlet": {"kind": "minor", "min": 3, "max": 12}, "dungeon": {"kind": "minor", "min": 3, "max": 10}, "ruins": {"kind": "minor", "min": 3, "max": 12}, "shrine": {"kind": "minor", "min": 3, "max": 12}, "landmark": {"kind": "minor", "min": 3, "max": 12}},
+    "fill": {"kind": "minor", "cell": 64, "jitter": 0.6, "siteClearance": 52, "coreClearance": 60, "reachTiles": 700, "search": 10, "salt": "fx-anchor-fill"}
+  }
+}

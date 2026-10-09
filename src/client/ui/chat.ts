@@ -104,7 +104,11 @@ export function createChatUI(
     return node
   }
 
-  const passiveLines = () => (getUIScale().compact ? CFG.compactPassiveLines : CFG.passiveLines)
+  const passiveLines = () => {
+    const sc = getUIScale()
+    if (document.documentElement.dataset.touchControls === 'on') return CFG.touchPassiveLines[sc.portrait ? 'portrait' : 'landscape']
+    return sc.compact ? CFG.compactPassiveLines : CFG.passiveLines
+  }
 
   const renderPassive = () => {
     const n = passiveLines()
