@@ -387,7 +387,7 @@
     "summary": {"nature": "性格", "grade": "品质 {grade} · {nick}", "natureNeutral": "无偏好"},
     "chip": "{grade} · {nature} {up}↑ {down}↓",
     "chipNeutral": "{grade} · {nature}",
-    "legacyToast": "研究所给每位训练家发了 2 张人设重写卡。",
+    "legacyToast": "研究所发了你 2 张人设重写卡。",
     "pickNature": "选择新的性格",
     "pickConfirm": "把 {name} 的性格改写成「{nature}」吗？",
     "pickCurrent": "当前",
