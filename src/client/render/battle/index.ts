@@ -13,11 +13,12 @@ import { isHD2DRendererExt } from '../hd2d.ts'
 import { cameraYaw } from '../sprite-utils.ts'
 import { createCaptureBall } from './ball.ts'
 import { createBattleCamera } from './camera.ts'
-import { STAGE, expandSteps, otherSide, shotFor, timelineLength, type SideIndex, type VfxStep } from './config.ts'
+import { STAGE, expandSteps, otherSide, shotFor, timelineLength, type ShotDef, type SideIndex, type VfxStep } from './config.ts'
 import { createEnvironment } from './environment.ts'
 import { createSharedGeometries } from './meshes.ts'
 import { createGlyphAtlas, createParticlePool } from './particles.ts'
 import { colorHex, spawnStep, type Effect, type FxCtx, type FxHost } from './primitives.ts'
+import { BOSS_PRES, bossEntry, bossTheme, themeGlyphs, type BossEntry } from './boss-config.ts'
 import { createBattleSprite, type BattleSprite } from './sprites.ts'
 import { createScheduler, ease } from './timeline.ts'
 
@@ -35,6 +36,11 @@ export interface BattleStage {
   /** Shows / hides a slot's creature instantly (no effect). */
   showCreature(side: 0 | 1, visible: boolean): void
   setTrainer(side: 0 | 1, sheet: string | null): void
+  /**
+   * Marks a slot as holding a boss (content/boss-presentation.json): scaled sprite, boss camera base shot, idle float
+   * and the theme's aura. Call before setCreature(); null returns the slot to a normal creature.
+   */
+  setBoss(side: 0 | 1, bossId: string | null): void
   intro(kind: IntroKind): Promise<void>
   sendOut(side: 0 | 1, ballColor?: string): Promise<void>
   recall(side: 0 | 1): Promise<void>
@@ -101,6 +107,7 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
   const geos = createSharedGeometries(S.vfx.geometry)
   const chars = new Set<string>(S.vfx.glyphChars)
   collectChars(T, chars)
+  for (const ch of themeGlyphs()) chars.add(ch)
   const atlas = createGlyphAtlas([...chars].join(''), S.vfx.glyphFont, S.vfx.glyphCell)
   const additive = createParticlePool(S.vfx.pool.add, true, atlas, S.vfx.look.particles)
   const alpha = createParticlePool(S.vfx.pool.alpha, false, atlas, S.vfx.look.particles)
@@ -222,6 +229,30 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
 
   const alive = () => !disposed
 
+  // --- boss presentation ------------------------------------------------------
+  const bosses: [BossEntry | null, BossEntry | null] = [null, null]
+  const bossAura = [0, 0]
+  const slotScale = (side: SideIndex) => S.slots[side].scale * (bosses[side]?.scale ?? 1)
+  const expandedAura = new Map<string, VfxStep[]>()
+  const auraSteps = (theme: string, steps: readonly VfxStep[]) => {
+    let list = expandedAura.get(theme)
+    if (!list) { list = expandSteps(steps, null); expandedAura.set(theme, list) }
+    return list
+  }
+  function bossIdle(dt: number): void {
+    for (const side of [0, 1] as const) {
+      const boss = bosses[side]
+      const theme = boss && BOSS_PRES.themes[boss.theme]
+      const sp = creatures[side]
+      if (!boss || !theme || !sp.present || !sp.id || sp.fx.dissolve > 0.5 || (evolveActive && side === 0)) continue
+      bossAura[side] += dt * 1000
+      if (bossAura[side] < theme.everyMs) continue
+      bossAura[side] %= theme.everyMs
+      const ctx = ctxFor(side, null, typeColor(sp.id))
+      for (const st of auraSteps(boss.theme, theme.steps)) spawnStep(st, ctx, host)?.dispose()
+    }
+  }
+
   // --- evolution helpers -------------------------------------------------------
   /** Holds a sprite's flash at a level (silhouette) until stopped; `fadeOut` ramps it down. */
   function holdFlash(sp: BattleSprite, color: THREE.Color, rampIn: number) {
@@ -267,12 +298,27 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
     setCreature(side, speciesId, shiny) {
       const sp = creatures[side]
       const sl = S.slots[side]
-      if (!speciesId) { sp.setCreature(null, false, sl.scale, sl.facesRight); sp.present = false; return }
-      sp.setCreature(speciesId, shiny, sl.scale, sl.facesRight)
+      if (!speciesId) { sp.setCreature(null, false, slotScale(side), sl.facesRight); sp.present = false; return }
+      sp.setCreature(speciesId, shiny, slotScale(side), sl.facesRight)
       if (side === 1) ball.setVisible(false)
     },
 
     showCreature(side, visible) { creatures[side].present = visible && !!creatures[side].id },
+
+    setBoss(side, bossId) {
+      const entry = bossEntry(bossId)
+      bosses[side] = entry
+      bossAura[side] = 0
+      const theme = bossTheme(bossId)
+      creatures[side].setIdleMotion(theme ? { breath: theme.breath, floatAmp: theme.bob.amp, floatHz: theme.bob.hz } : null)
+      if (side === 1) {
+        const base = (entry ? BOSS_PRES.framing.base : S.camera.shots.base) as ShotDef
+        cam.setBase(base)
+        cam.cut(base)
+      }
+      const sp = creatures[side]
+      if (sp.id) sp.setCreature(sp.id, sp.shiny, slotScale(side), S.slots[side].facesRight)
+    },
 
     setTrainer(side, sheet) {
       const tr = trainers[side]
@@ -514,6 +560,7 @@ export function createBattleStage(renderer: HD2DRenderer, assets: AssetStore, op
       for (const s of creatures) s.update(dt, time, yaw)
       for (const s of trainers) s.update(dt, time, yaw)
       evolveSprite.update(dt, time, yaw)
+      bossIdle(dt)
       const q = quality()
       const internalH = ext?.internal.height ?? renderer.canvas.height
       const pxPerUnit = internalH / (2 * Math.tan(THREE.MathUtils.degToRad(cam.camera.fov) / 2))

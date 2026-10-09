@@ -1,0 +1,540 @@
+{
+  "about": "Boss battle presentation (issue #32): per-boss scale, idle theme and intro cut-in manifest. Client-side only; mechanics live in bosses.json.",
+  "frames": {"size": [1376, 768], "base": "#07080f", "tint": 0.5, "glowAt": [0.5, 0.62], "glowRadius": 0.42, "falloff": 1.6, "artHeightFrac": 0.8, "footY": 0.93, "floor": {"w": 0.42, "h": 0.1, "y": 0.93, "alpha": 0.55, "blur": 18}},
+  "bosses": {
+    "astra": {
+      "species": "gpt-6-astra",
+      "scale": 1.35,
+      "theme": "starlight",
+      "intro": {
+        "src": "assets/boss-intro/astra.mp4",
+        "poster": "assets/boss-intro/astra.jpg",
+        "bytes": 1679833,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "d9a197523d794caf",
+          "seed": 518947736,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime dragon-queen girl stands in the center of a dark cosmic arena. The camera slowly pushes in. Golden starlight erupts around her in a ring, her long lavender and mint hair and her robe flutter upward, her dragon wings spread wide, the golden orb in her hand blazes brighter, and she gives a confident smile. Keep her face, hair, horns, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/astra.png"
+        }
+      }
+    },
+    "deepseek": {
+      "species": "deepseek-v4",
+      "scale": 1.35,
+      "theme": "tide",
+      "intro": {
+        "src": "assets/boss-intro/deepseek.mp4",
+        "poster": "assets/boss-intro/deepseek.jpg",
+        "bytes": 1837416,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "7478d0dbb7524b46",
+          "seed": 519438036,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime deep-sea queen stands in the center of a dark abyssal ocean arena. The camera slowly pushes in. Glowing deep-blue water currents and bubbles swirl upward around her, her floor-length flowing hair and gown drift as if underwater, a bioluminescent blue light blooms behind her, and she opens her eyes with a calm confident look. Keep her face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/deepseek.png"
+        }
+      }
+    },
+    "kimi": {
+      "species": "kimi-k3",
+      "scale": 1.35,
+      "theme": "moon",
+      "intro": {
+        "src": "assets/boss-intro/kimi.mp4",
+        "poster": "assets/boss-intro/kimi.jpg",
+        "bytes": 1421665,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "81c58ed384b348c2",
+          "seed": 519439712,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime moon princess with long silver-white hair stands in the center of a dark night arena. The camera slowly pushes in. A huge silver full moon rises behind her, soft silver moonlight rays fall, ice-blue sparkles drift down, her floor-length hair and gown flow gracefully, and she lifts one hand with a serene confident smile. Keep her face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/kimi.png"
+        }
+      }
+    },
+    "minimax": {
+      "species": "minimax-h3",
+      "scale": 1.35,
+      "theme": "stage",
+      "intro": {
+        "src": "assets/boss-intro/minimax.mp4",
+        "poster": "assets/boss-intro/minimax.jpg",
+        "bytes": 1550435,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "d19940b2c8014708",
+          "seed": 519441378,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime diva-director girl stands in the center of a dark theater stage. The camera slowly pushes in. Stage spotlights sweep on, colorful ribbons of light and film-strip sparkles burst around her, her long flowing multi-colored hair sways, and she strikes a confident diva pose with a bright smile. Keep her face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/minimax.png"
+        }
+      }
+    },
+    "qwen": {
+      "species": "qwen3-8-max",
+      "scale": 1.35,
+      "theme": "glyph",
+      "intro": {
+        "src": "assets/boss-intro/qwen.mp4",
+        "poster": "assets/boss-intro/qwen.jpg",
+        "bytes": 1705411,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "d16fc309652f4b68",
+          "seed": 520427220,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime ojou-sama queen with long periwinkle hair stands in the center of a dark violet arena. The camera slowly pushes in. Glowing violet-blue magic sigils and floating calligraphy characters orbit around her, a ring of light expands outward, her long hair and gown rise gently, and she lifts her chin with a composed elegant smile. Keep her face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/qwen.png"
+        }
+      }
+    },
+    "cursor": {
+      "species": "cursor",
+      "scale": 1.6,
+      "theme": "glyph",
+      "intro": {
+        "src": "assets/boss-intro/cursor.mp4",
+        "poster": "assets/boss-intro/cursor.jpg",
+        "bytes": 1350191,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "afc8f470a33f4e28",
+          "seed": 520428913,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime coder girl with a charcoal bob stands in the center of a dark terminal-style arena. The camera slowly pushes in. Green-teal lines of code and square pixel glyphs rain down behind her, a blinking cursor glows beside her, her bob haircut and clothes sway, and she gives a cool composed look. Keep her face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/cursor.png"
+        }
+      }
+    },
+    "claude-code": {
+      "species": "claude-code",
+      "scale": 1.6,
+      "theme": "ember",
+      "intro": {
+        "src": "assets/boss-intro/claude-code.mp4",
+        "poster": "assets/boss-intro/claude-code.jpg",
+        "bytes": 1112968,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "947adead6827483e",
+          "seed": 520430745,
+          "prompt": "Cinematic boss entrance cut-in. The small chunky orange pixel mascot creature stands in the center of a dark terminal-style arena. The camera slowly pushes in. Orange pixel sparkles and a blinking prompt cursor appear around it, the creature bounces up once, raises its claws proudly and its eyes glow, small pixel stars burst. Keep its shape, colors and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/claude-code.png"
+        }
+      }
+    },
+    "mythos": {
+      "species": "claude-mythos",
+      "scale": 1.37,
+      "theme": "void",
+      "intro": {
+        "src": "assets/boss-intro/mythos.mp4",
+        "poster": "assets/boss-intro/mythos.jpg",
+        "bytes": 1563453,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "7a5ecc36e9ed4619",
+          "seed": 520432197,
+          "prompt": "Cinematic boss entrance cut-in. The upright black-and-gold pixel-art dragon stands in the center of a dark vault arena. The camera slowly pushes in. Chains of golden light shatter and fall away, dark purple energy surges around it, cracks of light spread across the floor, the dragon lifts its chest, unfolds its wings and its eyes glow gold. Keep its shape, colors and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/mythos.png"
+        }
+      }
+    },
+    "alpha": {
+      "species": "alpha",
+      "scale": 1.35,
+      "theme": "starlight",
+      "intro": {
+        "src": "assets/boss-intro/alpha.mp4",
+        "poster": "assets/boss-intro/alpha.jpg",
+        "bytes": 1372891,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "d63082bf787a4727",
+          "seed": 520434055,
+          "prompt": "Cinematic boss entrance cut-in. The small regal pixel-art dog spirit stands in the center of a dark arena. The camera slowly pushes in. A floating Go board of glowing lines with white and black stones rises behind it, golden stardust drifts, soft dawn light blooms, and the dog lifts its head in a proud regal pose. Keep its shape, colors and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/alpha.png"
+        }
+      }
+    },
+    "opus": {
+      "species": "claude-opus",
+      "scale": 1.35,
+      "theme": "notes",
+      "intro": {
+        "src": "assets/boss-intro/opus.mp4",
+        "poster": "assets/boss-intro/opus.jpg",
+        "bytes": 1631034,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "6c5a3edbde8a44dc",
+          "seed": 523761385,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime maestro lady with very long ginger hair and her tiny flame companion stand in the center of a dark stage lit by a few golden spotlights. The camera slowly pushes in. Pixel-art golden musical notes float and swirl around her, her long ginger hair and gown flow, and she raises one arm like a conductor with a calm aloof smile. Everything stays in chunky retro 16-bit pixel art with blocky square pixels, no smoothing, no painted or illustrated look, her face, hair, outfit and companion unchanged, no new characters, no text, smooth natural motion.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/opus.png",
+          "rejected": [
+            {"task": "b824cb3f68354e5c", "seed": 520436039, "reason": "pixel style and companion lost after frame 1 (smooth redraw)"},
+            {"task": "9853f172c0e843a7", "seed": 522343414, "reason": "scene redrawn as a smooth illustration, pixel look lost (character and companion kept)"}
+          ]
+        }
+      }
+    },
+    "chatgpt": {
+      "species": "chatgpt",
+      "scale": 1.56,
+      "theme": "ripple",
+      "intro": {
+        "src": "assets/boss-intro/chatgpt.mp4",
+        "poster": "assets/boss-intro/chatgpt.jpg",
+        "bytes": 1239466,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "79d5a9ccda3d47f3",
+          "seed": 520437137,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime elegant big-sister concierge with long silver-white hair stands in the center of a dark arena. The camera slowly pushes in. Soft emerald-green and white ripples of light spread across the floor, glowing speech-bubble shaped sparkles float up around her, and she smiles warmly and raises one hand in welcome. Keep her face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/chatgpt.png"
+        }
+      }
+    },
+    "unitree": {
+      "species": "unitree-gd01",
+      "scale": 1.35,
+      "theme": "steel",
+      "intro": {
+        "src": "assets/boss-intro/unitree.mp4",
+        "poster": "assets/boss-intro/unitree.jpg",
+        "bytes": 1757528,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "f009b92fe4514f15",
+          "seed": 522058366,
+          "prompt": "Cinematic boss entrance cut-in. The chunky pixel-art mecha with a robot girl pilot stands in the center of a dark industrial arena. The camera slowly pushes in. Steam vents burst, blue thruster light glows, sparks fly, the mecha's eyes light up and its servos flex as it plants its feet, and the pilot grins confidently. Keep its shape, colors and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/unitree.png"
+        }
+      }
+    },
+    "grok": {
+      "species": "grok-4-7",
+      "scale": 1.35,
+      "theme": "starlight",
+      "intro": {
+        "src": "assets/boss-intro/grok.mp4",
+        "poster": "assets/boss-intro/grok.jpg",
+        "bytes": 1644053,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "aa75e340c4c54f41",
+          "seed": 522059679,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime gothic star-princess commander with honey-gold twin tails stands in the center of a dark nebula arena. The camera slowly pushes in. Star-shaped sparks and a dark violet nebula swirl around her, her voluminous twin tails and cape flare outward, and she points forward commandingly with a bold smile. Keep her face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/grok.png"
+        }
+      }
+    },
+    "openclaw": {
+      "species": "openclaw",
+      "scale": 1.35,
+      "theme": "ember",
+      "intro": {
+        "src": "assets/boss-intro/openclaw.mp4",
+        "poster": "assets/boss-intro/openclaw.jpg",
+        "bytes": 1938670,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "f676ac32a8f840d0",
+          "seed": 522061400,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime lobster girl captain with coral-red hair stands in the center of a dark sea-cave arena. The camera slowly pushes in. Coral-red flames and sea spray burst around her, a giant glowing claw shape flashes behind her, her long coral hair flows, and she raises her claw hand with a fierce grin. Keep her face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/openclaw.png"
+        }
+      }
+    },
+    "gemini": {
+      "species": "gemini-argon",
+      "scale": 1.43,
+      "theme": "prism",
+      "intro": {
+        "src": "assets/boss-intro/gemini.mp4",
+        "poster": "assets/boss-intro/gemini.jpg",
+        "bytes": 1137158,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "1df35349287e4aaf",
+          "seed": 523759402,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime cat-eared girl with long lavender-purple hair, holding a star-patterned shield, stands in the center of a dark arena. The camera slowly pushes in. Two glowing crystal prisms, one blue and one violet, orbit around her, small stars sparkle, and she opens her eyes with a knowing confident smile. Keep her lavender-purple hair color, face, cat ears, outfit, shield and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/gemini.png",
+          "rejected": [
+            {"task": "4f1c371481e64a93", "seed": 522063055, "reason": "hair colour drifted from lavender to silver (prompt described it wrongly)"}
+          ]
+        }
+      }
+    },
+    "doubao": {
+      "species": "doubao-app",
+      "scale": 1.56,
+      "theme": "bubble",
+      "intro": {
+        "src": "assets/boss-intro/doubao.mp4",
+        "poster": "assets/boss-intro/doubao.jpg",
+        "bytes": 1135756,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "249a3fd785c243c6",
+          "seed": 522064714,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime friendly girl with a dark-brown bob stands in the center of a dark arena. The camera slowly pushes in. Colorful soft bubbles and floating musical-note sparkles pop around her in a warm friendly glow, and she waves cheerfully with a bright smile. Keep her face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/doubao.png"
+        }
+      }
+    },
+    "seedance": {
+      "species": "seedance-2-5",
+      "scale": 1.35,
+      "theme": "stage",
+      "intro": {
+        "src": "assets/boss-intro/seedance.mp4",
+        "poster": "assets/boss-intro/seedance.jpg",
+        "bytes": 1803010,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "fd6281c42cf9465a",
+          "seed": 522066534,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime stage-idol young man with swept-back teal hair stands in the center of a dark concert stage. The camera slowly pushes in. Teal and cobalt laser beams and stage lights flare on, confetti sparkles burst, and he spins into a confident dance pose with a bright smile. Keep his face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/seedance.png"
+        }
+      }
+    },
+    "glm": {
+      "species": "glm-5-3",
+      "scale": 1.35,
+      "theme": "petal",
+      "intro": {
+        "src": "assets/boss-intro/glm.mp4",
+        "poster": "assets/boss-intro/glm.jpg",
+        "bytes": 1608937,
+        "width": 1280,
+        "height": 720,
+        "fps": 24.0,
+        "durationSec": 4.458,
+        "source": {
+          "tool": "xiaochui-video MCP create_video_task",
+          "model": "MiniMax H3 (Hailuo 3.0)",
+          "taskId": "af4c9fcc526d48d8",
+          "seed": 522068124,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime elegant fox-spirit girl with floor-length black hair stands in the center of a dark moonlit arena. The camera slowly pushes in. Pale jade petals and blue-green fox-fire flames drift around her, her long black hair and sleeves float gently, and she gives a soft composed smile. Keep her face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
+          "firstFrame": "assets_src/boss-intro/frames/glm.png"
+        }
+      }
+    }
+  },
+  "scaleRange": [1.3, 1.6],
+  "framing": {"about": "Boss battle camera base shot (replaces camera.shots.base while a boss is on the field): wider and higher so the scaled boss stays between the two info windows.", "base": {"pos": [-2.05, 2.55, 12.2], "look": [0.1, 0.95, -0.34], "fov": 27.5}},
+  "intro": {"maxBytes": 2000000, "loadTimeoutMs": 9000, "stallMs": 3500, "fadeInMs": 260, "fadeOutMs": 320, "holdLastMs": 120, "captionDelayMs": 700, "staticHoldMs": 1900, "prefetch": true, "skipOnSaveData": true, "slowConnections": ["slow-2g", "2g"]},
+  "themes": {
+    "starlight": {
+      "bob": {"amp": 0.045, "hz": 0.33},
+      "breath": {"hz": 0.42, "squash": 0.03, "bob": 0.01},
+      "everyMs": 320,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 0.5, "radius": 0.8, "count": 3, "emit": 0, "dir": "up", "speed": [0.15, 0.4], "life": [1.2, 2.0], "size": [0.06, 0.12], "shape": "star", "glow": 4, "colors": ["#fff6b0", "#ffffff", "#ffd36b"], "spin": 2}
+      ]
+    },
+    "tide": {
+      "bob": {"amp": 0.055, "hz": 0.27},
+      "breath": {"hz": 0.36, "squash": 0.028, "bob": 0.01},
+      "everyMs": 300,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 0.3, "radius": 0.85, "count": 2, "emit": 0, "dir": "up", "speed": [0.3, 0.7], "life": [1.3, 2.1], "size": [0.05, 0.1], "shape": "ring", "glow": 2.5, "colors": ["#9fe3ff", "#4aa8ff", "#d8f6ff"]},
+        {"fx": "particles", "on": "self", "h": 0.6, "radius": 0.7, "count": 1, "emit": 0, "dir": "up", "speed": [0.1, 0.3], "life": [1.4, 2.2], "size": [0.14, 0.22], "shape": "soft", "glow": 1.6, "colors": ["#2a6ad0", "#4aa8ff"]}
+      ]
+    },
+    "moon": {
+      "bob": {"amp": 0.04, "hz": 0.3},
+      "breath": {"hz": 0.4, "squash": 0.026, "bob": 0.01},
+      "everyMs": 340,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 1.15, "radius": 0.7, "count": 3, "emit": 0, "dir": "down", "speed": [0.15, 0.32], "life": [1.6, 2.5], "size": [0.06, 0.11], "shape": "star", "glow": 3.5, "colors": ["#e8f2ff", "#b8d0ff", "#ffffff"], "spin": 1.5}
+      ]
+    },
+    "stage": {
+      "bob": {"amp": 0.05, "hz": 0.5},
+      "breath": {"hz": 0.55, "squash": 0.035, "bob": 0.012},
+      "everyMs": 260,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 0.55, "radius": 0.85, "count": 3, "emit": 0, "dir": "radial", "speed": [0.2, 0.6], "life": [0.7, 1.2], "size": [0.06, 0.12], "shape": "star", "glow": 5, "colors": ["#ff7ac8", "#ffd36b", "#7affc8", "#7ab8ff"], "spin": 3}
+      ]
+    },
+    "glyph": {
+      "bob": {"amp": 0.035, "hz": 0.38},
+      "breath": {"hz": 0.45, "squash": 0.025, "bob": 0.01},
+      "everyMs": 280,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 0.3, "radius": 0.9, "count": 2, "emit": 0, "dir": "up", "speed": [0.3, 0.65], "life": [1.2, 1.9], "size": [0.08, 0.13], "shape": "glyph", "chars": "01{}<>/;=", "glow": 3, "colors": ["#7affc8", "#4ad0ff", "#c8fff0"]}
+      ]
+    },
+    "ember": {
+      "bob": {"amp": 0.04, "hz": 0.45},
+      "breath": {"hz": 0.5, "squash": 0.032, "bob": 0.012},
+      "everyMs": 220,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 0.15, "radius": 0.7, "count": 3, "emit": 0, "dir": "up", "speed": [0.5, 1.1], "life": [0.6, 1.1], "size": [0.04, 0.08], "shape": "dot", "glow": 4, "colors": ["#ff9a4a", "#ff5a2a", "#ffd36b"]}
+      ]
+    },
+    "steel": {
+      "bob": {"amp": 0.02, "hz": 0.4},
+      "breath": {"hz": 0.4, "squash": 0.018, "bob": 0.008},
+      "everyMs": 300,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 0.2, "radius": 0.8, "count": 2, "emit": 0, "dir": "up", "speed": [0.2, 0.4], "life": [0.9, 1.5], "size": [0.14, 0.24], "shape": "soft", "blend": "alpha", "glow": 1, "colors": ["#cfd8e6", "#8fa0b8"]},
+        {"fx": "particles", "on": "self", "h": 0.3, "radius": 0.8, "count": 2, "emit": 0, "dir": "radial", "speed": [0.5, 1.2], "life": [0.2, 0.4], "size": [0.03, 0.06], "shape": "dot", "glow": 5, "colors": ["#9fe3ff", "#ffffff"]}
+      ]
+    },
+    "void": {
+      "bob": {"amp": 0.05, "hz": 0.25},
+      "breath": {"hz": 0.32, "squash": 0.034, "bob": 0.01},
+      "everyMs": 260,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 0.3, "radius": 0.9, "count": 2, "emit": 0, "dir": "up", "speed": [0.2, 0.5], "life": [1.1, 1.8], "size": [0.14, 0.24], "shape": "soft", "blend": "alpha", "glow": 1, "colors": ["#2a1850", "#4a2a80"]},
+        {"fx": "particles", "on": "self", "h": 0.5, "radius": 0.85, "count": 2, "emit": 0, "dir": "up", "speed": [0.15, 0.4], "life": [1.0, 1.7], "size": [0.04, 0.08], "shape": "dot", "glow": 4.5, "colors": ["#ffd36b", "#fff0a8"]}
+      ]
+    },
+    "notes": {
+      "bob": {"amp": 0.045, "hz": 0.36},
+      "breath": {"hz": 0.44, "squash": 0.03, "bob": 0.01},
+      "everyMs": 340,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 0.5, "radius": 0.85, "count": 2, "emit": 0, "dir": "up", "speed": [0.25, 0.55], "life": [1.3, 2.0], "size": [0.1, 0.16], "shape": "glyph", "chars": "♪♫", "glow": 3, "colors": ["#ffd36b", "#ffb36b", "#ffffff"]}
+      ]
+    },
+    "ripple": {
+      "bob": {"amp": 0.03, "hz": 0.33},
+      "breath": {"hz": 0.4, "squash": 0.028, "bob": 0.01},
+      "everyMs": 300,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 0.1, "radius": 0.8, "count": 2, "emit": 0, "dir": "up", "speed": [0.15, 0.4], "life": [1.2, 1.9], "size": [0.08, 0.16], "shape": "ring", "glow": 2.5, "colors": ["#7affc8", "#ffffff", "#b8ffe0"]}
+      ]
+    },
+    "prism": {
+      "bob": {"amp": 0.045, "hz": 0.34},
+      "breath": {"hz": 0.42, "squash": 0.03, "bob": 0.01},
+      "everyMs": 300,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 0.55, "radius": 0.9, "count": 3, "emit": 0, "dir": "radial", "speed": [0.15, 0.4], "life": [1.0, 1.6], "size": [0.06, 0.11], "shape": "star", "glow": 4, "colors": ["#6aa8ff", "#c08aff", "#ffffff"], "spin": 2}
+      ]
+    },
+    "bubble": {
+      "bob": {"amp": 0.05, "hz": 0.4},
+      "breath": {"hz": 0.5, "squash": 0.034, "bob": 0.012},
+      "everyMs": 300,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 0.2, "radius": 0.85, "count": 2, "emit": 0, "dir": "up", "speed": [0.25, 0.6], "life": [1.2, 2.0], "size": [0.07, 0.14], "shape": "ring", "glow": 2.2, "colors": ["#ffb3d9", "#a8e6ff", "#fff3a8"]}
+      ]
+    },
+    "petal": {
+      "bob": {"amp": 0.04, "hz": 0.3},
+      "breath": {"hz": 0.4, "squash": 0.026, "bob": 0.01},
+      "everyMs": 320,
+      "steps": [
+        {"fx": "particles", "on": "self", "h": 1.15, "radius": 0.8, "count": 3, "emit": 0, "dir": "down", "speed": [0.15, 0.35], "life": [1.8, 2.8], "size": [0.08, 0.14], "shape": "leaf", "glow": 2, "colors": ["#c8f5d8", "#8fe0c0", "#ffffff"], "spin": 3}
+      ]
+    }
+  },
+  "encode": {"width": 1280, "height": 720, "crfStart": 22, "crfMax": 34, "crfStep": 1, "preset": "slow", "posterAt": 0.85, "posterQuality": 3, "outDir": "public/assets/boss-intro"}
+}

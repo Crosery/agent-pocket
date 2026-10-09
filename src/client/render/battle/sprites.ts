@@ -41,6 +41,8 @@ export interface BattleSprite {
   readonly shiny: boolean
   setCreature(speciesId: string | null, shiny: boolean, sizeMul: number, facesRight: boolean): void
   setSheet(sheet: string | null, row: Dir): void
+  /** Boss idle motion: replaces the breathing and adds a slow float; null restores the defaults. */
+  setIdleMotion(m: { breath: BreathDef; floatAmp: number; floatHz: number } | null): void
   /** Temporarily shows another texture (evolution swap); null restores the assigned one. */
   setTextureOverride(tex: THREE.Texture | null): void
   /** World point at a fraction of the visual height, including the current offset and scale. */
@@ -152,6 +154,7 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
   let row = 0
   let shadows = true
   let layout = sheetLayout()
+  let motion: { breath: BreathDef; floatAmp: number; floatHz: number } | null = null
   const idleAnimation = () => createCharacterAnimation(layout.walkFrames, layout.walkStart, {
     frames: layout.idleFrames, fps: CONTENT.config.sprites.idleFps, settleMs: CONTENT.config.sprites.idleSettleMs, phase,
   })
@@ -225,6 +228,7 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
       rebuild()
       syncAspect()
     },
+    setIdleMotion(m) { motion = m },
     setTextureOverride(t) {
       override = t
       const m = override ?? tex
@@ -260,16 +264,17 @@ export function createBattleSprite(kind: 'creature' | 'trainer', assets: AssetSt
           setGeometryFrame(geo, idleFrame, row, layout.cols, layout.rows)
         }
       }
-      const b = cfg.breath
+      const b = motion?.breath ?? cfg.breath
       const P = STAGE.sprite
       const breath = kind === 'trainer' && layout.idleFrames > 1 ? 0 : Math.sin(time * b.hz * Math.PI * 2 + phase)
       const sq = fx.squash + breath * b.squash
       const s = fx.scale
       mesh.scale.set(s * (1 - sq * P.squashWiden), s * (1 + sq), s)
-      mesh.position.set(fx.offset.x, fx.offset.y + Math.max(0, breath) * b.bob * height, fx.offset.z)
+      const float = motion ? (0.5 + 0.5 * Math.sin(time * motion.floatHz * Math.PI * 2 + phase)) * motion.floatAmp * height : 0
+      mesh.position.set(fx.offset.x, fx.offset.y + float + Math.max(0, breath) * b.bob * height, fx.offset.z)
       mesh.rotation.set(0, yaw, 0)
       blob.position.set(fx.offset.x, P.blobLift, fx.offset.z)
-      const lift = Math.max(0, fx.offset.y)
+      const lift = Math.max(0, fx.offset.y) + float
       const aspectMix = 1 - P.blobWidthMix + P.blobWidthMix * (width / Math.max(1e-3, height))
       const bs = s * Math.max(P.blobMinScale, 1 - lift * P.blobLiftShrink) * aspectMix
       blob.scale.set(bs, 1, bs)
