@@ -11,8 +11,19 @@ export interface SkyRig {
   /** Scene light color estimate (for unlit shaders: water, weather particles). */
   readonly ambientLight: THREE.Color
   apply(s: LightingState, dir: Vec3, intensityMul: number, focus: THREE.Vector3, camera: THREE.PerspectiveCamera, camDistance: number, time: number): void
-  setShadows(enabled: boolean, mapSize: number, radius: number): void
+  /** `pace` limits how often the shadow map is redrawn (see ShadowPace); without it every frame draws it. */
+  setShadows(enabled: boolean, mapSize: number, radius: number, pace?: ShadowPace): void
+  /** The set of shadow casters changed (chunks streamed in or out, prop shadows toggled): redraw the map next frame. */
+  markShadowsDirty(): void
   dispose(): void
+}
+
+/** Shadow map redraw pacing: the casters are static, so the map only needs a redraw when the frustum or sun moved. */
+export interface ShadowPace {
+  /** Redraws per second even when nothing moved (trees sway in the depth pass); 0 = every frame. */
+  hz: number
+  /** The frustum centre snaps to this many shadow texels (1 = every texel, a redraw whenever the focus moves). */
+  snapTexels: number
 }
 
 const setSrgb = (c: THREE.Color, hex: string) => c.setRGB(...hexToRgb(hex), THREE.SRGBColorSpace)
@@ -83,7 +94,19 @@ void main() {
   const _inv = new THREE.Matrix4()
   const _look = new THREE.Matrix4()
   const _c = new THREE.Color()
+  const _origin = new THREE.Vector3(0, 0, 0)
+  const _upAxis = new THREE.Vector3(0, 1, 0)
   let extent = S.shadowExtent
+  // The shadow map is redrawn on request (shadow.needsUpdate) instead of every frame; see ShadowPace.
+  sun.shadow.autoUpdate = false
+  let pace: ShadowPace = { hz: 0, snapTexels: 1 }
+  let dirty = true
+  let sinceDraw = 0
+  let lastTime = -1
+  let drawnX = Infinity
+  let drawnY = Infinity
+  const drawnDir = new THREE.Vector3()
+  let drawnExtent = -1
 
   return {
     dome, sun, hemi, fog, ambientLight,
@@ -112,30 +135,48 @@ void main() {
       cam.left = -extent; cam.right = extent; cam.top = extent; cam.bottom = -extent
       cam.updateProjectionMatrix()
       const texel = (2 * extent) / Math.max(1, sun.shadow.mapSize.x)
-      _look.lookAt(_dir, new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 1, 0))
+      const step = texel * Math.max(1, pace.snapTexels)
+      _look.lookAt(_dir, _origin, _upAxis)
       _inv.copy(_look).invert()
       _ls.copy(focus).applyMatrix4(_inv)
-      _ls.x = Math.round(_ls.x / texel) * texel
-      _ls.y = Math.round(_ls.y / texel) * texel
+      _ls.x = Math.round(_ls.x / step) * step
+      _ls.y = Math.round(_ls.y / step) * step
       _snap.copy(_ls).applyMatrix4(_look)
       sun.target.position.copy(_snap)
       sun.position.copy(_snap).addScaledVector(_dir, S.distance)
       sun.target.updateMatrixWorld()
+
+      sinceDraw += lastTime < 0 ? 0 : Math.max(0, time - lastTime)
+      lastTime = time
+      const moved = drawnExtent !== extent || _ls.x !== drawnX || _ls.y !== drawnY || drawnDir.distanceToSquared(_dir) > S.shadowDirEpsilon
+      if (dirty || moved || sun.shadow.map === null || (pace.hz > 0 && sinceDraw >= 1 / pace.hz) || pace.hz <= 0) {
+        sun.shadow.needsUpdate = true
+        dirty = false
+        sinceDraw = 0
+        drawnX = _ls.x
+        drawnY = _ls.y
+        drawnDir.copy(_dir)
+        drawnExtent = extent
+      }
 
       // estimated diffuse light for unlit shaders
       ambientLight.copy(hemi.color).lerp(_c.copy(hemi.groundColor), 0.25).multiplyScalar(hemi.intensity)
       ambientLight.add(_c.copy(sun.color).multiplyScalar(sun.intensity * Math.max(0, _dir.y)))
       ambientLight.multiplyScalar(1 / Math.PI)
     },
-    setShadows(enabled, mapSize, radius) {
-      if (sun.castShadow !== enabled) sun.castShadow = enabled
+    setShadows(enabled, mapSize, radius, p) {
+      if (sun.castShadow !== enabled) { sun.castShadow = enabled; dirty = true }
       if (sun.shadow.mapSize.x !== mapSize) {
         sun.shadow.mapSize.set(mapSize, mapSize)
         sun.shadow.map?.dispose()
         sun.shadow.map = null
+        dirty = true
       }
+      if (sun.shadow.radius !== radius) dirty = true
       sun.shadow.radius = radius
+      pace = p ?? { hz: 0, snapTexels: 1 }
     },
+    markShadowsDirty() { dirty = true },
     dispose() {
       scene.remove(dome, sun, sun.target, hemi)
       dome.geometry.dispose()

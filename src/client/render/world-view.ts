@@ -154,6 +154,8 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
   /** First update after a map load: weather and ambient particles start at full level instead of fading in. */
   let snapAmbience = false
   let shadowsCast = true
+  /** Hash of the visible chunk set: when it changes the shadow map has other casters and is redrawn. */
+  let casterSig = 0
   let debugLamps = 0
   let physicsTier = ''
   /** Snow built up by the weather, 0..1 of render.json snowCover.max. */
@@ -196,6 +198,16 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
     d.group.removeFromParent()
     d.terrain = []; d.grass = []; d.decor = []; d.props = null
     lightsDirty = true
+  }
+
+  /** Patches a chunk's materials and freezes its transforms: nothing in a chunk moves (sway, bend and water run in shaders). */
+  function settleChunk(group: THREE.Group): void {
+    patchSceneLight(group)
+    group.traverse((o) => {
+      if (!o.matrixAutoUpdate) return
+      o.updateMatrix()
+      o.matrixAutoUpdate = false
+    })
   }
 
   function newStreamer(m: GameMap, s: TerrainSampler): Streamer<ChunkData> {
@@ -246,13 +258,13 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
           }
           for (const mesh of meshes) { mesh.name = 'terrain'; slot.data.group.add(mesh) }
           slot.data.terrain = meshes
-          patchSceneLight(slot.data.group)
+          settleChunk(slot.data.group)
           return true
         },
         (slot) => {
           slot.data.grass = grass.buildChunk(s, slot.cx, slot.cy, chunkSize, builtGrassPerTile, climate)
           for (const mesh of slot.data.grass) slot.data.group.add(mesh)
-          patchSceneLight(slot.data.group)
+          settleChunk(slot.data.group)
           return true
         },
         (slot, deadline) => {
@@ -261,7 +273,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
           slot.data.props = c
           props.applyShadows(c)
           for (const mesh of c.meshes) slot.data.group.add(mesh)
-          patchSceneLight(slot.data.group)
+          settleChunk(slot.data.group)
           slot.data.anchors = c.anchors
           if (infinite) slot.data.lights = props.lightsOf(slot.cx, slot.cy)
           lightsDirty = true
@@ -270,7 +282,7 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
         (slot) => {
           slot.data.decor = decor.build(s, slot.cx, slot.cy, chunkSize, climate, props.blockedIn(slot.cx, slot.cy), builtDecor, (k) => atlas.averageColor(k))
           for (const mesh of slot.data.decor) slot.data.group.add(mesh)
-          patchSceneLight(slot.data.group)
+          settleChunk(slot.data.group)
           return true
         },
       ],
@@ -606,10 +618,11 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
       const wx = applyWeather(s)
       sky.apply(s, dir, sunFade * wx.sunMul, rig.target, camera, rig.distance, time)
       const shadowsOn = st.shadows && q.shadows
-      sky.setShadows(shadowsOn, Math.round(CONTENT.config.render.shadowMapSize * q.shadowMapScale), q.shadowRadius)
+      sky.setShadows(shadowsOn, Math.round(CONTENT.config.render.shadowMapSize * q.shadowMapScale), q.shadowRadius, { hz: q.shadowHz, snapTexels: q.shadowSnapTexels })
       const cast = shadowsOn && q.propShadows
       props.setShadows(cast)
       if (cast !== shadowsCast) {
+        sky.markShadowsDirty()
         shadowsCast = cast
         if (streamer) for (const slot of streamer.slots.values()) if (slot.data.props) props.applyShadows(slot.data.props)
       }
@@ -637,7 +650,13 @@ export function createWorldView(renderer: HD2DRenderer, assets: AssetStore, over
         camera.updateMatrixWorld()
         streamer.update(streamFrame(q))
         compileFinished(STAGE_COUNT)
-        for (const slot of streamer.slots.values()) slot.data.group.visible = slot.wanted && slot.data.ready
+        let casters = 0
+        for (const slot of streamer.slots.values()) {
+          const on = slot.wanted && slot.data.ready
+          slot.data.group.visible = on
+          if (on) casters = (casters * 31 + slot.key) | 0
+        }
+        if (casters !== casterSig) { casterSig = casters; sky.markShadowsDirty() }
         updateLights()
         infiniteFrame(dt, q)
       }

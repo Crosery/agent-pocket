@@ -1,9 +1,31 @@
 {
   "quality": {
-    "low": {"shadows": false, "shadowMapScale": 0.5, "shadowRadius": 1, "dof": false, "dofSamples": 8, "bloom": false, "grassPerTile": 2, "particleScale": 0.35, "pointLights": 2, "viewRadius": 26, "propShadows": false, "waterSparkles": false, "glowSprites": true, "natureVariants": 1, "decorDensity": 0.35, "terrainFringe": false, "snowDust": true, "maxChunks": 36},
-    "medium": {"shadows": true, "shadowMapScale": 0.5, "shadowRadius": 1.5, "dof": true, "dofSamples": 12, "bloom": true, "grassPerTile": 3, "particleScale": 0.6, "pointLights": 4, "viewRadius": 30, "propShadows": true, "waterSparkles": true, "glowSprites": true, "natureVariants": 2, "decorDensity": 0.65, "terrainFringe": true, "snowDust": true, "maxChunks": 44},
-    "high": {"shadows": true, "shadowMapScale": 1, "shadowRadius": 2, "dof": true, "dofSamples": 20, "bloom": true, "grassPerTile": 4, "particleScale": 1, "pointLights": 8, "viewRadius": 36, "propShadows": true, "waterSparkles": true, "glowSprites": true, "natureVariants": 4, "decorDensity": 1.0, "terrainFringe": true, "snowDust": true, "maxChunks": 56},
-    "ultra": {"shadows": true, "shadowMapScale": 1.5, "shadowRadius": 2.5, "dof": true, "dofSamples": 32, "bloom": true, "grassPerTile": 6, "particleScale": 1.4, "pointLights": 10, "viewRadius": 44, "propShadows": true, "waterSparkles": true, "glowSprites": true, "natureVariants": 5, "decorDensity": 1.35, "terrainFringe": true, "snowDust": true, "maxChunks": 72}
+    "low": {"shadows": false, "shadowMapScale": 0.5, "shadowRadius": 1, "shadowHz": 10, "shadowSnapTexels": 32, "dof": false, "dofSamples": 8, "bloom": false, "grassPerTile": 2, "particleScale": 0.35, "pointLights": 2, "viewRadius": 26, "propShadows": false, "waterSparkles": false, "glowSprites": true, "natureVariants": 1, "decorDensity": 0.35, "terrainFringe": false, "snowDust": true, "maxChunks": 36},
+    "medium": {"shadows": true, "shadowMapScale": 0.5, "shadowRadius": 1.5, "shadowHz": 20, "shadowSnapTexels": 16, "dof": true, "dofSamples": 12, "bloom": true, "grassPerTile": 3, "particleScale": 0.6, "pointLights": 4, "viewRadius": 30, "propShadows": true, "waterSparkles": true, "glowSprites": true, "natureVariants": 2, "decorDensity": 0.65, "terrainFringe": true, "snowDust": true, "maxChunks": 44},
+    "high": {"shadows": true, "shadowMapScale": 1, "shadowRadius": 2, "shadowHz": 0, "shadowSnapTexels": 1, "dof": true, "dofSamples": 20, "bloom": true, "grassPerTile": 4, "particleScale": 1, "pointLights": 8, "viewRadius": 36, "propShadows": true, "waterSparkles": true, "glowSprites": true, "natureVariants": 4, "decorDensity": 1.0, "terrainFringe": true, "snowDust": true, "maxChunks": 56},
+    "ultra": {"shadows": true, "shadowMapScale": 1.5, "shadowRadius": 2.5, "shadowHz": 0, "shadowSnapTexels": 1, "dof": true, "dofSamples": 32, "bloom": true, "grassPerTile": 6, "particleScale": 1.4, "pointLights": 10, "viewRadius": 44, "propShadows": true, "waterSparkles": true, "glowSprites": true, "natureVariants": 5, "decorDensity": 1.35, "terrainFringe": true, "snowDust": true, "maxChunks": 72}
+  },
+  "device": {"touchMinInternalHeight": 450},
+  "governor": {
+    "enabled": true,
+    "storageKey": "ap.render.governor",
+    "windowFrames": 90,
+    "skipAboveMs": 250,
+    "downAboveMs": 24,
+    "downWorkMs": 10,
+    "hardAboveMs": 45,
+    "upBelowMs": 19,
+    "upBelowWorkMs": 7,
+    "downWindows": 2,
+    "upWindows": 8,
+    "cooldownSeconds": 5,
+    "upLockSeconds": 90,
+    "steps": [
+      {"about": "tree shadows redraw less often", "shadowHz": 8},
+      {"about": "no depth of field and bloom: ten fewer full-screen passes", "dof": false, "bloom": false},
+      {"about": "pixels one step bigger", "scaleBias": 1},
+      {"about": "ambient particles thinned out", "particleScale": 0.4}
+    ]
   },
   "post": {
     "focusRange": 3.2,
@@ -32,7 +54,7 @@
     "split": {"lo": 0.04, "hi": 0.7}
   },
   "camera": {"near": 0.5, "far": 180, "edgeMargin": 1.5, "zoomDamping": 5, "lookAheadDamping": 2.2, "lookAheadReleaseDamping": 7, "lookAheadMinSpeed": 0.4, "lookAheadFullSpeed": 3.2, "interiorMargin": 1.2, "snapDistance": 12, "focusSafe": {"north": 0.36, "south": 0.6, "side": 0.35}, "billboard": {"lean": 1, "compensate": 1}},
-  "sun": {"distance": 60, "shadowExtent": 20, "shadowNear": 1, "shadowFar": 160, "bias": -0.0006, "normalBias": 0.035, "sunrise": 330, "sunset": 1170, "switchFadeMinutes": 28, "switchFloor": 0.12, "minElevationDeg": 11, "maxElevationDeg": 60, "azimuthRiseDeg": 72, "azimuthSetDeg": -72, "extentPerDistance": 1.15, "moonMinElevationDeg": 30, "moonMaxElevationDeg": 58, "moonAzimuthRiseDeg": 62, "moonAzimuthSetDeg": -62},
+  "sun": {"distance": 60, "shadowExtent": 20, "shadowNear": 1, "shadowFar": 160, "shadowDirEpsilon": 1e-05, "bias": -0.0006, "normalBias": 0.035, "sunrise": 330, "sunset": 1170, "switchFadeMinutes": 28, "switchFloor": 0.12, "minElevationDeg": 11, "maxElevationDeg": 60, "azimuthRiseDeg": 72, "azimuthSetDeg": -72, "extentPerDistance": 1.15, "moonMinElevationDeg": 30, "moonMaxElevationDeg": 58, "moonAzimuthRiseDeg": 62, "moonAzimuthSetDeg": -62},
   "timeOfDay": [
     {"minute": 0, "skyTop": "#050920", "skyHorizon": "#172150", "skyBottom": "#0a0f28", "sun": "#8ea6ec", "sunIntensity": 0.8, "hemiSky": "#4a5ea8", "hemiGround": "#1c1832", "hemiIntensity": 1.05, "fog": "#111a3c", "fogNear": 10, "fogFar": 58, "exposure": 1.05, "saturation": 0.86, "contrast": 1.08, "warmth": -0.4, "bloomStrength": 0.55, "vignette": 0.52, "lamps": 1, "stars": 1, "shadowTint": "#5c78b0", "highlightTint": "#8098d0", "split": 0.4, "spriteFill": "#9fb6ee", "spriteFillIntensity": 0.2, "rim": 0.8, "cloud": 0, "shaft": 0.2},
     {"minute": 290, "skyTop": "#070b26", "skyHorizon": "#1d2758", "skyBottom": "#0c112c", "sun": "#8ea6ec", "sunIntensity": 0.8, "hemiSky": "#4a5ea8", "hemiGround": "#1c1832", "hemiIntensity": 1.05, "fog": "#141d42", "fogNear": 10, "fogFar": 58, "exposure": 1.05, "saturation": 0.86, "contrast": 1.08, "warmth": -0.4, "bloomStrength": 0.55, "vignette": 0.52, "lamps": 1, "stars": 1, "shadowTint": "#5c78b0", "highlightTint": "#8098d0", "split": 0.4, "spriteFill": "#9fb6ee", "spriteFillIntensity": 0.2, "rim": 0.8, "cloud": 0, "shaft": 0.2},
