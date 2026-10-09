@@ -40,6 +40,9 @@ const MP = multiplayerJson as unknown as { online: OnlineHubRules; emotes: strin
 const RULES = MP.online
 
 const STYLE = `
+/* The lobby is a full-screen panel: it runs on the same finer unit and type tiers as the screens (ui/scale.ts screenDevicePerUnit). */
+.mp-hub { --u: calc(var(--ap-screen-scale, var(--ap-ui-scale)) * 1px); font-size: calc(var(--u) * var(--ap-t-body)); line-height: calc(var(--u) * 16); text-shadow: var(--u) var(--u) 0 rgba(3, 5, 10, 0.9); }
+.mp-hub .ap-big { font-size: calc(var(--u) * var(--ap-t-title)); line-height: calc(var(--u) * 22); }
 .mp-hub > .ap-panel { width: min(96vw, calc(var(--u) * var(--mp-list-w))); }
 .mp-hub-head { display: flex; align-items: center; gap: calc(var(--u) * 6); }
 .mp-hub-title { flex: 1 1 auto; white-space: nowrap; color: var(--ap-gold-hi); }
