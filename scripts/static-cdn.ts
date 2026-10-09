@@ -94,17 +94,33 @@ async function upload(): Promise<void> {
 
 async function verify(): Promise<void> {
   const p = plan()
-  const bad: string[] = []
   const all = [...p.bundles, ...p.pub]
-  let done = 0
-  await pool(all, async (it) => {
-    const res = await head(cdnUrl(it.key))
-    if (++done % 100 === 0 || done === all.length) console.log(`static-cdn: verified ${done}/${all.length}`)
-    const size = readFileSync(it.file).length
-    if (!res.ok) bad.push(`${res.status} ${it.key}${res.headers.get('x-error') ? ` (${res.headers.get('x-error')})` : ''}`)
-    else if (Number(res.headers.get('content-length')) !== size) bad.push(`size ${res.headers.get('content-length')} != ${size} ${it.key}`)
-    else if (!res.headers.get('access-control-allow-origin')) bad.push(`no CORS ${it.key}`)
-  }, CDN.verifyConcurrency)
+  // status 0 = the runner could not reach the CDN at all (connect reset / timeout), not a CDN answer. Those keys get slower
+  // re-check rounds; only real answers (404, wrong size, missing CORS) or keys still unreachable after every round fail.
+  const check = async (items: typeof all, width: number, log: boolean): Promise<{ bad: string[]; unreachable: typeof all }> => {
+    const bad: string[] = []
+    const unreachable: typeof all = []
+    let done = 0
+    await pool(items, async (it) => {
+      const res = await head(cdnUrl(it.key))
+      if (log && (++done % 100 === 0 || done === items.length)) console.log(`static-cdn: verified ${done}/${items.length}`)
+      const size = readFileSync(it.file).length
+      if (res.status === 0) unreachable.push(it)
+      else if (!res.ok) bad.push(`${res.status} ${it.key}`)
+      else if (Number(res.headers.get('content-length')) !== size) bad.push(`size ${res.headers.get('content-length')} != ${size} ${it.key}`)
+      else if (!res.headers.get('access-control-allow-origin')) bad.push(`no CORS ${it.key}`)
+    }, width)
+    return { bad, unreachable }
+  }
+  let { bad, unreachable } = await check(all, CDN.verifyConcurrency, true)
+  for (let round = 1; unreachable.length && round <= CDN.verifyRecheckRounds; round++) {
+    console.log(`static-cdn: ${unreachable.length} keys unreachable, re-check round ${round} in ${CDN.verifyRecheckDelayMs} ms`)
+    await new Promise((r) => setTimeout(r, CDN.verifyRecheckDelayMs))
+    const next = await check(unreachable, CDN.verifyRecheckConcurrency, false)
+    bad = [...bad, ...next.bad]
+    unreachable = next.unreachable
+  }
+  bad = [...bad, ...unreachable.map((it) => `0 ${it.key} (unreachable after ${CDN.verifyRecheckRounds} re-check rounds)`)]
   if (bad.length) die(`verify failed for ${bad.length} keys:\n${bad.slice(0, 20).join('\n')}`)
   console.log(`static-cdn: verified ${p.bundles.length + p.pub.length} keys via ${p.base}`)
 }
