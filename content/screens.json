@@ -190,7 +190,7 @@
     "cellIconSize": 28,
     "partyIconSize": 24
   },
-  "worldMap": {"townGlyph": "diamond", "playerGlyph": "mPlayer", "visitedPalette": {"h": "#fff6c8", "g": "#ffd257", "o": "#2a1a06"}, "unvisitedPalette": {"h": "#b8c0d0", "g": "#6b7488", "o": "#0d0a08"}, "minLabelTiles": 260, "padUnits": 6, "panel": {"widthUnits": 150, "nameUnits": 10, "bodyUnits": 8, "chipUnits": 8, "minPx": 12, "chipMinPx": 12, "nearRadius": 90, "questRadius": 40, "flyChips": 6, "descLinesOpen": 4, "farAbove": 1000, "services": [{"id": "heal", "npcRole": "nurse", "glyph": "mCenter", "text": "screens.map.fact.heal"}, {"id": "shop", "npcRole": "clerk", "glyph": "mShop", "text": "screens.map.fact.shop"}], "glyphs": {"gym": "mGym", "anchor": "mAnchor", "quest": "mQuest", "levels": "mWild"}}},
+  "worldMap": {"townGlyph": "diamond", "playerGlyph": "mPlayer", "visitedPalette": {"h": "#fff6c8", "g": "#ffd257", "o": "#2a1a06"}, "unvisitedPalette": {"h": "#b8c0d0", "g": "#6b7488", "o": "#0d0a08"}, "minLabelTiles": 260, "padUnits": 6, "panel": {"widthUnits": 150, "nearRadius": 90, "questRadius": 40, "flyChips": 6, "descLinesOpen": 4, "farAbove": 1000, "services": [{"id": "heal", "npcRole": "nurse", "glyph": "mCenter", "text": "screens.map.fact.heal"}, {"id": "shop", "npcRole": "clerk", "glyph": "mShop", "text": "screens.map.fact.shop"}], "glyphs": {"gym": "mGym", "anchor": "mAnchor", "quest": "mQuest", "levels": "mWild"}}},
   "anchors": {"visibleRows": 8, "compactVisibleRows": 10, "reserveUnits": {"base": 40, "home": 78}, "padFreeReserveUnits": {"base": 190, "home": 250}},
   "quests": {
     "tabs": [

@@ -198,7 +198,7 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean; anchors?: b
     const P = cfg.panel
     f.body.append(el('div', {
       class: 'aps-map-layout',
-      vars: { '--wm-side': P.widthUnits, '--wm-name': P.nameUnits, '--wm-body': P.bodyUnits, '--wm-chip': P.chipUnits, '--wm-min': `${P.minPx}px`, '--wm-chip-min': `${P.chipMinPx}px`, '--wm-desc-open': P.descLinesOpen },
+      vars: { '--wm-side': P.widthUnits, '--wm-desc-open': P.descLinesOpen },
     }, [view, side]))
     // Key caps and pad names mean nothing to a finger: touch gets no footer (the close button, pins and the action button do the work).
     let hintDevice = ctx.input.lastDevice
@@ -225,6 +225,7 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean; anchors?: b
     let sel: PlaceMark | null = null
     let sideT = 0
     let declutterT = 0
+    let firstPlaced = false
     const zoom = () => WM.zooms[zoomIdx]
 
     const resize = () => {
@@ -398,7 +399,7 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean; anchors?: b
     /** Wild anchor pins yield to places, to stronger pins (selected, grand, activated) and to the map tools. */
     const declutterPins = () => {
       const touch = document.documentElement.dataset.touchControls === 'on'
-      const sp = Math.max(WM.pinSpacingUnits * getUIScale().cssPerUnit, touch ? WM.pinTouchPx : 0)
+      const sp = Math.max(WM.pinSpacingUnits * getUIScale().screenCssPerUnit, touch ? WM.pinTouchPx : 0)
       const cellOf = (v: number) => Math.floor(v / sp)
       const taken = new Map<string, { sx: number; sy: number }[]>()
       const take = (sx: number, sy: number) => {
@@ -747,6 +748,8 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean; anchors?: b
       setZoom(zoomIdx + (e.deltaY > 0 ? WM.wheelStep : -WM.wheelStep), local(e))
     }), { passive: false })
 
+    // Name widths change when the pixel font arrives: labels must be placed again.
+    void document.fonts?.ready.then(() => { overlayDirty = true })
     const offScale = onUIScaleChange(() => requestAnimationFrame(resize))
     const onResize = () => resize()
     window.addEventListener('resize', onResize)
@@ -778,7 +781,13 @@ export function worldMapScreen(env: ScreenEnv, opts: { fly: boolean; anchors?: b
         panAxis = { x: 0, y: 0 }
         bakeSome()
         if (dirty) { dirty = false; render() }
-        if (overlayDirty) { overlayDirty = false; layoutOverlay(); if (snap()) layoutOverlay() }
+        if (overlayDirty) {
+          overlayDirty = false
+          layoutOverlay()
+          if (snap()) layoutOverlay()
+          // The first picture is already tidy; later passes wait for the pan / zoom to settle (declutterT).
+          if (!firstPlaced && cssW > 1) { firstPlaced = true; declutter() }
+        }
         if (declutterT > 0) { declutterT -= dt; if (declutterT <= 0) declutter() }
         if (ctx.input.lastDevice !== hintDevice) paintHints()
         sideT -= dt

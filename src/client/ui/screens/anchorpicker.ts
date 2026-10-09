@@ -110,7 +110,7 @@ export function anchorPickerScreen(env: ScreenEnv, opts: { hereId?: string }): P
         disabled: d.here,
       })), {
         visibleRows: rows,
-        reservePx: (list.home ? SCREENS.anchors.padFreeReserveUnits.home : SCREENS.anchors.padFreeReserveUnits.base) * getUIScale().cssPerUnit,
+        reservePx: (list.home ? SCREENS.anchors.padFreeReserveUnits.home : SCREENS.anchors.padFreeReserveUnits.base) * getUIScale().screenCssPerUnit,
         padFree: true,
         initial: Math.min(keep, Math.max(0, shown.length - 1)),
         wrap: true,
