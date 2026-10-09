@@ -48,16 +48,19 @@ export function sheetLayout(c: Content = CONTENT, texture?: THREE.Texture | null
   return { ...characterFrames(texture ? textureSize(texture).w : 0, s), rows, rowOf: s.sheetRows }
 }
 
-const opaqueTops = new WeakMap<object, { key: string; tops: Float32Array }>()
+/** Per image and per measuring grid: two actors may cut the same atlas differently, and one must not evict the other. */
+const opaqueTops = new WeakMap<object, Map<string, Float32Array>>()
 
-/** Top opaque texel of a cell, measured as a fraction above the card bottom. Read each loaded atlas only once. */
+/** Top opaque texel of a cell, measured as a fraction above the card bottom. Read each loaded atlas only once per grid. */
 export function spriteOpaqueTop(texture: THREE.Texture | null, col = 0, row = 0, cols = 1, rows = 1, alphaTest = 0.5): number {
   const image = texture?.image as HTMLCanvasElement | undefined
   if (!image || !(image.width > 0 && image.height > 0)) return 1
   const key = `${image.width}/${image.height}/${cols}/${rows}/${alphaTest}`
-  let cached = opaqueTops.get(image)
-  if (!cached || cached.key !== key) {
-    const tops = new Float32Array(cols * rows).fill(1)
+  let grids = opaqueTops.get(image)
+  if (!grids) opaqueTops.set(image, (grids = new Map()))
+  let tops = grids.get(key)
+  if (!tops) {
+    tops = new Float32Array(cols * rows).fill(1)
     try {
       const canvas = typeof image.getContext === 'function' ? image : createCanvas(image.width, image.height)
       const g = canvas.getContext('2d', { willReadFrequently: true })!
@@ -78,10 +81,9 @@ export function spriteOpaqueTop(texture: THREE.Texture | null, col = 0, row = 0,
     } catch {
       // A loading placeholder or unreadable cross-origin image keeps the full-card fallback.
     }
-    cached = { key, tops }
-    opaqueTops.set(image, cached)
+    grids.set(key, tops)
   }
-  return cached.tops[row * cols + col] ?? 1
+  return tops[row * cols + col] ?? 1
 }
 
 /**

@@ -358,6 +358,12 @@ export interface ChatUI {
   setVisible(v: boolean): void
 }
 
+export interface TypeChartOptions {
+  view?: 'type' | 'grid' | 'loops'
+  /** Type shown first (per-type view) or under the cursor (grid view). */
+  type?: string
+}
+
 /** High-level screens (src/client/ui/screens/*). All resolve when closed. */
 export interface Screens {
   title(hasSave: boolean): Promise<'continue' | 'new' | 'import' | 'settings'>
@@ -374,6 +380,8 @@ export interface Screens {
   exchange(desk: string): Promise<void>
   /** 教学手册: every curriculum lesson, re-readable (content/tutorial.json curriculum). */
   manual(): Promise<void>
+  /** 属性克制表: per-type matchups, the full grid and the memory loops, all read from content/types.json. */
+  typeChart(opts?: TypeChartOptions): Promise<void>
   box(): Promise<void>
   /** fly: pick a town to fly to; anchors: pick an activated teleport anchor. Resolves a place id / anchor id, null when closed. */
   worldMap(opts: { fly: boolean; anchors?: boolean }): Promise<string | null>

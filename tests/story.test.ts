@@ -123,7 +123,7 @@ test('trainers: references, resolved species, levels, sprites', () => {
 const KNOWN_OPS = new Set([
   'say', 'choice', 'setFlag', 'ifFlag', 'ifBadges', 'ifItem', 'ifCaught', 'giveItem', 'takeItem', 'giveMoney', 'takeMoney',
   'giveCreature', 'chooseStarter', 'battle', 'wildBattle', 'heal', 'shop', 'openBox', 'quest', 'warp', 'moveNpc', 'faceNpc',
-  'hideNpc', 'showNpc', 'sfx', 'bgm', 'wait', 'fade', 'unlockTown', 'setRespawn', 'end', 'exchange', 'teach',
+  'hideNpc', 'showNpc', 'sfx', 'bgm', 'wait', 'fade', 'unlockTown', 'setRespawn', 'end', 'exchange', 'teach', 'openTypeChart',
 ])
 
 test('scripts are well-formed recursively and every reference resolves', () => {

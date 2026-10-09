@@ -43,6 +43,12 @@ function apply(): void {
   root.style.setProperty('--ap-ui-scale', String(s.cssPerUnit))
   root.classList.toggle('ap-compact', s.compact)
   root.classList.toggle('ap-portrait', s.portrait)
+  const z = UI_CONFIG.phoneHud[s.portrait ? 'portrait' : 'landscape']
+  root.style.setProperty('--ap-ph-toast-top', String(z.toast.top))
+  root.style.setProperty('--ap-ph-toast-left', String(z.toast.left))
+  root.style.setProperty('--ap-ph-toast-right', String(z.toast.right))
+  root.style.setProperty('--ap-ph-lower-w', String(z.lowerStackWidth))
+  root.style.setProperty('--ap-ph-banner-lines', String(z.bannerSubLines))
   if (changed) for (const fn of listeners) fn(s)
 }
 
@@ -56,6 +62,9 @@ function setStaticVars(): void {
   root.setProperty('--ap-toast-enter-ms', `${a.toastEnterMs}ms`)
   root.setProperty('--ap-toast-leave-ms', `${a.toastLeaveMs}ms`)
   // --ap-touch-inset / -left-inset / -right-inset belong to the touch pad (core/input-touch.ts publishes them per orientation).
+  root.setProperty('--ap-ph-toast-lines', String(UI_CONFIG.phoneHud.toastLines))
+  root.setProperty('--ap-ph-chat-clear', `${UI_CONFIG.phoneHud.chatClearPx}px`)
+  root.setProperty('--ap-ph-tip-foot-gap', `${UI_CONFIG.phoneHud.tipFootGapPx}px`)
   root.setProperty('--ap-minimap-size', String(UI_CONFIG.minimap.size))
   root.setProperty('--ap-minimap-compact-size', String(UI_CONFIG.minimap.compactSize))
   root.setProperty('--ap-minimap-ring', String(UI_CONFIG.minimap.ring))

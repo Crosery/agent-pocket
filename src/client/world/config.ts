@@ -13,7 +13,7 @@ export interface PropInteraction { action: 'box' | 'statue' | 'text' | 'script' 
 
 export interface GameTuning {
   loop: { maxDtSec: number; pauseWhenHidden: boolean }
-  loading: { showAfterMs: number; fadeOutMs: number; steps: string[] }
+  loading: { showAfterMs: number; fadeOutMs: number; steps: string[]; worldSliceMs: number }
   title: { importCodeMaxLen: number }
   newGame: { startAnchor: string; facing: Dir; respawnAtStart: boolean; introScript: ScriptStep[] }
   player: {

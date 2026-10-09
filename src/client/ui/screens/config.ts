@@ -8,7 +8,7 @@ import type { GlyphDef } from '../config.ts'
 
 export interface MenuEntry { id: string; label: string }
 
-export type PauseAction = 'dex' | 'party' | 'bag' | 'map' | 'quests' | 'research' | 'intel' | 'manual' | 'online' | 'save' | 'settings' | 'title'
+export type PauseAction = 'dex' | 'party' | 'bag' | 'map' | 'quests' | 'research' | 'intel' | 'manual' | 'typeChart' | 'online' | 'save' | 'settings' | 'title'
 export type TitleChoice = 'continue' | 'new' | 'import' | 'settings'
 export type SettingsKey = keyof Settings
 
@@ -82,6 +82,22 @@ export interface KeyItemAction {
   action?: InputAction
 }
 
+export type TypeChartView = 'type' | 'grid' | 'loops'
+export type ChartTone = 'good' | 'warn' | 'bad' | 'null'
+
+/** One row of the per-type view: the multiplier it lists, its text key id (screens.typeChart.<side>.<id>) and its colour. */
+export interface MatchupRow { id: string; mul: number; tone: ChartTone }
+
+export interface TypeChartConfig {
+  views: TypeChartView[]
+  tones: Record<ChartTone, { bg: string; fg: string }>
+  matchups: { attack: MatchupRow[]; defend: MatchupRow[] }
+  picker: { cols: number; compactCols: number; tileH: number; icon: number }
+  chip: { icon: number }
+  grid: { cellW: number; cellH: number; headW: number; headH: number; icon: number; sideW: number }
+  loops: { ring: { w: number; h: number; radius: number; node: number; gap: number; stroke: number; head: number; label: number } }
+}
+
 export interface ScreensConfig {
   sfx: Record<'useItem' | 'heal' | 'buy' | 'sell' | 'save' | 'learn' | 'levelUp' | 'release' | 'toss' | 'start' | 'pick' | 'drop' | 'error' | 'shiny' | 'press', string>
   anim: { walkFps: number; walkTurnMs: number; cardStaggerMs: number; pressBlinkMs: number; artPanSeconds: number; mapBlinkMs: number; creditsScrollUnits: number }
@@ -142,6 +158,7 @@ export interface ScreensConfig {
   quests: { tabs: (MenuEntry & { kinds: ('main' | 'side')[]; done: boolean })[]; visibleRows: number; compactVisibleRows: number }
   /** Teleport-anchor picker (anchorpicker.ts): rows of the destination list. */
   anchors: { visibleRows: number; compactVisibleRows: number; reserveUnits: { base: number; home: number } }
+  typeChart: TypeChartConfig
   moveCategoryColors: Record<'physical' | 'special' | 'status', string>
   badges: { tintLight: number; tintDark: number; cols: number; compactCols: number }
   settings: {
@@ -158,7 +175,7 @@ export interface ScreensConfig {
 export const SCREENS: ScreensConfig = screensJson as unknown as ScreensConfig
 
 const ITEM_CATEGORIES: readonly ItemCategory[] = ['ball', 'medicine', 'battle', 'key', 'chip', 'evolution', 'misc']
-const PAUSE_ACTIONS: readonly PauseAction[] = ['dex', 'party', 'bag', 'map', 'quests', 'research', 'intel', 'manual', 'online', 'save', 'settings', 'title']
+const PAUSE_ACTIONS: readonly PauseAction[] = ['dex', 'party', 'bag', 'map', 'quests', 'research', 'intel', 'manual', 'typeChart', 'online', 'save', 'settings', 'title']
 
 /** Validates content/screens.json against the content registry. Returns human-readable problems (empty = OK). */
 export function validateScreensConfig(cfg: ScreensConfig, c: Content, ui: { glyphs: Record<string, unknown>; glyphPalette: Record<string, string> }): string[] {
@@ -232,6 +249,35 @@ export function validateScreensConfig(cfg: ScreensConfig, c: Content, ui: { glyp
   if (cfg.box.wallpapers.length === 0) errs.push('box.wallpapers must not be empty')
   if (!glyphKnown(cfg.worldMap.townGlyph)) errs.push(`worldMap.townGlyph: unknown glyph "${cfg.worldMap.townGlyph}"`)
   if (!glyphKnown(cfg.worldMap.playerGlyph)) errs.push(`worldMap.playerGlyph: unknown glyph "${cfg.worldMap.playerGlyph}"`)
+  errs.push(...validateTypeChartConfig(cfg.typeChart, c))
+  return errs
+}
+
+/** typeChart: every view and matchup row has its text, tones exist, multipliers are real chart values. */
+export function validateTypeChartConfig(cfg: TypeChartConfig, c: Content): string[] {
+  const errs: string[] = []
+  const text = (where: string, key: string) => { if (!(key in c.text)) errs.push(`typeChart.${where}: missing text "${key}"`) }
+  if (!cfg.views.length) errs.push('typeChart.views must not be empty')
+  for (const v of cfg.views) text(`views.${v}`, `screens.typeChart.view.${v}`)
+  const mults = new Set<number>([0, 0.5, 1, 2])
+  for (const side of ['attack', 'defend'] as const) {
+    const seen = new Set<number>()
+    for (const r of cfg.matchups[side]) {
+      text(`matchups.${side}.${r.id}`, `screens.typeChart.${side}.${r.id}`)
+      if (!(r.tone in cfg.tones)) errs.push(`typeChart.matchups.${side}.${r.id}: unknown tone "${r.tone}"`)
+      if (!mults.has(r.mul) || r.mul === 1) errs.push(`typeChart.matchups.${side}.${r.id}: multiplier ${r.mul} is not a chart value other than 1`)
+      if (seen.has(r.mul)) errs.push(`typeChart.matchups.${side}: duplicate multiplier ${r.mul}`)
+      seen.add(r.mul)
+    }
+    text(`${side}.title`, `screens.typeChart.${side}.title`)
+  }
+  for (const r of cfg.matchups.attack) {
+    text(`cell.${r.id}`, `screens.typeChart.cell.${r.id}`)
+    text(`legend.${r.id}`, `screens.typeChart.legend.${r.id}`)
+    text(`verdict.${r.id}`, `screens.typeChart.verdict.${r.id}`)
+  }
+  for (const k of ['neutral']) { text(`legend.${k}`, `screens.typeChart.legend.${k}`); text(`verdict.${k}`, `screens.typeChart.verdict.${k}`) }
+  for (const t of c.types) if (!t.icon) errs.push(`typeChart: type "${t.id}" has no icon`)
   return errs
 }
 

@@ -841,6 +841,8 @@ export type ScriptStep =
   | { op: 'exchange'; desk: string }
   /** Records that this NPC delivered a curriculum lesson (content/tutorial.json): the manual marks it learnt. */
   | { op: 'teach'; lesson: string }
+  /** Opens the type chart (属性克制表), optionally on a view and a type. */
+  | { op: 'openTypeChart'; view?: 'type' | 'grid' | 'loops'; type?: string }
   | { op: 'quest'; quest: string; stage: number; done?: boolean }
   | { op: 'warp'; map: string; x: number; y: number; facing: Dir }
   | { op: 'moveNpc'; npc: string; path: Dir[] }

@@ -114,6 +114,7 @@ export function pauseScreen(env: ScreenEnv): Promise<void> {
         case 'research': await researchScreen(env); break
         case 'intel': await intelScreen(env); break
         case 'manual': await env.screens.manual(); break
+        case 'typeChart': await env.screens.typeChart(); break
         case 'online': ctx.events.emit('screen:opened', { screen: 'online' }); await env.screens.online(); break
         case 'settings': await env.screens.settings(); break
         case 'save':
