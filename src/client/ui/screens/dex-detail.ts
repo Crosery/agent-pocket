@@ -42,6 +42,8 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
         ...(extraEnglishName(sp) ? [el('div', { class: 'ap-dim aps-dexd-en ap-model-name', text: sp.nameEn, title: sp.nameEn, attrs: { 'aria-label': sp.nameEn } })] : []),
         el('div', 'aps-chips', [...sp.types.map((ty) => typeChip(ty)), rarityBadge(sp.rarity, { label: 'name' })]),
         el('div', 'aps-dexd-btns', [cryBtn, shinyBtn]),
+        // The radar lives under the portrait: the data columns have no room left for it beside the bars.
+        ...(caught ? [statRadar(sp.baseStats, Math.max(...statKeys().map((k) => sp.baseStats[k]), 1), { size: cfg.radarSize, values: false }).el] : []),
       )
       const habitats = el('div', 'aps-chips', sp.habitats.map((b) => el('span', { class: 'aps-tag', text: CONTENT.biomeById[b]?.nameZh ?? b })))
       setChildren(mid, [
@@ -51,12 +53,11 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
         infoRow(t('screens.dex.release'), sp.releaseDate),
         infoRow(t('screens.dex.category'), textOrKey(`screens.category.${sp.category}`)),
         infoRow(t('screens.dex.habitat'), habitats),
-        researchBlock(sp),
         sectionTitle(t('screens.dex.entry')),
         caught ? el('p', { class: 'aps-dexd-entry', text: sp.dexEntry }) : el('p', { class: 'aps-dexd-entry ap-dim', text: t('screens.dex.lockedEntry') }),
         caught ? el('p', 'aps-dexd-persona', [el('span', { class: 'ap-gold', text: t('screens.starter.personality') }), sp.personality]) : null,
       ])
-      right.replaceChildren(sectionTitle(t('screens.dex.baseStats')), caught ? statsBlock(sp) : el('p', { class: 'ap-dim', text: t('screens.dex.lockedStats') }), sectionTitle(t('screens.dex.evolution')), evoBlock(sp))
+      right.replaceChildren(sectionTitle(t('screens.dex.baseStats')), caught ? statsBlock(sp) : el('p', { class: 'ap-dim', text: t('screens.dex.lockedStats') }), sectionTitle(t('screens.dex.evolution')), evoBlock(sp), researchBlock(sp))
       f.setHints([['ud', t('screens.dex.hint.browse')], ...(caught ? [['lr', t('screens.dex.hint.shiny')] as ['lr', string]] : []), ['confirm', t('screens.dex.hint.cry')], ['cancel', t('screens.hint.back')]])
     }
 
@@ -68,10 +69,8 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
         el('span', { class: 'aps-bstat-v', text: String(sp.baseStats[k]) }),
         el('span', { class: 'aps-bstat-bar', vars: { '--p': Math.min(1, sp.baseStats[k] / cfg.statBarMax) } }),
       ]))
-      const radar = statRadar(sp.baseStats, Math.max(...keys.map((k) => sp.baseStats[k]), 1), { size: cfg.radarSize, values: false })
       return el('div', 'aps-bstats', [
         el('div', 'aps-bstat-list', [...bars, el('div', 'aps-bstat is-total', [el('span', { class: 'aps-bstat-k', text: t('screens.dex.total') }), el('span', { class: 'aps-bstat-v ap-gold', text: String(total) })])]),
-        radar.el,
       ])
     }
 
@@ -111,7 +110,7 @@ export function dexDetailScreen(env: ScreenEnv, list: SpeciesDef[], start: numbe
             eventIconUrl ? el('img', { attrs: { src: eventIconUrl, alt: '', draggable: 'false' } }) : null,
             el('span', { text: t('screens.dex.researchEvents') }),
           ]),
-          el('ul', 'aps-dexd-research-event-list', events.map((title) => el('li', { text: title }))),
+          el('ul', 'aps-dexd-research-event-list', events.map((title) => el('li', { text: title, title }))),
         ]) : null,
       ])
     }

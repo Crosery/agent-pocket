@@ -169,7 +169,7 @@
     "searchMaxLen": 16,
     "companiesFromSeenOnly": true,
     "statBarMax": 180,
-    "radarSize": 60,
+    "radarSize": 46,
     "cryOnOpen": true
   },
   "shop": {"tabs": [{"id": "buy", "label": "screens.shop.tab.buy"}, {"id": "sell", "label": "screens.shop.tab.sell"}], "qtyMax": 99, "qtyBigStep": 10, "visibleRows": 11, "compactVisibleRows": 10},
