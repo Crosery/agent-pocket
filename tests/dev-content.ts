@@ -1,6 +1,6 @@
 // Developer-mode content read straight from disk (the browser gets the same files through Vite's glob import).
 import { readdirSync, readFileSync } from 'node:fs'
-import type { DevBeat, DevScenario, DevTeam } from '../src/shared/types.ts'
+import type { DevAcceptance, DevBeat, DevScenario, DevTeam } from '../src/shared/types.ts'
 import type { DevContent } from '../src/client/dev/content.ts'
 
 const dir = new URL('../content/dev/', import.meta.url)
@@ -12,5 +12,6 @@ export function devContentFromDisk(): DevContent {
     const sc = json<DevScenario>(`scenarios/${f}`)
     scenarios[sc.id] = sc
   }
-  return { scenarios, beats: json<Record<string, DevBeat>>('beats.json'), teams: json<Record<string, DevTeam>>('teams.json') }
+  const acceptance = readdirSync(new URL('acceptance/', dir)).filter((n) => n.endsWith('.json')).map((f) => json<DevAcceptance>(`acceptance/${f}`)).sort((a, b) => a.issue - b.issue)
+  return { scenarios, beats: json<Record<string, DevBeat>>('beats.json'), teams: json<Record<string, DevTeam>>('teams.json'), acceptance }
 }

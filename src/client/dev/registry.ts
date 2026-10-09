@@ -29,6 +29,25 @@ export interface CommandMeta {
   args: ArgSpec[]
 }
 
+export type PanelControl =
+  | { kind: 'cmd'; cmd: string }
+  | { kind: 'preset'; cmd: string; args: Record<string, unknown>; labelKey: string }
+  | { kind: 'readout'; pointer: string; labelKey: string }
+  | { kind: 'list'; source: string; cmd: string; argName: string; limit: number; args?: Record<string, unknown> }
+  | { kind: 'acceptance' }
+
+export interface PanelFile {
+  /** KeyboardEvent.code that opens and closes the panel. */
+  toggleCode: string
+  readoutMs: number
+  listLimit: number
+  outputLines: number
+  outputChars: number
+  /** Viewport width (px) up to which the panel becomes a bottom sheet. */
+  compactMaxWidth: number
+  tabs: { id: string; titleKey: string; sections: { titleKey: string; controls: PanelControl[] }[] }[]
+}
+
 export interface ConsoleFile {
   limits: {
     eventBuffer: number; logLines: number; waitTimeoutMs: number; waitPollMs: number; dumpMaxChars: number
@@ -40,6 +59,7 @@ export interface ConsoleFile {
     reloadSlot: number
   }
   commands: Record<string, CommandMeta>
+  panel: PanelFile
   /** Deprecated window.__ap.<name> hooks -> what to use instead (printed once per name). */
   legacy: Record<string, string>
 }
@@ -63,6 +83,8 @@ export interface Taint { count: number; firstAt: number | null }
 
 export interface Registry {
   has(id: string): boolean
+  /** Validates and coerces arguments exactly like run() would, without running anything. */
+  check(id: string, args?: CommandArgs): CommandArgs
   /** Validates and coerces the arguments, runs the command and returns its JSON-safe result. */
   run(id: string, args?: CommandArgs): Promise<unknown>
   /** "tp.xy 100 200" or `give potion 3`: whitespace separated, "double quotes" keep spaces, args by position. */
@@ -124,10 +146,9 @@ export function createRegistry(
   const now = opts.now ?? Date.now
   const taint: Taint = { count: 0, firstAt: null }
 
-  async function run(id: string, raw: CommandArgs = {}): Promise<unknown> {
+  function check(id: string, raw: CommandArgs = {}): CommandArgs {
     const m = meta[id]
-    const impl = impls[id]
-    if (!m || !impl) throw new DevError('dev.err.unknownCmd', { id })
+    if (!m || !impls[id]) throw new DevError('dev.err.unknownCmd', { id })
     const args: CommandArgs = {}
     for (const spec of m.args) {
       const v = raw[spec.name]
@@ -139,13 +160,20 @@ export function createRegistry(
     }
     const extra = Object.keys(raw).filter((k) => !m.args.some((a) => a.name === k))
     if (extra.length) throw new DevError('dev.err.extraArgs', { args: extra.join(', ') })
-    const result = await impl(host, args)
+    return args
+  }
+
+  async function run(id: string, raw: CommandArgs = {}): Promise<unknown> {
+    const args = check(id, raw)
+    const m = meta[id]
+    const result = await impls[id](host, args)
     if (m.mutates) { taint.count++; taint.firstAt ??= now() }
     return result === undefined ? null : JSON.parse(JSON.stringify(result))
   }
 
   return {
     has: (id) => !!meta[id] && !!impls[id],
+    check,
     run,
     runLine(line) {
       const [id, ...rest] = tokenize(line.trim())

@@ -21,6 +21,7 @@ import { CONSOLE, createRegistry } from './registry.ts'
 import { prepareScenario, runScenarioCommands, settleScenario } from './scenario.ts'
 import { dumpState } from './state.ts'
 import { installDevText } from './text.ts'
+import { mountPanel } from './ui/panel.ts'
 
 /** Marks the devtools bundle (content/dev/gate.json `sentinel`): required there by scripts/check-dev-gate.mjs, forbidden in the production build. */
 export const DEV_SENTINEL = '__AP_DEV_SENTINEL'
@@ -92,6 +93,7 @@ export function createDevKit(search: string): DevKit | null {
       ;(w.__ap as Record<string, unknown>).build = { devtools: true, sentinel: DEV_SENTINEL }
       const registry = createRegistry(h, COMMANDS, { enums: devEnums(content) })
       mountApi(createApiV1({ host: h, registry, log, extras }))
+      mountPanel(h, registry)
     },
     async runActions(ctx, overworld, world, screens) {
       if (host && prepared) {

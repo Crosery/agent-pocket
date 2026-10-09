@@ -304,4 +304,21 @@ test('lists: every source answers, filters by id or name, caps, and reflects sta
   assert.deepEqual(listEntries(host, 'roamers')[0].info, { x: 3, y: 4, mood: 'idle' })
 })
 
+test('scenario: open reloads through the scenario URL, check reports the loaded scenario\'s expectations', async () => {
+  const { reg, host } = rig()
+  const assigned: string[] = []
+  ;(globalThis as Record<string, unknown>).location = { search: '?dev=1', pathname: '/game', assign: (u: string) => assigned.push(u) }
+  const res = await reg.run('scenario.open', { id: 'fresh-start' }) as { reloading: string }
+  assert.equal(res.reloading, '/game?dev=1&scenario=fresh-start')
+  await new Promise((ok) => setTimeout(ok, 120))
+  assert.deepEqual(assigned, [res.reloading])
+  await rejects(reg.run('scenario.open', { id: 'nope' }))
+  assert.deepEqual(await reg.run('scenario.check'), { scenario: null, ok: true, results: [] })
+  host.session.scenario = 'fresh-start'
+  host.dump = () => ({ runtime: { map: 'elsewhere' }, save: {} })
+  const r = await reg.run('scenario.check') as { scenario: string; ok: boolean; results: { path: string; ok: boolean }[] }
+  assert.equal(r.scenario, 'fresh-start')
+  assert.ok(r.results.length > 0 && typeof r.ok === 'boolean')
+})
+
 after(() => { delete (globalThis as Record<string, unknown>).location })

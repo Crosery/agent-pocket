@@ -1299,3 +1299,6 @@ export interface DevScenario {
   then?: DevCommandCall[]
   expect?: DevExpectation[]
 }
+
+/** content/dev/acceptance/<issue>.json: the scenarios a worker ships with an issue, shown on the panel's acceptance tab. */
+export interface DevAcceptance { issue: number; titleKey: string; scenarios: string[] }
