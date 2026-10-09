@@ -70,6 +70,8 @@ html.ap-battle-on[data-touch-controls] { --ap-bottom-inset: 0px; }
 .apb-status.is-own { --apb-frame: var(--apb-f-own); grid-column: 3; width: calc(var(--u) * var(--apb-own-w, 188)); min-height: var(--apb-barh); }
 .apb-status.is-away.is-foe { transform: translateX(calc(var(--u) * -220)); opacity: 0; }
 .apb-status.is-away.is-own { opacity: 0.35; }
+/* before our creature has been sent out the own card is only a frame: no frame, no click target; it keeps its place so the bar and the camera do not move when it fades in */
+.apb-status.is-away.is-own.is-empty { opacity: 0; pointer-events: none; }
 .apb-status.is-empty > * { visibility: hidden; }
 .apb-st-head { display: flex; flex-wrap: nowrap; align-items: center; gap: calc(var(--u) * 4); white-space: nowrap; min-height: calc(var(--u) * 15); }
 /* one line, always: the card shows the short name, the full one is the tooltip and the status sheet's */

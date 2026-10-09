@@ -288,3 +288,11 @@ test('card names drop their parenthetical and never come back empty', () => {
     assert.ok(shortName(sp.nameZh).length <= sp.nameZh.length, sp.id)
   }
 })
+
+test('the own card draws nothing until our creature is out (no empty frame in the opening)', () => {
+  const css = readFileSync(join(ROOT, 'src/client/battle/battle.css'), 'utf8')
+  assert.match(css, /\.apb-status\.is-away\.is-own\.is-empty\s*\{[^}]*opacity:\s*0[;\s][^}]*pointer-events:\s*none/)
+  const panel = readFileSync(join(ROOT, 'src/client/battle/status-panel.ts'), 'utf8')
+  assert.match(panel, /is-away is-empty/, 'a panel starts away and empty')
+  assert.match(panel, /classList\.remove\('is-empty'\)/, 'the first creature fills it')
+})

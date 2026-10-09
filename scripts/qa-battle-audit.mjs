@@ -5,7 +5,7 @@
 //   const { runBattleAudit } = await import('file:///<repo>/scripts/qa-battle-audit.mjs')
 //   await runBattleAudit({ task: await taskSpace(<id>), base: 'http://127.0.0.1:<port>', phase: 'audit' })
 //   JS
-// Output: output/32/<phase>/<viewport>/<scenario>-<state>.png and report.json.
+// Output: output/<issue>/<phase>/<viewport>/<scenario>-<state>.png and report.json (issue defaults to 32).
 import assert from 'node:assert/strict'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
@@ -18,7 +18,13 @@ export const BATTLE_SCENARIOS = [
   { id: 'wild', query: 'battle=wild' },
   { id: 'trainer', query: 'battle=trainer&trainer=route-1' },
 ]
-export const BATTLE_STATES = ['msg', 'cmd', 'moves', 'bag', 'party', 'inspect', 'pause']
+export const BATTLE_STATES = ['opening', 'msg', 'cmd', 'moves', 'bag', 'party', 'inspect', 'pause']
+
+/** Runs in the page: a status window that has no creature yet draws nothing (no empty frame). */
+const emptyFrames = () => [...document.querySelectorAll('.apb-status.is-empty')]
+  .filter((n) => n.checkVisibility() && Number(getComputedStyle(n).opacity) > 0.05)
+  .map((n) => ({ type: 'empty-frame', sel: n.className.slice(0, 40), text: '', detail: `an empty status window is drawn (opacity ${getComputedStyle(n).opacity})` }))
+
 
 /** Runs in the page: card and sheet headers keep every part on one line, names clamp instead of wrapping, the command hint fits its window. */
 const textFit = () => {
@@ -52,10 +58,10 @@ const textFit = () => {
 }
 
 
-export async function runBattleAudit({ task, base, phase = 'audit', viewports = BATTLE_VIEWPORTS, scenarios = BATTLE_SCENARIOS, states = BATTLE_STATES, slot = '2032100003', repoRoot = null }) {
+export async function runBattleAudit({ task, base, phase = 'audit', viewports = BATTLE_VIEWPORTS, scenarios = BATTLE_SCENARIOS, states = BATTLE_STATES, slot = '2032100003', repoRoot = null, issue = 32 }) {
   assert.match(phase, /^[a-z0-9-]+$/)
   const root = repoRoot ?? fileURLToPath(new URL('..', import.meta.url))
-  const outDir = `${root}output/32/${phase}/`
+  const outDir = `${root}output/${issue}/${phase}/`
   const page = task.page('p1')
   const report = []
   const key = async (k, n = 1) => { for (let i = 0; i < n; i++) { await page.keyboard.press(k); await page.waitForTimeout(140) } }
@@ -76,6 +82,16 @@ export async function runBattleAudit({ task, base, phase = 'audit', viewports = 
         await page.waitForFunction(() => document.querySelector('.apb-root'), undefined, { timeout: 30000 })
         await setBattleViewport(page, vp)
         await page.evaluate(() => { window.__AP.save.settings.showTips = false })
+        if (states.includes('opening') && sc.id === 'wild') {
+          // the opening message, before our creature is out: the battle clock is held (a kit screen on top) so the frame stays for the shot
+          await page.waitForFunction(() => (document.querySelector('.apb-msg')?.textContent ?? '').length > 4 && !document.querySelector('.apb-menu')?.checkVisibility(), undefined, { timeout: 15000 })
+          await page.evaluate(() => { const h = document.createElement('div'); h.className = 'aps-screen'; h.dataset.auditHold = ''; h.style.cssText = 'position:absolute;width:0;height:0;pointer-events:none'; document.querySelector('.ap-kit-stack').append(h) })
+          await page.waitForTimeout(700)
+          const r = await measureScreen(page, { scope: '.apb-root', ignore: '' }, `${outDir}${vp.name}/${sc.id}-opening.png`)
+          violations.push(...r.violations, ...(await page.evaluate(emptyFrames)))
+          record('opening', { warnings: r.warnings })
+          await page.evaluate(() => document.querySelector('[data-audit-hold]')?.remove())
+        }
         const intro = await page.waitForFunction(() => document.querySelector('.apb-bi.is-playing, .apb-bi.is-static'), undefined, { timeout: 4000 }).then(() => true).catch(() => false)
         if (intro) {
           await page.waitForTimeout(1500)
@@ -89,7 +105,7 @@ export async function runBattleAudit({ task, base, phase = 'audit', viewports = 
         await page.waitForTimeout(1800)
         const measure = async (state) => {
           const r = await measureScreen(page, { scope: '.apb-root', ignore: '' }, `${outDir}${vp.name}/${sc.id}-${state}.png`)
-          violations.push(...r.violations, ...(await page.evaluate(textFit)))
+          violations.push(...r.violations, ...(await page.evaluate(textFit)), ...(await page.evaluate(emptyFrames)))
           record(state, { warnings: r.warnings, stats: r.stats?.battle })
         }
         for (const st of states) {
