@@ -6,7 +6,8 @@ The look stays the original 2D drawing: pixels are only moved or duplicated, nev
 Rig per frame: head / body / legs bands (neck = narrowest row inside `bands.neckBand`, legs = bottom `bands.legFrac`),
 arms = body pixels outside the legs' columns below `arms.topFrac`, legs split at their middle column. Pieces not
 connected to the figure (a hovering drone) move rigidly with the body.
-  idle  the stand pose (front / back: both feet planted first) breathing: the body sinks 1 px over `idle.body`, the
+  idle  the stand pose (front / back: both feet planted first; side: the drawn stride with both legs sheared under
+        the hips, so neither foot is lifted) breathing: the body sinks 1 px over `idle.body`, the
         head follows `idle.headLag` frames later
   walk  front / back: from the planted stand pose, one foot lifted per step (`walk.front`), the arms counter-swinging
         `arms.swing` px; side: the drawn strides (`walk.sidePoses`). Each pose is shown twice, first with the head
@@ -220,6 +221,44 @@ def side_strides(f: np.ndarray, row: str) -> tuple[np.ndarray, np.ndarray]:
     return shade_far(f, back), shade_far(f, fwd)
 
 
+def _common(f: np.ndarray, mask: np.ndarray) -> np.ndarray | None:
+    """Most frequent colour (RGBA) under mask, or None."""
+    px = f[mask]
+    if not len(px):
+        return None
+    cols, counts = np.unique(px, axis=0, return_counts=True)
+    return cols[int(np.argmax(counts))]
+
+
+def side_stand(stride: np.ndarray, row: str) -> np.ndarray:
+    """Side stand pose from the drawn stride (both feet on the ground): the legs band (from the hip row) cut in two
+    along the crotch-to-feet line, each leg sheared (0 at the hip row, full at the foot) so its foot lands under the
+    hips, `side.standGap` px ahead of / behind the hip centre; back leg drawn first. Rows never change, so both
+    feet stay on the baseline. The stride itself when its legs cannot be split."""
+    sd = CFG["walk"]["side"]
+    forward_left = sd["forwardLeft"][row]
+    legs = _split_legs(stride, forward_left)
+    if legs is None:
+        return stride.copy()
+    fwd, back = legs
+    y0 = int(np.nonzero((fwd | back).any(axis=1))[0].min())
+    xs = np.nonzero(_opaque(stride)[y0 - 1])[0]
+    hip_x = (xs.min() + xs.max()) / 2
+    ahead = -1 if forward_left else 1
+    out = stride.copy()
+    out[fwd | back] = 0
+    for leg, target in ((back, hip_x - ahead * sd["standGap"]), (fwd, hip_x + ahead * sd["standGap"])):
+        ys, lx = np.nonzero(leg)
+        yb = ys.max()
+        foot_x = lx[ys >= yb - 1].mean()
+        for y in range(y0, yb + 1):
+            cols = lx[ys == y]
+            tx = cols + round((target - foot_x) * (y - y0) / max(yb - y0, 1))
+            ok = (tx >= 0) & (tx < out.shape[1])
+            out[y, tx[ok]] = stride[y, cols[ok]]
+    return out
+
+
 def _low(f: np.ndarray) -> int:
     return int(np.nonzero(_opaque(f).any(axis=1))[0].max())
 
@@ -263,7 +302,10 @@ def build_sheet(base: np.ndarray) -> np.ndarray:
     rows = []
     for r in ROWS:
         cells = [base[r * CELL : (r + 1) * CELL, c * CELL : (c + 1) * CELL] for c in range(nb)]
-        stand = cells[0] if names[r] in CFG["walk"]["sideRows"] else plant(cells[0])
+        if names[r] in CFG["walk"]["sideRows"]:
+            stand = side_stand(cells[CFG["walk"]["side"]["stride"]], names[r])
+        else:
+            stand = plant(cells[0])
         frames = idle_frames(stand) + walk_frames(cells, names[r])
         rows.append(np.concatenate(frames, axis=1))
     sheet = np.concatenate(rows, axis=0)
