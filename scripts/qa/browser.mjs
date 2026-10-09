@@ -36,7 +36,7 @@ async function step(s, c) {
       if (k === 'layout') return e.layout(v === true ? undefined : v)
       if (k === 'scenario') {
         // The scenario's own settling (a battle opening, the net coming up) may still be going: poll, then fail with the unmet expectations.
-        const end = Date.now() + 15000
+        const end = Date.now() + 10000
         for (;;) {
           const bad = window.__ap.v1.scenario.check().filter((x) => !x.ok)
           if (!bad.length) return true
