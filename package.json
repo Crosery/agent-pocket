@@ -1,6 +1,6 @@
 {
   "name": "agent-pocket",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "Agent Pocket · 智灵口袋 — HD-2D open-world pixel creature-collecting game where the creatures are today's AIs. Multiplayer, pure web.",
