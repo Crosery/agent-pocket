@@ -218,7 +218,10 @@
       {"key": "dof", "kind": "toggle", "section": "video"},
       {"key": "bloom", "kind": "toggle", "section": "video"},
       {"key": "shadows", "kind": "toggle", "section": "video"},
-      {"key": "touchControls", "kind": "choice", "section": "control", "options": ["auto", "on", "off"]}
+      {"key": "touchControls", "kind": "choice", "section": "control", "options": ["auto", "on", "off"]},
+      {"key": "touchHand", "kind": "choice", "section": "control", "options": ["right", "left"]},
+      {"key": "touchSize", "kind": "choice", "section": "control", "options": ["small", "normal", "large"]},
+      {"key": "haptics", "kind": "toggle", "section": "control"}
     ],
     "saveActions": [
       {"id": "export", "label": "screens.settings.saveAction.export"},

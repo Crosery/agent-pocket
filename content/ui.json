@@ -1,5 +1,5 @@
 {
-  "scale": {"baseWidth": 512, "baseHeight": 288, "minCssPerUnit": 1, "maxDeviceScale": 8, "compactBelowWidth": 480, "touchInsetGapCss": 6},
+  "scale": {"baseWidth": 512, "baseHeight": 288, "minCssPerUnit": 1, "maxDeviceScale": 8, "compactBelowWidth": 480},
   "anim": {"panelOpenMs": 180, "panelCloseMs": 140, "modalOpenMs": 120, "cursorBobMs": 560, "toastEnterMs": 180, "toastLeaveMs": 240},
   "fade": {"defaultMs": 420},
   "sfx": {"move": "select", "confirm": "confirm", "cancel": "cancel", "error": "error", "open": "menu_open", "close": "menu_close", "tab": "select"},
