@@ -384,7 +384,7 @@
       "intro": {
         "src": "assets/boss-intro/glm.mp4",
         "poster": "assets/boss-intro/glm.jpg",
-        "bytes": 1608937,
+        "bytes": 1643929,
         "width": 1280,
         "height": 720,
         "fps": 24.0,
@@ -392,11 +392,14 @@
         "source": {
           "tool": "xiaochui-video MCP create_video_task",
           "model": "MiniMax H3 (Hailuo 3.0)",
-          "taskId": "af4c9fcc526d48d8",
-          "seed": 522068124,
-          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime elegant fox-spirit girl with floor-length black hair stands in the center of a dark moonlit arena. The camera slowly pushes in. Pale jade petals and blue-green fox-fire flames drift around her, her long black hair and sleeves float gently, and she gives a soft composed smile. Keep her face, hair, outfit and the pixel-art style exactly the same as the first frame, no new characters, no text, smooth natural motion, dramatic rim light.",
+          "taskId": "f79d06be17564cc0",
+          "seed": 522070311,
+          "prompt": "Cinematic boss entrance cut-in. The chibi pixel-art anime elegant fox-spirit girl with long black hair, blue halo rings above her head, black fox ears and a big white-tipped black fox tail stands in the center of a dark moonlit arena. The camera slowly pushes in. Pale jade petals and blue-green fox-fire flames drift around her, her hair and sleeves float gently, and she gives a soft composed smile. Keep her face, hair, halo rings, fox tail, outfit and the low-resolution pixel-art style with visible square pixels exactly the same as the first frame, never turn into a smooth illustration, no new characters, no text, smooth natural motion, dramatic rim light.",
           "params": {"flow": "i2v", "aspect": "16:9", "megapixels": 1, "profile": "fidelity", "durationSec": 4, "steps": 8, "width": 1376, "height": 768, "fps": 24, "frames": 107},
-          "firstFrame": "assets_src/boss-intro/frames/glm.png"
+          "firstFrame": "assets_src/boss-intro/frames/glm.png",
+          "rejected": [
+            {"task": "af4c9fcc526d48d8", "seed": 522068124, "reason": "scene redrawn as a smooth illustration, halo rings and fox tail lost"}
+          ]
         }
       }
     }
