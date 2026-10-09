@@ -19,6 +19,8 @@ function fakeInput() {
     setTextInputActive: () => {},
     lastDevice: 'keyboard',
     setTouchControlsVisible: () => {},
+    refreshTouchLayout: () => {},
+    onWorldTap: () => () => {},
   }
   return {
     input, consumed, get frames() { return frames },

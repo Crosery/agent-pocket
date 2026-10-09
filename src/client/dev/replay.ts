@@ -5,7 +5,7 @@ import type { Input, InputAction } from '../contracts.ts'
 
 const ACTION_SET: Record<InputAction, true> = {
   up: true, down: true, left: true, right: true, confirm: true, cancel: true, menu: true, run: true, map: true,
-  chat: true, minimap: true, bike: true, quickSave: true, debug: true,
+  chat: true, minimap: true, bike: true, quickSave: true, debug: true, bag: true,
 }
 export const ACTIONS = Object.keys(ACTION_SET) as InputAction[]
 const bit = (a: InputAction): number => 1 << ACTIONS.indexOf(a)
@@ -110,5 +110,8 @@ export function createInputTap(real: Input, dtSource: () => number): InputTap {
     setTextInputActive: (on) => real.setTextInputActive(on),
     get lastDevice() { return real.lastDevice },
     setTouchControlsVisible: (v) => real.setTouchControlsVisible(v),
+    refreshTouchLayout: () => real.refreshTouchLayout(),
+    // World taps (tap-to-move) are DOM pointer input and are not recorded, like other mouse clicks (ADR 0002 §4.5).
+    onWorldTap: (fn) => real.onWorldTap(fn),
   }
 }
