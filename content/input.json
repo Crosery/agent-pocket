@@ -50,7 +50,6 @@
       {"action": "bike", "label": "audio.touch.bike", "size": "small", "right": 66, "bottom": 128, "worldOnly": true}
     ],
     "style": {
-      "idleOpacity": 0,
       "frame": "#141026",
       "ringFill": "rgba(40,36,72,.55)",
       "ringEdge": "rgba(150,160,220,.35)",

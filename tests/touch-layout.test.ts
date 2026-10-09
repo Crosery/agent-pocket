@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { CONTENT, t } from '../src/shared/content/index.ts'
 import { sanitizeSettings } from '../src/client/core/save-sanitize.ts'
 import { INPUT_CONFIG } from '../src/client/core/input-config.ts'
-import { buttonRect, clampRing, computeTouchLayout, driveStick, inStickZone, rectsOverlap } from '../src/client/core/touch-layout.ts'
+import { buttonRect, clampRing, computeTouchLayout, driveStick, inStickZone, mayStartStick, moveOutcome, rectsOverlap, releaseIsTap } from '../src/client/core/touch-layout.ts'
 
 const T = INPUT_CONFIG.touch
 const VIEWPORTS = [
@@ -60,7 +60,7 @@ test('touch tuning is sane and every button resolves a label', () => {
   assert.ok(T.zoneWidthFraction > 0 && T.zoneWidthFraction <= 0.6)
   assert.equal(T.zoneWidthFraction, 0.5, 'the stick zone is the whole left half')
   assert.ok(T.stick.fadeMs > 0 && T.stick.edgePadPx >= 0)
-  assert.equal(T.style.idleOpacity, 0, 'no resting stick: it is invisible until a thumb lands')
+  assert.ok(!('idleOpacity' in T.style), 'no resting stick: the ring has no idle state to tune')
   assert.ok(T.hint.opacity > 0 && T.hint.opacity < 0.7 && T.hint.loopMs > 0, 'the hint is faint')
   for (const spot of [T.hint.portrait, T.hint.landscape]) assert.ok(spot.x > 0 && spot.x < T.zoneWidthFraction && spot.y > 0 && spot.y < 1, 'the hint sits inside the stick half')
   for (const k of ['small', 'normal', 'large'] as const) assert.ok(T.sizes[k] > 0)
@@ -119,6 +119,28 @@ test('stick ring: spawns neutral under the thumb, trails it past the radius, and
     assert.ok(c.x - R >= pad - 1e-9 && c.x + R <= vp.width - pad + 1e-9 && c.y - R >= pad - 1e-9 && c.y + R <= vp.height - pad + 1e-9, JSON.stringify(c))
   }
   assert.deepEqual(clampRing({ x: 200, y: 400 }, R, vp, pad), { x: 200, y: 400 }, 'a thumb in the open leaves the ring where it is')
+})
+
+test('gestures: a stick starts only on the bare canvas in the stick half; HUD touches and modals never start it', () => {
+  const T = INPUT_CONFIG.touch
+  const base = { onCanvas: true, modalOpen: false, x: 40, width: 390, hand: 'right' as const, fraction: T.zoneWidthFraction }
+  assert.equal(mayStartStick(base), true)
+  assert.equal(mayStartStick({ ...base, onCanvas: false }), false, 'a HUD control under the thumb keeps its own touch')
+  assert.equal(mayStartStick({ ...base, modalOpen: true }), false, 'menus, dialogue and battles are tap-driven')
+  assert.equal(mayStartStick({ ...base, x: 300 }), false, 'the button half never starts a stick')
+  assert.equal(mayStartStick({ ...base, hand: 'left', x: 300 }), true, 'left-handed mirrors the zone')
+})
+
+test('gestures: a touch is a tap until it travels past the slop, then a stick in the zone or a drag outside it', () => {
+  const T = INPUT_CONFIG.touch
+  const slop = T.tap.slopPx
+  assert.equal(moveOutcome(true, slop, slop), 'pending', 'exactly the slop is still a tap candidate')
+  assert.equal(moveOutcome(true, slop + 1, slop), 'stick')
+  assert.equal(moveOutcome(false, slop + 1, slop), 'drag')
+  assert.equal(releaseIsTap('pending', T.tap.maxMs, T.tap.maxMs, false), true, 'a brief release without travel is the world tap')
+  assert.equal(releaseIsTap('pending', T.tap.maxMs + 1, T.tap.maxMs, false), false, 'a long press is not a tap')
+  assert.equal(releaseIsTap('pending', 50, T.tap.maxMs, true), false, 'a cancelled touch is not a tap')
+  for (const mode of ['stick', 'drag'] as const) assert.equal(releaseIsTap(mode, 50, T.tap.maxMs, false), false)
 })
 
 test('the tutorial text for touch points at the left half, not at a fixed stick', () => {

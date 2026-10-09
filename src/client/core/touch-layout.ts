@@ -84,6 +84,25 @@ export function inStickZone(x: number, width: number, hand: Settings['touchHand'
   return hand === 'right' ? x < width * fraction : x > width * (1 - fraction)
 }
 
+/**
+ * A touch may begin a stick only when it lands on the bare canvas (a HUD control under the thumb keeps its own touch),
+ * no menu, dialogue or battle owns input, and it falls inside the stick half.
+ */
+export function mayStartStick(o: { onCanvas: boolean; modalOpen: boolean; x: number; width: number; hand: Settings['touchHand']; fraction: number }): boolean {
+  return o.onCanvas && !o.modalOpen && inStickZone(o.x, o.width, o.hand, o.fraction)
+}
+
+/** What a pending touch becomes once it has travelled `distPx`: still undecided inside the slop, else a stick (in the zone) or a drag. */
+export function moveOutcome(stickCapable: boolean, distPx: number, slopPx: number): 'pending' | 'stick' | 'drag' {
+  if (distPx <= slopPx) return 'pending'
+  return stickCapable ? 'stick' : 'drag'
+}
+
+/** A release is a world tap only when the touch never became a stick or drag, was not cancelled, and was brief. */
+export function releaseIsTap(mode: 'pending' | 'stick' | 'drag', heldMs: number, maxMs: number, cancelled: boolean): boolean {
+  return mode === 'pending' && !cancelled && heldMs <= maxMs
+}
+
 /** Where the ring is drawn: its centre kept `radius + pad` inside the viewport so it never leaves the screen. */
 export function clampRing(c: { x: number; y: number }, radius: number, viewport: { width: number; height: number }, pad: number): { x: number; y: number } {
   const m = radius + pad

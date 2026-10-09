@@ -43,12 +43,11 @@ export interface TapMoveConfig {
 
 export interface TouchButtonColors { hi: string; base: string; lo: string }
 
-/** CSS colour values for the touch overlay. */
 /** A screen position as fractions of the viewport. */
 export interface HintSpot { x: number; y: number }
 
+/** CSS colour values for the touch overlay. */
 export interface TouchStyle {
-  idleOpacity: number
   frame: string
   ringFill: string
   ringEdge: string

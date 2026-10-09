@@ -6,7 +6,7 @@
 import type { InputAction } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
 import type { InputConfig, TouchStyle } from './input-config.ts'
-import { clampRing, computeTouchLayout, driveStick, inStickZone, type TouchLayout } from './touch-layout.ts'
+import { clampRing, computeTouchLayout, driveStick, mayStartStick, moveOutcome, releaseIsTap, type TouchLayout } from './touch-layout.ts'
 
 export interface TouchCallbacks {
   onButton(action: InputAction, down: boolean): void
@@ -66,8 +66,11 @@ html:not(.ap-portrait).ap-ui-blocking .ap-touch__btns{display:none;}
 /* Battles are tap-driven in both orientations: no overworld buttons, and no strip reserved for them under the panels. */
 html.ap-battle-on .ap-touch__btns{display:none;}
 html.ap-battle-on[data-touch-controls='on']{--ap-bottom-inset:0px;}
-.ap-touch__stick{position:absolute;transform:translate(-50%,-50%);opacity:${st.idleOpacity};visibility:hidden;transition:opacity ${cfg.stick.fadeMs}ms linear,visibility 0s linear ${cfg.stick.fadeMs}ms;pointer-events:none;}
-.ap-touch__stick.is-active{opacity:1;visibility:visible;transition-duration:0s;transition-delay:0s;}
+.ap-touch__stick{position:absolute;transform:translate(-50%,-50%);display:none;pointer-events:none;}
+/* Nothing is laid out at rest: the ring exists only while a thumb holds it and for the fade after release. */
+.ap-touch__stick.is-active{display:block;}
+.ap-touch__stick.is-fading{display:block;animation:ap-touch-stick-out ${cfg.stick.fadeMs}ms linear forwards;}
+@keyframes ap-touch-stick-out{from{opacity:1}to{opacity:0}}
 /* First-use hint: a faint ring with a knob that drags to the side, in the stick half; gone for good once the stick was used. */
 .ap-touch__hint{position:absolute;transform:translate(-50%,-50%);display:none;pointer-events:none;opacity:0;}
 .ap-touch__hint.is-on{display:block;animation:ap-touch-hint ${cfg.hint.loopMs}ms ease-in-out infinite;}
@@ -150,8 +153,15 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     stick.style.top = `${c.y}px`
   }
   const placeKnob = (dx: number, dy: number) => { knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))` }
+  let fadeTimer: ReturnType<typeof setTimeout> | null = null
+  const clearFade = () => {
+    if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null }
+    stick.classList.remove('is-fading')
+  }
   const resetStick = () => {
     stick.classList.remove('is-active')
+    stick.classList.add('is-fading')
+    fadeTimer = setTimeout(clearFade, cfg.stick.fadeMs)
     cb.onStick(0, 0)
   }
   const updateStick = (clientX: number, clientY: number) => {
@@ -174,6 +184,7 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     origin = { x: g.x0, y: g.y0 }
     placeStick()
     placeKnob(0, 0)
+    clearFade()
     stick.classList.add('is-active')
     hint.classList.remove('is-on')
     if (!hintDone()) { try { localStorage.setItem(cfg.hint.storageKey, '1') } catch { /* private mode */ } }
@@ -185,7 +196,7 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     gesture = null
     if (g.timer) clearTimeout(g.timer)
     if (g.mode === 'stick') resetStick()
-    else if (g.mode === 'pending' && !cancelled && e.timeStamp - g.t0 <= cfg.tap.maxMs && documentTouchOn()) {
+    else if (releaseIsTap(g.mode, e.timeStamp - g.t0, cfg.tap.maxMs, cancelled) && documentTouchOn()) {
       buzz(cfg.haptics.tap)
       cb.onTap({ x: e.clientX, y: e.clientY })
     }
@@ -203,9 +214,10 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
   const moved = (e: PointerEvent) => {
     const g = gesture
     if (!g || e.pointerId !== g.id) return
-    if (g.mode === 'pending' && Math.hypot(e.clientX - g.x0, e.clientY - g.y0) > cfg.tap.slopPx) {
-      if (g.stickCapable) startStick(g)
-      else g.mode = 'drag'
+    if (g.mode === 'pending') {
+      const next = moveOutcome(g.stickCapable, Math.hypot(e.clientX - g.x0, e.clientY - g.y0), cfg.tap.slopPx)
+      if (next === 'stick') startStick(g)
+      else if (next === 'drag') g.mode = 'drag'
     }
     if (g.mode === 'stick') { e.preventDefault(); updateStick(e.clientX, e.clientY) }
   }
@@ -217,8 +229,10 @@ export function createTouchControls(root: HTMLElement, cfg: InputConfig['touch']
     return c.contains('ap-ui-blocking') || c.contains('ap-battle-on')
   }
   const onCanvasDown = (e: PointerEvent) => {
-    if (e.pointerType === 'mouse' || e.target !== canvas) return
-    const stickCapable = !modalOpen() && inStickZone(e.clientX, window.innerWidth, layout.hand, cfg.zoneWidthFraction)
+    if (e.pointerType === 'mouse') return
+    const onCanvas = e.target === canvas
+    const stickCapable = mayStartStick({ onCanvas, modalOpen: modalOpen(), x: e.clientX, width: window.innerWidth, hand: layout.hand, fraction: cfg.zoneWidthFraction })
+    if (!onCanvas) return
     if (stickCapable) e.preventDefault()
     begin(e, canvas as HTMLElement, stickCapable)
   }
