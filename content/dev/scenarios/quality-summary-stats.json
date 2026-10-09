@@ -1,0 +1,14 @@
+{
+  "id": "quality-summary-stats",
+  "titleKey": "dev.scn.qualitySummaryStats",
+  "extends": "quality-showcase",
+  "then": [
+    {
+      "cmd": "screen.open",
+      "args": {
+        "screen": "summaryStats",
+        "index": 3
+      }
+    }
+  ]
+}

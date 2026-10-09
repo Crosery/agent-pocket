@@ -1,0 +1,21 @@
+{
+  "id": "quality-summary-iv",
+  "titleKey": "dev.scn.qualitySummaryIv",
+  "extends": "quality-showcase",
+  "then": [
+    {
+      "cmd": "settings.set",
+      "args": {
+        "key": "showIvNumbers",
+        "value": "true"
+      }
+    },
+    {
+      "cmd": "screen.open",
+      "args": {
+        "screen": "summaryStats",
+        "index": 3
+      }
+    }
+  ]
+}

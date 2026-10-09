@@ -1,0 +1,62 @@
+{
+  "id": "quality-showcase",
+  "titleKey": "dev.scn.qualityShowcase",
+  "extends": "fresh-start",
+  "rng": 5858,
+  "party": [
+    {
+      "species": "claude-haiku",
+      "level": 20,
+      "nature": "reckless",
+      "grade": "C"
+    },
+    {
+      "species": "claude-haiku",
+      "level": 20,
+      "nature": "deep",
+      "grade": "B"
+    },
+    {
+      "species": "claude-haiku",
+      "level": 20,
+      "nature": "poetic",
+      "grade": "A"
+    },
+    {
+      "species": "claude-haiku",
+      "level": 20,
+      "nature": "cautious",
+      "grade": "S"
+    },
+    {
+      "species": "claude-haiku",
+      "level": 20,
+      "nature": "light",
+      "grade": "SS"
+    },
+    {
+      "species": "claude-haiku",
+      "level": 20,
+      "nature": "balanced",
+      "grade": "B"
+    }
+  ],
+  "boxFill": 20,
+  "bag": {
+    "persona-card": 1
+  },
+  "expect": [
+    {
+      "path": "/save/party",
+      "length": 6
+    },
+    {
+      "path": "/save/bag/persona-card",
+      "eq": 1
+    },
+    {
+      "path": "/save/boxes/0",
+      "length": 20
+    }
+  ]
+}

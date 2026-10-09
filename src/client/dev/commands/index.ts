@@ -12,9 +12,10 @@ import { onboardingCommands } from './onboarding.ts'
 import { partyCommands } from './party.ts'
 import { scenarioCommands } from './scenario.ts'
 import { storyCommands } from './story.ts'
+import { uiCommands } from './ui.ts'
 import { worldCommands } from './world.ts'
 
 export const COMMANDS: Record<string, CommandRun> = {
   ...basicCommands, ...determinismCommands, ...scenarioCommands, ...worldCommands, ...storyCommands, ...eventCommands,
-  ...partyCommands, ...itemCommands, ...battleCommands, ...envCommands, ...onboardingCommands, ...netCommands, ...editorCommands,
+  ...partyCommands, ...itemCommands, ...battleCommands, ...envCommands, ...onboardingCommands, ...netCommands, ...editorCommands, ...uiCommands,
 }

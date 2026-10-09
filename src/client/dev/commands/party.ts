@@ -7,7 +7,7 @@ import { addCreature } from '../../world/save-ops.ts'
 import type { DevHost } from '../kit.ts'
 import { DevError, type CommandRun } from '../registry.ts'
 
-const FIELDS = ['level', 'exp', 'nickname', 'status', 'hp', 'shiny', 'friendship', 'heldItem', 'abilityId', 'moves', 'ivs'] as const
+const FIELDS = ['level', 'exp', 'nickname', 'status', 'hp', 'shiny', 'friendship', 'heldItem', 'abilityId', 'moves', 'ivs', 'nature'] as const
 export const PARTY_FIELDS: readonly string[] = FIELDS
 
 const member = (host: DevHost, index: unknown): Creature => {

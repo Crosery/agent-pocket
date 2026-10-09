@@ -1,0 +1,23 @@
+{
+  "id": "legacy-save-v1",
+  "titleKey": "dev.scn.legacySaveV1",
+  "legacySave": "save-v1-3badges",
+  "expect": [
+    {
+      "path": "/save/version",
+      "eq": 2
+    },
+    {
+      "path": "/save/bag/persona-card",
+      "eq": 2
+    },
+    {
+      "path": "/save/party/0/nature",
+      "eq": "balanced"
+    },
+    {
+      "path": "/save/flags/gift:quality-legacy",
+      "eq": true
+    }
+  ]
+}

@@ -13,5 +13,8 @@ export function devContentFromDisk(): DevContent {
     scenarios[sc.id] = sc
   }
   const acceptance = readdirSync(new URL('acceptance/', dir)).filter((n) => n.endsWith('.json')).map((f) => json<DevAcceptance>(`acceptance/${f}`)).sort((a, b) => a.issue - b.issue)
-  return { scenarios, beats: json<Record<string, DevBeat>>('beats.json'), teams: json<Record<string, DevTeam>>('teams.json'), acceptance }
+  const saves: Record<string, unknown> = {}
+  const fx = new URL('../tests/fixtures/', import.meta.url)
+  for (const f of readdirSync(fx).filter((n) => /^save-v1-.+\.json$/.test(n))) saves[f.slice(0, -'.json'.length)] = JSON.parse(readFileSync(new URL(f, fx), 'utf8'))
+  return { scenarios, beats: json<Record<string, DevBeat>>('beats.json'), teams: json<Record<string, DevTeam>>('teams.json'), acceptance, saves }
 }

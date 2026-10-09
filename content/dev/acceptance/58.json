@@ -1,0 +1,18 @@
+{
+  "issue": 58,
+  "titleKey": "dev.acc.i58",
+  "scenarios": [
+    "quality-showcase",
+    "quality-reveal-full",
+    "quality-reveal-chip",
+    "quality-party",
+    "quality-summary-info",
+    "quality-summary-stats",
+    "quality-summary-iv",
+    "quality-box",
+    "quality-foe-plate",
+    "quality-nature-picker",
+    "quality-settings",
+    "legacy-save-v1"
+  ]
+}

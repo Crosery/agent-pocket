@@ -460,6 +460,8 @@ const phoneHudOpen = (withTip) => async (page) => {
       ctx.hud.showBanner('模型蒸馏潮', '大模型们把知识蒸馏给了小模型——草丛里突然冒出一堆小巧玲珑的初级形态，经验值也更容易拿。')
       ctx.ui.toast('蒸馏潮来了！草丛里冒出了好多小巧的智灵。', 'info')
       ctx.ui.toast('价目牌翻到了红色一面：高峰时段，全场价格翻倍。', 'warn')
+      const { showReveal } = await import('/src/client/ui/reveal.ts')
+      void showReveal(ctx, ctx.save.party[0], { full: false })
       for (const text of ['欢迎来到智灵口袋！和其他训练家一起探索、交换与对战吧。', '系统: 少年训练家 进入了智灵世界', '另一条用来撑满聊天栏的系统消息。']) {
         ctx.chat.addMessage({ name: '', channel: 'system', text: `${text} #${Date.now() % 10000}`, at: Date.now() })
       }
@@ -521,6 +523,25 @@ export const SCREENS = [
   { id: 'dex', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.dex() }) },
   { id: 'dex-detail', scope: '.ap-kit-stack > *:last-child', open: async (page) => { await page.evaluate(() => { void window.__AP.screens.dex() }); await page.waitForTimeout(700); await page.keyboard.press('KeyZ') } },
   { id: 'box', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.box() }) },
+  // Natures and grades (#58): the stats page with the grade title and arrows, the persona-card grid, the appraisal card, the box toolbar (sort + filter on).
+  { id: 'summary-stats', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.summaryAt(window.__AP.save.party[3], 1) }) },
+  { id: 'nature-picker', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.pickNature(window.__AP.save.party[0]) }) },
+  { id: 'reveal-full', scope: '.aps-reveal', open: async (page) => {
+    await page.evaluate(async () => {
+      const { showReveal } = await import('/src/client/ui/reveal.ts')
+      window.__AP.data.quality.reveal.maxMs = 600000
+      void showReveal(window.__AP, window.__AP.save.party[2], { full: true })
+    })
+    await page.waitForTimeout(700)
+  } },
+  { id: 'box-grade', scope: '.ap-kit-stack > *:last-child', open: async (page) => {
+    await page.evaluate(async () => {
+      const { boxToolbar } = await import('/src/client/ui/screens/box.ts')
+      boxToolbar.sortByGrade = true
+      boxToolbar.onlyTop = true
+      void window.__AP.screens.box()
+    })
+  } },
   { id: 'shop', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.shop(Object.keys(window.__AP.data.items).slice(0, 40)) }) },
   { id: 'map', scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: run(() => { void window.__AP.screens.worldMap({ fly: false }) }) },
   { id: 'map-fly', scope: '.ap-kit-stack > *:last-child', noScroll: '.aps-map-sidebody', open: run(() => { void window.__AP.screens.worldMap({ fly: true }) }) },

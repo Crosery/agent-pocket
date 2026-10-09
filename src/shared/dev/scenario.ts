@@ -16,6 +16,8 @@ export interface ScenarioDeps {
   teams: Record<string, DevTeam>
   /** A fresh new-game save (name and avatar chosen); the scenario is applied on top of a copy. */
   base: SaveData
+  /** Resolves a scenario's `legacySave` fixture name to a ready (migrated, sanitized) save; it replaces `base`. */
+  legacy?: (name: string) => SaveData | null
   rng: IRng
   content?: Content
 }
@@ -65,7 +67,7 @@ export function resolveDevPlace(world: World, place: DevPlace, anchors: Record<s
 function buildMember(entry: DevPartyEntry & { species: string }, level: number, rng: IRng, save: SaveData, c: Content, problems: string[]): Creature | null {
   if (!c.species[entry.species]) { problems.push(`unknown species "${entry.species}"`); return null }
   const ball = c.itemList.find((it) => it.effect.kind === 'ball')?.id
-  const cr = createCreature(entry.species, level, { rng, otName: save.name, otId: save.playerId, ...(ball ? { ballId: ball } : {}), caughtMap: save.position.map, ...(entry.shiny !== undefined ? { shiny: entry.shiny } : {}) }, c)
+  const cr = createCreature(entry.species, level, { rng, otName: save.name, otId: save.playerId, ...(ball ? { ballId: ball } : {}), caughtMap: save.position.map, ...(entry.shiny !== undefined ? { shiny: entry.shiny } : {}), ...(entry.nature ? { nature: entry.nature } : {}), ...(entry.grade ? { gradeFloor: entry.grade, gradeCap: entry.grade } : {}) }, c)
   if (entry.nickname) cr.nickname = entry.nickname
   if (entry.status) {
     const def = c.statusById[entry.status]
@@ -92,7 +94,9 @@ export function applyScenario(id: string, deps: ScenarioDeps): ScenarioResult {
   const sc = flattenScenario(id, deps.scenarios)
   const beat = sc.beat ? deps.beats[sc.beat] : undefined
   if (sc.beat && !beat) problems.push(`unknown beat "${sc.beat}"`)
-  const save: SaveData = structuredClone(deps.base)
+  const legacy = sc.legacySave ? deps.legacy?.(sc.legacySave) ?? null : null
+  if (sc.legacySave && !legacy) problems.push(`unknown legacy save "${sc.legacySave}"`)
+  const save: SaveData = structuredClone(legacy ?? deps.base)
   const rng = deps.rng
 
   if (beat) applyBeat(save, beat)
@@ -136,6 +140,17 @@ export function applyScenario(id: string, deps: ScenarioDeps): ScenarioResult {
     save.dexCaught = [...ids]
     save.dexSeen = [...new Set([...save.dexSeen, ...ids])]
     if (save.party[0]) save.flags[STORY_CONTENT.meta.flags.starter] = save.party[0].speciesId
+  }
+  if (sc.boxFill) {
+    const pool = c.speciesList.filter((sp) => !c.bossBySpecies[sp.id])
+    while (save.boxes.length < c.config.party.boxCount) save.boxes.push([])
+    const room = Math.max(0, c.config.party.boxSize - save.boxes[0].length)
+    for (let i = 0; i < Math.min(room, Math.floor(sc.boxFill)); i++) {
+      const sp = rng.pick(pool)
+      save.boxes[0].push(createCreature(sp.id, rng.int(5, 40), { rng, otName: save.name, otId: save.playerId, caughtMap: save.position.map }, c))
+    }
+    save.dexCaught = [...new Set([...save.dexCaught, ...save.boxes[0].map((m) => m.speciesId)])]
+    save.dexSeen = [...new Set([...save.dexSeen, ...save.dexCaught])]
   }
   if (sc.clock) save.clockMinutes = Math.max(0, sc.clock.minutes)
 

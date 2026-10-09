@@ -1,0 +1,14 @@
+{
+  "id": "quality-reveal-chip",
+  "titleKey": "dev.scn.qualityRevealChip",
+  "extends": "quality-showcase",
+  "then": [
+    {
+      "cmd": "reveal.show",
+      "args": {
+        "index": 1,
+        "full": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "id": "quality-party",
+  "titleKey": "dev.scn.qualityParty",
+  "extends": "quality-showcase",
+  "then": [
+    {
+      "cmd": "screen.open",
+      "args": {
+        "screen": "party"
+      }
+    }
+  ]
+}

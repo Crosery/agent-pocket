@@ -4,6 +4,7 @@ import type { SaveData } from '../../shared/types.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { applyScenario, checkExpectations, flattenScenario, type ExpectResult, type ScenarioResult } from '../../shared/dev/scenario.ts'
 import type { SaveManager } from '../contracts.ts'
+import { migrateSave } from '../core/save-migrate.ts'
 import type { DevHost } from './kit.ts'
 import { CONSOLE, DevError } from './registry.ts'
 
@@ -13,11 +14,17 @@ export function freshBase(saves: SaveManager): SaveData {
   return saves.newGame({ name: avatar?.nameZh ?? '', avatar: avatar?.id ?? '' })
 }
 
+/** An older-format save fixture brought up to date the way a real load does it (null when there is none by that name). */
+export function legacyBase(host: DevHost, name: string): SaveData | null {
+  const raw = host.content.saves[name]
+  return raw ? host.ctx.saves.sanitize(migrateSave(structuredClone(raw))) : null
+}
+
 export function prepareScenario(host: DevHost, id: string): ScenarioResult {
   if (!host.content.scenarios[id]) throw new DevError('dev.err.unknownScenario', { id })
   const res = applyScenario(id, {
     world: host.world, scenarios: host.content.scenarios, beats: host.content.beats, teams: host.content.teams,
-    base: freshBase(host.ctx.saves), rng: host.rng.stream('debug'),
+    base: freshBase(host.ctx.saves), legacy: (name) => legacyBase(host, name), rng: host.rng.stream('debug'),
   })
   if (res.problems.length) throw new DevError('dev.err.scenarioProblems', { list: res.problems.join('; ') })
   return res
