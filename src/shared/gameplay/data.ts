@@ -2,7 +2,7 @@
 // keys default to the patterns in content/events/spawn.json `text`, and every roaming legend in
 // content/events/legends.json is expanded into its encounter event through the file's `eventTemplate`.
 // Imports JSON only (no CONTENT) so src/shared/content/index.ts can validate it without an import cycle.
-import type { EventEffect, ResearchFile, WorldEventDef } from '../types.ts'
+import type { EventEffect, InstanceFile, ResearchFile, WorldEventDef } from '../types.ts'
 import type { EventFile, GameplayData, LegendFile, MythicFile, RoamingLegendDef, SpawnRules } from './schema.ts'
 
 import spawnJson from '../../../content/events/spawn.json' with { type: 'json' }
@@ -13,6 +13,7 @@ import buzzJson from '../../../content/events/buzz.json' with { type: 'json' }
 import mythicJson from '../../../content/events/mythic.json' with { type: 'json' }
 import legendsJson from '../../../content/events/legends.json' with { type: 'json' }
 import researchJson from '../../../content/research.json' with { type: 'json' }
+import instancesJson from '../../../content/world/instances.json' with { type: 'json' }
 
 /** Raw event as authored: name/description may be omitted (filled from the text-key patterns). */
 type RawEvent = Omit<WorldEventDef, 'nameZh' | 'description'> & { nameZh?: string; description?: string }
@@ -72,6 +73,7 @@ export function buildGameplay(): GameplayData {
     chains: mythic.chains,
     chainById: Object.fromEntries(mythic.chains.map((c) => [c.id, c])),
     research: researchJson as unknown as ResearchFile,
+    instances: (instancesJson as unknown as InstanceFile).instances,
   }
 }
 

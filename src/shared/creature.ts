@@ -139,12 +139,11 @@ export function createCreature(
   return cr
 }
 
-export function gainExp(cr: Creature, amount: number, c: Content = CONTENT): { levels: number[]; learned: string[]; learnable: string[] } {
+/** Level-ups from the exp a creature already holds, up to `levelCap` (and the global cap); learns and reports moves. */
+function applyLevelUps(cr: Creature, levelCap: number, c: Content): { levels: number[]; learned: string[]; learnable: string[] } {
   const res = { levels: [] as number[], learned: [] as string[], learnable: [] as string[] }
   const sp = speciesOf(cr.speciesId, c)
-  const cap = c.config.party.maxLevel
-  if (!(amount > 0) || cr.level >= cap) return res
-  cr.exp += Math.floor(amount)
+  const cap = Math.min(levelCap, c.config.party.maxLevel)
   while (cr.level < cap && cr.exp >= expForLevel(sp.growth, cr.level + 1, c)) {
     const before = maxHp(cr, c)
     cr.level += 1
@@ -161,7 +160,31 @@ export function gainExp(cr: Creature, amount: number, c: Content = CONTENT): { l
       } else res.learnable.push(e.move)
     }
   }
+  return res
+}
+
+/**
+ * Adds exp and levels up. `opts.levelCap` stops levelling at that level (the exp keeps piling up, a boss card's
+ * bank); `opts.expCap` is the most exp the creature may hold. Without `opts` this is the plain rule.
+ */
+export function gainExp(
+  cr: Creature, amount: number, c: Content = CONTENT, opts?: { levelCap?: number; expCap?: number },
+): { levels: number[]; learned: string[]; learnable: string[] } {
+  const sp = speciesOf(cr.speciesId, c)
+  const cap = c.config.party.maxLevel
+  if (!(amount > 0) || cr.level >= cap) return { levels: [], learned: [], learnable: [] }
+  let add = Math.floor(amount)
+  if (opts?.expCap !== undefined) add = Math.max(0, Math.min(add, opts.expCap - cr.exp))
+  cr.exp += add
+  const res = applyLevelUps(cr, opts?.levelCap ?? cap, c)
   if (cr.level >= cap) cr.exp = Math.min(cr.exp, expForLevel(sp.growth, cap, c))
+  return res
+}
+
+/** Levels a creature up to `levelCap` from the exp it already holds (a boss card's bank paid out by a new badge). */
+export function settleLevels(cr: Creature, levelCap: number, c: Content = CONTENT): { levels: number[]; learned: string[]; learnable: string[] } {
+  const res = applyLevelUps(cr, levelCap, c)
+  if (cr.level >= c.config.party.maxLevel) cr.exp = Math.min(cr.exp, expForLevel(speciesOf(cr.speciesId, c).growth, c.config.party.maxLevel, c))
   return res
 }
 
@@ -264,7 +287,12 @@ export function sanitizeCreature(raw: unknown, c: Content = CONTENT): Creature |
   const ivs = {} as Stats
   for (const k of STAT_KEYS) ivs[k] = clampInt(num(ivSrc[k]) ?? 0, 0, c.config.creature.ivMax)
 
+  // The signature ability / move and the exp bank are only legal on the boss's own species.
+  const origin = sanitizeOrigin(raw.origin, c)
+  const bossDef = origin?.kind === 'boss' && origin.boss ? c.bosses[origin.boss] : undefined
+  const card = bossDef !== undefined && bossDef.species === speciesId ? bossDef : undefined
   const legal = legalMoves(speciesId, level, c)
+  if (card?.signature?.move && c.moves[card.signature.move]) legal.add(card.signature.move)
   const moves: MoveSlot[] = []
   if (Array.isArray(raw.moves)) {
     for (const m of raw.moves) {
@@ -278,21 +306,22 @@ export function sanitizeCreature(raw: unknown, c: Content = CONTENT): Creature |
   if (moves.length === 0) for (const id of defaultMoves(speciesId, level, c)) moves.push(slotOf(id, c))
 
   const lo = expForLevel(sp.growth, level, c)
-  const hi = level >= c.config.party.maxLevel ? lo : expForLevel(sp.growth, level + 1, c) - 1
+  // A boss card banks exp past its badge cap (up to bankMaxLevels levels ahead of its level).
+  const bank = card ? c.quality.bossCard.bankMaxLevels : 0
+  const hi = level >= c.config.party.maxLevel ? lo : expForLevel(sp.growth, Math.min(c.config.party.maxLevel, level + Math.max(1, bank)), c) - (bank > 0 ? 0 : 1)
   const exp = clampInt(num(raw.exp) ?? lo, lo, Math.max(lo, hi))
 
   const status = typeof raw.status === 'string' && c.statusById[raw.status] ? raw.status : null
   const statusMax = status ? (c.statusById[status].durationMax ?? c.statusById[status].durationMin ?? 0) : 0
   const statusTurns = status ? clampInt(num(raw.statusTurns) ?? 0, 0, statusMax) : 0
 
-  const abilityId = typeof raw.abilityId === 'string' && sp.abilities.includes(raw.abilityId)
+  const abilityId = typeof raw.abilityId === 'string' && (sp.abilities.includes(raw.abilityId) || (card?.signature?.ability === raw.abilityId && !!c.abilities[raw.abilityId]))
     ? raw.abilityId
     : (sp.abilities[0] ?? '')
   const ballId = typeof raw.ballId === 'string' && c.items[raw.ballId]?.effect.kind === 'ball' ? raw.ballId : ''
   const nickname = cleanText(raw.nickname, RULES.creature.nicknameMaxLen)
   const heldItem = typeof raw.heldItem === 'string' && c.items[raw.heldItem] ? raw.heldItem : undefined
   const nature = typeof raw.nature === 'string' && c.natureById[raw.nature] ? raw.nature : c.quality.legacyNature
-  const origin = sanitizeOrigin(raw.origin, c)
 
   const cr: Creature = {
     uid,

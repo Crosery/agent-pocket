@@ -75,6 +75,11 @@ export interface BalanceRules {
     underlingMaxLevelBelow: number
     startMoneyInPotions: number
   }
+  /**
+   * Boss-card guard: a card of this boss at the level cap of each badge count, every IV `ivs`, fights the leader team of the
+   * next gym (badge count + 1) alone over `seeds` games and may win at most `maxWin` of them.
+   */
+  bossCard: { badges: number[]; ivs: number; seeds: number; maxWin: number; boss: string; tier: string }
 }
 
 export const RULES: BalanceRules = rulesJson as unknown as BalanceRules

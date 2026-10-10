@@ -22,5 +22,6 @@
   },
   "ttk": {"movePower": [70, 100], "levels": [10, 30, 50, 70], "band": {"neutral": [2.4, 4.6], "superEffective": [1.3, 2.8], "resisted": [4.5, 14]}},
   "sim": {"level": 50, "battles": 400, "seed": 1, "variants": 24, "maxTurns": 150, "minFieldWin": 0.33, "maxFieldWin": 0.68, "maxAllOpponentsWin": 0.65, "favourableWin": 0.55, "unfavourableWin": 0.5, "maxDrawRate": 0.08},
-  "curve": {"expLevels": [5, 10, 20, 30, 40, 50, 60, 80, 99], "battlesPerLevel": [{"upTo": 20, "range": [1, 6]}, {"upTo": 50, "range": [2, 12]}, {"upTo": 100, "range": [4, 24]}], "gymCount": 8, "gymFirstLeaderLevel": [8, 14], "gymLevelStep": [3, 12], "gymPowerRatio": [1.05, 1.8], "gymFirstStepPowerRatio": [1.05, 2.0], "underlingMaxLevelBelow": 6, "startMoneyInPotions": 8}
+  "curve": {"expLevels": [5, 10, 20, 30, 40, 50, 60, 80, 99], "battlesPerLevel": [{"upTo": 20, "range": [1, 6]}, {"upTo": 50, "range": [2, 12]}, {"upTo": 100, "range": [4, 24]}], "gymCount": 8, "gymFirstLeaderLevel": [8, 14], "gymLevelStep": [3, 12], "gymPowerRatio": [1.05, 1.8], "gymFirstStepPowerRatio": [1.05, 2.0], "underlingMaxLevelBelow": 6, "startMoneyInPotions": 8},
+  "bossCard": {"badges": [2, 4, 6], "ivs": 19, "seeds": 100, "maxWin": 0.5, "boss": "deepseek", "tier": "story"}
 }
