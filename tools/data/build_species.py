@@ -516,6 +516,9 @@ def pick_teachable(ctx, learnset):
     scored.sort()
     n = tr["maxByRarity"][s["rarity"]]
     out = [mid for _, _, mid in scored[:n]]
+    for mid in tr.get("extraBySpecies", {}).get(s["id"], []):
+        if mid not in out:
+            out.append(mid)
     if len(out) < tr["min"]:
         raise SystemExit(
             f"{s['id']}: only {len(out)} teachable chips (min {tr['min']})"

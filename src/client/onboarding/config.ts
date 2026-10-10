@@ -58,6 +58,7 @@ export type TipTrigger =
   | { kind: 'free'; delaySec?: number; needs?: Cond }
   | { kind: 'npcNear'; radius: number }
   | { kind: 'tallGrass' }
+  | { kind: 'roamer'; delaySec?: number; needs?: Cond }
   | { kind: 'hurt'; hpBelow: number; delaySec?: number }
   | { kind: 'battle'; delaySec?: number; battleKinds?: string[]; needs?: Cond }
   | { kind: 'menu'; delaySec?: number }
@@ -186,7 +187,7 @@ export function validateTutorial(world: World, anchors: Record<string, unknown>,
     text(`${tip.text}.body`, where)
     for (const e of [tip.expires ?? []].flat()) cond(e, where)
     if (tip.whileAttention && !ATTENTION.sources.some((a) => a.id === tip.whileAttention)) errs.push(`${where}: unknown attention source "${tip.whileAttention}"`)
-    if (tip.trigger.kind === 'free') cond(tip.trigger.needs, where)
+    if (tip.trigger.kind === 'free' || tip.trigger.kind === 'roamer') cond(tip.trigger.needs, where)
     const tr = tip.trigger
     for (const a of tip.after ?? []) if (!cfg.tips.list.some((x) => x.id === a)) errs.push(`${where}: unknown "after" tip "${a}"`)
     if (tip.open) {

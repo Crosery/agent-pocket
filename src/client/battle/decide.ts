@@ -6,7 +6,7 @@ import { CONTENT, t } from '../../shared/content/index.ts'
 import { creatureName } from '../../shared/creature.ts'
 import { BATTLE_UI, type CommandId } from './config.ts'
 import type { MoveItem } from './menus.ts'
-import { catchPlacement, moveEffectiveness, type BattleModel } from './model.ts'
+import { catchPlacement, coachCommandPulse, moveEffectiveness, type BattleModel } from './model.ts'
 import type { BattleScene } from './scene.ts'
 
 type ActionRequest = Extract<BattleRequest, { kind: 'action' }>
@@ -176,7 +176,8 @@ export function createDecider(env: DecideEnv): Decider {
           view.message.hold(t('battleui.prompt.command', { name: model.sides[0].view ? creatureName(model.sides[0].view) : creatureName(cr) }))
           const ids = pvp ? BATTLE_UI.commands.pvp : BATTLE_UI.commands.normal
           showCoach()
-          const id = await view.menus.openCommands(ids.map((x) => ({ id: x, disabled: !enabled(x, req) })), Math.min(lastCommand, ids.length - 1))
+          const pulse = coachCommandPulse(model, env.init.coach, ctx.save.bag, ctx.data)
+          const id = await view.menus.openCommands(ids.map((x) => ({ id: x, disabled: !enabled(x, req), pulse: x === pulse })), Math.min(lastCommand, ids.length - 1))
           view.setCoach(null)
           lastCommand = ids.indexOf(id)
           const action = await command(id, req, cr)

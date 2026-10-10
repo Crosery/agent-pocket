@@ -135,9 +135,9 @@
         {"id": "price-hike", "on": "afterAction", "phase": true, "if": {"hpBelow": 0.4}, "do": [{"op": "say", "text": "boss.deepseek.hike"}, {"op": "stages", "target": "boss", "stats": {"atk": 1, "spa": 1}}]},
         {"id": "coupon", "on": "foeItem", "tag": "offpeak", "times": 0, "if": {"meter": {"id": "tide", "atMost": 0}}, "do": [{"op": "say", "text": "boss.deepseek.coupon"}, {"op": "meter", "id": "grace", "set": 3}, {"op": "meter", "id": "tide", "set": 1}]},
         {"id": "coach-start", "on": "start", "times": 1, "do": [{"op": "coach", "text": "boss.deepseek.coach.start"}]},
-        {"id": "coach-peakEndsNext", "on": "turnEnd", "times": 1, "if": {"turnCycle": {"period": 6, "from": 1, "to": 2}, "turnAtMost": 6}, "do": [{"op": "coach", "text": "boss.deepseek.coach.peakEndsNext"}]},
+        {"id": "coach-peakEndsNext", "on": "turnEnd", "times": 1, "if": {"turnCycle": {"period": 6, "from": 1, "to": 2}, "turnAtMost": 6, "meter": {"id": "tide", "atMost": 0}}, "do": [{"op": "coach", "text": "boss.deepseek.coach.peakEndsNext"}]},
         {"id": "coach-valleyStart", "on": "turnEnd", "times": 1, "if": {"meter": {"id": "tide", "atLeast": 1}}, "do": [{"op": "coach", "text": "boss.deepseek.coach.valleyStart"}]},
-        {"id": "coach-peakAgain", "on": "turnStart", "times": 1, "if": {"turnAtLeast": 7, "turnAtMost": 7, "foeHasItem": "off-peak-coupon"}, "do": [{"op": "coach", "text": "boss.deepseek.coach.peakAgain"}]},
+        {"id": "coach-peakAgain", "on": "turnEnd", "times": 1, "if": {"turnAtLeast": 6, "turnAtMost": 6, "meter": {"id": "tide", "atMost": 0}, "foeHasItem": "off-peak-coupon"}, "do": [{"op": "coach", "text": "boss.deepseek.coach.peakAgain"}]},
         {"id": "coach-residual", "on": "turnEnd", "times": 1, "if": {"meter": {"id": "tide", "atMost": 0}, "bossHas": {"volatile": "leech"}}, "do": [{"op": "coach", "text": "boss.deepseek.coach.residual"}]},
         {"id": "coach-residual-status", "on": "turnEnd", "times": 1, "if": {"meter": {"id": "tide", "atMost": 0}, "bossHas": {"status": true}}, "do": [{"op": "coach", "text": "boss.deepseek.coach.residual"}]},
         {"id": "coach-ownLow", "on": "turnEnd", "times": 1, "if": {"foeHpBelow": 0.3, "turnAtLeast": 7}, "do": [{"op": "coach", "text": "boss.deepseek.coach.ownLow"}]}
@@ -1048,11 +1048,12 @@
         {"id": "grace", "max": 4, "start": 0, "label": "boss.deepseek.tide", "show": false, "decay": 1}
       ],
       "triggers": [
-        {"id": "tide-peak", "on": "turnEnd", "times": 0, "if": {"turnCycle": {"period": 4, "from": 0, "to": 2}, "meter": {"id": "grace", "atMost": 0}}, "do": [{"op": "meter", "id": "tide", "set": 0}]},
-        {"id": "tide-valley", "on": "turnEnd", "times": 0, "if": {"turnCycle": {"period": 4, "from": 2, "to": 4}, "meter": {"id": "grace", "atMost": 0}}, "do": [{"op": "meter", "id": "tide", "set": 1}]},
+        {"id": "tide-peak-a", "on": "turnEnd", "times": 0, "if": {"turnCycle": {"period": 4, "from": 3, "to": 4}, "meter": {"id": "grace", "atMost": 0}}, "do": [{"op": "meter", "id": "tide", "set": 0}]},
+        {"id": "tide-peak-b", "on": "turnEnd", "times": 0, "if": {"turnCycle": {"period": 4, "from": 0, "to": 1}, "meter": {"id": "grace", "atMost": 0}}, "do": [{"op": "meter", "id": "tide", "set": 0}]},
+        {"id": "tide-valley", "on": "turnEnd", "times": 0, "if": {"turnCycle": {"period": 4, "from": 1, "to": 3}, "meter": {"id": "grace", "atMost": 0}}, "do": [{"op": "meter", "id": "tide", "set": 1}]},
         {"id": "coupon", "on": "foeItem", "tag": "offpeak", "times": 0, "if": {"meter": {"id": "tide", "atMost": 0}}, "do": [{"op": "say", "text": "boss.deepseek.coupon"}, {"op": "meter", "id": "grace", "set": 3}, {"op": "meter", "id": "tide", "set": 1}]},
-        {"id": "coach-valley", "on": "turnEnd", "times": 1, "if": {"meter": {"id": "tide", "atLeast": 1}}, "do": [{"op": "coach", "text": "boss.deepseek.drill.valley"}]},
-        {"id": "coach-coupon", "on": "turnStart", "times": 1, "if": {"turnAtLeast": 2, "foeHasItem": "off-peak-coupon", "meter": {"id": "tide", "atMost": 0}}, "do": [{"op": "coach", "text": "boss.deepseek.drill.coupon"}]}
+        {"id": "coach-coupon", "on": "start", "times": 1, "if": {"foeHasItem": "off-peak-coupon", "meter": {"id": "tide", "atMost": 0}}, "do": [{"op": "coach", "text": "boss.deepseek.drill.coupon"}]},
+        {"id": "coach-valley", "on": "turnEnd", "times": 1, "if": {"meter": {"id": "tide", "atLeast": 1}}, "do": [{"op": "coach", "text": "boss.deepseek.drill.valley"}]}
       ],
       "gates": [],
       "catchRateMul": 0.01,

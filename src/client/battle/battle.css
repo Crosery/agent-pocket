@@ -443,6 +443,8 @@ html.ap-compact :is(.apb-fx-chip, .apb-fx-status-line, .apb-fx-ability-tag, .apb
 .apb-cmd-ico { display: inline-flex; flex: none; }
 .apb-cmd-row .ap-row-label, html[data-touch-controls='on'] .apb-cmd-row .ap-row-label { overflow: visible; white-space: nowrap; text-shadow: 0 var(--u) 0 var(--ap-ink); }
 .apb-cmd-row.is-disabled .apb-cmd-ico { opacity: 0.45; }
+.apb-cmd-row.is-pulse { box-shadow: inset 0 0 0 var(--u) var(--ap-gold-hi); animation: apb-cmd-pulse 1100ms ease-in-out infinite; }
+@keyframes apb-cmd-pulse { 50% { background-color: rgba(242, 217, 142, 0.28); } }
 .apb-cmd-hint { grid-column: 1 / -1; margin-top: calc(var(--u) * 1); padding-top: calc(var(--u) * 2); border-top: var(--u) solid rgba(201, 168, 92, 0.3); color: var(--ap-text-dim); line-height: calc(var(--u) * 11); text-align: center; white-space: nowrap; }
 @media (pointer: coarse) { .apb-hint-keys { display: none; } }
 @media (pointer: fine), (hover: hover) and (pointer: fine) { .apb-hint-touch { display: none; } }

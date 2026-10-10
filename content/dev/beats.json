@@ -6,5 +6,13 @@
     "trainers": ["gc-xiaoma", "gc-ace", "gc-xiaoyuan", "leader_code", "gv-xiaocai", "gv-kuaimen", "gv-atong", "leader_vision", "gs-xiaodiao", "gs-apu", "gs-shengsheng", "leader_sound"],
     "quests": {"main": {"stage": 11, "done": false}},
     "flags": {"intro:mom": true, "rival:lab": true, "ob:route1": true, "ob:healed": true, "tip:move": true, "tip:talk": true, "tip:objective": true, "tip:signs": true, "tip:groundItem": true, "tip:grass": true, "tip:menuHint": true, "tip:menu": true, "tip:save": true, "tip:hud": true, "tip:battle": true, "tip:moveInfo": true, "tip:typeMatchup": true, "tip:superEffective": true, "tip:resisted": true, "tip:immune": true, "tip:doubleType": true, "tip:stab": true, "tip:statGlossary": true, "tip:battleEffects": true, "tip:status": true, "tip:crit": true, "tip:weather": true, "tip:ability": true, "tip:catch": true, "tip:caught": true, "tip:catchFail": true, "tip:trainer": true, "tip:takenSuper": true, "tip:faintOwn": true, "tip:levelUp": true, "tip:moveLearn": true, "tip:evolve": true, "tip:party": true, "tip:teamBuild": true, "tip:bag": true, "tip:shop": true, "tip:exchange": true, "tip:chips": true, "tip:bike": true, "tip:surf": true, "tip:hurt": true, "tip:center": true, "tip:gym": true, "tip:badge": true, "tip:worldMap": true, "tip:fly": true, "tip:quests": true, "tip:sideQuest": true, "tip:worldEvent": true, "tip:rarity": true, "tip:timeWeather": true, "tip:research": true, "tip:dex": true, "tip:online": true, "tip:chat": true, "tip:tradePvp": true}
+  },
+  "after-deepseek": {
+    "titleKey": "dev.beat.afterDeepseek",
+    "place": "town:origin:lab",
+    "badges": [],
+    "trainers": ["r1-xin", "ds-relay-o1"],
+    "quests": {"main": {"stage": 7, "done": false}},
+    "flags": {"intro:mom": true, "starter": "o1", "rival:lab": true, "ds:stamp:starter": true, "ds:stamp:types": true, "ds:ernie": true, "ds:stamp:catch": true, "ds:certFull": true, "ds:called": true, "ds:briefed": true, "ds:drill": true, "ds:relay": true, "ds:met": true, "ds:gateOpen": true, "ds:done": true, "boss:deepseek": true, "lesson:typeChart": true, "lesson:bossMechanic": true, "lesson:bait": true, "lesson:capture": true, "lesson:grade": true}
   }
 }

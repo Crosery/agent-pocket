@@ -75,6 +75,7 @@ export interface NpcSpec extends PlacementSpec {
   portrait?: string
   /** Species id: the NPC is drawn as that creature (sprite is still required for the script's speaker fallback). */
   creature?: string
+  aura?: string
   /** Shorthand: one `say` per line (spoken by this NPC) before `script`. */
   lines?: string[]
   script?: StepSpec[]
@@ -902,6 +903,7 @@ class StoryBuilder implements PopHost {
           const id = String(s.script)
           const body = this.scripts[id]
           if (!body) { this.problems.push(`${path}: unknown script "${id}"`); return }
+          if (env.path.includes(`<${id}>`) && env.depth >= 4) return
           if (env.depth >= MAX_INCLUDE_DEPTH) { this.problems.push(`${path}: include depth exceeded at "${id}"`); return }
           const extra = isObj(s.params) ? Object.fromEntries(Object.entries(s.params).map(([k, v]) => [k, String(v)])) : {}
           out.push(...this.expand(body, { ...env, params: { ...env.params, ...extra }, path: `${path}<${id}>`, depth: env.depth + 1 }))
@@ -980,7 +982,7 @@ class StoryBuilder implements PopHost {
       if ('then' in raw) step.then = this.expand(raw.then, { ...env, path: `${path}.then` })
       if ('else' in raw) step.else = this.expand(raw.else, { ...env, path: `${path}.else` })
       if (Array.isArray(raw.branches)) step.branches = raw.branches.map((b, j) => this.expand(b, { ...env, path: `${path}.b${j}` }))
-      if (step.op === 'say') {
+      if (step.op === 'say' || step.op === 'choice') {
         if (step.speaker === undefined) {
           step.speaker = env.npc.spec.nameZh
           if (env.npc.spec.portrait && step.portrait === undefined) step.portrait = env.npc.spec.portrait
@@ -1102,6 +1104,7 @@ class StoryBuilder implements PopHost {
       }
       if (s.portrait) npc.portrait = s.portrait
       if (s.creature) npc.creature = s.creature
+      if (s.aura) npc.aura = s.aura
       if (s.trainer) npc.trainer = s.trainer
       if (s.sightRange) npc.sightRange = s.sightRange
       if (s.wander) npc.wander = s.wander
@@ -1509,6 +1512,7 @@ class StoryBuilder implements PopHost {
           case 'choice':
             str(s.text, 'text')
             if (!Array.isArray(s.options) || !Array.isArray(s.branches) || s.options.length !== s.branches.length || s.options.length < 2) bad('options/branches mismatch')
+            if (s.portrait && !portraitKnown(s.portrait)) bad(`unknown portrait "${s.portrait}"`)
             break
           case 'setFlag': str(s.flag, 'flag'); break
           case 'ifFlag': str(s.flag, 'flag'); list(s.then, 'then'); break

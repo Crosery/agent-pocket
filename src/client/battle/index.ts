@@ -197,7 +197,8 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
       if (!remote) ctx.persist('battle')
       ctx.events.emit('battle:end', { kind, result })
       const moneyDelta = pve ? pve.moneyDelta : (remote ? 0 : model.money)
-      return caught ? { result, moneyDelta, caught } : { result, moneyDelta }
+      const summary = engine ? engine.summary() : undefined
+      return { result, moneyDelta, ...(caught ? { caught } : {}), ...(summary ? { summary } : {}) }
     },
 
     async evolve(partyIndex: number, toSpeciesId: string): Promise<boolean> {

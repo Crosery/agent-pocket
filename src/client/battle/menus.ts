@@ -10,7 +10,7 @@ import { icon } from '../ui/screens/base.ts'
 import { categoryIcon, commandIcon, typeBadge } from './badges.ts'
 import { BATTLE_UI, type CommandId, type EffCategory } from './config.ts'
 
-export interface CommandItem { id: CommandId; disabled: boolean }
+export interface CommandItem { id: CommandId; disabled: boolean; pulse?: boolean }
 
 export interface MoveItem {
   /** null = unknown move id (still selectable by index). */
@@ -97,7 +97,7 @@ export function createMenus(audio: AudioManager): Menus {
       return new Promise<CommandId>((resolve) => {
         const p = panel(null, { className: 'apb-win apb-menu apb-cmd' })
         p.el.style.setProperty('--cols', String(BATTLE_UI.commands.columns))
-        const rows = items.map((it) => row('apb-cmd-row', [commandIcon(it.id), el('span', { class: 'ap-row-label', text: t(`battleui.cmd.${it.id}`) })], it.disabled))
+        const rows = items.map((it) => row(`apb-cmd-row${it.pulse ? ' is-pulse' : ''}`, [commandIcon(it.id), el('span', { class: 'ap-row-label', text: t(`battleui.cmd.${it.id}`) })], it.disabled))
         const hint = el('div', 'apb-cmd-hint', [
           el('span', { class: 'apb-hint-keys', text: t('battleui.hint.keys', { confirm: actionKeyLabel('confirm'), menu: actionKeyLabel('menu') }) }),
           el('span', { class: 'apb-hint-touch', text: t('battleui.hint.touch') }),

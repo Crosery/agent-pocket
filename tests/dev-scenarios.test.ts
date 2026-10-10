@@ -215,3 +215,33 @@ test('boss-astra-counter: the scenario team plays out the Astra fight with the s
   assert.ok(r.turns > 0 && r.turns <= 120)
   assert.ok(boss.level >= res.save.party[0].level)
 })
+
+test('M1c prologue & boss scenarios: opening-cert, opening-ernie, ds-lobby, ds-boss-story, ds-loss-assist, after-deepseek', () => {
+  const cert = apply('opening-cert')
+  assert.equal(cert.save.position.map, 'origin-lab')
+  assert.equal(cert.save.flags['ds:stamp:starter'], true)
+  assert.equal(cert.save.bag['work-permit'], 1)
+
+  const ernie = apply('opening-ernie')
+  assert.equal(ernie.save.position.map, 'overworld')
+  assert.equal(ernie.save.flags['ds:stamp:types'], true)
+  assert.equal(ernie.save.party.length, 2)
+
+  const lobby = apply('ds-lobby')
+  assert.equal(lobby.save.position.map, 'origin-lab-b1')
+  assert.equal(lobby.save.flags['ds:certFull'], true)
+  assert.equal(lobby.save.party.length, 3)
+
+  const bossStory = apply('ds-boss-story')
+  const bossCall = bossStory.commands.find((c) => c.cmd === 'battle.boss')
+  assert.equal(bossCall?.args?.coach, true, 'ds-boss-story enables the coach bar')
+
+  const lossAssist = apply('ds-loss-assist')
+  assert.equal(lossAssist.save.instances?.['deepseek-tide']?.losses.story, 1)
+  assert.ok(lossAssist.commands.some((c) => c.cmd === 'battle.forceResult' && c.args?.result === 'lose'))
+
+  const afterDs = apply('after-deepseek')
+  assert.equal(afterDs.save.flags['ds:done'], true)
+  assert.equal(afterDs.save.flags['ds:gateOpen'], true)
+  assert.ok(afterDs.commands.some((c) => c.cmd === 'bosscard.give' && c.args?.boss === 'deepseek' && c.args?.level === 1))
+})

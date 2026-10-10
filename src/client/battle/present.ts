@@ -179,6 +179,7 @@ export function createPresenter(env: PresenterEnv): Presenter {
         return
       }
       case 'turn':
+        applyEvent(model, e)
         return
       case 'move': {
         const def = CONTENT.moves[e.moveId]
@@ -318,6 +319,9 @@ export function createPresenter(env: PresenterEnv): Presenter {
         }
         return
       }
+      case 'coach':
+        applyEvent(model, e)
+        return
       case 'form':
         await onForm(e)
         return

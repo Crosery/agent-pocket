@@ -23,6 +23,8 @@ export interface ContractOptions {
   /** Success chance shown (the tier's `capture.first`, 0..1). */
   chance: number
   battleId?: string
+  /** Skip the pre-contract story lines (used by `capture.force` so the scenario opens on `.aps-contract` right away). */
+  skipBefore?: boolean
 }
 
 /** The boss's contract line: `contractWake` when the story woke it, else `contract`. */
@@ -187,6 +189,7 @@ function contractPanel(ctx: GameContext, a: PanelArgs): Promise<void> {
       },
     }
     root.addEventListener('pointerdown', (e) => { e.preventDefault(); advance() })
+    root.addEventListener('click', (e) => { if (e.detail === 0) advance() })
     paintPick()
     setPhase('pick')
     ctx.ui.pushPanel(panelApi)
@@ -216,7 +219,7 @@ export async function contractFlow(ctx: GameContext, o: ContractOptions): Promis
     return signed
   }
   const talk = BATTLE_UI.contract.lines[o.bossId]
-  await sayLines(ctx, talk?.before)
+  if (!o.skipBefore) await sayLines(ctx, talk?.before)
   try {
     await contractPanel(ctx, { ...o, choices, commit })
   } catch (err) {

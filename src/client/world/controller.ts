@@ -77,7 +77,7 @@ export interface OverworldExt extends OverworldController {
   startWildBattle(speciesId: string, level: number): Promise<void>
   startTrainerBattle(trainerId: string): Promise<void>
   /** Dev: one run of a boss instance tier, like the simulator terminal (rewards, contract on the first clear). */
-  startBossBattle(bossId: string, tier: string, opts?: { assist?: boolean }): Promise<void>
+  startBossBattle(bossId: string, tier: string, opts?: { assist?: boolean; coach?: boolean }): Promise<void>
   /** New-game intro (content/game.json newGame.introScript). */
   playIntro(): Promise<void>
   /** Writes the fog-of-war bits of the current map into save.exploredChunks. */
@@ -1242,7 +1242,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     async startBossBattle(bossId, tier, opts) {
       lock('script')
       try {
-        const r = await battles.boss(bossId, tier, { captureAfterWin: true, ...(opts?.assist ? { assist: true } : {}) })
+        const r = await battles.boss(bossId, tier, { captureAfterWin: true, ...(opts?.assist ? { assist: true } : {}), ...(opts?.coach ? { coach: true } : {}) })
         if (r?.result === 'lose' || r?.result === 'draw') await blackoutFlow()
       } finally {
         unlock('script')

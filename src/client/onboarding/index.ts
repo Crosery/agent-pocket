@@ -208,6 +208,9 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
         case 'tallGrass':
           hold(tip, isTallGrassName(overworld.terrainName))
           break
+        case 'roamer':
+          hold(tip, overworld.roamerCount > 0 && condHolds(tr.needs, ctx.save, live()), tr.delaySec ?? 0)
+          break
         case 'hurt':
           hold(tip, ctx.save.party.some((c) => c.hp < maxHp(c, ctx.data) * tr.hpBelow), tr.delaySec ?? 0)
           break

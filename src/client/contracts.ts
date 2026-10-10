@@ -3,7 +3,7 @@
 // Interfaces only — no implementation here.
 import type * as THREE from 'three'
 import type {
-  BattleInit, BattleResult, BiomeId, Creature, Dir, GameMap, NpcDef, SaveData,
+  BattleInit, BattleResult, BattleSummary, BiomeId, Creature, Dir, GameMap, NpcDef, SaveData,
   Settings, SpeciesDef, TrainerDef, World, TimeOfDay, CreatureView,
   BattleAction, BattleEvent, BattleRequest, FieldWeatherKind,
 } from '../shared/types.ts'
@@ -425,6 +425,7 @@ export interface BattleOutcome {
   result: BattleResult
   caught?: Creature
   moneyDelta: number
+  summary?: BattleSummary
 }
 
 /** Abstracts where battle decisions/events come from (local engine vs server PvP). */

@@ -9,7 +9,7 @@ import { Rng } from '../../shared/rng.ts'
 import { createCreature, maxHp } from '../../shared/creature.ts'
 import { buildBossInit, createBossCreature } from '../../shared/battle/boss-battle.ts'
 import { partyExpMods } from '../../shared/gameplay/bosscard.ts'
-import { instanceOfBoss, progressOf } from '../../shared/gameplay/instances.ts'
+import { instanceOfBoss, pickLossHint, progressOf, shouldOfferAssist } from '../../shared/gameplay/instances.ts'
 import { GAMEPLAY } from '../../shared/gameplay/data.ts'
 import { modifierValue, type EventModifiers } from '../../shared/gameplay/events.ts'
 import { regionAt } from '../../shared/world/worldapi.ts'
@@ -301,10 +301,11 @@ export function createBattleFlow(deps: BattleFlowDeps) {
       }
     }
     const a = arena()
+    const startBaits = baitCounts()
     const init = buildBossInit(bossId, ctx.save.party, {
       seed, tier: tierId, boss: foe, c: ctx.data, expGain: true, playerName: ctx.save.name, ...(ctx.save.avatar ? { playerSprite: ctx.save.avatar } : {}),
       biome: a.biome, timeOfDay: a.timeOfDay, ...(a.weather ? { weather: a.weather } : {}), ...(opts.assist ? { assist: true } : {}),
-      ...(opts.coach ? { coach: true, skipBrief: !!ctx.save.flags['ds:skipBrief'], items: baitCounts() } : {}),
+      ...(opts.coach ? { coach: true, skipBrief: !!ctx.save.flags['ds:skipBrief'], items: startBaits } : {}),
       ...(opts.assist === undefined && ctx.save.flags[ID.assistFlag] ? { assist: true } : {}),
     })
     if (opts.captureAfterWin && first) init.captureAfterWin = true
@@ -321,8 +322,10 @@ export function createBattleFlow(deps: BattleFlowDeps) {
       else payBossReward({ money: rules.repeat.money })
     } else if (outcome.result === 'lose' || outcome.result === 'draw') {
       prog.losses[tierId] = (prog.losses[tierId] ?? 0) + 1
-      // The assist mode ("减负") is offered once the losses add up; the story script of the instance asks the player.
-      ctx.save.flags[ID.assistOfferFlag] = prog.losses[tierId] >= ID.assistAfterLosses
+      const hintKey = pickLossHint(inst.def, outcome.summary, startBaits, ctx.data)
+      if (ID.lossHintFlag) ctx.save.flags[ID.lossHintFlag] = hintKey.slice(hintKey.lastIndexOf('.') + 1)
+      // The assist mode ("减负") is offered once the losses add up or after an early wipe; the story script of the instance asks the player.
+      ctx.save.flags[ID.assistOfferFlag] = shouldOfferAssist(ID, prog.losses[tierId], outcome.summary)
     }
     ctx.persist('boss-run')
     return outcome

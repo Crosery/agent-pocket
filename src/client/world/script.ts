@@ -30,7 +30,7 @@ export interface ScriptHost {
   setNpcHidden(id: string, hidden: boolean): void
   /** Trainer battle incl. intro/defeat text and rewards; null when the trainer does not exist. */
   trainerBattle(trainerId: string, npc: NpcDef | null): Promise<BattleResult | null>
-  wildBattle(speciesId: string, level: number, opts: { music?: string; shiny?: boolean; scripted: boolean; moves?: string[]; catchRateMul?: number; gradeFloor?: string }): Promise<BattleResult | null>
+  wildBattle(speciesId: string, level: number, opts: { music?: string; shiny?: boolean; scripted: boolean; moves?: string[]; catchRateMul?: number; gradeFloor?: string; aura?: string }): Promise<BattleResult | null>
   /** Boss instance fight of one tier (rewards and the post-win contract included); null when the boss or tier does not exist. */
   bossBattle?(bossId: string, tier: string, opts: { captureAfterWin?: boolean; coach?: boolean }): Promise<BattleResult | null>
   /** A floating bubble over an NPC id or "player". */
@@ -127,7 +127,7 @@ export function createScriptRunner(host: ScriptHost) {
         return 'done'
       case 'choice': {
         const options = s.options.map((o) => textOrKey(o, params()))
-        const i = await ctx.ui.choose(line(s.text, npc?.nameZh, npc?.portrait), options, { cancelIndex: options.length - 1 })
+        const i = await ctx.ui.choose(line(s.text, s.speaker ?? npc?.nameZh, s.portrait ?? npc?.portrait), options, { cancelIndex: options.length - 1 })
         const branch = s.branches[i] ?? s.branches[s.branches.length - 1] ?? []
         return exec(branch, npc, depth + 1)
       }
@@ -222,7 +222,7 @@ export function createScriptRunner(host: ScriptHost) {
         if (!s.species) { console.warn('[script] wildBattle without a resolved species'); return 'done' }
         markSeen(ctx, s.species)
         await presentArrival(ctx, s.species, host.playerPlace())
-        const r = await host.wildBattle(s.species, s.level, { music: s.music, scripted: true, moves: s.moves, catchRateMul: s.catchRateMul, gradeFloor: s.gradeFloor })
+        const r = await host.wildBattle(s.species, s.level, { music: s.music, scripted: true, moves: s.moves, catchRateMul: s.catchRateMul, gradeFloor: s.gradeFloor, ...(s.aura ? { aura: s.aura } : {}) })
         if (isLoss(r) && GAME.battle.lossAbortsScript) { await host.blackout(); return 'abort' }
         return 'done'
       }

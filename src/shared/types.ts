@@ -922,6 +922,20 @@ export type BattleEvent =
   | { t: 'loot'; itemId: string; qty: number }
   | { t: 'end'; result: BattleResult; winner: SideIndex | -1 }
 
+/** End-of-fight statistics of a boss fight (read by the post-loss tutor and assist-mode rules). */
+export interface BattleSummary {
+  turns: number
+  /** Remaining hp ratio (0..1) of the opponent's active creature when the fight ended. */
+  foeHpLeft: number
+  enraged: boolean
+  baitTagsUsed: string[]
+  healItemsUsed: number
+  /** meterId -> meter state value -> damage dealt to the boss in that state. */
+  damageByMeterState: Record<string, Record<number, number>>
+  /** meterId -> meter state value -> player creatures that fainted in that state. */
+  faintedByMeterState: Record<string, Record<number, number>>
+}
+
 // ---------------------------------------------------------------------------
 // World / maps (generated deterministically from content/world/** by src/shared/world/)
 // ---------------------------------------------------------------------------
@@ -967,7 +981,7 @@ export type NpcRole =
 /** Data-only cutscene/dialogue script executed by the client ScriptRunner. */
 export type ScriptStep =
   | { op: 'say'; text: string; speaker?: string; portrait?: string }
-  | { op: 'choice'; text: string; options: string[]; branches: ScriptStep[][] }
+  | { op: 'choice'; text: string; speaker?: string; portrait?: string; options: string[]; branches: ScriptStep[][] }
   | { op: 'setFlag'; flag: string; value?: boolean | number | string }
   | { op: 'ifFlag'; flag: string; equals?: boolean | number | string; then: ScriptStep[]; else?: ScriptStep[] }
   | { op: 'ifBadges'; atLeast: number; then: ScriptStep[]; else?: ScriptStep[] }
@@ -988,7 +1002,7 @@ export type ScriptStep =
    */
   | { op: 'bossBattle'; boss: string; tier: string; captureAfterWin?: boolean; lossContinues?: boolean; lossFlag?: string; coach?: boolean; lossWarp?: string }
   /** moves / gradeFloor shape the opponent, catchRateMul scales the catch chance. */
-  | { op: 'wildBattle'; species?: string; pick?: SpeciesPick; level: number; music?: string; moves?: string[]; catchRateMul?: number; gradeFloor?: string }
+  | { op: 'wildBattle'; species?: string; pick?: SpeciesPick; level: number; music?: string; moves?: string[]; catchRateMul?: number; gradeFloor?: string; aura?: string }
   /** A floating bubble (`fx`: "!", "?" ...) over an NPC id or "player". */
   | { op: 'emote'; target: string; fx: string }
   | { op: 'heal' }
@@ -1031,6 +1045,8 @@ export interface NpcDef {
   portrait?: string
   /** A creature NPC: drawn as that species' billboard instead of a character sheet. */
   creature?: string
+  /** Aura colour or preset ('spark') shown on a creature NPC. */
+  aura?: string
   script: ScriptStep[]
   trainer?: string
   sightRange?: number
@@ -1451,10 +1467,24 @@ export interface InstanceTierDef {
   repeat: { expMul: number; money: number; capture: boolean }
 }
 
+export interface InstanceLossHint {
+  if?: {
+    peakDamageShare?: number
+    unusedBaitTag?: string
+    faintedInMeterState?: { meter: string; value: number; atLeast: number }
+    noHealItem?: boolean
+    enraged?: boolean
+  }
+  text: string
+}
+
 export interface InstanceDef {
   boss: string
   /** Text key of the instance name. */
   name: string
+  lobby?: string
+  drill?: string
+  lossHints?: InstanceLossHint[]
   tiers: Record<string, InstanceTierDef>
 }
 
@@ -1468,6 +1498,11 @@ export interface InstanceDefaults {
   /** Save flag set while the assist offer stands (the story script reads it), and the flag a yes sets. */
   assistOfferFlag: string
   assistFlag: string
+  lossHintFlag?: string
+  lossPolicy?: string
+  assistEarly?: { losses: number; foeHpLeftAtLeast: number; maxTurns: number }
+  retryFromLobby?: boolean
+  couponRefill?: { item: string; min: number }
 }
 
 // ---------------------------------------------------------------------------
@@ -1538,6 +1573,7 @@ export interface DevScenario {
   badges?: string[]
   flags?: Record<string, boolean | number | string>
   quests?: Record<string, { stage: number; done: boolean }>
+  instances?: Record<string, Partial<InstanceProgress>>
   clock?: { minutes: number; frozen?: boolean }
   weather?: string | null
   /** Commands to run once the state is applied (battle, effects, ...). */

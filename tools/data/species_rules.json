@@ -140,7 +140,8 @@
     "excludeLearnset": true,
     "compatByCategory": {"llm": ["chat", "logic", "write"], "reasoning": ["logic", "compute", "search"], "code": ["code", "logic", "compute"], "agent": ["agent", "search", "code"], "multimodal": ["vision", "sound", "chat"], "image": ["vision", "write"], "video": ["motion", "vision", "sound"], "music": ["sound", "write"], "audio": ["sound", "chat"], "search": ["search", "write", "logic"], "embodied": ["agent", "compute", "motion"], "other": ["chat", "chaos", "write"]},
     "scores": {"ownPrimary": 3.2, "ownSecondary": 3.0, "compat": 1.5, "categoryMatch": 1.0, "status": 0.4, "coverage": 0.6, "coverageOnly": 1.2},
-    "includeCoverageTypes": true
+    "includeCoverageTypes": true,
+    "extraBySpecies": {"ernie-bot": ["embedding-orb"]}
   },
   "catchRate": {"_doc": "t = stageT*stageWeight + bstPosInBand*bstWeight; catchRate = hi - t*(hi-lo) (rarity band from content/rarities.json)", "stageT": {"1": 0.15, "2": 0.55, "3": 0.9}, "stageWeight": 0.7, "bstWeight": 0.3},
   "baseExp": {"_doc": "baseExp = round(BST * max(perBstByStage[stage], minPerBstByRarity[rarity]))", "perBstByStage": {"1": 0.2, "2": 0.33, "3": 0.45}, "minPerBstByRarity": {"N": 0.18, "R": 0.2, "SR": 0.24, "SSR": 0.3, "UR": 0.42, "MYTHIC": 0.5}},

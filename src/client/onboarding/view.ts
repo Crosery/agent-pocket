@@ -171,11 +171,9 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
   open.addEventListener('click', () => { openAsked = true; clicked = true })
   nativeActivation(open)
   let hideTimer = 0
-  let expireTimer = 0
   const api = {
     show(s: TipState) {
       window.clearTimeout(hideTimer)
-      window.clearTimeout(expireTimer)
       clicked = false
       title.textContent = t(`${s.textKey}.title`)
       const touchBody = `${s.textKey}.bodyTouch`
@@ -199,11 +197,8 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
       card.classList.remove('is-in')
       void card.offsetWidth
       card.classList.add('is-in')
-      // A paused render loop or a background tab must not leave an old hint on screen.
-      expireTimer = window.setTimeout(() => { clicked = true; api.hide() }, TUTORIAL.tips.layer.ttlSec * 1000)
     },
     hide() {
-      window.clearTimeout(expireTimer)
       if (card.hidden || card.classList.contains('is-out')) return
       card.classList.remove('is-in')
       card.classList.add('is-out')
@@ -235,7 +230,7 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
       if (input.pressed('cancel')) return true
       return false
     },
-    dispose() { window.clearTimeout(expireTimer); window.clearTimeout(hideTimer); card.remove(); layer.remove() },
+    dispose() { window.clearTimeout(hideTimer); card.remove(); layer.remove() },
   }
   return api
 }

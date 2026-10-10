@@ -1,9 +1,18 @@
 {
-  "defaults": {"assistAfterLosses": 2, "assistOfferFlag": "ds:assistOffer", "assistFlag": "ds:assist"},
+  "defaults": {"lossPolicy": "lobby", "assistAfterLosses": 2, "assistEarly": {"losses": 1, "foeHpLeftAtLeast": 0.8, "maxTurns": 8}, "assistOfferFlag": "ds:assistOffer", "assistFlag": "ds:assist", "lossHintFlag": "ds:lossHint", "retryFromLobby": true, "couponRefill": {"item": "off-peak-coupon", "min": 1}},
   "instances": {
     "deepseek-tide": {
       "boss": "deepseek",
       "name": "boss.deepseek.instance.name",
+      "lobby": "origin-lab-b1:r1-front",
+      "drill": "deepseek-drill",
+      "lossHints": [
+        {"if": {"peakDamageShare": 0.6}, "text": "boss.deepseek.loss.peakDamage"},
+        {"if": {"unusedBaitTag": "offpeak"}, "text": "boss.deepseek.loss.noCoupon"},
+        {"if": {"faintedInMeterState": {"meter": "tide", "value": 0, "atLeast": 2}, "noHealItem": true}, "text": "boss.deepseek.loss.noHeal"},
+        {"if": {"enraged": true}, "text": "boss.deepseek.loss.enrage"},
+        {"text": "boss.deepseek.loss.default"}
+      ],
       "tiers": {
         "story": {
           "capture": {"first": 1, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.4, "slot0": 0.4, "slot1": 0.2}},

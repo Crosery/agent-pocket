@@ -1,15 +1,17 @@
 // Starting fights. They return at once (the battle runs on); wait.battle('active' | 'idle') follows them.
+import type { ScriptStep } from '../../../shared/types.ts'
 import { CONTENT } from '../../../shared/content/index.ts'
 import { createBossCreature } from '../../../shared/battle/boss-battle.ts'
 import { defaultMoves, expForLevel, maxHp } from '../../../shared/creature.ts'
 import { rollBossCard } from '../../../shared/gameplay/bosscard.ts'
 import { GAMEPLAY } from '../../../shared/gameplay/data.ts'
-import { instanceOfBoss } from '../../../shared/gameplay/instances.ts'
+import { instanceOfBoss, progressOf, shouldOfferAssist } from '../../../shared/gameplay/instances.ts'
+import { walkSteps } from '../../../shared/world/story.ts'
+import { contractFlow } from '../../battle/capture.ts'
 import { addCreature } from '../../world/save-ops.ts'
 import { GAME } from '../../world/config.ts'
 import type { DevHost } from '../kit.ts'
 import { DevError, type CommandRun } from '../registry.ts'
-
 const guard = (host: DevHost): void => { if (host.overworld.battleActive) throw new DevError('dev.err.battleBusy') }
 const fire = (p: Promise<unknown>, what: string): void => { p.catch((err) => console.error(`[dev] ${what} failed`, err)) }
 
@@ -38,12 +40,49 @@ export const battleCommands: Record<string, CommandRun> = {
     const tier = a.tier === undefined ? undefined : String(a.tier)
     if (tier !== undefined) {
       if (!def.tiers?.[tier]) throw new DevError('dev.err.unknownBossTier', { boss: id, tier })
-      fire(host.overworld.startBossBattle(id, tier, { assist: a.assist === true }), 'boss tier battle')
-      return { boss: id, tier, level: def.tiers[tier].level, assist: a.assist === true }
+      fire(host.overworld.startBossBattle(id, tier, { assist: a.assist === true, coach: a.coach === true }), 'boss tier battle')
+      return { boss: id, tier, level: def.tiers[tier].level, assist: a.assist === true, ...(a.coach === true ? { coach: true } : {}) }
     }
     const level = Math.max(1, Math.floor((a.level as number | undefined) ?? def.level))
     fire(host.overworld.startWildBattle(def.species, level), 'boss battle')
     return { boss: id, species: def.species, level }
+  },
+  /** Forces a boss instance result without playing the fight; on 'lose', updates instance losses/flags and runs the post-loss script. */
+  'battle.forceResult': (host, a) => {
+    const result = String(a.result ?? 'lose')
+    if (result !== 'win' && result !== 'lose') throw new DevError('dev.err.badArg', { arg: 'result', why: 'win | lose' })
+    const bossId = String(a.boss ?? 'deepseek')
+    const tierId = String(a.tier ?? 'story')
+    const inst = instanceOfBoss(bossId)
+    if (!inst || !inst.def.tiers[tierId]) throw new DevError('dev.err.unknownBossTier', { boss: bossId, tier: tierId })
+    const { ctx } = host
+    const prog = progressOf(ctx.save, inst.id)
+    const ID = GAMEPLAY.instanceDefaults
+    if (result === 'win') {
+      prog.clears[tierId] = (prog.clears[tierId] ?? 0) + 1
+      prog.losses[tierId] = 0
+      ctx.save.flags[ID.assistOfferFlag] = false
+      ctx.save.flags[GAME.flags.bossWonPrefix + bossId] = true
+      return { boss: bossId, tier: tierId, result: 'win', clears: prog.clears[tierId] }
+    }
+    prog.losses[tierId] = (prog.losses[tierId] ?? 0) + 1
+    const hint = String(a.hint ?? 'peakDamage')
+    if (ID.lossHintFlag) ctx.save.flags[ID.lossHintFlag] = hint
+    ctx.save.flags[ID.assistOfferFlag] = shouldOfferAssist(ID, prog.losses[tierId], {
+      turns: 3, foeHpLeft: 0.9, enraged: false, baitTagsUsed: [], healItemsUsed: 0,
+      damageByMeterState: { tide: { 0: 10 } }, faintedByMeterState: { tide: { 0: 3 } },
+    })
+    ctx.save.flags['ds:met'] = true
+    ctx.save.flags['ds:lost'] = true
+    for (const cr of ctx.save.party) cr.hp = maxHp(cr, CONTENT)
+    const v4 = host.world.maps['origin-lab-b2']?.npcs.find((n) => n.id === 'ds-v4')
+    let lossBranch: ScriptStep[] | null = null
+    if (v4) walkSteps(v4.script, (s) => { if (!lossBranch && s.op === 'ifFlag' && s.flag === 'ds:lost') lossBranch = s.then })
+    const r1 = host.world.maps['origin-lab-b1']?.npcs.find((n) => n.id === 'ds-r1') ?? null
+    if (lossBranch && typeof host.overworld.runScript === 'function') {
+      fire(host.overworld.runScript(lossBranch.slice(4, -1), r1), 'loss script')
+    }
+    return { boss: bossId, tier: tierId, result: 'lose', losses: prog.losses[tierId], assistOffer: !!ctx.save.flags[ID.assistOfferFlag], hint }
   },
   /** The contract screen right away, without the fight (the first clear's card is rolled, filed and appraised). */
   'capture.force': (host, a) => {
@@ -55,10 +94,8 @@ export const battleCommands: Record<string, CommandRun> = {
     if (!def.tiers?.[tier] || !rules) throw new DevError('dev.err.unknownBossTier', { boss: id, tier })
     if (a.result !== undefined && a.result !== 'success') throw new DevError('dev.err.badArg', { arg: 'result', why: 'success' })
     guard(host)
-    fire(import('../../battle/capture.ts').then(({ contractFlow }) => {
-      const foe = createBossCreature(id, def.tiers![tier].level, host.rng.stream('debug'), CONTENT)
-      return contractFlow(host.ctx, { bossId: id, tierId: tier, foe, chance: rules.capture.first })
-    }), 'contract')
+    const foe = createBossCreature(id, def.tiers![tier].level, host.rng.stream('debug'), CONTENT)
+    fire(contractFlow(host.ctx, { bossId: id, tierId: tier, foe, chance: rules.capture.first, skipBefore: true }), 'contract')
     return { boss: id, tier, result: 'success' }
   },
   /** Forgets a boss instance's progress (clears, captures, run counter) so its first clear can be played again. */

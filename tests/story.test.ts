@@ -192,7 +192,7 @@ test('no unresolved placeholders or authoring macros reach the World', () => {
 })
 
 /** Written by the v2 -> v3 save migration (src/client/core/save-migrate.ts), not by a script. */
-const MIGRATION_FLAGS = new Set(['ds:legacy', 'ds:assistOffer'])
+const MIGRATION_FLAGS = new Set(['ds:legacy', 'ds:assistOffer', 'ds:lossHint'])
 /** Never set on purpose: the NPC is hidden by default and a script shows it for one scene (hiddenUnlessFlag). */
 const SCENE_ONLY_FLAGS = new Set(['ds:zeroBack'])
 
@@ -307,7 +307,8 @@ test('prologue: starter, gifts, rival battle and heal are wired', () => {
   const holds = (blockers: typeof npcs, exit: string) => blockers.some((n) => Math.abs(n.x - anchors[exit].x) <= 1 && Math.abs(n.y - anchors[exit].y) <= 1)
   for (const e of ['north', 'east', 'south']) assert.ok(holds(stateB, `town:origin:exit-${e}`), `exit-${e} is held until ds:gateOpen`)
   assert.ok(!holds(stateB, 'town:origin:exit-west'), 'the west road is open once the partner is chosen')
-  assert.ok(holds(stateB, 'town:opensource:exit-east'), 'the far end of the west road is held too')
+  for (const e of ['east', 'north', 'south', 'west']) assert.ok(holds(stateB, `town:opensource:exit-${e}`), `opensource exit-${e} is held until ds:gateOpen`)
+  assert.deepEqual(reachedTowns(stateB).filter((id) => id !== start?.id), [], 'no other town is reachable before ds:gateOpen')
   assert.equal(reachedTowns(sealedBy([starterFlag, 'ds:gateOpen'])).length, world.towns.length, 'ds:gateOpen opens every road')
 })
 
