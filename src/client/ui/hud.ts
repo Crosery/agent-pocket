@@ -97,6 +97,15 @@ export function createHUD(root: HTMLElement): HUDHandle {
   let moneyRaf = 0
   let questValue: string | null = null
   let questTitle = ''
+  let questStage = ''
+  let objectiveText: string | null = null
+  /** The objective card is the primary line: a quest row repeating its sentence is dropped, one saying something else is marked as aside. */
+  const syncQuest = () => {
+    const hide = !questValue || (objectiveText !== null && objectiveText === questStage)
+    if (hide) expandQuest(false)
+    quest.hidden = hide
+    quest.classList.toggle('is-aside', !hide && objectiveText !== null)
+  }
 
   const api: HUDHandle = {
     el: hud,
@@ -161,13 +170,14 @@ export function createHUD(root: HTMLElement): HUDHandle {
       }
       moneyRaf = requestAnimationFrame(step)
     },
-    setQuest(text: string | null, summary?: string) {
+    setQuest(text: string | null, summary?: string, stage = '') {
       const title = summary || t('hud.quest.title')
-      if (text === questValue && title === questTitle) return
+      if (text === questValue && title === questTitle && stage === questStage) return
       questValue = text
       questTitle = title
+      questStage = stage
       expandQuest(false)
-      quest.hidden = !text
+      syncQuest()
       if (!text) return
       questSummary.textContent = title
       questToggle.setAttribute('aria-label', t('hud.quest.label', { quest: title }))
@@ -175,6 +185,11 @@ export function createHUD(root: HTMLElement): HUDHandle {
       quest.style.animation = 'none'
       void quest.offsetWidth
       quest.style.animation = ''
+    },
+    setObjective(text: string | null) {
+      if (text === objectiveText) return
+      objectiveText = text
+      syncQuest()
     },
     setNetStatus(status: NetStatus, online: number) {
       net.dataset.status = status

@@ -10,8 +10,10 @@ import { questEntries, type QuestEntry } from './logic.ts'
 
 /** Text shown on the HUD for a tracked quest (current stage). */
 export function questHudText(def: QuestDef, stage: number): string {
-  return t('screens.quests.hud', { quest: def.nameZh, stage: def.stages[Math.min(stage, def.stages.length - 1)]?.text ?? '' })
+  return t('screens.quests.hud', { quest: def.nameZh, stage: stageText(def, stage) })
 }
+
+const stageText = (def: QuestDef, stage: number): string => def.stages[Math.min(stage, def.stages.length - 1)]?.text ?? ''
 
 export function questsScreen(env: ScreenEnv): Promise<void> {
   const { ctx } = env
@@ -93,7 +95,7 @@ export function questsScreen(env: ScreenEnv): Promise<void> {
         uiSfx(env, 'cancel')
       } else {
         ctx.save.trackedQuest = e.def.id
-        ctx.hud.setQuest(questHudText(e.def, e.stage), e.def.nameZh)
+        ctx.hud.setQuest(questHudText(e.def, e.stage), e.def.nameZh, stageText(e.def, e.stage))
         uiSfx(env, 'confirm')
       }
       dirty = true
