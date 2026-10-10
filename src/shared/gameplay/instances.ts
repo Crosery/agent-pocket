@@ -158,15 +158,29 @@ export function instancePeriodKey(
 }
 
 /**
+ * Calculates Boss Max HP scaled by N^exp where N is number of players.
+ */
+export function scaleBossHp(baseHp: number, playerCount: number, exp = 0.8): number {
+  const n = Math.max(1, playerCount)
+  const mul = Math.pow(n, exp)
+  return Math.round(baseHp * mul)
+}
+
+/**
  * Checks whether current time qualifies for off-peak double events.
- * Peak hours in AI compute circles are typically 10:00 - 22:00; off-peak is 22:00 - 08:00.
+ * Reads hour range from GAMEPLAY.instanceDefaults.offPeakDouble.hours (default 22:00 - 08:00).
  */
 export function isOffPeakDouble(nowMs = Date.now(), period?: InstancePeriodConfig): boolean {
   const cfg = period ?? GAMEPLAY.instancePeriod ?? { utcOffset: '+08:00', dayStartHour: 5 }
   const offsetMs = parseUtcOffsetMs(cfg.utcOffset)
   const localDate = new Date(nowMs + offsetMs)
   const hour = localDate.getUTCHours()
-  return hour >= 22 || hour < 8
+  const hours = GAMEPLAY.instanceDefaults?.offPeakDouble?.hours ?? [22, 8]
+  const [start, end] = hours
+  if (start > end) {
+    return hour >= start || hour < end
+  }
+  return hour >= start && hour < end
 }
 
 /**
@@ -261,7 +275,8 @@ export function rollContractOutcome(
 export function dailyLockoutStatus(
   prog: InstanceProgress,
   periodKey: string,
-  limit = 3,
+  rollLimit = GAMEPLAY.instanceDefaults?.dailyRollLimit ?? 3,
+  rewardLimit = GAMEPLAY.instanceDefaults?.dailyRewardLimit ?? 5,
 ): { canRoll: boolean; rollsLeft: number; canReward: boolean; rewardsLeft: number } {
   if (prog.day?.key !== periodKey) {
     prog.day = { key: periodKey, rolls: 0, rewards: 0 }
@@ -269,10 +284,10 @@ export function dailyLockoutStatus(
   const rolls = prog.day.rolls ?? 0
   const rewards = prog.day.rewards ?? 0
   return {
-    canRoll: rolls < limit,
-    rollsLeft: Math.max(0, limit - rolls),
-    canReward: rewards < 5,
-    rewardsLeft: Math.max(0, 5 - rewards),
+    canRoll: rolls < rollLimit,
+    rollsLeft: Math.max(0, rollLimit - rolls),
+    canReward: rewards < rewardLimit,
+    rewardsLeft: Math.max(0, rewardLimit - rewards),
   }
 }
 

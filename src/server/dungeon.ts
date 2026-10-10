@@ -7,6 +7,7 @@ import {
   applyRaidPlayerAction,
   buildRaidSummary,
   createRaidSession,
+  getBossRaidState,
   getRaidMemberStates,
   type RaidSession,
 } from '../shared/coop/raid.ts'
@@ -27,11 +28,20 @@ import type { ProfileStore } from './store.ts'
 export interface DungeonAccountStore {
   getSave?(id: string): SaveData | null
   putSave?(id: string, s: SaveData): unknown
+  audit?(entry: { accountId?: string | null; kind: string; detail?: Record<string, unknown>; severity?: number }): void
+}
+
+export interface DungeonAuthority {
+  getSave(playerId: string): SaveData | null
+  mutateSave<T>(playerId: string, ref: string, fn: (save: SaveData) => T): T | null
+  grantReward?(playerId: string, reward: { money?: number; items?: Record<string, number>; creatures?: Creature[] }, ref: string): boolean
+  audit?(accountId: string | null, kind: string, detail: Record<string, unknown>, severity?: number): void
 }
 
 export interface DungeonServerOptions {
   core: HubCore
   store?: ProfileStore | DungeonAccountStore | null
+  authority?: DungeonAuthority | null
   lookupPlayer: (id: string) => Player | null
   log?: (msg: string) => void
 }
@@ -53,9 +63,6 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
 
   const raids = new Map<string, RaidSession>()
   const playerToRaid = new Map<string, string>()
-
-  // Fallback in-memory save storage when standalone without account store
-  const inMemorySaves = new Map<string, SaveData>()
 
   function sendToPlayer(playerId: string, msg: CoopServerMsg): void {
     const player = opts.lookupPlayer(playerId)
@@ -80,38 +87,11 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     }
   }
 
-  function getSaveForPlayer(playerId: string): SaveData {
+  function getSaveForPlayer(playerId: string): SaveData | null {
+    const authSave = opts.authority?.getSave(playerId)
+    if (authSave) return authSave
     const st = opts.store as DungeonAccountStore | undefined
-    const external = st?.getSave?.(playerId)
-    if (external) return external
-    let local = inMemorySaves.get(playerId)
-    if (!local) {
-      local = {
-        playerId,
-        name: opts.lookupPlayer(playerId)?.name ?? playerId,
-        money: 1000,
-        bag: { 'prompt-ball': 5, 'data-shard': 0 },
-        party: [],
-        boxes: [[]],
-        badges: [],
-        dexSeen: [],
-        dexCaught: [],
-        flags: {},
-        stats: { battlesWon: 0, caught: 0, steps: 0, pvpWins: 0, pvpLosses: 0, trades: 0, shiniesFound: 0 },
-        instances: {},
-      }
-      inMemorySaves.set(playerId, local)
-    }
-    return local
-  }
-
-  function savePlayer(playerId: string, save: SaveData): void {
-    const st = opts.store as DungeonAccountStore | undefined
-    if (st?.putSave) {
-      st.putSave(playerId, save)
-    } else {
-      inMemorySaves.set(playerId, save)
-    }
+    return st?.getSave?.(playerId) ?? null
   }
 
   // -------------------------------------------------------------
@@ -121,6 +101,15 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
   function handlePartyCreate(p: Player): void {
     if (playerToParty.has(p.id)) {
       core.send(p, { t: 'party.error', code: 'already_in_party', message: '已在队伍中' })
+      return
+    }
+    const save = getSaveForPlayer(p.id)
+    if (!save) {
+      core.send(p, { t: 'party.error', code: 'no_save', message: '未找到在线存档，请先登录' })
+      return
+    }
+    if (!save.party || save.party.length === 0) {
+      core.send(p, { t: 'party.error', code: 'empty_party', message: '队伍中没有出战智灵' })
       return
     }
     const partyId = `party-${p.id}-${Date.now().toString(36)}`
@@ -173,6 +162,12 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
         code: 'invite_declined',
         message: `${p.name} 拒绝了组队邀请`,
       })
+      return
+    }
+
+    const save = getSaveForPlayer(p.id)
+    if (!save || !save.party || save.party.length === 0) {
+      core.send(p, { t: 'party.error', code: 'invalid_party', message: '队伍中没有出战智灵，无法加入' })
       return
     }
 
@@ -246,8 +241,12 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
       return
     }
 
-    // Check unlocks and ready state
     const leaderSave = getSaveForPlayer(p.id)
+    if (!leaderSave) {
+      core.send(p, { t: 'party.error', code: 'no_save', message: '未找到在线存档，请先登录' })
+      return
+    }
+
     const boolFlags = Object.fromEntries(Object.entries(leaderSave.flags).map(([k, v]) => [k, Boolean(v)]))
     const check = isTierUnlocked(tierDef, leaderSave.badges, boolFlags, party.members.length)
     if (!check.unlocked) {
@@ -307,6 +306,15 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     }
 
     const save = getSaveForPlayer(p.id)
+    if (!save) {
+      core.send(p, { t: 'dungeon.error', code: 'no_save', message: '未找到在线存档，请先登录' })
+      return
+    }
+    if (!save.party || save.party.length === 0) {
+      core.send(p, { t: 'dungeon.error', code: 'empty_party', message: '队伍中没有出战智灵' })
+      return
+    }
+
     const boolFlags = Object.fromEntries(Object.entries(save.flags).map(([k, v]) => [k, Boolean(v)]))
     const check = isTierUnlocked(tierDef, save.badges, boolFlags, 1)
     if (!check.unlocked) {
@@ -414,16 +422,20 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
   // -------------------------------------------------------------
 
   function startRaidForInstance(inst: InstanceState, def: typeof GAMEPLAY.instances[string]): void {
-    const raidMembers = inst.members.map((id) => {
+    const raidMembers = []
+    for (const id of inst.members) {
       const pl = opts.lookupPlayer(id)
       const sv = getSaveForPlayer(id)
-      return {
+      if (!sv || !sv.party || sv.party.length === 0) continue
+      raidMembers.push({
         id,
         name: pl?.name ?? sv.name ?? id,
-        avatar: pl?.avatar ?? 'sprite-hero',
-        party: sv.party.length > 0 ? sv.party : [createPlaceholderCreature(id)],
-      }
-    })
+        avatar: pl?.avatar ?? sv.avatar ?? 'sprite-hero',
+        party: sv.party,
+      })
+    }
+
+    if (raidMembers.length === 0) return
 
     const tierDef = def.tiers[inst.tierId]
     const session = createRaidSession({
@@ -442,49 +454,31 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     }
 
     const memberStates = getRaidMemberStates(session)
+    const bossState = getBossRaidState(session)
     let sideIdx = 0
     for (const m of raidMembers) {
       sendToPlayer(m.id, {
         t: 'raid.start',
         raidId: session.raidId,
-        boss: session.boss,
+        boss: bossState,
         members: memberStates,
         yourSide: sideIdx++,
       })
     }
   }
 
-  function createPlaceholderCreature(otId: string): Creature {
-    return {
-      uid: `raid-starter-${otId}`,
-      speciesId: 'deepseek-v4',
-      level: 15,
-      exp: 0,
-      hp: 80,
-      maxHp: 80,
-      ivs: { hp: 15, atk: 15, def: 15, spa: 15, spd: 15, spe: 15 },
-      nature: 'balanced',
-      abilityId: 'peak-valley',
-      moves: [{ id: 'tensor-tackle', pp: 20, ppMax: 20 }],
-      shiny: false,
-      otId,
-      otName: 'Trainer',
-    }
-  }
-
-  function handleRaidAction(p: Player, action: BattleAction): void {
-    const raidId = playerToRaid.get(p.id)
-    if (!raidId) return
+  function handleRaidAction(p: Player, raidId: string, action: BattleAction): void {
     const session = raids.get(raidId)
     if (!session || session.ended) return
 
     const { events, ended, victory } = applyRaidPlayerAction(session, p.id, action)
     const memberStates = getRaidMemberStates(session)
+    const bossState = getBossRaidState(session)
 
     broadcastRaid(session, {
       t: 'raid.tick',
       raidId: session.raidId,
-      boss: session.boss,
+      boss: bossState,
       members: memberStates,
       events,
     })
@@ -513,42 +507,60 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
 
     for (const mem of summary.members) {
       if (!mem.qualified) continue
-      const save = getSaveForPlayer(mem.id)
-      const prog = progressOf(save, session.instanceId)
-      const first = (prog.clears[session.tierId] ?? 0) === 0
 
-      prog.clears[session.tierId] = (prog.clears[session.tierId] ?? 0) + 1
-      prog.losses[session.tierId] = 0
+      const applyRewards = (save: SaveData) => {
+        const prog = progressOf(save, session.instanceId)
+        const first = (prog.clears[session.tierId] ?? 0) === 0
 
-      let shards = (first ? tierDef.reward.shards : tierDef.repeat.shards) ?? 0
-      if (tierDef.reward.jackpot && Math.random() < tierDef.reward.jackpot.chance) {
-        shards *= tierDef.reward.jackpot.mul
-      }
-      if (offPeak) shards *= 2
+        prog.clears[session.tierId] = (prog.clears[session.tierId] ?? 0) + 1
+        prog.losses[session.tierId] = 0
 
-      save.bag ??= {}
-      if (shards > 0) {
-        save.bag['data-shard'] = (save.bag['data-shard'] ?? 0) + shards
-      }
+        let shards = (first ? tierDef.reward.shards : tierDef.repeat.shards) ?? 0
+        if (tierDef.reward.jackpot && Math.random() < tierDef.reward.jackpot.chance) {
+          shards *= tierDef.reward.jackpot.mul
+        }
+        if (offPeak) shards *= 2
 
-      const moneyGain = offPeak
-        ? (first ? (tierDef.reward.money ?? 0) * 2 : (tierDef.repeat.money ?? 0) * 2)
-        : (first ? (tierDef.reward.money ?? 0) : (tierDef.repeat.money ?? 0))
-      save.money = (save.money ?? 0) + (moneyGain ?? 0)
+        save.bag ??= {}
+        if (shards > 0) {
+          const shardItem = GAMEPLAY.instanceDefaults?.shardItem ?? 'data-shard'
+          save.bag[shardItem] = (save.bag[shardItem] ?? 0) + shards
+        }
 
-      if (first && tierDef.firstReward.items) {
-        for (const [it, qty] of Object.entries(tierDef.firstReward.items)) {
-          save.bag[it] = (save.bag[it] ?? 0) + (qty ?? 1)
+        const moneyGain = offPeak
+          ? (first ? (tierDef.reward.money ?? 0) * 2 : (tierDef.repeat.money ?? 0) * 2)
+          : (first ? (tierDef.reward.money ?? 0) : (tierDef.repeat.money ?? 0))
+        save.money = (save.money ?? 0) + moneyGain
+
+        if (first && tierDef.firstReward.items) {
+          for (const [it, qty] of Object.entries(tierDef.firstReward.items)) {
+            save.bag[it] = (save.bag[it] ?? 0) + (qty ?? 1)
+          }
         }
       }
 
-      savePlayer(mem.id, save)
+      if (opts.authority) {
+        opts.authority.mutateSave(mem.id, `dungeon:${session.instanceId}`, (save) => {
+          applyRewards(save)
+          return true
+        })
+      } else if (opts.store) {
+        const st = opts.store as DungeonAccountStore
+        const save = st.getSave?.(mem.id)
+        if (save) {
+          applyRewards(save)
+          st.putSave?.(mem.id, save)
+          st.audit?.({
+            accountId: mem.id,
+            kind: 'dungeon.clear',
+            detail: { instanceId: session.instanceId, tierId: session.tierId },
+          })
+        }
+      }
     }
   }
 
-  function handleRaidRollContract(p: Player, ballId: string): void {
-    const raidId = playerToRaid.get(p.id)
-    if (!raidId) return
+  function handleRaidRollContract(p: Player, raidId: string, ballId: string): void {
     const session = raids.get(raidId)
     if (!session || !session.ended || !session.victory) return
 
@@ -568,6 +580,11 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     if (!instDef || !tierDef) return
 
     const save = getSaveForPlayer(p.id)
+    if (!save) {
+      core.send(p, { t: 'raid.error', code: 'no_save', message: '未找到在线存档' })
+      return
+    }
+
     const prog = progressOf(save, session.instanceId)
     const first = (prog.captures[session.tierId] ?? 0) === 0
 
@@ -589,63 +606,79 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
       return
     }
 
-    prog.lastRollRun ??= {}
-    prog.lastRollRun[session.tierId] = prog.runSeq
+    const executeRoll = (s: SaveData): { success: boolean; card?: Creature; shardsAwarded?: number; pity?: number } => {
+      const pProg = progressOf(s, session.instanceId)
+      pProg.lastRollRun ??= {}
+      pProg.lastRollRun[session.tierId] = pProg.runSeq
 
-    const ballBonus = CONTENT.quality.capture.ballBonus[ballId] ?? 0
-    const isMaster = ballId === CONTENT.quality.capture.masterBall
-    const curPity = prog.pity?.[session.tierId] ?? 0
-    const odds = contractOdds(tierDef, ballBonus, !first, curPity)
+      const ballBonus = CONTENT.quality.capture.ballBonus[ballId] ?? 0
+      const isMaster = ballId === CONTENT.quality.capture.masterBall
+      const curPity = pProg.pity?.[session.tierId] ?? 0
+      const odds = contractOdds(tierDef, ballBonus, !first, curPity)
 
-    const rng = new Rng((Date.now() ^ 0x5bd1e995) >>> 0)
-    const success = first || isMaster || odds.guaranteed || rollContractOutcome(rng, odds.chance)
+      const rng = new Rng((Date.now() ^ 0x5bd1e995) >>> 0)
+      const success = first || isMaster || odds.guaranteed || rollContractOutcome(rng, odds.chance)
 
-    if (success) {
-      prog.pity ??= {}
-      prog.pity[session.tierId] = 0
-      prog.captures[session.tierId] = (prog.captures[session.tierId] ?? 0) + 1
+      if (success) {
+        pProg.pity ??= {}
+        pProg.pity[session.tierId] = 0
+        pProg.captures[session.tierId] = (pProg.captures[session.tierId] ?? 0) + 1
 
-      const card = rollBossCard(rng, instDef.boss, session.tierId, tierDef, {
-        first,
-        run: String(prog.runSeq),
-        at: Date.now(),
-        otName: save.name,
-        otId: save.playerId,
-        ballId,
-      }, CONTENT)
+        const card = rollBossCard(rng, instDef.boss, session.tierId, tierDef, {
+          first,
+          run: String(pProg.runSeq),
+          at: Date.now(),
+          otName: s.name,
+          otId: s.playerId,
+          ballId,
+        }, CONTENT)
 
-      if (save.party.length < CONTENT.config.party.maxParty) {
-        save.party.push(card)
+        if (s.party.length < CONTENT.config.party.maxParty) {
+          s.party.push(card)
+        } else {
+          s.boxes ??= [[]]
+          if (!s.boxes.length) s.boxes.push([])
+          s.boxes[s.boxes.length - 1].push(card)
+        }
+        return { success: true, card, pity: 0 }
       } else {
-        save.boxes ??= [[]]
-        if (!save.boxes.length) save.boxes.push([])
-        save.boxes[save.boxes.length - 1].push(card)
+        pProg.pity ??= {}
+        pProg.pity[session.tierId] = curPity + 1
+        const failShard = tierDef.repeat.shards ?? GAMEPLAY.instanceDefaults?.failShardQty ?? 1
+        const shardItem = GAMEPLAY.instanceDefaults?.shardItem ?? 'data-shard'
+        s.bag ??= {}
+        s.bag[shardItem] = (s.bag[shardItem] ?? 0) + failShard
+        return { success: false, shardsAwarded: failShard, pity: pProg.pity[session.tierId] }
       }
-      savePlayer(p.id, save)
+    }
 
+    let rollResult: { success: boolean; card?: Creature; shardsAwarded?: number; pity?: number } | null = null
+
+    if (opts.authority) {
+      rollResult = opts.authority.mutateSave(p.id, `dungeon-contract:${session.instanceId}`, (s) => executeRoll(s))
+    } else if (opts.store) {
+      const st = opts.store as DungeonAccountStore
+      const freshSave = st.getSave?.(p.id)
+      if (freshSave) {
+        rollResult = executeRoll(freshSave)
+        st.putSave?.(p.id, freshSave)
+        st.audit?.({
+          accountId: p.id,
+          kind: 'dungeon.contract',
+          detail: { instanceId: session.instanceId, tierId: session.tierId, success: rollResult.success },
+        })
+      }
+    }
+
+    if (rollResult) {
       core.send(p, {
         t: 'raid.contractResult',
         raidId: session.raidId,
         memberId: p.id,
-        success: true,
-        card,
-        pity: 0,
-      })
-    } else {
-      prog.pity ??= {}
-      prog.pity[session.tierId] = curPity + 1
-      const failShard = tierDef.repeat.shards ?? GAMEPLAY.instanceDefaults.failShardQty ?? 1
-      save.bag ??= {}
-      save.bag['data-shard'] = (save.bag['data-shard'] ?? 0) + failShard
-      savePlayer(p.id, save)
-
-      core.send(p, {
-        t: 'raid.contractResult',
-        raidId: session.raidId,
-        memberId: p.id,
-        success: false,
-        shardsAwarded: failShard,
-        pity: prog.pity[session.tierId],
+        success: rollResult.success,
+        card: rollResult.card,
+        shardsAwarded: rollResult.shardsAwarded,
+        pity: rollResult.pity,
       })
     }
   }
@@ -669,8 +702,9 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
       case 'dungeon.mechanism': handleDungeonMechanism(p, msg.mechanismId); return
       case 'dungeon.eliteFight': handleDungeonEliteFight(p, msg.eliteId); return
       case 'dungeon.leave': handleDungeonLeave(p); return
-      case 'raid.action': handleRaidAction(p, msg.action); return
-      case 'raid.rollContract': handleRaidRollContract(p, msg.ballId); return
+      case 'raid.join': return
+      case 'raid.action': handleRaidAction(p, msg.raidId, msg.action); return
+      case 'raid.rollContract': handleRaidRollContract(p, msg.raidId, msg.ballId); return
     }
   }
 

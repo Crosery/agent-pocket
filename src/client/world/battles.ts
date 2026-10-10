@@ -336,8 +336,10 @@ export function createBattleFlow(deps: BattleFlowDeps) {
 
       checkInstanceAchievements(prog, inst.def, { tierId, win: true })
 
-      if (first) payBossReward({ money: offPeak ? rules.reward.money * 2 : rules.reward.money, items: rules.firstReward.items })
-      else payBossReward({ money: offPeak ? rules.repeat.money * 2 : rules.repeat.money })
+      const firstMoney = (rules.reward.money ?? 0) * (offPeak ? 2 : 1)
+      const repeatMoney = (rules.repeat.money ?? 0) * (offPeak ? 2 : 1)
+      if (first) payBossReward({ money: firstMoney, items: rules.firstReward.items })
+      else payBossReward({ money: repeatMoney })
     } else if (outcome.result === 'lose' || outcome.result === 'draw') {
       prog.losses[tierId] = (prog.losses[tierId] ?? 0) + 1
       const hintKey = pickLossHint(inst.def, outcome.summary, startBaits, ctx.data)

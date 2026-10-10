@@ -1,7 +1,9 @@
-// Authoritative multiplayer Boss Raid synchronization and settlement.
-import type { BattleAction, BattleEvent, Creature, MoveAnim, TypeId } from '../types.ts'
-import { maxHp, toView } from '../creature.ts'
+// Authoritative multiplayer Boss Raid synchronization and settlement via BattleEngine.
+import type { BattleAction, BattleEvent, Creature, BossState } from '../types.ts'
+import { maxHp } from '../creature.ts'
 import { CONTENT } from '../content/index.ts'
+import { startBossBattle } from '../battle/boss-battle.ts'
+import type { BattleEngine } from '../battle/engine.ts'
 import type { BossRaidState, RaidMemberState, RaidSummary } from './protocol.ts'
 
 export interface CreateRaidOpts {
@@ -21,10 +23,8 @@ export interface CreateRaidOpts {
 
 export interface RaidMemberSession {
   info: { id: string; name: string; avatar: string }
-  party: Creature[]
-  activeIdx: number
+  engine: BattleEngine
   damageDealt: number
-  pendingAction?: BattleAction
 }
 
 export interface RaidSession {
@@ -33,7 +33,7 @@ export interface RaidSession {
   tierId: string
   bossId: string
   minContribution: number
-  boss: BossRaidState
+  bossState: BossState
   members: Map<string, RaidMemberSession>
   events: BattleEvent[]
   ended: boolean
@@ -51,33 +51,35 @@ export function scaleBossHp(baseHp: number, playerCount: number, exp = 0.8): num
 }
 
 export function createRaidSession(opts: CreateRaidOpts): RaidSession {
-  const bossDef = CONTENT.bosses[opts.bossId]
-  const tierDef = bossDef?.tiers?.[opts.tierId]
-  const baseLevel = tierDef?.level ?? bossDef?.level ?? 50
-  const species = CONTENT.species[bossDef?.species ?? opts.bossId]
-  const rawBaseHp = species ? Math.round(((2 * species.baseStats.hp + 31) * baseLevel) / 100 + baseLevel + 10) : 500
-  const statMulHp = bossDef?.forms[bossDef.initialForm]?.statMul?.hp ?? 8
-  const baseBossHp = Math.round(rawBaseHp * statMulHp)
-  const scaledHp = scaleBossHp(baseBossHp, opts.members.length, opts.hpScaleExp ?? 0.8)
-
-  const bossState: BossRaidState = {
-    speciesId: bossDef?.species ?? opts.bossId,
-    level: baseLevel,
-    hp: scaledHp,
-    maxHp: scaledHp,
-    form: bossDef?.initialForm ?? 'base',
-    meters: {},
-  }
-
   const memberMap = new Map<string, RaidMemberSession>()
+  let baseBossState: BossState | null = null
 
   for (const m of opts.members) {
+    const { engine } = startBossBattle(opts.bossId, m.party, {
+      seed: 1,
+      tier: opts.tierId,
+      playerName: m.name,
+      playerSprite: m.avatar,
+      expGain: false,
+    })
+    baseBossState ??= engine.extractBossState()
     memberMap.set(m.id, {
       info: { id: m.id, name: m.name, avatar: m.avatar },
-      party: m.party,
-      activeIdx: 0,
+      engine,
       damageDealt: 0,
     })
+  }
+
+  if (!baseBossState) {
+    throw new Error(`cannot initialize raid boss "${opts.bossId}"`)
+  }
+
+  const scaledHp = scaleBossHp(baseBossState.maxHp, opts.members.length, opts.hpScaleExp ?? 0.8)
+  baseBossState.maxHp = scaledHp
+  baseBossState.hp = scaledHp
+
+  for (const m of memberMap.values()) {
+    m.engine.applyBossState(baseBossState)
   }
 
   return {
@@ -86,7 +88,7 @@ export function createRaidSession(opts: CreateRaidOpts): RaidSession {
     tierId: opts.tierId,
     bossId: opts.bossId,
     minContribution: opts.minContribution ?? 10,
-    boss: bossState,
+    bossState: baseBossState,
     members: memberMap,
     events: [],
     ended: false,
@@ -95,29 +97,37 @@ export function createRaidSession(opts: CreateRaidOpts): RaidSession {
   }
 }
 
+export function getBossRaidState(session: RaidSession): BossRaidState {
+  const def = CONTENT.bosses[session.bossId]
+  const tierDef = def?.tiers?.[session.tierId]
+  return {
+    speciesId: session.bossState.speciesId,
+    level: tierDef?.level ?? def?.level ?? 50,
+    hp: session.bossState.hp,
+    maxHp: session.bossState.maxHp,
+    form: session.bossState.form,
+    meters: session.bossState.meters,
+    status: session.bossState.status ?? undefined,
+  }
+}
+
 export function getRaidMemberStates(session: RaidSession): RaidMemberState[] {
   const list: RaidMemberState[] = []
   const totalDmg = Math.max(1, getTotalDamage(session))
 
   for (const [id, m] of session.members.entries()) {
-    const active = m.party[m.activeIdx] ?? m.party[0]
-    const hp = active?.hp ?? 0
-    const mHp = active ? maxHp(active, CONTENT) : 100
-    const fainted = m.party.every((c) => c.hp <= 0)
+    const leadView = m.engine.activeView(0)
+    const party = m.engine.party(0)
+    const activeCr = party[m.engine.activeIndex(0)]
+    const hp = activeCr?.hp ?? leadView.hp
+    const mHp = activeCr ? maxHp(activeCr, CONTENT) : leadView.maxHp
+    const fainted = party.every((c) => c.hp <= 0)
     const pct = (m.damageDealt / totalDmg) * 100
     list.push({
       id,
       name: m.info.name,
       avatar: m.info.avatar,
-      lead: active ? toView(active, CONTENT) : {
-        uid: id,
-        speciesId: 'deepseek-v4',
-        level: 1,
-        hp: 0,
-        maxHp: 100,
-        status: null,
-        shiny: false,
-      },
+      lead: leadView,
       hp,
       maxHp: mHp,
       fainted,
@@ -135,7 +145,8 @@ export function getTotalDamage(session: RaidSession): number {
 }
 
 /**
- * Applies an action from a player against the raid Boss.
+ * Applies an action from a player against the raid Boss using their local engine
+ * and synchronizes BossState across all member engines.
  */
 export function applyRaidPlayerAction(
   session: RaidSession,
@@ -146,107 +157,48 @@ export function applyRaidPlayerAction(
   const member = session.members.get(playerId)
   if (!member) return { events: [], ended: false, victory: false }
 
-  const events: BattleEvent[] = []
+  // Sync latest shared boss state before taking action
+  member.engine.applyBossState(session.bossState)
 
-  if (action.kind === 'move') {
-    const active = member.party[member.activeIdx]
-    if (active && active.hp > 0) {
-      const moveId = active.moves[action.moveIndex]?.id ?? 'tensor-tackle'
-      const move = CONTENT.moves[moveId]
-      const power = move?.power ?? 60
-      const atk = active.level * 4
-      // Estimated damage formula for shared boss raid tick
-      const rawDmg = Math.max(10, Math.round(((atk * power) / 50) + 10))
-      const dmg = Math.min(session.boss.hp, rawDmg)
+  const prevHp = session.bossState.hp
+  const err = member.engine.choose(0, action)
+  if (err) return { events: [], ended: false, victory: false }
 
-      session.boss.hp = Math.max(0, session.boss.hp - dmg)
-      member.damageDealt += dmg
+  const events = member.engine.step()
 
-      events.push({
-        t: 'move',
-        side: 0,
-        moveId,
-        anim: (move?.anim ?? 'physical') as MoveAnim,
-        type: (move?.type ?? 'normal') as TypeId,
-      })
-      events.push({
-        t: 'damage',
-        side: 1,
-        amount: dmg,
-        hp: session.boss.hp,
-        maxHp: session.boss.maxHp,
-        effectiveness: 1,
-        crit: false,
-      })
-    }
-  } else if (action.kind === 'switch') {
-    if (action.partyIndex >= 0 && action.partyIndex < member.party.length && member.party[action.partyIndex].hp > 0) {
-      member.activeIdx = action.partyIndex
-      const switched = member.party[action.partyIndex]
-      events.push({
-        t: 'switch',
-        side: 0,
-        partyIndex: action.partyIndex,
-        creature: toView(switched, CONTENT),
-      })
-    }
-  }
+  const updatedBoss = member.engine.extractBossState()
+  if (updatedBoss) {
+    const dmg = Math.max(0, prevHp - updatedBoss.hp)
+    member.damageDealt += dmg
+    session.bossState = updatedBoss
 
-  // Check victory
-  if (session.boss.hp <= 0) {
-    session.ended = true
-    session.victory = true
-    events.push({ t: 'end', result: 'win', winner: 0 })
-    return { events, ended: true, victory: true }
-  }
-
-  // Boss retaliates against the acting player
-  const activeCreature = member.party[member.activeIdx]
-  if (activeCreature && activeCreature.hp > 0) {
-    const bossAtk = session.boss.level * 3
-    const bossDmg = Math.max(5, Math.round(bossAtk * 0.8))
-    activeCreature.hp = Math.max(0, activeCreature.hp - bossDmg)
-
-    events.push({
-      t: 'damage',
-      side: 0,
-      amount: bossDmg,
-      hp: activeCreature.hp,
-      maxHp: maxHp(activeCreature, CONTENT),
-      effectiveness: 1,
-      crit: false,
-    })
-
-    if (activeCreature.hp <= 0) {
-      events.push({ t: 'faint', side: 0 })
-      // Auto-switch to next alive creature if any
-      const nextAlive = member.party.findIndex((c) => c.hp > 0)
-      if (nextAlive !== -1) {
-        member.activeIdx = nextAlive
-        const nextCr = member.party[nextAlive]
-        events.push({
-          t: 'switch',
-          side: 0,
-          partyIndex: nextAlive,
-          creature: toView(nextCr, CONTENT),
-        })
+    // Sync updated boss state to other members
+    for (const [otherId, other] of session.members.entries()) {
+      if (otherId !== playerId) {
+        other.engine.applyBossState(session.bossState)
       }
     }
   }
 
-  // Check if all players fainted
-  let anyAlive = false
+  // Check victory: boss HP zero or engine marked win
+  if (session.bossState.hp <= 0 || member.engine.result === 'win') {
+    session.ended = true
+    session.victory = true
+    return { events, ended: true, victory: true }
+  }
+
+  // Check defeat: all members' parties fainted
+  let allFainted = true
   for (const m of session.members.values()) {
-    if (m.party.some((c) => c.hp > 0)) {
-      anyAlive = true
+    if (m.engine.party(0).some((c) => c.hp > 0)) {
+      allFainted = false
       break
     }
   }
 
-  if (!anyAlive) {
+  if (allFainted) {
     session.ended = true
     session.victory = false
-    events.push({ t: 'end', result: 'lose', winner: 1 })
     return { events, ended: true, victory: false }
   }
 

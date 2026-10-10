@@ -1631,7 +1631,15 @@ export interface InstanceDefaults {
   /** Online daily limits per instance (Design 0003 §4.4). */
   dailyRollLimit?: number
   dailyRewardLimit?: number
-  /** Off-peak double (谷时双倍) configuration. */
+  /** Compute jackpot default configuration. */
+  jackpot?: { chance: number; mul: number }
+  /** Co-op default configuration. */
+  coop?: {
+    minPlayers: number
+    maxPlayers: number
+    hpScaleExp: number
+    minContribution: number
+  }
   offPeakDouble?: {
     /** In-game or real hour range [from, to) that counts as off-peak valley hours. */
     hours: [number, number]

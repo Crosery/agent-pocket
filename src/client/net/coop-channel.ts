@@ -1,5 +1,8 @@
 // Client-side coop channel: party coordination, dungeon room/mechanism sync, and multiplayer Boss Raid flow.
-import type { BattleAction } from '../../shared/types.ts'
+import type { BattleAction, BattleInit } from '../../shared/types.ts'
+import { CONTENT, t } from '../../shared/content/index.ts'
+import { createCreature } from '../../shared/creature.ts'
+import { Rng } from '../../shared/rng.ts'
 import type {
   CoopClientMsg,
   InstanceState,
@@ -9,7 +12,6 @@ import type {
   BossRaidState,
 } from '../../shared/coop/protocol.ts'
 import type { GameContext, Input, NetClient, UIPanel } from '../contracts.ts'
-import { t } from '../../shared/content/index.ts'
 import { GAMEPLAY } from '../../shared/gameplay/data.ts'
 import { isTierUnlocked } from '../../shared/gameplay/instances.ts'
 import { button, el, panel } from '../ui/widgets.ts'
@@ -30,7 +32,7 @@ export interface CoopChannel {
   enterDungeon(instanceId: string, tierId: string): void
   moveRoom(roomId: string): void
   activateMechanism(mechanismId: string): void
-  fightElite(eliteId: string): void
+  fightElite(eliteId: string): Promise<void>
   leaveDungeon(): void
   actionRaid(action: BattleAction): void
   rollContract(ballId: string): void
@@ -65,7 +67,36 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     enterDungeon: (instanceId: string, tierId: string) => send({ t: 'dungeon.enter', instanceId, tierId }),
     moveRoom: (roomId: string) => send({ t: 'dungeon.roomMove', roomId }),
     activateMechanism: (mechanismId: string) => send({ t: 'dungeon.mechanism', mechanismId }),
-    fightElite: (eliteId: string) => send({ t: 'dungeon.eliteFight', eliteId }),
+    fightElite: async (eliteId: string) => {
+      const inst = currentInstance ? GAMEPLAY.instances[currentInstance.instanceId] : null
+      const eliteDef = inst?.elites?.[eliteId]
+      if (!eliteDef) {
+        send({ t: 'dungeon.eliteFight', eliteId })
+        return
+      }
+      const foe = createCreature(eliteDef.species, eliteDef.level, { rng: new Rng(Date.now() ^ 0x5bd1e995) })
+      const foeName = CONTENT.species[eliteDef.species]?.nameZh ?? eliteDef.name
+      const init: BattleInit = {
+        seed: Math.floor(Math.random() * 0x7fffffff),
+        sides: [
+          { kind: 'player', name: ctx.save.name, party: ctx.save.party },
+          { kind: 'wild', name: foeName, party: [foe], aiLevel: 3 },
+        ],
+        isWild: true,
+        canRun: false,
+        canCatch: false,
+        biome: 'circuit',
+        timeOfDay: 'day',
+      }
+      try {
+        const outcome = await ctx.battle.run(init, { kind: 'wild' })
+        if (outcome.result === 'win') {
+          send({ t: 'dungeon.eliteFight', eliteId })
+        }
+      } catch (err) {
+        console.error('[dungeon] elite fight failed', err)
+      }
+    },
     leaveDungeon: () => send({ t: 'dungeon.leave' }),
     actionRaid: (action: BattleAction) => {
       if (currentRaid) send({ t: 'raid.action', raidId: currentRaid.raidId, action })

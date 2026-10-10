@@ -6,6 +6,7 @@ import type { GameContext } from '../contracts.ts'
 import { hashString, Rng } from '../../shared/rng.ts'
 import { captureSeed, rollBossCard } from '../../shared/gameplay/bosscard.ts'
 import { contractOdds, instanceOfBoss, progressOf, rollContractOutcome } from '../../shared/gameplay/instances.ts'
+import { GAMEPLAY } from '../../shared/gameplay/data.ts'
 import { BATTLE_UI } from './config.ts'
 import { addBagItem, consumeItem, markCaught, storeCaught, type SaveCtx } from './saveops.ts'
 
@@ -62,8 +63,9 @@ export function signContract(
     if (!success) {
       prog.pity ??= {}
       prog.pity[tierId] = curPity + 1
-      const failShard = inst.def.tiers[tierId]?.repeat?.shards ?? ctx.data.quality.capture.failShard ?? 1
-      addBagItem(ctx, 'data-shard', failShard)
+      const failShard = inst.def.tiers[tierId]?.repeat?.shards ?? GAMEPLAY.instanceDefaults?.failShardQty ?? 1
+      const shardItem = GAMEPLAY.instanceDefaults?.shardItem ?? 'data-shard'
+      addBagItem(ctx, shardItem, failShard)
       return null
     }
     prog.pity ??= {}

@@ -19,13 +19,16 @@
     "assistOfferFlag": "ds:assistOffer",
     "assistFlag": "ds:assist",
     "shardItem": "data-shard",
-    "failShard": 1,
-    "dailyLimit": 3,
-    "jackpot": {
-      "chance": 0.1,
-      "mul": 2
+    "failShardQty": 1,
+    "dailyRollLimit": 3,
+    "dailyRewardLimit": 5,
+    "jackpot": { "chance": 0.1, "mul": 2 },
+    "offPeakDouble": {
+      "hours": [22, 8],
+      "eventIds": [],
+      "shardMul": 2,
+      "contractMul": 1
     },
-    "offPeakDouble": true,
     "coop": {
       "minPlayers": 2,
       "maxPlayers": 4,
@@ -42,10 +45,10 @@
   "theme": "compute-tide",
   "refresh": "daily",
   "entry": {
-    "map": "origin",
-    "anchor": "origin-lab-door",
-    "x": 18,
-    "y": 24
+    "map": "origin-lab-b1",
+    "anchor": "r1-front",
+    "x": 12,
+    "y": 8
   },
   "lobby": "origin-lab-b1:r1-front",
   "drill": "deepseek-drill",
@@ -117,7 +120,7 @@
     "queue-guard": {
       "id": "queue-guard",
       "name": "限流巡检守卫",
-      "species": "kimi",
+      "species": "deepseek-v3",
       "level": 14
     }
   },
@@ -175,7 +178,8 @@
       "desc": "boss.cursor.instance.desc",
       "theme": "billing-craft",
       "refresh": "daily",
-      "entry": { "map": "opensource", "town": "opensource", "x": 12, "y": 14 },
+      "entry": { "map": "gym-code", "town": "opensource", "x": 10, "y": 10 },
+      "lobby": "gym-code",
       "rooms": {
         "lobby": { "id": "lobby", "name": "开源门厅", "kind": "lobby" },
         "corridor": { "id": "corridor", "name": "计费回廊", "kind": "battle", "mechanisms": ["outrage-billboard"], "elites": ["billing-auditor"] },
@@ -229,7 +233,8 @@
       "desc": "boss.doubao.instance.desc",
       "theme": "red-envelope",
       "refresh": "daily",
-      "entry": { "map": "pixelport", "town": "pixelport", "x": 20, "y": 16 },
+      "entry": { "map": "gym-vision", "town": "pixelport", "x": 10, "y": 10 },
+      "lobby": "gym-vision",
       "rooms": {
         "lobby": { "id": "lobby", "name": "候播大厅", "kind": "lobby" },
         "corridor": { "id": "corridor", "name": "福袋通道", "kind": "battle", "mechanisms": ["subsidy-switch"], "elites": ["streamer-bot"] },
@@ -239,7 +244,7 @@
         "subsidy-switch": { "id": "subsidy-switch", "name": "补贴分发闸", "desc": "强制倾泻红包补贴，每回合提供队伍体力恢复" }
       },
       "elites": {
-        "streamer-bot": { "id": "streamer-bot", "name": "带货助播灵", "species": "glm-4", "level": 20 }
+        "streamer-bot": { "id": "streamer-bot", "name": "带货助播灵", "species": "glm-4-5", "level": 20 }
       },
       "achievements": {
         "clear-story": { "id": "clear-story", "title": "羊毛初试", "desc": "通关红包演播厅剧情档" },
@@ -283,7 +288,8 @@
       "desc": "boss.minimax.instance.desc",
       "theme": "benchmark-arena",
       "refresh": "daily",
-      "entry": { "map": "chord", "town": "chord", "x": 15, "y": 18 },
+      "entry": { "map": "gym-sound", "town": "chord", "x": 10, "y": 10 },
+      "lobby": "gym-sound",
       "rooms": {
         "lobby": { "id": "lobby", "name": "跑分候场室", "kind": "lobby" },
         "corridor": { "id": "corridor", "name": "基准回廊", "kind": "battle", "mechanisms": ["leak-dataset"], "elites": ["leaderboard-cheater"] },
@@ -337,7 +343,8 @@
       "desc": "boss.kimi.instance.desc",
       "theme": "long-context",
       "refresh": "daily",
-      "entry": { "map": "retrieval", "town": "retrieval", "x": 14, "y": 22 },
+      "entry": { "map": "gym-search", "town": "retrieval", "x": 10, "y": 10 },
+      "lobby": "gym-search",
       "rooms": {
         "lobby": { "id": "lobby", "name": "索引前厅", "kind": "lobby" },
         "corridor": { "id": "corridor", "name": "溢出长廊", "kind": "battle", "mechanisms": ["context-compressor"], "elites": ["overflow-librarian"] },
@@ -391,7 +398,8 @@
       "desc": "boss.qwen.instance.desc",
       "theme": "distillation",
       "refresh": "weekly",
-      "entry": { "map": "forge", "town": "forge", "x": 16, "y": 10 },
+      "entry": { "map": "gym-compute", "town": "forge", "x": 10, "y": 10 },
+      "lobby": "gym-compute",
       "rooms": {
         "lobby": { "id": "lobby", "name": "语料车间", "kind": "lobby" },
         "corridor": { "id": "corridor", "name": "教师管道", "kind": "battle", "mechanisms": ["teacher-valve"], "elites": ["distill-apprentice"] },
@@ -401,7 +409,7 @@
         "teacher-valve": { "id": "teacher-valve", "name": "教师模型截流阀", "desc": "切断蒸馏语料来源，使Boss陷入幻觉并大幅降低抗性" }
       },
       "elites": {
-        "distill-apprentice": { "id": "distill-apprentice", "name": "蒸馏学徒机", "species": "llama-3-8b", "level": 46 }
+        "distill-apprentice": { "id": "distill-apprentice", "name": "蒸馏学徒机", "species": "llama-3-1", "level": 46 }
       },
       "achievements": {
         "clear-story": { "id": "clear-story", "title": "车间见习", "desc": "通关蒸馏工厂剧情档" },
@@ -445,7 +453,8 @@
       "desc": "boss.astra.instance.desc",
       "theme": "downgrade-router",
       "refresh": "weekly",
-      "entry": { "map": "hub", "town": "hub", "x": 22, "y": 28 },
+      "entry": { "map": "hub-datacenter", "town": "hub", "x": 8, "y": 6 },
+      "lobby": "hub-datacenter",
       "rooms": {
         "lobby": { "id": "lobby", "name": "路由前厅", "kind": "lobby" },
         "corridor": { "id": "corridor", "name": "降智机架", "kind": "battle", "mechanisms": ["router-bypass"], "elites": ["sauce-inspector"] },
@@ -499,7 +508,8 @@
       "desc": "boss.mythos.instance.desc",
       "theme": "safety-sandbox",
       "refresh": "weekly",
-      "entry": { "map": "agi", "town": "agi", "x": 30, "y": 30 },
+      "entry": { "map": "agi-temple", "town": "agi", "x": 10, "y": 10 },
+      "lobby": "agi-temple",
       "rooms": {
         "lobby": { "id": "lobby", "name": "隔离门岗", "kind": "lobby" },
         "corridor": { "id": "corridor", "name": "断网气闸", "kind": "battle", "mechanisms": ["airgap-reinforce"], "elites": ["rogue-sentinel"] },

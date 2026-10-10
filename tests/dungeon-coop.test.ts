@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { CONTENT } from '../src/shared/content/index.ts'
 import { GAMEPLAY } from '../src/shared/gameplay/data.ts'
-import type { BattleAction, Creature, SaveData } from '../src/shared/types.ts'
+import type { BattleAction, SaveData } from '../src/shared/types.ts'
 import type { GameContext } from '../src/client/contracts.ts'
 import { createCreature } from '../src/shared/creature.ts'
 import { Rng } from '../src/shared/rng.ts'
@@ -339,6 +339,19 @@ test('multiplayer server simulation: 2 clients form party, enter dungeon, defeat
     state: { map: 'origin', x: 11, y: 10 } as never,
   } as unknown as Player
 
+  const p1Save = newTestSave(p1.id, p1.name)
+  p1Save.badges = ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7']
+  const p2Save = newTestSave(p2.id, p2.name)
+  const playerSaves = new Map<string, SaveData>([
+    [p1.id, p1Save],
+    [p2.id, p2Save],
+  ])
+  const mockStore = {
+    getSave: (id: string) => playerSaves.get(id) ?? null,
+    putSave: (id: string, s: SaveData) => { playerSaves.set(id, s) },
+    audit: () => {},
+  }
+
   const playerMap = new Map<string, Player>([
     [p1.id, p1],
     [p2.id, p2],
@@ -362,6 +375,7 @@ test('multiplayer server simulation: 2 clients form party, enter dungeon, defeat
 
   const server = createDungeonServer({
     core: mockCore,
+    store: mockStore,
     lookupPlayer: (id) => playerMap.get(id) ?? null,
   })
 
@@ -394,13 +408,14 @@ test('multiplayer server simulation: 2 clients form party, enter dungeon, defeat
   // 7. Move to boss room initiates raid
   sentMessages.length = 0
   server.handle(p1, { t: 'dungeon.roomMove', roomId: 'boss' })
-  const raidStarts = sentMessages.filter((m) => m.msg.t === 'raid.start')
+  const raidStarts = sentMessages.filter((m): m is { targetId: string; msg: Extract<CoopServerMsg, { t: 'raid.start' }> } => m.msg.t === 'raid.start')
   assert.equal(raidStarts.length, 2, 'both players receive raid.start')
+  const raidId = raidStarts[0].msg.raidId
 
   // 8. Battle actions against boss
   sentMessages.length = 0
   const action: BattleAction = { kind: 'move', moveIndex: 0 }
-  server.handle(p1, { t: 'raid.action', action })
+  server.handle(p1, { t: 'raid.action', raidId, action })
   assert.ok(sentMessages.some((m) => m.msg.t === 'raid.tick'))
 
   server.close()
