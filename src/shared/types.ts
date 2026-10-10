@@ -544,6 +544,10 @@ export interface BattleInit {
   assist?: boolean
   /** The overworld runs the post-win contract (src/client/battle/capture.ts) once the boss is down. */
   captureAfterWin?: boolean
+  /** The boss's coach lines (content/bosses.json coach) are spoken in the coach bar this fight. */
+  coach?: boolean
+  /** The player already skipped the briefing: only the coach's skipBriefLines are let through. */
+  skipBrief?: boolean
 }
 
 /**
@@ -943,13 +947,20 @@ export type ScriptStep =
   | { op: 'takeItem'; item: string; qty: number }
   | { op: 'giveMoney'; amount: number }
   | { op: 'takeMoney'; amount: number; failText?: string }
-  | { op: 'giveCreature'; species?: string; pick?: SpeciesPick; level: number; shiny?: boolean }
+  | { op: 'giveCreature'; species?: string; pick?: SpeciesPick; level: number; shiny?: boolean; gradeFloor?: string; nature?: string; moves?: string[]; ability?: string }
   | { op: 'chooseStarter' }
   /** lossContinues: a loss does not black out or abort the script (story-scripted fights); lossFlag records win/loss. */
   | { op: 'battle'; trainer: string; lossContinues?: boolean; lossFlag?: string }
-  /** Boss instance fight: tier of content/bosses.json; captureAfterWin runs the contract on the first clear. Loss flags as 'battle'. */
-  | { op: 'bossBattle'; boss: string; tier: string; captureAfterWin?: boolean; lossContinues?: boolean; lossFlag?: string }
-  | { op: 'wildBattle'; species?: string; pick?: SpeciesPick; level: number; music?: string }
+  /**
+   * Boss instance fight: tier of content/bosses.json; captureAfterWin runs the contract on the first clear. Loss flags as 'battle'.
+   * coach: the coach bar speaks during the fight; lossWarp: anchor to wake up at after a loss (fade, teleport, heal, then
+   * `ds-loss` runs and the script that started the fight ends).
+   */
+  | { op: 'bossBattle'; boss: string; tier: string; captureAfterWin?: boolean; lossContinues?: boolean; lossFlag?: string; coach?: boolean; lossWarp?: string }
+  /** moves / gradeFloor shape the opponent, catchRateMul scales the catch chance. */
+  | { op: 'wildBattle'; species?: string; pick?: SpeciesPick; level: number; music?: string; moves?: string[]; catchRateMul?: number; gradeFloor?: string }
+  /** A floating bubble (`fx`: "!", "?" ...) over an NPC id or "player". */
+  | { op: 'emote'; target: string; fx: string }
   | { op: 'heal' }
   | { op: 'shop'; items: string[] }
   | { op: 'openBox' }
@@ -988,6 +999,8 @@ export interface NpcDef {
   nameZh: string
   role: NpcRole
   portrait?: string
+  /** A creature NPC: drawn as that species' billboard instead of a character sheet. */
+  creature?: string
   script: ScriptStep[]
   trainer?: string
   sightRange?: number

@@ -1,0 +1,584 @@
+{
+ "version": 2,
+ "playerId": "fixture-player-0001",
+ "name": "老训练家",
+ "avatar": "hero_boy",
+ "createdAt": 1700000000000,
+ "playTimeSec": 0,
+ "money": 250000,
+ "badges": [
+  "badge-code",
+  "badge-vision",
+  "badge-sound",
+  "badge-search",
+  "badge-compute",
+  "badge-safety",
+  "badge-agent",
+  "badge-logic"
+ ],
+ "party": [
+  {
+   "uid": "gidykl93jh7p",
+   "speciesId": "deepseek-v4",
+   "level": 58,
+   "exp": 243890,
+   "ivs": {
+    "hp": 16,
+    "atk": 9,
+    "def": 27,
+    "spa": 30,
+    "spd": 5,
+    "spe": 16
+   },
+   "moves": [
+    {
+     "id": "knowledge-graph",
+     "pp": 10,
+     "ppMax": 10
+    },
+    {
+     "id": "weight-drop",
+     "pp": 10,
+     "ppMax": 10
+    },
+    {
+     "id": "open-license",
+     "pp": 15,
+     "ppMax": 15
+    },
+    {
+     "id": "first-principles",
+     "pp": 10,
+     "ppMax": 10
+    }
+   ],
+   "hp": 233,
+   "status": null,
+   "statusTurns": 0,
+   "abilityId": "long-context",
+   "shiny": false,
+   "friendship": 70,
+   "ballId": "rare-ball",
+   "caughtMap": "overworld",
+   "otName": "老训练家",
+   "otId": "fixture-player-0001",
+   "nickname": "潮汐",
+   "nature": "balanced",
+   "origin": {
+    "kind": "legacy",
+    "boss": "deepseek"
+   },
+   "finetuned": 0
+  },
+  {
+   "uid": "29rqxf9ur9f2",
+   "speciesId": "claude-mythos",
+   "level": 60,
+   "exp": 270000,
+   "ivs": {
+    "hp": 9,
+    "atk": 14,
+    "def": 10,
+    "spa": 18,
+    "spd": 6,
+    "spe": 15
+   },
+   "moves": [
+    {
+     "id": "cliffhanger",
+     "pp": 15,
+     "ppMax": 15
+    },
+    {
+     "id": "force-push",
+     "pp": 15,
+     "ppMax": 15
+    },
+    {
+     "id": "hotfix",
+     "pp": 10,
+     "ppMax": 10
+    },
+    {
+     "id": "rogue-strike",
+     "pp": 15,
+     "ppMax": 15
+    }
+   ],
+   "hp": 215,
+   "status": null,
+   "statusTurns": 0,
+   "abilityId": "mythic-aura",
+   "shiny": false,
+   "friendship": 70,
+   "ballId": "prompt-ball",
+   "caughtMap": "overworld",
+   "otName": "老训练家",
+   "otId": "fixture-player-0001",
+   "nature": "balanced",
+   "origin": {
+    "kind": "legacy",
+    "boss": "mythos"
+   },
+   "finetuned": 0
+  },
+  {
+   "uid": "079zdus1kf53",
+   "speciesId": "gemini-3-pro",
+   "level": 52,
+   "exp": 175760,
+   "ivs": {
+    "hp": 27,
+    "atk": 0,
+    "def": 2,
+    "spa": 1,
+    "spd": 7,
+    "spe": 18
+   },
+   "moves": [
+    {
+     "id": "force-push",
+     "pp": 15,
+     "ppMax": 15
+    },
+    {
+     "id": "trending-blast",
+     "pp": 10,
+     "ppMax": 10
+    },
+    {
+     "id": "qed",
+     "pp": 10,
+     "ppMax": 10
+    },
+    {
+     "id": "inpaint",
+     "pp": 10,
+     "ppMax": 10
+    }
+   ],
+   "hp": 168,
+   "status": null,
+   "statusTurns": 0,
+   "abilityId": "deep-think",
+   "shiny": false,
+   "friendship": 70,
+   "ballId": "prompt-ball",
+   "caughtMap": "overworld",
+   "otName": "老训练家",
+   "otId": "fixture-player-0001",
+   "nature": "balanced",
+   "origin": {
+    "kind": "legacy"
+   },
+   "finetuned": 0
+  },
+  {
+   "uid": "l4orj70dk72s",
+   "speciesId": "veo-3-1",
+   "level": 50,
+   "exp": 156250,
+   "ivs": {
+    "hp": 18,
+    "atk": 14,
+    "def": 0,
+    "spa": 18,
+    "spd": 3,
+    "spe": 14
+   },
+   "moves": [
+    {
+     "id": "voiceprint-wave",
+     "pp": 15,
+     "ppMax": 15
+    },
+    {
+     "id": "sonnet",
+     "pp": 10,
+     "ppMax": 10
+    },
+    {
+     "id": "long-take",
+     "pp": 10,
+     "ppMax": 10
+    },
+    {
+     "id": "rewind",
+     "pp": 10,
+     "ppMax": 10
+    }
+   ],
+   "hp": 147,
+   "status": null,
+   "statusTurns": 0,
+   "abilityId": "resonance",
+   "shiny": false,
+   "friendship": 70,
+   "ballId": "prompt-ball",
+   "caughtMap": "overworld",
+   "otName": "老训练家",
+   "otId": "fixture-player-0001",
+   "nature": "balanced",
+   "origin": {
+    "kind": "legacy"
+   },
+   "finetuned": 0
+  },
+  {
+   "uid": "dpw7jdrw3hsj",
+   "speciesId": "o1",
+   "level": 45,
+   "exp": 113906,
+   "ivs": {
+    "hp": 6,
+    "atk": 24,
+    "def": 17,
+    "spa": 30,
+    "spd": 9,
+    "spe": 4
+   },
+   "moves": [
+    {
+     "id": "eureka",
+     "pp": 20,
+     "ppMax": 20
+    },
+    {
+     "id": "proof-by-contradiction",
+     "pp": 10,
+     "ppMax": 10
+    },
+    {
+     "id": "regex-slash",
+     "pp": 15,
+     "ppMax": 15
+    },
+    {
+     "id": "qed",
+     "pp": 10,
+     "ppMax": 10
+    }
+   ],
+   "hp": 100,
+   "status": null,
+   "statusTurns": 0,
+   "abilityId": "deep-think",
+   "shiny": false,
+   "friendship": 70,
+   "ballId": "prompt-ball",
+   "caughtMap": "overworld",
+   "otName": "老训练家",
+   "otId": "fixture-player-0001",
+   "nature": "balanced",
+   "origin": {
+    "kind": "legacy"
+   },
+   "finetuned": 0
+  },
+  {
+   "uid": "fltnnn32kbqg",
+   "speciesId": "qwen-audio",
+   "level": 44,
+   "exp": 106480,
+   "ivs": {
+    "hp": 28,
+    "atk": 4,
+    "def": 0,
+    "spa": 15,
+    "spd": 0,
+    "spe": 15
+   },
+   "moves": [
+    {
+     "id": "noise-cancel",
+     "pp": 20,
+     "ppMax": 20
+    },
+    {
+     "id": "chatter-storm",
+     "pp": 15,
+     "ppMax": 15
+    },
+    {
+     "id": "text-to-video",
+     "pp": 15,
+     "ppMax": 15
+    },
+    {
+     "id": "voiceprint-wave",
+     "pp": 15,
+     "ppMax": 15
+    }
+   ],
+   "hp": 133,
+   "status": null,
+   "statusTurns": 0,
+   "abilityId": "resonance",
+   "shiny": false,
+   "friendship": 70,
+   "ballId": "prompt-ball",
+   "caughtMap": "overworld",
+   "otName": "老训练家",
+   "otId": "fixture-player-0001",
+   "nature": "balanced",
+   "origin": {
+    "kind": "legacy"
+   },
+   "finetuned": 0
+  }
+ ],
+ "boxes": [
+  [
+   {
+    "uid": "dbtx5xlawdqf",
+    "speciesId": "kimi-k3",
+    "level": 40,
+    "exp": 80000,
+    "ivs": {
+     "hp": 30,
+     "atk": 28,
+     "def": 10,
+     "spa": 28,
+     "spd": 19,
+     "spe": 27
+    },
+    "moves": [
+     {
+      "id": "chain-of-thought",
+      "pp": 15,
+      "ppMax": 15
+     },
+     {
+      "id": "mcp-link",
+      "pp": 20,
+      "ppMax": 20
+     },
+     {
+      "id": "magnet-link",
+      "pp": 15,
+      "ppMax": 15
+     },
+     {
+      "id": "sonnet",
+      "pp": 10,
+      "ppMax": 10
+     }
+    ],
+    "hp": 160,
+    "status": null,
+    "statusTurns": 0,
+    "abilityId": "scaling-law",
+    "shiny": false,
+    "friendship": 70,
+    "ballId": "prompt-ball",
+    "caughtMap": "overworld",
+    "otName": "老训练家",
+    "otId": "fixture-player-0001",
+    "nature": "balanced",
+    "origin": {
+     "kind": "legacy",
+     "boss": "kimi"
+    },
+    "finetuned": 0
+   },
+   {
+    "uid": "kl0p0ajcol8h",
+    "speciesId": "claude-haiku",
+    "level": 12,
+    "exp": 1728,
+    "ivs": {
+     "hp": 7,
+     "atk": 31,
+     "def": 21,
+     "spa": 19,
+     "spd": 21,
+     "spe": 14
+    },
+    "moves": [
+     {
+      "id": "code-review",
+      "pp": 20,
+      "ppMax": 20
+     },
+     {
+      "id": "hello-world",
+      "pp": 35,
+      "ppMax": 35
+     },
+     {
+      "id": "prompt-growl",
+      "pp": 30,
+      "ppMax": 30
+     },
+     {
+      "id": "null-pointer",
+      "pp": 25,
+      "ppMax": 25
+     }
+    ],
+    "hp": 37,
+    "status": null,
+    "statusTurns": 0,
+    "abilityId": "quantized",
+    "shiny": false,
+    "friendship": 70,
+    "ballId": "prompt-ball",
+    "caughtMap": "overworld",
+    "otName": "老训练家",
+    "otId": "fixture-player-0001",
+    "nature": "balanced",
+    "origin": {
+     "kind": "legacy"
+    },
+    "finetuned": 0
+   }
+  ],
+  [],
+  [
+   {
+    "uid": "2poxzpd6gnrg",
+    "speciesId": "deepseek-v3",
+    "level": 27,
+    "exp": 24603,
+    "ivs": {
+     "hp": 6,
+     "atk": 16,
+     "def": 8,
+     "spa": 23,
+     "spd": 14,
+     "spe": 0
+    },
+    "moves": [
+     {
+      "id": "thermal-spike",
+      "pp": 20,
+      "ppMax": 20
+     },
+     {
+      "id": "null-pointer",
+      "pp": 25,
+      "ppMax": 25
+     },
+     {
+      "id": "heat-sink-slam",
+      "pp": 20,
+      "ppMax": 20
+     },
+     {
+      "id": "distill-strike",
+      "pp": 20,
+      "ppMax": 20
+     }
+    ],
+    "hp": 71,
+    "status": null,
+    "statusTurns": 0,
+    "abilityId": "mixture-of-experts",
+    "shiny": false,
+    "friendship": 70,
+    "ballId": "prompt-ball",
+    "caughtMap": "overworld",
+    "otName": "老训练家",
+    "otId": "fixture-player-0001",
+    "nature": "balanced",
+    "origin": {
+     "kind": "legacy"
+    },
+    "finetuned": 0
+   }
+  ],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  [],
+  []
+ ],
+ "bag": {
+  "rare-ball": 10,
+  "full-restore": 12,
+  "rare-dataset": 3,
+  "persona-card": 2
+ },
+ "dexSeen": [
+  "deepseek-v4",
+  "claude-mythos",
+  "gemini-3-pro",
+  "veo-3-1",
+  "o1",
+  "qwen-audio"
+ ],
+ "dexCaught": [
+  "deepseek-v4",
+  "claude-mythos",
+  "gemini-3-pro",
+  "veo-3-1",
+  "o1",
+  "qwen-audio"
+ ],
+ "position": {
+  "map": "overworld",
+  "x": 519,
+  "y": 873,
+  "facing": "down"
+ },
+ "respawn": {
+  "map": "overworld",
+  "x": 519,
+  "y": 873,
+  "facing": "down"
+ },
+ "flags": {
+  "champion": true,
+  "starter": "deepseek-v4",
+  "gift:quality-legacy": true
+ },
+ "quests": {},
+ "visitedTowns": [],
+ "exploredChunks": {},
+ "repelSteps": 0,
+ "clockMinutes": 600,
+ "stats": {
+  "battlesWon": 0,
+  "caught": 0,
+  "steps": 0,
+  "pvpWins": 0,
+  "pvpLosses": 0,
+  "trades": 0,
+  "shiniesFound": 0
+ },
+ "settings": {
+  "bgmVolume": 0,
+  "sfxVolume": 0.8,
+  "quality": "high",
+  "pixelScale": 2,
+  "dof": true,
+  "bloom": true,
+  "shadows": true,
+  "textSpeed": "normal",
+  "battleSpeed": 1,
+  "showMinimap": true,
+  "showNames": true,
+  "showObjective": true,
+  "showTips": true,
+  "autoRun": false,
+  "touchControls": "auto",
+  "touchHand": "right",
+  "touchSize": "normal",
+  "haptics": true,
+  "migrations": [
+   "bgm-mute-20261003"
+  ]
+ },
+ "anchors": {
+  "unlocked": [
+   "anchor:grand:525:877"
+  ],
+  "seen": [
+   "anchor:grand:525:877"
+  ]
+ }
+}

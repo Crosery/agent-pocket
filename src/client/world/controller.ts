@@ -37,6 +37,7 @@ import { createNpcLayer, type NpcRuntime } from './npcs.ts'
 import { createPresence, type MultiplayerHooks } from './presence.ts'
 import { createRoamingLayer, type Roamer } from './roaming.ts'
 import { addItem, changeMoney, flagSet, healParty, ownedKeyItem, removeItem, settleBossCards } from './save-ops.ts'
+import { createTriggers } from './triggers.ts'
 import { createScriptRunner, type ScriptHost } from './script.ts'
 import { anchorName, isUnlocked, markSeen, unlockAnchor } from './anchors.ts'
 
@@ -212,6 +213,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       if (n) npcs.face(n, dir)
     },
     setNpcHidden(id, hidden) { npcs.setHidden(id, hidden) },
+    emote(target, fx) { (target === 'player' ? actor : npcs.get(target)?.actor)?.bubble(fx, GAME.presence.emoteBubbleMs) },
     async trainerBattle(trainerId, npc) {
       const tr = ctx.data.world.trainers[trainerId] ?? frontierTrainer(ctx.data.world, trainerId)
       if (!tr) { console.warn(`[overworld] unknown trainer "${trainerId}"`); return null }
@@ -219,8 +221,11 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       return outcome?.result ?? null
     },
     async wildBattle(speciesId, level, o) {
-      const cr = createCreature(speciesId, level, { rng, shiny: o.shiny ?? rollShiny(rng, ctx.data), caughtMap: map?.id }, ctx.data)
-      const outcome = await battles.wild(cr, { music: o.music, scripted: o.scripted })
+      const cr = createCreature(speciesId, level, {
+        rng, shiny: o.shiny ?? rollShiny(rng, ctx.data), caughtMap: map?.id,
+        ...(o.moves?.length ? { moves: o.moves } : {}), ...(o.gradeFloor ? { gradeFloor: o.gradeFloor } : {}),
+      }, ctx.data)
+      const outcome = await battles.wild(cr, { music: o.music, scripted: o.scripted, ...(o.catchRateMul !== undefined ? { catchRateMul: o.catchRateMul } : {}) })
       return outcome.result
     },
     async bossBattle(bossId, tier, o) {
@@ -822,6 +827,8 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     }
   }
 
+  const triggers = createTriggers({ ctx, isFree, run: (steps) => runScript(steps, null) })
+
   async function talkTo(n: NpcRuntime): Promise<void> {
     n.busy = true
     const pt = playerTile()
@@ -1116,6 +1123,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       else if (ctx.input.pressed('confirm')) { ctx.input.consume('confirm'); void interact() }
       else if (ctx.input.pressed('bike')) { ctx.input.consume('bike'); toggleBike() }
     }
+    triggers.update()
     npcs.update(dt, { allowWander: !locks.has('script'), focus: player })
     if (grid) {
       navigator.update(dt, grid, player, ctx.save, surf || (!!ownedKeyItem(ctx.save, 'surf', ctx.data) && !!lead()), target => {
@@ -1218,6 +1226,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       offParty()
       offMoney()
       offBadge()
+      triggers.dispose()
       gameplay.dispose()
       navigator.clear()
       ctx.world.setQuestPath([])

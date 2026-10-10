@@ -203,7 +203,8 @@ export interface RegionSpec {
   shore?: 'cliff' | 'beach'
 }
 
-export interface TownBuildingSpec { interior?: string; floors?: string[]; mapId?: string; nameZh?: string; prop?: string }
+/** `below`: interior templates reached by stairs down from the ground floor (map ids `<base>-b1`, `<base>-b2`, ...). */
+export interface TownBuildingSpec { interior?: string; floors?: string[]; below?: string[]; mapId?: string; nameZh?: string; prop?: string }
 
 export interface TownGymSpec { type: string; badge: string; badgeNameZh: string; leader: string }
 

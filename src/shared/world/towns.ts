@@ -119,12 +119,13 @@ export function stampTowns(ctx: OwCtx): StampedTown[] {
       const entries = propDoors(p)
       const door = entries[0]
       if (!door) continue
-      const floors = bs?.floors ?? (bs?.interior ? [bs.interior] : [])
+      const below = bs?.below ?? []
+      const floors = [...(bs?.floors ?? (bs?.interior ? [bs.interior] : [])), ...below]
       if (!floors.length) { ctx.problems.push(`${where}: building ${b.slot} has a door but no interior`); continue }
       const baseId = bs?.mapId ?? `${spec.id}-${b.slot}`
-      const mapIds = floors.length === 1 ? [baseId] : floors.map((_, k) => `${baseId}-${k + 1}f`)
+      const mapIds = below.length ? [baseId, ...below.map((_, k) => `${baseId}-b${k + 1}`)] : floors.length === 1 ? [baseId] : floors.map((_, k) => `${baseId}-${k + 1}f`)
       const first = interiorTemplate(ctx, floors[0])
-      const link: DoorLink = { townId: spec.id, townNameZh: spec.nameZh, slot: b.slot, floors, mapIds, door, biome, nameZh: bs?.nameZh }
+      const link: DoorLink = { townId: spec.id, townNameZh: spec.nameZh, slot: b.slot, floors, mapIds, belowCount: below.length, door, biome, nameZh: bs?.nameZh }
       ctx.doors.push(link)
       for (const entry of entries) {
         d.warps.push({ x: entry.x, y: entry.y, toMap: mapIds[0], toX: first.arrive[0], toY: first.arrive[1], facing: opposite(entry.facing), kind: 'door' })

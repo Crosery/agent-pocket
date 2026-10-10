@@ -69,7 +69,7 @@
       {"id": "badge", "trigger": {"kind": "on", "on": "badge:earned", "phase": "field", "delaySec": 2}, "text": "tutorial.tip.badge", "expires": {"minBadges": 4}},
       {"id": "worldMap", "trigger": {"kind": "on", "on": "screen:opened", "phase": "screen", "match": {"screen": "map"}, "delaySec": 0.6}, "text": "tutorial.tip.worldMap", "expires": {"minBadges": 2}},
       {"id": "fly", "trigger": {"kind": "on", "on": "badge:earned", "phase": "field", "delaySec": 7}, "text": "tutorial.tip.fly", "expires": {"minBadges": 3}, "after": ["badge"]},
-      {"id": "quests", "trigger": {"kind": "on", "on": "quest:updated", "phase": "field", "match": {"questId": "main", "stage": {"min": 1}}, "delaySec": 2}, "text": "tutorial.tip.quests", "expires": {"minBadges": 2}},
+      {"id": "quests", "trigger": {"kind": "on", "on": "quest:updated", "phase": "field", "match": {"questId": "main", "stage": {"min": 8}}, "delaySec": 2}, "text": "tutorial.tip.quests", "expires": {"minBadges": 2}},
       {"id": "sideQuest", "trigger": {"kind": "on", "on": "quest:updated", "phase": "field", "match": {"questId": {"startsWith": "sq-"}}, "delaySec": 2}, "text": "tutorial.tip.sideQuest", "expires": {"minBadges": 6}},
       {"id": "worldEvent", "trigger": {"kind": "on", "on": "world:event", "phase": "field", "delaySec": 2}, "text": "tutorial.tip.worldEvent", "expires": {"minBadges": 6}},
       {"id": "rarity", "trigger": {"kind": "on", "on": "dex:seen", "phase": "battle", "match": {"rarityOrder": {"min": 2}}, "delaySec": 2}, "text": "tutorial.tip.rarity", "expires": {"minStat": {"caught": 30}}, "after": ["catch"]},

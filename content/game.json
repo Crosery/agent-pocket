@@ -74,7 +74,7 @@
   "blackout": {"fadeMs": 650, "sfx": "faint"},
   "fly": {"minBadges": 1, "keyItemKind": "map", "mapKinds": ["overworld"], "sfx": "door"},
   "anchorTravel": {"minBadges": 0, "keyItemKind": "", "mapKinds": ["overworld"], "scanSec": 0.25, "beaconRadius": 36},
-  "script": {"maxDepth": 48, "healWaitMs": 900, "healSfx": "heal", "moneySfx": "money", "questSfx": "notify", "unlockSfx": "notify", "fadeMs": 420, "moveNpcSpeed": 3.4},
+  "script": {"maxDepth": 48, "healWaitMs": 900, "healSfx": "heal", "moneySfx": "money", "questSfx": "notify", "unlockSfx": "notify", "fadeMs": 420, "moveNpcSpeed": 3.4, "emoteWaitMs": 700},
   "presence": {"chatBubbleMs": 3600, "emoteBubbleMs": 2200, "bubbleMaxChars": 22, "interactRadius": 0.9, "followerDistance": 1.0, "followerRate": 8, "leadDebounceSec": 0.5, "inspectTimeoutMs": 5000, "moveMinSpeed": 0.4, "moveHoldMs": 160},
   "markers": {"refreshSec": 0.2, "trainers": true, "quest": true, "others": true, "rares": true, "wild": false, "items": true},
   "fog": {"mapKinds": ["overworld", "cave"]},

@@ -204,6 +204,8 @@ export function createAssetStore(): AssetStore {
       return url('characters', sheetId) ?? placeholders.dataUrl('character', sheetId)
     },
     portraitUrl(id) {
+      // "creature:<species>": the creature's own artwork speaks (dialogue lines of creature NPCs and the phone).
+      if (id.startsWith('creature:')) return url('creatures', id.slice('creature:'.length))
       return url('portraits', id)
     },
     terrainTexture(key) {

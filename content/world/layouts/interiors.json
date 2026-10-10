@@ -197,11 +197,13 @@
         {"prop": "lab_machine", "x": 12, "y": 5},
         {"prop": "table", "x": 6, "y": 5},
         {"prop": "table", "x": 3, "y": 8},
-        {"prop": "table", "x": 11, "y": 8}
+        {"prop": "table", "x": 11, "y": 8},
+        {"prop": "stairs_down", "x": 14, "y": 10}
       ],
       "arrive": [7, 10],
-      "anchors": {"professor": [7, 3], "aide-1": [3, 6], "aide-2": [13, 7], "rival": [9, 6], "starters": [6, 5], "starters-front": [7, 6], "machine": [7, 1], "pc": [1, 7], "pc-front": [2, 7], "terminal": [14, 4]},
-      "exit": [7, 11]
+      "anchors": {"professor": [7, 3], "aide-1": [3, 6], "aide-2": [13, 7], "rival": [9, 6], "starters": [6, 5], "starters-front": [7, 6], "machine": [7, 1], "pc": [1, 7], "pc-front": [2, 7], "terminal": [14, 4], "stairs": [14, 10], "stairs-front": [13, 10], "stairs-side": [12, 10]},
+      "exit": [7, 11],
+      "links": {"down": {"x": 14, "y": 10, "arrive": [13, 10], "facing": "left"}}
     },
     "datacenter": {
       "w": 16,
@@ -350,6 +352,59 @@
       "arrive": [8, 18],
       "anchors": {"champion": [8, 3], "altar": [8, 1], "guard-1": [6, 12], "guard-2": [10, 12], "elder": [5, 17], "npc-1": [12, 17]},
       "exit": [8, 19]
+    },
+    "lab_b1": {
+      "w": 16,
+      "h": 10,
+      "nameZh": "研究所·潮汐机房 前厅",
+      "music": "city",
+      "palette": {"floor": "tech", "floor2": "tile_floor", "mat": "tile_floor"},
+      "rows": [
+        {"r": "################"},
+        {"r": "#R.R.R.R.R.R.R.#"},
+        {"r": "#..............#"},
+        {"r": "#..............#"},
+        {"r": "#..............#"},
+        {"r": "#..............#"},
+        {"r": "#..............#"},
+        {"r": "#..............#"},
+        {"r": "#P............P#"},
+        {"r": "################"}
+      ],
+      "props": [
+        {"prop": "stairs_down", "x": 2, "y": 8},
+        {"prop": "stairs_down", "x": 13, "y": 8}
+      ],
+      "arrive": [3, 8],
+      "anchors": {"r1": [8, 3], "r1-front": [8, 4], "v2": [11, 3], "v2-front": [11, 4], "supply": [4, 3], "heal": [6, 3]},
+      "links": {"up": {"x": 2, "y": 8, "arrive": [3, 8], "facing": "right"}, "down": {"x": 13, "y": 8, "arrive": [12, 8], "facing": "left"}}
+    },
+    "lab_b2": {
+      "w": 16,
+      "h": 12,
+      "nameZh": "研究所·潮汐机房 核心",
+      "music": "city",
+      "palette": {"floor": "tech", "floor2": "tile_floor", "mat": "tile_floor"},
+      "rows": [
+        {"r": "################"},
+        {"r": "#..............#"},
+        {"r": "#.RRRR....RRRR.#"},
+        {"r": "#..............#"},
+        {"r": "#..............#"},
+        {"r": "#....hhhhhh....#"},
+        {"r": "#....hhhhhh....#"},
+        {"r": "#..............#"},
+        {"r": "#.RRRR....RRRR.#"},
+        {"r": "#..............#"},
+        {"r": "#..............#"},
+        {"r": "################"}
+      ],
+      "props": [
+        {"prop": "stairs_down", "x": 2, "y": 1}
+      ],
+      "arrive": [3, 1],
+      "anchors": {"queue": [8, 4], "core": [8, 10], "core-front": [8, 9]},
+      "links": {"up": {"x": 2, "y": 1, "arrive": [3, 1], "facing": "right"}}
     }
   }
 }

@@ -10,7 +10,7 @@
   "bag": {"prompt-ball": 20},
   "expect": [
     {"path": "/save/badges", "length": 3},
-    {"path": "/save/quests/main/stage", "eq": 4},
+    {"path": "/save/quests/main/stage", "eq": 11},
     {"path": "/save/flags/trainer:leader_sound", "eq": true}
   ],
   "place": "town:chord"

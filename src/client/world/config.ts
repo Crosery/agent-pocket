@@ -103,7 +103,7 @@ export interface GameTuning {
   anchorTravel: { minBadges: number; keyItemKind: string; mapKinds: MapKind[]; scanSec: number; beaconRadius: number }
   script: {
     maxDepth: number; healWaitMs: number; healSfx: string; moneySfx: string; questSfx: string; unlockSfx: string
-    fadeMs: number; moveNpcSpeed: number
+    fadeMs: number; moveNpcSpeed: number; emoteWaitMs: number
   }
   presence: {
     chatBubbleMs: number; emoteBubbleMs: number; bubbleMaxChars: number; interactRadius: number

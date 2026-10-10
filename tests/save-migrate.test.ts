@@ -34,9 +34,9 @@ test('v1 saves migrate to v2: levels, exp, IVs and moves unchanged; every creatu
   for (const n of NAMES) {
     const raw = fixture(n) as unknown as SaveData
     const migrated = migrateSave(raw) as SaveData
-    assert.equal(migrated.version, 2, n)
+    assert.equal(migrated.version, 3, n)
     const out = saves.sanitize(migrated)!
-    assert.equal(out.version, 2)
+    assert.equal(out.version, 3)
     const before = all(raw)
     const after = all(out)
     assert.equal(after.length, before.length, n)
@@ -93,7 +93,7 @@ test('migration is idempotent and does not mutate its input', () => {
 
 test('a v2 save passes through unchanged (same object)', () => {
   const v2 = saves.newGame({ name: 'x', avatar: '' })
-  assert.equal(v2.version, 2)
+  assert.equal(v2.version, 3)
   assert.equal(migrateSave(v2), v2)
   assert.equal(v2.flags[Q.flags.legacyGift], undefined)
 })
@@ -111,10 +111,50 @@ test('load and importCode migrate before sanitizing', () => {
   const raw = fixture('3badges')
   store.setItem(`${CONTENT.config.save.storagePrefix}0`, JSON.stringify(raw))
   const loaded = mgr.load(0)!
-  assert.equal(loaded.version, 2)
+  assert.equal(loaded.version, 3)
   assert.ok(loaded.party.every((c) => c.nature === Q.legacyNature && c.origin?.kind === 'legacy'))
   assert.equal(loaded.bag['persona-card'], 2)
   const imported = mgr.importCode(encodeSaveCode(raw as unknown as SaveData, 1))!
   assert.equal(imported.bag['persona-card'], 2)
   assert.ok(imported.party.every((c) => c.nature === Q.legacyNature))
+})
+
+// Save v2 -> v3 (the new prologue): main stages from 1 shift by 7; a save that already has a starter keeps every gate
+// open and gets the DeepSeek terminal as an optional quest; a save still in the prologue keeps its stage and its gates.
+const v2fixture = (name: string): Record<string, unknown> => JSON.parse(readFileSync(new URL(`./fixtures/save-v2-${name}.json`, import.meta.url), 'utf8'))
+const shiftedStage = (raw: unknown) => ((migrateSave(raw) as SaveData).quests.main as { stage: number } | undefined)?.stage
+
+test('v2 -> v3: a save with a starter opens the gates and gets the optional DeepSeek quest', () => {
+  for (const n of NAMES) {
+    const raw = v2fixture(n)
+    assert.equal(raw.version, 2, n)
+    const out = migrateSave(raw) as SaveData
+    assert.equal(out.version, 3, n)
+    assert.equal(out.flags['ds:gateOpen'], true, n)
+    assert.equal(out.flags['ds:legacy'], true, n)
+    assert.deepEqual(out.position, (raw as unknown as SaveData).position, `${n}: the player stays where they stood`)
+  }
+})
+
+test('v2 -> v3: main quest stages from 1 shift by 7, stage 0 and the done flag stay', () => {
+  const at = (stage: number, done = false) => ({ ...v2fixture('starter'), quests: { main: { stage, done } } })
+  assert.equal(shiftedStage(at(0)), 0)
+  assert.equal(shiftedStage(at(1)), 8)
+  assert.equal(shiftedStage(at(4)), 11)
+  const end = migrateSave(at(12, true)) as SaveData
+  assert.deepEqual(end.quests.main, { stage: 19, done: true })
+  assert.equal(world.quests.find((q) => q.id === 'main')!.stages.length, 20, 'the shifted chain still has 20 stages (0-19)')
+})
+
+test('v2 -> v3: a save still in the prologue (no starter) keeps its gates shut', () => {
+  const raw = { ...v2fixture('starter'), flags: {} }
+  const out = migrateSave(raw) as SaveData
+  assert.equal(out.flags['ds:gateOpen'], undefined)
+  assert.equal(out.flags['ds:legacy'], undefined)
+})
+
+test('v2 -> v3 is idempotent', () => {
+  const once = migrateSave(v2fixture('3badges'))
+  assert.equal(migrateSave(once), once)
+  assert.deepEqual(saves.sanitize(migrateSave(saves.sanitize(once))), saves.sanitize(once))
 })

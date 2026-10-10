@@ -9,5 +9,6 @@
     "script": [
       {"op": "ifFlag", "flag": "trainer:{id}", "then": [{"op": "say", "text": "{after}"}], "else": [{"op": "battle", "trainer": "{id}"}]}
     ]
-  }
+  },
+  "lossWarp": {"facing": "up", "script": "ds-loss"}
 }
