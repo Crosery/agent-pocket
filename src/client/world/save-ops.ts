@@ -86,6 +86,7 @@ export async function settleBossCards(ctx: GameContext): Promise<Creature[]> {
   const cap = bossCardCap(ctx.save.badges.length, ctx.data)
   const levelled: Creature[] = []
   const inParty = new Set(ctx.save.party)
+  const pendingLearn: { cr: Creature; learnable: string[] }[] = []
   for (const cr of [...ctx.save.party, ...ctx.save.boxes.flat()]) {
     if (!isBossCard(cr)) continue
     const r = settleBank(cr, cap, ctx.data)
@@ -93,22 +94,27 @@ export async function settleBossCards(ctx: GameContext): Promise<Creature[]> {
     levelled.push(cr)
     ctx.audio.playSfx(BATTLE_UI.sfx.levelUp)
     ctx.ui.toast(t('hud.license.up', { name: creatureName(cr), from: r.from, to: r.to }), 'success')
-    if (!inParty.has(cr)) continue
-    for (const moveId of r.learnable) {
+    if (inParty.has(cr) && r.learnable.length) {
+      pendingLearn.push({ cr, learnable: r.learnable })
+    }
+  }
+  ctx.save.flags[GAME.flags.licenseSettled] = true
+  sendScriptOp(ctx, { t: 'script.op', op: 'settleBossCards' })
+  for (const { cr, learnable } of pendingLearn) {
+    for (const moveId of learnable) {
       const move = ctx.data.moves[moveId]
       if (!move || cr.moves.some((m) => m.id === moveId)) continue
       const slot = await ctx.screens.learnMove(cr, moveId)
       if (slot < 0 || slot > cr.moves.length) continue
       const entry = { id: moveId, pp: move.pp, ppMax: move.pp }
+      const replacing = slot < cr.moves.length
       if (slot === cr.moves.length) cr.moves.push(entry)
       else cr.moves[slot] = entry
       const pIdx = ctx.save.party.indexOf(cr)
-      if (pIdx >= 0) sendCreatureLearnMove(ctx, pIdx, moveId, slot < cr.moves.length ? slot : undefined)
+      if (pIdx >= 0) sendCreatureLearnMove(ctx, pIdx, moveId, replacing ? slot : undefined)
       ctx.ui.toast(t('hud.license.learned', { name: creatureName(cr) }), 'success')
     }
   }
-  ctx.save.flags[GAME.flags.licenseSettled] = true
-  sendScriptOp(ctx, { t: 'script.op', op: 'settleBossCards' })
   if (levelled.length) {
     ctx.events.emit('party:changed', {})
     ctx.persist('license')

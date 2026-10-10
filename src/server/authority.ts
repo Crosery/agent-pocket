@@ -6,8 +6,9 @@
 // - Economic ledger + anti-cheat audit log + anomaly detection (encounter/step ratio, hourly exp/money rate).
 import { randomInt } from 'node:crypto'
 import battleUiJson from '../../content/battle-ui.json' with { type: 'json' }
+import gameJson from '../../content/game.json' with { type: 'json' }
 import type {
-  BattleAction, BattleEvent, BattleInit, BattleModifiers, BattleRequest, BattleSideInit, Creature, SaveData, SpeciesDef, TrainerDef, World,
+  BattleAction, BattleEvent, BattleInit, BattleModifiers, BattleRequest, BattleSideInit, Creature, FieldWeatherKind, Grade, NpcDef, SaveData, ScriptStep, SpeciesDef, TrainerDef, TypeId, World,
 } from '../shared/types.ts'
 import type { ClientMsg, PublicProfile, ServerMsg } from '../shared/protocol.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
@@ -20,15 +21,20 @@ import { buildBossInit, createBossCreature } from '../shared/battle/boss-battle.
 import { bossCardCap, captureSeed, isBossCard, partyExpMods, rollBossCard, settleBank } from '../shared/gameplay/bosscard.ts'
 import { offersOf, takeOffer, timesAffordable, unlocked } from '../shared/gameplay/exchange.ts'
 import { activeEvents, eventModifiers, modifierValue } from '../shared/gameplay/events.ts'
-import { instanceOfBoss, progressOf } from '../shared/gameplay/instances.ts'
-import { addTaskProgress } from '../shared/gameplay/research.ts'
+import {
+  checkInstanceAchievements, contractOdds, instanceOfBoss, isOffPeakDouble, isTierUnlocked, pickLossHint, progressOf, rollContractOutcome, shouldOfferAssist,
+} from '../shared/gameplay/instances.ts'
+import {
+  addTaskProgress, applyResearch, levelRewards, researchFromBattle, researchLevel, researchPoints,
+} from '../shared/gameplay/research.ts'
+import { speciesBehavior } from '../shared/gameplay/spawns.ts'
 import { GAMEPLAY } from '../shared/gameplay/data.ts'
 import {
   applyMedicine, applyTradeResult, canOffer, canSell, catchPlacement, medicineBlocker, moveCreature, releaseCreature,
   sellPrice, shopBuyPrice, teachState,
 } from '../shared/gameplay/save-ops.ts'
-import { STORY_CONTENT } from '../shared/world/story.ts'
-import { frontierQuest, frontierTrainer } from '../shared/world/frontier/content/index.ts'
+import { STORY_CONTENT, storyFeatures, type StepSpec } from '../shared/world/story.ts'
+import { frontierQuest, frontierTrainer, registerFrontierRefs } from '../shared/world/frontier/content/index.ts'
 import { getMap, objectsInRect, regionAt } from '../shared/world/worldapi.ts'
 import type { AuditRecord, LedgerRecord } from './accounts.ts'
 import type { HubCore, Player } from './core.ts'
@@ -80,6 +86,10 @@ interface ActiveBattle {
   lootEarned: Record<string, number>
   expEarned: number
   seenSpecies: Set<string>
+  defeatedSpecies: string[]
+  foeMoves: { species: string; type: TypeId }[]
+  activeFoeSpecies: string | null
+  roamingLegend: boolean
   learnableMoves: Map<number, Set<string>>
   evolutionsReady: Map<number, string>
   openedAt: number
@@ -157,7 +167,22 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
   const activeBattles = new Map<string, ActiveBattle>()
   const pendingContracts = new Map<string, PendingContract>()
   const metrics = new Map<string, PlayerMetrics>()
+  const recentPayments = new Map<string, { kind: 'money' | 'item'; itemId?: string; amount: number; map: string; at: number }>()
+  const recentFlagsSet = new Map<string, Map<string, number>>()
 
+  function noteRecentFlag(playerId: string, flag: string): void {
+    let m = recentFlagsSet.get(playerId)
+    if (!m) {
+      m = new Map()
+      recentFlagsSet.set(playerId, m)
+    }
+    m.set(flag, Date.now())
+  }
+
+  function wasFlagRecentlySet(playerId: string, flag: string, windowMs = 30_000): boolean {
+    const at = recentFlagsSet.get(playerId)?.get(flag)
+    return typeof at === 'number' && Date.now() - at <= windowMs
+  }
   function indexSaveCreatures(accountId: string, save: SaveData): void {
     for (const [uid, owner] of [...creatureOwners.entries()]) {
       if (owner === accountId) creatureOwners.delete(uid)
@@ -281,10 +306,22 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
   function commitSave(
     playerId: string,
     save: SaveData,
-    optsIn: { imported?: boolean; trusted?: boolean; ref?: string; notify?: boolean } = {},
+    optsIn: { imported?: boolean; trusted?: boolean; ref?: string; notify?: boolean; syncPosition?: boolean } = {},
   ): SignedServerSave {
     const now = Date.now()
-    const stored = store.putAccountSave(playerId, structuredClone(save), {
+    const nextSave = structuredClone(save)
+    if (optsIn.syncPosition !== false && optsIn.ref !== 'script:blackout' && optsIn.ref !== 'save:import') {
+      const live = core.byId(playerId)
+      if (live?.state) {
+        nextSave.position = {
+          map: live.state.map,
+          x: Math.floor(live.state.x),
+          y: Math.floor(live.state.y),
+          facing: live.state.facing,
+        }
+      }
+    }
+    const stored = store.putAccountSave(playerId, nextSave, {
       ...(optsIn.imported !== undefined ? { imported: optsIn.imported } : {}),
       ...(optsIn.trusted !== undefined ? { trusted: optsIn.trusted } : {}),
       now,
@@ -367,7 +404,12 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     }
     for (const e of events) {
       if (e.t === 'switch' && e.side === 1 && CONTENT.species[e.creature.speciesId]) {
+        b.activeFoeSpecies = e.creature.speciesId
         b.seenSpecies.add(e.creature.speciesId)
+      } else if (e.t === 'move' && e.side === 1 && b.activeFoeSpecies) {
+        b.foeMoves.push({ species: b.activeFoeSpecies, type: e.type })
+      } else if (e.t === 'faint' && e.side === 1 && b.activeFoeSpecies) {
+        b.defeatedSpecies.push(b.activeFoeSpecies)
       } else if (e.t === 'item' && e.side === 0) {
         b.consumedItems[e.itemId] = (b.consumedItems[e.itemId] ?? 0) + 1
         b.bag[e.itemId] = Math.max(0, (b.bag[e.itemId] ?? 0) - 1)
@@ -431,38 +473,49 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       caught = structuredClone(b.engine.caught)
       storeCreatureInSave(save, caught)
       addLedger(p.id, 'creature', caught.uid, 1, save.party.length, ref)
-      if (b.bossId) save.flags[`bossWon:${b.bossId}`] = true
+      if (b.bossId) {
+        const wonFlag = `${gameJson.flags.bossWonPrefix}${b.bossId}`
+        save.flags[wonFlag] = true
+        noteRecentFlag(p.id, wonFlag)
+      }
+    }
+
+    const researchItems = researchFromBattle({
+      seen: [...b.seenSpecies],
+      defeated: b.defeatedSpecies,
+      result,
+      caught: caught ? { speciesId: caught.speciesId, shiny: caught.shiny } : null,
+      foeMoves: b.foeMoves,
+      timeOfDay: b.init.timeOfDay,
+      weather: (b.init.weather && b.init.weather !== 'none' ? b.init.weather : 'clear') as FieldWeatherKind,
+      biome: b.init.biome || null,
+      roamingLegend: b.roamingLegend,
+    })
+    if (researchItems.length) {
+      const r = applyResearch(save.research ?? {}, researchItems)
+      if (r.gains.length) save.research = r.state
     }
 
     if (result === 'win') {
       save.stats.battlesWon += 1
       if (b.trainer) {
-        save.flags[STORY_CONTENT.meta.flags.trainerWon + b.trainer.id] = true
+        const trFlag = STORY_CONTENT.meta.flags.trainerWon + b.trainer.id
+        save.flags[trFlag] = true
+        noteRecentFlag(p.id, trFlag)
         if (b.trainer.badge && !save.badges.includes(b.trainer.badge)) {
           save.badges.push(b.trainer.badge)
           const badge = world?.badges.find((bd) => bd.id === b.trainer!.badge)
-          if (badge) save.flags[`badge:${badge.type}`] = true
-          const cap = bossCardCap(save.badges.length, CONTENT)
-          for (let i = 0; i < save.party.length; i++) {
-            const cr = save.party[i]
-            if (!isBossCard(cr)) continue
-            const r = settleBank(cr, cap, CONTENT)
-            if (r.learnable.length) {
-              let set = b.learnableMoves.get(i)
-              if (!set) { set = new Set(); b.learnableMoves.set(i, set) }
-              for (const m of r.learnable) set.add(m)
-            }
+          if (badge) {
+            const bFlag = `${gameJson.flags.badgePrefix}${badge.type}`
+            save.flags[bFlag] = true
+            noteRecentFlag(p.id, bFlag)
           }
-          for (const box of save.boxes) {
-            for (const cr of box) {
-              if (isBossCard(cr)) settleBank(cr, cap, CONTENT)
-            }
-          }
-          save.flags['ds:licenseSettled'] = true
         }
       }
       if (b.bossId) {
-        save.flags[`bossWon:${b.bossId}`] = true
+        const wonFlag = `${gameJson.flags.bossWonPrefix}${b.bossId}`
+        save.flags[wonFlag] = true
+        noteRecentFlag(p.id, wonFlag)
         if (b.tierId) {
           const inst = instanceOfBoss(b.bossId)
           const rules = inst?.def.tiers[b.tierId]
@@ -471,7 +524,33 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
             prog.clears[b.tierId] = (prog.clears[b.tierId] ?? 0) + 1
             prog.losses[b.tierId] = 0
             save.flags[GAMEPLAY.instanceDefaults.assistOfferFlag] = false
-            const rewardMoney = b.firstClear ? (rules.reward.money ?? 0) : (rules.repeat.money ?? 0)
+
+            const offPeak = isOffPeakDouble()
+            let shards = (b.firstClear ? rules.reward.shards : rules.repeat.shards) ?? 0
+            if (shards > 0 && rules.reward.jackpot) {
+              const jRng = new Rng(b.seed ^ 0x3c6ef372)
+              if (jRng.nextFloat() < rules.reward.jackpot.chance) {
+                shards *= rules.reward.jackpot.mul
+              }
+            }
+            if (offPeak) shards *= 2
+            const shardItem = GAMEPLAY.instanceDefaults.shardItem
+            if (shards > 0 && CONTENT.items[shardItem]) {
+              save.bag[shardItem] = (save.bag[shardItem] ?? 0) + Math.floor(shards)
+              addLedger(p.id, 'item', shardItem, Math.floor(shards), save.bag[shardItem], ref)
+            }
+
+            const summary = b.engine.summary()
+            checkInstanceAchievements(prog, inst.def, {
+              tierId: b.tierId,
+              win: true,
+              turns: summary.turns,
+              damageTaken: summary.fainted > 0 ? 1 : 0,
+              partySize: 1,
+            })
+
+            const baseMoney = b.firstClear ? (rules.reward.money ?? 0) : (rules.repeat.money ?? 0)
+            const rewardMoney = baseMoney * (offPeak ? 2 : 1)
             if (rewardMoney > 0) {
               save.money += rewardMoney
               moneyDelta += rewardMoney
@@ -503,11 +582,20 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         if (inst) {
           const prog = progressOf(save, inst.id)
           prog.losses[b.tierId] = (prog.losses[b.tierId] ?? 0) + 1
-          save.flags[GAMEPLAY.instanceDefaults.assistOfferFlag] = prog.losses[b.tierId] >= GAMEPLAY.instanceDefaults.assistAfterLosses
+          const summary = b.engine.summary()
+          const startBaits = b.init.sides[0].items ?? {}
+          const hintKey = pickLossHint(inst.def, summary, startBaits, CONTENT)
+          if (GAMEPLAY.instanceDefaults.lossHintFlag) {
+            save.flags[GAMEPLAY.instanceDefaults.lossHintFlag] = hintKey.slice(hintKey.lastIndexOf('.') + 1)
+          }
+          save.flags[GAMEPLAY.instanceDefaults.assistOfferFlag] = shouldOfferAssist(
+            GAMEPLAY.instanceDefaults,
+            prog.losses[b.tierId],
+            summary,
+          )
         }
       }
     }
-
     const committed = commitSave(p.id, save, { ref, notify: false })
     return {
       t: 'battle.end',
@@ -553,6 +641,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     let tierId: string | null = null
     let firstClear = false
     const captureAfterWin = msg.captureAfterWin === true
+    let roamingLegend = false
 
     if (msg.kind === 'wild') {
       const m = playerMetrics(p.id)
@@ -562,6 +651,10 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       }
       let speciesId = msg.speciesId
       let level = msg.level
+      let scriptedMoves: string[] | undefined
+      let scriptedGradeFloor: Grade | undefined
+      let scriptedCatchRateMul: number | undefined
+
       if (speciesId !== undefined) {
         const sp = CONTENT.species[speciesId]
         if (!sp) {
@@ -571,18 +664,50 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         }
         const bossDef = CONTENT.bossBySpecies[speciesId]
         if (bossDef?.scriptedOnly) {
-          const mapHasBossScript = !world || Boolean(
-            map?.npcs.some((n) => JSON.stringify(n.script ?? []).includes(speciesId!)),
-          )
-          if (!msg.scripted || !mapHasBossScript) {
+          const wildStep = findWildBattleStepOnMap(p, save, speciesId)
+          if (!msg.scripted || (world && !wildStep)) {
             audit(p.id, 'battle.invalid_encounter', { reason: 'scripted_only_boss', speciesId }, 3, p.ip)
             core.error(p, 'invalid_encounter')
             return
           }
         }
-        if (region && !msg.scripted && !msg.roamer && region.encounters.length > 0) {
+        if (msg.scripted) {
+          const wildStep = findWildBattleStepOnMap(p, save, speciesId)
+          if (world && !wildStep) {
+            audit(p.id, 'battle.invalid_encounter', { reason: 'unverified_scripted_encounter', speciesId, map: p.state.map }, 3, p.ip)
+            core.error(p, 'invalid_encounter')
+            return
+          }
+          if (wildStep) {
+            level = wildStep.level
+            scriptedMoves = wildStep.moves
+            scriptedGradeFloor = wildStep.gradeFloor as Grade | undefined
+            scriptedCatchRateMul = wildStep.catchRateMul
+          } else {
+            if (Array.isArray(msg.moves) && msg.moves.every((mv) => typeof mv === 'string' && CONTENT.moves[mv])) {
+              scriptedMoves = msg.moves
+            }
+            if (typeof msg.gradeFloor === 'string' && CONTENT.quality.grades.some((g) => g.id === msg.gradeFloor)) {
+              scriptedGradeFloor = msg.gradeFloor as Grade
+            }
+            scriptedCatchRateMul = msg.catchRateMul
+          }
+        } else if (msg.roamer) {
+          const inTable = Boolean(region?.encounters.some((s) => s.species === speciesId))
+          const isLegend = GAMEPLAY.legends.some((l) => l.species === speciesId)
+          const activeEvs = activeEvents(save.events ?? {}, save.clockMinutes)
+          const isEventSpawn = activeEvs.some((ev) => JSON.stringify(ev.def.effects).includes(speciesId!))
+          if (isLegend) roamingLegend = true
+          if (world && region && region.encounters.length > 0 && !inTable && !isLegend && !isEventSpawn) {
+            audit(p.id, 'battle.invalid_encounter', { reason: 'invalid_roamer_species', speciesId, region: region.id }, 2, p.ip)
+            core.error(p, 'invalid_encounter')
+            return
+          }
+        } else if (region && region.encounters.length > 0) {
           const inTable = region.encounters.some((s) => s.species === speciesId)
-          if (!inTable) {
+          const activeEvs = activeEvents(save.events ?? {}, save.clockMinutes)
+          const inEventBoost = activeEvs.some((ev) => JSON.stringify(ev.def.effects).includes(speciesId!))
+          if (!inTable && !inEventBoost) {
             audit(p.id, 'battle.invalid_encounter', { reason: 'species_not_in_region_table', speciesId, region: region.id }, 2, p.ip)
             core.error(p, 'invalid_encounter')
             return
@@ -602,21 +727,24 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         core.error(p, 'invalid_encounter')
         return
       }
-      if (world && region && region.encounters.length > 0 && !msg.scripted && !msg.roamer) {
+      if (world && region && region.encounters.length > 0 && !msg.scripted) {
         const slots = region.encounters.filter((s) => s.species === speciesId)
         if (slots.length > 0) {
+          const bonus = speciesBehavior(speciesId, CONTENT).levelBonus
           const minLv = Math.min(...slots.map((s) => Math.min(s.minLevel, s.maxLevel)))
-          const maxLv = Math.max(...slots.map((s) => Math.max(s.minLevel, s.maxLevel)))
+          const maxLv = Math.max(...slots.map((s) => Math.max(s.minLevel, s.maxLevel))) + bonus
           clampedLevel = Math.max(minLv, Math.min(maxLv, clampedLevel))
+        } else if (msg.roamer) {
+          const maxAllowed = Math.min(CONTENT.config.party.maxLevel, Math.max(35, save.badges.length * 10 + 25))
+          clampedLevel = Math.min(clampedLevel, maxAllowed)
         }
-      } else if (world && (msg.scripted || msg.roamer)) {
-        const maxAllowed = Math.min(CONTENT.config.party.maxLevel, Math.max(25, save.badges.length * 10 + 20))
-        clampedLevel = Math.min(clampedLevel, maxAllowed)
       }
       const foe = createCreature(speciesId, clampedLevel, {
         rng,
         shiny: rollShiny(rng, CONTENT),
         caughtMap: p.state.map,
+        ...(scriptedMoves?.length ? { moves: scriptedMoves } : {}),
+        ...(scriptedGradeFloor ? { gradeFloor: scriptedGradeFloor } : {}),
       }, CONTENT)
       const wildBoss = CONTENT.bossBySpecies[speciesId]
       if (wildBoss) {
@@ -631,8 +759,9 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         mods.levelCapByParty = card.levelCapByParty
         mods.expCapByParty = card.expCapByParty
       }
-      if (typeof msg.catchRateMul === 'number' && msg.catchRateMul > 0 && msg.catchRateMul <= 5 && (msg.scripted || clampedLevel <= 15)) {
-        mods.catchRate = msg.catchRateMul
+      const effCatchMul = msg.scripted ? scriptedCatchRateMul : (clampedLevel <= 15 && !msg.roamer ? msg.catchRateMul : undefined)
+      if (typeof effCatchMul === 'number' && effCatchMul > 0 && effCatchMul <= 5) {
+        mods.catchRate = effCatchMul
       }
       init = {
         seed,
@@ -653,9 +782,18 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       }
     } else if (msg.kind === 'trainer') {
       const trId = typeof msg.trainerId === 'string' ? msg.trainerId : ''
+      if (world && map?.infinite) {
+        const near = objectsInRect(map, Math.floor(p.state.x) - 24, Math.floor(p.state.y) - 24, Math.floor(p.state.x) + 25, Math.floor(p.state.y) + 25)
+        registerFrontierRefs(world, near.npcs)
+      }
       const tr = world ? (world.trainers[trId] ?? frontierTrainer(world, trId)) : null
       if (!tr) {
         audit(p.id, 'battle.invalid_trainer', { trainerId: trId }, 2, p.ip)
+        core.error(p, 'invalid_encounter')
+        return
+      }
+      if (world && !isTrainerOnPlayerMap(p, save, tr.id)) {
+        audit(p.id, 'battle.invalid_trainer', { trainerId: tr.id, map: p.state.map, reason: 'trainer_not_on_map' }, 3, p.ip)
         core.error(p, 'invalid_encounter')
         return
       }
@@ -727,23 +865,21 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       bossId = bId
       tierId = tId
       const prog = progressOf(save, inst.id)
-      const unlock = (rules as { unlock?: { tier?: string; badges?: number; flag?: string } }).unlock
-      if (unlock) {
-        if (unlock.tier && (prog.clears[unlock.tier] ?? 0) <= 0) {
-          audit(p.id, 'battle.locked_boss_tier', { bossId: bId, tierId: tId, needTier: unlock.tier }, 2, p.ip)
-          core.error(p, 'invalid_encounter')
-          return
-        }
-        if (typeof unlock.badges === 'number' && save.badges.length < unlock.badges) {
-          audit(p.id, 'battle.locked_boss_tier', { bossId: bId, tierId: tId, needBadges: unlock.badges }, 2, p.ip)
-          core.error(p, 'invalid_encounter')
-          return
-        }
-        if (unlock.flag && !save.flags[unlock.flag]) {
-          audit(p.id, 'battle.locked_boss_tier', { bossId: bId, tierId: tId, needFlag: unlock.flag }, 2, p.ip)
-          core.error(p, 'invalid_encounter')
-          return
-        }
+      const boolFlags: Record<string, boolean> = {}
+      for (const [k, v] of Object.entries(save.flags)) {
+        if (v !== undefined && v !== false && v !== 0 && v !== '') boolFlags[k] = true
+      }
+      const unlockCheck = isTierUnlocked(rules, save.badges, boolFlags, 1)
+      const unlockTier = (rules.unlock as { tier?: string } | undefined)?.tier
+      if (!unlockCheck.unlocked || (unlockTier && (prog.clears[unlockTier] ?? 0) <= 0)) {
+        audit(p.id, 'battle.locked_boss_tier', {
+          bossId: bId,
+          tierId: tId,
+          reason: unlockCheck.reason ?? unlockTier,
+          badges: save.badges.length,
+        }, 2, p.ip)
+        core.error(p, 'invalid_encounter')
+        return
       }
       firstClear = (prog.clears[tId] ?? 0) === 0
       save.rollSeed ??= hashString(save.playerId) >>> 0
@@ -785,7 +921,6 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       core.error(p, 'bad_message')
       return
     }
-
     const clientInit = structuredClone(init)
     const engine = new BattleEngine(init, CONTENT)
     const active: ActiveBattle = {
@@ -807,6 +942,10 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       lootEarned: {},
       expEarned: 0,
       seenSpecies: new Set(),
+      defeatedSpecies: [],
+      foeMoves: [],
+      activeFoeSpecies: null,
+      roamingLegend,
       learnableMoves: new Map(),
       evolutionsReady: new Map(),
       openedAt: Date.now(),
@@ -923,9 +1062,14 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     const save = structuredClone(rec.save)
     const ballId = typeof msg.ballId === 'string' && CONTENT.items[msg.ballId]?.effect.kind === 'ball'
       ? msg.ballId
-      : BATTLE_CONTRACT_DEFAULT_BALL
+      : ''
+    if (!ballId) {
+      audit(p.id, 'battle.contract_ball_not_owned', { battleId: msg.battleId, ballId: msg.ballId }, 2, p.ip)
+      core.error(p, 'item_not_owned')
+      return
+    }
     const heldBalls = Object.entries(save.bag).filter(([id, n]) => n > 0 && CONTENT.items[id]?.effect.kind === 'ball')
-    if (heldBalls.length > 0 && (save.bag[ballId] ?? 0) <= 0) {
+    if (heldBalls.length > 0 ? (save.bag[ballId] ?? 0) <= 0 : ballId !== BATTLE_CONTRACT_DEFAULT_BALL) {
       audit(p.id, 'battle.contract_ball_not_owned', { battleId: msg.battleId, ballId }, 2, p.ip)
       core.error(p, 'item_not_owned')
       return
@@ -935,13 +1079,52 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
 
     const prog = progressOf(save, inst.id)
     const first = (prog.captures[msg.tierId] ?? 0) === 0
-    if (!first && !rules.repeat.capture) {
+    if (
+      (!first && !rules.repeat.capture) ||
+      (prog.lastRollRun?.[msg.tierId] !== undefined && prog.lastRollRun[msg.tierId] === prog.runSeq)
+    ) {
       const committed = commitSave(p.id, save, { ref: `contract:${msg.battleId}`, notify: false })
       core.send(p, { t: 'battle.contracted', battleId: msg.battleId, signed: null, save: committed.save, rev: committed.rev })
       return
     }
     save.rollSeed ??= hashString(save.playerId) >>> 0
     const seed = captureSeed(save.rollSeed, inst.id, msg.tierId, first ? 0 : prog.runSeq)
+    const ballBonus = CONTENT.quality.capture.ballBonus?.[ballId] ?? 0
+    const isMaster = ballId === CONTENT.quality.capture.masterBall && (save.bag[ballId] ?? 0) > 0
+    const curPity = prog.pity?.[msg.tierId] ?? 0
+    const odds = contractOdds(rules, ballBonus, !first, curPity)
+    const rollRng = new Rng(seed)
+    const success = isMaster || odds.guaranteed || rollContractOutcome(rollRng, odds.chance)
+    prog.lastRollRun ??= {}
+    prog.lastRollRun[msg.tierId] = prog.runSeq
+    prog.pity ??= {}
+
+    if (BATTLE_CONTRACT_CONSUME_BALL && (save.bag[ballId] ?? 0) > 0) {
+      if (save.bag[ballId] > 1) save.bag[ballId] -= 1
+      else delete save.bag[ballId]
+      addLedger(p.id, 'item', ballId, -1, save.bag[ballId] ?? 0, `contract:${msg.battleId}`)
+    }
+
+    if (!success) {
+      prog.pity[msg.tierId] = curPity + 1
+      const failShard = rules.repeat.shards ?? GAMEPLAY.instanceDefaults.failShardQty
+      const shardItem = GAMEPLAY.instanceDefaults.shardItem
+      if (failShard > 0 && CONTENT.items[shardItem]) {
+        save.bag[shardItem] = (save.bag[shardItem] ?? 0) + failShard
+        addLedger(p.id, 'item', shardItem, failShard, save.bag[shardItem], `contract_fail:${msg.battleId}`)
+      }
+      const committed = commitSave(p.id, save, { ref: `contract_fail:${msg.battleId}`, notify: false })
+      core.send(p, {
+        t: 'battle.contracted',
+        battleId: msg.battleId,
+        signed: null,
+        save: committed.save,
+        rev: committed.rev,
+      })
+      return
+    }
+
+    prog.pity[msg.tierId] = 0
     const card = rollBossCard(new Rng(seed), msg.bossId, msg.tierId, rules, {
       first,
       run: String(prog.runSeq),
@@ -960,11 +1143,6 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       filed = 'box'
     }
     prog.captures[msg.tierId] = (prog.captures[msg.tierId] ?? 0) + 1
-    if (BATTLE_CONTRACT_CONSUME_BALL && (save.bag[ballId] ?? 0) > 0) {
-      if (save.bag[ballId] > 1) save.bag[ballId] -= 1
-      else delete save.bag[ballId]
-      addLedger(p.id, 'item', ballId, -1, save.bag[ballId] ?? 0, `contract:${msg.battleId}`)
-    }
     addLedger(p.id, 'creature', card.uid, 1, save.party.length, `contract:${msg.battleId}`)
     const committed = commitSave(p.id, save, { ref: `contract:${msg.battleId}`, notify: false })
     core.send(p, {
@@ -988,9 +1166,24 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       core.error(p, 'shop_invalid')
       return
     }
+    if (world && !isShopItemUnlockedForPlayer(p, rec.save, item.id)) {
+      audit(p.id, 'shop.locked_tier_item', { itemId: item.id, badges: rec.save.badges.length, map: p.state.map }, 2, p.ip)
+      core.error(p, 'shop_invalid')
+      return
+    }
     const active = activeEvents(rec.save.events ?? {}, rec.save.clockMinutes)
-    const evMods = eventModifiers(active, { map: p.state.map, x: p.state.x, y: p.state.y }, rec.save.clockMinutes)
-    const serverMul = modifierValue(evMods, 'shopPrice', { category: item.category })
+    const evModsHere = eventModifiers(active, { map: p.state.map, x: p.state.x, y: p.state.y }, rec.save.clockMinutes)
+    let serverMul = modifierValue(evModsHere, 'shopPrice', { category: item.category })
+    if (world && p.state.map !== world.startMap && p.lastOverworld) {
+      const ow = world.maps[world.startMap]
+      const r = ow ? regionAt(ow, p.lastOverworld.x, p.lastOverworld.y) : null
+      const evModsOw = eventModifiers(
+        active,
+        { map: world.startMap, x: Math.floor(p.lastOverworld.x), y: Math.floor(p.lastOverworld.y), ...(r ? { region: r.id } : {}) },
+        rec.save.clockMinutes,
+      )
+      serverMul = Math.min(serverMul, modifierValue(evModsOw, 'shopPrice', { category: item.category }))
+    }
     const reqMul = typeof msg.priceMul === 'number' && isFiniteNumber(msg.priceMul) && msg.priceMul >= 0.5 && msg.priceMul <= 2 ? msg.priceMul : 1
     const mul = reqMul < 1 ? Math.max(reqMul, serverMul) : reqMul
     const unitPrice = shopBuyPrice(item, mul)
@@ -1051,7 +1244,6 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     const e = item.effect
     let consumed = true
     if (e.kind === 'repel') {
-      if (save.repelSteps > 0) { core.error(p, 'invalid_item_use'); return }
       save.repelSteps = e.steps
     } else if (e.kind === 'escape') {
       // Consumes the escape rope; overworld warp follows on the client.
@@ -1172,6 +1364,8 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     evolve(save.party[idx], target, CONTENT)
     if (!save.dexSeen.includes(target)) save.dexSeen.push(target)
     if (!save.dexCaught.includes(target)) save.dexCaught.push(target)
+    const r = applyResearch(save.research ?? {}, [{ species: target, event: { kind: 'evolve' } }])
+    if (r.gains.length) save.research = r.state
     commitSave(p.id, save, { ref: `evolve:${cr.uid}:${target}` })
   }
 
@@ -1246,6 +1440,384 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     commitSave(p.id, save, { ref: 'box:release' })
   }
 
+  function expandRawSteps(raw: readonly StepSpec[], depth = 0): ScriptStep[] {
+    if (depth > 8) return []
+    const out: ScriptStep[] = []
+    const starters = CONTENT.speciesList.filter((sp) => sp.starter).map((sp) => sp.id)
+    for (const s of raw) {
+      if (s.op === 'include' && typeof s.script === 'string') {
+        const target = STORY_CONTENT.scripts[s.script]
+        if (target) out.push(...expandRawSteps(target, depth + 1))
+        continue
+      }
+      if (s.op === 'byStarter' && isRecord(s.cases)) {
+        for (const br of Object.values(s.cases)) {
+          if (Array.isArray(br)) out.push(...expandRawSteps(br as StepSpec[], depth + 1))
+        }
+        continue
+      }
+      if (s.op === 'rivalBattle' && typeof s.battle === 'string') {
+        for (const st of starters) {
+          out.push({ op: 'battle', trainer: `rival-${s.battle}-${st}` } as ScriptStep)
+        }
+        continue
+      }
+      if (s.op === 'starterBattle' && typeof s.trainer === 'string') {
+        for (const st of starters) {
+          out.push({ op: 'battle', trainer: `${s.trainer}-${st}` } as ScriptStep)
+        }
+        continue
+      }
+      if (s.op === 'choice' && Array.isArray(s.branches)) {
+        out.push({
+          ...s,
+          branches: (s.branches as StepSpec[][]).map((b) => expandRawSteps(b, depth + 1)),
+        } as unknown as ScriptStep)
+        continue
+      }
+      if (
+        s.op === 'ifFlag' ||
+        s.op === 'ifBadges' ||
+        s.op === 'ifItem' ||
+        s.op === 'ifCaught' ||
+        s.op === 'ifDex' ||
+        s.op === 'ifInstance' ||
+        s.op === 'random' ||
+        s.op === 'ifTime' ||
+        s.op === 'ifWeather'
+      ) {
+        out.push({
+          ...s,
+          then: Array.isArray(s.then) ? expandRawSteps(s.then as StepSpec[], depth + 1) : [],
+          ...(Array.isArray(s.else) ? { else: expandRawSteps(s.else as StepSpec[], depth + 1) } : {}),
+        } as unknown as ScriptStep)
+        continue
+      }
+      out.push(s as unknown as ScriptStep)
+    }
+    return out
+  }
+
+  function collectMapScripts(p: Player, save: SaveData): ScriptStep[][] {
+    const lists: ScriptStep[][] = []
+    if (world) {
+      const map = getMap(world, p.state.map)
+      if (map) {
+        const npcs: readonly NpcDef[] = map.infinite
+          ? (() => {
+            const near = objectsInRect(map, Math.floor(p.state.x) - 24, Math.floor(p.state.y) - 24, Math.floor(p.state.x) + 25, Math.floor(p.state.y) + 25)
+            registerFrontierRefs(world, near.npcs)
+            return near.npcs
+          })()
+          : map.npcs
+        for (const n of npcs) {
+          if (n.hiddenUnlessFlag && !save.flags[n.hiddenUnlessFlag] && !wasFlagRecentlySet(p.id, n.hiddenUnlessFlag)) continue
+          if (n.script?.length) lists.push(n.script)
+        }
+      }
+      for (const trig of storyFeatures(world).triggers) {
+        if (trig.match?.map && trig.match.map !== p.state.map) continue
+        lists.push(trig.steps)
+      }
+    }
+    if (p.state.map === 'origin-lab') {
+      if (STORY_CONTENT.scripts['ds-professor']) lists.push(expandRawSteps(STORY_CONTENT.scripts['ds-professor']))
+      if (STORY_CONTENT.scripts['ds-aide']) lists.push(expandRawSteps(STORY_CONTENT.scripts['ds-aide']))
+    } else if (p.state.map === 'origin-lab-b1') {
+      for (const k of ['ds-r1', 'ds-supply', 'ds-heal', 'ds-loss']) {
+        if (STORY_CONTENT.scripts[k]) lists.push(expandRawSteps(STORY_CONTENT.scripts[k]))
+      }
+    } else if (p.state.map === 'origin-lab-b2') {
+      for (const k of ['ds-relay', 'ds-core']) {
+        if (STORY_CONTENT.scripts[k]) lists.push(expandRawSteps(STORY_CONTENT.scripts[k]))
+      }
+    }
+    return lists
+  }
+
+  function walkAllSteps(steps: readonly ScriptStep[], visit: (s: ScriptStep) => void): void {
+    for (const s of steps) {
+      visit(s)
+      if (s.op === 'choice') {
+        for (const b of s.branches) walkAllSteps(b, visit)
+      } else if (
+        s.op === 'ifFlag' ||
+        s.op === 'ifBadges' ||
+        s.op === 'ifItem' ||
+        s.op === 'ifCaught' ||
+        s.op === 'ifDex' ||
+        s.op === 'ifInstance' ||
+        s.op === 'random' ||
+        s.op === 'ifTime' ||
+        s.op === 'ifWeather'
+      ) {
+        walkAllSteps(s.then, visit)
+        if (s.else) walkAllSteps(s.else, visit)
+      }
+    }
+  }
+
+  function findWildBattleStepOnMap(
+    p: Player,
+    save: SaveData,
+    speciesId: string,
+  ): Extract<ScriptStep, { op: 'wildBattle' }> | null {
+    let found: Extract<ScriptStep, { op: 'wildBattle' }> | null = null
+    for (const script of collectMapScripts(p, save)) {
+      walkAllSteps(script, (s) => {
+        if (!found && s.op === 'wildBattle' && s.species === speciesId) {
+          found = s
+        }
+      })
+      if (found) return found
+    }
+    return null
+  }
+
+  function isTrainerOnPlayerMap(p: Player, save: SaveData, trainerId: string): boolean {
+    if (!world) return true
+    const map = getMap(world, p.state.map)
+    if (map) {
+      const npcs = map.infinite
+        ? objectsInRect(map, Math.floor(p.state.x) - 24, Math.floor(p.state.y) - 24, Math.floor(p.state.x) + 25, Math.floor(p.state.y) + 25).npcs
+        : map.npcs
+      if (npcs.some((n) => n.trainer === trainerId)) return true
+    }
+    let found = false
+    for (const script of collectMapScripts(p, save)) {
+      walkAllSteps(script, (s) => {
+        if (s.op === 'battle' && s.trainer === trainerId) found = true
+      })
+      if (found) return true
+    }
+    const activeEvs = activeEvents(save.events ?? {}, save.clockMinutes)
+    if (activeEvs.some((ev) => JSON.stringify(ev.def.effects).includes(trainerId))) return true
+    return false
+  }
+
+  function isShopItemUnlockedForPlayer(p: Player, save: SaveData, itemId: string): boolean {
+    const tiers = STORY_CONTENT.services.shop.tiers
+    const inTiers = tiers.filter((t) => t.items.includes(itemId))
+    if (inTiers.length === 0) return true
+    const minBadges = Math.min(...inTiers.map((t) => t.atLeast))
+    if (save.badges.length >= minBadges) return true
+    for (const script of collectMapScripts(p, save)) {
+      let offered = false
+      walkAllSteps(script, (s) => {
+        if (s.op === 'shop' && s.items.includes(itemId)) offered = true
+      })
+      if (offered) return true
+    }
+    return false
+  }
+
+  function hasRewardOrAction(steps: readonly ScriptStep[]): boolean {
+    let hit = false
+    walkAllSteps(steps, (s) => {
+      if (
+        s.op === 'giveItem' ||
+        s.op === 'giveMoney' ||
+        s.op === 'giveCreature' ||
+        s.op === 'chooseStarter' ||
+        s.op === 'battle' ||
+        s.op === 'bossBattle' ||
+        s.op === 'wildBattle' ||
+        s.op === 'quest' ||
+        s.op === 'research' ||
+        s.op === 'takeItem' ||
+        s.op === 'takeMoney'
+      ) {
+        hit = true
+      }
+    })
+    return hit
+  }
+
+  function flagMatches(save: SaveData, flag: string, equals: boolean | number | string | undefined): boolean {
+    const v = save.flags[flag]
+    return equals === undefined ? (v !== undefined && v !== false && v !== 0 && v !== '') : v === equals
+  }
+
+  function countEligibleScriptOp(
+    p: Player,
+    save: SaveData,
+    matcher: (s: ScriptStep) => boolean,
+  ): number {
+    const walk = (list: readonly ScriptStep[]): number => {
+      if (list.some((st) => st.op === 'takeMoney' || st.op === 'takeItem')) return 0
+      let count = 0
+      for (const s of list) {
+        if (matcher(s)) count += 1
+        switch (s.op) {
+          case 'ifFlag': {
+            const holds = flagMatches(save, s.flag, s.equals)
+            const recent = wasFlagRecentlySet(p.id, s.flag)
+            const thenAct = hasRewardOrAction(s.then)
+            const elseAct = hasRewardOrAction(s.else ?? [])
+            if (!thenAct && elseAct) {
+              if (!holds || recent) count += walk(s.else ?? [])
+            } else if (thenAct && !elseAct) {
+              if (holds || recent) count += walk(s.then)
+            } else {
+              if (holds || recent) count += walk(s.then)
+              if (!holds || recent) count += walk(s.else ?? [])
+            }
+            break
+          }
+          case 'ifBadges':
+            count += walk(save.badges.length >= s.atLeast ? s.then : s.else ?? [])
+            break
+          case 'ifDex':
+            count += walk(save.dexCaught.length >= s.caughtAtLeast ? s.then : s.else ?? [])
+            break
+          case 'ifCaught': {
+            const n = save.dexCaught.filter((id) => {
+              const sp = CONTENT.species[id]
+              if (!sp) return false
+              if (s.species && id !== s.species) return false
+              if (s.type && !sp.types.includes(s.type)) return false
+              return true
+            }).length
+            count += walk(n >= (s.atLeast ?? 1) ? s.then : s.else ?? [])
+            break
+          }
+          case 'ifItem':
+            count += walk((save.bag[s.item] ?? 0) >= (s.atLeast ?? 1) ? s.then : s.else ?? [])
+            break
+          case 'ifInstance': {
+            const prog = progressOf(save, s.id)
+            const tier = s.tier ?? 'story'
+            const cleared = prog.clears[tier] ?? 0
+            const captured = prog.captures[tier] ?? 0
+            const ok = (s.clearedAtLeast === undefined || cleared >= s.clearedAtLeast)
+              && (s.capturedAtLeast === undefined || captured >= s.capturedAtLeast)
+            count += walk(ok ? s.then : s.else ?? [])
+            break
+          }
+          case 'choice': {
+            let best = 0
+            for (const br of s.branches) best = Math.max(best, walk(br))
+            count += best
+            break
+          }
+          case 'random':
+          case 'ifTime':
+          case 'ifWeather':
+            count += Math.max(walk(s.then), walk(s.else ?? []))
+            break
+          default:
+            break
+        }
+      }
+      return count
+    }
+
+    const seenScripts = new Set<string>()
+    let total = 0
+    for (const script of collectMapScripts(p, save)) {
+      const key = JSON.stringify(script)
+      if (seenScripts.has(key)) continue
+      seenScripts.add(key)
+      total += walk(script)
+    }
+    return total
+  }
+
+  function consumePaidScriptGrant(
+    p: Player,
+    save: SaveData,
+    matcher: (s: ScriptStep) => boolean,
+  ): boolean {
+    const pay = recentPayments.get(p.id)
+    if (!pay || pay.map !== p.state.map || Date.now() - pay.at > 30_000) return false
+    let matched = false
+    const search = (list: readonly ScriptStep[]): void => {
+      if (matched) return
+      const hasPay = list.some((st) =>
+        (pay.kind === 'money' && st.op === 'takeMoney' && st.amount === pay.amount) ||
+        (pay.kind === 'item' && st.op === 'takeItem' && st.item === pay.itemId && st.qty === pay.amount),
+      )
+      if (hasPay && list.some(matcher)) {
+        matched = true
+        return
+      }
+      for (const s of list) {
+        if (s.op === 'choice') {
+          for (const b of s.branches) search(b)
+        } else if (
+          s.op === 'ifFlag' ||
+          s.op === 'ifBadges' ||
+          s.op === 'ifItem' ||
+          s.op === 'ifCaught' ||
+          s.op === 'ifDex' ||
+          s.op === 'ifInstance' ||
+          s.op === 'random' ||
+          s.op === 'ifTime' ||
+          s.op === 'ifWeather'
+        ) {
+          search(s.then)
+          if (s.else) search(s.else)
+        }
+      }
+    }
+    for (const script of collectMapScripts(p, save)) {
+      search(script)
+      if (matched) {
+        recentPayments.delete(p.id)
+        return true
+      }
+    }
+    return false
+  }
+
+  function isQuestCompletionAuthorized(p: Player, save: SaveData, qId: string): boolean {
+    if (world) {
+      let onMap = false
+      for (const script of collectMapScripts(p, save)) {
+        walkAllSteps(script, (s) => {
+          if (s.op === 'quest' && s.quest === qId && s.done === true) onMap = true
+        })
+        if (onMap) break
+      }
+      if (!onMap) return false
+    }
+    switch (qId) {
+      case 'sq-dex':
+        return save.dexCaught.length >= 30
+      case 'sq-photo':
+        return save.dexCaught.filter((id) => CONTENT.species[id]?.types.includes('vision')).length >= 2
+      case 'sq-chorus':
+        return save.dexCaught.filter((id) => CONTENT.species[id]?.types.includes('sound')).length >= 1
+      case 'sq-chaos':
+        return save.dexCaught.filter((id) => CONTENT.species[id]?.types.includes('chaos')).length >= 1
+      case 'sq-badges':
+        return save.badges.length >= 8
+      case 'sq-arena':
+        return Boolean(save.flags['trainer:sq-arena'])
+      case 'sq-floppy':
+        return Boolean(save.flags['sq-floppy:given'])
+      case 'sq-antivirus':
+        return Boolean(save.flags['sq-antivirus:started'])
+      case 'sq-fan':
+        return Boolean(save.flags['sq-fan:given'])
+      case 'sq-snow':
+        return Boolean(save.flags['sq-snow:found'])
+      case 'sq-castaway':
+        return Boolean(save.flags['sq-castaway:rescued'])
+      case 'sq-lostkid':
+        return Boolean(save.flags['sq-lostkid:found'])
+      case 'sq-ruins':
+        return Boolean(save.flags['sq-ruins:a']) && Boolean(save.flags['sq-ruins:b'])
+      case 'hq-zero':
+        return Boolean(save.flags['zero:t1']) && Boolean(save.flags['zero:t2']) && Boolean(save.flags['zero:ending'])
+      default:
+        if (qId.startsWith('bounty-') || qId.includes(':bounty-')) {
+          return Boolean(save.flags[`${qId}:given`]) || Boolean(save.flags[`${qId}:started`])
+        }
+        return true
+    }
+  }
+
   function handleScriptOp(p: Player, msg: Extract<ClientMsg, { t: 'script.op' }>): void {
     const rec = getRecord(p.id)
     if (!rec) { core.error(p, 'not_ready'); return }
@@ -1257,42 +1829,34 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           core.error(p, 'authority_violation')
           return
         }
+        if (world && p.state.map !== 'origin-lab') {
+          audit(p.id, 'script.invalid_starter_map', { map: p.state.map, speciesId: msg.speciesId }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
         const options = CONTENT.speciesList.filter((sp) => sp.starter)
         const chosen = typeof msg.speciesId === 'string' && options.some((sp) => sp.id === msg.speciesId)
           ? msg.speciesId
-          : (options[0]?.id ?? '')
-        if (!chosen) return
-        const ballId = CONTENT.itemList.find((it) => it.effect.kind === 'ball')?.id
-        const clientStarter = msg.creature ? sanitizeCreature(msg.creature, CONTENT) : null
-        let cr: Creature
-        if (
-          clientStarter &&
-          clientStarter.speciesId === chosen &&
-          clientStarter.level === CONTENT.config.creature.starterLevel
-        ) {
-          cr = {
-            ...clientStarter,
-            otName: save.name,
-            otId: save.playerId,
-            ballId: ballId ?? clientStarter.ballId,
-            caughtMap: p.state.map,
-            origin: { kind: 'starter' },
-          }
-          cr.hp = maxHp(cr, CONTENT)
-        } else {
-          const seed = hashString(`${p.id}:starter:${chosen}`) >>> 0
-          cr = createCreature(chosen, CONTENT.config.creature.starterLevel, {
-            rng: new Rng(seed || 1),
-            otName: save.name,
-            otId: save.playerId,
-            ...(ballId ? { ballId } : {}),
-            caughtMap: p.state.map,
-            gradeFloor: CONTENT.quality.giftGradeFloor,
-            origin: { kind: 'starter' },
-          }, CONTENT)
+          : ''
+        if (!chosen) {
+          audit(p.id, 'script.invalid_starter_species', { speciesId: msg.speciesId }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
         }
+        const ballId = CONTENT.itemList.find((it) => it.effect.kind === 'ball')?.id
+        const seed = hashString(`${p.id}:starter:${chosen}`) >>> 0
+        const cr = createCreature(chosen, CONTENT.config.creature.starterLevel, {
+          rng: new Rng(seed || 1),
+          otName: save.name,
+          otId: save.playerId,
+          ...(ballId ? { ballId } : {}),
+          caughtMap: p.state.map,
+          gradeFloor: CONTENT.quality.giftGradeFloor,
+          origin: { kind: 'starter' },
+        }, CONTENT)
         storeCreatureInSave(save, cr)
         save.flags[STORY_CONTENT.meta.flags.starter] = chosen
+        noteRecentFlag(p.id, STORY_CONTENT.meta.flags.starter)
         addLedger(p.id, 'creature', cr.uid, 1, save.party.length, `script:starter:${chosen}`)
         commitSave(p.id, save, { ref: `script:starter:${chosen}` })
         return
@@ -1319,6 +1883,13 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           cr.statusTurns = 0
           for (const m of cr.moves) m.pp = m.ppMax
         }
+        if (save.respawn) {
+          save.position = structuredClone(save.respawn)
+          p.state.map = save.respawn.map
+          p.state.x = save.respawn.x
+          p.state.y = save.respawn.y
+          p.state.facing = save.respawn.facing
+        }
         commitSave(p.id, save, { ref: 'script:blackout' })
         return
       }
@@ -1336,7 +1907,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           const nearItems = map
             ? objectsInRect(map, Math.floor(p.state.x) - 6, Math.floor(p.state.y) - 6, Math.floor(p.state.x) + 7, Math.floor(p.state.y) + 7).items
             : []
-          const ground = nearItems.find((it) => it.id === groundId) ?? map?.items.find((it) => it.id === groundId)
+          const ground = nearItems.find((it) => it.id === groundId)
           if (!ground) {
             audit(p.id, 'script.invalid_pickup', { groundId, map: p.state.map, x: p.state.x, y: p.state.y }, 3, p.ip)
             core.error(p, 'authority_violation')
@@ -1369,9 +1940,72 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           core.error(p, 'authority_violation')
           return
         }
+        const ledger = store.listLedger(p.id, 500)
+        let ref = `script:giveItem:${p.state.map}:${itemId}:${qty}`
+        let authorized = false
+
+        // 1. Event scatter item pickup
+        if (typeof msg.groundId === 'string' && msg.groundId.startsWith('ev:') && qty <= 5) {
+          const evRef = `script:evitem:${msg.groundId}`
+          if (!ledger.some((l) => l.ref === evRef)) {
+            authorized = true
+            ref = evRef
+          }
+        }
+        // 2. Paid move tutor or item exchange
+        if (!authorized && consumePaidScriptGrant(p, save, (s) => s.op === 'giveItem' && s.item === itemId && s.qty === qty)) {
+          authorized = true
+          ref = `script:paidItem:${p.state.map}:${itemId}:${qty}`
+        }
+        // 3. Unclaimed research level reward
+        if (!authorized) {
+          const rLv = researchLevel(researchPoints(save.research ?? {})).level
+          const rClaimed = typeof save.flags['research:claimedLevel'] === 'number' ? Math.floor(save.flags['research:claimedLevel']) : 0
+          if (rLv > rClaimed) {
+            const claimable = levelRewards(rClaimed, rLv)
+            const rRef = `script:researchReward:${rLv}:${itemId}`
+            if (claimable.items[itemId] === qty && !ledger.some((l) => l.ref === rRef)) {
+              authorized = true
+              ref = rRef
+            }
+          }
+        }
+        // 4. Prologue ds-loss refill in origin-lab-b1
+        if (
+          !authorized &&
+          p.state.map === 'origin-lab-b1' &&
+          save.flags['ds:briefed'] &&
+          !save.flags['ds:done'] &&
+          (itemId === 'off-peak-coupon' || itemId === 'cache-potion') &&
+          (save.bag[itemId] ?? 0) + qty <= 2
+        ) {
+          authorized = true
+          ref = `script:lossRefill:${itemId}:${qty}`
+        }
+        // 5. One-shot script gift on player's current map
+        if (!authorized) {
+          if (
+            p.state.map === 'origin-lab' &&
+            ['dex-device', 'town-map', 'prompt-ball', 'cache-potion', 'work-permit'].includes(itemId) &&
+            !save.flags[STORY_CONTENT.meta.flags.starter]
+          ) {
+            authorized = false
+          } else {
+            const eligible = countEligibleScriptOp(p, save, (s) => s.op === 'giveItem' && s.item === itemId && s.qty === qty)
+            const claimed = ledger.filter((l) => l.ref === ref).length
+            if (eligible > 0 && claimed < eligible) {
+              authorized = true
+            }
+          }
+        }
+        if (!authorized) {
+          audit(p.id, 'script.invalid_give_item', { itemId, qty, map: p.state.map }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
         save.bag[itemId] = (save.bag[itemId] ?? 0) + qty
-        addLedger(p.id, 'item', itemId, qty, save.bag[itemId], `script:giveItem:${itemId}`)
-        commitSave(p.id, save, { ref: `script:giveItem:${itemId}` })
+        addLedger(p.id, 'item', itemId, qty, save.bag[itemId], ref)
+        commitSave(p.id, save, { ref })
         return
       }
       case 'takeItem': {
@@ -1382,68 +2016,129 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         if (n <= 0) return
         if (have - n > 0) save.bag[itemId] = have - n
         else delete save.bag[itemId]
+        if (n === qty) {
+          recentPayments.set(p.id, { kind: 'item', itemId, amount: n, map: p.state.map, at: Date.now() })
+        }
         addLedger(p.id, 'item', itemId, -n, save.bag[itemId] ?? 0, `script:takeItem:${itemId}`)
         commitSave(p.id, save, { ref: `script:takeItem:${itemId}` })
         return
       }
       case 'giveMoney': {
         const amount = typeof msg.amount === 'number' && Number.isInteger(msg.amount) && msg.amount > 0 && msg.amount <= 50_000 ? msg.amount : 0
-        if (amount <= 0) return
+        if (amount <= 0) {
+          audit(p.id, 'script.invalid_give_money', { amount: msg.amount, map: p.state.map }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
+        const ledger = store.listLedger(p.id, 500)
+        let ref = `script:giveMoney:${p.state.map}:${amount}`
+        let authorized = false
+
+        if (consumePaidScriptGrant(p, save, (s) => s.op === 'giveMoney' && s.amount === amount)) {
+          authorized = true
+          ref = `script:paidMoney:${p.state.map}:${amount}`
+        }
+        if (!authorized) {
+          const rLv = researchLevel(researchPoints(save.research ?? {})).level
+          const rClaimed = typeof save.flags['research:claimedLevel'] === 'number' ? Math.floor(save.flags['research:claimedLevel']) : 0
+          if (rLv > rClaimed) {
+            const claimable = levelRewards(rClaimed, rLv)
+            const rRef = `script:researchMoney:${rLv}:${amount}`
+            if (claimable.money === amount && !ledger.some((l) => l.ref === rRef)) {
+              authorized = true
+              ref = rRef
+            }
+          }
+        }
+        if (!authorized) {
+          const eligible = countEligibleScriptOp(p, save, (s) => s.op === 'giveMoney' && s.amount === amount)
+          const claimed = ledger.filter((l) => l.ref === ref).length
+          if (eligible > 0 && claimed < eligible) {
+            authorized = true
+          }
+        }
+        if (!authorized) {
+          audit(p.id, 'script.invalid_give_money', { amount, map: p.state.map }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
         save.money += amount
-        addLedger(p.id, 'money', 'script', amount, save.money, 'script:giveMoney')
-        commitSave(p.id, save, { ref: 'script:giveMoney' })
+        addLedger(p.id, 'money', 'script', amount, save.money, ref)
+        commitSave(p.id, save, { ref })
         return
       }
       case 'takeMoney': {
         const amount = typeof msg.amount === 'number' && Number.isInteger(msg.amount) && msg.amount > 0 ? msg.amount : 0
         if (amount <= 0 || save.money < amount) return
         save.money -= amount
+        recentPayments.set(p.id, { kind: 'money', amount, map: p.state.map, at: Date.now() })
         addLedger(p.id, 'money', 'script', -amount, save.money, 'script:takeMoney')
         commitSave(p.id, save, { ref: 'script:takeMoney' })
         return
       }
       case 'giveCreature': {
         const speciesId = typeof msg.speciesId === 'string' ? msg.speciesId : ''
-        const level = typeof msg.level === 'number' && Number.isInteger(msg.level) ? Math.max(1, Math.min(35, msg.level)) : 5
-        if (!CONTENT.species[speciesId]) return
-        const ballId = CONTENT.itemList.find((it) => it.effect.kind === 'ball')?.id
-        const clientCr = msg.creature ? sanitizeCreature(msg.creature, CONTENT) : null
-        let cr: Creature
-        if (clientCr && clientCr.speciesId === speciesId && clientCr.level === level) {
-          cr = {
-            ...clientCr,
-            otName: save.name,
-            otId: save.playerId,
-            ballId: ballId ?? clientCr.ballId,
-            caughtMap: p.state.map,
-            origin: { kind: 'gift' },
-          }
-          cr.hp = maxHp(cr, CONTENT)
-        } else {
-          const seed = hashString(`${p.id}:gift:${speciesId}:${save.party.length}`) >>> 0
-          cr = createCreature(speciesId, level, {
-            rng: new Rng(seed || 1),
-            shiny: msg.shiny === true,
-            otName: save.name,
-            otId: save.playerId,
-            ...(ballId ? { ballId } : {}),
-            caughtMap: p.state.map,
-            gradeFloor: msg.gradeFloor ?? CONTENT.quality.giftGradeFloor,
-            origin: { kind: 'gift' },
-            ...(msg.nature ? { nature: msg.nature } : {}),
-            ...(msg.moves?.length ? { moves: msg.moves } : {}),
-          }, CONTENT)
-          if (msg.ability && CONTENT.abilities[msg.ability]) cr.abilityId = msg.ability
+        if (!CONTENT.species[speciesId]) {
+          audit(p.id, 'script.invalid_give_creature', { speciesId, map: p.state.map }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
         }
+        if (
+          speciesId === 'phi-3' &&
+          (!save.flags[STORY_CONTENT.meta.flags.starter] || save.flags['ds:stamp:types'])
+        ) {
+          audit(p.id, 'script.invalid_give_creature', { speciesId, reason: 'prereq_or_already_stamped' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
+        let matchedStep: Extract<ScriptStep, { op: 'giveCreature' }> | null = null
+        const eligible = countEligibleScriptOp(p, save, (s) => {
+          if (s.op === 'giveCreature' && s.species === speciesId) {
+            matchedStep ??= s
+            return true
+          }
+          return false
+        })
+        const ref = `script:gift:${p.state.map}:${speciesId}`
+        const ledger = store.listLedger(p.id, 500)
+        const alreadyGifted = ledger.some((l) => l.ref === ref) ||
+          [...save.party, ...save.boxes.flat()].some((c) => c.speciesId === speciesId && c.origin?.kind === 'gift')
+        if (eligible <= 0 || !matchedStep || alreadyGifted) {
+          audit(p.id, 'script.invalid_give_creature', { speciesId, map: p.state.map, alreadyGifted }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
+        const stepDef = matchedStep as Extract<ScriptStep, { op: 'giveCreature' }>
+        const level = stepDef.level
+        const ballId = CONTENT.itemList.find((it) => it.effect.kind === 'ball')?.id
+        const seed = hashString(`${p.id}:gift:${speciesId}:${save.party.length}`) >>> 0
+        const cr = createCreature(speciesId, level, {
+          rng: new Rng(seed || 1),
+          shiny: stepDef.shiny === true,
+          otName: save.name,
+          otId: save.playerId,
+          ...(ballId ? { ballId } : {}),
+          caughtMap: p.state.map,
+          gradeFloor: (stepDef.gradeFloor as Grade | undefined) ?? CONTENT.quality.giftGradeFloor,
+          origin: { kind: 'gift' },
+          ...(stepDef.nature ? { nature: stepDef.nature } : {}),
+          ...(stepDef.moves?.length ? { moves: stepDef.moves } : {}),
+        }, CONTENT)
+        if (stepDef.ability && CONTENT.abilities[stepDef.ability]) cr.abilityId = stepDef.ability
         storeCreatureInSave(save, cr)
-        addLedger(p.id, 'creature', cr.uid, 1, save.party.length, `script:gift:${speciesId}`)
-        commitSave(p.id, save, { ref: `script:gift:${speciesId}` })
+        addLedger(p.id, 'creature', cr.uid, 1, save.party.length, ref)
+        commitSave(p.id, save, { ref })
         return
       }
       case 'setRespawn': {
-        const mapId = typeof msg.map === 'string' && msg.map ? msg.map : p.state.map
-        const rx = typeof msg.x === 'number' && Number.isFinite(msg.x) ? Math.floor(msg.x) : Math.floor(p.state.x)
-        const ry = typeof msg.y === 'number' && Number.isFinite(msg.y) ? Math.floor(msg.y) : Math.floor(p.state.y)
+        if (world && typeof msg.map === 'string' && msg.map && msg.map !== p.state.map) {
+          audit(p.id, 'script.invalid_respawn', { requestedMap: msg.map, actualMap: p.state.map }, 2, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
+        const mapId = world ? p.state.map : (typeof msg.map === 'string' && msg.map ? msg.map : p.state.map)
+        const rx = world ? Math.floor(p.state.x) : (typeof msg.x === 'number' && Number.isFinite(msg.x) ? Math.floor(msg.x) : Math.floor(p.state.x))
+        const ry = world ? Math.floor(p.state.y) : (typeof msg.y === 'number' && Number.isFinite(msg.y) ? Math.floor(msg.y) : Math.floor(p.state.y))
         const facing = msg.facing && ['up', 'down', 'left', 'right'].includes(msg.facing) ? msg.facing : p.state.facing
         save.respawn = { map: mapId, x: rx, y: ry, facing }
         commitSave(p.id, save, { ref: 'script:respawn', notify: false })
@@ -1461,17 +2156,33 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       case 'teach': {
         const flag = typeof msg.flag === 'string' && msg.flag && !msg.flag.startsWith('auth:')
           ? msg.flag
-          : (typeof msg.lesson === 'string' && msg.lesson ? `tutorial:lesson:${msg.lesson}` : '')
-        if (!flag) return
+          : (typeof msg.lesson === 'string' && msg.lesson ? `lesson:${msg.lesson}` : '')
+        if (!flag || (!flag.startsWith('lesson:') && !flag.startsWith('tutorial:'))) return
         save.flags[flag] = true
+        noteRecentFlag(p.id, flag)
         commitSave(p.id, save, { ref: `script:teach:${flag}`, notify: false })
         return
       }
       case 'research': {
         const spId = typeof msg.speciesId === 'string' ? msg.speciesId : ''
         const task = typeof msg.task === 'string' ? msg.task : ''
-        const amount = typeof msg.amount === 'number' && Number.isFinite(msg.amount) && msg.amount > 0 ? Math.min(20, Math.floor(msg.amount)) : 1
-        if (!CONTENT.species[spId] || !task) return
+        const amount = typeof msg.amount === 'number' && Number.isInteger(msg.amount) ? msg.amount : 1
+        if (!CONTENT.species[spId] || !task || amount !== 1) {
+          audit(p.id, 'script.invalid_research', { speciesId: spId, task, amount }, 2, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
+        const curVal = save.research?.[spId]?.[task] ?? 0
+        const eligible = countEligibleScriptOp(
+          p,
+          save,
+          (s) => s.op === 'research' && s.species === spId && s.task === task && s.amount === amount,
+        )
+        if (curVal >= 1 || eligible <= 0) {
+          audit(p.id, 'script.invalid_research', { speciesId: spId, task, amount, curVal, eligible }, 2, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
         const r = addTaskProgress(save.research ?? {}, spId, task, amount)
         if (r.gains.length) {
           save.research = r.state
@@ -1484,30 +2195,118 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         for (const cr of [...save.party, ...save.boxes.flat()]) {
           if (isBossCard(cr)) settleBank(cr, cap, CONTENT)
         }
-        save.flags['ds:licenseSettled'] = true
+        save.flags[gameJson.flags.licenseSettled] = true
         commitSave(p.id, save, { ref: 'script:settleBossCards', notify: false })
         return
       }
       case 'setFlag': {
-        if (typeof msg.flag !== 'string' || !msg.flag || msg.flag.startsWith('auth:')) return
-        const v = msg.value ?? true
-        if (typeof v === 'boolean' || typeof v === 'string' || (typeof v === 'number' && Number.isFinite(v))) {
-          save.flags[msg.flag] = v
-          commitSave(p.id, save, { ref: `script:flag:${msg.flag}` })
+        const flag = typeof msg.flag === 'string' ? msg.flag : ''
+        if (!flag) return
+        if (
+          flag.startsWith('auth:') ||
+          flag.startsWith(STORY_CONTENT.meta.flags.trainerWon) ||
+          flag.startsWith(gameJson.flags.bossWonPrefix) ||
+          flag.startsWith('boss:won:') ||
+          flag.startsWith(STORY_CONTENT.meta.flags.groundItem) ||
+          flag.startsWith('quest:reward:') ||
+          flag === STORY_CONTENT.meta.flags.starter
+        ) {
+          audit(p.id, 'script.forged_flag', { flag, value: msg.value }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
         }
+        const v = msg.value ?? true
+        if (typeof v !== 'boolean' && typeof v !== 'string' && !(typeof v === 'number' && Number.isFinite(v))) {
+          return
+        }
+        if (flag.startsWith(gameJson.flags.badgePrefix)) {
+          const badgeType = flag.slice(gameJson.flags.badgePrefix.length)
+          const ownsBadge = world
+            ? world.badges.some((bd) => bd.type === badgeType && save.badges.includes(bd.id))
+            : save.badges.some((b) => b.endsWith(badgeType))
+          if (!ownsBadge && !save.flags[flag]) {
+            audit(p.id, 'script.forged_flag', { flag, reason: 'badge_not_earned' }, 3, p.ip)
+            core.error(p, 'authority_violation')
+            return
+          }
+        } else if (flag === 'villain:swamp' && !save.flags['trainer:hx-admin-wangyan']) {
+          audit(p.id, 'script.forged_flag', { flag, reason: 'missing_trainer_win' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        } else if (flag === 'villain:boss' && !save.flags['trainer:hx-boss']) {
+          audit(p.id, 'script.forged_flag', { flag, reason: 'missing_trainer_win' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        } else if (flag === 'champion' && !save.flags['trainer:champion']) {
+          audit(p.id, 'script.forged_flag', { flag, reason: 'missing_trainer_win' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        } else if (flag === 'gate:ruins' && save.badges.length < 8) {
+          audit(p.id, 'script.forged_flag', { flag, reason: 'insufficient_badges' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        } else if (
+          (flag === 'ds:done' || flag === 'ds:gateOpen') &&
+          !save.flags[`${gameJson.flags.bossWonPrefix}deepseek`] &&
+          (progressOf(save, 'deepseek-tide').clears.story ?? 0) <= 0
+        ) {
+          audit(p.id, 'script.forged_flag', { flag, reason: 'deepseek_not_cleared' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        } else if (flag === 'ds:drill' && !save.flags[`${gameJson.flags.bossWonPrefix}deepseek-drill`]) {
+          audit(p.id, 'script.forged_flag', { flag, reason: 'drill_not_cleared' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        } else if (
+          flag === 'ds:relay' &&
+          !Object.keys(save.flags).some((k) => k.startsWith('trainer:ds-relay') && save.flags[k])
+        ) {
+          audit(p.id, 'script.forged_flag', { flag, reason: 'relay_not_defeated' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        } else if (
+          (flag === 'ds:stamp:starter' || flag === 'ds:stamp:types') &&
+          !save.flags[STORY_CONTENT.meta.flags.starter]
+        ) {
+          audit(p.id, 'script.forged_flag', { flag, reason: 'no_starter' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        } else if (
+          (flag === 'ds:stamp:catch' || flag === 'ds:certFull') &&
+          (!save.flags['ds:stamp:types'] || save.stats.caught <= 0)
+        ) {
+          audit(p.id, 'script.forged_flag', { flag, reason: 'catch_prereq_not_met' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        } else if (flag === 'research:claimedLevel') {
+          const maxLv = researchLevel(researchPoints(save.research ?? {})).level
+          if (typeof v !== 'number' || !Number.isInteger(v) || v < 0 || v > maxLv) {
+            audit(p.id, 'script.forged_flag', { flag, value: v, maxLv }, 3, p.ip)
+            core.error(p, 'authority_violation')
+            return
+          }
+        }
+        save.flags[flag] = v
+        noteRecentFlag(p.id, flag)
+        commitSave(p.id, save, { ref: `script:flag:${flag}` })
         return
       }
       case 'quest': {
         const qId = typeof msg.questId === 'string' ? msg.questId : ''
-        const def = world ? (world.quests.find((q) => q.id === qId) ?? frontierQuest(world, qId)) : null
+        const def = world
+          ? (world.quests.find((q) => q.id === qId) ?? frontierQuest(world, qId))
+          : (STORY_CONTENT.quests.find((q) => q.id === qId) ?? null)
         if (!def) return
         const prev = save.quests[qId]
         const stage = typeof msg.stage === 'number' && Number.isInteger(msg.stage) ? Math.max(0, Math.min(msg.stage, Math.max(0, def.stages.length - 1))) : 0
         const done = msg.done === true
         if (prev && (prev.done || stage < prev.stage)) return
-        if (done && def.stages.length > 2 && !prev) {
-          audit(p.id, 'script.quest_skip_rejected', { questId: qId, stage, totalStages: def.stages.length }, 2, p.ip)
-          return
+        if (done) {
+          if ((def.stages.length > 1 && !prev && qId !== 'ds-legacy') || (def.reward && !isQuestCompletionAuthorized(p, save, qId))) {
+            audit(p.id, 'script.quest_skip_rejected', { questId: qId, stage, totalStages: def.stages.length }, 3, p.ip)
+            core.error(p, 'authority_violation')
+            return
+          }
         }
         const justFinished = done && !prev?.done
         save.quests[qId] = { stage, done }
@@ -1545,6 +2344,8 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     async close() {
       activeBattles.clear()
       pendingContracts.clear()
+      recentPayments.clear()
+      recentFlagsSet.clear()
       await store.flush()
     },
 
@@ -1569,7 +2370,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
 
 
     setSave(playerId, save, optsIn = {}) {
-      return commitSave(playerId, save, { ...optsIn, notify: false })
+      return commitSave(playerId, save, { ...optsIn, notify: false, syncPosition: false })
     },
 
     importOfflineSave(playerId, rawSave, optsIn = {}) {
@@ -1744,6 +2545,10 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         audit(aId, 'trade.commit_failed', { aId, bId, tradeId }, 3)
         return false
       }
+      const rA = applyResearch(saveA.research ?? {}, [{ species: giveB.speciesId, event: { kind: 'trade' } }])
+      if (rA.gains.length) saveA.research = rA.state
+      const rB = applyResearch(saveB.research ?? {}, [{ species: giveA.speciesId, event: { kind: 'trade' } }])
+      if (rB.gains.length) saveB.research = rB.state
       const ref = `trade:${tradeId}`
       addLedger(aId, 'creature', aUid, -1, saveA.party.length, ref)
       addLedger(aId, 'creature', bUid, 1, saveA.party.length, ref)
@@ -1907,6 +2712,8 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
 
     onDisconnect(playerId) {
       activeBattles.delete(playerId)
+      recentPayments.delete(playerId)
+      recentFlagsSet.delete(playerId)
     },
   }
 }

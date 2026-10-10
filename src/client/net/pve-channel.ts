@@ -13,6 +13,8 @@ export interface PveBattleStartRequest {
   level?: number
   scripted?: boolean
   roamer?: boolean
+  moves?: string[]
+  gradeFloor?: string
   catchRateMul?: number
   flee?: { chancePerTurn: number; afterTurn: number }
   trainerId?: string
@@ -217,13 +219,15 @@ export async function signOnlineContract(
 export function applyAuthoritativeSave(ctx: GameContext, serverSave: SaveData, opts?: { initial?: boolean }): void {
   const prev = ctx.save
   const prevBadges = [...prev.badges]
+  const prevSeen = new Set(prev.dexSeen)
+  const prevCaught = new Set(prev.dexCaught)
   const next = structuredClone(serverSave)
   next.settings = structuredClone(prev.settings)
   if (!opts?.initial) {
     next.position = structuredClone(prev.position)
     next.clockMinutes = prev.clockMinutes
     next.playTimeSec = Math.max(prev.playTimeSec, next.playTimeSec)
-    next.repelSteps = prev.repelSteps
+    next.repelSteps = Math.max(prev.repelSteps, next.repelSteps)
     if (prev.explored) {
       next.explored = prev.explored
     }
@@ -246,8 +250,25 @@ export function applyAuthoritativeSave(ctx: GameContext, serverSave: SaveData, o
         if (!next.anchors.seen.includes(a)) next.anchors.seen.push(a)
       }
     }
+    if (prev.research) {
+      next.research ??= {}
+      for (const [spId, tasks] of Object.entries(prev.research)) {
+        const dst = (next.research[spId] ??= {})
+        for (const [tk, val] of Object.entries(tasks)) {
+          dst[tk] = Math.max(dst[tk] ?? 0, val)
+        }
+      }
+    }
   }
   ctx.save = next
+  if (!opts?.initial) {
+    for (const spId of next.dexSeen) {
+      if (!prevSeen.has(spId)) ctx.events.emit('dex:seen', { speciesId: spId })
+    }
+    for (const spId of next.dexCaught) {
+      if (!prevCaught.has(spId)) ctx.events.emit('dex:caught', { speciesId: spId })
+    }
+  }
   for (const b of next.badges) {
     if (!prevBadges.includes(b)) ctx.events.emit('badge:earned', { badgeId: b })
   }

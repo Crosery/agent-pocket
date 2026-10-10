@@ -40,6 +40,7 @@ export function adoptServerSave(
   opts?: { initial?: boolean },
 ): void {
   const st = stateOf(ctx)
+  if (!opts?.initial && typeof rev === 'number' && st.rev > 0 && rev < st.rev) return
   st.active = true
   if (typeof rev === 'number') st.rev = rev
   if (untrustedImport !== undefined) st.untrustedImport = untrustedImport

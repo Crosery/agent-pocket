@@ -141,7 +141,18 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     return order >= GAME.encounters.legendRarityOrder ? 'legend' : 'wild'
   }
 
-  async function wild(cr: Creature, opts: { music?: string; scripted?: boolean; flee?: BattleSideInit['flee']; catchRateMul?: number } = {}): Promise<BattleOutcome> {
+  async function wild(
+    cr: Creature,
+    opts: {
+      music?: string
+      scripted?: boolean
+      roamer?: boolean
+      moves?: string[]
+      gradeFloor?: string
+      flee?: BattleSideInit['flee']
+      catchRateMul?: number
+    } = {},
+  ): Promise<BattleOutcome> {
     await transition()
     const name = ctx.data.species[cr.speciesId]?.nameZh ?? cr.speciesId
     // A species with a boss definition (content/bosses.json) is fought with its boss rules; bosses never flee.
@@ -152,6 +163,9 @@ export function createBattleFlow(deps: BattleFlowDeps) {
         speciesId: cr.speciesId,
         level: cr.level,
         scripted: opts.scripted,
+        ...(opts.roamer ? { roamer: true } : {}),
+        ...(opts.moves?.length ? { moves: opts.moves } : {}),
+        ...(opts.gradeFloor ? { gradeFloor: opts.gradeFloor } : {}),
         catchRateMul: opts.catchRateMul,
         flee: opts.flee,
         timeOfDay: ctx.clock.timeOfDay,
@@ -285,6 +299,10 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     const seed = rng.int(1, 0x7fffffff)
     const foe = createBossCreature(bossId, tier.level, new Rng(seed ^ 0x5bd1e995), ctx.data)
     if (isOnlineAuthorityActive(ctx)) {
+      const shardItem = ID.shardItem
+      const prevShards = ctx.save.bag[shardItem] ?? 0
+      const prevMoney = ctx.save.money
+      const prevBag = { ...ctx.save.bag }
       const onlineOutcome = await runOnlineBattle(ctx, {
         kind: 'boss',
         bossId,
@@ -295,6 +313,24 @@ export function createBattleFlow(deps: BattleFlowDeps) {
         timeOfDay: ctx.clock.timeOfDay,
       }, { kind: wildKind(foe) })
       if (onlineOutcome) {
+        if (onlineOutcome.result === 'win') {
+          const shardDiff = (ctx.save.bag[shardItem] ?? 0) - prevShards
+          if (shardDiff > 0) {
+            if (isOffPeakDouble()) ctx.ui.toast(t('multiplayer.dungeon.offPeak'), 'info')
+            ctx.ui.toast(t('multiplayer.dungeon.shardsEarned', { n: shardDiff }), 'success')
+          }
+          const moneyDiff = ctx.save.money - prevMoney
+          if (moneyDiff > 0) {
+            ctx.ui.toast(t('battle.moneyWon', { amount: moneyDiff, currency: t('common.money') }), 'success')
+          }
+          if (first && rules.firstReward.items) {
+            for (const [itemId, qty] of Object.entries(rules.firstReward.items)) {
+              if ((ctx.save.bag[itemId] ?? 0) > (prevBag[itemId] ?? 0)) {
+                ctx.ui.toast(t('battle.lootGot', { item: ctx.data.items[itemId]?.nameZh ?? itemId, qty }), 'success')
+              }
+            }
+          }
+        }
         lastOutcome = onlineOutcome
         deps.afterBattle()
         return onlineOutcome
@@ -330,7 +366,7 @@ export function createBattleFlow(deps: BattleFlowDeps) {
         ctx.ui.toast(t('multiplayer.dungeon.offPeak'), 'info')
       }
       if (shards > 0) {
-        addItem(ctx, 'data-shard', shards)
+        addItem(ctx, ID.shardItem, shards)
         ctx.ui.toast(t('multiplayer.dungeon.shardsEarned', { n: shards }), 'success')
       }
 

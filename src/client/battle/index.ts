@@ -52,17 +52,30 @@ const coveredByCaller = (ctx: GameContext): boolean => (ctx.overworld as { battl
 
 export function createBattleRunner(ctx: GameContext): BattleRunner {
   /** Stores the capture first (synchronously, so a failing prompt can never lose it), then narrates and appraises. */
-  async function catchFlow(scene: BattleScene, cr: Creature): Promise<void> {
+  async function catchFlow(
+    scene: BattleScene,
+    cr: Creature,
+    preBattle?: { firstCatch: boolean; newEntry: boolean },
+  ): Promise<void> {
     const { view } = scene
     const name = CONTENT.species[cr.speciesId]?.nameZh ?? cr.speciesId
-    const firstCatch = ctx.save.stats.caught === 0
-    const newEntry = markCaught(ctx, cr.speciesId)
-    const where = storeCaught(ctx, cr)
+    const inParty = ctx.save.party.find((x) => x.uid === cr.uid)
+    const inBoxIdx = inParty ? -1 : ctx.save.boxes.findIndex((b) => b.some((x) => x.uid === cr.uid))
+    const inBoxCr = inBoxIdx >= 0 ? ctx.save.boxes[inBoxIdx].find((x) => x.uid === cr.uid) : undefined
+    const alreadyStored = inParty ?? inBoxCr
+    const firstCatch = preBattle ? preBattle.firstCatch : ctx.save.stats.caught === 0
+    const newEntry = alreadyStored
+      ? (preBattle ? preBattle.newEntry : false)
+      : markCaught(ctx, cr.speciesId)
+    const where = alreadyStored
+      ? (inParty ? { where: 'party' as const } : { where: 'box' as const, box: inBoxIdx })
+      : storeCaught(ctx, cr)
+    const targetCr = alreadyStored ?? cr
     if (newEntry) {
       ctx.ui.toast(t('battleui.catch.newDexToast', { name }), 'success')
       await view.message.show(t('battleui.catch.newDex', { name }))
     }
-    if (cr.shiny) ctx.ui.toast(t('battleui.catch.shinyToast', { name }), 'success')
+    if (targetCr.shiny) ctx.ui.toast(t('battleui.catch.shinyToast', { name }), 'success')
     if (BATTLE_UI.catch.nicknamePrompt) {
       view.setBarVisible(false)
       try {
@@ -70,20 +83,23 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
           const max = RULES.creature.nicknameMaxLen
           const nick = await ctx.ui.prompt(t('battleui.catch.nicknamePrompt', { name }), Array.from(name).length <= max ? name : '', max)
           const v = nick?.trim()
-          if (v && v !== name) cr.nickname = v
+          if (v && v !== name) {
+            targetCr.nickname = v
+            cr.nickname = v
+          }
         }
       } finally {
         view.setBarVisible(true)
       }
     }
-    if (cr.nickname) {
-      sendCreatureNickname(ctx, cr.uid, cr.nickname)
+    if (targetCr.nickname) {
+      sendCreatureNickname(ctx, targetCr.uid, targetCr.nickname)
       ctx.events.emit('party:changed', {})
     }
-    const shown = creatureName(cr)
+    const shown = creatureName(targetCr)
     if (where?.where === 'party') await view.message.show(t('battleui.catch.toParty', { name: shown }))
     else if (where?.where === 'box') await view.message.show(t('battleui.catch.toBox', { name: shown, box: where.box + 1 }))
-    if (where) await showReveal(ctx, cr, { full: revealIsFull(cr, { newSpecies: newEntry, firstCatch }, ctx.data) })
+    if (where) await showReveal(ctx, targetCr, { full: revealIsFull(targetCr, { newSpecies: newEntry, firstCatch }, ctx.data) })
   }
 
   return {
@@ -94,6 +110,8 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
       const ownParty = init.sides[0].party
       const model = createBattleModel(init, CLEAR)
       const known = new Set<string>(ctx.save.dexSeen)
+      const preBattleCaught = new Set<string>(ctx.save.dexCaught)
+      const preBattleCaughtCount = ctx.save.stats.caught
       let engine: BattleEngine | null = null
       let local: LocalChannel | null = null
       let scene: BattleScene | null = null
@@ -166,7 +184,10 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         if (result === 'caught' && caughtFromBattle) {
           caught = caughtFromBattle
           stored = true
-          await catchFlow(scene, caught)
+          await catchFlow(scene, caught, {
+            firstCatch: preBattleCaughtCount === 0,
+            newEntry: !preBattleCaught.has(caught.speciesId),
+          })
         }
         // A boss instance's first clear ends in the contract (capture.ts), still on the battle stage.
         if (result === 'win' && init.captureAfterWin && bossId && init.bossTier && (engine || pve)) {
@@ -193,8 +214,12 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
       const fallbackCaught = engine?.caught ?? pve?.caught ?? null
       if (result === 'caught' && !stored && fallbackCaught) {
         caught = fallbackCaught
-        markCaught(ctx, caught.speciesId)
-        storeCaught(ctx, caught)
+        const alreadyInSave = ctx.save.party.some((x) => x.uid === caught!.uid)
+          || ctx.save.boxes.some((b) => b.some((x) => x.uid === caught!.uid))
+        if (!alreadyInSave) {
+          markCaught(ctx, caught.speciesId)
+          storeCaught(ctx, caught)
+        }
       }
       if (!remote) ctx.persist('battle')
       ctx.events.emit('battle:end', { kind, result })

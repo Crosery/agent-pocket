@@ -96,6 +96,8 @@ export type ClientMsgCore =
     level?: number
     scripted?: boolean
     roamer?: boolean
+    moves?: string[]
+    gradeFloor?: string
     catchRateMul?: number
     flee?: { chancePerTurn: number; afterTurn: number }
     trainerId?: string

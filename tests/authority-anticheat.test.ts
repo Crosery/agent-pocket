@@ -14,8 +14,10 @@ import { DatabaseSync } from 'node:sqlite'
 import type { BattleAction, Creature, SaveData } from '../src/shared/types.ts'
 import type { ClientMsg, PublicProfile, ServerMsg } from '../src/shared/protocol.ts'
 import { CONTENT } from '../src/shared/content/index.ts'
+import { GAMEPLAY } from '../src/shared/gameplay/index.ts'
 import { createCreature } from '../src/shared/creature.ts'
 import { Rng } from '../src/shared/rng.ts'
+import { loadWorld } from '../src/shared/world/index.ts'
 import {
   canonicalJson, createReplayWindow, hmacSha256WebCrypto, signEnvelope,
 } from '../src/shared/net-envelope.ts'
@@ -32,8 +34,8 @@ import type { EventBus, GameEvents } from '../src/client/contracts.ts'
 import { startServer } from '../src/server/index.ts'
 import { NET } from '../src/server/config.ts'
 import { createPvp } from '../src/server/pvp.ts'
-import { isolateUntrustedSave, signServerSave, verifyServerSave } from '../src/server/save-sign.ts'
-
+import { signServerSave, verifyServerSave } from '../src/server/save-sign.ts'
+import type { ProfileStore } from '../src/server/store.ts'
 async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {
   const dir = await mkdtemp(pathJoin(tmpdir(), 'ap-auth22-test-'))
   try {
@@ -142,8 +144,9 @@ function connectRawClient(port: number, token?: string): Promise<RawWsClient> {
 }
 
 async function loginSignedClient(
-  srv: { port: number; store: import('../src/server/store.ts').ProfileStore },
+  srv: { port: number; store: ProfileStore },
   name: string,
+  pos: { map?: string; x?: number; y?: number } = {},
 ): Promise<RawWsClient> {
   const reg = await srv.store.registerAccount(name, 'StrongPass#123', { ip: '127.0.0.1' })
   assert.ok(reg.ok)
@@ -157,9 +160,9 @@ async function loginSignedClient(
     playerId: reg.account.id,
     name,
     avatar: '',
-    map: 'auth-test-map',
-    x: 5,
-    y: 5,
+    map: pos.map ?? 'auth-test-map',
+    x: pos.x ?? 5,
+    y: pos.y ?? 5,
     facing: 'down',
     lead: null,
     profile,
@@ -268,42 +271,56 @@ test('save-sign: server save HMAC detects disk tampering; untrusted offline impo
     assert.equal(verifyPortableSave(portable).ok, true)
     assert.equal(verifyPortableSave({ ...portable, save: { ...save, money: 777777 } }).ok, false)
 
-    // Untrusted offline save import isolation: strips forged resources & marks creatures legacy
+    // Server refuses to load a tampered SQLite characters row on read, records an audit entry,
+    // and isolates untrusted offline imports while preserving offline gameplay progress
+    const srv1 = await startServer({ port: 0, dataDir: dir, distDir: pathJoin(dir, 'no-dist'), quiet: true, world: null, pvp: null })
     const buyableItem = CONTENT.itemList.find((it) => it.buyable && it.price > 0)!
     const masterBall = CONTENT.itemList.find((it) => it.effect.kind === 'ball' && it.effect.bonus === 'master')
     const offlineSave = makeTestSave('old-local-id', 'OfflineHero')
     offlineSave.money = 500_000
     offlineSave.stats.pvpWins = 50
+    offlineSave.stats.pvpLosses = 12
     offlineSave.stats.trades = 20
     offlineSave.maxDistance = 9000
     offlineSave.bag[buyableItem.id] = 250
     if (masterBall) offlineSave.bag[masterBall.id] = 99
     offlineSave.party[0].level = 80
+    offlineSave.party[0].origin = { kind: 'boss', at: 1_700_000_000_000, boss: 'deepseek' }
 
-    const isolated = isolateUntrustedSave(encodeSaveCode(offlineSave, offlineSave.version), { accountId: 'online-acc-1' })
-    assert.equal(isolated.ok, true)
-    if (isolated.ok) {
-      assert.equal(isolated.save.playerId, 'online-acc-1')
-      assert.equal(isolated.save.money, CONTENT.config.economy.startMoney, 'forged offline money is capped to startMoney')
-      assert.equal(isolated.save.stats.pvpWins, 0, 'offline pvpWins stripped')
-      assert.equal(isolated.save.stats.trades, 0, 'offline trades stripped')
-      assert.equal(isolated.save.maxDistance, 0, 'offline maxDistance stripped')
-      assert.ok((isolated.save.bag[buyableItem.id] ?? 0) <= 10, 'forged item stacks capped')
-      if (masterBall) assert.equal(isolated.save.bag[masterBall.id], undefined, 'unbuyable master ball stripped')
-      assert.ok(isolated.save.party.every((c) => c.origin?.kind === 'legacy' && c.level <= 20), 'creatures marked legacy and level-clamped')
+    const regImport = await srv1.store.registerAccount('OfflineImporter', 'StrongPass#123', { ip: '127.0.0.1' })
+    assert.ok(regImport.ok)
+    const importAccId = regImport.account.id
+    const imported = srv1.authority.importOfflineSave(importAccId, encodeSaveCode(offlineSave, offlineSave.version), { ip: '127.0.0.1' })
+    assert.equal(imported.ok, true)
+    if (imported.ok) {
+      const impSave = imported.record.save
+      assert.equal(imported.record.imported, true)
+      assert.equal(imported.record.trusted, false)
+      assert.equal(impSave.playerId, importAccId)
+      assert.equal(impSave.flags['auth:untrustedImport'], true, 'imported save must carry auth:untrustedImport flag')
+      assert.equal(impSave.stats.pvpWins, 0, 'offline pvpWins stripped')
+      assert.equal(impSave.stats.pvpLosses, 0, 'offline pvpLosses stripped')
+      assert.equal(impSave.stats.trades, 0, 'offline trades stripped')
+      assert.ok(!impSave.maxDistance, 'offline maxDistance stripped')
+      assert.ok(impSave.party.every((c) => c.origin?.kind === 'legacy'), 'imported creatures marked legacy')
+      assert.equal(srv1.authority.isUntrustedImport(importAccId), true, 'isUntrustedImport reports true for imported save')
+      const tradeCheck = srv1.authority.validateTradeOffer(importAccId, impSave.party[0], '127.0.0.1')
+      assert.deepEqual(tradeCheck, { ok: false, code: 'trade_untrusted_creature' }, 'untrusted imported save blocked from trade')
+      const pvpCheck = srv1.authority.validatePvpParty(importAccId, impSave.party, true, '127.0.0.1')
+      assert.equal(pvpCheck, null, 'untrusted imported save blocked from PvP')
     }
 
     // Tampered save code or out-of-bounds raw save is rejected on import
-    const badCode = isolateUntrustedSave('3.corruptedpayload.00000000', { accountId: 'online-acc-1' })
+    const regBad = await srv1.store.registerAccount('BadImporter', 'StrongPass#123', { ip: '127.0.0.1' })
+    assert.ok(regBad.ok)
+    const badCode = srv1.authority.importOfflineSave(regBad.account.id, '3.corruptedpayload.00000000', { ip: '127.0.0.1' })
     assert.equal(badCode.ok, false)
     if (!badCode.ok) assert.equal(badCode.code, 'save_tampered')
 
-    const outOfBounds = isolateUntrustedSave({ ...offlineSave, money: -999 }, { accountId: 'online-acc-1' })
+    const outOfBounds = srv1.authority.importOfflineSave(regBad.account.id, { ...offlineSave, money: -999 }, { ip: '127.0.0.1' })
     assert.equal(outOfBounds.ok, false)
     if (!outOfBounds.ok) assert.equal(outOfBounds.code, 'save_tampered')
 
-    // Server refuses to load a tampered SQLite characters row on read and records an audit entry
-    const srv1 = await startServer({ port: 0, dataDir: dir, distDir: pathJoin(dir, 'no-dist'), quiet: true, world: null, pvp: null })
     const regTamper = await srv1.store.registerAccount('TamperTarget', 'StrongPass#123', { ip: '127.0.0.1' })
     assert.ok(regTamper.ok)
     const tamperId = regTamper.account.id
@@ -330,7 +347,6 @@ test('save-sign: server save HMAC detects disk tampering; untrusted offline impo
     }
   })
 })
-
 // ---------------------------------------------------------------------------
 // 3. Authoritative Battles, Tamper/Replay Rejection, Ownership & Economy
 // ---------------------------------------------------------------------------
@@ -536,24 +552,30 @@ test('server authority: valid battles update save once; tampered results/exp/ite
       assert.equal(untrustedRes, null, 'untrusted account party must be rejected from PvP')
       assert.ok(srv.authority.listAudit(untrustedClient.selfId).some((a) => a.kind === 'pvp.untrusted_party'))
 
-      // 3f. Script ops (giveItem, takeItem, giveMoney, takeMoney, chooseStarter, teach, unlockTown, setRespawn, research)
-      const sFrom = alice.msgs.length
+      // 3f. Uncontextualized script.op mutations are rejected; allowed town/respawn ops succeed
+      const arbMoneyFrom = alice.msgs.length
       alice.sendSigned({ t: 'script.op', op: 'giveMoney', amount: 500 })
-      const moneySync = await alice.waitFor('state.sync', undefined, sFrom)
-      assert.equal(moneySync.save.money, srv.authority.getSave(alice.selfId)!.money)
-      assert.ok(srv.authority.listLedger(alice.selfId).some((l) => l.kind === 'money' && l.delta === 500))
+      await alice.waitFor('error', (e) => e.code === 'authority_violation', arbMoneyFrom)
+      assert.ok(srv.authority.listAudit(alice.selfId).some((a) => a.kind === 'script.invalid_give_money'))
 
-      const itemFrom = alice.msgs.length
+      const arbItemFrom = alice.msgs.length
       alice.sendSigned({ t: 'script.op', op: 'giveItem', itemId: ballItem.id, qty: 2 })
-      const itemSync = await alice.waitFor('state.sync', undefined, itemFrom)
-      assert.equal(itemSync.save.bag[ballItem.id], srv.authority.getSave(alice.selfId)!.bag[ballItem.id])
+      await alice.waitFor('error', (e) => e.code === 'authority_violation', arbItemFrom)
+      assert.ok(srv.authority.listAudit(alice.selfId).some((a) => a.kind === 'script.invalid_give_item'))
 
+      const arbFlagFrom = alice.msgs.length
+      alice.sendSigned({ t: 'script.op', op: 'setFlag', flag: 'champion', value: true })
+      await alice.waitFor('error', (e) => e.code === 'authority_violation', arbFlagFrom)
+      assert.ok(srv.authority.listAudit(alice.selfId).some((a) => a.kind === 'script.forged_flag'))
+
+      const townSyncFrom = alice.msgs.length
       alice.sendSigned({ t: 'script.op', op: 'unlockTown', townId: 'town-alpha' })
-      await new Promise((r) => setTimeout(r, 50))
+      await alice.waitFor('state.sync', undefined, townSyncFrom)
       assert.ok(srv.authority.getSave(alice.selfId)!.visitedTowns.includes('town-alpha'))
 
+      const respSyncFrom = alice.msgs.length
       alice.sendSigned({ t: 'script.op', op: 'setRespawn', map: 'town-alpha', x: 10, y: 12, facing: 'down' })
-      await new Promise((r) => setTimeout(r, 50))
+      await alice.waitFor('state.sync', undefined, respSyncFrom)
       assert.deepEqual(srv.authority.getSave(alice.selfId)!.respawn, { map: 'town-alpha', x: 10, y: 12, facing: 'down' })
 
       // Unverified scriptedOnly boss start rejected
@@ -563,6 +585,97 @@ test('server authority: valid battles update save once; tampered results/exp/ite
         alice.sendSigned({ t: 'battle.start', kind: 'wild', speciesId: scriptedBoss.species, scripted: false })
         await alice.waitFor('error', (e) => e.code === 'invalid_encounter', bFailFrom)
         assert.ok(srv.authority.listAudit(alice.selfId).some((a) => a.kind === 'battle.invalid_encounter'))
+      }
+
+      // Locked boss tier (badgesAtLeast not met) is rejected with invalid_encounter
+      const lockedBossFrom = alice.msgs.length
+      alice.sendSigned({ t: 'battle.start', kind: 'boss', bossId: 'deepseek', tierId: 'deepseek-hard' })
+      await alice.waitFor('error', (e) => e.code === 'invalid_encounter', lockedBossFrom)
+      assert.ok(srv.authority.listAudit(alice.selfId).some((a) => a.kind === 'battle.boss_tier_locked'))
+
+      // 3g. Solo Boss Battle (story & repeat contract odds, pity, shard rewards & failure shard compensation)
+      const bossLead = makeCreature(888, 100, 0)
+      aliceSave.party[0] = bossLead
+      aliceSave.bag[ballItem.id] = 10
+      srv.authority.setSave(alice.selfId, aliceSave, { imported: false, trusted: true })
+
+      const shardsBefore = srv.authority.getSave(alice.selfId)!.bag[GAMEPLAY.instanceDefaults.shardItem] ?? 0
+      const bossStartFrom = alice.msgs.length
+      alice.sendSigned({ t: 'battle.start', kind: 'boss', bossId: 'deepseek', tierId: 'deepseek-story' })
+      const bossStarted = await alice.waitFor('battle.started', undefined, bossStartFrom)
+      let bossEnded = false
+      for (let turn = 0; turn < 30 && !bossEnded; turn++) {
+        const stepFrom = alice.msgs.length
+        alice.sendSigned({
+          t: 'battle.action',
+          battleId: bossStarted.battleId,
+          action: { kind: 'move', moveIndex: 0 } satisfies BattleAction,
+        })
+        const batch = await alice.waitFor('battle.events', (m) => m.battleId === bossStarted.battleId, stepFrom)
+        if (batch.events.some((e) => e.t === 'end')) bossEnded = true
+      }
+      assert.equal(bossEnded, true, 'deepseek-story boss battle should finish')
+      const bossEndMsg = await alice.waitFor('battle.end', (m) => m.battleId === bossStarted.battleId, bossStartFrom)
+      assert.equal(bossEndMsg.result, 'win')
+
+      const saveAfterBossWin = srv.authority.getSave(alice.selfId)!
+      assert.equal(saveAfterBossWin.flags['bossWon:deepseek'], true)
+      assert.ok((saveAfterBossWin.bag[GAMEPLAY.instanceDefaults.shardItem] ?? 0) > shardsBefore, 'boss win must award data shards')
+      assert.equal((saveAfterBossWin.bag['focus-sash'] ?? 0) >= 1, true, 'first boss win awards firstReward items')
+
+      // Unowned master ball in battle.contract is rejected with item_not_owned
+      if (masterBall) {
+        const badContractFrom = alice.msgs.length
+        alice.sendSigned({ t: 'battle.contract', battleId: bossStarted.battleId, ballItemId: masterBall.id })
+        await alice.waitFor('error', (e) => e.code === 'item_not_owned', badContractFrom)
+      }
+
+      // Valid first-clear contract on deepseek-story (capture.first = 1.0) signs Lv1 boss card
+      const contractSyncFrom = alice.msgs.length
+      alice.sendSigned({ t: 'battle.contract', battleId: bossStarted.battleId, ballItemId: ballItem.id })
+      const contractSync = await alice.waitFor('state.sync', undefined, contractSyncFrom)
+      const signedBossCard = [...contractSync.save.party, ...contractSync.save.boxes.flat()].find(
+        (c) => c.origin?.kind === 'boss' && c.origin?.boss === 'deepseek',
+      )
+      assert.ok(signedBossCard, 'first-clear story contract with capture.first=1.0 must sign boss card')
+      assert.equal(signedBossCard.level, 1, 'signed boss card starts at Lv1 until badge settlement')
+      assert.equal(contractSync.save.instanceProgress?.deepseek?.firstClaimed?.['deepseek-story'], true)
+
+      // Non-guaranteed contract tier (cursor-story has capture.first = 0.35): rolls odds, updates lastRollRun & pity or awards fail shards
+      const cursorStartFrom = alice.msgs.length
+      alice.sendSigned({ t: 'battle.start', kind: 'boss', bossId: 'cursor', tierId: 'cursor-story' })
+      const cursorStarted = await alice.waitFor('battle.started', undefined, cursorStartFrom)
+      let cursorEnded = false
+      for (let turn = 0; turn < 30 && !cursorEnded; turn++) {
+        const stepFrom = alice.msgs.length
+        alice.sendSigned({
+          t: 'battle.action',
+          battleId: cursorStarted.battleId,
+          action: { kind: 'move', moveIndex: 0 } satisfies BattleAction,
+        })
+        const batch = await alice.waitFor('battle.events', (m) => m.battleId === cursorStarted.battleId, stepFrom)
+        if (batch.events.some((e) => e.t === 'end')) cursorEnded = true
+      }
+      await alice.waitFor('battle.end', (m) => m.battleId === cursorStarted.battleId, cursorStartFrom)
+      const shardsBeforeCursorContract = srv.authority.getSave(alice.selfId)!.bag[GAMEPLAY.instanceDefaults.shardItem] ?? 0
+      const cursorContractFrom = alice.msgs.length
+      alice.sendSigned({ t: 'battle.contract', battleId: cursorStarted.battleId, ballItemId: ballItem.id })
+      const cursorContractSync = await alice.waitFor('state.sync', undefined, cursorContractFrom)
+      const cursorProg = cursorContractSync.save.instanceProgress?.cursor
+      assert.ok(cursorProg, 'cursor instance progress recorded')
+      assert.equal(cursorProg.lastRollRun?.['cursor-story'], cursorProg.runSeq, 'contract roll records lastRollRun')
+      const cursorSigned = [...cursorContractSync.save.party, ...cursorContractSync.save.boxes.flat()].some(
+        (c) => c.origin?.kind === 'boss' && c.origin?.boss === 'cursor',
+      )
+      if (cursorSigned) {
+        assert.equal(cursorProg.pity?.['cursor-story'], 0)
+      } else {
+        assert.equal(cursorProg.pity?.['cursor-story'], 1, 'failed contract roll increments pity')
+        assert.equal(
+          cursorContractSync.save.bag[GAMEPLAY.instanceDefaults.shardItem],
+          shardsBeforeCursorContract + 1,
+          'failed contract roll awards failure shard compensation',
+        )
       }
     } finally {
       await Promise.all(clients.map((c) => c.close()))
@@ -648,6 +761,103 @@ test('client PveChannel + NetClient: signs session envelopes and drives authorit
       assert.equal(ended[0].result, 'win')
     } finally {
       net.disconnect()
+      await srv.close()
+    }
+  })
+})
+
+// ---------------------------------------------------------------------------
+// 5. World-Backed New-Account Prologue Progression & Anti-Cheat Authorization
+// ---------------------------------------------------------------------------
+
+test('world-backed prologue progression: starter selection, one-shot gifts, aide phi-3 & anti-cheat rejections', async () => {
+  await withTempDir(async (dir) => {
+    const world = loadWorld()
+    const srv = await startServer({
+      port: 0,
+      dataDir: dir,
+      distDir: pathJoin(dir, 'no-dist'),
+      quiet: true,
+      world,
+      pvp: null,
+    })
+    const clients: RawWsClient[] = []
+    try {
+      const rookie = await loginSignedClient(srv, 'Rookie', { map: 'origin-lab', x: 6, y: 6 })
+      clients.push(rookie)
+
+      // Seed fresh new-game save at origin-lab before choosing a starter
+      const mgr = createSaveManager({ world, now: () => 1_700_000_000_000, newId: () => rookie.selfId })
+      const freshSave = mgr.newGame({ name: 'Rookie', avatar: CONTENT.characters[0]?.id ?? '' })
+      freshSave.position = { map: 'origin-lab', x: 6, y: 6, facing: 'up' }
+      srv.authority.setSave(rookie.selfId, freshSave, { imported: false, trusted: true })
+
+      // Forged creature payload in chooseStarter is ignored; server creates authoritative Lv5 starter
+      const forgedStarter = makeCreature(123, 100, 0)
+      forgedStarter.shiny = true
+      forgedStarter.ivs = { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 }
+      const starterSyncFrom = rookie.msgs.length
+      rookie.sendSigned({
+        t: 'script.op',
+        op: 'chooseStarter',
+        speciesId: 'qwen-spark',
+        creature: forgedStarter,
+      })
+      const afterStarter = await rookie.waitFor('state.sync', undefined, starterSyncFrom)
+      assert.equal(afterStarter.save.party.length, 1)
+      assert.equal(afterStarter.save.party[0].speciesId, 'qwen-spark')
+      assert.equal(afterStarter.save.party[0].level, 5, 'server enforces Lv5 starter regardless of forged client creature')
+      assert.notEqual(afterStarter.save.party[0].uid, forgedStarter.uid, 'server generates authoritative starter uid')
+      assert.equal(afterStarter.save.flags.starter, 'qwen-spark')
+
+      // Duplicate chooseStarter is rejected
+      const dupStarterFrom = rookie.msgs.length
+      rookie.sendSigned({ t: 'script.op', op: 'chooseStarter', speciesId: 'glm-sprout' })
+      await rookie.waitFor('error', (e) => e.code === 'authority_violation', dupStarterFrom)
+
+      // Professor's prologue gifts succeed once and reject replay
+      for (const [itemId, qty] of [['dex-device', 1], ['town-map', 1], ['prompt-ball', 5]] as const) {
+        const gFrom = rookie.msgs.length
+        rookie.sendSigned({ t: 'script.op', op: 'giveItem', itemId, qty })
+        const gSync = await rookie.waitFor('state.sync', undefined, gFrom)
+        assert.equal(gSync.save.bag[itemId], qty)
+
+        const replayFrom = rookie.msgs.length
+        rookie.sendSigned({ t: 'script.op', op: 'giveItem', itemId, qty })
+        await rookie.waitFor('error', (e) => e.code === 'authority_violation', replayFrom)
+      }
+
+      // Aide's phi-3 gift creature & research tasks succeed once and reject replay
+      const phiSyncFrom = rookie.msgs.length
+      rookie.sendSigned({
+        t: 'script.op',
+        op: 'giveCreature',
+        speciesId: 'phi-3',
+        level: 6,
+        creature: forgedStarter,
+      })
+      const afterPhi = await rookie.waitFor('state.sync', undefined, phiSyncFrom)
+      assert.equal(afterPhi.save.party.length, 2)
+      assert.equal(afterPhi.save.party[1].speciesId, 'phi-3')
+      assert.equal(afterPhi.save.party[1].level, 6)
+
+      const dupPhiFrom = rookie.msgs.length
+      rookie.sendSigned({ t: 'script.op', op: 'giveCreature', speciesId: 'phi-3', level: 6 })
+      await rookie.waitFor('error', (e) => e.code === 'authority_violation', dupPhiFrom)
+
+      const resSeeFrom = rookie.msgs.length
+      rookie.sendSigned({ t: 'script.op', op: 'research', speciesId: 'phi-3', kind: 'see' })
+      await rookie.waitFor('state.sync', undefined, resSeeFrom)
+      const dupSeeFrom = rookie.msgs.length
+      rookie.sendSigned({ t: 'script.op', op: 'research', speciesId: 'phi-3', kind: 'see' })
+      await rookie.waitFor('error', (e) => e.code === 'authority_violation', dupSeeFrom)
+
+      // Premature progression flags (ds:done without deepseek defeat) are rejected
+      const badDoneFrom = rookie.msgs.length
+      rookie.sendSigned({ t: 'script.op', op: 'setFlag', flag: 'ds:done', value: true })
+      await rookie.waitFor('error', (e) => e.code === 'authority_violation', badDoneFrom)
+    } finally {
+      await Promise.all(clients.map((c) => c.close()))
       await srv.close()
     }
   })

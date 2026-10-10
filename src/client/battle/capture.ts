@@ -12,6 +12,7 @@ import { creatureImg } from '../ui/screens/sprites.ts'
 import { actionKeyLabel, button, el, panel } from '../ui/widgets.ts'
 import { BATTLE_UI, type SignedLine } from './config.ts'
 import { ballChoices, signContract, type BallChoice, type Signed } from './contract.ts'
+import { isOnlineAuthorityActive } from '../net/authority-client.ts'
 import { signOnlineContract } from '../net/pve-channel.ts'
 import './capture.css'
 
@@ -207,13 +208,19 @@ const sayLines = (ctx: GameContext, lines: readonly SignedLine[] | undefined) =>
  */
 export async function contractFlow(ctx: GameContext, o: ContractOptions): Promise<Signed | null> {
   const choices = ballChoices(ctx)
+  const online = Boolean(o.battleId && isOnlineAuthorityActive(ctx))
   let signed: Signed | null = null
+  let onlinePromise: Promise<Signed | null> | null = null
   let tried = false
   let selectedBallId = choices[0].id
   const commit = (ballId: string): Signed | null => {
     if (tried) return signed
     tried = true
     selectedBallId = ballId
+    if (online && o.battleId) {
+      onlinePromise = signOnlineContract(ctx, o.battleId, o.bossId, o.tierId, ballId)
+      return null
+    }
     signed = signContract(ctx, o.bossId, o.tierId, ballId)
     // Saved before anything else is shown: closing the tab on the next screen cannot lose or reroll the card.
     if (signed) ctx.persist('boss-sign')
@@ -228,7 +235,9 @@ export async function contractFlow(ctx: GameContext, o: ContractOptions): Promis
   }
   // However the screen ended, a first clear always signs.
   if (!tried) commit(choices[0].id)
-  if (o.battleId) {
+  if (onlinePromise) {
+    signed = await onlinePromise
+  } else if (o.battleId && !online) {
     const onlineSigned = await signOnlineContract(ctx, o.battleId, o.bossId, o.tierId, selectedBallId)
     if (onlineSigned) signed = onlineSigned
   }

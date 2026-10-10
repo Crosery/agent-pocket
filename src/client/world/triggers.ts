@@ -5,6 +5,7 @@ import type { ScriptStep } from '../../shared/types.ts'
 import { storyFeatures, type StoryTrigger } from '../../shared/world/story.ts'
 import type { GameContext } from '../contracts.ts'
 import { condHolds } from '../onboarding/logic.ts'
+import { sendScriptOp } from '../net/authority-client.ts'
 import { flagSet } from './save-ops.ts'
 
 export interface TriggerDeps {
@@ -57,7 +58,11 @@ export function createTriggers(deps: TriggerDeps) {
       const t = queue.shift()!
       if (!open(t)) return
       running = true
-      if (t.once) ctx.save.flags[ONCE_FLAG_PREFIX + t.id] = true
+      if (t.once) {
+        const flag = ONCE_FLAG_PREFIX + t.id
+        ctx.save.flags[flag] = true
+        sendScriptOp(ctx, { t: 'script.op', op: 'setFlag', flag, value: true })
+      }
       void deps.run(t.steps).finally(() => { running = false })
     },
     get pending(): number { return queue.length },

@@ -44,6 +44,7 @@ import type { RoamPick } from './roaming.ts'
 import { reconcileEventsOnSave } from '../core/save-reconcile.ts'
 import { addItem } from './save-ops.ts'
 import { eventBenefits } from './event-details.ts'
+import { sendScriptOp } from '../net/authority-client.ts'
 
 /** Compile-time switch (vite.config.ts define): the dev server and `vite build --mode devtools` only; undefined under Node. */
 declare const __AP_DEVTOOLS__: boolean | undefined
@@ -65,7 +66,7 @@ export interface GameplayDeps {
   reserved(tx: number, ty: number): boolean
   runScript(steps: ScriptStep[]): Promise<void>
   /** Wild battle with a prepared creature (locks the overworld, blackout on loss); null when it could not start. */
-  startWild(cr: Creature, opts: { flee?: BattleSideInit['flee'] }): Promise<BattleOutcome | null>
+  startWild(cr: Creature, opts: { flee?: BattleSideInit['flee']; roamer?: boolean }): Promise<BattleOutcome | null>
 }
 
 interface ScatterItem { id: string; event: string; startedAt: number; x: number; y: number; item: string; qty: number; hidden: boolean }
@@ -467,7 +468,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     battleBusy = true
     try {
       if (s.legend) research.expectLegend()
-      const outcome = await deps.startWild(s.creature, { ...(s.flee ? { flee: s.flee } : {}) })
+      const outcome = await deps.startWild(s.creature, { ...(s.flee ? { flee: s.flee } : {}), roamer: true })
       if (!outcome) return
       if (s.legend) { afterLegendBattle(s, outcome); return }
       const ev = active.find((a) => s.tag.startsWith(`ev:${a.id}:`))
@@ -516,9 +517,12 @@ export function createGameplayRuntime(deps: GameplayDeps) {
       if (glint && (!it.hidden || d <= I.hiddenGlintRadius)) ctx.world.spawnFx(it.hidden ? I.hiddenFx : I.visibleFx, x, y, ctx.world.elevationAt(x, y))
       if (!free || d > I.pickupRadius) continue
       items.splice(items.indexOf(it), 1)
-      ctx.save.flags[GPC.flags.itemTaken + it.id] = it.startedAt
+      const flag = GPC.flags.itemTaken + it.id
+      ctx.save.flags[flag] = it.startedAt
       const def = ctx.data.items[it.item]
       if (!def || !addItem(ctx, it.item, it.qty)) continue
+      sendScriptOp(ctx, { t: 'script.op', op: 'setFlag', flag, value: it.startedAt })
+      sendScriptOp(ctx, { t: 'script.op', op: 'giveItem', itemId: it.item, qty: it.qty, groundId: it.id })
       ctx.audio.playSfx(I.sfx)
       const params = { name: ctx.save.name, currency: t('common.money'), item: def.nameZh, qty: it.qty }
       ctx.ui.toast(t(it.qty > 1 ? 'world.item.foundQty' : 'world.item.found', params), 'success')

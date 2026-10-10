@@ -45,38 +45,34 @@ export function signContract(
   const inst = instanceOfBoss(bossId)
   const rules = inst?.def.tiers[tierId]
   if (!inst || !rules) return null
+  const ballDef = ctx.data.items[ballId]
+  if (!ballDef || ballDef.effect.kind !== 'ball') return null
+  const heldBalls = Object.entries(ctx.save.bag).filter(([id, n]) => n > 0 && ctx.data.items[id]?.effect.kind === 'ball')
+  if (heldBalls.length > 0 ? (ctx.save.bag[ballId] ?? 0) <= 0 : ballId !== BATTLE_UI.contract.defaultBall) return null
   const prog = progressOf(ctx.save, inst.id)
   const first = (prog.captures[tierId] ?? 0) === 0
   if (!first && !rules.repeat.capture) return null
   if (prog.lastRollRun?.[tierId] !== undefined && prog.lastRollRun[tierId] === prog.runSeq) return null
 
-  if (!first) {
-    const ballBonus = (ctx.data.quality.capture.ballBonus?.[ballId] ?? 0)
-    const isMaster = ballId === ctx.data.quality.capture.masterBall
-    const curPity = prog.pity?.[tierId] ?? 0
-    const odds = contractOdds(rules, ballBonus, true, curPity)
-    const rollRng = new Rng(contractSeed(ctx, inst.id, tierId, false))
-    const success = isMaster || odds.guaranteed || rollContractOutcome(rollRng, odds.chance)
-    prog.lastRollRun ??= {}
-    prog.lastRollRun[tierId] = prog.runSeq
-    if (BATTLE_UI.contract.consumeBall) consumeItem(ctx, ballId)
-    if (!success) {
-      prog.pity ??= {}
-      prog.pity[tierId] = curPity + 1
-      const failShard = inst.def.tiers[tierId]?.repeat?.shards ?? GAMEPLAY.instanceDefaults?.failShardQty ?? 1
-      const shardItem = GAMEPLAY.instanceDefaults?.shardItem ?? 'data-shard'
-      addBagItem(ctx, shardItem, failShard)
-      return null
-    }
+  const ballBonus = ctx.data.quality.capture.ballBonus?.[ballId] ?? 0
+  const isMaster = ballId === ctx.data.quality.capture.masterBall && (ctx.save.bag[ballId] ?? 0) > 0
+  const curPity = prog.pity?.[tierId] ?? 0
+  const odds = contractOdds(rules, ballBonus, !first, curPity)
+  const rollRng = new Rng(contractSeed(ctx, inst.id, tierId, first))
+  const success = isMaster || odds.guaranteed || rollContractOutcome(rollRng, odds.chance)
+  prog.lastRollRun ??= {}
+  prog.lastRollRun[tierId] = prog.runSeq
+  if (BATTLE_UI.contract.consumeBall) consumeItem(ctx, ballId)
+  if (!success) {
     prog.pity ??= {}
-    prog.pity[tierId] = 0
-  } else {
-    prog.lastRollRun ??= {}
-    prog.lastRollRun[tierId] = prog.runSeq
-    prog.pity ??= {}
-    prog.pity[tierId] = 0
-    if (BATTLE_UI.contract.consumeBall) consumeItem(ctx, ballId)
+    prog.pity[tierId] = curPity + 1
+    const failShard = rules.repeat.shards ?? GAMEPLAY.instanceDefaults.failShardQty
+    const shardItem = GAMEPLAY.instanceDefaults.shardItem
+    addBagItem(ctx, shardItem, failShard)
+    return null
   }
+  prog.pity ??= {}
+  prog.pity[tierId] = 0
 
   const rng = new Rng(contractSeed(ctx, inst.id, tierId, first))
   const card = rollBossCard(rng, bossId, tierId, rules, {

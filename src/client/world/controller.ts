@@ -37,6 +37,7 @@ import { createNpcLayer, type NpcRuntime } from './npcs.ts'
 import { createPresence, type MultiplayerHooks } from './presence.ts'
 import { createRoamingLayer, type Roamer } from './roaming.ts'
 import { addItem, changeMoney, flagSet, healParty, ownedKeyItem, removeItem, settleBossCards } from './save-ops.ts'
+import { sendItemUse, sendScriptOp } from '../net/authority-client.ts'
 import { createTriggers } from './triggers.ts'
 import { createScriptRunner, type ScriptHost } from './script.ts'
 import { anchorName, isUnlocked, markSeen, unlockAnchor } from './anchors.ts'
@@ -226,7 +227,13 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
         rng, shiny: o.shiny ?? rollShiny(rng, ctx.data), caughtMap: map?.id,
         ...(o.moves?.length ? { moves: o.moves } : {}), ...(o.gradeFloor ? { gradeFloor: o.gradeFloor } : {}),
       }, ctx.data)
-      const outcome = await battles.wild(cr, { music: o.music, scripted: o.scripted, ...(o.catchRateMul !== undefined ? { catchRateMul: o.catchRateMul } : {}) })
+      const outcome = await battles.wild(cr, {
+        music: o.music,
+        scripted: o.scripted,
+        ...(o.moves?.length ? { moves: o.moves } : {}),
+        ...(o.gradeFloor ? { gradeFloor: o.gradeFloor } : {}),
+        ...(o.catchRateMul !== undefined ? { catchRateMul: o.catchRateMul } : {}),
+      })
       return outcome.result
     },
     async bossBattle(bossId, tier, o) {
@@ -426,7 +433,10 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     const name = regional ? r?.nameZh ?? map.nameZh : map.nameZh
     ctx.hud.setRegion(name)
     if (r) ctx.events.emit('region:entered', { mapId: map.id, regionIndex: ri, nameZh: r.nameZh })
-    if (r?.isTown && r.townId && !ctx.save.visitedTowns.includes(r.townId)) ctx.save.visitedTowns.push(r.townId)
+    if (r?.isTown && r.townId && !ctx.save.visitedTowns.includes(r.townId)) {
+      ctx.save.visitedTowns.push(r.townId)
+      sendScriptOp(ctx, { t: 'script.op', op: 'unlockTown', townId: r.townId })
+    }
     if (regional && r && r.nameZh !== prevName) {
       const last = bannerAt.get(r.id) ?? -Infinity
       if (nowSec() - last > GAME.region.bannerCooldownSec) {
@@ -741,6 +751,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
         const yes = await ctx.ui.confirm(t('world.repel.useAnother', { item: item.nameZh }))
         if (yes && removeItem(ctx, item.id, 1) > 0) {
           ctx.save.repelSteps = item.effect.steps
+          sendItemUse(ctx, item.id)
           await say(t('world.repel.used', { ...params(), item: item.nameZh }))
         }
       }
@@ -774,7 +785,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     await wildEncounter(cr, null, pick.flee ? { flee: pick.flee } : {})
   }
 
-  async function wildEncounter(cr: ReturnType<typeof createCreature>, roamer: Roamer | null, o: { flee?: BattleSideInit['flee'] } = {}) {
+  async function wildEncounter(cr: Creature, roamer: Roamer | null, o: { flee?: BattleSideInit['flee']; roamer?: boolean } = {}) {
     lock('battle')
     player.moving = false
     syncActor(0)
@@ -782,7 +793,8 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       actor?.bubble(GAME.npc.trainer.bubble)
       ctx.world.spawnFx(GAME.encounters.transition.fx, player.x, player.y, player.elev)
       const flee = o.flee ?? roamer?.extra?.flee
-      const outcome = await battles.wild(cr, flee ? { flee } : {})
+      const isRoamer = Boolean(roamer || o.roamer)
+      const outcome = await battles.wild(cr, { ...(flee ? { flee } : {}), ...(isRoamer ? { roamer: true } : {}) })
       if (roamer) roaming.remove(roamer)
       if (outcome.result === 'lose' || outcome.result === 'draw') await blackoutFlow()
       return outcome
