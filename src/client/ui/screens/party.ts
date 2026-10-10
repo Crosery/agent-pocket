@@ -4,7 +4,8 @@ import type { Creature } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
 import { creatureName, maxHp } from '../../../shared/creature.ts'
 import { gradeOf } from '../../../shared/gameplay/quality.ts'
-import { createGridNav, creatureIcon, el, expBar, gradeChip, hpBar, statusChip, typeChip } from '../widgets.ts'
+import { bankLevels, bossCardCap, isBossCard } from '../../../shared/gameplay/bosscard.ts'
+import { bossMark, createGridNav, creatureIcon, el, expBar, gradeChip, hpBar, statusChip, typeChip } from '../widgets.ts'
 import { onUIScaleChange } from '../scale.ts'
 import { backPressed, frame, H, isCompact, openScreen, popupMenu, pressed, sfx, uiSfx, type PartyOptions, type ScreenEnv } from './base.ts'
 import { SCREENS } from './config.ts'
@@ -47,6 +48,8 @@ export function partyScreen(env: ScreenEnv, mode: PartyMode, opts?: PartyOptions
       const exp = expBar({ label: t('screens.common.exp'), width: cfg.expBarWidth, className: 'aps-party-exp' })
       exp.set(xp.max ? 1 : xp.into, xp.max ? 1 : xp.need)
       const note = opts?.annotate?.(c, i) ?? null
+      const boss = isBossCard(c)
+      const bank = boss ? bankLevels(c) : 0
       const disabled = mode !== 'view' && !!blocked(c)
       const node = el('button', {
         class: `aps-party-card aps-card${isConscious(c) ? '' : ' is-fainted'}${disabled ? ' is-disabled' : ''}${i === swapFrom ? ' is-swap' : ''}`,
@@ -56,10 +59,15 @@ export function partyScreen(env: ScreenEnv, mode: PartyMode, opts?: PartyOptions
         el('div', 'aps-party-main', [
           el('div', 'aps-party-line', [
             el('span', { class: 'aps-party-name ap-model-name', text: creatureName(c), title: creatureName(c), attrs: { 'aria-label': creatureName(c) } }),
-            el('span', 'aps-party-lvbox', [el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) }), gradeChip(gradeOf(c.ivs).id)]),
+            el('span', 'aps-party-lvbox', [
+              boss ? bossMark() : null,
+              el('span', { class: 'aps-party-lv', text: boss ? t('screens.common.levelCap', { level: c.level, cap: bossCardCap(ctx.save.badges.length) }) : t('screens.common.level', { level: c.level }) }),
+              gradeChip(gradeOf(c.ivs).id),
+            ]),
           ]),
           el('div', 'aps-party-line', [
             el('span', 'aps-chips', [...(sp?.types ?? []).map((ty) => typeChip(ty)), c.status ? statusChip(c.status) : null,
+              bank > 0 ? el('span', { class: 'aps-tag is-bank', text: t('hud.party.bank', { n: bank }) }) : null,
               isConscious(c) ? null : el('span', { class: 'aps-tag is-bad', text: t('screens.party.fainted') })]),
           ]),
           bar.el,

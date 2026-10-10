@@ -1,5 +1,5 @@
 {
-  "common": {"ok": "确定", "cancel": "取消", "close": "关闭", "dash": "—", "level": "Lv.{level}", "money": "{n}", "dexNo": "No.{n}", "hp": "上下文", "exp": "经验", "playTime": "{h}:{m}", "count": "{n} 枚", "nameBoth": "{zh} · {en}", "companyCountry": "{company}（{country}）"},
+  "common": {"ok": "确定", "cancel": "取消", "close": "关闭", "dash": "—", "level": "Lv.{level}", "levelCap": "Lv.{level}/{cap}", "money": "{n}", "dexNo": "No.{n}", "hp": "上下文", "exp": "经验", "playTime": "{h}:{m}", "count": "{n} 枚", "nameBoth": "{zh} · {en}", "companyCountry": "{company}（{country}）"},
   "hint": {"select": "选择", "confirm": "确定", "back": "返回", "tabs": "切换分类", "choose": "移动", "pages": "翻页"},
   "qty": {"value": "×{n}", "minus": "-1", "plus": "+1", "minusBig": "-{n}", "plusBig": "+{n}", "total": "合计"},
   "title": {
@@ -383,8 +383,8 @@
       "surfing": {"name": "冲浪", "quip": "网速飞快，知识全靠现搜。"}
     },
     "grade": {"C": "INT4 量化", "B": "INT8 量化", "A": "FP16", "S": "满血版", "SS": "满血·天选"},
-    "reveal": {"title": "鉴定结果", "ladderHint": "越靠右越强", "best": "最强项：{stat}", "boss": "BOSS 卡", "skipKey": "{key} 继续", "skipTouch": "点任意处继续"},
-    "summary": {"nature": "性格", "grade": "品质 {grade} · {nick}", "natureNeutral": "无偏好"},
+    "reveal": {"title": "鉴定结果", "ladderHint": "越靠右越强", "best": "最强项：{stat}", "boss": "BOSS 卡", "bossTitle": "Boss 版鉴定", "signature": "签名", "skipKey": "{key} 继续", "skipTouch": "点任意处继续"},
+    "summary": {"nature": "性格", "grade": "品质 {grade} · {nick}", "natureNeutral": "无偏好", "licence": "算力许可", "licenceValue": "Lv.{level}/{cap}", "bank": "储备", "bankValue": "+{n} 级", "bankNone": "无"},
     "chip": "{grade} · {nature} {up}↑ {down}↓",
     "chipNeutral": "{grade} · {nature}",
     "legacyToast": "研究所发了你 2 张人设重写卡。",

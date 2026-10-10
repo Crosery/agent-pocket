@@ -142,6 +142,7 @@ export function createTrades(deps: TradeDeps): TradeService {
       if (!sanitize) { core.error(c, 'trade_unavailable'); return }
       creature = sanitize(raw)
       if (!creature || !CONTENT.species[creature.speciesId]) { core.error(c, 'trade_invalid_creature'); return }
+      if (creature.origin?.kind === 'boss') { core.error(c, 'trade_bound_boss'); return }
       // Free text travels to another player: apply the same word filter as chat.
       if (creature.nickname) creature.nickname = maskBanned(creature.nickname)
       creature.otName = maskBanned(creature.otName)

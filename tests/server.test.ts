@@ -343,6 +343,10 @@ test('hub: presence, interest, chat, inspect, trade, leaderboard', async (tc) =>
         await B.waitFor('trade.offer', (m) => m.side === 'other' && m.creature?.uid === ca.uid, { from: fb })
         B.send({ t: 'trade.offer', tradeId, creature: { bogus: true } as unknown as Creature })
         await B.waitFor('error', (m) => m.code === 'trade_invalid_creature', { from: fb })
+        // A signed boss card is bound to its trainer: the server refuses it whatever the client says.
+        const fBound = B.mark()
+        B.send({ t: 'trade.offer', tradeId, creature: { ...cb, origin: { kind: 'boss', boss: 'deepseek', tier: 'story' } } as Creature })
+        await B.waitFor('error', (m) => m.code === 'trade_bound_boss', { from: fBound })
         B.send({ t: 'trade.offer', tradeId, creature: cb })
         await A.waitFor('trade.offer', (m) => m.side === 'other' && m.creature?.uid === cb.uid, { from: fa })
 

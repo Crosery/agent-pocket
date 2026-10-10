@@ -5,8 +5,9 @@ import type { Creature, MoveDef } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
 import { calcStats, creatureName, maxHp } from '../../../shared/creature.ts'
 import { gradeOf, natureArrows } from '../../../shared/gameplay/quality.ts'
+import { bankLevels, bossCardCap, isBossCard } from '../../../shared/gameplay/bosscard.ts'
 import { getMap } from '../../../shared/world/worldapi.ts'
-import { button, el, expBar, gradeChip, hpBar, rarityBadge, statRadar, statusChip, tabs, typeChip } from '../widgets.ts'
+import { bossMark, button, el, expBar, gradeChip, hpBar, rarityBadge, statRadar, statusChip, tabs, typeChip } from '../widgets.ts'
 import { backPressed, frame, icon, infoRow, meterIcons, openScreen, pressed, sectionTitle, sfx, textOrKey, uiSfx, type ScreenEnv, setChildren , arrowButton } from './base.ts'
 import { SCREENS } from './config.ts'
 import { defensiveProfile, expProgress, extraEnglishName, ivStars, statKeys } from './logic.ts'
@@ -86,7 +87,11 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number, s
         el('div', 'aps-sum-stage', [el('div', 'aps-sum-pedestal'), creatureImg(ctx.assets, c.speciesId, { shiny: c.shiny, className: 'aps-sum-sprite' }), c.shiny ? icon('shine', { className: 'aps-sum-shine' }) : null]),
         el('div', 'aps-sum-name', [
           el('span', { class: 'ap-model-name', text: creatureName(c), title: creatureName(c), attrs: { 'aria-label': creatureName(c) } }),
-          el('span', 'aps-party-lvbox', [el('span', { class: 'aps-party-lv', text: t('screens.common.level', { level: c.level }) }), gradeChip(gradeOf(c.ivs).id)]),
+          el('span', 'aps-party-lvbox', [
+            isBossCard(c) ? bossMark() : null,
+            el('span', { class: 'aps-party-lv', text: isBossCard(c) ? t('screens.common.levelCap', { level: c.level, cap: bossCardCap(ctx.save.badges.length) }) : t('screens.common.level', { level: c.level }) }),
+            gradeChip(gradeOf(c.ivs).id),
+          ]),
         ]),
         c.nickname && sp ? el('div', { class: 'ap-dim ap-model-name aps-sum-species', text: sp.nameZh, title: sp.nameZh }) : null,
         el('div', 'aps-chips', [...(sp?.types ?? []).map((ty) => typeChip(ty)), sp ? rarityBadge(sp.rarity, { label: 'name' }) : null, c.status ? statusChip(c.status) : null]),
@@ -95,6 +100,15 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number, s
         el('div', { class: 'aps-sum-tonext ap-dim', text: prog.max ? t('screens.summary.maxLevel') : t('screens.summary.toNext', { n: prog.toNext }) }),
       ])
       counter.textContent = t('screens.summary.counter', { i: index + 1, n: list.length })
+    }
+
+    /** Boss cards: the licence (level / badge cap) and what exp is banked past it. */
+    const bossRows = (c: Creature): HTMLElement[] => {
+      const bank = bankLevels(c)
+      return [
+        infoRow(t('screens.quality.summary.licence'), t('screens.quality.summary.licenceValue', { level: c.level, cap: bossCardCap(ctx.save.badges.length) })),
+        infoRow(t('screens.quality.summary.bank'), bank > 0 ? t('screens.quality.summary.bankValue', { n: bank }) : t('screens.quality.summary.bankNone')),
+      ]
     }
 
     const infoPage = (c: Creature): HTMLElement[] => {
@@ -106,6 +120,7 @@ export function summaryScreen(env: ScreenEnv, list: Creature[], start: number, s
       return [
         infoRow(t('screens.summary.dexNo'), sp ? t('screens.common.dexNo', { n: String(sp.dexNo).padStart(3, '0') }) : t('screens.common.dash')),
         infoRow(t('screens.summary.species'), sp ? (extraEnglishName(sp) ? t('screens.common.nameBoth', { zh: sp.nameZh, en: sp.nameEn }) : sp.nameZh) : c.speciesId),
+        ...(isBossCard(c) ? bossRows(c) : []),
         infoRow(t('screens.summary.company'), sp ? t('screens.common.companyCountry', { company: sp.company, country: textOrKey(`screens.country.${sp.country}`) }) : t('screens.common.dash')),
         // Rows with nothing to say (no trainer, unknown place, no ball) and the internal trainer id are left out.
         c.otName ? infoRow(t('screens.summary.ot'), c.otName) : null,
