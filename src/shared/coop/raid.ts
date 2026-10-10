@@ -48,6 +48,10 @@ export interface RaidSession {
   ended: boolean
   victory: boolean
   turn: number
+  settled?: boolean
+  runSeqByMember: Map<string, number>
+  rolledMembers: Set<string>
+  settledMembers: Set<string>
 }
 
 /**
@@ -92,6 +96,45 @@ export function applyActiveMechanismsToBossState(
     bossState.takenMulBonus = Number(bonus.toFixed(4))
   }
 }
+export function syncMemberBattleIntroAndInit(
+  member: RaidMemberSession,
+  bossState: BossState,
+): void {
+  const bossCr = member.init.sides[1]?.party?.[0]
+  if (bossCr) {
+    bossCr.hp = Math.max(0, Math.min(bossState.hp, bossState.maxHp))
+    bossCr.speciesId = bossState.speciesId
+  }
+  const playerParty = member.engine.party(0)
+  if (member.init.sides[0]?.party && playerParty) {
+    member.init.sides[0].party = structuredClone(playerParty)
+  }
+
+  const bossView = member.engine.activeView(1)
+  const playerView = member.engine.activeView(0)
+  const hud = member.engine.bossHud()
+
+  let hasBossHud = false
+  for (const ev of member.intro) {
+    if (ev.t === 'switch') {
+      if (ev.side === 1) {
+        ev.creature = { ...bossView }
+      } else if (ev.side === 0) {
+        ev.creature = { ...playerView }
+      }
+    } else if (ev.t === 'boss' && ev.side === 1) {
+      if (hud) {
+        ev.hud = { ...hud }
+        hasBossHud = true
+      }
+    }
+  }
+  if (!hasBossHud && hud) {
+    member.intro.push({ t: 'boss', side: 1, hud: { ...hud } })
+  }
+  member.engine.flush()
+}
+
 
 export function createRaidSession(opts: CreateRaidOpts): RaidSession {
   const memberMap = new Map<string, RaidMemberSession>()
@@ -134,8 +177,7 @@ export function createRaidSession(opts: CreateRaidOpts): RaidSession {
 
   for (const m of memberMap.values()) {
     m.engine.applyBossState(baseBossState)
-    const bossCr = m.init.sides[1]?.party?.[0]
-    if (bossCr) bossCr.hp = baseBossState.hp
+    syncMemberBattleIntroAndInit(m, baseBossState)
   }
 
   const session: RaidSession = {
@@ -152,6 +194,9 @@ export function createRaidSession(opts: CreateRaidOpts): RaidSession {
     ended: false,
     victory: false,
     turn: 1,
+    runSeqByMember: new Map<string, number>(),
+    rolledMembers: new Set<string>(),
+    settledMembers: new Set<string>(),
   }
   return session
 }
@@ -240,6 +285,7 @@ export function rejoinRaidMember(
   member.info.name = player.name || member.info.name
   member.info.avatar = player.avatar || member.info.avatar
   member.engine.applyBossState(session.bossState)
+  syncMemberBattleIntroAndInit(member, session.bossState)
   return true
 }
 
@@ -287,6 +333,19 @@ export function applyRaidPlayerAction(
     }
   }
 
+  // Drain legitimate automatic recharge/wait turns so player does not receive un-actionable wait request
+  let autoSteps = 0
+  while (!member.engine.finished && member.engine.request(0).kind === 'wait' && member.engine.ready() && autoSteps < 10) {
+    autoSteps++
+    events.push(...member.engine.step())
+    if (!member.engine.finished && member.engine.request(0).kind === 'switch') {
+      const nextIdx = member.engine.party(0).findIndex((c) => c.hp > 0)
+      if (nextIdx >= 0 && member.engine.choose(0, { kind: 'switch', partyIndex: nextIdx }) === null) {
+        events.push(...member.engine.step())
+      }
+    }
+  }
+
   const updatedBoss = member.engine.extractBossState()
   if (updatedBoss) {
     const expectedPrevHp =
@@ -304,7 +363,7 @@ export function applyRaidPlayerAction(
 
     // Sync updated boss state to other members
     for (const [otherId, other] of session.members.entries()) {
-      if (otherId !== playerId) {
+      if (otherId !== playerId && !other.engine.finished) {
         other.engine.applyBossState(session.bossState)
       }
     }
@@ -350,4 +409,20 @@ export function buildRaidSummary(session: RaidSession): RaidSummary {
     totalDamage: totalDmg,
     members: memberList,
   }
+}
+
+export function canMemberRollContract(session: RaidSession, playerId: string): boolean {
+  return session.victory && !session.rolledMembers.has(playerId)
+}
+
+export function recordMemberContractRoll(session: RaidSession, playerId: string): void {
+  session.rolledMembers.add(playerId)
+}
+
+export function isMemberSettled(session: RaidSession, playerId: string): boolean {
+  return session.settledMembers.has(playerId)
+}
+
+export function recordMemberSettled(session: RaidSession, playerId: string): void {
+  session.settledMembers.add(playerId)
 }

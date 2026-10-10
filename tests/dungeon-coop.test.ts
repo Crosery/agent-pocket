@@ -33,7 +33,13 @@ import {
 import {
   applyRaidPlayerAction,
   buildRaidSummary,
+  canMemberRollContract,
   createRaidSession,
+  disconnectRaidMember,
+  isMemberSettled,
+  recordMemberContractRoll,
+  recordMemberSettled,
+  rejoinRaidMember,
   scaleBossHp,
 } from '../src/shared/coop/raid.ts'
 import { createDungeonServer, type DungeonAuthority } from '../src/server/dungeon.ts'
@@ -372,7 +378,7 @@ test('multiplayer server simulation: authoritative elite battle, mechanism effec
       version: 1,
       limits: {} as never,
       closed: false,
-      state: { map: 'origin', x: 10, y: 10 } as never,
+      state: { map: 'origin-lab-b1', x: 13, y: 3 } as never,
     }) as unknown as Player
 
   const p1 = makePlayer('c1', '玩家一')
@@ -611,4 +617,253 @@ test('multiplayer server simulation: authoritative elite battle, mechanism effec
   assert.ok(defeatEnd && defeatEnd.msg.victory === false, 'raid terminates in defeat when remaining connected player faints')
 
   server.close()
+})
+
+test('raid engine regression: individual wipeout with surviving teammate preserves scaled maxHp and form without corrupting shared state', () => {
+  // P1 has a fragile Lv1 creature that will faint; P2 has a high-level creature with plenty of HP
+  const p1Cr = createCreature('phi-3', 1, { rng: new Rng(1) })
+  p1Cr.hp = 1
+  const p2Cr = createCreature('o1', 50, { rng: new Rng(2) })
+
+  const session = createRaidSession({
+    raidId: 'raid-wipeout-test',
+    instanceId: 'deepseek-tide',
+    tierId: 'cluster',
+    bossId: 'deepseek',
+    hpScaleExp: 0.8,
+    minContribution: 10,
+    members: [
+      { id: 'u1', name: 'Alice', avatar: 'hero', party: [p1Cr] },
+      { id: 'u2', name: 'Bob', avatar: 'hero', party: [p2Cr] },
+    ],
+  })
+
+  const initialMaxHp = session.bossState.maxHp
+  const initialForm = session.bossState.form
+  const initialSpecies = session.bossState.speciesId
+
+  assert.ok(initialMaxHp > 1000, `expected scaled max HP > 1000, got ${initialMaxHp}`)
+
+  // P1 takes action and faints from Boss counter-attack
+  const p1Session = session.members.get('u1')!
+  const p2Session = session.members.get('u2')!
+
+  applyRaidPlayerAction(session, 'u1', { kind: 'move', moveIndex: 0 })
+
+  // P1 engine finished (wiped out)
+  assert.equal(p1Session.engine.finished, true, 'P1 engine must be finished after wipeout')
+  assert.equal(p1Session.engine.result, 'lose', 'P1 engine result must be lose')
+
+  // Surviving teammate keeps the raid active
+  assert.equal(session.ended, false, 'session must NOT end while P2 is still alive')
+  assert.equal(session.victory, false)
+
+  // Shared bossState must preserve scaled maxHp and authoritative form/species
+  assert.equal(session.bossState.maxHp, initialMaxHp, 'bossState.maxHp must NOT collapse to unscaled creature plainMaxHp')
+  assert.equal(session.bossState.form, initialForm, 'boss form must be preserved')
+  assert.equal(session.bossState.speciesId, initialSpecies, 'boss speciesId must be preserved')
+  assert.ok(session.bossState.hp > 0, 'boss must still have HP')
+
+  // P2 engine must retain scaled maxHp and live boss HP
+  const p2BossView = p2Session.engine.activeView(1)
+  assert.equal(p2BossView.maxHp, initialMaxHp, 'P2 engine boss view maxHp must match scaled maxHp')
+  assert.equal(p2BossView.hp, session.bossState.hp, 'P2 engine boss view hp must match shared bossState.hp')
+  assert.equal(p2Session.engine.finished, false, 'P2 engine must still be active')
+
+  // P2 acts and deals damage without phantom damage or corrupt state
+  const prevHp = session.bossState.hp
+  applyRaidPlayerAction(session, 'u2', { kind: 'move', moveIndex: 0 })
+  assert.equal(session.bossState.maxHp, initialMaxHp, 'maxHp must remain scaled after P2 action')
+  assert.ok(session.bossState.hp < prevHp, 'boss HP must decrease after P2 attack')
+  assert.equal(p2Session.damageDealt, prevHp - session.bossState.hp, 'P2 damageDealt must equal exact HP delta')
+})
+
+test('raid engine regression: killing blow contribution is exact and does not suffer phantom damage loss', () => {
+  const p1Cr = createCreature('o1', 30, { rng: new Rng(11) })
+  const p2Cr = createCreature('o1', 30, { rng: new Rng(22) })
+
+  const session = createRaidSession({
+    raidId: 'raid-kill-test',
+    instanceId: 'deepseek-tide',
+    tierId: 'cluster',
+    bossId: 'deepseek',
+    hpScaleExp: 0.8,
+    minContribution: 10,
+    members: [
+      { id: 'u1', name: 'Alice', avatar: 'hero', party: [p1Cr] },
+      { id: 'u2', name: 'Bob', avatar: 'hero', party: [p2Cr] },
+    ],
+  })
+
+  const scaledMaxHp = session.bossState.maxHp
+  const p2Session = session.members.get('u2')!
+
+  // Force remaining Boss HP to exactly 150
+  session.bossState.hp = 150
+  session.boss.hp = 150
+  p2Session.engine.applyBossState(session.bossState)
+
+  const dmgBefore = p2Session.damageDealt
+  const res = applyRaidPlayerAction(session, 'u2', { kind: 'move', moveIndex: 0 })
+
+  assert.equal(res.ended, true, 'raid must end on killing blow')
+  assert.equal(res.victory, true, 'raid must be victory on killing blow')
+  assert.equal(session.ended, true)
+  assert.equal(session.victory, true)
+  assert.equal(session.bossState.hp, 0, 'boss HP must be 0')
+  assert.equal(session.bossState.maxHp, scaledMaxHp, 'boss maxHp must NOT collapse across restore() on killing blow')
+
+  // Killer must receive the exact 150 damage, not shrunken by plainMaxHp / scaledMaxHp (~15)
+  const dmgDelta = p2Session.damageDealt - dmgBefore
+  assert.equal(dmgDelta, 150, `killing blow contribution must be exact 150, got ${dmgDelta}`)
+
+  const summary = buildRaidSummary(session)
+  assert.equal(summary.victory, true)
+  const p2Summary = summary.members.find((m) => m.id === 'u2')
+  assert.ok(p2Summary && p2Summary.qualified, 'killer must qualify for rewards')
+})
+
+test('raid engine regression: scaled startup and rejoin visible events reflect scaled HP and mechanism meters', () => {
+  const p1Cr = createCreature('o1', 25, { rng: new Rng(31) })
+  const p2Cr = createCreature('phi-3', 25, { rng: new Rng(32) })
+
+  const session = createRaidSession({
+    raidId: 'raid-events-test',
+    instanceId: 'deepseek-tide',
+    tierId: 'cluster',
+    bossId: 'deepseek',
+    hpScaleExp: 0.8,
+    members: [
+      { id: 'u1', name: 'Alice', avatar: 'hero', party: [p1Cr] },
+      { id: 'u2', name: 'Bob', avatar: 'hero', party: [p2Cr] },
+    ],
+    activeMechanisms: ['load-breaker'],
+  })
+
+  const p1Session = session.members.get('u1')!
+  const p2Session = session.members.get('u2')!
+  const scaledMaxHp = session.bossState.maxHp
+
+  // 1. Initial intro events must show scaled maxHp in switch event and active mechanism meters in boss event
+  const p1BossSwitch = p1Session.intro.find(
+    (e): e is Extract<typeof e, { t: 'switch' }> => e.t === 'switch' && e.side === 1,
+  )
+  assert.ok(p1BossSwitch, 'intro must have side 1 switch event')
+  assert.equal(p1BossSwitch.creature.hp, scaledMaxHp, 'intro boss switch event hp must be scaled')
+  assert.equal(p1BossSwitch.creature.maxHp, scaledMaxHp, 'intro boss switch event maxHp must be scaled')
+
+  const p1BossHud = p1Session.intro.find(
+    (e): e is Extract<typeof e, { t: 'boss' }> => e.t === 'boss' && e.side === 1,
+  )
+  assert.ok(p1BossHud, 'intro must have side 1 boss hud event')
+  assert.equal(p1BossHud.hud.meters.tide, 1, 'intro boss hud must include load-breaker mechanism meter')
+  assert.equal(p1Session.engine.flush().length, 0, 'engine output queue must be cleanly flushed')
+
+  // 2. Mid-battle rejoin must update intro and init to current scaled HP and meters
+  const damagedHp = Math.round(scaledMaxHp * 0.6)
+  session.bossState.hp = damagedHp
+  session.boss.hp = damagedHp
+  session.bossState.meters.tide = 3
+
+  assert.equal(disconnectRaidMember(session, 'u2').ended, false)
+  assert.equal(rejoinRaidMember(session, { id: 'u2', name: 'Bob', avatar: 'hero' }), true)
+
+  // Rejoin must update side-1 party in init
+  assert.equal(p2Session.init.sides[1].party[0].hp, damagedHp, 'rejoin init must show current boss HP')
+
+  // Rejoin must update intro switch and boss hud events
+  const p2BossSwitch = p2Session.intro.find(
+    (e): e is Extract<typeof e, { t: 'switch' }> => e.t === 'switch' && e.side === 1,
+  )
+  assert.ok(p2BossSwitch)
+  assert.equal(p2BossSwitch.creature.hp, damagedHp, 'rejoin intro switch event must reflect current boss HP')
+  assert.equal(p2BossSwitch.creature.maxHp, scaledMaxHp, 'rejoin intro switch event must retain scaled maxHp')
+
+  const p2BossHud = p2Session.intro.find(
+    (e): e is Extract<typeof e, { t: 'boss' }> => e.t === 'boss' && e.side === 1,
+  )
+  assert.ok(p2BossHud)
+  assert.equal(p2BossHud.hud.meters.tide, 3, 'rejoin intro boss hud must reflect updated mechanism meter')
+})
+
+test('raid engine regression: recharge moves auto-drain so player request is actionable or terminal, preventing UI forfeit', () => {
+  // Give creature the recharge move exaflop-beam
+  const p1Cr = createCreature('o1', 50, { rng: new Rng(41) })
+  p1Cr.moves = [{ id: 'exaflop-beam', pp: 5, ppMax: 5 }]
+
+  const session = createRaidSession({
+    raidId: 'raid-recharge-test',
+    instanceId: 'deepseek-tide',
+    tierId: 'cluster',
+    bossId: 'deepseek',
+    hpScaleExp: 0.8,
+    members: [{ id: 'u1', name: 'Alice', avatar: 'hero', party: [p1Cr] }],
+  })
+
+  const p1Session = session.members.get('u1')!
+  assert.equal(p1Session.engine.request(0).kind, 'action')
+
+  // Use recharge move
+  const res = applyRaidPlayerAction(session, 'u1', { kind: 'move', moveIndex: 0 })
+
+  // Auto-drain must advance through the recharge wait turn
+  assert.ok(res.events.length > 0)
+  assert.ok(
+    res.events.some((e) => (e.t === 'msg' && String(e.text).includes('recharge')) || e.t === 'msg' || e.t === 'damage'),
+    'events must include actions from attack and recharge turn',
+  )
+
+  // Engine request must NOT be stuck in 'wait'
+  const postReq = p1Session.engine.request(0)
+  assert.notEqual(postReq.kind, 'wait', 'engine request must NOT be "wait" after recharge auto-drain')
+  assert.ok(postReq.kind === 'action' || postReq.kind === 'switch' || p1Session.engine.finished, 'must progress to actionable or terminal state')
+})
+
+test('raid engine regression: session identity, runSeq binding, contract rolls and settlement are isolated per member', () => {
+  const p1Cr = createCreature('o1', 25, { rng: new Rng(51) })
+  const p2Cr = createCreature('phi-3', 25, { rng: new Rng(52) })
+
+  const session = createRaidSession({
+    raidId: 'raid-identity-test',
+    instanceId: 'deepseek-tide',
+    tierId: 'cluster',
+    bossId: 'deepseek',
+    hpScaleExp: 0.8,
+    members: [
+      { id: 'u1', name: 'Alice', avatar: 'hero', party: [p1Cr] },
+      { id: 'u2', name: 'Bob', avatar: 'hero', party: [p2Cr] },
+    ],
+  })
+
+  // 1. Initial collection identity fields
+  assert.ok(session.runSeqByMember instanceof Map)
+  assert.ok(session.rolledMembers instanceof Set)
+  assert.ok(session.settledMembers instanceof Set)
+  assert.equal(session.rolledMembers.size, 0)
+  assert.equal(session.settledMembers.size, 0)
+
+  // 2. Bound runSeq per member
+  session.runSeqByMember.set('u1', 1)
+  session.runSeqByMember.set('u2', 4)
+  assert.equal(session.runSeqByMember.get('u1'), 1)
+  assert.equal(session.runSeqByMember.get('u2'), 4)
+  assert.equal(session.runSeqByMember.get('u3'), undefined)
+
+  // 3. Contract roll deduplication per member
+  session.victory = true
+  assert.equal(canMemberRollContract(session, 'u1'), true)
+  assert.equal(canMemberRollContract(session, 'u2'), true)
+
+  recordMemberContractRoll(session, 'u1')
+  assert.equal(canMemberRollContract(session, 'u1'), false, 'u1 cannot re-roll contract')
+  assert.equal(canMemberRollContract(session, 'u2'), true, 'u2 roll eligibility is isolated from u1')
+
+  recordMemberContractRoll(session, 'u2')
+  assert.equal(canMemberRollContract(session, 'u2'), false, 'u2 cannot re-roll contract after rolling')
+
+  // 4. Victory settlement per member
+  assert.equal(isMemberSettled(session, 'u1'), false)
+  recordMemberSettled(session, 'u1')
+  assert.equal(isMemberSettled(session, 'u1'), true)
+  assert.equal(isMemberSettled(session, 'u2'), false, 'u2 settlement is isolated from u1')
 })

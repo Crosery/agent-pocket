@@ -2,7 +2,7 @@
 // Statuses, volatiles, weathers and abilities are interpreted generically from their content definitions;
 // there is no per-id logic. Every message is a t('battle.*') template from content/text/zh-CN/battle.json.
 import type {
-  BattleAction, BattleEvent, BattleInit, BattleRequest, BattleResult, BattleSideInit, BattleSummary, BossState, Creature, CreatureView,
+  BattleAction, BattleEvent, BattleInit, BattleRequest, BattleResult, BattleSideInit, BattleSummary, BossHud, BossState, Creature, CreatureView,
   ItemDef, MoveDef, SideIndex, StatChanges, Stats, WeatherId,
 } from '../types.ts'
 import type { IBattleEngine } from '../contracts.ts'
@@ -132,6 +132,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
   /** Boss contract (docs/bosses.md): everything that makes the boss fight resumable, or null without a boss. */
   extractBossState(): BossState | null { return this.boss ? this.boss.extract() : null }
   applyBossState(state: BossState): void { this.boss?.apply(state) }
+  bossHud(): BossHud | null { return this.boss ? this.boss.hud() : null }
   /** Max hp of a party member at the battle level. */
   battleMaxHp(side: SideIndex, partyIndex: number): number { return this.maxHpOf(this.sides[side].party[partyIndex]) }
   /** End-of-fight statistics for boss loss hints and early assist mode. */
@@ -423,7 +424,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
 
   // ------------------------------------------------------------------ helpers: text
 
-  private flush(): BattleEvent[] { const o = this.out; this.out = []; return o }
+  flush(): BattleEvent[] { const o = this.out; this.out = []; return o }
   private emit(e: BattleEvent): void { this.out.push(e) }
   private err(key: string, params?: Record<string, string | number>): string { return t(`battle.err.${key}`, params, this.c) }
 

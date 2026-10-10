@@ -159,6 +159,7 @@ export class BossDirector {
   private readonly original: { speciesId: string; abilityId: string; moves: MoveSlot[] }
   private lastHud = ''
   private restored = false
+  private preRestore: BossState | null = null
   /** Notes already said during the current action (one line per rule per action). */
   private readonly noted = new Set<string>()
   private readonly phaseCount: number
@@ -185,6 +186,8 @@ export class BossDirector {
 
   /** Puts the boss into its opening form without events and scales hp to the boss pool (hp ratio is kept). */
   begin(): void {
+    this.restored = false
+    this.preRestore = null
     const ratio = this.cr.hp / Math.max(1, this.host.plainMaxHp(this.cr))
     this.wear(this.formDef(), false)
     const max = this.host.maxHp(this.cr)
@@ -193,6 +196,9 @@ export class BossDirector {
 
   /** Back to the creature it was before the fight (hp ratio kept), e.g. for a catch or the party save. */
   restore(): void {
+    if (!this.restored) {
+      this.preRestore = this.extract()
+    }
     const max = this.host.maxHp(this.cr)
     const ratio = max > 0 ? this.cr.hp / max : 0
     this.cr.speciesId = this.original.speciesId
@@ -633,6 +639,9 @@ export class BossDirector {
   }
 
   extract(): BossState {
+    if (this.restored && this.preRestore) {
+      return JSON.parse(JSON.stringify(this.preRestore)) as BossState
+    }
     const b = this.host.battler()
     return JSON.parse(JSON.stringify({
       bossId: this.def.id, form: this.core.form, turn: this.host.turn(), formTurn: this.core.formTurn, fired: this.core.fired,
@@ -648,6 +657,8 @@ export class BossDirector {
   /** Writes a state taken with extract() back, including the battle turn counter the boss rules are clocked by. */
   apply(s: BossState): void {
     if (s.bossId !== this.def.id) return
+    this.restored = false
+    this.preRestore = null
     const c = JSON.parse(JSON.stringify(s)) as BossState
     this.core = {
       form: c.form, formTurn: c.formTurn, fired: c.fired, phase: c.phase, meters: c.meters, enrage: c.enrage, charge: c.charge,
