@@ -1,15 +1,22 @@
 // Overworld -> battle glue: builds BattleInit for wild / trainer battles from the world, region and save,
 // plays the encounter transition, runs ctx.battle and applies overworld-side results (trainer flags, badges,
 // stats). Party hp/exp, bag, money and dex are mutated by the battle runner (BattleRunner contract).
-import type { BattleInit, BattleModifiers, BattleSideInit, Creature, FieldWeatherKind, GameMap, NpcDef, TrainerDef } from '../../shared/types.ts'
+import type { BattleInit, BattleModifiers, BattleSideInit, BossReward, Creature, FieldWeatherKind, GameMap, NpcDef, TrainerDef } from '../../shared/types.ts'
 import type { BattleKind, BattleOutcome, GameContext } from '../contracts.ts'
 import type { IRng } from '../../shared/contracts.ts'
+import { t } from '../../shared/content/index.ts'
+import { Rng } from '../../shared/rng.ts'
 import { createCreature, maxHp } from '../../shared/creature.ts'
+import { buildBossInit, createBossCreature } from '../../shared/battle/boss-battle.ts'
+import { partyExpMods } from '../../shared/gameplay/bosscard.ts'
+import { instanceOfBoss, progressOf } from '../../shared/gameplay/instances.ts'
 import { modifierValue, type EventModifiers } from '../../shared/gameplay/events.ts'
 import { regionAt } from '../../shared/world/worldapi.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
 import { GAME } from './config.ts'
 import { battleWeatherFor } from './encounters.ts'
+import { addItem, changeMoney } from './save-ops.ts'
+import { randomSeed } from '../core/rng-hub.ts'
 
 export interface BattleFlowDeps {
   readonly ctx: GameContext
@@ -60,17 +67,25 @@ export function createBattleFlow(deps: BattleFlowDeps) {
 
   const typesOf = (cr: Creature) => ctx.data.species[cr.speciesId]?.types ?? []
 
-  /** World-event multipliers for one battle (type-qualified effects resolved per party slot / foe). */
+  /**
+   * Multipliers for one battle: world events (type-qualified effects resolved per party slot / foe) and the boss-card
+   * rules (teaching bonus, badge cap, exp bank), which apply to every battle the party fights.
+   */
   function battleMods(foe: Creature | null): BattleModifiers | undefined {
     const m = deps.modifiers?.()
-    if (!m?.modifiers.length) return undefined
     const out: BattleModifiers = {}
-    const exp = ctx.save.party.map((cr) => modifierValue(m, 'exp', { types: typesOf(cr) }))
+    const card = partyExpMods(ctx.save.party, ctx.save.badges.length, ctx.data)
+    const event = m?.modifiers.length ? ctx.save.party.map((cr) => modifierValue(m, 'exp', { types: typesOf(cr) })) : null
+    const exp = ctx.save.party.map((_, i) => (event?.[i] ?? 1) * card.expByParty[i])
     if (exp.some((v) => v !== 1)) out.expByParty = exp
-    const catchRate = foe ? modifierValue(m, 'catchRate', { types: typesOf(foe) }) : 1
-    if (catchRate !== 1) out.catchRate = catchRate
-    const friendship = modifierValue(m, 'friendship')
-    if (friendship !== 1) out.friendship = friendship
+    if (card.benchExp.some((v) => v > 0)) out.benchExp = card.benchExp
+    if (card.levelCapByParty.some((v) => v > 0)) { out.levelCapByParty = card.levelCapByParty; out.expCapByParty = card.expCapByParty }
+    if (m?.modifiers.length) {
+      const catchRate = foe ? modifierValue(m, 'catchRate', { types: typesOf(foe) }) : 1
+      if (catchRate !== 1) out.catchRate = catchRate
+      const friendship = modifierValue(m, 'friendship')
+      if (friendship !== 1) out.friendship = friendship
+    }
     return Object.keys(out).length ? out : undefined
   }
 
@@ -197,9 +212,63 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     return outcome
   }
 
+  /** Pays a boss-instance reward (money, items) and says what came in. */
+  function payBossReward(r: BossReward): void {
+    if (r.money && r.money > 0) {
+      changeMoney(ctx, r.money)
+      ctx.ui.toast(t('battle.moneyWon', { amount: r.money, currency: t('common.money') }), 'success')
+    }
+    for (const [itemId, qty] of Object.entries(r.items ?? {})) {
+      if (!addItem(ctx, itemId, qty)) continue
+      ctx.ui.toast(t('battle.lootGot', { item: ctx.data.items[itemId]?.nameZh ?? itemId, qty }), 'success')
+    }
+  }
+
+  /**
+   * One run of a boss instance tier (content/world/instances.json): the run counter moves and is saved before the
+   * fight so the contract roll is fixed from the room's door on; the first win pays the first reward and, when asked,
+   * runs the contract (battle/capture.ts); repeats pay the repeat reward and halve the exp. null: unknown boss / tier.
+   */
+  async function boss(bossId: string, tierId: string, opts: { captureAfterWin?: boolean; assist?: boolean } = {}): Promise<BattleOutcome | null> {
+    const def = ctx.data.bosses[bossId]
+    const tier = def?.tiers?.[tierId]
+    const inst = instanceOfBoss(bossId)
+    const rules = inst?.def.tiers[tierId]
+    if (!def || !tier || !inst || !rules) { console.warn(`[overworld] unknown boss tier "${bossId}:${tierId}"`); return null }
+    const prog = progressOf(ctx.save, inst.id)
+    const first = (prog.clears[tierId] ?? 0) === 0
+    ctx.save.rollSeed ??= randomSeed() >>> 0
+    prog.runSeq += 1
+    ctx.persist('boss-room')
+    await transition()
+    const seed = rng.int(1, 0x7fffffff)
+    const foe = createBossCreature(bossId, tier.level, new Rng(seed ^ 0x5bd1e995), ctx.data)
+    const a = arena()
+    const init = buildBossInit(bossId, ctx.save.party, {
+      seed, tier: tierId, boss: foe, c: ctx.data, expGain: true, playerName: ctx.save.name, ...(ctx.save.avatar ? { playerSprite: ctx.save.avatar } : {}),
+      biome: a.biome, timeOfDay: a.timeOfDay, ...(a.weather ? { weather: a.weather } : {}), ...(opts.assist ? { assist: true } : {}),
+    })
+    if (opts.captureAfterWin && first) init.captureAfterWin = true
+    const mods = battleMods(foe) ?? {}
+    if (!first && rules.repeat.expMul !== 1) mods.expByParty = ctx.save.party.map((_, i) => (mods.expByParty?.[i] ?? 1) * rules.repeat.expMul)
+    if (Object.keys(mods).length) init.mods = mods
+    const outcome = await run(init, { kind: wildKind(foe) })
+    if (outcome.result === 'win') {
+      prog.clears[tierId] = (prog.clears[tierId] ?? 0) + 1
+      ctx.save.flags[GAME.flags.bossWonPrefix + bossId] = true
+      if (first) payBossReward({ money: rules.reward.money, items: rules.firstReward.items })
+      else payBossReward({ money: rules.repeat.money })
+    } else if (outcome.result === 'lose' || outcome.result === 'draw') {
+      prog.losses[tierId] = (prog.losses[tierId] ?? 0) + 1
+    }
+    ctx.persist('boss-run')
+    return outcome
+  }
+
   return {
     wild,
     trainer,
+    boss,
     run,
     get lastOutcome(): BattleOutcome | null { return lastOutcome },
   }

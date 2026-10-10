@@ -1,0 +1,10 @@
+{
+  "id": "ds-boss-story-haiku",
+  "titleKey": "dev.scn.dsBossStoryHaiku",
+  "extends": "ds-boss-story",
+  "party": [
+    {"species": "claude-haiku", "level": 8, "grade": "B"},
+    {"species": "ernie-bot", "level": 6, "grade": "B"},
+    {"species": "phi-3", "level": 5, "grade": "B"}
+  ]
+}

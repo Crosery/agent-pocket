@@ -1,0 +1,1 @@
+{"id": "bosscard-catchup", "titleKey": "dev.scn.bosscardCatchup", "extends": "fresh-start", "rng": 43, "place": "route:route-1:3", "party": [{"species": "o1", "level": 10, "grade": "B"}], "flags": {"starter": true, "tip:battle": true, "tip:bossCard": true}, "bag": {"cache-potion": 5}, "then": [{"cmd": "bosscard.give", "args": {"boss": "deepseek", "level": 1}}], "expect": []}

@@ -17,6 +17,7 @@
 .aps-rv-who { flex: none; width: calc(var(--u) * 84); display: flex; flex-direction: column; align-items: center; min-width: 0; }
 .aps-rv-sprite { width: calc(var(--u) * 64); height: calc(var(--u) * 64); object-fit: contain; image-rendering: pixelated; }
 .aps-rv-name { max-width: 100%; font-size: var(--ap-fs-body); }
+.aps-rv-lvline { display: inline-flex; align-items: center; gap: calc(var(--u) * 4); }
 .aps-rv-lv { font-size: var(--ap-fs-label); color: var(--ap-text-dim); }
 .aps-rv-gradebox { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 3); }
 .aps-rv-letterbox {
@@ -40,6 +41,11 @@
 .aps-rv-row { display: flex; align-items: center; gap: calc(var(--u) * 6); min-height: calc(var(--u) * 14); padding: 0 calc(var(--u) * 4); background: rgba(255, 255, 255, 0.05); }
 .aps-rv-k { flex: none; min-width: calc(var(--u) * 30); font-size: var(--ap-fs-label); color: var(--ap-gold-hi); }
 .aps-rv-v { min-width: 0; font-size: var(--ap-fs-body); }
+/* Boss card: gold frame and a gold-edged signature ability row. */
+.aps-reveal.is-boss .aps-rv-card { box-shadow: 0 0 0 calc(var(--u) * 2) var(--ap-gold-hi), 0 0 calc(var(--u) * 14) rgba(242, 217, 142, 0.55); }
+.aps-rv-row.is-signature { background: rgba(242, 217, 142, 0.14); box-shadow: inset 0 0 0 var(--u) var(--ap-gold-hi); }
+.aps-rv-row.is-signature .aps-rv-v { color: var(--ap-gold-hi); }
+.aps-rv-sig { margin-left: auto; padding: 0 calc(var(--u) * 4); font-size: var(--ap-fs-caption); color: #10131c; background: var(--ap-gold-hi); }
 .aps-rv-natstats { display: inline-flex; gap: calc(var(--u) * 5); margin-left: auto; font-size: var(--ap-fs-label); white-space: nowrap; }
 .aps-rv-natstats .is-up, .aps-rv-arrow.is-up { color: #7be37b; }
 .aps-rv-natstats .is-down, .aps-rv-arrow.is-down { color: #ff7b6b; }

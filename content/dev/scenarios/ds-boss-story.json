@@ -1,0 +1,1 @@
+{"id": "ds-boss-story", "titleKey": "dev.scn.dsBossStory", "extends": "ds-boss-party", "then": [{"cmd": "battle.boss", "args": {"boss": "deepseek", "tier": "story"}}], "expect": [{"path": "/runtime/battle/boss", "eq": "deepseek"}]}

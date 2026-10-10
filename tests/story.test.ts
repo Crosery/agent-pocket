@@ -122,7 +122,7 @@ test('trainers: references, resolved species, levels, sprites', () => {
 
 const KNOWN_OPS = new Set([
   'say', 'choice', 'setFlag', 'ifFlag', 'ifBadges', 'ifItem', 'ifCaught', 'giveItem', 'takeItem', 'giveMoney', 'takeMoney',
-  'giveCreature', 'chooseStarter', 'battle', 'wildBattle', 'heal', 'shop', 'openBox', 'quest', 'warp', 'moveNpc', 'faceNpc',
+  'giveCreature', 'chooseStarter', 'battle', 'bossBattle', 'wildBattle', 'heal', 'shop', 'openBox', 'quest', 'warp', 'moveNpc', 'faceNpc',
   'hideNpc', 'showNpc', 'sfx', 'bgm', 'wait', 'fade', 'unlockTown', 'setRespawn', 'end', 'exchange', 'teach', 'openTypeChart',
 ])
 
@@ -156,6 +156,7 @@ test('scripts are well-formed recursively and every reference resolves', () => {
           if (s.op === 'wildBattle' && s.music) assert.ok(bgm.has(s.music), `${at}: music`)
           break
         case 'battle': assert.ok(world.trainers[s.trainer], `${at}: trainer ${s.trainer}`); break
+        case 'bossBattle': assert.ok(CONTENT.bosses[s.boss]?.tiers?.[s.tier], `${at}: boss tier ${s.boss}:${s.tier}`); break
         case 'shop': assert.ok(s.items.length > 0 && s.items.every((x) => CONTENT.items[x]), `${at}: shop items`); break
         case 'quest': {
           const q = quests.get(s.quest)
@@ -186,7 +187,7 @@ test('no unresolved placeholders or authoring macros reach the World', () => {
 test('flags read by scripts are written somewhere or are client conventions', () => {
   const f = STORY_CONTENT.meta.flags
   const written = new Set(everyStep.filter(({ s }) => s.op === 'setFlag').map(({ s }) => (s as { flag: string }).flag))
-  for (const { s } of everyStep) if (s.op === 'battle' && s.lossFlag) written.add(s.lossFlag)
+  for (const { s } of everyStep) if ((s.op === 'battle' || s.op === 'bossBattle') && s.lossFlag) written.add(s.lossFlag)
   for (const { s } of everyStep) if (s.op === 'teach') written.add(`${TUTORIAL.curriculum.flagPrefix}${s.lesson}`)
   const groundItems = new Set(Object.values(world.maps).flatMap((m) => m.items.map((i) => i.id)))
   const ok = (flag: string) => written.has(flag) || flag === f.starter
@@ -737,4 +738,19 @@ test('resolvePick: filters, level-appropriate stage, determinism and fallbacks',
   assert.equal(resolvePickAvoiding({ types: ['vision'], rarities: ['N'] }, 5, 'k', new Set(['b1']), c), 'c1', 'widens one rarity before repeating')
   assert.equal(resolvePickAvoiding({ types: ['vision'] }, 5, 'k', new Set(['b1', 'c1']), c).length > 0, true)
   assert.throws(() => resolvePick({}, 5, 'k', { ...c, speciesList: [], species: {} }))
+})
+
+test('the simulator terminal stands on its lab anchor, reachable from the door and clear of the starters and the rival', () => {
+  const lab = world.maps['origin-lab']
+  const term = lab.npcs.find((n) => n.id === 'ds-terminal')
+  assert.ok(term, 'ds-terminal is in the lab')
+  const at = (name: string) => worldAnchors(world)[`origin-lab:${name}`]
+  assert.ok(at('terminal'), 'the lab has a terminal anchor')
+  assert.deepEqual([term.x, term.y], [at('terminal').x, at('terminal').y])
+  for (const other of ['starters-front', 'rival', 'professor', 'aide-1', 'aide-2', 'pc-front']) {
+    assert.notDeepEqual([at('terminal').x, at('terminal').y], [at(other).x, at(other).y], other)
+  }
+  const reach = floodReach(lab, buildCollision(lab), lab.spawn.x, lab.spawn.y, false)
+  assert.ok(reach[term.y * lab.width + term.x - 1], 'the player can stand in front of it')
+  assert.ok(term.hiddenUnlessFlag === 'starter' && !term.hiddenIfFlag, 'shown from the moment the partner is chosen, and stays for repeat runs')
 })

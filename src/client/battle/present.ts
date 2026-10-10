@@ -98,7 +98,7 @@ export function createPresenter(env: PresenterEnv): Presenter {
       markSeen(ctx, e.creature.speciesId)
       const bossId = env.init.sides[1].boss
       const opening = bossId && !model.boss ? bossOpeningHud(bossId) : null
-      if (opening) { model.boss = opening; view.setBoss(bossPanelInfo(opening)) }
+      if (opening) { model.boss = opening; view.setBoss(bossPanelInfo(opening, undefined, env.init.bossTier)) }
     } else {
       const p = model.progress[e.partyIndex]
       void panel.setExp(p ? expRatio(growthOf(e.partyIndex), p.level, p.exp) : 0, false)
@@ -310,7 +310,7 @@ export function createPresenter(env: PresenterEnv): Presenter {
       case 'boss': {
         const before = model.boss
         applyEvent(model, e)
-        view.setBoss(bossPanelInfo(e.hud))
+        view.setBoss(bossPanelInfo(e.hud, undefined, env.init.bossTier))
         if (before && e.hud.phase > before.phase) {
           sfx(S.ability)
           view.status[e.side].pulseBoss()

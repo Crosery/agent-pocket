@@ -947,6 +947,8 @@ export type ScriptStep =
   | { op: 'chooseStarter' }
   /** lossContinues: a loss does not black out or abort the script (story-scripted fights); lossFlag records win/loss. */
   | { op: 'battle'; trainer: string; lossContinues?: boolean; lossFlag?: string }
+  /** Boss instance fight: tier of content/bosses.json; captureAfterWin runs the contract on the first clear. Loss flags as 'battle'. */
+  | { op: 'bossBattle'; boss: string; tier: string; captureAfterWin?: boolean; lossContinues?: boolean; lossFlag?: string }
   | { op: 'wildBattle'; species?: string; pick?: SpeciesPick; level: number; music?: string }
   | { op: 'heal' }
   | { op: 'shop'; items: string[] }

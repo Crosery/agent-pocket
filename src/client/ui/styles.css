@@ -652,6 +652,22 @@ html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast-text { di
 }
 .ap-grade.is-light-ink { color: #ffffff; text-shadow: var(--u) var(--u) 0 rgba(0, 0, 0, 0.45); }
 
+/* Boss card marker: a round medal (the grade is a shield, the rarity a rectangle) with a gold ring and a pixel crown. */
+.ap-boss-mark {
+  --bm: calc(var(--u) * 16);
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--bm);
+  height: var(--bm);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 30%, #3a3f63, var(--ap-ink, #05070d) 78%);
+  box-shadow: 0 0 0 var(--u) var(--ap-gold-hi, #f2d98e), 0 0 0 calc(var(--u) * 2) var(--ap-ink, #05070d);
+  vertical-align: middle;
+}
+
 .ap-rarity {
   --rc: #ccc;
   position: relative;

@@ -57,6 +57,7 @@
   "party": {"level": "Lv.{level}", "active": "正在战斗", "fainted": "无法战斗"},
   "forfeit": {"confirm": "真的要认输吗？"},
   "catch": {"newDex": "{name} 的数据已登记到图鉴中！", "newDexToast": "图鉴新增：{name}", "nicknameAsk": "要给 {name} 起个昵称吗？", "nicknamePrompt": "给 {name} 起个昵称吧", "toParty": "{name} 加入了队伍！", "toBox": "{name} 被传送到了第 {box} 号盒子！", "shinyToast": "收服了闪光的 {name}！"},
+  "capture": {"title": "Boss 签约", "rate": "成功率", "rateValue": "{pct}%", "pick": "选择签约用的球", "owned": "×{n}", "gift": "赠送", "sign": "签约", "signed": "签约成功！", "reset": "等级归零，从头成长", "hintKey": "{key} 签约　← → 选球", "hintTouch": "点球选择，再点「签约」", "skipKey": "{key} 继续", "skipTouch": "点任意处继续", "bossTier": "{name}（{tier}）"},
   "learn": {"forgot": "1、2……砰！{name} 忘记了 {old}……", "learned": "然后……{name} 学会了 {move}！", "skipped": "{name} 最终没有学习 {move}。"},
   "evolve": {"start": "咦？{name} 的样子……", "done": "恭喜！{name} 进化成了 {to}！", "donePostTraining": "后训练完成！{name} 进化成了 {to}！", "cancelled": "咦？{name} 停止了进化。", "hint": "按 {key} 键中止进化", "newDexToast": "图鉴新增：{name}"},
   "ability": {"banner": "{name} 的「{ability}」"},

@@ -127,7 +127,7 @@ export function createDecider(env: DecideEnv): Decider {
     const item = CONTENT.items[pick.itemId]
     if (!item) return null
     if (item.effect.kind === 'ball') {
-      if (!env.init.isWild || !env.init.canCatch) { await refuse(t('battleui.bag.cantCatch')); return null }
+      if (!env.init.isWild || !env.init.canCatch) { await refuse(env.init.sides[1].boss && env.init.bossTier ? t('battle.err.cantCatchBoss') : t('battleui.bag.cantCatch')); return null }
       if (!catchPlacement(ctx.save, ctx.data)) { await refuse(t('battleui.bag.noSpace')); return null }
     } else if (!item.usableInBattle) {
       await refuse(t('battleui.bag.cantUse'))

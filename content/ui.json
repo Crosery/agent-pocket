@@ -80,6 +80,7 @@
     "scrollDown": {"rows": ["ooooooo", ".ohggo.", "..ogo..", "...o..."]},
     "diamond": {"rows": ["..o..", ".oho.", "ohhgo", ".ogo.", "..o.."]},
     "coin": {"rows": ["..ooooo..", ".ohhhggo.", "ohgggggdo", "ohgwwwgdo", "ohggwggdo", "ohggwggdo", "ogggggddo", ".ogddddo.", "..ooooo.."]},
+    "crown": {"rows": ["y...y...y", "yy.yyy.yy", "yyhyyyhyy", "yyyyryyyy", "nnnnnnnnn"]},
     "location": {"rows": ["...hhh...", "..hgggh..", ".hgkkkgh.", ".hgkhkgh.", ".hgggggh.", "..hgggh..", "...hgh...", "....h....", "........."]},
     "todDawn": {
       "rows": [".........", "....n....", ".n.....n.", "...yyy...", "..yhhyy..", ".yhyyyyy.", "sssssssss", ".........", "..s...s.."]

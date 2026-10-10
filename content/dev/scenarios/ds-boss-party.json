@@ -1,0 +1,19 @@
+{
+  "id": "ds-boss-party",
+  "titleKey": "dev.scn.dsBossParty",
+  "extends": "fresh-start",
+  "rng": 41,
+  "party": [
+    {"species": "o1", "level": 8, "grade": "B"},
+    {"species": "ernie-bot", "level": 6, "grade": "B"},
+    {"species": "phi-3", "level": 5, "grade": "B"}
+  ],
+  "bag": {"off-peak-coupon": 2, "cache-potion": 5, "prompt-ball": 5, "few-shot-ball": 2},
+  "flags": {"starter": true, "tip:battle": true},
+  "then": [
+    {"cmd": "party.set", "args": {"index": 1, "field": "moves", "value": "token-tackle,web-crawl,morning-greeting,embedding-orb"}}
+  ],
+  "expect": [
+    {"path": "/save/party", "length": 3}
+  ]
+}

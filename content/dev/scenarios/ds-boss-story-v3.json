@@ -1,0 +1,10 @@
+{
+  "id": "ds-boss-story-v3",
+  "titleKey": "dev.scn.dsBossStoryV3",
+  "extends": "ds-boss-story",
+  "party": [
+    {"species": "deepseek-v3", "level": 8, "grade": "B"},
+    {"species": "ernie-bot", "level": 6, "grade": "B"},
+    {"species": "phi-3", "level": 5, "grade": "B"}
+  ]
+}

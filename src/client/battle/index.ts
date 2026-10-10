@@ -7,12 +7,14 @@ import type { BattleOutcome, BattleRunner, GameContext } from '../contracts.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { creatureName, evolve } from '../../shared/creature.ts'
 import { revealIsFull } from '../../shared/gameplay/quality.ts'
+import { instanceOfBoss } from '../../shared/gameplay/instances.ts'
 import { showReveal } from '../ui/reveal.ts'
 import { BattleEngine } from '../../shared/battle/engine.ts'
 import { getMap, regionAt } from '../../shared/world/worldapi.ts'
 import { RULES } from '../../shared/battle/rules.ts'
 import { BATTLE_UI } from './config.ts'
 import { playBossIntro, prefetchBossIntro } from './boss-intro.ts'
+import { contractFlow } from './capture.ts'
 import { createLocalChannel, type LocalChannel } from './channel.ts'
 import { createDecider } from './decide.ts'
 import { playEvolution } from './evolution.ts'
@@ -158,6 +160,12 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
           caught = engine.caught
           stored = true
           await catchFlow(scene, caught)
+        }
+        // A boss instance's first clear ends in the contract (capture.ts), still on the battle stage.
+        if (result === 'win' && init.captureAfterWin && bossId && init.bossTier && engine) {
+          const foe = engine.party(1)[engine.activeIndex(1)] ?? engine.party(1)[0]
+          const chance = instanceOfBoss(bossId)?.def.tiers[init.bossTier]?.capture.first ?? 1
+          if (foe) await contractFlow(ctx, { bossId, tierId: init.bossTier, foe, chance })
         }
         for (const [i, to] of model.evolutions) {
           const cr = ownParty[i]

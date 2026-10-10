@@ -1,0 +1,17 @@
+{
+  "id": "bosscard-follower",
+  "titleKey": "dev.scn.bosscardFollower",
+  "extends": "fresh-start",
+  "rng": 45,
+  "place": "town:origin",
+  "party": [
+    {"species": "o1", "level": 10, "grade": "B"}
+  ],
+  "flags": {"starter": true, "tip:battle": true, "tip:bossCard": true, "tip:bossCapped": true, "tip:move": true, "tip:talk": true},
+  "then": [
+    {"cmd": "bosscard.give", "args": {"boss": "deepseek", "level": 10, "bank": 3, "lead": true}}
+  ],
+  "expect": [
+    {"path": "/save/badges", "length": 0}
+  ]
+}
