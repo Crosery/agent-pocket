@@ -356,6 +356,8 @@ export interface Minimap {
   reveal(x: number, y: number): void
   exploredBits(): Uint8Array | null
   setExpanded(v: boolean): void
+  /** A tap / click on the HUD radar (not on the expanded view, which closes itself). */
+  onTap(fn: () => void): () => void
   setVisible(v: boolean): void
 }
 

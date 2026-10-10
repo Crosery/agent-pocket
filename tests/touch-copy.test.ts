@@ -57,3 +57,9 @@ test('script say lines use the Touch text on touch and the keyboard text otherwi
   assert.deepEqual(await run('keyboard'), [t('game.intro.hint'), t('game.intro.wake', { name: '小明' })])
   assert.deepEqual(await run('gamepad'), [t('game.intro.hint'), t('game.intro.wake', { name: '小明' })])
 })
+
+test('the minimap tip tells a phone to tap the radar, and the enlarged map says how to close', () => {
+  assert.match(t('tutorial.tip.hud.bodyTouch'), /点右上角的小地图可以放大/)
+  assert.match(t('tutorial.manual.hud.bodyTouch'), /点右上角的小地图可以放大/)
+  assert.doesNotMatch(t('hud.minimap.closeTouch'), KEYBOARD_WORDS)
+})

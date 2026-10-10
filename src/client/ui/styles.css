@@ -71,6 +71,12 @@
 html.ap-compact { --mm: var(--ap-minimap-compact-size, 76); }
 /* core/ marks <html data-touch-controls="on"> while the virtual pad is shown; lift bottom UI above it. */
 html[data-touch-controls='on'] { --ap-bottom-inset: var(--ap-touch-inset, 0px); }
+/* A full-screen panel or overlay (anything carrying .ap-fullscreen: every openScreen() root, the reveal card, the enlarged
+   minimap while it is open) owns the whole display on a phone: no overworld pad or chat button above it and no strip
+   reserved for one. Closing (.ap-pushed-out) brings them back. */
+.ap-fullscreen { --ap-bottom-inset: 0px; }
+html:has(.ap-fullscreen:not(.ap-pushed-out)) .ap-touch,
+html[data-touch-controls='on']:has(.ap-fullscreen:not(.ap-pushed-out)) .ap-l-chat { visibility: hidden; }
 
 /* ------------------------------------------------------------------ roots & layers */
 
@@ -516,29 +522,18 @@ html.ap-compact.ap-portrait .ap-toasts {
 html.ap-compact .ap-toasts { top: calc(var(--u) * 116 + env(safe-area-inset-top, 0px)); }
 html.ap-compact.ap-portrait .ap-toast { font-size: calc(var(--u) * 10); }
 /* Over a full-screen screen the stack moves into the title strip, which is empty between the title and the close
-   button; only the newest toast shows there, clamped to two lines. On phones the strip is too narrow, so the stack
-   drops to the bottom-left corner instead, beside the touch buttons. Either way it never covers a list or a pane. */
+   button; only the newest toast shows there, clamped to two lines. A phone has no touch pad (and no strip below the
+   screen) there any more, so it uses the same strip, with narrower margins. It never covers a list or a pane. */
 .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toasts {
   top: calc(var(--u) * 5 + env(safe-area-inset-top, 0px));
   left: 22vw;
   right: 22vw;
   align-items: center;
 }
+html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toasts { left: 34vw; right: 18vw; }
 .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast:not(:last-child) { display: none; }
 .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast { font-size: calc(var(--u) * 10); line-height: 1.15; padding-top: calc(var(--u) * 2); padding-bottom: calc(var(--u) * 3); }
 .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toasts {
-  top: auto;
-  bottom: calc(var(--u) * 8 + env(safe-area-inset-bottom, 0px));
-  left: calc(var(--u) * 10 + env(safe-area-inset-left, 0px));
-  right: auto;
-  width: min(42vw, calc(var(--u) * 190));
-  flex-direction: column-reverse;
-  align-items: flex-start;
-}
-html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast:not(:last-child) { display: flex; }
-html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast { font-size: inherit; line-height: inherit; padding-top: calc(var(--u) * 3); padding-bottom: calc(var(--u) * 4); }
-html.ap-compact .ap-l-kit:has(> .ap-kit-stack > .aps-screen) .ap-toast-text { display: block; -webkit-line-clamp: unset; overflow: visible; }
 .ap-toast {
   --tc: var(--ap-info);
   position: relative;
@@ -1015,6 +1010,8 @@ html.ap-minimap-hidden .ap-net { top: calc(var(--u) * 8 + env(safe-area-inset-to
   transition: opacity 240ms;
 }
 .ap-minimap[hidden] { display: none; }
+/* Tapping the radar enlarges it (the N key on a keyboard); the layer around it stays click-through. */
+.ap-minimap { pointer-events: auto; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .ap-minimap canvas { position: absolute; display: block; }
 .ap-mm-map {
   left: calc(var(--u) * var(--ap-minimap-ring, 4));

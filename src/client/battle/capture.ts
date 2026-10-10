@@ -117,7 +117,7 @@ function contractPanel(ctx: GameContext, a: PanelArgs): Promise<void> {
   }
   const setLevel = (n: number) => { levelEl.textContent = t('screens.common.level', { level: n }) }
 
-  const root = el('div', { class: 'aps-screen aps-contract', attrs: { role: 'dialog', 'aria-modal': 'true', 'aria-label': t('battleui.capture.title') } }, [card.el])
+  const root = el('div', { class: 'aps-screen ap-fullscreen aps-contract', attrs: { role: 'dialog', 'aria-modal': 'true', 'aria-label': t('battleui.capture.title') } }, [card.el])
   root.style.setProperty('--ct-shakes', String(C.shakes))
   root.style.setProperty('--ct-shake-ms', `${C.shakeMs}ms`)
   root.style.setProperty('--ct-flash-ms', `${C.flashMs}ms`)

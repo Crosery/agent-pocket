@@ -421,6 +421,13 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     ui.toast(t('world.anchor.arrive', { place: anchorName(needWorld(), spot) }), 'info')
   }
 
+  /** N on a keyboard, a tap on the radar on a phone: the same toggle, only while the world is free. */
+  const toggleMinimap = (): void => {
+    if (modal || !overworld.free) return
+    minimap.setExpanded(!(minimap as Minimap & { expanded?: boolean }).expanded)
+  }
+  minimap.onTap(toggleMinimap)
+
   function globalKeys(): void {
     if (input.pressed('debug')) { input.consume('debug'); debugOverlay.toggle() }
     if (modal || !overworld.free) return
@@ -439,8 +446,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
       void runModal(async () => { await screens.bag('field') })
     } else if (input.pressed('minimap')) {
       input.consume('minimap')
-      const mm = minimap as Minimap & { expanded?: boolean }
-      minimap.setExpanded(!mm.expanded)
+      toggleMinimap()
     } else if (input.pressed('quickSave')) {
       input.consume('quickSave')
       ctx.persist('quick')
