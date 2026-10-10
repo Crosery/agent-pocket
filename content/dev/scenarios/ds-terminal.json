@@ -1,0 +1,1 @@
+{"id": "ds-terminal", "titleKey": "dev.scn.dsTerminal", "rng": 41, "place": {"map": "origin-lab", "x": 14, "y": 5}, "party": [{"species": "o1", "level": 8, "grade": "B"}], "bag": {"prompt-ball": 5}, "flags": {"starter": true, "tip:move": true, "tip:talk": true}, "expect": [{"path": "/save/position/map", "eq": "origin-lab"}]}

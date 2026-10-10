@@ -1207,6 +1207,7 @@ class StoryBuilder implements PopHost {
               if (s.op === 'wildBattle' && s.music && !bgm.has(s.music)) bad(`unknown music "${s.music}"`)
               break
             case 'battle': if (!w.trainers[s.trainer]) bad(`unknown trainer "${s.trainer}"`); break
+            case 'bossBattle': if (!CONTENT.bosses[s.boss]?.tiers?.[s.tier]) bad(`unknown boss tier "${s.boss}:${s.tier}"`); break
             case 'shop': if (!Array.isArray(s.items) || !s.items.length) bad('empty shop'); else s.items.forEach(item); break
             case 'quest': {
               const q = quests.get(s.quest)

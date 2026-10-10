@@ -1,0 +1,1 @@
+{"id": "ds-capture", "titleKey": "dev.scn.dsCapture", "extends": "ds-boss-party", "then": [{"cmd": "capture.force", "args": {"boss": "deepseek", "tier": "story", "result": "success"}}]}

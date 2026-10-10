@@ -13,6 +13,8 @@ export interface Cond {
   maxBadges?: number
   minParty?: number
   maxParty?: number
+  /** Some boss card in the party holds at least this many banked levels (exp past its badge cap). */
+  minBossBank?: number
   minStat?: Record<string, number>
   maxStat?: Record<string, number>
   /** Every listed item is in the bag. */
@@ -133,7 +135,7 @@ export const TIP_FLAG_PREFIX = 'tip:'
 /** Placeholders that render as key caps ({confirm} -> Z / A / ...) plus {move}. */
 export const KEY_PLACEHOLDERS = ['confirm', 'cancel', 'menu', 'run', 'map', 'minimap', 'chat', 'bike', 'quickSave'] as const
 
-const COND_KEYS = new Set(['flag', 'noFlag', 'minBadges', 'maxBadges', 'minParty', 'maxParty', 'minStat', 'maxStat', 'hasItem', 'hasCategory', 'timeOfDay'])
+const COND_KEYS = new Set(['flag', 'noFlag', 'minBadges', 'maxBadges', 'minParty', 'maxParty', 'minBossBank', 'minStat', 'maxStat', 'hasItem', 'hasCategory', 'timeOfDay'])
 
 export function validateTutorial(world: World, anchors: Record<string, unknown>, cfg: TutorialConfig = TUTORIAL): string[] {
   const errs: string[] = []

@@ -1,5 +1,5 @@
 // Typed view of content/game.json (overworld + integration tunables) and its validation against CONTENT.
-import type { Dir, FieldWeatherKind, GameMap, ScriptStep } from '../../shared/types.ts'
+import type { Dir, FieldWeatherKind, GameMap, ScriptStep, TimeOfDay } from '../../shared/types.ts'
 import type { WorldFx } from '../contracts.ts'
 import { CONTENT, t, type Content } from '../../shared/content/index.ts'
 import gameJson from '../../../content/game.json' with { type: 'json' }
@@ -57,6 +57,8 @@ export interface GameTuning {
     teleportDistance: number; moveMinSpeed: number; flipMinSpeed: number
     mapKinds: MapKind[]; interactRadius: number; fx: WorldFx; cryPitch: number
     tiredBelow: number
+    /** Times of day a boss-card follower speaks its off-peak (night) line: boss.<id>.follow.night; otherwise .day. */
+    bossNightTimes: TimeOfDay[]
     /** Map kinds where indoorMaxSize applies. */
     sizeCapMapKinds: MapKind[]
   }

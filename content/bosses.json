@@ -138,7 +138,30 @@
       "gates": [],
       "catchRateMul": 0.6,
       "reward": {"money": 7000, "items": {"chip-weight-drop": 1, "token-max": 2}},
-      "enrage": {"turn": 24, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.deepseek.enrageWarn", "start": "boss.deepseek.enrageStart", "tick": "boss.deepseek.enrageTick"}
+      "enrage": {"turn": 24, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.deepseek.enrageWarn", "start": "boss.deepseek.enrageStart", "tick": "boss.deepseek.enrageTick"},
+      "tiers": {
+        "story": {
+          "level": 12,
+          "expMul": 2.0,
+          "statMul": {"hp": 2.5, "atk": 0.3, "spa": 0.3},
+          "byStarter": {"deepseek-v3": {"statMul": {"hp": 1.6}}},
+          "moves": ["distill-strike", "deductive-slash", "quick-deduce", "weight-drop"],
+          "pattern": [
+            {"move": "distill-strike", "weight": 34},
+            {"move": "deductive-slash", "weight": 34},
+            {"move": "quick-deduce", "weight": 22},
+            {"move": "weight-drop", "weight": 10}
+          ],
+          "rules": {"peak": {"dealtMul": 1.0, "takenMul": 0.15}, "valley": {"dealtMul": 0.5, "takenMul": 3.0}},
+          "addRules": [
+            {"id": "family", "if": {"foeCompany": ["DeepSeek"]}, "dealtMul": 0.6, "takenMul": [{"mul": 4.0, "note": "boss.deepseek.family.hitByKin"}]}
+          ],
+          "residualMul": 0.4,
+          "enrage": {"turn": 18, "warnBefore": 3},
+          "assist": {"statMul": {"hp": 1.8, "atk": 0.2, "spa": 0.2}, "rules": {"peak": {"takenMul": 0.3}}, "byStarter": {"deepseek-v3": {"statMul": {"hp": 1.3}}}}
+        }
+      },
+      "signature": {"ability": "peak-valley", "move": "weight-drop"}
     },
     "kimi": {
       "species": "kimi-k3",

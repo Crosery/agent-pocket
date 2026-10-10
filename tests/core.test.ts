@@ -4,6 +4,7 @@ import { CONTENT, t, timeOfDayAt } from '../src/shared/content/index.ts'
 import type { GameMap, SaveData, World } from '../src/shared/types.ts'
 import type { InputAction } from '../src/client/contracts.ts'
 import { createCreature } from '../src/shared/creature.ts'
+import { GAMEPLAY } from '../src/shared/gameplay/data.ts'
 import { Rng } from '../src/shared/rng.ts'
 import { createEventBus } from '../src/client/core/events.ts'
 import { createClock, formatClock } from '../src/client/core/clock.ts'
@@ -155,6 +156,43 @@ test('save write / load round-trip through storage', () => {
   assert.equal(saves.load(3), null)
   storage.map.set(`${CONTENT.config.save.storagePrefix}1`, '{not json')
   assert.equal(saves.load(1), null)
+})
+
+test('save: rollSeed is drawn for a new game, kept by a round trip and drawn once for a save that lacks it', () => {
+  const storage = memoryStorage()
+  const saves = manager(storage)
+  const save = saves.newGame({ name: '测试', avatar: '' })
+  assert.ok(Number.isInteger(save.rollSeed) && save.rollSeed! >= 0 && save.rollSeed! <= 0xffffffff)
+  saves.write(save)
+  assert.equal(saves.load()!.rollSeed, save.rollSeed, 'a reload keeps the seed')
+  assert.equal(saves.load()!.rollSeed, save.rollSeed)
+
+  const old = JSON.parse(JSON.stringify(save)) as Record<string, unknown>
+  delete old.rollSeed
+  delete old.instances
+  const fixed = saves.sanitize(old)!
+  assert.ok(Number.isInteger(fixed.rollSeed) && fixed.rollSeed! >= 0 && fixed.rollSeed! <= 0xffffffff, 'an old save gets a uint32 seed')
+  assert.deepEqual(fixed.instances, {})
+  for (const bad of [-1, 1.5, 2 ** 32, 'x', null]) {
+    const r = saves.sanitize({ ...old, rollSeed: bad })!
+    assert.ok(Number.isInteger(r.rollSeed) && r.rollSeed! >= 0 && r.rollSeed! <= 0xffffffff, `rollSeed ${String(bad)} is replaced`)
+  }
+})
+
+test('save: instance progress is cleaned to known ids and non-negative integers', () => {
+  const saves = manager()
+  const base = JSON.parse(JSON.stringify(saves.newGame({ name: 'ok', avatar: '' }))) as Record<string, unknown>
+  const id = Object.keys(GAMEPLAY.instances)[0]
+  const out = saves.sanitize({
+    ...base,
+    instances: {
+      [id]: { clears: { story: 2.9, 'bad key!': 4, hard: -3 }, captures: { story: 'x' }, runSeq: 7.2, losses: { story: Infinity }, extra: 1 },
+      'no-such-instance': { clears: { story: 1 } },
+      other: 'junk',
+    },
+  })!
+  assert.deepEqual(out.instances, { [id]: { clears: { story: 2, hard: 0 }, captures: { story: 0 }, runSeq: 7, losses: { story: 0 } } })
+  assert.deepEqual(saves.sanitize({ ...base, instances: 'nope' })!.instances, {})
 })
 
 test('write reports storage failures', () => {

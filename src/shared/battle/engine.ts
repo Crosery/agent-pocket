@@ -17,6 +17,7 @@ import {
 import { fill, msgEvent, perspective, type Render } from './messages.ts'
 import { chooseAiAction, chooseAiReplacement, type AiIntrospection } from './ai.ts'
 import { BOSS_SIDE, BossDirector, type BossHost } from './boss.ts'
+import { resolveBossDef } from './boss-tier.ts'
 
 export { perspective }
 
@@ -307,7 +308,9 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
 
   private attachBoss(): void {
     const id = this.sides[BOSS_SIDE].init.boss
-    const def = id ? this.c.bosses[id] : undefined
+    const base = id ? this.c.bosses[id] : undefined
+    // A tier fight folds its numbers into a plain definition; the lead creature of the player picks the byStarter layer.
+    const def = base ? resolveBossDef(base, this.init.bossTier, { starter: this.sides[0].party[0]?.speciesId, assist: this.init.assist }) : undefined
     const cr = def ? this.sides[BOSS_SIDE].party.find((x) => x.speciesId === def.species) : undefined
     if (!def || !cr) return
     this.boss = new BossDirector(def, cr, this.bossHost())
@@ -507,6 +510,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     const bad = this.err('itemNoTarget')
     switch (e.kind) {
       case 'ball':
+        if (s === 0 && this.init.isWild && !this.init.canCatch && this.sides[1].init.boss) return this.err('cantCatchBoss')
         return s === 0 && this.init.isWild && this.init.canCatch && this.act(1).hp > 0 ? null : this.err('cantCatch')
       case 'heal':
         return cr.hp > 0 && cr.hp < max ? null : bad
@@ -609,7 +613,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     if (!a || a.kind !== 'move') return 0
     if (a.struggle) return RULES.struggle.priority
     const def = this.c.moves[this.act(s).moves[a.moveIndex]?.id ?? '']
-    return def ? priorityOf(this.fighter(s), def, this.weatherId, this.c) : 0
+    return def ? priorityOf(this.fighter(s), def, this.weatherId, this.c, this.turnNo) : 0
   }
 
   // ------------------------------------------------------------------ moves
@@ -718,7 +722,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
       if (!this.rng.chance(def.selfHitChance)) continue
       const f = this.fighter(s)
       const dmg = computeDamage(f, f, { power: this.c.config.battle.confusionSelfHitPower, category: 'physical', type: null, plain: true },
-        this.weatherId, { crit: false, random: this.rollRandom() }, this.c).damage
+        this.weatherId, { crit: false, random: this.rollRandom() }, this.c, this.turnNo).damage
       this.hurt(s, dmg)
       this.say(this.flavor('volatileText', id, 'selfHit', 'battle.volatileSelfHit'), { name: this.nameRef(s), volatile: def.nameZh })
       return false
@@ -809,6 +813,9 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     return forced === undefined ? random : forced === 'min' ? b.randomMin : b.randomMax
   }
 
+  /** Tier scale of lingering damage on the boss side (1 for everyone else). */
+  private residualMul(s: SideIndex): number { return s === BOSS_SIDE && this.boss ? this.boss.residualMul() : 1 }
+
   private fraction(max: number, frac: number): number {
     return Math.max(RULES.minHpChange, Math.floor(max * frac))
   }
@@ -840,7 +847,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
         crit = this.rng.chance(critChance(att, highCrit, this.c))
         if (this.init.debug?.rolls?.crit !== undefined) crit = this.init.debug.rolls.crit === 'always'
         const r = computeDamage(att, def, { power: move.power, category: move.category === 'special' ? 'special' : 'physical', type },
-          this.weatherId, { crit, random: this.rollRandom() }, this.c)
+          this.weatherId, { crit, random: this.rollRandom() }, this.c, this.turnNo)
         dmg = r.damage
         for (const tr of r.triggered) {
           const key = `${tr.by}:${tr.abilityId}`
@@ -861,7 +868,7 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     const mctx = { type, category: move.category, effectiveness: eff }
     if (target.hp > 0 && dealt > 0) {
       for (const e of effectsOn(target, 'afterHitBy', this.c)) {
-        if (!condHolds(e.if, this.fighter(f), mctx, this.weatherId, this.c)) continue
+        if (!condHolds(e.if, this.fighter(f), mctx, this.weatherId, this.c, this.turnNo)) continue
         this.abilityTriggered(f)
         this.applyStats(f, e.stats, f, false)
       }
@@ -1404,13 +1411,13 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
       for (const id of [...b.volatiles.keys()]) {
         const def = this.c.volatileById[id]
         if (!def?.drainFraction || cr.hp <= 0) continue
-        const lost = this.hurt(s, this.fraction(this.maxHpOf(cr), def.drainFraction))
+        const lost = this.hurt(s, this.fraction(this.maxHpOf(cr), def.drainFraction * this.residualMul(s)))
         this.say(this.flavor('volatileText', id, 'drain', 'battle.volatileDrain'), { name: this.nameRef(s), volatile: def.nameZh })
         if (lost > 0) this.heal(other(s), lost)
       }
       const st = cr.status ? this.c.statusById[cr.status] : undefined
       if (st?.dotFraction && cr.hp > 0) {
-        this.hurt(s, this.fraction(this.maxHpOf(cr), st.dotFraction))
+        this.hurt(s, this.fraction(this.maxHpOf(cr), st.dotFraction * this.residualMul(s)))
         this.say(this.flavor('statusText', st.id, 'dot', 'battle.statusDot'), { name: this.nameRef(s), status: st.nameZh })
       }
       if (cr.hp > 0) this.turnEndAbilities(s)
@@ -1514,12 +1521,16 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     const total = Math.floor(expYield(defeated, this.sides[1].init.kind === 'trainer', this.c) * (this.boss?.cr === defeated ? this.boss.expMul() : 1))
     const each = Math.max(1, Math.floor(total / parts.length))
     const mods = this.init.mods
-    for (const i of parts.sort((a, b) => a - b)) {
+    const grant = (i: number, gain: number): void => {
       const cr = me.party[i]
       const name = creatureName(cr, this.c)
-      const mul = mods?.expByParty?.[i] ?? 1
-      const gain = mul === 1 ? each : Math.max(1, Math.round(each * mul))
-      const r = gainExp(cr, gain, this.c)
+      const lvCap = mods?.levelCapByParty?.[i]
+      const xpCap = mods?.expCapByParty?.[i]
+      const caps = lvCap || xpCap ? { ...(lvCap ? { levelCap: lvCap } : {}), ...(xpCap ? { expCap: xpCap } : {}) } : undefined
+      const expBefore = cr.exp
+      const r = gainExp(cr, gain, this.c, caps)
+      // A boss card whose bank is full takes nothing: no "gained exp" line for it.
+      if (caps && cr.exp === expBefore) return
       const fmul = mods?.friendship ?? 1
       if (fmul !== 1 && r.levels.length) {
         const extra = Math.round(this.c.config.creature.levelUpFriendship * (fmul - 1)) * r.levels.length
@@ -1540,6 +1551,20 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
       for (const moveId of r.learnable) {
         this.emit({ t: 'moveLearnable', partyIndex: i, moveId })
         this.say('battle.wantsToLearn', { name, move: this.c.moves[moveId]?.nameZh ?? moveId, max: this.c.config.party.maxMoves })
+      }
+    }
+    const fighters = parts.sort((a, b) => a - b)
+    for (const i of fighters) {
+      const mul = mods?.expByParty?.[i] ?? 1
+      grant(i, mul === 1 ? each : Math.max(1, Math.round(each * mul)))
+    }
+    // Teaching bonus: a living member that sat out still earns a share (boss cards, gameplay/bosscard.ts).
+    const bench = mods?.benchExp
+    if (bench) {
+      for (let i = 0; i < me.party.length; i++) {
+        const share = bench[i] ?? 0
+        if (!(share > 0) || fighters.includes(i) || !(me.party[i].hp > 0) || me.party[i].level >= this.c.config.party.maxLevel) continue
+        grant(i, Math.max(1, Math.round(each * share)))
       }
     }
   }

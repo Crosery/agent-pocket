@@ -265,6 +265,49 @@ export function validateGameplay(g: GameplayData, c: Content): string[] {
     if (i > 0 && !(lv.points > R.levels[i - 1].points)) errs.push(`research.levels[${i}]: points must increase`)
     for (const id of Object.keys(lv.reward?.items ?? {})) item(`research.levels[${i}]`, id)
   })
+  errs.push(...validateInstances(g, c))
+  return errs
+}
+
+/** content/world/instances.json and the boss-contract numbers of content/quality.json. */
+function validateInstances(g: GameplayData, c: Content): string[] {
+  const errs: string[] = []
+  const q = c.quality
+  const grades = new Set(q.grades.map((x) => x.id))
+  const item = (where: string, id: string) => { if (!c.items[id]) errs.push(`${where}: unknown item "${id}"`) }
+  for (const [id, n] of Object.entries(q.capture.ballBonus)) {
+    if (c.items[id]?.effect.kind !== 'ball') errs.push(`quality.capture.ballBonus: "${id}" is not a ball`)
+    if (!(n >= 0 && n <= 1)) errs.push(`quality.capture.ballBonus.${id}: must be within [0, 1]`)
+  }
+  if (c.items[q.capture.masterBall]?.effect.kind !== 'ball') errs.push(`quality.capture.masterBall: "${q.capture.masterBall}" is not a ball`)
+  if (!(q.capture.roamingBase > 0 && q.capture.roamingBase <= 1)) errs.push('quality.capture.roamingBase: must be within (0, 1]')
+  const bc = q.bossCard
+  if (!(bc.startLevel >= 1)) errs.push('quality.bossCard.startLevel: must be >= 1')
+  if (!bc.capByBadges.length || bc.capByBadges.some((v, i) => !(v >= 1) || (i > 0 && v < bc.capByBadges[i - 1]))) errs.push('quality.bossCard.capByBadges: must be positive and non-decreasing')
+  if (!(bc.bankMaxLevels >= 0)) errs.push('quality.bossCard.bankMaxLevels: must be >= 0')
+  if (!(bc.catchUp.perLevel >= 0 && bc.catchUp.max >= 1 && bc.catchUp.benchShare >= 0 && bc.catchUp.benchShare <= 1)) errs.push('quality.bossCard.catchUp: perLevel >= 0, max >= 1, benchShare within [0, 1]')
+
+  for (const [id, inst] of Object.entries(g.instances)) {
+    const w = `instance ${id}`
+    const boss = c.bosses[inst.boss]
+    if (!boss) { errs.push(`${w}: unknown boss "${inst.boss}"`); continue }
+    if (!(inst.name in c.text)) errs.push(`${w}: missing text "${inst.name}"`)
+    for (const [tid, t] of Object.entries(inst.tiers)) {
+      const tw = `${w}.tier.${tid}`
+      if (!boss.tiers?.[tid]) errs.push(`${tw}: boss "${inst.boss}" has no tier "${tid}"`)
+      const cap = t.capture
+      if (!(cap.first >= 0 && cap.first <= 1)) errs.push(`${tw}.capture.first: must be within [0, 1]`)
+      if (!(cap.perfectIvs >= 0 && cap.perfectIvs <= 6)) errs.push(`${tw}.capture.perfectIvs: must be 0..6`)
+      if (!(cap.ivMin >= 0 && cap.ivMin <= c.config.creature.ivMax)) errs.push(`${tw}.capture.ivMin: must be 0..${c.config.creature.ivMax}`)
+      if (!grades.has(cap.firstGradeFloor)) errs.push(`${tw}.capture.firstGradeFloor: unknown grade "${cap.firstGradeFloor}"`)
+      if (cap.firstAbility === 'signature' && !boss.signature?.ability) errs.push(`${tw}.capture.firstAbility: boss has no signature ability`)
+      const weights = Object.entries(cap.ability)
+      if (!weights.length || weights.some(([k, v]) => !(v >= 0) || !/^(signature|slot\d+)$/.test(k)) || !weights.some(([, v]) => v > 0)) errs.push(`${tw}.capture.ability: weights keyed signature / slotN, at least one above 0`)
+      if (cap.ability.signature && !boss.signature?.ability) errs.push(`${tw}.capture.ability: signature weight without a signature ability`)
+      for (const [where, r] of [['reward', t.reward], ['firstReward', t.firstReward]] as const) for (const it of Object.keys(r.items ?? {})) item(`${tw}.${where}`, it)
+      if (!(t.repeat.expMul > 0)) errs.push(`${tw}.repeat.expMul: must be > 0`)
+    }
+  }
   return errs
 }
 

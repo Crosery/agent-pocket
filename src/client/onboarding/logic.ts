@@ -1,6 +1,7 @@
 // Pure onboarding logic: condition evaluation, objective selection, arrow target resolution, tip eligibility.
 import type { BattleEvent, GameMap, QuestDef, SaveData, World } from '../../shared/types.ts'
 import { CONTENT } from '../../shared/content/index.ts'
+import { bankLevels } from '../../shared/gameplay/bosscard.ts'
 import { TIP_FLAG_PREFIX, TUTORIAL, type Cond, type LessonDef, type Matcher, type ObjectiveRule, type TipDef, type TutorialConfig } from './config.ts'
 
 const truthy = (v: boolean | number | string | undefined) => v !== undefined && v !== false && v !== 0 && v !== ''
@@ -22,6 +23,7 @@ export function condHolds(c: Cond | undefined, s: ProgressView, live: LiveView =
   if (c.maxBadges !== undefined && s.badges.length > c.maxBadges) return false
   if (c.minParty !== undefined && s.party.length < c.minParty) return false
   if (c.maxParty !== undefined && s.party.length > c.maxParty) return false
+  if (c.minBossBank !== undefined && !s.party.some((cr) => bankLevels(cr) >= c.minBossBank!)) return false
   const stat = (k: string) => (s.stats as unknown as Record<string, number>)[k] ?? 0
   for (const [k, n] of Object.entries(c.minStat ?? {})) if (stat(k) < n) return false
   for (const [k, n] of Object.entries(c.maxStat ?? {})) if (stat(k) > n) return false

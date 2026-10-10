@@ -3,7 +3,9 @@
 import type { Creature, ItemDef, KeyItemKind, QuestDef, SaveData } from '../../shared/types.ts'
 import type { GameContext } from '../contracts.ts'
 import { CONTENT, t, type Content } from '../../shared/content/index.ts'
-import { healFull } from '../../shared/creature.ts'
+import { creatureName, healFull } from '../../shared/creature.ts'
+import { bossCardCap, isBossCard, settleBank } from '../../shared/gameplay/bosscard.ts'
+import { BATTLE_UI } from '../battle/config.ts'
 
 export function truthy(v: boolean | number | string | undefined): boolean {
   return v !== undefined && v !== false && v !== 0 && v !== ''
@@ -71,6 +73,40 @@ export function addCreature(ctx: GameContext, cr: Creature): Placement {
   markCaught(ctx, cr.speciesId)
   if (cr.shiny) ctx.save.stats.shiniesFound += 1
   return { where: 'box', box }
+}
+
+/**
+ * Pays every boss card's exp bank under the cap the current badge count allows ("算力许可升级"): a toast per card that
+ * levelled and, for party members, a pick for each move it could not fit. Returns the cards that levelled.
+ */
+export async function settleBossCards(ctx: GameContext): Promise<Creature[]> {
+  const cap = bossCardCap(ctx.save.badges.length, ctx.data)
+  const levelled: Creature[] = []
+  const inParty = new Set(ctx.save.party)
+  for (const cr of [...ctx.save.party, ...ctx.save.boxes.flat()]) {
+    if (!isBossCard(cr)) continue
+    const r = settleBank(cr, cap, ctx.data)
+    if (r.to === r.from) continue
+    levelled.push(cr)
+    ctx.audio.playSfx(BATTLE_UI.sfx.levelUp)
+    ctx.ui.toast(t('hud.license.up', { name: creatureName(cr), from: r.from, to: r.to }), 'success')
+    if (!inParty.has(cr)) continue
+    for (const moveId of r.learnable) {
+      const move = ctx.data.moves[moveId]
+      if (!move || cr.moves.some((m) => m.id === moveId)) continue
+      const slot = await ctx.screens.learnMove(cr, moveId)
+      if (slot < 0 || slot > cr.moves.length) continue
+      const entry = { id: moveId, pp: move.pp, ppMax: move.pp }
+      if (slot === cr.moves.length) cr.moves.push(entry)
+      else cr.moves[slot] = entry
+      ctx.ui.toast(t('hud.license.learned', { name: creatureName(cr) }), 'success')
+    }
+  }
+  if (levelled.length) {
+    ctx.events.emit('party:changed', {})
+    ctx.persist('license')
+  }
+  return levelled
 }
 
 export function healParty(ctx: GameContext): void {

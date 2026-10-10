@@ -134,7 +134,7 @@ html.ap-compact .aps-head { min-height: calc(var(--u) * 22); }
 }
 .aps-tag.is-ok { color: var(--ap-success); border-color: rgba(130, 224, 140, 0.55); }
 .aps-tag.is-bad { color: var(--ap-error); border-color: rgba(255, 107, 91, 0.55); }
-.aps-tag.is-main { color: var(--ap-gold-hi); border-color: var(--ap-gold); }
+.aps-tag.is-main, .aps-tag.is-bank { color: var(--ap-gold-hi); border-color: var(--ap-gold); }
 .aps-empty { padding: calc(var(--u) * 12) calc(var(--u) * 8); color: var(--ap-text-dim); text-align: center; white-space: normal; }
 .aps-meter { display: inline-flex; gap: var(--u); align-items: center; }
 .aps-money { display: inline-flex; align-items: center; gap: calc(var(--u) * 4); color: var(--ap-gold-hi); font-variant-numeric: tabular-nums; white-space: nowrap; }

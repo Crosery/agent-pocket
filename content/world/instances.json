@@ -1,0 +1,16 @@
+{
+  "instances": {
+    "deepseek-tide": {
+      "boss": "deepseek",
+      "name": "boss.deepseek.instance.name",
+      "tiers": {
+        "story": {
+          "capture": {"first": 1, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.4, "slot0": 0.4, "slot1": 0.2}},
+          "reward": {"money": 1200},
+          "firstReward": {"items": {"off-peak-coupon": 2, "chip-weight-drop": 1}},
+          "repeat": {"expMul": 0.5, "money": 300, "capture": false}
+        }
+      }
+    }
+  }
+}

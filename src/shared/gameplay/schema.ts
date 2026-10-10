@@ -1,6 +1,6 @@
 // Content schemas for the gameplay layer (content/events/**, content/research.json). Types only — the data is
 // loaded by ./data.ts and validated by ./validate.ts (hooked into validateContent()).
-import type { BiomeId, EventCondition, FieldWeatherKind, ResearchFile, TimeOfDay, TypeId, WorldEventDef } from '../types.ts'
+import type { BiomeId, EventCondition, FieldWeatherKind, InstanceDef, ResearchFile, TimeOfDay, TypeId, WorldEventDef } from '../types.ts'
 
 export interface SchedulerRules {
   /** The scheduler rolls once per slot of this many in-game minutes (eventSlot()). */
@@ -158,4 +158,6 @@ export interface GameplayData {
   chains: MythicChainDef[]
   chainById: Record<string, MythicChainDef>
   research: ResearchFile
+  /** Boss instances by id (content/world/instances.json). */
+  instances: Record<string, InstanceDef>
 }

@@ -40,9 +40,9 @@ const REQUEST_SECONDS = (netJson as unknown as { server: { tradeRequestSeconds: 
 // Pure rules (Node-testable)
 // ---------------------------------------------------------------------------
 
-/** A creature may be offered only if the party keeps at least one other creature able to battle. */
+/** A creature may be offered only if the party keeps at least one other creature able to battle; a signed boss card is bound to its trainer. */
 export function canOffer(party: readonly Creature[], cr: Creature): boolean {
-  return party.includes(cr) && party.some((o) => o !== cr && o.hp > 0)
+  return cr.origin?.kind !== 'boss' && party.includes(cr) && party.some((o) => o !== cr && o.hp > 0)
 }
 
 export function offerableIndices(party: readonly Creature[]): number[] {
@@ -524,7 +524,7 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
         } finally { picking = false }
         if (closed || completed || idx < 0) return
         const cr = ctx.save.party[idx]
-        if (!cr || !canOffer(ctx.save.party, cr)) { ctx.ui.toast(t('multiplayer.trade.notOfferable'), 'warn'); return }
+        if (!cr || !canOffer(ctx.save.party, cr)) { ctx.ui.toast(cr?.origin?.kind === 'boss' ? t('net.trade.boundBoss') : t('multiplayer.trade.notOfferable'), 'warn'); return }
         ctx.net.send({ t: 'trade.offer', tradeId, creature: structuredClone(cr) })
         return
       }

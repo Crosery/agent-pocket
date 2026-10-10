@@ -11,7 +11,7 @@ import { ivStars } from './screens/logic.ts'
 import { meterIcons } from './screens/base.ts'
 import { creatureImg } from './screens/sprites.ts'
 import { UI_CONFIG } from './config.ts'
-import { actionKeyLabel, el, gradeChip, panel } from './widgets.ts'
+import { actionKeyLabel, bossMark, el, gradeChip, panel } from './widgets.ts'
 import { appraisalText, gradeNick, natureName, natureStats } from './quality-text.ts'
 import './reveal.css'
 
@@ -64,6 +64,9 @@ function fullCard(ctx: GameContext, cr: Creature, grade: GradeDef): Promise<void
   const best = bestStat(cr.ivs)
   const arrows = natureArrows(cr.nature)
   const ability = CONTENT.abilities[cr.abilityId]
+  // A signed boss card: gold frame, the crown medal, and its signature ability set apart.
+  const bossDef = cr.origin?.kind === 'boss' && cr.origin.boss ? CONTENT.bosses[cr.origin.boss] : undefined
+  const signature = !!bossDef && bossDef.signature?.ability === cr.abilityId
   const touch = ctx.input.lastDevice === 'touch'
 
   const nowIndex = Q.grades.findIndex((x) => x.id === grade.id)
@@ -85,13 +88,13 @@ function fullCard(ctx: GameContext, cr: Creature, grade: GradeDef): Promise<void
       meterIcons(ivStars(cr.ivs[k] ?? 0, ivMax, SCREENS.summary.ivStars), SCREENS.summary.ivStars, 'star', 'starOff'),
     ])
   }))
-  const card = panel(t('screens.quality.reveal.title'), { className: 'aps-rv-card' })
+  const card = panel(t(bossDef ? 'screens.quality.reveal.bossTitle' : 'screens.quality.reveal.title'), { className: 'aps-rv-card' })
   card.body.append(
     el('div', 'aps-rv-top', [
       el('div', 'aps-rv-who', [
         creatureImg(ctx.assets, cr.speciesId, { shiny: cr.shiny, className: 'aps-rv-sprite' }),
         el('div', { class: 'aps-rv-name ap-model-name', text: creatureName(cr), title: creatureName(cr) }),
-        el('div', { class: 'aps-rv-lv', text: t('screens.common.level', { level: cr.level }) }),
+        el('div', 'aps-rv-lvline', [bossDef ? bossMark() : null, el('span', { class: 'aps-rv-lv', text: t('screens.common.level', { level: cr.level }) })]),
       ]),
       el('div', 'aps-rv-gradebox', [
         el('div', { class: 'aps-rv-letterbox', vars: { '--gc': grade.color } }, [letter]),
@@ -102,9 +105,10 @@ function fullCard(ctx: GameContext, cr: Creature, grade: GradeDef): Promise<void
     ]),
     el('div', 'aps-rv-rows', [
       el('div', 'aps-rv-row', [el('span', { class: 'aps-rv-k', text: t('screens.quality.summary.nature') }), ...natureBadge(cr.nature)]),
-      el('div', 'aps-rv-row', [
+      el('div', { class: `aps-rv-row${signature ? ' is-signature' : ''}` }, [
         el('span', { class: 'aps-rv-k', text: t('screens.summary.ability') }),
         el('span', { class: 'aps-rv-v', text: ability?.nameZh ?? t('screens.common.dash') }),
+        signature ? el('span', { class: 'aps-rv-sig', text: t('screens.quality.reveal.signature') }) : null,
       ]),
     ]),
     stats,
@@ -114,6 +118,7 @@ function fullCard(ctx: GameContext, cr: Creature, grade: GradeDef): Promise<void
   return new Promise<void>((resolve) => {
     const root = el('div', { class: 'aps-screen aps-reveal', attrs: { role: 'dialog', 'aria-modal': 'true', 'aria-label': t('screens.quality.reveal.title') } }, [card.el])
     root.dataset.grade = grade.id
+    root.classList.toggle('is-boss', !!bossDef)
     let closed = false
     let timer = 0
     const close = () => {

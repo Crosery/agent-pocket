@@ -7,6 +7,7 @@
 //   solo     1v1 tables: rarity ladder, type power, value of a type edge
 //   ttk      hits-to-KO bands by matchup class
 //   curve    exp curve, trainer/gym level curve, economy
+//   bosscard a boss card at its badge cap, alone against the next gym (docs/design/0003)
 //   all      everything except the slow ones (matrix, solo)
 import { RULES, pct, table } from './lib.ts'
 import * as types from './typechart.ts'
@@ -15,6 +16,7 @@ import * as moves from './moves.ts'
 import * as solo from './solo.ts'
 import * as ttk from './ttk.ts'
 import * as curve from './curve.ts'
+import * as bosscard from './bosscard.ts'
 import { gameAi, judgeMatrix, pilotPolicy, runMatrix, type TeamSource } from './sim.ts'
 import { DEFS, buildArchetype, lawProblems } from './teams.ts'
 import { C } from './lib.ts'
@@ -74,6 +76,7 @@ const sections: Record<string, () => string> = {
   solo: () => solo.report(opt('per', 6), opt('games', 4), opt('seed', RULES.sim.seed)),
   ttk: ttk.report,
   curve: curve.report,
+  bosscard: bosscard.report,
 }
 
 if (cmd === 'all') {

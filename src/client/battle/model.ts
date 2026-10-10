@@ -293,7 +293,7 @@ export interface BossChip {
   /** State-word meters: the current state's word. */
   stateText: string | null
 }
-export interface BossPanelInfo { bossId: string; title: string; phase: number; phases: number; chips: BossChip[] }
+export interface BossPanelInfo { bossId: string; title: string; /** Story-tier name shown as its own chip (null: the full boss). */ tier: string | null; phase: number; phases: number; chips: BossChip[] }
 
 /** The boss HUD before the first engine snapshot (shown the moment the boss appears). */
 export function bossOpeningHud(bossId: string, c: Content = CONTENT): BossHud | null {
@@ -305,7 +305,7 @@ export function bossOpeningHud(bossId: string, c: Content = CONTENT): BossHud | 
 }
 
 /** What the foe status window shows for a boss snapshot: title, phase pips and the few chips worth reading mid-fight. */
-export function bossPanelInfo(hud: BossHud, c: Content = CONTENT): BossPanelInfo | null {
+export function bossPanelInfo(hud: BossHud, c: Content = CONTENT, tier?: string): BossPanelInfo | null {
   const def = c.bosses[hud.bossId]
   if (!def) return null
   const chips: BossChip[] = []
@@ -330,5 +330,6 @@ export function bossPanelInfo(hud: BossHud, c: Content = CONTENT): BossPanelInfo
     const text = t('battleui.boss.enrage', { n: hud.enrage })
     chips.push({ id: 'enrage', text, tone: 'bad', fill: null, alert: false, label: t('battleui.boss.enrageLabel'), readout: text, max: null, stateText: `×${hud.enrage}` })
   }
-  return { bossId: hud.bossId, title: t(def.title), phase: hud.phase, phases: hud.phases, chips }
+  const tierName = tier && def.tiers?.[tier] ? t(`boss.${hud.bossId}.tier.${tier}`, undefined, c) : null
+  return { bossId: hud.bossId, title: t(def.title), tier: tierName, phase: hud.phase, phases: hud.phases, chips }
 }

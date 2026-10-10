@@ -3,6 +3,7 @@ import type { SaveManager } from '../contracts.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import type { Content } from '../../shared/content/index.ts'
 import { preUnlockedIds } from '../../shared/world/anchors.ts'
+import { hashString } from '../../shared/rng.ts'
 import { decodeSaveCode, encodeSaveCode } from './save-codec.ts'
 import { migrateSave } from './save-migrate.ts'
 import { playableAvatars, sanitizeName, sanitizeSaveData, sanitizeSettings, worldSpawn } from './save-sanitize.ts'
@@ -76,9 +77,10 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
       for (const [id, qty] of Object.entries(c.config.economy.startItems)) {
         if (c.items[id] && Number.isFinite(qty) && qty > 0) bag[id] = Math.floor(qty)
       }
+      const playerId = newId()
       return {
         version: c.config.save.version,
-        playerId: newId(),
+        playerId,
         name: sanitizeName(opts.name, c, t('audio.save.defaultName', undefined, c)),
         avatar: avatars.includes(opts.avatar) ? opts.avatar : avatars[0] ?? '',
         createdAt: now(),
@@ -101,6 +103,8 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
         stats: { battlesWon: 0, caught: 0, steps: 0, pvpWins: 0, pvpLosses: 0, trades: 0, shiniesFound: 0 },
         settings: sanitizeSettings(c.config.defaultSettings, c),
         anchors: { unlocked: w ? preUnlockedIds(w) : [], seen: w ? preUnlockedIds(w) : [] },
+        rollSeed: hashString(playerId) >>> 0,
+        instances: {},
       }
     },
     exportCode(save: SaveData) {

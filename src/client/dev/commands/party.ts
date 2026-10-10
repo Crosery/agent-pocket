@@ -35,6 +35,7 @@ export const partyCommands: Record<string, CommandRun> = {
     let value = a.value as unknown
     if (typeof value === 'string' && ['level', 'exp', 'hp', 'friendship'].includes(field)) value = Number(value)
     if (field === 'shiny') value = value === true || value === 'true'
+    if (field === 'moves' && typeof value === 'string') value = value.split(',').map((m) => m.trim()).filter(Boolean)
     if (field === 'moves' && Array.isArray(value)) value = (value as string[]).map((id) => ({ id, pp: CONTENT.moves[id]?.pp ?? 5, ppMax: CONTENT.moves[id]?.pp ?? 5 }))
     if (value === 'null' || value === '') value = undefined
     raw[field] = value

@@ -92,7 +92,7 @@
     "focus": {"start": "{name} 进入了专注状态！"},
     "taunt": {"start": "{name} 被挑衅了！", "end": "{name} 不再受挑衅的影响了！", "blocked": "{name} 受到挑衅，无法使用{move}！"}
   },
-  "err": {"finished": "对战已经结束了。", "notYourTurn": "现在还不能行动。", "mustSwitch": "请选择下一只上场的智灵！", "badAction": "无效的行动。", "badMove": "无法使用这个招式。", "noPp": "这个招式的 PP 已经用完了！", "blocked": "{name} 因{volatile}无法使用变化招式！", "cantSwitch": "现在无法交换智灵！", "badSwitch": "无法交换到这只智灵。", "alreadyActive": "{name} 已经在场上了！", "fainted": "{name} 已经无法战斗了！", "cantRun": "无法从这场对战中逃走！", "cantItem": "现在不能使用道具！", "badItem": "这个道具无法在对战中使用。", "noItem": "没有这个道具了。", "cantCatch": "无法捕捉这只智灵！", "itemNoTarget": "无法对这只智灵使用这个道具。", "baitNoEffect": "现在用这个，没有任何效果。"},
+  "err": {"finished": "对战已经结束了。", "notYourTurn": "现在还不能行动。", "mustSwitch": "请选择下一只上场的智灵！", "badAction": "无效的行动。", "badMove": "无法使用这个招式。", "noPp": "这个招式的 PP 已经用完了！", "blocked": "{name} 因{volatile}无法使用变化招式！", "cantSwitch": "现在无法交换智灵！", "badSwitch": "无法交换到这只智灵。", "alreadyActive": "{name} 已经在场上了！", "fainted": "{name} 已经无法战斗了！", "cantRun": "无法从这场对战中逃走！", "cantItem": "现在不能使用道具！", "badItem": "这个道具无法在对战中使用。", "noItem": "没有这个道具了。", "cantCatch": "无法捕捉这只智灵！", "itemNoTarget": "无法对这只智灵使用这个道具。", "baitNoEffect": "现在用这个，没有任何效果。", "cantCatchBoss": "Boss 战中无法投球，打赢后可以签约。"},
   "bossIdle": "{name} 还没缓过来，什么也没做……",
   "bossExtraAction": "{name} 趁势再次行动！",
   "lootGot": "获得了 {item} ×{qty}！"

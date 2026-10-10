@@ -5,11 +5,13 @@
 import type { Creature, Dir, SaveData, Settings, World } from '../../shared/types.ts'
 import type { Content } from '../../shared/content/index.ts'
 import { sanitizeEventState } from '../../shared/gameplay/events.ts'
+import { sanitizeInstances } from '../../shared/gameplay/instances.ts'
 import { sanitizeResearch } from '../../shared/gameplay/research.ts'
 import { sanitizeLegendState } from '../../shared/gameplay/spawns.ts'
 import { frontierQuest } from '../../shared/world/frontier/content/index.ts'
 import { parseFrontierId } from '../../shared/world/frontier/sites.ts'
 import { parseAnchorId, preUnlockedIds } from '../../shared/world/anchors.ts'
+import { hashString } from '../../shared/rng.ts'
 import { WORLD_CONTENT } from '../../shared/world/data.ts'
 import { getMap, isInfinite } from '../../shared/world/worldapi.ts'
 import { FogPages } from '../ui/fog.ts'
@@ -299,6 +301,9 @@ export function sanitizeSaveData(raw: unknown, ctx: SanitizeContext): SaveData |
     settings: sanitizeSettings(raw.settings, c),
     ...sanitizeExtras(raw, townIds, c),
     anchors: sanitizeAnchors(raw.anchors, ctx.world),
+    // Seed of the boss-contract rolls: drawn once (from the id source) and kept; instance progress as clean counters.
+    rollSeed: typeof raw.rollSeed === 'number' && Number.isInteger(raw.rollSeed) && raw.rollSeed >= 0 && raw.rollSeed <= 0xffffffff ? raw.rollSeed : hashString(ctx.newId()) >>> 0,
+    instances: sanitizeInstances(raw.instances),
   }
   if (tracked && tracked in quests) save.trackedQuest = tracked
   return save

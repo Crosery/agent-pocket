@@ -43,6 +43,7 @@
     "fx": "heart",
     "cryPitch": 1,
     "tiredBelow": 0.5,
+    "bossNightTimes": ["dawn", "night"],
     "sizeCapMapKinds": ["interior", "cave"]
   },
   "interact": {"reach": 0.85, "radius": 0.62, "reachAcrossProps": ["counter"], "props": {"pc_terminal": {"action": "box"}, "statue": {"action": "statue"}, "warp_anchor": {"action": "anchor"}, "warp_anchor_grand": {"action": "anchor"}}, "sfx": "select"},

@@ -155,6 +155,8 @@ export interface AbilityCondition {
   moveCategory?: MoveCategory | 'damaging'
   superEffective?: boolean
   weather?: WeatherId[]
+  /** (battle turn - 1) % period lies in [from, to): the same clock as BossCond.turnCycle. */
+  turnCycle?: { period: number; from: number; to: number }
 }
 
 export type AbilityEffect =
@@ -443,6 +445,18 @@ export interface QualityFile {
     /** Audio sfx id played when a card or chip of that grade appears. */
     sfx: Record<string, string>
   }
+  /** Boss contract (post-win signing) rules; instances.json holds the per-instance numbers. */
+  capture: { ballBonus: Record<string, number>; masterBall: string; roamingBase: number }
+  /** Boss cards start low and are held back by the badge count (src/shared/gameplay/bosscard.ts). */
+  bossCard: {
+    startLevel: number
+    /** Level cap by number of badges held (index = badges, clamped to the last entry). */
+    capByBadges: number[]
+    /** Exp past the cap is kept as a bank of at most this many levels, settled when a badge raises the cap. */
+    bankMaxLevels: number
+    /** Catch-up: exp x min(max, 1 + perLevel x gap) for a card behind the party's best; benchShare of a fighter's share to a card on the bench. */
+    catchUp: { perLevel: number; max: number; benchShare: number }
+  }
   /** One-time bag gift for saves migrated from before natures. */
   legacyGift: Record<string, number>
   /** Save flags: the gift was handed out / its toast was shown / the one-time ladder hint was shown. */
@@ -524,9 +538,27 @@ export interface BattleInit {
    * expByParty[i]: exp for player party slot i; catchRate: the wild target's species catch rate;
    * friendship: level-up friendship gain. Prize money is scaled by the caller through rewardMoney. */
   mods?: BattleModifiers
+  /** Boss tier fought (content/bosses.json tiers); the boss is built through resolveBossDef. */
+  bossTier?: string
+  /** Assist ("减负") numbers of the tier apply. */
+  assist?: boolean
+  /** The overworld runs the post-win contract (src/client/battle/capture.ts) once the boss is down. */
+  captureAfterWin?: boolean
 }
 
-export interface BattleModifiers { expByParty?: number[]; catchRate?: number; friendship?: number }
+/**
+ * expByParty[i]: exp multiplier of player party slot i; benchExp[i] > 0: slot i also earns that share of a fighter's
+ * exp while it sat on the bench alive; levelCapByParty[i] / expCapByParty[i]: slot i stops levelling at that level and
+ * banks at most that much exp (boss cards, gameplay/bosscard.ts); 0 = no cap.
+ */
+export interface BattleModifiers {
+  expByParty?: number[]
+  benchExp?: number[]
+  levelCapByParty?: number[]
+  expCapByParty?: number[]
+  catchRate?: number
+  friendship?: number
+}
 
 // ---------------------------------------------------------------------------
 // Boss battles (content/bosses.json, engine module src/shared/battle/boss.ts)
@@ -560,6 +592,8 @@ export interface BossCond {
   foeStatus?: boolean | StatusId
   foeCountry?: string[]
   foeNotCountry?: string[]
+  /** The foe's active creature belongs to one of these companies (SpeciesDef.company): kin recognise each other. */
+  foeCompany?: string[]
   /** The foe's active creature was released before this date (YYYY-MM or YYYY-MM-DD). */
   foeReleasedBefore?: string
   /** The foe's active creature was released on or after this date. */
@@ -698,6 +732,29 @@ export interface BossEnrage {
 
 export interface BossReward { money?: number; items?: Record<string, number> }
 
+/** Per-rule override of a tier: only the given multipliers replace the base rule's (matched by rule id). */
+export interface BossRuleTweak { dealtMul?: number; takenMul?: number }
+
+/**
+ * One difficulty tier of a boss (BossDef.tiers). resolveBossDef() folds a tier into a plain BossDef before the engine
+ * sees it: statMul lands on the opening form, `rules` override existing rule ids, `addRules` append, `enrage` merges,
+ * then byStarter[starterSpecies] and finally `assist` (and its own byStarter) on top. `residualMul` scales damage the
+ * boss takes from lingering effects (leech drain, status damage).
+ */
+export interface BossTierDef {
+  level: number
+  expMul?: number
+  statMul?: Partial<Stats>
+  byStarter?: Record<string, Omit<BossTierDef, 'level' | 'byStarter' | 'assist'>>
+  moves?: string[]
+  pattern?: { move: string; weight: number }[]
+  rules?: Record<string, BossRuleTweak>
+  addRules?: BossRule[]
+  residualMul?: number
+  enrage?: Partial<BossEnrage>
+  assist?: Omit<BossTierDef, 'level' | 'assist'>
+}
+
 export interface BossDef {
   id: string
   /** Species of the boss creature in the party that carries the boss rules. */
@@ -723,6 +780,14 @@ export interface BossDef {
   /** Catch odds multiplier on top of the current form's species catch rate. */
   catchRateMul: number
   reward: BossReward
+  /** Difficulty tiers (story tier = the opening instance); absent = only the full-strength fight above. */
+  tiers?: Record<string, BossTierDef>
+  /** What a contracted boss card carries that a wild member of the species may not (sanitizeCreature allows these). */
+  signature?: { ability?: string; move?: string }
+  /** Script-only fights (sparring partners): not looked up by species, so wild creatures never carry the boss rules. */
+  scriptedOnly?: boolean
+  /** Set by resolveBossDef from a tier: lingering damage (leech drain, status damage) on the boss is scaled by this. */
+  residualMul?: number
 }
 
 /** content/bosses.json: bosses keyed by id (the key is the BossDef id). */
@@ -882,6 +947,8 @@ export type ScriptStep =
   | { op: 'chooseStarter' }
   /** lossContinues: a loss does not black out or abort the script (story-scripted fights); lossFlag records win/loss. */
   | { op: 'battle'; trainer: string; lossContinues?: boolean; lossFlag?: string }
+  /** Boss instance fight: tier of content/bosses.json; captureAfterWin runs the contract on the first clear. Loss flags as 'battle'. */
+  | { op: 'bossBattle'; boss: string; tier: string; captureAfterWin?: boolean; lossContinues?: boolean; lossFlag?: string }
   | { op: 'wildBattle'; species?: string; pick?: SpeciesPick; level: number; music?: string }
   | { op: 'heal' }
   | { op: 'shop'; items: string[] }
@@ -1306,7 +1373,48 @@ export interface SaveData {
    * `seen` were merely come close to (greyed pin on the map). The start's grand anchors are always unlocked.
    */
   anchors?: { unlocked: string[]; seen: string[] }
+  /** Seed of the contract rolls (instance runs): drawn once per save, so reloading a boss room repeats its result. */
+  rollSeed?: number
+  /** Boss-instance progress by instance id (content/world/instances.json). */
+  instances?: Record<string, InstanceProgress>
 }
+
+/** Per boss instance: clears / contracts by tier id, the run counter that seeds the roll, losses by tier. */
+export interface InstanceProgress {
+  clears: Record<string, number>
+  captures: Record<string, number>
+  runSeq: number
+  losses: Record<string, number>
+}
+
+/** What a tier of an instance rolls on a contract and pays out (content/world/instances.json). */
+export interface InstanceTierDef {
+  capture: {
+    /** Contract chance of the first / later runs (M1b: the first run always signs). */
+    first: number
+    perfectIvs: number
+    ivMin: number
+    /** Grade the first contract is at least. */
+    firstGradeFloor: string
+    /** 'signature' = the boss's signature ability on the first contract. */
+    firstAbility: string
+    /** Ability weights by 'signature' / 'slot<i>'. */
+    ability: Record<string, number>
+  }
+  reward: BossReward
+  firstReward: BossReward
+  repeat: { expMul: number; money: number; capture: boolean }
+}
+
+export interface InstanceDef {
+  boss: string
+  /** Text key of the instance name. */
+  name: string
+  tiers: Record<string, InstanceTierDef>
+}
+
+/** content/world/instances.json */
+export interface InstanceFile { instances: Record<string, InstanceDef> }
 
 // ---------------------------------------------------------------------------
 // Developer mode (content/dev/**, src/shared/dev, src/client/dev) — append-only section

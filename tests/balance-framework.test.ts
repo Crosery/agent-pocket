@@ -7,6 +7,7 @@ import { moveViolations } from '../tools/balance/moves.ts'
 import { ttkViolations } from '../tools/balance/ttk.ts'
 import { curveViolations } from '../tools/balance/curve.ts'
 import { rarityCell } from '../tools/balance/solo.ts'
+import { bossCardRows, bossCardViolations } from '../tools/balance/bosscard.ts'
 import { judgeMatrix, runMatrix, type TeamSource } from '../tools/balance/sim.ts'
 import { DEFS, buildArchetype, lawProblems } from '../tools/balance/teams.ts'
 import { buildWorld, worldBuildInfo } from '../src/shared/world/index.ts'
@@ -97,4 +98,11 @@ test('encounter coverage: every non-UR, non-MYTHIC base form is wild-obtainable 
   assert.deepEqual(missing, [], 'base forms in no wild encounter table')
   assert.deepEqual(worldBuildInfo(world).problems.filter((p) => p.startsWith('encounter coverage')), [])
   for (const s of C.speciesList) if (s.evolvesFrom) assert.equal(C.species[s.evolvesFrom]?.evolvesTo?.id, s.id, `${s.id}: its pre-evolution does not evolve into it`)
+})
+
+test('boss card: a V4 card at its badge cap (2 / 4 / 6 badges = Lv19 / Lv29 / Lv41, IVs 19, Weight Drop) does not win the next gym alone', () => {
+  const rows = bossCardRows()
+  assert.deepEqual(rows.map((r) => r.cap), [19, 29, 41])
+  assert.deepEqual(rows.map((r) => r.gym), ['sound', 'compute', 'agent'], 'gyms 3 / 5 / 7')
+  assert.deepEqual(bossCardViolations(rows), [])
 })

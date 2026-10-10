@@ -220,7 +220,8 @@ export function createStatusPanel(own: boolean, onInspect: () => void, speed?: (
         clearTimeout(readoutTimer)
         readoutTimer = window.setTimeout(() => { title.textContent = info.title; title.classList.remove('is-readout') }, H.meterReadoutMs)
       }
-      const head = el('div', 'apb-boss-head', [el('span', { class: 'apb-boss-tag', text: t('battleui.boss.tag') }), title, pips])
+      const tierChip = info.tier ? [el('span', { class: 'apb-boss-tier', text: info.tier })] : []
+      const head = el('div', 'apb-boss-head', [el('span', { class: 'apb-boss-tag', text: t('battleui.boss.tag') }), title, ...tierChip, pips])
       const tiles = info.chips.map((c) => meterTile(c, readout))
       bossBox.replaceChildren(head, ...(tiles.length ? [el('div', 'apb-boss-tiles', tiles)] : []))
     },

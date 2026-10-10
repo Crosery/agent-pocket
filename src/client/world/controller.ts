@@ -4,11 +4,12 @@
 // All tile/object access goes through WorldApi, so the same code runs on finite maps and on the infinite
 // overworld (any integer coordinate, negatives included): objects stream in around the player (stream.ts),
 // one-way ledges are jumped with a hop, and exploration (fog pages, milestones, discoveries) lives in explore.ts.
-import type { BattleSideInit, Dir, FieldWeatherKind, GameMap, GroundItemDef, NpcDef, QuestDef, RegionDef, ScriptStep } from '../../shared/types.ts'
+import type { BattleSideInit, Creature, Dir, FieldWeatherKind, GameMap, GroundItemDef, NpcDef, QuestDef, RegionDef, ScriptStep } from '../../shared/types.ts'
 import type { GameContext, MinimapMarker, OverworldController, WorldFx } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
 import { RngHub } from '../core/rng-hub.ts'
 import { createCreature, creatureName, maxHp, rollShiny } from '../../shared/creature.ts'
+import { bankLevels, bossCardCap } from '../../shared/gameplay/bosscard.ts'
 import { propRect } from '../../shared/world/collision.ts'
 import { collisionField, getMap, isInfinite, isLedgeDrop, objectsInRect, regionAt, terrainAt, warpAt } from '../../shared/world/worldapi.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
@@ -35,7 +36,7 @@ import { DIR_VEC, dirTowards, facingFromAxis, moveBody, tilePassable, type Motio
 import { createNpcLayer, type NpcRuntime } from './npcs.ts'
 import { createPresence, type MultiplayerHooks } from './presence.ts'
 import { createRoamingLayer, type Roamer } from './roaming.ts'
-import { addItem, changeMoney, flagSet, healParty, ownedKeyItem, removeItem } from './save-ops.ts'
+import { addItem, changeMoney, flagSet, healParty, ownedKeyItem, removeItem, settleBossCards } from './save-ops.ts'
 import { createScriptRunner, type ScriptHost } from './script.ts'
 import { anchorName, isUnlocked, markSeen, unlockAnchor } from './anchors.ts'
 
@@ -73,6 +74,8 @@ export interface OverworldExt extends OverworldController {
   setWeatherOverride(kind: FieldWeatherKind | null): void
   startWildBattle(speciesId: string, level: number): Promise<void>
   startTrainerBattle(trainerId: string): Promise<void>
+  /** Dev: one run of a boss instance tier, like the simulator terminal (rewards, contract on the first clear). */
+  startBossBattle(bossId: string, tier: string, opts?: { assist?: boolean }): Promise<void>
   /** New-game intro (content/game.json newGame.introScript). */
   playIntro(): Promise<void>
   /** Writes the fog-of-war bits of the current map into save.exploredChunks. */
@@ -219,6 +222,10 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       const cr = createCreature(speciesId, level, { rng, shiny: o.shiny ?? rollShiny(rng, ctx.data), caughtMap: map?.id }, ctx.data)
       const outcome = await battles.wild(cr, { music: o.music, scripted: o.scripted })
       return outcome.result
+    },
+    async bossBattle(bossId, tier, o) {
+      const outcome = await battles.boss(bossId, tier, o)
+      return outcome?.result ?? null
     },
     blackout: () => blackoutFlow(),
     warp: (m, x, y, facing) => enterMap(m, x, y, facing, true),
@@ -952,6 +959,16 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     }
   }
 
+  /** What a boss-card lead says when talked to: capped with exp banked, else its day / night line; null for any other lead. */
+  function bossFollowKey(l: Creature): string | null {
+    const id = l.origin?.kind === 'boss' ? l.origin.boss : undefined
+    if (!id) return null
+    const capped = l.level >= bossCardCap(ctx.save.badges.length, ctx.data) && bankLevels(l, ctx.data) > 0
+    const key = capped ? 'capped' : GAME.follower.bossNightTimes.includes(ctx.clock.timeOfDay) ? 'night' : 'day'
+    const text = `boss.${id}.follow.${key}`
+    return text in ctx.data.text ? text : null
+  }
+
   async function followerInteract(): Promise<void> {
     const l = lead()
     if (!l) return
@@ -959,7 +976,8 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     ctx.world.spawnFx(GAME.follower.fx, follower.x, follower.y, ctx.world.elevationAt(follower.x, follower.y))
     ctx.audio.playCry(l.speciesId, { pitch: GAME.follower.cryPitch })
     const tired = l.hp / Math.max(1, maxHp(l, ctx.data)) < GAME.follower.tiredBelow
-    await say(t(tired ? 'world.follower.tired' : 'world.follower.happy', { name }))
+    const bossLine = bossFollowKey(l)
+    await say(bossLine ? t(bossLine) : t(tired ? 'world.follower.tired' : 'world.follower.happy', { name }))
   }
 
   async function surfPrompt(): Promise<void> {
@@ -1138,6 +1156,11 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
   const offTap = ctx.input.onWorldTap(onWorldTap)
   const offParty = ctx.events.on('party:changed', () => refreshFollower())
   const offMoney = ctx.events.on('money:changed', ({ money }) => ctx.hud.setMoney(money))
+  // A badge raises the boss-card level cap: pay out the banked exp (one settle at a time).
+  let settling: Promise<unknown> = Promise.resolve()
+  const offBadge = ctx.events.on('badge:earned', () => {
+    settling = settling.then(() => settleBossCards(ctx)).catch((err: unknown) => console.error('[overworld] boss card settle failed', err))
+  })
 
   return {
     enterMap,
@@ -1177,6 +1200,16 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
         refresh()
       }
     },
+    async startBossBattle(bossId, tier, opts) {
+      lock('script')
+      try {
+        const r = await battles.boss(bossId, tier, { captureAfterWin: true, ...(opts?.assist ? { assist: true } : {}) })
+        if (r?.result === 'lose' || r?.result === 'draw') await blackoutFlow()
+      } finally {
+        unlock('script')
+        refresh()
+      }
+    },
     playIntro: () => runScript(GAME.newGame.introScript, null),
     storeExplored,
     dispose() {
@@ -1184,6 +1217,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       offTap()
       offParty()
       offMoney()
+      offBadge()
       gameplay.dispose()
       navigator.clear()
       ctx.world.setQuestPath([])

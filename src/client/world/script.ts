@@ -30,6 +30,8 @@ export interface ScriptHost {
   /** Trainer battle incl. intro/defeat text and rewards; null when the trainer does not exist. */
   trainerBattle(trainerId: string, npc: NpcDef | null): Promise<BattleResult | null>
   wildBattle(speciesId: string, level: number, opts: { music?: string; shiny?: boolean; scripted: boolean }): Promise<BattleResult | null>
+  /** Boss instance fight of one tier (rewards and the post-win contract included); null when the boss or tier does not exist. */
+  bossBattle?(bossId: string, tier: string, opts: { captureAfterWin?: boolean }): Promise<BattleResult | null>
   /** Teleport to the respawn point after a loss (heals). */
   blackout(): Promise<void>
   warp(map: string, x: number, y: number, facing: Dir): Promise<void>
@@ -197,6 +199,12 @@ export function createScriptRunner(host: ScriptHost) {
       }
       case 'battle': {
         const r = await host.trainerBattle(s.trainer, npc)
+        if (s.lossFlag && r !== null) ctx.save.flags[flagName(s.lossFlag)] = isLoss(r)
+        if (isLoss(r) && GAME.battle.lossAbortsScript && !s.lossContinues) { await host.blackout(); return 'abort' }
+        return 'done'
+      }
+      case 'bossBattle': {
+        const r = (await host.bossBattle?.(s.boss, s.tier, { captureAfterWin: s.captureAfterWin })) ?? null
         if (s.lossFlag && r !== null) ctx.save.flags[flagName(s.lossFlag)] = isLoss(r)
         if (isLoss(r) && GAME.battle.lossAbortsScript && !s.lossContinues) { await host.blackout(); return 'abort' }
         return 'done'

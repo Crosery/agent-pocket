@@ -95,6 +95,15 @@ export interface BattleUiConfig {
     chart: { action: InputAction; view: 'type' | 'grid' | 'loops' }
   }
   catch: { nicknamePrompt: boolean }
+  /**
+   * The boss contract screen (capture.ts): the ball a trainer with none signs with, whether signing uses the ball up,
+   * the throw (`shakes` of `shakeMs`), the flash, the level roll back to Lv1, the line fade and the idle limit.
+   */
+  contract: {
+    defaultBall: string; consumeBall: boolean
+    shakes: number; shakeMs: number; flashMs: number; rollMs: number; lineMs: number; autoCloseMs: number
+    sfx: { throw: string; shake: string; sign: string; roll: string; line: string }
+  }
   evolve: { startHoldMs: number; endHoldMs: number }
 }
 
@@ -158,6 +167,9 @@ export function validateBattleUi(c: Content, cfg: BattleUiConfig = BATTLE_UI): s
   for (const cat of CATEGORIES) if (typeof cfg.moves.categoryColors[cat] !== 'string') errs.push(`battle-ui moves.categoryColors.${cat} missing`)
   if (!['type', 'grid', 'loops'].includes(cfg.moves.chart?.view)) errs.push('battle-ui moves.chart.view: expected type, grid or loops')
   if (!INPUT_BINDINGS.keyboard[cfg.moves.chart?.action]) errs.push('battle-ui moves.chart.action: expected an action with a keyboard binding')
+  if (c.items[cfg.contract?.defaultBall]?.effect.kind !== 'ball') errs.push(`battle-ui contract.defaultBall: "${cfg.contract?.defaultBall}" is not a ball`)
+  for (const k of ['shakes', 'shakeMs', 'flashMs', 'rollMs', 'lineMs', 'autoCloseMs'] as const) num(`contract.${k}`, cfg.contract[k])
+  for (const [k, v] of Object.entries(cfg.contract.sfx)) sfx(`contract.sfx.${k}`, v)
   num('evolve.startHoldMs', cfg.evolve.startHoldMs)
   num('evolve.endHoldMs', cfg.evolve.endHoldMs)
   return errs

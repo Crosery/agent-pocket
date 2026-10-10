@@ -123,6 +123,55 @@ export function validateBosses(list: readonly BossDef[], c: Content): string[] {
       for (const k of [b.enrage.warn, b.enrage.start, b.enrage.tick]) text(`${w}.enrage`, k)
       if (!(b.enrage.turn >= 1 && b.enrage.max >= 1)) errs.push(`${w}.enrage: turn and max must be >= 1`)
     }
+
+    if (b.signature) {
+      if (b.signature.ability !== undefined && !c.abilities[b.signature.ability]) errs.push(`${w}.signature: unknown ability "${b.signature.ability}"`)
+      if (b.signature.move !== undefined) move(`${w}.signature`, b.signature.move)
+    }
+    if (b.tiers) {
+      const base = b.forms[b.initialForm]
+      const ruleIds = new Set((base?.rules ?? []).map((r) => r.id))
+      text(`${w}.contract`, `${TEXT_PREFIX}${b.id}.contract`)
+      for (const [tid, tier] of Object.entries(b.tiers)) {
+        const tw = `${w}.tier.${tid}`
+        text(tw, `${TEXT_PREFIX}${b.id}.tier.${tid}`)
+        if (!(tier.level >= 1 && tier.level <= c.config.party.maxLevel)) errs.push(`${tw}: level out of range`)
+        const layers: [string, Omit<typeof tier, 'level' | 'byStarter' | 'assist'>][] = [[tw, tier]]
+        for (const [sid, l] of Object.entries(tier.byStarter ?? {})) {
+          if (!c.species[sid]) errs.push(`${tw}.byStarter: unknown species "${sid}"`)
+          layers.push([`${tw}.byStarter.${sid}`, l])
+        }
+        if (tier.assist) {
+          layers.push([`${tw}.assist`, tier.assist])
+          for (const [sid, l] of Object.entries(tier.assist.byStarter ?? {})) {
+            if (!c.species[sid]) errs.push(`${tw}.assist.byStarter: unknown species "${sid}"`)
+            layers.push([`${tw}.assist.byStarter.${sid}`, l])
+          }
+        }
+        for (const [lw, l] of layers) {
+          if (l.expMul !== undefined && !(l.expMul > 0)) errs.push(`${lw}: expMul must be > 0`)
+          if (l.residualMul !== undefined && !(l.residualMul > 0)) errs.push(`${lw}: residualMul must be > 0`)
+          for (const [k, v] of Object.entries(l.statMul ?? {})) if (!(v > 0)) errs.push(`${lw}.statMul.${k}: must be > 0`)
+          for (const id of Object.keys(l.rules ?? {})) if (!ruleIds.has(id)) errs.push(`${lw}.rules: unknown rule "${id}"`)
+          for (const [id, r] of Object.entries(l.rules ?? {})) {
+            if (r.dealtMul !== undefined && !(r.dealtMul > 0)) errs.push(`${lw}.rules.${id}: dealtMul must be > 0`)
+            if (r.takenMul !== undefined && !(r.takenMul > 0)) errs.push(`${lw}.rules.${id}: takenMul must be > 0`)
+          }
+          for (const r of l.addRules ?? []) {
+            if (ruleIds.has(r.id)) errs.push(`${lw}.addRules: rule "${r.id}" already exists on the form`)
+            cond(`${lw}.addRules.${r.id}`, r.if)
+            if (r.if?.foeCompany && !r.if.foeCompany.length) errs.push(`${lw}.addRules.${r.id}: foeCompany is empty`)
+            for (const e of r.takenMul ?? []) text(`${lw}.addRules.${r.id}.note`, e.note)
+          }
+          l.moves?.forEach((m) => move(lw, m))
+          if (l.moves && (l.moves.length < 1 || l.moves.length > c.config.party.maxMoves)) errs.push(`${lw}: needs 1..${c.config.party.maxMoves} moves`)
+          for (const p of l.pattern ?? []) {
+            if (!(l.moves ?? tier.moves ?? base?.moves ?? []).includes(p.move)) errs.push(`${lw}.pattern: "${p.move}" is not one of the tier's moves`)
+            if (!(p.weight > 0)) errs.push(`${lw}.pattern: weight must be > 0`)
+          }
+        }
+      }
+    }
   }
   return errs
 }

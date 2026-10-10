@@ -199,6 +199,8 @@ html.ap-battle-on[data-touch-controls] { --ap-bottom-inset: 0px; }
 }
 .apb-boss-title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ap-gold-hi); text-shadow: 0 var(--u) 0 var(--ap-ink); }
 .apb-boss-title.is-readout { color: #fff; }
+/* The story tier is never cut: the epithet in front of it gives way first. */
+.apb-boss-tier { flex: none; height: calc(var(--u) * 14); padding: 0 calc(var(--u) * 4); line-height: calc(var(--u) * 12); color: var(--ap-ink); background: var(--ap-gold-hi); border: var(--u) solid var(--ap-ink); text-shadow: none; white-space: nowrap; }
 .apb-boss-pips { display: flex; flex: none; gap: calc(var(--u) * 2); }
 .apb-pip { width: calc(var(--u) * 6); height: calc(var(--u) * 6); background: rgba(5, 7, 13, 0.8); border: var(--u) solid rgba(226, 91, 74, 0.7); transform: rotate(45deg) scale(0.85); }
 .apb-pip.is-on { background: #e25b4a; border-color: var(--ap-ink); }

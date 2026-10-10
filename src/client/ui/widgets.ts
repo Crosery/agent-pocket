@@ -248,6 +248,13 @@ export function attentionDot(className = ''): HTMLElement {
   return el('span', { class: `ap-attn-dot ${className}`.trim(), attrs: { role: 'img', 'aria-label': t('hud.attention.dot') } })
 }
 
+/** Boss card marker: a round gold-ringed medal with a pixel crown, so it never reads as the shield grade or the rectangular rarity chip. The text is its tooltip / label. */
+export function bossMark(): HTMLElement {
+  ensureUIEnvironment()
+  const label = t('hud.party.boss')
+  return el('span', { class: 'ap-boss-mark', title: label, attrs: { role: 'img', 'aria-label': label } }, [glyphEl('crown')])
+}
+
 export function rarityBadge(rarityId: string, opts?: { label?: 'id' | 'name' }): HTMLElement {
   ensureUIEnvironment()
   const def = CONTENT.rarityById[rarityId]
