@@ -76,7 +76,24 @@ export function createScriptRunner(host: ScriptHost) {
   /** Flags may carry {year} / {day} placeholders (yearly / daily one-shots). */
   const flagName = (f: string) => (f.includes('{') ? expandFlag(f, { year: realDateOf(new Date()).year, day: dayOf(ctx.save.clockMinutes) }) : f)
 
-  async function giveCreature(s: Extract<ScriptStep, { op: 'giveCreature' }>, speciesId: string): Promise<void> {
+  interface StepExecCtx {
+    sourceId?: string
+    npcId?: string
+    stepPath: string
+    choiceIndex?: number
+  }
+
+  function attachCtx<T extends Record<string, unknown>>(msg: T, c: StepExecCtx): T {
+    return {
+      ...msg,
+      ...(c.sourceId ? { sourceId: c.sourceId } : {}),
+      ...(c.npcId ? { npcId: c.npcId } : {}),
+      stepPath: c.stepPath,
+      ...(c.choiceIndex !== undefined ? { choiceIndex: c.choiceIndex } : {}),
+    }
+  }
+
+  async function giveCreature(s: Extract<ScriptStep, { op: 'giveCreature' }>, speciesId: string, c: StepExecCtx): Promise<void> {
     const { level, shiny } = s
     if (!ctx.data.species[speciesId]) { console.warn(`[script] unknown species "${speciesId}"`); return }
     const place = host.playerPlace()
@@ -92,9 +109,9 @@ export function createScriptRunner(host: ScriptHost) {
     await narrate(t('world.script.giveCreature', { ...params(), species }))
     const where = addCreature(ctx, cr)
     if (where) {
-      sendScriptOp(ctx, {
-        t: 'script.op',
-        op: 'giveCreature',
+      sendScriptOp(ctx, attachCtx({
+        t: 'script.op' as const,
+        op: 'giveCreature' as const,
         speciesId,
         level: s.level,
         shiny: cr.shiny,
@@ -103,7 +120,7 @@ export function createScriptRunner(host: ScriptHost) {
         moves: cr.moves.map((m) => m.id),
         gradeFloor: s.gradeFloor,
         creature: structuredClone(cr),
-      })
+      }, c))
     }
     if (!where) await narrate(t('world.script.boxFull', { species }))
     else if (where.where === 'box') await narrate(t('world.script.toBox', { species, box: t('world.script.boxName', { n: where.box + 1 }) }))
@@ -111,10 +128,10 @@ export function createScriptRunner(host: ScriptHost) {
     host.onWorldChanged()
   }
 
-  async function questStep(questId: string, stage: number, done: boolean): Promise<void> {
+  async function questStep(questId: string, stage: number, done: boolean, c: StepExecCtx): Promise<void> {
     const change = applyQuest(ctx, questId, stage, done)
     if (!change) { console.warn(`[script] unknown quest "${questId}"`); return }
-    sendScriptOp(ctx, { t: 'script.op', op: 'quest', questId, stage, done })
+    sendScriptOp(ctx, attachCtx({ t: 'script.op' as const, op: 'quest' as const, questId, stage, done }, c))
     const quest = change.def.nameZh
     if (change.started) ctx.ui.toast(t('world.script.questStart', { quest }), 'info')
     else if (change.advanced && !change.finished) ctx.ui.toast(t('world.script.questStage', { quest }), 'info')
@@ -126,16 +143,30 @@ export function createScriptRunner(host: ScriptHost) {
     } else if (change.started || change.advanced) ctx.audio.playSfx(GAME.script.questSfx)
   }
 
-  async function exec(steps: readonly ScriptStep[], npc: NpcDef | null, depth: number): Promise<ScriptOutcome> {
+  async function exec(
+    steps: readonly ScriptStep[],
+    npc: NpcDef | null,
+    depth: number,
+    pathPrefix = '',
+    sourceId?: string,
+    choiceIndex?: number,
+  ): Promise<ScriptOutcome> {
     if (depth > GAME.script.maxDepth) { console.warn('[script] max depth exceeded'); return 'end' }
-    for (const s of steps) {
-      const r = await step(s, npc, depth)
+    const resolvedSource = sourceId ?? (npc?.id ? `npc:${npc.id}` : undefined)
+    for (let idx = 0; idx < steps.length; idx++) {
+      const stepPath = pathPrefix ? `${pathPrefix}.${idx}` : String(idx)
+      const r = await step(steps[idx], npc, depth, {
+        ...(resolvedSource ? { sourceId: resolvedSource } : {}),
+        ...(npc?.id ? { npcId: npc.id } : {}),
+        stepPath,
+        ...(choiceIndex !== undefined ? { choiceIndex } : {}),
+      })
       if (r !== 'done') return r
     }
     return 'done'
   }
 
-  async function step(s: ScriptStep, npc: NpcDef | null, depth: number): Promise<ScriptOutcome> {
+  async function step(s: ScriptStep, npc: NpcDef | null, depth: number, c: StepExecCtx): Promise<ScriptOutcome> {
     switch (s.op) {
       case 'say':
         await ctx.ui.say([line(s.text, s.speaker, s.portrait)])
@@ -143,23 +174,28 @@ export function createScriptRunner(host: ScriptHost) {
       case 'choice': {
         const options = s.options.map((o) => textOrKey(o, params()))
         const i = await ctx.ui.choose(line(s.text, s.speaker ?? npc?.nameZh, s.portrait ?? npc?.portrait), options, { cancelIndex: options.length - 1 })
-        const branch = s.branches[i] ?? s.branches[s.branches.length - 1] ?? []
-        return exec(branch, npc, depth + 1)
+        const branchIdx = s.branches[i] ? i : Math.max(0, s.branches.length - 1)
+        const branch = s.branches[branchIdx] ?? []
+        return exec(branch, npc, depth + 1, `${c.stepPath}.b${branchIdx}`, c.sourceId, branchIdx)
       }
       case 'setFlag':
         ctx.save.flags[flagName(s.flag)] = s.value ?? true
-        sendScriptOp(ctx, { t: 'script.op', op: 'setFlag', flag: flagName(s.flag), value: s.value ?? true })
+        sendScriptOp(ctx, attachCtx({ t: 'script.op' as const, op: 'setFlag' as const, flag: flagName(s.flag), value: s.value ?? true }, c))
         return 'done'
       case 'ifFlag': {
         const flag = flagName(s.flag)
         const v = ctx.save.flags[flag]
         const ok = s.equals === undefined ? flagSet(ctx.save, flag) : v === s.equals
-        return exec(ok ? s.then : s.else ?? [], npc, depth + 1)
+        return exec(ok ? s.then : s.else ?? [], npc, depth + 1, `${c.stepPath}.${ok ? 'then' : 'else'}`, c.sourceId, c.choiceIndex)
       }
-      case 'ifBadges':
-        return exec(ctx.save.badges.length >= s.atLeast ? s.then : s.else ?? [], npc, depth + 1)
-      case 'ifItem':
-        return exec((ctx.save.bag[s.item] ?? 0) >= (s.atLeast ?? 1) ? s.then : s.else ?? [], npc, depth + 1)
+      case 'ifBadges': {
+        const ok = ctx.save.badges.length >= s.atLeast
+        return exec(ok ? s.then : s.else ?? [], npc, depth + 1, `${c.stepPath}.${ok ? 'then' : 'else'}`, c.sourceId, c.choiceIndex)
+      }
+      case 'ifItem': {
+        const ok = (ctx.save.bag[s.item] ?? 0) >= (s.atLeast ?? 1)
+        return exec(ok ? s.then : s.else ?? [], npc, depth + 1, `${c.stepPath}.${ok ? 'then' : 'else'}`, c.sourceId, c.choiceIndex)
+      }
       case 'ifCaught': {
         const n = ctx.save.dexCaught.filter((id) => {
           const sp = ctx.data.species[id]
@@ -168,12 +204,13 @@ export function createScriptRunner(host: ScriptHost) {
           if (s.type && !sp.types.includes(s.type)) return false
           return true
         }).length
-        return exec(n >= (s.atLeast ?? 1) ? s.then : s.else ?? [], npc, depth + 1)
+        const ok = n >= (s.atLeast ?? 1)
+        return exec(ok ? s.then : s.else ?? [], npc, depth + 1, `${c.stepPath}.${ok ? 'then' : 'else'}`, c.sourceId, c.choiceIndex)
       }
       case 'giveItem': {
         const item = ctx.data.items[s.item]
         if (!item || !addItem(ctx, s.item, s.qty)) { console.warn(`[script] unknown item "${s.item}"`); return 'done' }
-        sendScriptOp(ctx, { t: 'script.op', op: 'giveItem', itemId: s.item, qty: s.qty })
+        sendScriptOp(ctx, attachCtx({ t: 'script.op' as const, op: 'giveItem' as const, itemId: s.item, qty: s.qty }, c))
         const key = item.category === 'key'
         ctx.audio.playSfx(key ? GAME.items.keyItemSfx : GAME.items.pickupSfx)
         const text = key ? 'world.script.keyItem' : s.qty > 1 ? 'world.script.giveItemQty' : 'world.script.giveItem'
@@ -183,13 +220,13 @@ export function createScriptRunner(host: ScriptHost) {
       case 'takeItem': {
         const n = removeItem(ctx, s.item, s.qty)
         const item = ctx.data.items[s.item]
-        if (n > 0) sendScriptOp(ctx, { t: 'script.op', op: 'takeItem', itemId: s.item, qty: n })
+        if (n > 0) sendScriptOp(ctx, attachCtx({ t: 'script.op' as const, op: 'takeItem' as const, itemId: s.item, qty: n }, c))
         if (n > 0 && item) await narrate(t('world.script.takeItem', { ...params(), item: item.nameZh, qty: n }))
         return 'done'
       }
       case 'giveMoney':
         changeMoney(ctx, s.amount)
-        sendScriptOp(ctx, { t: 'script.op', op: 'giveMoney', amount: s.amount })
+        sendScriptOp(ctx, attachCtx({ t: 'script.op' as const, op: 'giveMoney' as const, amount: s.amount }, c))
         ctx.audio.playSfx(GAME.script.moneySfx)
         await narrate(t('world.script.giveMoney', { ...params(), money: s.amount }))
         return 'done'
@@ -199,13 +236,13 @@ export function createScriptRunner(host: ScriptHost) {
           return 'end'
         }
         changeMoney(ctx, -s.amount)
-        sendScriptOp(ctx, { t: 'script.op', op: 'takeMoney', amount: s.amount })
+        sendScriptOp(ctx, attachCtx({ t: 'script.op' as const, op: 'takeMoney' as const, amount: s.amount }, c))
         ctx.audio.playSfx(GAME.script.moneySfx)
         await narrate(t('world.script.takeMoney', { ...params(), money: s.amount }))
         return 'done'
       case 'giveCreature':
         if (!s.species) { console.warn('[script] giveCreature without a resolved species'); return 'done' }
-        await giveCreature(s, s.species)
+        await giveCreature(s, s.species, c)
         return 'done'
       case 'chooseStarter': {
         const options = ctx.data.speciesList.filter((sp) => sp.starter)
@@ -289,7 +326,7 @@ export function createScriptRunner(host: ScriptHost) {
         host.onWorldChanged()
         return 'done'
       case 'quest':
-        await questStep(s.quest, s.stage, s.done ?? false)
+        await questStep(s.quest, s.stage, s.done ?? false, c)
         return 'done'
       case 'warp':
         await host.warp(s.map, s.x, s.y, s.facing)
@@ -341,16 +378,23 @@ export function createScriptRunner(host: ScriptHost) {
         sendScriptOp(ctx, { t: 'script.op', op: 'setRespawn', map: p.map, x: rx, y: ry, facing: p.facing })
         return 'done'
       }
-      case 'random':
-        return exec(rng.chance(s.chance) ? s.then : s.else ?? [], npc, depth + 1)
-      case 'ifTime':
-        return exec(s.times.includes(ctx.clock.timeOfDay) ? s.then : s.else ?? [], npc, depth + 1)
+      case 'random': {
+        const ok = rng.chance(s.chance)
+        return exec(ok ? s.then : s.else ?? [], npc, depth + 1, `${c.stepPath}.${ok ? 'then' : 'else'}`, c.sourceId, c.choiceIndex)
+      }
+      case 'ifTime': {
+        const ok = s.times.includes(ctx.clock.timeOfDay)
+        return exec(ok ? s.then : s.else ?? [], npc, depth + 1, `${c.stepPath}.${ok ? 'then' : 'else'}`, c.sourceId, c.choiceIndex)
+      }
       case 'ifWeather': {
         const w = host.weather?.()
-        return exec(w && s.weather.includes(w) ? s.then : s.else ?? [], npc, depth + 1)
+        const ok = Boolean(w && s.weather.includes(w))
+        return exec(ok ? s.then : s.else ?? [], npc, depth + 1, `${c.stepPath}.${ok ? 'then' : 'else'}`, c.sourceId, c.choiceIndex)
       }
-      case 'ifDex':
-        return exec(ctx.save.dexCaught.length >= s.caughtAtLeast ? s.then : s.else ?? [], npc, depth + 1)
+      case 'ifDex': {
+        const ok = ctx.save.dexCaught.length >= s.caughtAtLeast
+        return exec(ok ? s.then : s.else ?? [], npc, depth + 1, `${c.stepPath}.${ok ? 'then' : 'else'}`, c.sourceId, c.choiceIndex)
+      }
       case 'triggerEvent':
         if (!host.triggerEvent) console.warn(`[script] triggerEvent "${s.event}" without an event runtime`)
         else await host.triggerEvent(s.event)
@@ -362,7 +406,7 @@ export function createScriptRunner(host: ScriptHost) {
       case 'research':
         if (!ctx.data.species[s.species]) { console.warn(`[script] unknown species "${s.species}"`); return 'done' }
         scriptResearch(ctx, s.species, s.task, s.amount)
-        sendScriptOp(ctx, { t: 'script.op', op: 'research', speciesId: s.species, task: s.task, amount: s.amount })
+        sendScriptOp(ctx, attachCtx({ t: 'script.op' as const, op: 'research' as const, speciesId: s.species, task: s.task, amount: s.amount }, c))
         return 'done'
       case 'instance': {
         // Dungeon UI requires browser styles; Node script consumers must not load that platform-only module.
@@ -386,7 +430,7 @@ export function createScriptRunner(host: ScriptHost) {
         let cond = true
         if (s.clearedAtLeast !== undefined && cleared < s.clearedAtLeast) cond = false
         if (s.capturedAtLeast !== undefined && captured < s.capturedAtLeast) cond = false
-        return exec(cond ? s.then : s.else ?? [], npc, depth + 1)
+        return exec(cond ? s.then : s.else ?? [], npc, depth + 1, `${c.stepPath}.${cond ? 'then' : 'else'}`, c.sourceId, c.choiceIndex)
       }
       case 'end':
         return 'end'
@@ -395,8 +439,8 @@ export function createScriptRunner(host: ScriptHost) {
 
   return {
     /** Runs steps to completion; 'abort' when a battle loss ended the script with a blackout. */
-    run(steps: readonly ScriptStep[], npc: NpcDef | null): Promise<ScriptOutcome> {
-      return exec(steps, npc, 0)
+    run(steps: readonly ScriptStep[], npc: NpcDef | null, sourceId?: string): Promise<ScriptOutcome> {
+      return exec(steps, npc, 0, '', sourceId)
     },
   }
 }

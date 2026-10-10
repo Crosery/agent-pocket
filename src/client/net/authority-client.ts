@@ -95,14 +95,14 @@ export function sendExchangeDeal(ctx: GameContext, desk: string, offerIndex: num
   ctx.net.send({ t: 'exchange.deal', desk, offerIndex, qty })
 }
 
-export function sendCreatureEvolve(ctx: GameContext, partyIndex: number, toSpeciesId: string): void {
+export function sendCreatureEvolve(ctx: GameContext, partyIndex: number, toSpeciesId: string, uid?: string): void {
   if (!isOnlineAuthorityActive(ctx)) return
-  ctx.net.send({ t: 'creature.evolve', partyIndex, toSpeciesId })
+  ctx.net.send({ t: 'creature.evolve', partyIndex, toSpeciesId, ...(uid ? { uid } : {}) })
 }
 
-export function sendCreatureLearnMove(ctx: GameContext, partyIndex: number, moveId: string, replaceIndex?: number): void {
+export function sendCreatureLearnMove(ctx: GameContext, partyIndex: number, moveId: string, replaceIndex?: number, uid?: string): void {
   if (!isOnlineAuthorityActive(ctx)) return
-  ctx.net.send({ t: 'creature.learnMove', partyIndex, moveId, replaceIndex })
+  ctx.net.send({ t: 'creature.learnMove', partyIndex, moveId, replaceIndex, ...(uid ? { uid } : {}) })
 }
 
 export function sendCreatureNickname(ctx: GameContext, uid: string, nickname?: string): void {

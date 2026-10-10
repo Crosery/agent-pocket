@@ -116,8 +116,8 @@ export type ClientMsgCore =
   | { t: 'shop.sell'; itemId: string; qty: number }
   | { t: 'item.use'; itemId: string; partyIndex?: number; moveIndex?: number; natureId?: string }
   | { t: 'exchange.deal'; desk: string; offerIndex: number; qty: number }
-  | { t: 'creature.evolve'; partyIndex: number; toSpeciesId: string }
-  | { t: 'creature.learnMove'; partyIndex: number; moveId: string; replaceIndex?: number }
+  | { t: 'creature.evolve'; partyIndex: number; toSpeciesId: string; uid?: string }
+  | { t: 'creature.learnMove'; partyIndex: number; moveId: string; replaceIndex?: number; uid?: string }
   | { t: 'creature.nickname'; uid: string; nickname?: string }
   | { t: 'party.swap'; a: number; b: number }
   | { t: 'box.move'; from: { area: 'party' | 'box'; box: number; index: number }; to: { area: 'party' | 'box'; box: number; index: number } }
@@ -141,6 +141,9 @@ export type ClientMsgCore =
       | 'teach'
       | 'research'
       | 'settleBossCards'
+      | 'claimResearch'
+      | 'triggerEvent'
+      | 'tickEvents'
     speciesId?: string
     itemId?: string
     groundId?: string
@@ -165,6 +168,12 @@ export type ClientMsgCore =
     townId?: string
     lesson?: string
     task?: string
+    sourceId?: string
+    npcId?: string
+    stepPath?: string
+    choiceIndex?: number
+    eventId?: string
+    clockMinutes?: number
   }
   | { t: 'save.import'; save: unknown; slotSig?: string | null; slotIndex?: number }
 

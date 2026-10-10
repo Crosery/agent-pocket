@@ -64,7 +64,7 @@ export interface GameplayDeps {
   npcs: { add(defs: readonly NpcDef[]): void; remove(ids: readonly string[]): void }
   /** Tile reserved by an NPC / warp (no spawns or items there). */
   reserved(tx: number, ty: number): boolean
-  runScript(steps: ScriptStep[]): Promise<void>
+  runScript(steps: ScriptStep[], sourceId?: string): Promise<void>
   /** Wild battle with a prepared creature (locks the overworld, blackout on loss); null when it could not start. */
   startWild(cr: Creature, opts: { flee?: BattleSideInit['flee']; roamer?: boolean }): Promise<BattleOutcome | null>
 }
@@ -100,7 +100,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
   const eventTrainers = new Map<string, string[]>()
   let items: ScatterItem[] = []
   let glintT = 0
-  const pending: ScriptStep[][] = []
+  const pending: { steps: ScriptStep[]; sourceId: string }[] = []
   let scriptBusy = false
   let battleBusy = false
   let bannerAt = -Infinity
@@ -278,7 +278,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
       ctx.hud.showBanner(title, eventDescription(def))
     } else if (!def.hidden && !a.rumors.length) ctx.ui.toast(t('events.ui.started', { name: title }), S.rumorToastKind)
     for (const ref of a.reveals) revealPlace(ref)
-    for (const steps of a.scripts) pending.push(steps)
+    a.scripts.forEach((steps, idx) => pending.push({ steps, sourceId: `ev:${ev.id}:script:${idx}` }))
     materialize(ev, map, a)
   }
 
@@ -318,6 +318,9 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     ctx.save.events = state
     active = activeEvents(state, minutes())
     refreshMods(p)
+    if (r.started.length > 0 || r.ended.length > 0) {
+      sendScriptOp(ctx, { t: 'script.op', op: 'tickEvents', clockMinutes: ctx.save.clockMinutes })
+    }
   }
 
   /** Where nothing is scheduled (interiors, caves) events whose time ran out still end: chips and modifiers stop. */
@@ -346,6 +349,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     const r = triggerEvent(id, ctx.save.events ?? {}, contextAt(p), { check: 'progress', anchor: anchorOf(p) })
     if (!r.started) return false
     ctx.save.events = r.state
+    sendScriptOp(ctx, { t: 'script.op', op: 'triggerEvent', eventId: id, clockMinutes: ctx.save.clockMinutes })
     onStarted(r.started, p)
     active = activeEvents(ctx.save.events, minutes())
     refreshMods(p)
@@ -416,6 +420,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     const tr = triggerEvent(`legend-${lg.species}`, ctx.save.events ?? {}, ectx, { check: 'all', anchor: { map: p.map.id, x: at.x, y: at.y, ...(p.region ? { region: p.region.id } : {}) } })
     if (tr.started) {
       ctx.save.events = tr.state
+      sendScriptOp(ctx, { t: 'script.op', op: 'triggerEvent', eventId: `legend-${lg.species}`, clockMinutes: ctx.save.clockMinutes })
       onStarted(tr.started, p)
       active = activeEvents(ctx.save.events, minutes())
     } else if (tr.reason !== 'active') return
@@ -487,7 +492,10 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     if (!r) return false
     const def = GAMEPLAY.eventById[r.event]
     ctx.ui.toast(`${t('events.ui.rumorPrefix')}${textOrKey(r.text, def ? eventParams(def) : {})}`, GPC.rumors.toastKind)
-    ctx.save.flags[rumorFlag(r.event)] = Math.max(1, Math.floor(minutes()))
+    const rFlag = rumorFlag(r.event)
+    const rVal = Math.max(1, Math.floor(minutes()))
+    ctx.save.flags[rFlag] = rVal
+    sendScriptOp(ctx, { t: 'script.op', op: 'setFlag', flag: rFlag, value: rVal })
     rumorAt = minutes()
     return true
   }
@@ -521,7 +529,6 @@ export function createGameplayRuntime(deps: GameplayDeps) {
       ctx.save.flags[flag] = it.startedAt
       const def = ctx.data.items[it.item]
       if (!def || !addItem(ctx, it.item, it.qty)) continue
-      sendScriptOp(ctx, { t: 'script.op', op: 'setFlag', flag, value: it.startedAt })
       sendScriptOp(ctx, { t: 'script.op', op: 'giveItem', itemId: it.item, qty: it.qty, groundId: it.id })
       ctx.audio.playSfx(I.sfx)
       const params = { name: ctx.save.name, currency: t('common.money'), item: def.nameZh, qty: it.qty }
@@ -561,10 +568,29 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     lastTown = null
   }
 
+  function syncSaveInPlace(p: GameplayPlace): void {
+    saveRef = ctx.save
+    reconcileEventsOnSave(ctx.save)
+    const nextActive = activeEvents(ctx.save.events ?? {}, minutes())
+    const nextIds = new Set(nextActive.map((ev) => ev.id))
+    for (const id of [...materialized.keys()]) {
+      if (!nextIds.has(id)) dematerialize(id, false)
+    }
+    active = nextActive
+    for (const ev of active) materialize(ev, p.map)
+    items = items.filter((it) => ctx.save.flags[GPC.flags.itemTaken + it.id] !== it.startedAt)
+    special.removeWhere((s) => {
+      const ev = active.find((a) => s.tag.startsWith(`ev:${a.id}:`))
+      return Boolean(ev && ctx.save.flags[GPC.flags.spawnTaken + s.tag] === ev.startedAt)
+    }, false)
+    refreshMods(p)
+  }
+
   function onMapEntered(): void {
     if (ctx.save !== saveRef) resetForSave()
     reconcileEventsOnSave(ctx.save)
     const p = deps.place()
+    for (const m of materialized.values()) deps.npcs.remove([...m.npcs])
     special.clear()
     items = []
     materialized.clear()
@@ -580,7 +606,10 @@ export function createGameplayRuntime(deps: GameplayDeps) {
   function update(dt: number, o: { free: boolean; canBattle: boolean }): void {
     const p = deps.place()
     if (!p) { hud.setVisible(false); return }
-    if (ctx.save !== saveRef) onMapEntered()
+    if (ctx.save !== saveRef) {
+      if (ctx.save.playerId === saveRef.playerId && p.map.id === mapId) syncSaveInPlace(p)
+      else onMapEntered()
+    }
     if (p.map.id !== mapId) onMapEntered()
     hud.setVisible(true)
     if (isOverworld(p.map)) {
@@ -599,9 +628,9 @@ export function createGameplayRuntime(deps: GameplayDeps) {
       rumorTick(p)
     } else if (!GPC.scheduler.mapKinds.includes(p.map.kind)) expire(p)
     if (pending.length && o.free && !scriptBusy && !battleBusy) {
-      const steps = pending.shift()!
+      const next = pending.shift()!
       scriptBusy = true
-      void deps.runScript(steps).catch((err: unknown) => console.error('[gameplay] event script failed', err)).finally(() => { scriptBusy = false })
+      void deps.runScript(next.steps, next.sourceId).catch((err: unknown) => console.error('[gameplay] event script failed', err)).finally(() => { scriptBusy = false })
     }
     const touched = special.update(dt, p, o.free && o.canBattle && !battleBusy && !scriptBusy)
     if (touched) void battleSpecial(touched)

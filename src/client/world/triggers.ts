@@ -12,7 +12,7 @@ export interface TriggerDeps {
   readonly ctx: GameContext
   /** True while nothing else owns the player (controller isFree). */
   isFree(): boolean
-  run(steps: readonly ScriptStep[]): Promise<void>
+  run(steps: readonly ScriptStep[], sourceId?: string): Promise<void>
 }
 
 const ONCE_FLAG_PREFIX = 'trig:'
@@ -63,7 +63,7 @@ export function createTriggers(deps: TriggerDeps) {
         ctx.save.flags[flag] = true
         sendScriptOp(ctx, { t: 'script.op', op: 'setFlag', flag, value: true })
       }
-      void deps.run(t.steps).finally(() => { running = false })
+      void deps.run(t.steps, `trig:${t.id}`).finally(() => { running = false })
     },
     get pending(): number { return queue.length },
     dispose(): void { for (const off of offs) off(); queue.length = 0 },

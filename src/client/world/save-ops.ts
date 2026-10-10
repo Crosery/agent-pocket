@@ -110,8 +110,15 @@ export async function settleBossCards(ctx: GameContext): Promise<Creature[]> {
       const replacing = slot < cr.moves.length
       if (slot === cr.moves.length) cr.moves.push(entry)
       else cr.moves[slot] = entry
-      const pIdx = ctx.save.party.indexOf(cr)
-      if (pIdx >= 0) sendCreatureLearnMove(ctx, pIdx, moveId, replacing ? slot : undefined)
+      const pIdx = ctx.save.party.findIndex((c) => c.uid === cr.uid)
+      if (pIdx >= 0) {
+        const live = ctx.save.party[pIdx]
+        if (live !== cr && !live.moves.some((m) => m.id === moveId)) {
+          if (!replacing && live.moves.length < ctx.data.config.party.maxMoves) live.moves.push({ ...entry })
+          else if (slot < live.moves.length) live.moves[slot] = { ...entry }
+        }
+        sendCreatureLearnMove(ctx, pIdx, moveId, replacing ? slot : undefined, cr.uid)
+      }
       ctx.ui.toast(t('hud.license.learned', { name: creatureName(cr) }), 'success')
     }
   }

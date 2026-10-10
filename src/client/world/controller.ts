@@ -262,7 +262,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     setEventWeather: (kind) => { if (kind !== eventWeather) { eventWeather = kind; applyWeather() } },
     npcs: { add: (defs) => npcs.add(defs), remove: (ids) => npcs.remove(ids) },
     reserved: (tx, ty) => !!map && (npcs.occupies(tx, ty) || !!warpAt(map, tx, ty)),
-    runScript: (steps) => runScript(steps, null),
+    runScript: (steps, sourceId) => runScript(steps, null, sourceId),
     startWild: (cr, o) => wildEncounter(cr, null, o),
   })
 
@@ -833,18 +833,18 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
 
   // ---------------------------------------------------------------- scripts & NPCs
 
-  async function runScript(steps: readonly ScriptStep[], npc: NpcDef | null): Promise<void> {
+  async function runScript(steps: readonly ScriptStep[], npc: NpcDef | null, sourceId?: string): Promise<void> {
     lock('script')
     player.moving = false
     try {
-      await scripts.run(steps, npc)
+      await scripts.run(steps, npc, sourceId)
     } finally {
       unlock('script')
       refresh()
     }
   }
 
-  const triggers = createTriggers({ ctx, isFree, run: (steps) => runScript(steps, null) })
+  const triggers = createTriggers({ ctx, isFree, run: (steps, sourceId) => runScript(steps, null, sourceId) })
 
   async function talkTo(n: NpcRuntime): Promise<void> {
     n.busy = true

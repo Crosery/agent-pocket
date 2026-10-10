@@ -6,9 +6,10 @@
 // - Economic ledger + anti-cheat audit log + anomaly detection (encounter/step ratio, hourly exp/money rate).
 import { randomInt } from 'node:crypto'
 import battleUiJson from '../../content/battle-ui.json' with { type: 'json' }
+import clientJson from '../../content/events/client.json' with { type: 'json' }
 import gameJson from '../../content/game.json' with { type: 'json' }
 import type {
-  BattleAction, BattleEvent, BattleInit, BattleModifiers, BattleRequest, BattleSideInit, Creature, FieldWeatherKind, GradeDef, NpcDef, SaveData, ScriptStep, SpeciesDef, TrainerDef, TypeId, World,
+  BattleAction, BattleEvent, BattleInit, BattleModifiers, BattleRequest, BattleSideInit, Creature, FieldWeatherKind, GameMap, GradeDef, NpcDef, RegionDef, SaveData, ScriptStep, SpeciesDef, TownDef, TrainerDef, TypeId, World,
 } from '../shared/types.ts'
 import type { ClientMsg, PublicProfile, ServerMsg } from '../shared/protocol.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
@@ -20,22 +21,28 @@ import { BattleEngine, perspective } from '../shared/battle/engine.ts'
 import { buildBossInit, createBossCreature } from '../shared/battle/boss-battle.ts'
 import { bossCardCap, captureSeed, isBossCard, partyExpMods, rollBossCard, settleBank } from '../shared/gameplay/bosscard.ts'
 import { offersOf, takeOffer, timesAffordable, unlocked } from '../shared/gameplay/exchange.ts'
-import { activeEvents, eventModifiers, modifierValue } from '../shared/gameplay/events.ts'
 import {
-  checkInstanceAchievements, contractOdds, instanceOfBoss, isOffPeakDouble, isTierUnlocked, pickLossHint, progressOf, rollContractOutcome, shouldOfferAssist,
+  activeEvents, dayOf, endEvent, eventAppliesAt, eventContext, eventFocus, eventModifiers, eventRng, eventSalt,
+  evaluateCondition, evaluateProgress, expandFlag, modifierValue, realDateOf, resolvePlaceRef, startActions,
+  tickEvents, triggerEvent, type ActiveEvent, type EventAnchor, type EventContext, type StartActions,
+} from '../shared/gameplay/events.ts'
+import {
+  checkInstanceAchievements, contractOdds, dailyLockoutStatus, instanceOfBoss, instancePeriodKey, isOffPeakDouble,
+  isTierUnlocked, pickLossHint, progressOf, recordDailyReward, recordDailyRoll, rollContractOutcome, shouldOfferAssist,
 } from '../shared/gameplay/instances.ts'
 import {
   addTaskProgress, applyResearch, levelRewards, researchFromBattle, researchLevel, researchPoints,
 } from '../shared/gameplay/research.ts'
-import { speciesBehavior } from '../shared/gameplay/spawns.ts'
+import { legendsNear, onLegendBattleEnd, resolveSpawnEffect, speciesBehavior } from '../shared/gameplay/spawns.ts'
 import { GAMEPLAY } from '../shared/gameplay/data.ts'
 import {
   applyMedicine, applyTradeResult, canOffer, canSell, catchPlacement, medicineBlocker, moveCreature, releaseCreature,
   sellPrice, shopBuyPrice, teachState,
 } from '../shared/gameplay/save-ops.ts'
 import { STORY_CONTENT, storyFeatures, type StepSpec } from '../shared/world/story.ts'
+import { FRONTIER_PACK } from '../shared/world/frontier/content/data.ts'
 import { frontierQuest, frontierTrainer, registerFrontierRefs } from '../shared/world/frontier/content/index.ts'
-import { getMap, objectsInRect, regionAt } from '../shared/world/worldapi.ts'
+import { distanceFromOrigin, getMap, objectsInRect, regionAt, worldOrigin } from '../shared/world/worldapi.ts'
 import type { AuditRecord, LedgerRecord } from './accounts.ts'
 import type { HubCore, Player } from './core.ts'
 import { maskBanned } from './moderation.ts'
@@ -79,6 +86,7 @@ interface ActiveBattle {
   trainer: TrainerDef | null
   bossId: string | null
   tierId: string | null
+  runSeq: number
   firstClear: boolean
   captureAfterWin: boolean
   consumedItems: Record<string, number>
@@ -91,6 +99,8 @@ interface ActiveBattle {
   foeMoves: { species: string; type: TypeId }[]
   activeFoeSpecies: string | null
   roamingLegend: boolean
+  eventSpawnTag: string | null
+  eventStartedAt: number | null
   learnableMoves: Map<number, Set<string>>
   evolutionsReady: Map<number, string>
   openedAt: number
@@ -102,9 +112,9 @@ interface PendingContract {
   playerId: string
   bossId: string
   tierId: string
+  runSeq: number
   signed: boolean
 }
-
 interface PlayerMetrics {
   stepsSinceCheck: number
   encountersSinceCheck: number
@@ -128,6 +138,7 @@ export interface AuthorityService {
   close(): Promise<void>
   readonly secret: string
   hasSave(playerId: string): boolean
+  isInBattle(playerId: string): boolean
   getSave(playerId: string): SaveData | null
   getRecord(playerId: string): SignedServerSave | null
   isUntrustedImport(playerId: string): boolean
@@ -170,6 +181,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
   const metrics = new Map<string, PlayerMetrics>()
   const recentPayments = new Map<string, { kind: 'money' | 'item'; itemId?: string; amount: number; map: string; at: number }>()
   const recentFlagsSet = new Map<string, Map<string, number>>()
+  const lastClockSyncMs = new Map<string, number>()
 
   function noteRecentFlag(playerId: string, flag: string): void {
     let m = recentFlagsSet.get(playerId)
@@ -499,6 +511,17 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       if (r.gains.length) save.research = r.state
     }
 
+    if (b.roamingLegend && b.activeFoeSpecies) {
+      const foeHpLeft = b.engine.state.sides[1]?.active?.hp ?? 0
+      save.legends = onLegendBattleEnd(save.legends ?? {}, b.activeFoeSpecies, result, {
+        hpLeft: foeHpLeft,
+        minutes: save.clockMinutes,
+      })
+    }
+    if (b.eventSpawnTag && b.eventStartedAt !== null && (result === 'win' || result === 'caught')) {
+      save.flags[clientJson.flags.spawnTaken + b.eventSpawnTag] = b.eventStartedAt
+    }
+
     if (result === 'win') {
       save.stats.battlesWon += 1
       if (b.trainer) {
@@ -524,12 +547,18 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           const rules = inst?.def.tiers[b.tierId]
           if (inst && rules) {
             const prog = progressOf(save, inst.id)
+            const periodKey = instancePeriodKey(inst.def.refresh ?? 'daily')
+            const lockout = dailyLockoutStatus(prog, periodKey)
+            const canGrantRepeatReward = b.firstClear || lockout.canReward
+            if (!b.firstClear && lockout.canReward) {
+              recordDailyReward(prog, periodKey)
+            }
             prog.clears[b.tierId] = (prog.clears[b.tierId] ?? 0) + 1
             prog.losses[b.tierId] = 0
             save.flags[GAMEPLAY.instanceDefaults.assistOfferFlag] = false
 
             const offPeak = isOffPeakDouble()
-            let shards = (b.firstClear ? rules.reward.shards : rules.repeat.shards) ?? 0
+            let shards = canGrantRepeatReward ? ((b.firstClear ? rules.reward.shards : rules.repeat.shards) ?? 0) : 0
             if (shards > 0 && rules.reward.jackpot) {
               const jRng = new Rng(b.seed ^ 0x3c6ef372)
               if (jRng.next() < rules.reward.jackpot.chance) {
@@ -552,7 +581,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
               partySize: 1,
             })
 
-            const baseMoney = b.firstClear ? (rules.reward.money ?? 0) : (rules.repeat.money ?? 0)
+            const baseMoney = canGrantRepeatReward ? (b.firstClear ? (rules.reward.money ?? 0) : (rules.repeat.money ?? 0)) : 0
             const rewardMoney = baseMoney * (offPeak ? 2 : 1)
             if (rewardMoney > 0) {
               save.money += rewardMoney
@@ -567,12 +596,13 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
                 }
               }
             }
-            if (b.captureAfterWin && (b.firstClear || rules.repeat.capture)) {
+            if (b.captureAfterWin && (b.firstClear || (rules.repeat.capture && lockout.canRoll))) {
               pendingContracts.set(b.id, {
                 battleId: b.id,
                 playerId: p.id,
                 bossId: b.bossId,
                 tierId: b.tierId,
+                runSeq: b.runSeq,
                 signed: false,
               })
             }
@@ -610,8 +640,10 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       rev: committed.rev,
     }
   }
-
   function handleBattleStart(p: Player, msg: Extract<ClientMsg, { t: 'battle.start' }>): void {
+    for (const [cid, pc] of [...pendingContracts.entries()]) {
+      if (pc.playerId === p.id) pendingContracts.delete(cid)
+    }
     const rec = getRecord(p.id)
     if (!rec) {
       core.error(p, 'not_ready')
@@ -642,9 +674,12 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     let trainer: TrainerDef | null = null
     let bossId: string | null = null
     let tierId: string | null = null
+    let battleRunSeq = 0
     let firstClear = false
     const captureAfterWin = msg.captureAfterWin === true
     let roamingLegend = false
+    let eventSpawnTag: string | null = null
+    let eventStartedAt: number | null = null
 
     if (msg.kind === 'wild') {
       const m = playerMetrics(p.id)
@@ -654,6 +689,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       }
       let speciesId = msg.speciesId
       let level = msg.level
+      let legendCarriedHp: number | undefined
       let scriptedMoves: string[] | undefined
       let scriptedGradeFloor: GradeDef['id'] | undefined
       let scriptedCatchRateMul: number | undefined
@@ -695,31 +731,66 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
             }
             scriptedCatchRateMul = msg.catchRateMul
           }
-        } else if (msg.roamer) {
-          const inTable = Boolean(region?.encounters.some((s) => s.species === speciesId))
-          const isLegend = GAMEPLAY.legends.some((l) => l.species === speciesId)
-          const activeEvs = activeEvents(save.events ?? {}, save.clockMinutes)
-          const isEventSpawn = activeEvs.some((ev) => JSON.stringify(ev.def.effects).includes(speciesId!))
-          if (isLegend) roamingLegend = true
-          if (world && region && region.encounters.length > 0 && !inTable && !isLegend && !isEventSpawn) {
-            audit(p.id, 'battle.invalid_encounter', { reason: 'invalid_roamer_species', speciesId, region: region.id }, 2, p.ip)
-            core.error(p, 'invalid_encounter')
-            return
-          }
-        } else if (region && region.encounters.length > 0) {
-          const inTable = region.encounters.some((s) => s.species === speciesId)
-          const activeEvs = activeEvents(save.events ?? {}, save.clockMinutes)
-          const inEventBoost = activeEvs.some((ev) => JSON.stringify(ev.def.effects).includes(speciesId!))
-          if (!inTable && !inEventBoost) {
-            audit(p.id, 'battle.invalid_encounter', { reason: 'species_not_in_region_table', speciesId, region: region.id }, 2, p.ip)
-            core.error(p, 'invalid_encounter')
-            return
+        } else {
+          const legDef = GAMEPLAY.legendBySpecies[speciesId]
+          const inTable = Boolean(region && region.encounters.length > 0 && region.encounters.some((s) => s.species === speciesId))
+          const evSpawn = findActiveEventWildForPlayer(p, save, speciesId, map, region)
+          if (legDef && !inTable && !evSpawn) {
+            if (!msg.roamer) {
+              audit(p.id, 'battle.invalid_encounter', { reason: 'legend_requires_roamer', speciesId, map: p.state.map }, 3, p.ip)
+              core.error(p, 'invalid_encounter')
+              return
+            }
+            const ectx = buildServerEventContext(p, save, (weather && weather !== 'none' ? weather : 'clear') as FieldWeatherKind)
+            const condOk = world ? evaluateCondition(legDef.when, ectx) : evaluateProgress(legDef.when, ectx)
+            if (!condOk) {
+              audit(p.id, 'battle.invalid_encounter', { reason: 'legend_condition_not_met', speciesId, map: p.state.map }, 3, p.ip)
+              core.error(p, 'invalid_encounter')
+              return
+            }
+            if (world) {
+              if (!map || !clientJson.legends.mapKinds.includes(map.kind)) {
+                audit(p.id, 'battle.invalid_encounter', { reason: 'legend_invalid_map', speciesId, map: p.state.map }, 3, p.ip)
+                core.error(p, 'invalid_encounter')
+                return
+              }
+              const near = legendsNear(worldOrigin(world), { x: p.state.x, y: p.state.y }, save.clockMinutes, serverEventSeed(save), save.legends ?? {})
+              const hit = near.find((n) => n.legend.species === speciesId && n.proximity === 'appear')
+              if (!hit) {
+                audit(p.id, 'battle.invalid_encounter', { reason: 'legend_not_near', speciesId, map: p.state.map }, 3, p.ip)
+                core.error(p, 'invalid_encounter')
+                return
+              }
+              level = hit.legend.level
+              legendCarriedHp = hit.legend.hp
+            }
+            roamingLegend = true
+          } else if (world) {
+            if (!inTable && !evSpawn) {
+              audit(p.id, 'battle.invalid_encounter', {
+                reason: (!region || region.encounters.length === 0) ? 'no_encounters_in_region' : 'species_not_in_region_table',
+                speciesId,
+                map: p.state.map,
+                region: region?.id ?? null,
+              }, 2, p.ip)
+              core.error(p, 'invalid_encounter')
+              return
+            }
+            if (evSpawn && !inTable) {
+              level = evSpawn.level
+              eventSpawnTag = evSpawn.tag
+              eventStartedAt = evSpawn.startedAt
+            }
           }
         }
       } else if (region && region.encounters.length > 0) {
         const slot = rng.pick(region.encounters)
         speciesId = slot.species
         level = rng.int(Math.min(slot.minLevel, slot.maxLevel), Math.max(slot.minLevel, slot.maxLevel))
+      } else if (world) {
+        audit(p.id, 'battle.invalid_encounter', { reason: 'no_encounters_in_region', map: p.state.map }, 2, p.ip)
+        core.error(p, 'invalid_encounter')
+        return
       } else {
         speciesId = CONTENT.speciesList[0]?.id ?? ''
         level = 3
@@ -730,16 +801,13 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         core.error(p, 'invalid_encounter')
         return
       }
-      if (world && region && region.encounters.length > 0 && !msg.scripted) {
-        const slots = region.encounters.filter((s) => s.species === speciesId)
+      if (world && !msg.scripted && !roamingLegend && !eventSpawnTag) {
+        const slots = (region?.encounters ?? []).filter((s) => s.species === speciesId)
         if (slots.length > 0) {
           const bonus = speciesBehavior(speciesId, CONTENT).levelBonus
           const minLv = Math.min(...slots.map((s) => Math.min(s.minLevel, s.maxLevel)))
           const maxLv = Math.max(...slots.map((s) => Math.max(s.minLevel, s.maxLevel))) + bonus
           clampedLevel = Math.max(minLv, Math.min(maxLv, clampedLevel))
-        } else if (msg.roamer) {
-          const maxAllowed = Math.min(CONTENT.config.party.maxLevel, Math.max(35, save.badges.length * 10 + 25))
-          clampedLevel = Math.min(clampedLevel, maxAllowed)
         }
       }
       const foe = createCreature(speciesId, clampedLevel, {
@@ -749,6 +817,9 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         ...(scriptedMoves?.length ? { moves: scriptedMoves } : {}),
         ...(scriptedGradeFloor ? { gradeFloor: scriptedGradeFloor } : {}),
       }, CONTENT)
+      if (legendCarriedHp !== undefined) {
+        foe.hp = Math.max(1, Math.min(foe.hp, legendCarriedHp))
+      }
       const wildBoss = CONTENT.bossBySpecies[speciesId]
       if (wildBoss) {
         bossId = wildBoss.id
@@ -789,7 +860,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         const near = objectsInRect(map, Math.floor(p.state.x) - 24, Math.floor(p.state.y) - 24, Math.floor(p.state.x) + 25, Math.floor(p.state.y) + 25)
         registerFrontierRefs(world, near.npcs)
       }
-      const tr = world ? (world.trainers[trId] ?? frontierTrainer(world, trId)) : null
+      const tr = resolveTrainerDef(p, save, trId, map)
       if (!tr) {
         audit(p.id, 'battle.invalid_trainer', { trainerId: trId }, 2, p.ip)
         core.error(p, 'invalid_encounter')
@@ -865,6 +936,11 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         core.error(p, 'invalid_encounter')
         return
       }
+      if (world && !isBossAccessibleOnPlayerMap(p, save, bId, inst.id, inst.def.entry?.map)) {
+        audit(p.id, 'battle.invalid_boss', { bossId: bId, tierId: tId, map: p.state.map, reason: 'not_at_boss_entry' }, 3, p.ip)
+        core.error(p, 'invalid_encounter')
+        return
+      }
       bossId = bId
       tierId = tId
       const prog = progressOf(save, inst.id)
@@ -873,9 +949,9 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         if (v !== undefined && v !== false && v !== 0 && v !== '') boolFlags[k] = true
       }
       const unlockCheck = isTierUnlocked(rules, save.badges, boolFlags, 1)
-      const unlockTier = (rules.unlock as { tier?: string } | undefined)?.tier
+      const unlockTier = rules.unlock && 'tier' in rules.unlock && typeof rules.unlock.tier === 'string' ? rules.unlock.tier : undefined
       if (!unlockCheck.unlocked || (unlockTier && (prog.clears[unlockTier] ?? 0) <= 0)) {
-        audit(p.id, 'battle.locked_boss_tier', {
+        audit(p.id, 'battle.boss_tier_locked', {
           bossId: bId,
           tierId: tId,
           reason: unlockCheck.reason ?? unlockTier,
@@ -885,8 +961,16 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         return
       }
       firstClear = (prog.clears[tId] ?? 0) === 0
+      const periodKey = instancePeriodKey(inst.def.refresh ?? 'daily')
+      const lockout = dailyLockoutStatus(prog, periodKey)
+      if (!firstClear && !lockout.canReward && (!captureAfterWin || !rules.repeat.capture || !lockout.canRoll)) {
+        audit(p.id, 'battle.boss_daily_lockout', { bossId: bId, tierId: tId, periodKey }, 2, p.ip)
+        core.error(p, 'invalid_encounter')
+        return
+      }
       save.rollSeed ??= hashString(save.playerId) >>> 0
       prog.runSeq += 1
+      battleRunSeq = prog.runSeq
       commitSave(p.id, save, { ref: `boss_enter:${bId}:${tId}`, notify: false })
 
       const foe = createBossCreature(bId, tier.level, new Rng(seed ^ 0x5bd1e995), CONTENT)
@@ -938,6 +1022,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       trainer,
       bossId,
       tierId,
+      runSeq: battleRunSeq,
       firstClear,
       captureAfterWin,
       consumedItems: {},
@@ -950,6 +1035,8 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       foeMoves: [],
       activeFoeSpecies: null,
       roamingLegend,
+      eventSpawnTag,
+      eventStartedAt,
       learnableMoves: new Map(),
       evolutionsReady: new Map(),
       openedAt: Date.now(),
@@ -1082,17 +1169,23 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     pendingContracts.delete(msg.battleId)
 
     const prog = progressOf(save, inst.id)
+    const periodKey = instancePeriodKey(inst.def.refresh ?? 'daily')
+    const lockout = dailyLockoutStatus(prog, periodKey)
+    const boundRunSeq = pending.runSeq
     const first = (prog.captures[msg.tierId] ?? 0) === 0
     if (
-      (!first && !rules.repeat.capture) ||
-      (prog.lastRollRun?.[msg.tierId] !== undefined && prog.lastRollRun[msg.tierId] === prog.runSeq)
+      (!first && (!rules.repeat.capture || !lockout.canRoll)) ||
+      (prog.lastRollRun?.[msg.tierId] !== undefined && prog.lastRollRun[msg.tierId] >= boundRunSeq)
     ) {
-      const committed = commitSave(p.id, save, { ref: `contract:${msg.battleId}`, notify: false })
+      const committed = commitSave(p.id, save, { ref: `contract:${msg.battleId}` })
       core.send(p, { t: 'battle.contracted', battleId: msg.battleId, signed: null, save: committed.save, rev: committed.rev })
       return
     }
+    if (!first) {
+      recordDailyRoll(prog, periodKey)
+    }
     save.rollSeed ??= hashString(save.playerId) >>> 0
-    const seed = captureSeed(save.rollSeed, inst.id, msg.tierId, first ? 0 : prog.runSeq)
+    const seed = captureSeed(save.rollSeed, inst.id, msg.tierId, first ? 0 : boundRunSeq)
     const ballBonus = CONTENT.quality.capture.ballBonus?.[ballId] ?? 0
     const isMaster = ballId === CONTENT.quality.capture.masterBall && (save.bag[ballId] ?? 0) > 0
     const curPity = prog.pity?.[msg.tierId] ?? 0
@@ -1100,7 +1193,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     const rollRng = new Rng(seed)
     const success = isMaster || odds.guaranteed || rollContractOutcome(rollRng, odds.chance)
     prog.lastRollRun ??= {}
-    prog.lastRollRun[msg.tierId] = prog.runSeq
+    prog.lastRollRun[msg.tierId] = boundRunSeq
     prog.pity ??= {}
 
     if (BATTLE_CONTRACT_CONSUME_BALL && (save.bag[ballId] ?? 0) > 0) {
@@ -1117,7 +1210,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         save.bag[shardItem] = (save.bag[shardItem] ?? 0) + failShard
         addLedger(p.id, 'item', shardItem, failShard, save.bag[shardItem], `contract_fail:${msg.battleId}`)
       }
-      const committed = commitSave(p.id, save, { ref: `contract_fail:${msg.battleId}`, notify: false })
+      const committed = commitSave(p.id, save, { ref: `contract_fail:${msg.battleId}` })
       core.send(p, {
         t: 'battle.contracted',
         battleId: msg.battleId,
@@ -1131,7 +1224,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     prog.pity[msg.tierId] = 0
     const card = rollBossCard(new Rng(seed), msg.bossId, msg.tierId, rules, {
       first,
-      run: String(prog.runSeq),
+      run: String(boundRunSeq),
       at: Date.now(),
       otName: save.name,
       otId: save.playerId,
@@ -1148,7 +1241,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     }
     prog.captures[msg.tierId] = (prog.captures[msg.tierId] ?? 0) + 1
     addLedger(p.id, 'creature', card.uid, 1, save.party.length, `contract:${msg.battleId}`)
-    const committed = commitSave(p.id, save, { ref: `contract:${msg.battleId}`, notify: false })
+    const committed = commitSave(p.id, save, { ref: `contract:${msg.battleId}` })
     core.send(p, {
       t: 'battle.contracted',
       battleId: msg.battleId,
@@ -1170,7 +1263,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       core.error(p, 'shop_invalid')
       return
     }
-    if (world && !isShopItemUnlockedForPlayer(p, rec.save, item.id)) {
+    if (!isShopItemUnlockedForPlayer(p, rec.save, item.id)) {
       audit(p.id, 'shop.locked_tier_item', { itemId: item.id, badges: rec.save.badges.length, map: p.state.map }, 2, p.ip)
       core.error(p, 'shop_invalid')
       return
@@ -1347,46 +1440,71 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     return out
   }
 
+  function resolvePartyIndex(party: readonly Creature[], uid?: string, partyIndex?: number): number {
+    if (typeof uid === 'string' && uid) {
+      const byUid = party.findIndex((c) => c.uid === uid)
+      if (byUid >= 0) return byUid
+    }
+    return typeof partyIndex === 'number' && Number.isInteger(partyIndex) && partyIndex >= 0 && partyIndex < party.length
+      ? partyIndex
+      : -1
+  }
+
   function handleCreatureEvolve(p: Player, msg: Extract<ClientMsg, { t: 'creature.evolve' }>): void {
     const rec = getRecord(p.id)
     if (!rec) { core.error(p, 'not_ready'); return }
-    const idx = typeof msg.partyIndex === 'number' && Number.isInteger(msg.partyIndex) ? msg.partyIndex : -1
-    const cr = rec.save.party[idx]
+    const active = activeBattles.get(p.id)
+    const saveIdx = resolvePartyIndex(rec.save.party, msg.uid, msg.partyIndex)
+    const battleIdx = active ? resolvePartyIndex(active.workingParty, msg.uid, msg.partyIndex) : -1
+    const cr = (battleIdx >= 0 ? active?.workingParty[battleIdx] : undefined) ?? (saveIdx >= 0 ? rec.save.party[saveIdx] : undefined)
     const target = typeof msg.toSpeciesId === 'string' ? msg.toSpeciesId : ''
     if (!cr || !CONTENT.species[target]) {
-      audit(p.id, 'creature.invalid_evolve', { partyIndex: msg.partyIndex, toSpeciesId: msg.toSpeciesId }, 2, p.ip)
+      audit(p.id, 'creature.invalid_evolve', { partyIndex: msg.partyIndex, uid: msg.uid, toSpeciesId: msg.toSpeciesId }, 2, p.ip)
       core.error(p, 'authority_violation')
       return
     }
     if (cr.speciesId === target) return
-    if (evolutionTarget(cr, CONTENT) !== target) {
-      audit(p.id, 'creature.invalid_evolve', { partyIndex: msg.partyIndex, toSpeciesId: msg.toSpeciesId }, 2, p.ip)
+    const readyTarget = battleIdx >= 0 ? active?.evolutionsReady.get(battleIdx) : undefined
+    if (evolutionTarget(cr, CONTENT) !== target && readyTarget !== target) {
+      audit(p.id, 'creature.invalid_evolve', { partyIndex: msg.partyIndex, uid: msg.uid, toSpeciesId: msg.toSpeciesId }, 2, p.ip)
       core.error(p, 'authority_violation')
       return
     }
+    if (active && battleIdx >= 0 && active.workingParty[battleIdx]) {
+      evolve(active.workingParty[battleIdx], target, CONTENT)
+    }
     const save = structuredClone(rec.save)
-    evolve(save.party[idx], target, CONTENT)
+    if (saveIdx >= 0 && save.party[saveIdx]) {
+      evolve(save.party[saveIdx], target, CONTENT)
+    }
     if (!save.dexSeen.includes(target)) save.dexSeen.push(target)
     if (!save.dexCaught.includes(target)) save.dexCaught.push(target)
     const r = applyResearch(save.research ?? {}, [{ species: target, event: { kind: 'evolve' } }])
     if (r.gains.length) save.research = r.state
-    commitSave(p.id, save, { ref: `evolve:${cr.uid}:${target}` })
+    commitSave(p.id, save, { ref: `evolve:${cr.uid}:${target}`, notify: !active })
   }
 
   function handleCreatureLearnMove(p: Player, msg: Extract<ClientMsg, { t: 'creature.learnMove' }>): void {
     const rec = getRecord(p.id)
     if (!rec) { core.error(p, 'not_ready'); return }
-    const idx = typeof msg.partyIndex === 'number' && Number.isInteger(msg.partyIndex) ? msg.partyIndex : -1
     const moveId = typeof msg.moveId === 'string' ? msg.moveId : ''
     const mv = CONTENT.moves[moveId]
     const active = activeBattles.get(p.id)
-    const battleCr = active?.workingParty[idx]
-    const saveCr = rec.save.party[idx]
+    const battleIdx = active ? resolvePartyIndex(active.workingParty, msg.uid, msg.partyIndex) : -1
+    const saveIdx = resolvePartyIndex(rec.save.party, msg.uid, msg.partyIndex)
+    const battleCr = battleIdx >= 0 ? active?.workingParty[battleIdx] : undefined
+    const saveCr = saveIdx >= 0 ? rec.save.party[saveIdx] : undefined
     const cr = battleCr ?? saveCr
-    const allowedInBattle = Boolean(active?.learnableMoves.get(idx)?.has(moveId))
-    const allowedByLearnset = Boolean(cr && learnsetMovesAtOrBelow(cr.speciesId, cr.level).has(moveId))
+    const allowedInBattle = Boolean(
+      (battleIdx >= 0 && active?.learnableMoves.get(battleIdx)?.has(moveId)) ||
+      (typeof msg.partyIndex === 'number' && active?.learnableMoves.get(msg.partyIndex)?.has(moveId)),
+    )
+    const allowedByLearnset = Boolean(
+      (cr && learnsetMovesAtOrBelow(cr.speciesId, cr.level).has(moveId)) ||
+      (saveCr && learnsetMovesAtOrBelow(saveCr.speciesId, saveCr.level).has(moveId)),
+    )
     if (!cr || !mv || (!allowedInBattle && !allowedByLearnset)) {
-      audit(p.id, 'creature.invalid_learn_move', { partyIndex: msg.partyIndex, moveId }, 2, p.ip)
+      audit(p.id, 'creature.invalid_learn_move', { partyIndex: msg.partyIndex, uid: msg.uid, moveId }, 2, p.ip)
       core.error(p, 'authority_violation')
       return
     }
@@ -1400,7 +1518,8 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     }
     if (battleCr) applySlot(battleCr)
     const save = structuredClone(rec.save)
-    if (save.party[idx]) applySlot(save.party[idx])
+    const targetSaveIdx = resolvePartyIndex(save.party, cr.uid, saveIdx >= 0 ? saveIdx : msg.partyIndex)
+    if (targetSaveIdx >= 0 && save.party[targetSaveIdx]) applySlot(save.party[targetSaveIdx])
     commitSave(p.id, save, { ref: `learnMove:${cr.uid}:${moveId}`, notify: !active })
   }
 
@@ -1444,38 +1563,318 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     commitSave(p.id, save, { ref: 'box:release' })
   }
 
-  function expandRawSteps(raw: readonly StepSpec[], depth = 0): ScriptStep[] {
+  // ------------------------------------------------------------------ World Event Runtime & Script Verification
+
+  function serverEventSeed(save: SaveData): number {
+    const wSeed = world ? world.seed : 0
+    return hashString(`${clientJson.scheduler.seedSalt}:${wSeed >>> 0}:${save.playerId}`)
+  }
+
+  function advanceServerClock(playerId: string, save: SaveData, hintClockMinutes?: number): void {
+    const nowMs = Date.now()
+    const prevMs = lastClockSyncMs.get(playerId)
+    lastClockSyncMs.set(playerId, nowMs)
+    const daySec = Math.max(1, CONTENT.config.time.dayRealSeconds)
+    const minPerSec = (24 * 60) / daySec
+    const elapsedSec = prevMs !== undefined ? Math.max(0, (nowMs - prevMs) / 1000) : 15
+    const maxAdvance = elapsedSec * minPerSec + GAMEPLAY.spawn.scheduler.checkEveryMinutes * 2
+    if (typeof hintClockMinutes === 'number' && Number.isFinite(hintClockMinutes) && hintClockMinutes >= save.clockMinutes) {
+      save.clockMinutes = Math.min(hintClockMinutes, save.clockMinutes + maxAdvance)
+    } else if (prevMs !== undefined && elapsedSec > 0) {
+      save.clockMinutes += elapsedSec * minPerSec
+    }
+  }
+
+  function serverPlacesNear(map: GameMap, x: number, y: number, r: number): TownDef[] {
+    if (!world) return []
+    const prov = map.infinite as unknown as {
+      placesIn?(x0: number, y0: number, x1: number, y1: number): TownDef[]
+      siteOf?(id: string): { site: { template: string } } | null
+    } | undefined
+    if (prov?.placesIn) {
+      return prov.placesIn(Math.floor(x - r), Math.floor(y - r), Math.ceil(x + r), Math.ceil(y + r)).flatMap((pl) => {
+        const tpl = prov.siteOf?.(pl.id)?.site.template
+        if (!tpl || pl.id.startsWith(`${tpl}-`)) return [pl]
+        return [tpl, ...(FRONTIER_PACK.common.templateAliases[tpl] ?? [])].map((a) => ({ ...pl, id: `${a}-@${pl.id}` }))
+      })
+    }
+    return world.towns.filter((tw) => tw.map === map.id && Math.abs(tw.x - x) <= r && Math.abs(tw.y - y) <= r)
+  }
+
+  function buildServerEventContext(p: Player, save: SaveData, weather: FieldWeatherKind = 'clear'): EventContext {
+    const map = world ? getMap(world, p.state.map) : null
+    const region = map ? regionAt(map, p.state.x, p.state.y) : null
+    const near = map ? serverPlacesNear(map, p.state.x, p.state.y, GAMEPLAY.spawn.scheduler.localRadius) : []
+    const dist = world
+      ? (map?.id === world.startMap
+        ? distanceFromOrigin(world, p.state.x, p.state.y)
+        : (p.lastOverworld ? distanceFromOrigin(world, p.lastOverworld.x, p.lastOverworld.y) : 0))
+      : 0
+    return eventContext(save, {
+      real: realDateOf(new Date()),
+      weather,
+      biome: region?.biome ?? null,
+      regionId: region?.id ?? null,
+      regionDanger: region?.danger ?? 0,
+      distance: dist,
+      outdoor: map ? map.outdoor : true,
+      nearPlaces: near.map((pl) => pl.id),
+      researchLevel: researchLevel(researchPoints(save.research ?? {})).level,
+    })
+  }
+
+  function serverFocusOfEvent(ev: ActiveEvent, map: GameMap | null): { x: number; y: number } {
+    const a = ev.anchor ?? { map: map?.id ?? '', x: 0, y: 0 }
+    if (!world || !map) return { x: a.x, y: a.y }
+    const near = serverPlacesNear(map, a.x, a.y, GAMEPLAY.spawn.scheduler.localRadius)
+    const f = eventFocus(ev.def, near, a)
+    return f ? { x: f.x, y: f.y } : { x: a.x, y: a.y }
+  }
+
+  function serverActionsForEvent(ev: ActiveEvent, p: Player, save: SaveData): StartActions {
+    const map = world ? getMap(world, ev.anchor?.map ?? p.state.map) : null
+    const at = serverFocusOfEvent(ev, map)
+    const areaLevel = (map ? regionAt(map, at.x, at.y)?.levelRange : undefined)
+      ?? (clientJson.scheduler.fallbackAreaLevel as [number, number])
+    return startActions(ev, {
+      areaLevel,
+      rng: new Rng(eventSalt(serverEventSeed(save), ev)),
+      at,
+    })
+  }
+
+  function applyEventStartToSave(ev: ActiveEvent, p: Player, save: SaveData): void {
+    const a = serverActionsForEvent(ev, p, save)
+    const vars = { year: realDateOf(new Date()).year, day: dayOf(save.clockMinutes) }
+    for (const f of a.flags) {
+      const fname = f.flag.includes('{') ? expandFlag(f.flag, vars) : f.flag
+      save.flags[fname] = f.value
+      noteRecentFlag(p.id, fname)
+    }
+    save.flags[clientJson.flags.news + ev.id] = Math.max(1, Math.floor(save.clockMinutes))
+    if (world) {
+      const ow = world.maps[world.startMap]
+      const from = p.state.map === world.startMap ? { x: p.state.x, y: p.state.y } : (p.lastOverworld ?? ow?.spawn)
+      if (ow && from) {
+        const places = serverPlacesNear(ow, from.x, from.y, clientJson.places.revealSearchRadius)
+        for (const ref of a.reveals) {
+          const hit = resolvePlaceRef(ref, places, from, save.visitedTowns)
+          if (hit) {
+            const realId = hit.id.includes('-@') ? hit.id.slice(hit.id.indexOf('-@') + 2) : hit.id
+            save.flags[clientJson.flags.revealed + realId] = Math.max(1, Math.floor(save.clockMinutes))
+          }
+        }
+      }
+    }
+  }
+
+  function cleanEndedEventFlags(ev: ActiveEvent, save: SaveData): void {
+    const spPrefix = `${clientJson.flags.spawnTaken}ev:${ev.id}:`
+    const itPrefix = `${clientJson.flags.itemTaken}ev:${ev.id}:`
+    for (const k of Object.keys(save.flags)) {
+      if (k.startsWith(spPrefix) || k.startsWith(itPrefix)) delete save.flags[k]
+    }
+  }
+
+  function findActiveEventWildForPlayer(
+    p: Player,
+    save: SaveData,
+    speciesId: string,
+    map: GameMap | null,
+    region: RegionDef | null,
+  ): { level: number; tag: string | null; startedAt: number | null } | null {
+    const active = activeEvents(save.events ?? {}, save.clockMinutes)
+    const at: EventAnchor = {
+      map: p.state.map,
+      x: Math.floor(p.state.x),
+      y: Math.floor(p.state.y),
+      ...(region ? { region: region.id } : {}),
+    }
+    const mods = eventModifiers(active, at, save.clockMinutes)
+    for (const ev of active) {
+      if (ev.anchor && ev.anchor.map !== p.state.map) continue
+      const a = serverActionsForEvent(ev, p, save)
+      const origin = serverFocusOfEvent(ev, map)
+      const areaLevel = (map ? regionAt(map, origin.x, origin.y)?.levelRange : undefined)
+        ?? (clientJson.scheduler.fallbackAreaLevel as [number, number])
+      for (let k = 0; k < a.spawns.length; k++) {
+        const eff = a.spawns[k]
+        const r = new Rng(eventSalt(serverEventSeed(save), ev) ^ Math.imul(k + 1, 0x9e3779b1))
+        const list = resolveSpawnEffect(eff, areaLevel, r, { mods, research: save.research ?? {} })
+        for (let i = 0; i < list.length; i++) {
+          const v = list[i]
+          const tag = `ev:${ev.id}:${k}.${i}`
+          if (v.speciesId === speciesId && save.flags[clientJson.flags.spawnTaken + tag] !== ev.startedAt) {
+            return { level: v.level, tag, startedAt: ev.startedAt }
+          }
+        }
+      }
+    }
+    if (region && region.encounters.length > 0) {
+      for (const b of mods.encounterBoosts) {
+        if (b.species?.includes(speciesId)) {
+          const lo = Math.min(...region.encounters.map((s) => Math.min(s.minLevel, s.maxLevel)))
+          const hi = Math.max(...region.encounters.map((s) => Math.max(s.minLevel, s.maxLevel)))
+          return { level: Math.round((lo + hi) / 2), tag: null, startedAt: null }
+        }
+      }
+    }
+    return null
+  }
+
+  function resolveTrainerDef(p: Player, save: SaveData, trId: string, map: GameMap | null): TrainerDef | null {
+    if (world) {
+      const base = world.trainers[trId] ?? frontierTrainer(world, trId)
+      if (base) return base
+    } else {
+      for (const g of Object.values(STORY_CONTENT.trainerGroups)) {
+        const spec = g.trainers.find((t) => t.id === trId)
+        if (spec) {
+          return {
+            id: spec.id,
+            nameZh: spec.nameZh,
+            classZh: spec.classZh,
+            sprite: spec.sprite,
+            party: spec.party.map((e) => ({ species: e.species ?? CONTENT.speciesList[0].id, level: e.level, ...(e.moves ? { moves: e.moves } : {}) })),
+            reward: spec.reward ?? 200,
+            introText: spec.introText,
+            defeatText: spec.defeatText,
+            aiLevel: spec.aiLevel ?? g.defaults?.aiLevel ?? 1,
+            ...(spec.badge ? { badge: spec.badge } : {}),
+            ...(spec.rematchable !== undefined ? { rematchable: spec.rematchable } : {}),
+          }
+        }
+      }
+    }
+    if (trId.startsWith('ev:')) {
+      for (const ev of activeEvents(save.events ?? {}, save.clockMinutes)) {
+        if (ev.anchor && ev.anchor.map !== (map?.id ?? p.state.map)) continue
+        const a = serverActionsForEvent(ev, p, save)
+        const hit = a.trainers.find((t) => t.trainer.id === trId)
+        if (hit) return hit.trainer
+      }
+    }
+    return null
+  }
+
+  function expandRawSteps(raw: readonly StepSpec[], depth = 0, params: Record<string, string> = {}): ScriptStep[] {
     if (depth > 8) return []
     const out: ScriptStep[] = []
     const starters = CONTENT.speciesList.filter((sp) => sp.starter).map((sp) => sp.id)
-    for (const s of raw) {
+    const substStr = (v: unknown): unknown => {
+      if (typeof v === 'string') return v.replace(/\{(\w+)\}/g, (m, k: string) => params[k] ?? m)
+      if (Array.isArray(v)) return v.map(substStr)
+      if (isRecord(v)) {
+        const o: Record<string, unknown> = {}
+        for (const [k, val] of Object.entries(v)) o[k] = substStr(val)
+        return o
+      }
+      return v
+    }
+    const tierChain = (tiers: { atLeast: number; steps: ScriptStep[] }[]): ScriptStep[] => {
+      const sorted = tiers.slice().sort((a, b) => b.atLeast - a.atLeast)
+      let chain: ScriptStep[] | null = null
+      for (let k = sorted.length - 1; k >= 0; k--) {
+        const t = sorted[k]
+        if (t.atLeast <= 0 && chain === null) { chain = t.steps; continue }
+        const st: ScriptStep = { op: 'ifBadges', atLeast: t.atLeast, then: t.steps }
+        if (chain) st.else = chain
+        chain = [st]
+      }
+      return chain ?? []
+    }
+    for (const rawStep of raw) {
+      const s = substStr(rawStep) as StepSpec
       if (s.op === 'include' && typeof s.script === 'string') {
         const target = STORY_CONTENT.scripts[s.script]
-        if (target) out.push(...expandRawSteps(target, depth + 1))
+        const extra = isRecord(s.params) ? Object.fromEntries(Object.entries(s.params).map(([k, v]) => [k, String(v)])) : {}
+        if (target) out.push(...expandRawSteps(target, depth + 1, { ...params, ...extra }))
         continue
       }
       if (s.op === 'byStarter' && isRecord(s.cases)) {
-        for (const br of Object.values(s.cases)) {
-          if (Array.isArray(br)) out.push(...expandRawSteps(br as StepSpec[], depth + 1))
+        let chain: ScriptStep[] = []
+        for (let k = starters.length - 1; k >= 0; k--) {
+          const st = starters[k]
+          const br = s.cases[st]
+          if (!Array.isArray(br)) continue
+          const step: ScriptStep = {
+            op: 'ifFlag',
+            flag: STORY_CONTENT.meta.flags.starter,
+            equals: st,
+            then: expandRawSteps(br as StepSpec[], depth + 1, params),
+            ...(chain.length ? { else: chain } : {}),
+          }
+          chain = [step]
         }
+        out.push(...chain)
         continue
       }
       if (s.op === 'rivalBattle' && typeof s.battle === 'string') {
-        for (const st of starters) {
-          out.push({ op: 'battle', trainer: `rival-${s.battle}-${st}` } as ScriptStep)
+        let chain: ScriptStep[] = []
+        for (let k = starters.length - 1; k >= 0; k--) {
+          const st = starters[k]
+          const step: ScriptStep = {
+            op: 'ifFlag',
+            flag: STORY_CONTENT.meta.flags.starter,
+            equals: st,
+            then: [{
+              op: 'battle',
+              trainer: `rival-${s.battle}-${st}`,
+              ...(s.lossContinues ? { lossContinues: true } : {}),
+              ...(typeof s.lossFlag === 'string' ? { lossFlag: s.lossFlag } : {}),
+            } as ScriptStep],
+            ...(chain.length ? { else: chain } : {}),
+          }
+          chain = [step]
         }
+        out.push(...chain)
         continue
       }
       if (s.op === 'starterBattle' && typeof s.trainer === 'string') {
-        for (const st of starters) {
-          out.push({ op: 'battle', trainer: `${s.trainer}-${st}` } as ScriptStep)
+        let chain: ScriptStep[] = []
+        for (let k = starters.length - 1; k >= 0; k--) {
+          const st = starters[k]
+          const step: ScriptStep = {
+            op: 'ifFlag',
+            flag: STORY_CONTENT.meta.flags.starter,
+            equals: st,
+            then: [{
+              op: 'battle',
+              trainer: `${s.trainer}-${st}`,
+              ...(s.lossContinues ? { lossContinues: true } : {}),
+              ...(typeof s.lossFlag === 'string' ? { lossFlag: s.lossFlag } : {}),
+            } as ScriptStep],
+            ...(chain.length ? { else: chain } : {}),
+          }
+          chain = [step]
         }
+        out.push(...chain)
+        continue
+      }
+      if (s.op === 'badgeTiers' && Array.isArray(s.tiers)) {
+        const tiers = s.tiers.filter(isRecord).map((t) => ({
+          atLeast: Number(t.atLeast),
+          steps: Array.isArray(t.then) ? expandRawSteps(t.then as StepSpec[], depth + 1, params) : [],
+        }))
+        out.push(...tierChain(tiers))
+        continue
+      }
+      if (s.op === 'tieredShop' && typeof s.town === 'string') {
+        const town = s.town
+        const extra = STORY_CONTENT.services.shop.extra[town] ?? []
+        const acc: string[] = []
+        const tiers = STORY_CONTENT.services.shop.tiers.map((t) => {
+          for (const it of t.items) if (!acc.includes(it)) acc.push(it)
+          const items = [...acc, ...extra.filter((x) => !acc.includes(x))]
+          return { atLeast: t.atLeast, steps: [{ op: 'shop', items } as ScriptStep] }
+        })
+        out.push(...tierChain(tiers))
         continue
       }
       if (s.op === 'choice' && Array.isArray(s.branches)) {
         out.push({
           ...s,
-          branches: (s.branches as StepSpec[][]).map((b) => expandRawSteps(b, depth + 1)),
+          branches: (s.branches as StepSpec[][]).map((b) => expandRawSteps(b, depth + 1, params)),
         } as unknown as ScriptStep)
         continue
       }
@@ -1492,9 +1891,30 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       ) {
         out.push({
           ...s,
-          then: Array.isArray(s.then) ? expandRawSteps(s.then as StepSpec[], depth + 1) : [],
-          ...(Array.isArray(s.else) ? { else: expandRawSteps(s.else as StepSpec[], depth + 1) } : {}),
+          then: Array.isArray(s.then) ? expandRawSteps(s.then as StepSpec[], depth + 1, params) : [],
+          ...(Array.isArray(s.else) ? { else: expandRawSteps(s.else as StepSpec[], depth + 1, params) } : {}),
         } as unknown as ScriptStep)
+        continue
+      }
+      if (s.op === 'bossBattle' && typeof s.lossWarp === 'string') {
+        const lf = typeof s.lossFlag === 'string' ? s.lossFlag : 'ds:lostNow'
+        const copy = { ...s, lossContinues: true, lossFlag: lf }
+        delete copy.lossWarp
+        out.push(copy as unknown as ScriptStep)
+        const lw = STORY_CONTENT.meta.lossWarp
+        out.push({
+          op: 'ifFlag',
+          flag: lf,
+          equals: true,
+          then: [
+            { op: 'fade', out: true },
+            { op: 'warp', map: 'origin-lab-b1', x: 8, y: 4, facing: lw.facing },
+            { op: 'heal' },
+            { op: 'fade', out: false },
+            ...expandRawSteps([{ op: 'include', script: lw.script }], depth + 1, params),
+            { op: 'end' },
+          ],
+        } as ScriptStep)
         continue
       }
       out.push(s as unknown as ScriptStep)
@@ -1516,6 +1936,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           : map.npcs
         for (const n of npcs) {
           if (n.hiddenUnlessFlag && !save.flags[n.hiddenUnlessFlag] && !wasFlagRecentlySet(p.id, n.hiddenUnlessFlag)) continue
+          if (n.hiddenIfFlag && save.flags[n.hiddenIfFlag] && !wasFlagRecentlySet(p.id, n.hiddenIfFlag)) continue
           if (n.script?.length) lists.push(n.script)
         }
       }
@@ -1523,17 +1944,26 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         if (trig.match?.map && trig.match.map !== p.state.map) continue
         lists.push(trig.steps)
       }
-    }
-    if (p.state.map === 'origin-lab') {
-      if (STORY_CONTENT.scripts['ds-professor']) lists.push(expandRawSteps(STORY_CONTENT.scripts['ds-professor']))
-      if (STORY_CONTENT.scripts['ds-aide']) lists.push(expandRawSteps(STORY_CONTENT.scripts['ds-aide']))
-    } else if (p.state.map === 'origin-lab-b1') {
-      for (const k of ['ds-r1', 'ds-supply', 'ds-heal', 'ds-loss']) {
-        if (STORY_CONTENT.scripts[k]) lists.push(expandRawSteps(STORY_CONTENT.scripts[k]))
+    } else {
+      for (const list of Object.values(STORY_CONTENT.npcGroups)) {
+        for (const spec of list) {
+          if (spec.at === p.state.map || spec.at.startsWith(`${p.state.map}:`)) {
+            const say = (spec.lines ?? []).map((text): StepSpec => ({ op: 'say', text }))
+            lists.push(expandRawSteps([...say, ...(spec.script ?? [])]))
+          }
+        }
       }
-    } else if (p.state.map === 'origin-lab-b2') {
-      for (const k of ['ds-relay', 'ds-core']) {
-        if (STORY_CONTENT.scripts[k]) lists.push(expandRawSteps(STORY_CONTENT.scripts[k]))
+      for (const trig of STORY_CONTENT.triggers) {
+        if (trig.match?.map && trig.match.map !== p.state.map) continue
+        if (STORY_CONTENT.scripts[trig.script]) lists.push(expandRawSteps(STORY_CONTENT.scripts[trig.script]))
+      }
+    }
+    for (const ev of activeEvents(save.events ?? {}, save.clockMinutes)) {
+      if (ev.anchor && ev.anchor.map !== p.state.map) continue
+      const a = serverActionsForEvent(ev, p, save)
+      for (const sc of a.scripts) lists.push(sc)
+      for (const n of a.npcs) {
+        if (n.script?.length) lists.push(n.script)
       }
     }
     return lists
@@ -1578,6 +2008,25 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     return null
   }
 
+  function isBossAccessibleOnPlayerMap(
+    p: Player,
+    save: SaveData,
+    bossId: string,
+    instanceId: string,
+    entryMap?: string,
+  ): boolean {
+    if (entryMap && p.state.map === entryMap) return true
+    let found = false
+    for (const script of collectMapScripts(p, save)) {
+      walkAllSteps(script, (s) => {
+        if (s.op === 'bossBattle' && s.boss === bossId) found = true
+        if (s.op === 'instance' && s.id === instanceId) found = true
+      })
+      if (found) return true
+    }
+    return false
+  }
+
   function isTrainerOnPlayerMap(p: Player, save: SaveData, trainerId: string): boolean {
     if (!world) return true
     const map = getMap(world, p.state.map)
@@ -1594,47 +2043,12 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       })
       if (found) return true
     }
-    const activeEvs = activeEvents(save.events ?? {}, save.clockMinutes)
-    if (activeEvs.some((ev) => JSON.stringify(ev.def.effects).includes(trainerId))) return true
-    return false
-  }
-
-  function isShopItemUnlockedForPlayer(p: Player, save: SaveData, itemId: string): boolean {
-    const tiers = STORY_CONTENT.services.shop.tiers
-    const inTiers = tiers.filter((t) => t.items.includes(itemId))
-    if (inTiers.length === 0) return true
-    const minBadges = Math.min(...inTiers.map((t) => t.atLeast))
-    if (save.badges.length >= minBadges) return true
-    for (const script of collectMapScripts(p, save)) {
-      let offered = false
-      walkAllSteps(script, (s) => {
-        if (s.op === 'shop' && s.items.includes(itemId)) offered = true
-      })
-      if (offered) return true
+    for (const ev of activeEvents(save.events ?? {}, save.clockMinutes)) {
+      if (ev.anchor && ev.anchor.map !== p.state.map) continue
+      const a = serverActionsForEvent(ev, p, save)
+      if (a.trainers.some((t) => t.trainer.id === trainerId)) return true
     }
     return false
-  }
-
-  function hasRewardOrAction(steps: readonly ScriptStep[]): boolean {
-    let hit = false
-    walkAllSteps(steps, (s) => {
-      if (
-        s.op === 'giveItem' ||
-        s.op === 'giveMoney' ||
-        s.op === 'giveCreature' ||
-        s.op === 'chooseStarter' ||
-        s.op === 'battle' ||
-        s.op === 'bossBattle' ||
-        s.op === 'wildBattle' ||
-        s.op === 'quest' ||
-        s.op === 'research' ||
-        s.op === 'takeItem' ||
-        s.op === 'takeMoney'
-      ) {
-        hit = true
-      }
-    })
-    return hit
   }
 
   function flagMatches(save: SaveData, flag: string, equals: boolean | number | string | undefined): boolean {
@@ -1642,136 +2056,412 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     return equals === undefined ? (v !== undefined && v !== false && v !== 0 && v !== '') : v === equals
   }
 
-  function countEligibleScriptOp(
-    p: Player,
-    save: SaveData,
-    matcher: (s: ScriptStep) => boolean,
-  ): number {
-    const walk = (list: readonly ScriptStep[]): number => {
-      if (list.some((st) => st.op === 'takeMoney' || st.op === 'takeItem')) return 0
-      let count = 0
-      for (const s of list) {
-        if (matcher(s)) count += 1
-        switch (s.op) {
-          case 'ifFlag': {
-            const holds = flagMatches(save, s.flag, s.equals)
-            const recent = wasFlagRecentlySet(p.id, s.flag)
-            const thenAct = hasRewardOrAction(s.then)
-            const elseAct = hasRewardOrAction(s.else ?? [])
-            if (!thenAct && elseAct) {
-              if (!holds || recent) count += walk(s.else ?? [])
-            } else if (thenAct && !elseAct) {
-              if (holds || recent) count += walk(s.then)
-            } else {
-              if (holds || recent) count += walk(s.then)
-              if (!holds || recent) count += walk(s.else ?? [])
-            }
-            break
-          }
-          case 'ifBadges':
-            count += walk(save.badges.length >= s.atLeast ? s.then : s.else ?? [])
-            break
-          case 'ifDex':
-            count += walk(save.dexCaught.length >= s.caughtAtLeast ? s.then : s.else ?? [])
-            break
-          case 'ifCaught': {
-            const n = save.dexCaught.filter((id) => {
-              const sp = CONTENT.species[id]
-              if (!sp) return false
-              if (s.species && id !== s.species) return false
-              if (s.type && !sp.types.includes(s.type)) return false
-              return true
-            }).length
-            count += walk(n >= (s.atLeast ?? 1) ? s.then : s.else ?? [])
-            break
-          }
-          case 'ifItem':
-            count += walk((save.bag[s.item] ?? 0) >= (s.atLeast ?? 1) ? s.then : s.else ?? [])
-            break
-          case 'ifInstance': {
-            const prog = progressOf(save, s.id)
-            const tier = s.tier ?? 'story'
-            const cleared = prog.clears[tier] ?? 0
-            const captured = prog.captures[tier] ?? 0
-            const ok = (s.clearedAtLeast === undefined || cleared >= s.clearedAtLeast)
-              && (s.capturedAtLeast === undefined || captured >= s.capturedAtLeast)
-            count += walk(ok ? s.then : s.else ?? [])
-            break
-          }
-          case 'choice': {
-            let best = 0
-            for (const br of s.branches) best = Math.max(best, walk(br))
-            count += best
-            break
-          }
-          case 'random':
-          case 'ifTime':
-          case 'ifWeather':
-            count += Math.max(walk(s.then), walk(s.else ?? []))
-            break
-          default:
-            break
+  function isShopItemOfferedInSteps(steps: readonly ScriptStep[], p: Player, save: SaveData, itemId: string): boolean {
+    for (const s of steps) {
+      if (s.op === 'shop' && s.items.includes(itemId)) return true
+      switch (s.op) {
+        case 'ifBadges':
+          if (isShopItemOfferedInSteps(save.badges.length >= s.atLeast ? s.then : (s.else ?? []), p, save, itemId)) return true
+          break
+        case 'ifFlag': {
+          const holds = flagMatches(save, s.flag, s.equals) || wasFlagRecentlySet(p.id, s.flag)
+          if (isShopItemOfferedInSteps(holds ? s.then : (s.else ?? []), p, save, itemId)) return true
+          break
         }
-      }
-      return count
-    }
-
-    const seenScripts = new Set<string>()
-    let total = 0
-    for (const script of collectMapScripts(p, save)) {
-      const key = JSON.stringify(script)
-      if (seenScripts.has(key)) continue
-      seenScripts.add(key)
-      total += walk(script)
-    }
-    return total
-  }
-
-  function consumePaidScriptGrant(
-    p: Player,
-    save: SaveData,
-    matcher: (s: ScriptStep) => boolean,
-  ): boolean {
-    const pay = recentPayments.get(p.id)
-    if (!pay || pay.map !== p.state.map || Date.now() - pay.at > 30_000) return false
-    let matched = false
-    const search = (list: readonly ScriptStep[]): void => {
-      if (matched) return
-      const hasPay = list.some((st) =>
-        (pay.kind === 'money' && st.op === 'takeMoney' && st.amount === pay.amount) ||
-        (pay.kind === 'item' && st.op === 'takeItem' && st.item === pay.itemId && st.qty === pay.amount),
-      )
-      if (hasPay && list.some(matcher)) {
-        matched = true
-        return
-      }
-      for (const s of list) {
-        if (s.op === 'choice') {
-          for (const b of s.branches) search(b)
-        } else if (
-          s.op === 'ifFlag' ||
-          s.op === 'ifBadges' ||
-          s.op === 'ifItem' ||
-          s.op === 'ifCaught' ||
-          s.op === 'ifDex' ||
-          s.op === 'ifInstance' ||
-          s.op === 'random' ||
-          s.op === 'ifTime' ||
-          s.op === 'ifWeather'
-        ) {
-          search(s.then)
-          if (s.else) search(s.else)
+        case 'ifDex':
+          if (isShopItemOfferedInSteps(save.dexCaught.length >= s.caughtAtLeast ? s.then : (s.else ?? []), p, save, itemId)) return true
+          break
+        case 'ifCaught': {
+          const n = save.dexCaught.filter((id) => {
+            const sp = CONTENT.species[id]
+            if (!sp) return false
+            if (s.species && id !== s.species) return false
+            if (s.type && !sp.types.includes(s.type)) return false
+            return true
+          }).length
+          if (isShopItemOfferedInSteps(n >= (s.atLeast ?? 1) ? s.then : (s.else ?? []), p, save, itemId)) return true
+          break
         }
-      }
-    }
-    for (const script of collectMapScripts(p, save)) {
-      search(script)
-      if (matched) {
-        recentPayments.delete(p.id)
-        return true
+        case 'ifItem':
+          if (isShopItemOfferedInSteps((save.bag[s.item] ?? 0) >= (s.atLeast ?? 1) ? s.then : (s.else ?? []), p, save, itemId)) return true
+          break
+        case 'ifInstance': {
+          const prog = progressOf(save, s.id)
+          const tier = s.tier ?? 'story'
+          const ok = (s.clearedAtLeast === undefined || (prog.clears[tier] ?? 0) >= s.clearedAtLeast)
+            && (s.capturedAtLeast === undefined || (prog.captures[tier] ?? 0) >= s.capturedAtLeast)
+          if (isShopItemOfferedInSteps(ok ? s.then : (s.else ?? []), p, save, itemId)) return true
+          break
+        }
+        case 'choice':
+          if (s.branches.some((b) => isShopItemOfferedInSteps(b, p, save, itemId))) return true
+          break
+        case 'random':
+        case 'ifTime':
+        case 'ifWeather':
+          if (isShopItemOfferedInSteps(s.then, p, save, itemId) || isShopItemOfferedInSteps(s.else ?? [], p, save, itemId)) return true
+          break
+        default:
+          break
       }
     }
     return false
+  }
+
+  function isShopItemUnlockedForPlayer(p: Player, save: SaveData, itemId: string): boolean {
+    for (const script of collectMapScripts(p, save)) {
+      if (isShopItemOfferedInSteps(script, p, save, itemId)) return true
+    }
+    const tiers = STORY_CONTENT.services.shop.tiers
+    const inTiers = tiers.filter((t) => t.items.includes(itemId))
+    if (inTiers.length > 0) {
+      const minBadges = Math.min(...inTiers.map((t) => t.atLeast))
+      if (save.badges.length < minBadges) return false
+      if (!world || p.state.map.endsWith('-shop')) return true
+      return false
+    }
+    for (const [town, extraItems] of Object.entries(STORY_CONTENT.services.shop.extra)) {
+      if (extraItems.includes(itemId)) {
+        if (p.state.map === `${town}-shop` || p.state.map === town) return true
+        return false
+      }
+    }
+    return false
+  }
+
+  function resolveScriptSource(
+    p: Player,
+    save: SaveData,
+    rawSourceId?: string,
+    rawNpcId?: string,
+    rawStepPath?: string,
+  ): { canonicalSourceId: string; canonicalStepPath: string; steps: readonly ScriptStep[] } | null {
+    if (typeof rawStepPath !== 'string' || !rawStepPath.trim()) return null
+    let sourceId = typeof rawSourceId === 'string' && rawSourceId.trim()
+      ? rawSourceId.trim()
+      : (typeof rawNpcId === 'string' && rawNpcId.trim() ? `npc:${rawNpcId.trim()}` : '')
+    if (!sourceId) return null
+    let stepPath = rawStepPath.trim()
+
+    if (sourceId === 'script:ds-professor' || sourceId === 'ds-professor') {
+      sourceId = 'npc:professor'
+      stepPath = `0.else.${stepPath}`
+    } else if (sourceId === 'script:ds-aide' || sourceId === 'ds-aide') {
+      sourceId = 'npc:aide-types'
+      stepPath = `0.else.${stepPath}`
+    } else if (sourceId === 'script:ds-r1' || sourceId === 'ds-r1') {
+      sourceId = 'npc:ds-r1'
+    } else if (sourceId === 'script:ds-supply' || sourceId === 'ds-supply') {
+      sourceId = 'npc:ds-supply'
+    } else if (sourceId === 'script:ds-heal' || sourceId === 'ds-heal') {
+      sourceId = 'npc:ds-heal'
+    } else if (sourceId === 'script:ds-relay' || sourceId === 'ds-relay') {
+      sourceId = 'npc:ds-relay'
+    } else if (sourceId === 'script:ds-core' || sourceId === 'ds-core') {
+      sourceId = 'npc:ds-v4'
+    }
+
+    if (sourceId.startsWith('npc:')) {
+      const npcId = sourceId.slice(4)
+      if (!npcId) return null
+      if (npcId.startsWith('ev:')) {
+        for (const ev of activeEvents(save.events ?? {}, save.clockMinutes)) {
+          if (ev.anchor && ev.anchor.map !== p.state.map) continue
+          const a = serverActionsForEvent(ev, p, save)
+          const n = a.npcs.find((x) => x.id === npcId)
+          if (n?.script?.length) return { canonicalSourceId: `npc:${n.id}`, canonicalStepPath: stepPath, steps: n.script }
+        }
+        return null
+      }
+      if (world) {
+        const map = getMap(world, p.state.map)
+        const findOnMap = (m: GameMap | null): NpcDef | undefined => {
+          if (!m) return undefined
+          const list = m.infinite
+            ? (() => {
+              const near = objectsInRect(m, Math.floor(p.state.x) - 24, Math.floor(p.state.y) - 24, Math.floor(p.state.x) + 25, Math.floor(p.state.y) + 25)
+              registerFrontierRefs(world, near.npcs)
+              return near.npcs
+            })()
+            : m.npcs
+          return list.find((x) => x.id === npcId)
+        }
+        let npc = findOnMap(map)
+        if (!npc && p.state.map === 'origin-lab-b1' && npcId === 'ds-v4') {
+          npc = findOnMap(getMap(world, 'origin-lab-b2'))
+        }
+        if (npc) {
+          if (npc.hiddenUnlessFlag && !save.flags[npc.hiddenUnlessFlag] && !wasFlagRecentlySet(p.id, npc.hiddenUnlessFlag)) return null
+          if (npc.hiddenIfFlag && save.flags[npc.hiddenIfFlag] && !wasFlagRecentlySet(p.id, npc.hiddenIfFlag)) return null
+          if (npcId === 'ds-r1' && p.state.map === 'origin-lab-b1' && STORY_CONTENT.scripts['ds-loss']) {
+            const lossSteps = expandRawSteps(STORY_CONTENT.scripts['ds-loss'])
+            const testIdx = Number(stepPath.split('.')[0])
+            if (Number.isInteger(testIdx) && testIdx >= 0 && testIdx < lossSteps.length && lossSteps[testIdx]?.op === 'ifItem') {
+              return { canonicalSourceId: 'script:ds-loss', canonicalStepPath: stepPath, steps: lossSteps }
+            }
+          }
+          return { canonicalSourceId: `npc:${npc.id}`, canonicalStepPath: stepPath, steps: npc.script }
+        }
+        for (const ev of activeEvents(save.events ?? {}, save.clockMinutes)) {
+          if (ev.anchor && ev.anchor.map !== p.state.map) continue
+          const a = serverActionsForEvent(ev, p, save)
+          const evNpc = a.npcs.find((x) => x.id === npcId || x.id === `ev:${ev.id}:${npcId}`)
+          if (evNpc?.script?.length) {
+            return { canonicalSourceId: `npc:${evNpc.id}`, canonicalStepPath: stepPath, steps: evNpc.script }
+          }
+        }
+        return null
+      }
+      for (const list of Object.values(STORY_CONTENT.npcGroups)) {
+        const spec = list.find((x) => x.id === npcId)
+        if (spec) {
+          if (spec.hiddenUnlessFlag && !save.flags[spec.hiddenUnlessFlag] && !wasFlagRecentlySet(p.id, spec.hiddenUnlessFlag)) return null
+          if (spec.hiddenIfFlag && save.flags[spec.hiddenIfFlag] && !wasFlagRecentlySet(p.id, spec.hiddenIfFlag)) return null
+          const say = (spec.lines ?? []).map((text): StepSpec => ({ op: 'say', text }))
+          return {
+            canonicalSourceId: `npc:${spec.id}`,
+            canonicalStepPath: stepPath,
+            steps: expandRawSteps([...say, ...(spec.script ?? [])]),
+          }
+        }
+      }
+      for (const spec of STORY_CONTENT.services.npcs) {
+        for (const tw of ['origin', 'opensource', 'pixelport', 'chord', 'retrieval', 'forge', 'frostshield', 'hub', 'balance', 'agi']) {
+          const id = spec.id.replace('{town}', tw)
+          if (id === npcId) {
+            const say = (spec.lines ?? []).map((text): StepSpec => ({ op: 'say', text }))
+            return {
+              canonicalSourceId: `npc:${id}`,
+              canonicalStepPath: stepPath,
+              steps: expandRawSteps([...say, ...(spec.script ?? [])], 0, { town: tw, townName: tw }),
+            }
+          }
+        }
+      }
+      return null
+    }
+
+    if (sourceId.startsWith('trig:')) {
+      const trigId = sourceId.slice(5)
+      if (world) {
+        const trig = storyFeatures(world).triggers.find((t) => t.id === trigId)
+        if (!trig || (trig.match?.map && trig.match.map !== p.state.map)) return null
+        if (trig.when?.flag?.some((f) => !save.flags[f] && !wasFlagRecentlySet(p.id, f))) return null
+        if (trig.when?.noFlag?.some((f) => save.flags[f] && !wasFlagRecentlySet(p.id, f))) return null
+        return { canonicalSourceId: `trig:${trig.id}`, canonicalStepPath: stepPath, steps: trig.steps }
+      }
+      const rawTrig = STORY_CONTENT.triggers.find((t) => t.id === trigId)
+      if (!rawTrig || !STORY_CONTENT.scripts[rawTrig.script]) return null
+      if (rawTrig.when?.flag?.some((f) => !save.flags[f] && !wasFlagRecentlySet(p.id, f))) return null
+      if (rawTrig.when?.noFlag?.some((f) => save.flags[f] && !wasFlagRecentlySet(p.id, f))) return null
+      return {
+        canonicalSourceId: `trig:${rawTrig.id}`,
+        canonicalStepPath: stepPath,
+        steps: expandRawSteps(STORY_CONTENT.scripts[rawTrig.script]),
+      }
+    }
+
+    if (sourceId.startsWith('ev:')) {
+      const m = /^ev:([^:]+):script:(\d+)$/.exec(sourceId)
+      if (!m) return null
+      const [, evId, idxStr] = m
+      const idx = Number(idxStr)
+      const ev = activeEvents(save.events ?? {}, save.clockMinutes).find((a) => a.id === evId)
+      if (!ev || (ev.anchor && ev.anchor.map !== p.state.map)) return null
+      const a = serverActionsForEvent(ev, p, save)
+      const steps = a.scripts[idx]
+      if (!steps) return null
+      return { canonicalSourceId: `ev:${ev.id}:script:${idx}`, canonicalStepPath: stepPath, steps }
+    }
+
+    if (sourceId === 'script:ds-loss' && p.state.map === 'origin-lab-b1' && STORY_CONTENT.scripts['ds-loss']) {
+      return {
+        canonicalSourceId: 'script:ds-loss',
+        canonicalStepPath: stepPath,
+        steps: expandRawSteps(STORY_CONTENT.scripts['ds-loss']),
+      }
+    }
+
+    return null
+  }
+
+  function hasUnpaidGrantInBranch(steps: readonly ScriptStep[]): boolean {
+    if (steps.some((st) => st.op === 'takeMoney' || st.op === 'takeItem')) return false
+    let hit = false
+    walkAllSteps(steps, (s) => {
+      if (s.op === 'giveItem' || s.op === 'giveMoney' || s.op === 'giveCreature' || s.op === 'research') {
+        hit = true
+      }
+    })
+    return hit
+  }
+
+  function resolveAuthorizedScriptStep(
+    p: Player,
+    save: SaveData,
+    msg: Extract<ClientMsg, { t: 'script.op' }>,
+    matcher: (s: ScriptStep) => boolean,
+  ): {
+    step: ScriptStep
+    canonicalSourceId: string
+    canonicalStepPath: string
+    grantFlag: string
+    paid: boolean
+    choiceLocks: { key: string; branchIdx: number }[]
+  } | null {
+    const src = resolveScriptSource(p, save, msg.sourceId, msg.npcId, msg.stepPath)
+    if (!src) return null
+    const parts = src.canonicalStepPath.split('.')
+    let curSteps: readonly ScriptStep[] = src.steps
+    let pathPrefix = ''
+    const preceding: ScriptStep[] = []
+    let dynamicSuffix = ''
+    const choiceLocks: { key: string; branchIdx: number }[] = []
+    const vars = { year: realDateOf(new Date()).year, day: dayOf(save.clockMinutes) }
+
+    for (let i = 0; i < parts.length;) {
+      const idx = Number(parts[i])
+      if (!Number.isInteger(idx) || idx < 0 || idx >= curSteps.length) return null
+      for (let k = 0; k < idx; k++) preceding.push(curSteps[k])
+      const step = curSteps[idx]
+      const stepKey = pathPrefix ? `${pathPrefix}.${idx}` : String(idx)
+      if (i === parts.length - 1) {
+        if (!matcher(step)) return null
+        const payStep = preceding.find((st) => st.op === 'takeMoney' || st.op === 'takeItem')
+        let paid = false
+        if (payStep) {
+          const recent = recentPayments.get(p.id)
+          if (!recent || recent.map !== p.state.map || Date.now() - recent.at > 30_000) return null
+          if (payStep.op === 'takeMoney' && (recent.kind !== 'money' || recent.amount !== payStep.amount)) return null
+          if (payStep.op === 'takeItem' && (recent.kind !== 'item' || recent.itemId !== payStep.item || recent.amount !== payStep.qty)) return null
+          recentPayments.delete(p.id)
+          paid = true
+        }
+        return {
+          step,
+          canonicalSourceId: src.canonicalSourceId,
+          canonicalStepPath: src.canonicalStepPath,
+          grantFlag: `auth:grant:${src.canonicalSourceId}:${src.canonicalStepPath}${dynamicSuffix}`,
+          paid,
+          choiceLocks,
+        }
+      }
+      const branchToken = parts[i + 1]
+      i += 2
+      switch (step.op) {
+        case 'choice': {
+          const m = /^b(\d+)$/.exec(branchToken)
+          if (!m) return null
+          const bIdx = Number(m[1])
+          if (bIdx < 0 || bIdx >= step.branches.length) return null
+          if (msg.choiceIndex !== undefined && msg.choiceIndex !== bIdx) return null
+          const grantBranches = step.branches.filter((b) => hasUnpaidGrantInBranch(b)).length
+          if (grantBranches > 0 && hasUnpaidGrantInBranch(step.branches[bIdx])) {
+            const choiceKey = `auth:choice:${src.canonicalSourceId}:${stepKey}${dynamicSuffix}`
+            const prevChoice = save.flags[choiceKey]
+            if (prevChoice !== undefined && prevChoice !== bIdx) return null
+            choiceLocks.push({ key: choiceKey, branchIdx: bIdx })
+          }
+          curSteps = step.branches[bIdx]
+          pathPrefix = `${stepKey}.b${bIdx}`
+          break
+        }
+        case 'ifFlag': {
+          if (branchToken !== 'then' && branchToken !== 'else') return null
+          const expFlag = step.flag.includes('{') ? expandFlag(step.flag, vars) : step.flag
+          if (step.flag.includes('{')) dynamicSuffix += `:${expFlag}`
+          const holds = flagMatches(save, expFlag, step.equals)
+          const recent = wasFlagRecentlySet(p.id, expFlag)
+          if (branchToken === 'then') {
+            if (!holds && !recent) return null
+            curSteps = step.then
+          } else {
+            const starterOpening = expFlag === STORY_CONTENT.meta.flags.starter && step.equals === undefined
+            if (holds && !recent && !starterOpening) return null
+            curSteps = step.else ?? []
+          }
+          pathPrefix = `${stepKey}.${branchToken}`
+          break
+        }
+        case 'ifBadges': {
+          if (branchToken !== 'then' && branchToken !== 'else') return null
+          const holds = save.badges.length >= step.atLeast
+          if (branchToken === 'then' ? !holds : holds) return null
+          curSteps = branchToken === 'then' ? step.then : (step.else ?? [])
+          pathPrefix = `${stepKey}.${branchToken}`
+          break
+        }
+        case 'ifDex': {
+          if (branchToken !== 'then' && branchToken !== 'else') return null
+          const holds = save.dexCaught.length >= step.caughtAtLeast
+          if (branchToken === 'then' ? !holds : holds) return null
+          curSteps = branchToken === 'then' ? step.then : (step.else ?? [])
+          pathPrefix = `${stepKey}.${branchToken}`
+          break
+        }
+        case 'ifCaught': {
+          if (branchToken !== 'then' && branchToken !== 'else') return null
+          const n = save.dexCaught.filter((id) => {
+            const sp = CONTENT.species[id]
+            if (!sp) return false
+            if (step.species && id !== step.species) return false
+            if (step.type && !sp.types.includes(step.type)) return false
+            return true
+          }).length
+          const holds = n >= (step.atLeast ?? 1)
+          if (branchToken === 'then' ? !holds : holds) return null
+          curSteps = branchToken === 'then' ? step.then : (step.else ?? [])
+          pathPrefix = `${stepKey}.${branchToken}`
+          break
+        }
+        case 'ifItem': {
+          if (branchToken !== 'then' && branchToken !== 'else') return null
+          const have = save.bag[step.item] ?? 0
+          const need = step.atLeast ?? 1
+          const recent = recentPayments.get(p.id)
+          const paidItem = Boolean(recent && recent.kind === 'item' && recent.itemId === step.item && recent.amount >= need)
+          if (branchToken === 'then') {
+            if (have < need && !paidItem) return null
+            curSteps = step.then
+          } else {
+            if (have >= need) return null
+            curSteps = step.else ?? []
+          }
+          pathPrefix = `${stepKey}.${branchToken}`
+          break
+        }
+        case 'ifInstance': {
+          if (branchToken !== 'then' && branchToken !== 'else') return null
+          const prog = progressOf(save, step.id)
+          const tier = step.tier ?? 'story'
+          const cleared = prog.clears[tier] ?? 0
+          const captured = prog.captures[tier] ?? 0
+          const holds = (step.clearedAtLeast === undefined || cleared >= step.clearedAtLeast)
+            && (step.capturedAtLeast === undefined || captured >= step.capturedAtLeast)
+          if (branchToken === 'then' ? !holds : holds) return null
+          curSteps = branchToken === 'then' ? step.then : (step.else ?? [])
+          pathPrefix = `${stepKey}.${branchToken}`
+          break
+        }
+        case 'random':
+        case 'ifTime':
+        case 'ifWeather': {
+          if (branchToken !== 'then' && branchToken !== 'else') return null
+          if (step.op === 'random' && (step.else?.length ?? 0) > 0) {
+            const randKey = `auth:choice:${src.canonicalSourceId}:${stepKey}:day${vars.day}`
+            const bIdx = branchToken === 'then' ? 0 : 1
+            if (save.flags[randKey] !== undefined && save.flags[randKey] !== bIdx) return null
+            choiceLocks.push({ key: randKey, branchIdx: bIdx })
+          }
+          curSteps = branchToken === 'then' ? step.then : (step.else ?? [])
+          pathPrefix = `${stepKey}.${branchToken}`
+          break
+        }
+        default:
+          return null
+      }
+    }
+    return null
   }
 
   function isQuestCompletionAuthorized(p: Player, save: SaveData, qId: string): boolean {
@@ -1944,70 +2634,85 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           core.error(p, 'authority_violation')
           return
         }
-        const ledger = store.listLedger(p.id, 500)
-        let ref = `script:giveItem:${p.state.map}:${itemId}:${qty}`
-        let authorized = false
 
-        // 1. Event scatter item pickup
-        if (typeof msg.groundId === 'string' && msg.groundId.startsWith('ev:') && qty <= 5) {
-          const evRef = `script:evitem:${msg.groundId}`
-          if (!ledger.some((l) => l.ref === evRef)) {
-            authorized = true
-            ref = evRef
-          }
-        }
-        // 2. Paid move tutor or item exchange
-        if (!authorized && consumePaidScriptGrant(p, save, (s) => s.op === 'giveItem' && s.item === itemId && s.qty === qty)) {
-          authorized = true
-          ref = `script:paidItem:${p.state.map}:${itemId}:${qty}`
-        }
-        // 3. Unclaimed research level reward
-        if (!authorized) {
-          const rLv = researchLevel(researchPoints(save.research ?? {})).level
-          const rClaimed = typeof save.flags['research:claimedLevel'] === 'number' ? Math.floor(save.flags['research:claimedLevel']) : 0
-          if (rLv > rClaimed) {
-            const claimable = levelRewards(rClaimed, rLv)
-            const rRef = `script:researchReward:${rLv}:${itemId}`
-            if (claimable.items[itemId] === qty && !ledger.some((l) => l.ref === rRef)) {
-              authorized = true
-              ref = rRef
+        // 1. Active event scatter item pickup (deterministic server verification)
+        if (typeof msg.groundId === 'string' && msg.groundId.startsWith('ev:')) {
+          let matchedEvent: ActiveEvent | null = null
+          let matchedItem: { id: string; x: number; y: number; item: string; qty: number; hidden: boolean } | null = null
+          for (const ev of activeEvents(save.events ?? {}, save.clockMinutes)) {
+            if (ev.anchor && ev.anchor.map !== p.state.map) continue
+            const a = serverActionsForEvent(ev, p, save)
+            const it = a.items.find((x) => x.id === msg.groundId)
+            if (it) {
+              matchedEvent = ev
+              matchedItem = it
+              break
             }
           }
-        }
-        // 4. Prologue ds-loss refill in origin-lab-b1
-        if (
-          !authorized &&
-          p.state.map === 'origin-lab-b1' &&
-          save.flags['ds:briefed'] &&
-          !save.flags['ds:done'] &&
-          (itemId === 'off-peak-coupon' || itemId === 'cache-potion') &&
-          (save.bag[itemId] ?? 0) + qty <= 2
-        ) {
-          authorized = true
-          ref = `script:lossRefill:${itemId}:${qty}`
-        }
-        // 5. One-shot script gift on player's current map
-        if (!authorized) {
+          const takenKey = clientJson.flags.itemTaken + msg.groundId
+          const maxDist = clientJson.items.snapRadius + clientJson.items.pickupRadius + 6
           if (
-            p.state.map === 'origin-lab' &&
-            ['dex-device', 'town-map', 'prompt-ball', 'cache-potion', 'work-permit'].includes(itemId) &&
-            !save.flags[STORY_CONTENT.meta.flags.starter]
+            !matchedEvent ||
+            !matchedItem ||
+            matchedItem.item !== itemId ||
+            matchedItem.qty !== qty ||
+            save.flags[takenKey] === matchedEvent.startedAt ||
+            (world && Math.hypot(p.state.x - matchedItem.x, p.state.y - matchedItem.y) > maxDist)
           ) {
-            authorized = false
-          } else {
-            const eligible = countEligibleScriptOp(p, save, (s) => s.op === 'giveItem' && s.item === itemId && s.qty === qty)
-            const claimed = ledger.filter((l) => l.ref === ref).length
-            if (eligible > 0 && claimed < eligible) {
-              authorized = true
-            }
+            audit(p.id, 'script.invalid_give_item', { itemId, qty, groundId: msg.groundId, map: p.state.map }, 3, p.ip)
+            core.error(p, 'authority_violation')
+            return
           }
+          save.flags[takenKey] = matchedEvent.startedAt
+          save.bag[itemId] = (save.bag[itemId] ?? 0) + qty
+          const ref = `script:evitem:${msg.groundId}@${matchedEvent.startedAt}`
+          addLedger(p.id, 'item', itemId, qty, save.bag[itemId], ref)
+          commitSave(p.id, save, { ref })
+          return
         }
-        if (!authorized) {
-          audit(p.id, 'script.invalid_give_item', { itemId, qty, map: p.state.map }, 3, p.ip)
+
+        // 2. Contextualized script step grant
+        if (
+          p.state.map === 'origin-lab' &&
+          ['dex-device', 'town-map', 'prompt-ball', 'cache-potion', 'work-permit'].includes(itemId) &&
+          !save.flags[STORY_CONTENT.meta.flags.starter]
+        ) {
+          audit(p.id, 'script.invalid_give_item', { itemId, qty, map: p.state.map, reason: 'no_starter' }, 3, p.ip)
           core.error(p, 'authority_violation')
           return
         }
+
+        const resolved = resolveAuthorizedScriptStep(
+          p,
+          save,
+          msg,
+          (s) => s.op === 'giveItem' && s.item === itemId && s.qty === qty,
+        )
+        if (!resolved) {
+          audit(p.id, 'script.invalid_give_item', { itemId, qty, map: p.state.map, sourceId: msg.sourceId, stepPath: msg.stepPath }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
+
+        const isLossRefill =
+          (p.state.map === 'origin-lab-b1' || p.state.map === 'origin-lab-b2') &&
+          Boolean(save.flags['ds:briefed']) &&
+          !save.flags['ds:done'] &&
+          (itemId === 'off-peak-coupon' || itemId === 'cache-potion') &&
+          (resolved.canonicalSourceId === 'npc:ds-v4' || resolved.canonicalSourceId === 'script:ds-loss') &&
+          (save.bag[itemId] ?? 0) + qty <= 2
+
+        if (!resolved.paid && !isLossRefill && save.flags[resolved.grantFlag]) {
+          audit(p.id, 'script.invalid_give_item', { itemId, qty, map: p.state.map, grantFlag: resolved.grantFlag, reason: 'already_claimed' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
+        if (!resolved.paid && !isLossRefill) {
+          save.flags[resolved.grantFlag] = true
+          for (const lock of resolved.choiceLocks) save.flags[lock.key] = lock.branchIdx
+        }
         save.bag[itemId] = (save.bag[itemId] ?? 0) + qty
+        const ref = `script:giveItem:${resolved.canonicalSourceId}:${resolved.canonicalStepPath}:${itemId}:${qty}`
         addLedger(p.id, 'item', itemId, qty, save.bag[itemId], ref)
         commitSave(p.id, save, { ref })
         return
@@ -2034,39 +2739,23 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           core.error(p, 'authority_violation')
           return
         }
-        const ledger = store.listLedger(p.id, 500)
-        let ref = `script:giveMoney:${p.state.map}:${amount}`
-        let authorized = false
-
-        if (consumePaidScriptGrant(p, save, (s) => s.op === 'giveMoney' && s.amount === amount)) {
-          authorized = true
-          ref = `script:paidMoney:${p.state.map}:${amount}`
-        }
-        if (!authorized) {
-          const rLv = researchLevel(researchPoints(save.research ?? {})).level
-          const rClaimed = typeof save.flags['research:claimedLevel'] === 'number' ? Math.floor(save.flags['research:claimedLevel']) : 0
-          if (rLv > rClaimed) {
-            const claimable = levelRewards(rClaimed, rLv)
-            const rRef = `script:researchMoney:${rLv}:${amount}`
-            if (claimable.money === amount && !ledger.some((l) => l.ref === rRef)) {
-              authorized = true
-              ref = rRef
-            }
-          }
-        }
-        if (!authorized) {
-          const eligible = countEligibleScriptOp(p, save, (s) => s.op === 'giveMoney' && s.amount === amount)
-          const claimed = ledger.filter((l) => l.ref === ref).length
-          if (eligible > 0 && claimed < eligible) {
-            authorized = true
-          }
-        }
-        if (!authorized) {
-          audit(p.id, 'script.invalid_give_money', { amount, map: p.state.map }, 3, p.ip)
+        const resolved = resolveAuthorizedScriptStep(
+          p,
+          save,
+          msg,
+          (s) => s.op === 'giveMoney' && s.amount === amount,
+        )
+        if (!resolved || (!resolved.paid && save.flags[resolved.grantFlag])) {
+          audit(p.id, 'script.invalid_give_money', { amount, map: p.state.map, sourceId: msg.sourceId, stepPath: msg.stepPath }, 3, p.ip)
           core.error(p, 'authority_violation')
           return
         }
+        if (!resolved.paid) {
+          save.flags[resolved.grantFlag] = true
+          for (const lock of resolved.choiceLocks) save.flags[lock.key] = lock.branchIdx
+        }
         save.money += amount
+        const ref = `script:giveMoney:${resolved.canonicalSourceId}:${resolved.canonicalStepPath}:${amount}`
         addLedger(p.id, 'money', 'script', amount, save.money, ref)
         commitSave(p.id, save, { ref })
         return
@@ -2095,24 +2784,22 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           core.error(p, 'authority_violation')
           return
         }
-        let matchedStep: Extract<ScriptStep, { op: 'giveCreature' }> | null = null
-        const eligible = countEligibleScriptOp(p, save, (s) => {
-          if (s.op === 'giveCreature' && s.species === speciesId) {
-            matchedStep ??= s
-            return true
-          }
-          return false
-        })
-        const ref = `script:gift:${p.state.map}:${speciesId}`
-        const ledger = store.listLedger(p.id, 500)
-        const alreadyGifted = ledger.some((l) => l.ref === ref) ||
-          [...save.party, ...save.boxes.flat()].some((c) => c.speciesId === speciesId && c.origin?.kind === 'gift')
-        if (eligible <= 0 || !matchedStep || alreadyGifted) {
-          audit(p.id, 'script.invalid_give_creature', { speciesId, map: p.state.map, alreadyGifted }, 3, p.ip)
+        const resolved = resolveAuthorizedScriptStep(
+          p,
+          save,
+          msg,
+          (s) => s.op === 'giveCreature' && s.species === speciesId,
+        )
+        if (!resolved || (!resolved.paid && save.flags[resolved.grantFlag])) {
+          audit(p.id, 'script.invalid_give_creature', { speciesId, map: p.state.map, sourceId: msg.sourceId, stepPath: msg.stepPath }, 3, p.ip)
           core.error(p, 'authority_violation')
           return
         }
-        const stepDef = matchedStep as Extract<ScriptStep, { op: 'giveCreature' }>
+        if (!resolved.paid) {
+          save.flags[resolved.grantFlag] = true
+          for (const lock of resolved.choiceLocks) save.flags[lock.key] = lock.branchIdx
+        }
+        const stepDef = resolved.step as Extract<ScriptStep, { op: 'giveCreature' }>
         const level = stepDef.level
         const ballId = CONTENT.itemList.find((it) => it.effect.kind === 'ball')?.id
         const seed = hashString(`${p.id}:gift:${speciesId}:${save.party.length}`) >>> 0
@@ -2130,6 +2817,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         }, CONTENT)
         if (stepDef.ability && CONTENT.abilities[stepDef.ability]) cr.abilityId = stepDef.ability
         storeCreatureInSave(save, cr)
+        const ref = `script:gift:${resolved.canonicalSourceId}:${resolved.canonicalStepPath}:${speciesId}`
         addLedger(p.id, 'creature', cr.uid, 1, save.party.length, ref)
         commitSave(p.id, save, { ref })
         return
@@ -2145,7 +2833,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         const ry = world ? Math.floor(p.state.y) : (typeof msg.y === 'number' && Number.isFinite(msg.y) ? Math.floor(msg.y) : Math.floor(p.state.y))
         const facing = msg.facing && ['up', 'down', 'left', 'right'].includes(msg.facing) ? msg.facing : p.state.facing
         save.respawn = { map: mapId, x: rx, y: ry, facing }
-        commitSave(p.id, save, { ref: 'script:respawn', notify: false })
+        commitSave(p.id, save, { ref: 'script:respawn' })
         return
       }
       case 'unlockTown': {
@@ -2153,7 +2841,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         if (!townId || (world && !world.towns.some((tw) => tw.id === townId))) return
         if (!save.visitedTowns.includes(townId)) {
           save.visitedTowns.push(townId)
-          commitSave(p.id, save, { ref: `script:unlockTown:${townId}`, notify: false })
+          commitSave(p.id, save, { ref: `script:unlockTown:${townId}` })
         }
         return
       }
@@ -2164,34 +2852,155 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         if (!flag || (!flag.startsWith('lesson:') && !flag.startsWith('tutorial:'))) return
         save.flags[flag] = true
         noteRecentFlag(p.id, flag)
-        commitSave(p.id, save, { ref: `script:teach:${flag}`, notify: false })
+        commitSave(p.id, save, { ref: `script:teach:${flag}` })
         return
       }
       case 'research': {
         const spId = typeof msg.speciesId === 'string' ? msg.speciesId : ''
         const task = typeof msg.task === 'string' ? msg.task : ''
         const amount = typeof msg.amount === 'number' && Number.isInteger(msg.amount) ? msg.amount : 1
-        if (!CONTENT.species[spId] || !task || amount !== 1) {
+        if (!CONTENT.species[spId] || !task || amount <= 0 || amount > 10) {
           audit(p.id, 'script.invalid_research', { speciesId: spId, task, amount }, 2, p.ip)
           core.error(p, 'authority_violation')
           return
         }
-        const curVal = save.research?.[spId]?.[task] ?? 0
-        const eligible = countEligibleScriptOp(
+        const resolved = resolveAuthorizedScriptStep(
           p,
           save,
+          msg,
           (s) => s.op === 'research' && s.species === spId && s.task === task && s.amount === amount,
         )
-        if (curVal >= 1 || eligible <= 0) {
-          audit(p.id, 'script.invalid_research', { speciesId: spId, task, amount, curVal, eligible }, 2, p.ip)
+        if (!resolved || save.flags[resolved.grantFlag]) {
+          audit(p.id, 'script.invalid_research', { speciesId: spId, task, amount, sourceId: msg.sourceId, stepPath: msg.stepPath }, 2, p.ip)
           core.error(p, 'authority_violation')
           return
         }
+        save.flags[resolved.grantFlag] = true
+        for (const lock of resolved.choiceLocks) save.flags[lock.key] = lock.branchIdx
         const r = addTaskProgress(save.research ?? {}, spId, task, amount)
-        if (r.gains.length) {
-          save.research = r.state
-          commitSave(p.id, save, { ref: `script:research:${spId}:${task}`, notify: false })
+        save.research = r.state
+        commitSave(p.id, save, { ref: `script:research:${spId}:${task}` })
+        return
+      }
+      case 'claimResearch': {
+        const claimFlag = clientJson.research.claimFlag
+        const curLv = researchLevel(researchPoints(save.research ?? {})).level
+        const rawClaimed = save.flags[claimFlag]
+        const rClaimed = typeof rawClaimed === 'number' && Number.isFinite(rawClaimed) ? Math.max(0, Math.floor(rawClaimed)) : 0
+        const targetLv = typeof msg.level === 'number' && Number.isInteger(msg.level) ? msg.level : curLv
+        if (targetLv <= rClaimed || targetLv > curLv || curLv <= rClaimed) {
+          audit(p.id, 'script.invalid_claim_research', { targetLv, rClaimed, curLv }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
         }
+        for (let l = rClaimed + 1; l <= targetLv; l++) {
+          if (save.flags[`auth:researchClaimed:${l}`]) {
+            audit(p.id, 'script.invalid_claim_research', { level: l, rClaimed, targetLv, reason: 'level_already_claimed' }, 3, p.ip)
+            core.error(p, 'authority_violation')
+            return
+          }
+        }
+        for (let l = rClaimed + 1; l <= targetLv; l++) {
+          save.flags[`auth:researchClaimed:${l}`] = true
+          const rew = levelRewards(l - 1, l)
+          const ref = `script:claimResearch:${l}`
+          if (rew.money > 0) {
+            save.money += rew.money
+            addLedger(p.id, 'money', 'research', rew.money, save.money, ref)
+          }
+          for (const [itemId, qty] of Object.entries(rew.items)) {
+            if (CONTENT.items[itemId] && qty > 0) {
+              save.bag[itemId] = (save.bag[itemId] ?? 0) + qty
+              addLedger(p.id, 'item', itemId, qty, save.bag[itemId], ref)
+            }
+          }
+        }
+        save.flags[claimFlag] = targetLv
+        commitSave(p.id, save, { ref: `script:claimResearch:${targetLv}` })
+        return
+      }
+      case 'tickEvents': {
+        advanceServerClock(p.id, save, msg.clockMinutes)
+        if (clientJson.scheduler.requireFlag && !save.flags[clientJson.scheduler.requireFlag]) return
+        const map = world ? getMap(world, p.state.map) : null
+        if (map && !(clientJson.scheduler.mapKinds as string[]).includes(map.kind)) return
+        const region = map ? regionAt(map, p.state.x, p.state.y) : null
+        const anchor: EventAnchor = {
+          map: p.state.map,
+          x: Math.floor(p.state.x),
+          y: Math.floor(p.state.y),
+          ...(region ? { region: region.id } : {}),
+        }
+        const ectx = buildServerEventContext(p, save)
+        const r = tickEvents(save.events ?? {}, ectx, eventRng(serverEventSeed(save), save.clockMinutes), { anchor })
+        let state = r.state
+        for (const ev of r.ended) cleanEndedEventFlags(ev, save)
+        for (const ev of r.started) applyEventStartToSave(ev, p, save)
+        for (const ev of r.active) {
+          if (ev.def.scope !== 'local' || ev.def.trigger === 'legend' || !ev.anchor || ev.anchor.map !== p.state.map) continue
+          if (Math.hypot(ev.anchor.x - p.state.x, ev.anchor.y - p.state.y) > clientJson.scheduler.localEndDistance) {
+            state = endEvent(ev.id, state, save.clockMinutes)
+          }
+        }
+        save.events = state
+        commitSave(p.id, save, { ref: 'script:tickEvents' })
+        return
+      }
+      case 'triggerEvent': {
+        const evId = typeof msg.eventId === 'string' ? msg.eventId : ''
+        const def = GAMEPLAY.eventById[evId]
+        if (!def) {
+          audit(p.id, 'script.invalid_trigger_event', { eventId: evId }, 2, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
+        advanceServerClock(p.id, save, msg.clockMinutes)
+        const map = world ? getMap(world, p.state.map) : null
+        const region = map ? regionAt(map, p.state.x, p.state.y) : null
+        const anchor: EventAnchor = {
+          map: p.state.map,
+          x: Math.floor(p.state.x),
+          y: Math.floor(p.state.y),
+          ...(region ? { region: region.id } : {}),
+        }
+        const ectx = buildServerEventContext(p, save)
+        let checkMode: 'progress' | 'all' = 'progress'
+        if (def.trigger === 'legend' || evId.startsWith('legend-')) {
+          checkMode = 'all'
+          const lgSpecies = def.legend ?? evId.slice('legend-'.length)
+          if (world) {
+            const near = legendsNear(worldOrigin(world), { x: p.state.x, y: p.state.y }, save.clockMinutes, serverEventSeed(save), save.legends ?? {})
+            if (!near.some((n) => n.legend.species === lgSpecies && n.proximity === 'appear')) {
+              audit(p.id, 'script.invalid_trigger_event', { eventId: evId, reason: 'legend_not_near' }, 3, p.ip)
+              core.error(p, 'authority_violation')
+              return
+            }
+          }
+        } else if (world) {
+          let hasTriggerStep = false
+          for (const script of collectMapScripts(p, save)) {
+            walkAllSteps(script, (s) => {
+              if (s.op === 'triggerEvent' && s.event === evId) hasTriggerStep = true
+            })
+            if (hasTriggerStep) break
+          }
+          if (!hasTriggerStep) {
+            audit(p.id, 'script.invalid_trigger_event', { eventId: evId, map: p.state.map, reason: 'not_on_map' }, 3, p.ip)
+            core.error(p, 'authority_violation')
+            return
+          }
+        }
+        const r = triggerEvent(evId, save.events ?? {}, ectx, { check: checkMode, anchor })
+        if (!r.started) {
+          if (r.reason === 'gated' || r.reason === 'spent') {
+            audit(p.id, 'script.invalid_trigger_event', { eventId: evId, reason: r.reason }, 2, p.ip)
+            core.error(p, 'authority_violation')
+          }
+          return
+        }
+        save.events = r.state
+        applyEventStartToSave(r.started, p, save)
+        commitSave(p.id, save, { ref: `script:triggerEvent:${evId}` })
         return
       }
       case 'settleBossCards': {
@@ -2200,7 +3009,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           if (isBossCard(cr)) settleBank(cr, cap, CONTENT)
         }
         save.flags[gameJson.flags.licenseSettled] = true
-        commitSave(p.id, save, { ref: 'script:settleBossCards', notify: false })
+        commitSave(p.id, save, { ref: 'script:settleBossCards' })
         return
       }
       case 'setFlag': {
@@ -2212,8 +3021,12 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           flag.startsWith(gameJson.flags.bossWonPrefix) ||
           flag.startsWith('boss:won:') ||
           flag.startsWith(STORY_CONTENT.meta.flags.groundItem) ||
+          flag.startsWith(clientJson.flags.itemTaken) ||
+          flag.startsWith(clientJson.flags.spawnTaken) ||
           flag.startsWith('quest:reward:') ||
-          flag === STORY_CONTENT.meta.flags.starter
+          flag === STORY_CONTENT.meta.flags.starter ||
+          flag === clientJson.research.claimFlag ||
+          flag === 'research:claimedLevel'
         ) {
           audit(p.id, 'script.forged_flag', { flag, value: msg.value }, 3, p.ip)
           core.error(p, 'authority_violation')
@@ -2221,6 +3034,12 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         }
         const v = msg.value ?? true
         if (typeof v !== 'boolean' && typeof v !== 'string' && !(typeof v === 'number' && Number.isFinite(v))) {
+          return
+        }
+        const clearableFlags = new Set(['ds:healUsed', 'ds:assist', 'rival:lab-lost', 'lesson:types-lost', 'ds:drillLost', 'ds:lost', 'ds:lostNow'])
+        if ((v === false || v === 0 || v === '') && save.flags[flag] && !clearableFlags.has(flag)) {
+          audit(p.id, 'script.forged_flag', { flag, value: v, reason: 'cannot_clear_progression_flag' }, 3, p.ip)
+          core.error(p, 'authority_violation')
           return
         }
         if (flag.startsWith(gameJson.flags.badgePrefix)) {
@@ -2282,13 +3101,6 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           audit(p.id, 'script.forged_flag', { flag, reason: 'catch_prereq_not_met' }, 3, p.ip)
           core.error(p, 'authority_violation')
           return
-        } else if (flag === 'research:claimedLevel') {
-          const maxLv = researchLevel(researchPoints(save.research ?? {})).level
-          if (typeof v !== 'number' || !Number.isInteger(v) || v < 0 || v > maxLv) {
-            audit(p.id, 'script.forged_flag', { flag, value: v, maxLv }, 3, p.ip)
-            core.error(p, 'authority_violation')
-            return
-          }
         }
         save.flags[flag] = v
         noteRecentFlag(p.id, flag)
@@ -2350,11 +3162,17 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       pendingContracts.clear()
       recentPayments.clear()
       recentFlagsSet.clear()
+      lastClockSyncMs.clear()
       await store.flush()
     },
 
     hasSave(playerId) {
       return getRecord(playerId) !== null
+    },
+
+    isInBattle(playerId) {
+      const b = activeBattles.get(playerId)
+      return Boolean(b && !b.done)
     },
 
     getSave(playerId) {
@@ -2372,8 +3190,8 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       return !!rec && (rec.imported || !rec.trusted || !!rec.save.flags['auth:untrustedImport'])
     },
 
-
     setSave(playerId, save, optsIn = {}) {
+      lastClockSyncMs.set(playerId, Date.now())
       return commitSave(playerId, save, { ...optsIn, notify: false, syncPosition: false })
     },
 
@@ -2636,50 +3454,66 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     },
 
     handle(p, msg) {
+      const isDungeonBusy = 'dungeonBusy' in p && p.dungeonBusy === true
       switch (msg.t) {
         case 'battle.start':
+          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleBattleStart(p, msg)
           return true
         case 'battle.action':
+          if (isDungeonBusy) { core.error(p, 'self_busy'); return true }
           handleBattleAction(p, msg)
           return true
         case 'battle.contract':
+          if (isDungeonBusy) { core.error(p, 'self_busy'); return true }
           handleBattleContract(p, msg)
           return true
         case 'shop.buy':
+          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleShopBuy(p, msg)
           return true
         case 'shop.sell':
+          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleShopSell(p, msg)
           return true
         case 'item.use':
+          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleItemUse(p, msg)
           return true
         case 'exchange.deal':
+          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleExchangeDeal(p, msg)
           return true
         case 'creature.evolve':
+          if (isDungeonBusy) { core.error(p, 'self_busy'); return true }
           handleCreatureEvolve(p, msg)
           return true
         case 'creature.learnMove':
+          if (isDungeonBusy) { core.error(p, 'self_busy'); return true }
           handleCreatureLearnMove(p, msg)
           return true
         case 'creature.nickname':
+          if (isDungeonBusy) { core.error(p, 'self_busy'); return true }
           handleCreatureNickname(p, msg)
           return true
         case 'party.swap':
+          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handlePartySwap(p, msg)
           return true
         case 'box.move':
+          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleBoxMove(p, msg)
           return true
         case 'box.release':
+          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleBoxRelease(p, msg)
           return true
         case 'script.op':
+          if (isDungeonBusy) { core.error(p, 'self_busy'); return true }
           handleScriptOp(p, msg)
           return true
         case 'save.import': {
+          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           if (this.hasSave(p.id)) {
             audit(p.id, 'save.import_already_bound', {}, 2, p.ip)
             core.error(p, 'authority_violation')
@@ -2718,6 +3552,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       activeBattles.delete(playerId)
       recentPayments.delete(playerId)
       recentFlagsSet.delete(playerId)
+      lastClockSyncMs.delete(playerId)
     },
   }
 }

@@ -4,6 +4,7 @@
 import type { BattleAction, BattleEvent, BattleRequest, BattleResult, Creature, SaveData, TimeOfDay, WeatherId } from '../../shared/types.ts'
 import type { BattleOutcome, BattleRunner, GameContext, NetClient } from '../contracts.ts'
 import type { ServerMsg } from '../../shared/protocol.ts'
+import { adoptServerSave } from './authority-client.ts'
 
 export type PveBattleKind = 'wild' | 'trainer' | 'boss'
 
@@ -169,7 +170,7 @@ export async function runOnlineBattle(
   if (!started) return null
 
   const channel = createPveChannel(ctx.net, started, (end) => {
-    applyAuthoritativeSave(ctx, end.save)
+    adoptServerSave(ctx, end.save, end.rev)
   })
 
   let outcome: BattleOutcome
@@ -200,7 +201,7 @@ export async function signOnlineContract(
   const offContract = ctx.net.on('battle.contracted', (m) => {
     if (m.battleId !== battleId) return
     cleanup()
-    applyAuthoritativeSave(ctx, m.save)
+    adoptServerSave(ctx, m.save, m.rev)
     resolve(m.signed)
   })
   const cleanup = () => {
@@ -248,15 +249,6 @@ export function applyAuthoritativeSave(ctx: GameContext, serverSave: SaveData, o
       }
       for (const a of prev.anchors.seen) {
         if (!next.anchors.seen.includes(a)) next.anchors.seen.push(a)
-      }
-    }
-    if (prev.research) {
-      next.research ??= {}
-      for (const [spId, tasks] of Object.entries(prev.research)) {
-        const dst = (next.research[spId] ??= {})
-        for (const [tk, val] of Object.entries(tasks)) {
-          dst[tk] = Math.max(dst[tk] ?? 0, val)
-        }
       }
     }
   }

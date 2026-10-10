@@ -13,9 +13,16 @@ export async function learnWithScreen(ctx: GameContext, view: BattleView, cr: Cr
   if (!move || cr.moves.some((m) => m.id === moveId)) return false
   const name = creatureName(cr)
   if (cr.moves.length < CONTENT.config.party.maxMoves) {
-    cr.moves.push({ id: moveId, pp: move.pp, ppMax: move.pp })
+    const entry = { id: moveId, pp: move.pp, ppMax: move.pp }
+    cr.moves.push(entry)
     const pIdx = ctx.save.party.findIndex((x) => x.uid === cr.uid)
-    if (pIdx >= 0) sendCreatureLearnMove(ctx, pIdx, moveId)
+    if (pIdx >= 0) {
+      const live = ctx.save.party[pIdx]
+      if (live !== cr && !live.moves.some((m) => m.id === moveId) && live.moves.length < CONTENT.config.party.maxMoves) {
+        live.moves.push({ ...entry })
+      }
+      sendCreatureLearnMove(ctx, pIdx, moveId, undefined, cr.uid)
+    }
     ctx.events.emit('party:changed', {})
     ctx.audio.playSfx(BATTLE_UI.sfx.learn)
     await view.message.show(t('battleui.learn.learned', { name, move: move.nameZh }))
@@ -29,9 +36,16 @@ export async function learnWithScreen(ctx: GameContext, view: BattleView, cr: Cr
     return false
   }
   const old = CONTENT.moves[cr.moves[slot].id]?.nameZh ?? cr.moves[slot].id
-  cr.moves[slot] = { id: moveId, pp: move.pp, ppMax: move.pp }
+  const entry = { id: moveId, pp: move.pp, ppMax: move.pp }
+  cr.moves[slot] = entry
   const pIdx = ctx.save.party.findIndex((x) => x.uid === cr.uid)
-  if (pIdx >= 0) sendCreatureLearnMove(ctx, pIdx, moveId, slot)
+  if (pIdx >= 0) {
+    const live = ctx.save.party[pIdx]
+    if (live !== cr && slot < live.moves.length) {
+      live.moves[slot] = { ...entry }
+    }
+    sendCreatureLearnMove(ctx, pIdx, moveId, slot, cr.uid)
+  }
   ctx.events.emit('party:changed', {})
   await view.message.show(t('battleui.learn.forgot', { name, old }))
   ctx.audio.playSfx(BATTLE_UI.sfx.learn)
