@@ -49,13 +49,18 @@ export const hasEffect = (cr: Creature, on: AbilityEffect['on'], c: Content): bo
 
 export const speciesTypes = (cr: Creature, c: Content): readonly TypeId[] => c.species[cr.speciesId]?.types ?? []
 
-export function condHolds(cond: AbilityCondition | undefined, holder: Fighter, move: MoveCtx | null, weather: WeatherId, c: Content): boolean {
+/** `turn` is the battle's turn number (0 = before the first turn); only `turnCycle` reads it. */
+export function condHolds(cond: AbilityCondition | undefined, holder: Fighter, move: MoveCtx | null, weather: WeatherId, c: Content, turn = 0): boolean {
   if (!cond) return true
   const hp = holder.creature.hp
   const max = holder.stats.hp
   if (cond.hpBelow !== undefined && !(max > 0 && hp / max <= cond.hpBelow)) return false
   if (cond.hpFull && hp < max) return false
   if (cond.weather && !cond.weather.includes(weather)) return false
+  if (cond.turnCycle) {
+    const i = (Math.max(1, turn) - 1) % cond.turnCycle.period
+    if (!(i >= cond.turnCycle.from && i < cond.turnCycle.to)) return false
+  }
   const needsMove = cond.moveTypes || cond.moveNotOwnType || cond.moveCategory || cond.superEffective
   if (!needsMove) return true
   if (!move) return false
@@ -95,9 +100,9 @@ export function speedOf(f: Fighter, c: Content): number {
   return battleStat(f, 'spe', {}, c) * (st?.speedMul ?? 1)
 }
 
-export function priorityOf(f: Fighter, move: MoveDef, weather: WeatherId, c: Content): number {
+export function priorityOf(f: Fighter, move: MoveDef, weather: WeatherId, c: Content, turn = 0): number {
   const ctx: MoveCtx = { type: move.type, category: move.category }
-  return effectsOn(f.creature, 'priority', c).reduce((p, e) => (condHolds(e.if, f, ctx, weather, c) ? p + e.add : p), move.priority)
+  return effectsOn(f.creature, 'priority', c).reduce((p, e) => (condHolds(e.if, f, ctx, weather, c, turn) ? p + e.add : p), move.priority)
 }
 
 export function critChance(att: Fighter, highCrit: boolean, c: Content): number {
@@ -143,7 +148,7 @@ export interface DamageOutcome {
   triggered: { by: 'attacker' | 'defender'; abilityId: string }[]
 }
 
-export function computeDamage(att: Fighter, def: Fighter, spec: AttackSpec, weather: WeatherId, roll: DamageRoll, c: Content): DamageOutcome {
+export function computeDamage(att: Fighter, def: Fighter, spec: AttackSpec, weather: WeatherId, roll: DamageRoll, c: Content, turn = 0): DamageOutcome {
   const triggered: DamageOutcome['triggered'] = []
   const eff = spec.type === null ? 1 : typeEffectiveness(spec.type, speciesTypes(def.creature, c), c)
   if (eff === 0) return { damage: 0, effectiveness: 0, triggered }
@@ -156,7 +161,7 @@ export function computeDamage(att: Fighter, def: Fighter, spec: AttackSpec, weat
   let power = spec.power
   if (!spec.plain) {
     for (const e of effectsOn(att.creature, 'powerMul', c)) {
-      if (!condHolds(e.if, att, ctx, weather, c)) continue
+      if (!condHolds(e.if, att, ctx, weather, c, turn)) continue
       power *= e.mul
       if (situational(e.if)) triggered.push({ by: 'attacker', abilityId: att.creature.abilityId })
     }
@@ -178,7 +183,7 @@ export function computeDamage(att: Fighter, def: Fighter, spec: AttackSpec, weat
     const st = att.creature.status ? c.statusById[att.creature.status] : undefined
     if (physical && st?.physicalMul !== undefined) mod *= st.physicalMul
     for (const e of effectsOn(def.creature, 'damageTakenMul', c)) {
-      if (!condHolds(e.if, def, ctx, weather, c)) continue
+      if (!condHolds(e.if, def, ctx, weather, c, turn)) continue
       mod *= e.mul
       if (situational(e.if)) triggered.push({ by: 'defender', abilityId: def.creature.abilityId })
     }
@@ -187,14 +192,14 @@ export function computeDamage(att: Fighter, def: Fighter, spec: AttackSpec, weat
 }
 
 /** Deterministic estimate for AI: min roll without crit, and crit-weighted mean roll. */
-export function estimateDamage(att: Fighter, def: Fighter, move: MoveDef, weather: WeatherId, c: Content): { min: number; avg: number; effectiveness: number } {
+export function estimateDamage(att: Fighter, def: Fighter, move: MoveDef, weather: WeatherId, c: Content, turn = 0): { min: number; avg: number; effectiveness: number } {
   const b = c.config.battle
   const spec: AttackSpec = { power: move.power, category: move.category === 'special' ? 'special' : 'physical', type: move.type }
-  const lo = computeDamage(att, def, spec, weather, { crit: false, random: b.randomMin }, c)
+  const lo = computeDamage(att, def, spec, weather, { crit: false, random: b.randomMin }, c, turn)
   if (lo.effectiveness === 0) return { min: 0, avg: 0, effectiveness: 0 }
   const mid = (b.randomMin + b.randomMax) / 2
-  const normal = computeDamage(att, def, spec, weather, { crit: false, random: mid }, c).damage
-  const crit = computeDamage(att, def, spec, weather, { crit: true, random: mid }, c).damage
+  const normal = computeDamage(att, def, spec, weather, { crit: false, random: mid }, c, turn).damage
+  const crit = computeDamage(att, def, spec, weather, { crit: true, random: mid }, c, turn).damage
   const p = critChance(att, move.effects.some((e) => e.kind === 'highCrit'), c)
   return { min: lo.damage, avg: normal * (1 - p) + crit * p, effectiveness: lo.effectiveness }
 }

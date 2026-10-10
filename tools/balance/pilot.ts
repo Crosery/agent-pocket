@@ -53,7 +53,7 @@ function fighter(e: BattleEngine, side: SideIndex, idx = e.activeIndex(side)): F
 const hpOf = (f: Fighter): number => f.creature.hp / f.stats.hp
 
 /** Expected damage (absolute hp) of a move, accuracy and multi-hit included. */
-function expectedDamage(att: Fighter, def: Fighter, mv: MoveDef, weather: string): number {
+function expectedDamage(att: Fighter, def: Fighter, mv: MoveDef, weather: string, turn = 0): number {
   if (!isDamaging(mv)) return 0
   const fixed = mv.effects.find((x) => x.kind === 'fixedDamage')
   const multi = mv.effects.find((x) => x.kind === 'multiHit')
@@ -64,7 +64,7 @@ function expectedDamage(att: Fighter, def: Fighter, mv: MoveDef, weather: string
     if (typeEffectiveness(mv.type, C.species[def.creature.speciesId].types, C) === 0) return 0
     return (fixed.amount === 'level' ? att.level : fixed.amount) * acc
   }
-  const est = estimateDamage(att, def, mv, weather as never, C)
+  const est = estimateDamage(att, def, mv, weather as never, C, turn)
   if (est.effectiveness === 0) return 0
   const absorb = effectsOn(def.creature, 'absorbType', C).some((x) => x.types.includes(mv.type))
   return absorb ? 0 : est.avg * hits * acc
@@ -76,7 +76,7 @@ function threat(e: BattleEngine, att: Fighter, def: Fighter): number {
   for (const m of att.creature.moves) {
     const mv = C.moves[m.id]
     if (!mv || m.pp <= 0) continue
-    best = Math.max(best, expectedDamage(att, def, mv, e.weather))
+    best = Math.max(best, expectedDamage(att, def, mv, e.weather, e.turn + 1))
   }
   return best / Math.max(1, def.creature.hp)
 }
@@ -98,11 +98,11 @@ function scoreMove(e: BattleEngine, side: SideIndex, me: Fighter, foe: Fighter, 
   const myThreat = threat(e, foe, me)
   const meFaster = speedOf(me, C) >= speedOf(foe, C)
   if (isDamaging(mv)) {
-    const dmg = expectedDamage(me, foe, mv, e.weather)
+    const dmg = expectedDamage(me, foe, mv, e.weather, e.turn + 1)
     let v = Math.min(1, dmg / foeHp)
     const sure = mv.accuracy === 0 || mv.effects.some((x) => x.kind === 'alwaysHit')
     const acc = sure ? 1 : Math.min(1, hitChance(me, foe, mv, C) / PERCENT)
-    const lo = estimateDamage(me, foe, mv, e.weather, C).min
+    const lo = estimateDamage(me, foe, mv, e.weather, C, e.turn + 1).min
     if (lo >= foeHp && !mv.effects.some((x) => x.kind === 'fixedDamage')) {
       v += P.koBonus * acc
       if (mv.priority > 0 && !meFaster) v += P.priorityKoBonus
@@ -200,7 +200,7 @@ export function pilot(engine: BattleEngine, side: SideIndex, rng: Rng): BattleAc
       let offense = 0
       for (const m of cr.moves) {
         const mv = C.moves[m.id]
-        if (mv && m.pp > 0) offense = Math.max(offense, expectedDamage(f, foe, mv, engine.weather))
+        if (mv && m.pp > 0) offense = Math.max(offense, expectedDamage(f, foe, mv, engine.weather, engine.turn + 1))
       }
       const score = offense / Math.max(1, foe.creature.hp) - threat(engine, foe, f) + hpOf(f) * 0.3
       if (score > bestScore) { bestScore = score; best = i }

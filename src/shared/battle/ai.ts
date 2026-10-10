@@ -125,7 +125,7 @@ function damageScore(ctx: Ctx, mv: MoveDef): number {
   const fixedAmount = fixed ? (fixed.amount === 'level' ? meF.level : fixed.amount) : 0
   let score: number
   if (unlocked(ctx.level, 'damageEstimate')) {
-    const est = fixed ? { min: fixedAmount, avg: fixedAmount } : estimateDamage(meF, themF, mv, ctx.engine.weather, c)
+    const est = fixed ? { min: fixedAmount, avg: fixedAmount } : estimateDamage(meF, themF, mv, ctx.engine.weather, c, ctx.engine.turn + 1)
     const foeHp = Math.max(1, them.hp)
     score = Math.min(1, (est.avg * avgHits) / foeHp) * ai.damageScore * acc
     if (est.min * minHits >= them.hp) {

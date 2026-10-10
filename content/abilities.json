@@ -32,5 +32,6 @@
   {"id": "benchmark-ace", "nameZh": "跑分王者", "description": "登场时，推理与创造中较高的一项提升 1 级。", "effects": [{"on": "switchIn", "target": "self", "highestOf": ["atk", "spa"], "stages": 1}]},
   {"id": "jailbreak", "nameZh": "越狱", "description": "攻击时无视对手的能力提升与守住。", "effects": [{"on": "ignoreFoeBoosts"}, {"on": "ignoreProtect"}]},
   {"id": "data-hunger", "nameZh": "数据饥渴", "description": "攻击招式造成伤害后，恢复造成伤害的 1/8。", "effects": [{"on": "dealDamage", "drainFraction": 0.125}]},
-  {"id": "latency", "nameZh": "高延迟", "description": "总是最后行动，但招式威力提升 30%。", "effects": [{"on": "moveLast"}, {"on": "powerMul", "mul": 1.3, "if": {"moveCategory": "damaging"}}]}
+  {"id": "latency", "nameZh": "高延迟", "description": "总是最后行动，但招式威力提升 30%。", "effects": [{"on": "moveLast"}, {"on": "powerMul", "mul": 1.3, "if": {"moveCategory": "damaging"}}]},
+  {"id": "peak-valley", "nameZh": "峰谷电价", "description": "6 回合一轮。前 3 回合受到的伤害 ×0.8、造成的伤害 ×0.85；后 3 回合造成的伤害 ×1.3。", "effects": [{"on": "damageTakenMul", "mul": 0.8, "if": {"turnCycle": {"period": 6, "from": 0, "to": 3}}}, {"on": "powerMul", "mul": 0.85, "if": {"turnCycle": {"period": 6, "from": 0, "to": 3}, "moveCategory": "damaging"}}, {"on": "powerMul", "mul": 1.3, "if": {"turnCycle": {"period": 6, "from": 3, "to": 6}, "moveCategory": "damaging"}}]}
 ]

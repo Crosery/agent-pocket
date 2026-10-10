@@ -3,14 +3,20 @@
 // party of each player (one engine instance per player, boss state shared through extractBossState()/applyBossState()).
 import type { BattleEvent, BattleInit, BattleSideInit, Creature, TimeOfDay, WeatherId } from '../types.ts'
 import { CONTENT, type Content } from '../content/index.ts'
+import type { IRng } from '../contracts.ts'
 import { Rng } from '../rng.ts'
 import { createCreature, maxHp } from '../creature.ts'
 import { BattleEngine } from './engine.ts'
+import { tierLevel } from './boss-tier.ts'
 
 export interface BossBattleOpts {
   seed: number
-  /** Boss level (default: BossDef.level). */
+  /** Boss level (default: the tier's level, else BossDef.level). */
   level?: number
+  /** Difficulty tier of the definition (content/bosses.json tiers): the fight is an instance run, no ball, no flight. */
+  tier?: string
+  /** Assist ("减负") numbers of the tier. */
+  assist?: boolean
   playerName?: string
   playerSprite?: string
   biome?: string
@@ -27,7 +33,7 @@ export interface BossBattleOpts {
 }
 
 /** The boss creature of a BossDef: the species at `level`, max IVs, never shiny. */
-export function createBossCreature(bossId: string, level: number, rng: Rng, c: Content = CONTENT): Creature {
+export function createBossCreature(bossId: string, level: number, rng: IRng, c: Content = CONTENT): Creature {
   const def = c.bosses[bossId]
   if (!def) throw new Error(`unknown boss "${bossId}"`)
   const cr = createCreature(def.species, level, { rng, shiny: false, nature: c.quality.npcNature, moves: def.forms[def.initialForm]?.moves }, c)
@@ -40,7 +46,7 @@ export function buildBossInit(bossId: string, party: Creature[], o: BossBattleOp
   const c = o.c ?? CONTENT
   const def = c.bosses[bossId]
   if (!def) throw new Error(`unknown boss "${bossId}"`)
-  const boss = o.boss ?? createBossCreature(bossId, o.level ?? def.level, new Rng(o.seed ^ 0x5bd1e995), c)
+  const boss = o.boss ?? createBossCreature(bossId, o.level ?? tierLevel(def, o.tier), new Rng(o.seed ^ 0x5bd1e995), c)
   const player: BattleSideInit = {
     kind: 'player', name: o.playerName ?? '', party,
     ...(o.playerSprite ? { sprite: o.playerSprite } : {}),
@@ -51,12 +57,14 @@ export function buildBossInit(bossId: string, party: Creature[], o: BossBattleOp
     seed: o.seed,
     sides: [player, { kind: 'wild', name: boss.nickname ?? '', party: [boss], aiLevel: 3, boss: bossId }],
     isWild: true,
-    canRun: def.canRun,
-    canCatch: true,
+    canRun: o.tier ? false : def.canRun,
+    canCatch: !o.tier,
     biome: o.biome ?? c.biomes[0]?.id ?? '',
     timeOfDay: o.timeOfDay ?? 'day',
     ...(o.weather ? { weather: o.weather } : {}),
     expGain: o.expGain ?? true,
+    ...(o.tier ? { bossTier: o.tier } : {}),
+    ...(o.assist ? { assist: true } : {}),
   }
 }
 

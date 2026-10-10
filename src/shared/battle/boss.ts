@@ -54,7 +54,7 @@ export interface BossHost {
 }
 
 /** What the boss's decision needs to know about its opponent. */
-export interface BossFoeView { status: StatusId | null; country: string; released: string; weather: string }
+export interface BossFoeView { status: StatusId | null; country: string; company: string; released: string; weather: string }
 export interface BossDecision { moveId: string; forced: boolean }
 
 interface CondCtx { core: Core; hpRatio: number; foe: BossFoeView; turn: number }
@@ -87,6 +87,7 @@ export function bossCondHolds(cond: BossCond | undefined, x: CondCtx): boolean {
     if (cond.foeStatus === true ? !x.foe.status : cond.foeStatus === false ? !!x.foe.status : x.foe.status !== cond.foeStatus) return false
   }
   if (cond.foeCountry && !cond.foeCountry.includes(x.foe.country)) return false
+  if (cond.foeCompany && !cond.foeCompany.includes(x.foe.company)) return false
   if (cond.foeNotCountry?.includes(x.foe.country)) return false
   if (cond.foeReleasedBefore !== undefined && !(x.foe.released !== '' && x.foe.released < cond.foeReleasedBefore)) return false
   if (cond.foeReleasedFrom !== undefined && !(x.foe.released !== '' && x.foe.released >= cond.foeReleasedFrom)) return false
@@ -181,7 +182,7 @@ export class BossDirector {
   private foeView(): BossFoeView {
     const foe = this.host.foe()
     const sp = this.host.c.species[foe.speciesId]
-    return { status: foe.status, country: sp?.country ?? '', released: sp?.releaseDate ?? '', weather: this.host.weather() }
+    return { status: foe.status, country: sp?.country ?? '', company: sp?.company ?? '', released: sp?.releaseDate ?? '', weather: this.host.weather() }
   }
 
   private ctx(hpMax?: number): CondCtx {
@@ -294,6 +295,9 @@ export class BossDirector {
   }
 
   expMul(): number { return this.def.expMul }
+
+  /** Scale of lingering damage (leech drain, status damage) on the boss; 1 when the tier sets none. */
+  residualMul(): number { return this.active ? (this.def.residualMul ?? 1) : 1 }
 
   /** The boss's action for the coming turn. */
   decide(rng: IRng): BossDecision | null {

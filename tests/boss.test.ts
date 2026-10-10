@@ -18,6 +18,11 @@ import { applyEvent, bossOpeningHud, bossPanelInfo, createBattleModel } from '..
 import { COUNTERS, PLAIN } from './boss-counters.ts'
 import { DEFS } from '../tools/balance/teams.ts'
 import { makeParty, SIM_PARTY, simulate, type SimOpts, type SimResult } from './boss-sim.ts'
+import { resolveBossDef } from '../src/shared/battle/boss-tier.ts'
+import { bossCondHolds } from '../src/shared/battle/boss.ts'
+import { computeDamage, condHolds, toStages, type Fighter } from '../src/shared/battle/formulas.ts'
+import { calcStats, createCreature } from '../src/shared/creature.ts'
+import { fightStory, rateStory, STARTERS, storyParty } from './boss-story.ts'
 
 const BOSSES = CONTENT.bossList
 const SEEDS = 200
@@ -702,7 +707,7 @@ test('contract: chooseBossAction is pure and honours the form pattern', () => {
     const { engine } = startBossBattle(b.id, makeParty(SIM_PARTY, b.level - 2, 1), { seed: 1, expGain: false })
     const state = engine.extractBossState()!
     const frozen = JSON.stringify(state)
-    const foe = { status: null, country: 'US', released: '2025-01', weather: 'none' }
+    const foe = { status: null, country: 'US', company: 'OpenAI', released: '2025-01', weather: 'none' }
     const allowed = new Set(b.forms[state.form].moves)
     const a = chooseBossAction(state, b, foe, new Rng(5))
     const c = chooseBossAction(state, b, foe, new Rng(5))
@@ -721,7 +726,7 @@ test('contract: a charged attack is forced on the next turn', () => {
   const { engine } = startBossBattle('astra', makeParty(SIM_PARTY, b.level, 1), { seed: 1, expGain: false })
   const state = engine.extractBossState()!
   state.charge = { move: 'exaflop-beam', warn: 'boss.astra.charge', mul: 0.6 }
-  assert.deepEqual(chooseBossAction(state, b, { status: null, country: '', released: '', weather: 'none' }, new Rng(1)), { moveId: 'exaflop-beam', forced: true })
+  assert.deepEqual(chooseBossAction(state, b, { status: null, country: '', company: '', released: '', weather: 'none' }, new Rng(1)), { moveId: 'exaflop-beam', forced: true })
 })
 
 // ---------------------------------------------------------------------------------------------------- entry point & rewards
@@ -825,4 +830,171 @@ test('client model: the opening boss HUD equals the first snapshot the engine se
     const first = intro.find((e): e is Extract<BattleEvent, { t: 'boss' }> => e.t === 'boss')
     assert.deepEqual(bossOpeningHud(b.id), first?.hud, b.id)
   }
+})
+
+// ---------------------------------------------------------------------------------------------------- story tier (M1b)
+
+const DEEPSEEK = byId('deepseek')
+const ruleOf = (def: BossDef, id: string) => def.forms[def.initialForm].rules!.find((r) => r.id === id)!
+
+test('resolveBossDef: the story tier overrides the named rules, keeps the rest and never touches its input', () => {
+  const before = JSON.stringify(DEEPSEEK)
+  const def = resolveBossDef(DEEPSEEK, 'story', { starter: 'o1' })
+  assert.equal(JSON.stringify(DEEPSEEK), before, 'the input is not modified')
+  assert.equal(def.level, 12)
+  assert.equal(def.expMul, 2.0)
+  assert.deepEqual(def.reward, {}, 'a tier fight pays nothing itself')
+  assert.equal(def.tiers, undefined)
+  const form = def.forms[def.initialForm]
+  assert.equal(form.statMul?.hp, 2.5)
+  assert.equal(form.statMul?.atk, 0.3)
+  assert.equal(form.statMul?.spa, 0.3)
+  assert.deepEqual(form.moves, ['distill-strike', 'deductive-slash', 'quick-deduce', 'weight-drop'])
+  assert.equal(ruleOf(def, 'peak').takenMul![0].mul, 0.15)
+  assert.equal(ruleOf(def, 'peak').takenMul![0].note, 'boss.deepseek.busy', 'the note of the base entry stays')
+  assert.equal(ruleOf(def, 'peak').dealtMul, 1.0)
+  assert.equal(ruleOf(def, 'valley').takenMul![0].mul, 3.0)
+  assert.equal(ruleOf(def, 'valley').dealtMul, 0.5)
+  assert.equal(ruleOf(def, 'family').dealtMul, 0.6)
+  assert.equal(ruleOf(def, 'family').takenMul![0].mul, 4.0)
+  assert.equal(def.residualMul, 0.4)
+  assert.equal(def.enrage!.turn, 18)
+  assert.equal(def.enrage!.warnBefore, 3)
+  assert.equal(def.enrage!.max, DEEPSEEK.enrage!.max, 'enrage fields not given stay')
+  assert.equal(resolveBossDef(DEEPSEEK, 'nope'), DEEPSEEK, 'an unknown tier is the plain definition')
+  assert.equal(resolveBossDef(DEEPSEEK, undefined), DEEPSEEK)
+})
+
+test('resolveBossDef: byStarter first, assist after it, assist.byStarter last', () => {
+  const v3 = resolveBossDef(DEEPSEEK, 'story', { starter: 'deepseek-v3' }).forms.base.statMul!
+  assert.equal(v3.hp, DEEPSEEK.tiers!.story.byStarter!['deepseek-v3'].statMul!.hp)
+  assert.equal(v3.atk, 0.3, 'the other numbers of the tier stay')
+  const o1Assist = resolveBossDef(DEEPSEEK, 'story', { starter: 'o1', assist: true })
+  assert.equal(o1Assist.forms.base.statMul!.hp, 1.8)
+  assert.equal(o1Assist.forms.base.statMul!.atk, 0.2)
+  assert.equal(ruleOf(o1Assist, 'peak').takenMul![0].mul, 0.3)
+  assert.equal(ruleOf(o1Assist, 'valley').takenMul![0].mul, 3.0, 'rules the assist does not mention stay')
+  assert.equal(resolveBossDef(DEEPSEEK, 'story', { starter: 'deepseek-v3', assist: true }).forms.base.statMul!.hp, 1.3)
+  assert.equal(resolveBossDef(DEEPSEEK, 'story', { starter: 'o1', assist: false }).forms.base.statMul!.hp, 2.5)
+})
+
+test('validateBosses: the story tier is consistent and the contract line exists', () => {
+  assert.deepEqual(validateBosses(CONTENT.bossList, CONTENT), [])
+  assert.ok(t('boss.deepseek.contract') !== 'boss.deepseek.contract')
+  assert.ok(t('boss.deepseek.tier.story') !== 'boss.deepseek.tier.story')
+  const bad: BossDef = JSON.parse(JSON.stringify(DEEPSEEK))
+  bad.tiers!.story.rules!.nope = { takenMul: 1 }
+  bad.tiers!.story.pattern = [{ move: 'moe-burst', weight: 1 }]
+  const errs = validateBosses([bad], CONTENT)
+  assert.ok(errs.some((e) => e.includes('unknown rule "nope"')))
+  assert.ok(errs.some((e) => e.includes('not one of the tier')))
+})
+
+test('foeCompany: the family rule holds for DeepSeek-company creatures only', () => {
+  const core = { form: 'base', formTurn: 0, fired: {}, phase: 0, meters: {}, enrage: 0, charge: null, skip: 0, borrowed: [], lastFoeType: null, lastFoeMove: null, seenTypes: [] }
+  const ctx = (company: string) => ({ core, hpRatio: 1, turn: 1, foe: { status: null, country: 'CN', company, released: '', weather: 'none' } })
+  const cond = ruleOf(resolveBossDef(DEEPSEEK, 'story'), 'family').if
+  assert.deepEqual(cond, { foeCompany: ['DeepSeek'] })
+  assert.ok(bossCondHolds(cond, ctx('DeepSeek')))
+  assert.ok(!bossCondHolds(cond, ctx('OpenAI')))
+  assert.equal(CONTENT.species['deepseek-v3'].company, 'DeepSeek')
+  assert.notEqual(CONTENT.species.o1.company, 'DeepSeek')
+})
+
+test('residualMul: lingering damage on the story boss is scaled, plain bosses are not', () => {
+  const drainOf = (tier: string | undefined, seed: number): number | null => {
+    const party = storyParty('o1', [8, 6, 5], seed)
+    party[0].moves = [{ id: 'web-crawl', pp: 10, ppMax: 10 }]
+    const { engine } = startBossBattle('deepseek', party, { seed, expGain: false, ...(tier ? { tier } : {}) })
+    const max = engine.battleMaxHp(1, 0)
+    const hp0 = engine.party(1)[0].hp
+    engine.choose(0, { kind: 'move', moveIndex: 0 })
+    engine.step()
+    if (!engine.volatiles(1).includes('leech')) return null
+    const lost = hp0 - engine.party(1)[0].hp
+    return lost / max
+  }
+  let checked = 0
+  for (let seed = 1; seed < 60 && checked < 3; seed++) {
+    const story = drainOf('story', seed)
+    if (story === null) continue
+    checked++
+    const df = CONTENT.volatileById.leech.drainFraction!
+    // floor(maxHp x 0.125 x 0.4), at least 1: close to 5% of the pool, well below the plain 12.5%.
+    assert.ok(story > 0 && story <= df * 0.4 + 0.02, `story drain ${story}`)
+  }
+  assert.ok(checked >= 1, 'leech landed at least once')
+})
+
+test('peak-valley: the signature ability reads the battle turn (1-3 defensive, 4-6 offensive)', () => {
+  const ab = CONTENT.abilities['peak-valley']
+  const att = createCreature('o1', 20, { rng: new Rng(1), nature: 'balanced' })
+  const def = createCreature('deepseek-v4', 20, { rng: new Rng(2), nature: 'balanced' })
+  def.abilityId = 'peak-valley'
+  att.abilityId = 'peak-valley'
+  const f = (cr: typeof att): Fighter => ({ creature: cr, level: cr.level, stats: calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, nature: cr.nature, level: cr.level }, CONTENT), stages: toStages(undefined), critStageAdd: 0 })
+  const spec = { power: 70, category: 'physical' as const, type: 'logic' as const }
+  const roll = { crit: false, random: 1 }
+  const taken = (turn: number) => computeDamage(f(createCreature('o1', 20, { rng: new Rng(1), nature: 'balanced' })), f(def), spec, 'none', roll, CONTENT, turn).damage
+  assert.equal(taken(1), taken(3))
+  assert.equal(taken(4), taken(6))
+  assert.equal(taken(7), taken(1), 'six turns a round')
+  assert.ok(taken(1) < taken(4), 'defensive half takes less')
+  const dealt = (turn: number) => computeDamage(f(att), f(createCreature('o1', 20, { rng: new Rng(1), nature: 'balanced' })), spec, 'none', roll, CONTENT, turn).damage
+  assert.ok(dealt(5) > dealt(2), 'offensive half hits harder')
+  assert.ok(dealt(2) < dealt(5) * 0.85 + 2, 'defensive half hits softer')
+  const cond = ab.effects.find((e) => e.on === 'damageTakenMul')!.if
+  const holder = f(def)
+  assert.ok(condHolds(cond, holder, null, 'none', CONTENT, 1) && condHolds(cond, holder, null, 'none', CONTENT, 3))
+  assert.ok(!condHolds(cond, holder, null, 'none', CONTENT, 4))
+  assert.ok(condHolds(cond, holder, null, 'none', CONTENT, 7))
+})
+
+test('tier fights: no ball, no flight; the start of the fight carries the tier', () => {
+  const party = storyParty('o1', [8, 6, 5], 3)
+  const init = buildBossInit('deepseek', party, { seed: 3, expGain: false, tier: 'story' })
+  assert.equal(init.canCatch, false)
+  assert.equal(init.canRun, false)
+  assert.equal(init.bossTier, 'story')
+  assert.equal(init.sides[1].party[0].level, 12)
+  const { engine } = startBossBattle('deepseek', party, { seed: 3, expGain: false, tier: 'story' })
+  assert.equal(engine.battleMaxHp(1, 0) > 0, true)
+  const ball = CONTENT.itemList.find((it) => it.effect.kind === 'ball')!
+  const err = engine.choose(0, { kind: 'item', itemId: ball.id, partyIndex: 0 })
+  assert.equal(err, t('battle.err.cantCatchBoss'))
+  // The full-strength fight of the same boss keeps its ball and its flight.
+  const plain = buildBossInit('deepseek', party, { seed: 3, expGain: false })
+  assert.equal(plain.canCatch, true)
+  assert.equal(plain.bossTier, undefined)
+})
+
+test('story tier: the boss pays no loot of its own (the instance does)', () => {
+  const r = fightStory(storyParty('o1', [30, 30, 30], 5), 'competent', 5, undefined, false, true)
+  assert.ok(r.won)
+  assert.ok(!r.events.some((e) => e.t === 'loot' || e.t === 'money'))
+})
+
+// The win-rate table of the story tier (docs: M1b). Every starter, Lv8 / Lv6 / Lv5 party, 5 potions and 2 coupons.
+const STORY_SEEDS = 120
+test(`story tier: win rates over ${STORY_SEEDS} seeds per starter (naive / competent / guided)`, () => {
+  const table: string[] = []
+  for (const starter of STARTERS) {
+    const naive = rateStory(starter, [8, 6, 5], 'naive', STORY_SEEDS)
+    const competent = rateStory(starter, [8, 6, 5], 'competent', STORY_SEEDS)
+    const guided = rateStory(starter, [8, 6, 5], 'guided', STORY_SEEDS)
+    const assisted = rateStory(starter, [8, 6, 5], 'competent', STORY_SEEDS, { assist: true })
+    table.push(`${starter.padEnd(13)} ${(naive.rate * 100).toFixed(0)} / ${(competent.rate * 100).toFixed(0)} / ${(guided.rate * 100).toFixed(0)} (${guided.winTurns.toFixed(1)} turns)  assist competent ${(assisted.rate * 100).toFixed(0)}`)
+    assert.ok(guided.rate >= 0.85, `${starter}: guided ${guided.rate}`)
+    assert.ok(competent.rate >= 0.5, `${starter}: competent ${competent.rate}`)
+    assert.ok(naive.rate <= competent.rate - 0.3, `${starter}: naive ${naive.rate} must sit well below competent ${competent.rate}`)
+    assert.ok(naive.rate <= 0.6, `${starter}: the briefing cannot be skipped (${naive.rate})`)
+    assert.ok(assisted.rate >= 0.9, `${starter}: assist ${assisted.rate}`)
+    assert.ok(guided.winTurns >= 6 && guided.winTurns <= 16, `${starter}: guided wins take ${guided.winTurns} turns`)
+  }
+  if (process.env.BOSS_TABLE) console.log(table.join('\n'))
+})
+
+test('story tier: the fight is deterministic for a seed', () => {
+  const run = () => fightStory(storyParty('claude-haiku', [8, 6, 5], 17), 'guided', 17)
+  assert.deepEqual(run(), run())
 })
