@@ -249,7 +249,7 @@ export function createHub(opts: HubOptions): Hub {
   const dungeons = createDungeonServer({
     core,
     store: opts.store,
-    lookupPlayer: (id) => registry.get(id),
+    lookupPlayer: (id) => registry.get(id) ?? null,
     log,
   })
 

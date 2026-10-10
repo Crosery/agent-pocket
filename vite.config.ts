@@ -29,14 +29,11 @@ export default defineConfig(({ command, mode }) => ({
       '/api': { target: `http://localhost:${SERVER_PORT}` },
     },
   },
-  esbuild: command === 'build' && !devtoolsBuild(command, mode)
-    ? { legalComments: 'none', drop: ['debugger'] }
-    : undefined,
   build: {
     outDir: 'dist',
     target: 'es2022',
     sourcemap: false,
-    minify: 'esbuild',
+    minify: 'oxc',
     chunkSizeWarningLimit: 4000,
   },
   experimental: CDN_BASE && PUBLIC_BASE
