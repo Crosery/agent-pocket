@@ -2,6 +2,7 @@
 import type { WebSocket } from 'ws'
 import type { PlayerState, PublicProfile, ServerMsg } from '../shared/protocol.ts'
 import type { GameMap } from '../shared/types.ts'
+import type { SessionInfo } from './accounts.ts'
 import type { RateKey } from './config.ts'
 import type { RateLimiter } from './util.ts'
 
@@ -11,6 +12,10 @@ export interface Conn {
   readonly ws: WebSocket
   readonly ip: string
   readonly connectedAt: number
+  /** Authenticated account id from session cookie (null for unauthenticated guest connections). */
+  accountId?: string | null
+  /** Validated session metadata when connected with an authenticated session cookie. */
+  session?: SessionInfo | null
   /** Spatial-index key; equals `id` once registered. */
   key: string
   /** Public player id (null until hello). */

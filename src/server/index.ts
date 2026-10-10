@@ -1,16 +1,19 @@
 // Agent Pocket game server: HTTP (static dist/ + /api) and the WebSocket hub on one port.
 // Run directly: `node src/server/index.ts` (PORT, AP_DATA_DIR, AP_DIST_DIR env vars).
+import { once } from 'node:events'
 import { createServer, type IncomingMessage } from 'node:http'
 import { resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { promisify } from 'node:util'
 import { WebSocketServer } from 'ws'
 import pkg from '../../package.json' with { type: 'json' }
 import type { Creature } from '../shared/types.ts'
+import { CONTENT, t } from '../shared/content/index.ts'
 import { NET, validateNetContent } from './config.ts'
 import { createHttpHandler } from './http.ts'
 import { createHub } from './hub.ts'
 import { loadPvpModule, type PvpModule } from './pvp-hooks.ts'
-import { createProfileStore } from './store.ts'
+import { createProfileStore, type ProfileStore } from './store.ts'
 import type { SanitizeCreature } from './trade.ts'
 import { loadWorldInfo, type WorldInfo } from './world.ts'
 
@@ -32,6 +35,7 @@ export interface ServerOptions {
 
 export interface RunningServer {
   readonly port: number
+  readonly store: ProfileStore
   close(): Promise<void>
 }
 
@@ -73,9 +77,9 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
   if (problems.length) throw new Error(`invalid net content:\n${problems.join('\n')}`)
   const log = opts.quiet ? () => {} : (msg: string) => console.log(`[server] ${msg}`)
 
+  const world = opts.world !== undefined ? opts.world : await loadWorldInfo(log)
   const store = createProfileStore({ dir: opts.dataDir, log })
   await store.load()
-  const world = opts.world !== undefined ? opts.world : await loadWorldInfo(log)
   const pvp = opts.pvp !== undefined ? opts.pvp : await loadPvpModule(log)
   const sanitizer = creatureSanitizer(log)
   const hub = createHub({ store, world, pvp, sanitizer, allowDev: opts.allowDev === true, log })
@@ -86,7 +90,15 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
     publicDir: resolve(PROJECT_ROOT, NET.http.publicDir),
     api: {
       health: () => ({ ok: true, online: hub.onlineCount(), uptime: Math.round((Date.now() - startedAt) / 1000), version: pkg.version }),
+      status: () => ({
+        protocolVersion: CONTENT.config.net.protocolVersion,
+        version: pkg.version,
+        online: hub.onlineCount(),
+        name: t('net.serverName'),
+      }),
       leaderboard: () => store.leaderboard(),
+      accounts: store,
+      clientIp,
     },
     log,
   })
@@ -100,17 +112,15 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
       socket.end('HTTP/1.1 404 Not Found\r\nConnection: close\r\nContent-Length: 0\r\n\r\n')
       return
     }
-    wss.handleUpgrade(req, socket, head, (ws) => hub.attach(ws, clientIp(req)))
+    wss.handleUpgrade(req, socket, head, (ws) => hub.attach(ws, clientIp(req), req))
   })
   server.on('clientError', (_err, socket) => {
     if (socket.writable) socket.end('HTTP/1.1 400 Bad Request\r\nConnection: close\r\nContent-Length: 0\r\n\r\n')
     else socket.destroy()
   })
 
-  await new Promise<void>((ok, fail) => {
-    server.once('error', fail)
-    server.listen(opts.port, opts.host, () => { server.off('error', fail); ok() })
-  })
+  server.listen(opts.port, opts.host)
+  await once(server, 'listening')
   const addr = server.address()
   const port = typeof addr === 'object' && addr ? addr.port : opts.port
   log(`listening on http://localhost:${port} (ws ${NET.protocol.wsPath}, world bounds ${world ? 'on' : 'off'}, pvp ${pvp ? 'on' : 'off'}, dev ${opts.allowDev ? 'on' : 'off'})`)
@@ -118,14 +128,15 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
   let closing: Promise<void> | null = null
   return {
     port,
+    store,
     close() {
       closing ??= (async () => {
         hub.close()
         wss.close()
-        await new Promise<void>((ok) => {
-          server.close(() => ok())
-          server.closeAllConnections()
-        })
+        const closeServer = promisify(server.close.bind(server))
+        const closePromise = closeServer()
+        server.closeAllConnections()
+        await closePromise
         await store.close()
       })()
       return closing

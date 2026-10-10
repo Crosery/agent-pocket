@@ -75,12 +75,29 @@ export interface NetFile {
     profileLimits: { badgesMax: number; idMaxLen: number; maxHp: number; playTimeMaxSec: number }
     world: WorldNetConfig
   }
-  store: { defaultDir: string; file: string; debounceMs: number; maxProfiles: number; version: number }
+  store: { defaultDir: string; file: string; sqliteFile: string; backupDir: string; debounceMs: number; maxProfiles: number; version: number }
+  auth: {
+    cookieName: string
+    sessionTtlSeconds: number
+    maxSessionsPerAccount: number
+    maxRateBuckets: number
+    username: { minLen: number; maxLen: number; pattern: string }
+    password: { minLen: number; maxLen: number }
+    scrypt: { cost: number; blockSize: number; parallelization: number; keyLen: number; saltBytes: number; maxmem: number }
+    rates: { registerIp: Rate; loginIp: Rate; loginAccount: Rate; bindAccount: Rate }
+  }
   leaderboard: { size: number; sortBy: LeaderboardSortKey[] }
   http: {
     apiPrefix: string
     healthPath: string
+    statusPath: string
     leaderboardPath: string
+    registerPath: string
+    loginPath: string
+    logoutPath: string
+    accountPath: string
+    bindPath: string
+    maxBodyBytes: number
     distDir: string
     publicDir: string
     indexFile: string
@@ -169,13 +186,31 @@ export function validateNetContent(net: NetFile = NET, mod: ModerationFile = MOD
   pos('multiplayer.presence.viewRadiusTiles', presence?.viewRadiusTiles)
   nonNeg('multiplayer.presence.leaveMarginTiles', presence?.leaveMarginTiles)
   for (const k of ['tradeRangeTiles', 'pvpRangeTiles'] as const) if (presence?.[k] !== null) pos(`multiplayer.presence.${k}`, presence?.[k])
-  if (!net.store?.defaultDir || !net.store?.file) errs.push('net.store: defaultDir and file are required')
+  if (!net.store?.defaultDir || !net.store?.file || !net.store?.sqliteFile || !net.store?.backupDir) errs.push('net.store: defaultDir, file, sqliteFile and backupDir are required')
   for (const k of ['debounceMs', 'maxProfiles', 'version'] as const) pos(`net.store.${k}`, net.store?.[k])
+  const a = net.auth
+  if (!a?.cookieName || !/^[A-Za-z0-9_-]+$/.test(a.cookieName)) errs.push('net.auth.cookieName: must be a valid cookie token')
+  for (const k of ['sessionTtlSeconds', 'maxSessionsPerAccount', 'maxRateBuckets'] as const) pos(`net.auth.${k}`, a?.[k])
+  pos('net.auth.username.minLen', a?.username?.minLen)
+  pos('net.auth.username.maxLen', a?.username?.maxLen)
+  if ((a?.username?.minLen ?? 0) > (a?.username?.maxLen ?? 0)) errs.push('net.auth.username: minLen must be <= maxLen')
+  try { new RegExp(a?.username?.pattern ?? '', 'u') } catch { errs.push('net.auth.username.pattern: invalid RegExp') }
+  pos('net.auth.password.minLen', a?.password?.minLen)
+  pos('net.auth.password.maxLen', a?.password?.maxLen)
+  if ((a?.password?.minLen ?? 0) > (a?.password?.maxLen ?? 0)) errs.push('net.auth.password: minLen must be <= maxLen')
+  for (const k of ['cost', 'blockSize', 'parallelization', 'keyLen', 'saltBytes', 'maxmem'] as const) pos(`net.auth.scrypt.${k}`, a?.scrypt?.[k])
+  for (const k of ['registerIp', 'loginIp', 'loginAccount', 'bindAccount'] as const) {
+    pos(`net.auth.rates.${k}.count`, a?.rates?.[k]?.count)
+    pos(`net.auth.rates.${k}.perSeconds`, a?.rates?.[k]?.perSeconds)
+  }
   pos('net.leaderboard.size', net.leaderboard?.size)
   if (!Array.isArray(net.leaderboard?.sortBy) || net.leaderboard.sortBy.length === 0) errs.push('net.leaderboard.sortBy: non-empty array required')
   else for (const k of net.leaderboard.sortBy) if (!SORT_KEYS.includes(k)) errs.push(`net.leaderboard.sortBy: unknown key "${k}"`)
   const h = net.http
-  for (const k of ['apiPrefix', 'healthPath', 'leaderboardPath'] as const) if (!h?.[k]?.startsWith('/')) errs.push(`net.http.${k}: must start with "/"`)
+  for (const k of ['apiPrefix', 'healthPath', 'statusPath', 'leaderboardPath', 'registerPath', 'loginPath', 'logoutPath', 'accountPath', 'bindPath'] as const) {
+    if (!h?.[k]?.startsWith('/')) errs.push(`net.http.${k}: must start with "/"`)
+  }
+  pos('net.http.maxBodyBytes', h?.maxBodyBytes)
   if (!h?.distDir || !h?.indexFile || !h?.defaultMime) errs.push('net.http: distDir, indexFile and defaultMime are required')
   if (!Array.isArray(h?.noCacheFiles) || h.noCacheFiles.some((f) => typeof f !== 'string' || f.includes('/'))) errs.push('net.http.noCacheFiles: array of file names')
   try { new RegExp(h?.hashedAssetPattern ?? '') } catch { errs.push('net.http.hashedAssetPattern: invalid RegExp') }

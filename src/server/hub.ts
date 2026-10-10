@@ -2,9 +2,11 @@
 // (bounds, speed, and on the generated world tile steps incl. the infinite overworld, frontier interiors and
 // one-way ledges), proximity for trade / pvp, server-observed distance records, chunk-cache trimming around
 // online players, inspect, leaderboard, heartbeat, and routing to chat / trade / pvp.
+import type { IncomingMessage } from 'node:http'
 import { WebSocket, type RawData } from 'ws'
 import type { ClientMsg, PlayerState, ServerMsg } from '../shared/protocol.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
+import { parseSessionCookie, type SessionInfo } from './accounts.ts'
 import { MODERATION, NET, PRESENCE, type RateKey } from './config.ts'
 import type { Conn, HubCore, LimiterKey, Player } from './core.ts'
 import { createChat } from './chat.ts'
@@ -33,7 +35,7 @@ export interface HubOptions {
 
 export interface Hub {
   /** Take ownership of an upgraded socket. */
-  attach(ws: WebSocket, ip: string): void
+  attach(ws: WebSocket, ip: string, req?: IncomingMessage): void
   onlineCount(): number
   /** Stop timers, cancel sessions and close every socket. */
   close(): void
@@ -142,12 +144,13 @@ export function createHub(opts: HubOptions): Hub {
 
   // ------------------------------------------------------------------ lifecycle
 
-  function makeConn(ws: WebSocket, ip: string): Conn {
+  function makeConn(ws: WebSocket, ip: string, session: SessionInfo | null = null): Conn {
     const limits = {} as Record<LimiterKey, RateLimiter>
     for (const k of Object.keys(srv.rates) as RateKey[]) limits[k] = createRateLimiter(srv.rates[k])
     limits.chat = createRateLimiter(net.chatRate)
     return {
-      ws, ip, connectedAt: Date.now(), key: '', id: null, name: '', avatar: '', state: null, profile: null, version: 0,
+      ws, ip, connectedAt: Date.now(), accountId: session?.accountId ?? null, session,
+      key: '', id: null, name: '', avatar: '', state: null, profile: null, version: 0,
       clientBusy: false, pvpBusy: false, tradeId: null, emoteUntil: 0, lastMoveAt: 0, visible: new Map(), snapMap: null,
       mapRef: null, lastOverworld: null, maxDistance: 0, distanceSaved: 0,
       alive: true, closed: false, limits,
@@ -172,6 +175,15 @@ export function createHub(opts: HubOptions): Hub {
     if (byName.get(p.name.toLowerCase()) === p) byName.delete(p.name.toLowerCase())
     grid.remove(p)
     if (Math.floor(p.maxDistance) > p.distanceSaved) opts.store.recordDistance(p.id, p.maxDistance)
+    if (p.accountId) {
+      const existingSave = opts.store.getSave(p.accountId)
+      if (existingSave) {
+        opts.store.putSave(p.accountId, {
+          ...existingSave,
+          position: { map: p.state.map, x: Math.round(p.state.x), y: Math.round(p.state.y), facing: p.state.facing },
+        })
+      }
+    }
     opts.store.touch(p.id)
     if (!silent) chat.system('net.system.leave', { name: p.name })
   }
@@ -285,19 +297,48 @@ export function createHub(opts: HubOptions): Hub {
   function hello(c: Conn, m: HelloMsg): void {
     if (m.v !== net.protocolVersion) { drop(c, codes.version, 'version_mismatch'); return }
     if (m.build?.devtools === true && !opts.allowDev) { drop(c, codes.devNotAllowed, 'dev_not_allowed'); return }
-    const secret = isUuidLike(m.playerId) ? m.playerId : newSecretId()
-    const id = publicIdFor(secret)
+
+    let id: string
+    let boundSave = null
+    if (c.session) {
+      const liveSession = opts.store.getAccountBySession(c.session.token)
+      if (!liveSession) {
+        drop(c, codes.shutdown, 'unauthorized')
+        return
+      }
+      c.session = liveSession
+      c.accountId = liveSession.accountId
+      id = liveSession.accountId
+      boundSave = opts.store.getAccountSave(id)
+    } else {
+      const rawSecret = isUuidLike(m.playerId) ? m.playerId : newSecretId()
+      const candidateId = publicIdFor(rawSecret)
+      // Never allow an unauthenticated connection to claim a registered account id.
+      id = opts.store.getAccount(candidateId) ? publicIdFor(newSecretId()) : candidateId
+    }
+
     const prev = registry.get(id)
     if (prev) drop(prev, codes.duplicate, 'kicked_duplicate', true)
 
     const tag = id.replace(/-/g, '').slice(0, MODERATION.name.tagLength).toUpperCase()
-    const base = sanitizeName(m.name) ?? fallbackName(tag)
+    const rawName = boundSave?.save ? boundSave.save.name : (c.session?.username ?? m.name)
+    const base = sanitizeName(rawName) ?? fallbackName(tag)
     const name = uniqueName(base, (n) => byName.has(n.toLowerCase()), (i) => (i === 0 ? tag : `${tag}${i}`))
-    const avatar = sanitizeAvatar(m.avatar)
-    const profile = sanitizeProfile(m.profile, { id, name, avatar }, opts.world?.badgeIds ?? null)
-    const { pos, ref } = initialPosition(m)
+    const avatar = sanitizeAvatar(boundSave?.save ? boundSave.save.avatar : m.avatar)
+    const profileInput = boundSave?.save
+      ? {
+        ...m.profile,
+        badges: boundSave.trusted ? boundSave.save.badges : [],
+        dexCaught: boundSave.trusted ? boundSave.save.dexCaught.length : 0,
+        playTimeSec: boundSave.save.playTimeSec,
+      }
+      : m.profile
+    const profile = sanitizeProfile(profileInput, { id, name, avatar }, opts.world?.badgeIds ?? null)
+    const helloPosMsg: HelloMsg = boundSave?.save
+      ? { ...m, map: boundSave.save.position.map, x: boundSave.save.position.x, y: boundSave.save.position.y, facing: boundSave.save.position.facing }
+      : m
+    const { pos, ref } = initialPosition(helloPosMsg)
     const now = Date.now()
-
     c.id = id
     c.key = id
     c.name = name
@@ -517,13 +558,25 @@ export function createHub(opts: HubOptions): Hub {
   ]
 
   return {
-    attach(ws, ip) {
+    attach(ws, ip, req) {
       if (sockets.size >= srv.maxClients || (ipCounts.get(ip) ?? 0) >= srv.maxClientsPerIp) {
         ws.send(JSON.stringify(errorMsg('server_full')))
         ws.close(codes.serverFull)
         return
       }
-      const c = makeConn(ws, ip)
+      const cookieHeader = req?.headers.cookie
+      const token = parseSessionCookie(cookieHeader)
+      let session: SessionInfo | null = null
+      if (token) {
+        session = opts.store.getAccountBySession(token)
+        if (!session) {
+          opts.store.audit({ ip, kind: 'ws.unauthorized_session', severity: 1, detail: {} })
+          ws.send(JSON.stringify(errorMsg('unauthorized')))
+          ws.close(codes.shutdown)
+          return
+        }
+      }
+      const c = makeConn(ws, ip, session)
       sockets.add(c)
       ipCounts.set(ip, (ipCounts.get(ip) ?? 0) + 1)
       const helloTimer = setTimeout(() => { if (!c.id) drop(c, codes.helloTimeout, 'hello_timeout') }, srv.helloTimeoutSeconds * 1000)
