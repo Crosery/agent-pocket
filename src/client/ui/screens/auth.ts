@@ -173,7 +173,7 @@ export function accountBindScreen(
     ])
 
     const localCard = el('div', {
-      class: `aps-bind-card ap-panel ${currentChoice === 'local' ? 'is-active' : ''} ${!hasLocalSave ? 'is-disabled' : ''}`,
+      class: `aps-bind-card ap-panel ${!hasLocalSave ? 'is-disabled' : ''}`,
       attrs: { role: 'button', tabindex: hasLocalSave ? '0' : '-1' },
       on: {
         click: api.guard(() => {

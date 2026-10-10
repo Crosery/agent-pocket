@@ -1,6 +1,7 @@
 // Multiplayer server list screen: official server protection, custom server CRUD, status probing.
 import { t } from '../../../shared/content/index.ts'
 import { button, el, panel } from '../widgets.ts'
+import { backPressed, frame, H, openScreen, pressed, sfx, uiSfx, type ScreenEnv } from './base.ts'
 import {
   addServer, deleteServer, loadServers, probeServer, sanitizeServerAddress, OFFICIAL_SERVER_ID,
   type ServerEntry, type ServerProbeResult, updateServer,

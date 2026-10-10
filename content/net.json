@@ -3,12 +3,6 @@
     "wsPath": "/ws",
     "closeCodes": {"shutdown": 1001, "duplicate": 4001, "version": 4002, "flood": 4003, "helloTimeout": 4004, "serverFull": 4005, "slowConsumer": 4006, "devNotAllowed": 4007}
   },
-  "auth": {
-    "usernameMinLen": 2,
-    "usernameMaxLen": 16,
-    "passwordMinLen": 8,
-    "passwordMaxLen": 72
-  },
   "official": {
     "name": "官方服务器",
     "url": "https://ap.crosery.com"

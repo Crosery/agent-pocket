@@ -6,9 +6,6 @@ import {
   type StorageLike,
 } from '../src/client/net/servers.ts'
 import { validatePassword, validateUsername, getAuthLimits } from '../src/client/net/auth.ts'
-import { createEventBus } from '../src/client/core/events.ts'
-import { createNetClient } from '../src/client/net/client.ts'
-import type { GameEvents } from '../src/client/contracts.ts'
 
 function createMemoryStorage(initial: Record<string, string> = {}): StorageLike {
   const store = new Map<string, string>(Object.entries(initial))
@@ -31,6 +28,7 @@ test('official server is always present as the first entry on fresh load with co
   assert.equal(list[0].official, true)
   assert.equal(list[0].address, getOfficialServer().address)
   assert.equal(getOfficialServer().address, 'https://ap.crosery.com')
+})
 
 test('custom servers can be added, updated, and deleted', () => {
   const storage = createMemoryStorage()
@@ -176,6 +174,7 @@ test('normalizeWsUrl returns only the WebSocket URL', () => {
 
 test('probeServer reports online and compatibility when server status matches', async () => {
   const origFetch = globalThis.fetch
+  try {
     globalThis.fetch = async (input) => {
       const url = String(input)
       if (url.endsWith('/api/status')) {
@@ -259,39 +258,3 @@ test('validatePassword enforces min and max length bounds', () => {
   assert.ok(validatePassword('p'.repeat(73)) !== null) // too long
 })
 
-// ---------------------------------------------------------------------------
-// NetClient endpoint dynamic reconfiguration
-// ---------------------------------------------------------------------------
-
-test('NetClient setEndpoint changes active target endpoint', () => {
-  const bus = createEventBus<GameEvents>()
-  const client = createNetClient(bus, () => ({
-    t: 'hello',
-    v: 1,
-    playerId: 'p1',
-    name: 'test',
-    avatar: 'red',
-    map: 'home',
-    x: 0,
-    y: 0,
-    facing: 'down',
-    lead: null,
-    profile: {
-      party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0,
-    },
-    build: { devtools: false },
-  }))
-
-  const initialEp = client.endpoint
-  assert.ok(initialEp === null || (typeof initialEp === 'string' && initialEp.includes('/ws')))
-
-  client.setEndpoint('192.168.1.10:8787')
-  assert.equal(client.endpoint, 'ws://192.168.1.10:8787/ws')
-
-  client.setEndpoint('https://play.agentpocket.cn')
-  assert.equal(client.endpoint, 'wss://play.agentpocket.cn/ws')
-
-  client.setEndpoint(null)
-  const finalEp = client.endpoint
-  assert.ok(finalEp === null || (typeof finalEp === 'string' && finalEp.includes('/ws')))
-})

@@ -20,8 +20,8 @@ export interface AuthCredentials {
 }
 
 export function getAuthLimits() {
-  if (!NET_CLIENT.auth) throw new Error('missing auth limits in net config')
-  return NET_CLIENT.auth
+  const { username, password } = NET_CLIENT.auth
+  return { usernameMinLen: username.minLen, usernameMaxLen: username.maxLen, passwordMinLen: password.minLen, passwordMaxLen: password.maxLen }
 }
 
 export function validateUsername(username: string): string | null {

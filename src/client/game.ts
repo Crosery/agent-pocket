@@ -3,7 +3,7 @@
 // are discovered with import.meta.glob so the game still runs, with fallbacks, while they are missing.
 import type { Creature, QuestDef, SaveData, Settings, World } from '../shared/types.ts'
 import type { ClientMsg, PublicProfile } from '../shared/protocol.ts'
-import type { AudioManager, BattleRunner, GameClock, GameContext, GameData, GameEvents, Minimap, Screens, WorldFx } from './contracts.ts'
+import type { AudioManager, BattleRunner, GameClock, GameContext, GameData, GameEvents, Minimap, NetClient, Screens, WorldFx } from './contracts.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { toView } from '../shared/creature.ts'
 import { buildWorld, buildWorldAsync, worldAnchors } from '../shared/world/index.ts'
