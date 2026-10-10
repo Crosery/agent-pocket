@@ -116,7 +116,7 @@ export interface GameTuning {
   fog: { mapKinds: MapKind[] }
   autosave: { events: string[]; minIntervalSec: number; onHidden: boolean }
   hud: { moneyCheckSec: number }
-  flags: { badgePrefix: string; bossWonPrefix: string }
+  flags: { badgePrefix: string; bossWonPrefix: string; /** Set once a badge has paid out the boss-card exp banks (also with no card to pay): the license tip waits for it. */ licenseSettled: string }
   debug: {
     partySize: number; partyLevel: number; money: number; keyItemKinds: string[]
     categoryQty: Record<string, number>; freezeClockWithTime: boolean; overlayRefreshMs: number; battleLevel: number

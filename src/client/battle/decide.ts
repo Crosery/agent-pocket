@@ -167,18 +167,24 @@ export function createDecider(env: DecideEnv): Decider {
     async chooseAction(req) {
       const stop = startTimer()
       try {
+        // The coach speaks when the command menu opens (one line per turn) and steps aside once a command is picked.
+        const line = model.coach.shift()
+        const showCoach = () => view.setCoach(line ? { text: line.text, speaker: line.speaker, portraitUrl: line.portrait ? ctx.assets.portraitUrl(line.portrait) : null } : null)
         for (;;) {
           const cr = active()
           if (!cr) return { kind: 'move', moveIndex: 0 }
           view.message.hold(t('battleui.prompt.command', { name: model.sides[0].view ? creatureName(model.sides[0].view) : creatureName(cr) }))
           const ids = pvp ? BATTLE_UI.commands.pvp : BATTLE_UI.commands.normal
+          showCoach()
           const id = await view.menus.openCommands(ids.map((x) => ({ id: x, disabled: !enabled(x, req) })), Math.min(lastCommand, ids.length - 1))
+          view.setCoach(null)
           lastCommand = ids.indexOf(id)
           const action = await command(id, req, cr)
           if (action) return action
         }
       } finally {
         stop()
+        view.setCoach(null)
       }
     },
     async chooseReplacement() {

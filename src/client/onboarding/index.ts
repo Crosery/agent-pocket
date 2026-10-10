@@ -41,7 +41,7 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
   const here = (): Place => ({ map: overworld.player.map, x: overworld.player.x, y: overworld.player.y })
   const settings = () => ctx.save.settings
 
-  const live = (): LiveView => ({ timeOfDay: ctx.clock.timeOfDay })
+  const live = (): LiveView => ({ timeOfDay: ctx.clock.timeOfDay, device: ctx.input.lastDevice })
   const orderOf = new Map(cfg.tips.list.map((x, i) => [x.id, i]))
   type Phase = 'battle' | 'field' | 'screen'
   const phaseOf = (tip: TipDef): Phase => {
@@ -100,7 +100,11 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
   const offLegacy = () => { offLegacyEvent(); window.clearTimeout(legacyTimer) }
 
   // -- tips ----------------------------------------------------------------------------------------------------
-  const offBattle = ctx.events.on('battle:start', ({ kind }) => {
+  let battleKind = ''
+  const offBattle = ctx.events.on('battle:start', ({ kind, coach }) => {
+    battleKind = coach ? 'boss' : kind
+    // A coached boss fight teaches by itself: the legacy battle cards stay quiet (and are not marked seen) until it is over.
+    if (coach) return
     for (const tip of cfg.tips.list) {
       const tr = tip.trigger
       if (tr.kind !== 'battle') continue
@@ -109,11 +113,14 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
       queue(tip, tr.delaySec ?? 0)
     }
   })
-  const offBattleEnd = ctx.events.on('battle:end', () => { dropPhase('battle') })
+  const offBattleEnd = ctx.events.on('battle:end', () => { battleKind = ''; dropPhase('battle') })
+
+  /** What a dex:seen entry was met as: only a wild one earns the rarity card. */
+  const dexSeenKind = (kind: string) => (kind === 'wild' ? 'wild' : kind === 'boss' || kind === 'legend' ? 'boss' : kind ? 'trainer' : 'other')
 
   /** Queues every `on` tip listening to `name` whose payload matches. */
   function fire(name: string, raw: Record<string, unknown>): void {
-    const payload = enrich(name, raw, ctx.data.world)
+    const payload = enrich(name, name === 'dex:seen' ? { ...raw, kind: dexSeenKind(battleKind) } : raw, ctx.data.world)
     for (const tip of cfg.tips.list) {
       const tr = tip.trigger
       if (tr.kind !== 'on' || tr.on !== name || !matchPayload(tr.match, payload) || !condHolds(tr.needs, ctx.save, live())) continue
@@ -123,7 +130,7 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
   const offBus = (ON_EVENTS as readonly string[])
     .filter((name) => cfg.tips.list.some((x) => x.trigger.kind === 'on' && x.trigger.on === name))
     .map((name) => (ctx.events.on as (n: string, fn: (p: Record<string, unknown>) => void) => () => void)(name, (p) => fire(name, p)))
-  const offCues = ctx.events.on('battle:events', ({ events }) => { for (const c of battleCues(events)) fire(c.cue, c.payload) })
+  const offCues = ctx.events.on('battle:events', ({ events, coach }) => { if (!coach) for (const c of battleCues(events)) fire(c.cue, c.payload) })
 
   function dropPhase(phase: Phase): void {
     pending = pending.filter((p) => phaseOf(p.tip) !== phase)
@@ -251,7 +258,8 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
 
   const api: Onboarding = {
     update(dt) {
-      clock += dt
+      // Time spent in a pause menu or the manual is not the player's: the tip clock, delays and staleness stand still.
+      if (!ctx.ui.isBlocking()) clock += dt
       if (!visible) return
       const free = overworld.free && !ctx.ui.isBlocking()
       if (!settings().showTips) { if (showing) closeTip(); pending = [] } else {

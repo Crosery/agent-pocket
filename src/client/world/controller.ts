@@ -458,10 +458,12 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       moneyT = GAME.hud.moneyCheckSec
       ctx.hud.setMoney(ctx.save.money)
       const st = ctx.save.trackedQuest ? ctx.save.quests[ctx.save.trackedQuest] : undefined
-      const key = `${ctx.save.trackedQuest ?? ''}|${st?.stage ?? ''}|${st?.done ?? ''}`
+      const gate = TUTORIAL.objective.hideQuestCardUntilFlag
+      const hidden = !!gate && !ctx.save.flags[gate]
+      const key = `${ctx.save.trackedQuest ?? ''}|${st?.stage ?? ''}|${st?.done ?? ''}|${hidden}`
       if (key !== questKey) {
         questKey = key
-        const line = questLine()
+        const line = hidden ? null : questLine()
         ctx.hud.setQuest(line?.text ?? null, line?.title, line?.stage)
       }
     }

@@ -6,6 +6,7 @@ import { CONTENT, t, type Content } from '../../shared/content/index.ts'
 import { creatureName, healFull } from '../../shared/creature.ts'
 import { bossCardCap, isBossCard, settleBank } from '../../shared/gameplay/bosscard.ts'
 import { BATTLE_UI } from '../battle/config.ts'
+import { GAME } from './config.ts'
 
 export function truthy(v: boolean | number | string | undefined): boolean {
   return v !== undefined && v !== false && v !== 0 && v !== ''
@@ -102,10 +103,9 @@ export async function settleBossCards(ctx: GameContext): Promise<Creature[]> {
       ctx.ui.toast(t('hud.license.learned', { name: creatureName(cr) }), 'success')
     }
   }
-  if (levelled.length) {
-    ctx.events.emit('party:changed', {})
-    ctx.persist('license')
-  }
+  ctx.save.flags[GAME.flags.licenseSettled] = true
+  if (levelled.length) ctx.events.emit('party:changed', {})
+  ctx.persist('license')
   return levelled
 }
 

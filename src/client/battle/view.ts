@@ -21,6 +21,8 @@ export interface BattleView {
   readonly status: [StatusPanel, StatusPanel]
   readonly message: MessageBox
   readonly menus: Menus
+  /** The coach bar above the message window (one line with the tutor's portrait); null hides it. */
+  setCoach(line: { text: string; speaker: string; portraitUrl: string | null } | null): void
   setWeather(id: string): void
   /** PvP decision countdown (seconds left) or null to hide. */
   setTimer(secondsLeft: number | null): void
@@ -67,8 +69,15 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
   timer.hidden = true
   const message: MessageBox = createMessageBox(audio, settings, pace)
   const menus: Menus = createMenus(audio)
-  const bar = el('div', 'apb-bar', [message.el, menus.el, status[0].el])
-  for (const n of [status[1].el, status[0].el, message.el, menus.el, weather, timer]) n.dataset.hud = ''
+  const coachImg = el('img', { class: 'apb-coach-img', attrs: { alt: '' } })
+  const coachName = el('span', 'apb-coach-name')
+  const coachText = el('span', 'apb-coach-text')
+  const coachPanel = panel(null, { className: 'apb-win apb-coach' })
+  coachPanel.body.append(coachImg, coachName, coachText)
+  const coach = coachPanel.el
+  coach.hidden = true
+  const bar = el('div', 'apb-bar', [coach, message.el, menus.el, status[0].el])
+  for (const n of [status[1].el, status[0].el, message.el, menus.el, weather, timer, coach]) n.dataset.hud = ''
   root.append(status[1].el, weather, timer, bar)
   let weatherId: string | null = null
   const effects = createBattleEffectsPanel(root, status, () => ({ weather: weatherId, boss: status[1].getBoss() }))
@@ -80,6 +89,18 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
   let levelWait: { left: number; done: () => void } | null = null
   const banners: { node: HTMLElement; left: number }[] = []
 
+  const setCoach: BattleView['setCoach'] = (line) => {
+    coach.hidden = line === null
+    bar.classList.toggle('has-coach', line !== null)
+    if (!line) return
+    coachName.textContent = line.speaker
+    coachText.textContent = line.text
+    coachImg.hidden = !line.portraitUrl
+    if (line.portraitUrl) coachImg.src = line.portraitUrl
+  }
+  // A tap on the bar puts it away for this menu (no timer: it stays until the player picks a command).
+  coach.addEventListener('click', (e) => { e.stopPropagation(); setCoach(null) })
+
   const syncMenuClass = () => bar.classList.toggle('is-moves', menus.mode === 'moves')
 
   const view: BattleView = {
@@ -87,6 +108,7 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
     status,
     message,
     menus,
+    setCoach,
     setWeather(id) {
       const def = CONTENT.weatherById[id]
       weatherId = def ? id : null

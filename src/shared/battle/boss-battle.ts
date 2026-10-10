@@ -24,6 +24,9 @@ export interface BossBattleOpts {
   weather?: WeatherId
   /** Items the player side carries (only the AI-driven player side of simulations reads them; humans own their bag). */
   items?: Record<string, number>
+  /** The boss coaches the player in this fight (BattleInit.coach); skipBrief: the player skipped the briefing. */
+  coach?: boolean
+  skipBrief?: boolean
   /** Let the player side be driven by the shared AI (simulations, raid auto-pilot). */
   autoPlayer?: boolean
   expGain?: boolean
@@ -65,6 +68,8 @@ export function buildBossInit(bossId: string, party: Creature[], o: BossBattleOp
     expGain: o.expGain ?? true,
     ...(o.tier ? { bossTier: o.tier } : {}),
     ...(o.assist ? { assist: true } : {}),
+    ...(o.coach ? { coach: true } : {}),
+    ...(o.skipBrief ? { skipBrief: true } : {}),
   }
 }
 

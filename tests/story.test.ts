@@ -192,7 +192,7 @@ test('no unresolved placeholders or authoring macros reach the World', () => {
 })
 
 /** Written by the v2 -> v3 save migration (src/client/core/save-migrate.ts), not by a script. */
-const MIGRATION_FLAGS = new Set(['ds:legacy'])
+const MIGRATION_FLAGS = new Set(['ds:legacy', 'ds:assistOffer'])
 /** Never set on purpose: the NPC is hidden by default and a script shows it for one scene (hiddenUnlessFlag). */
 const SCENE_ONLY_FLAGS = new Set(['ds:zeroBack'])
 

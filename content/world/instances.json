@@ -1,4 +1,5 @@
 {
+  "defaults": {"assistAfterLosses": 2, "assistOfferFlag": "ds:assistOffer", "assistFlag": "ds:assist"},
   "instances": {
     "deepseek-tide": {
       "boss": "deepseek",

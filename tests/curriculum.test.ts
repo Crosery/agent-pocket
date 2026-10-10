@@ -157,3 +157,13 @@ test('the tall-grass tip fires for the terrain name the overworld reports', () =
   const plain = CONTENT.terrain.find((x) => !x.tallGrass && x.walkable)!
   assert.ok(!isTallGrassName(plain.nameZh), plain.nameZh)
 })
+
+test('boss lessons: the new lessons have manual pages and a trigger, the removed cards are not taught any more', () => {
+  for (const id of ['bossMechanic', 'bait', 'capture', 'grade']) {
+    const l = TUTORIAL.curriculum.lessons.find((x) => x.id === id)
+    assert.ok(l, id)
+    assert.ok(`tutorial.manual.${id}.body` in CONTENT.text, `${id} manual`)
+    assert.ok((l.tips?.length ?? 0) + (l.npcs?.length ?? 0) > 0, `${id} trigger`)
+  }
+  for (const lesson of TUTORIAL.curriculum.lessons) for (const gone of ['signs', 'fly', 'tradePvp', 'center', 'objective', 'menuHint']) assert.ok(!lesson.tips?.includes(gone), `${lesson.id} still teaches ${gone}`)
+})

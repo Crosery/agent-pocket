@@ -79,7 +79,7 @@
   "fog": {"mapKinds": ["overworld", "cave"]},
   "autosave": {"events": ["badge:earned", "dex:caught", "quest:updated", "battle:end", "map:entered"], "minIntervalSec": 6, "onHidden": true},
   "hud": {"moneyCheckSec": 0.5},
-  "flags": {"badgePrefix": "badge:", "bossWonPrefix": "bossWon:"},
+  "flags": {"badgePrefix": "badge:", "bossWonPrefix": "bossWon:", "licenseSettled": "lic:settled"},
   "debug": {
     "partySize": 6,
     "partyLevel": 30,

@@ -65,7 +65,9 @@ export function createObjectiveView(uiRoot: HTMLElement) {
   let host: HTMLElement | null = null
   let shown = ''
   let device: Device | null = null
+  let collapseTimer = 0
   const expand = (on: boolean) => {
+    window.clearTimeout(collapseTimer)
     if (!on && !box.hidden && details.contains(document.activeElement)) toggle.focus({ preventScroll: true })
     box.classList.toggle('is-collapsed', !on)
     toggle.setAttribute('aria-expanded', String(on))
@@ -112,7 +114,9 @@ export function createObjectiveView(uiRoot: HTMLElement) {
         summary.textContent = short
         toggle.setAttribute('aria-label', t('tutorial.objective.label', { objective: short }))
         if (changed) {
-          expand(false)
+          // A new objective opens for a few seconds so it is read, then folds away to the one-line summary.
+          expand(true)
+          collapseTimer = window.setTimeout(() => expand(false), TUTORIAL.objective.collapseSec * 1000)
           box.classList.remove('is-new')
           void box.offsetWidth
           box.classList.add('is-new')
@@ -125,7 +129,7 @@ export function createObjectiveView(uiRoot: HTMLElement) {
         dist.textContent = t('tutorial.objective.distance', { n: s.arrow.steps })
       } else if (s.note) dist.replaceChildren(...richText(t(s.note), s.device))
     },
-    dispose() { uiRoot.removeEventListener('ap-hud-expand', onDetailsOpen); box.remove() },
+    dispose() { window.clearTimeout(collapseTimer); uiRoot.removeEventListener('ap-hud-expand', onDetailsOpen); box.remove() },
   }
 }
 

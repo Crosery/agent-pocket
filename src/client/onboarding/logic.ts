@@ -9,7 +9,7 @@ const truthy = (v: boolean | number | string | undefined) => v !== undefined && 
 export type ProgressView = Pick<SaveData, 'flags' | 'badges' | 'party' | 'stats' | 'quests'> & Partial<Pick<SaveData, 'bag'>>
 
 /** State that is not part of the save (the clock). */
-export interface LiveView { timeOfDay?: string }
+export interface LiveView { timeOfDay?: string; device?: 'keyboard' | 'gamepad' | 'touch' }
 
 export function condHolds(c: Cond | undefined, s: ProgressView, live: LiveView = {}): boolean {
   if (!c) return true
@@ -17,6 +17,7 @@ export function condHolds(c: Cond | undefined, s: ProgressView, live: LiveView =
   if (c.hasItem?.some((id) => !have(id))) return false
   if (c.hasCategory && !c.hasCategory.some((cat) => CONTENT.itemList.some((it) => it.category === cat && have(it.id)))) return false
   if (c.timeOfDay && !(live.timeOfDay && c.timeOfDay.includes(live.timeOfDay))) return false
+  if (c.device && !(live.device && c.device.includes(live.device))) return false
   if (c.flag?.some((f) => !truthy(s.flags[f]))) return false
   if (c.noFlag?.some((f) => truthy(s.flags[f]))) return false
   if (c.minBadges !== undefined && s.badges.length < c.minBadges) return false
@@ -109,7 +110,7 @@ export function tipSeen(s: ProgressView, id: string): boolean {
 
 /** A tip that was never shown but whose lesson the save already moved past is not worth showing. */
 export function tipLive(tip: TipDef, s: ProgressView): boolean {
-  return !tipSeen(s, tip.id) && !(tip.expires && condHolds(tip.expires, s))
+  return !tipSeen(s, tip.id) && ![tip.expires ?? []].flat().some((e) => condHolds(e, s))
 }
 
 /** Every `after` tip was shown or no longer applies (its own expiry), so teaching order holds across reloads. */

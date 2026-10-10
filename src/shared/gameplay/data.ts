@@ -74,6 +74,7 @@ export function buildGameplay(): GameplayData {
     chainById: Object.fromEntries(mythic.chains.map((c) => [c.id, c])),
     research: researchJson as unknown as ResearchFile,
     instances: (instancesJson as unknown as InstanceFile).instances,
+    instanceDefaults: (instancesJson as unknown as InstanceFile).defaults,
   }
 }
 
