@@ -1,1 +1,6 @@
-[]
+[
+  {"id": "ds-stamp-catch", "on": "dex:caught", "when": {"flag": ["ds:stamp:types"], "noFlag": ["ds:stamp:catch"]}, "script": "ds-stamp-catch", "once": true},
+  {"id": "ds-enter-lobby", "on": "map:entered", "match": {"map": "origin-lab-b1"}, "when": {"flag": ["ds:certFull"], "noFlag": ["ds:briefed"]}, "script": "ds-enter-lobby"},
+  {"id": "ds-lobby-reset", "on": "map:entered", "match": {"map": "origin-lab-b1"}, "script": "ds-lobby-reset"},
+  {"id": "ds-legacy-start", "on": "map:entered", "match": {"map": "origin-lab"}, "when": {"flag": ["ds:legacy"], "noFlag": ["ds:done"]}, "script": "ds-legacy-start", "once": true}
+]

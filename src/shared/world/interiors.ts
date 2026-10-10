@@ -81,13 +81,16 @@ export function buildInteriors(wc: WorldContent, doors: DoorLink[], overworldId:
           d.warps.push({ x: down.x, y: down.y, toMap: link.mapIds[k + 1], toX: up.arrive[0], toY: up.arrive[1], facing: up.facing, kind: 'stairs' })
           drafts[k + 1].warps.push({ x: up.x, y: up.y, toMap: link.mapIds[k], toX: down.arrive[0], toY: down.arrive[1], facing: down.facing, kind: 'stairs' })
         } else problems.push(`interior ${link.floors[k]}: stairs links do not match the floor list`)
+      } else if (underground) {
+        // The pairing with the floor above was made there; an underground floor must have its way back up.
+        if (!tpl.links?.up) problems.push(`interior ${link.floors[k]}: stairs links do not match the floor list`)
       } else {
         const up = tpl.links?.up
         if (up && nextTpl?.links?.down) {
           const down = nextTpl.links.down
           d.warps.push({ x: up.x, y: up.y, toMap: link.mapIds[k + 1], toX: down.arrive[0], toY: down.arrive[1], facing: down.facing, kind: 'stairs' })
           drafts[k + 1].warps.push({ x: down.x, y: down.y, toMap: link.mapIds[k], toX: up.arrive[0], toY: up.arrive[1], facing: up.facing, kind: 'stairs' })
-        } else if (up || (k > 0 && !underground && !tpl.links?.down) || (underground && !tpl.links?.up)) problems.push(`interior ${link.floors[k]}: stairs links do not match the floor list`)
+        } else if (up || (k > 0 && !tpl.links?.down)) problems.push(`interior ${link.floors[k]}: stairs links do not match the floor list`)
       }
       if (underground && tpl.links?.up) d.spawn = { x: tpl.links.up.arrive[0], y: tpl.links.up.arrive[1], facing: tpl.links.up.facing }
       else if (k > 0 && tpl.links?.down) d.spawn = { x: tpl.links.down.arrive[0], y: tpl.links.down.arrive[1], facing: tpl.links.down.facing }

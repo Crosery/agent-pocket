@@ -132,5 +132,6 @@
   {"id": "silicon-wafer", "nameZh": "硅晶圆", "category": "misc", "price": 5000, "buyable": false, "description": "闪闪发亮的硅晶圆，能卖出高价。", "effect": {"kind": "none"}, "usableInBattle": false, "usableInField": false},
   {"id": "rare-chip", "nameZh": "稀有晶片", "category": "misc", "price": 6000, "buyable": false, "description": "极为稀有的定制晶片，商店会高价收购。", "effect": {"kind": "none"}, "usableInBattle": false, "usableInField": false},
   {"id": "quantum-bit", "nameZh": "量子比特", "category": "misc", "price": 8000, "buyable": false, "description": "据说同时处于“值钱”与“不值钱”两种状态，商店愿意高价收购。", "effect": {"kind": "none"}, "usableInBattle": false, "usableInField": false},
-  {"id": "gold-token", "nameZh": "金色 Token", "category": "misc", "price": 10000, "buyable": false, "description": "纯金打造的 Token，可以卖出非常高的价格。", "effect": {"kind": "none"}, "usableInBattle": false, "usableInField": false}
+  {"id": "gold-token", "nameZh": "金色 Token", "category": "misc", "price": 10000, "buyable": false, "description": "纯金打造的 Token，可以卖出非常高的价格。", "effect": {"kind": "none"}, "usableInBattle": false, "usableInField": false},
+  {"id": "work-permit", "nameZh": "上岗证", "category": "key", "price": 0, "buyable": false, "description": "图灵研究所签发。盖满三个印，机房保安放行。", "effect": {"kind": "key", "key": "pass"}, "usableInBattle": false, "usableInField": false}
 ]

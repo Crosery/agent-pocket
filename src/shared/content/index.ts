@@ -153,7 +153,7 @@ function build(): Content {
     speciesList,
     bosses: byId(bossList, 'id'),
     bossList,
-    bossBySpecies: byId(bossList, 'species'),
+    bossBySpecies: byId(bossList.filter((b) => !b.scriptedOnly), 'species'),
     quality,
     natureById: byId(quality.natures, 'id'),
     dexResearch: dexResearchFile.entries,

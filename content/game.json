@@ -7,12 +7,11 @@
     "respawnAtStart": true,
     "introScript": [
       {"op": "wait", "ms": 500},
-      {"op": "say", "text": "game.intro.narration1"},
-      {"op": "say", "text": "game.intro.narration2"},
-      {"op": "say", "text": "game.intro.narration3"},
+      {"op": "say", "text": "story.opening.intro.n1"},
+      {"op": "say", "text": "story.opening.intro.phone1"},
       {"op": "sfx", "id": "notify"},
-      {"op": "say", "text": "game.intro.wake"},
-      {"op": "say", "text": "game.intro.hint"}
+      {"op": "say", "text": "story.opening.intro.phone2"},
+      {"op": "say", "text": "story.opening.intro.wake"}
     ]
   },
   "player": {"radius": 0.27, "cornerSlip": 0.45, "cornerSlipRate": 1.0, "substepTiles": 0.2, "axisDeadzone": 0.18, "facingHysteresis": 0.18, "elevSmoothing": 16, "zoomByMapKind": {"overworld": 1, "cave": 1, "interior": 0}, "bump": {"sfx": "bump", "cooldownMs": 420, "volume": 0.5, "stuckRatio": 0.3}, "bike": {"mapKinds": ["overworld"], "sfxOn": "confirm", "sfxOff": "cancel"}, "surf": {"hopMs": 360, "rideLift": 0.32, "splashEverySec": 1.4, "sfx": "splash", "fx": "splash"}, "showOwnName": true, "movingRatio": 0.05},

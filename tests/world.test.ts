@@ -413,7 +413,8 @@ test('anchors are reachable, and NPCs standing on every spot never seal off warp
     const open = m === ow ? info.surfReach : floodReach(m, col, m.spawn.x, m.spawn.y, false)
     for (const [k, a] of own) assert.ok(near(m, open, a.x, a.y), `${k} unreachable`)
     if (m === ow) continue
-    const blocked = new Set(own.filter(([k]) => !/:entrance(-|$)/.test(k)).map(([, a]) => a.y * m.width + a.x))
+    // The lab's stairs-front is held by a guard until the work permit is stamped (hiddenIfFlag ds:certFull), then released.
+    const blocked = new Set(own.filter(([k]) => !/:entrance(-|$)|:stairs-front$/.test(k)).map(([, a]) => a.y * m.width + a.x))
     const reach = floodReach(m, col, m.spawn.x, m.spawn.y, false, blocked)
     for (const w of m.warps) assert.ok(near(m, reach, w.x, w.y), `${m.id}: warp (${w.x},${w.y}) sealed by NPC spots`)
   }

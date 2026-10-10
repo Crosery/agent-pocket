@@ -25,6 +25,7 @@
   "moves": {"columns": 2, "hintRequiresSeen": true, "categoryColors": {"physical": "#e8823a", "special": "#5aa0f0", "status": "#a0a6b8"}, "chart": {"action": "map", "view": "type"}},
   "catch": {"nicknamePrompt": true},
   "contract": {"defaultBall": "prompt-ball", "consumeBall": false, "shakes": 3, "shakeMs": 230, "flashMs": 200, "rollMs": 900, "lineMs": 240, "autoCloseMs": 9000,
-    "sfx": {"throw": "ball_throw", "shake": "select", "sign": "catch", "roll": "levelup", "line": "notify"}},
+    "sfx": {"throw": "ball_throw", "shake": "select", "sign": "catch", "roll": "levelup", "line": "notify"},
+    "lines": {"deepseek": {"before": [{"text": "story.opening.signed.s1", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}, {"text": "story.opening.signed.s2", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}, {"text": "story.opening.signed.s3", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}], "after": [{"text": "story.opening.signed.s4", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}, {"text": "story.opening.signed.s5", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}, {"text": "story.opening.signed.s6", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}, {"text": "story.opening.signed.s7", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}]}}},
   "evolve": {"startHoldMs": 400, "endHoldMs": 600}
 }

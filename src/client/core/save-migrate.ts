@@ -38,7 +38,7 @@ const MAIN_STAGE = migrationsJson.mainStage as Record<string, { from: number; ad
  */
 function v2to3(save: Obj): void {
   const flags = isObj(save.flags) ? save.flags : (save.flags = {}) as Obj
-  if (flags.starter) { flags['ds:gateOpen'] = true; flags['ds:legacy'] = true }
+  if (flags.starter) { flags['ds:gateOpen'] = true; flags['ds:legacy'] = true; flags['ds:certFull'] = true }
   const shift = MAIN_STAGE['3']
   const main = isObj(save.quests) && isObj(save.quests.main) ? save.quests.main : null
   if (shift && main && typeof main.stage === 'number' && main.stage >= shift.from) main.stage += shift.add

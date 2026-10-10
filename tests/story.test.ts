@@ -43,6 +43,9 @@ const npcs: (NpcDef & { map: string })[] = Object.values(world.maps).flatMap((m)
 const npcById = new Map(npcs.map((n) => [n.id, n]))
 const allSteps = (n: NpcDef): ScriptStep[] => { const out: ScriptStep[] = []; walkSteps(n.script, (s) => out.push(s)); return out }
 const everyStep = npcs.flatMap((n) => allSteps(n).map((s) => ({ s, n })))
+/** Steps of the scripts that start themselves on game events (triggers.json). */
+const triggerSteps: ScriptStep[] = []
+for (const t of storyFeatures(world).triggers) walkSteps(t.steps, (s) => triggerSteps.push(s))
 const colCache = new Map<string, Uint8Array>()
 const col = (m: GameMap) => { let c = colCache.get(m.id); if (!c) { c = buildCollision(m); colCache.set(m.id, c) } return c }
 
@@ -78,7 +81,8 @@ test('NPCs: unique ids, walkable non-warp tiles, never on arrival tiles or other
     assert.ok(!arrivals.has(key), `${n.id} on an arrival tile`)
     assert.ok(['up', 'down', 'left', 'right'].includes(n.facing), `${n.id} facing`)
     assert.ok(CONTENT.characterById[n.sprite], `${n.id} sprite ${n.sprite}`)
-    if (n.portrait) assert.ok(CONTENT.characterById[n.portrait], `${n.id} portrait ${n.portrait}`)
+    if (n.portrait) assert.ok(n.portrait.startsWith('creature:') ? CONTENT.species[n.portrait.slice(9)] : CONTENT.characterById[n.portrait], `${n.id} portrait ${n.portrait}`)
+    if (n.creature) assert.ok(CONTENT.species[n.creature], `${n.id} creature ${n.creature}`)
   }
 })
 
@@ -103,6 +107,8 @@ test('permanent NPCs never seal warps, towns or each other', () => {
 })
 
 test('trainers: references, resolved species, levels, sprites', () => {
+  const placed = new Set(npcs.map((n) => n.trainer).filter(Boolean))
+  const scriptedOnly = new Set(everyStep.filter(({ s }) => s.op === 'battle').map(({ s }) => (s as { trainer: string }).trainer).filter((id) => !placed.has(id) && !STORY_CONTENT.rival.battles.some((b) => id.startsWith(`rival-${b.key}`)) && /^ds-relay-/.test(id)))
   for (const n of npcs) if (n.trainer) assert.ok(world.trainers[n.trainer], `${n.id} -> trainer ${n.trainer}`)
   for (const s of everyStep) if (s.s.op === 'battle') assert.ok(world.trainers[s.s.trainer], `${s.n.id} battles unknown ${s.s.trainer}`)
   for (const t of Object.values(world.trainers)) {
@@ -115,7 +121,8 @@ test('trainers: references, resolved species, levels, sprites', () => {
       assert.equal(levelForm(CONTENT.species[p.species!], p.level).id, p.species, `${t.id}: ${p.species} not level-appropriate at ${p.level}`)
     }
     assert.ok(t.reward >= 0 && Number.isFinite(t.reward))
-    assert.ok(t.introText.length > 0 && t.defeatText.length > 0, `${t.id} lines`)
+    // A trainer fought only from a script (battle step) may leave its lines to that script.
+    if (!scriptedOnly.has(t.id)) assert.ok(t.introText.length > 0 && t.defeatText.length > 0, `${t.id} lines`)
     for (const it of Object.keys(t.items ?? {})) assert.ok(CONTENT.items[it], `${t.id} item ${it}`)
   }
 })
@@ -123,7 +130,7 @@ test('trainers: references, resolved species, levels, sprites', () => {
 const KNOWN_OPS = new Set([
   'say', 'choice', 'setFlag', 'ifFlag', 'ifBadges', 'ifItem', 'ifCaught', 'giveItem', 'takeItem', 'giveMoney', 'takeMoney',
   'giveCreature', 'chooseStarter', 'battle', 'bossBattle', 'wildBattle', 'heal', 'shop', 'openBox', 'quest', 'warp', 'moveNpc', 'faceNpc',
-  'hideNpc', 'showNpc', 'sfx', 'bgm', 'wait', 'fade', 'unlockTown', 'setRespawn', 'end', 'exchange', 'teach', 'openTypeChart',
+  'hideNpc', 'showNpc', 'sfx', 'bgm', 'wait', 'fade', 'unlockTown', 'setRespawn', 'end', 'exchange', 'teach', 'openTypeChart', 'emote',
 ])
 
 test('scripts are well-formed recursively and every reference resolves', () => {
@@ -184,13 +191,18 @@ test('no unresolved placeholders or authoring macros reach the World', () => {
   scan(npcs, 'npcs'); scan(world.trainers, 'trainers'); scan(world.quests, 'quests')
 })
 
+/** Written by the v2 -> v3 save migration (src/client/core/save-migrate.ts), not by a script. */
+const MIGRATION_FLAGS = new Set(['ds:legacy'])
+/** Never set on purpose: the NPC is hidden by default and a script shows it for one scene (hiddenUnlessFlag). */
+const SCENE_ONLY_FLAGS = new Set(['ds:zeroBack'])
+
 test('flags read by scripts are written somewhere or are client conventions', () => {
   const f = STORY_CONTENT.meta.flags
-  const written = new Set(everyStep.filter(({ s }) => s.op === 'setFlag').map(({ s }) => (s as { flag: string }).flag))
+  const written = new Set([...everyStep.map(({ s }) => s), ...triggerSteps].filter((s) => s.op === 'setFlag').map((s) => (s as { flag: string }).flag))
   for (const { s } of everyStep) if ((s.op === 'battle' || s.op === 'bossBattle') && s.lossFlag) written.add(s.lossFlag)
   for (const { s } of everyStep) if (s.op === 'teach') written.add(`${TUTORIAL.curriculum.flagPrefix}${s.lesson}`)
   const groundItems = new Set(Object.values(world.maps).flatMap((m) => m.items.map((i) => i.id)))
-  const ok = (flag: string) => written.has(flag) || flag === f.starter
+  const ok = (flag: string) => written.has(flag) || flag === f.starter || MIGRATION_FLAGS.has(flag) || SCENE_ONLY_FLAGS.has(flag)
     || (flag.startsWith(f.trainerWon) && !!world.trainers[flag.slice(f.trainerWon.length)])
     || (flag.startsWith(f.groundItem) && groundItems.has(flag.slice(f.groundItem.length)))
   for (const n of npcs) {
@@ -203,6 +215,9 @@ test('hideNpc always persists through a flag the hidden NPC watches', () => {
   for (const { s, n } of everyStep) {
     if (s.op !== 'hideNpc') continue
     const target = npcById.get(s.npc)!
+    // An NPC that is hidden by default (hiddenUnlessFlag nobody sets) stays hidden by itself; the script only shows it for a scene.
+    const neverShown = target.hiddenUnlessFlag && !everyStep.some(({ s: x }) => x.op === 'setFlag' && x.flag === target.hiddenUnlessFlag)
+    if (neverShown) continue
     assert.ok(target.hiddenIfFlag, `${s.npc} hidden by ${n.id} but has no hiddenIfFlag`)
     assert.ok(allSteps(n).some((x) => x.op === 'setFlag' && x.flag === target.hiddenIfFlag), `${n.id} hides ${s.npc} without setting ${target.hiddenIfFlag}`)
   }
@@ -276,12 +291,24 @@ test('prologue: starter, gifts, rival battle and heal are wired', () => {
   for (const key of ['bike', 'surf', 'badgeCase', 'pass']) {
     assert.ok(ops.some((s) => s.op === 'giveItem' && (CONTENT.items[s.item]?.effect as { key?: string }).key === key), `key item ${key} given`)
   }
-  // Without a starter the start town is sealed: the starter flag hides the blockers.
-  const blockers = npcs.filter((n) => n.map === ow.id && n.hiddenIfFlag === STORY_CONTENT.meta.flags.starter)
-  assert.ok(blockers.length > 0)
-  const reach = floodReach(ow, col(ow), ow.spawn.x, ow.spawn.y, false, new Set(blockers.map((n) => n.y * ow.width + n.x)))
+  // Three stages of the start town: no partner = sealed; partner but DeepSeek still up = only the west road is open;
+  // after the machine room (ds:gateOpen) every exit is open.
+  const starterFlag = STORY_CONTENT.meta.flags.starter
+  const sealedBy = (hidden: string[]) => npcs.filter((n) => n.map === ow.id && n.hiddenIfFlag !== undefined && !hidden.includes(n.hiddenIfFlag) && (n.hiddenIfFlag === starterFlag || n.hiddenIfFlag === 'ds:gateOpen'))
+  const reachedTowns = (blockers: typeof npcs) => {
+    const reach = floodReach(ow, col(ow), ow.spawn.x, ow.spawn.y, false, new Set(blockers.map((n) => n.y * ow.width + n.x)))
+    return world.towns.filter((t) => reach[t.y * ow.width + t.x] !== 0).map((t) => t.id)
+  }
   const start = world.towns.find((t) => t.x === anchors['town:origin']?.x && t.y === anchors['town:origin']?.y)
-  for (const t of world.towns) if (t !== start) assert.equal(reach[t.y * ow.width + t.x], 0, `${t.id} reachable without a starter`)
+  assert.ok(sealedBy([]).length > 0)
+  assert.deepEqual(reachedTowns(sealedBy([])).filter((id) => id !== start?.id), [], 'no partner: every exit is blocked')
+  // With a partner but DeepSeek still up the patrols hold the north / east / south exits (the west road stays open).
+  const stateB = sealedBy([starterFlag])
+  const holds = (blockers: typeof npcs, exit: string) => blockers.some((n) => Math.abs(n.x - anchors[exit].x) <= 1 && Math.abs(n.y - anchors[exit].y) <= 1)
+  for (const e of ['north', 'east', 'south']) assert.ok(holds(stateB, `town:origin:exit-${e}`), `exit-${e} is held until ds:gateOpen`)
+  assert.ok(!holds(stateB, 'town:origin:exit-west'), 'the west road is open once the partner is chosen')
+  assert.ok(holds(stateB, 'town:opensource:exit-east'), 'the far end of the west road is held too')
+  assert.equal(reachedTowns(sealedBy([starterFlag, 'ds:gateOpen'])).length, world.towns.length, 'ds:gateOpen opens every road')
 })
 
 test('gates hold until their condition, then open', () => {
@@ -301,7 +328,7 @@ test('quests: main + side quests, every quest can start and finish', () => {
   for (const q of world.quests) { assert.ok(!ids.has(q.id), q.id); ids.add(q.id) }
   assert.equal(world.quests.filter((q) => q.kind === 'main').length, 1)
   assert.ok(world.quests.filter((q) => q.kind === 'side').length >= MIN_SIDE_QUESTS)
-  const questSteps = everyStep.map(({ s }) => s).filter((s) => s.op === 'quest') as Extract<ScriptStep, { op: 'quest' }>[]
+  const questSteps = [...everyStep.map(({ s }) => s), ...triggerSteps].filter((s) => s.op === 'quest') as Extract<ScriptStep, { op: 'quest' }>[]
   for (const q of world.quests) {
     assert.ok(questSteps.some((s) => s.quest === q.id && !s.done), `${q.id} never started`)
     assert.ok(questSteps.some((s) => s.quest === q.id && s.done), `${q.id} never finished`)
@@ -752,5 +779,5 @@ test('the simulator terminal stands on its lab anchor, reachable from the door a
   }
   const reach = floodReach(lab, buildCollision(lab), lab.spawn.x, lab.spawn.y, false)
   assert.ok(reach[term.y * lab.width + term.x - 1], 'the player can stand in front of it')
-  assert.ok(term.hiddenUnlessFlag === 'starter' && !term.hiddenIfFlag, 'shown from the moment the partner is chosen, and stays for repeat runs')
+  assert.ok(term.hiddenUnlessFlag === 'ds:legacy' && !term.hiddenIfFlag, 'only for saves that skipped the new opening (ds:legacy); the story fights DeepSeek in the machine room')
 })

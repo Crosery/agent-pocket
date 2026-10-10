@@ -25,6 +25,7 @@
         }
       }
     },
+    "deepseek-drill": {"species": "deepseek-v2", "scale": 1.35, "theme": "tide"},
     "deepseek": {
       "species": "deepseek-v4",
       "scale": 1.35,

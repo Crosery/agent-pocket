@@ -24,7 +24,8 @@ import { computeDamage, condHolds, toStages, type Fighter } from '../src/shared/
 import { calcStats, createCreature } from '../src/shared/creature.ts'
 import { fightStory, rateStory, STARTERS, storyParty } from './boss-story.ts'
 
-const BOSSES = CONTENT.bossList
+/** Fought by scripts only (sparring partners): no wild counterpart, no placement, no balance bands. */
+const BOSSES = CONTENT.bossList.filter((b) => !b.scriptedOnly)
 const SEEDS = 200
 const seedOf = (i: number) => 1 + i * 7919
 
@@ -54,7 +55,7 @@ const byId = (id: string): BossDef => {
 
 test('data: at least 8 bosses, all of them consistent with the rest of the content', () => {
   assert.ok(BOSSES.length >= 8, `${BOSSES.length} bosses`)
-  assert.deepEqual(validateBosses(BOSSES, CONTENT), [])
+  assert.deepEqual(validateBosses(CONTENT.bossList, CONTENT), [])
   for (const b of BOSSES) {
     assert.equal(CONTENT.bossBySpecies[b.species]?.id, b.id, `${b.id} is found by its species`)
     assert.ok(b.gossip.length >= 1 && b.taunt.length >= 1, `${b.id} has hints`)

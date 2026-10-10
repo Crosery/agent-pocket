@@ -1008,6 +1008,63 @@
       "catchRateMul": 0.6,
       "reward": {"money": 10000, "items": {"chip-community-support": 1, "no-upload-pledge": 3}},
       "enrage": {"turn": 20, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.glm.enrageWarn", "start": "boss.glm.enrageStart", "tick": "boss.glm.enrageTick"}
+    },
+    "deepseek-drill": {
+      "species": "deepseek-v2",
+      "level": 7,
+      "title": "boss.deepseek.title",
+      "taunt": ["boss.deepseek.taunt1", "boss.deepseek.taunt2"],
+      "hint": {"seen": "boss.deepseek.hintSeen", "won": "boss.deepseek.hintWon"},
+      "gossip": ["boss.deepseek.gossip1", "boss.deepseek.gossip2"],
+      "canRun": false,
+      "expMul": 4,
+      "initialForm": "base",
+      "forms": {
+        "base": {
+          "species": "deepseek-v2",
+          "moves": ["pull-request", "open-license", "community-fork"],
+          "statMul": {"hp": 0.8, "atk": 0.3, "spa": 0.3},
+          "pattern": [
+            {"move": "pull-request", "weight": 40},
+            {"move": "open-license", "weight": 35},
+            {"move": "community-fork", "weight": 25}
+          ],
+          "rules": [
+            {"id": "peak", "if": {"meter": {"id": "tide", "atMost": 0}}, "dealtMul": 1.0, "takenMul": [{"mul": 0.2, "note": "boss.deepseek.busy"}]},
+            {"id": "valley", "if": {"meter": {"id": "tide", "atLeast": 1}}, "dealtMul": 0.5, "takenMul": [{"mul": 2.0}]}
+          ]
+        }
+      },
+      "meters": [
+        {"id": "tide", "max": 1, "start": 0, "label": "boss.deepseek.tide", "show": true, "states": ["boss.deepseek.peak", "boss.deepseek.valley"], "tone": "warn"},
+        {"id": "grace", "max": 4, "start": 0, "label": "boss.deepseek.tide", "show": false, "decay": 1}
+      ],
+      "triggers": [
+        {"id": "tide-peak", "on": "turnEnd", "times": 0, "if": {"turnCycle": {"period": 4, "from": 0, "to": 2}, "meter": {"id": "grace", "atMost": 0}}, "do": [{"op": "meter", "id": "tide", "set": 0}]},
+        {"id": "tide-valley", "on": "turnEnd", "times": 0, "if": {"turnCycle": {"period": 4, "from": 2, "to": 4}, "meter": {"id": "grace", "atMost": 0}}, "do": [{"op": "meter", "id": "tide", "set": 1}]},
+        {"id": "coupon", "on": "foeItem", "tag": "offpeak", "times": 0, "if": {"meter": {"id": "tide", "atMost": 0}}, "do": [{"op": "say", "text": "boss.deepseek.coupon"}, {"op": "meter", "id": "grace", "set": 3}, {"op": "meter", "id": "tide", "set": 1}]}
+      ],
+      "gates": [],
+      "catchRateMul": 0.01,
+      "reward": {"money": 0, "items": {}},
+      "tiers": {
+        "story": {
+          "level": 7,
+          "expMul": 4,
+          "statMul": {"hp": 0.8, "atk": 0.3, "spa": 0.3},
+          "moves": ["pull-request", "open-license", "community-fork"],
+          "pattern": [
+            {"move": "pull-request", "weight": 40},
+            {"move": "open-license", "weight": 35},
+            {"move": "community-fork", "weight": 25}
+          ],
+          "rules": {"peak": {"dealtMul": 1.0, "takenMul": 0.2}, "valley": {"dealtMul": 0.5, "takenMul": 2.0}},
+          "addRules": [
+            {"id": "family", "if": {"foeCompany": ["DeepSeek"]}, "dealtMul": 0.6, "takenMul": [{"mul": 4.0, "note": "boss.deepseek.family.hitByKin"}]}
+          ]
+        }
+      },
+      "scriptedOnly": true
     }
   }
 }
