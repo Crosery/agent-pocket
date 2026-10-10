@@ -7,6 +7,7 @@ import type { Dir } from '../../shared/types.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { NET_CLIENT } from './config.ts'
 import { pushSample, sampleAt, type Sample } from './interp.ts'
+import { normalizeWsUrl } from './servers.ts'
 
 export type RemotePlayer = PlayerState & { rx: number; ry: number }
 
@@ -17,6 +18,8 @@ export interface NetClientExt extends NetClient {
   readonly serverTimeOffset: number
   /** Message of the day from the last welcome. */
   readonly motd: string
+  readonly endpoint: string | null
+  setEndpoint(url: string | null): void
 }
 
 export interface NetClientOptions {
@@ -92,7 +95,21 @@ export function createNetClient(
   const view = new Map<string, RemotePlayer>()
   const lbWaiters = new Set<(entries: LeaderboardEntry[] | null) => void>()
 
-  const url = (): string | null => opts.url ?? defaultUrl()
+  let customUrl: string | null = opts.url ? normalizeWsUrl(opts.url) : null
+  const url = (): string | null => customUrl ?? defaultUrl()
+
+  function setEndpoint(newUrl: string | null): void {
+    const next = newUrl ? normalizeWsUrl(newUrl) : null
+    if (customUrl === next) return
+    customUrl = next
+    if (ws) {
+      dropSocket(1000)
+      if (wanted) {
+        attempt = 0
+        open()
+      }
+    }
+  }
 
   function setStatus(s: NetStatus): void {
     if (status === s) return
@@ -323,6 +340,8 @@ export function createNetClient(
     get rtt() { return rtt },
     get serverTimeOffset() { return serverTimeOffset },
     get motd() { return motd },
+    get endpoint() { return url() },
+    setEndpoint,
 
     connect() {
       wanted = true

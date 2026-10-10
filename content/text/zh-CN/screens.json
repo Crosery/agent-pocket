@@ -11,7 +11,7 @@
     "version": "版本 {v}",
     "online": "在线 {n} 人",
     "net": {"offline": "离线模式", "connecting": "正在连接服务器…", "online": "在线", "error": "服务器连接失败"},
-    "menu": {"continue": "继续游戏", "new": "新游戏", "import": "导入存档", "settings": "设置"}
+    "menu": {"singleplayer": "单人游戏", "multiplayer": "多人游戏", "continue": "继续游戏", "new": "新游戏", "import": "导入存档", "settings": "设置", "back": "返回"}
   },
   "newGame": {"title": "创建角色", "caption": "选择你的训练家形象", "hintPick": "选择形象", "namePrompt": "请输入你的名字", "confirm": "以「{avatar}」的形象，名字叫「{name}」，开始冒险吗？", "previewDirection": "预览朝向", "direction": {"left": "←", "up": "↑", "down": "↓", "right": "→"}, "directionLabel": {"left": "朝左", "up": "朝后", "down": "朝前", "right": "朝右"}, "walking": "行走", "standing": "站立"},
   "starter": {"title": "选择你的伙伴", "intro": "图灵博士准备了几只智灵，选一只成为你旅途中的第一位伙伴吧。", "hintPick": "查看伙伴", "dexNo": "No.{n}", "company": "研发：{company}", "personality": "人设", "confirm": "就决定是 {name} 了吗？"},
@@ -395,5 +395,74 @@
     "pickDone": "{name} 的性格改写成了「{nature}」！",
     "pickBoss": "{name} 是 Boss 卡，无法改写性格。",
     "box": {"sortDefault": "排序：默认", "sortGrade": "排序：品质", "onlyGrade": "只看 {grade} 以上", "noMatch": "没有符合条件的智灵。", "menuTitle": "盒子整理"}
+  },
+  "serverList": {
+    "title": "多人服务器列表",
+    "subtitle": "选择服务器进入游戏，或添加自定义服务器",
+    "officialName": "官方服务器",
+    "officialTag": "官方",
+    "officialAddress": "官方默认",
+    "customTag": "自定义",
+    "join": "加入服务器",
+    "add": "添加服务器",
+    "edit": "编辑",
+    "delete": "删除",
+    "refresh": "刷新",
+    "back": "返回",
+    "empty": "暂无自定义服务器，点击「添加服务器」即可添加。",
+    "status": {
+      "probing": "正在探测…",
+      "online": "在线 {online} 人",
+      "offline": "无法连接",
+      "compatible": "兼容",
+      "incompatible": "版本不匹配",
+      "ping": "{rtt} ms"
+    },
+    "addDialog": {
+      "titleAdd": "添加服务器",
+      "titleEdit": "编辑服务器",
+      "nameLabel": "服务器名称",
+      "namePlaceholder": "例如：好友服 / 二服",
+      "addrLabel": "服务器地址",
+      "addrPlaceholder": "例如：127.0.0.1:8787 或 mc.example.com",
+      "save": "保存",
+      "cancel": "取消",
+      "nameRequired": "请输入服务器名称",
+      "addrRequired": "请输入服务器地址"
+    },
+    "deleteConfirm": "确定要删除服务器「{name}」吗？",
+    "officialImmutable": "官方服务器不可修改或删除"
+  },
+  "auth": {
+    "title": "登录与注册",
+    "subtitle": "连接至：{server}",
+    "tabLogin": "账号登录",
+    "tabRegister": "注册账号",
+    "usernameLabel": "用户名",
+    "usernamePlaceholder": "2-16 个字符",
+    "passwordLabel": "密码",
+    "passwordPlaceholder": "至少 8 位密码",
+    "submitLogin": "登 录",
+    "submitRegister": "注 册 并 登 录",
+    "cancel": "取 消",
+    "submitting": "正在验证…",
+    "bindTitle": "绑定角色存档",
+    "bindDesc": "首次登录该服务器！请为账号绑定一个角色与存档：",
+    "bindNew": "创建新角色",
+    "bindLocal": "上传本地存档",
+    "bindCancel": "返回服务器列表",
+    "bindNewConfirm": "将创建全新角色并绑定到该账号，确定吗？",
+    "bindLocalConfirm": "将上传当前单人存档并绑定到该账号。联机数据将以服务器权威为准，确定吗？",
+    "bindSuccess": "角色绑定成功，正在进入世界…",
+    "errors": {
+      "usernameLength": "用户名长度需在 2 到 16 个字符之间",
+      "passwordLength": "密码长度需在 8 到 72 个字符之间",
+      "invalidCredentials": "用户名或密码错误",
+      "usernameTaken": "该用户名已被注册",
+      "network": "连接服务器失败，请检查网络",
+      "unauthorized": "登录凭证已失效，请重新登录",
+      "rateLimited": "请求过于频繁，请稍后再试",
+      "alreadyBound": "该账号已绑定存档"
+    }
   }
 }

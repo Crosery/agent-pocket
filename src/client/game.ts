@@ -26,6 +26,8 @@ import { flyLanding, resolvePlace } from './world/explore.ts'
 import { anchorGateMessage, anchorLanding, anchorName, canAnchorTravel } from './world/anchors.ts'
 import { createDebugOverlay } from './debug-overlay.ts'
 import type { DevKit } from './dev/kit.ts'
+import { resolveServerUrls } from './net/servers.ts'
+import { bindAccountSave, getAccountSession, type AccountSessionResult } from './net/auth.ts'
 
 type Mutable<T> = { -readonly [K in keyof T]: T[K] }
 type Loader = () => Promise<unknown>
@@ -274,6 +276,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
 
   // ---- context ------------------------------------------------------------
   let inWorld = false
+  let activeMode: 'singleplayer' | 'multiplayer' = 'singleplayer'
   let lastPersistAt = 0
   let lastFrame = performance.now()
   const ctxObj: Partial<Mutable<GameContext>> & { save: SaveData } = {
@@ -284,6 +287,17 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     clock: clockHolder.clock,
     renderer, world: worldView, ui, hud, minimap, chat, net,
     persist(reason: string) {
+      if (activeMode === 'multiplayer') {
+        if (ctx.save === playing) {
+          overworld.storeExplored()
+          const p = overworld.player
+          ctx.save.position = { map: p.map, x: Math.floor(p.x), y: Math.floor(p.y), facing: p.facing }
+        }
+        lastPersistAt = performance.now()
+        net.updateProfile(profile())
+        events.emit('save:changed', { reason })
+        return
+      }
       if (!inWorld) {
         if (titleSaveStored && !saves.write(ctx.save, slot)) ui.toast(t('game.save.failed'), 'error')
         return
@@ -295,7 +309,6 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
       }
       if (!saves.write(ctx.save, slot)) ui.toast(t('game.save.failed'), 'error')
       lastPersistAt = performance.now()
-      net.updateProfile(profile())
       events.emit('save:changed', { reason })
     },
     species: (id: string) => data.species[id],
@@ -557,12 +570,86 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     return s
   }
 
-  async function titleFlow(): Promise<{ save: SaveData; isNew: boolean }> {
+  async function multiplayerFlow(): Promise<{ save: SaveData; isNew: boolean; mode: 'multiplayer' } | null> {
+    for (;;) {
+      const server = screens.serverList ? await screens.serverList() : null
+      if (!server) return null
+
+      const urls = resolveServerUrls(server.address)
+      let session: AccountSessionResult | null = null
+      try {
+        session = await getAccountSession(urls.httpBase)
+      } catch {
+        // unauthenticated or offline
+      }
+
+      if (!session) {
+        if (!screens.accountAuth) {
+          ui.toast('账号认证模块未加载', 'warn')
+          continue
+        }
+        session = await screens.accountAuth(server, urls.httpBase)
+        if (!session) continue
+      }
+
+      let serverSave = session.save
+      let isNew = false
+
+      if (!serverSave) {
+        const hasLocalSave = saves.hasSave(slot)
+        if (!screens.bindAccount) {
+          ui.toast('角色绑定模块未加载', 'warn')
+          continue
+        }
+        const bindDecision = await screens.bindAccount(server, urls.httpBase, hasLocalSave)
+        if (bindDecision.choice === 'cancel') continue
+
+        if (bindDecision.choice === 'new') {
+          const char = await screens.newGame()
+          if (!char) continue
+          await ensureWorld()
+          const newSave = saves.newGame(char)
+          newSave.settings = { ...ctx.save.settings }
+          applyNewGameStart(newSave)
+
+          try {
+            const bound = await bindAccountSave(urls.httpBase, { save: newSave, imported: false })
+            serverSave = bound.save
+            isNew = true
+          } catch (err) {
+            ui.toast(err instanceof Error ? err.message : String(err), 'error')
+            continue
+          }
+        } else if (bindDecision.choice === 'local') {
+          const localSave = saves.load(slot)
+          if (!localSave) {
+            ui.toast('本地存档不可用', 'error')
+            continue
+          }
+          try {
+            const bound = await bindAccountSave(urls.httpBase, { save: localSave, imported: true })
+            serverSave = bound.save
+            isNew = false
+          } catch (err) {
+            ui.toast(err instanceof Error ? err.message : String(err), 'error')
+            continue
+          }
+        }
+      }
+
+      if (!serverSave) continue
+
+      net.setEndpoint?.(urls.wsUrl)
+      return { save: serverSave, isNew, mode: 'multiplayer' }
+    }
+  }
+
+  async function titleFlow(): Promise<{ save: SaveData; isNew: boolean; mode: 'singleplayer' | 'multiplayer' }> {
     if (dev?.skipTitle) {
       const existing = saves.load(slot)
       const s = existing ?? dev.newSave(saves, needWorld())
       if (!existing) applyNewGameStart(s)
-      return { save: s, isNew: false }
+      return { save: s, isNew: false, mode: 'singleplayer' }
     }
     for (;;) {
       const hasSave = saves.hasSave(slot)
@@ -570,7 +657,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
       if (choice === 'continue') {
         await ensureWorld()
         const s = saves.load(slot)
-        if (s) return { save: s, isNew: false }
+        if (s) return { save: s, isNew: false, mode: 'singleplayer' }
       } else if (choice === 'new') {
         if (hasSave && !(await ui.confirm(t('game.title.overwrite')))) continue
         const r = await screens.newGame()
@@ -579,7 +666,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         const s = saves.newGame(r)
         s.settings = { ...ctx.save.settings }
         applyNewGameStart(s)
-        return { save: s, isNew: true }
+        return { save: s, isNew: true, mode: 'singleplayer' }
       } else if (choice === 'import') {
         await ensureWorld()
         const s = await importSave()
@@ -588,16 +675,20 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
           s.settings = { ...ctx.save.settings }
           saves.write(s, slot)
           ui.toast(t('game.title.imported', { name: s.name }), 'success')
-          return { save: s, isNew: false }
+          return { save: s, isNew: false, mode: 'singleplayer' }
         }
       } else if (choice === 'settings') {
         await screens.settings()
+      } else if (choice === 'multiplayer') {
+        const mp = await multiplayerFlow()
+        if (mp) return mp
       }
     }
   }
 
   if (!dev) void startWorld()
   const start = await titleFlow()
+  activeMode = start.mode
   await ensureWorld()
   await buildWorldLayer()
   const readyWorld = needWorld()
@@ -615,11 +706,13 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   hud.setVisible(true)
   onboarding.setVisible(true)
   minimap.setVisible(ctx.save.settings.showMinimap)
-  chat.setVisible(true)
+  chat.setVisible(start.mode === 'multiplayer')
   hud.setMoney(ctx.save.money)
   hud.setNetStatus(net.status, net.online)
   ctx.persist(start.isNew ? 'newgame' : 'continue')
-  net.connect()
+  if (start.mode === 'multiplayer') {
+    net.connect()
+  }
   await ui.fade(false, GAME.warp.fadeMs)
   if (start.isNew) await overworld.playIntro()
   await dev?.runActions(ctx, overworld, readyWorld, screens)

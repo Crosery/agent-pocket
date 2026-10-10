@@ -9,6 +9,7 @@ import type {
 } from '../shared/types.ts'
 import type { Content } from '../shared/content/index.ts'
 import type { ClientMsg, PlayerState, PublicProfile, ServerMsg, ChatChannel, LeaderboardEntry } from '../shared/protocol.ts'
+import type { ServerEntry } from './net/servers.ts'
 
 // ---------------------------------------------------------------------------
 // Game data = loaded content tables (content/**/*.json) + the generated world.
@@ -375,8 +376,10 @@ export interface TypeChartOptions {
 }
 
 /** High-level screens (src/client/ui/screens/*). All resolve when closed. */
+export type TitleChoice = 'continue' | 'new' | 'import' | 'settings' | 'singleplayer' | 'multiplayer'
+
 export interface Screens {
-  title(hasSave: boolean): Promise<'continue' | 'new' | 'import' | 'settings'>
+  title(hasSave: boolean): Promise<TitleChoice>
   newGame(): Promise<{ name: string; avatar: string } | null>
   starter(options: SpeciesDef[]): Promise<string>
   pauseMenu(): Promise<void>
@@ -401,6 +404,9 @@ export interface Screens {
   settings(): Promise<void>
   online(): Promise<void>                                     // multiplayer hub: online list, leaderboard, trade/pvp entry
   learnMove(creature: Creature, moveId: string): Promise<number> // slot to replace or -1 to skip
+  serverList?(): Promise<ServerEntry | null>
+  accountAuth?(server: ServerEntry, httpBase: string): Promise<{ account: { id: string; username: string }; save: SaveData | null } | null>
+  bindAccount?(server: ServerEntry, httpBase: string, hasLocalSave: boolean): Promise<{ choice: 'new' | 'local' | 'cancel' }>
 }
 
 // ---------------------------------------------------------------------------
@@ -440,6 +446,8 @@ export interface NetClient {
   readonly status: NetStatus
   readonly selfId: string | null
   readonly online: number
+  readonly endpoint?: string | null
+  setEndpoint?(url: string | null): void
   connect(): void
   disconnect(): void
   send(msg: ClientMsg): void

@@ -5,6 +5,12 @@ export type CloseCodeKey = 'shutdown' | 'duplicate' | 'version' | 'flood' | 'hel
 
 export interface NetClientTuning {
   protocol: { wsPath: string; closeCodes: Record<CloseCodeKey, number> }
+  auth?: {
+    usernameMinLen: number
+    usernameMaxLen: number
+    passwordMinLen: number
+    passwordMaxLen: number
+  }
   client: {
     reconnect: { baseMs: number; maxMs: number; factor: number; jitter: number }
     pingSeconds: number

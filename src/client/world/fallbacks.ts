@@ -58,10 +58,17 @@ export function createFallbackScreens(ctx: GameContext): Screens {
   const unavailable = () => ctx.ui.toast(t('game.fallback.unavailable'), 'warn')
   return {
     async title(hasSave) {
-      type Choice = 'continue' | 'new' | 'import' | 'settings'
-      const ids: Choice[] = hasSave ? ['continue', 'new', 'import', 'settings'] : ['new', 'import', 'settings']
+      type Choice = 'singleplayer' | 'multiplayer' | 'settings'
+      const ids: Choice[] = ['singleplayer', 'multiplayer', 'settings']
       const i = await ctx.ui.choose(t('game.fallback.title.prompt'), ids.map((id) => t(`game.fallback.title.${id}`)))
-      return ids[Math.max(0, i)] ?? 'new'
+      const picked = ids[Math.max(0, i)] ?? 'singleplayer'
+      if (picked === 'singleplayer') {
+        type SpChoice = 'continue' | 'new' | 'import'
+        const spIds: SpChoice[] = hasSave ? ['continue', 'new', 'import'] : ['new', 'import']
+        const spIdx = await ctx.ui.choose(t('game.fallback.title.singleplayer'), spIds.map((id) => t(`game.fallback.title.${id}`)))
+        return spIds[Math.max(0, spIdx)] ?? 'new'
+      }
+      return picked
     },
     async newGame() {
       const name = await ctx.ui.prompt(t('game.fallback.namePrompt'), '', ctx.data.config.net.nameMaxLen)

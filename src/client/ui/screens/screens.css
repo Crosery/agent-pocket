@@ -1169,3 +1169,244 @@ html:not(.ap-compact) .aps-nat-grid { flex: 1; min-height: 0; grid-template-rows
 html.ap-compact.ap-portrait .aps-nat-layout { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; align-content: start; }
 html.ap-compact .aps-nat-detail { align-self: stretch; }
 html.ap-compact:not(.ap-portrait) .aps-nat-layout { grid-template-columns: minmax(0, 1fr) calc(var(--u) * 110); }
+
+/* ------------------------------------------------------------------ multiplayer server list */
+
+.aps-server-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 4);
+  padding: calc(var(--u) * 6);
+}
+.aps-server-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(var(--u) * 6) calc(var(--u) * 8);
+  cursor: pointer;
+  border: var(--u) solid transparent;
+  min-height: calc(var(--u) * 28);
+}
+.aps-server-card.is-active {
+  background: var(--ap-sel);
+  outline: var(--u) solid var(--ap-gold-hi);
+  outline-offset: calc(var(--u) * -1);
+}
+.aps-server-col-left {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 2);
+  min-width: 0;
+}
+.aps-server-title-row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 4);
+}
+.aps-server-name {
+  font-size: var(--ap-fs-body);
+  font-weight: bold;
+  color: var(--ap-text);
+}
+.aps-server-addr {
+  font-size: var(--ap-fs-caption);
+  color: var(--ap-text-dim);
+}
+.aps-server-col-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: calc(var(--u) * 2);
+  flex: none;
+  margin-left: calc(var(--u) * 6);
+}
+.aps-server-stat-row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 4);
+}
+.aps-server-ping {
+  font-size: var(--ap-fs-label);
+  color: var(--ap-gold);
+}
+.aps-server-online {
+  font-size: var(--ap-fs-caption);
+  color: var(--ap-text-dim);
+}
+.aps-server-dot {
+  width: calc(var(--u) * 5);
+  height: calc(var(--u) * 5);
+  border-radius: 50%;
+  display: inline-block;
+  background: #64748b;
+}
+.aps-server-dot.is-online {
+  background: #4ade80;
+  box-shadow: 0 0 calc(var(--u) * 3) #4ade80;
+}
+.aps-server-dot.is-warning {
+  background: #facc15;
+  box-shadow: 0 0 calc(var(--u) * 3) #facc15;
+}
+.aps-server-dot.is-offline {
+  background: #ef4444;
+}
+.aps-server-tag {
+  font-size: var(--ap-fs-caption);
+  padding: 0 calc(var(--u) * 3);
+  border-radius: calc(var(--u) * 2);
+}
+.aps-server-tag.is-official {
+  background: rgba(234, 179, 8, 0.2);
+  color: var(--ap-gold-hi);
+  border: var(--u) solid var(--ap-gold);
+}
+.aps-server-tag.is-custom {
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--ap-text-dim);
+  border: var(--u) solid rgba(148, 163, 184, 0.3);
+}
+.aps-server-compat {
+  font-size: var(--ap-fs-caption);
+  padding: 0 calc(var(--u) * 2);
+}
+.aps-server-compat.is-good {
+  color: #4ade80;
+}
+.aps-server-compat.is-warn {
+  color: #f87171;
+}
+.aps-server-actions {
+  display: flex;
+  gap: calc(var(--u) * 4);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin-top: calc(var(--u) * 4);
+}
+.aps-server-empty {
+  padding: calc(var(--u) * 12);
+  text-align: center;
+  font-size: var(--ap-fs-label);
+}
+.aps-server-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: calc(var(--u) * 10);
+}
+.aps-server-dialog-panel {
+  width: min(calc(var(--u) * 220), 92vw);
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+}
+.aps-server-label, .aps-auth-label {
+  font-size: var(--ap-fs-label);
+  color: var(--ap-text-dim);
+  margin-top: calc(var(--u) * 4);
+  margin-bottom: calc(var(--u) * 2);
+  display: block;
+}
+.aps-server-input, .aps-auth-input {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.45);
+  border: var(--u) solid rgba(255, 255, 255, 0.2);
+  color: var(--ap-text);
+  padding: calc(var(--u) * 4) calc(var(--u) * 6);
+  font: inherit;
+  font-size: var(--ap-fs-body);
+}
+.aps-server-input:focus, .aps-auth-input:focus {
+  outline: var(--u) solid var(--ap-gold-hi);
+  border-color: var(--ap-gold-hi);
+}
+.aps-server-dialog-btns {
+  display: flex;
+  gap: calc(var(--u) * 4);
+  justify-content: flex-end;
+  margin-top: calc(var(--u) * 8);
+}
+.aps-server-dialog-error, .aps-auth-error {
+  color: #ef4444;
+  font-size: var(--ap-fs-label);
+  margin-top: calc(var(--u) * 3);
+}
+
+/* ------------------------------------------------------------------ account auth & binding */
+
+.aps-auth-card {
+  margin: auto;
+  width: min(calc(var(--u) * 200), 92vw);
+  max-width: 440px;
+  padding: calc(var(--u) * 8);
+}
+.aps-auth-sub {
+  margin-bottom: calc(var(--u) * 6);
+  font-size: var(--ap-fs-label);
+  text-align: center;
+}
+.aps-auth-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: calc(var(--u) * 6);
+}
+.aps-auth-btns {
+  display: flex;
+  gap: calc(var(--u) * 4);
+  justify-content: flex-end;
+  margin-top: calc(var(--u) * 8);
+}
+.aps-bind-desc {
+  font-size: var(--ap-fs-body);
+  margin-bottom: calc(var(--u) * 8);
+  text-align: center;
+}
+.aps-bind-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(var(--u) * 120), 1fr));
+  gap: calc(var(--u) * 8);
+  margin-bottom: calc(var(--u) * 8);
+}
+.aps-bind-card {
+  padding: calc(var(--u) * 8);
+  cursor: pointer;
+  border: var(--u) solid transparent;
+  transition: background 0.15s ease;
+}
+.aps-bind-card.is-active {
+  background: var(--ap-sel);
+  outline: var(--u) solid var(--ap-gold-hi);
+  outline-offset: calc(var(--u) * -1);
+}
+.aps-bind-card.is-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+  cursor: default;
+}
+.aps-bind-card-title {
+  font-size: var(--ap-fs-title);
+  color: var(--ap-gold-hi);
+  margin-bottom: calc(var(--u) * 4);
+  font-weight: bold;
+}
+.aps-bind-card-desc {
+  font-size: var(--ap-fs-label);
+  line-height: 1.4;
+}
+.aps-bind-foot {
+  display: flex;
+  justify-content: center;
+}
+
+html[data-touch-controls='on'] .aps-server-card { min-height: 48px; }
+html[data-touch-controls='on'] .aps-server-actions button { min-height: 44px; }
+html.ap-compact .aps-server-actions { justify-content: stretch; }
+html.ap-compact .aps-server-actions button { flex: 1 1 calc(50% - var(--u) * 4); }

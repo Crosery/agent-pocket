@@ -73,10 +73,15 @@
     },
     "vignette": {"ellipse": [84, 80, 50, 40], "clearTo": 0.6, "corner": 0.42, "top": 0.3, "topTo": 0.2, "bottomFrom": 0.8, "bottom": 0.55},
     "menu": [
+      {"id": "singleplayer", "label": "screens.title.menu.singleplayer"},
+      {"id": "multiplayer", "label": "screens.title.menu.multiplayer"},
+      {"id": "settings", "label": "screens.title.menu.settings"}
+    ],
+    "singleplayerMenu": [
       {"id": "continue", "label": "screens.title.menu.continue", "needsSave": true},
       {"id": "new", "label": "screens.title.menu.new"},
       {"id": "import", "label": "screens.title.menu.import"},
-      {"id": "settings", "label": "screens.title.menu.settings"}
+      {"id": "back", "label": "screens.title.menu.back"}
     ],
     "particles": {"count": 44, "speedMin": 4, "speedMax": 12, "sizeMin": 1, "sizeMax": 2, "swayUnits": 5, "swayHz": 0.35, "twinkleHz": 1.3, "colors": ["#fff4d6", "#a8ecff", "#ffd27a", "#d9c2ff"]},
     "scene": {

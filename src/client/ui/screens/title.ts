@@ -7,7 +7,7 @@ import { createRowMenu } from '../menu.ts'
 import { getUIScale, onUIScaleChange } from '../scale.ts'
 import { el } from '../widgets.ts'
 import { SCREENS, type TitleChoice } from './config.ts'
-import { openScreen, sfx, type ScreenEnv } from './base.ts'
+import { backPressed, openScreen, sfx, type ScreenEnv } from './base.ts'
 import { placeTitleArt, type Size } from './title-art.ts'
 import { createMotes, paintTitleScene } from './title-scene.ts'
 
@@ -50,14 +50,32 @@ export function titleScreen(env: ScreenEnv, hasSave: boolean): Promise<TitleChoi
         el('div', { class: 'aps-title-logo-sub', text: t('screens.title.subtitle') }),
       ])
     const press = el('div', { class: 'aps-title-press', text: t(document.documentElement.dataset.touchControls === 'on' ? 'screens.title.pressTouch' : 'screens.title.press'), vars: { '--blink-ms': `${SCREENS.anim.pressBlinkMs}ms` } })
-    const entries = cfg.menu.filter((m) => !m.needsSave || hasSave)
-    const menu = createRowMenu(entries.map((m) => ({ label: t(m.label) })), {
-      visibleRows: entries.length,
+    const mainEntries = cfg.menu
+    const spConfig = cfg.singleplayerMenu ?? [
+      { id: 'continue', label: 'screens.title.menu.continue', needsSave: true },
+      { id: 'new', label: 'screens.title.menu.new' },
+      { id: 'import', label: 'screens.title.menu.import' },
+      { id: 'back', label: 'screens.title.menu.back' },
+    ]
+    const spEntries = spConfig.filter((m) => !m.needsSave || hasSave)
+
+    let phase: 'press' | 'main' | 'singleplayer' = 'press'
+
+    const mainMenu = createRowMenu(mainEntries.map((m) => ({ label: t(m.label) })), {
+      visibleRows: mainEntries.length,
       wrap: true,
       audio: ctx.audio,
-      onPick: api.guard((i: number) => pick(i)),
+      onPick: api.guard((i: number) => pickMain(i)),
     })
-    const menuWin = el('nav', { class: 'aps-title-menu ap-panel', attrs: { 'aria-label': t('screens.title.menuLabel') } }, [menu.el])
+
+    const spMenu = createRowMenu(spEntries.map((m) => ({ label: t(m.label) })), {
+      visibleRows: spEntries.length,
+      wrap: true,
+      audio: ctx.audio,
+      onPick: api.guard((i: number) => pickSP(i)),
+    })
+
+    const menuWin = el('nav', { class: 'aps-title-menu ap-panel', attrs: { 'aria-label': t('screens.title.menuLabel') } }, [mainMenu.el])
     menuWin.hidden = true
     const online = el('span', 'aps-title-online')
     const foot = el('div', 'aps-title-foot', [
@@ -100,29 +118,55 @@ export function titleScreen(env: ScreenEnv, hasSave: boolean): Promise<TitleChoi
     const offNet = ctx.events.on('net:status', refreshOnline)
     let onlineTimer = 0
 
-    let phase: 'press' | 'menu' = 'press'
     const toMenu = () => {
       if (phase !== 'press') return
-      phase = 'menu'
+      phase = 'main'
       ctx.audio.unlock()
       sfx(env, 'press')
       press.hidden = true
       menuWin.hidden = false
+      menuWin.replaceChildren(mainMenu.el)
+      mainMenu.setIndex(0, false)
       menuWin.classList.add('ap-anim-in')
     }
     const anyKey = (e: Event) => {
       if (phase !== 'press' || api.closed) return
       if (e instanceof KeyboardEvent && (e.repeat || e.isComposing)) return
-      // Defer to the next frame so the same key cannot also activate the menu.
       requestAnimationFrame(toMenu)
     }
     window.addEventListener('keydown', anyKey)
     api.root.addEventListener('pointerdown', anyKey)
 
-    const pick = (i: number) => {
-      if (phase !== 'menu') return
+    const backToMain = () => {
+      sfx(env, 'press')
+      phase = 'main'
+      menuWin.replaceChildren(mainMenu.el)
+      mainMenu.setIndex(0, false)
+    }
+
+    const pickMain = (i: number) => {
+      if (phase !== 'main') return
+      const chosen = mainEntries[i].id
+      if (chosen === 'singleplayer') {
+        sfx(env, 'press')
+        phase = 'singleplayer'
+        menuWin.replaceChildren(spMenu.el)
+        spMenu.setIndex(0, false)
+        return
+      }
       sfx(env, 'start')
-      api.close(entries[i].id)
+      api.close(chosen)
+    }
+
+    const pickSP = (i: number) => {
+      if (phase !== 'singleplayer') return
+      const chosen = spEntries[i].id
+      if (chosen === 'back') {
+        backToMain()
+        return
+      }
+      sfx(env, 'start')
+      api.close(chosen)
     }
 
     return {
@@ -133,7 +177,15 @@ export function titleScreen(env: ScreenEnv, hasSave: boolean): Promise<TitleChoi
           }
           return
         }
-        if (menu.handleInput(input) === 'confirm') pick(menu.index)
+        if (phase === 'main') {
+          if (mainMenu.handleInput(input) === 'confirm') pickMain(mainMenu.index)
+        } else if (phase === 'singleplayer') {
+          if (backPressed(input)) {
+            backToMain()
+            return
+          }
+          if (spMenu.handleInput(input) === 'confirm') pickSP(spMenu.index)
+        }
       },
       update(dt) {
         motes.update(dt)
