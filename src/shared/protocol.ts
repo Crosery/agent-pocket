@@ -2,7 +2,7 @@
 // Transport: JSON text frames on path /ws. Every message has a `t` discriminator.
 // Limits/rates live in CONTENT.config.net.
 import type {
-  BattleAction, BattleEvent, BattleRequest, Creature, CreatureView, Dir, SideIndex,
+  BattleAction, BattleEvent, BattleInit, BattleRequest, BattleResult, Creature, CreatureView, Dir, SaveData, SideIndex, TimeOfDay, WeatherId,
 } from './types.ts'
 import type { CompactMoveTuple, CompactPlayerTuple } from './net-codec.ts'
 export type { CompactMoveTuple, CompactPlayerTuple } from './net-codec.ts'
@@ -59,8 +59,15 @@ export interface MoveClientMsg {
   d?: CompactMoveTuple
 }
 
-export type ClientMsg =
-  | { t: 'hello'; v: number; playerId: string; name: string; avatar: string; map: string; x: number; y: number; facing: Dir; lead: PresenceLead | null; profile: PublicProfile; build?: { devtools: boolean }; compact?: boolean }
+export interface EnvelopeFields {
+  /** Monotonic per-session sequence number for replay protection. */
+  seq?: number
+  /** Hex HMAC-SHA256 signature over `${seq}:${canonicalJson(payloadWithoutSig)}`. */
+  sig?: string
+}
+
+export type ClientMsgCore =
+  | { t: 'hello'; v: number; playerId: string; name: string; avatar: string; map: string; x: number; y: number; facing: Dir; lead: PresenceLead | null; profile: PublicProfile; build?: { devtools: boolean }; compact?: boolean; signed?: boolean; sessionToken?: string; save?: SaveData }
   | MoveClientMsg
   | { t: 'lead'; lead: PresenceLead | null }
   | { t: 'profile'; profile: PublicProfile }
@@ -80,12 +87,62 @@ export type ClientMsg =
   | { t: 'pvp.forfeit'; battleId: string }
   | { t: 'leaderboard' }
   | { t: 'ping'; at: number; rtt?: number }
+  | {
+    t: 'battle.start'
+    kind: 'wild' | 'trainer' | 'boss'
+    speciesId?: string
+    level?: number
+    scripted?: boolean
+    roamer?: boolean
+    catchRateMul?: number
+    flee?: { chancePerTurn: number; afterTurn: number }
+    trainerId?: string
+    bossId?: string
+    tierId?: string
+    assist?: boolean
+    coach?: boolean
+    skipBrief?: boolean
+    captureAfterWin?: boolean
+    timeOfDay?: TimeOfDay
+    weather?: WeatherId
+  }
+  | { t: 'battle.action'; battleId: string; action: BattleAction }
+  | { t: 'battle.contract'; battleId: string; bossId: string; tierId: string; ballId: string }
+  | { t: 'shop.buy'; itemId: string; qty: number; priceMul?: number }
+  | { t: 'shop.sell'; itemId: string; qty: number }
+  | { t: 'item.use'; itemId: string; partyIndex?: number; moveIndex?: number; natureId?: string }
+  | { t: 'exchange.deal'; desk: string; offerIndex: number; qty: number }
+  | { t: 'creature.evolve'; partyIndex: number; toSpeciesId: string }
+  | { t: 'creature.learnMove'; partyIndex: number; moveId: string; replaceIndex?: number }
+  | { t: 'creature.nickname'; uid: string; nickname?: string }
+  | { t: 'party.swap'; a: number; b: number }
+  | { t: 'box.move'; from: { area: 'party' | 'box'; box: number; index: number }; to: { area: 'party' | 'box'; box: number; index: number } }
+  | { t: 'box.release'; slot: { area: 'party' | 'box'; box: number; index: number } }
+  | {
+    t: 'script.op'
+    op: 'chooseStarter' | 'heal' | 'blackout' | 'pickup' | 'setFlag' | 'quest'
+    speciesId?: string
+    itemId?: string
+    groundId?: string
+    qty?: number
+    flag?: string
+    value?: boolean | number | string
+    questId?: string
+    stage?: number
+    done?: boolean
+  }
+  | { t: 'save.import'; save: unknown; slotSig?: string | null; slotIndex?: number }
+
+export type ClientMsg = ClientMsgCore & EnvelopeFields
 
 // ----------------------------- server -> client -----------------------------
 
 export type ServerMsg =
-  | { t: 'welcome'; selfId: string; serverTime: number; motd: string; online: number }
-  | { t: 'snapshot'; map: string; players: PlayerState[]; d?: CompactPlayerTuple[]; at?: number; ack?: number }        // players near you on your map (excludes self)
+  | {
+    t: 'welcome'; selfId: string; serverTime: number; motd: string; online: number
+    sessionKey?: string; authority?: boolean; save?: SaveData; saveRev?: number; untrustedImport?: boolean
+  }
+  | { t: 'snapshot'; map: string; players: PlayerState[]; d?: CompactPlayerTuple[]; at?: number; ack?: number }
   | { t: 'join'; player: PlayerState; s?: number }
   | { t: 'leave'; id: string }
   | { t: 'move.correct'; seq: number; map: string; x: number; y: number; facing: Dir; reason?: string }
@@ -108,3 +165,14 @@ export type ServerMsg =
   | { t: 'system'; text: string; level: 'info' | 'warn' | 'error' }
   | { t: 'error'; code: string; message: string }
   | { t: 'pong'; at: number; serverTime: number; ack?: number }
+  | { t: 'state.sync'; save: SaveData; rev: number; reason?: string }
+  | { t: 'battle.started'; battleId: string; seed: number; init: BattleInit; events: BattleEvent[]; request: BattleRequest }
+  | { t: 'battle.events'; battleId: string; events: BattleEvent[]; request: BattleRequest }
+  | { t: 'battle.end'; battleId: string; result: BattleResult; moneyDelta: number; caught?: Creature; save: SaveData; rev: number }
+  | {
+    t: 'battle.contracted'
+    battleId: string
+    signed: { card: Creature; where: 'party' | 'box'; newEntry: boolean } | null
+    save: SaveData
+    rev: number
+  }

@@ -17,3 +17,12 @@ export { adaptiveInterpDelay, pushSample, sampleAt } from './interp.ts'
 export type { InterpOptions, Sample } from './interp.ts'
 export { createPredictor } from './predict.ts'
 export type { CorrectionState, PredictedMove, Predictor, PredictorOptions, StepReplayFn } from './predict.ts'
+export {
+  adoptServerSave, installAuthorityHandlers, isOnlineAuthorityActive, isUntrustedImportOnline,
+  sendBoxMove, sendBoxRelease, sendCreatureEvolve, sendCreatureLearnMove, sendCreatureNickname,
+  sendExchangeDeal, sendItemUse, sendPartySwap, sendSaveImport, sendScriptOp, sendShopBuy, sendShopSell,
+} from './authority-client.ts'
+export {
+  applyAuthoritativeSave, createPveChannel, isPveChannel, requestOnlineBattleStart, runOnlineBattle, signOnlineContract,
+  type PveBattleKind, type PveBattleStartRequest, type PveChannel,
+} from './pve-channel.ts'

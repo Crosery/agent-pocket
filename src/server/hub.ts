@@ -4,11 +4,14 @@
 // online players, inspect, leaderboard, heartbeat, and routing to chat / trade / pvp.
 import type { IncomingMessage } from 'node:http'
 import { monitorEventLoopDelay, performance } from 'node:perf_hooks'
+import { randomBytes } from 'node:crypto'
 import { WebSocket, type RawData } from 'ws'
+import { createReplayWindow, verifyEnvelope } from '../shared/net-envelope.ts'
 import type { ClientMsg, PlayerState, ServerMsg } from '../shared/protocol.ts'
 import { decodeMoveFrame, encodePlayerDelta, staticStateKey, type CompactPlayerTuple } from '../shared/net-codec.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { parseSessionCookie, type SessionInfo } from './accounts.ts'
+import { createAuthority, type AuthorityService, type ExternalAccountStore } from './authority.ts'
 import { MODERATION, NET, PRESENCE, type RateKey } from './config.ts'
 import type { Conn, HubCore, LimiterKey, Player } from './core.ts'
 import { createChat } from './chat.ts'
@@ -24,12 +27,23 @@ import {
   type RateLimiter,
 } from './util.ts'
 
+export interface SessionLookupStore {
+  verifySession?(cookieHeaderOrToken: string | undefined | null, now?: number): { accountId: string; username: string; sessionSecret?: string } | null
+  getAccountBySession?(cookieHeaderOrToken: string | undefined | null, now?: number): { accountId: string; username: string; sessionSecret?: string } | null
+}
+
 export interface HubOptions {
-  store: ProfileStore
+  store: ProfileStore & Partial<ExternalAccountStore> & SessionLookupStore
   world: WorldInfo | null
   pvp: PvpModule | null
   /** Resolves sanitizeCreature from src/shared/creature.ts (null while unavailable). */
   sanitizer: () => SanitizeCreature | null
+  /** Directory for authoritative saves, ledger, and audit persistence. */
+  dataDir?: string
+  /** Optional pre-built authority service. */
+  authority?: AuthorityService
+  /** Enforce HMAC envelope signing from the first post-hello message. */
+  requireSigned?: boolean
   /** Accept clients built with developer tooling (AP_DEV); the official server leaves this off. */
   allowDev?: boolean
   log?: (msg: string) => void
@@ -79,6 +93,7 @@ export interface HubMetrics {
 }
 
 export interface Hub {
+  readonly authority: AuthorityService
   /** Take ownership of an upgraded socket. */
   attach(ws: WebSocket, ip: string, req?: IncomingMessage): void
   onlineCount(): number
@@ -212,10 +227,22 @@ export function createHub(opts: HubOptions): Hub {
     touch,
   }
 
+  const authority = opts.authority ?? createAuthority({
+    dataDir: opts.dataDir ?? NET.store.defaultDir,
+    core,
+    store: opts.store,
+    world: opts.world?.world ?? null,
+    log,
+  })
+
   const chat = createChat(core)
   const trades = createTrades({
-    core, sanitizer: opts.sanitizer, recordTrade: (id) => opts.store.recordTrade(id),
+    core,
+    sanitizer: opts.sanitizer,
+    recordTrade: (id) => opts.store.recordTrade(id),
     inRange: (a, b) => inRange(a, b, PRESENCE.tradeRangeTiles),
+    validateOffer: (player, raw) => authority.validateTradeOffer(player.id, raw, player.ip),
+    completeTrade: (aId, aUid, bId, bUid, tradeId) => authority.completeTrade(aId, aUid, bId, bUid, tradeId),
   })
 
   // ------------------------------------------------------------------ pvp
@@ -235,6 +262,7 @@ export function createHub(opts: HubOptions): Hub {
       const pa = registry.get(a), pb = registry.get(b)
       return !!pa && !!pb && inRange(pa, pb, PRESENCE.pvpRangeTiles)
     },
+    resolveParty: (playerId, raw, healParty) => authority.validatePvpParty(playerId, raw, healParty, registry.get(playerId)?.ip),
   }
 
   let pvp: PvpInstance | null = null
@@ -252,6 +280,9 @@ export function createHub(opts: HubOptions): Hub {
       ws, ip, connectedAt: Date.now(), accountId: session?.accountId ?? null, session,
       key: '', id: null, name: '', avatar: '', state: null, profile: null, version: 0,
       compact: false, nextSlot: 0, lastMoveSeq: 0, ackDirty: false,
+      sessionKey: randomBytes(32).toString('hex'),
+      signed: true,
+      replayWindow: createReplayWindow(),
       clientBusy: false, pvpBusy: false, tradeId: null, emoteUntil: 0, lastMoveAt: 0,
       visible: new Map(), rosterSent: new Map(), lastOnlineCount: 0, snapMap: null,
       mapRef: null, lastOverworld: null, maxDistance: 0, distanceSaved: 0,
@@ -275,6 +306,7 @@ export function createHub(opts: HubOptions): Hub {
     if (!c.id || registry.get(c.id) !== c) return
     const p = c as Player
     trades.onDisconnect(p)
+    authority.onDisconnect(p.id)
     try { pvp?.onDisconnect(p.id) } catch (err) { log(`pvp.onDisconnect failed: ${(err as Error).message}`) }
     registry.delete(p.id)
     if (byName.get(p.name.toLowerCase()) === p) byName.delete(p.name.toLowerCase())
@@ -460,7 +492,6 @@ export function createHub(opts: HubOptions): Hub {
       // Never allow an unauthenticated connection to claim a registered account id.
       id = opts.store.getAccount(candidateId) ? publicIdFor(newSecretId()) : candidateId
     }
-
     const prev = registry.get(id)
     if (prev) drop(prev, codes.duplicate, 'kicked_duplicate', true)
 
@@ -501,10 +532,24 @@ export function createHub(opts: HubOptions): Hub {
     byName.set(name.toLowerCase(), p)
     grid.upsert(p)
     touch(p)
-    opts.store.put(profile, now)
+    const validatedProfile = authority.validateProfileReport(p, profile)
+    p.profile = validatedProfile
+    p.state.badges = validatedProfile.badges.length
+    p.state.dexCaught = validatedProfile.dexCaught
+    opts.store.put(validatedProfile, now)
     p.maxDistance = p.distanceSaved = opts.store.get(id)?.maxDistance ?? 0
+    const saveRec = authority.getRecord(id)
 
-    core.send(p, { t: 'welcome', selfId: id, serverTime: now, motd: t('net.motd'), online: registry.size })
+    core.send(p, {
+      t: 'welcome',
+      selfId: id,
+      serverTime: now,
+      motd: t('net.motd'),
+      online: registry.size,
+      sessionKey: c.sessionKey,
+      authority: true,
+      ...(saveRec ? { save: saveRec.save, saveRev: saveRec.rev, untrustedImport: saveRec.imported } : {}),
+    })
     sendOnlineSummary(p)
     pingSocket(p)
     if (!prev) chat.system('net.system.join', { name })
@@ -551,7 +596,11 @@ export function createHub(opts: HubOptions): Hub {
       dt = Math.min(srv.moveMaxDtSeconds, Math.max(0, now - p.lastMoveAt) / 1000)
       const allowed = maxSpeed * srv.moveSpeedSlack * dt + srv.moveToleranceTiles
       walked = Math.hypot(m.x - st.x, m.y - st.y) <= allowed && walkable(ref ?? null, st.x, st.y, m.x, m.y, allowed, now)
-      if (!walked && !p.limits.jump.take(now)) { reject('blocked_or_speed'); return }
+      if (!walked && !p.limits.jump.take(now)) {
+        authority.audit(p.id, 'movement.jump_budget_exhausted', { map: m.map, x: m.x, y: m.y, fromX: st.x, fromY: st.y }, 2, p.ip)
+        reject('blocked_or_speed')
+        return
+      }
     }
     p.movesAccepted++
     totalMovesAccepted++
@@ -564,6 +613,7 @@ export function createHub(opts: HubOptions): Hub {
     st.running = m.running === true
     p.lastMoveAt = now
     p.mapRef = ref ?? null
+    if (walked && Math.hypot(m.x - fromX, m.y - fromY) >= 0.25) authority.noteStep(p.id, p.ip)
     if (geo && st.map === geo.overworldId) {
       p.lastOverworld = { x: st.x, y: st.y }
       if (walked) creditDistance(p, fromX, fromY, dt)
@@ -718,7 +768,8 @@ export function createHub(opts: HubOptions): Hub {
         return
       case 'profile': {
         if (!p.limits.profile.take()) { core.error(p, 'rate_limited'); return }
-        const profile = sanitizeProfile(msg.profile, p, opts.world?.badgeIds ?? null)
+        const sanitized = sanitizeProfile(msg.profile, p, opts.world?.badgeIds ?? null)
+        const profile = authority.validateProfileReport(p, sanitized)
         p.profile = profile
         p.state.badges = profile.badges.length
         p.state.dexCaught = profile.dexCaught
@@ -746,6 +797,7 @@ export function createHub(opts: HubOptions): Hub {
       try { pvp.handle(p.id, msg) } catch (err) { log(`pvp.handle failed: ${(err as Error).message}`); core.error(p, 'bad_message') }
       return
     }
+    if (authority.handle(p, msg)) return
     core.error(p, 'bad_message')
   }
 
@@ -765,6 +817,13 @@ export function createHub(opts: HubOptions): Hub {
     while (c.rxWindow.length > 0 && c.rxWindow[0].at < nowMs - 2000) c.rxWindow.shift()
     const msg = safeJsonParse(rawStr)
     if (!isRecord(msg) || typeof msg.t !== 'string') { core.error(c, 'bad_message'); return }
+    if (msg.sig !== undefined) c.signed = true
+    const envCheck = verifyEnvelope(c.sessionKey, msg, c.replayWindow, { requireSig: c.signed })
+    if (!envCheck.ok) {
+      authority.audit(c.id, `protocol.${envCheck.code}`, { reason: envCheck.reason, t: msg.t, seq: msg.seq }, 3, c.ip)
+      core.error(c, envCheck.code)
+      return
+    }
     try {
       dispatch(c, msg as unknown as ClientMsg)
     } catch (err) {
@@ -784,6 +843,7 @@ export function createHub(opts: HubOptions): Hub {
   ]
 
   return {
+    authority,
     attach(ws, ip, req) {
       if (sockets.size >= srv.maxClients || (ipCounts.get(ip) ?? 0) >= srv.maxClientsPerIp) {
         ws.send(JSON.stringify(errorMsg('server_full')))

@@ -17,6 +17,7 @@ import { RngHub, randomSeed } from './core/rng-hub.ts'
 import { createRenderer, createWorldView } from './render/index.ts'
 import { UI_CONFIG, createChatUI, createEscapeStack, createHUD, createMinimap, createUIKit, installEscapeFallback, releaseButtonFocusAfterClick } from './ui/index.ts'
 import { createNetClient } from './net/index.ts'
+import { installAuthorityHandlers, isOnlineAuthorityActive } from './net/authority-client.ts'
 import { createAttention } from './attention/index.ts'
 import { createOnboarding } from './onboarding/index.ts'
 import { createFallbackBattleRunner, createFallbackScreens, createOverworld, GAME, type MultiplayerHooks, type OverworldExt } from './world/index.ts'
@@ -308,7 +309,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         const p = overworld.player
         ctx.save.position = { map: p.map, x: Math.floor(p.x), y: Math.floor(p.y), facing: p.facing }
       }
-      if (!saves.write(ctx.save, slot)) ui.toast(t('game.save.failed'), 'error')
+      if (!isOnlineAuthorityActive(ctx) && !saves.write(ctx.save, slot)) ui.toast(t('game.save.failed'), 'error')
       lastPersistAt = performance.now()
       events.emit('save:changed', { reason })
     },
@@ -360,6 +361,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   events.on('net:status', ({ status }) => hud.setNetStatus(status, net.online, net.rtt))
   net.on('online', (m) => hud.setNetStatus(net.status, m.count, net.rtt))
   net.on('pong', () => hud.setNetStatus(net.status, net.online, net.rtt))
+  installAuthorityHandlers(ctx)
   net.on('welcome', (m) => {
     hud.setNetStatus(net.status, m.online, net.rtt)
     // The server's greeting names the T key; on a phone the same sentence points at the chat icon (only the stock text is swapped).

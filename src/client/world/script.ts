@@ -16,6 +16,7 @@ import { addCreature, addItem, applyQuest, changeMoney, flagSet, healParty, mark
 import { presentArrival } from './rarity-spawns.ts'
 import { scriptResearch } from './research.ts'
 import { TUTORIAL } from '../onboarding/config.ts'
+import { sendScriptOp } from '../net/authority-client.ts'
 
 export type ScriptOutcome = 'done' | 'end' | 'abort'
 
@@ -98,6 +99,7 @@ export function createScriptRunner(host: ScriptHost) {
   async function questStep(questId: string, stage: number, done: boolean): Promise<void> {
     const change = applyQuest(ctx, questId, stage, done)
     if (!change) { console.warn(`[script] unknown quest "${questId}"`); return }
+    sendScriptOp(ctx, { t: 'script.op', op: 'quest', questId, stage, done })
     const quest = change.def.nameZh
     if (change.started) ctx.ui.toast(t('world.script.questStart', { quest }), 'info')
     else if (change.advanced && !change.finished) ctx.ui.toast(t('world.script.questStage', { quest }), 'info')
@@ -131,6 +133,7 @@ export function createScriptRunner(host: ScriptHost) {
       }
       case 'setFlag':
         ctx.save.flags[flagName(s.flag)] = s.value ?? true
+        sendScriptOp(ctx, { t: 'script.op', op: 'setFlag', flag: flagName(s.flag), value: s.value ?? true })
         return 'done'
       case 'ifFlag': {
         const flag = flagName(s.flag)
@@ -196,6 +199,7 @@ export function createScriptRunner(host: ScriptHost) {
         }, ctx.data)
         addCreature(ctx, cr)
         ctx.save.flags[STORY_CONTENT.meta.flags.starter] = chosen
+        sendScriptOp(ctx, { t: 'script.op', op: 'chooseStarter', speciesId: chosen })
         ctx.audio.playCry(chosen)
         await narrate(t('world.script.starter', { ...params(), species: creatureName(cr, ctx.data) }))
         await host.reveal?.(cr, { full: true })
@@ -224,6 +228,7 @@ export function createScriptRunner(host: ScriptHost) {
       }
       case 'heal':
         healParty(ctx)
+        sendScriptOp(ctx, { t: 'script.op', op: 'heal' })
         ctx.audio.playSfx(GAME.script.healSfx)
         await wait(GAME.script.healWaitMs)
         host.onWorldChanged()

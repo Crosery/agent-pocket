@@ -158,6 +158,8 @@ export interface SaveManager {
   defaultSettings(): Settings
   /** Migrates/validates foreign data into a well-formed SaveData. */
   sanitize(raw: unknown): SaveData | null
+  /** Checks whether a local save slot's stored HMAC matches its JSON content. */
+  verifySlot?(slot?: number): { valid: boolean; tampered: boolean; reason?: string }
 }
 
 // ---------------------------------------------------------------------------

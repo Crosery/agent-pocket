@@ -15,6 +15,8 @@ export interface WorldInfo {
    * step validation (elevation / stairs / ledges / water). Absent = bounds-only validation against `maps`.
    */
   geo?: WorldGeo
+  /** Full generated World when available, used by server authority for trainer/encounter/quest validation. */
+  world?: World
 }
 
 type WorldModule = { buildWorld?: (seed?: number) => World }
@@ -39,7 +41,7 @@ export async function loadWorldInfo(log: (msg: string) => void = () => {}): Prom
     log(`buildWorld() failed, movement bounds disabled (${(err as Error).message})`)
     return null
   }
-  const info: WorldInfo = { maps, startMap: world.startMap, badgeIds: new Set((world.badges ?? []).map((b) => b.id)) }
+  const info: WorldInfo = { maps, startMap: world.startMap, badgeIds: new Set((world.badges ?? []).map((b) => b.id)), world }
   try {
     const gm = (await import(new URL('./geo.ts', import.meta.url).href)) as GeoModule
     if (typeof gm.createWorldGeo === 'function') info.geo = gm.createWorldGeo(world)

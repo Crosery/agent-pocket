@@ -10,6 +10,7 @@ import { onUIScaleChange } from '../scale.ts'
 import { backPressed, frame, H, isCompact, openScreen, popupMenu, pressed, sfx, uiSfx, type PartyOptions, type ScreenEnv } from './base.ts'
 import { SCREENS } from './config.ts'
 import { expProgress, isConscious } from './logic.ts'
+import { sendCreatureNickname, sendPartySwap } from '../../net/authority-client.ts'
 
 export type PartyMode = 'view' | 'select' | 'battleSwitch'
 
@@ -113,6 +114,7 @@ export function partyScreen(env: ScreenEnv, mode: PartyMode, opts?: PartyOptions
       if (swapFrom >= 0) {
         if (swapFrom !== i) {
           ;[list[swapFrom], list[i]] = [list[i], list[swapFrom]]
+          sendPartySwap(ctx, swapFrom, i)
           dirty = true
           ctx.events.emit('party:changed', {})
           sfx(env, 'drop')
@@ -142,6 +144,7 @@ export function partyScreen(env: ScreenEnv, mode: PartyMode, opts?: PartyOptions
         const name = await ctx.ui.prompt(t('screens.party.nicknamePrompt', { name: sp?.nameZh ?? '' }), creatureName(c), CONTENT.config.net.nameMaxLen)
         if (name !== null) {
           c.nickname = name === sp?.nameZh ? undefined : name
+          sendCreatureNickname(ctx, c.uid, c.nickname)
           dirty = true
           ctx.events.emit('party:changed', {})
           render()

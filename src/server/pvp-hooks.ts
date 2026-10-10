@@ -1,7 +1,7 @@
 // Contract between the hub and the PvP module (src/server/pvp.ts, implemented separately).
 // The hub owns sockets, presence and persistence; the PvP module owns battle sessions.
 import type { ClientMsg, ServerMsg } from '../shared/protocol.ts'
-
+import type { Creature } from '../shared/types.ts'
 export interface PvpHost {
   send(playerId: string, msg: ServerMsg): void
   getPlayer(id: string): { id: string; name: string; avatar: string; busy: boolean } | null
@@ -9,6 +9,13 @@ export interface PvpHost {
   recordPvp(winnerId: string | null, loserId: string | null): void
   /** Optional proximity rule (same map, within pvp range); absent = no range limit. */
   inRange?(a: string, b: string): boolean
+  /**
+   * Optional authoritative party resolver (#22):
+   * - returns `Creature[]` when validated against the player's server save,
+   * - returns `null` when the submitted party fabricated/tampered with unowned creatures,
+   * - returns `undefined` when the player has no server save bound (legacy/stateless test mode).
+   */
+  resolveParty?(playerId: string, raw: unknown, healParty: boolean): Creature[] | null | undefined
 }
 
 export interface PvpInstance {

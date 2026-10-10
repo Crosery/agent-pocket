@@ -32,6 +32,7 @@ export interface ResolvedServerUrls {
 }
 
 export const SERVERS_STORAGE_KEY = 'agent-pocket/servers'
+export const OFFICIAL_SERVER_ID = 'official'
 
 function fallbackStorage(): StorageLike {
   try {
@@ -110,8 +111,8 @@ export function sanitizeServerAddress(input: string): SanitizedServerAddress | S
 }
 
 export function getOfficialServer(): ServerEntry {
-  const configuredUrl = NET_CLIENT.official?.url ?? 'https://ap.crosery.com'
-  const configuredName = NET_CLIENT.official?.name ?? t('screens.serverList.officialName')
+  const configuredUrl = NET_CLIENT.official.url
+  const configuredName = NET_CLIENT.official.name
   return {
     id: OFFICIAL_SERVER_ID,
     name: configuredName,
@@ -129,10 +130,7 @@ export function resolveServerUrls(address: string): ResolvedServerUrls {
   if (sanitized.ok) {
     return { httpBase: sanitized.httpBase, wsUrl: sanitized.wsUrl }
   }
-  return {
-    httpBase: 'http://localhost:8787',
-    wsUrl: `ws://localhost:8787${NET_CLIENT.protocol.wsPath}`,
-  }
+  throw new Error(sanitized.error)
 }
 
 export function normalizeWsUrl(address: string): string {

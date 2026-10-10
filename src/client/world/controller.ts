@@ -40,6 +40,7 @@ import { addItem, changeMoney, flagSet, healParty, ownedKeyItem, removeItem, set
 import { createTriggers } from './triggers.ts'
 import { createScriptRunner, type ScriptHost } from './script.ts'
 import { anchorName, isUnlocked, markSeen, unlockAnchor } from './anchors.ts'
+import { sendScriptOp } from '../net/authority-client.ts'
 
 export type MoveMode = 'walk' | 'run' | 'bike' | 'surf'
 
@@ -806,6 +807,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
       ctx.audio.playSfx(GAME.blackout.sfx)
       await ctx.ui.fade(true, GAME.blackout.fadeMs)
       healParty(ctx)
+      sendScriptOp(ctx, { t: 'script.op', op: 'blackout' })
       const r = ctx.save.respawn
       const target = getMap(ctx.data.world, r.map) ? r : { ...ctx.save.position, ...ctx.data.world.maps[ctx.data.world.startMap].spawn, map: ctx.data.world.startMap }
       bike = false
@@ -919,6 +921,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     groundItemsChanged()
     if (!item) return
     addItem(ctx, it.item, it.qty)
+    sendScriptOp(ctx, { t: 'script.op', op: 'pickup', groundId: it.id, itemId: it.item, qty: it.qty })
     ctx.audio.playSfx(item.category === 'key' ? GAME.items.keyItemSfx : GAME.items.pickupSfx)
     const lines = [t(it.qty > 1 ? 'world.item.foundQty' : 'world.item.found', { ...params(), item: item.nameZh, qty: it.qty }), t('world.item.pocket', { ...params(), item: item.nameZh })]
     if (it.hidden) lines.unshift(t('world.item.hidden'))

@@ -4,6 +4,7 @@ import { CONTENT, t } from '../../shared/content/index.ts'
 import type { Content } from '../../shared/content/index.ts'
 import { preUnlockedIds } from '../../shared/world/anchors.ts'
 import { hashString } from '../../shared/rng.ts'
+import { signLocalSlotText, verifyLocalSlotText } from '../../shared/save-provenance.ts'
 import { decodeSaveCode, encodeSaveCode } from './save-codec.ts'
 import { migrateSave } from './save-migrate.ts'
 import { reconcileSave } from './save-reconcile.ts'
@@ -69,10 +70,21 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
     },
     write(save: SaveData, slot = 0) {
       try {
-        storage.setItem(key(slot), JSON.stringify(save))
+        const json = JSON.stringify(save)
+        storage.setItem(key(slot), json)
+        storage.setItem(`${key(slot)}:sig`, signLocalSlotText(json, slot))
         return true
       } catch {
         return false
+      }
+    },
+    verifySlot(slot = 0) {
+      try {
+        const text = storage.getItem(key(slot))
+        const sig = storage.getItem(`${key(slot)}:sig`)
+        return verifyLocalSlotText(text, sig, slot)
+      } catch {
+        return { valid: false, tampered: true, reason: 'storage_error' }
       }
     },
     newGame(opts) {

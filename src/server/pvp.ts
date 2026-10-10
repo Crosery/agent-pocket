@@ -232,7 +232,8 @@ export function createPvp(host: PvpHost, overrides: PvpOverrides = {}): PvpInsta
     if (!found) { fail(from, 'pvp_battle_not_found'); return }
     const { s, side } = found
     if (s.engine || s.seats[side].party) return
-    const cleaned = sanitizePvpParty(raw, rules)
+    const authoritative = host.resolveParty ? host.resolveParty(from, raw, rules.healParty) : undefined
+    const cleaned = authoritative !== undefined ? authoritative : sanitizePvpParty(raw, rules)
     if (!cleaned) {
       abort(s, bySide(side, 'pvp_party_invalid', 'pvp_cancelled'))
       return

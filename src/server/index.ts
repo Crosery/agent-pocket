@@ -9,9 +9,10 @@ import { WebSocketServer } from 'ws'
 import pkg from '../../package.json' with { type: 'json' }
 import type { Creature } from '../shared/types.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
+import type { AuthorityService } from './authority.ts'
 import { NET, validateNetContent } from './config.ts'
 import { createHttpHandler } from './http.ts'
-import { createHub, type HubMetrics } from './hub.ts'
+import { createHub, type Hub, type HubMetrics } from './hub.ts'
 import { loadPvpModule, type PvpModule } from './pvp-hooks.ts'
 import { createProfileStore, type ProfileStore } from './store.ts'
 import type { SanitizeCreature } from './trade.ts'
@@ -30,6 +31,8 @@ export interface ServerOptions {
   allowDev?: boolean
   /** Inject world bounds (tests); undefined = build from src/shared/world, null = no bounds. */
   world?: WorldInfo | null
+  /** Require HMAC signatures on every post-hello message. */
+  requireSigned?: boolean
   quiet?: boolean
 }
 
@@ -37,6 +40,8 @@ export interface RunningServer {
   readonly port: number
   readonly store: ProfileStore
   metrics(): HubMetrics
+  readonly hub: Hub
+  readonly authority: AuthorityService
   close(): Promise<void>
 }
 
@@ -83,7 +88,17 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
   await store.load()
   const pvp = opts.pvp !== undefined ? opts.pvp : await loadPvpModule(log)
   const sanitizer = creatureSanitizer(log)
-  const hub = createHub({ store, world, pvp, sanitizer, allowDev: opts.allowDev === true, log })
+  const hub = createHub({
+    store,
+    world,
+    pvp,
+    sanitizer,
+    dataDir: opts.dataDir,
+    requireSigned: opts.requireSigned,
+    allowDev: opts.allowDev === true,
+    log,
+  })
+  await hub.authority.load()
   const startedAt = Date.now()
 
   const handler = createHttpHandler({
@@ -136,6 +151,8 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
     port,
     store,
     metrics: () => hub.metrics(),
+    hub,
+    authority: hub.authority,
     close() {
       closing ??= (async () => {
         hub.close()
@@ -144,6 +161,7 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
         const closePromise = closeServer()
         server.closeAllConnections()
         await closePromise
+        await hub.authority.close()
         await store.close()
       })()
       return closing

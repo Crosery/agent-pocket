@@ -18,6 +18,8 @@ import { GAME } from './config.ts'
 import { battleWeatherFor } from './encounters.ts'
 import { addItem, changeMoney } from './save-ops.ts'
 import { randomSeed } from '../core/rng-hub.ts'
+import { isOnlineAuthorityActive } from '../net/authority-client.ts'
+import { runOnlineBattle } from '../net/pve-channel.ts'
 
 export interface BattleFlowDeps {
   readonly ctx: GameContext
@@ -144,6 +146,22 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     const name = ctx.data.species[cr.speciesId]?.nameZh ?? cr.speciesId
     // A species with a boss definition (content/bosses.json) is fought with its boss rules; bosses never flee.
     const boss = ctx.data.bossBySpecies[cr.speciesId]
+    if (isOnlineAuthorityActive(ctx)) {
+      const onlineOutcome = await runOnlineBattle(ctx, {
+        kind: 'wild',
+        speciesId: cr.speciesId,
+        level: cr.level,
+        scripted: opts.scripted,
+        catchRateMul: opts.catchRateMul,
+        flee: opts.flee,
+        timeOfDay: ctx.clock.timeOfDay,
+      }, { kind: wildKind(cr), ...(opts.music ? { music: opts.music } : {}) })
+      if (onlineOutcome) {
+        lastOutcome = onlineOutcome
+        deps.afterBattle()
+        return onlineOutcome
+      }
+    }
     const init: BattleInit = {
       seed: rng.int(1, 0x7fffffff),
       sides: [playerSide(), boss
@@ -189,6 +207,21 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     await transition()
     const kind: BattleKind = tr.badge ? 'gym' : 'trainer'
     const music = tr.music ?? (tr.badge ? ctx.data.audio.battleMusic.gym : undefined)
+    if (isOnlineAuthorityActive(ctx)) {
+      const onlineOutcome = await runOnlineBattle(ctx, {
+        kind: 'trainer',
+        trainerId: tr.id,
+        timeOfDay: ctx.clock.timeOfDay,
+      }, { kind, trainer: tr, ...(music ? { music } : {}) })
+      if (onlineOutcome) {
+        lastOutcome = onlineOutcome
+        if (onlineOutcome.result === 'win' && GAME.battle.sayDefeatTextAfter && tr.defeatText.length) {
+          await ctx.ui.say(tr.defeatText.map((text) => (portrait ? { text, speaker, portrait } : { text, speaker })))
+        }
+        deps.afterBattle()
+        return onlineOutcome
+      }
+    }
     const init: BattleInit = {
       seed: rng.int(1, 0x7fffffff),
       sides: [playerSide(), {
@@ -251,6 +284,22 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     await transition()
     const seed = rng.int(1, 0x7fffffff)
     const foe = createBossCreature(bossId, tier.level, new Rng(seed ^ 0x5bd1e995), ctx.data)
+    if (isOnlineAuthorityActive(ctx)) {
+      const onlineOutcome = await runOnlineBattle(ctx, {
+        kind: 'boss',
+        bossId,
+        tierId,
+        assist: opts.assist,
+        coach: opts.coach,
+        captureAfterWin: opts.captureAfterWin,
+        timeOfDay: ctx.clock.timeOfDay,
+      }, { kind: wildKind(foe) })
+      if (onlineOutcome) {
+        lastOutcome = onlineOutcome
+        deps.afterBattle()
+        return onlineOutcome
+      }
+    }
     const a = arena()
     const init = buildBossInit(bossId, ctx.save.party, {
       seed, tier: tierId, boss: foe, c: ctx.data, expGain: true, playerName: ctx.save.name, ...(ctx.save.avatar ? { playerSprite: ctx.save.avatar } : {}),

@@ -8,6 +8,7 @@ import type { ClientMsg, LeaderboardEntry, PlayerState, PublicProfile, ServerMsg
 import { applyPlayerDelta, encodeMoveFrame } from '../../shared/net-codec.ts'
 import type { Dir } from '../../shared/types.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
+import { signEnvelope } from '../../shared/net-envelope.ts'
 import { NET_CLIENT } from './config.ts'
 import { adaptiveInterpDelay, pushSample, sampleAt, type Sample } from './interp.ts'
 import { createPredictor, type CorrectionState, type Predictor, type StepReplayFn } from './predict.ts'
@@ -143,6 +144,8 @@ export function createNetClient(
   let localMap: string | null = null
   let lastSent: PositionReport | null = null
   let lastSentAt = -Infinity
+  let sessionKey: string | null = null
+  let outSeq = 0
   let windowHooked = false
   let stepReplayFn: StepReplayFn | null = null
 
@@ -344,6 +347,8 @@ export function createNetClient(
     lastServerSnapAt = 0
     lastSnapArrivalAt = 0
     predictor.reset()
+    sessionKey = null
+    outSeq = 0
     clearRemotes()
     flushLeaderboardWaiters(null)
     if (!wanted) { setStatus('offline'); return }
@@ -423,7 +428,8 @@ export function createNetClient(
       if (ws !== sock) return
       let hello: HelloMsg
       try {
-        hello = getHello()
+        const raw = getHello()
+        hello = { ...raw, signed: true }
       } catch (err) {
         reportError(err)
         dropSocket(1011)
@@ -457,6 +463,8 @@ export function createNetClient(
         online = msg.online
         motd = msg.motd
         serverTimeOffset = msg.serverTime - Date.now()
+        sessionKey = typeof msg.sessionKey === 'string' && msg.sessionKey ? msg.sessionKey : null
+        outSeq = 0
         attempt = 0
         lastSent = null
         // The hello already carried the freshest profile.
@@ -511,6 +519,12 @@ export function createNetClient(
 
   function send(msg: ClientMsg): void {
     if (!ws || status !== 'online' || ws.readyState !== WebSocket.OPEN) return
+    if (sessionKey && msg.t !== 'ping') {
+      const targetSeq = typeof msg.seq === 'number' && Number.isSafeInteger(msg.seq) && msg.seq > 0 ? msg.seq : ++outSeq
+      if (targetSeq > outSeq) outSeq = targetSeq
+      sendJson(ws, signEnvelope(sessionKey, msg, targetSeq))
+      return
+    }
     sendJson(ws, msg)
   }
 

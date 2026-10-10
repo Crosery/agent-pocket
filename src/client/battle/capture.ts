@@ -12,6 +12,7 @@ import { creatureImg } from '../ui/screens/sprites.ts'
 import { actionKeyLabel, button, el, panel } from '../ui/widgets.ts'
 import { BATTLE_UI, type SignedLine } from './config.ts'
 import { ballChoices, signContract, type BallChoice, type Signed } from './contract.ts'
+import { signOnlineContract } from '../net/pve-channel.ts'
 import './capture.css'
 
 export interface ContractOptions {
@@ -21,6 +22,7 @@ export interface ContractOptions {
   foe: Creature
   /** Success chance shown (the tier's `capture.first`, 0..1). */
   chance: number
+  battleId?: string
 }
 
 /** The boss's contract line: `contractWake` when the story woke it, else `contract`. */
@@ -208,6 +210,7 @@ export async function contractFlow(ctx: GameContext, o: ContractOptions): Promis
     if (tried) return signed
     tried = true
     signed = signContract(ctx, o.bossId, o.tierId, ballId)
+    if (o.battleId) void signOnlineContract(ctx, o.battleId, o.bossId, o.tierId, ballId)
     // Saved before anything else is shown: closing the tab on the next screen cannot lose or reroll the card.
     if (signed) ctx.persist('boss-sign')
     return signed

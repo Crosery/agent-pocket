@@ -1,6 +1,8 @@
 // Portable save codes: "<version>.<base64url(utf8 JSON)>.<checksum>". Pure, works in browsers and Node.
+import { hmacSha256Hex, timingSafeEqualStr } from '../../shared/net-envelope.ts'
 import { hashString } from './hash.ts'
 
+const SAVE_CODE_HMAC_KEY = 'agent-pocket/save-code-v1'
 export function toBase64Url(text: string): string {
   const bytes = new TextEncoder().encode(text)
   let bin = ''
@@ -32,16 +34,27 @@ export function encodeSaveCode(data: unknown, version: number): string {
 }
 
 /** Returns the parsed JSON value, or null when the code is malformed or its checksum does not match. */
-export function decodeSaveCode(code: string): { version: number; data: unknown } | null {
+/** Returns the parsed JSON value, or null when the code is malformed or its checksum/signature does not match. */
+export function decodeSaveCode(code: string, secret = SAVE_CODE_HMAC_KEY): { version: number; data: unknown; signed?: boolean } | null {
   const parts = code.replace(/\s+/g, '').split('.')
-  if (parts.length !== 3) return null
-  const [ver, payload, sum] = parts
+  if (parts.length !== 3 && parts.length !== 4) return null
+  const [ver, payload, sum, sig] = parts
   if (!/^\d+$/.test(ver) || !payload || checksum(payload) !== sum.toLowerCase()) return null
+  if (sig !== undefined) {
+    const expected = hmacSha256Hex(secret, `${ver}.${payload}.${sum.toLowerCase()}`)
+    if (!timingSafeEqualStr(sig.toLowerCase(), expected)) return null
+  }
   const json = fromBase64Url(payload)
   if (json === null) return null
   try {
-    return { version: Number(ver), data: JSON.parse(json) as unknown }
+    return { version: Number(ver), data: JSON.parse(json) as unknown, ...(sig !== undefined ? { signed: true } : {}) }
   } catch {
     return null
   }
+}
+
+export function encodeSignedSaveCode(data: unknown, version: number, secret = SAVE_CODE_HMAC_KEY): string {
+  const base = encodeSaveCode(data, version)
+  const sig = hmacSha256Hex(secret, base)
+  return `${base}.${sig}`
 }

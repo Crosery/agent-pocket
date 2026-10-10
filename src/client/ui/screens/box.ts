@@ -9,6 +9,7 @@ import { backPressed, frame, isCompact, openScreen, popupMenu, pressed, sfx, uiS
 import { SCREENS } from './config.ts'
 import { boxView, creatureAt, moveCreature, releaseCreature, type Slot } from './logic.ts'
 import { creatureImg } from './sprites.ts'
+import { sendBoxMove, sendBoxRelease } from '../../net/authority-client.ts'
 
 type Zone = 'party' | 'head' | 'box'
 
@@ -157,8 +158,10 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
 
     const place = (target: Slot) => {
       if (!held) return
-      const err = moveCreature(save, held, target)
+      const from = held
+      const err = moveCreature(save, from, target)
       if (err) { sfx(env, 'error'); ctx.ui.toast(t(err), 'warn'); return }
+      sendBoxMove(ctx, from, target)
       held = null
       dirty = true
       sfx(env, 'drop')
@@ -192,6 +195,7 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
         if (!await ctx.ui.confirm(t('screens.box.releaseConfirm2', { name }))) return
         const err = releaseCreature(save, slot)
         if (err) { sfx(env, 'error'); ctx.ui.toast(t(err), 'warn'); return }
+        sendBoxRelease(ctx, slot)
         dirty = true
         sfx(env, 'release')
         ctx.events.emit('party:changed', {})

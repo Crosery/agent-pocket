@@ -10,6 +10,7 @@ import { natureScreen } from './nature.ts'
 import { natureName } from '../quality-text.ts'
 import { SCREENS } from './config.ts'
 import { addItem, applyMedicine, medicineBlocker, needsMovePick, needsTarget, overworldExit, teachState } from './logic.ts'
+import { sendCreatureLearnMove, sendItemUse } from '../../net/authority-client.ts'
 
 const say = (env: ScreenEnv, ...lines: string[]) => env.ctx.ui.say(lines)
 
@@ -21,6 +22,8 @@ export async function teachMove(env: ScreenEnv, c: Creature, moveId: string): Pr
   const slot = { id: moveId, pp: m.pp, ppMax: m.pp }
   if (c.moves.length < CONTENT.config.party.maxMoves) {
     c.moves.push(slot)
+    const pIdx = env.ctx.save.party.indexOf(c)
+    if (pIdx >= 0) sendCreatureLearnMove(env.ctx, pIdx, moveId)
     sfx(env, 'learn')
     await say(env, t('screens.use.learned', { name, move: m.nameZh }))
     return true
@@ -32,6 +35,8 @@ export async function teachMove(env: ScreenEnv, c: Creature, moveId: string): Pr
   }
   const old = CONTENT.moves[c.moves[i].id]?.nameZh ?? c.moves[i].id
   c.moves[i] = slot
+  const pIdx = env.ctx.save.party.indexOf(c)
+  if (pIdx >= 0) sendCreatureLearnMove(env.ctx, pIdx, moveId, i)
   sfx(env, 'learn')
   await say(env, t('screens.use.forgot', { name, old }), t('screens.use.learned', { name, move: m.nameZh }))
   return true
@@ -75,6 +80,7 @@ async function applyToCreature(env: ScreenEnv, item: ItemDef, partyIndex: number
         if (moveIndex < 0) return false
       }
       const r = applyMedicine(c, item, moveIndex)
+      sendItemUse(ctx, item.id, { partyIndex, ...(moveIndex >= 0 ? { moveIndex } : {}) })
       sfx(env, 'heal')
       const lines: string[] = []
       if (r.revived) lines.push(t('screens.use.revived', { name }))
@@ -92,6 +98,7 @@ async function applyToCreature(env: ScreenEnv, item: ItemDef, partyIndex: number
       const res = gainExp(c, expForLevel(sp.growth, c.level + 1) - c.exp)
       if (!res.levels.length) return false
       if (c.hp > 0) c.hp = Math.min(maxHp(c), c.hp)
+      sendItemUse(ctx, item.id, { partyIndex })
       sfx(env, 'levelUp')
       await say(env, t('screens.use.levelUp', { name, level: c.level }))
       for (const m of res.learned) await say(env, t('screens.use.learned', { name, move: CONTENT.moves[m]?.nameZh ?? m }))
@@ -103,6 +110,7 @@ async function applyToCreature(env: ScreenEnv, item: ItemDef, partyIndex: number
     }
     case 'evolve': {
       const to = CONTENT.species[c.speciesId]?.evolvesTo?.id
+      if (to) sendItemUse(ctx, item.id, { partyIndex })
       return to ? runEvolution(env, partyIndex, to) : false
     }
     case 'chip':
@@ -113,6 +121,7 @@ async function applyToCreature(env: ScreenEnv, item: ItemDef, partyIndex: number
       if (pick === c.nature) { sfx(env, 'error'); await say(env, t('screens.quality.pickSame', { name, nature: natureName(pick) })); return false }
       if (!await ctx.ui.confirm(t('screens.quality.pickConfirm', { name, nature: natureName(pick) }))) return false
       c.nature = pick
+      sendItemUse(ctx, item.id, { partyIndex, natureId: pick })
       sfx(env, 'useItem')
       await say(env, t('screens.quality.pickDone', { name, nature: natureName(pick) }))
       ctx.events.emit('party:changed', {})
@@ -156,6 +165,7 @@ export async function useItemInField(env: ScreenEnv, item: ItemDef): Promise<boo
     if (ctx.save.repelSteps > 0) { sfx(env, 'error'); await say(env, t('screens.use.repelActive')); return false }
     ctx.save.repelSteps = e.steps
     consume(env, item)
+    sendItemUse(ctx, item.id)
     sfx(env, 'useItem')
     await say(env, t('screens.use.repel', { item: item.nameZh, steps: e.steps }))
     return true
@@ -192,6 +202,7 @@ async function useEscape(env: ScreenEnv, item: ItemDef): Promise<boolean> {
   const exit = here && here.kind === 'cave' ? overworldExit(ctx.data.world, here.id, p.x, p.y) : null
   if (!exit) { sfx(env, 'error'); await say(env, t('screens.use.cantHere')); return false }
   consume(env, item)
+  sendItemUse(ctx, item.id)
   sfx(env, 'useItem')
   await say(env, t('screens.use.escape', { item: item.nameZh }))
   leaveAllScreens(env, () => { void ctx.overworld.enterMap(exit.toMap, exit.toX, exit.toY, exit.facing, true) })
