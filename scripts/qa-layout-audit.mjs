@@ -16,6 +16,9 @@
 // 'hud-phone' (touch viewports only, incl. 932x430) shows every transient overworld HUD piece at once - region banner, toasts, tip,
 // chat lines, quest card, activity chip, online badge, touch pad, DEV badge - and asserts that no two pieces overlap and none
 // covers the player (padding from content/ui.json phoneHud.audit).
+// Touch pad (issue #64, phones only): while a full-screen panel (.aps-screen, the activity dialog, the enlarged minimap) is open the main touch pad (.ap-touch) is hidden and the
+// panel reserves no bottom strip for it (--ap-bottom-inset 0); with no panel open the pad is shown. 'touch-pad-restore' checks it is back
+// after every fixture was closed. A panel that forgot the shared .ap-fullscreen marker shows up here as a visible pad.
 // Fixtures run with the first-run tips hidden (they are audited alone as 'tip'); report stats.scroll is the tallest
 // scroller's content in viewport heights.
 import assert from 'node:assert/strict'
@@ -335,6 +338,26 @@ export async function measureNameTags(page) {
   })
 }
 
+/** Runs inside the page (phones in the overworld only): the touch pad against the full-screen panels that are open. */
+export function auditTouchPad() {
+  const html = document.documentElement
+  const pad = document.querySelector('.ap-touch')
+  if (!pad || html.dataset.touchControls !== 'on' || html.classList.contains('ap-battle-on')) return { violations: [], stats: null }
+  // Full-screen by what they are, not by the shared marker: panels, the activity dialog and the enlarged minimap.
+  const open = [...document.querySelectorAll('.aps-screen, .ap-evdetails[open], .ap-mapview.is-on')].filter((e) => !e.classList.contains('ap-pushed-out'))
+  const cs = getComputedStyle(pad)
+  const hidden = cs.visibility === 'hidden' || cs.display === 'none'
+  const name = (e) => [...e.classList].find((c) => /^(aps|ap-ev|ap-map)/.test(c) && c !== 'aps-screen') ?? 'aps-screen'
+  const violations = []
+  if (open.length && !hidden) violations.push({ type: 'touch-pad-visible', sel: '.ap-touch', text: '', detail: `the pad is shown over ${open.map(name).join(', ')}` })
+  if (!open.length && hidden) violations.push({ type: 'touch-pad-hidden', sel: '.ap-touch', text: '', detail: 'no full-screen panel is open but the pad is hidden' })
+  for (const e of open) {
+    const inset = getComputedStyle(e).getPropertyValue('--ap-bottom-inset').trim()
+    if (parseFloat(inset) !== 0) violations.push({ type: 'touch-pad-inset', sel: `.${name(e)}`, text: '', detail: `--ap-bottom-inset is ${inset || 'unset'}, expected 0px` })
+  }
+  return { violations, stats: { open: open.map(name), hidden } }
+}
+
 /** Runs inside the page: every transient HUD piece that is showing, pairwise overlaps, and what covers the player. */
 export function auditHudZones(opts) {
   const { pad } = opts
@@ -530,6 +553,8 @@ export const SCREENS = [
   { id: 'hud-phone', touchOnly: true, keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', tip: true, hudZones: true, after: toLab, open: phoneHudOpen(true) },
   { id: 'hud-phone-chat', touchOnly: true, keepToasts: true, scope: null, ignore: '.ap-l-overlay canvas', tip: true, hudZones: true, noReshow: true, after: toLab, open: phoneHudOpen(false) },
   { id: 'hud-events', scrollOk: ['.ap-evbody'], scope: '.ap-evdetails', open: async (page) => { await page.evaluate(() => document.querySelector('.ap-evtoggle')?.click()) }, closeKey: 'Escape' },
+  // The enlarged minimap (a tap on the radar on a phone, N on a keyboard) is a full-screen overlay too.
+  { id: 'minimap-open', scope: '.ap-mapview-frame', open: async (page) => { await page.evaluate(() => window.__AP.minimap.setExpanded(true)); await page.waitForTimeout(700) }, after: async (page) => { await page.evaluate(() => window.__AP.minimap.setExpanded(false)); await page.waitForTimeout(400) } },
   { id: 'pause', scope: '.ap-kit-stack > *:last-child', open: run(() => { void window.__AP.screens.pauseMenu() }) },
   // A research reward is waiting: red dot on the menu row, the cursor starts on it (first time), the detail pane names it.
   { id: 'pause-reward', scope: '.ap-kit-stack > *:last-child', after: clearReward, open: async (page) => { await giveReward(page); await page.evaluate(() => { void window.__AP.screens.pauseMenu() }); await page.waitForTimeout(700); await touchActivity(page) } },
@@ -765,6 +790,11 @@ export async function measureScreen(page, screen, shot) {
     result.warnings.push(...sprites.warnings)
     result.stats = { ...result.stats, battle: sprites.stats }
   }
+  if (screen.scope !== '.apb-root') {
+    const pad = await page.evaluate(auditTouchPad)
+    result.violations.push(...pad.violations)
+    if (pad.stats) result.stats = { ...result.stats, touchPad: pad.stats }
+  }
   await page.screenshot({ path: shot })
   return result
 }
@@ -801,11 +831,21 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
       if (!nt.tags.length) violations.push({ type: 'name-tag', sel: 'actors', text: '', detail: 'no visible name tag could be measured' })
       await record({ id: 'name-tags' }, { violations, warnings: [], stats: { tags: nt.tags.length } }, '')
     }
+    const stuck = []
+    let prevId = ''
+    let closedChecks = 0
     for (const screen of SCREENS) {
       if (only && !only.includes(screen.id)) continue
       if (screen.touchOnly && !vp.touch) continue
       try {
         if (!(await closeAll(page))) await restore()
+        else if (vp.touch && prevId) {
+          // closeAll waits for the stack to empty; the pad must be back (the closing panel carries .ap-pushed-out)
+          const back = await page.evaluate(auditTouchPad)
+          closedChecks++
+          stuck.push(...back.violations.filter((v) => v.type === 'touch-pad-hidden').map((v) => ({ ...v, sel: prevId, detail: `after closing "${prevId}": ${v.detail}` })))
+        }
+        prevId = screen.id
         await screen.open(page)
         if (!screen.keepToasts) await page.evaluate(() => document.querySelectorAll('.ap-toast').forEach((n) => n.remove()))
         await hideTips(page, screen.id !== 'tip' && !screen.tip)
@@ -825,6 +865,13 @@ export async function runLayoutAudit({ task, base, phase = 'after', viewports = 
       } catch (err) {
         await record(screen, { violations: [{ type: 'harness', sel: screen.id, text: '', detail: String(err.message).slice(0, 200) }], warnings: [], stats: {} }, '')
       }
+    }
+    if (vp.touch && prevId) {
+      if (await closeAll(page)) {
+        closedChecks++
+        stuck.push(...(await page.evaluate(auditTouchPad)).violations.filter((v) => v.type === 'touch-pad-hidden').map((v) => ({ ...v, sel: prevId, detail: `after closing "${prevId}": ${v.detail}` })))
+      }
+      await record({ id: 'touch-pad-restore' }, { violations: stuck, warnings: [], stats: { closedChecks } }, '')
     }
     if (!only || BATTLE_SCREENS.some((s) => only.includes(s.id))) {
       // A wild battle is scripted by the game and can end on its own; one clean restart before a failure counts.

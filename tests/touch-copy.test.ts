@@ -65,3 +65,9 @@ test('the battle, save and hud cards have a phone wording, and the prologue line
     assert.doesNotMatch(text, KEYBOARD_WORDS, `${key}: keyboard wording in the prologue`)
   }
 })
+
+test('the minimap tip tells a phone to tap the radar, and the enlarged map says how to close', () => {
+  assert.match(t('tutorial.tip.hud.bodyTouch'), /点右上角的小地图可以放大/)
+  assert.match(t('tutorial.manual.hud.bodyTouch'), /点右上角的小地图可以放大/)
+  assert.doesNotMatch(t('hud.minimap.closeTouch'), KEYBOARD_WORDS)
+})

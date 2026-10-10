@@ -100,6 +100,8 @@
   min-height: calc(var(--u) * 16);
   color: var(--ap-text-dim);
 }
+/* Touch screens carry no key-cap hints: an empty footer takes no room. */
+.aps-foot:empty { display: none; }
 html.ap-compact .aps-foot { justify-content: center; }
 html.ap-compact .aps-title { font-size: var(--ap-fs-body); line-height: calc(var(--u) * 16); }
 html.ap-compact .aps-head { min-height: calc(var(--u) * 22); }
@@ -479,14 +481,11 @@ html.ap-compact .aps-starter-layout { justify-content: center; }
 /* ------------------------------------------------------------------ pause */
 
 .aps-pause {
-  --ap-bottom-inset: 0px;
   background: rgba(9, 15, 25, 0.78);
   -webkit-backdrop-filter: blur(calc(var(--u) * 1.5)) saturate(0.75);
   backdrop-filter: blur(calc(var(--u) * 1.5)) saturate(0.75);
 }
-html:not(.ap-battle-on):has(.ap-kit-stack > .aps-pause):not(:has(.aps-pause ~ .aps-screen:not(.ap-pushed-out))) .ap-touch { visibility: hidden; }
 .aps-pause .aps-frame { flex: 0 1 auto; width: min(100%, calc(var(--u) * 460)); margin: auto; max-height: 100%; }
-.aps-pause .aps-foot:empty { display: none; }
 .aps-pause-clock { color: var(--ap-text-dim); }
 .aps-pause .aps-body { flex: 0 1 auto; overflow-y: auto; padding: calc(var(--u) * 2); }
 .aps-pause-layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); align-items: stretch; gap: calc(var(--u) * 12); }
@@ -1139,11 +1138,6 @@ html[data-touch-controls='on'] .aps-map-town { min-width: 46px; min-height: 46px
 html[data-touch-controls='on'] .aps-wm-act { min-width: 46px; min-height: 46px; }
 html[data-touch-controls='on'] .aps-map-town.is-anchor { min-width: 46px; min-height: 46px; }
 
-/* On a phone the map and the destination picker own the whole display (like pause / type chart): no overworld pad underneath. */
-.aps-map, .aps-anchor { --ap-bottom-inset: 0px; }
-html:not(.ap-battle-on):has(.ap-kit-stack > .aps-map):not(:has(.aps-map ~ .aps-screen:not(.ap-pushed-out))) .ap-touch,
-html:not(.ap-battle-on):has(.ap-kit-stack > .aps-anchor):not(:has(.aps-anchor ~ .aps-screen:not(.ap-pushed-out))) .ap-touch { visibility: hidden; }
-.aps-map .aps-foot:empty, .aps-anchor .aps-foot:empty { display: none; }
 
 /* ------------------------------------------------------------------ nature picker (persona card) */
 
