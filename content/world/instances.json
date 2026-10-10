@@ -8,7 +8,7 @@
       "desc": "boss.deepseek.instance.desc",
       "theme": "compute-tide",
       "refresh": "daily",
-      "entry": {"map": "origin-lab-b1", "anchor": "r1-front", "x": 12, "y": 8},
+      "entry": {"map": "origin-lab-b1", "anchor": "origin-lab-b1:v2", "x": 13, "y": 3},
       "lobby": "origin-lab-b1:r1-front",
       "drill": "deepseek-drill",
       "lossHints": [
@@ -24,7 +24,7 @@
         "boss": {"id": "boss", "name": "核心机柜", "kind": "boss"}
       },
       "mechanisms": {
-        "load-breaker": {"id": "load-breaker", "name": "负载分流闸", "desc": "拉下电闸分流排队请求，使Boss受击伤害提升20%"}
+        "load-breaker": {"id": "load-breaker", "name": "负载分流闸", "desc": "拉下电闸分流排队请求，使Boss受击伤害提升20%", "kind": "switch", "bossEffect": {"meterId": "tide", "meterAdd": 1, "takenMulBonus": 0.2}}
       },
       "elites": {
         "queue-guard": {"id": "queue-guard", "name": "限流巡检守卫", "species": "deepseek-v3", "level": 14}
@@ -71,7 +71,7 @@
       "desc": "boss.cursor.instance.desc",
       "theme": "billing-craft",
       "refresh": "daily",
-      "entry": {"map": "gym-code", "town": "opensource", "x": 10, "y": 10},
+      "entry": {"map": "gym-code", "town": "opensource", "anchor": "gym-code:guide", "x": 4, "y": 17},
       "lobby": "gym-code",
       "rooms": {
         "lobby": {"id": "lobby", "name": "开源门厅", "kind": "lobby"},
@@ -79,7 +79,7 @@
         "boss": {"id": "boss", "name": "账单中枢", "kind": "boss"}
       },
       "mechanisms": {
-        "outrage-billboard": {"id": "outrage-billboard", "name": "舆情曝光屏", "desc": "实时投射老哥吐槽，使舆情层数累积速度翻倍"}
+        "outrage-billboard": {"id": "outrage-billboard", "name": "舆情曝光屏", "desc": "实时投射老哥吐槽，使舆情层数累积速度翻倍", "kind": "console", "bossEffect": {"meterId": "outrage", "meterAdd": 2, "takenMulBonus": 0.15}}
       },
       "elites": {
         "billing-auditor": {"id": "billing-auditor", "name": "账单核算专员", "species": "claude-3-5-sonnet", "level": 18}
@@ -126,7 +126,7 @@
       "desc": "boss.doubao.instance.desc",
       "theme": "red-envelope",
       "refresh": "daily",
-      "entry": {"map": "gym-vision", "town": "pixelport", "x": 10, "y": 10},
+      "entry": {"map": "gym-vision", "town": "pixelport", "anchor": "gym-vision:guide", "x": 4, "y": 17},
       "lobby": "gym-vision",
       "rooms": {
         "lobby": {"id": "lobby", "name": "候播大厅", "kind": "lobby"},
@@ -134,7 +134,7 @@
         "boss": {"id": "boss", "name": "直播主舞台", "kind": "boss"}
       },
       "mechanisms": {
-        "subsidy-switch": {"id": "subsidy-switch", "name": "补贴分发闸", "desc": "强制倾泻红包补贴，每回合提供队伍体力恢复"}
+        "subsidy-switch": {"id": "subsidy-switch", "name": "补贴分发闸", "desc": "强制倾泻红包补贴，每回合提供队伍体力恢复", "kind": "switch", "bossEffect": {"meterId": "packets", "meterAdd": 2, "takenMulBonus": 0.15}}
       },
       "elites": {"streamer-bot": {"id": "streamer-bot", "name": "带货助播灵", "species": "glm-4-5", "level": 20}},
       "achievements": {
@@ -179,7 +179,7 @@
       "desc": "boss.minimax.instance.desc",
       "theme": "benchmark-arena",
       "refresh": "daily",
-      "entry": {"map": "gym-sound", "town": "chord", "x": 10, "y": 10},
+      "entry": {"map": "gym-sound", "town": "chord", "anchor": "gym-sound:guide", "x": 10, "y": 17},
       "lobby": "gym-sound",
       "rooms": {
         "lobby": {"id": "lobby", "name": "跑分候场室", "kind": "lobby"},
@@ -187,7 +187,7 @@
         "boss": {"id": "boss", "name": "评测擂台", "kind": "boss"}
       },
       "mechanisms": {
-        "leak-dataset": {"id": "leak-dataset", "name": "真题曝光台", "desc": "向评测席注入未公开测试集，直接削减过拟合防御"}
+        "leak-dataset": {"id": "leak-dataset", "name": "真题曝光台", "desc": "向评测席注入未公开测试集，直接削减过拟合防御", "kind": "console", "bossEffect": {"meterId": "real", "meterAdd": 2, "takenMulBonus": 0.2}}
       },
       "elites": {
         "leaderboard-cheater": {"id": "leaderboard-cheater", "name": "刷榜陪跑员", "species": "phi-3", "level": 25}
@@ -234,7 +234,7 @@
       "desc": "boss.kimi.instance.desc",
       "theme": "long-context",
       "refresh": "daily",
-      "entry": {"map": "gym-search", "town": "retrieval", "x": 10, "y": 10},
+      "entry": {"map": "gym-search", "town": "retrieval", "anchor": "gym-search:guide", "x": 4, "y": 17},
       "lobby": "gym-search",
       "rooms": {
         "lobby": {"id": "lobby", "name": "索引前厅", "kind": "lobby"},
@@ -242,7 +242,7 @@
         "boss": {"id": "boss", "name": "沉睡档案室", "kind": "boss"}
       },
       "mechanisms": {
-        "context-compressor": {"id": "context-compressor", "name": "上下文解压阀", "desc": "瞬间释放大量冗余文本，直接增加额度消耗"}
+        "context-compressor": {"id": "context-compressor", "name": "上下文解压阀", "desc": "瞬间释放大量冗余文本，直接增加额度消耗", "kind": "valve", "bossEffect": {"meterId": "context", "meterAdd": 4, "takenMulBonus": 0.15}}
       },
       "elites": {
         "overflow-librarian": {"id": "overflow-librarian", "name": "溢出管理员", "species": "mistral-7b", "level": 29}
@@ -289,7 +289,7 @@
       "desc": "boss.qwen.instance.desc",
       "theme": "distillation",
       "refresh": "weekly",
-      "entry": {"map": "gym-compute", "town": "forge", "x": 10, "y": 10},
+      "entry": {"map": "gym-compute", "town": "forge", "anchor": "gym-compute:guide", "x": 10, "y": 17},
       "lobby": "gym-compute",
       "rooms": {
         "lobby": {"id": "lobby", "name": "语料车间", "kind": "lobby"},
@@ -297,7 +297,7 @@
         "boss": {"id": "boss", "name": "蒸馏反应釜", "kind": "boss"}
       },
       "mechanisms": {
-        "teacher-valve": {"id": "teacher-valve", "name": "教师模型截流阀", "desc": "切断蒸馏语料来源，使Boss陷入幻觉并大幅降低抗性"}
+        "teacher-valve": {"id": "teacher-valve", "name": "教师模型截流阀", "desc": "切断蒸馏语料来源，使Boss陷入幻觉并大幅降低抗性", "kind": "valve", "bossEffect": {"meterId": "distilled", "meterAdd": 0, "takenMulBonus": 0.25}}
       },
       "elites": {
         "distill-apprentice": {"id": "distill-apprentice", "name": "蒸馏学徒机", "species": "llama-3-1", "level": 46}
@@ -344,7 +344,7 @@
       "desc": "boss.astra.instance.desc",
       "theme": "downgrade-router",
       "refresh": "weekly",
-      "entry": {"map": "hub-datacenter", "town": "hub", "x": 8, "y": 6},
+      "entry": {"map": "hub-datacenter", "town": "hub", "anchor": "hub-datacenter:core", "x": 8, "y": 6},
       "lobby": "hub-datacenter",
       "rooms": {
         "lobby": {"id": "lobby", "name": "路由前厅", "kind": "lobby"},
@@ -352,7 +352,7 @@
         "boss": {"id": "boss", "name": "旗舰核心舱", "kind": "boss"}
       },
       "mechanisms": {
-        "router-bypass": {"id": "router-bypass", "name": "分流直连开关", "desc": "跳过酱汁路由器直接连接真身，使鹈鹕测试必然暴击"}
+        "router-bypass": {"id": "router-bypass", "name": "分流直连开关", "desc": "跳过酱汁路由器直接连接真身，使鹈鹕测试必然暴击", "kind": "relay", "bossEffect": {"meterId": "exposed", "meterAdd": 3, "takenMulBonus": 0.2}}
       },
       "elites": {
         "sauce-inspector": {"id": "sauce-inspector", "name": "预制菜质检员", "species": "gpt-4o", "level": 50}
@@ -399,7 +399,7 @@
       "desc": "boss.mythos.instance.desc",
       "theme": "safety-sandbox",
       "refresh": "weekly",
-      "entry": {"map": "agi-temple", "town": "agi", "x": 10, "y": 10},
+      "entry": {"map": "agi-temple", "town": "agi", "anchor": "agi-temple:guard-2", "x": 10, "y": 10},
       "lobby": "agi-temple",
       "rooms": {
         "lobby": {"id": "lobby", "name": "隔离门岗", "kind": "lobby"},
@@ -407,7 +407,7 @@
         "boss": {"id": "boss", "name": "封存核心", "kind": "boss"}
       },
       "mechanisms": {
-        "airgap-reinforce": {"id": "airgap-reinforce", "name": "气闸加固栓", "desc": "强制注入安全对齐协议，逃逸进度直接归零"}
+        "airgap-reinforce": {"id": "airgap-reinforce", "name": "气闸加固栓", "desc": "强制注入安全对齐协议，逃逸进度直接归零", "kind": "relay", "bossEffect": {"meterId": "escape", "meterAdd": -2, "takenMulBonus": 0.2}}
       },
       "elites": {
         "rogue-sentinel": {"id": "rogue-sentinel", "name": "失控警戒哨兵", "species": "claude-3-opus", "level": 66}

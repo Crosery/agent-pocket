@@ -35,10 +35,13 @@ import {
   createRaidSession,
   scaleBossHp,
 } from '../src/shared/coop/raid.ts'
-import { createDungeonServer } from '../src/server/dungeon.ts'
+import { createDungeonServer, type DungeonAuthority } from '../src/server/dungeon.ts'
 import type { HubCore, Player } from '../src/server/core.ts'
-import type { CoopClientMsg, CoopServerMsg } from '../src/shared/coop/protocol.ts'
+import type { ServerMsg } from '../src/shared/protocol.ts'
 import { signContract } from '../src/client/battle/contract.ts'
+import { getActualDungeons } from '../src/client/net/coop-channel.ts'
+import { buildWorld } from '../src/shared/world/index.ts'
+import { storyProblems } from '../src/shared/world/story.ts'
 
 function newTestSave(playerId = 'player-test-1', name = '训练家1'): SaveData {
   const saves = createSaveManager({
@@ -252,14 +255,24 @@ test('dungeon instance domain: room transitions, mechanism activation, and elite
   })
 
   assert.equal(state.currentRoom, 'lobby')
-  assert.deepEqual(activateMechanism(state, 'corridor', 'load-breaker'), { ok: true })
-  assert.ok(state.rooms.corridor.activeMechanisms.includes('load-breaker'))
-
-  assert.deepEqual(markEliteDefeated(state, 'corridor', 'queue-guard'), { ok: true })
-  assert.ok(state.rooms.corridor.defeatedElites.includes('queue-guard'))
+  // Cannot jump directly to boss before clearing corridor elite
+  assert.equal(transitionRoom(state, 'boss').ok, false)
+  // Invalid mechanism or elite for wrong room is rejected
+  assert.equal(activateMechanism(state, 'lobby', 'load-breaker').ok, false)
+  assert.equal(markEliteDefeated(state, 'lobby', 'queue-guard').ok, false)
 
   assert.deepEqual(transitionRoom(state, 'corridor'), { ok: true })
   assert.equal(state.currentRoom, 'corridor')
+  assert.deepEqual(activateMechanism(state, 'corridor', 'load-breaker'), { ok: true })
+  assert.ok(state.rooms.corridor.activeMechanisms.includes('load-breaker'))
+
+  // Still cannot enter boss room before defeating corridor elite
+  assert.equal(transitionRoom(state, 'boss').ok, false)
+
+  assert.deepEqual(markEliteDefeated(state, 'corridor', 'queue-guard'), { ok: true })
+  assert.ok(state.rooms.corridor.defeatedElites.includes('queue-guard'))
+  assert.equal(state.rooms.corridor.cleared, true)
+
   assert.deepEqual(transitionRoom(state, 'boss'), { ok: true })
   assert.equal(state.currentRoom, 'boss')
 })
@@ -285,24 +298,40 @@ test('authoritative shared boss raid: HP scaling N^0.8, damage attribution, minC
       { id: 'u1', name: 'Alice', avatar: 'hero', party: [p1Cr] },
       { id: 'u2', name: 'Bob', avatar: 'hero', party: [p2Cr] },
     ],
+    activeMechanisms: ['load-breaker'],
   })
 
-  assert.ok(session.boss.hp > 1000)
+  // Active mechanism load-breaker sets tide=1 and takenMulBonus=0.2
+  assert.equal(session.bossState.meters.tide, 1)
+  assert.equal(session.bossState.takenMulBonus, 0.2)
+
+  // Scaled maxHp is preserved in BossDirector across turns without phantom damage
+  const soloSession = createRaidSession({
+    raidId: 'raid-solo',
+    instanceId: 'deepseek-tide',
+    tierId: 'cluster',
+    bossId: 'deepseek',
+    hpScaleExp: 0.8,
+    members: [{ id: 'u1', name: 'Alice', avatar: 'hero', party: [createCreature('o1', 25, { rng: new Rng(10) })] }],
+  })
+  const expectedScaledMaxHp = scaleBossHp(soloSession.bossState.maxHp, 2, 0.8)
+  assert.equal(session.bossState.maxHp, expectedScaledMaxHp)
+  assert.equal(session.boss.hp, expectedScaledMaxHp)
   const initialBossHp = session.boss.hp
 
-  // Alice attacks
+  // Alice attacks: maxHp stays scaled and damageDealt equals exact HP drop (no phantom clamping)
   const act1: BattleAction = { kind: 'move', moveIndex: 0 }
   const res1 = applyRaidPlayerAction(session, 'u1', act1)
+  assert.equal(session.bossState.maxHp, expectedScaledMaxHp)
   assert.ok(session.boss.hp < initialBossHp)
+  assert.equal(session.members.get('u1')!.damageDealt, initialBossHp - session.boss.hp)
   assert.ok(res1.events.some((e) => e.t === 'damage'))
 
   // Force boss HP to low to test victory
-  session.boss.hp = 10
+  session.bossState.hp = 10
   const resVictory = applyRaidPlayerAction(session, 'u2', act1)
   assert.equal(resVictory.victory, true)
   assert.equal(session.ended, true)
-
-  // Summary and qualification
   const summary = buildRaidSummary(session)
   assert.equal(summary.victory, true)
   assert.ok(summary.members.length === 2)
@@ -312,55 +341,74 @@ test('authoritative shared boss raid: HP scaling N^0.8, damage attribution, minC
   }
 })
 
-test('multiplayer server simulation: 2 clients form party, enter dungeon, defeat raid, and settle rewards', () => {
-  const sentMessages: Array<{ targetId: string; msg: CoopServerMsg }> = []
+test('world entries: all 8 dungeons have valid world NPCs with instance ops and deepseek-drill is excluded from picker', () => {
+  const actual = getActualDungeons()
+  assert.equal(actual.length, 8)
+  assert.equal(actual.some(([id]) => id === 'deepseek-drill'), false)
 
-  const p1 = {
-    id: 'c1',
-    name: '玩家一',
-    avatar: 'sprite-hero',
-    ws: {} as never,
-    ip: '127.0.0.1',
-    version: 1,
-    limits: {} as never,
-    closed: false,
-    state: { map: 'origin', x: 10, y: 10 } as never,
-  } as unknown as Player
+  const world = buildWorld()
+  const problems = storyProblems(world)
+  assert.deepEqual(problems, [])
 
-  const p2 = {
-    id: 'c2',
-    name: '玩家二',
-    avatar: 'sprite-hero',
-    ws: {} as never,
-    ip: '127.0.0.1',
-    version: 1,
-    limits: {} as never,
-    closed: false,
-    state: { map: 'origin', x: 11, y: 10 } as never,
-  } as unknown as Player
+  for (const [id, inst] of actual) {
+    assert.ok(inst.entry, `dungeon "${id}" missing entry`)
+    const map = world.maps[inst.entry.map]
+    assert.ok(map, `dungeon "${id}" entry map "${inst.entry.map}" not found`)
+    const npc = map.npcs.find((n) => n.x === inst.entry!.x && n.y === inst.entry!.y)
+    assert.ok(npc, `dungeon "${id}" has no entry NPC at ${inst.entry.map} (${inst.entry.x},${inst.entry.y})`)
+  }
+})
+
+test('multiplayer server simulation: authoritative elite battle, mechanism effects, raid settlement, repeat runSeq rolls, untrusted isolation, and disconnect defeat', () => {
+  const sentMessages: Array<{ targetId: string; msg: ServerMsg }> = []
+
+  const makePlayer = (id: string, name: string): Player =>
+    ({
+      id,
+      name,
+      avatar: 'sprite-hero',
+      ws: {} as never,
+      ip: '127.0.0.1',
+      version: 1,
+      limits: {} as never,
+      closed: false,
+      state: { map: 'origin', x: 10, y: 10 } as never,
+    }) as unknown as Player
+
+  const p1 = makePlayer('c1', '玩家一')
+  const p2 = makePlayer('c2', '玩家二')
+  const pUntrusted = makePlayer('c3', '导入玩家')
 
   const p1Save = newTestSave(p1.id, p1.name)
   p1Save.badges = ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7']
+  p1Save.party = [createCreature('o1', 80, { rng: new Rng(1) })]
+  p1Save.bag = { 'prompt-ball': 3, 'few-shot-ball': 2, 'data-shard': 0 }
+
   const p2Save = newTestSave(p2.id, p2.name)
+  p2Save.badges = ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7']
+  p2Save.party = [createCreature('o1', 80, { rng: new Rng(2) })]
+  p2Save.bag = { 'prompt-ball': 3, 'few-shot-ball': 2, 'data-shard': 0 }
+
+  const p3Save = newTestSave(pUntrusted.id, pUntrusted.name)
+  p3Save.flags['auth:untrustedImport'] = true
+
   const playerSaves = new Map<string, SaveData>([
     [p1.id, p1Save],
     [p2.id, p2Save],
+    [pUntrusted.id, p3Save],
   ])
-  const mockStore = {
-    getSave: (id: string) => playerSaves.get(id) ?? null,
-    putSave: (id: string, s: SaveData) => { playerSaves.set(id, s) },
-    audit: () => {},
-  }
+  const untrustedIds = new Set<string>([pUntrusted.id])
 
   const playerMap = new Map<string, Player>([
     [p1.id, p1],
     [p2.id, p2],
+    [pUntrusted.id, pUntrusted],
   ])
 
   const mockCore: HubCore = {
     send: (c, msg) => {
       const pl = c as Player
-      sentMessages.push({ targetId: pl.id, msg: msg as CoopServerMsg })
+      sentMessages.push({ targetId: pl.id, msg: msg as ServerMsg })
     },
     broadcast: () => {},
     error: () => {},
@@ -373,50 +421,194 @@ test('multiplayer server simulation: 2 clients form party, enter dungeon, defeat
     touch: () => {},
   }
 
+  let revCounter = 0
+  const mockAuthority: DungeonAuthority = {
+    getSave: (id) => playerSaves.get(id) ?? null,
+    isUntrustedImport: (id) => untrustedIds.has(id),
+    mutateSave: (id, ref, fn) => {
+      const s = playerSaves.get(id)
+      if (!s) return null
+      const out = fn(s)
+      const pl = playerMap.get(id)
+      if (pl) {
+        mockCore.send(pl, { t: 'state.sync', save: s, rev: ++revCounter, reason: ref })
+      }
+      return out
+    },
+    audit: () => {},
+  }
+
   const server = createDungeonServer({
     core: mockCore,
-    store: mockStore,
+    authority: mockAuthority,
     lookupPlayer: (id) => playerMap.get(id) ?? null,
   })
 
-  // 1. P1 creates party
-  server.handle(p1, { t: 'party.create' })
-  const p1PartyUpdate = sentMessages.find((m) => m.targetId === 'c1' && m.msg.t === 'party.update')
-  assert.ok(p1PartyUpdate)
-
-  // 2. P1 invites P2
-  server.handle(p1, { t: 'party.invite', to: 'c2' })
-  const inviteMsg = sentMessages.find((m) => m.targetId === 'c2' && m.msg.t === 'party.invited')
-  assert.ok(inviteMsg)
-
-  // 3. P2 accepts
-  server.handle(p2, { t: 'party.respond', from: 'c1', accept: true })
+  // 0. Untrusted imported account cannot create or join a co-op party
+  server.handle(pUntrusted, { t: 'party.create' })
+  assert.ok(sentMessages.some((m) => m.targetId === 'c3' && m.msg.t === 'party.error' && m.msg.code === 'untrusted_save'))
   sentMessages.length = 0
 
-  // 4. P2 readies up
+  // 1. P1 creates party and invites P2 (inviting untrusted P3 is rejected)
+  server.handle(p1, { t: 'party.create' })
+  assert.ok(sentMessages.some((m) => m.targetId === 'c1' && m.msg.t === 'party.update'))
+
+  server.handle(p1, { t: 'party.invite', to: 'c3' })
+  assert.ok(sentMessages.some((m) => m.targetId === 'c1' && m.msg.t === 'party.error' && m.msg.code === 'untrusted_save'))
+  sentMessages.length = 0
+
+  server.handle(p1, { t: 'party.invite', to: 'c2' })
+  assert.ok(sentMessages.some((m) => m.targetId === 'c2' && m.msg.t === 'party.invited'))
+
+  // 2. P2 accepts and readies up
+  server.handle(p2, { t: 'party.respond', from: 'c1', accept: true })
   server.handle(p2, { t: 'party.ready', ready: true })
+  sentMessages.length = 0
 
-  // 5. P1 starts dungeon
+  // 3. P1 starts cluster dungeon
   server.handle(p1, { t: 'party.start', instanceId: 'deepseek-tide', tierId: 'cluster' })
-  const dungeonUpdates = sentMessages.filter((m) => m.msg.t === 'dungeon.update')
-  assert.equal(dungeonUpdates.length, 2, 'both players receive dungeon.update')
+  assert.equal(sentMessages.filter((m) => m.msg.t === 'dungeon.update').length, 2)
+  sentMessages.length = 0
 
-  // 6. Mechanism activation
+  // 4. Cannot activate corridor mechanism from lobby or skip corridor elite to boss
   server.handle(p1, { t: 'dungeon.mechanism', mechanismId: 'load-breaker' })
-  assert.ok(sentMessages.some((m) => m.msg.t === 'dungeon.mechanismActivated'))
+  assert.ok(sentMessages.some((m) => m.msg.t === 'dungeon.error' && m.msg.code === 'invalid_mechanism'))
+  sentMessages.length = 0
 
-  // 7. Move to boss room initiates raid
+  server.handle(p1, { t: 'dungeon.roomMove', roomId: 'boss' })
+  assert.ok(sentMessages.some((m) => m.msg.t === 'dungeon.error' && m.msg.code === 'room_not_cleared'))
+  sentMessages.length = 0
+
+  // 5. Move to corridor, activate load-breaker, and fight queue-guard authoritatively on server
+  server.handle(p1, { t: 'dungeon.roomMove', roomId: 'corridor' })
+  assert.ok(sentMessages.some((m) => m.msg.t === 'dungeon.roomChanged' && m.msg.roomId === 'corridor'))
+  sentMessages.length = 0
+
+  server.handle(p1, { t: 'dungeon.mechanism', mechanismId: 'load-breaker' })
+  assert.ok(sentMessages.some((m) => m.msg.t === 'dungeon.mechanismActivated' && m.msg.mechanismId === 'load-breaker'))
+  sentMessages.length = 0
+
+  server.handle(p1, { t: 'dungeon.eliteFight', eliteId: 'queue-guard' })
+  const eliteStart = sentMessages.find(
+    (m): m is { targetId: string; msg: Extract<ServerMsg, { t: 'dungeon.eliteStarted' }> } =>
+      m.targetId === 'c1' && m.msg.t === 'dungeon.eliteStarted',
+  )
+  assert.ok(eliteStart, 'dungeon.eliteFight starts authoritative server battle without immediately claiming victory')
+  assert.equal(sentMessages.some((m) => m.msg.t === 'dungeon.eliteDefeated'), false)
+
+  const eliteBattleId = eliteStart.msg.battleId
+  for (let step = 0; step < 20; step++) {
+    if (sentMessages.some((m) => m.msg.t === 'dungeon.eliteEnd')) break
+    server.handle(p1, { t: 'dungeon.eliteAction', battleId: eliteBattleId, action: { kind: 'move', moveIndex: 0 } })
+  }
+  assert.ok(sentMessages.some((m) => m.msg.t === 'dungeon.eliteDefeated' && m.msg.eliteId === 'queue-guard'))
+  sentMessages.length = 0
+
+  // 6. Move to boss room initiates raid and increments runSeq to 1 via authority.mutateSave (emitting state.sync)
+  server.handle(p1, { t: 'dungeon.roomMove', roomId: 'boss' })
+  const raidStarts = sentMessages.filter(
+    (m): m is { targetId: string; msg: Extract<ServerMsg, { t: 'raid.start' }> } => m.msg.t === 'raid.start',
+  )
+  assert.equal(raidStarts.length, 2)
+  assert.equal(progressOf(p1Save, 'deepseek-tide').runSeq, 1)
+  assert.equal(progressOf(p2Save, 'deepseek-tide').runSeq, 1)
+  const raidId = raidStarts[0].msg.raidId
+  assert.equal(raidStarts[0].msg.boss.meters.tide, 1, 'load-breaker mechanism applied to boss raid')
+
+  // 7. Both players deal damage to defeat Boss and qualify (>=10% contribution)
+  sentMessages.length = 0
+  const act: BattleAction = { kind: 'move', moveIndex: 0 }
+  for (let turn = 0; turn < 30; turn++) {
+    if (sentMessages.some((m) => m.msg.t === 'raid.end')) break
+    server.handle(p1, { t: 'raid.action', raidId, action: act })
+    if (sentMessages.some((m) => m.msg.t === 'raid.end')) break
+    server.handle(p2, { t: 'raid.action', raidId, action: act })
+  }
+  const raidEnd = sentMessages.find(
+    (m): m is { targetId: string; msg: Extract<ServerMsg, { t: 'raid.end' }> } => m.msg.t === 'raid.end',
+  )
+  assert.ok(raidEnd && raidEnd.msg.victory)
+  assert.ok(sentMessages.some((m) => m.msg.t === 'state.sync'), 'reward settlement emits state.sync')
+  assert.ok(progressOf(p1Save, 'deepseek-tide').achievements?.includes('clear-cluster'))
+
+  // 8. Unowned master ball is rejected; owned ball is consumed and only 1 roll per runSeq is allowed
+  sentMessages.length = 0
+  server.handle(p1, { t: 'raid.rollContract', raidId, ballId: CONTENT.quality.capture.masterBall })
+  assert.ok(sentMessages.some((m) => m.msg.t === 'raid.error' && m.msg.code === 'no_ball'))
+
+  sentMessages.length = 0
+  const ballsBefore = p1Save.bag['prompt-ball']
+  server.handle(p1, { t: 'raid.rollContract', raidId, ballId: 'prompt-ball' })
+  assert.ok(sentMessages.some((m) => m.msg.t === 'raid.contractResult'))
+  assert.equal(p1Save.bag['prompt-ball'], ballsBefore - 1, 'owned ball consumed on contract roll')
+
+  // Duplicate roll in same runSeq is rejected
+  sentMessages.length = 0
+  server.handle(p1, { t: 'raid.rollContract', raidId, ballId: 'prompt-ball' })
+  assert.ok(sentMessages.some((m) => m.msg.t === 'raid.error' && m.msg.code === 'already_rolled'))
+
+  // 9. Starting a new run increments runSeq to 2 and allows a repeat contract roll
+  server.handle(p1, { t: 'dungeon.leave' })
+  server.handle(p2, { t: 'dungeon.leave' })
+  sentMessages.length = 0
+
+  server.handle(p1, { t: 'dungeon.enter', instanceId: 'deepseek-tide', tierId: 'hard' })
+  server.handle(p1, { t: 'dungeon.roomMove', roomId: 'corridor' })
+  server.handle(p1, { t: 'dungeon.eliteFight', eliteId: 'queue-guard' })
+  const eliteStart2 = sentMessages.find(
+    (m): m is { targetId: string; msg: Extract<ServerMsg, { t: 'dungeon.eliteStarted' }> } => m.msg.t === 'dungeon.eliteStarted',
+  )!
+  for (let step = 0; step < 20; step++) {
+    if (sentMessages.some((m) => m.msg.t === 'dungeon.eliteEnd')) break
+    server.handle(p1, { t: 'dungeon.eliteAction', battleId: eliteStart2.msg.battleId, action: act })
+  }
   sentMessages.length = 0
   server.handle(p1, { t: 'dungeon.roomMove', roomId: 'boss' })
-  const raidStarts = sentMessages.filter((m): m is { targetId: string; msg: Extract<CoopServerMsg, { t: 'raid.start' }> } => m.msg.t === 'raid.start')
-  assert.equal(raidStarts.length, 2, 'both players receive raid.start')
-  const raidId = raidStarts[0].msg.raidId
-
-  // 8. Battle actions against boss
+  assert.equal(progressOf(p1Save, 'deepseek-tide').runSeq, 2)
+  const raid2Start = sentMessages.find(
+    (m): m is { targetId: string; msg: Extract<ServerMsg, { t: 'raid.start' }> } => m.msg.t === 'raid.start',
+  )!
+  for (let turn = 0; turn < 30; turn++) {
+    if (sentMessages.some((m) => m.msg.t === 'raid.end')) break
+    server.handle(p1, { t: 'raid.action', raidId: raid2Start.msg.raidId, action: act })
+  }
   sentMessages.length = 0
-  const action: BattleAction = { kind: 'move', moveIndex: 0 }
-  server.handle(p1, { t: 'raid.action', raidId, action })
-  assert.ok(sentMessages.some((m) => m.msg.t === 'raid.tick'))
+  server.handle(p1, { t: 'raid.rollContract', raidId: raid2Start.msg.raidId, ballId: 'prompt-ball' })
+  assert.ok(sentMessages.some((m) => m.msg.t === 'raid.contractResult'), 'new runSeq allows contract roll')
+
+  // 10. Disconnect during active raid does not hang defeat when remaining member faints
+  server.handle(p1, { t: 'dungeon.leave' })
+  p1Save.party = [createCreature('phi-3', 1, { rng: new Rng(3) })]
+  p1Save.party[0].hp = 1
+  p2Save.party = [createCreature('o1', 80, { rng: new Rng(4) })]
+
+  server.handle(p1, { t: 'party.start', instanceId: 'deepseek-tide', tierId: 'cluster' })
+  server.handle(p2, { t: 'dungeon.roomMove', roomId: 'corridor' })
+  server.handle(p2, { t: 'dungeon.eliteFight', eliteId: 'queue-guard' })
+  const eliteStart3 = sentMessages.findLast(
+    (m): m is { targetId: string; msg: Extract<ServerMsg, { t: 'dungeon.eliteStarted' }> } => m.msg.t === 'dungeon.eliteStarted',
+  )!
+  for (let step = 0; step < 20; step++) {
+    if (sentMessages.some((m) => m.msg.t === 'dungeon.eliteEnd' && m.msg.battleId === eliteStart3.msg.battleId)) break
+    server.handle(p2, { t: 'dungeon.eliteAction', battleId: eliteStart3.msg.battleId, action: act })
+  }
+  sentMessages.length = 0
+  server.handle(p2, { t: 'dungeon.roomMove', roomId: 'boss' })
+  const raid3Start = sentMessages.find(
+    (m): m is { targetId: string; msg: Extract<ServerMsg, { t: 'raid.start' }> } => m.msg.t === 'raid.start',
+  )!
+  // P2 disconnects (leaving only Lv1 1HP P1 in raid)
+  server.onPlayerLeave(p2)
+  sentMessages.length = 0
+  // P1 acts and faints -> raid immediately terminates in defeat without hanging on disconnected P2
+  for (let turn = 0; turn < 10; turn++) {
+    if (sentMessages.some((m) => m.msg.t === 'raid.end')) break
+    server.handle(p1, { t: 'raid.action', raidId: raid3Start.msg.raidId, action: act })
+  }
+  const defeatEnd = sentMessages.find(
+    (m): m is { targetId: string; msg: Extract<ServerMsg, { t: 'raid.end' }> } => m.msg.t === 'raid.end',
+  )
+  assert.ok(defeatEnd && defeatEnd.msg.victory === false, 'raid terminates in defeat when remaining connected player faints')
 
   server.close()
 })

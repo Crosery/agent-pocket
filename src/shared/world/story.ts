@@ -18,6 +18,7 @@ import type {
 } from '../types.ts'
 import { CONTENT, terrainId, typeEffectiveness } from '../content/index.ts'
 import { EXCHANGE } from '../gameplay/exchange.ts'
+import { GAMEPLAY } from '../gameplay/data.ts'
 import { worldAnchors, worldBuildInfo } from './index.ts'
 import { WORLD_CONTENT } from './data.ts'
 import { COLLISION_FREE, COLLISION_WATER, DIR_DX, DIR_DY, DIRS, buildCollision, canStep, inBounds } from './collision.ts'
@@ -586,7 +587,17 @@ export function walkSteps(steps: readonly ScriptStep[], fn: (s: ScriptStep, path
   steps.forEach((s, i) => {
     const p = `${path}${i}`
     fn(s, p)
-    if (s.op === 'ifFlag' || s.op === 'ifBadges' || s.op === 'ifItem' || s.op === 'ifCaught') {
+    if (
+      s.op === 'ifFlag' ||
+      s.op === 'ifBadges' ||
+      s.op === 'ifItem' ||
+      s.op === 'ifCaught' ||
+      s.op === 'ifInstance' ||
+      s.op === 'random' ||
+      s.op === 'ifTime' ||
+      s.op === 'ifWeather' ||
+      s.op === 'ifDex'
+    ) {
       if (Array.isArray(s.then)) walkSteps(s.then, fn, `${p}.then.`)
       if (Array.isArray(s.else)) walkSteps(s.else, fn, `${p}.else.`)
     } else if (s.op === 'choice' && Array.isArray(s.branches)) {
@@ -1567,6 +1578,43 @@ class StoryBuilder implements PopHost {
           case 'openTypeChart':
             if (s.type !== undefined && !CONTENT.typeById[s.type]) bad(`unknown type "${s.type}"`)
             if (s.view !== undefined && !['type', 'grid', 'loops'].includes(s.view)) bad(`unknown chart view "${s.view}"`)
+            break
+          case 'random':
+            if (typeof s.chance !== 'number' || s.chance < 0 || s.chance > 1) bad('chance must be 0..1')
+            list(s.then, 'then')
+            break
+          case 'ifTime':
+            if (!Array.isArray(s.times) || !s.times.length) bad('missing times')
+            list(s.then, 'then')
+            break
+          case 'ifWeather':
+            if (!Array.isArray(s.weather) || !s.weather.length) bad('missing weather')
+            list(s.then, 'then')
+            break
+          case 'ifDex':
+            if (typeof s.caughtAtLeast !== 'number') bad('caughtAtLeast must be a number')
+            list(s.then, 'then')
+            break
+          case 'triggerEvent':
+            str(s.event, 'event')
+            break
+          case 'revealPlace':
+            str(s.place, 'place')
+            break
+          case 'research':
+            if (!s.species || !CONTENT.species[s.species]) bad(`unknown species "${s.species}"`)
+            if (!s.task || !GAMEPLAY.research.tasks.some((t) => t.id === s.task)) bad(`unknown research task "${s.task}"`)
+            qty(s.amount)
+            break
+          case 'instance':
+            str(s.id, 'id')
+            if (!GAMEPLAY.instances[s.id]) bad(`unknown instance "${s.id}"`)
+            if (!['enter', 'room', 'leave'].includes(s.action)) bad(`unknown instance action "${s.action}"`)
+            break
+          case 'ifInstance':
+            str(s.id, 'id')
+            if (!GAMEPLAY.instances[s.id]) bad(`unknown instance "${s.id}"`)
+            list(s.then, 'then')
             break
           case 'chooseStarter': case 'heal': case 'openBox': case 'setRespawn': case 'end': break
           default: bad('unknown op')

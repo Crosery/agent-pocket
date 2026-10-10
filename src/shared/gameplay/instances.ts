@@ -227,8 +227,8 @@ export function contractOdds(
   currentPity = 0,
 ): ContractOddsResult {
   const base = isRepeat ? (tier.capture.repeat ?? tier.capture.first) : tier.capture.first
-  const maxPity = tier.capture.pity ?? (isRepeat ? 4 : 0)
-  const guaranteed = isRepeat && maxPity > 0 && currentPity >= maxPity
+  const maxPity = tier.capture.pity ?? 0
+  const guaranteed = maxPity > 0 && currentPity >= maxPity
   const chance = guaranteed ? 1.0 : Math.min(1.0, Math.max(0, base + ballBonus))
 
   // Theoretical average attempts under pity rule:
@@ -236,7 +236,7 @@ export function contractOdds(
   // When p is 0.35 with pity 3 -> 2.35; 0.25 with pity 4 -> 3.05; 0.15 with pity 5 -> 4.15
   let avgAttempts = 1.0
   if (chance > 0) {
-    if (maxPity > 0 && isRepeat) {
+    if (maxPity > 0 && (isRepeat || base < 1)) {
       let sum = 0
       let failAcc = 1
       for (let k = 1; k <= maxPity; k++) {
@@ -252,7 +252,6 @@ export function contractOdds(
       avgAttempts = Number((1 / chance).toFixed(2))
     }
   }
-
   return { chance, guaranteed, pity: currentPity, maxPity, avgAttempts }
 }
 
@@ -275,8 +274,8 @@ export function rollContractOutcome(
 export function dailyLockoutStatus(
   prog: InstanceProgress,
   periodKey: string,
-  rollLimit = GAMEPLAY.instanceDefaults?.dailyRollLimit ?? 3,
-  rewardLimit = GAMEPLAY.instanceDefaults?.dailyRewardLimit ?? 5,
+  rollLimit = GAMEPLAY.instanceDefaults.dailyRollLimit ?? 0,
+  rewardLimit = GAMEPLAY.instanceDefaults.dailyRewardLimit ?? 0,
 ): { canRoll: boolean; rollsLeft: number; canReward: boolean; rewardsLeft: number } {
   if (prog.day?.key !== periodKey) {
     prog.day = { key: periodKey, rolls: 0, rewards: 0 }

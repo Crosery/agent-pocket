@@ -13,7 +13,7 @@ import { createRowMenu, listMetrics, type RowMenu } from '../menu.ts'
 import { actionKeyLabel, append, button, creatureIcon, el, formatNumber, keyHint, panel, tabs, type TabsHandle } from '../widgets.ts'
 import { challengePvp } from '../../net/pvp-channel.ts'
 import { injectStyle, startTradeFlow, trackOnlineRoster, type RosterEntry } from '../../net/trade-flow.ts'
-import { getCoopChannel } from '../../net/coop-channel.ts'
+import { getCoopChannel, openPartyModal } from '../../net/coop-channel.ts'
 /** Client view of content/multiplayer.json → online + emotes. */
 export interface OnlineHubRules {
   tabs: TabId[]
@@ -411,7 +411,7 @@ export async function openOnline(ctx: GameContext): Promise<void> {
     const online = ctx.net.status === 'online'
     const reason = (a: PlayerAction): string | undefined => {
       if (!online) return t('multiplayer.online.actions.offline')
-      if (isSelf && a !== 'inspect') return t('multiplayer.online.actions.selfOnly')
+      if (isSelf && a !== 'inspect' && a !== 'party') return t('multiplayer.online.actions.selfOnly')
       if (p.busy && (a === 'trade' || a === 'battle')) return t('multiplayer.online.actions.busy')
       return undefined
     }
@@ -434,9 +434,14 @@ export async function openOnline(ctx: GameContext): Promise<void> {
       case 'party': {
         const channel = getCoopChannel()
         if (!channel) return
+        if (isSelf) {
+          openPartyModal(ctx)
+          return
+        }
         if (!channel.getParty()) channel.createParty()
         channel.inviteParty(p.id)
         ctx.ui.toast(`${t('multiplayer.party.invite')} -> ${p.name}`, 'info')
+        openPartyModal(ctx)
         return
       }
     }

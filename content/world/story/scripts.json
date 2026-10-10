@@ -353,5 +353,9 @@
   ],
   "ds-legacy-start": [
     {"op": "quest", "quest": "ds-legacy", "stage": 0}
+  ],
+  "dungeon-entry": [
+    {"op": "ifInstance", "id": "{instance}", "tier": "story", "clearedAtLeast": 1, "then": [{"op": "say", "text": "你已经通关过「{instanceName}」剧情档，可以挑战更高难度或组队进入集群版。"}], "else": [{"op": "say", "text": "这里是「{instanceName}」副本终端，支持单人挑战与好友组队讨伐。"}]},
+    {"op": "choice", "text": "要打开「{instanceName}」副本面板吗？", "options": ["进入副本面板", "稍后再来"], "branches": [[{"op": "instance", "id": "{instance}", "action": "enter"}], []]}
   ]
 }

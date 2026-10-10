@@ -167,7 +167,8 @@ export class BossDirector {
   /** Coach lines already spoken this fight, and the turn of the last one (one per turn). */
   private readonly coached: string[] = []
   private coachTurn = -1
-
+  private maxHpOverride: number | null = null
+  private takenMulBonus = 0
   constructor(def: BossDef, cr: Creature, host: BossHost) {
     this.def = def
     this.cr = cr
@@ -228,12 +229,21 @@ export class BossDirector {
     return (this.formDef().rules ?? []).filter((r) => bossCondHolds(r.if, ctx))
   }
 
+  private unscaledFormMaxHp(): number {
+    const baseHp = this.host.plainMaxHp(this.cr)
+    const mul = this.formDef().statMul?.hp ?? 1
+    return Math.max(1, Math.floor(baseHp * mul))
+  }
+
   /** Stats of the boss creature: the form's multipliers, then the active rules' (hp only from the form). */
   adjustStats(cr: Creature, stats: Stats): Stats {
     if (cr !== this.cr || this.restored) return stats
     const form = this.formDef().statMul ?? {}
     const out = { ...stats }
     for (const k of Object.keys(form) as (keyof Stats)[]) out[k] = Math.max(1, Math.floor(stats[k] * (form[k] ?? 1)))
+    if (this.maxHpOverride !== null && this.maxHpOverride > 0) {
+      out.hp = this.maxHpOverride
+    }
     if (this.active) {
       for (const r of this.rules(this.ctx(out.hp))) {
         for (const [k, m] of Object.entries(r.statMul ?? {}) as [keyof Stats, number][]) out[k] = Math.max(1, Math.floor(out[k] * m))
@@ -254,7 +264,7 @@ export class BossDirector {
     }
     if (dmg <= 0) return dmg
     const max = this.host.maxHp(this.cr)
-    let mul = 1
+    let mul = this.takenMulBonus > 0 ? 1 + this.takenMulBonus : 1
     let cap = Infinity
     for (const r of rules) {
       for (const e of r.takenMul ?? []) {
@@ -576,12 +586,19 @@ export class BossDirector {
   private switchForm(id: string): void {
     const form = this.def.forms[id]
     if (!form || id === this.core.form) return
+    const oldUnscaled = this.unscaledFormMaxHp()
     const ratio = this.cr.hp / Math.max(1, this.host.maxHp(this.cr))
     const from = this.cr.speciesId
     this.core.form = id
     this.core.formTurn = 0
     this.core.borrowed = []
     this.wear(form, false)
+    if (this.maxHpOverride !== null && this.maxHpOverride > 0) {
+      const newUnscaled = this.unscaledFormMaxHp()
+      if (oldUnscaled > 0 && newUnscaled !== oldUnscaled) {
+        this.maxHpOverride = Math.max(1, Math.round((this.maxHpOverride * newUnscaled) / oldUnscaled))
+      }
+    }
     if (!form.keepStages) this.host.clearStages(BOSS_SIDE)
     const max = this.host.maxHp(this.cr)
     this.cr.hp = this.cr.hp > 0 ? Math.min(max, Math.max(1, Math.round(ratio * max))) : 0
@@ -624,6 +641,7 @@ export class BossDirector {
       speciesId: this.cr.speciesId, abilityId: this.cr.abilityId, hp: this.cr.hp, maxHp: this.host.maxHp(this.cr),
       stages: { ...emptyStageRecord(), ...b.stages }, status: this.cr.status, statusTurns: this.cr.statusTurns, volatiles: b.volatiles,
       moves: this.cr.moves, recharging: b.recharging,
+      ...(this.takenMulBonus > 0 ? { takenMulBonus: this.takenMulBonus } : {}),
     })) as BossState
   }
 
@@ -642,7 +660,12 @@ export class BossDirector {
     this.cr.status = c.status
     this.cr.statusTurns = c.statusTurns
     this.host.setBattler({ stages: c.stages, volatiles: c.volatiles, recharging: c.recharging })
-    this.cr.hp = Math.max(0, Math.min(c.hp, this.host.maxHp(this.cr)))
+    if (typeof c.maxHp === 'number' && Number.isFinite(c.maxHp) && c.maxHp > 0) {
+      this.maxHpOverride = Math.max(1, Math.floor(c.maxHp))
+    }
+    this.takenMulBonus = typeof c.takenMulBonus === 'number' && Number.isFinite(c.takenMulBonus) && c.takenMulBonus > 0 ? c.takenMulBonus : 0
+    const max = this.host.maxHp(this.cr)
+    this.cr.hp = Math.max(0, Math.min(c.hp, max))
     this.pushHud(true)
   }
 }

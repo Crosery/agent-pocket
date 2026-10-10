@@ -869,6 +869,7 @@ export interface BossState {
   volatiles: Record<string, number>
   moves: MoveSlot[]
   recharging: boolean
+  takenMulBonus?: number
 }
 
 export type BattleAction =
@@ -1465,7 +1466,7 @@ export interface InstanceMechanismDef {
   /** Text key of the mechanism description / effect hint. */
   desc: string
   /** Kind of puzzle / interaction in the dungeon room. */
-  kind: 'switch' | 'console' | 'valve' | 'relay'
+  kind?: 'switch' | 'console' | 'valve' | 'relay'
   /** Activations needed (1 in solo; up to party size in co-op when coopScale is true). */
   required?: number
   coopScale?: boolean
@@ -1478,6 +1479,7 @@ export interface InstanceEliteDef {
   /** Text key of the elite guardian's title. */
   name: string
   species: string
+  level?: number
   levelOffset?: number
   trainer?: string
 }
@@ -1486,16 +1488,17 @@ export interface InstanceRoomDef {
   id: string
   /** Text key of the room name. */
   name: string
-  kind: 'lobby' | 'corridor' | 'boss'
+  kind: 'lobby' | 'corridor' | 'battle' | 'boss'
   map?: string
-  mechanisms?: InstanceMechanismDef[]
-  elites?: InstanceEliteDef[]
+  mechanisms?: Array<string | InstanceMechanismDef>
+  elites?: Array<string | InstanceEliteDef>
 }
 
 export interface InstanceAchievementDef {
   id: string
   /** Text key of the achievement title. */
-  name: string
+  name?: string
+  title?: string
   /** Text key of the achievement condition description. */
   desc: string
   tier?: string

@@ -15,7 +15,8 @@
     {"id": "os-fan", "at": "town:opensource:npc-5", "sprite": "villager_woman", "nameZh": "馆主的粉丝", "role": "villager", "lines": ["代码馆主·林，据说能在一夜之间重构整片森林的代码。", "{type:code}系的智灵最怕{weakTo:code}系的招式，记住了吗？"], "wander": 2},
     {"id": "os-student", "at": "opensource-house2:resident-1", "sprite": "trainer_student", "nameZh": "大学生", "role": "villager", "lines": ["我的毕业设计是“基于大模型的毕业设计生成器”。", "导师沉默了很久，然后让我重新选题。"], "wander": 1},
     {"id": "os-dad", "at": "opensource-house3:resident-1", "sprite": "villager_man", "nameZh": "林镇居民", "role": "villager", "lines": ["Transformer 架构出自 2017 年的论文《Attention Is All You Need》。", "注意力就是你所需要的一切……我老婆也是这么说的。"], "wander": 1},
-    {"id": "guide-code", "at": "gym-code:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "code", "town": "opensource"}}]}
+    {"id": "guide-code", "at": "gym-code:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "code", "town": "opensource"}}]},
+    {"id": "inst-cursor", "at": "gym-code:guide", "offset": [-6, 0], "facing": "down", "sprite": "trainer_coder", "nameZh": "计费工坊专员", "role": "villager", "script": [{"op": "include", "script": "dungeon-entry", "params": {"instance": "cursor-atelier", "instanceName": "计费工坊"}}]}
   ],
   "pixelport": [
     {"id": "pp-painter", "at": "town:pixelport:npc-1", "sprite": "trainer_artist", "nameZh": "街头画师", "role": "villager", "lines": ["我用扩散模型画了一张港口全景。", "仔细一数，海鸥长了三条腿。"], "wander": 2},
@@ -24,7 +25,8 @@
     {"id": "pp-kid", "at": "town:pixelport:npc-5", "sprite": "villager_kid", "nameZh": "小渔", "role": "villager", "lines": ["视觉馆主·绘，能一眼认出一千种猫！", "还能认出哪一只是 AI 画的。"], "wander": 2},
     {"id": "pp-shop", "at": "pixelport-house1:resident-1", "sprite": "villager_woman", "nameZh": "渔具店老板娘", "role": "villager", "lines": ["2012 年，一个叫 AlexNet 的神经网络在 ImageNet 图像识别比赛中遥遥领先。", "深度学习从那年开始火起来。我的渔具店，也是那年开的。"], "wander": 1},
     {"id": "pp-up", "at": "pixelport-house2:resident-1", "sprite": "trainer_streamer", "nameZh": "UP 主·阿彩", "role": "villager", "lines": ["家人们，这条视频是 AI 生成的……", "评论区：“看出来了，你在视频里有三只手。”"], "wander": 1},
-    {"id": "guide-vision", "at": "gym-vision:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "vision", "town": "pixelport"}}]}
+    {"id": "guide-vision", "at": "gym-vision:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "vision", "town": "pixelport"}}]},
+    {"id": "inst-doubao", "at": "gym-vision:guide", "offset": [-6, 0], "facing": "down", "sprite": "trainer_streamer", "nameZh": "演播厅场务", "role": "villager", "script": [{"op": "include", "script": "dungeon-entry", "params": {"instance": "doubao-arena", "instanceName": "红包演播厅"}}]}
   ],
   "chord": [
     {"id": "ch-singer", "at": "town:chord:npc-1", "sprite": "trainer_streamer", "nameZh": "沙漠歌手", "role": "villager", "lines": ["我用 AI 写了一首歌，旋律超好听。", "就是每段副歌都在唱“作为一个人工智能模型”。"], "wander": 2},
@@ -34,7 +36,8 @@
     {"id": "ch-whisper", "at": "chord-house2:resident-1", "sprite": "villager_woman", "nameZh": "沙城居民", "role": "villager", "lines": ["听说有个叫 Whisper 的语音识别模型，2022 年就开源了。", "连风沙里的悄悄话，它都能听得清清楚楚。"], "wander": 1},
     {"id": "ch-merchant", "at": "chord-house3:resident-1", "sprite": "villager_man", "nameZh": "行脚商人", "role": "villager", "lines": ["往北穿过沙漠，就是检索遗都。", "最近那边的沼泽不太平，常有穿紫衣服的家伙出没。"], "wander": 1},
     {"id": "ch-cave", "at": "chord-center:npc-1", "sprite": "trainer_hiker", "nameZh": "探险爱好者", "role": "villager", "lines": ["沙漠里有个回响洞窟，能直通北边的沼泽。", "洞里回声很大，说话小声点。"], "wander": 1},
-    {"id": "guide-sound", "at": "gym-sound:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "sound", "town": "chord"}}]}
+    {"id": "guide-sound", "at": "gym-sound:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "sound", "town": "chord"}}]},
+    {"id": "inst-minimax", "at": "gym-sound:guide", "offset": [6, 0], "facing": "down", "sprite": "trainer_student", "nameZh": "评测场裁判", "role": "villager", "script": [{"op": "include", "script": "dungeon-entry", "params": {"instance": "minimax-colosseum", "instanceName": "刷榜竞技场"}}]}
   ],
   "retrieval": [
     {"id": "rt-librarian", "at": "town:retrieval:npc-1", "sprite": "villager_old", "nameZh": "老图书管理员", "role": "villager", "lines": ["RAG，就是“检索增强生成”。", "先翻书找到资料，再组织语言回答——这样就不容易胡说八道了。"], "wander": 1},
@@ -43,7 +46,8 @@
     {"id": "rt-kid", "at": "town:retrieval:npc-4", "sprite": "villager_kid", "nameZh": "小典", "role": "villager", "script": [{"op": "ifFlag", "flag": "villain:swamp", "then": [{"op": "say", "text": "馆主回道馆啦！快去挑战吧！"}], "else": [{"op": "say", "text": "道馆馆主去沼泽里抓坏人了！"}, {"op": "say", "text": "……馆主好帅。"}]}], "wander": 2},
     {"id": "rt-man", "at": "retrieval-house2:resident-1", "sprite": "villager_man", "nameZh": "遗都居民", "role": "villager", "lines": ["我在网上搜“怎么才能不拖延”。", "搜了一下午。"], "wander": 1},
     {"id": "rt-center", "at": "retrieval-center:npc-1", "sprite": "trainer_student", "nameZh": "图书馆志愿者", "role": "villager", "lines": ["不确定的事，就多查几个来源。", "这句话，对人和智灵都适用。"], "wander": 1},
-    {"id": "guide-search", "at": "gym-search:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "search", "town": "retrieval"}}]}
+    {"id": "guide-search", "at": "gym-search:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "search", "town": "retrieval"}}]},
+    {"id": "inst-kimi", "at": "gym-search:guide", "offset": [-2, 0], "facing": "down", "sprite": "trainer_scientist", "nameZh": "书库引导员", "role": "villager", "script": [{"op": "include", "script": "dungeon-entry", "params": {"instance": "kimi-archive", "instanceName": "百万字书库"}}]}
   ],
   "forge": [
     {"id": "fg-miner", "at": "town:forge:npc-1", "sprite": "villager_man", "nameZh": "矿工", "role": "villager", "lines": ["以前大家挖矿，现在大家抢显卡。", "显卡还是那张显卡，价格又翻了一番。"], "wander": 2},
@@ -53,7 +57,8 @@
     {"id": "fg-gamer", "at": "town:forge:npc-5", "sprite": "trainer_gamer", "nameZh": "电竞少年", "role": "villager", "lines": ["{type:compute}系的招式，打{strongVs:compute}系特别痛！", "反过来，碰上{weakTo:compute}系就得小心了。"], "wander": 2},
     {"id": "fg-quant", "at": "forge-house2:resident-1", "sprite": "villager_woman", "nameZh": "熔炉镇居民", "role": "villager", "lines": ["量化，就是把模型的权重从 16 位压到 8 位、甚至 4 位，省下显存。", "我家冰箱也该量化一下了，实在塞不下了。"], "wander": 1},
     {"id": "fg-scaling", "at": "forge-house3:resident-1", "sprite": "villager_man", "nameZh": "熔炉镇居民", "role": "villager", "lines": ["听说大模型训练有个“规模定律”：参数、数据和算力一起加大，效果就会稳定变好。", "我的工资可不遵循这个定律。"], "wander": 1},
-    {"id": "guide-compute", "at": "gym-compute:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "compute", "town": "forge"}}]}
+    {"id": "guide-compute", "at": "gym-compute:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "compute", "town": "forge"}}]},
+    {"id": "inst-qwen", "at": "gym-compute:guide", "offset": [6, 0], "facing": "down", "sprite": "trainer_coder", "nameZh": "蒸馏车间调度员", "role": "villager", "script": [{"op": "include", "script": "dungeon-entry", "params": {"instance": "qwen-distill", "instanceName": "蒸馏工厂"}}]}
   ],
   "frostshield": [
     {"id": "fs-veteran", "at": "town:frostshield:npc-1", "sprite": "villager_old", "nameZh": "城门老兵", "role": "villager", "lines": ["北边是通往 AGI 圣殿的遗迹参道。", "只有集齐八枚徽章的训练家，才能通过那里的关口。"], "wander": 1},
@@ -73,7 +78,8 @@
     {"id": "hb-elder", "at": "town:hub:npc-6", "sprite": "villager_old", "nameZh": "老教授", "role": "villager", "lines": ["1956 年的达特茅斯会议上，“人工智能”这个词第一次被正式提出。", "那时候谁能想到，会有今天这番景象。"], "wander": 1},
     {"id": "hb-plaza", "at": "town:hub:plaza-south", "sprite": "trainer_streamer", "nameZh": "广场主播", "role": "villager", "script": [{"op": "ifFlag", "flag": "villain:boss", "then": [{"op": "say", "text": "家人们，数据塔解放了！今天的弹幕全是“感谢路过的训练家”！"}], "else": [{"op": "say", "text": "家人们，这里是枢纽市中央广场！"}, {"op": "say", "text": "身后就是全城最高的数据塔……奇怪，今天的弹幕怎么全是“快跑”？"}]}], "wander": 1},
     {"id": "hb-dc", "at": "hub-datacenter:npc-1", "sprite": "villager_man", "nameZh": "数据中心访客", "role": "villager", "lines": ["这里的服务器日夜不停地运转。", "据说训练一个顶级大模型，要用上万张 GPU 跑好几个月。"], "wander": 1},
-    {"id": "guide-agent", "at": "gym-agent:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "agent", "town": "hub"}}]}
+    {"id": "guide-agent", "at": "gym-agent:guide", "sprite": "villager_man", "nameZh": "道馆向导", "role": "villager", "script": [{"op": "include", "script": "gym-guide", "params": {"gym": "agent", "town": "hub"}}]},
+    {"id": "inst-astra", "at": "hub-datacenter:core", "offset": [1, -1], "facing": "down", "sprite": "trainer_scientist", "nameZh": "路由机房专员", "role": "villager", "script": [{"op": "include", "script": "dungeon-entry", "params": {"instance": "astra-datacenter", "instanceName": "废弃数据中心"}}]}
   ],
   "balance": [
     {"id": "bl-chess", "at": "town:balance:npc-1", "sprite": "villager_old", "nameZh": "棋社老人", "role": "villager", "lines": ["1997 年，“深蓝”战胜了国际象棋世界冠军卡斯帕罗夫；2016 年，AlphaGo 又在围棋上赢了李世石。", "我下棋输给孙子，倒是年年都发生。"], "wander": 1},

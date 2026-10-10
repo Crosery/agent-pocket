@@ -1,5 +1,5 @@
 // Shared coop protocol types for party management, dungeon progression, and multiplayer Boss Raids.
-import type { BattleAction, BattleEvent, Creature, CreatureView } from '../types.ts'
+import type { BattleAction, BattleEvent, BattleInit, BattleRequest, BattleResult, Creature, CreatureView } from '../types.ts'
 
 export interface PartyMember {
   id: string
@@ -88,11 +88,11 @@ export type CoopClientMsg =
   | { t: 'dungeon.roomMove'; roomId: string }
   | { t: 'dungeon.mechanism'; mechanismId: string }
   | { t: 'dungeon.eliteFight'; eliteId: string }
+  | { t: 'dungeon.eliteAction'; battleId: string; action: BattleAction }
   | { t: 'dungeon.leave' }
-  | { t: 'raid.join'; raidId: string; party: Creature[] }
+  | { t: 'raid.join'; raidId: string; party?: Creature[] }
   | { t: 'raid.action'; raidId: string; action: BattleAction }
   | { t: 'raid.rollContract'; raidId: string; ballId: string }
-
 // ----------------------------- Coop Server -> Client Messages -----------------------------
 
 export type CoopServerMsg =
@@ -102,10 +102,13 @@ export type CoopServerMsg =
   | { t: 'dungeon.update'; instance: InstanceState | null }
   | { t: 'dungeon.roomChanged'; roomId: string }
   | { t: 'dungeon.mechanismActivated'; mechanismId: string; by: string }
+  | { t: 'dungeon.eliteStarted'; battleId: string; eliteId: string; init: BattleInit; events: BattleEvent[]; request: BattleRequest }
+  | { t: 'dungeon.eliteEvents'; battleId: string; eliteId: string; events: BattleEvent[]; request: BattleRequest }
+  | { t: 'dungeon.eliteEnd'; battleId: string; eliteId: string; result: BattleResult }
   | { t: 'dungeon.eliteDefeated'; eliteId: string; by: string }
   | { t: 'dungeon.error'; code: string; message: string }
-  | { t: 'raid.start'; raidId: string; boss: BossRaidState; members: RaidMemberState[]; yourSide: number }
-  | { t: 'raid.tick'; raidId: string; boss: BossRaidState; members: RaidMemberState[]; events: BattleEvent[] }
+  | { t: 'raid.start'; raidId: string; boss: BossRaidState; members: RaidMemberState[]; yourSide: number; init?: BattleInit; events?: BattleEvent[]; request?: BattleRequest }
+  | { t: 'raid.tick'; raidId: string; boss: BossRaidState; members: RaidMemberState[]; events: BattleEvent[]; actorId?: string; request?: BattleRequest }
   | { t: 'raid.end'; raidId: string; victory: boolean; summary: RaidSummary }
   | { t: 'raid.contractResult'; raidId: string; memberId: string; success: boolean; card?: Creature; shardsAwarded?: number; pity?: number }
   | { t: 'raid.error'; code: string; message: string }
