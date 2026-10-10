@@ -1624,10 +1624,6 @@ export interface InstanceDefaults {
   assistOfferFlag: string
   assistFlag: string
   lossHintFlag?: string
-  lossPolicy?: string
-  assistEarly?: { losses: number; foeHpLeftAtLeast: number; maxTurns: number }
-  retryFromLobby?: boolean
-  couponRefill?: { item: string; min: number }
   /** Item id used for boss fragments / shards (defaults to 'data-shard'). */
   shardItem?: string
   /** Shards granted when a contract roll fails. */

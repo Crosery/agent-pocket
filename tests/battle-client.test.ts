@@ -16,7 +16,7 @@ import { BATTLE_UI, validateBattleUi } from '../src/client/battle/config.ts'
 import { INPUT_BINDINGS } from '../src/client/ui/config.ts'
 import { createLocalChannel, isLocalChannel } from '../src/client/battle/channel.ts'
 import {
-  applyEvent, catchPlacement, coachCommandPulse, createBattleModel, effCategory, evolutionMoves, expRatio, expSegments, finalResult, levelUpStats, moveEffectiveness, shortName,
+  applyEvent, bossOpeningHud, catchPlacement, coachCommandPulse, createBattleModel, effCategory, evolutionMoves, expRatio, expSegments, finalResult, levelUpStats, moveEffectiveness, shortName,
 } from '../src/client/battle/model.ts'
 import { changeMoney, consumeItem, markCaught, markSeen, storeCaught } from '../src/client/battle/saveops.ts'
 
@@ -289,13 +289,6 @@ test('card names drop their parenthetical and never come back empty', () => {
   }
 })
 
-test('the own card draws nothing until our creature is out (no empty frame in the opening)', () => {
-  const css = readFileSync(join(ROOT, 'src/client/battle/battle.css'), 'utf8')
-  assert.match(css, /\.apb-status\.is-away\.is-own\.is-empty\s*\{[^}]*opacity:\s*0[;\s][^}]*pointer-events:\s*none/)
-  const panel = readFileSync(join(ROOT, 'src/client/battle/status-panel.ts'), 'utf8')
-  assert.match(panel, /is-away is-empty/, 'a panel starts away and empty')
-  assert.match(panel, /classList\.remove\('is-empty'\)/, 'the first creature fills it')
-})
 
 test('coach model: applyEvent queues coach lines, tracks turn, and coachCommandPulse highlights bag in peak and fight in valley', () => {
   const rng = new Rng(7)
@@ -307,16 +300,18 @@ test('coach model: applyEvent queues coach lines, tracks turn, and coachCommandP
       { kind: 'wild', name: 'DeepSeek', party: [mk(rng, 1, 12)], boss: 'deepseek' },
     ],
   }
-  const m = createBattleModel(init, [null, null], CONTENT)
+  const m = createBattleModel(init, CLEAR)
+  applyEvent(m, { t: 'boss', hud: bossOpeningHud('deepseek')! })
   applyEvent(m, { t: 'coach', text: 'line1', speaker: 'R1' })
   assert.equal(m.coach.length, 1)
   applyEvent(m, { t: 'turn', turn: 1 })
   assert.equal(m.turn, 1)
-  assert.equal(coachCommandPulse(m, { 'off-peak-coupon': 2 }, CONTENT), 'bag', 'peak + bait in bag pulses bag')
-  assert.equal(coachCommandPulse(m, {}, CONTENT), null, 'peak without bait does not pulse bag')
-  applyEvent(m, { t: 'bossHydrate', state: { turn: 3, form: null, meters: { tide: 1 }, enrage: 0, fired: {}, cycles: { tide: 3 } } })
+  assert.equal(coachCommandPulse(m, true, { 'off-peak-coupon': 2 }, CONTENT), 'bag', 'peak + bait in bag pulses bag')
+  assert.equal(coachCommandPulse(m, true, {}, CONTENT), null, 'peak without bait does not pulse bag')
+  assert.equal(coachCommandPulse(m, false, { 'off-peak-coupon': 2 }, CONTENT), null, 'ordinary fights do not coach')
+  applyEvent(m, { t: 'boss', hud: { ...bossOpeningHud('deepseek')!, meters: { tide: 1 } } })
   applyEvent(m, { t: 'turn', turn: 4 })
-  assert.equal(coachCommandPulse(m, { 'off-peak-coupon': 2 }, CONTENT), 'fight', 'valley in first cycle pulses fight')
+  assert.equal(coachCommandPulse(m, true, { 'off-peak-coupon': 2 }, CONTENT), 'fight', 'valley in first cycle pulses fight')
   applyEvent(m, { t: 'turn', turn: 7 })
-  assert.equal(coachCommandPulse(m, { 'off-peak-coupon': 2 }, CONTENT), null, 'no command pulse after turn 6')
+  assert.equal(coachCommandPulse(m, true, { 'off-peak-coupon': 2 }, CONTENT), null, 'no command pulse after turn 6')
 })

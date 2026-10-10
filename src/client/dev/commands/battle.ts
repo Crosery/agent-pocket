@@ -77,8 +77,9 @@ export const battleCommands: Record<string, CommandRun> = {
     ctx.save.flags['ds:lost'] = true
     for (const cr of ctx.save.party) cr.hp = maxHp(cr, CONTENT)
     const v4 = host.world.maps['origin-lab-b2']?.npcs.find((n) => n.id === 'ds-v4')
-    let lossBranch: ScriptStep[] | null = null
-    if (v4) walkSteps(v4.script, (s) => { if (!lossBranch && s.op === 'ifFlag' && s.flag === 'ds:lost') lossBranch = s.then })
+    const lossBranches: ScriptStep[][] = []
+    if (v4) walkSteps(v4.script, (s) => { if (s.op === 'ifFlag' && s.flag === 'ds:lost') lossBranches.push(s.then) })
+    const lossBranch = lossBranches[0]
     const r1 = host.world.maps['origin-lab-b1']?.npcs.find((n) => n.id === 'ds-r1') ?? null
     if (lossBranch && typeof host.overworld.runScript === 'function') {
       fire(host.overworld.runScript(lossBranch.slice(4, -1), r1), 'loss script')

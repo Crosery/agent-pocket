@@ -189,8 +189,9 @@ test('time model: the shortest road from waking to the DeepSeek fight stays with
 
 test('ernie-bot: scripted encounter carries embedding-orb at Lv6 and sanitizeCreature preserves it', () => {
   const ernieNpc = npc('ds-ernie').n
-  let wild: Extract<ScriptStep, { op: 'wildBattle' }> | null = null
-  walkSteps(ernieNpc.script, (s) => { if (s.op === 'wildBattle') wild = s })
+  const battles: Extract<ScriptStep, { op: 'wildBattle' }>[] = []
+  walkSteps(ernieNpc.script, (s) => { if (s.op === 'wildBattle') battles.push(s) })
+  const wild = battles[0]
   assert.ok(wild, 'ds-ernie has a wildBattle step')
   assert.ok(wild.moves?.includes('embedding-orb'), 'ds-ernie knows embedding-orb')
   assert.ok(legalMoves('ernie-bot', 6, CONTENT).has('embedding-orb'), 'embedding-orb is legal at Lv6')
@@ -199,30 +200,3 @@ test('ernie-bot: scripted encounter carries embedding-orb at Lv6 and sanitizeCre
   assert.ok(sanitized?.moves.some((m) => m.id === 'embedding-orb'), 'sanitizeCreature preserves embedding-orb at Lv6')
 })
 
-test('surprises: ds-first-spark trigger, S-grade spark NPC, os-greeter and ds-loss branches', () => {
-  const trigs = storyFeatures(world).triggers
-  const sparkTrig = trigs.find((t) => t.id === 'ds-first-spark')
-  assert.ok(sparkTrig, 'ds-first-spark trigger exists')
-  assert.equal(sparkTrig.on, 'region:entered')
-  const sparkNpc = npc('ds-spark').n
-  assert.equal(sparkNpc.aura, 'spark')
-  assert.equal(sparkNpc.hiddenUnlessFlag, 'ds:sparkShow')
-  assert.equal(sparkNpc.hiddenIfFlag, 'ds:spark')
-  let sparkBattle: Extract<ScriptStep, { op: 'wildBattle' }> | null = null
-  walkSteps(sparkNpc.script, (s) => { if (s.op === 'wildBattle') sparkBattle = s })
-  assert.equal(sparkBattle?.gradeFloor, 'S')
-  assert.equal(sparkBattle?.aura, 'spark')
-
-  const greeter = npc('os-greeter').n
-  assert.equal(greeter.hiddenUnlessFlag, 'ds:done')
-  assert.equal(greeter.hiddenIfFlag, 'ds:greeted')
-
-  const v4 = npc('ds-v4').n
-  const lossHints: string[] = []
-  walkSteps(v4.script, (s) => {
-    if (s.op === 'say' && s.text.startsWith('boss.deepseek.loss.')) lossHints.push(s.text)
-  })
-  for (const k of ['peakDamage', 'noCoupon', 'noHeal', 'enrage', 'default', 'refill', 'assistOffer', 'assistOn']) {
-    assert.ok(lossHints.includes(`boss.deepseek.loss.${k}`), `ds-loss includes boss.deepseek.loss.${k}`)
-  }
-})

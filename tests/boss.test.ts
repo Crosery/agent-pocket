@@ -1060,7 +1060,7 @@ test('boss HUD: the tide meter shows a countdown of the current segment (peak 3 
 
 test('drill: 2 turns peak + 2 turns valley, and both drill coach lines fire in a 4-turn spar', () => {
   const party = storyParty('o1', [7, 6, 5], 11)
-  const { engine, events: startEvents } = startBossBattle('deepseek-drill', party, {
+  const { engine, intro: startEvents } = startBossBattle('deepseek-drill', party, {
     seed: 11, tier: 'story', expGain: false, coach: true, items: { 'off-peak-coupon': 3 },
   })
   const seen = coachLines(startEvents).map((c) => c.text)
