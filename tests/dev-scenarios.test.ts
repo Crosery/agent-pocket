@@ -167,7 +167,7 @@ test('after-gym-3: three badges, the gym trainers count as beaten, the main ques
   assert.deepEqual(s.badges, ['badge-code', 'badge-vision', 'badge-sound'])
   const prefix = STORY_CONTENT.meta.flags.trainerWon
   for (const tr of ['gc-xiaoma', 'leader_code', 'gv-atong', 'leader_vision', 'gs-shengsheng', 'leader_sound']) assert.equal(s.flags[prefix + tr], true, tr)
-  assert.deepEqual(s.quests.main, { stage: 4, done: false })
+  assert.deepEqual(s.quests.main, { stage: 11, done: false })
   assert.equal(s.position.map, anchors['town:chord'].map)
   assert.equal(s.position.x, anchors['town:chord'].x)
 })

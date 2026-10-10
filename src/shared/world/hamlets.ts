@@ -184,7 +184,7 @@ export function stampHamlets(ctx: OwCtx, sites: Site[], used: Set<string>, doorL
         const slot = s.slot.startsWith('house') ? `house${++houseNo}` : s.slot
         const mapId = `${site.id}-${slot}`
         const first = interiorTemplate(ctx, s.interior)
-        doorLinks.push({ townId: site.id, townNameZh: nameZh, slot, floors: [s.interior], mapIds: [mapId], door, biome })
+        doorLinks.push({ townId: site.id, townNameZh: nameZh, slot, floors: [s.interior], mapIds: [mapId], belowCount: 0, door, biome })
         for (const entry of entries) {
           d.warps.push({ x: entry.x, y: entry.y, toMap: mapId, toX: first.arrive[0], toY: first.arrive[1], facing: opposite(entry.facing), kind: 'door' })
           addFlag(d, entry.y * d.w + entry.x, F_RESERVED)

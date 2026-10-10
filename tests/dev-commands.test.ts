@@ -86,7 +86,7 @@ test('world: anchors, places, beats, seed reload', async () => {
 
   const beat = await reg.run('beat.apply', { beat: 'after-gym-3' }) as { at: { map: string } | null; badges: number }
   assert.equal(beat.badges, 3)
-  assert.deepEqual(save.quests.main, { stage: 4, done: false })
+  assert.deepEqual(save.quests.main, { stage: 11, done: false })
   assert.equal(save.flags[STORY_CONTENT.meta.flags.trainerWon + 'leader_code'], true)
   assert.ok(beat.at, 'went to the beat place')
   save.badges = []

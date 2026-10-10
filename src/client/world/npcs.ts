@@ -1,7 +1,7 @@
 // NPC actors on the current map: flag-driven visibility (hiddenIfFlag / hiddenUnlessFlag + script overrides),
 // tile-stepped walking (scripted paths, wandering, trainer approach), facing, occupancy and trainer sight lines.
 import type { Dir, GameMap, NpcDef } from '../../shared/types.ts'
-import type { Actor, GameContext } from '../contracts.ts'
+import type { Actor, CreatureActor, GameContext } from '../contracts.ts'
 import type { CollisionField, IRng } from '../../shared/contracts.ts'
 import { canStep, warpAt } from '../../shared/world/worldapi.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
@@ -34,6 +34,33 @@ export interface NpcRuntime {
   blockedFor: number
 }
 
+/** A creature billboard standing in as an NPC actor (creature NPCs: the machine-room coaches, the sparring partner). */
+export function creatureAsActor(c: CreatureActor): Actor {
+  let facing: Dir = 'down'
+  return {
+    object: c.object,
+    get x() { return c.x }, set x(v) { c.x = v },
+    get y() { return c.y }, set y(v) { c.y = v },
+    get elev() { return c.elev }, set elev(v) { c.elev = v },
+    get facing() { return facing },
+    set facing(d: Dir) { this.setFacing(d) },
+    setPosition: (x, y, e) => c.setPosition(x, y, e),
+    setFacing(d) {
+      facing = d
+      if (d === 'left' || d === 'right') c.setFacingLeft(d === 'left')
+    },
+    setMoving: (moving) => c.setMoving(moving),
+    setName() {},
+    setSheet() {},
+    setVisible: (v) => c.setVisible(v),
+    setInGrass() {},
+    bubble: (text, ms) => c.bubble(text, ms),
+    hop() {},
+    update: (dt) => c.update(dt),
+    dispose: () => c.dispose(),
+  }
+}
+
 export interface NpcLayerDeps {
   readonly ctx: GameContext
   /** Tile the player stands on (NPCs never step onto it). */
@@ -58,7 +85,9 @@ export function createNpcLayer(deps: NpcLayerDeps) {
 
   const ensureActor = (n: NpcRuntime): Actor => {
     if (n.actor) return n.actor
-    const a = ctx.world.createActor({ sheet: n.def.sprite, name: GAME.npc.showNames ? n.def.nameZh : undefined, kind: 'npc' })
+    const a = n.def.creature && ctx.world.createCreatureActor
+      ? creatureAsActor(ctx.world.createCreatureActor(n.def.creature, false))
+      : ctx.world.createActor({ sheet: n.def.sprite, name: GAME.npc.showNames ? n.def.nameZh : undefined, kind: 'npc' })
     a.setFacing(n.facing)
     a.setPosition(n.x, n.y, ctx.world.elevationAt(n.x, n.y))
     n.actor = a

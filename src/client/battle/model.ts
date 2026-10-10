@@ -7,6 +7,7 @@ import type {
   SideIndex, StatKey, TypeId,
 } from '../../shared/types.ts'
 import { CONTENT, t, typeEffectiveness, type Content } from '../../shared/content/index.ts'
+import { cycleLeft } from '../../shared/battle/boss.ts'
 import { STAT_KEYS, calcStats, expForLevel } from '../../shared/creature.ts'
 import { BATTLE_UI, type EffCategory } from './config.ts'
 
@@ -40,6 +41,8 @@ export interface BattleModel {
   money: number
   /** Latest boss HUD snapshot (null outside boss fights). */
   boss: BossHud | null
+  /** Coach lines the engine sent, shown one per command menu (the head is the next one). */
+  readonly coach: { text: string; speaker: string; portrait?: string }[]
 }
 
 const slotOf = (cr: Pick<Creature, 'hp' | 'status'>): SlotInfo =>
@@ -64,6 +67,7 @@ export function createBattleModel(init: BattleInit, clear: string): BattleModel 
     end: null,
     money: 0,
     boss: null,
+    coach: [],
   }
 }
 
@@ -125,6 +129,9 @@ export function applyEvent(m: BattleModel, e: BattleEvent): void {
       break
     case 'boss':
       m.boss = e.hud
+      break
+    case 'coach':
+      m.coach.push({ text: e.text, speaker: e.speaker, ...(e.portrait ? { portrait: e.portrait } : {}) })
       break
     case 'form': {
       // Same battler, new body: stat stages and volatiles are announced by their own events.
@@ -300,8 +307,13 @@ export function bossOpeningHud(bossId: string, c: Content = CONTENT): BossHud | 
   const def = c.bosses[bossId]
   if (!def) return null
   const meters: Record<string, number> = {}
-  for (const m of def.meters) if (m.show) meters[m.id] = m.start ?? 0
-  return { bossId, form: def.initialForm, phase: 1, phases: 1 + def.triggers.filter((x) => x.phase).length, meters, charge: null, enrage: 0 }
+  const cycles: Record<string, { left: number; total: number }> = {}
+  for (const m of def.meters) {
+    if (!m.show) continue
+    meters[m.id] = m.start ?? 0
+    if (m.cycle) cycles[m.id] = cycleLeft(m.cycle, 0)
+  }
+  return { bossId, form: def.initialForm, phase: 1, phases: 1 + def.triggers.filter((x) => x.phase).length, meters, ...(Object.keys(cycles).length ? { cycles } : {}), charge: null, enrage: 0 }
 }
 
 /** What the foe status window shows for a boss snapshot: title, phase pips and the few chips worth reading mid-fight. */
@@ -314,7 +326,10 @@ export function bossPanelInfo(hud: BossHud, c: Content = CONTENT, tier?: string)
     const value = Math.min(m.max, Math.max(0, Math.round(hud.meters[m.id] ?? 0)))
     const label = t(m.label)
     if (m.states) {
-      const word = t(m.states[value] ?? '')
+      const cy = hud.cycles?.[m.id]
+      // Countdown dots: filled = turns left in this segment (this turn included), hollow = already spent.
+      const dots = cy ? ` ${t('battleui.boss.dotOn').repeat(Math.min(cy.total, cy.left))}${t('battleui.boss.dotOff').repeat(Math.max(0, cy.total - cy.left))}` : ''
+      const word = t(m.states[value] ?? '') + dots
       const text = `${label} ${word}`
       chips.push({ id: m.id, text, tone: m.tone ?? 'neutral', fill: null, alert: false, label, readout: text, max: null, stateText: word })
     } else {

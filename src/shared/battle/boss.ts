@@ -10,7 +10,7 @@ import type {
 import type { IRng } from '../contracts.ts'
 import { creatureName } from '../creature.ts'
 import type { Content } from '../content/index.ts'
-import { typeEffectiveness } from '../content/index.ts'
+import { t, typeEffectiveness } from '../content/index.ts'
 import { isDamaging } from './formulas.ts'
 
 /** The boss always fights on the enemy side of the singles engine. */
@@ -50,14 +50,23 @@ export interface BossHost {
   /** A roll of the battle's rng: true with probability p. */
   roll(p: number): boolean
   battler(): { stages: Record<string, number>; volatiles: Record<string, number>; recharging: boolean }
+  /** Coach fights (BattleInit.coach / skipBrief); a plain host reports off. */
+  coach?(): { on: boolean; skipBrief: boolean }
+  /** The foe's side holds at least one of the item (only coach fights track the bag). */
+  foeHasItem?(itemId: string): boolean
   setBattler(b: { stages: Record<string, number>; volatiles: Record<string, number>; recharging: boolean }): void
 }
 
 /** What the boss's decision needs to know about its opponent. */
-export interface BossFoeView { status: StatusId | null; country: string; company: string; released: string; weather: string }
+export interface BossFoeView {
+  status: StatusId | null; country: string; company: string; released: string; weather: string
+  /** Hp ratio of the foe's active creature and a bag probe (coach conditions). */
+  hpRatio?: number
+  has?(itemId: string): boolean
+}
 export interface BossDecision { moveId: string; forced: boolean }
 
-interface CondCtx { core: Core; hpRatio: number; foe: BossFoeView; turn: number }
+interface CondCtx { core: Core; hpRatio: number; foe: BossFoeView; turn: number; boss?: { volatiles: Record<string, number>; status: boolean } }
 
 const hit = (n: number | undefined): number => n ?? 0
 
@@ -93,6 +102,13 @@ export function bossCondHolds(cond: BossCond | undefined, x: CondCtx): boolean {
   if (cond.foeReleasedFrom !== undefined && !(x.foe.released !== '' && x.foe.released >= cond.foeReleasedFrom)) return false
   if (cond.weather && !cond.weather.includes(x.foe.weather)) return false
   if (cond.notWeather?.includes(x.foe.weather)) return false
+  if (cond.foeHpBelow !== undefined && !((x.foe.hpRatio ?? 1) <= cond.foeHpBelow)) return false
+  if (cond.bossHas) {
+    const b = cond.bossHas
+    if (b.volatile !== undefined && !((x.boss?.volatiles[b.volatile] ?? 0) > 0)) return false
+    if (b.status !== undefined && b.status !== (x.boss?.status ?? false)) return false
+  }
+  if (cond.foeHasItem !== undefined && !(x.foe.has?.(cond.foeHasItem) ?? false)) return false
   return true
 }
 
@@ -126,6 +142,15 @@ export function chooseBossAction(state: BossState, def: BossDef, foe: BossFoeVie
 const slotOf = (id: string, c: Content): MoveSlot => ({ id, pp: c.moves[id]?.pp ?? 1, ppMax: c.moves[id]?.pp ?? 1 })
 const emptyStageRecord = (): Record<string, number> => ({ atk: 0, def: 0, spa: 0, spd: 0, spe: 0, acc: 0, eva: 0 })
 
+/**
+ * Turns left in the current segment of a meter's cycle (the turn the next command menu is for included) of its length.
+ * The turn counter is bumped as a turn begins, so (turn % period) is that turn's cycle index.
+ */
+export function cycleLeft(cy: { period: number; from: number; to: number }, turn: number): { left: number; total: number } {
+  const i = turn % cy.period
+  return i >= cy.from && i < cy.to ? { left: cy.to - i, total: cy.to - cy.from } : { left: cy.period - i, total: cy.period - (cy.to - cy.from) }
+}
+
 export class BossDirector {
   readonly def: BossDef
   readonly cr: Creature
@@ -139,6 +164,9 @@ export class BossDirector {
   private readonly phaseCount: number
   /** The charged attack being fired right now (its damage multiplier applies to that move only). */
   private firing: { move: string; mul: number } | null = null
+  /** Coach lines already spoken this fight, and the turn of the last one (one per turn). */
+  private readonly coached: string[] = []
+  private coachTurn = -1
 
   constructor(def: BossDef, cr: Creature, host: BossHost) {
     this.def = def
@@ -182,12 +210,18 @@ export class BossDirector {
   private foeView(): BossFoeView {
     const foe = this.host.foe()
     const sp = this.host.c.species[foe.speciesId]
-    return { status: foe.status, country: sp?.country ?? '', company: sp?.company ?? '', released: sp?.releaseDate ?? '', weather: this.host.weather() }
+    return {
+      status: foe.status, country: sp?.country ?? '', company: sp?.company ?? '', released: sp?.releaseDate ?? '', weather: this.host.weather(),
+      hpRatio: foe.hp / Math.max(1, this.host.maxHp(foe)), has: (id) => this.host.foeHasItem?.(id) ?? false,
+    }
   }
 
   private ctx(hpMax?: number): CondCtx {
     const max = hpMax ?? this.host.maxHp(this.cr)
-    return { core: this.core, hpRatio: max > 0 ? this.cr.hp / max : 0, foe: this.foeView(), turn: Math.max(1, this.host.turn()) }
+    return {
+      core: this.core, hpRatio: max > 0 ? this.cr.hp / max : 0, foe: this.foeView(), turn: Math.max(1, this.host.turn()),
+      boss: { volatiles: this.host.battler().volatiles, status: this.cr.status !== null },
+    }
   }
 
   private rules(ctx: CondCtx): BossRule[] {
@@ -408,6 +442,26 @@ export class BossDirector {
 
   private side(target: 'boss' | 'foe'): SideIndex { return target === 'boss' ? BOSS_SIDE : FOE_SIDE }
 
+  /** A coach line: only in a coach fight, within the fight's cap, each key once, one per turn, and after a skipped briefing only the allowed few. */
+  private coach(key: string): void {
+    const def = this.def.coach
+    const st = this.host.coach?.()
+    if (!def || !st?.on) return
+    const name = key.slice(key.lastIndexOf('.') + 1)
+    if (st.skipBrief && !def.skipBriefLines?.includes(name)) return
+    const turn = this.host.turn()
+    if (this.coached.length >= def.maxPerFight || this.coachTurn === turn) return
+    const suffix = def.variants?.[this.host.foe().speciesId]
+    const variant = suffix !== undefined && `${key}${suffix}` in this.host.c.text ? `${key}${suffix}` : key
+    if (def.oncePerLine && this.coached.includes(key)) return
+    this.coached.push(key)
+    this.coachTurn = turn
+    this.host.emit({
+      t: 'coach', text: t(variant, this.params(), this.host.c), speaker: t(def.speaker, {}, this.host.c),
+      ...(def.portrait ? { portrait: def.portrait } : {}),
+    })
+  }
+
   private run(ops: readonly BossOp[]): void {
     for (const op of ops) this.exec(op)
   }
@@ -417,6 +471,9 @@ export class BossDirector {
     switch (op.op) {
       case 'say':
         h.say(op.text, this.params())
+        break
+      case 'coach':
+        this.coach(op.text)
         break
       case 'form':
         this.switchForm(op.form)
@@ -537,8 +594,15 @@ export class BossDirector {
   hud(): BossHud {
     const meters: Record<string, number> = {}
     for (const m of this.def.meters) if (m.show) meters[m.id] = hit(this.core.meters[m.id])
+    const cycles: Record<string, { left: number; total: number }> = {}
+    for (const m of this.def.meters) {
+      const cy = m.cycle
+      if (!m.show || !cy) continue
+      cycles[m.id] = cycleLeft(cy, this.host.turn())
+    }
     return {
       bossId: this.def.id, form: this.core.form, phase: 1 + this.core.phase, phases: 1 + this.phaseCount, meters,
+      ...(Object.keys(cycles).length ? { cycles } : {}),
       charge: this.core.charge?.move ?? null, enrage: this.core.enrage,
     }
   }

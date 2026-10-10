@@ -103,7 +103,7 @@ export interface GameTuning {
   anchorTravel: { minBadges: number; keyItemKind: string; mapKinds: MapKind[]; scanSec: number; beaconRadius: number }
   script: {
     maxDepth: number; healWaitMs: number; healSfx: string; moneySfx: string; questSfx: string; unlockSfx: string
-    fadeMs: number; moveNpcSpeed: number
+    fadeMs: number; moveNpcSpeed: number; emoteWaitMs: number
   }
   presence: {
     chatBubbleMs: number; emoteBubbleMs: number; bubbleMaxChars: number; interactRadius: number
@@ -116,7 +116,7 @@ export interface GameTuning {
   fog: { mapKinds: MapKind[] }
   autosave: { events: string[]; minIntervalSec: number; onHidden: boolean }
   hud: { moneyCheckSec: number }
-  flags: { badgePrefix: string; bossWonPrefix: string }
+  flags: { badgePrefix: string; bossWonPrefix: string; /** Set once a badge has paid out the boss-card exp banks (also with no card to pay): the license tip waits for it. */ licenseSettled: string }
   debug: {
     partySize: number; partyLevel: number; money: number; keyItemKinds: string[]
     categoryQty: Record<string, number>; freezeClockWithTime: boolean; overlayRefreshMs: number; battleLevel: number

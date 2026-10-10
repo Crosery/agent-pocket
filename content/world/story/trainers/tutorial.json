@@ -2,7 +2,10 @@
   "tutorial": {
     "defaults": {"aiLevel": 0, "rewardPerLevel": 0, "music": "battle_trainer"},
     "trainers": [
-      {"id": "lesson-types", "nameZh": "陪练智灵", "classZh": "属性特训", "sprite": "trainer_scientist", "reward": 200, "party": [{"species": "phi-3", "level": 2, "moves": ["white-noise"]}, {"species": "codex-2021", "level": 2, "moves": ["white-noise"]}, {"species": "gemini-flash-lite", "level": 2, "moves": ["white-noise"]}], "introText": ["陪练一号、二号、三号，上场！", "三位各是一种属性。注意看每一招打上去的效果！"], "defeatText": ["三位陪练都练累了。属性课，毕业！"]}
+      {"id": "lesson-types", "nameZh": "陪练智灵", "classZh": "属性特训", "sprite": "trainer_scientist", "reward": 200, "party": [{"species": "phi-3", "level": 2, "moves": ["white-noise"]}, {"species": "codex-2021", "level": 2, "moves": ["white-noise"]}, {"species": "gemini-flash-lite", "level": 2, "moves": ["white-noise"]}], "introText": ["陪练一号、二号、三号，上场！", "三位各是一种属性。注意看每一招打上去的效果！"], "defeatText": ["三位陪练都练累了。属性课，毕业！"]},
+      {"id": "ds-relay-o1", "nameZh": "阿转的转发机", "classZh": "中转站", "sprite": "trainer_scientist", "reward": 240, "party": [{"species": "codex-2021", "level": 6}, {"species": "claude-haiku-3", "level": 6}, {"species": "text-embedding-ada-002", "level": 6}], "introText": [], "defeatText": []},
+      {"id": "ds-relay-claude-haiku", "nameZh": "阿转的转发机", "classZh": "中转站", "sprite": "trainer_scientist", "reward": 240, "party": [{"species": "gemma-2", "level": 6}, {"species": "mistral-7b", "level": 6}, {"species": "gpt-4-1-nano", "level": 6}], "introText": [], "defeatText": []},
+      {"id": "ds-relay-deepseek-v3", "nameZh": "阿转的转发机", "classZh": "中转站", "sprite": "trainer_scientist", "reward": 240, "party": [{"species": "mimo-7b", "level": 6}, {"species": "llama-1", "level": 6}, {"species": "mistral-7b", "level": 6}], "introText": [], "defeatText": []}
     ]
   }
 }

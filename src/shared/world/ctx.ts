@@ -19,6 +19,8 @@ export interface DoorLink {
   floors: string[]
   /** Map id per floor. */
   mapIds: string[]
+  /** How many of the last `floors` lie below the ground floor (the first entry). */
+  belowCount: number
   door: DoorInfo
   biome: string
   nameZh?: string

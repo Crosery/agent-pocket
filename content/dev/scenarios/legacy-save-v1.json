@@ -5,7 +5,11 @@
   "expect": [
     {
       "path": "/save/version",
-      "eq": 2
+      "eq": 3
+    },
+    {
+      "path": "/save/flags/ds:gateOpen",
+      "eq": true
     },
     {
       "path": "/save/bag/persona-card",

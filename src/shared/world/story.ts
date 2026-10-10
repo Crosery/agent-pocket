@@ -33,6 +33,7 @@ import scriptsJson from '../../../content/world/story/scripts.json' with { type:
 import servicesJson from '../../../content/world/story/services.json' with { type: 'json' }
 import rivalJson from '../../../content/world/story/rival.json' with { type: 'json' }
 import questsJson from '../../../content/world/story/quests.json' with { type: 'json' }
+import triggersJson from '../../../content/world/story/triggers.json' with { type: 'json' }
 import npcsTownsJson from '../../../content/world/story/npcs/towns.json' with { type: 'json' }
 import npcsStoryJson from '../../../content/world/story/npcs/story.json' with { type: 'json' }
 import npcsQuestsJson from '../../../content/world/story/npcs/quests.json' with { type: 'json' }
@@ -72,6 +73,8 @@ export interface NpcSpec extends PlacementSpec {
   nameZh: string
   role: NpcRole
   portrait?: string
+  /** Species id: the NPC is drawn as that creature (sprite is still required for the script's speaker fallback). */
+  creature?: string
   /** Shorthand: one `say` per line (spoken by this NPC) before `script`. */
   lines?: string[]
   script?: StepSpec[]
@@ -165,6 +168,8 @@ export interface StoryMeta {
   text: { listSeparator: string; trainerNpcName: string }
   trainers: Required<Pick<TrainerDefaults, 'aiLevel' | 'rewardPerLevel' | 'sightRange'>>
   trainerNpc: { role: NpcRole; script: StepSpec[] }
+  /** bossBattle.lossWarp: where the player faces after waking up, and the script that picks the story up there. */
+  lossWarp: { facing: Dir; script: string }
 }
 
 /**
@@ -251,8 +256,28 @@ export interface PopulationFile {
   trainerPools: Record<string, TrainerArchetype[]>
 }
 
+/**
+ * A script that starts by itself when a game event fires (src/client/world/triggers.ts). `on`: event bus name;
+ * `match`: payload fields that must equal (region ids resolve from region:entered); `when`: save flags that must be
+ * set / unset; `once` writes the flag `trig:<id>`.
+ */
+export interface TriggerSpec {
+  id: string
+  on: string
+  match?: Record<string, string>
+  when?: { flag?: string[]; noFlag?: string[] }
+  script: string
+  once?: boolean
+}
+
+/** A trigger with its script expanded. */
+export interface StoryTrigger extends Omit<TriggerSpec, 'script'> { steps: ScriptStep[] }
+
+export const TRIGGER_EVENTS: readonly string[] = ['dex:caught', 'map:entered', 'region:entered', 'quest:updated', 'battle:end', 'badge:earned']
+
 export interface StoryContent {
   meta: StoryMeta
+  triggers: TriggerSpec[]
   scripts: Record<string, StepSpec[]>
   services: ServicesFile
   rival: RivalFile
@@ -279,6 +304,7 @@ const LOAD_PROBLEMS: string[] = []
 
 export const STORY_CONTENT: StoryContent = {
   meta: storyJson as unknown as StoryMeta,
+  triggers: triggersJson as unknown as TriggerSpec[],
   scripts: scriptsJson as unknown as Record<string, StepSpec[]>,
   services: servicesJson as unknown as ServicesFile,
   rival: rivalJson as unknown as RivalFile,
@@ -366,6 +392,9 @@ function slugOf(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 }
 
+/** A character portrait id, or "creature:<species>" (the creature's own artwork). */
+const portraitKnown = (id: string): boolean => (id.startsWith('creature:') ? !!CONTENT.species[id.slice(9)] : !!CONTENT.characterById[id])
+
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
 
 // ---------------------------------------------------------------------------
@@ -394,6 +423,7 @@ class StoryBuilder implements PopHost {
   private readonly scripts: Record<string, StepSpec[]>
   readonly spots: SpotIndex
   readonly hints: HintIndex
+  triggers: StoryTrigger[] = []
   legends: PlacedLegend[] = []
   bounties: PlacedBounty[] = []
   private readonly collision = new Map<string, Uint8Array>()
@@ -612,6 +642,21 @@ class StoryBuilder implements PopHost {
     }
   }
 
+  // -- triggers -------------------------------------------------------------
+
+  addTriggers(): void {
+    const ids = new Set<string>()
+    const holder: PendingNpc = { spec: { id: 'trigger', at: '', sprite: '', nameZh: '', role: 'villager' } as unknown as NpcSpec, params: {}, script: [], source: 'triggers' }
+    this.sc.triggers.forEach((t, i) => {
+      const path = `triggers.${t.id ?? i}`
+      if (!t.id || ids.has(t.id)) { this.problems.push(`${path}: missing or duplicate id`); return }
+      ids.add(t.id)
+      if (!TRIGGER_EVENTS.includes(t.on)) this.problems.push(`${path}: unknown event "${t.on}"`)
+      const { script, ...rest } = t
+      this.triggers.push({ ...rest, steps: this.expand([{ op: 'include', script }], { params: {}, npc: holder, path, depth: 0 }) })
+    })
+  }
+
   // -- scripts --------------------------------------------------------------
 
   expand(steps: unknown, env: Env): ScriptStep[] {
@@ -638,6 +683,33 @@ class StoryBuilder implements PopHost {
           for (let k = this.starters.length - 1; k >= 0; k--) {
             const st = this.starters[k].id
             const step: ScriptStep = { op: 'ifFlag', flag: this.sc.meta.flags.starter, equals: st, then: [{ op: 'battle', trainer: rivalTrainerId(key, st, this.sc.rival), ...(s.lossContinues ? { lossContinues: true } : {}), ...(typeof s.lossFlag === 'string' ? { lossFlag: s.lossFlag } : {}) }] }
+            if (chain.length) step.else = chain
+            chain = [step]
+          }
+          out.push(...chain)
+          return
+        }
+        case 'byStarter': {
+          // {op:'byStarter', cases: {<starter id>: [steps]}}: ifFlag(starter === id) chain, every starter needs a case
+          const cases = isObj(s.cases) ? s.cases : {}
+          let chain: ScriptStep[] = []
+          for (let k = this.starters.length - 1; k >= 0; k--) {
+            const st = this.starters[k].id
+            if (!Array.isArray(cases[st])) { this.problems.push(`${path}: byStarter has no case for starter "${st}"`); continue }
+            const step: ScriptStep = { op: 'ifFlag', flag: this.sc.meta.flags.starter, equals: st, then: this.expand(cases[st], { ...env, path: `${path}.by.${st}` }) }
+            if (chain.length) step.else = chain
+            chain = [step]
+          }
+          out.push(...chain)
+          return
+        }
+        case 'starterBattle': {
+          // {op:'starterBattle', trainer}: battle <trainer>-<starter> per starter (counter team picked by the player's choice)
+          const base = String(s.trainer)
+          let chain: ScriptStep[] = []
+          for (let k = this.starters.length - 1; k >= 0; k--) {
+            const st = this.starters[k].id
+            const step: ScriptStep = { op: 'ifFlag', flag: this.sc.meta.flags.starter, equals: st, then: [{ op: 'battle', trainer: `${base}-${st}`, ...(s.lossContinues ? { lossContinues: true } : {}), ...(s.lossFlag ? { lossFlag: String(s.lossFlag) } : {}) }] }
             if (chain.length) step.else = chain
             chain = [step]
           }
@@ -682,6 +754,24 @@ class StoryBuilder implements PopHost {
           step.speaker = env.npc.spec.nameZh
           if (env.npc.spec.portrait && step.portrait === undefined) step.portrait = env.npc.spec.portrait
         } else if (step.speaker === '') delete step.speaker
+      }
+      if (step.op === 'emote' && typeof step.target === 'string' && step.target === 'self') step.target = env.npc.spec.id
+      if (step.op === 'bossBattle' && typeof step.lossWarp === 'string') {
+        // lossWarp = a lost fight continues at the anchor: wake up healed, `lossWarp.script` runs, the starting script ends.
+        const a = this.anchors[step.lossWarp]
+        if (!a) { this.problems.push(`${path}: unknown lossWarp anchor "${step.lossWarp}"`); return }
+        const lf = typeof step.lossFlag === 'string' ? step.lossFlag : 'ds:lostNow'
+        delete step.lossWarp
+        out.push({ ...step, lossContinues: true, lossFlag: lf } as unknown as ScriptStep)
+        const lw = this.sc.meta.lossWarp
+        out.push({
+          op: 'ifFlag', flag: lf, equals: true,
+          then: [
+            { op: 'fade', out: true }, { op: 'warp', map: a.map, x: a.x, y: a.y, facing: lw.facing }, { op: 'heal' }, { op: 'fade', out: false },
+            ...this.expand([{ op: 'include', script: lw.script }], { ...env, path: `${path}.loss` }), { op: 'end' },
+          ],
+        })
+        return
       }
       if ((step.op === 'giveCreature' || step.op === 'wildBattle') && isObj(step.pick)) {
         // Keyed by the pick itself so the same pick meets the same species from every script path; `salt` separates.
@@ -780,6 +870,7 @@ class StoryBuilder implements PopHost {
         script: this.expand(p.script, { params: p.params, npc: p, path: `npc ${s.id}`, depth: 0 }),
       }
       if (s.portrait) npc.portrait = s.portrait
+      if (s.creature) npc.creature = s.creature
       if (s.trainer) npc.trainer = s.trainer
       if (s.sightRange) npc.sightRange = s.sightRange
       if (s.wander) npc.wander = s.wander
@@ -1171,78 +1262,92 @@ class StoryBuilder implements PopHost {
     for (const q of w.quests) {
       for (const it of Object.keys(q.reward?.items ?? {})) if (!CONTENT.items[it]) this.problems.push(`quest ${q.id}: unknown reward item "${it}"`)
     }
+    const checkScript = (where: string, script: ScriptStep[]): void => {
+      const step = (s: ScriptStep, path: string): void => {
+        const at = `${where} step ${path} (${s.op})`
+        const bad = (msg: string) => this.problems.push(`${at}: ${msg}`)
+        const item = (id: string) => { if (!CONTENT.items[id]) bad(`unknown item "${id}"`) }
+        const qty = (v: unknown) => { if (typeof v !== 'number' || !(v > 0)) bad(`quantity must be > 0`) }
+        const str = (v: unknown, name: string) => { if (typeof v !== 'string' || !v) bad(`missing ${name}`) }
+        const list = (v: unknown, name: string) => { if (!Array.isArray(v)) bad(`${name} must be a step list`) }
+        switch (s.op) {
+          case 'say':
+            str(s.text, 'text')
+            if (s.portrait && !portraitKnown(s.portrait)) bad(`unknown portrait "${s.portrait}"`)
+            break
+          case 'choice':
+            str(s.text, 'text')
+            if (!Array.isArray(s.options) || !Array.isArray(s.branches) || s.options.length !== s.branches.length || s.options.length < 2) bad('options/branches mismatch')
+            break
+          case 'setFlag': str(s.flag, 'flag'); break
+          case 'ifFlag': str(s.flag, 'flag'); list(s.then, 'then'); break
+          case 'ifBadges': if (typeof s.atLeast !== 'number') bad('atLeast must be a number'); list(s.then, 'then'); break
+          case 'ifItem': item(s.item); list(s.then, 'then'); break
+          case 'ifCaught':
+            if (s.species && !CONTENT.species[s.species]) bad(`unknown species "${s.species}"`)
+            if (s.type && !CONTENT.typeById[s.type]) bad(`unknown type "${s.type}"`)
+            list(s.then, 'then')
+            break
+          case 'giveItem': case 'takeItem': item(s.item); qty(s.qty); break
+          case 'giveMoney': case 'takeMoney': qty(s.amount); break
+          case 'giveCreature': case 'wildBattle':
+            if (!s.species || !CONTENT.species[s.species]) bad(`unresolved species "${s.species}"`)
+            if (!(s.level >= 1 && s.level <= CONTENT.config.party.maxLevel)) bad(`level ${s.level} out of range`)
+            if (s.op === 'wildBattle' && s.music && !bgm.has(s.music)) bad(`unknown music "${s.music}"`)
+            if (s.gradeFloor !== undefined && !CONTENT.quality.grades.some((g) => g.id === s.gradeFloor)) bad(`unknown grade "${s.gradeFloor}"`)
+            if (s.moves?.some((m) => !CONTENT.moves[m])) bad(`unknown move in "${s.moves.join(',')}"`)
+            if (s.op === 'giveCreature' && s.nature !== undefined && !CONTENT.natureById[s.nature]) bad(`unknown nature "${s.nature}"`)
+            break
+          case 'emote': if (s.target !== 'player' && !npcIds.has(s.target)) bad(`unknown emote target "${s.target}"`); break
+          case 'battle': if (!w.trainers[s.trainer]) bad(`unknown trainer "${s.trainer}"`); break
+          case 'bossBattle':
+            if (!CONTENT.bosses[s.boss]?.tiers?.[s.tier]) bad(`unknown boss tier "${s.boss}:${s.tier}"`)
+            break
+          case 'shop': if (!Array.isArray(s.items) || !s.items.length) bad('empty shop'); else s.items.forEach(item); break
+          case 'quest': {
+            const q = quests.get(s.quest)
+            if (!q) bad(`unknown quest "${s.quest}"`)
+            else if (!(Number.isInteger(s.stage) && s.stage >= 0 && s.stage < q.stages.length)) bad(`stage ${s.stage} out of range`)
+            break
+          }
+          case 'warp': {
+            const tm = w.maps[s.map]
+            if (!tm || !inBounds(tm, s.x, s.y)) bad(`bad warp target ${s.map} ${s.x},${s.y}`)
+            if (!dirs.has(s.facing)) bad(`bad facing "${s.facing}"`)
+            break
+          }
+          case 'moveNpc':
+            if (!npcIds.has(s.npc)) bad(`unknown npc "${s.npc}"`)
+            if (!Array.isArray(s.path) || s.path.some((d) => !dirs.has(d))) bad('bad path')
+            break
+          case 'faceNpc': if (!npcIds.has(s.npc)) bad(`unknown npc "${s.npc}"`); if (!dirs.has(s.dir)) bad(`bad dir "${s.dir}"`); break
+          case 'hideNpc': case 'showNpc': if (!npcIds.has(s.npc)) bad(`unknown npc "${s.npc}"`); break
+          case 'sfx': if (!sfx.has(s.id)) bad(`unknown sfx "${s.id}"`); break
+          case 'bgm': if (!bgm.has(s.id)) bad(`unknown bgm "${s.id}"`); break
+          case 'wait': if (typeof s.ms !== 'number' || s.ms < 0) bad('bad ms'); break
+          case 'fade': if (typeof s.out !== 'boolean') bad('fade.out must be boolean'); break
+          case 'unlockTown': if (!w.towns.some((t) => t.id === s.town)) bad(`unknown town "${s.town}"`); break
+          case 'exchange': if (!EXCHANGE.desks[s.desk]) bad(`unknown exchange desk "${s.desk}"`); break
+          case 'teach': if (typeof s.lesson !== 'string' || !s.lesson) bad('teach needs a lesson id'); break
+          case 'openTypeChart':
+            if (s.type !== undefined && !CONTENT.typeById[s.type]) bad(`unknown type "${s.type}"`)
+            if (s.view !== undefined && !['type', 'grid', 'loops'].includes(s.view)) bad(`unknown chart view "${s.view}"`)
+            break
+          case 'chooseStarter': case 'heal': case 'openBox': case 'setRespawn': case 'end': break
+          default: bad('unknown op')
+        }
+      }
+      walkSteps(script, step)
+    }
+    for (const t of this.triggers) checkScript(`trigger ${t.id}`, t.steps)
     for (const m of Object.values(w.maps)) {
       for (const n of m.npcs) {
         const where = `npc ${n.id}`
         if (!CONTENT.characterById[n.sprite]) this.problems.push(`${where}: unknown sprite "${n.sprite}"`)
-        if (n.portrait && !CONTENT.characterById[n.portrait]) this.problems.push(`${where}: unknown portrait "${n.portrait}"`)
+        if (n.portrait && !portraitKnown(n.portrait)) this.problems.push(`${where}: unknown portrait "${n.portrait}"`)
+        if (n.creature && !CONTENT.species[n.creature]) this.problems.push(`${where}: unknown creature "${n.creature}"`)
         if (n.trainer && !w.trainers[n.trainer]) this.problems.push(`${where}: unknown trainer "${n.trainer}"`)
-        const step = (s: ScriptStep, path: string): void => {
-          const at = `${where} step ${path} (${s.op})`
-          const bad = (msg: string) => this.problems.push(`${at}: ${msg}`)
-          const item = (id: string) => { if (!CONTENT.items[id]) bad(`unknown item "${id}"`) }
-          const qty = (v: unknown) => { if (typeof v !== 'number' || !(v > 0)) bad(`quantity must be > 0`) }
-          const str = (v: unknown, name: string) => { if (typeof v !== 'string' || !v) bad(`missing ${name}`) }
-          const list = (v: unknown, name: string) => { if (!Array.isArray(v)) bad(`${name} must be a step list`) }
-          switch (s.op) {
-            case 'say': str(s.text, 'text'); if (s.portrait && !CONTENT.characterById[s.portrait]) bad(`unknown portrait "${s.portrait}"`); break
-            case 'choice':
-              str(s.text, 'text')
-              if (!Array.isArray(s.options) || !Array.isArray(s.branches) || s.options.length !== s.branches.length || s.options.length < 2) bad('options/branches mismatch')
-              break
-            case 'setFlag': str(s.flag, 'flag'); break
-            case 'ifFlag': str(s.flag, 'flag'); list(s.then, 'then'); break
-            case 'ifBadges': if (typeof s.atLeast !== 'number') bad('atLeast must be a number'); list(s.then, 'then'); break
-            case 'ifItem': item(s.item); list(s.then, 'then'); break
-            case 'ifCaught':
-              if (s.species && !CONTENT.species[s.species]) bad(`unknown species "${s.species}"`)
-              if (s.type && !CONTENT.typeById[s.type]) bad(`unknown type "${s.type}"`)
-              list(s.then, 'then')
-              break
-            case 'giveItem': case 'takeItem': item(s.item); qty(s.qty); break
-            case 'giveMoney': case 'takeMoney': qty(s.amount); break
-            case 'giveCreature': case 'wildBattle':
-              if (!s.species || !CONTENT.species[s.species]) bad(`unresolved species "${s.species}"`)
-              if (!(s.level >= 1 && s.level <= CONTENT.config.party.maxLevel)) bad(`level ${s.level} out of range`)
-              if (s.op === 'wildBattle' && s.music && !bgm.has(s.music)) bad(`unknown music "${s.music}"`)
-              break
-            case 'battle': if (!w.trainers[s.trainer]) bad(`unknown trainer "${s.trainer}"`); break
-            case 'bossBattle': if (!CONTENT.bosses[s.boss]?.tiers?.[s.tier]) bad(`unknown boss tier "${s.boss}:${s.tier}"`); break
-            case 'shop': if (!Array.isArray(s.items) || !s.items.length) bad('empty shop'); else s.items.forEach(item); break
-            case 'quest': {
-              const q = quests.get(s.quest)
-              if (!q) bad(`unknown quest "${s.quest}"`)
-              else if (!(Number.isInteger(s.stage) && s.stage >= 0 && s.stage < q.stages.length)) bad(`stage ${s.stage} out of range`)
-              break
-            }
-            case 'warp': {
-              const tm = w.maps[s.map]
-              if (!tm || !inBounds(tm, s.x, s.y)) bad(`bad warp target ${s.map} ${s.x},${s.y}`)
-              if (!dirs.has(s.facing)) bad(`bad facing "${s.facing}"`)
-              break
-            }
-            case 'moveNpc':
-              if (!npcIds.has(s.npc)) bad(`unknown npc "${s.npc}"`)
-              if (!Array.isArray(s.path) || s.path.some((d) => !dirs.has(d))) bad('bad path')
-              break
-            case 'faceNpc': if (!npcIds.has(s.npc)) bad(`unknown npc "${s.npc}"`); if (!dirs.has(s.dir)) bad(`bad dir "${s.dir}"`); break
-            case 'hideNpc': case 'showNpc': if (!npcIds.has(s.npc)) bad(`unknown npc "${s.npc}"`); break
-            case 'sfx': if (!sfx.has(s.id)) bad(`unknown sfx "${s.id}"`); break
-            case 'bgm': if (!bgm.has(s.id)) bad(`unknown bgm "${s.id}"`); break
-            case 'wait': if (typeof s.ms !== 'number' || s.ms < 0) bad('bad ms'); break
-            case 'fade': if (typeof s.out !== 'boolean') bad('fade.out must be boolean'); break
-            case 'unlockTown': if (!w.towns.some((t) => t.id === s.town)) bad(`unknown town "${s.town}"`); break
-            case 'exchange': if (!EXCHANGE.desks[s.desk]) bad(`unknown exchange desk "${s.desk}"`); break
-            case 'teach': if (typeof s.lesson !== 'string' || !s.lesson) bad('teach needs a lesson id'); break
-            case 'openTypeChart':
-              if (s.type !== undefined && !CONTENT.typeById[s.type]) bad(`unknown type "${s.type}"`)
-              if (s.view !== undefined && !['type', 'grid', 'loops'].includes(s.view)) bad(`unknown chart view "${s.view}"`)
-              break
-            case 'chooseStarter': case 'heal': case 'openBox': case 'setRespawn': case 'end': break
-            default: bad('unknown op')
-          }
-        }
-        walkSteps(n.script, step)
+        checkScript(where, n.script)
       }
     }
   }
@@ -1260,20 +1365,21 @@ export function applyStory(world: World, sc: StoryContent = STORY_CONTENT): void
   }
   b.addRivals()
   b.addQuests()
+  b.addTriggers()
   b.addServices()
   for (const [group, list] of Object.entries(sc.npcGroups)) for (const spec of list) b.addNpc(spec, {}, `npcs/${group}`)
   b.place()
   b.populate()
   b.validate()
   PROBLEMS.set(world, b.problems)
-  FEATURES.set(world, { legends: b.legends, bounties: b.bounties })
+  FEATURES.set(world, { legends: b.legends, bounties: b.bounties, triggers: b.triggers })
 }
 
-export interface StoryFeatures { legends: PlacedLegend[]; bounties: PlacedBounty[] }
+export interface StoryFeatures { legends: PlacedLegend[]; bounties: PlacedBounty[]; triggers: StoryTrigger[] }
 
 const FEATURES = new WeakMap<World, StoryFeatures>()
 
 /** Legend chains (tablet / final anchors) and bounties (quest, kind, giver / target anchors) placed for a world. */
 export function storyFeatures(world: World): StoryFeatures {
-  return FEATURES.get(world) ?? { legends: [], bounties: [] }
+  return FEATURES.get(world) ?? { legends: [], bounties: [], triggers: [] }
 }

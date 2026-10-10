@@ -10,7 +10,7 @@ import { creatureName } from '../../shared/creature.ts'
 import { showReveal } from '../ui/reveal.ts'
 import { creatureImg } from '../ui/screens/sprites.ts'
 import { actionKeyLabel, button, el, panel } from '../ui/widgets.ts'
-import { BATTLE_UI } from './config.ts'
+import { BATTLE_UI, type SignedLine } from './config.ts'
 import { ballChoices, signContract, type BallChoice, type Signed } from './contract.ts'
 import './capture.css'
 
@@ -191,6 +191,11 @@ function contractPanel(ctx: GameContext, a: PanelArgs): Promise<void> {
   })
 }
 
+const sayLines = (ctx: GameContext, lines: readonly SignedLine[] | undefined) =>
+  lines?.length
+    ? ctx.ui.say(lines.map((l) => ({ text: t(l.text), ...(l.speaker ? { speaker: t(l.speaker) } : {}), ...(l.portrait ? { portrait: l.portrait } : {}) })))
+    : Promise.resolve()
+
 /**
  * The whole contract after a story-tier win: the screen, the saved card, the "joined" toast and the appraisal card.
  * Returns the signed card (null when the tier signs nothing).
@@ -207,6 +212,8 @@ export async function contractFlow(ctx: GameContext, o: ContractOptions): Promis
     if (signed) ctx.persist('boss-sign')
     return signed
   }
+  const talk = BATTLE_UI.contract.lines[o.bossId]
+  await sayLines(ctx, talk?.before)
   try {
     await contractPanel(ctx, { ...o, choices, commit })
   } catch (err) {
@@ -219,5 +226,6 @@ export async function contractFlow(ctx: GameContext, o: ContractOptions): Promis
   const name = creatureName(card)
   ctx.ui.toast(where === 'party' ? t('battleui.catch.toParty', { name }) : t('battleui.catch.toBox', { name, box: ctx.save.boxes.findIndex((b) => b.includes(card)) + 1 }), 'success')
   await showReveal(ctx, card, { full: true })
+  await sayLines(ctx, talk?.after)
   return signed
 }

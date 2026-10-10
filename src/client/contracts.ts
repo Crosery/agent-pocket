@@ -33,10 +33,11 @@ export interface GameEvents {
   'region:entered': { mapId: string; regionIndex: number; nameZh: string }
   'quest:updated': { questId: string; stage: number; done: boolean }
   'badge:earned': { badgeId: string }
-  'battle:start': { kind: BattleKind }
+  /** `coach`: a guided boss fight (BattleInit.coach): the legacy tips stay quiet until it is over. */
+  'battle:start': { kind: BattleKind; coach?: boolean }
   'battle:end': { kind: BattleKind; result: BattleResult }
   /** Every batch of battle events as the battle client plays it (research / roaming-legend hp tracking). */
-  'battle:events': { kind: BattleKind; events: readonly BattleEvent[] }
+  'battle:events': { kind: BattleKind; events: readonly BattleEvent[]; coach?: boolean }
   /** A full-screen panel opened (id = its aps-<id> class; 'online' for the multiplayer hub). Drives teaching tips. */
   'screen:opened': { screen: string }
   /** A world event became active (events-runtime). */

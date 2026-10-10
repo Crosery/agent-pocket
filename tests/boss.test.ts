@@ -7,7 +7,7 @@ import { CONTENT, t, typeEffectiveness } from '../src/shared/content/index.ts'
 import type { BattleEvent, BossDef, BossState } from '../src/shared/types.ts'
 import { Rng } from '../src/shared/rng.ts'
 import { perspective } from '../src/shared/battle/engine.ts'
-import { chooseBossAction } from '../src/shared/battle/boss.ts'
+import { chooseBossAction, cycleLeft } from '../src/shared/battle/boss.ts'
 import { validateBosses } from '../src/shared/battle/boss-validate.ts'
 import { buildBossInit, startBossBattle } from '../src/shared/battle/boss-battle.ts'
 import legendsJson from '../content/events/legends.json' with { type: 'json' }
@@ -24,7 +24,8 @@ import { computeDamage, condHolds, toStages, type Fighter } from '../src/shared/
 import { calcStats, createCreature } from '../src/shared/creature.ts'
 import { fightStory, rateStory, STARTERS, storyParty } from './boss-story.ts'
 
-const BOSSES = CONTENT.bossList
+/** Fought by scripts only (sparring partners): no wild counterpart, no placement, no balance bands. */
+const BOSSES = CONTENT.bossList.filter((b) => !b.scriptedOnly)
 const SEEDS = 200
 const seedOf = (i: number) => 1 + i * 7919
 
@@ -54,7 +55,7 @@ const byId = (id: string): BossDef => {
 
 test('data: at least 8 bosses, all of them consistent with the rest of the content', () => {
   assert.ok(BOSSES.length >= 8, `${BOSSES.length} bosses`)
-  assert.deepEqual(validateBosses(BOSSES, CONTENT), [])
+  assert.deepEqual(validateBosses(CONTENT.bossList, CONTENT), [])
   for (const b of BOSSES) {
     assert.equal(CONTENT.bossBySpecies[b.species]?.id, b.id, `${b.id} is found by its species`)
     assert.ok(b.gossip.length >= 1 && b.taunt.length >= 1, `${b.id} has hints`)
@@ -997,4 +998,60 @@ test(`story tier: win rates over ${STORY_SEEDS} seeds per starter (naive / compe
 test('story tier: the fight is deterministic for a seed', () => {
   const run = () => fightStory(storyParty('claude-haiku', [8, 6, 5], 17), 'guided', 17)
   assert.deepEqual(run(), run())
+})
+
+// ---------------------------------------------------------------- the coach (DeepSeek guided fight)
+const COACH_SEEDS = 50
+const coachLines = (events: BattleEvent[]) => events.filter((e): e is Extract<BattleEvent, { t: 'coach' }> => e.t === 'coach')
+
+test('coach: lines stay silent without init.coach, and a guided fight speaks at most 6 times, each line once', () => {
+  const quiet = fightStory(storyParty('o1', [8, 6, 5], 3), 'guided', 3, undefined, false, true)
+  assert.equal(coachLines(quiet.events).length, 0, 'no coach unless the caller asks for it')
+  const cap = CONTENT.bosses.deepseek.coach!.maxPerFight
+  assert.equal(cap, 6)
+  for (const starter of STARTERS) {
+    for (let i = 0; i < COACH_SEEDS; i++) {
+      const seed = 1 + i * 7919
+      const r = fightStory(storyParty(starter, [8, 6, 5], seed), 'guided', seed, undefined, false, true, { coach: true })
+      const lines = coachLines(r.events)
+      assert.ok(lines.length >= 1 && lines.length <= cap, `${starter}/${seed}: ${lines.length} coach lines`)
+      assert.equal(new Set(lines.map((l) => l.text)).size, lines.length, `${starter}/${seed}: a line repeats`)
+      for (const l of lines) assert.ok(Array.from(l.text).length <= 24, `${l.text} is longer than 24 characters`)
+    }
+  }
+})
+
+test('coach: the opening line follows the starter and the first command menu always gets one', () => {
+  const first = (starter: string) => coachLines(fightStory(storyParty(starter, [8, 6, 5], 9), 'guided', 9, undefined, false, true, { coach: true }).events)[0]
+  const texts = STARTERS.map((s) => first(s).text)
+  assert.equal(new Set(texts).size, 3, 'o1 / Haiku / V3 each hear their own opener')
+  assert.equal(first('o1').speaker, t('story.cast.r1'))
+})
+
+test('coach: after skipping the briefing only the allowed lines are spoken (at most 4)', () => {
+  const allowed = CONTENT.bosses.deepseek.coach!.skipBriefLines!
+  assert.equal(allowed.length, 4)
+  for (const starter of STARTERS) {
+    for (let i = 0; i < COACH_SEEDS; i++) {
+      const seed = 1 + i * 7919
+      const r = fightStory(storyParty(starter, [8, 6, 5], seed), 'guided', seed, undefined, false, true, { coach: true, skipBrief: true })
+      assert.ok(coachLines(r.events).length <= 4, `${starter}/${seed}: more than 4 lines after skipping`)
+      const base = (txt: string) => allowed.some((n) => ['', 'O1', 'Haiku', 'V3'].some((sfx) => t(`boss.deepseek.coach.${n}${sfx}`) === txt))
+      for (const l of coachLines(r.events)) assert.ok(base(l.text), `"${l.text}" is not an allowed line`)
+    }
+  }
+})
+
+test('coach: the sparring partner (scriptedOnly) never answers to its species, and its cycle is 2 + 2', () => {
+  const drill = CONTENT.bosses['deepseek-drill']
+  assert.ok(drill.scriptedOnly)
+  assert.equal(CONTENT.bossBySpecies[drill.species], undefined, 'a wild deepseek-v2 is an ordinary creature')
+  assert.deepEqual(drill.meters.find((m) => m.id === 'tide')!.cycle, { period: 4, from: 0, to: 2 })
+  assert.equal(drill.coach!.maxPerFight, 2)
+})
+
+test('boss HUD: the tide meter shows a countdown of the current segment (peak 3 / valley 3)', () => {
+  const info = (turn: number) => bossPanelInfo({ ...bossOpeningHud('deepseek')!, meters: { tide: turn % 6 < 3 ? 0 : 1 }, cycles: { tide: cycleLeft({ period: 6, from: 0, to: 3 }, turn) } }, CONTENT, 'story')!.chips[0].text
+  const dots = (s: string) => [...s].filter((c) => c === t('battleui.boss.dotOn') || c === t('battleui.boss.dotOff')).join('')
+  assert.deepEqual([0, 1, 2, 3, 4, 5, 6].map((turn) => dots(info(turn))), ['●●●', '●●○', '●○○', '●●●', '●●○', '●○○', '●●●'])
 })

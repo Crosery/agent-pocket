@@ -107,3 +107,18 @@ test('first rival battle: a loss continues the story instead of blacking out', (
   }
   assert.ok(flat.some((s) => s.op === 'heal'), 'party is healed after the loss')
 })
+
+test('conditions: device is live state, expires may be a list, the retired cards are gone', () => {
+  const p = progress()
+  assert.ok(condHolds({ device: ['keyboard', 'gamepad'] }, p, { device: 'keyboard' }))
+  assert.ok(!condHolds({ device: ['keyboard', 'gamepad'] }, p, { device: 'touch' }))
+  assert.ok(!condHolds({ device: ['touch'] }, p), 'no device reported: not a touch player')
+  const move = TUTORIAL.tips.list.find((x) => x.id === 'move')!
+  assert.deepEqual(move.trigger.kind === 'free' && move.trigger.needs, { device: ['keyboard', 'gamepad'] }, 'phones learn to move from the stick animation')
+  const caught = TUTORIAL.tips.list.find((x) => x.id === 'catch')!
+  assert.ok(Array.isArray(caught.expires))
+  assert.ok(!tipLive(caught, progress({ flags: { 'ds:ernie': true } })), 'any entry of an expires list ends the tip (the story already taught catching)')
+  assert.ok(tipLive(caught, progress()))
+  for (const id of ['objective', 'menuHint', 'signs', 'fly', 'tradePvp', 'center']) assert.ok(!TUTORIAL.tips.list.some((x) => x.id === id), `${id} is retired`)
+  assert.equal(TUTORIAL.objective.hideQuestCardUntilFlag, 'ds:gateOpen')
+})

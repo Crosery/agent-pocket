@@ -71,13 +71,29 @@ export function buildInteriors(wc: WorldContent, doors: DoorLink[], overworldId:
         d.warps.push({ x: tpl.exit[0], y: tpl.exit[1], toMap: overworldId, toX: link.door.front.x, toY: link.door.front.y, facing: link.door.facing, kind: 'door' })
         addFlag(d, idx(d, tpl.exit[0], tpl.exit[1]), F_RESERVED)
       } else if (k === 0) problems.push(`interior ${link.floors[k]}: ground floor has no exit`)
-      const up = tpl.links?.up, nextTpl = tpls[k + 1]
-      if (up && nextTpl?.links?.down) {
-        const down = nextTpl.links.down
-        d.warps.push({ x: up.x, y: up.y, toMap: link.mapIds[k + 1], toX: down.arrive[0], toY: down.arrive[1], facing: down.facing, kind: 'stairs' })
-        drafts[k + 1].warps.push({ x: down.x, y: down.y, toMap: link.mapIds[k], toX: up.arrive[0], toY: up.arrive[1], facing: up.facing, kind: 'stairs' })
-      } else if (up || (k > 0 && !tpl.links?.down)) problems.push(`interior ${link.floors[k]}: stairs links do not match the floor list`)
-      if (k > 0 && tpl.links?.down) d.spawn = { x: tpl.links.down.arrive[0], y: tpl.links.down.arrive[1], facing: tpl.links.down.facing }
+      const nextTpl = tpls[k + 1]
+      const firstBelow = tpls.length - link.belowCount
+      const underground = k >= firstBelow
+      if (k + 1 === firstBelow && link.belowCount > 0 || underground && nextTpl) {
+        // Going down: this floor's `down` stairs pair with the next floor's `up` stairs.
+        const down = tpl.links?.down, up = nextTpl?.links?.up
+        if (down && up) {
+          d.warps.push({ x: down.x, y: down.y, toMap: link.mapIds[k + 1], toX: up.arrive[0], toY: up.arrive[1], facing: up.facing, kind: 'stairs' })
+          drafts[k + 1].warps.push({ x: up.x, y: up.y, toMap: link.mapIds[k], toX: down.arrive[0], toY: down.arrive[1], facing: down.facing, kind: 'stairs' })
+        } else problems.push(`interior ${link.floors[k]}: stairs links do not match the floor list`)
+      } else if (underground) {
+        // The pairing with the floor above was made there; an underground floor must have its way back up.
+        if (!tpl.links?.up) problems.push(`interior ${link.floors[k]}: stairs links do not match the floor list`)
+      } else {
+        const up = tpl.links?.up
+        if (up && nextTpl?.links?.down) {
+          const down = nextTpl.links.down
+          d.warps.push({ x: up.x, y: up.y, toMap: link.mapIds[k + 1], toX: down.arrive[0], toY: down.arrive[1], facing: down.facing, kind: 'stairs' })
+          drafts[k + 1].warps.push({ x: down.x, y: down.y, toMap: link.mapIds[k], toX: up.arrive[0], toY: up.arrive[1], facing: up.facing, kind: 'stairs' })
+        } else if (up || (k > 0 && !tpl.links?.down)) problems.push(`interior ${link.floors[k]}: stairs links do not match the floor list`)
+      }
+      if (underground && tpl.links?.up) d.spawn = { x: tpl.links.up.arrive[0], y: tpl.links.up.arrive[1], facing: tpl.links.up.facing }
+      else if (k > 0 && tpl.links?.down) d.spawn = { x: tpl.links.down.arrive[0], y: tpl.links.down.arrive[1], facing: tpl.links.down.facing }
       addAnchor(anchors, problems, `${link.mapIds[k]}:entrance`, link.mapIds[k], d.spawn.x, d.spawn.y)
       for (const [name, [x, y]] of Object.entries(tpl.anchors)) addAnchor(anchors, problems, `${link.mapIds[k]}:${name}`, link.mapIds[k], x, y)
     })

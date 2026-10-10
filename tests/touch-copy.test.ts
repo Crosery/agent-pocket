@@ -58,6 +58,14 @@ test('script say lines use the Touch text on touch and the keyboard text otherwi
   assert.deepEqual(await run('gamepad'), [t('game.intro.hint'), t('game.intro.wake', { name: '小明' })])
 })
 
+test('the battle, save and hud cards have a phone wording, and the prologue lines name no keys', () => {
+  for (const id of ['battle', 'save', 'hud']) assert.ok(`tutorial.tip.${id}.bodyTouch` in CONTENT.text, `tip ${id} bodyTouch`)
+  for (const [key, text] of Object.entries(CONTENT.text)) {
+    if (!key.startsWith('story.opening.')) continue
+    assert.doesNotMatch(text, KEYBOARD_WORDS, `${key}: keyboard wording in the prologue`)
+  }
+})
+
 test('the minimap tip tells a phone to tap the radar, and the enlarged map says how to close', () => {
   assert.match(t('tutorial.tip.hud.bodyTouch'), /点右上角的小地图可以放大/)
   assert.match(t('tutorial.manual.hud.bodyTouch'), /点右上角的小地图可以放大/)

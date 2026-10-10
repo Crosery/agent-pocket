@@ -10,6 +10,7 @@ import { createCreature, maxHp } from '../../shared/creature.ts'
 import { buildBossInit, createBossCreature } from '../../shared/battle/boss-battle.ts'
 import { partyExpMods } from '../../shared/gameplay/bosscard.ts'
 import { instanceOfBoss, progressOf } from '../../shared/gameplay/instances.ts'
+import { GAMEPLAY } from '../../shared/gameplay/data.ts'
 import { modifierValue, type EventModifiers } from '../../shared/gameplay/events.ts'
 import { regionAt } from '../../shared/world/worldapi.ts'
 import { STORY_CONTENT } from '../../shared/world/story.ts'
@@ -89,6 +90,12 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     return Object.keys(out).length ? out : undefined
   }
 
+  /** Bait items in the bag (a coach fight lets the boss see whether the player holds a coupon). */
+  const baitCounts = (): Record<string, number> =>
+    Object.fromEntries(Object.entries(ctx.save.bag).filter(([id]) => ctx.data.items[id]?.effect.kind === 'bait'))
+
+  const ID = GAMEPLAY.instanceDefaults
+
   const prizeMoney = (base: number) => {
     const m = deps.modifiers?.()
     return m ? Math.round(base * modifierValue(m, 'money')) : base
@@ -132,7 +139,7 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     return order >= GAME.encounters.legendRarityOrder ? 'legend' : 'wild'
   }
 
-  async function wild(cr: Creature, opts: { music?: string; scripted?: boolean; flee?: BattleSideInit['flee'] } = {}): Promise<BattleOutcome> {
+  async function wild(cr: Creature, opts: { music?: string; scripted?: boolean; flee?: BattleSideInit['flee']; catchRateMul?: number } = {}): Promise<BattleOutcome> {
     await transition()
     const name = ctx.data.species[cr.speciesId]?.nameZh ?? cr.speciesId
     // A species with a boss definition (content/bosses.json) is fought with its boss rules; bosses never flee.
@@ -148,8 +155,9 @@ export function createBattleFlow(deps: BattleFlowDeps) {
       expGain: true,
       ...arena(),
     }
-    const mods = battleMods(cr)
-    if (mods) init.mods = mods
+    const mods = battleMods(cr) ?? {}
+    if (opts.catchRateMul !== undefined) mods.catchRate = (mods.catchRate ?? 1) * opts.catchRateMul
+    if (Object.keys(mods).length) init.mods = mods
     if (boss) cr.hp = maxHp(cr, ctx.data)
     const outcome = await run(init, { kind: wildKind(cr), ...(opts.music ? { music: opts.music } : {}) })
     // Defeating (or taming) a boss unlocks the full counterplay hint in its dex entry.
@@ -229,7 +237,7 @@ export function createBattleFlow(deps: BattleFlowDeps) {
    * fight so the contract roll is fixed from the room's door on; the first win pays the first reward and, when asked,
    * runs the contract (battle/capture.ts); repeats pay the repeat reward and halve the exp. null: unknown boss / tier.
    */
-  async function boss(bossId: string, tierId: string, opts: { captureAfterWin?: boolean; assist?: boolean } = {}): Promise<BattleOutcome | null> {
+  async function boss(bossId: string, tierId: string, opts: { captureAfterWin?: boolean; assist?: boolean; coach?: boolean } = {}): Promise<BattleOutcome | null> {
     const def = ctx.data.bosses[bossId]
     const tier = def?.tiers?.[tierId]
     const inst = instanceOfBoss(bossId)
@@ -247,6 +255,8 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     const init = buildBossInit(bossId, ctx.save.party, {
       seed, tier: tierId, boss: foe, c: ctx.data, expGain: true, playerName: ctx.save.name, ...(ctx.save.avatar ? { playerSprite: ctx.save.avatar } : {}),
       biome: a.biome, timeOfDay: a.timeOfDay, ...(a.weather ? { weather: a.weather } : {}), ...(opts.assist ? { assist: true } : {}),
+      ...(opts.coach ? { coach: true, skipBrief: !!ctx.save.flags['ds:skipBrief'], items: baitCounts() } : {}),
+      ...(opts.assist === undefined && ctx.save.flags[ID.assistFlag] ? { assist: true } : {}),
     })
     if (opts.captureAfterWin && first) init.captureAfterWin = true
     const mods = battleMods(foe) ?? {}
@@ -255,11 +265,15 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     const outcome = await run(init, { kind: wildKind(foe) })
     if (outcome.result === 'win') {
       prog.clears[tierId] = (prog.clears[tierId] ?? 0) + 1
+      prog.losses[tierId] = 0
+      ctx.save.flags[ID.assistOfferFlag] = false
       ctx.save.flags[GAME.flags.bossWonPrefix + bossId] = true
       if (first) payBossReward({ money: rules.reward.money, items: rules.firstReward.items })
       else payBossReward({ money: rules.repeat.money })
     } else if (outcome.result === 'lose' || outcome.result === 'draw') {
       prog.losses[tierId] = (prog.losses[tierId] ?? 0) + 1
+      // The assist mode ("减负") is offered once the losses add up; the story script of the instance asks the player.
+      ctx.save.flags[ID.assistOfferFlag] = prog.losses[tierId] >= ID.assistAfterLosses
     }
     ctx.persist('boss-run')
     return outcome

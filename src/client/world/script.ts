@@ -29,9 +29,11 @@ export interface ScriptHost {
   setNpcHidden(id: string, hidden: boolean): void
   /** Trainer battle incl. intro/defeat text and rewards; null when the trainer does not exist. */
   trainerBattle(trainerId: string, npc: NpcDef | null): Promise<BattleResult | null>
-  wildBattle(speciesId: string, level: number, opts: { music?: string; shiny?: boolean; scripted: boolean }): Promise<BattleResult | null>
+  wildBattle(speciesId: string, level: number, opts: { music?: string; shiny?: boolean; scripted: boolean; moves?: string[]; catchRateMul?: number; gradeFloor?: string }): Promise<BattleResult | null>
   /** Boss instance fight of one tier (rewards and the post-win contract included); null when the boss or tier does not exist. */
-  bossBattle?(bossId: string, tier: string, opts: { captureAfterWin?: boolean }): Promise<BattleResult | null>
+  bossBattle?(bossId: string, tier: string, opts: { captureAfterWin?: boolean; coach?: boolean }): Promise<BattleResult | null>
+  /** A floating bubble over an NPC id or "player". */
+  emote?(target: string, fx: string): void
   /** Teleport to the respawn point after a loss (heals). */
   blackout(): Promise<void>
   warp(map: string, x: number, y: number, facing: Dir): Promise<void>
@@ -72,14 +74,17 @@ export function createScriptRunner(host: ScriptHost) {
   /** Flags may carry {year} / {day} placeholders (yearly / daily one-shots). */
   const flagName = (f: string) => (f.includes('{') ? expandFlag(f, { year: realDateOf(new Date()).year, day: dayOf(ctx.save.clockMinutes) }) : f)
 
-  async function giveCreature(speciesId: string, level: number, shiny: boolean | undefined): Promise<void> {
+  async function giveCreature(s: Extract<ScriptStep, { op: 'giveCreature' }>, speciesId: string): Promise<void> {
+    const { level, shiny } = s
     if (!ctx.data.species[speciesId]) { console.warn(`[script] unknown species "${speciesId}"`); return }
     const place = host.playerPlace()
     const isNew = !ctx.save.dexCaught.includes(speciesId)
     const cr = createCreature(speciesId, level, {
       rng, shiny: shiny ?? rollShiny(rng, ctx.data), otName: ctx.save.name, otId: ctx.save.playerId, ballId: ballId(ctx), caughtMap: place.map,
-      gradeFloor: ctx.data.quality.giftGradeFloor, origin: { kind: 'gift' },
+      gradeFloor: s.gradeFloor ?? ctx.data.quality.giftGradeFloor, origin: { kind: 'gift' },
+      ...(s.nature ? { nature: s.nature } : {}), ...(s.moves?.length ? { moves: s.moves } : {}),
     }, ctx.data)
+    if (s.ability && ctx.data.abilities[s.ability]) cr.abilityId = s.ability
     const species = creatureName(cr, ctx.data)
     ctx.audio.playSfx(GAME.items.keyItemSfx)
     await narrate(t('world.script.giveCreature', { ...params(), species }))
@@ -178,7 +183,7 @@ export function createScriptRunner(host: ScriptHost) {
         return 'done'
       case 'giveCreature':
         if (!s.species) { console.warn('[script] giveCreature without a resolved species'); return 'done' }
-        await giveCreature(s.species, s.level, s.shiny)
+        await giveCreature(s, s.species)
         return 'done'
       case 'chooseStarter': {
         const options = ctx.data.speciesList.filter((sp) => sp.starter)
@@ -204,7 +209,7 @@ export function createScriptRunner(host: ScriptHost) {
         return 'done'
       }
       case 'bossBattle': {
-        const r = (await host.bossBattle?.(s.boss, s.tier, { captureAfterWin: s.captureAfterWin })) ?? null
+        const r = (await host.bossBattle?.(s.boss, s.tier, { captureAfterWin: s.captureAfterWin, coach: s.coach })) ?? null
         if (s.lossFlag && r !== null) ctx.save.flags[flagName(s.lossFlag)] = isLoss(r)
         if (isLoss(r) && GAME.battle.lossAbortsScript && !s.lossContinues) { await host.blackout(); return 'abort' }
         return 'done'
@@ -213,7 +218,7 @@ export function createScriptRunner(host: ScriptHost) {
         if (!s.species) { console.warn('[script] wildBattle without a resolved species'); return 'done' }
         markSeen(ctx, s.species)
         await presentArrival(ctx, s.species, host.playerPlace())
-        const r = await host.wildBattle(s.species, s.level, { music: s.music, scripted: true })
+        const r = await host.wildBattle(s.species, s.level, { music: s.music, scripted: true, moves: s.moves, catchRateMul: s.catchRateMul, gradeFloor: s.gradeFloor })
         if (isLoss(r) && GAME.battle.lossAbortsScript) { await host.blackout(); return 'abort' }
         return 'done'
       }
@@ -279,6 +284,10 @@ export function createScriptRunner(host: ScriptHost) {
         return 'done'
       case 'fade':
         await ctx.ui.fade(s.out, GAME.script.fadeMs)
+        return 'done'
+      case 'emote':
+        host.emote?.(s.target === 'self' && npc ? npc.id : s.target, s.fx)
+        await wait(GAME.script.emoteWaitMs)
         return 'done'
       case 'unlockTown': {
         const town = ctx.data.world.towns.find((tw) => tw.id === s.town)

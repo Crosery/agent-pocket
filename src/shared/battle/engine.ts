@@ -346,6 +346,8 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
       weather: () => this.weatherId,
       setWeather: (id, turns) => { this.setWeather(id, turns ?? this.c.config.battle.weatherTurns) },
       roll: (p) => this.rng.chance(p),
+      coach: () => ({ on: this.init.coach === true, skipBrief: this.init.skipBrief === true }),
+      foeHasItem: (id) => (this.sides[other(BOSS_SIDE)].items[id] ?? 0) > 0,
       battler: () => {
         const b = stageOf(BOSS_SIDE)
         return { stages: { ...b.stages }, volatiles: Object.fromEntries(b.volatiles), recharging: b.recharging }
@@ -1225,7 +1227,8 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     const sd = this.sides[s]
     const item = this.c.items[itemId]
     if (!item) return
-    if (this.isAi(s)) sd.items[itemId] = Math.max(0, (sd.items[itemId] ?? 0) - 1)
+    // The bag of a player side is tracked only for the items a caller listed (boss coach fights).
+    if (this.isAi(s) || sd.items[itemId] !== undefined) sd.items[itemId] = Math.max(0, (sd.items[itemId] ?? 0) - 1)
     const e = item.effect
     if (e.kind === 'ball') {
       this.say('battle.throwBall', { trainer: this.label(s), item: item.nameZh })

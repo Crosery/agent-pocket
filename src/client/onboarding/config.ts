@@ -23,6 +23,8 @@ export interface Cond {
   hasCategory?: string[]
   /** Live state: the clock is in one of these times of day. */
   timeOfDay?: string[]
+  /** Live state: the last input the player used. */
+  device?: ('keyboard' | 'gamepad' | 'touch')[]
 }
 
 /** Payload field test of an `on` trigger: literal equality or a small operator object. */
@@ -87,7 +89,8 @@ export interface TipDef {
   trigger: TipTrigger
   /** Text namespace key: <text>.title / <text>.body. */
   text: string
-  expires?: Cond
+  /** A list expires the tip as soon as any entry holds. */
+  expires?: Cond | Cond[]
   /** Tips that must have been shown (or have expired) before this one may appear. */
   after?: string[]
   /** Screen edge the card sits on (default bottom; battle tips sit right, above the player's status panel). */
@@ -115,6 +118,8 @@ export interface TutorialConfig {
   objective: {
     refreshSec: number
     collapseSec: number
+    /** The tracked-quest card on the HUD stays hidden until this flag is set (the prologue shows the objective only). */
+    hideQuestCardUntilFlag?: string
     arrow: { minDistance: number; stepsPerTile: number }
     navigation: NavigationRules
     markers: { flag: string; on: 'region:entered'; region: string }[]
@@ -135,7 +140,7 @@ export const TIP_FLAG_PREFIX = 'tip:'
 /** Placeholders that render as key caps ({confirm} -> Z / A / ...) plus {move}. */
 export const KEY_PLACEHOLDERS = ['confirm', 'cancel', 'menu', 'run', 'map', 'minimap', 'chat', 'bike', 'quickSave'] as const
 
-const COND_KEYS = new Set(['flag', 'noFlag', 'minBadges', 'maxBadges', 'minParty', 'maxParty', 'minBossBank', 'minStat', 'maxStat', 'hasItem', 'hasCategory', 'timeOfDay'])
+const COND_KEYS = new Set(['flag', 'noFlag', 'minBadges', 'maxBadges', 'minParty', 'maxParty', 'minBossBank', 'minStat', 'maxStat', 'hasItem', 'hasCategory', 'timeOfDay', 'device'])
 
 export function validateTutorial(world: World, anchors: Record<string, unknown>, cfg: TutorialConfig = TUTORIAL): string[] {
   const errs: string[] = []
@@ -179,7 +184,7 @@ export function validateTutorial(world: World, anchors: Record<string, unknown>,
     tipIds.add(tip.id)
     text(`${tip.text}.title`, where)
     text(`${tip.text}.body`, where)
-    cond(tip.expires, where)
+    for (const e of [tip.expires ?? []].flat()) cond(e, where)
     if (tip.whileAttention && !ATTENTION.sources.some((a) => a.id === tip.whileAttention)) errs.push(`${where}: unknown attention source "${tip.whileAttention}"`)
     if (tip.trigger.kind === 'free') cond(tip.trigger.needs, where)
     const tr = tip.trigger

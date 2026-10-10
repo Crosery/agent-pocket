@@ -103,9 +103,14 @@ export interface BattleUiConfig {
     defaultBall: string; consumeBall: boolean
     shakes: number; shakeMs: number; flashMs: number; rollMs: number; lineMs: number; autoCloseMs: number
     sfx: { throw: string; shake: string; sign: string; roll: string; line: string }
+    /** Story talk around the first signing of a boss, by boss id: before the contract screen and after the appraisal card. */
+    lines: Record<string, { before: SignedLine[]; after: SignedLine[] }>
   }
   evolve: { startHoldMs: number; endHoldMs: number }
 }
+
+/** A dialogue line (text keys). */
+export interface SignedLine { text: string; speaker?: string; portrait?: string }
 
 export const BATTLE_UI: BattleUiConfig = battleUiJson as unknown as BattleUiConfig
 
@@ -170,6 +175,10 @@ export function validateBattleUi(c: Content, cfg: BattleUiConfig = BATTLE_UI): s
   if (c.items[cfg.contract?.defaultBall]?.effect.kind !== 'ball') errs.push(`battle-ui contract.defaultBall: "${cfg.contract?.defaultBall}" is not a ball`)
   for (const k of ['shakes', 'shakeMs', 'flashMs', 'rollMs', 'lineMs', 'autoCloseMs'] as const) num(`contract.${k}`, cfg.contract[k])
   for (const [k, v] of Object.entries(cfg.contract.sfx)) sfx(`contract.sfx.${k}`, v)
+  for (const [boss, talk] of Object.entries(cfg.contract.lines ?? {})) {
+    if (!c.bosses[boss]) errs.push(`battle-ui contract.lines: unknown boss "${boss}"`)
+    for (const l of [...talk.before, ...talk.after]) for (const key of [l.text, l.speaker]) if (key && !(key in c.text)) errs.push(`battle-ui contract.lines.${boss}: missing text "${key}"`)
+  }
   num('evolve.startHoldMs', cfg.evolve.startHoldMs)
   num('evolve.endHoldMs', cfg.evolve.endHoldMs)
   return errs

@@ -1,8 +1,8 @@
 {
   "origin": [
-    {"id": "o-xiaoman", "at": "town:origin:npc-1", "sprite": "villager_kid", "nameZh": "小满", "role": "villager", "lines": ["我长大了也要当训练家！", "智灵的名字我全背下来了……虽然它们每隔几个月就出一个新版本。"], "wander": 2},
-    {"id": "o-florist", "at": "town:origin:npc-2", "sprite": "villager_woman", "nameZh": "花店阿姨", "role": "villager", "lines": ["高草丛里随时会窜出野生智灵。", "只走土路和石板路的话，就不会被打扰啦。"], "wander": 2},
-    {"id": "o-guard", "at": "town:origin:npc-4", "sprite": "villager_man", "nameZh": "保安大叔", "role": "villager", "lines": ["“图灵测试”是 1950 年提出的，用来判断机器能不能像人一样对话。", "现在的智灵嘛……天天都在通过。"]},
+    {"id": "o-xiaoman", "at": "town:origin:npc-1", "sprite": "villager_kid", "nameZh": "小满", "role": "villager", "wander": 2, "script": [{"op": "ifFlag", "flag": "ds:done", "then": [{"op": "say", "text": "story.opening.town.xiaomanAfter", "speaker": ""}], "else": [{"op": "say", "text": "story.opening.town.xiaomanBusy", "speaker": ""}]}, {"op": "say", "text": "我长大了也要当训练家！"}, {"op": "say", "text": "智灵的名字我全背下来了……虽然它们每隔几个月就出一个新版本。"}]},
+    {"id": "o-florist", "at": "town:origin:npc-2", "sprite": "villager_woman", "nameZh": "花店阿姨", "role": "villager", "wander": 2, "script": [{"op": "ifFlag", "flag": "ds:done", "then": [{"op": "say", "text": "story.opening.town.floristAfter", "speaker": ""}], "else": [{"op": "say", "text": "story.opening.town.floristBusy", "speaker": ""}]}, {"op": "say", "text": "高草丛里随时会窜出野生智灵。"}, {"op": "say", "text": "只走土路和石板路的话，就不会被打扰啦。"}]},
+    {"id": "o-guard", "at": "town:origin:npc-4", "sprite": "villager_man", "nameZh": "保安大叔", "role": "villager", "lines": ["“图灵测试”是 1950 年提出的，用来判断机器能不能像人一样对话。", "现在的智灵嘛……天天都在通过。"], "hiddenUnlessFlag": "ds:gateOpen"},
     {"id": "o-azhe", "at": "town:origin:npc-5", "sprite": "villager_kid", "nameZh": "阿哲", "role": "villager", "lines": ["打不过就逃跑！逃跑不丢人。", "在对战里全军覆没才丢人——还会丢 Token 币。"], "wander": 2},
     {"id": "o-neighbor", "at": "origin-house1:resident-1", "sprite": "villager_woman", "nameZh": "邻居阿姨", "role": "villager", "lines": ["我儿子说要做一个能帮我洗碗的智能体。", "三个月过去了，碗还是我洗。不过它学会给我写洗碗周报了。"], "wander": 1},
     {"id": "o-localmodel", "at": "origin-house2:resident-1", "sprite": "villager_man", "nameZh": "邻居大叔", "role": "villager", "lines": ["我在电脑上跑了个本地小模型。", "风扇一转，整个屋子都暖和了，冬天正好省暖气费。"], "wander": 1},

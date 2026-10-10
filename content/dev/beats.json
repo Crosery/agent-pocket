@@ -4,7 +4,7 @@
     "place": "town:chord",
     "badges": ["badge-code", "badge-vision", "badge-sound"],
     "trainers": ["gc-xiaoma", "gc-ace", "gc-xiaoyuan", "leader_code", "gv-xiaocai", "gv-kuaimen", "gv-atong", "leader_vision", "gs-xiaodiao", "gs-apu", "gs-shengsheng", "leader_sound"],
-    "quests": {"main": {"stage": 4, "done": false}},
+    "quests": {"main": {"stage": 11, "done": false}},
     "flags": {"intro:mom": true, "rival:lab": true, "ob:route1": true, "ob:healed": true, "tip:move": true, "tip:talk": true, "tip:objective": true, "tip:signs": true, "tip:groundItem": true, "tip:grass": true, "tip:menuHint": true, "tip:menu": true, "tip:save": true, "tip:hud": true, "tip:battle": true, "tip:moveInfo": true, "tip:typeMatchup": true, "tip:superEffective": true, "tip:resisted": true, "tip:immune": true, "tip:doubleType": true, "tip:stab": true, "tip:statGlossary": true, "tip:battleEffects": true, "tip:status": true, "tip:crit": true, "tip:weather": true, "tip:ability": true, "tip:catch": true, "tip:caught": true, "tip:catchFail": true, "tip:trainer": true, "tip:takenSuper": true, "tip:faintOwn": true, "tip:levelUp": true, "tip:moveLearn": true, "tip:evolve": true, "tip:party": true, "tip:teamBuild": true, "tip:bag": true, "tip:shop": true, "tip:exchange": true, "tip:chips": true, "tip:bike": true, "tip:surf": true, "tip:hurt": true, "tip:center": true, "tip:gym": true, "tip:badge": true, "tip:worldMap": true, "tip:fly": true, "tip:quests": true, "tip:sideQuest": true, "tip:worldEvent": true, "tip:rarity": true, "tip:timeWeather": true, "tip:research": true, "tip:dex": true, "tip:online": true, "tip:chat": true, "tip:tradePvp": true}
   }
 }

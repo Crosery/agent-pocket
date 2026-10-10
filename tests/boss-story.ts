@@ -36,9 +36,10 @@ export interface StoryRun { won: boolean; turns: number; coupons: number; potion
 
 export function fightStory(
   party: Creature[], strat: Strategy, seed: number, bag0: Readonly<Record<string, number>> = STORY_BAG, assist = false, log = false,
+  guide: { coach?: boolean; skipBrief?: boolean } = {},
 ): StoryRun {
   const bag = { ...bag0 }
-  const { engine, intro } = startBossBattle('deepseek', party, { seed, autoPlayer: true, items: bag, expGain: false, tier: 'story', assist })
+  const { engine, intro } = startBossBattle('deepseek', party, { seed, autoPlayer: true, items: bag, expGain: false, tier: 'story', assist, ...guide })
   const events: BattleEvent[] = log ? [...intro] : []
   const rng = new Rng(seed ^ 0x2545f491)
   let usedCoupon = 0

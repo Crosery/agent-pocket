@@ -385,6 +385,13 @@ html.ap-compact :is(.apb-fx-chip, .apb-fx-status-line, .apb-fx-ability-tag, .apb
   pointer-events: none;
 }
 .apb-bar > * { pointer-events: auto; }
+/* the coach bar sits above the message window and never joins the command buttons */
+.apb-coach { grid-column: 1 / -1; grid-row: 1; display: flex; align-items: center; gap: calc(var(--u) * 5); min-width: 0; cursor: pointer; }
+.apb-coach .ap-panel-body { display: flex; align-items: center; gap: calc(var(--u) * 5); min-width: 0; padding-block: calc(var(--u) * 2); }
+.apb-coach-img { flex: none; width: calc(var(--u) * 22); height: calc(var(--u) * 22); object-fit: cover; image-rendering: pixelated; border: calc(var(--u) * 1) solid var(--ap-gold); }
+.apb-coach-name { flex: none; color: var(--ap-gold-hi); }
+.apb-coach-text { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; line-height: 1.2; }
+.apb-bar.has-coach > :not(.apb-coach) { grid-row: 2; }
 .apb-msg {
   position: relative;
   grid-column: 1;
@@ -512,6 +519,10 @@ html.ap-compact .apb-cmd { width: calc(var(--u) * var(--apb-cmd-w-c, 116)); }
 html.ap-portrait .apb-bar { grid-template-columns: minmax(0, 1fr); row-gap: var(--apb-g); }
 html.ap-portrait .apb-status.is-own { grid-column: 1; grid-row: 1; width: 100%; min-height: 0; }
 html.ap-portrait .apb-msg { grid-column: 1; grid-row: 2; }
+html.ap-portrait .apb-bar.has-coach .apb-status.is-own { grid-row: 1; }
+html.ap-portrait .apb-bar.has-coach .apb-coach { grid-row: 2; }
+html.ap-portrait .apb-bar.has-coach .apb-msg { grid-row: 3; }
+html.ap-portrait .apb-bar.has-coach .apb-menu-wrap { grid-row: 4; }
 html.ap-portrait .apb-menu-wrap { grid-column: 1; grid-row: 3; width: 100%; }
 html.ap-portrait .apb-cmd { width: 100%; grid-template-columns: repeat(4, minmax(0, 1fr)); }
 html.ap-portrait .apb-moves { --cols: 2; }

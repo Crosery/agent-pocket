@@ -62,6 +62,6 @@
   "evolve": {"start": "咦？{name} 的样子……", "done": "恭喜！{name} 进化成了 {to}！", "donePostTraining": "后训练完成！{name} 进化成了 {to}！", "cancelled": "咦？{name} 停止了进化。", "hint": "按 {key} 键中止进化", "newDexToast": "图鉴新增：{name}"},
   "ability": {"banner": "{name} 的「{ability}」"},
   "error": {"aborted": "战斗出现异常，已安全结束。"},
-  "boss": {"tag": "首领", "meter": "{label} {value}/{max}", "charge": "蓄力：{move}", "enrage": "狂暴 ×{n}", "chargeLabel": "蓄力", "enrageLabel": "狂暴", "phase": "第 {n} 阶段", "formBanner": "{from} → {to}"},
+  "boss": {"tag": "首领", "meter": "{label} {value}/{max}", "charge": "蓄力：{move}", "enrage": "狂暴 ×{n}", "chargeLabel": "蓄力", "enrageLabel": "狂暴", "phase": "第 {n} 阶段", "formBanner": "{from} → {to}", "dotOn": "●", "dotOff": "○"},
   "bossIntro": {"skip": "跳过", "skipHint": "{key} 跳过"}
 }

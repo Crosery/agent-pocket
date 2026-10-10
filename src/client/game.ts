@@ -482,7 +482,8 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
       chat.update(dt, inWorld && !modal && !blocking)
       if (inWorld) {
         ctx.save.playTimeSec += dt
-        if (!clockFrozen()) ctx.clock.update(dt)
+        // A blocking overlay (type chart, manual, menu) stops the world clock: time does not pass while the player reads.
+        if (!clockFrozen() && !blocking) ctx.clock.update(dt)
         globalKeys()
         const battleUp = battleScreenUp()
         if (!battleUp) overworld.update(dt)

@@ -6,6 +6,9 @@ import type { Content } from '../content/index.ts'
 const BORROWED = '$borrowed'
 const TEXT_PREFIX = 'boss.'
 
+/** The coach bar shows one short line. */
+export const COACH_MAX_CHARS = 24
+
 export function validateBosses(list: readonly BossDef[], c: Content): string[] {
   const errs: string[] = []
   const seen = new Set<string>()
@@ -32,6 +35,24 @@ export function validateBosses(list: readonly BossDef[], c: Content): string[] {
     if (!(b.expMul > 0)) errs.push(`${w}: expMul must be > 0`)
     if (!(b.catchRateMul > 0)) errs.push(`${w}: catchRateMul must be > 0`)
     for (const id of Object.keys(b.reward.items ?? {})) if (!c.items[id]) errs.push(`${w}.reward: unknown item "${id}"`)
+
+    if (b.coach) {
+      const k = b.coach
+      if (!(k.speaker in c.text)) errs.push(`${w}.coach: missing text "${k.speaker}"`)
+      if (k.portrait?.startsWith('creature:') && !c.species[k.portrait.slice(9)]) errs.push(`${w}.coach: unknown portrait "${k.portrait}"`)
+      if (!(k.maxPerFight >= 1)) errs.push(`${w}.coach: maxPerFight must be >= 1`)
+      const lines = new Set(b.triggers.flatMap((tr) => tr.do.filter((o) => o.op === 'coach').map((o) => (o as { text: string }).text.slice((o as { text: string }).text.lastIndexOf('.') + 1))))
+      for (const n of k.skipBriefLines ?? []) if (!lines.has(n)) errs.push(`${w}.coach: skipBriefLines "${n}" is no coach line`)
+      for (const [sp, suf] of Object.entries(k.variants ?? {})) if (!c.species[sp] || !suf) errs.push(`${w}.coach.variants: bad entry "${sp}"`)
+      for (const tr of b.triggers) for (const o of tr.do) if (o.op === 'coach') {
+        for (const key of [o.text, ...Object.values(k.variants ?? {}).map((suf) => `${o.text}${suf}`).filter((v) => v in c.text)]) if (!(key in c.text)) errs.push(`${w}.coach: missing text "${key}"`)
+        // The coach bar is one line: at most 24 characters once the placeholders are gone.
+        for (const key of [o.text, ...Object.values(k.variants ?? {}).map((suf) => `${o.text}${suf}`)]) {
+          const v = c.text[key]
+          if (v !== undefined && Array.from(v.replace(/\{[^}]*\}/g, '')).length > COACH_MAX_CHARS) errs.push(`${w}.coach: "${key}" is longer than ${COACH_MAX_CHARS} characters`)
+        }
+      }
+    }
 
     const meters = new Set<string>()
     for (const m of b.meters) {
@@ -63,6 +84,7 @@ export function validateBosses(list: readonly BossDef[], c: Content): string[] {
     const op = (where: string, o: BossOp) => {
       switch (o.op) {
         case 'say': text(where, o.text); break
+        case 'coach': text(where, o.text); if (!b.coach) errs.push(`${where}: a coach op needs the boss's coach block`); break
         case 'form': if (!b.forms[o.form]) errs.push(`${where}: unknown form "${o.form}"`); break
         case 'status': if (!c.statusById[o.status]) errs.push(`${where}: unknown status "${o.status}"`); break
         case 'volatile': if (!c.volatileById[o.volatile]) errs.push(`${where}: unknown volatile "${o.volatile}"`); break

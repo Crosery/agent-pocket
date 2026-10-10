@@ -544,6 +544,10 @@ export interface BattleInit {
   assist?: boolean
   /** The overworld runs the post-win contract (src/client/battle/capture.ts) once the boss is down. */
   captureAfterWin?: boolean
+  /** The boss's coach lines (content/bosses.json coach) are spoken in the coach bar this fight. */
+  coach?: boolean
+  /** The player already skipped the briefing: only the coach's skipBriefLines are let through. */
+  skipBrief?: boolean
 }
 
 /**
@@ -601,6 +605,12 @@ export interface BossCond {
   /** The field weather is / is not one of these (content/weathers.json ids; 'none' = clear). */
   weather?: WeatherId[]
   notWeather?: WeatherId[]
+  /** The foe's active creature has hp ratio <= value. */
+  foeHpBelow?: number
+  /** The boss carries this volatile (leech ...) or any major status (`status: true`). */
+  bossHas?: { volatile?: string; status?: boolean }
+  /** The foe's side still holds at least one of this item (coach fights pass the relevant bag counts in). */
+  foeHasItem?: string
 }
 
 export type BossEventKind = 'start' | 'turnStart' | 'turnEnd' | 'afterAction' | 'foeMove' | 'foeItem' | 'foeMedicine' | 'foeSwitch'
@@ -608,6 +618,8 @@ export type BossEventKind = 'start' | 'turnStart' | 'turnEnd' | 'afterAction' | 
 /** Declarative side effect of a trigger; interpreted by the engine, never code per boss. */
 export type BossOp =
   | { op: 'say'; text: string }
+  /** A coach line (text key; a per-starter variant `<key><Suffix>` wins when defined); only spoken in a coach fight. */
+  | { op: 'coach'; text: string }
   | { op: 'form'; form: string }
   | { op: 'heal'; target: BossTarget; fraction: number }
   | { op: 'stages'; target: BossTarget; stats: StatChanges }
@@ -716,6 +728,8 @@ export interface BossMeterDef {
   /** Text keys by value (0..max) for state-like meters such as peak/valley. */
   states?: string[]
   tone?: 'good' | 'warn' | 'bad'
+  /** Countdown dots in the HUD: (turn - 1) % period in [from, to) is the first segment, the rest of the period the second. */
+  cycle?: { period: number; from: number; to: number }
 }
 
 export interface BossEnrage {
@@ -755,6 +769,20 @@ export interface BossTierDef {
   assist?: Omit<BossTierDef, 'level' | 'assist'>
 }
 
+/** Coach bar rules: at most `maxPerFight` lines per fight, each key once, one per turn. */
+export interface BossCoach {
+  /** Text key of the speaker's name and the portrait id ("creature:<species>"). */
+  speaker: string
+  portrait?: string
+  maxPerFight: number
+  /** Each line key is spoken once per fight. */
+  oncePerLine?: boolean
+  /** Lines (last key segment) still spoken when the player skipped the briefing. */
+  skipBriefLines?: string[]
+  /** Lead species of the player -> suffix of the variant text key (`<key><Suffix>`). */
+  variants?: Record<string, string>
+}
+
 export interface BossDef {
   id: string
   /** Species of the boss creature in the party that carries the boss rules. */
@@ -786,6 +814,8 @@ export interface BossDef {
   signature?: { ability?: string; move?: string }
   /** Script-only fights (sparring partners): not looked up by species, so wild creatures never carry the boss rules. */
   scriptedOnly?: boolean
+  /** The tutor that speaks in a guided fight (BattleInit.coach); absent = the boss cannot be coached. */
+  coach?: BossCoach
   /** Set by resolveBossDef from a tier: lingering damage (leech drain, status damage) on the boss is scaled by this. */
   residualMul?: number
 }
@@ -801,6 +831,8 @@ export interface BossHud {
   phase: number
   phases: number
   meters: Record<string, number>
+  /** Countdown of the meters that declare a `cycle`: turns left in the current segment (this turn included) of its length. */
+  cycles?: Record<string, { left: number; total: number }>
   /** Move id of the pending charged attack, or null. */
   charge: string | null
   enrage: number
@@ -880,6 +912,8 @@ export type BattleEvent =
   | { t: 'flee'; side: SideIndex; stage: 'warn' | 'fled' }
   /** Boss HUD snapshot (BossDef battles): sent on entry and whenever phase, meters, charge or enrage change. */
   | { t: 'boss'; side: SideIndex; hud: BossHud }
+  /** A coach line for the next command menu (BossDef.coach): resolved text and speaker. */
+  | { t: 'coach'; text: string; speaker: string; portrait?: string }
   /** The boss changed form: its species, stats and moves are those of `creature` from now on. */
   | { t: 'form'; side: SideIndex; form: string; fromSpeciesId: string; creature: CreatureView }
   /** Warning one turn before a charged attack lands (the matching message follows). */
@@ -943,13 +977,20 @@ export type ScriptStep =
   | { op: 'takeItem'; item: string; qty: number }
   | { op: 'giveMoney'; amount: number }
   | { op: 'takeMoney'; amount: number; failText?: string }
-  | { op: 'giveCreature'; species?: string; pick?: SpeciesPick; level: number; shiny?: boolean }
+  | { op: 'giveCreature'; species?: string; pick?: SpeciesPick; level: number; shiny?: boolean; gradeFloor?: string; nature?: string; moves?: string[]; ability?: string }
   | { op: 'chooseStarter' }
   /** lossContinues: a loss does not black out or abort the script (story-scripted fights); lossFlag records win/loss. */
   | { op: 'battle'; trainer: string; lossContinues?: boolean; lossFlag?: string }
-  /** Boss instance fight: tier of content/bosses.json; captureAfterWin runs the contract on the first clear. Loss flags as 'battle'. */
-  | { op: 'bossBattle'; boss: string; tier: string; captureAfterWin?: boolean; lossContinues?: boolean; lossFlag?: string }
-  | { op: 'wildBattle'; species?: string; pick?: SpeciesPick; level: number; music?: string }
+  /**
+   * Boss instance fight: tier of content/bosses.json; captureAfterWin runs the contract on the first clear. Loss flags as 'battle'.
+   * coach: the coach bar speaks during the fight; lossWarp: anchor to wake up at after a loss (fade, teleport, heal, then
+   * `ds-loss` runs and the script that started the fight ends).
+   */
+  | { op: 'bossBattle'; boss: string; tier: string; captureAfterWin?: boolean; lossContinues?: boolean; lossFlag?: string; coach?: boolean; lossWarp?: string }
+  /** moves / gradeFloor shape the opponent, catchRateMul scales the catch chance. */
+  | { op: 'wildBattle'; species?: string; pick?: SpeciesPick; level: number; music?: string; moves?: string[]; catchRateMul?: number; gradeFloor?: string }
+  /** A floating bubble (`fx`: "!", "?" ...) over an NPC id or "player". */
+  | { op: 'emote'; target: string; fx: string }
   | { op: 'heal' }
   | { op: 'shop'; items: string[] }
   | { op: 'openBox' }
@@ -988,6 +1029,8 @@ export interface NpcDef {
   nameZh: string
   role: NpcRole
   portrait?: string
+  /** A creature NPC: drawn as that species' billboard instead of a character sheet. */
+  creature?: string
   script: ScriptStep[]
   trainer?: string
   sightRange?: number
@@ -1414,7 +1457,16 @@ export interface InstanceDef {
 }
 
 /** content/world/instances.json */
-export interface InstanceFile { instances: Record<string, InstanceDef> }
+export interface InstanceFile { defaults: InstanceDefaults; instances: Record<string, InstanceDef> }
+
+/** What every instance does after a loss: the number of losses that offers the assist ("减负") mode, and the flags the story reads. */
+export interface InstanceDefaults {
+  /** Losses in a row (per tier) after which the assist mode is offered. */
+  assistAfterLosses: number
+  /** Save flag set while the assist offer stands (the story script reads it), and the flag a yes sets. */
+  assistOfferFlag: string
+  assistFlag: string
+}
 
 // ---------------------------------------------------------------------------
 // Developer mode (content/dev/**, src/shared/dev, src/client/dev) — append-only section

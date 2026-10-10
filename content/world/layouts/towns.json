@@ -58,7 +58,8 @@
       "signs": [
         {"slot": "town", "x": 15, "y": 27, "kind": "sign"},
         {"slot": "lab", "x": 11, "y": 7, "kind": "sign"},
-        {"slot": "home", "x": 26, "y": 10, "kind": "sign"}
+        {"slot": "home", "x": 26, "y": 10, "kind": "sign"},
+        {"slot": "board", "x": 14, "y": 10, "kind": "board"}
       ],
       "anchors": {"professor": [8, 10], "rival": [23, 12], "home-yard": [30, 10], "npc-1": [6, 16], "npc-2": [29, 17], "npc-3": [14, 26], "npc-4": [22, 26], "npc-5": [12, 16], "gate-west": [2, 15], "gate-east": [33, 14], "square": [17, 12]}
     },

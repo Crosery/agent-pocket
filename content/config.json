@@ -23,7 +23,7 @@
   "encounters": {"stageWeight": [1, 0.35, 0.08], "nightTypeBoost": {"chaos": 2.0, "sound": 1.3}, "roamingMax": 10, "roamingRadius": 18},
   "economy": {"startMoney": 3000, "blackoutMoneyLoss": 0.25, "sellRatio": 0.5, "startItems": {}},
   "creature": {"ivMax": 31, "startFriendship": 70, "secondAbilityChance": 0.2, "starterLevel": 5, "levelUpFriendship": 3},
-  "save": {"autosaveSeconds": 60, "storagePrefix": "agent-pocket/save/", "version": 2},
+  "save": {"autosaveSeconds": 60, "storagePrefix": "agent-pocket/save/", "version": 3},
   "camera": {"fov": 32, "pitchDeg": 36, "zoomDistances": [11, 16, 24], "followDamping": 6, "lookAhead": 1.2, "minViewTilesWide": 7},
   "render": {"maxPointLights": 10, "shadowMapSize": 2048, "internalHeight": {"low": 300, "medium": 360, "high": 450, "ultra": 540}},
   "settingsMigrations": [

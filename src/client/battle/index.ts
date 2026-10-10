@@ -93,7 +93,7 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
       let scene: BattleScene | null = null
       let caught: Creature | undefined
       let stored = false
-      ctx.events.emit('battle:start', { kind })
+      ctx.events.emit('battle:start', { kind, ...(init.coach ? { coach: true } : {}) })
       const bossId = init.sides[1].boss ?? null
       const introClip = prefetchBossIntro(bossId)
 
@@ -123,7 +123,7 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         const decider = createDecider({ ctx, scene, model, init, kind, ownParty, known })
 
         let batch = await channel.start()
-        ctx.events.emit('battle:events', { kind, events: batch.events })
+        ctx.events.emit('battle:events', { kind, events: batch.events, ...(init.coach ? { coach: true } : {}) })
         if (init.sides[1].kind === 'wild') {
           const first = batch.events.find((e) => e.t === 'switch' && e.side === 1)
           if (first?.t === 'switch') {
@@ -148,7 +148,7 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
           if (remote) view.message.hold(t('battleui.prompt.waiting', { name: foeLabel }))
           else view.message.clear()
           batch = await channel.submit(action)
-          ctx.events.emit('battle:events', { kind, events: batch.events })
+          ctx.events.emit('battle:events', { kind, events: batch.events, ...(init.coach ? { coach: true } : {}) })
           await presenter.play(batch.events)
         }
 
