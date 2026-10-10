@@ -104,8 +104,10 @@ export async function settleBossCards(ctx: GameContext): Promise<Creature[]> {
     }
   }
   ctx.save.flags[GAME.flags.licenseSettled] = true
-  if (levelled.length) ctx.events.emit('party:changed', {})
-  ctx.persist('license')
+  if (levelled.length) {
+    ctx.events.emit('party:changed', {})
+    ctx.persist('license')
+  }
   return levelled
 }
 

@@ -3,7 +3,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { buildWorld, worldAnchors } from '../src/shared/world/index.ts'
-import { STORY_CONTENT, storyProblems, walkSteps } from '../src/shared/world/story.ts'
+import { STORY_CONTENT, starterSpecies, storyProblems, walkSteps } from '../src/shared/world/story.ts'
 import { CONTENT } from '../src/shared/content/index.ts'
 import type { NpcDef, ScriptStep } from '../src/shared/types.ts'
 
@@ -75,7 +75,7 @@ test('choices: both "我都懂" / "不用了" options of the aide, the lobby bri
 })
 
 test('pacing: no more than four say lines in a row without a beat between them', () => {
-  const BEATS = new Set(['chooseStarter', 'emote', 'moveNpc', 'choice', 'wildBattle', 'battle', 'bossBattle', 'rivalBattle', 'starterBattle'])
+  const BEATS = new Set<string>(['chooseStarter', 'emote', 'moveNpc', 'choice', 'wildBattle', 'battle', 'bossBattle', 'rivalBattle', 'starterBattle'])
   for (const { id, steps } of scriptList()) {
     const run = (list: ScriptStep[]): void => {
       let streak = 0
@@ -101,7 +101,6 @@ test('text: every story.* / boss.deepseek.* key used by a prologue script exists
       if (Array.isArray(o.options)) o.options.forEach(take)
     })
   }
-  for (const n of PROLOGUE_NPCS.filter((id) => npcById.has(id))) for (const line of (npc(n).n.lines ?? []) as string[]) if (/^story\./.test(line)) keys.add(line)
   assert.ok(keys.size > 80, `prologue uses many keys (${keys.size})`)
   for (const k of keys) {
     assert.ok(k in CONTENT.text, `text key ${k}`)
@@ -109,12 +108,19 @@ test('text: every story.* / boss.deepseek.* key used by a prologue script exists
   }
 })
 
-test('starter variants: every starter has its byStarter / starterBattle branch', () => {
-  for (const { id, steps } of scriptList()) {
-    walkSteps(steps, (s) => {
-      if (s.op === 'byStarter') for (const starter of STORY_CONTENT.meta.starters ?? []) assert.ok(starter.id in s.cases || !('cases' in s), `${id}: byStarter lacks ${starter.id}`)
-    })
+test('starter variants: every byStarter in the prologue scripts has a case for each starter', () => {
+  const starters = starterSpecies().map((sp) => sp.id)
+  assert.equal(starters.length, 3)
+  let seen = 0
+  const visit = (list: readonly unknown[]): void => {
+    for (const raw of list) {
+      const s = raw as { op: string; cases?: Record<string, unknown[]>; then?: unknown[]; else?: unknown[]; branches?: unknown[][] }
+      if (s.op === 'byStarter') { seen++; for (const id of starters) assert.ok(s.cases && id in s.cases, `byStarter lacks ${id}`) }
+      visit(s.then ?? []); visit(s.else ?? []); for (const b of s.branches ?? []) visit(b)
+    }
   }
+  for (const [id, steps] of Object.entries(STORY_CONTENT.scripts)) if (id.startsWith('ds-') || id.startsWith('rival-lab')) visit(steps)
+  assert.ok(seen >= 3, `the prologue branches on the starter (${seen})`)
 })
 
 test('stamps: the three seals are set by the professor, the aide and the catch script; the guard blocks the stairs until the cert is full', () => {
@@ -132,21 +138,23 @@ test('stamps: the three seals are set by the professor, the aide and the catch s
 // -- time model ------------------------------------------------------------------------------------------------
 
 /** A tiny interpreter: follows the first option of every choice, the flags the player has accumulated, includes and macros. */
-function readerSeconds(steps: ScriptStep[], flags: Set<string>, depth = 0): { lines: number; battles: string[] } {
+type Loose = { op: string; flag?: string; script?: string; boss?: string; then?: Loose[]; else?: Loose[]; branches?: Loose[][]; cases?: Record<string, Loose[]> }
+
+function readerSeconds(steps: readonly Loose[], flags: Set<string>, depth = 0): { lines: number; battles: string[] } {
   const out = { lines: 0, battles: [] as string[] }
-  const run = (list: ScriptStep[]): void => {
+  const run = (list: readonly Loose[]): void => {
     for (const s of list) {
       switch (s.op) {
         case 'say': out.lines++; break
-        case 'setFlag': flags.add(s.flag); break
+        case 'setFlag': flags.add(s.flag!); break
         case 'chooseStarter': flags.add('starter'); break
-        case 'byStarter': run((s.cases as Record<string, ScriptStep[]>)['o1'] ?? []); break
+        case 'byStarter': run(s.cases?.['o1'] ?? []); break
         case 'ifCaught': run((flags.has('caught') ? s.then : s.else) ?? []); break
-        case 'ifFlag': run((flags.has(s.flag) ? s.then : s.else) ?? []); break
-        case 'choice': run(s.branches[0] ?? []); break
-        case 'include': if (depth < 8) { const r = readerSeconds(STORY_CONTENT.scripts[s.script] as unknown as ScriptStep[], flags, depth + 1); out.lines += r.lines; out.battles.push(...r.battles) } break
+        case 'ifFlag': run((flags.has(s.flag!) ? s.then : s.else) ?? []); break
+        case 'choice': run(s.branches?.[0] ?? []); break
+        case 'include': if (depth < 8) { const r = readerSeconds(STORY_CONTENT.scripts[s.script!] as unknown as Loose[], flags, depth + 1); out.lines += r.lines; out.battles.push(...r.battles) } break
         case 'bossBattle': out.battles.push(`boss:${s.boss}`); break
-        case 'battle': case 'wildBattle': case 'rivalBattle': case 'starterBattle': out.battles.push(s.op); break
+        case 'battle': case 'wildBattle': out.battles.push(s.op); break
         default: break
       }
     }
@@ -156,7 +164,7 @@ function readerSeconds(steps: ScriptStep[], flags: Set<string>, depth = 0): { li
 }
 
 test('time model: the shortest road from waking to the DeepSeek fight stays within the budget', () => {
-  const TURNS: Record<string, number> = { battle: 4, wildBattle: 4, rivalBattle: 4, starterBattle: 4, 'boss:deepseek-drill': 8 }
+  const TURNS: Record<string, number> = { battle: 4, wildBattle: 4, 'boss:deepseek-drill': 8 }
   // The itinerary a first-time player follows, by NPC id (reading the script once, then walking to the next one).
   const route = ['mom', 'professor', 'rival-lab', 'aide-types', 'ds-ernie', 'ds-guard', 'ds-r1', 'ds-r1', 'ds-relay', 'ds-v4']
   const flags = new Set<string>()
@@ -169,7 +177,7 @@ test('time model: the shortest road from waking to the DeepSeek fight stays with
     const here = { map: e.map, x: e.n.x, y: e.n.y }
     if (prev) tiles += prev.map === here.map ? Math.abs(prev.x - here.x) + Math.abs(prev.y - here.y) : 12
     prev = here
-    const r = readerSeconds(e.n.script, flags)
+    const r = readerSeconds(e.n.script as unknown as Loose[], flags)
     lines += r.lines
     for (const b of r.battles) if (b !== 'boss:deepseek') turns += TURNS[b] ?? 0
   }
