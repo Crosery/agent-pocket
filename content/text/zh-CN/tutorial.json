@@ -2,7 +2,7 @@
   "objective": {
     "title": "当前目标",
     "label": "当前目标：{objective}",
-    "starter": "走出家门，去镇上的研究所找图灵博士，挑选你的第一位搭档",
+    "starter": "走出家门，去镇西研究所找图灵博士看看机房出了什么怪事",
     "rival": "和研究所里的对手「零」切磋一场：走近他，按 {confirm} 对话",
     "route": "沿镇子西边的 1 号道路出发，开始你的冒险",
     "catch": "在草丛里遇到野生智灵后：先用招式把它的 HP 打低，再从「背包」里选一颗提示词球扔出去收服它",
@@ -13,8 +13,8 @@
     "distance": "沿光点 {n} 步",
     "here": "就在这里",
     "navigation": {"searching": "正在规划可行走路线…", "arrived": "已到达目标附近，按 {confirm} 对话或交互", "unreachable": "暂时没有可通行路线；检查入口或移动后重试"},
-    "short": {"starter": "去研究所领取搭档", "rival": "与零切磋", "route": "前往 1 号道路", "catch": "收服第一只野生智灵", "heal": "前往补给站休息", "gym1": "挑战代码道馆", "next": "{stage}", "explore": "探索智灵世界", "typeLesson": "上一节属性课"},
-    "typeLesson": "和研究所里的助理「阿灵」上一节属性课：走近她，按 {confirm} 对话（只要一分钟，可以跳过）"
+    "short": {"starter": "去研究所找图灵博士", "rival": "与零热身切磋", "route": "前往 1 号道路", "catch": "收服第一位新队友", "heal": "前往补给站休息", "gym1": "挑战代码道馆", "next": "{stage}", "explore": "探索智灵世界", "typeLesson": "找阿灵校准克制频段"},
+    "typeLesson": "和研究所里的助理「阿灵」校准调谐器的克制频段：走近她，按 {confirm} 对话（可实战也可直接跳过）"
   },
   "device": {"keyboard": {"move": "W A S D / 方向键"}, "gamepad": {"move": "左摇杆 / 十字键"}, "touch": {"move": "屏幕左半边"}},
   "tip": {

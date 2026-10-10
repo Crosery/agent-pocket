@@ -110,7 +110,25 @@ export function reconcileSave(
       }
       save.flags['ds:gateOpen'] = true
       save.flags['ds:certFull'] = true
+      save.flags['ds:stamp:starter'] = true
+      save.flags['ds:stamp:types'] = true
+      save.flags['ds:stamp:catch'] = true
+      save.flags['lesson:typeChart'] = true
+      save.flags['lic:settled'] = true
       if (!truthy(save.flags['ds:done'])) save.flags['ds:legacy'] = true
+    }
+    if (truthy(save.flags['ds:done'])) {
+      save.flags['ds:gateOpen'] = true
+      save.flags['ds:certFull'] = true
+      save.flags['ds:stamp:starter'] = true
+      save.flags['ds:stamp:types'] = true
+      save.flags['ds:stamp:catch'] = true
+      save.flags['lesson:typeChart'] = true
+      if (save.badges.length > 0) save.flags['lic:settled'] = true
+    }
+    const ruins = save.quests['sq-ruins']
+    if (ruins && !ruins.done && truthy(save.flags['sq-ruins:a']) && truthy(save.flags['sq-ruins:b']) && typeof ruins.stage === 'number' && ruins.stage < 2) {
+      ruins.stage = 2
     }
 
     const saveAsObj = save as unknown as Record<string, unknown>

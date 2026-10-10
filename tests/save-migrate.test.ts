@@ -219,7 +219,7 @@ test('historical synthetic fixtures (0.1.x, rc.5, rc.12, rc.16) infer their star
   for (const l of ['leader_code', 'leader_vision', 'leader_sound']) assert.equal(s01x.flags[`trainer:${l}`], true)
   assert.equal(s01x.flags['update:fromRev'], 0)
   assert.equal(s01x.flags['update:pendingRev'], targetRev)
-  assert.equal(pendingContentRevisions(s01x).length, 4)
+  assert.equal(pendingContentRevisions(s01x).length, targetRev)
 
   // 0.2.0-rc.5 -> current: hq-zero started and reconciled to stage 1 from zero:t1/zero:t2, expired/retired events & flags cleaned
   const src5 = loadThroughManager(frc5)
@@ -301,11 +301,11 @@ test('appending a new chapter reopens a completed quest without losing old facts
   // Extending main with a new chapter (stage 20) in a rev 5 migration reopens main at stage 20 while archiving ch1 completion
   const nextMig: MigrationsFile = {
     ...MIGRATIONS,
-    contentRev: 5,
+    contentRev: MIGRATIONS.contentRev + 1,
     revisions: [
       ...MIGRATIONS.revisions,
       {
-        rev: 5,
+        rev: MIGRATIONS.contentRev + 1,
         id: 'm2-chapter-append',
         release: '0.3.0-rc.1',
         titleKey: 'screens.update.rev.rc17ContentReconcile.title',
@@ -319,9 +319,9 @@ test('appending a new chapter reopens a completed quest without losing old facts
       },
     ],
   }
-  const customContent = { ...CONTENT, config: { ...CONTENT.config, save: { ...CONTENT.config.save, contentRev: 5 } } }
+  const customContent = { ...CONTENT, config: { ...CONTENT.config, save: { ...CONTENT.config.save, contentRev: MIGRATIONS.contentRev + 1 } } }
   const migrated = migrateSave(base, customContent, nextMig) as SaveData
-  assert.equal(migrated.contentRev, 5)
+  assert.equal(migrated.contentRev, MIGRATIONS.contentRev + 1)
   assert.deepEqual(migrated.quests.main, { stage: 20, done: false }, 'completed main reopened at the new chapter stage')
   assert.equal(migrated.flags['main:ch1:done'], true, 'previous chapter completion archived')
   assert.equal(migrated.flags.champion, true, 'champion flag preserved')
@@ -376,11 +376,11 @@ test('quest stage guard: editing quest stages without a declared migration fails
   // 4. Declaring appendStages in migrations.json without a reopenQuest step
   const badAppendMig: MigrationsFile = {
     ...MIGRATIONS,
-    contentRev: 5,
+    contentRev: MIGRATIONS.contentRev + 1,
     revisions: [
       ...MIGRATIONS.revisions,
       {
-        rev: 5,
+        rev: MIGRATIONS.contentRev + 1,
         id: 'bad-append',
         release: '0.3.0',
         titleKey: 'screens.update.rev.rc17ContentReconcile.title',
@@ -392,7 +392,7 @@ test('quest stage guard: editing quest stages without a declared migration fails
   }
   const errsBadAppend = validateStoryMigrations(extraStageQuests, badAppendMig, {
     ...CONTENT,
-    config: { ...CONTENT.config, save: { ...CONTENT.config.save, contentRev: 5 } },
+    config: { ...CONTENT.config, save: { ...CONTENT.config.save, contentRev: MIGRATIONS.contentRev + 1 } },
   })
   assert.ok(errsBadAppend.some((e) => e.includes('requires a matching reopenQuest')), errsBadAppend.join('\n'))
 

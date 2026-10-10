@@ -121,10 +121,33 @@ function v1to2(save: Obj, c: Content): void {
  */
 function v2to3(save: Obj, _c: Content, mig: MigrationsFile): void {
   const flags = ensureObj(save, 'flags')
-  if (flags.starter) { flags['ds:gateOpen'] = true; flags['ds:legacy'] = true; flags['ds:certFull'] = true }
+  const quests = isObj(save.quests) ? save.quests : null
+  const main = quests && isObj(quests.main) ? quests.main : null
+  const badges = Array.isArray(save.badges) ? save.badges : []
+
+  if (flags.starter) {
+    flags['ds:gateOpen'] = true
+    flags['ds:legacy'] = true
+    flags['ds:certFull'] = true
+    flags['ds:stamp:starter'] = true
+    flags['ds:stamp:types'] = true
+    flags['ds:stamp:catch'] = true
+    flags['lesson:typeChart'] = true
+  }
+
+  if (badges.length > 0) {
+    flags['lic:settled'] = true
+  }
+
   const shift = mig.mainStage?.['3']
-  const main = isObj(save.quests) && isObj(save.quests.main) ? save.quests.main : null
-  if (shift && main && typeof main.stage === 'number' && main.stage >= shift.from) main.stage += shift.add
+  if (shift && main && typeof main.stage === 'number' && main.stage >= shift.from) {
+    main.stage += shift.add
+  }
+
+  const ruins = quests && isObj(quests['sq-ruins']) ? quests['sq-ruins'] : null
+  if (ruins && !ruins.done && flags['sq-ruins:a'] && flags['sq-ruins:b'] && typeof ruins.stage === 'number' && ruins.stage < 2) {
+    ruins.stage = 2
+  }
 }
 
 /** Schema steps by the version they produce, applied in ascending order while `save.version < c.config.save.version`. */

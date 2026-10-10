@@ -480,7 +480,8 @@
       "rc5EventsAndZero": {"title": "v0.2.0-rc.5 · 世界活动与第 0 号服务器", "summary": "新增世界动态活动、传送锚点与隐藏支线「第 0 号服务器」。"},
       "rc12QualityNatures": {"title": "v0.2.0-rc.12 · 智灵人设与品质鉴定", "summary": "新增 25 种性格与品质分级，老存档获赠 2 张人设重写卡。"},
       "rc16PrologueDeepseek": {"title": "v0.2.0-rc.16 · 潮汐机房与 DeepSeek 体验版", "summary": "新增研究所地下机房与「潮汐机房」模拟舱挑战。"},
-      "rc17ContentReconcile": {"title": "v0.2.0-rc.17 · 存档对账与活动同步", "summary": "主线与支线进度、道馆徽章、Boss 签约记录及最新活动已全部同步。"}
+      "rc17ContentReconcile": {"title": "v0.2.0-rc.17 · 存档对账与活动同步", "summary": "主线与支线进度、道馆徽章、Boss 签约记录及最新活动已全部同步。"},
+      "rc18CouncilStory": {"title": "v0.2.0-rc.18 · 潮汐共鸣与叙事动线优化", "summary": "主线与支线叙事文案打磨，潮汐调谐器就绪，新增任务一键返程与道馆直飞。"}
     }
   }
 }

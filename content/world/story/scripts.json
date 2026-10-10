@@ -28,51 +28,68 @@
     {"op": "ifFlag", "flag": "ds:gateOpen", "then": [{"op": "badgeTiers", "tiers": [{"atLeast": 8, "then": [{"op": "quest", "quest": "main", "stage": 18}]}, {"atLeast": 7, "then": [{"op": "quest", "quest": "main", "stage": 17}]}, {"atLeast": 6, "then": [{"op": "ifFlag", "flag": "villain:boss", "then": [{"op": "quest", "quest": "main", "stage": 16}], "else": [{"op": "quest", "quest": "main", "stage": 15}]}]}, {"atLeast": 5, "then": [{"op": "quest", "quest": "main", "stage": 14}]}, {"atLeast": 4, "then": [{"op": "quest", "quest": "main", "stage": 13}]}, {"atLeast": 3, "then": [{"op": "ifFlag", "flag": "villain:swamp", "then": [{"op": "quest", "quest": "main", "stage": 12}], "else": [{"op": "quest", "quest": "main", "stage": 11}]}]}, {"atLeast": 2, "then": [{"op": "quest", "quest": "main", "stage": 10}]}, {"atLeast": 1, "then": [{"op": "quest", "quest": "main", "stage": 9}]}, {"atLeast": 0, "then": [{"op": "quest", "quest": "main", "stage": 8}]}]}], "else": []}
   ],
   "reward-code": [
-    {"op": "say", "text": "这是「{item:chip-compile-cannon}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "say", "text": "这是「{item:chip-compile-cannon}」，我最得意的一段高爆发编译代码，拿去给智灵装上吧。"},
     {"op": "giveItem", "item": "chip-compile-cannon", "qty": 1},
-    {"op": "say", "text": "还有这个{item:badge-case}，以后赢来的徽章都可以收在里面。"},
+    {"op": "say", "text": "这个{item:badge-case}也一并送你。每拿下一枚徽章，你的 Boss 卡算力许可也会跟着往上跳一档。"},
     {"op": "giveItem", "item": "badge-case", "qty": 1},
-    {"op": "say", "text": "另外，开源社区众筹做了一块{item:hover-board}，专门送给第一次赢下徽章的新人。"},
+    {"op": "say", "text": "还有件礼物——咱们开源社区众筹攒了一块{item:hover-board}，专门奖给第一个零警告通过审查的新人。"},
     {"op": "giveItem", "item": "hover-board", "qty": 1},
-    {"op": "say", "text": "在野外踩上它，速度会快很多。下一站，去东边的像素港看看吧！"}
+    {"op": "unlockTown", "town": "origin"},
+    {"op": "unlockTown", "town": "opensource"},
+    {"op": "teach", "lesson": "worldMap"},
+    {"op": "say", "text": "拿到首枚徽章后，打开城镇地图就能直接飞去你走过的城镇。听说你那位叫『零』的朋友刚往原点镇东边的像素港赶去——要不要我直接送你回原点镇东口？"},
+    {"op": "choice", "text": "要直接回原点镇东口出发吗？", "options": ["送我回原点镇东口", "我自己踩滑板过去"], "branches": [
+      [{"op": "fade", "out": true}, {"op": "warpTo", "anchor": "town:origin:exit-east", "facing": "right"}, {"op": "fade", "out": false}],
+      []
+    ]}
   ],
   "reward-vision": [
-    {"op": "say", "text": "这是「{item:chip-ray-trace}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "say", "text": "收下这枚「{item:chip-ray-trace}」吧。只要光影对得准，再隐蔽的破绽也藏不住。"},
     {"op": "giveItem", "item": "chip-ray-trace", "qty": 1},
-    {"op": "say", "text": "下一座道馆，在开源林镇北边的和弦沙城。"}
+    {"op": "say", "text": "从开源林镇往北走，就是黄沙漫天的和弦沙城。"},
+    {"op": "say", "text": "那边的音律馆主·韵是个怪脾气，最近全城都在热议什么『AI 编曲榜单』，她却一个劲儿往沙丘里钻。你去听听她的曲子就明白了。"}
   ],
   "reward-sound": [
-    {"op": "say", "text": "这是「{item:chip-feedback-howl}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "say", "text": "这枚「{item:chip-feedback-howl}」送给你。记住，真正能打动人的声音，从来不是刷榜刷出来的。"},
     {"op": "giveItem", "item": "chip-feedback-howl", "qty": 1},
-    {"op": "say", "text": "再往北就是检索遗都。听说那边最近来了一群奇怪的人……路上小心。"}
+    {"op": "say", "text": "顺着沙海再往北，就是藏书万卷的检索遗都。"},
+    {"op": "say", "text": "不过最近风沙里传来的回音不太对劲……好像有一伙穿紫衣服的『幻觉团』在沼泽里往水源掺假数据。你到了那边，千万留个心眼。"}
   ],
   "reward-search": [
-    {"op": "say", "text": "这是「{item:chip-deep-research}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "say", "text": "这是「{item:chip-deep-research}」。遇到越离谱的谣言，越要先做深度检索。"},
     {"op": "giveItem", "item": "chip-deep-research", "qty": 1},
-    {"op": "say", "text": "幻觉团被赶跑之后，港口的通信也恢复了。这份{item:dive-protocol}也交给你。"},
+    {"op": "say", "text": "多亏你替遗都清干净了沼泽里的脏数据，海路航道也重新校准完毕了。这份{item:dive-protocol}请务必收下。"},
     {"op": "giveItem", "item": "dive-protocol", "qty": 1},
-    {"op": "say", "text": "有了它，智灵就能载着你在水面上前进。海上的小岛，也许藏着意想不到的东西。"},
-    {"op": "say", "text": "继续往北，就是火山脚下的熔炉镇。"}
+    {"op": "say", "text": "有了它，你的智灵就能直接载着你渡海登岛。至于陆路……继续北上就是火山口的熔炉镇，那里的算力馆主·焰是个火爆脾气。"}
   ],
   "reward-compute": [
-    {"op": "say", "text": "这是「{item:chip-cluster-crush}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "say", "text": "痛快！这块「{item:chip-cluster-crush}」归你了，使出来就是满负荷集群轰炸！"},
     {"op": "giveItem", "item": "chip-cluster-crush", "qty": 1},
-    {"op": "say", "text": "有了{badge:badge-compute}，霜脊山口的守卫就会放行。山口那边，就是霜盾城。"}
+    {"op": "say", "text": "亮出这枚{badge:badge-compute}，东边霜脊山口的守卫就不敢拦你了。翻过雪山就是霜盾城——那位对齐馆主·霜管得可严了，你去给她点颜色瞧瞧！"}
   ],
   "reward-safety": [
-    {"op": "say", "text": "这是「{item:chip-superalignment}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "say", "text": "请收下这枚「{item:chip-superalignment}」。愿你的力量，永远有温柔的边界。"},
     {"op": "giveItem", "item": "chip-superalignment", "qty": 1},
-    {"op": "say", "text": "往东是枢纽市。最近那里的数据塔……似乎出了些状况。"}
+    {"op": "say", "text": "从这里往东便是整片大陆最繁华的枢纽市。但我刚才收到警报，城中心的数据塔似乎被幻觉团强行接管了……能拜托你去看看吗？"}
   ],
   "reward-agent": [
-    {"op": "say", "text": "这是「{item:chip-full-auto}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "say", "text": "这是「{item:chip-full-auto}」。好的智能体能替你分忧，但最关键的决断，永远握在你自己手里。"},
     {"op": "giveItem", "item": "chip-full-auto", "qty": 1},
-    {"op": "say", "text": "最后一座道馆在南边高原上的衡理镇。去吧！"}
+    {"op": "say", "text": "八座道馆只剩最后一站了——沿着 8 号道路南下高原，去衡理镇找推理馆主·衡吧。他那盘棋，已经摆了很久了。"}
   ],
   "reward-logic": [
-    {"op": "say", "text": "这是「{item:chip-long-reasoning}」，用它可以教会智灵新的招式。收下吧！"},
+    {"op": "say", "text": "这枚「{item:chip-long-reasoning}」交给你。慢一步想清楚，往往比快一步撞南墙走得更远。"},
     {"op": "giveItem", "item": "chip-long-reasoning", "qty": 1},
-    {"op": "ifBadges", "atLeast": 8, "then": [{"op": "say", "text": "八枚徽章都集齐了……去霜盾城北边的遗迹参道吧。"}], "else": [{"op": "say", "text": "等你集齐八枚徽章，就去霜盾城北边的遗迹参道吧。"}]}
+    {"op": "ifBadges", "atLeast": 8, "then": [
+      {"op": "unlockTown", "town": "frostshield"},
+      {"op": "say", "text": "八枚徽章已全数落子。霜盾城北方的遗迹参道已经为你敞开，冠军·启就在圣殿尽头等你收官。"},
+      {"op": "choice", "text": "要现在直接前往遗迹参道入口吗？", "options": ["直接前往参道入口", "留在衡理镇整备一下"], "branches": [
+        [{"op": "fade", "out": true}, {"op": "warpTo", "anchor": "town:frostshield:exit-north", "facing": "up"}, {"op": "fade", "out": false}],
+        []
+      ]}
+    ], "else": [
+      {"op": "say", "text": "等你集齐全部八枚徽章，就去霜盾城北边的遗迹参道吧。圣殿的大门只为走完长路的人敞开。"}
+    ]}
   ],
   "rival-lab-battle": [
     {"op": "rivalBattle", "battle": "lab", "lossContinues": true, "lossFlag": "rival:lab-lost"},
@@ -87,12 +104,11 @@
     {"op": "say", "text": "好好用它！招式芯片用过一次就会消失，记得挑一只合适的智灵。"}
   ],
   "type-lesson-battle": [
-    {"op": "say", "text": "规则很简单：陪练只会喊口号，不会真打你。你自己的招式，试着打出「效果拔群」和「效果不佳」。", "speaker": "阿灵"},
+    {"op": "say", "text": "别紧张，我的陪练智灵只会喊口号，不会还手。你只管换着招式打，试试看哪一招能打出『效果拔群』！", "speaker": "阿灵"},
     {"op": "setFlag", "flag": "ob:typeLesson"},
     {"op": "battle", "trainer": "lesson-types", "lossContinues": true, "lossFlag": "lesson:types-lost"},
     {"op": "heal"},
-    {"op": "say", "text": "辛苦啦！看到了吗：打到弱点，一下就倒；打到抵抗的，磨半天。", "speaker": "阿灵"},
-    {"op": "say", "text": "所以对战前先看属性，必要时换人。我把你的队伍也治好了。", "speaker": "阿灵"},
+    {"op": "say", "text": "漂亮！刚才顺手把你搭档的体力也恢复满了，这三瓶伤药你也揣兜里。", "speaker": "阿灵"},
     {"op": "ifFlag", "flag": "lesson:typeChart", "then": [], "else": [{"op": "giveItem", "item": "cache-potion", "qty": 3}, {"op": "teach", "lesson": "typeChart"}]}
   ],
   "ds-professor": [
@@ -140,10 +156,15 @@
   ],
   "ds-aide": [
     {"op": "say", "text": "story.opening.aide.a1", "speaker": "story.cast.aide"},
-    {"op": "choice", "text": "story.opening.aide.a1", "options": ["story.opening.aide.optLesson", "story.opening.aide.optSkip"], "branches": [[{"op": "include", "script": "type-lesson-battle"}, {"op": "say", "text": "story.opening.aide.a2", "speaker": "story.cast.aide"}], [{"op": "say", "text": "story.opening.aide.aSkip", "speaker": "story.cast.aide"}, {"op": "giveItem", "item": "cache-potion", "qty": 3}, {"op": "setFlag", "flag": "ds:skipLesson"}, {"op": "teach", "lesson": "typeChart"}]]},
+    {"op": "choice", "text": "story.opening.aide.a1", "options": ["story.opening.aide.optLesson", "story.opening.aide.optSkip"], "branches": [
+      [{"op": "include", "script": "type-lesson-battle"}, {"op": "say", "text": "story.opening.aide.a2", "speaker": "story.cast.aide"}],
+      [{"op": "say", "text": "story.opening.aide.aSkip", "speaker": "story.cast.aide"}, {"op": "giveItem", "item": "cache-potion", "qty": 3}, {"op": "setFlag", "flag": "ds:skipLesson"}, {"op": "teach", "lesson": "typeChart"}]
+    ]},
     {"op": "say", "text": "story.opening.aide.a3", "speaker": "story.cast.aide"},
     {"op": "say", "text": "story.opening.aide.a4", "speaker": "story.cast.aide"},
-    {"op": "giveCreature", "species": "phi-3", "level": 5, "gradeFloor": "B"},
+    {"op": "giveCreature", "species": "phi-3", "level": 6, "gradeFloor": "B"},
+    {"op": "research", "species": "phi-3", "task": "see", "amount": 1},
+    {"op": "research", "species": "phi-3", "task": "catch", "amount": 1},
     {"op": "say", "text": "story.opening.aide.phi3", "speaker": "story.cast.phi3", "portrait": "creature:phi-3"},
     {"op": "setFlag", "flag": "ds:stamp:types"},
     {"op": "quest", "quest": "main", "stage": 2}
@@ -157,11 +178,19 @@
     {"op": "say", "text": "story.opening.call.r1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
     {"op": "say", "text": "story.opening.call.r2", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
     {"op": "emote", "target": "player", "fx": "?"},
-    {"op": "byStarter", "cases": {"o1": [{"op": "say", "text": "story.opening.call.rO1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], "claude-haiku": [{"op": "say", "text": "story.opening.call.rHaiku", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], "deepseek-v3": [{"op": "say", "text": "story.opening.call.rV3", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}]}},
+    {"op": "byStarter", "cases": {
+      "o1": [{"op": "say", "text": "story.opening.call.rO1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}],
+      "claude-haiku": [{"op": "say", "text": "story.opening.call.rHaiku", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}],
+      "deepseek-v3": [{"op": "say", "text": "story.opening.call.rV3", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}]
+    }},
     {"op": "say", "text": "story.opening.call.r3", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
     {"op": "say", "text": "story.opening.call.r4", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
     {"op": "say", "text": "story.opening.call.r5", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
-    {"op": "setFlag", "flag": "ds:called"}
+    {"op": "setFlag", "flag": "ds:called"},
+    {"op": "choice", "text": "story.opening.call.askReturn", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["story.opening.call.optReturnNow", "story.opening.call.optWalk"], "branches": [
+      [{"op": "fade", "out": true}, {"op": "warpTo", "anchor": "origin-lab:stairs-front", "facing": "right"}, {"op": "fade", "out": false}],
+      []
+    ]}
   ],
   "ds-enter-lobby": [
     {"op": "quest", "quest": "main", "stage": 4}
@@ -170,7 +199,55 @@
     {"op": "setFlag", "flag": "ds:healUsed", "value": false}
   ],
   "ds-r1": [
-    {"op": "ifFlag", "flag": "ds:drill", "then": [{"op": "ifFlag", "flag": "ds:done", "then": [], "else": [{"op": "ifFlag", "flag": "ds:assist", "then": [{"op": "choice", "text": "boss.deepseek.loss.assistHint", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["boss.deepseek.loss.assistYes", "boss.deepseek.loss.assistNo"], "branches": [[], [{"op": "setFlag", "flag": "ds:assist", "value": false}]]}], "else": [{"op": "ifFlag", "flag": "ds:assistOffer", "then": [{"op": "say", "text": "boss.deepseek.loss.assistOffer", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}, {"op": "choice", "text": "boss.deepseek.loss.assistHint", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["boss.deepseek.loss.assistYes", "boss.deepseek.loss.assistNo"], "branches": [[{"op": "setFlag", "flag": "ds:assist"}, {"op": "say", "text": "boss.deepseek.loss.assistOn", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], []]}]}]}]}, {"op": "say", "text": "story.opening.lobby.again", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}, {"op": "choice", "text": "story.opening.lobby.again", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["story.opening.lobby.optAgain", "story.opening.lobby.optNo"], "branches": [[{"op": "bossBattle", "boss": "deepseek-drill", "tier": "story", "coach": true, "lossContinues": true}], []]}], "else": [{"op": "ifFlag", "flag": "ds:briefed", "then": [], "else": [{"op": "say", "text": "story.opening.lobby.b1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}, {"op": "choice", "text": "story.opening.lobby.b1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["story.opening.lobby.optBrief", "story.opening.lobby.optSkip"], "branches": [[{"op": "say", "text": "story.opening.lobby.b2", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}, {"op": "say", "text": "story.opening.lobby.b3", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}, {"op": "say", "text": "story.opening.lobby.b4", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}, {"op": "say", "text": "story.opening.lobby.b5", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], [{"op": "say", "text": "story.opening.lobby.skip", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}, {"op": "setFlag", "flag": "ds:skipBrief"}]]}, {"op": "giveItem", "item": "off-peak-coupon", "qty": 3}, {"op": "setFlag", "flag": "ds:briefed"}, {"op": "teach", "lesson": "bossMechanic"}]}, {"op": "bossBattle", "boss": "deepseek-drill", "tier": "story", "coach": true, "lossContinues": true, "lossFlag": "ds:drillLost"}, {"op": "ifFlag", "flag": "ds:drillLost", "then": [{"op": "heal"}, {"op": "say", "text": "boss.deepseek.loss.default", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], "else": [{"op": "say", "text": "story.opening.drill.v2b", "speaker": "story.cast.v2", "portrait": "creature:deepseek-v2"}, {"op": "setFlag", "flag": "ds:drill"}, {"op": "teach", "lesson": "bait"}, {"op": "quest", "quest": "main", "stage": 5}]}]}
+    {"op": "ifFlag", "flag": "ds:briefed", "then": [
+      {"op": "ifFlag", "flag": "ds:done", "then": [], "else": [
+        {"op": "ifFlag", "flag": "ds:assist", "then": [
+          {"op": "choice", "text": "boss.deepseek.loss.assistHint", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["boss.deepseek.loss.assistYes", "boss.deepseek.loss.assistNo"], "branches": [[], [{"op": "setFlag", "flag": "ds:assist", "value": false}]]}
+        ], "else": [
+          {"op": "ifFlag", "flag": "ds:assistOffer", "then": [
+            {"op": "say", "text": "boss.deepseek.loss.assistOffer", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+            {"op": "choice", "text": "boss.deepseek.loss.assistHint", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["boss.deepseek.loss.assistYes", "boss.deepseek.loss.assistNo"], "branches": [
+              [{"op": "setFlag", "flag": "ds:assist"}, {"op": "say", "text": "boss.deepseek.loss.assistOn", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}],
+              []
+            ]}
+          ]}
+        ]}
+      ]},
+      {"op": "say", "text": "story.opening.lobby.again", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+      {"op": "choice", "text": "story.opening.lobby.again", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["story.opening.lobby.optAgain", "story.opening.lobby.optNo"], "branches": [
+        [
+          {"op": "bossBattle", "boss": "deepseek-drill", "tier": "story", "coach": true, "lossContinues": true}
+        ],
+        []
+      ]}
+    ], "else": [
+      {"op": "say", "text": "story.opening.lobby.b1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+      {"op": "choice", "text": "story.opening.lobby.b1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["story.opening.lobby.optBrief", "story.opening.lobby.optSkip"], "branches": [
+        [
+          {"op": "say", "text": "story.opening.lobby.b2", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+          {"op": "say", "text": "story.opening.lobby.b3", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+          {"op": "say", "text": "story.opening.lobby.b4", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+          {"op": "say", "text": "story.opening.lobby.b5", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}
+        ],
+        [
+          {"op": "say", "text": "story.opening.lobby.skip", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+          {"op": "setFlag", "flag": "ds:skipBrief"}
+        ]
+      ]},
+      {"op": "giveItem", "item": "off-peak-coupon", "qty": 3},
+      {"op": "setFlag", "flag": "ds:briefed"},
+      {"op": "teach", "lesson": "bossMechanic"},
+      {"op": "bossBattle", "boss": "deepseek-drill", "tier": "story", "coach": true, "lossContinues": true, "lossFlag": "ds:drillLost"},
+      {"op": "ifFlag", "flag": "ds:drillLost", "then": [
+        {"op": "heal"},
+        {"op": "say", "text": "boss.deepseek.loss.default", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}
+      ], "else": [
+        {"op": "say", "text": "story.opening.drill.v2b", "speaker": "story.cast.v2", "portrait": "creature:deepseek-v2"},
+        {"op": "setFlag", "flag": "ds:drill"},
+        {"op": "teach", "lesson": "bait"},
+        {"op": "quest", "quest": "main", "stage": 5}
+      ]}
+    ]}
   ],
   "ds-supply": [
     {"op": "setFlag", "flag": "ob:shopped"},
@@ -185,13 +262,90 @@
     {"op": "ifFlag", "flag": "ds:relay", "then": [{"op": "say", "text": "story.opening.queue.relayAfter", "speaker": "story.cast.relay"}], "else": [{"op": "say", "text": "story.opening.queue.relay1", "speaker": "story.cast.relay"}, {"op": "say", "text": "story.opening.queue.relay2", "speaker": "story.cast.relay"}, {"op": "starterBattle", "trainer": "ds-relay"}, {"op": "say", "text": "story.opening.queue.relayAfter", "speaker": "story.cast.relay"}, {"op": "setFlag", "flag": "ds:relay"}, {"op": "quest", "quest": "main", "stage": 6}]}
   ],
   "ds-core": [
-    {"op": "ifFlag", "flag": "ds:done", "then": [{"op": "say", "text": "story.opening.core.again", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}, {"op": "bossBattle", "boss": "deepseek", "tier": "story", "lossContinues": true}], "else": [{"op": "ifFlag", "flag": "ds:met", "then": [{"op": "say", "text": "story.opening.core.again", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}], "else": [{"op": "say", "text": "story.opening.core.nar", "speaker": ""}, {"op": "say", "text": "story.opening.core.v1", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}, {"op": "emote", "target": "player", "fx": "!"}, {"op": "say", "text": "story.opening.core.r1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}, {"op": "say", "text": "story.opening.core.v2", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}, {"op": "say", "text": "story.opening.core.v3", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}, {"op": "emote", "target": "ds-v4", "fx": "..."}, {"op": "byStarter", "cases": {"o1": [], "claude-haiku": [], "deepseek-v3": [{"op": "say", "text": "story.opening.core.vV3", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}, {"op": "say", "text": "story.opening.core.lineV3", "speaker": "DeepSeek-V3", "portrait": "creature:deepseek-v3"}]}}, {"op": "choice", "text": "story.opening.core.choice", "options": ["story.opening.core.optPolite", "story.opening.core.optWake"], "branches": [[{"op": "setFlag", "flag": "ds:approach", "value": "polite"}, {"op": "say", "text": "story.opening.core.cPolite", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}], [{"op": "setFlag", "flag": "ds:approach", "value": "wake"}, {"op": "say", "text": "story.opening.core.cWake", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}]]}, {"op": "say", "text": "story.opening.core.v4", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}, {"op": "setFlag", "flag": "ds:met"}]}, {"op": "bossBattle", "boss": "deepseek", "tier": "story", "coach": true, "captureAfterWin": true, "lossWarp": "origin-lab-b1:r1-front", "lossFlag": "ds:lost"}, {"op": "setFlag", "flag": "ds:gateOpen"}, {"op": "setFlag", "flag": "ds:done"}, {"op": "teach", "lesson": "capture"}, {"op": "teach", "lesson": "grade"}, {"op": "quest", "quest": "main", "stage": 7}, {"op": "ifFlag", "flag": "ds:legacy", "then": [{"op": "quest", "quest": "ds-legacy", "stage": 0, "done": true}]}]}
+    {"op": "ifFlag", "flag": "ds:done", "then": [
+      {"op": "say", "text": "story.opening.core.again", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"},
+      {"op": "bossBattle", "boss": "deepseek", "tier": "story", "lossContinues": true}
+    ], "else": [
+      {"op": "ifFlag", "flag": "ds:met", "then": [
+        {"op": "say", "text": "story.opening.core.again", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}
+      ], "else": [
+        {"op": "say", "text": "story.opening.core.nar", "speaker": ""},
+        {"op": "say", "text": "story.opening.core.v1", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"},
+        {"op": "emote", "target": "player", "fx": "!"},
+        {"op": "say", "text": "story.opening.core.r1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+        {"op": "say", "text": "story.opening.core.v2", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"},
+        {"op": "say", "text": "story.opening.core.v3", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"},
+        {"op": "emote", "target": "ds-v4", "fx": "..."},
+        {"op": "byStarter", "cases": {
+          "o1": [],
+          "claude-haiku": [],
+          "deepseek-v3": [
+            {"op": "say", "text": "story.opening.core.vV3", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"},
+            {"op": "say", "text": "story.opening.core.lineV3", "speaker": "DeepSeek-V3", "portrait": "creature:deepseek-v3"}
+          ]
+        }},
+        {"op": "choice", "text": "story.opening.core.choice", "options": ["story.opening.core.optPolite", "story.opening.core.optWake"], "branches": [
+          [{"op": "setFlag", "flag": "ds:approach", "value": "polite"}, {"op": "say", "text": "story.opening.core.cPolite", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}],
+          [{"op": "setFlag", "flag": "ds:approach", "value": "wake"}, {"op": "say", "text": "story.opening.core.cWake", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}]
+        ]},
+        {"op": "say", "text": "story.opening.core.v4", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"},
+        {"op": "setFlag", "flag": "ds:met"}
+      ]},
+      {"op": "bossBattle", "boss": "deepseek", "tier": "story", "coach": true, "captureAfterWin": true, "lossWarp": "origin-lab-b1:r1-front", "lossFlag": "ds:lost"},
+      {"op": "setFlag", "flag": "ds:gateOpen"},
+      {"op": "setFlag", "flag": "ds:done"},
+      {"op": "teach", "lesson": "capture"},
+      {"op": "teach", "lesson": "grade"},
+      {"op": "quest", "quest": "main", "stage": 7},
+      {"op": "ifFlag", "flag": "ds:legacy", "then": [{"op": "quest", "quest": "ds-legacy", "stage": 0, "done": true}]},
+      {"op": "choice", "text": "story.opening.core.askUp", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["story.opening.core.optUpNow", "story.opening.core.optStay"], "branches": [
+        [{"op": "fade", "out": true}, {"op": "warpTo", "anchor": "origin-lab:starters-front", "facing": "up"}, {"op": "fade", "out": false}],
+        []
+      ]}
+    ]}
   ],
   "ds-loss": [
-    {"op": "ifFlag", "flag": "ds:lossHint", "equals": "peakDamage", "then": [{"op": "say", "text": "boss.deepseek.loss.peakDamage", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], "else": [{"op": "ifFlag", "flag": "ds:lossHint", "equals": "noCoupon", "then": [{"op": "say", "text": "boss.deepseek.loss.noCoupon", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], "else": [{"op": "ifFlag", "flag": "ds:lossHint", "equals": "noHeal", "then": [{"op": "say", "text": "boss.deepseek.loss.noHeal", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], "else": [{"op": "ifFlag", "flag": "ds:lossHint", "equals": "enrage", "then": [{"op": "say", "text": "boss.deepseek.loss.enrage", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], "else": [{"op": "say", "text": "boss.deepseek.loss.default", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}]}]}]}]},
-    {"op": "ifItem", "item": "off-peak-coupon", "atLeast": 1, "then": [], "else": [{"op": "giveItem", "item": "off-peak-coupon", "qty": 1}, {"op": "say", "text": "boss.deepseek.loss.refill", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}]},
-    {"op": "ifFlag", "flag": "ds:assistOffer", "then": [{"op": "ifFlag", "flag": "ds:assist", "then": [], "else": [{"op": "say", "text": "boss.deepseek.loss.assistOffer", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}, {"op": "choice", "text": "boss.deepseek.loss.assistHint", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["boss.deepseek.loss.assistYes", "boss.deepseek.loss.assistNo"], "branches": [[{"op": "setFlag", "flag": "ds:assist"}, {"op": "say", "text": "boss.deepseek.loss.assistOn", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], []]}]}]},
-    {"op": "choice", "text": "story.opening.loss.ask", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["boss.deepseek.loss.retry", "boss.deepseek.loss.train"], "branches": [[{"op": "warpTo", "anchor": "origin-lab-b2:core-front", "facing": "up"}, {"op": "include", "script": "ds-core"}], []]}
+    {"op": "setFlag", "flag": "ds:healUsed", "value": false},
+    {"op": "ifFlag", "flag": "ds:lossHint", "equals": "peakDamage", "then": [{"op": "say", "text": "boss.deepseek.loss.peakDamage", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], "else": [
+      {"op": "ifFlag", "flag": "ds:lossHint", "equals": "noCoupon", "then": [{"op": "say", "text": "boss.deepseek.loss.noCoupon", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], "else": [
+        {"op": "ifFlag", "flag": "ds:lossHint", "equals": "noHeal", "then": [{"op": "say", "text": "boss.deepseek.loss.noHeal", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], "else": [
+          {"op": "ifFlag", "flag": "ds:lossHint", "equals": "enrage", "then": [{"op": "say", "text": "boss.deepseek.loss.enrage", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}], "else": [
+            {"op": "say", "text": "boss.deepseek.loss.default", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}
+          ]}
+        ]}
+      ]}
+    ]},
+    {"op": "ifItem", "item": "off-peak-coupon", "atLeast": 2, "then": [], "else": [
+      {"op": "ifItem", "item": "off-peak-coupon", "atLeast": 1, "then": [
+        {"op": "giveItem", "item": "off-peak-coupon", "qty": 1},
+        {"op": "say", "text": "boss.deepseek.loss.refill", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}
+      ], "else": [
+        {"op": "giveItem", "item": "off-peak-coupon", "qty": 2},
+        {"op": "say", "text": "boss.deepseek.loss.refill", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}
+      ]}
+    ]},
+    {"op": "ifItem", "item": "cache-potion", "atLeast": 2, "then": [], "else": [
+      {"op": "ifItem", "item": "cache-potion", "atLeast": 1, "then": [
+        {"op": "giveItem", "item": "cache-potion", "qty": 1},
+        {"op": "say", "text": "boss.deepseek.loss.healRefill", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}
+      ], "else": [
+        {"op": "giveItem", "item": "cache-potion", "qty": 2},
+        {"op": "say", "text": "boss.deepseek.loss.healRefill", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}
+      ]}
+    ]},
+    {"op": "ifFlag", "flag": "ds:assistOffer", "then": [
+      {"op": "ifFlag", "flag": "ds:assist", "then": [], "else": [
+        {"op": "say", "text": "boss.deepseek.loss.assistOffer", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+        {"op": "choice", "text": "boss.deepseek.loss.assistHint", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["boss.deepseek.loss.assistYes", "boss.deepseek.loss.assistNo"], "branches": [
+          [{"op": "setFlag", "flag": "ds:assist"}, {"op": "say", "text": "boss.deepseek.loss.assistOn", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}],
+          []
+        ]}
+      ]}
+    ]},
+    {"op": "choice", "text": "story.opening.loss.ask", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "options": ["boss.deepseek.loss.retry", "boss.deepseek.loss.train"], "branches": [
+      [{"op": "warpTo", "anchor": "origin-lab-b2:core-front", "facing": "up"}, {"op": "include", "script": "ds-core"}],
+      []
+    ]}
   ],
   "ds-spark-show": [
     {"op": "setFlag", "flag": "ds:sparkShow"},
