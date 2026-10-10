@@ -166,6 +166,8 @@ CREATE INDEX IF NOT EXISTS idx_audit_account ON audit(account_id, at);
    ```
 3. **保留原文件：** 原 `<dataDir>/profiles.json` 保持只读留存，不删除、不截断，同时在 `legacy_profiles.raw_json` 完整留底。
 
+命令行遇到未知参数、缺少目录或备份路径时，在打开数据库前以非零状态退出；`--restore-db` 与 `--backup` 必须和 `--rollback` 一起使用，避免拼写错误意外操作默认数据目录。
+
 ### 6.2 备份与回滚步骤
 1. **将 SQLite 导出回 `profiles.json` 并回滚：**
    ```bash

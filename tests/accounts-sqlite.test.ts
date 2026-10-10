@@ -494,3 +494,12 @@ test('migration CLI: profiles.json -> SQLite transactional import, original JSON
     await rm(dir, { recursive: true, force: true })
   }
 })
+
+test('migration CLI rejects missing paths and unknown options before touching a data directory', async () => {
+  for (const args of [
+    ['--data-dir'], ['--data-dir', '--rollback'], ['--backup'],
+    ['--date-dir', 'missing'], ['--restore-db'], ['--backup', 'backup.db'],
+  ]) {
+    await assert.rejects(runMigrateCli(args), /requires|require|unknown migration option/)
+  }
+})

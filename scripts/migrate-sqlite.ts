@@ -30,16 +30,23 @@ export function parseMigrateArgs(argv: readonly string[]): MigrateCliOptions {
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i]
-    if ((arg === '--data-dir' || arg === '-d') && argv[i + 1]) {
-      dataDir = resolve(argv[++i])
+    if (arg === '--data-dir' || arg === '-d') {
+      const value = argv[++i]
+      if (!value || value.startsWith('-')) throw new Error(`${arg} requires a directory`)
+      dataDir = resolve(value)
     } else if (arg === '--rollback') {
       rollback = true
     } else if (arg === '--restore-db') {
       restoreDb = true
-    } else if (arg === '--backup' && argv[i + 1]) {
-      backupFile = resolve(argv[++i])
+    } else if (arg === '--backup') {
+      const value = argv[++i]
+      if (!value || value.startsWith('-')) throw new Error('--backup requires a file')
+      backupFile = resolve(value)
+    } else {
+      throw new Error(`unknown migration option: ${arg}`)
     }
   }
+  if ((restoreDb || backupFile) && !rollback) throw new Error('--restore-db and --backup require --rollback')
 
   return { dataDir, rollback, restoreDb, ...(backupFile ? { backupFile } : {}) }
 }
