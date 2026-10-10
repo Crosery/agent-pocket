@@ -15,6 +15,7 @@ import {
   isOffPeakDouble,
   isTierUnlocked,
   progressOf,
+  getActualDungeons,
 } from '../src/shared/gameplay/instances.ts'
 import {
   createParty,
@@ -39,7 +40,6 @@ import { createDungeonServer, type DungeonAuthority } from '../src/server/dungeo
 import type { HubCore, Player } from '../src/server/core.ts'
 import type { ServerMsg } from '../src/shared/protocol.ts'
 import { signContract } from '../src/client/battle/contract.ts'
-import { getActualDungeons } from '../src/client/net/coop-channel.ts'
 import { buildWorld } from '../src/shared/world/index.ts'
 import { storyProblems } from '../src/shared/world/story.ts'
 

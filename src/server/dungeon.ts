@@ -889,7 +889,7 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
         const jackpot = tierDef.reward.jackpot ?? GAMEPLAY.instanceDefaults.jackpot
         if (jackpot && shards > 0) {
           const rng = new Rng(hashString(`${save.playerId}:${session.instanceId}:${prog.runSeq}:jackpot`) >>> 0)
-          if (rng.nextFloat() < jackpot.chance) {
+          if (rng.next() < jackpot.chance) {
             shards *= jackpot.mul
           }
         }

@@ -3,6 +3,14 @@
 import type { BattleSummary, InstanceDef, InstanceDefaults, InstanceLossHint, InstancePeriodConfig, InstanceProgress, InstanceTierDef, SaveData } from '../types.ts'
 import { CONTENT, type Content } from '../content/index.ts'
 import { GAMEPLAY } from './data.ts'
+/**
+ * Returns the 8 actual multi-room dungeons (excluding scripted drills like `deepseek-drill`).
+ */
+export function getActualDungeons(): Array<[string, (typeof GAMEPLAY.instances)[string]]> {
+  return Object.entries(GAMEPLAY.instances).filter(
+    ([id, inst]) => id !== 'deepseek-drill' && Boolean(inst.rooms && Object.keys(inst.rooms).length >= 2),
+  )
+}
 
 /** The instance that runs `bossId`'s fights (first match), or null. */
 export function instanceOfBoss(bossId: string): { id: string; def: InstanceDef } | null {

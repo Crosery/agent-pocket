@@ -26,6 +26,7 @@ import {
   instancePeriodKey,
   isTierUnlocked,
   progressOf,
+  getActualDungeons,
 } from '../../shared/gameplay/instances.ts'
 import type { BattleChannel, GameContext, Input, NetClient, UIPanel } from '../contracts.ts'
 import { showReveal } from '../ui/reveal.ts'
@@ -140,9 +141,6 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
         if (!battleId || msg.battleId !== battleId) return
         endResult = msg.result
         poke()
-        if (!ctx.battle?.run) {
-          finish(msg.result)
-        }
       })
 
       const offStarted = net.on('dungeon.eliteStarted', (started) => {
@@ -150,35 +148,6 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
         battleId = started.battleId
         inbox.push({ events: [...started.events], request: started.request })
 
-        if (!ctx.battle?.run) {
-          // Headless/non-3D fallback: drive moves through the authoritative server engine until dungeon.eliteEnd.
-          const stepLoop = () => {
-            if (settled || endResult !== null) {
-              finish(endResult)
-              return
-            }
-            const batch = inbox.shift()
-            if (batch) {
-              if (batch.request.kind === 'switch') {
-                const aliveIdx = ctx.save.party.findIndex((c) => c.hp > 0)
-                net.send({
-                  t: 'dungeon.eliteAction',
-                  battleId: started.battleId,
-                  action: { kind: 'switch', partyIndex: Math.max(0, aliveIdx) },
-                })
-              } else if (batch.request.kind === 'action') {
-                net.send({
-                  t: 'dungeon.eliteAction',
-                  battleId: started.battleId,
-                  action: { kind: 'move', moveIndex: 0 },
-                })
-              }
-            }
-            wake = stepLoop
-          }
-          stepLoop()
-          return
-        }
 
         const collect = async (): Promise<{ events: BattleEvent[]; request: BattleRequest }> => {
           for (;;) {
@@ -201,6 +170,10 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
             if (endResult !== null || settled) return collect()
             net.send({ t: 'dungeon.eliteAction', battleId: started.battleId, action })
             return collect()
+          },
+          dispose() {
+            if (endResult === null && !settled) net.send({ t: 'dungeon.leave' })
+            finish(endResult)
           },
         }
 
@@ -378,11 +351,19 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
           net.send({ t: 'raid.action', raidId: msg.raidId, action })
           return collectRaid()
         },
+        dispose() {
+          if (raidBattleEnd === null) net.send({ t: 'dungeon.leave' })
+          raidBattleEnd ??= { victory: false }
+          raidBattleInbox.length = 0
+          const wake = raidBattleWake
+          raidBattleWake = null
+          wake?.()
+        },
       }
       void ctx.battle.run(msg.init, { kind: 'legend', channel: raidBattleChannel }).catch((err) => {
         console.error('[raid] battle runner failed', err)
       })
-    } else if (ctx.ui.pushPanel && typeof document !== 'undefined') {
+    } else if (typeof document !== 'undefined') {
       if (raidModal) raidModal.close()
       raidModal = mountRaidBattleModal(ctx, channel, () => {
         raidModal = null
@@ -395,7 +376,7 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
       currentRaid.boss = msg.boss
       currentRaid.members = msg.members
       raidModal?.refresh()
-      if (ctx.battle?.run && (!msg.actorId || msg.actorId === net.selfId)) {
+      if (!msg.actorId || msg.actorId === net.selfId) {
         const nextReq: BattleRequest = msg.request ?? {
           kind: 'action',
           canSwitch: ctx.save.party.filter((c) => c.hp > 0).length > 1,
@@ -430,7 +411,7 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     } else {
       ctx.ui.toast(t('multiplayer.dungeon.raidDefeat'), 'warn')
     }
-    if (ctx.ui.pushPanel && typeof document !== 'undefined') {
+    if (typeof document !== 'undefined') {
       showRaidSummaryModal(ctx, msg.summary, () => {
         const selfMember = msg.summary.members.find((m) => m.id === net.selfId)
         if (msg.victory && selfMember?.qualified) {
@@ -445,7 +426,7 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
       ctx.ui.toast(t('multiplayer.dungeon.contractSuccess'), 'success')
       const name = creatureName(msg.card)
       ctx.ui.toast(t('battleui.catch.toParty', { name }), 'success')
-      if (ctx.ui.pushPanel && typeof document !== 'undefined') {
+      if (typeof document !== 'undefined') {
         void showReveal(ctx, msg.card, { full: true })
       }
     } else {
@@ -881,14 +862,6 @@ function promptContractRoll(ctx: GameContext, channel: CoopChannel, summary: Rai
   safePushPanel(ctx, pApi)
 }
 
-/**
- * Returns the 8 actual multi-room dungeons (excluding scripted drills like `deepseek-drill`).
- */
-export function getActualDungeons(): Array<[string, (typeof GAMEPLAY.instances)[string]]> {
-  return Object.entries(GAMEPLAY.instances).filter(
-    ([id, inst]) => id !== 'deepseek-drill' && Boolean(inst.rooms && Object.keys(inst.rooms).length >= 2),
-  )
-}
 
 /**
  * Opens the dungeon selection and entry modal.

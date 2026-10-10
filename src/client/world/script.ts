@@ -17,7 +17,6 @@ import { presentArrival } from './rarity-spawns.ts'
 import { scriptResearch } from './research.ts'
 import { TUTORIAL } from '../onboarding/config.ts'
 import { sendScriptOp } from '../net/authority-client.ts'
-import { getCoopChannel, openDungeonModal } from '../net/coop-channel.ts'
 import { progressOf } from '../../shared/gameplay/instances.ts'
 
 export type ScriptOutcome = 'done' | 'end' | 'abort'
@@ -366,6 +365,8 @@ export function createScriptRunner(host: ScriptHost) {
         sendScriptOp(ctx, { t: 'script.op', op: 'research', speciesId: s.species, task: s.task, amount: s.amount })
         return 'done'
       case 'instance': {
+        // Dungeon UI requires browser styles; Node script consumers must not load that platform-only module.
+        const { getCoopChannel, openDungeonModal } = await import('../net/coop-channel.ts')
         if (s.action === 'enter') {
           openDungeonModal(ctx, s.id)
         } else if (s.action === 'room') {

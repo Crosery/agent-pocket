@@ -26,7 +26,7 @@ import { createSpatialIndex } from './spatial.ts'
 import { fallbackName, sanitizeName, uniqueName } from './moderation.ts'
 import { sanitizeAvatar, sanitizeLead, sanitizeProfile } from './sanitize.ts'
 import {
-  createRateLimiter, ID_TOKEN_RE, isDir, isFiniteNumber, isRecord, isUuidLike, newSecretId, publicIdFor, safeJsonParse,
+  createRateLimiter, ID_TOKEN_RE, isDir, isFiniteNumber, isRecord, safeJsonParse,
   type RateLimiter,
 } from './util.ts'
 
@@ -245,6 +245,7 @@ export function createHub(opts: HubOptions): Hub {
   const dungeons = createDungeonServer({
     core,
     store: opts.store,
+    authority,
     lookupPlayer: (id) => registry.get(id) ?? null,
     log,
   })
@@ -490,45 +491,29 @@ export function createHub(opts: HubOptions): Hub {
     if (m.build?.devtools === true && !opts.allowDev) { drop(c, codes.devNotAllowed, 'dev_not_allowed'); return }
     if (m.signed === true) c.signed = true
 
-    let id: string
-    let boundSave: ReturnType<ProfileStore['getAccountSave']> = null
-    if (c.session) {
-      const liveSession = opts.store.getAccountBySession(c.session.token)
-      if (!liveSession) {
-        drop(c, codes.shutdown, 'unauthorized')
-        return
-      }
-      c.session = liveSession
-      c.accountId = liveSession.accountId
-      id = liveSession.accountId
-      boundSave = opts.store.getAccountSave(id)
-    } else {
-      const rawSecret = isUuidLike(m.playerId) ? m.playerId : newSecretId()
-      const candidateId = publicIdFor(rawSecret)
-      // Never allow an unauthenticated connection to claim a registered account id.
-      id = opts.store.getAccount(candidateId) ? publicIdFor(newSecretId()) : candidateId
-    }
+    const liveSession = c.session && opts.store.getAccountBySession(c.session.token)
+    if (!liveSession) { drop(c, codes.shutdown, 'unauthorized'); return }
+    c.session = liveSession
+    c.accountId = liveSession.accountId
+    const id = liveSession.accountId
+    const boundSave = opts.store.getAccountSave(id)
+    if (!boundSave?.save) { drop(c, codes.shutdown, 'unauthorized'); return }
     const prev = registry.get(id)
     if (prev) drop(prev, codes.duplicate, 'kicked_duplicate', true)
 
     const tag = id.replace(/-/g, '').slice(0, MODERATION.name.tagLength).toUpperCase()
-    const rawName = boundSave?.save ? boundSave.save.name : (c.session?.username ?? m.name)
+    const rawName = boundSave.save.name
     const base = sanitizeName(rawName) ?? fallbackName(tag)
     const name = uniqueName(base, (n) => byName.has(n.toLowerCase()), (i) => (i === 0 ? tag : `${tag}${i}`))
-    const avatar = sanitizeAvatar(boundSave?.save ? boundSave.save.avatar : m.avatar)
-    const profileInput = boundSave?.save
-      ? {
-        ...m.profile,
-        badges: boundSave.trusted ? boundSave.save.badges : [],
-        dexCaught: boundSave.trusted ? boundSave.save.dexCaught.length : 0,
-        party: boundSave.save.party.slice(0, CONTENT.config.party.maxParty).map((c) => toView(c, CONTENT)),
-        playTimeSec: boundSave.save.playTimeSec,
-      }
-      : m.profile
+    const avatar = sanitizeAvatar(boundSave.save.avatar)
+    const profileInput = {
+      badges: boundSave.trusted ? boundSave.save.badges : [],
+      dexCaught: boundSave.trusted ? boundSave.save.dexCaught.length : 0,
+      party: boundSave.save.party.slice(0, CONTENT.config.party.maxParty).map((cr) => toView(cr, CONTENT)),
+      playTimeSec: boundSave.save.playTimeSec,
+    }
     const profile = sanitizeProfile(profileInput, { id, name, avatar }, opts.world?.badgeIds ?? null)
-    const helloPosMsg: HelloMsg = boundSave?.save
-      ? { ...m, map: boundSave.save.position.map, x: boundSave.save.position.x, y: boundSave.save.position.y, facing: boundSave.save.position.facing }
-      : m
+    const helloPosMsg: HelloMsg = { ...m, ...boundSave.save.position }
     const { pos, ref } = initialPosition(helloPosMsg)
     const now = Date.now()
 
@@ -540,7 +525,7 @@ export function createHub(opts: HubOptions): Hub {
     c.compact = m.compact === true
     c.state = {
       id, name, avatar, ...pos, moving: false, running: false, lead: sanitizeLead(m.lead),
-      badges: rawProfile.badges.length, dexCaught: rawProfile.dexCaught, busy: false,
+      badges: profile.badges.length, dexCaught: profile.dexCaught, busy: false,
     }
     c.lastMoveAt = now
     c.mapRef = ref
@@ -709,7 +694,7 @@ export function createHub(opts: HubOptions): Hub {
       }
     }
 
-    if (!mapChanged && fullPlayers.length === 0 && deltas.length === 0) return
+    if (!mapChanged && fullPlayers.length === 0 && deltas.length === 0 && !c.ackDirty) return
     if (c.ws.bufferedAmount > srv.skipSnapshotAboveBytes) { c.snapMap = null; return }
     const ack = c.ackDirty && c.lastMoveSeq > 0 ? c.lastMoveSeq : undefined
     c.ackDirty = false
@@ -838,6 +823,7 @@ export function createHub(opts: HubOptions): Hub {
     while (c.rxWindow.length > 0 && c.rxWindow[0].at < nowMs - 2000) c.rxWindow.shift()
     const msg = safeJsonParse(rawStr)
     if (!isRecord(msg) || typeof msg.t !== 'string') { core.error(c, 'bad_message'); return }
+    if (!c.id && msg.t !== 'hello' && msg.t !== 'ping') { core.error(c, 'not_ready'); return }
     if (msg.sig !== undefined) c.signed = true
     const envCheck = verifyEnvelope(c.sessionKey, msg, c.replayWindow, { requireSig: c.signed })
     if (!envCheck.ok) {
@@ -887,15 +873,12 @@ export function createHub(opts: HubOptions): Hub {
       }
       const cookieHeader = req?.headers.cookie
       const token = parseSessionCookie(cookieHeader)
-      let session: SessionInfo | null = null
-      if (token) {
-        session = opts.store.getAccountBySession(token)
-        if (!session) {
-          opts.store.audit({ ip, kind: 'ws.unauthorized_session', severity: 1, detail: {} })
-          ws.send(JSON.stringify(errorMsg('unauthorized')))
-          ws.close(codes.shutdown)
-          return
-        }
+      const session = token ? opts.store.getAccountBySession(token) : null
+      if (!session) {
+        opts.store.audit({ ip, kind: 'ws.unauthorized_session', severity: 1, detail: {} })
+        ws.send(JSON.stringify(errorMsg('unauthorized')))
+        ws.close(codes.shutdown)
+        return
       }
       const c = makeConn(ws, ip, session)
       sockets.add(c)

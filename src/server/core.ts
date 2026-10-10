@@ -4,7 +4,6 @@ import type { PlayerState, PublicProfile, ServerMsg } from '../shared/protocol.t
 import type { GameMap } from '../shared/types.ts'
 import type { SessionInfo } from './accounts.ts'
 import type { ReplayWindow } from '../shared/net-envelope.ts'
-import type { SessionInfo } from './accounts.ts'
 import type { RateKey } from './config.ts'
 import type { RateLimiter } from './util.ts'
 

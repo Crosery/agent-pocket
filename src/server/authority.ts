@@ -8,7 +8,7 @@ import { randomInt } from 'node:crypto'
 import battleUiJson from '../../content/battle-ui.json' with { type: 'json' }
 import gameJson from '../../content/game.json' with { type: 'json' }
 import type {
-  BattleAction, BattleEvent, BattleInit, BattleModifiers, BattleRequest, BattleSideInit, Creature, FieldWeatherKind, Grade, NpcDef, SaveData, ScriptStep, SpeciesDef, TrainerDef, TypeId, World,
+  BattleAction, BattleEvent, BattleInit, BattleModifiers, BattleRequest, BattleSideInit, Creature, FieldWeatherKind, GradeDef, NpcDef, SaveData, ScriptStep, SpeciesDef, TrainerDef, TypeId, World,
 } from '../shared/types.ts'
 import type { ClientMsg, PublicProfile, ServerMsg } from '../shared/protocol.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
@@ -85,6 +85,7 @@ interface ActiveBattle {
   moneyEarned: number
   lootEarned: Record<string, number>
   expEarned: number
+  damageTaken: number
   seenSpecies: Set<string>
   defeatedSpecies: string[]
   foeMoves: { species: string; type: TypeId }[]
@@ -419,6 +420,8 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         b.lootEarned[e.itemId] = (b.lootEarned[e.itemId] ?? 0) + Math.floor(e.qty)
       } else if (e.t === 'exp' && e.amount > 0) {
         b.expEarned += Math.floor(e.amount)
+      } else if (e.t === 'damage' && e.side === 0) {
+        b.damageTaken += e.amount
       } else if (e.t === 'moveLearnable') {
         let set = b.learnableMoves.get(e.partyIndex)
         if (!set) { set = new Set(); b.learnableMoves.set(e.partyIndex, set) }
@@ -529,13 +532,13 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
             let shards = (b.firstClear ? rules.reward.shards : rules.repeat.shards) ?? 0
             if (shards > 0 && rules.reward.jackpot) {
               const jRng = new Rng(b.seed ^ 0x3c6ef372)
-              if (jRng.nextFloat() < rules.reward.jackpot.chance) {
+              if (jRng.next() < rules.reward.jackpot.chance) {
                 shards *= rules.reward.jackpot.mul
               }
             }
             if (offPeak) shards *= 2
             const shardItem = GAMEPLAY.instanceDefaults.shardItem
-            if (shards > 0 && CONTENT.items[shardItem]) {
+            if (shards > 0 && shardItem && CONTENT.items[shardItem]) {
               save.bag[shardItem] = (save.bag[shardItem] ?? 0) + Math.floor(shards)
               addLedger(p.id, 'item', shardItem, Math.floor(shards), save.bag[shardItem], ref)
             }
@@ -545,7 +548,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
               tierId: b.tierId,
               win: true,
               turns: summary.turns,
-              damageTaken: summary.fainted > 0 ? 1 : 0,
+              damageTaken: b.damageTaken,
               partySize: 1,
             })
 
@@ -652,7 +655,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       let speciesId = msg.speciesId
       let level = msg.level
       let scriptedMoves: string[] | undefined
-      let scriptedGradeFloor: Grade | undefined
+      let scriptedGradeFloor: GradeDef['id'] | undefined
       let scriptedCatchRateMul: number | undefined
 
       if (speciesId !== undefined) {
@@ -681,14 +684,14 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           if (wildStep) {
             level = wildStep.level
             scriptedMoves = wildStep.moves
-            scriptedGradeFloor = wildStep.gradeFloor as Grade | undefined
+            scriptedGradeFloor = wildStep.gradeFloor
             scriptedCatchRateMul = wildStep.catchRateMul
           } else {
             if (Array.isArray(msg.moves) && msg.moves.every((mv) => typeof mv === 'string' && CONTENT.moves[mv])) {
               scriptedMoves = msg.moves
             }
             if (typeof msg.gradeFloor === 'string' && CONTENT.quality.grades.some((g) => g.id === msg.gradeFloor)) {
-              scriptedGradeFloor = msg.gradeFloor as Grade
+              scriptedGradeFloor = msg.gradeFloor as GradeDef['id']
             }
             scriptedCatchRateMul = msg.catchRateMul
           }
@@ -941,6 +944,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       moneyEarned: 0,
       lootEarned: {},
       expEarned: 0,
+      damageTaken: 0,
       seenSpecies: new Set(),
       defeatedSpecies: [],
       foeMoves: [],
@@ -1109,7 +1113,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       prog.pity[msg.tierId] = curPity + 1
       const failShard = rules.repeat.shards ?? GAMEPLAY.instanceDefaults.failShardQty
       const shardItem = GAMEPLAY.instanceDefaults.shardItem
-      if (failShard > 0 && CONTENT.items[shardItem]) {
+      if (failShard && failShard > 0 && shardItem && CONTENT.items[shardItem]) {
         save.bag[shardItem] = (save.bag[shardItem] ?? 0) + failShard
         addLedger(p.id, 'item', shardItem, failShard, save.bag[shardItem], `contract_fail:${msg.battleId}`)
       }
@@ -2119,7 +2123,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           otId: save.playerId,
           ...(ballId ? { ballId } : {}),
           caughtMap: p.state.map,
-          gradeFloor: (stepDef.gradeFloor as Grade | undefined) ?? CONTENT.quality.giftGradeFloor,
+          gradeFloor: stepDef.gradeFloor ?? CONTENT.quality.giftGradeFloor,
           origin: { kind: 'gift' },
           ...(stepDef.nature ? { nature: stepDef.nature } : {}),
           ...(stepDef.moves?.length ? { moves: stepDef.moves } : {}),

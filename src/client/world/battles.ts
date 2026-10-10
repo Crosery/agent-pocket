@@ -300,7 +300,7 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     const foe = createBossCreature(bossId, tier.level, new Rng(seed ^ 0x5bd1e995), ctx.data)
     if (isOnlineAuthorityActive(ctx)) {
       const shardItem = ID.shardItem
-      const prevShards = ctx.save.bag[shardItem] ?? 0
+      const prevShards = shardItem ? ctx.save.bag[shardItem] ?? 0 : 0
       const prevMoney = ctx.save.money
       const prevBag = { ...ctx.save.bag }
       const onlineOutcome = await runOnlineBattle(ctx, {
@@ -314,7 +314,7 @@ export function createBattleFlow(deps: BattleFlowDeps) {
       }, { kind: wildKind(foe) })
       if (onlineOutcome) {
         if (onlineOutcome.result === 'win') {
-          const shardDiff = (ctx.save.bag[shardItem] ?? 0) - prevShards
+          const shardDiff = (shardItem ? ctx.save.bag[shardItem] ?? 0 : 0) - prevShards
           if (shardDiff > 0) {
             if (isOffPeakDouble()) ctx.ui.toast(t('multiplayer.dungeon.offPeak'), 'info')
             ctx.ui.toast(t('multiplayer.dungeon.shardsEarned', { n: shardDiff }), 'success')
@@ -365,7 +365,7 @@ export function createBattleFlow(deps: BattleFlowDeps) {
         shards *= 2
         ctx.ui.toast(t('multiplayer.dungeon.offPeak'), 'info')
       }
-      if (shards > 0) {
+      if (shards > 0 && ID.shardItem) {
         addItem(ctx, ID.shardItem, shards)
         ctx.ui.toast(t('multiplayer.dungeon.shardsEarned', { n: shards }), 'success')
       }

@@ -68,7 +68,7 @@ export function signContract(
     prog.pity[tierId] = curPity + 1
     const failShard = rules.repeat.shards ?? GAMEPLAY.instanceDefaults.failShardQty
     const shardItem = GAMEPLAY.instanceDefaults.shardItem
-    addBagItem(ctx, shardItem, failShard)
+    if (shardItem && failShard && failShard > 0) addBagItem(ctx, shardItem, failShard)
     return null
   }
   prog.pity ??= {}

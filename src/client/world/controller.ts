@@ -41,7 +41,6 @@ import { sendItemUse, sendScriptOp } from '../net/authority-client.ts'
 import { createTriggers } from './triggers.ts'
 import { createScriptRunner, type ScriptHost } from './script.ts'
 import { anchorName, isUnlocked, markSeen, unlockAnchor } from './anchors.ts'
-import { sendScriptOp } from '../net/authority-client.ts'
 
 export type MoveMode = 'walk' | 'run' | 'bike' | 'surf'
 

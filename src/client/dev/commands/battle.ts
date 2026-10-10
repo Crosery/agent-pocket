@@ -7,9 +7,7 @@ import { rollBossCard } from '../../../shared/gameplay/bosscard.ts'
 import { GAMEPLAY } from '../../../shared/gameplay/data.ts'
 import { instanceOfBoss, progressOf, shouldOfferAssist } from '../../../shared/gameplay/instances.ts'
 import { walkSteps } from '../../../shared/world/story.ts'
-import { contractFlow } from '../../battle/capture.ts'
 import { addCreature } from '../../world/save-ops.ts'
-import { getCoopChannel, openDungeonModal } from '../../net/coop-channel.ts'
 import { GAME } from '../../world/config.ts'
 import type { DevHost } from '../kit.ts'
 import { DevError, type CommandRun } from '../registry.ts'
@@ -87,7 +85,7 @@ export const battleCommands: Record<string, CommandRun> = {
     return { boss: bossId, tier: tierId, result: 'lose', losses: prog.losses[tierId], assistOffer: !!ctx.save.flags[ID.assistOfferFlag], hint }
   },
   /** The contract screen right away, without the fight (the first clear's card is rolled, filed and appraised). */
-  'capture.force': (host, a) => {
+  'capture.force': async (host, a) => {
     const id = String(a.boss ?? 'deepseek')
     const tier = String(a.tier ?? 'story')
     const def = CONTENT.bosses[id]
@@ -96,6 +94,8 @@ export const battleCommands: Record<string, CommandRun> = {
     if (!def.tiers?.[tier] || !rules) throw new DevError('dev.err.unknownBossTier', { boss: id, tier })
     if (a.result !== undefined && a.result !== 'success') throw new DevError('dev.err.badArg', { arg: 'result', why: 'success' })
     guard(host)
+    // Capture presentation requires browser styles; Node command consumers only exercise pure commands.
+    const { contractFlow } = await import('../../battle/capture.ts')
     const foe = createBossCreature(id, def.tiers![tier].level, host.rng.stream('debug'), CONTENT)
     fire(contractFlow(host.ctx, { bossId: id, tierId: tier, foe, chance: rules.capture.first, skipBefore: true }), 'contract')
     return { boss: id, tier, result: 'success' }
@@ -110,12 +110,16 @@ export const battleCommands: Record<string, CommandRun> = {
     delete host.ctx.save.flags[GAME.flags.bossWonPrefix + found.def.boss]
      return { id: found.id }
    },
-  'dungeon.open': (host, a) => {
+  'dungeon.open': async (host, a) => {
     const id = String(a.id ?? 'deepseek-tide')
+    // Dungeon screens are browser-only; keep the Node command registry loadable without CSS.
+    const { openDungeonModal } = await import('../../net/coop-channel.ts')
     openDungeonModal(host.ctx, id)
     return { opened: id }
   },
-  'party.create': (host) => {
+  'party.create': async (host) => {
+    // The active channel is installed with browser-only dungeon screens.
+    const { getCoopChannel } = await import('../../net/coop-channel.ts')
     const channel = getCoopChannel()
     if (channel) channel.createParty()
     return { result: 'ok' }
