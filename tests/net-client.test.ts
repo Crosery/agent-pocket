@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join as pathJoin } from 'node:path'
+import { setTimeout as sleep } from 'node:timers/promises'
 import { WebSocketServer, type WebSocket as WsSocket } from 'ws'
 import type { EventBus, GameEvents, NetStatus } from '../src/client/contracts.ts'
 import type { ClientMsg, PublicProfile, ServerMsg } from '../src/shared/protocol.ts'
@@ -11,12 +12,11 @@ import { CONTENT } from '../src/shared/content/index.ts'
 import { createNetClient, NET_CLIENT } from '../src/client/net/index.ts'
 import { pushSample, sampleAt, type Sample } from '../src/client/net/interp.ts'
 import { startServer } from '../src/server/index.ts'
+import { registerTestAccount } from './net-fixture.ts'
 
 const PORT = 8794
 const URL_WS = `ws://localhost:${PORT}${NET_CLIENT.protocol.wsPath}`
 const tickMs = 1000 / CONTENT.config.net.tickHz
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
 function bus(): EventBus<GameEvents> & { log: { type: string; payload: unknown }[] } {
   const handlers = new Map<string, Set<(p: unknown) => void>>()
   const log: { type: string; payload: unknown }[] = []
@@ -43,7 +43,7 @@ async function until(cond: () => boolean, ms = 3000, label = 'condition'): Promi
 
 const profile = (name: string): PublicProfile => ({ id: 'x', name, avatar: 'x', badges: [], dexCaught: 0, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0 })
 
-function helloFor(name: string, map: string, x: number, y: number, playerId = crypto.randomUUID()) {
+function helloFor(name: string, map: string, x: number, y: number, playerId: string = crypto.randomUUID()) {
   return (): Extract<ClientMsg, { t: 'hello' }> => ({
     t: 'hello', v: CONTENT.config.net.protocolVersion, playerId, name, avatar: '', map, x, y, facing: 'down', lead: null, profile: profile(name),
   })
@@ -57,8 +57,12 @@ test('interp: lerp between samples, bridge idle gaps, snap on teleports', () => 
   pushSample(buf, { t: 0, x: 0, y: 0 }, o)
   pushSample(buf, { t: 100, x: 1, y: 0 }, o)
   assert.deepEqual(sampleAt(buf, 50), { x: 0.5, y: 0 })
-  assert.deepEqual(sampleAt(buf, -10), { t: 0, x: 0, y: 0 })
-  assert.deepEqual(sampleAt(buf, 500), { t: 100, x: 1, y: 0 })
+  const beforeStart = sampleAt(buf, -10)
+  assert.ok(beforeStart)
+  assert.deepEqual({ x: beforeStart.x, y: beforeStart.y }, { x: 0, y: 0 })
+  const afterEnd = sampleAt(buf, 500)
+  assert.ok(afterEnd)
+  assert.deepEqual({ x: afterEnd.x, y: afterEnd.y }, { x: 1, y: 0 })
   pushSample(buf, { t: 5000, x: 2, y: 0 }, o)
   // Idle for 4.9 s: the slide starts one tick before the new sample.
   assert.deepEqual(sampleAt(buf, 4950), { x: 1.5, y: 0 })
@@ -179,18 +183,22 @@ test('client against the real server: remote players, interpolation, chat, leade
   // world: null — this test exercises client mechanics on a synthetic map id, not world bounds.
   const srv = await startServer({ port: PORT, dataDir: dir, distDir: pathJoin(dir, 'nd'), quiet: true, pvp: null, world: null })
   const mapId = 'net-client-map'
+  const origin = `http://localhost:${PORT}`
+  const anaAcct = await registerTestAccount(srv, { name: 'Ana', map: mapId, x: 10, y: 10 })
+  const boAcct = await registerTestAccount(srv, { name: 'Bo', map: mapId, x: 11, y: 10 })
   const eventsA = bus(), eventsB = bus()
-  const a = createNetClient(eventsA, helloFor('Ana', mapId, 10, 10), { url: URL_WS })
-  const b = createNetClient(eventsB, helloFor('Bo', mapId, 11, 10), { url: URL_WS })
+  const a = createNetClient(eventsA, helloFor('Ana', mapId, 10, 10, anaAcct.accountId), { url: URL_WS, headers: { cookie: anaAcct.cookie, origin } })
+  const b = createNetClient(eventsB, helloFor('Bo', mapId, 11, 10, boAcct.accountId), { url: URL_WS, headers: { cookie: boAcct.cookie, origin } })
   try {
     a.connect()
     b.connect()
     await until(() => a.status === 'online' && b.status === 'online', 3000, 'both online')
+    assert.equal(a.selfId, anaAcct.accountId)
+    assert.equal(b.selfId, boAcct.accountId)
     a.reportPosition({ map: mapId, x: 10, y: 10, facing: 'down', moving: false, running: false })
     b.reportPosition({ map: mapId, x: 11, y: 10, facing: 'down', moving: false, running: false })
     await until(() => a.remotePlayers().has(b.selfId!), 2000, 'a sees b')
     assert.ok(!a.remotePlayers().has(a.selfId!))
-
     // Walk b east; a's interpolated position trails the authoritative one and then converges.
     for (let i = 1; i <= 10; i++) {
       b.reportPosition({ map: mapId, x: 11 + i * 0.3, y: 10, facing: 'right', moving: i < 10, running: false })

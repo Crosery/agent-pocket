@@ -11,8 +11,9 @@ import { mkdtemp, rm } from 'node:fs/promises'
 import { request } from 'node:http'
 import { tmpdir } from 'node:os'
 import { join as pathJoin } from 'node:path'
+import { setTimeout as sleep } from 'node:timers/promises'
 import type { EventBus, GameEvents } from '../src/client/contracts.ts'
-import type { ClientMsg, PlayerState, PublicProfile } from '../src/shared/protocol.ts'
+import type { ClientMsg, PlayerState, PublicProfile, ServerMsg } from '../src/shared/protocol.ts'
 import {
   applyPlayerDelta, decodeMoveFlags, decodeMoveFrame,
   encodeMoveFlags, encodeMoveFrame, encodePlayerDelta, staticStateKey,
@@ -21,11 +22,12 @@ import { adaptiveInterpDelay, pushSample, sampleAt, type Sample } from '../src/c
 import { createPredictor, type CorrectionState } from '../src/client/net/predict.ts'
 import { createNetClient } from '../src/client/net/client.ts'
 import { startServer } from '../src/server/index.ts'
+import type { WorldInfo } from '../src/server/world.ts'
 import { CONTENT } from '../src/shared/content/index.ts'
 import netJson from '../content/net.json' with { type: 'json' }
-const tickMs = 1000 / CONTENT.config.net.tickHz
-const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
+import { registerTestAccount } from './net-fixture.ts'
 
+const tickMs = 1000 / CONTENT.config.net.tickHz
 function makeBus(): EventBus<GameEvents> & { log: { type: string; payload: unknown }[] } {
   const handlers = new Map<string, Set<(p: unknown) => void>>()
   const log: { type: string; payload: unknown }[] = []
@@ -52,7 +54,7 @@ const testHello = (name: string, map: string, x: number, y: number): Extract<Cli
 })
 
 function httpGet(port: number, path: string, headers: Record<string, string> = {}): Promise<{ status: number; body: string }> {
-  return new Promise<{ status: number; body: string }>((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const req = request({ host: '127.0.0.1', port, path, method: 'GET', headers }, (res) => {
       const chunks: Buffer[] = []
       res.on('data', (d: Buffer) => chunks.push(d))
@@ -234,18 +236,36 @@ test('interp: adaptive delay formula, velocity dead-reckoning and stopped conver
   // Stopped player (vx = 0) never extrapolates
   pushSample(buf, { t: 1300, x: 10.6, y: 5.0, vx: 0, vy: 0 }, o)
   const stopped = sampleAt(buf, 1450, 160)
-  assert.deepEqual(stopped, { x: 10.6, y: 5.0 })
+  assert.ok(stopped)
+  assert.deepEqual({ x: stopped.x, y: stopped.y }, { x: 10.6, y: 5.0 })
 })
 
 // ----------------------------------------------------------------------------- 4. Live Server Integration
 test('live server: compact delta movement, server ack, correction, distance tiers, /api/metrics and setEndpoint', async () => {
   const dir = await mkdtemp(pathJoin(tmpdir(), 'ap-net-latency-live-'))
-  const server = await startServer({ port: 0, dataDir: dir, distDir: pathJoin(dir, 'nd'), quiet: true, pvp: null, world: null })
+  const world: WorldInfo = {
+    maps: new Map([['test_map', { width: 12, height: 12, spawn: { x: 10, y: 10, facing: 'down' } }]]),
+    startMap: 'test_map',
+    badgeIds: new Set(),
+  }
+  const server = await startServer({ port: 0, dataDir: dir, distDir: pathJoin(dir, 'nd'), quiet: true, pvp: null, world })
   const wsUrl = `ws://127.0.0.1:${server.port}${netJson.protocol.wsPath}`
+  const origin = `http://127.0.0.1:${server.port}`
+
+  const aliceAcct = await registerTestAccount(server, { name: 'Alice', map: 'test_map', x: 10, y: 10 })
+  const bobAcct = await registerTestAccount(server, { name: 'Bob', map: 'test_map', x: 11, y: 10 })
 
   const busA = makeBus(), busB = makeBus()
-  const a = createNetClient(busA, () => testHello('Alice', 'test_map', 10, 10), { url: wsUrl, compact: true })
-  const b = createNetClient(busB, () => testHello('Bob', 'test_map', 11, 10), { url: wsUrl, compact: true })
+  const a = createNetClient(
+    busA,
+    () => testHello('Alice', 'test_map', 10, 10),
+    { url: wsUrl, compact: true, headers: { cookie: aliceAcct.cookie, origin } },
+  )
+  const b = createNetClient(
+    busB,
+    () => testHello('Bob', 'test_map', 11, 10),
+    { url: wsUrl, compact: true, headers: { cookie: bobAcct.cookie, origin } },
+  )
 
   let aCorrection: CorrectionState | null = null
   const getCorrection = (): CorrectionState | null => aCorrection
@@ -260,6 +280,8 @@ test('live server: compact delta movement, server ack, correction, distance tier
     while ((a.status !== 'online' || b.status !== 'online') && Date.now() < onlineDeadline) await sleep(20)
     assert.equal(a.status, 'online')
     assert.equal(b.status, 'online')
+    assert.equal(a.selfId, aliceAcct.accountId)
+    assert.equal(b.selfId, bobAcct.accountId)
 
     // B sees A joined
     const bSeesADeadline = Date.now() + 4000
@@ -272,6 +294,11 @@ test('live server: compact delta movement, server ack, correction, distance tier
       await sleep(tickMs + 10)
     }
 
+    // Deterministic wait for server movement ACK on snapshot (without waiting for 5s ping)
+    const ackDeadline = Date.now() + 1500
+    while (a.predictor.lastAckSeq < 1 && Date.now() < ackDeadline) await sleep(20)
+    assert.ok(a.predictor.lastAckSeq >= 1, `A received ack from server (lastAckSeq=${a.predictor.lastAckSeq})`)
+
     // B receives compact deltas and interpolates A's position
     const bInterpDeadline = Date.now() + 4000
     while (Math.abs((b.remotePlayers().get(a.selfId ?? '')?.x ?? 0) - 11.0) > 0.05 && Date.now() < bInterpDeadline) await sleep(25)
@@ -279,11 +306,10 @@ test('live server: compact delta movement, server ack, correction, distance tier
     assert.ok(remoteA, 'B saw remote A')
     assert.ok(Math.abs(remoteA.x - 11.0) < 0.05, `B saw A move to ~11.0 (got ${remoteA?.x})`)
 
-    // A received ack from server
-    assert.ok(a.predictor.lastAckSeq >= 1, `A received ack from server (lastAckSeq=${a.predictor.lastAckSeq})`)
-
-    // A sends an invalid move outside bounds -> server replies with move.correct
-    a.send({ t: 'move', seq: 99, map: 'test_map', x: 9999, y: 9999, facing: 'down', moving: false, running: false })
+    // A predicts and sends an out-of-bounds move (13.5 > map width 12, discrepancy 2.5 <= snapDistanceTiles 6)
+    // -> server replies with move.correct and smooth visual pull-back activates
+    a.predictor.record({ map: 'test_map', x: 13.5, y: 10, facing: 'right', moving: true, running: false }, performance.now())
+    a.send({ t: 'move', seq: 99, map: 'test_map', x: 13.5, y: 10, facing: 'right', moving: true, running: false })
     const corrDeadline = Date.now() + 2000
     while (!getCorrection() && Date.now() < corrDeadline) await sleep(20)
     const corr = getCorrection()
@@ -324,31 +350,56 @@ test('live server: compact delta movement, server ack, correction, distance tier
   }
 })
 
-test('net client: options.headers forwards custom headers during WebSocket handshake', async () => {
+test('net client: options.headers forwards authenticated session cookie and establishes account identity', async () => {
   const dir = await mkdtemp(pathJoin(tmpdir(), 'ap-net-headers-'))
   const server = await startServer({ port: 0, dataDir: dir, distDir: pathJoin(dir, 'nd'), quiet: true, pvp: null, world: null })
   const wsUrl = `ws://127.0.0.1:${server.port}${netJson.protocol.wsPath}`
+  const origin = `http://127.0.0.1:${server.port}`
+  const acct = await registerTestAccount(server, { name: 'HeaderUser', map: 'test_map', x: 5, y: 5 })
   const bus = makeBus()
-
   const client = createNetClient(
     bus,
     () => testHello('HeaderUser', 'test_map', 5, 5),
     {
       url: wsUrl,
       headers: {
-        cookie: 'ap_session=mock_test_token_12345678',
-        origin: 'http://127.0.0.1',
+        cookie: acct.cookie,
+        origin,
       },
     },
   )
 
+  const badBus = makeBus()
+  const badErrors: string[] = []
+  const badClient = createNetClient(
+    badBus,
+    () => testHello('BadCookieUser', 'test_map', 5, 5),
+    {
+      url: wsUrl,
+      headers: {
+        cookie: 'ap_session=invalid_forged_token_1234567890',
+        origin,
+      },
+    },
+  )
+  badClient.on('error', (m: Extract<ServerMsg, { t: 'error' }>) => badErrors.push(m.code))
+
   try {
     client.connect()
     const deadline = Date.now() + 4000
-    while (client.status !== 'online' && client.status !== 'offline' && Date.now() < deadline) await sleep(20)
-    assert.ok(client.status === 'online' || client.status === 'offline')
+    while (client.status !== 'online' && Date.now() < deadline) await sleep(20)
+    assert.equal(client.status, 'online')
+    assert.equal(client.selfId, acct.accountId)
+
+    badClient.connect()
+    const errDeadline = Date.now() + 2000
+    while (badErrors.length === 0 && Date.now() < errDeadline) await sleep(20)
+    assert.ok(badErrors.includes('unauthorized'), 'invalid session cookie rejected with unauthorized')
+    assert.notEqual(badClient.status, 'online')
+    assert.equal(badClient.selfId, null)
   } finally {
     client.disconnect()
+    badClient.disconnect()
     await server.close()
     await rm(dir, { recursive: true, force: true })
   }

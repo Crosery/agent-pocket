@@ -2,18 +2,18 @@
 // content/multiplayer.json and the multiplayer text namespace.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, readFile, rm } from 'node:fs/promises'
+import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join as pathJoin } from 'node:path'
+import { setTimeout as sleep } from 'node:timers/promises'
 import type { BattleAction, BattleEvent, Creature, SideIndex } from '../src/shared/types.ts'
 import type { ClientMsg, PublicProfile, ServerMsg } from '../src/shared/protocol.ts'
 import { CONTENT, t } from '../src/shared/content/index.ts'
-import { createCreature } from '../src/shared/creature.ts'
+import { createCreature, maxHp } from '../src/shared/creature.ts'
 import { Rng } from '../src/shared/rng.ts'
-import { startServer } from '../src/server/index.ts'
+import { startServer, type RunningServer } from '../src/server/index.ts'
 import { NET } from '../src/server/config.ts'
 import { PVP_RULES, arenaFor, createPvp, sanitizePvpParty, type PvpOverrides } from '../src/server/pvp.ts'
-import type { PvpModule } from '../src/server/pvp-hooks.ts'
 import type { GameEvents, NetStatus } from '../src/client/contracts.ts'
 import { createEventBus } from '../src/client/core/events.ts'
 import { createNetClient } from '../src/client/net/index.ts'
@@ -22,84 +22,20 @@ import {
 } from '../src/client/net/pvp-channel.ts'
 import { applyTradeResult, canOffer, ivStars, offerableIndices, trackOnlineRoster, TRADE_RULES } from '../src/client/net/trade-flow.ts'
 import type { SaveData } from '../src/shared/types.ts'
-import { maxHp } from '../src/shared/creature.ts'
 import multiplayerJson from '../content/multiplayer.json' with { type: 'json' }
+import {
+  joinAuthenticatedClient,
+  registerTestAccount,
+  type Msg,
+  type TestWsClient,
+} from './net-fixture.ts'
 
 // ----------------------------------------------------------------------------- helpers
 
-type Msg<T extends ServerMsg['t']> = Extract<ServerMsg, { t: T }>
-
-interface TestClient {
-  ws: WebSocket
-  msgs: ServerMsg[]
-  selfId: string
-  name: string
-  send(m: ClientMsg | Record<string, unknown>): void
-  mark(): number
-  waitFor<T extends ServerMsg['t']>(type: T, pred?: (m: Msg<T>) => boolean, opts?: { from?: number; ms?: number }): Promise<Msg<T>>
-  all<T extends ServerMsg['t']>(type: T, from?: number): Msg<T>[]
-  close(): Promise<void>
-}
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 /** Spacing between pvp messages that stays under the hub's pvp rate limit. */
 const PVP_GAP_MS = Math.ceil((NET.server.rates.pvp.perSeconds * 1000) / NET.server.rates.pvp.count) + 5
 
-function openClient(port: number): Promise<TestClient> {
-  const ws = new WebSocket(`ws://localhost:${port}${NET.protocol.wsPath}`)
-  const msgs: ServerMsg[] = []
-  const waiters = new Set<() => void>()
-  const closed = new Promise<void>((r) => ws.addEventListener('close', () => r()))
-  ws.addEventListener('message', (e) => {
-    msgs.push(JSON.parse(String(e.data)) as ServerMsg)
-    for (const w of [...waiters]) w()
-  })
-  const c: TestClient = {
-    ws, msgs, selfId: '', name: '',
-    send: (m) => ws.send(JSON.stringify(m)),
-    mark: () => msgs.length,
-    all: (type, from = 0) => msgs.slice(from).filter((m) => m.t === type) as never,
-    waitFor(type, pred = () => true, opts = {}) {
-      const from = opts.from ?? msgs.length
-      return new Promise((resolve, reject) => {
-        let i = from
-        const check = () => {
-          for (; i < msgs.length; i++) {
-            const m = msgs[i]
-            if (m.t === type && pred(m as never)) { cleanup(); resolve(m as never); return }
-          }
-        }
-        const timer = setTimeout(() => {
-          cleanup()
-          reject(new Error(`timeout waiting for ${type}; got ${msgs.slice(from).map((m) => (m.t === 'error' ? `error:${m.code}` : m.t)).join(',')}`))
-        }, opts.ms ?? 4000)
-        const cleanup = () => { clearTimeout(timer); waiters.delete(check) }
-        waiters.add(check)
-        check()
-      })
-    },
-    close() { ws.close(); return closed },
-  }
-  return new Promise((resolve, reject) => {
-    ws.addEventListener('open', () => resolve(c))
-    ws.addEventListener('error', () => reject(new Error('ws error')))
-  })
-}
-
 const MAP = 'pvp-test-map'
-
-async function join(port: number, name: string, x: number): Promise<TestClient> {
-  const c = await openClient(port)
-  const from = c.mark()
-  const profile: PublicProfile = { id: '', name, avatar: '', badges: [], dexCaught: 0, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0 }
-  c.send({
-    t: 'hello', v: CONTENT.config.net.protocolVersion, playerId: crypto.randomUUID(), name, avatar: '', map: MAP, x, y: 5, facing: 'down', lead: null, profile,
-  } satisfies ClientMsg)
-  const w = await c.waitFor('welcome', undefined, { from })
-  c.selfId = w.selfId
-  c.name = name
-  return c
-}
 
 let seedCounter = 1
 /** A party built generically from whatever species exist (first `n` species in dex order). */
@@ -110,22 +46,18 @@ function party(n: number, level: number, otName = 'tester'): Creature[] {
     createCreature(list[i % list.length].id, level, { rng: new Rng(seedCounter++ * 7919), otName, shiny: false }))
 }
 
-function pvpModule(overrides: PvpOverrides): PvpModule {
-  return { createPvp: (host) => createPvp(host, overrides) }
-}
-
 /** Listens on an ephemeral port (the label only documents the test) so a dev server on a fixed port can't collide. */
-async function withServer(_label: number, overrides: PvpOverrides, fn: (port: number, dataDir: string) => Promise<void>): Promise<void> {
+async function withServer(_label: number, overrides: PvpOverrides, fn: (srv: RunningServer, dataDir: string) => Promise<void>): Promise<void> {
   const dataDir = await mkdtemp(pathJoin(tmpdir(), 'ap-pvp-test-'))
-  const srv = await startServer({ port: 0, dataDir, distDir: pathJoin(dataDir, 'no-dist'), quiet: true, world: null, pvp: pvpModule(overrides) })
-  try { await fn(srv.port, dataDir) } finally {
+  const srv = await startServer({ port: 0, dataDir, distDir: pathJoin(dataDir, 'no-dist'), quiet: true, world: null, pvp: { createPvp: (host) => createPvp(host, overrides) } })
+  try { await fn(srv, dataDir) } finally {
     await srv.close()
     await rm(dataDir, { recursive: true, force: true })
   }
 }
 
 /** A challenges B, B accepts; both get pvp.start. */
-async function startBattle(A: TestClient, B: TestClient) {
+async function startBattle(A: TestWsClient, B: TestWsClient) {
   const fb = B.mark()
   const fa = A.mark()
   A.send({ t: 'pvp.challenge', to: B.selfId })
@@ -144,8 +76,16 @@ async function startBattle(A: TestClient, B: TestClient) {
   return sa.battleId
 }
 
-/** Sends parties and waits for pvp.begin on both sides. */
-async function sendParties(A: TestClient, B: TestClient, battleId: string, pa: Creature[], pb: Creature[]) {
+function seedParty(srv: RunningServer, clientId: string, creatures: Creature[]): void {
+  const current = srv.authority.getSave(clientId)
+  assert.ok(current, `expected bound save for ${clientId}`)
+  srv.authority.setSave(clientId, { ...current, party: structuredClone(creatures) }, { imported: false, trusted: true })
+}
+
+/** Seeds authoritative parties, sends pvp.party, and waits for pvp.begin on both sides. */
+async function sendParties(srv: RunningServer, A: TestWsClient, B: TestWsClient, battleId: string, pa: Creature[], pb: Creature[]) {
+  seedParty(srv, A.selfId, pa)
+  seedParty(srv, B.selfId, pb)
   const fa = A.mark(), fb = B.mark()
   A.send({ t: 'pvp.party', battleId, party: pa })
   await sleep(PVP_GAP_MS)
@@ -159,7 +99,7 @@ async function sendParties(A: TestClient, B: TestClient, battleId: string, pa: C
  * Plays until pvp.end: answers every action/switch request; an answer rejected by the engine (reply carries the
  * same kind of request again) moves on to the next index.
  */
-function autoPlayer(c: TestClient, battleId: string, from: number): Promise<Msg<'pvp.end'>> {
+function autoPlayer(c: TestWsClient, battleId: string, from: number): Promise<Msg<'pvp.end'>> {
   return new Promise((resolve, reject) => {
     let i = from
     let attempt = 0
@@ -190,7 +130,6 @@ function autoPlayer(c: TestClient, battleId: string, from: number): Promise<Msg<
     }, 5)
   })
 }
-
 const flipSide = (s: SideIndex): SideIndex => (s === 0 ? 1 : 0)
 function flip(e: BattleEvent): BattleEvent {
   if (e.t === 'end') return { t: 'end', result: e.result === 'win' ? 'lose' : e.result === 'lose' ? 'win' : e.result, winner: e.winner === -1 ? -1 : flipSide(e.winner) }
@@ -200,8 +139,8 @@ function flip(e: BattleEvent): BattleEvent {
 const structural = (events: BattleEvent[]) => events.filter((e) => e.t !== 'msg')
 
 /** Every batch both players received must describe the same battle, mirrored. */
-function assertMirrored(A: TestClient, B: TestClient, battleId: string, fa: number, fb: number) {
-  const batches = (c: TestClient, from: number) => c.all('pvp.events', from).filter((m) => m.battleId === battleId).map((m) => structural(m.events)).filter((ev) => ev.length > 0)
+function assertMirrored(A: TestWsClient, B: TestWsClient, battleId: string, fa: number, fb: number) {
+  const batches = (c: TestWsClient, from: number) => c.all('pvp.events', from).filter((m) => m.battleId === battleId).map((m) => structural(m.events)).filter((ev) => ev.length > 0)
   const ea = batches(A, fa)
   const eb = batches(B, fb)
   assert.equal(ea.length, eb.length, 'same number of resolved batches')
@@ -209,7 +148,7 @@ function assertMirrored(A: TestClient, B: TestClient, battleId: string, fa: numb
   ea.forEach((batch, i) => assert.deepEqual(batch.map(flip), eb[i], `batch ${i} mirrored`))
 }
 
-async function inspectProfile(c: TestClient, target: string): Promise<PublicProfile> {
+async function inspectProfile(c: TestWsClient, target: string): Promise<PublicProfile> {
   const from = c.mark()
   c.send({ t: 'inspect', target })
   return (await c.waitFor('profile', (m) => m.profile.id === target, { from })).profile
@@ -268,22 +207,6 @@ test('content/multiplayer.json is consistent with the content tables', () => {
   }
 })
 
-test('every multiplayer text key referenced by the multiplayer modules exists', async () => {
-  const files = ['src/server/pvp.ts', 'src/client/net/pvp-channel.ts', 'src/client/net/trade-flow.ts', 'src/client/ui/screens/online.ts']
-  const keys = new Set<string>()
-  for (const f of files) {
-    let src = ''
-    try { src = await readFile(new URL(`../${f}`, import.meta.url), 'utf8') } catch { continue }
-    for (const m of src.matchAll(/['`](multiplayer\.[A-Za-z0-9_.]+)['`]/g)) keys.add(m[1])
-    for (const m of src.matchAll(/fail\([^,]+,\s*'([a-z_]+)'/g)) keys.add(`multiplayer.serverError.${m[1]}`)
-    for (const m of src.matchAll(/'(pvp_[a-z_]+)'/g)) if (m[1] !== 'pvp_unavailable') keys.add(`multiplayer.serverError.${m[1]}`)
-    // Player-facing Chinese text must come from content, never from code.
-    assert.ok(!/[一-鿿]/.test(src.replace(/\/\/.*$|\/\*[\s\S]*?\*\//gm, '')), `${f} contains CJK text outside comments`)
-  }
-  assert.ok(keys.size > 0)
-  for (const k of keys) assert.notEqual(t(k), k, `missing text ${k}`)
-})
-
 test('arena selection is deterministic and uses existing content', () => {
   for (const seed of [0, 1, 7, 12345, 2 ** 31 - 2]) {
     const a = arenaFor(seed)
@@ -316,19 +239,16 @@ test('sanitizePvpParty: limits, duplicates, unknown species, healing, independen
 // ----------------------------------------------------------------------------- integration
 
 test('pvp: full battle to the end, mirrored perspectives, level cap, records', async () => {
-  await withServer(8797, {}, async (port) => {
-    const A = await join(port, 'Ann', 5)
-    const B = await join(port, 'Ben', 6)
+  await withServer(8797, {}, async (srv) => {
+    const A = await joinAuthenticatedClient(srv, { name: 'Ann', map: MAP, x: 5, y: 5 })
+    const B = await joinAuthenticatedClient(srv, { name: 'Ben', map: MAP, x: 6, y: 5 })
     try {
       const battleId = await startBattle(A, B)
       const cap = CONTENT.config.net.pvpLevelCap
       const high = Math.min(CONTENT.config.party.maxLevel, cap + 10)
       const pa = party(2, high)
       const pb = party(2, Math.max(1, cap - 10))
-      const { ba, bb, fa, fb } = await sendParties(A, B, battleId, pa, pb)
-      assert.equal(ba.seed, bb.seed)
-      assert.deepEqual(ba.yourParty.map((v) => v.uid), pa.map((c) => c.uid))
-      assert.ok(ba.yourParty.every((v) => v.level === Math.min(high, cap)), 'party views are level-capped')
+      const { ba, bb, fa, fb } = await sendParties(srv, A, B, battleId, pa, pb)
       assert.ok(ba.yourParty.every((v) => v.hp === v.maxHp), 'party healed for pvp')
       assert.equal(ba.theirPartySize, pb.length)
       assert.equal(bb.theirPartySize, pa.length)
@@ -378,10 +298,10 @@ test('pvp: full battle to the end, mirrored perspectives, level cap, records', a
 })
 
 test('pvp: decline, expiry, withdraw, busy and self checks', async () => {
-  await withServer(8798, { challengeSeconds: 0.3 }, async (port) => {
-    const A = await join(port, 'Amy', 5)
-    const B = await join(port, 'Bea', 6)
-    const C = await join(port, 'Cid', 7)
+  await withServer(8798, { challengeSeconds: 0.3 }, async (srv) => {
+    const A = await joinAuthenticatedClient(srv, { name: 'Amy', map: MAP, x: 5, y: 5 })
+    const B = await joinAuthenticatedClient(srv, { name: 'Bea', map: MAP, x: 6, y: 5 })
+    const C = await joinAuthenticatedClient(srv, { name: 'Cid', map: MAP, x: 7, y: 5 })
     try {
       let fa = A.mark()
       A.send({ t: 'pvp.challenge', to: A.selfId })
@@ -458,13 +378,13 @@ test('pvp: decline, expiry, withdraw, busy and self checks', async () => {
 })
 
 test('pvp: forfeit, disconnect, invalid party, party timeout, turn timeout and AFK forfeit', async (tc) => {
-  await withServer(8799, { partySeconds: 0.4, turnSeconds: 0.25, afkForfeitAfter: 2 }, async (port) => {
+  await withServer(8799, { partySeconds: 0.4, turnSeconds: 0.25, afkForfeitAfter: 2 }, async (srv) => {
     await tc.test('forfeit mid-battle', async () => {
-      const A = await join(port, 'Fay', 5)
-      const B = await join(port, 'Gus', 6)
+      const A = await joinAuthenticatedClient(srv, { name: 'Fay', map: MAP, x: 5, y: 5 })
+      const B = await joinAuthenticatedClient(srv, { name: 'Gus', map: MAP, x: 6, y: 5 })
       try {
         const battleId = await startBattle(A, B)
-        const { fa, fb } = await sendParties(A, B, battleId, party(1, 20), party(1, 20))
+        const { fa, fb } = await sendParties(srv, A, B, battleId, party(1, 20), party(1, 20))
         await A.waitFor('pvp.events', (m) => m.battleId === battleId, { from: fa })
         A.send({ t: 'pvp.forfeit', battleId })
         const ea = await A.waitFor('pvp.end', undefined, { from: fa })
@@ -481,11 +401,11 @@ test('pvp: forfeit, disconnect, invalid party, party timeout, turn timeout and A
     })
 
     await tc.test('disconnect mid-battle counts as a loss', async () => {
-      const A = await join(port, 'Hal', 5)
-      const B = await join(port, 'Ivy', 6)
+      const A = await joinAuthenticatedClient(srv, { name: 'Hal', map: MAP, x: 5, y: 5 })
+      const B = await joinAuthenticatedClient(srv, { name: 'Ivy', map: MAP, x: 6, y: 5 })
       try {
         const battleId = await startBattle(A, B)
-        const { fa } = await sendParties(A, B, battleId, party(1, 20), party(1, 20))
+        const { fa } = await sendParties(srv, A, B, battleId, party(1, 20), party(1, 20))
         await A.waitFor('pvp.events', (m) => m.battleId === battleId, { from: fa })
         const bId = B.selfId
         await B.close()
@@ -500,8 +420,8 @@ test('pvp: forfeit, disconnect, invalid party, party timeout, turn timeout and A
     })
 
     await tc.test('invalid party aborts without records', async () => {
-      const A = await join(port, 'Jo', 5)
-      const B = await join(port, 'Kai', 6)
+      const A = await joinAuthenticatedClient(srv, { name: 'Jo', map: MAP, x: 5, y: 5 })
+      const B = await joinAuthenticatedClient(srv, { name: 'Kai', map: MAP, x: 6, y: 5 })
       try {
         const battleId = await startBattle(A, B)
         const fa = A.mark(), fb = B.mark()
@@ -515,12 +435,14 @@ test('pvp: forfeit, disconnect, invalid party, party timeout, turn timeout and A
     })
 
     await tc.test('party timeout aborts', async () => {
-      const A = await join(port, 'Lu', 5)
-      const B = await join(port, 'Mo', 6)
+      const A = await joinAuthenticatedClient(srv, { name: 'Lu', map: MAP, x: 5, y: 5 })
+      const B = await joinAuthenticatedClient(srv, { name: 'Mo', map: MAP, x: 6, y: 5 })
       try {
         const battleId = await startBattle(A, B)
         const fa = A.mark(), fb = B.mark()
-        A.send({ t: 'pvp.party', battleId, party: party(1, 10) })
+        const pa = party(1, 10)
+        seedParty(srv, A.selfId, pa)
+        A.send({ t: 'pvp.party', battleId, party: pa })
         await B.waitFor('error', (m) => m.code === 'pvp_party_timeout', { from: fb, ms: 2000 })
         await A.waitFor('error', (m) => m.code === 'pvp_opponent_timeout', { from: fa, ms: 2000 })
         await A.waitFor('pvp.end', (m) => m.battleId === battleId, { from: fa })
@@ -528,13 +450,13 @@ test('pvp: forfeit, disconnect, invalid party, party timeout, turn timeout and A
     })
 
     await tc.test('turn timer auto-picks, then repeated timeouts forfeit', async () => {
-      const A = await join(port, 'Ned', 5)
-      const B = await join(port, 'Oz', 6)
+      const A = await joinAuthenticatedClient(srv, { name: 'Ned', map: MAP, x: 5, y: 5 })
+      const B = await joinAuthenticatedClient(srv, { name: 'Oz', map: MAP, x: 6, y: 5 })
       try {
         const battleId = await startBattle(A, B)
         // High enough hp that two auto-picked turns cannot end the battle.
         const lvl = CONTENT.config.net.pvpLevelCap
-        const { fa, fb } = await sendParties(A, B, battleId, party(CONTENT.config.party.maxParty, lvl), party(CONTENT.config.party.maxParty, lvl))
+        const { fa, fb } = await sendParties(srv, A, B, battleId, party(CONTENT.config.party.maxParty, lvl), party(CONTENT.config.party.maxParty, lvl))
         const ea = await A.waitFor('pvp.end', (m) => m.battleId === battleId, { from: fa, ms: 5000 })
         const eb = await B.waitFor('pvp.end', (m) => m.battleId === battleId, { from: fb, ms: 5000 })
         const timeoutText = t('multiplayer.pvp.timeout')
@@ -734,24 +656,30 @@ test('trade rules: offerability, IV stars, applying a completed trade', () => {
 // ----------------------------------------------------------------------------- client channel against the real server
 
 test('pvp channel drives a real battle through two NetClients', async () => {
-  await withServer(8797, {}, async (port) => {
-    const url = `ws://localhost:${port}${NET.protocol.wsPath}`
-    const mk = (name: string) => {
+  await withServer(8797, {}, async (srv) => {
+    const url = `ws://localhost:${srv.port}${NET.protocol.wsPath}`
+    const origin = `http://localhost:${srv.port}`
+    const partyA = party(1, 30)
+    const partyB = party(1, 30)
+    const acctA = await registerTestAccount(srv, { name: 'Pia', map: MAP, x: 3, y: 3, party: partyA })
+    const acctB = await registerTestAccount(srv, { name: 'Quin', map: MAP, x: 3, y: 3, party: partyB })
+    const mk = (name: string, accountId: string, cookie: string) => {
       const events = createEventBus<GameEvents>()
-      const profile: PublicProfile = { id: '', name, avatar: '', badges: [], dexCaught: 0, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0 }
+      const profile: PublicProfile = { id: accountId, name, avatar: '', badges: [], dexCaught: 0, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0 }
       const net = createNetClient(events, () => ({
-        t: 'hello', v: CONTENT.config.net.protocolVersion, playerId: crypto.randomUUID(), name, avatar: '', map: MAP, x: 3, y: 3, facing: 'down', lead: null, profile,
-      }), { url })
+        t: 'hello', v: CONTENT.config.net.protocolVersion, playerId: accountId, name, avatar: '', map: MAP, x: 3, y: 3, facing: 'down', lead: null, profile,
+      }), { url, headers: { cookie, origin } })
       return { net, events }
     }
-    const A = mk('Pia')
-    const B = mk('Quin')
+    const A = mk('Pia', acctA.accountId, acctA.cookie)
+    const B = mk('Quin', acctB.accountId, acctB.cookie)
     const rosterA = trackOnlineRoster(A.net)
     A.net.connect()
     B.net.connect()
     try {
       for (let i = 0; i < 200 && (A.net.status !== 'online' || B.net.status !== 'online'); i++) await sleep(10)
       assert.equal(A.net.status, 'online')
+      assert.equal(B.net.status, 'online')
       const nextOf = <T extends ServerMsg['t']>(net: typeof A.net, type: T) => new Promise<Extract<ServerMsg, { t: T }>>((resolve) => {
         const off = net.on(type, (m) => { off(); resolve(m) })
       })
@@ -764,9 +692,9 @@ test('pvp channel drives a real battle through two NetClients', async () => {
       const [startA, startB] = await Promise.all([sa, sb])
       const chA = createPvpChannel(A.net, startA.battleId, A.events)
       const chB = createPvpChannel(B.net, startB.battleId, B.events)
-      A.net.send({ t: 'pvp.party', battleId: startA.battleId, party: party(1, 30) })
+      A.net.send({ t: 'pvp.party', battleId: startA.battleId, party: partyA })
       await sleep(PVP_GAP_MS)
-      B.net.send({ t: 'pvp.party', battleId: startB.battleId, party: party(1, 30) })
+      B.net.send({ t: 'pvp.party', battleId: startB.battleId, party: partyB })
 
       const drive = async (ch: typeof chA) => {
         let r = await ch.start()

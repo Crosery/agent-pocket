@@ -5,77 +5,37 @@ import assert from 'node:assert/strict'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join as pathJoin } from 'node:path'
-import type { ClientMsg, PublicProfile, ServerMsg } from '../src/shared/protocol.ts'
+import { setTimeout as sleep } from 'node:timers/promises'
 import type { GameMap } from '../src/shared/types.ts'
 import { CONTENT, t } from '../src/shared/content/index.ts'
-import { startServer } from '../src/server/index.ts'
+import { startServer, type RunningServer } from '../src/server/index.ts'
 import { NET, PRESENCE } from '../src/server/config.ts'
 import { loadWorldInfo, type WorldInfo } from '../src/server/world.ts'
 import type { PathLimits, WorldGeo } from '../src/server/geo.ts'
 import * as W from '../src/shared/world/worldapi.ts'
+import { joinAuthenticatedClient, type TestWsClient } from './net-fixture.ts'
 
 // ----------------------------------------------------------------------------- helpers
 
-type Msg<T extends ServerMsg['t']> = Extract<ServerMsg, { t: T }>
-
-interface Client {
-  ws: WebSocket
-  selfId: string
-  send(m: ClientMsg | Record<string, unknown>): void
-  mark(): number
-  waitFor<T extends ServerMsg['t']>(type: T, pred?: (m: Msg<T>) => boolean, opts?: { from?: number; ms?: number }): Promise<Msg<T>>
-  all<T extends ServerMsg['t']>(type: T, from?: number): Msg<T>[]
-}
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 const tickMs = 1000 / CONTENT.config.net.tickHz
 
-async function join(port: number, name: string, map: string, x: number, y: number): Promise<Client> {
-  const ws = new WebSocket(`ws://localhost:${port}${NET.protocol.wsPath}`)
-  const msgs: ServerMsg[] = []
-  const waiters = new Set<() => void>()
-  ws.addEventListener('message', (e) => {
-    msgs.push(JSON.parse(String(e.data)) as ServerMsg)
-    for (const w of [...waiters]) w()
-  })
-  const c: Client = {
-    ws, selfId: '',
-    send: (m) => ws.send(JSON.stringify(m)),
-    mark: () => msgs.length,
-    all: (type, from = 0) => msgs.slice(from).filter((m) => m.t === type) as never,
-    waitFor(type, pred = () => true, opts = {}) {
-      const from = opts.from ?? msgs.length
-      return new Promise((resolve, reject) => {
-        let i = from
-        const check = () => {
-          for (; i < msgs.length; i++) {
-            const m = msgs[i]
-            if (m.t === type && pred(m as never)) { cleanup(); resolve(m as never); return }
-          }
-        }
-        const timer = setTimeout(() => { cleanup(); reject(new Error(`timeout waiting for ${type}; got ${msgs.slice(from).map((m) => m.t).join(',')}`)) }, opts.ms ?? 3000)
-        const cleanup = () => { clearTimeout(timer); waiters.delete(check) }
-        waiters.add(check)
-        check()
-      })
-    },
+const move = (c: TestWsClient, map: string, x: number, y: number) =>
+  c.send({ t: 'move', map, x, y, facing: 'down', moving: true, running: false })
+
+async function join(srv: RunningServer, name: string, map: string, x: number, y: number): Promise<TestWsClient> {
+  const c = await joinAuthenticatedClient(srv, { name, map, x, y })
+  if ((x !== Math.floor(x) || y !== Math.floor(y)) && Math.abs(x) <= NET.server.world.maxCoordTiles && Math.abs(y) <= NET.server.world.maxCoordTiles) {
+    move(c, map, x, y)
   }
-  await new Promise<void>((ok, fail) => { ws.addEventListener('open', () => ok()); ws.addEventListener('error', () => fail(new Error('ws error'))) })
-  const profile: PublicProfile = { id: 'x', name: 'x', avatar: 'x', badges: [], dexCaught: 0, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0 }
-  c.send({ t: 'hello', v: CONTENT.config.net.protocolVersion, playerId: crypto.randomUUID(), name, avatar: '', map, x, y, facing: 'down', lead: null, profile })
-  c.selfId = (await c.waitFor('welcome', undefined, { from: 0 })).selfId
   return c
 }
 
-const move = (c: Client, map: string, x: number, y: number) => c.send({ t: 'move', map, x, y, facing: 'down', moving: true, running: false })
-
 /** Latest position of `id` as seen by `watcher` in its snapshots. */
-function seen(watcher: Client, id: string): { map: string; x: number; y: number } | null {
+function seen(watcher: TestWsClient, id: string): { map: string; x: number; y: number } | null {
   const snap = watcher.all('snapshot').reverse().find((m) => m.players.some((p) => p.id === id))
   const p = snap?.players.find((q) => q.id === id)
   return snap && p ? { map: snap.map, x: p.x, y: p.y } : null
 }
-
 async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {
   const dir = await mkdtemp(pathJoin(tmpdir(), 'ap-server-world-'))
   try { return await fn(dir) } finally { await rm(dir, { recursive: true, force: true }) }
@@ -213,8 +173,8 @@ test('hub on an infinite world: walls, interest hysteresis, proximity, distance 
     const PORT = 8813
     const geo = fakeGeo()
     const srv = await startServer({ port: PORT, dataDir, distDir: pathJoin(dataDir, 'nd'), quiet: true, world: fakeWorld(geo) })
-    const clients: Client[] = []
-    const open = async (name: string, map: string, x: number, y: number) => { const c = await join(PORT, name, map, x, y); clients.push(c); return c }
+    const clients: TestWsClient[] = []
+    const open = async (name: string, map: string, x: number, y: number) => { const c = await join(srv, name, map, x, y); clients.push(c); return c }
     // Every test client shares one IP (net.json maxClientsPerIp): close a subtest's clients before the next one.
     const closeAll = async () => {
       for (const c of clients.splice(0)) c.ws.close()
@@ -409,11 +369,11 @@ test('generated world: two players walk a frontier hamlet and enter its interior
   await withTempDir(async (dataDir) => {
     const PORT = 8812
     const srv = await startServer({ port: PORT, dataDir, distDir: pathJoin(dataDir, 'nd'), quiet: true, pvp: null })
-    const clients: Client[] = []
+    const clients: TestWsClient[] = []
     try {
       const [sx, sy] = path[0]
-      const A = await join(PORT, 'Ada', ow.id, sx + 0.5, sy + 0.5)
-      const B = await join(PORT, 'Bo', ow.id, sx + 0.5, sy + 0.5)
+      const A = await join(srv, 'Ada', ow.id, sx + 0.5, sy + 0.5)
+      const B = await join(srv, 'Bo', ow.id, sx + 0.5, sy + 0.5)
       clients.push(A, B)
       await A.waitFor('snapshot', (m) => m.players.some((q) => q.id === B.selfId), { from: 0 })
       let from = A.mark()
