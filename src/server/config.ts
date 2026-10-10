@@ -101,6 +101,7 @@ export interface NetFile {
     accountPath: string
     bindPath: string
     maxBodyBytes: number
+
     distDir: string
     metricsPath: string
     publicDir: string

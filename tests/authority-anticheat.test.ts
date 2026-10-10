@@ -17,9 +17,12 @@ import { CONTENT } from '../src/shared/content/index.ts'
 import { createCreature } from '../src/shared/creature.ts'
 import { Rng } from '../src/shared/rng.ts'
 import {
-  canonicalJson, createReplayWindow, hmacSha256Hex, sha256Hex, signEnvelope, verifyEnvelope,
+  canonicalJson, createReplayWindow, hmacSha256WebCrypto, signEnvelope,
 } from '../src/shared/net-envelope.ts'
-import { signPortableSave, verifyPortableSave } from '../src/shared/save-provenance.ts'
+import {
+  hmacSha256HexNode, signEnvelopeNode, verifyEnvelope,
+} from '../src/server/net-envelope.ts'
+import { portableChecksum, signPortableSave, verifyPortableSave } from '../src/shared/save-provenance.ts'
 import { createSaveManager } from '../src/client/core/save.ts'
 import { decodeSaveCode, encodeSaveCode, encodeSignedSaveCode } from '../src/client/core/save-codec.ts'
 import { createEventBus } from '../src/client/core/events.ts'
@@ -64,8 +67,11 @@ interface RawWsClient {
   close(): Promise<void>
 }
 
-function connectRawClient(port: number): Promise<RawWsClient> {
-  const ws = new WebSocket(`ws://localhost:${port}${NET.protocol.wsPath}`)
+function connectRawClient(port: number, token?: string): Promise<RawWsClient> {
+  const ws = new WebSocket(
+    `ws://localhost:${port}${NET.protocol.wsPath}`,
+    token ? ({ headers: { Cookie: `ap_session=${token}` } } as unknown as string[]) : undefined,
+  )
   const msgs: ServerMsg[] = []
   const waiters = new Set<() => void>()
   let closedResolved = false
@@ -94,7 +100,7 @@ function connectRawClient(port: number): Promise<RawWsClient> {
     sendSigned(msg, customSeq) {
       const s = customSeq ?? ++client.seq
       if (s > client.seq) client.seq = s
-      const signed = signEnvelope(client.sessionKey, msg as Record<string, unknown>, s)
+      const signed = signEnvelopeNode(client.sessionKey, msg as Record<string, unknown>, s)
       ws.send(JSON.stringify(signed))
       return s
     },
@@ -135,14 +141,20 @@ function connectRawClient(port: number): Promise<RawWsClient> {
   })
 }
 
-async function loginSignedClient(port: number, name: string, playerId = crypto.randomUUID()): Promise<RawWsClient> {
-  const c = await connectRawClient(port)
+async function loginSignedClient(
+  srv: { port: number; store: import('../src/server/store.ts').ProfileStore },
+  name: string,
+): Promise<RawWsClient> {
+  const reg = await srv.store.registerAccount(name, 'StrongPass#123', { ip: '127.0.0.1' })
+  assert.ok(reg.ok)
+  const token = reg.session.token
+  const c = await connectRawClient(srv.port, token)
   const from = c.msgs.length
-  const profile: PublicProfile = { id: '', name, avatar: '', badges: [], dexCaught: 0, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0 }
+  const profile: PublicProfile = { id: reg.account.id, name, avatar: '', badges: [], dexCaught: 0, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0 }
   c.sendRaw({
     t: 'hello',
     v: CONTENT.config.net.protocolVersion,
-    playerId,
+    playerId: reg.account.id,
     name,
     avatar: '',
     map: 'auth-test-map',
@@ -164,20 +176,22 @@ async function loginSignedClient(port: number, name: string, playerId = crypto.r
 // 1. Standard HMAC-SHA256 & Monotonic Replay Window
 // ---------------------------------------------------------------------------
 
-test('net-envelope: pure HMAC-SHA256 matches node:crypto and replay window blocks duplicates/old seqs', () => {
+test('net-envelope: pure WebCrypto matches node:crypto and replay window blocks duplicates/old seqs', async () => {
   const keys = ['short-key', 'a'.repeat(100), '密钥-🌟-secret-key-0123456789abcdef']
   const payloads = ['', 'hello world', canonicalJson({ t: 'shop.buy', itemId: 'ball', qty: 3, nested: { b: 2, a: 1 } })]
   for (const k of keys) {
     for (const p of payloads) {
       const expected = createHmac('sha256', k).update(p).digest('hex')
-      assert.equal(hmacSha256Hex(k, p), expected)
+      assert.equal(hmacSha256HexNode(k, p), expected)
+      const webSig = await hmacSha256WebCrypto(k, p)
+      assert.equal(webSig, expected, 'WebCrypto HMAC must match node:crypto exactly')
     }
   }
-  assert.equal(sha256Hex('abc'), 'ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad')
+  assert.equal(portableChecksum('domain', 'abc').length, 32)
 
   const win = createReplayWindow(64, 1000)
   const sessionKey = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
-  const m1 = signEnvelope(sessionKey, { t: 'shop.buy', itemId: 'x', qty: 1 }, 1)
+  const m1 = signEnvelopeNode(sessionKey, { t: 'shop.buy', itemId: 'x', qty: 1 }, 1)
   assert.deepEqual(verifyEnvelope(sessionKey, m1, win, { requireSig: true }), { ok: true, authSeq: 1 })
 
   // Replaying seq 1 is rejected.
@@ -186,21 +200,21 @@ test('net-envelope: pure HMAC-SHA256 matches node:crypto and replay window block
   if (!replay.ok) assert.equal(replay.code, 'replay_detected')
 
   // Out-of-order within window (authSeq 5 then authSeq 3) succeeds once each, while move.seq stays independent.
-  const m5 = signEnvelope(sessionKey, { t: 'move', seq: 1, x: 5 }, 5)
-  const m3 = signEnvelope(sessionKey, { t: 'move', seq: 1, x: 3 }, 3)
+  const m5 = signEnvelopeNode(sessionKey, { t: 'move', seq: 1, x: 5 }, 5)
+  const m3 = signEnvelopeNode(sessionKey, { t: 'move', seq: 1, x: 3 }, 3)
   assert.equal(verifyEnvelope(sessionKey, m5, win, { requireSig: true }).ok, true)
   assert.equal(verifyEnvelope(sessionKey, m3, win, { requireSig: true }).ok, true)
   assert.equal(verifyEnvelope(sessionKey, m3, win, { requireSig: true }).ok, false)
   // Advancing beyond window invalidates old seq 2.
-  const m80 = signEnvelope(sessionKey, { t: 'move', x: 80 }, 80)
-  const m2 = signEnvelope(sessionKey, { t: 'move', x: 2 }, 2)
+  const m80 = signEnvelopeNode(sessionKey, { t: 'move', x: 80 }, 80)
+  const m2 = signEnvelopeNode(sessionKey, { t: 'move', x: 2 }, 2)
   assert.equal(verifyEnvelope(sessionKey, m80, win, { requireSig: true }).ok, true)
   const old = verifyEnvelope(sessionKey, m2, win, { requireSig: true })
   assert.equal(old.ok, false)
   if (!old.ok) assert.equal(old.code, 'replay_detected')
 
   // Tampering with payload invalidates signature.
-  const m81 = signEnvelope(sessionKey, { t: 'shop.buy', itemId: 'x', qty: 1 }, 81)
+  const m81 = signEnvelopeNode(sessionKey, { t: 'shop.buy', itemId: 'x', qty: 1 }, 81)
   const tampered = { ...m81, qty: 99 }
   const badSig = verifyEnvelope(sessionKey, tampered, win, { requireSig: true })
   assert.equal(badSig.ok, false)
@@ -290,23 +304,26 @@ test('save-sign: server save HMAC detects disk tampering; untrusted offline impo
 
     // Server refuses to load a tampered SQLite characters row on read and records an audit entry
     const srv1 = await startServer({ port: 0, dataDir: dir, distDir: pathJoin(dir, 'no-dist'), quiet: true, world: null, pvp: null })
-    srv1.authority.setSave('acc-tamper', makeTestSave('acc-tamper', 'TamperTarget'))
+    const regTamper = await srv1.store.registerAccount('TamperTarget', 'StrongPass#123', { ip: '127.0.0.1' })
+    assert.ok(regTamper.ok)
+    const tamperId = regTamper.account.id
+    srv1.authority.setSave(tamperId, makeTestSave(tamperId, 'TamperTarget'))
     await srv1.close()
 
     const sqlitePath = pathJoin(dir, NET.store.sqliteFile)
     const rawDb = new DatabaseSync(sqlitePath)
-    const charRow = rawDb.prepare('SELECT save_json FROM characters WHERE account_id = ?').get('acc-tamper')
+    const charRow = rawDb.prepare('SELECT save_json FROM characters WHERE account_id = ?').get(tamperId)
     assert.ok(charRow && typeof charRow.save_json === 'string')
     const tamperedSave = JSON.parse(charRow.save_json) as SaveData
     tamperedSave.money = 9_999_999
-    rawDb.prepare('UPDATE characters SET save_json = ? WHERE account_id = ?').run(JSON.stringify(tamperedSave), 'acc-tamper')
+    rawDb.prepare('UPDATE characters SET save_json = ? WHERE account_id = ?').run(JSON.stringify(tamperedSave), tamperId)
     rawDb.close()
 
     const srv2 = await startServer({ port: 0, dataDir: dir, distDir: pathJoin(dir, 'no-dist'), quiet: true, world: null, pvp: null })
     try {
-      assert.equal(srv2.authority.getSave('acc-tamper'), null, 'tampered server save in SQLite must be refused on load')
-      assert.equal(srv2.store.getSave('acc-tamper'), null, 'store.getSave must also refuse tampered save_sig')
-      const audits = srv2.authority.listAudit('acc-tamper')
+      assert.equal(srv2.authority.getSave(tamperId), null, 'tampered server save in SQLite must be refused on load')
+      assert.equal(srv2.store.getSave(tamperId), null, 'store.getSave must also refuse tampered save_sig')
+      const audits = srv2.authority.listAudit(tamperId)
       assert.ok(audits.some((a) => a.kind === 'save.tamper_detected'), 'tampered server save must write an audit entry')
     } finally {
       await srv2.close()
@@ -330,8 +347,8 @@ test('server authority: valid battles update save once; tampered results/exp/ite
     })
     const clients: RawWsClient[] = []
     try {
-      const alice = await loginSignedClient(srv.port, 'Alice')
-      const bob = await loginSignedClient(srv.port, 'Bob')
+      const alice = await loginSignedClient(srv, 'Alice')
+      const bob = await loginSignedClient(srv, 'Bob')
       clients.push(alice, bob)
 
       // Seed authoritative server saves for Alice and Bob
@@ -511,7 +528,7 @@ test('server authority: valid battles update save once; tampered results/exp/ite
       assert.ok(srv.authority.listAudit(bob.selfId).some((a) => a.kind === 'pvp.party_tamper'))
 
       // Untrusted imported account or legacy creature rejected from PvP
-      const untrustedClient = await loginSignedClient(srv.port, 'UntrustedPvP')
+      const untrustedClient = await loginSignedClient(srv, 'UntrustedPvP')
       clients.push(untrustedClient)
       const untrustedSave = makeTestSave(untrustedClient.selfId, 'UntrustedPvP')
       srv.authority.setSave(untrustedClient.selfId, untrustedSave, { imported: true, trusted: false })
@@ -565,9 +582,11 @@ function makeEventBus(): EventBus<GameEvents> {
 test('client PveChannel + NetClient: signs session envelopes and drives authoritative battle end-to-end', async () => {
   await withTempDir(async (dir) => {
     const srv = await startServer({ port: 0, dataDir: dir, distDir: pathJoin(dir, 'no-dist'), quiet: true, world: null, pvp: null })
-    const pid = crypto.randomUUID()
+    const reg = await srv.store.registerAccount('ClientHero', 'StrongPass#123', { ip: '127.0.0.1' })
+    assert.ok(reg.ok)
+    const pid = reg.account.id
     const events = makeEventBus()
-    const profile: PublicProfile = { id: '', name: 'ClientHero', avatar: '', badges: [], dexCaught: 0, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0 }
+    const profile: PublicProfile = { id: pid, name: 'ClientHero', avatar: '', badges: [], dexCaught: 0, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0 }
     const net = createNetClient(events, () => ({
       t: 'hello',
       v: CONTENT.config.net.protocolVersion,
@@ -580,7 +599,10 @@ test('client PveChannel + NetClient: signs session envelopes and drives authorit
       facing: 'down',
       lead: null,
       profile,
-    }), { url: `ws://localhost:${srv.port}${NET.protocol.wsPath}` })
+    }), {
+      url: `ws://localhost:${srv.port}${NET.protocol.wsPath}`,
+      headers: { Cookie: `ap_session=${reg.session.token}` },
+    })
 
     try {
       const onlineReady = new Promise<void>((resolve) => {

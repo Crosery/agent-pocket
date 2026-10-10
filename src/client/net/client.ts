@@ -44,6 +44,10 @@ export interface NetClientOptions {
   url?: string
   /** Set false to force legacy verbose move frames (for before/after byte benchmarks). */
   compact?: boolean
+  /** Custom HTTP headers for WebSocket handshake (e.g. Cookie/Origin in Node tests/tools). */
+  headers?: Record<string, string>
+  /** Custom socket constructor/factory for lagproxy or test environments. */
+  createSocket?: (url: string) => WebSocket
 }
 
 type HelloMsg = Extract<ClientMsg, { t: 'hello' }>
@@ -146,6 +150,8 @@ export function createNetClient(
   let lastSentAt = -Infinity
   let sessionKey: string | null = null
   let outSeq = 0
+  let connectionGen = 0
+  let sendQueue: Promise<void> = Promise.resolve()
   let windowHooked = false
   let stepReplayFn: StepReplayFn | null = null
 
@@ -349,7 +355,8 @@ export function createNetClient(
     predictor.reset()
     sessionKey = null
     outSeq = 0
-    clearRemotes()
+    connectionGen++
+    sendQueue = Promise.resolve()
     flushLeaderboardWaiters(null)
     if (!wanted) { setStatus('offline'); return }
     if (code === codes.duplicate || code === codes.version || code === codes.devNotAllowed) {
@@ -415,10 +422,14 @@ export function createNetClient(
     if (ws || !wanted) return
     const target = url()
     if (!target || typeof WebSocket === 'undefined') { setStatus('offline'); return }
+    connectionGen++
+    sendQueue = Promise.resolve()
     setStatus('connecting')
     let sock: WebSocket
     try {
-      sock = new WebSocket(target)
+      sock = opts.createSocket
+        ? opts.createSocket(target)
+        : (opts.headers ? new (WebSocket as unknown as { new (u: string, o?: unknown): WebSocket })(target, { headers: opts.headers }) : new WebSocket(target))
     } catch {
       scheduleReconnect()
       return
@@ -519,11 +530,27 @@ export function createNetClient(
 
   function send(msg: ClientMsg): void {
     if (!ws || status !== 'online' || ws.readyState !== WebSocket.OPEN) return
-    if (sessionKey && msg.t !== 'ping' && msg.t !== 'hello') {
-      sendJson(ws, signEnvelope(sessionKey, msg, ++outSeq))
+    if (!sessionKey || msg.t === 'ping' || msg.t === 'hello') {
+      sendJson(ws, msg)
       return
     }
-    sendJson(ws, msg)
+    const currentGen = connectionGen
+    const currentSock = ws
+    const currentKey = sessionKey
+    const targetSeq = ++outSeq
+
+    sendQueue = sendQueue.then(async () => {
+      if (connectionGen !== currentGen || ws !== currentSock || currentSock.readyState !== WebSocket.OPEN) {
+        return
+      }
+      const signed = await signEnvelope(currentKey, msg, targetSeq)
+      if (connectionGen !== currentGen || ws !== currentSock || currentSock.readyState !== WebSocket.OPEN) {
+        return
+      }
+      sendJson(currentSock, signed)
+    }).catch((err) => {
+      reportError(err)
+    })
   }
 
   function sendProfileNow(): void {

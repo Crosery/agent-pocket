@@ -2,7 +2,8 @@
 // Offline/portable signatures detect accidental corruption, version mismatch, and casual hand-edits;
 // they never grant online authority (see ADR 0001 §3.5: offline imports are isolated as untrusted).
 import type { SaveData } from './types.ts'
-import { canonicalJson, hmacSha256Hex, timingSafeEqualStr } from './net-envelope.ts'
+import { canonicalJson, timingSafeEqualStr } from './net-envelope.ts'
+import { hashString } from './rng.ts'
 
 export type SaveOriginKind = 'offline' | 'imported' | 'online-authoritative'
 
@@ -16,12 +17,21 @@ export interface PortableSignedSave {
 const PORTABLE_DOMAIN_KEY = 'agent-pocket/portable-save-v1'
 const LOCAL_SLOT_DOMAIN_KEY = 'agent-pocket/local-slot-v1'
 
+/** Pure synchronous corruption-detection checksum (128-bit hex) with zero platform or crypto dependencies. */
+export function portableChecksum(domain: string, payload: string): string {
+  const h1 = hashString(`${domain}:p1:${payload}`)
+  const h2 = hashString(`${domain}:p2:${payload}`)
+  const h3 = hashString(`${domain}:p3:${payload}`)
+  const h4 = hashString(`${domain}:p4:${payload}`)
+  return `${h1.toString(16).padStart(8, '0')}${h2.toString(16).padStart(8, '0')}${h3.toString(16).padStart(8, '0')}${h4.toString(16).padStart(8, '0')}`
+}
+
 export function computeSaveDigest(save: unknown, version: number, domainKey = PORTABLE_DOMAIN_KEY): string {
-  return hmacSha256Hex(domainKey, `${version}:${canonicalJson(save)}`)
+  return portableChecksum(domainKey, `${version}:${canonicalJson(save)}`)
 }
 
 export function signPortableSave(save: SaveData, version = save.version, origin: SaveOriginKind = 'offline'): PortableSignedSave {
-  const sig = hmacSha256Hex(PORTABLE_DOMAIN_KEY, `${version}:${origin}:${canonicalJson(save)}`)
+  const sig = portableChecksum(PORTABLE_DOMAIN_KEY, `${version}:${origin}:${canonicalJson(save)}`)
   return { version, origin, save, sig }
 }
 
@@ -36,8 +46,8 @@ export function verifyPortableSave(
     const version = typeof r.version === 'number' && Number.isInteger(r.version) ? r.version : 0
     const origin: SaveOriginKind = r.origin === 'imported' || r.origin === 'online-authoritative' ? r.origin : 'offline'
     if (typeof r.sig !== 'string' || !r.sig) return { ok: false, reason: 'missing_portable_signature' }
-    const expected = hmacSha256Hex(PORTABLE_DOMAIN_KEY, `${version}:${origin}:${canonicalJson(r.save)}`)
-    if (!timingSafeEqualStr(r.sig.toLowerCase(), expected)) {
+    const expected = portableChecksum(PORTABLE_DOMAIN_KEY, `${version}:${origin}:${canonicalJson(r.save)}`)
+    if (!timingSafeEqualStr(r.sig.toLowerCase(), expected.toLowerCase())) {
       return { ok: false, reason: 'portable_signature_mismatch' }
     }
     return { ok: true, version, origin, save: r.save }
@@ -54,9 +64,9 @@ export function signLocalSlotText(rawJsonText: string, slot: number): string {
     const ver = typeof parsed === 'object' && parsed !== null && 'version' in parsed && typeof parsed.version === 'number'
       ? parsed.version
       : 0
-    return `${ver}.${hmacSha256Hex(LOCAL_SLOT_DOMAIN_KEY, `${slot}:${ver}:${canonicalJson(parsed)}`)}`
+    return `${ver}.${portableChecksum(LOCAL_SLOT_DOMAIN_KEY, `${slot}:${ver}:${canonicalJson(parsed)}`)}`
   } catch {
-    return `0.${hmacSha256Hex(LOCAL_SLOT_DOMAIN_KEY, `${slot}:0:${rawJsonText}`)}`
+    return `0.${portableChecksum(LOCAL_SLOT_DOMAIN_KEY, `${slot}:0:${rawJsonText}`)}`
   }
 }
 
