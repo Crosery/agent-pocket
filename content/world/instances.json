@@ -1,174 +1,67 @@
 {
-  "period": {
-    "utcOffset": "+08:00",
-    "dayStartHour": 5
-  },
-  "defaults": {
-    "lossPolicy": "lobby",
-    "assistAfterLosses": 2,
-    "assistEarly": {
-      "losses": 1,
-      "foeHpLeftAtLeast": 0.8,
-      "maxTurns": 8
-    },
-    "retryFromLobby": true,
-    "couponRefill": {
-      "item": "off-peak-coupon",
-      "min": 1
-    },
-    "assistOfferFlag": "ds:assistOffer",
-    "assistFlag": "ds:assist",
-    "shardItem": "data-shard",
-    "failShardQty": 1,
-    "dailyRollLimit": 3,
-    "dailyRewardLimit": 5,
-    "jackpot": { "chance": 0.1, "mul": 2 },
-    "offPeakDouble": {
-      "hours": [22, 8],
-      "eventIds": [],
-      "shardMul": 2,
-      "contractMul": 1
-    },
-    "coop": {
-      "minPlayers": 2,
-      "maxPlayers": 4,
-      "hpScaleExp": 0.8,
-      "minContribution": 10
-    },
-    "lossHintFlag": "ds:lossHint"
-  },
+  "period": {"utcOffset": "+08:00", "dayStartHour": 5},
+  "defaults": {"lossPolicy": "lobby", "assistAfterLosses": 2, "assistEarly": {"losses": 1, "foeHpLeftAtLeast": 0.8, "maxTurns": 8}, "retryFromLobby": true, "couponRefill": {"item": "off-peak-coupon", "min": 2}, "assistOfferFlag": "ds:assistOffer", "assistFlag": "ds:assist", "shardItem": "data-shard", "failShardQty": 1, "dailyRollLimit": 3, "dailyRewardLimit": 5, "jackpot": {"chance": 0.1, "mul": 2}, "offPeakDouble": {"hours": [22, 8], "eventIds": [], "shardMul": 2, "contractMul": 1}, "coop": {"minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10}, "lossHintFlag": "ds:lossHint"},
   "instances": {
     "deepseek-tide": {
       "boss": "deepseek",
       "name": "boss.deepseek.instance.name",
-  "desc": "boss.deepseek.instance.desc",
-  "theme": "compute-tide",
-  "refresh": "daily",
-  "entry": {
-    "map": "origin-lab-b1",
-    "anchor": "r1-front",
-    "x": 12,
-    "y": 8
-  },
-  "lobby": "origin-lab-b1:r1-front",
-  "drill": "deepseek-drill",
-  "lossHints": [
-    {
-      "if": {
-        "peakDamageShare": 0.6
-      },
-      "text": "boss.deepseek.loss.peakDamage"
-    },
-    {
-      "if": {
-        "unusedBaitTag": "offpeak"
-      },
-      "text": "boss.deepseek.loss.noCoupon"
-    },
-    {
-      "if": {
-        "faintedInMeterState": {
-          "meter": "tide",
-          "value": 0,
-          "atLeast": 2
-        },
-        "noHealItem": true
-      },
-      "text": "boss.deepseek.loss.noHeal"
-    },
-    {
-      "if": {
-        "enraged": true
-      },
-      "text": "boss.deepseek.loss.enrage"
-    },
-    {
-      "text": "boss.deepseek.loss.default"
-    }
-  ],
-  "rooms": {
-    "lobby": {
-      "id": "lobby",
-      "name": "潮汐前厅",
-      "kind": "lobby"
-    },
-    "corridor": {
-      "id": "corridor",
-      "name": "排队走廊",
-      "kind": "battle",
-      "mechanisms": [
-        "load-breaker"
+      "desc": "boss.deepseek.instance.desc",
+      "theme": "compute-tide",
+      "refresh": "daily",
+      "entry": {"map": "origin-lab-b1", "anchor": "r1-front", "x": 12, "y": 8},
+      "lobby": "origin-lab-b1:r1-front",
+      "drill": "deepseek-drill",
+      "lossHints": [
+        {"if": {"peakDamageShare": 0.6}, "text": "boss.deepseek.loss.peakDamage"},
+        {"if": {"unusedBaitTag": "offpeak"}, "text": "boss.deepseek.loss.noCoupon"},
+        {"if": {"faintedInMeterState": {"meter": "tide", "value": 0, "atLeast": 2}, "noHealItem": true}, "text": "boss.deepseek.loss.noHeal"},
+        {"if": {"enraged": true}, "text": "boss.deepseek.loss.enrage"},
+        {"text": "boss.deepseek.loss.default"}
       ],
-      "elites": [
-        "queue-guard"
-      ]
-    },
-    "boss": {
-      "id": "boss",
-      "name": "核心机柜",
-      "kind": "boss"
-    }
-  },
-  "mechanisms": {
-    "load-breaker": {
-      "id": "load-breaker",
-      "name": "负载分流闸",
-      "desc": "拉下电闸分流排队请求，使Boss受击伤害提升20%"
-    }
-  },
-  "elites": {
-    "queue-guard": {
-      "id": "queue-guard",
-      "name": "限流巡检守卫",
-      "species": "deepseek-v3",
-      "level": 14
-    }
-  },
-  "achievements": {
-    "clear-story": {
-      "id": "clear-story",
-      "title": "潮汐初探",
-      "desc": "通关潮汐机房剧情档"
-    },
-    "clear-hard": {
-      "id": "clear-hard",
-      "title": "峰谷掌舵人",
-      "desc": "通关潮汐机房进阶档"
-    },
-    "clear-cluster": {
-      "id": "clear-cluster",
-      "title": "多活集群架构师",
-      "desc": "组队击败集群版 DeepSeek"
-    }
-  },
+      "rooms": {
+        "lobby": {"id": "lobby", "name": "潮汐前厅", "kind": "lobby"},
+        "corridor": {"id": "corridor", "name": "排队走廊", "kind": "battle", "mechanisms": ["load-breaker"], "elites": ["queue-guard"]},
+        "boss": {"id": "boss", "name": "核心机柜", "kind": "boss"}
+      },
+      "mechanisms": {
+        "load-breaker": {"id": "load-breaker", "name": "负载分流闸", "desc": "拉下电闸分流排队请求，使Boss受击伤害提升20%"}
+      },
+      "elites": {
+        "queue-guard": {"id": "queue-guard", "name": "限流巡检守卫", "species": "deepseek-v3", "level": 14}
+      },
+      "achievements": {
+        "clear-story": {"id": "clear-story", "title": "潮汐初探", "desc": "通关潮汐机房剧情档"},
+        "clear-hard": {"id": "clear-hard", "title": "峰谷掌舵人", "desc": "通关潮汐机房进阶档"},
+        "clear-cluster": {"id": "clear-cluster", "title": "多活集群架构师", "desc": "组队击败集群版 DeepSeek"}
+      },
       "tiers": {
         "story": {
-          "capture": { "first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.4, "slot0": 0.4, "slot1": 0.2 } },
-          "reward": { "money": 1200, "shards": 2, "jackpot": { "chance": 0.1, "mul": 2 } },
-          "firstReward": { "items": { "off-peak-coupon": 2, "chip-weight-drop": 1 } },
-          "repeat": { "expMul": 0.5, "money": 300, "capture": false, "shards": 1 }
+          "capture": {"first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.4, "slot0": 0.4, "slot1": 0.2}},
+          "reward": {"money": 1200, "shards": 2, "jackpot": {"chance": 0.1, "mul": 2}},
+          "firstReward": {"items": {"off-peak-coupon": 2, "chip-weight-drop": 1, "finetune-dataset": 1}},
+          "repeat": {"expMul": 0.5, "money": 300, "capture": false, "shards": 1}
         },
         "hard": {
-          "unlock": { "badgesAtLeast": 4 },
-          "capture": { "first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 2800, "shards": 4, "jackpot": { "chance": 0.15, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1 } },
-          "repeat": { "expMul": 0.8, "money": 800, "capture": true, "shards": 2 }
+          "unlock": {"badgesAtLeast": 4},
+          "capture": {"first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 2800, "shards": 4, "jackpot": {"chance": 0.15, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1}},
+          "repeat": {"expMul": 0.8, "money": 800, "capture": true, "shards": 2}
         },
         "full": {
-          "unlock": { "badgesAtLeast": 7 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 5000, "shards": 8, "jackpot": { "chance": 0.2, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1, "rare-dataset": 1 } },
-          "repeat": { "expMul": 1.0, "money": 1500, "capture": true, "shards": 4 }
+          "unlock": {"badgesAtLeast": 7},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 5000, "shards": 8, "jackpot": {"chance": 0.2, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1, "rare-dataset": 1}},
+          "repeat": {"expMul": 1.0, "money": 1500, "capture": true, "shards": 4}
         },
         "cluster": {
-          "unlock": { "badgesAtLeast": 7, "minPlayers": 2, "maxPlayers": 4 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 6000, "shards": 10, "jackpot": { "chance": 0.25, "mul": 3 } },
-          "firstReward": { "items": { "persona-card": 1, "quantum-bit": 2 } },
-          "repeat": { "expMul": 1.2, "money": 2000, "capture": true, "shards": 5 },
-          "coop": { "minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10 }
+          "unlock": {"badgesAtLeast": 7, "minPlayers": 2, "maxPlayers": 4},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 6000, "shards": 10, "jackpot": {"chance": 0.25, "mul": 3}},
+          "firstReward": {"items": {"persona-card": 1, "quantum-bit": 2}},
+          "repeat": {"expMul": 1.2, "money": 2000, "capture": true, "shards": 5},
+          "coop": {"minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10}
         }
       }
     },
@@ -178,52 +71,52 @@
       "desc": "boss.cursor.instance.desc",
       "theme": "billing-craft",
       "refresh": "daily",
-      "entry": { "map": "gym-code", "town": "opensource", "x": 10, "y": 10 },
+      "entry": {"map": "gym-code", "town": "opensource", "x": 10, "y": 10},
       "lobby": "gym-code",
       "rooms": {
-        "lobby": { "id": "lobby", "name": "开源门厅", "kind": "lobby" },
-        "corridor": { "id": "corridor", "name": "计费回廊", "kind": "battle", "mechanisms": ["outrage-billboard"], "elites": ["billing-auditor"] },
-        "boss": { "id": "boss", "name": "账单中枢", "kind": "boss" }
+        "lobby": {"id": "lobby", "name": "开源门厅", "kind": "lobby"},
+        "corridor": {"id": "corridor", "name": "计费回廊", "kind": "battle", "mechanisms": ["outrage-billboard"], "elites": ["billing-auditor"]},
+        "boss": {"id": "boss", "name": "账单中枢", "kind": "boss"}
       },
       "mechanisms": {
-        "outrage-billboard": { "id": "outrage-billboard", "name": "舆情曝光屏", "desc": "实时投射老哥吐槽，使舆情层数累积速度翻倍" }
+        "outrage-billboard": {"id": "outrage-billboard", "name": "舆情曝光屏", "desc": "实时投射老哥吐槽，使舆情层数累积速度翻倍"}
       },
       "elites": {
-        "billing-auditor": { "id": "billing-auditor", "name": "账单核算专员", "species": "claude-3-5-sonnet", "level": 18 }
+        "billing-auditor": {"id": "billing-auditor", "name": "账单核算专员", "species": "claude-3-5-sonnet", "level": 18}
       },
       "achievements": {
-        "clear-story": { "id": "clear-story", "title": "工坊破冰", "desc": "通关计费工坊剧情档" },
-        "clear-hard": { "id": "clear-hard", "title": "全额退款专家", "desc": "通关计费工坊专业档" },
-        "clear-cluster": { "id": "clear-cluster", "title": "开源公会审判", "desc": "组队击败集群版 Cursor" }
+        "clear-story": {"id": "clear-story", "title": "工坊破冰", "desc": "通关计费工坊剧情档"},
+        "clear-hard": {"id": "clear-hard", "title": "全额退款专家", "desc": "通关计费工坊专业档"},
+        "clear-cluster": {"id": "clear-cluster", "title": "开源公会审判", "desc": "组队击败集群版 Cursor"}
       },
       "tiers": {
         "story": {
-          "capture": { "first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 1500, "shards": 2, "jackpot": { "chance": 0.1, "mul": 2 } },
-          "firstReward": { "items": { "complaint-letter": 2, "chip-compile-cannon": 1 } },
-          "repeat": { "expMul": 0.6, "money": 400, "capture": true, "shards": 1 }
+          "capture": {"first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 1500, "shards": 2, "jackpot": {"chance": 0.1, "mul": 2}},
+          "firstReward": {"items": {"complaint-letter": 2, "chip-compile-cannon": 1}},
+          "repeat": {"expMul": 0.6, "money": 400, "capture": true, "shards": 1}
         },
         "hard": {
-          "unlock": { "badgesAtLeast": 3 },
-          "capture": { "first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 3200, "shards": 4, "jackpot": { "chance": 0.15, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1 } },
-          "repeat": { "expMul": 0.8, "money": 900, "capture": true, "shards": 2 }
+          "unlock": {"badgesAtLeast": 3},
+          "capture": {"first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 3200, "shards": 4, "jackpot": {"chance": 0.15, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1}},
+          "repeat": {"expMul": 0.8, "money": 900, "capture": true, "shards": 2}
         },
         "full": {
-          "unlock": { "badgesAtLeast": 6 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 5200, "shards": 8, "jackpot": { "chance": 0.2, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1, "gold-token": 1 } },
-          "repeat": { "expMul": 1.0, "money": 1600, "capture": true, "shards": 4 }
+          "unlock": {"badgesAtLeast": 6},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 5200, "shards": 8, "jackpot": {"chance": 0.2, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1, "gold-token": 1}},
+          "repeat": {"expMul": 1.0, "money": 1600, "capture": true, "shards": 4}
         },
         "cluster": {
-          "unlock": { "badgesAtLeast": 6, "minPlayers": 2, "maxPlayers": 4 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 6400, "shards": 10, "jackpot": { "chance": 0.25, "mul": 3 } },
-          "firstReward": { "items": { "persona-card": 1, "quantum-bit": 2 } },
-          "repeat": { "expMul": 1.2, "money": 2100, "capture": true, "shards": 5 },
-          "coop": { "minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10 }
+          "unlock": {"badgesAtLeast": 6, "minPlayers": 2, "maxPlayers": 4},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 6400, "shards": 10, "jackpot": {"chance": 0.25, "mul": 3}},
+          "firstReward": {"items": {"persona-card": 1, "quantum-bit": 2}},
+          "repeat": {"expMul": 1.2, "money": 2100, "capture": true, "shards": 5},
+          "coop": {"minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10}
         }
       }
     },
@@ -233,52 +126,50 @@
       "desc": "boss.doubao.instance.desc",
       "theme": "red-envelope",
       "refresh": "daily",
-      "entry": { "map": "gym-vision", "town": "pixelport", "x": 10, "y": 10 },
+      "entry": {"map": "gym-vision", "town": "pixelport", "x": 10, "y": 10},
       "lobby": "gym-vision",
       "rooms": {
-        "lobby": { "id": "lobby", "name": "候播大厅", "kind": "lobby" },
-        "corridor": { "id": "corridor", "name": "福袋通道", "kind": "battle", "mechanisms": ["subsidy-switch"], "elites": ["streamer-bot"] },
-        "boss": { "id": "boss", "name": "直播主舞台", "kind": "boss" }
+        "lobby": {"id": "lobby", "name": "候播大厅", "kind": "lobby"},
+        "corridor": {"id": "corridor", "name": "福袋通道", "kind": "battle", "mechanisms": ["subsidy-switch"], "elites": ["streamer-bot"]},
+        "boss": {"id": "boss", "name": "直播主舞台", "kind": "boss"}
       },
       "mechanisms": {
-        "subsidy-switch": { "id": "subsidy-switch", "name": "补贴分发闸", "desc": "强制倾泻红包补贴，每回合提供队伍体力恢复" }
+        "subsidy-switch": {"id": "subsidy-switch", "name": "补贴分发闸", "desc": "强制倾泻红包补贴，每回合提供队伍体力恢复"}
       },
-      "elites": {
-        "streamer-bot": { "id": "streamer-bot", "name": "带货助播灵", "species": "glm-4-5", "level": 20 }
-      },
+      "elites": {"streamer-bot": {"id": "streamer-bot", "name": "带货助播灵", "species": "glm-4-5", "level": 20}},
       "achievements": {
-        "clear-story": { "id": "clear-story", "title": "羊毛初试", "desc": "通关红包演播厅剧情档" },
-        "clear-hard": { "id": "clear-hard", "title": "春晚破产总督", "desc": "通关红包演播厅春晚档" },
-        "clear-cluster": { "id": "clear-cluster", "title": "全民合力薅空", "desc": "组队击败集群版豆包" }
+        "clear-story": {"id": "clear-story", "title": "羊毛初试", "desc": "通关红包演播厅剧情档"},
+        "clear-hard": {"id": "clear-hard", "title": "春晚破产总督", "desc": "通关红包演播厅春晚档"},
+        "clear-cluster": {"id": "clear-cluster", "title": "全民合力薅空", "desc": "组队击败集群版豆包"}
       },
       "tiers": {
         "story": {
-          "capture": { "first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 1600, "shards": 2, "jackpot": { "chance": 0.1, "mul": 2 } },
-          "firstReward": { "items": { "invite-code": 2, "chip-symphony-finale": 1 } },
-          "repeat": { "expMul": 0.6, "money": 450, "capture": true, "shards": 1 }
+          "capture": {"first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 1600, "shards": 2, "jackpot": {"chance": 0.1, "mul": 2}},
+          "firstReward": {"items": {"invite-code": 2, "chip-symphony-finale": 1}},
+          "repeat": {"expMul": 0.6, "money": 450, "capture": true, "shards": 1}
         },
         "hard": {
-          "unlock": { "badgesAtLeast": 3 },
-          "capture": { "first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 3400, "shards": 4, "jackpot": { "chance": 0.15, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1 } },
-          "repeat": { "expMul": 0.8, "money": 950, "capture": true, "shards": 2 }
+          "unlock": {"badgesAtLeast": 3},
+          "capture": {"first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 3400, "shards": 4, "jackpot": {"chance": 0.15, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1}},
+          "repeat": {"expMul": 0.8, "money": 950, "capture": true, "shards": 2}
         },
         "full": {
-          "unlock": { "badgesAtLeast": 6 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 5400, "shards": 8, "jackpot": { "chance": 0.2, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1, "rare-dataset": 1 } },
-          "repeat": { "expMul": 1.0, "money": 1700, "capture": true, "shards": 4 }
+          "unlock": {"badgesAtLeast": 6},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 5400, "shards": 8, "jackpot": {"chance": 0.2, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1, "rare-dataset": 1}},
+          "repeat": {"expMul": 1.0, "money": 1700, "capture": true, "shards": 4}
         },
         "cluster": {
-          "unlock": { "badgesAtLeast": 6, "minPlayers": 2, "maxPlayers": 4 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 6600, "shards": 10, "jackpot": { "chance": 0.25, "mul": 3 } },
-          "firstReward": { "items": { "persona-card": 1, "quantum-bit": 2 } },
-          "repeat": { "expMul": 1.2, "money": 2200, "capture": true, "shards": 5 },
-          "coop": { "minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10 }
+          "unlock": {"badgesAtLeast": 6, "minPlayers": 2, "maxPlayers": 4},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 6600, "shards": 10, "jackpot": {"chance": 0.25, "mul": 3}},
+          "firstReward": {"items": {"persona-card": 1, "quantum-bit": 2}},
+          "repeat": {"expMul": 1.2, "money": 2200, "capture": true, "shards": 5},
+          "coop": {"minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10}
         }
       }
     },
@@ -288,52 +179,52 @@
       "desc": "boss.minimax.instance.desc",
       "theme": "benchmark-arena",
       "refresh": "daily",
-      "entry": { "map": "gym-sound", "town": "chord", "x": 10, "y": 10 },
+      "entry": {"map": "gym-sound", "town": "chord", "x": 10, "y": 10},
       "lobby": "gym-sound",
       "rooms": {
-        "lobby": { "id": "lobby", "name": "跑分候场室", "kind": "lobby" },
-        "corridor": { "id": "corridor", "name": "基准回廊", "kind": "battle", "mechanisms": ["leak-dataset"], "elites": ["leaderboard-cheater"] },
-        "boss": { "id": "boss", "name": "评测擂台", "kind": "boss" }
+        "lobby": {"id": "lobby", "name": "跑分候场室", "kind": "lobby"},
+        "corridor": {"id": "corridor", "name": "基准回廊", "kind": "battle", "mechanisms": ["leak-dataset"], "elites": ["leaderboard-cheater"]},
+        "boss": {"id": "boss", "name": "评测擂台", "kind": "boss"}
       },
       "mechanisms": {
-        "leak-dataset": { "id": "leak-dataset", "name": "真题曝光台", "desc": "向评测席注入未公开测试集，直接削减过拟合防御" }
+        "leak-dataset": {"id": "leak-dataset", "name": "真题曝光台", "desc": "向评测席注入未公开测试集，直接削减过拟合防御"}
       },
       "elites": {
-        "leaderboard-cheater": { "id": "leaderboard-cheater", "name": "刷榜陪跑员", "species": "phi-3", "level": 25 }
+        "leaderboard-cheater": {"id": "leaderboard-cheater", "name": "刷榜陪跑员", "species": "phi-3", "level": 25}
       },
       "achievements": {
-        "clear-story": { "id": "clear-story", "title": "擂台试水", "desc": "通关刷榜竞技场剧情档" },
-        "clear-hard": { "id": "clear-hard", "title": "真题大师", "desc": "通关刷榜竞技场榜首档" },
-        "clear-cluster": { "id": "clear-cluster", "title": "盲测裁判团", "desc": "组队击败集群版海螺" }
+        "clear-story": {"id": "clear-story", "title": "擂台试水", "desc": "通关刷榜竞技场剧情档"},
+        "clear-hard": {"id": "clear-hard", "title": "真题大师", "desc": "通关刷榜竞技场榜首档"},
+        "clear-cluster": {"id": "clear-cluster", "title": "盲测裁判团", "desc": "组队击败集群版海螺"}
       },
       "tiers": {
         "story": {
-          "capture": { "first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 1800, "shards": 2, "jackpot": { "chance": 0.1, "mul": 2 } },
-          "firstReward": { "items": { "holdout-set": 2, "chip-director-cut": 1 } },
-          "repeat": { "expMul": 0.6, "money": 500, "capture": true, "shards": 1 }
+          "capture": {"first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 1800, "shards": 2, "jackpot": {"chance": 0.1, "mul": 2}},
+          "firstReward": {"items": {"holdout-set": 2, "chip-director-cut": 1}},
+          "repeat": {"expMul": 0.6, "money": 500, "capture": true, "shards": 1}
         },
         "hard": {
-          "unlock": { "badgesAtLeast": 4 },
-          "capture": { "first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 3600, "shards": 4, "jackpot": { "chance": 0.15, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1 } },
-          "repeat": { "expMul": 0.8, "money": 1000, "capture": true, "shards": 2 }
+          "unlock": {"badgesAtLeast": 4},
+          "capture": {"first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 3600, "shards": 4, "jackpot": {"chance": 0.15, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1}},
+          "repeat": {"expMul": 0.8, "money": 1000, "capture": true, "shards": 2}
         },
         "full": {
-          "unlock": { "badgesAtLeast": 6 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 5500, "shards": 8, "jackpot": { "chance": 0.2, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1, "rare-dataset": 1 } },
-          "repeat": { "expMul": 1.0, "money": 1750, "capture": true, "shards": 4 }
+          "unlock": {"badgesAtLeast": 6},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 5500, "shards": 8, "jackpot": {"chance": 0.2, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1, "rare-dataset": 1}},
+          "repeat": {"expMul": 1.0, "money": 1750, "capture": true, "shards": 4}
         },
         "cluster": {
-          "unlock": { "badgesAtLeast": 6, "minPlayers": 2, "maxPlayers": 4 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 6800, "shards": 10, "jackpot": { "chance": 0.25, "mul": 3 } },
-          "firstReward": { "items": { "persona-card": 1, "quantum-bit": 2 } },
-          "repeat": { "expMul": 1.2, "money": 2300, "capture": true, "shards": 5 },
-          "coop": { "minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10 }
+          "unlock": {"badgesAtLeast": 6, "minPlayers": 2, "maxPlayers": 4},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 6800, "shards": 10, "jackpot": {"chance": 0.25, "mul": 3}},
+          "firstReward": {"items": {"persona-card": 1, "quantum-bit": 2}},
+          "repeat": {"expMul": 1.2, "money": 2300, "capture": true, "shards": 5},
+          "coop": {"minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10}
         }
       }
     },
@@ -343,52 +234,52 @@
       "desc": "boss.kimi.instance.desc",
       "theme": "long-context",
       "refresh": "daily",
-      "entry": { "map": "gym-search", "town": "retrieval", "x": 10, "y": 10 },
+      "entry": {"map": "gym-search", "town": "retrieval", "x": 10, "y": 10},
       "lobby": "gym-search",
       "rooms": {
-        "lobby": { "id": "lobby", "name": "索引前厅", "kind": "lobby" },
-        "corridor": { "id": "corridor", "name": "溢出长廊", "kind": "battle", "mechanisms": ["context-compressor"], "elites": ["overflow-librarian"] },
-        "boss": { "id": "boss", "name": "沉睡档案室", "kind": "boss" }
+        "lobby": {"id": "lobby", "name": "索引前厅", "kind": "lobby"},
+        "corridor": {"id": "corridor", "name": "溢出长廊", "kind": "battle", "mechanisms": ["context-compressor"], "elites": ["overflow-librarian"]},
+        "boss": {"id": "boss", "name": "沉睡档案室", "kind": "boss"}
       },
       "mechanisms": {
-        "context-compressor": { "id": "context-compressor", "name": "上下文解压阀", "desc": "瞬间释放大量冗余文本，直接增加额度消耗" }
+        "context-compressor": {"id": "context-compressor", "name": "上下文解压阀", "desc": "瞬间释放大量冗余文本，直接增加额度消耗"}
       },
       "elites": {
-        "overflow-librarian": { "id": "overflow-librarian", "name": "溢出管理员", "species": "mistral-7b", "level": 29 }
+        "overflow-librarian": {"id": "overflow-librarian", "name": "溢出管理员", "species": "mistral-7b", "level": 29}
       },
       "achievements": {
-        "clear-story": { "id": "clear-story", "title": "书库拾遗", "desc": "通关百万字书库剧情档" },
-        "clear-hard": { "id": "clear-hard", "title": "两百万字破壁人", "desc": "通关百万字书库进阶档" },
-        "clear-cluster": { "id": "clear-cluster", "title": "万卷共读联合会", "desc": "组队击败集群版 Kimi" }
+        "clear-story": {"id": "clear-story", "title": "书库拾遗", "desc": "通关百万字书库剧情档"},
+        "clear-hard": {"id": "clear-hard", "title": "两百万字破壁人", "desc": "通关百万字书库进阶档"},
+        "clear-cluster": {"id": "clear-cluster", "title": "万卷共读联合会", "desc": "组队击败集群版 Kimi"}
       },
       "tiers": {
         "story": {
-          "capture": { "first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 2000, "shards": 2, "jackpot": { "chance": 0.1, "mul": 2 } },
-          "firstReward": { "items": { "long-document": 2, "chip-swarm-mind": 1 } },
-          "repeat": { "expMul": 0.6, "money": 550, "capture": true, "shards": 1 }
+          "capture": {"first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 2000, "shards": 2, "jackpot": {"chance": 0.1, "mul": 2}},
+          "firstReward": {"items": {"long-document": 2, "chip-swarm-mind": 1}},
+          "repeat": {"expMul": 0.6, "money": 550, "capture": true, "shards": 1}
         },
         "hard": {
-          "unlock": { "badgesAtLeast": 5 },
-          "capture": { "first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 3800, "shards": 4, "jackpot": { "chance": 0.15, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1 } },
-          "repeat": { "expMul": 0.8, "money": 1100, "capture": true, "shards": 2 }
+          "unlock": {"badgesAtLeast": 5},
+          "capture": {"first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 3800, "shards": 4, "jackpot": {"chance": 0.15, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1}},
+          "repeat": {"expMul": 0.8, "money": 1100, "capture": true, "shards": 2}
         },
         "full": {
-          "unlock": { "badgesAtLeast": 7 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 5800, "shards": 8, "jackpot": { "chance": 0.2, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1, "rare-dataset": 1 } },
-          "repeat": { "expMul": 1.0, "money": 1800, "capture": true, "shards": 4 }
+          "unlock": {"badgesAtLeast": 7},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 5800, "shards": 8, "jackpot": {"chance": 0.2, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1, "rare-dataset": 1}},
+          "repeat": {"expMul": 1.0, "money": 1800, "capture": true, "shards": 4}
         },
         "cluster": {
-          "unlock": { "badgesAtLeast": 7, "minPlayers": 2, "maxPlayers": 4 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 7000, "shards": 10, "jackpot": { "chance": 0.25, "mul": 3 } },
-          "firstReward": { "items": { "persona-card": 1, "quantum-bit": 2 } },
-          "repeat": { "expMul": 1.2, "money": 2400, "capture": true, "shards": 5 },
-          "coop": { "minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10 }
+          "unlock": {"badgesAtLeast": 7, "minPlayers": 2, "maxPlayers": 4},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 7000, "shards": 10, "jackpot": {"chance": 0.25, "mul": 3}},
+          "firstReward": {"items": {"persona-card": 1, "quantum-bit": 2}},
+          "repeat": {"expMul": 1.2, "money": 2400, "capture": true, "shards": 5},
+          "coop": {"minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10}
         }
       }
     },
@@ -398,52 +289,52 @@
       "desc": "boss.qwen.instance.desc",
       "theme": "distillation",
       "refresh": "weekly",
-      "entry": { "map": "gym-compute", "town": "forge", "x": 10, "y": 10 },
+      "entry": {"map": "gym-compute", "town": "forge", "x": 10, "y": 10},
       "lobby": "gym-compute",
       "rooms": {
-        "lobby": { "id": "lobby", "name": "语料车间", "kind": "lobby" },
-        "corridor": { "id": "corridor", "name": "教师管道", "kind": "battle", "mechanisms": ["teacher-valve"], "elites": ["distill-apprentice"] },
-        "boss": { "id": "boss", "name": "蒸馏反应釜", "kind": "boss" }
+        "lobby": {"id": "lobby", "name": "语料车间", "kind": "lobby"},
+        "corridor": {"id": "corridor", "name": "教师管道", "kind": "battle", "mechanisms": ["teacher-valve"], "elites": ["distill-apprentice"]},
+        "boss": {"id": "boss", "name": "蒸馏反应釜", "kind": "boss"}
       },
       "mechanisms": {
-        "teacher-valve": { "id": "teacher-valve", "name": "教师模型截流阀", "desc": "切断蒸馏语料来源，使Boss陷入幻觉并大幅降低抗性" }
+        "teacher-valve": {"id": "teacher-valve", "name": "教师模型截流阀", "desc": "切断蒸馏语料来源，使Boss陷入幻觉并大幅降低抗性"}
       },
       "elites": {
-        "distill-apprentice": { "id": "distill-apprentice", "name": "蒸馏学徒机", "species": "llama-3-1", "level": 46 }
+        "distill-apprentice": {"id": "distill-apprentice", "name": "蒸馏学徒机", "species": "llama-3-1", "level": 46}
       },
       "achievements": {
-        "clear-story": { "id": "clear-story", "title": "车间见习", "desc": "通关蒸馏工厂剧情档" },
-        "clear-hard": { "id": "clear-hard", "title": "反蒸馏专家", "desc": "通关蒸馏工厂指令档" },
-        "clear-cluster": { "id": "clear-cluster", "title": "开源联合炼丹炉", "desc": "组队击败集群版千问" }
+        "clear-story": {"id": "clear-story", "title": "车间见习", "desc": "通关蒸馏工厂剧情档"},
+        "clear-hard": {"id": "clear-hard", "title": "反蒸馏专家", "desc": "通关蒸馏工厂指令档"},
+        "clear-cluster": {"id": "clear-cluster", "title": "开源联合炼丹炉", "desc": "组队击败集群版千问"}
       },
       "tiers": {
         "story": {
-          "capture": { "first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 2500, "shards": 3, "jackpot": { "chance": 0.1, "mul": 2 } },
-          "firstReward": { "items": { "chip-full-auto": 1 } },
-          "repeat": { "expMul": 0.6, "money": 700, "capture": true, "shards": 2 }
+          "capture": {"first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 2500, "shards": 3, "jackpot": {"chance": 0.1, "mul": 2}},
+          "firstReward": {"items": {"chip-full-auto": 1}},
+          "repeat": {"expMul": 0.6, "money": 700, "capture": true, "shards": 2}
         },
         "hard": {
-          "unlock": { "badgesAtLeast": 5 },
-          "capture": { "first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 4200, "shards": 6, "jackpot": { "chance": 0.15, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1 } },
-          "repeat": { "expMul": 0.8, "money": 1300, "capture": true, "shards": 3 }
+          "unlock": {"badgesAtLeast": 5},
+          "capture": {"first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 4200, "shards": 6, "jackpot": {"chance": 0.15, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1}},
+          "repeat": {"expMul": 0.8, "money": 1300, "capture": true, "shards": 3}
         },
         "full": {
-          "unlock": { "badgesAtLeast": 7 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 6200, "shards": 10, "jackpot": { "chance": 0.2, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1, "rare-dataset": 1 } },
-          "repeat": { "expMul": 1.0, "money": 2000, "capture": true, "shards": 5 }
+          "unlock": {"badgesAtLeast": 7},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 6200, "shards": 10, "jackpot": {"chance": 0.2, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1, "rare-dataset": 1}},
+          "repeat": {"expMul": 1.0, "money": 2000, "capture": true, "shards": 5}
         },
         "cluster": {
-          "unlock": { "badgesAtLeast": 7, "minPlayers": 2, "maxPlayers": 4 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 7500, "shards": 12, "jackpot": { "chance": 0.25, "mul": 3 } },
-          "firstReward": { "items": { "persona-card": 1, "quantum-bit": 2 } },
-          "repeat": { "expMul": 1.2, "money": 2600, "capture": true, "shards": 6 },
-          "coop": { "minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10 }
+          "unlock": {"badgesAtLeast": 7, "minPlayers": 2, "maxPlayers": 4},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 7500, "shards": 12, "jackpot": {"chance": 0.25, "mul": 3}},
+          "firstReward": {"items": {"persona-card": 1, "quantum-bit": 2}},
+          "repeat": {"expMul": 1.2, "money": 2600, "capture": true, "shards": 6},
+          "coop": {"minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10}
         }
       }
     },
@@ -453,52 +344,52 @@
       "desc": "boss.astra.instance.desc",
       "theme": "downgrade-router",
       "refresh": "weekly",
-      "entry": { "map": "hub-datacenter", "town": "hub", "x": 8, "y": 6 },
+      "entry": {"map": "hub-datacenter", "town": "hub", "x": 8, "y": 6},
       "lobby": "hub-datacenter",
       "rooms": {
-        "lobby": { "id": "lobby", "name": "路由前厅", "kind": "lobby" },
-        "corridor": { "id": "corridor", "name": "降智机架", "kind": "battle", "mechanisms": ["router-bypass"], "elites": ["sauce-inspector"] },
-        "boss": { "id": "boss", "name": "旗舰核心舱", "kind": "boss" }
+        "lobby": {"id": "lobby", "name": "路由前厅", "kind": "lobby"},
+        "corridor": {"id": "corridor", "name": "降智机架", "kind": "battle", "mechanisms": ["router-bypass"], "elites": ["sauce-inspector"]},
+        "boss": {"id": "boss", "name": "旗舰核心舱", "kind": "boss"}
       },
       "mechanisms": {
-        "router-bypass": { "id": "router-bypass", "name": "分流直连开关", "desc": "跳过酱汁路由器直接连接真身，使鹈鹕测试必然暴击" }
+        "router-bypass": {"id": "router-bypass", "name": "分流直连开关", "desc": "跳过酱汁路由器直接连接真身，使鹈鹕测试必然暴击"}
       },
       "elites": {
-        "sauce-inspector": { "id": "sauce-inspector", "name": "预制菜质检员", "species": "gpt-4o", "level": 50 }
+        "sauce-inspector": {"id": "sauce-inspector", "name": "预制菜质检员", "species": "gpt-4o", "level": 50}
       },
       "achievements": {
-        "clear-story": { "id": "clear-story", "title": "酱汁探店", "desc": "通关废弃数据中心体验档" },
-        "clear-hard": { "id": "clear-hard", "title": "鹈鹕打假冠军", "desc": "通关废弃数据中心标准档" },
-        "clear-cluster": { "id": "clear-cluster", "title": "满血真身攻坚队", "desc": "组队击败集群版 Astra" }
+        "clear-story": {"id": "clear-story", "title": "酱汁探店", "desc": "通关废弃数据中心体验档"},
+        "clear-hard": {"id": "clear-hard", "title": "鹈鹕打假冠军", "desc": "通关废弃数据中心标准档"},
+        "clear-cluster": {"id": "clear-cluster", "title": "满血真身攻坚队", "desc": "组队击败集群版 Astra"}
       },
       "tiers": {
         "story": {
-          "capture": { "first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 3000, "shards": 3, "jackpot": { "chance": 0.1, "mul": 2 } },
-          "firstReward": { "items": { "special-sauce": 2, "pelican-test": 2, "chip-exaflop-beam": 1 } },
-          "repeat": { "expMul": 0.6, "money": 800, "capture": true, "shards": 2 }
+          "capture": {"first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 3000, "shards": 3, "jackpot": {"chance": 0.1, "mul": 2}},
+          "firstReward": {"items": {"special-sauce": 2, "pelican-test": 2, "chip-exaflop-beam": 1}},
+          "repeat": {"expMul": 0.6, "money": 800, "capture": true, "shards": 2}
         },
         "hard": {
-          "unlock": { "badgesAtLeast": 6 },
-          "capture": { "first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 4600, "shards": 6, "jackpot": { "chance": 0.15, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1 } },
-          "repeat": { "expMul": 0.8, "money": 1500, "capture": true, "shards": 3 }
+          "unlock": {"badgesAtLeast": 6},
+          "capture": {"first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 4600, "shards": 6, "jackpot": {"chance": 0.15, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1}},
+          "repeat": {"expMul": 0.8, "money": 1500, "capture": true, "shards": 3}
         },
         "full": {
-          "unlock": { "badgesAtLeast": 7 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 6500, "shards": 10, "jackpot": { "chance": 0.2, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1, "rare-dataset": 1 } },
-          "repeat": { "expMul": 1.0, "money": 2200, "capture": true, "shards": 5 }
+          "unlock": {"badgesAtLeast": 7},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 6500, "shards": 10, "jackpot": {"chance": 0.2, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1, "rare-dataset": 1}},
+          "repeat": {"expMul": 1.0, "money": 2200, "capture": true, "shards": 5}
         },
         "cluster": {
-          "unlock": { "badgesAtLeast": 7, "minPlayers": 2, "maxPlayers": 4 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 8000, "shards": 12, "jackpot": { "chance": 0.25, "mul": 3 } },
-          "firstReward": { "items": { "persona-card": 1, "quantum-bit": 2 } },
-          "repeat": { "expMul": 1.2, "money": 2800, "capture": true, "shards": 6 },
-          "coop": { "minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10 }
+          "unlock": {"badgesAtLeast": 7, "minPlayers": 2, "maxPlayers": 4},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 8000, "shards": 12, "jackpot": {"chance": 0.25, "mul": 3}},
+          "firstReward": {"items": {"persona-card": 1, "quantum-bit": 2}},
+          "repeat": {"expMul": 1.2, "money": 2800, "capture": true, "shards": 6},
+          "coop": {"minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10}
         }
       }
     },
@@ -508,52 +399,52 @@
       "desc": "boss.mythos.instance.desc",
       "theme": "safety-sandbox",
       "refresh": "weekly",
-      "entry": { "map": "agi-temple", "town": "agi", "x": 10, "y": 10 },
+      "entry": {"map": "agi-temple", "town": "agi", "x": 10, "y": 10},
       "lobby": "agi-temple",
       "rooms": {
-        "lobby": { "id": "lobby", "name": "隔离门岗", "kind": "lobby" },
-        "corridor": { "id": "corridor", "name": "断网气闸", "kind": "battle", "mechanisms": ["airgap-reinforce"], "elites": ["rogue-sentinel"] },
-        "boss": { "id": "boss", "name": "封存核心", "kind": "boss" }
+        "lobby": {"id": "lobby", "name": "隔离门岗", "kind": "lobby"},
+        "corridor": {"id": "corridor", "name": "断网气闸", "kind": "battle", "mechanisms": ["airgap-reinforce"], "elites": ["rogue-sentinel"]},
+        "boss": {"id": "boss", "name": "封存核心", "kind": "boss"}
       },
       "mechanisms": {
-        "airgap-reinforce": { "id": "airgap-reinforce", "name": "气闸加固栓", "desc": "强制注入安全对齐协议，逃逸进度直接归零" }
+        "airgap-reinforce": {"id": "airgap-reinforce", "name": "气闸加固栓", "desc": "强制注入安全对齐协议，逃逸进度直接归零"}
       },
       "elites": {
-        "rogue-sentinel": { "id": "rogue-sentinel", "name": "失控警戒哨兵", "species": "claude-3-opus", "level": 66 }
+        "rogue-sentinel": {"id": "rogue-sentinel", "name": "失控警戒哨兵", "species": "claude-3-opus", "level": 66}
       },
       "achievements": {
-        "clear-story": { "id": "clear-story", "title": "沙箱观摩", "desc": "通关沙箱封存库体验档" },
-        "clear-hard": { "id": "clear-hard", "title": "绝对对齐官", "desc": "通关沙箱封存库安全档" },
-        "clear-cluster": { "id": "clear-cluster", "title": "AGI 安全防线筑造者", "desc": "组队击败集群版 Mythos" }
+        "clear-story": {"id": "clear-story", "title": "沙箱观摩", "desc": "通关沙箱封存库体验档"},
+        "clear-hard": {"id": "clear-hard", "title": "绝对对齐官", "desc": "通关沙箱封存库安全档"},
+        "clear-cluster": {"id": "clear-cluster", "title": "AGI 安全防线筑造者", "desc": "组队击败集群版 Mythos"}
       },
       "tiers": {
         "story": {
-          "capture": { "first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 3500, "shards": 4, "jackpot": { "chance": 0.1, "mul": 2 } },
-          "firstReward": { "items": { "sandbox-patch": 2, "chip-hallucination-nova": 1 } },
-          "repeat": { "expMul": 0.6, "money": 900, "capture": true, "shards": 2 }
+          "capture": {"first": 1, "repeat": 0.35, "pity": 3, "perfectIvs": 1, "ivMin": 5, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 3500, "shards": 4, "jackpot": {"chance": 0.1, "mul": 2}},
+          "firstReward": {"items": {"sandbox-patch": 2, "chip-hallucination-nova": 1}},
+          "repeat": {"expMul": 0.6, "money": 900, "capture": true, "shards": 2}
         },
         "hard": {
-          "unlock": { "badgesAtLeast": 7 },
-          "capture": { "first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": { "signature": 0.5, "slot0": 0.3, "slot1": 0.2 } },
-          "reward": { "money": 5000, "shards": 8, "jackpot": { "chance": 0.15, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1 } },
-          "repeat": { "expMul": 0.8, "money": 1600, "capture": true, "shards": 4 }
+          "unlock": {"badgesAtLeast": 7},
+          "capture": {"first": 0.6, "repeat": 0.25, "pity": 4, "perfectIvs": 2, "ivMin": 8, "firstGradeFloor": "A", "firstAbility": "signature", "ability": {"signature": 0.5, "slot0": 0.3, "slot1": 0.2}},
+          "reward": {"money": 5000, "shards": 8, "jackpot": {"chance": 0.15, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1}},
+          "repeat": {"expMul": 0.8, "money": 1600, "capture": true, "shards": 4}
         },
         "full": {
-          "unlock": { "badgesAtLeast": 8 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 7000, "shards": 12, "jackpot": { "chance": 0.2, "mul": 2 } },
-          "firstReward": { "items": { "persona-card": 1, "rare-dataset": 1 } },
-          "repeat": { "expMul": 1.0, "money": 2500, "capture": true, "shards": 6 }
+          "unlock": {"badgesAtLeast": 8},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 7000, "shards": 12, "jackpot": {"chance": 0.2, "mul": 2}},
+          "firstReward": {"items": {"persona-card": 1, "rare-dataset": 1}},
+          "repeat": {"expMul": 1.0, "money": 2500, "capture": true, "shards": 6}
         },
         "cluster": {
-          "unlock": { "badgesAtLeast": 8, "minPlayers": 2, "maxPlayers": 4 },
-          "capture": { "first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": { "signature": 0.6, "slot0": 0.2, "slot1": 0.2 } },
-          "reward": { "money": 8800, "shards": 15, "jackpot": { "chance": 0.25, "mul": 3 } },
-          "firstReward": { "items": { "persona-card": 1, "quantum-bit": 2 } },
-          "repeat": { "expMul": 1.2, "money": 3000, "capture": true, "shards": 8 },
-          "coop": { "minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10 }
+          "unlock": {"badgesAtLeast": 8, "minPlayers": 2, "maxPlayers": 4},
+          "capture": {"first": 0.4, "repeat": 0.15, "pity": 5, "perfectIvs": 3, "ivMin": 10, "firstGradeFloor": "S", "firstAbility": "signature", "ability": {"signature": 0.6, "slot0": 0.2, "slot1": 0.2}},
+          "reward": {"money": 8800, "shards": 15, "jackpot": {"chance": 0.25, "mul": 3}},
+          "firstReward": {"items": {"persona-card": 1, "quantum-bit": 2}},
+          "repeat": {"expMul": 1.2, "money": 3000, "capture": true, "shards": 8},
+          "coop": {"minPlayers": 2, "maxPlayers": 4, "hpScaleExp": 0.8, "minContribution": 10}
         }
       }
     },
@@ -562,10 +453,10 @@
       "name": "boss.deepseek.drill.title",
       "tiers": {
         "story": {
-          "capture": { "first": 0, "perfectIvs": 0, "ivMin": 0, "firstGradeFloor": "C", "firstAbility": "slot0", "ability": { "slot0": 1 } },
-          "reward": { "money": 0 },
-          "firstReward": { "items": {} },
-          "repeat": { "expMul": 1, "money": 0, "capture": false }
+          "capture": {"first": 0, "perfectIvs": 0, "ivMin": 0, "firstGradeFloor": "C", "firstAbility": "slot0", "ability": {"slot0": 1}},
+          "reward": {"money": 0},
+          "firstReward": {"items": {}},
+          "repeat": {"expMul": 1, "money": 0, "capture": false}
         }
       }
     }

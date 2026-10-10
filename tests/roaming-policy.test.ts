@@ -27,7 +27,7 @@ const otherCountry = [...new Set(CONTENT.speciesList.map((s) => s.country))].fin
 
 test('roaming policy lives in content and validates against the species data', () => {
   assert.deepEqual(validateGameplay(GAMEPLAY, CONTENT).filter((e) => e.includes('roamingPolicy')), [])
-  assert.equal(GAMEPLAY.spawn.roamingPolicy.countries.US.base, 'chase')
+  assert.equal(GAMEPLAY.spawn.roamingPolicy.countries.US.base, 'neutral')
   assert.deepEqual(GAMEPLAY.spawn.roamingPolicy.countries.CN, { base: 'neutral', outleveled: 'neutral' })
   const bad = { default: { base: 'neutral', outleveled: 'sulk' }, countries: { ZZ: { base: 'chase', outleveled: 'flee' } } }
   const errs = validateGameplay({ ...GAMEPLAY, spawn: { ...GAMEPLAY.spawn, roamingPolicy: bad as never } }, CONTENT).filter((e) => e.includes('roamingPolicy'))
@@ -40,10 +40,10 @@ test('country roaming policy keeps domestic creatures neutral', () => {
   assert.equal(roamingDisposition('CN', 8, 8), 'neutral')
 })
 
-test('US creatures chase until the strongest party member outlevels them', () => {
-  assert.equal(roamingDisposition('US', 8, 8), 'chase')
-  assert.equal(roamingDisposition('US', 8, 7), 'chase')
-  assert.equal(roamingDisposition('US', 8, 0), 'chase')
+test('US creatures are neutral until the strongest party member outlevels them', () => {
+  assert.equal(roamingDisposition('US', 8, 8), 'neutral')
+  assert.equal(roamingDisposition('US', 8, 7), 'neutral')
+  assert.equal(roamingDisposition('US', 8, 0), 'neutral')
   assert.equal(roamingDisposition('US', 8, 9), 'flee')
 })
 
@@ -60,7 +60,7 @@ test('every species resolves to a stance from its real country', () => {
   for (const sp of CONTENT.speciesList) {
     const low = roamingDisposition(sp.country, 20, 5), high = roamingDisposition(sp.country, 20, 40)
     if (sp.country === 'CN') assert.deepEqual([low, high], ['neutral', 'neutral'], sp.id)
-    else if (sp.country === 'US') assert.deepEqual([low, high], ['chase', 'flee'], sp.id)
+    else if (sp.country === 'US') assert.deepEqual([low, high], ['neutral', 'flee'], sp.id)
     else assert.deepEqual([low, high], ['neutral', 'flee'], sp.id)
   }
 })
@@ -123,9 +123,9 @@ function simulate(wildCountry: string, wildLevel: number, playerLevel: number, s
   return { start, end: Math.hypot(s.x - player.x, s.y - player.y), noticed, home }
 }
 
-test('special roamer: US and stronger than us -> chases the player down', () => {
+test('special roamer: US and stronger than us -> neutral does not chase', () => {
   const r = simulate('US', 12, 5)
-  assert.ok(r.noticed && r.end < r.start - 2, `end ${r.end.toFixed(2)} vs start ${r.start.toFixed(2)}`)
+  assert.equal(r.noticed, false, 'US stronger than us stays neutral and does not chase')
 })
 
 test('special roamer: US but we are stronger -> runs away', () => {
@@ -165,7 +165,7 @@ test('grass roamers take their mood from country and level, and re-evaluate when
     for (let i = 0; i < 400 && !layer.list.length; i++) layer.update(0.1, player, true)
     const r = layer.list[0]
     assert.ok(r, `${country} roamer spawned`)
-    const want = country === 'CN' ? 'calm' : country === 'US' ? (level > 8 ? 'chase' : 'flee') : level < 8 ? 'flee' : 'calm'
+    const want = country === 'CN' ? 'calm' : level < 8 ? 'flee' : 'calm'
     assert.equal(r.mood, want, `${country} Lv${level} vs party Lv8`)
     // level up past it (or drop below it): the mood follows on the next step
     ctx.save.party[0].level = 30
