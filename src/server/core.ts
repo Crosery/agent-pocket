@@ -50,6 +50,7 @@ export interface Conn {
   ackDirty: boolean
   clientBusy: boolean
   pvpBusy: boolean
+  dungeonBusy: boolean
   tradeId: string | null
   emoteUntil: number
   lastMoveAt: number

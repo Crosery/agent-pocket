@@ -428,11 +428,18 @@ export interface BattleOutcome {
   summary?: BattleSummary
 }
 
-/** Abstracts where battle decisions/events come from (local engine vs server PvP). */
+export interface BattleChannelUpdate {
+  events: BattleEvent[]
+  request?: BattleRequest
+}
+
+/** Abstracts where battle decisions/events come from (local engine vs server PvP/coop). */
 export interface BattleChannel {
   /** Initial view for side 0 (the local player). */
   start(): Promise<{ events: BattleEvent[]; request: BattleRequest }>
   submit(action: BattleAction): Promise<{ events: BattleEvent[]; request: BattleRequest }>
+  wait?(): Promise<{ events: BattleEvent[]; request: BattleRequest }>
+  onUpdate?(fn: (update: BattleChannelUpdate) => void): () => void
   dispose(): void
 }
 

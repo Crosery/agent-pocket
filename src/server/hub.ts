@@ -191,7 +191,7 @@ export function createHub(opts: HubOptions): Hub {
 
   const errorMsg = (code: string): ServerMsg => ({ t: 'error', code, message: t(`net.error.${code}`) })
 
-  const isBusy = (c: Conn) => c.clientBusy || c.pvpBusy || c.tradeId !== null
+  const isBusy = (c: Conn) => c.clientBusy || c.pvpBusy || c.dungeonBusy || c.tradeId !== null
 
   const inRange = (a: Player, b: Player, range: number | null): boolean =>
     range === null || (a.state.map === b.state.map && Math.hypot(a.state.x - b.state.x, a.state.y - b.state.y) <= range)
@@ -288,7 +288,7 @@ export function createHub(opts: HubOptions): Hub {
       sessionKey: randomBytes(32).toString('hex'),
       signed: true,
       replayWindow: createReplayWindow(),
-      clientBusy: false, pvpBusy: false, tradeId: null, emoteUntil: 0, lastMoveAt: 0,
+      clientBusy: false, pvpBusy: false, dungeonBusy: false, tradeId: null, emoteUntil: 0, lastMoveAt: 0,
       visible: new Map(), rosterSent: new Map(), lastOnlineCount: 0, snapMap: null,
       mapRef: null, lastOverworld: null, maxDistance: 0, distanceSaved: 0,
       pingSentAt: 0, rtt: -1, rttSamples: [], rttDiffSamples: [],

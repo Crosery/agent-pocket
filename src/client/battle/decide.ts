@@ -24,8 +24,9 @@ export interface DecideEnv {
 }
 
 export interface Decider {
-  chooseAction(req: ActionRequest): Promise<BattleAction>
-  chooseReplacement(): Promise<BattleAction>
+  chooseAction(req: ActionRequest): Promise<BattleAction | null>
+  chooseReplacement(): Promise<BattleAction | null>
+  cancel(): void
 }
 
 export function createDecider(env: DecideEnv): Decider {
@@ -35,6 +36,7 @@ export function createDecider(env: DecideEnv): Decider {
   const pvp = env.kind === 'pvp'
   let lastCommand = 0
   let lastMove = 0
+  let cancelCurrent: (() => void) | null = null
 
   const active = (): Creature | undefined => env.ownParty[model.sides[0].active]
   const refuse = async (text: string) => {
@@ -167,39 +169,71 @@ export function createDecider(env: DecideEnv): Decider {
   return {
     async chooseAction(req) {
       const stop = startTimer()
+      let cancelled = false
+      let resolveCancel: ((v: null) => void) | null = null
+      const cancelPromise = new Promise<null>((r) => { resolveCancel = r })
+      cancelCurrent = () => {
+        cancelled = true
+        view.menus.close()
+        resolveCancel?.(null)
+      }
       try {
         // The coach speaks when the command menu opens (one line per turn) and steps aside once a command is picked.
         const line = model.coach.shift()
         const showCoach = () => view.setCoach(line ? { text: line.text, speaker: line.speaker, portraitUrl: line.portrait ? ctx.assets.portraitUrl(line.portrait) : null } : null)
-        for (;;) {
-          const cr = active()
-          if (!cr) return { kind: 'move', moveIndex: 0 }
-          view.message.hold(t('battleui.prompt.command', { name: model.sides[0].view ? creatureName(model.sides[0].view) : creatureName(cr) }))
-          const ids = pvp ? BATTLE_UI.commands.pvp : BATTLE_UI.commands.normal
-          showCoach()
-          const pulse = coachCommandPulse(model, env.init.coach, ctx.save.bag, ctx.data)
-          const id = await view.menus.openCommands(ids.map((x) => ({ id: x, disabled: !enabled(x, req), pulse: x === pulse })), Math.min(lastCommand, ids.length - 1))
-          view.setCoach(null)
-          lastCommand = ids.indexOf(id)
-          const action = await command(id, req, cr)
-          if (action) return action
+        const loop = async (): Promise<BattleAction | null> => {
+          for (;;) {
+            if (cancelled || model.end) return null
+            const cr = active()
+            if (!cr) return { kind: 'move', moveIndex: 0 }
+            view.message.hold(t('battleui.prompt.command', { name: model.sides[0].view ? creatureName(model.sides[0].view) : creatureName(cr) }))
+            const ids = pvp ? BATTLE_UI.commands.pvp : BATTLE_UI.commands.normal
+            showCoach()
+            const pulse = coachCommandPulse(model, env.init.coach, ctx.save.bag, ctx.data)
+            const id = await view.menus.openCommands(ids.map((x) => ({ id: x, disabled: !enabled(x, req), pulse: x === pulse })), Math.min(lastCommand, ids.length - 1))
+            view.setCoach(null)
+            if (cancelled || model.end) return null
+            lastCommand = ids.indexOf(id)
+            const action = await command(id, req, cr)
+            if (cancelled || model.end) return null
+            if (action) return action
+          }
         }
+        return await Promise.race([loop(), cancelPromise])
       } finally {
+        cancelCurrent = null
         stop()
         view.setCoach(null)
       }
     },
     async chooseReplacement() {
       const stop = startTimer()
+      let cancelled = false
+      let resolveCancel: ((v: null) => void) | null = null
+      const cancelPromise = new Promise<null>((r) => { resolveCancel = r })
+      cancelCurrent = () => {
+        cancelled = true
+        view.menus.close()
+        resolveCancel?.(null)
+      }
       try {
-        for (;;) {
-          view.message.hold(t('battleui.prompt.forcedSwitch'))
-          const i = await pickMember(true)
-          if (i >= 0) return { kind: 'switch', partyIndex: i }
+        const loop = async (): Promise<BattleAction | null> => {
+          for (;;) {
+            if (cancelled || model.end) return null
+            view.message.hold(t('battleui.prompt.forcedSwitch'))
+            const i = await pickMember(true)
+            if (cancelled || model.end) return null
+            if (i >= 0) return { kind: 'switch', partyIndex: i }
+          }
         }
+        return await Promise.race([loop(), cancelPromise])
       } finally {
+        cancelCurrent = null
         stop()
       }
+    },
+    cancel() {
+      cancelCurrent?.()
     },
   }
 }

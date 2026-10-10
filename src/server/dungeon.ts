@@ -1,5 +1,6 @@
 // Multiplayer dungeon server adapter: party coordination, dungeon room/mechanism sync, and authoritative shared Boss Raids.
-import type { BattleAction, BattleInit, Creature, SaveData } from '../shared/types.ts'
+import gameJson from '../../content/game.json' with { type: 'json' }
+import type { BattleAction, BattleEvent, BattleInit, BattleRequest, Creature, SaveData } from '../shared/types.ts'
 import type { CoopClientMsg, CoopServerMsg, InstanceState, PartyState, RaidSummary } from '../shared/coop/protocol.ts'
 import { addPartyMember, canStartParty, createParty, removePartyMember, setMemberReady } from '../shared/coop/party.ts'
 import {
@@ -21,7 +22,7 @@ import {
   rejoinRaidMember,
   type RaidSession,
 } from '../shared/coop/raid.ts'
-import { BattleEngine } from '../shared/battle/engine.ts'
+import { BattleEngine, perspective } from '../shared/battle/engine.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { createCreature, healFull } from '../shared/creature.ts'
 import { GAMEPLAY } from '../shared/gameplay/data.ts'
@@ -53,6 +54,7 @@ export interface DungeonAccountStore {
 export interface DungeonAuthority {
   getSave(playerId: string): SaveData | null
   isUntrustedImport?(playerId: string): boolean
+  isInBattle?(playerId: string): boolean
   mutateSave<T>(playerId: string, ref: string, fn: (save: SaveData) => T): T | null
   grantReward?(playerId: string, reward: { money?: number; items?: Record<string, number>; creatures?: Creature[] }, ref: string): boolean
   audit?(accountId: string | null, kind: string, detail: Record<string, unknown>, severity?: number): void
@@ -179,6 +181,112 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     if (acc && (acc.imported === true || acc.trusted === false)) return true
     const save = getSaveForPlayer(playerId)
     return Boolean(save?.flags?.['auth:untrustedImport'])
+  }
+  function isPlayerInActiveDungeonBattle(playerId: string): boolean {
+    if (eliteBattles.has(playerId)) return true
+    const raidId = playerToRaid.get(playerId)
+    if (!raidId) return false
+    const session = raids.get(raidId)
+    if (!session || session.ended) return false
+    const m = session.members.get(playerId)
+    return Boolean(m && !m.disconnected)
+  }
+
+  function syncPlayerDungeonBusy(playerId: string): void {
+    const pl = opts.lookupPlayer(playerId)
+    if (!pl) return
+    const busy = isPlayerInActiveDungeonBattle(playerId)
+    if (pl.dungeonBusy !== busy) {
+      pl.dungeonBusy = busy
+      core.touch(pl)
+    }
+  }
+
+  function isCharacterBusyWithConflict(pl: Player): boolean {
+    return Boolean(
+      pl.pvpBusy ||
+      pl.tradeId !== null ||
+      authority?.isInBattle?.(pl.id) ||
+      pl.dungeonBusy ||
+      isPlayerInActiveDungeonBattle(pl.id),
+    )
+  }
+
+  function cleanupFinishedInstanceForPlayer(playerId: string): void {
+    const instId = playerToInstance.get(playerId)
+    if (!instId) return
+    const inst = instances.get(instId)
+    const raid = raids.get(instId)
+    if (!inst || inst.completed || (raid && raid.ended)) {
+      playerToInstance.delete(playerId)
+      playerToRaid.delete(playerId)
+      if (inst) {
+        const idx = inst.members.indexOf(playerId)
+        if (idx !== -1) inst.members.splice(idx, 1)
+        if (inst.members.length === 0) {
+          instances.delete(instId)
+        }
+      }
+      syncPlayerDungeonBusy(playerId)
+    }
+  }
+
+  function isAtDungeonEntry(pl: Player, instDef: (typeof GAMEPLAY.instances)[string]): boolean {
+    const entry = instDef.entry
+    if (!entry?.map) return true
+    if (!pl.state || pl.state.map !== entry.map) return false
+    if (typeof entry.x === 'number' && typeof entry.y === 'number') {
+      if (!Number.isFinite(pl.state.x) || !Number.isFinite(pl.state.y)) return false
+      if (Math.hypot(pl.state.x - entry.x, pl.state.y - entry.y) > 12) return false
+    }
+    return true
+  }
+
+  function validateMemberForDungeonTier(
+    playerId: string,
+    instanceId: string,
+    instDef: (typeof GAMEPLAY.instances)[string],
+    tierDef: (typeof GAMEPLAY.instances)[string]['tiers'][string],
+    partySize: number,
+  ): { ok: true; save: SaveData; player: Player } | { ok: false; code: string; message: string } {
+    const pl = opts.lookupPlayer(playerId)
+    if (!pl || pl.closed) {
+      return { ok: false, code: 'target_offline', message: t('multiplayer.party.targetOffline') }
+    }
+    if (isCharacterBusyWithConflict(pl)) {
+      return { ok: false, code: 'busy', message: t('net.error.self_busy') }
+    }
+    if (!isAtDungeonEntry(pl, instDef)) {
+      return { ok: false, code: 'not_at_entry', message: t('net.error.invalid_encounter') }
+    }
+    const save = getSaveForPlayer(playerId)
+    if (!save) {
+      return { ok: false, code: 'no_save', message: t('multiplayer.party.noSave') }
+    }
+    if (!save.party || !save.party.some((c) => c && c.hp > 0)) {
+      return { ok: false, code: 'empty_party', message: t('multiplayer.party.emptyParty') }
+    }
+    const boolFlags = Object.fromEntries(Object.entries(save.flags ?? {}).map(([k, v]) => [k, Boolean(v)]))
+    const check = isTierUnlocked(tierDef, save.badges ?? [], boolFlags, partySize)
+    const unlockTier = (tierDef.unlock as { tier?: string } | undefined)?.tier
+    const prog = progressOf(save, instanceId)
+    const minCoop = tierDef.coop?.minPlayers ?? 1
+    const maxCoop = tierDef.coop?.maxPlayers ?? 4
+    if (!check.unlocked || (unlockTier && (prog.clears[unlockTier] ?? 0) <= 0) || partySize < minCoop || partySize > maxCoop) {
+      return { ok: false, code: 'locked', message: check.reason ?? t('multiplayer.dungeon.errLocked') }
+    }
+    return { ok: true, save, player: pl }
+  }
+
+  function drainEliteEngine(engine: BattleEngine, initialEvents: BattleEvent[]): { events: BattleEvent[]; request: BattleRequest } {
+    const raw = [...initialEvents]
+    for (let i = 0; i < 16 && !engine.finished && engine.request(0).kind === 'wait' && engine.ready(); i++) {
+      raw.push(...engine.step())
+    }
+    return {
+      events: perspective(raw, 0),
+      request: engine.finished ? { kind: 'wait' } : engine.request(0),
+    }
   }
 
   // -------------------------------------------------------------
@@ -349,24 +457,27 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
       return
     }
 
-    const leaderSave = getSaveForPlayer(p.id)
-    if (!leaderSave) {
-      core.send(p, { t: 'party.error', code: 'no_save', message: t('multiplayer.party.noSave') })
-      return
-    }
-
-    const boolFlags = Object.fromEntries(Object.entries(leaderSave.flags).map(([k, v]) => [k, Boolean(v)]))
-    const check = isTierUnlocked(tierDef, leaderSave.badges, boolFlags, party.members.length)
-    if (!check.unlocked) {
-      core.send(p, { t: 'party.error', code: 'locked', message: check.reason ?? t('multiplayer.dungeon.errLocked') })
-      return
-    }
-
     if (!canStartParty(party, tierDef.coop?.minPlayers ?? 1)) {
       core.send(p, { t: 'party.error', code: 'not_all_ready', message: t('multiplayer.party.notAllReady') })
       return
     }
 
+    for (const m of party.members) {
+      cleanupFinishedInstanceForPlayer(m.id)
+      if (playerToInstance.has(m.id)) {
+        core.send(p, { t: 'party.error', code: 'already_in_dungeon', message: t('multiplayer.party.targetBusy') })
+        return
+      }
+      const check = validateMemberForDungeonTier(m.id, instanceId, instDef, tierDef, party.members.length)
+      if (!check.ok) {
+        core.send(p, { t: 'party.error', code: check.code, message: check.message })
+        return
+      }
+      if (m.id !== p.id && !core.inRange(p, check.player, 12)) {
+        core.send(p, { t: 'party.error', code: 'too_far', message: t('net.error.too_far') })
+        return
+      }
+    }
     party.dungeon = { instanceId, tierId }
 
     const instStateId = `inst-${party.id}-${(++seqCounter).toString(36)}`
@@ -404,7 +515,11 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
   // -------------------------------------------------------------
 
   function handleDungeonEnter(p: Player, instanceId: string, tierId: string): void {
-    if (playerToInstance.has(p.id)) return
+    cleanupFinishedInstanceForPlayer(p.id)
+    if (playerToInstance.has(p.id)) {
+      core.send(p, { t: 'dungeon.error', code: 'already_in_dungeon', message: t('net.error.self_busy') })
+      return
+    }
     const instDef = GAMEPLAY.instances[instanceId]
     const tierDef = instDef?.tiers[tierId]
     if (!instDef || !tierDef || !instDef.rooms) {
@@ -417,23 +532,11 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
       return
     }
 
-    const save = getSaveForPlayer(p.id)
-    if (!save) {
-      core.send(p, { t: 'dungeon.error', code: 'no_save', message: t('multiplayer.party.noSave') })
+    const check = validateMemberForDungeonTier(p.id, instanceId, instDef, tierDef, 1)
+    if (!check.ok) {
+      core.send(p, { t: 'dungeon.error', code: check.code, message: check.message })
       return
     }
-    if (!save.party || save.party.length === 0) {
-      core.send(p, { t: 'dungeon.error', code: 'empty_party', message: t('multiplayer.party.emptyParty') })
-      return
-    }
-
-    const boolFlags = Object.fromEntries(Object.entries(save.flags).map(([k, v]) => [k, Boolean(v)]))
-    const check = isTierUnlocked(tierDef, save.badges, boolFlags, 1)
-    if (!check.unlocked) {
-      core.send(p, { t: 'dungeon.error', code: 'locked', message: check.reason ?? t('multiplayer.dungeon.errLocked') })
-      return
-    }
-
     const instStateId = `inst-solo-${p.id}-${(++seqCounter).toString(36)}`
     const instState = createDungeonInstance({
       id: instStateId,
@@ -452,8 +555,47 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     const instId = playerToInstance.get(p.id)
     if (!instId) return
     const inst = instances.get(instId)
-    if (!inst) return
+    if (!inst || inst.completed) return
     const instDef = GAMEPLAY.instances[inst.instanceId] ?? null
+
+    const existingRaid = raids.get(inst.id)
+    if (existingRaid && !existingRaid.ended) {
+      core.send(p, { t: 'dungeon.error', code: 'battle_active', message: t('net.error.self_busy') })
+      return
+    }
+    for (const b of eliteBattles.values()) {
+      if (b.instanceId === inst.id) {
+        core.send(p, { t: 'dungeon.error', code: 'battle_active', message: t('net.error.self_busy') })
+        return
+      }
+    }
+
+    const roomDef = getRoomDef(instDef, roomId)
+    const isBossRoom = Boolean(instDef && (roomId === 'boss' || roomDef?.kind === 'boss'))
+    if (isBossRoom && instDef) {
+      const tierDef = instDef.tiers[inst.tierId]
+      const minPlayers = Math.max(tierDef?.coop?.minPlayers ?? 1, tierDef?.unlock?.minPlayers ?? 1)
+      if (inst.members.length < minPlayers) {
+        core.send(p, { t: 'dungeon.error', code: 'locked', message: t('multiplayer.dungeon.coopRequired') })
+        return
+      }
+      for (const mId of inst.members) {
+        if (inst.members.length > 1 && isPlayerUntrustedImport(mId)) {
+          core.send(p, { t: 'dungeon.error', code: 'untrusted_save', message: t('multiplayer.dungeon.untrustedCoop') })
+          return
+        }
+        const mPl = opts.lookupPlayer(mId)
+        if (mPl && isCharacterBusyWithConflict(mPl)) {
+          core.send(p, { t: 'dungeon.error', code: 'battle_active', message: t('net.error.self_busy') })
+          return
+        }
+        const sv = getSaveForPlayer(mId)
+        if (!sv || !sv.party?.some((c) => c && c.hp > 0)) {
+          core.send(p, { t: 'dungeon.error', code: 'empty_party', message: t('multiplayer.party.emptyParty') })
+          return
+        }
+      }
+    }
 
     const res = transitionRoom(inst, roomId, instDef)
     if (!res.ok) {
@@ -467,8 +609,7 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     broadcastInstance(inst)
 
     // Entering boss room initiates Boss Raid
-    const roomDef = getRoomDef(instDef, roomId)
-    if (instDef && (roomId === 'boss' || roomDef?.kind === 'boss') && !raids.has(inst.id)) {
+    if (isBossRoom && instDef && !raids.has(inst.id)) {
       startRaidForInstance(inst, instDef)
     }
   }
@@ -496,9 +637,25 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     const instId = playerToInstance.get(p.id)
     if (!instId) return
     const inst = instances.get(instId)
-    if (!inst) return
+    if (!inst || inst.completed) return
     const instDef = GAMEPLAY.instances[inst.instanceId]
     if (!instDef) return
+
+    if (isCharacterBusyWithConflict(p)) {
+      core.send(p, { t: 'dungeon.error', code: 'busy', message: t('net.error.self_busy') })
+      return
+    }
+    const activeRaid = raids.get(inst.id)
+    if (activeRaid && !activeRaid.ended) {
+      core.send(p, { t: 'dungeon.error', code: 'battle_active', message: t('net.error.self_busy') })
+      return
+    }
+    for (const b of eliteBattles.values()) {
+      if (b.instanceId === inst.id && b.eliteId === eliteId) {
+        core.send(p, { t: 'dungeon.error', code: 'elite_busy', message: t('net.error.busy') })
+        return
+      }
+    }
 
     const roomElites = getRoomEliteIds(instDef, inst.currentRoom)
     const eliteDef = getEliteDef(instDef, eliteId)
@@ -514,7 +671,7 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     }
 
     const save = getSaveForPlayer(p.id)
-    if (!save || !save.party?.some((c) => c.hp > 0)) {
+    if (!save || !save.party?.some((c) => c && c.hp > 0)) {
       core.send(p, { t: 'dungeon.error', code: 'empty_party', message: t('multiplayer.party.emptyParty') })
       return
     }
@@ -564,8 +721,7 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     }
 
     const engine = new BattleEngine(init, CONTENT)
-    const events = engine.start()
-    const request = engine.request(0)
+    const { events, request } = drainEliteEngine(engine, engine.start())
 
     eliteBattles.set(p.id, {
       battleId,
@@ -576,6 +732,7 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
       engine,
       init,
     })
+    syncPlayerDungeonBusy(p.id)
 
     core.send(p, {
       t: 'dungeon.eliteStarted',
@@ -594,25 +751,34 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
       return
     }
 
+    if (action.kind === 'item') {
+      const liveSave = getSaveForPlayer(p.id)
+      if (!liveSave || (liveSave.bag?.[action.itemId] ?? 0) <= 0) {
+        core.send(p, { t: 'dungeon.error', code: 'item_not_owned', message: t('net.error.item_not_owned') })
+        return
+      }
+    }
+
     const err = active.engine.choose(0, action)
     if (err) {
       core.send(p, { t: 'dungeon.error', code: 'invalid_action', message: err })
       return
     }
 
-    const events = active.engine.step()
+    const { events, request } = drainEliteEngine(active.engine, active.engine.step())
     if (!active.engine.finished) {
       core.send(p, {
         t: 'dungeon.eliteEvents',
         battleId: active.battleId,
         eliteId: active.eliteId,
         events,
-        request: active.engine.request(0),
+        request,
       })
       return
     }
 
     eliteBattles.delete(p.id)
+    syncPlayerDungeonBusy(p.id)
     const result = active.engine.result ?? 'lose'
     const inst = instances.get(active.instanceId)
     const instDef = inst ? GAMEPLAY.instances[inst.instanceId] : null
@@ -624,8 +790,35 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
         if (result !== 'win' && updatedParty.every((c) => c.hp <= 0)) {
           for (const c of updatedParty) healFull(c, CONTENT)
         }
-        save.party = updatedParty
-        save.bag = { ...active.engine.itemsLeft(0) }
+        const updatedByUid = new Map(updatedParty.map((c) => [c.uid, c]))
+        const boxedUids = new Set<string>()
+        for (const box of save.boxes ?? []) {
+          for (const c of box) {
+            if (c?.uid) boxedUids.add(c.uid)
+          }
+        }
+        save.party = (save.party ?? [])
+          .filter((c) => !boxedUids.has(c.uid))
+          .map((c) => {
+            const next = updatedByUid.get(c.uid)
+            return next ? structuredClone(next) : c
+          })
+        if (result !== 'win' && save.party.length > 0 && save.party.every((c) => c.hp <= 0)) {
+          for (const c of save.party) healFull(c, CONTENT)
+        }
+
+        save.bag ??= {}
+        const initItems = active.init.sides[0].items ?? {}
+        const leftItems = active.engine.itemsLeft(0)
+        for (const [itemId, startQty] of Object.entries(initItems)) {
+          const consumed = Math.max(0, (startQty ?? 0) - (leftItems[itemId] ?? 0))
+          if (consumed > 0) {
+            const nextQty = (save.bag[itemId] ?? 0) - consumed
+            if (nextQty > 0) save.bag[itemId] = nextQty
+            else delete save.bag[itemId]
+          }
+        }
+
         if (eliteDef && !save.dexSeen.includes(eliteDef.species)) {
           save.dexSeen.push(eliteDef.species)
         }
@@ -664,12 +857,15 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
   function handleDungeonLeave(p: Player): void {
     eliteBattles.delete(p.id)
     const instId = playerToInstance.get(p.id)
-    if (!instId) return
+    if (!instId) {
+      syncPlayerDungeonBusy(p.id)
+      return
+    }
     const inst = instances.get(instId)
-    if (!inst) return
-
     playerToInstance.delete(p.id)
     playerToRaid.delete(p.id)
+    syncPlayerDungeonBusy(p.id)
+    if (!inst) return
 
     const idx = inst.members.indexOf(p.id)
     if (idx !== -1) inst.members.splice(idx, 1)
@@ -678,6 +874,11 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     if (raidSession && !raidSession.ended) {
       const { ended, victory } = disconnectRaidMember(raidSession, p.id)
       if (ended) {
+        inst.completed = true
+        for (const mId of raidSession.members.keys()) {
+          playerToRaid.delete(mId)
+          syncPlayerDungeonBusy(mId)
+        }
         const summary = buildRaidSummary(raidSession)
         broadcastRaid(raidSession, {
           t: 'raid.end',
@@ -691,7 +892,9 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     core.send(p, { t: 'dungeon.update', instance: null })
     if (inst.members.length === 0 && (!raidSession || raidSession.ended)) {
       instances.delete(instId)
-      raids.delete(instId)
+      if (!raidSession || !raidSession.victory) {
+        raids.delete(instId)
+      }
     } else if (inst.members.length > 0) {
       broadcastInstance(inst)
     }
@@ -702,33 +905,52 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
   // -------------------------------------------------------------
 
   function startRaidForInstance(inst: InstanceState, def: typeof GAMEPLAY.instances[string]): void {
-    const raidMembers = []
+    const tierDef = def.tiers[inst.tierId]
+    const minPlayers = Math.max(tierDef?.coop?.minPlayers ?? 1, tierDef?.unlock?.minPlayers ?? 1)
+    if (inst.members.length < minPlayers) return
+
+    const candidateMembers: Array<{ id: string; name: string; avatar: string; save: SaveData }> = []
     for (const id of inst.members) {
-      if (inst.members.length > 1 && isPlayerUntrustedImport(id)) continue
+      if ((inst.members.length > 1 || inst.tierId === 'cluster') && isPlayerUntrustedImport(id)) return
       const pl = opts.lookupPlayer(id)
       const sv = getSaveForPlayer(id)
-      if (!sv || !sv.party || sv.party.length === 0) continue
+      if (!sv || !sv.party || !sv.party.some((c) => c && c.hp > 0)) return
+      candidateMembers.push({
+        id,
+        name: pl?.name ?? sv.name ?? id,
+        avatar: pl?.avatar ?? sv.avatar ?? '',
+        save: sv,
+      })
+    }
 
+    if (candidateMembers.length !== inst.members.length || candidateMembers.length < minPlayers) return
+
+    const raidMembers: Array<{ id: string; name: string; avatar: string; party: Creature[]; runSeq: number }> = []
+    for (const cand of candidateMembers) {
+      let runSeq = 1
       if (authority) {
-        authority.mutateSave(id, `dungeon-run:${inst.instanceId}`, (save) => {
+        const nextSeq = authority.mutateSave(cand.id, `dungeon-run:${inst.instanceId}`, (save) => {
           const prog = progressOf(save, inst.instanceId)
           prog.runSeq = (prog.runSeq ?? 0) + 1
           return prog.runSeq
         })
+        if (typeof nextSeq === 'number' && nextSeq > 0) runSeq = nextSeq
+      } else {
+        const prog = progressOf(cand.save, inst.instanceId)
+        prog.runSeq = (prog.runSeq ?? 0) + 1
+        runSeq = prog.runSeq
       }
 
-      const freshSave = getSaveForPlayer(id) ?? sv
+      const freshSave = getSaveForPlayer(cand.id) ?? cand.save
       raidMembers.push({
-        id,
-        name: pl?.name ?? freshSave.name ?? id,
-        avatar: pl?.avatar ?? freshSave.avatar ?? '',
+        id: cand.id,
+        name: cand.name,
+        avatar: cand.avatar,
         party: freshSave.party,
+        runSeq,
       })
     }
 
-    if (raidMembers.length === 0) return
-
-    const tierDef = def.tiers[inst.tierId]
     const defaultCoop = GAMEPLAY.instanceDefaults.coop
     const activeMechanisms = Object.values(inst.rooms).flatMap((r) => r.activeMechanisms)
     const session = createRaidSession({
@@ -742,10 +964,22 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
       seed: (hashString(inst.id) >>> 0) || 1,
       members: raidMembers,
     })
+    for (const m of raidMembers) {
+      session.runSeqByMember.set(m.id, m.runSeq)
+    }
 
+    if (raids.size > 256) {
+      for (const [k, old] of raids) {
+        if (old.ended) {
+          raids.delete(k)
+          if (raids.size <= 192) break
+        }
+      }
+    }
     raids.set(inst.id, session)
     for (const m of raidMembers) {
       playerToRaid.set(m.id, inst.id)
+      syncPlayerDungeonBusy(m.id)
     }
 
     const memberStates = getRaidMemberStates(session)
@@ -770,11 +1004,28 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     const session = raids.get(raidId)
     const inst = instances.get(raidId)
     if (!session || session.ended || !inst) return
+    if (p.pvpBusy || p.tradeId !== null || authority?.isInBattle?.(p.id) || eliteBattles.has(p.id)) {
+      core.send(p, { t: 'raid.error', code: 'busy', message: t('net.error.self_busy') })
+      return
+    }
+    const liveSave = getSaveForPlayer(p.id)
+    const existingMember = session.members.get(p.id)
+    if (!liveSave || !existingMember) return
+    const liveUids = new Set((liveSave.party ?? []).map((c) => c.uid))
+    for (const cr of existingMember.engine.party(0)) {
+      if (!liveUids.has(cr.uid)) {
+        cr.hp = 0
+      }
+    }
+    if (!existingMember.engine.party(0).some((c) => c.hp > 0)) {
+      return
+    }
     if (!rejoinRaidMember(session, { id: p.id, name: p.name, avatar: p.avatar })) return
 
     if (!inst.members.includes(p.id)) inst.members.push(p.id)
     playerToInstance.set(p.id, raidId)
     playerToRaid.set(p.id, raidId)
+    syncPlayerDungeonBusy(p.id)
 
     broadcastInstance(inst)
     const memberStates = getRaidMemberStates(session)
@@ -798,7 +1049,16 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     const session = raids.get(raidId)
     if (!session || session.ended) return
 
+    if (action.kind === 'item') {
+      const liveSave = getSaveForPlayer(p.id)
+      if (!liveSave || (liveSave.bag?.[action.itemId] ?? 0) <= 0) {
+        core.send(p, { t: 'raid.error', code: 'item_not_owned', message: t('net.error.item_not_owned') })
+        return
+      }
+    }
+
     const { events, ended, victory } = applyRaidPlayerAction(session, p.id, action)
+    const tickEvents = ended ? events : events.filter((e) => e.t !== 'end')
     const memberStates = getRaidMemberStates(session)
     const bossState = getBossRaidState(session)
 
@@ -809,7 +1069,7 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
         raidId: session.raidId,
         boss: bossState,
         members: memberStates,
-        events,
+        events: tickEvents,
         actorId: p.id,
         request: mSession.engine.request(0),
       })
@@ -817,9 +1077,13 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
 
     if (ended) {
       const inst = instances.get(session.raidId)
-      if (inst && victory) {
+      if (inst) {
         inst.completed = true
-        if (inst.rooms.boss) inst.rooms.boss.cleared = true
+        if (victory && inst.rooms.boss) inst.rooms.boss.cleared = true
+      }
+      for (const memberId of session.members.keys()) {
+        playerToRaid.delete(memberId)
+        syncPlayerDungeonBusy(memberId)
       }
       const summary = buildRaidSummary(session)
       broadcastRaid(session, {
@@ -836,7 +1100,8 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
   }
 
   function settleRaidVictory(session: RaidSession, summary: RaidSummary): void {
-    if (!authority) return
+    if (!authority || session.settled) return
+    session.settled = true
     const instDef = GAMEPLAY.instances[session.instanceId]
     const tierDef = instDef?.tiers[session.tierId]
     if (!instDef || !tierDef) return
@@ -849,19 +1114,27 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
 
     for (const mem of summary.members) {
       if (!mem.qualified) continue
+      if (session.settledMembers.has(mem.id)) continue
       if (isSharedCoop && isPlayerUntrustedImport(mem.id)) {
         authority.audit?.(mem.id, 'coop.untrusted_reward_blocked', { instanceId: session.instanceId, tierId: session.tierId }, 1)
         continue
       }
+      session.settledMembers.add(mem.id)
 
       authority.mutateSave(mem.id, `dungeon:${session.instanceId}`, (save) => {
         const prog = progressOf(save, session.instanceId)
         if ((prog.runSeq ?? 0) === 0) prog.runSeq = 1
+        const boundRunSeq = session.runSeqByMember.get(mem.id) ?? prog.runSeq
         const first = (prog.clears[session.tierId] ?? 0) === 0
         const lockout = dailyLockoutStatus(prog, periodKey)
 
         prog.clears[session.tierId] = (prog.clears[session.tierId] ?? 0) + 1
         prog.losses[session.tierId] = 0
+        save.flags ??= {}
+        save.flags[`${gameJson.flags.bossWonPrefix}${instDef.boss}`] = true
+        if (GAMEPLAY.instanceDefaults.assistOfferFlag) {
+          save.flags[GAMEPLAY.instanceDefaults.assistOfferFlag] = false
+        }
 
         checkInstanceAchievements(prog, instDef, {
           tierId: session.tierId,
@@ -888,7 +1161,7 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
         let shards = (first ? tierDef.reward.shards : tierDef.repeat.shards) ?? 0
         const jackpot = tierDef.reward.jackpot ?? GAMEPLAY.instanceDefaults.jackpot
         if (jackpot && shards > 0) {
-          const rng = new Rng(hashString(`${save.playerId}:${session.instanceId}:${prog.runSeq}:jackpot`) >>> 0)
+          const rng = new Rng(hashString(`${save.playerId}:${session.instanceId}:${boundRunSeq}:jackpot`) >>> 0)
           if (rng.next() < jackpot.chance) {
             shards *= jackpot.mul
           }
@@ -929,11 +1202,21 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
 
     const summary = buildRaidSummary(session)
     const mem = summary.members.find((m) => m.id === p.id)
-    if (!mem || !mem.qualified) {
+    const boundRunSeq = session.runSeqByMember.get(p.id)
+    if (!mem || !mem.qualified || boundRunSeq === undefined || boundRunSeq <= 0) {
       core.send(p, {
         t: 'raid.error',
         code: 'not_qualified',
         message: t('multiplayer.dungeon.errNotQualified'),
+      })
+      return
+    }
+
+    if (session.rolledMembers.has(p.id)) {
+      core.send(p, {
+        t: 'raid.error',
+        code: 'already_rolled',
+        message: t('multiplayer.dungeon.errAlreadyRolled'),
       })
       return
     }
@@ -971,7 +1254,7 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
       return
     }
 
-    if (prog.lastRollRun?.[session.tierId] !== undefined && prog.lastRollRun[session.tierId] === prog.runSeq) {
+    if (prog.lastRollRun?.[session.tierId] !== undefined && prog.lastRollRun[session.tierId] >= boundRunSeq) {
       core.send(p, {
         t: 'raid.error',
         code: 'already_rolled',
@@ -992,16 +1275,18 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     }
 
     const rollResult = authority.mutateSave(p.id, `dungeon-contract:${session.instanceId}`, (s) => {
+      if (session.rolledMembers.has(p.id)) return null
       s.bag ??= {}
       if ((s.bag[ballId] ?? 0) <= 0) return null
       s.bag[ballId] -= 1
       if (s.bag[ballId] <= 0) delete s.bag[ballId]
+      session.rolledMembers.add(p.id)
 
       const pProg = progressOf(s, session.instanceId)
       if ((pProg.runSeq ?? 0) === 0) pProg.runSeq = 1
       const isFirstCapture = (pProg.captures[session.tierId] ?? 0) === 0
       pProg.lastRollRun ??= {}
-      pProg.lastRollRun[session.tierId] = pProg.runSeq
+      pProg.lastRollRun[session.tierId] = Math.max(pProg.runSeq, boundRunSeq)
       recordDailyRoll(pProg, periodKey)
 
       const ballBonus = CONTENT.quality.capture.ballBonus[ballId] ?? 0
@@ -1010,7 +1295,7 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
       const odds = contractOdds(tierDef, ballBonus, !isFirstCapture, curPity)
 
       s.rollSeed ??= hashString(s.playerId) >>> 0
-      const seed = captureSeed(s.rollSeed, session.instanceId, session.tierId, isFirstCapture ? 0 : pProg.runSeq)
+      const seed = captureSeed(s.rollSeed, session.instanceId, session.tierId, isFirstCapture ? 0 : boundRunSeq)
       const rng = new Rng(seed)
       const success = isMaster || odds.guaranteed || rollContractOutcome(rng, odds.chance)
 
@@ -1022,7 +1307,7 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
         const cardRng = new Rng((seed ^ 0x5bd1e995) >>> 0)
         const card = rollBossCard(cardRng, instDef.boss, session.tierId, tierDef, {
           first: isFirstCapture,
-          run: String(pProg.runSeq),
+          run: String(boundRunSeq),
           at: Date.now(),
           otName: s.name,
           otId: s.playerId,
@@ -1098,6 +1383,7 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
   }
 
   function close(): void {
+    const busyIds = new Set<string>([...eliteBattles.keys(), ...playerToRaid.keys()])
     parties.clear()
     playerToParty.clear()
     instances.clear()
@@ -1105,6 +1391,9 @@ export function createDungeonServer(opts: DungeonServerOptions): DungeonServer {
     raids.clear()
     playerToRaid.clear()
     eliteBattles.clear()
+    for (const id of busyIds) {
+      syncPlayerDungeonBusy(id)
+    }
   }
 
   return {

@@ -33,6 +33,7 @@ export interface PresenterEnv {
 
 export interface Presenter {
   play(events: readonly BattleEvent[]): Promise<void>
+  sync(events: readonly BattleEvent[]): Promise<void>
 }
 
 export function ballColorOf(cr: Pick<Creature, 'ballId'> | undefined): string | undefined {
@@ -349,6 +350,42 @@ export function createPresenter(env: PresenterEnv): Presenter {
       const queued = after
       after = []
       for (const fn of queued) await fn()
+    },
+    async sync(events) {
+      for (const e of events) {
+        switch (e.t) {
+          case 'damage':
+          case 'heal':
+            applyEvent(model, e)
+            mirrorOwn(e.side)
+            syncSlots(e.side)
+            await view.status[e.side].setHp(e.hp, e.maxHp, true)
+            break
+          case 'status':
+            applyEvent(model, e)
+            mirrorOwn(e.side)
+            view.status[e.side].setStatus(e.status)
+            syncSlots(e.side)
+            break
+          case 'boss':
+            applyEvent(model, e)
+            view.setBoss(bossPanelInfo(e.hud, undefined, env.init.bossTier))
+            break
+          case 'form': {
+            applyEvent(model, e)
+            const s = model.sides[e.side]
+            view.status[e.side].setCreature(e.creature, env.init.sides[e.side].party[s.active]?.abilityId, foeGrade(e.side, s.active, e.creature.speciesId))
+            view.status[e.side].setVolatiles(s.volatiles)
+            view.status[e.side].setStages(s.stages)
+            syncSlots(e.side)
+            stage.setCreature(e.side, e.creature.speciesId, e.creature.shiny)
+            break
+          }
+          default:
+            applyEvent(model, e)
+            break
+        }
+      }
     },
   }
 }

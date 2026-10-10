@@ -115,6 +115,7 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
       let engine: BattleEngine | null = null
       let local: LocalChannel | null = null
       let scene: BattleScene | null = null
+      let offUpdate: (() => void) | undefined
       let caught: Creature | undefined
       let stored = false
       ctx.events.emit('battle:start', { kind, ...(init.coach ? { coach: true } : {}) })
@@ -145,6 +146,18 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         const env: PresenterEnv = { ctx, scene, model, init, kind, engine, ownParty, writesSave: !remote, introduced: null, known }
         const presenter = createPresenter(env)
         const decider = createDecider({ ctx, scene, model, init, kind, ownParty, known })
+        offUpdate = channel.onUpdate?.((update) => {
+          if (update.events.length > 0) {
+            ctx.events.emit('battle:events', { kind, events: update.events, ...(init.coach ? { coach: true } : {}) })
+            void presenter.sync(update.events)
+          }
+          if (update.request) {
+            batch = { events: [], request: update.request }
+          }
+          if (model.end || update.events.some((e) => e.t === 'end') || update.request?.kind === 'wait') {
+            decider.cancel()
+          }
+        })
 
         let batch = await channel.start()
         ctx.events.emit('battle:events', { kind, events: batch.events, ...(init.coach ? { coach: true } : {}) })
@@ -164,10 +177,29 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         const foeLabel = init.sides[1].trainerClass ? t('battle.trainerLabel', { class: init.sides[1].trainerClass, name: init.sides[1].name }) : init.sides[1].name
         while (!model.end) {
           const req = batch.request
-          let action: BattleAction
+          let action: BattleAction | null = null
           if (req.kind === 'action') action = await decider.chooseAction(req)
           else if (req.kind === 'switch') action = await decider.chooseReplacement()
-          else break
+          else if (req.kind === 'wait' && channel.wait) {
+            view.menus.close()
+            if (remote) view.message.hold(t('battleui.prompt.waiting', { name: foeLabel }))
+            batch = await channel.wait()
+            ctx.events.emit('battle:events', { kind, events: batch.events, ...(init.coach ? { coach: true } : {}) })
+            await presenter.play(batch.events)
+            continue
+          } else break
+          if (!action) {
+            if (model.end) break
+            if (channel.wait) {
+              view.menus.close()
+              if (remote) view.message.hold(t('battleui.prompt.waiting', { name: foeLabel }))
+              batch = await channel.wait()
+              ctx.events.emit('battle:events', { kind, events: batch.events, ...(init.coach ? { coach: true } : {}) })
+              await presenter.play(batch.events)
+              continue
+            }
+            break
+          }
           view.menus.close()
           if (remote) view.message.hold(t('battleui.prompt.waiting', { name: foeLabel }))
           else view.message.clear()
@@ -197,14 +229,13 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         }
         for (const [i, to] of model.evolutions) {
           const cr = ctx.save.party[i] ?? ownParty[i]
-          if (cr && cr.hp > 0 && await playEvolution(ctx, scene, cr, to)) {
-            sendCreatureEvolve(ctx, i, to)
-          }
+          if (cr && cr.hp > 0) await playEvolution(ctx, scene, cr, to)
         }
       } catch (err) {
         console.error('[battle] battle aborted', err)
         ctx.ui.toast(t('battleui.error.aborted'), 'error')
       } finally {
+        offUpdate?.()
         local?.dispose()
         if (scene) await scene.close().catch((err: unknown) => console.error('[battle] scene close failed', err))
         else ctx.renderer.setTransition('none', 0)
@@ -260,7 +291,6 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         if (before) ctx.audio.playBgm(before, { fadeMs: BATTLE_UI.music.fadeMs })
       }
       if (ok) {
-        sendCreatureEvolve(ctx, partyIndex, toSpeciesId)
         ctx.persist('evolve')
       }
       return ok

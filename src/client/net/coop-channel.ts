@@ -1,5 +1,5 @@
 // Client-side coop channel: party coordination, dungeon room/mechanism sync, and multiplayer Boss Raid flow.
-import type { BattleAction, BattleEvent, BattleInit, BattleRequest, BattleResult } from '../../shared/types.ts'
+import type { BattleAction, BattleEvent, BattleRequest, BattleResult } from '../../shared/types.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { creatureName } from '../../shared/creature.ts'
 import {
@@ -13,7 +13,6 @@ import {
 } from '../../shared/coop/instance.ts'
 import type {
   BossRaidState,
-  CoopClientMsg,
   InstanceState,
   PartyState,
   RaidMemberState,
@@ -28,7 +27,7 @@ import {
   progressOf,
   getActualDungeons,
 } from '../../shared/gameplay/instances.ts'
-import type { BattleChannel, GameContext, Input, NetClient, UIPanel } from '../contracts.ts'
+import type { BattleChannel, BattleChannelUpdate, GameContext, Input, NetClient, UIPanel } from '../contracts.ts'
 import { showReveal } from '../ui/reveal.ts'
 import { button, el, panel } from '../ui/widgets.ts'
 import { adoptServerSave } from './authority-client.ts'
@@ -53,7 +52,7 @@ export interface CoopChannel {
   leaveDungeon(): void
   joinRaid(raidId: string): void
   actionRaid(action: BattleAction): void
-  rollContract(ballId: string): void
+  rollContract(ballId: string, raidId?: string): void
 }
 
 const WAIT_REQ: BattleRequest = { kind: 'wait' }
@@ -76,12 +75,21 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
   let currentParty: PartyState | null = null
   let currentInstance: InstanceState | null = null
   let currentRaid: { raidId: string; boss: BossRaidState; members: RaidMemberState[] } | null = null
+  let lastCompletedRaidId: string | null = null
+  let eliteBattleActive = false
+  let raidBattlePromise: Promise<unknown> | null = null
   let roomModal: { panel: UIPanel; refresh: () => void; close: () => void } | null = null
-  let raidModal: { panel: UIPanel; refresh: () => void; close: () => void } | null = null
   const partyListeners = new Set<() => void>()
 
   const ensureRoomModal = () => {
-    if (!currentInstance || currentRaid) {
+    if (
+      !currentInstance ||
+      currentInstance.completed ||
+      currentInstance.currentRoom === 'boss' ||
+      currentRaid ||
+      eliteBattleActive ||
+      raidBattlePromise !== null
+    ) {
       if (roomModal) {
         roomModal.close()
         roomModal = null
@@ -105,6 +113,7 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
       const inbox: Array<{ events: BattleEvent[]; request: BattleRequest }> = []
       let endResult: BattleResult | null = null
       let wake: (() => void) | null = null
+      const updateListeners = new Set<(update: BattleChannelUpdate) => void>()
 
       const poke = () => {
         const w = wake
@@ -117,6 +126,7 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
         offEvents()
         offEnd()
         offErr()
+        updateListeners.clear()
       }
 
       const finish = (res: BattleResult | null) => {
@@ -140,6 +150,8 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
       const offEnd = net.on('dungeon.eliteEnd', (msg) => {
         if (!battleId || msg.battleId !== battleId) return
         endResult = msg.result
+        const endEv: BattleEvent = { t: 'end', result: msg.result, winner: msg.result === 'win' ? 0 : 1 }
+        for (const fn of updateListeners) fn({ events: [endEv], request: WAIT_REQ })
         poke()
       })
 
@@ -148,11 +160,23 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
         battleId = started.battleId
         inbox.push({ events: [...started.events], request: started.request })
 
-
         const collect = async (): Promise<{ events: BattleEvent[]; request: BattleRequest }> => {
           for (;;) {
             if (inbox.length > 0) {
-              return inbox.shift()!
+              const combined: BattleEvent[] = []
+              let lastReq: BattleRequest = WAIT_REQ
+              while (inbox.length > 0) {
+                const item = inbox.shift()!
+                combined.push(...item.events)
+                lastReq = item.request
+              }
+              if (endResult !== null) {
+                if (!combined.some((e) => e.t === 'end')) {
+                  combined.push({ t: 'end', result: endResult, winner: endResult === 'win' ? 0 : 1 })
+                }
+                lastReq = WAIT_REQ
+              }
+              return { events: combined, request: lastReq }
             }
             if (endResult !== null || settled) {
               return {
@@ -171,26 +195,34 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
             net.send({ t: 'dungeon.eliteAction', battleId: started.battleId, action })
             return collect()
           },
+          wait: () => collect(),
+          onUpdate(fn) {
+            updateListeners.add(fn)
+            return () => updateListeners.delete(fn)
+          },
           dispose() {
             if (endResult === null && !settled) net.send({ t: 'dungeon.leave' })
             finish(endResult)
           },
         }
 
-        if (roomModal) roomModal.panel.el.style.display = 'none'
+        eliteBattleActive = true
+        if (roomModal) {
+          roomModal.close()
+          roomModal = null
+        }
         void ctx.battle.run(started.init, { kind: 'wild', channel: battleChannel }).then(
           (outcome) => {
-            if (roomModal) {
-              roomModal.panel.el.style.display = ''
-              roomModal.refresh()
-            }
             finish(endResult ?? outcome.result)
           },
           () => {
-            if (roomModal) roomModal.panel.el.style.display = ''
             finish(endResult)
           },
-        )
+        ).finally(() => {
+          eliteBattleActive = false
+          battleChannel.dispose()
+          ensureRoomModal()
+        })
       })
 
       net.send({ t: 'dungeon.eliteFight', eliteId })
@@ -219,8 +251,9 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     actionRaid: (action: BattleAction) => {
       if (currentRaid) net.send({ t: 'raid.action', raidId: currentRaid.raidId, action })
     },
-    rollContract: (ballId: string) => {
-      if (currentRaid) net.send({ t: 'raid.rollContract', raidId: currentRaid.raidId, ballId })
+    rollContract: (ballId: string, raidId?: string) => {
+      const targetRaidId = raidId ?? currentRaid?.raidId ?? lastCompletedRaidId
+      if (targetRaidId) net.send({ t: 'raid.rollContract', raidId: targetRaidId, ballId })
     },
   }
 
@@ -258,10 +291,6 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     currentInstance = msg.instance
     if (!currentInstance) {
       currentRaid = null
-      if (raidModal) {
-        raidModal.close()
-        raidModal = null
-      }
     }
     ensureRoomModal()
   })
@@ -302,6 +331,9 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
   let raidBattleWake: (() => void) | null = null
   const raidBattleInbox: Array<{ events: BattleEvent[]; request: BattleRequest }> = []
   let raidBattleEnd: { victory: boolean } | null = null
+  const raidUpdateListeners = new Set<(update: BattleChannelUpdate) => void>()
+  let displayedBossHp = 0
+  let displayedBossMaxHp = 0
 
   net.on('raid.start', (msg) => {
     currentRaid = {
@@ -309,8 +341,11 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
       boss: msg.boss,
       members: msg.members,
     }
+    displayedBossHp = msg.boss.hp
+    displayedBossMaxHp = msg.boss.maxHp
     raidBattleInbox.length = 0
     raidBattleEnd = null
+    raidUpdateListeners.clear()
     if (roomModal) {
       roomModal.close()
       roomModal = null
@@ -332,7 +367,21 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
       const collectRaid = async (): Promise<{ events: BattleEvent[]; request: BattleRequest }> => {
         for (;;) {
           if (raidBattleInbox.length > 0) {
-            return raidBattleInbox.shift()!
+            const combined: BattleEvent[] = []
+            let lastReq: BattleRequest = WAIT_REQ
+            while (raidBattleInbox.length > 0) {
+              const item = raidBattleInbox.shift()!
+              combined.push(...item.events)
+              lastReq = item.request
+            }
+            if (raidBattleEnd !== null) {
+              const v = raidBattleEnd.victory
+              if (!combined.some((e) => e.t === 'end')) {
+                combined.push({ t: 'end', result: v ? 'win' : 'lose', winner: v ? 0 : 1 })
+              }
+              lastReq = WAIT_REQ
+            }
+            return { events: combined, request: lastReq }
           }
           if (raidBattleEnd !== null) {
             const v = raidBattleEnd.victory
@@ -351,23 +400,30 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
           net.send({ t: 'raid.action', raidId: msg.raidId, action })
           return collectRaid()
         },
+        wait: () => collectRaid(),
+        onUpdate(fn) {
+          raidUpdateListeners.add(fn)
+          return () => raidUpdateListeners.delete(fn)
+        },
         dispose() {
           if (raidBattleEnd === null) net.send({ t: 'dungeon.leave' })
           raidBattleEnd ??= { victory: false }
           raidBattleInbox.length = 0
+          raidUpdateListeners.clear()
           const wake = raidBattleWake
           raidBattleWake = null
           wake?.()
         },
       }
-      void ctx.battle.run(msg.init, { kind: 'legend', channel: raidBattleChannel }).catch((err) => {
+      const runPromise = ctx.battle.run(msg.init, { kind: 'legend', channel: raidBattleChannel }).catch((err) => {
         console.error('[raid] battle runner failed', err)
+      }).finally(() => {
+        raidBattleChannel.dispose()
+        if (raidBattlePromise === runPromise) {
+          raidBattlePromise = null
+        }
       })
-    } else if (typeof document !== 'undefined') {
-      if (raidModal) raidModal.close()
-      raidModal = mountRaidBattleModal(ctx, channel, () => {
-        raidModal = null
-      })
+      raidBattlePromise = runPromise
     }
   })
 
@@ -375,7 +431,29 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     if (currentRaid && currentRaid.raidId === msg.raidId) {
       currentRaid.boss = msg.boss
       currentRaid.members = msg.members
-      raidModal?.refresh()
+      const bossHpChanged = msg.boss.hp !== displayedBossHp || msg.boss.maxHp !== displayedBossMaxHp
+      const hpSyncEvent: BattleEvent | null = bossHpChanged
+        ? (msg.boss.hp <= displayedBossHp
+          ? {
+              t: 'damage',
+              side: 1,
+              amount: Math.max(1, displayedBossHp - msg.boss.hp),
+              hp: msg.boss.hp,
+              maxHp: msg.boss.maxHp,
+              effectiveness: 1,
+              crit: false,
+            }
+          : {
+              t: 'heal',
+              side: 1,
+              amount: msg.boss.hp - displayedBossHp,
+              hp: msg.boss.hp,
+              maxHp: msg.boss.maxHp,
+            })
+        : null
+      displayedBossHp = msg.boss.hp
+      displayedBossMaxHp = msg.boss.maxHp
+
       if (!msg.actorId || msg.actorId === net.selfId) {
         const nextReq: BattleRequest = msg.request ?? {
           kind: 'action',
@@ -383,24 +461,57 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
           canRun: false,
           canItem: true,
         }
-        raidBattleInbox.push({ events: [...msg.events], request: nextReq })
+        const tickEvents = [...msg.events]
+        const hasFoeHpEvent = tickEvents.some(
+          (e) => (e.t === 'damage' || e.t === 'heal') && e.side === 1 && e.hp === msg.boss.hp && e.maxHp === msg.boss.maxHp,
+        )
+        if (hpSyncEvent && !hasFoeHpEvent) {
+          tickEvents.unshift(hpSyncEvent)
+        }
+        raidBattleInbox.push({ events: tickEvents, request: nextReq })
         const w = raidBattleWake
         raidBattleWake = null
         w?.()
+      } else {
+        const syncEvents: BattleEvent[] = []
+        if (hpSyncEvent) syncEvents.push(hpSyncEvent)
+        for (const e of msg.events) {
+          if ((e.t === 'boss' || e.t === 'form' || e.t === 'status') && e.side === 1) {
+            syncEvents.push(e)
+          }
+        }
+        if (syncEvents.length > 0) {
+          for (const fn of raidUpdateListeners) {
+            fn({ events: syncEvents })
+          }
+        }
       }
     }
   })
 
   net.on('raid.end', (msg) => {
-    if (raidModal) {
-      raidModal.close()
-      raidModal = null
+    lastCompletedRaidId = msg.raidId
+    currentRaid = null
+    if (currentInstance && currentInstance.id === msg.raidId) {
+      currentInstance.completed = true
+    }
+    if (roomModal) {
+      roomModal.close()
+      roomModal = null
     }
     raidBattleEnd = { victory: msg.victory }
+    const endEv: BattleEvent = {
+      t: 'end',
+      result: msg.victory ? 'win' : 'lose',
+      winner: msg.victory ? 0 : 1,
+    }
     raidBattleInbox.push({
-      events: [{ t: 'end', result: msg.victory ? 'win' : 'lose', winner: msg.victory ? 0 : 1 }],
+      events: [endEv],
       request: WAIT_REQ,
     })
+    for (const fn of raidUpdateListeners) {
+      fn({ events: [endEv], request: WAIT_REQ })
+    }
     const w = raidBattleWake
     raidBattleWake = null
     w?.()
@@ -411,16 +522,41 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     } else {
       ctx.ui.toast(t('multiplayer.dungeon.raidDefeat'), 'warn')
     }
-    if (typeof document !== 'undefined') {
-      showRaidSummaryModal(ctx, msg.summary, () => {
-        const selfMember = msg.summary.members.find((m) => m.id === net.selfId)
-        if (msg.victory && selfMember?.qualified) {
-          promptContractRoll(ctx, channel, msg.summary)
-        }
-      })
-    }
-  })
 
+    const finishCompletedDungeon = () => {
+      if (currentInstance && currentInstance.id === msg.raidId) {
+        currentInstance = null
+      }
+      if (roomModal) {
+        roomModal.close()
+        roomModal = null
+      }
+      net.send({ t: 'dungeon.leave' })
+    }
+
+    const activePromise = raidBattlePromise
+    void (async () => {
+      if (activePromise) {
+        try {
+          await activePromise
+        } catch {
+          // ignore
+        }
+      }
+      if (typeof document !== 'undefined') {
+        showRaidSummaryModal(ctx, msg.summary, () => {
+          const selfMember = msg.summary.members.find((m) => m.id === net.selfId)
+          if (msg.victory && selfMember?.qualified) {
+            promptContractRoll(ctx, channel, msg.summary, finishCompletedDungeon)
+          } else {
+            finishCompletedDungeon()
+          }
+        })
+      } else {
+        finishCompletedDungeon()
+      }
+    })()
+  })
   net.on('raid.contractResult', (msg) => {
     if (msg.success && msg.card) {
       ctx.ui.toast(t('multiplayer.dungeon.contractSuccess'), 'success')
@@ -640,97 +776,6 @@ function mountDungeonRoomModal(
   return { panel: pApi, refresh, close }
 }
 
-function mountRaidBattleModal(
-  ctx: GameContext,
-  channel: CoopChannel,
-  onClosed: () => void,
-): { panel: UIPanel; refresh: () => void; close: () => void } {
-  const card = panel(t('multiplayer.dungeon.title'), { className: 'ap-raid-panel' })
-  const root = el('div', { class: 'aps-screen ap-fullscreen ap-raid-screen' }, [card.el])
-  let closed = false
-
-  const close = () => {
-    if (closed) return
-    closed = true
-    safePopPanel(ctx, pApi)
-    onClosed()
-  }
-
-  const refresh = () => {
-    const raid = channel.getRaid()
-    if (!raid) {
-      close()
-      return
-    }
-    card.body.replaceChildren()
-
-    const bossSpeciesName = CONTENT.species[raid.boss.speciesId]?.nameZh ?? raid.boss.speciesId
-    const bossHeader = el('div', { class: 'ap-raid-boss-header' }, [
-      el('h3', { text: `${bossSpeciesName} Lv.${raid.boss.level}` }),
-      el('div', { class: 'ap-raid-boss-hp', text: `HP ${raid.boss.hp} / ${raid.boss.maxHp}` }),
-    ])
-    card.body.append(bossHeader)
-
-    const memberRows = el(
-      'div',
-      { class: 'ap-raid-members' },
-      raid.members.map((m) =>
-        el('div', { class: 'ap-raid-member-row' }, [
-          el('span', { text: `${m.name} (${m.lead.nickname ?? (CONTENT.species[m.lead.speciesId]?.nameZh ?? m.lead.speciesId)})` }),
-          el('span', { text: `HP ${m.hp}/${m.maxHp}` }),
-          el('span', { text: `${m.contribution}` }),
-        ]),
-      ),
-    )
-    card.body.append(memberRows)
-
-    // Active creature moves
-    const leadCr = ctx.save.party.find((c) => c.hp > 0) ?? ctx.save.party[0]
-    if (leadCr) {
-      const moveRow = el('div', { class: 'ap-btn-row ap-raid-moves' })
-      leadCr.moves.forEach((slot, idx) => {
-        const moveName = CONTENT.moves[slot.id]?.nameZh ?? slot.id
-        const mBtn = button(t('multiplayer.dungeon.raidAttack', { name: moveName }), () => {
-          channel.actionRaid({ kind: 'move', moveIndex: idx })
-        }, { primary: idx === 0 })
-        mBtn.dataset.moveIndex = String(idx)
-        moveRow.append(mBtn)
-      })
-      card.body.append(moveRow)
-    }
-
-    // Switch party buttons
-    if (ctx.save.party.length > 1) {
-      const switchRow = el('div', { class: 'ap-btn-row ap-raid-switches' })
-      ctx.save.party.forEach((cr, idx) => {
-        if (cr.hp <= 0 || cr === leadCr) return
-        const sBtn = button(t('multiplayer.dungeon.raidSwitch', { name: creatureName(cr) }), () => {
-          channel.actionRaid({ kind: 'switch', partyIndex: idx })
-        })
-        sBtn.dataset.partyIndex = String(idx)
-        switchRow.append(sBtn)
-      })
-      card.body.append(switchRow)
-    }
-  }
-
-  const pApi: UIPanel = {
-    el: root,
-    onInput(input: Input) {
-      if (input.pressed('confirm')) {
-        input.consume('confirm')
-        channel.actionRaid({ kind: 'move', moveIndex: 0 })
-        return true
-      }
-      return true
-    },
-  }
-
-  refresh()
-  safePushPanel(ctx, pApi)
-  return { panel: pApi, refresh, close }
-}
-
 function showRaidSummaryModal(ctx: GameContext, summary: RaidSummary, onClose: () => void): void {
   const card = panel(summary.victory ? t('multiplayer.dungeon.raidVictory') : t('multiplayer.dungeon.raidDefeat'), {
     className: 'ap-raid-summary',
@@ -776,21 +821,32 @@ function showRaidSummaryModal(ctx: GameContext, summary: RaidSummary, onClose: (
   safePushPanel(ctx, pApi)
 }
 
-function promptContractRoll(ctx: GameContext, channel: CoopChannel, summary: RaidSummary): void {
+function promptContractRoll(
+  ctx: GameContext,
+  channel: CoopChannel,
+  summary: RaidSummary,
+  onDone?: () => void,
+): void {
+  const instDef = GAMEPLAY.instances[summary.instanceId]
+  const tierDef = instDef?.tiers[summary.tierId]
+  const prog = progressOf(ctx.save, summary.instanceId)
+  const first = (prog.captures[summary.tierId] ?? 0) === 0
+  if (!first && tierDef && !tierDef.repeat.capture) {
+    onDone?.()
+    return
+  }
+
   const heldBalls = Object.entries(ctx.save.bag ?? {})
     .filter(([id, n]) => (n ?? 0) > 0 && ctx.data.items[id]?.effect.kind === 'ball')
     .map(([id, n]) => ({ id, qty: n ?? 0, name: ctx.data.items[id]?.nameZh ?? id }))
 
   if (heldBalls.length === 0) {
     ctx.ui.toast(t('multiplayer.dungeon.errNoBall'), 'warn')
+    onDone?.()
     return
   }
 
   let selectedBall = heldBalls[0].id
-  const instDef = GAMEPLAY.instances[summary.instanceId]
-  const tierDef = instDef?.tiers[summary.tierId]
-  const prog = progressOf(ctx.save, summary.instanceId)
-  const first = (prog.captures[summary.tierId] ?? 0) === 0
   const curPity = prog.pity?.[summary.tierId] ?? 0
   const periodKey = instancePeriodKey(instDef?.refresh ?? 'daily', GAMEPLAY.instancePeriod)
   const lockout = dailyLockoutStatus(prog, periodKey)
@@ -838,12 +894,25 @@ function promptContractRoll(ctx: GameContext, channel: CoopChannel, summary: Rai
   updateOddsText()
   renderBallButtons()
 
-  const rollBtn = button(t('battleui.capture.sign'), () => {
+  let completed = false
+  const finishRoll = (doRoll: boolean) => {
+    if (completed) return
+    completed = true
     safePopPanel(ctx, pApi)
-    channel.rollContract(selectedBall)
-  }, { primary: true })
+    if (doRoll) {
+      channel.rollContract(selectedBall, summary.raidId)
+    }
+    onDone?.()
+  }
 
-  card.body.append(hintEl, pityEl, limitEl, ballBtnRow, rollBtn)
+  const rollBtn = button(t('battleui.capture.sign'), () => {
+    finishRoll(true)
+  }, { primary: true })
+  const skipBtn = button(t('common.close'), () => {
+    finishRoll(false)
+  })
+
+  card.body.append(hintEl, pityEl, limitEl, ballBtnRow, el('div', { class: 'ap-btn-row' }, [rollBtn, skipBtn]))
   const root = el('div', { class: 'aps-screen ap-fullscreen' }, [card.el])
 
   const pApi: UIPanel = {
@@ -851,8 +920,12 @@ function promptContractRoll(ctx: GameContext, channel: CoopChannel, summary: Rai
     onInput(input: Input) {
       if (input.pressed('confirm')) {
         input.consume('confirm')
-        safePopPanel(ctx, pApi)
-        channel.rollContract(selectedBall)
+        finishRoll(true)
+        return true
+      }
+      if (input.pressed('cancel')) {
+        input.consume('cancel')
+        finishRoll(false)
         return true
       }
       return true
@@ -866,12 +939,17 @@ function promptContractRoll(ctx: GameContext, channel: CoopChannel, summary: Rai
 /**
  * Opens the dungeon selection and entry modal.
  */
-export function openDungeonModal(ctx: GameContext, defaultInstanceId = 'deepseek-tide'): void {
+export function openDungeonModal(ctx: GameContext, defaultInstanceId?: string): void {
   const channel = getCoopChannel()
   const allDungeons = getActualDungeons()
+  const curMap = ctx.overworld?.player?.map ?? ctx.save.position?.map ?? ''
+  const preferredId =
+    defaultInstanceId ??
+    allDungeons.find(([, inst]) => inst.entry?.map === curMap)?.[0] ??
+    'deepseek-tide'
   const instances = [...allDungeons].sort(([a], [b]) => {
-    if (a === defaultInstanceId) return -1
-    if (b === defaultInstanceId) return 1
+    if (a === preferredId) return -1
+    if (b === preferredId) return 1
     return 0
   })
 
@@ -891,6 +969,7 @@ export function openDungeonModal(ctx: GameContext, defaultInstanceId = 'deepseek
   const list = el('div', { class: 'ap-dungeon-list' }, instances.map(([id, inst]) => {
     const name = t(inst.name)
     const tiers = Object.keys(inst.tiers)
+    const onEntryMap = !curMap || !inst.entry?.map || curMap === inst.entry.map
 
     const row = el('div', { class: 'ap-dungeon-row', attrs: { 'data-instance-id': id } }, [
       el('h3', { text: name }),
@@ -899,6 +978,10 @@ export function openDungeonModal(ctx: GameContext, defaultInstanceId = 'deepseek
         const tier = inst.tiers[tid]
         const check = isTierUnlocked(tier, ctx.save.badges, boolFlags, partySize)
         const btn = button(`${tid} (${t(`boss.${inst.boss}.tier.${tid}`)})`, () => {
+          if (!onEntryMap) {
+            ctx.ui.toast(t('net.error.invalid_encounter'), 'warn')
+            return
+          }
           safePopPanel(ctx, pApi)
           if (!channel) return
           const curParty = channel.getParty()
@@ -909,9 +992,9 @@ export function openDungeonModal(ctx: GameContext, defaultInstanceId = 'deepseek
           }
         })
         btn.dataset.tierId = tid
-        if (!check.unlocked) {
+        if (!check.unlocked || !onEntryMap) {
           ;(btn as HTMLButtonElement).disabled = true
-          if (check.reason) btn.title = check.reason
+          btn.title = !onEntryMap ? t('net.error.invalid_encounter') : (check.reason ?? '')
         }
         return btn
       })),
