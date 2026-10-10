@@ -12,6 +12,7 @@ import { SCREENS } from './config.ts'
 import { dexCounts, playTimeParts } from './logic.ts'
 import { intelScreen } from './intel.ts'
 import { researchScreen } from './research.ts'
+import { researchSummary } from '../../world/research.ts'
 import { portraitEl } from './sprites.ts'
 
 const css = (c: [number, number, number, number]) => `rgb(${c[0]}, ${c[1]}, ${c[2]})`
@@ -56,7 +57,13 @@ function playerCard(env: ScreenEnv): HTMLElement {
 
 export function pauseScreen(env: ScreenEnv): Promise<void> {
   const { ctx } = env
-  const entries = SCREENS.pause.entries
+  const isUnlocked = (e: (typeof SCREENS.pause.entries)[number]): boolean => {
+    if (e.action === 'research' && researchSummary(ctx.save).canClaim) return true
+    if (!e.unlockFlag) return true
+    return Boolean(ctx.save.flags[e.unlockFlag])
+  }
+  const unlocked = SCREENS.pause.entries.filter(isUnlocked)
+  const entries = unlocked.length > 0 ? unlocked : SCREENS.pause.entries
   ctx.audio.setMuffled(true)
   return openScreen<void>(env, 'aps-pause', (api) => {
     const f = frame(env, { title: t('screens.pause.heading'), onClose: api.guard(() => api.close()), hints: ctx.input.lastDevice === 'touch' ? [] : [H.select(), H.back()] })

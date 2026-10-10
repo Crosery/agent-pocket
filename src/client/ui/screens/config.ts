@@ -119,7 +119,7 @@ export interface ScreensConfig {
   }
   newGame: { previewDirs: ('down' | 'left' | 'right' | 'up')[]; cols: number; compactCols: number }
   pause: {
-    entries: (MenuEntry & { action: PauseAction; glyph?: string; requires?: 'party' })[]
+    entries: (MenuEntry & { action: PauseAction; glyph?: string; requires?: 'party'; unlockFlag?: string })[]
     /** Cancelable window event dispatched before returning to the title (integration may intercept). */
     titleEvent: string
   }

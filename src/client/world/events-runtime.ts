@@ -586,8 +586,9 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     }
     checkCooldown -= dt
     const slot = eventSlot(minutes())
+    const gated = Boolean(GPC.scheduler.requireFlag && !ctx.save.flags[GPC.scheduler.requireFlag])
     // Scheduling / announcements wait while menus, dialogue or battles own the screen.
-    if (slot !== lastSlot && checkCooldown <= 0 && o.free && GPC.scheduler.mapKinds.includes(p.map.kind)) {
+    if (!gated && slot !== lastSlot && checkCooldown <= 0 && o.free && GPC.scheduler.mapKinds.includes(p.map.kind)) {
       lastSlot = slot
       checkCooldown = GPC.scheduler.minCheckRealSec
       tick(p)
@@ -601,7 +602,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     const touched = special.update(dt, p, o.free && o.canBattle && !battleBusy && !scriptBusy)
     if (touched) void battleSpecial(touched)
     legendT -= dt
-    if (legendT <= 0 && o.free) { legendT = GPC.legends.checkSec; legendTick(p, o.canBattle) }
+    if (!gated && legendT <= 0 && o.free) { legendT = GPC.legends.checkSec; legendTick(p, o.canBattle) }
     itemsTick(dt, p, o.free)
     ambience.update(dt, p)
     hudT -= dt

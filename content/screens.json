@@ -103,16 +103,16 @@
   "newGame": {"previewDirs": ["down", "left", "up", "right"], "cols": 3, "compactCols": 3},
   "pause": {
     "entries": [
-      {"id": "dex", "action": "dex", "label": "screens.pause.dex", "glyph": "dex"},
-      {"id": "party", "action": "party", "label": "screens.pause.party", "glyph": "party", "requires": "party"},
+      {"id": "party", "action": "party", "label": "screens.pause.party", "glyph": "party", "requires": "party", "unlockFlag": "starter"},
       {"id": "bag", "action": "bag", "label": "screens.pause.bag", "glyph": "bag"},
-      {"id": "map", "action": "map", "label": "screens.pause.map", "glyph": "map"},
+      {"id": "dex", "action": "dex", "label": "screens.pause.dex", "glyph": "dex", "unlockFlag": "starter"},
+      {"id": "map", "action": "map", "label": "screens.pause.map", "glyph": "map", "unlockFlag": "starter"},
       {"id": "quests", "action": "quests", "label": "screens.pause.quests", "glyph": "quests"},
+      {"id": "typeChart", "action": "typeChart", "label": "screens.pause.typeChart", "glyph": "typeChart", "unlockFlag": "lesson:typeChart"},
+      {"id": "research", "action": "research", "label": "screens.pause.research", "glyph": "research", "unlockFlag": "ds:stamp:catch"},
+      {"id": "intel", "action": "intel", "label": "screens.pause.intel", "glyph": "intel", "unlockFlag": "ds:gateOpen"},
+      {"id": "online", "action": "online", "label": "screens.pause.online", "glyph": "online", "unlockFlag": "ds:gateOpen"},
       {"id": "manual", "action": "manual", "label": "screens.pause.manual", "glyph": "quests"},
-      {"id": "typeChart", "action": "typeChart", "label": "screens.pause.typeChart", "glyph": "typeChart"},
-      {"id": "research", "action": "research", "label": "screens.pause.research", "glyph": "research"},
-      {"id": "intel", "action": "intel", "label": "screens.pause.intel", "glyph": "intel"},
-      {"id": "online", "action": "online", "label": "screens.pause.online", "glyph": "online"},
       {"id": "save", "action": "save", "label": "screens.pause.save", "glyph": "save"},
       {"id": "settings", "action": "settings", "label": "screens.pause.settings", "glyph": "settings"},
       {"id": "title", "action": "title", "label": "screens.pause.title", "glyph": "title"}

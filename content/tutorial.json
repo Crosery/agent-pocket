@@ -1,7 +1,7 @@
 {
   "objective": {
     "refreshSec": 0.4,
-    "collapseSec": 7,
+    "collapseSec": 5,
     "hideQuestCardUntilFlag": "ds:gateOpen",
     "arrow": {"minDistance": 3, "stepsPerTile": 1},
     "navigation": {"nodesPerFrame": 16384, "frameBudgetMs": 2.5, "maxNodes": 1048576, "marginTiles": 160, "recheckSec": 0.5, "retrySec": 3, "trailTiles": 24},
@@ -34,9 +34,9 @@
       {"id": "hud", "trigger": {"kind": "free", "delaySec": 4, "needs": {"flag": ["ob:route1", "ds:done"]}}, "text": "tutorial.tip.hud", "expires": {"minBadges": 1}, "after": ["grass"]},
       {"id": "battle", "trigger": {"kind": "battle", "delaySec": 1.6}, "text": "tutorial.tip.battle", "expires": {"minStat": {"battlesWon": 3}}},
       {"id": "moveInfo", "trigger": {"kind": "on", "on": "turn", "phase": "battle", "match": {"turn": 2}, "delaySec": 0.8}, "text": "tutorial.tip.moveInfo", "expires": {"minStat": {"battlesWon": 2}}, "after": ["typeMatchup"]},
-      {"id": "typeMatchup", "trigger": {"kind": "battle", "battleKinds": ["wild", "trainer", "gym", "legend"], "delaySec": 2.1, "needs": {"flag": ["lesson:typeChart"]}}, "text": "tutorial.tip.typeMatchup", "expires": [{"minStat": {"battlesWon": 1}}, {"flag": ["lesson:typeChart"]}], "after": ["battle"], "open": {"screen": "typeChart", "action": "map", "text": "tutorial.tip.openChart"}},
-      {"id": "superEffective", "trigger": {"kind": "on", "on": "superEffective", "phase": "battle", "match": {"side": 1}, "delaySec": 0.6}, "text": "tutorial.tip.superEffective", "expires": [{"minStat": {"battlesWon": 5}}, {"flag": ["lesson:typeChart"]}], "open": {"screen": "typeChart", "action": "map", "text": "tutorial.tip.openChart"}},
-      {"id": "resisted", "trigger": {"kind": "on", "on": "resisted", "phase": "battle", "match": {"side": 1}, "delaySec": 0.6}, "text": "tutorial.tip.resisted", "expires": [{"minStat": {"battlesWon": 5}}, {"flag": ["lesson:typeChart"]}], "open": {"screen": "typeChart", "action": "map", "text": "tutorial.tip.openChart"}},
+      {"id": "typeMatchup", "trigger": {"kind": "battle", "battleKinds": ["wild", "trainer", "gym", "legend"], "delaySec": 2.1, "needs": {"flag": ["lesson:typeChart"]}}, "text": "tutorial.tip.typeMatchup", "expires": {"minStat": {"battlesWon": 3}}, "after": ["battle"], "open": {"screen": "typeChart", "action": "map", "text": "tutorial.tip.openChart"}},
+      {"id": "superEffective", "trigger": {"kind": "on", "on": "superEffective", "phase": "battle", "match": {"side": 1}, "delaySec": 0.6}, "text": "tutorial.tip.superEffective", "expires": {"minStat": {"battlesWon": 5}}, "open": {"screen": "typeChart", "action": "map", "text": "tutorial.tip.openChart"}},
+      {"id": "resisted", "trigger": {"kind": "on", "on": "resisted", "phase": "battle", "match": {"side": 1}, "delaySec": 0.6}, "text": "tutorial.tip.resisted", "expires": {"minStat": {"battlesWon": 5}}, "open": {"screen": "typeChart", "action": "map", "text": "tutorial.tip.openChart"}},
       {"id": "immune", "trigger": {"kind": "on", "on": "immune", "phase": "battle", "delaySec": 0.6, "needs": {"minStat": {"battlesWon": 1}}}, "text": "tutorial.tip.immune"},
       {"id": "doubleType", "trigger": {"kind": "on", "on": "doubleSuper", "phase": "battle", "delaySec": 0.6, "needs": {"minStat": {"battlesWon": 1}}}, "text": "tutorial.tip.doubleType"},
       {"id": "stab", "trigger": {"kind": "battle", "battleKinds": ["wild", "trainer", "gym"], "delaySec": 3, "needs": {"minStat": {"battlesWon": 1}, "flag": ["ds:done"]}}, "text": "tutorial.tip.stab", "expires": {"minStat": {"battlesWon": 4}}, "after": ["moveInfo"]},

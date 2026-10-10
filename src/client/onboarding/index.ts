@@ -5,11 +5,12 @@ import type { GameContext } from '../contracts.ts'
 import type { OverworldExt } from '../world/controller.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { maxHp } from '../../shared/creature.ts'
+import { worldAnchors } from '../../shared/world/index.ts'
 import { MIGRATIONS, STORY_CONTENT } from '../../shared/world/story.ts'
 import { contentUpdateSummaryText, hasPendingContentUpdate } from '../core/save-reconcile.ts'
 import { attentionCounts } from '../attention/logic.ts'
 import { ON_EVENTS, TUTORIAL, type TipDef } from './config.ts'
-import { afterDone, battleCues, condHolds, enrich, isTallGrassName, matchPayload, tipFlag, tipLive, type LiveView, type Place } from './logic.ts'
+import { afterDone, battleCues, bearing, condHolds, enrich, isTallGrassName, matchPayload, nearestTarget, pickObjective, tipFlag, tipLive, type LiveView, type Place } from './logic.ts'
 import { createObjectiveView, createTipView } from './view.ts'
 
 export interface Onboarding {
@@ -28,7 +29,7 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
   const objective = createObjectiveView(uiRoot)
   const tips = createTipView(uiRoot, ctx.input)
   const tipById = new Map(cfg.tips.list.map((x) => [x.id, x]))
-
+  const anchors = worldAnchors(ctx.data.world)
   let visible = false
   let refreshT = 0
   let objectiveRule = ''
@@ -58,20 +59,41 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
   // -- objective -------------------------------------------------------------------------------------------
   function refreshObjective(): void {
     const route = overworld.questNavigation
-    const on = visible && settings().showObjective && overworld.mapId !== null && route !== null
-    objective.setVisible(on)
-    ctx.hud.setObjective(on && route ? route.text : null)
-    if (!on) { objectiveRule = ''; return }
-    if (!route) return
-    objectiveRule = route.questId
+    const on = visible && settings().showObjective && overworld.mapId !== null
+    if (!on) {
+      objective.setVisible(false)
+      ctx.hud.setObjective(null)
+      objectiveRule = ''
+      return
+    }
+    if (route) {
+      objective.setVisible(true)
+      ctx.hud.setObjective(route.text)
+      objectiveRule = route.questId
+      const from = here()
+      const next = route.path[1]
+      const angle = next ? Math.atan2(next.y + 0.5 - from.y, next.x + 0.5 - from.x) : 0
+      objective.set({
+        textKey: 'tutorial.objective.next',
+        params: { stage: route.text },
+        arrow: next ? { angle, steps: route.steps } : null,
+        note: route.status === 'ready' ? undefined : `tutorial.objective.navigation.${route.status}`,
+        device: ctx.input.lastDevice,
+      })
+      return
+    }
+    const picked = pickObjective(ctx.data.world, ctx.save, cfg)
+    objective.setVisible(true)
+    ctx.hud.setObjective(t(picked.textKey, picked.params))
+    objectiveRule = picked.ruleId
     const from = here()
-    const next = route.path[1]
-    const angle = next ? Math.atan2(next.y + 0.5 - from.y, next.x + 0.5 - from.x) : 0
+    const places = picked.questTarget ? [picked.questTarget] : picked.targets.map((k) => anchors[k]).filter((x): x is Place => Boolean(x))
+    const dest = nearestTarget(ctx.data.world, from, places)
+    const b = dest ? bearing(from, dest) : null
     objective.set({
-      textKey: 'tutorial.objective.next',
-      params: { stage: route.text },
-      arrow: next ? { angle, steps: route.steps } : null,
-      note: route.status === 'ready' ? undefined : `tutorial.objective.navigation.${route.status}`,
+      textKey: picked.textKey,
+      params: picked.params,
+      arrow: b && b.tiles >= cfg.objective.arrow.minDistance ? { angle: b.angle, steps: b.tiles * cfg.objective.arrow.stepsPerTile } : null,
       device: ctx.input.lastDevice,
     })
   }
