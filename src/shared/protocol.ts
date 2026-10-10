@@ -62,14 +62,14 @@ export interface MoveClientMsg {
 }
 
 export interface EnvelopeFields {
-  /** Monotonic per-session sequence number for replay protection. */
-  seq?: number
-  /** Hex HMAC-SHA256 signature over `${seq}:${canonicalJson(payloadWithoutSig)}`. */
+  /** Distinct monotonic per-connection sequence number for signed envelope replay protection (separate from move.seq). */
+  authSeq?: number
+  /** Hex HMAC-SHA256 signature over `${authSeq}:${canonicalJson(payloadWithoutSig)}`. */
   sig?: string
 }
 
 export type ClientMsgCore =
-  | { t: 'hello'; v: number; playerId: string; name: string; avatar: string; map: string; x: number; y: number; facing: Dir; lead: PresenceLead | null; profile: PublicProfile; build?: { devtools: boolean }; compact?: boolean; signed?: boolean; sessionToken?: string; save?: SaveData }
+  | { t: 'hello'; v: number; playerId: string; name: string; avatar: string; map: string; x: number; y: number; facing: Dir; lead: PresenceLead | null; profile: PublicProfile; build?: { devtools: boolean }; compact?: boolean; signed?: boolean }
   | MoveClientMsg
   | { t: 'lead'; lead: PresenceLead | null }
   | { t: 'profile'; profile: PublicProfile }
@@ -122,16 +122,47 @@ export type ClientMsgCore =
   | { t: 'box.release'; slot: { area: 'party' | 'box'; box: number; index: number } }
   | {
     t: 'script.op'
-    op: 'chooseStarter' | 'heal' | 'blackout' | 'pickup' | 'setFlag' | 'quest'
+    op:
+      | 'chooseStarter'
+      | 'heal'
+      | 'blackout'
+      | 'pickup'
+      | 'setFlag'
+      | 'quest'
+      | 'giveItem'
+      | 'takeItem'
+      | 'giveMoney'
+      | 'takeMoney'
+      | 'giveCreature'
+      | 'setRespawn'
+      | 'unlockTown'
+      | 'teach'
+      | 'research'
+      | 'settleBossCards'
     speciesId?: string
     itemId?: string
     groundId?: string
     qty?: number
+    amount?: number
+    level?: number
+    shiny?: boolean
+    nature?: string
+    ability?: string
+    moves?: string[]
+    gradeFloor?: string
+    creature?: Creature
     flag?: string
     value?: boolean | number | string
     questId?: string
     stage?: number
     done?: boolean
+    map?: string
+    x?: number
+    y?: number
+    facing?: Dir
+    townId?: string
+    lesson?: string
+    task?: string
   }
   | { t: 'save.import'; save: unknown; slotSig?: string | null; slotIndex?: number }
 

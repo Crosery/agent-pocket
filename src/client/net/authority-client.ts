@@ -32,12 +32,18 @@ export function isUntrustedImportOnline(ctx: GameContext): boolean {
   return stateOf(ctx).untrustedImport
 }
 
-export function adoptServerSave(ctx: GameContext, save: SaveData, rev?: number, untrustedImport?: boolean): void {
+export function adoptServerSave(
+  ctx: GameContext,
+  save: SaveData,
+  rev?: number,
+  untrustedImport?: boolean,
+  opts?: { initial?: boolean },
+): void {
   const st = stateOf(ctx)
   st.active = true
   if (typeof rev === 'number') st.rev = rev
   if (untrustedImport !== undefined) st.untrustedImport = untrustedImport
-  applyAuthoritativeSave(ctx, save)
+  applyAuthoritativeSave(ctx, save, opts)
 }
 
 export function installAuthorityHandlers(ctx: GameContext): () => void {
@@ -46,7 +52,7 @@ export function installAuthorityHandlers(ctx: GameContext): () => void {
       const st = stateOf(ctx)
       if (m.authority) st.active = true
       if (m.save) {
-        adoptServerSave(ctx, m.save, m.saveRev, m.untrustedImport)
+        adoptServerSave(ctx, m.save, m.saveRev, m.untrustedImport, { initial: true })
       }
     }),
     ctx.net.on('state.sync', (m) => {

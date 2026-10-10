@@ -6,6 +6,7 @@ import { CONTENT, t } from '../../shared/content/index.ts'
 import { creatureName } from '../../shared/creature.ts'
 import { BATTLE_UI } from './config.ts'
 import type { BattleView } from './view.ts'
+import { sendCreatureLearnMove } from '../net/authority-client.ts'
 
 export async function learnWithScreen(ctx: GameContext, view: BattleView, cr: Creature, moveId: string): Promise<boolean> {
   const move = CONTENT.moves[moveId]
@@ -13,6 +14,8 @@ export async function learnWithScreen(ctx: GameContext, view: BattleView, cr: Cr
   const name = creatureName(cr)
   if (cr.moves.length < CONTENT.config.party.maxMoves) {
     cr.moves.push({ id: moveId, pp: move.pp, ppMax: move.pp })
+    const pIdx = ctx.save.party.findIndex((x) => x.uid === cr.uid)
+    if (pIdx >= 0) sendCreatureLearnMove(ctx, pIdx, moveId)
     ctx.events.emit('party:changed', {})
     ctx.audio.playSfx(BATTLE_UI.sfx.learn)
     await view.message.show(t('battleui.learn.learned', { name, move: move.nameZh }))
@@ -27,6 +30,8 @@ export async function learnWithScreen(ctx: GameContext, view: BattleView, cr: Cr
   }
   const old = CONTENT.moves[cr.moves[slot].id]?.nameZh ?? cr.moves[slot].id
   cr.moves[slot] = { id: moveId, pp: move.pp, ppMax: move.pp }
+  const pIdx = ctx.save.party.findIndex((x) => x.uid === cr.uid)
+  if (pIdx >= 0) sendCreatureLearnMove(ctx, pIdx, moveId, slot)
   ctx.events.emit('party:changed', {})
   await view.message.show(t('battleui.learn.forgot', { name, old }))
   ctx.audio.playSfx(BATTLE_UI.sfx.learn)

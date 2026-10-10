@@ -209,11 +209,12 @@ export async function contractFlow(ctx: GameContext, o: ContractOptions): Promis
   const choices = ballChoices(ctx)
   let signed: Signed | null = null
   let tried = false
+  let selectedBallId = choices[0].id
   const commit = (ballId: string): Signed | null => {
     if (tried) return signed
     tried = true
+    selectedBallId = ballId
     signed = signContract(ctx, o.bossId, o.tierId, ballId)
-    if (o.battleId) void signOnlineContract(ctx, o.battleId, o.bossId, o.tierId, ballId)
     // Saved before anything else is shown: closing the tab on the next screen cannot lose or reroll the card.
     if (signed) ctx.persist('boss-sign')
     return signed
@@ -227,10 +228,15 @@ export async function contractFlow(ctx: GameContext, o: ContractOptions): Promis
   }
   // However the screen ended, a first clear always signs.
   if (!tried) commit(choices[0].id)
+  if (o.battleId) {
+    const onlineSigned = await signOnlineContract(ctx, o.battleId, o.bossId, o.tierId, selectedBallId)
+    if (onlineSigned) signed = onlineSigned
+  }
   if (!signed) return null
   const { card, where } = signed
   const name = creatureName(card)
-  ctx.ui.toast(where === 'party' ? t('battleui.catch.toParty', { name }) : t('battleui.catch.toBox', { name, box: ctx.save.boxes.findIndex((b) => b.includes(card)) + 1 }), 'success')
+  const boxNum = Math.max(1, ctx.save.boxes.findIndex((b) => b.some((c) => c.uid === card.uid)) + 1)
+  ctx.ui.toast(where === 'party' ? t('battleui.catch.toParty', { name }) : t('battleui.catch.toBox', { name, box: boxNum }), 'success')
   await showReveal(ctx, card, { full: true })
   await sayLines(ctx, talk?.after)
   return signed

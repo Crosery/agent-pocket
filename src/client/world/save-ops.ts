@@ -8,6 +8,7 @@ import { bossCardCap, isBossCard, settleBank } from '../../shared/gameplay/bossc
 import { MIGRATIONS } from '../../shared/world/story.ts'
 import { BATTLE_UI } from '../battle/config.ts'
 import { GAME } from './config.ts'
+import { sendCreatureLearnMove, sendScriptOp } from '../net/authority-client.ts'
 
 export function truthy(v: boolean | number | string | undefined): boolean {
   return v !== undefined && v !== false && v !== 0 && v !== ''
@@ -101,10 +102,13 @@ export async function settleBossCards(ctx: GameContext): Promise<Creature[]> {
       const entry = { id: moveId, pp: move.pp, ppMax: move.pp }
       if (slot === cr.moves.length) cr.moves.push(entry)
       else cr.moves[slot] = entry
+      const pIdx = ctx.save.party.indexOf(cr)
+      if (pIdx >= 0) sendCreatureLearnMove(ctx, pIdx, moveId, slot < cr.moves.length ? slot : undefined)
       ctx.ui.toast(t('hud.license.learned', { name: creatureName(cr) }), 'success')
     }
   }
   ctx.save.flags[GAME.flags.licenseSettled] = true
+  sendScriptOp(ctx, { t: 'script.op', op: 'settleBossCards' })
   if (levelled.length) {
     ctx.events.emit('party:changed', {})
     ctx.persist('license')

@@ -9,21 +9,28 @@ import { leaveAllScreens, sfx, type ScreenEnv } from './base.ts'
 import { natureScreen } from './nature.ts'
 import { natureName } from '../quality-text.ts'
 import { SCREENS } from './config.ts'
-import { addItem, applyMedicine, medicineBlocker, needsMovePick, needsTarget, overworldExit, teachState } from './logic.ts'
+import { addItem, applyMedicine, medicineBlocker, needsMovePick, needsTarget, teachState } from '../../../shared/gameplay/save-ops.ts'
+import { overworldExit } from './logic.ts'
 import { sendCreatureLearnMove, sendItemUse } from '../../net/authority-client.ts'
 
 const say = (env: ScreenEnv, ...lines: string[]) => env.ctx.ui.say(lines)
 
 /** Teaches `moveId` (asking which move to forget when full). Returns true if learnt. */
-export async function teachMove(env: ScreenEnv, c: Creature, moveId: string): Promise<boolean> {
+export async function teachMove(
+  env: ScreenEnv,
+  c: Creature,
+  moveId: string,
+  opts?: { viaItemId?: string; partyIndex?: number },
+): Promise<boolean> {
   const m = CONTENT.moves[moveId]
   if (!m || c.moves.some((s) => s.id === moveId)) return false
   const name = creatureName(c)
   const slot = { id: moveId, pp: m.pp, ppMax: m.pp }
+  const pIdx = opts?.partyIndex ?? env.ctx.save.party.indexOf(c)
   if (c.moves.length < CONTENT.config.party.maxMoves) {
     c.moves.push(slot)
-    const pIdx = env.ctx.save.party.indexOf(c)
-    if (pIdx >= 0) sendCreatureLearnMove(env.ctx, pIdx, moveId)
+    if (opts?.viaItemId) sendItemUse(env.ctx, opts.viaItemId, { ...(pIdx >= 0 ? { partyIndex: pIdx } : {}) })
+    else if (pIdx >= 0) sendCreatureLearnMove(env.ctx, pIdx, moveId)
     sfx(env, 'learn')
     await say(env, t('screens.use.learned', { name, move: m.nameZh }))
     return true
@@ -35,8 +42,8 @@ export async function teachMove(env: ScreenEnv, c: Creature, moveId: string): Pr
   }
   const old = CONTENT.moves[c.moves[i].id]?.nameZh ?? c.moves[i].id
   c.moves[i] = slot
-  const pIdx = env.ctx.save.party.indexOf(c)
-  if (pIdx >= 0) sendCreatureLearnMove(env.ctx, pIdx, moveId, i)
+  if (opts?.viaItemId) sendItemUse(env.ctx, opts.viaItemId, { ...(pIdx >= 0 ? { partyIndex: pIdx } : {}), moveIndex: i })
+  else if (pIdx >= 0) sendCreatureLearnMove(env.ctx, pIdx, moveId, i)
   sfx(env, 'learn')
   await say(env, t('screens.use.forgot', { name, old }), t('screens.use.learned', { name, move: m.nameZh }))
   return true
@@ -114,7 +121,7 @@ async function applyToCreature(env: ScreenEnv, item: ItemDef, partyIndex: number
       return to ? runEvolution(env, partyIndex, to) : false
     }
     case 'chip':
-      return teachMove(env, c, e.move)
+      return teachMove(env, c, e.move, { viaItemId: item.id, partyIndex })
     case 'nature': {
       const pick = await natureScreen(env, c)
       if (!pick) return false

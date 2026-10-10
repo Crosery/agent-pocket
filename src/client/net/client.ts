@@ -519,10 +519,8 @@ export function createNetClient(
 
   function send(msg: ClientMsg): void {
     if (!ws || status !== 'online' || ws.readyState !== WebSocket.OPEN) return
-    if (sessionKey && msg.t !== 'ping') {
-      const targetSeq = typeof msg.seq === 'number' && Number.isSafeInteger(msg.seq) && msg.seq > 0 ? msg.seq : ++outSeq
-      if (targetSeq > outSeq) outSeq = targetSeq
-      sendJson(ws, signEnvelope(sessionKey, msg, targetSeq))
+    if (sessionKey && msg.t !== 'ping' && msg.t !== 'hello') {
+      sendJson(ws, signEnvelope(sessionKey, msg, ++outSeq))
       return
     }
     sendJson(ws, msg)

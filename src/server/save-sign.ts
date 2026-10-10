@@ -3,8 +3,6 @@
 // rejected and audited. Offline/portable saves cannot prove anti-cheat (client holds the code), so any
 // accepted legacy import is sanitized, stripped of forged online-valuable resources, and marked untrusted.
 import { createHmac, randomBytes } from 'node:crypto'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
 import type { Creature, SaveData, World } from '../shared/types.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { expForLevel, maxHp, sanitizeCreature } from '../shared/creature.ts'
@@ -26,31 +24,30 @@ export interface SignedServerSave {
   sig: string
 }
 
-const SECRET_FILE = 'save-secret.key'
 const IMPORT_ITEM_STACK_CAP = 10
 const IMPORT_BASE_LEVEL_CAP = 20
-const IMPORT_LEVEL_PER_BADGE = 10
 
-export async function loadOrCreateSaveSecret(dataDir: string): Promise<string> {
-  const fromEnv = process.env.AP_SAVE_SECRET?.trim()
-  if (fromEnv && fromEnv.length >= 32) return fromEnv
-  const file = join(dataDir, SECRET_FILE)
-  try {
-    const existing = (await readFile(file, 'utf8')).trim()
-    if (existing.length >= 32) return existing
-  } catch {
-    // Generated below on first boot.
+let ephemeralProcessSecret: string | null = null
+
+export function resolveServerSaveSecret(explicit?: string): string {
+  if (typeof explicit === 'string' && explicit.trim().length >= 32) {
+    return explicit.trim()
   }
-  const generated = randomBytes(32).toString('hex')
-  try {
-    await mkdir(dataDir, { recursive: true })
-    await writeFile(file, generated, { mode: 0o600 })
-  } catch {
-    // Ephemeral/read-only test directory still uses the in-memory secret for its lifetime.
+  const fromEnv = (process.env.AP_SAVE_SECRET ?? process.env.SAVE_SECRET)?.trim()
+  if (fromEnv && fromEnv.length >= 32) {
+    return fromEnv
   }
-  return generated
+  ephemeralProcessSecret ??= randomBytes(32).toString('hex')
+  return ephemeralProcessSecret
 }
 
+export function loadOrCreateSaveSecretSync(_dataDir?: string): string {
+  return resolveServerSaveSecret()
+}
+
+export async function loadOrCreateSaveSecret(_dataDir?: string): Promise<string> {
+  return resolveServerSaveSecret()
+}
 export function computeServerSaveSig(record: Omit<SignedServerSave, 'sig'>, secret: string): string {
   const payload = canonicalJson({
     version: record.version,
@@ -262,10 +259,7 @@ export function isolateUntrustedSave(rawInput: unknown, opts: IsolateSaveOptions
     }
   }
 
-  const levelCap = Math.min(
-    CONTENT.config.party.maxLevel,
-    IMPORT_BASE_LEVEL_CAP + sanitized.badges.length * IMPORT_LEVEL_PER_BADGE,
-  )
+  const levelCap = Math.min(CONTENT.config.party.maxLevel, IMPORT_BASE_LEVEL_CAP)
   sanitized.party = sanitized.party.map((cr) => {
     const res = clampImportedCreature(cr, levelCap, now)
     if (res.clamped) stripped.push(`party_clamped:${cr.uid}`)

@@ -285,7 +285,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   const ctxObj: Partial<Mutable<GameContext>> & { save: SaveData } = {
     data,
     get save() { return save },
-    set save(v: SaveData) { save = v; clockHolder.rebind(v) },
+    set save(v: SaveData) { save = v; if (playing) playing = v; clockHolder.rebind(v) },
     events, input, audio, assets, saves,
     clock: clockHolder.clock,
     renderer, world: worldView, ui, hud, minimap, chat, net,

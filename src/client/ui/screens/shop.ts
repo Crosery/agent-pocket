@@ -6,7 +6,7 @@ import { createRowMenu, type RowMenu } from '../menu.ts'
 import { el, tabs } from '../widgets.ts'
 import { backPressed, frame, infoRow, isCompact, moneyEl, openScreen, pressed, quantityPicker, sfx, type ScreenEnv, setChildren } from './base.ts'
 import { SCREENS } from './config.ts'
-import { addItem, canSell, maxAffordable, sellPrice, shopBuyPrice } from './logic.ts'
+import { addItem, canSell, maxAffordable, sellPrice, shopBuyPrice } from '../../../shared/gameplay/save-ops.ts'
 import { moveDetail } from './summary.ts'
 import { sendShopBuy, sendShopSell } from '../../net/authority-client.ts'
 

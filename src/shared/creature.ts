@@ -287,9 +287,9 @@ export function sanitizeCreature(raw: unknown, c: Content = CONTENT): Creature |
   const ivs = {} as Stats
   for (const k of STAT_KEYS) ivs[k] = clampInt(num(ivSrc[k]) ?? 0, 0, c.config.creature.ivMax)
 
-  // The signature ability / move and the exp bank are only legal on the boss's own species.
+  // The signature ability / move and the exp bank are legal on the boss's own species (including legacy imported boss cards).
   const origin = sanitizeOrigin(raw.origin, c)
-  const bossDef = origin?.kind === 'boss' && origin.boss ? c.bosses[origin.boss] : undefined
+  const bossDef = (origin?.kind === 'boss' || origin?.kind === 'legacy') && origin?.boss ? c.bosses[origin.boss] : undefined
   const card = bossDef !== undefined && bossDef.species === speciesId ? bossDef : undefined
   const legal = legalMoves(speciesId, level, c)
   if (card?.signature?.move && c.moves[card.signature.move]) legal.add(card.signature.move)

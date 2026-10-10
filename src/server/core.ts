@@ -4,6 +4,7 @@ import type { PlayerState, PublicProfile, ServerMsg } from '../shared/protocol.t
 import type { GameMap } from '../shared/types.ts'
 import type { SessionInfo } from './accounts.ts'
 import type { ReplayWindow } from '../shared/net-envelope.ts'
+import type { SessionInfo } from './accounts.ts'
 import type { RateKey } from './config.ts'
 import type { RateLimiter } from './util.ts'
 
@@ -27,6 +28,7 @@ export interface Conn {
   key: string
   /** Public player id (null until hello). */
   id: string | null
+
   /** Per-connection HMAC-SHA256 session key issued on welcome (#22). */
   sessionKey: string
   /** True once the client opts into signed envelopes or sends a signed frame. */

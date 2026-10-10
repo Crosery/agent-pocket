@@ -13,7 +13,7 @@ import type { CoopClientMsg } from '../shared/coop/protocol.ts'
 import { createDungeonServer } from './dungeon.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { parseSessionCookie, type SessionInfo } from './accounts.ts'
-import { createAuthority, type AuthorityService, type ExternalAccountStore } from './authority.ts'
+import { createAuthority, type AuthorityService } from './authority.ts'
 import { MODERATION, NET, PRESENCE, type RateKey } from './config.ts'
 import type { Conn, HubCore, LimiterKey, Player } from './core.ts'
 import { createChat } from './chat.ts'
@@ -29,13 +29,8 @@ import {
   type RateLimiter,
 } from './util.ts'
 
-export interface SessionLookupStore {
-  verifySession?(cookieHeaderOrToken: string | undefined | null, now?: number): { accountId: string; username: string; sessionSecret?: string } | null
-  getAccountBySession?(cookieHeaderOrToken: string | undefined | null, now?: number): { accountId: string; username: string; sessionSecret?: string } | null
-}
-
 export interface HubOptions {
-  store: ProfileStore & Partial<ExternalAccountStore> & SessionLookupStore
+  store: ProfileStore
   world: WorldInfo | null
   pvp: PvpModule | null
   /** Resolves sanitizeCreature from src/shared/creature.ts (null while unavailable). */
@@ -326,7 +321,7 @@ export function createHub(opts: HubOptions): Hub {
       if (existingSave) {
         opts.store.putSave(p.accountId, {
           ...existingSave,
-          position: { map: p.state.map, x: Math.round(p.state.x), y: Math.round(p.state.y), facing: p.state.facing },
+          position: { map: p.state.map, x: Math.floor(p.state.x), y: Math.floor(p.state.y), facing: p.state.facing },
         })
       }
     }
@@ -486,9 +481,10 @@ export function createHub(opts: HubOptions): Hub {
   function hello(c: Conn, m: HelloMsg): void {
     if (m.v !== net.protocolVersion) { drop(c, codes.version, 'version_mismatch'); return }
     if (m.build?.devtools === true && !opts.allowDev) { drop(c, codes.devNotAllowed, 'dev_not_allowed'); return }
+    if (m.signed === true) c.signed = true
 
     let id: string
-    let boundSave = null
+    let boundSave: ReturnType<ProfileStore['getAccountSave']> = null
     if (c.session) {
       const liveSession = opts.store.getAccountBySession(c.session.token)
       if (!liveSession) {
@@ -527,6 +523,7 @@ export function createHub(opts: HubOptions): Hub {
       : m
     const { pos, ref } = initialPosition(helloPosMsg)
     const now = Date.now()
+
     c.id = id
     c.key = id
     c.name = name
@@ -535,7 +532,7 @@ export function createHub(opts: HubOptions): Hub {
     c.compact = m.compact === true
     c.state = {
       id, name, avatar, ...pos, moving: false, running: false, lead: sanitizeLead(m.lead),
-      badges: profile.badges.length, dexCaught: profile.dexCaught, busy: false,
+      badges: rawProfile.badges.length, dexCaught: rawProfile.dexCaught, busy: false,
     }
     c.lastMoveAt = now
     c.mapRef = ref
@@ -552,7 +549,6 @@ export function createHub(opts: HubOptions): Hub {
     opts.store.put(validatedProfile, now)
     p.maxDistance = p.distanceSaved = opts.store.get(id)?.maxDistance ?? 0
     const saveRec = authority.getRecord(id)
-
     core.send(p, {
       t: 'welcome',
       selfId: id,
@@ -837,7 +833,7 @@ export function createHub(opts: HubOptions): Hub {
     if (msg.sig !== undefined) c.signed = true
     const envCheck = verifyEnvelope(c.sessionKey, msg, c.replayWindow, { requireSig: c.signed })
     if (!envCheck.ok) {
-      authority.audit(c.id, `protocol.${envCheck.code}`, { reason: envCheck.reason, t: msg.t, seq: msg.seq }, 3, c.ip)
+      authority.audit(c.id, `protocol.${envCheck.code}`, { reason: envCheck.reason, t: msg.t, authSeq: msg.authSeq, seq: msg.seq }, 3, c.ip)
       core.error(c, envCheck.code)
       return
     }

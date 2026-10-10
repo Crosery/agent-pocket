@@ -13,6 +13,7 @@ import {
 } from '../../shared/gameplay/research.ts'
 import { GPC } from './gameplay-config.ts'
 import { addItem, changeMoney } from './save-ops.ts'
+import { sendScriptOp } from '../net/authority-client.ts'
 
 export type ResearchCtx = Pick<GameContext, 'save' | 'ui' | 'events' | 'data'>
 
@@ -64,9 +65,17 @@ export function rewardLabel(r: Rewards, ctx: Pick<GameContext, 'data'>): string 
 export function claimResearchRewards(ctx: ResearchCtx): Rewards | null {
   const s = researchSummary(ctx.save)
   if (!s.canClaim) return null
-  if (s.claimable.money) changeMoney(ctx as GameContext, s.claimable.money)
-  for (const [id, n] of Object.entries(s.claimable.items)) addItem(ctx as GameContext, id, n)
+  const fullCtx = ctx as GameContext
+  if (s.claimable.money) {
+    changeMoney(fullCtx, s.claimable.money)
+    sendScriptOp(fullCtx, { t: 'script.op', op: 'giveMoney', amount: s.claimable.money })
+  }
+  for (const [id, n] of Object.entries(s.claimable.items)) {
+    addItem(fullCtx, id, n)
+    sendScriptOp(fullCtx, { t: 'script.op', op: 'giveItem', itemId: id, qty: n })
+  }
   ctx.save.flags[GPC.research.claimFlag] = s.level
+  sendScriptOp(fullCtx, { t: 'script.op', op: 'setFlag', flag: GPC.research.claimFlag, value: s.level })
   ctx.events.emit('save:changed', { reason: 'research-claim' })
   return s.claimable
 }

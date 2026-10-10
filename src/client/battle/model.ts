@@ -9,6 +9,7 @@ import type {
 import { CONTENT, t, typeEffectiveness, type Content } from '../../shared/content/index.ts'
 import { cycleLeft } from '../../shared/battle/boss.ts'
 import { STAT_KEYS, calcStats, expForLevel } from '../../shared/creature.ts'
+import { catchPlacement, type CatchPlacement } from '../../shared/gameplay/save-ops.ts'
 import { BATTLE_UI, type CommandId, type EffCategory } from './config.ts'
 
 export type SlotState = 'ok' | 'status' | 'fainted'
@@ -238,18 +239,7 @@ export function moveEffectiveness(move: MoveDef, defTypes: readonly TypeId[], c:
   return effCategory(mul)
 }
 
-export type CatchPlacement = { where: 'party' } | { where: 'box'; box: number } | null
-
-/** Where a newly caught creature goes: the party while it has room, else the first box with space. */
-export function catchPlacement(save: Pick<SaveData, 'party' | 'boxes'>, c: Content = CONTENT): CatchPlacement {
-  const P = c.config.party
-  if (save.party.length < P.maxParty) return { where: 'party' }
-  for (let i = 0; i < P.boxCount; i++) {
-    const box = save.boxes[i]
-    if (!box || box.length < P.boxSize) return { where: 'box', box: i }
-  }
-  return null
-}
+export { catchPlacement, type CatchPlacement }
 
 /** Moves the new species learns on evolving (level 0 = "on evolution", or the current level) not yet known. */
 export function evolutionMoves(cr: Pick<Creature, 'level' | 'moves'>, toSpeciesId: string, c: Content = CONTENT): string[] {

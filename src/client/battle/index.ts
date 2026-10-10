@@ -175,8 +175,10 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
           if (foe) await contractFlow(ctx, { bossId, tierId: init.bossTier, foe, chance, ...(pve ? { battleId: pve.battleId } : {}) })
         }
         for (const [i, to] of model.evolutions) {
-          const cr = ownParty[i]
-          if (cr && cr.hp > 0) await playEvolution(ctx, scene, cr, to)
+          const cr = ctx.save.party[i] ?? ownParty[i]
+          if (cr && cr.hp > 0 && await playEvolution(ctx, scene, cr, to)) {
+            sendCreatureEvolve(ctx, i, to)
+          }
         }
       } catch (err) {
         console.error('[battle] battle aborted', err)

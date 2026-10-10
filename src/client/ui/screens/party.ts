@@ -9,7 +9,8 @@ import { bossMark, createGridNav, creatureIcon, el, expBar, gradeChip, hpBar, st
 import { onUIScaleChange } from '../scale.ts'
 import { backPressed, frame, H, isCompact, openScreen, popupMenu, pressed, sfx, uiSfx, type PartyOptions, type ScreenEnv } from './base.ts'
 import { SCREENS } from './config.ts'
-import { expProgress, isConscious } from './logic.ts'
+import { isConscious } from '../../../shared/gameplay/save-ops.ts'
+import { expProgress } from './logic.ts'
 import { sendCreatureNickname, sendPartySwap } from '../../net/authority-client.ts'
 
 export type PartyMode = 'view' | 'select' | 'battleSwitch'

@@ -6,7 +6,8 @@ import { CONTENT, t } from '../../shared/content/index.ts'
 import { creatureName } from '../../shared/creature.ts'
 import { BATTLE_UI, type CommandId } from './config.ts'
 import type { MoveItem } from './menus.ts'
-import { catchPlacement, coachCommandPulse, moveEffectiveness, type BattleModel } from './model.ts'
+import { catchPlacement } from '../../shared/gameplay/save-ops.ts'
+import { coachCommandPulse, moveEffectiveness, type BattleModel } from './model.ts'
 import type { BattleScene } from './scene.ts'
 
 type ActionRequest = Extract<BattleRequest, { kind: 'action' }>

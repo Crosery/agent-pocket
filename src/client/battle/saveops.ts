@@ -2,7 +2,7 @@
 // the matching GameEvents. Pure over a GameContext subset so it is testable without DOM.
 import type { Creature } from '../../shared/types.ts'
 import type { GameContext } from '../contracts.ts'
-import { catchPlacement, type CatchPlacement } from './model.ts'
+import { catchPlacement, type CatchPlacement } from '../../shared/gameplay/save-ops.ts'
 
 export type SaveCtx = Pick<GameContext, 'save' | 'events' | 'data'>
 

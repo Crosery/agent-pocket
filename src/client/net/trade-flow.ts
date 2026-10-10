@@ -5,10 +5,10 @@ import type { EventBus, GameContext, GameEvents, Input, NetClient, UIPanel } fro
 import type { ServerMsg } from '../../shared/protocol.ts'
 import type { Creature, SaveData } from '../../shared/types.ts'
 import { CONTENT, t, type Content } from '../../shared/content/index.ts'
-import { STAT_KEYS, creatureName, newUid } from '../../shared/creature.ts'
+import { STAT_KEYS, creatureName } from '../../shared/creature.ts'
 import { gradeOf } from '../../shared/gameplay/quality.ts'
+import { applyTradeResult, canOffer, offerableIndices, type TradeApplied } from '../../shared/gameplay/save-ops.ts'
 import { natureName } from '../ui/quality-text.ts'
-import { Rng, hashString } from '../../shared/rng.ts'
 import multiplayerJson from '../../../content/multiplayer.json' with { type: 'json' }
 import netJson from '../../../content/net.json' with { type: 'json' }
 import { UI_CONFIG } from '../ui/config.ts'
@@ -40,14 +40,7 @@ const REQUEST_SECONDS = (netJson as unknown as { server: { tradeRequestSeconds: 
 // Pure rules (Node-testable)
 // ---------------------------------------------------------------------------
 
-/** A creature may be offered only if the party keeps at least one other creature able to battle; a signed boss card is bound to its trainer. */
-export function canOffer(party: readonly Creature[], cr: Creature): boolean {
-  return cr.origin?.kind !== 'boss' && party.includes(cr) && party.some((o) => o !== cr && o.hp > 0)
-}
-
-export function offerableIndices(party: readonly Creature[]): number[] {
-  return party.flatMap((cr, i) => (canOffer(party, cr) ? [i] : []))
-}
+export { applyTradeResult, canOffer, offerableIndices, type TradeApplied }
 
 /** IV quality as 0..stars (sum of IVs relative to the maximum). */
 export function ivStars(cr: Pick<Creature, 'ivs'>, stars = TRADE_RULES.ivStars, c: Content = CONTENT): number {
@@ -56,58 +49,7 @@ export function ivStars(cr: Pick<Creature, 'ivs'>, stars = TRADE_RULES.ivStars, 
   return max > 0 ? Math.max(0, Math.min(stars, Math.round((sum / max) * stars))) : 0
 }
 
-export interface TradeApplied {
-  where: 'party' | 'box'
-  index: number
-  given: Creature | null
-  newSeen: boolean
-  newCaught: boolean
-}
 
-/**
- * Applies trade.complete to a save: the given creature leaves (party slot is reused so the party never
- * shrinks), the received one joins the party or the first box with room, dex and stats update.
- */
-export function applyTradeResult(save: SaveData, givenUid: string, received: Creature, c: Content = CONTENT): TradeApplied {
-  const cr: Creature = structuredClone(received)
-  let given: Creature | null = null
-  let where: TradeApplied['where'] | null = null
-  let index = -1
-  const pi = save.party.findIndex((x) => x.uid === givenUid)
-  if (pi >= 0) {
-    given = save.party[pi]
-    save.party.splice(pi, 1)
-  } else {
-    for (const box of save.boxes) {
-      const bi = box.findIndex((x) => x.uid === givenUid)
-      if (bi >= 0) { given = box.splice(bi, 1)[0]; break }
-    }
-  }
-  const owned = (uid: string) => save.party.some((x) => x.uid === uid) || save.boxes.some((b) => b.some((x) => x.uid === uid))
-  if (owned(cr.uid)) cr.uid = newUid(new Rng(hashString(`${cr.uid}/${givenUid}/${save.playerId}`)))
-  if (pi >= 0) {
-    save.party.splice(pi, 0, cr)
-    where = 'party'
-    index = pi
-  } else if (save.party.length < c.config.party.maxParty) {
-    save.party.push(cr)
-    where = 'party'
-    index = save.party.length - 1
-  } else {
-    let bi = save.boxes.findIndex((b) => b.length < c.config.party.boxSize)
-    // Storage completely full: overflow the last box rather than ever losing a creature.
-    if (bi < 0) { if (!save.boxes.length) save.boxes.push([]); bi = save.boxes.length - 1 }
-    save.boxes[bi].push(cr)
-    where = 'box'
-    index = bi
-  }
-  const newSeen = !save.dexSeen.includes(cr.speciesId)
-  const newCaught = !save.dexCaught.includes(cr.speciesId)
-  if (newSeen) save.dexSeen.push(cr.speciesId)
-  if (newCaught) save.dexCaught.push(cr.speciesId)
-  save.stats.trades += 1
-  return { where, index, given, newSeen, newCaught }
-}
 
 // ---------------------------------------------------------------------------
 // Shared multiplayer session state (per GameContext)

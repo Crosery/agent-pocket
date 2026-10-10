@@ -4,68 +4,63 @@
 // - Authoritative captures, boss contracts, exp/level-ups, shop buy/sell, field item use, exchange, party/box moves.
 // - Ownership enforcement for trades and PvP parties (prevents cross-account theft, duplication, and party fabrication).
 // - Economic ledger + anti-cheat audit log + anomaly detection (encounter/step ratio, hourly exp/money rate).
-import { createHash, randomInt } from 'node:crypto'
-import { mkdir, readFile, rename, unlink, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { randomInt } from 'node:crypto'
+import battleUiJson from '../../content/battle-ui.json' with { type: 'json' }
 import type {
-  BattleAction, BattleEvent, BattleInit, BattleModifiers, BattleRequest, BattleSideInit, Creature, SaveData, TrainerDef, World,
+  BattleAction, BattleEvent, BattleInit, BattleModifiers, BattleRequest, BattleSideInit, Creature, SaveData, SpeciesDef, TrainerDef, World,
 } from '../shared/types.ts'
 import type { ClientMsg, PublicProfile, ServerMsg } from '../shared/protocol.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { hashString, Rng } from '../shared/rng.ts'
 import {
-  createCreature, evolutionTarget, evolve, expForLevel, gainExp, legalMoves, maxHp, rollShiny, sanitizeCreature, toView,
+  createCreature, evolutionTarget, evolve, expForLevel, gainExp, maxHp, rollShiny, sanitizeCreature, toView,
 } from '../shared/creature.ts'
 import { BattleEngine, perspective } from '../shared/battle/engine.ts'
 import { buildBossInit, createBossCreature } from '../shared/battle/boss-battle.ts'
-import { captureSeed, partyExpMods, rollBossCard } from '../shared/gameplay/bosscard.ts'
+import { bossCardCap, captureSeed, isBossCard, partyExpMods, rollBossCard, settleBank } from '../shared/gameplay/bosscard.ts'
 import { offersOf, takeOffer, timesAffordable, unlocked } from '../shared/gameplay/exchange.ts'
+import { activeEvents, eventModifiers, modifierValue } from '../shared/gameplay/events.ts'
 import { instanceOfBoss, progressOf } from '../shared/gameplay/instances.ts'
+import { addTaskProgress } from '../shared/gameplay/research.ts'
 import { GAMEPLAY } from '../shared/gameplay/data.ts'
-import { preUnlockedIds } from '../shared/world/anchors.ts'
+import {
+  applyMedicine, applyTradeResult, canOffer, canSell, catchPlacement, medicineBlocker, moveCreature, releaseCreature,
+  sellPrice, shopBuyPrice, teachState,
+} from '../shared/gameplay/save-ops.ts'
 import { STORY_CONTENT } from '../shared/world/story.ts'
-import { frontierTrainer } from '../shared/world/frontier/content/index.ts'
-import { getMap, regionAt } from '../shared/world/worldapi.ts'
-import { catchPlacement } from '../client/battle/model.ts'
-import { BATTLE_UI } from '../client/battle/config.ts'
-import { applyMedicine, canSell, medicineBlocker, moveCreature, releaseCreature, sellPrice, shopBuyPrice, teachState } from '../client/ui/screens/logic.ts'
-import { applyTradeResult, canOffer } from '../client/net/trade-flow.ts'
-import { playableAvatars, sanitizeName, sanitizeSettings, worldSpawn } from '../client/core/save-sanitize.ts'
+import { frontierQuest, frontierTrainer } from '../shared/world/frontier/content/index.ts'
+import { getMap, objectsInRect, regionAt } from '../shared/world/worldapi.ts'
+import type { AuditRecord, LedgerRecord } from './accounts.ts'
 import type { HubCore, Player } from './core.ts'
 import { maskBanned } from './moderation.ts'
 import {
-  isolateUntrustedSave, loadOrCreateSaveSecret, signServerSave, verifyServerSave, type SignedServerSave,
+  isolateUntrustedSave, loadOrCreateSaveSecret, loadOrCreateSaveSecretSync, signServerSave, type SignedServerSave,
 } from './save-sign.ts'
 import type { ProfileStore } from './store.ts'
 import { isFiniteNumber, isRecord, newSessionId } from './util.ts'
 
-export interface LedgerRecord {
-  id: number
-  accountId: string
-  at: number
-  kind: 'money' | 'item' | 'exp' | 'creature'
-  subject: string
-  delta: number
-  balance: number
-  ref: string
-}
-
-export interface AuditRecord {
-  id: number
-  at: number
-  accountId: string | null
-  ipHash: string | null
-  kind: string
-  severity: number
-  detail: Record<string, unknown>
-}
+export type { AuditRecord, LedgerRecord }
 
 export interface ExternalAccountStore {
-  getAccountSave?(accountId: string): { save: SaveData | null; imported: boolean; trusted: boolean; rev: number } | null
-  putAccountSave?(accountId: string, save: SaveData, opts?: { imported?: boolean; trusted?: boolean; now?: number }): unknown
-  recordAudit?(entry: { accountId?: string | null; ip?: string | null; kind: string; severity?: number; detail?: Record<string, unknown>; at?: number }): void
+  getAccountSave(accountId: string): { save: SaveData | null; imported: boolean; trusted: boolean; rev: number; updatedAt?: number; sig?: string } | null
+  putAccountSave(accountId: string, save: SaveData, opts?: { imported?: boolean; trusted?: boolean; now?: number }): {
+    accountId: string
+    save: SaveData
+    imported: boolean
+    trusted: boolean
+    rev: number
+    updatedAt: number
+    sig: string
+  }
+  recordAudit(entry: { accountId?: string | null; ip?: string | null; kind: string; severity?: number; detail?: Record<string, unknown>; at?: number }): void
+  listAudit(accountId?: string, limit?: number): AuditRecord[]
+  recordLedger(entry: { accountId: string; kind: LedgerRecord['kind']; subject: string; delta: number; balance: number; ref: string; at?: number }): void
+  listLedger(accountId?: string, limit?: number): LedgerRecord[]
 }
 
+const BATTLE_CHANNEL_MAX_AUTO_STEPS = battleUiJson.channel.maxAutoSteps
+const BATTLE_CONTRACT_DEFAULT_BALL = battleUiJson.contract.defaultBall
+const BATTLE_CONTRACT_CONSUME_BALL = battleUiJson.contract.consumeBall
 interface ActiveBattle {
   id: string
   playerId: string
@@ -110,7 +105,7 @@ interface PlayerMetrics {
 export interface AuthorityOptions {
   dataDir: string
   core: HubCore
-  store: ProfileStore & Partial<ExternalAccountStore>
+  store: ProfileStore
   world?: World | null
   secret?: string
   log?: (msg: string) => void
@@ -125,7 +120,6 @@ export interface AuthorityService {
   getSave(playerId: string): SaveData | null
   getRecord(playerId: string): SignedServerSave | null
   isUntrustedImport(playerId: string): boolean
-  ensurePlayerSave(playerId: string, init: { name: string; avatar: string; map: string; x: number; y: number; facing: SaveData['position']['facing'] }): SignedServerSave
   setSave(playerId: string, save: SaveData, opts?: { imported?: boolean; trusted?: boolean; ref?: string }): SignedServerSave
   importOfflineSave(
     playerId: string,
@@ -150,86 +144,19 @@ export interface AuthorityService {
   onDisconnect(playerId: string): void
 }
 
-const SAVES_FILE = 'saves.json'
-const AUDIT_FILE = 'audit.json'
-const LEDGER_FILE = 'ledger.json'
 const ANOMALY_WINDOW_MS = 3600_000
 const MAX_HOURLY_EXP = 500_000
 const MAX_HOURLY_MONEY = 250_000
 
-function hashIp(ip: string | undefined): string | null {
-  if (!ip) return null
-  return createHash('sha256').update(`agent-pocket/ip/${ip}`).digest('hex').slice(0, 16)
-}
-
-function defaultNewSave(
-  playerId: string,
-  opts: { name: string; avatar: string; map: string; x: number; y: number; facing: SaveData['position']['facing'] },
-  world: World | null,
-  now: number,
-): SaveData {
-  const c = CONTENT
-  const avatars = playableAvatars(c)
-  const spawn = opts.map ? { map: opts.map, x: Math.floor(opts.x), y: Math.floor(opts.y), facing: opts.facing } : worldSpawn(world)
-  const bag: Record<string, number> = {}
-  for (const [id, qty] of Object.entries(c.config.economy.startItems)) {
-    if (c.items[id] && Number.isFinite(qty) && qty > 0) bag[id] = Math.floor(qty)
-  }
-  const unlocked = world ? preUnlockedIds(world) : []
-  return {
-    version: c.config.save.version,
-    playerId,
-    name: sanitizeName(opts.name, c, t('audio.save.defaultName')),
-    avatar: avatars.includes(opts.avatar) ? opts.avatar : avatars[0] ?? '',
-    createdAt: now,
-    playTimeSec: 0,
-    money: c.config.economy.startMoney,
-    badges: [],
-    party: [],
-    boxes: Array.from({ length: c.config.party.boxCount }, () => []),
-    bag,
-    dexSeen: [],
-    dexCaught: [],
-    position: { ...spawn },
-    respawn: { ...spawn },
-    flags: {},
-    quests: {},
-    visitedTowns: [],
-    exploredChunks: {},
-    repelSteps: 0,
-    clockMinutes: c.config.time.startMinutes,
-    stats: { battlesWon: 0, caught: 0, steps: 0, pvpWins: 0, pvpLosses: 0, trades: 0, shiniesFound: 0 },
-    settings: sanitizeSettings(c.config.defaultSettings, c),
-    anchors: { unlocked: [...unlocked], seen: [...unlocked] },
-    rollSeed: hashString(playerId) >>> 0,
-    instances: {},
-  }
-}
-
 export function createAuthority(opts: AuthorityOptions): AuthorityService {
   const { core, store } = opts
   const world = opts.world ?? null
-  const log = opts.log ?? (() => {})
-  const savesFile = join(opts.dataDir, SAVES_FILE)
-  const auditFile = join(opts.dataDir, AUDIT_FILE)
-  const ledgerFile = join(opts.dataDir, LEDGER_FILE)
 
-  let secret = opts.secret ?? createHash('sha256').update(`ap-default-secret:${opts.dataDir}`).digest('hex')
-  const records = new Map<string, SignedServerSave>()
+  let secret = opts.secret ?? loadOrCreateSaveSecretSync(opts.dataDir)
   const creatureOwners = new Map<string, string>()
   const activeBattles = new Map<string, ActiveBattle>()
   const pendingContracts = new Map<string, PendingContract>()
   const metrics = new Map<string, PlayerMetrics>()
-  const audits: AuditRecord[] = []
-  const ledgers: LedgerRecord[] = []
-  let nextAuditId = 1
-  let nextLedgerId = 1
-  let dirtySaves = false
-  let dirtyAudit = false
-  let dirtyLedger = false
-  let persistTimer: ReturnType<typeof setTimeout> | null = null
-  let writing: Promise<void> | null = null
-  let closed = false
 
   function indexSaveCreatures(accountId: string, save: SaveData): void {
     for (const [uid, owner] of [...creatureOwners.entries()]) {
@@ -241,48 +168,6 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     }
   }
 
-  function schedulePersist(): void {
-    if (closed || persistTimer) return
-    persistTimer = setTimeout(() => {
-      persistTimer = null
-      void flushNow()
-    }, NET_DEBOUNCE_MS)
-    persistTimer.unref?.()
-  }
-
-  const NET_DEBOUNCE_MS = 250
-
-  async function writeAtomicJson(target: string, data: unknown): Promise<void> {
-    const tmp = `${target}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 7)}.tmp`
-    try {
-      await mkdir(opts.dataDir, { recursive: true })
-      await writeFile(tmp, JSON.stringify(data))
-      await rename(tmp, target)
-    } catch (err) {
-      await unlink(tmp).catch(() => {})
-      log(`authority write failed (${target}): ${(err as Error).message}`)
-    }
-  }
-
-  async function flushNow(): Promise<void> {
-    while (writing) await writing
-    if (!dirtySaves && !dirtyAudit && !dirtyLedger) return
-    const doSaves = dirtySaves
-    const doAudit = dirtyAudit
-    const doLedger = dirtyLedger
-    dirtySaves = false
-    dirtyAudit = false
-    dirtyLedger = false
-    writing = (async () => {
-      if (doSaves) await writeAtomicJson(savesFile, { version: 1, saves: Object.fromEntries(records) })
-      if (doAudit) await writeAtomicJson(auditFile, { version: 1, audits })
-      if (doLedger) await writeAtomicJson(ledgerFile, { version: 1, ledgers })
-    })().finally(() => {
-      writing = null
-    })
-    await writing
-  }
-
   function audit(
     accountId: string | null,
     kind: string,
@@ -290,24 +175,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     severity = 2,
     ip?: string,
   ): void {
-    const at = Date.now()
-    const entry: AuditRecord = {
-      id: nextAuditId++,
-      at,
-      accountId,
-      ipHash: hashIp(ip),
-      kind,
-      severity,
-      detail,
-    }
-    audits.push(entry)
-    dirtyAudit = true
-    try {
-      store.recordAudit?.({ accountId, ip: ip ?? null, kind, severity, detail, at })
-    } catch {
-      // External store audit is best-effort alongside authority's own audit log.
-    }
-    schedulePersist()
+    store.recordAudit({ accountId, ip: ip ?? null, kind, severity, detail, at: Date.now() })
   }
 
   function addLedger(
@@ -320,8 +188,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
   ): void {
     if (delta === 0) return
     const at = Date.now()
-    ledgers.push({
-      id: nextLedgerId++,
+    store.recordLedger({
       accountId,
       at,
       kind,
@@ -330,7 +197,6 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       balance,
       ref,
     })
-    dirtyLedger = true
     const m = playerMetrics(accountId)
     if (at - m.expWindowStart > ANOMALY_WINDOW_MS) {
       m.expWindowStart = at
@@ -349,7 +215,6 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         audit(accountId, 'anomaly.money_rate', { moneyInWindow: m.moneyInWindow, delta, ref }, 2)
       }
     }
-    schedulePersist()
   }
 
   function playerMetrics(playerId: string): PlayerMetrics {
@@ -362,39 +227,47 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
   }
 
   function getRecord(playerId: string): SignedServerSave | null {
-    const local = records.get(playerId)
-    if (local) return local
-    const ext = store.getAccountSave?.(playerId)
-    if (ext && ext.save) {
-      const signed = signServerSave({
-        version: ext.save.version,
+    const ext = store.getAccountSave(playerId)
+    if (!ext || !ext.save) return null
+    const save = structuredClone(ext.save)
+    indexSaveCreatures(playerId, save)
+    const updatedAt = ext.updatedAt ?? Date.now()
+    if (ext.sig) {
+      return {
+        version: save.version,
         accountId: playerId,
-        rev: ext.rev ?? 1,
-        trusted: ext.trusted ?? !ext.imported,
-        imported: ext.imported ?? false,
-        updatedAt: Date.now(),
-        save: structuredClone(ext.save),
-      }, secret)
-      records.set(playerId, signed)
-      indexSaveCreatures(playerId, signed.save)
-      return signed
+        rev: ext.rev,
+        trusted: ext.trusted,
+        imported: ext.imported,
+        updatedAt,
+        save,
+        sig: ext.sig,
+      }
     }
-    return null
+    return signServerSave({
+      version: save.version,
+      accountId: playerId,
+      rev: ext.rev,
+      trusted: ext.trusted,
+      imported: ext.imported,
+      updatedAt,
+      save,
+    }, secret)
   }
 
-  function syncPlayerPublicState(playerId: string, save: SaveData): void {
+  function syncPlayerPublicState(playerId: string, save: SaveData, trusted: boolean): void {
     const p = core.byId(playerId)
     if (!p) return
-    p.state.badges = save.badges.length
-    p.state.dexCaught = save.dexCaught.length
+    p.state.badges = trusted ? save.badges.length : 0
+    p.state.dexCaught = trusted ? save.dexCaught.length : 0
     const lead = save.party.find((c) => c.hp > 0) ?? null
     p.state.lead = lead ? { speciesId: lead.speciesId, shiny: lead.shiny, level: lead.level } : null
     p.profile = {
       id: p.id,
       name: p.name,
       avatar: p.avatar,
-      badges: [...save.badges],
-      dexCaught: save.dexCaught.length,
+      badges: trusted ? [...save.badges] : [],
+      dexCaught: trusted ? save.dexCaught.length : 0,
       party: save.party.map((c) => toView(c, CONTENT)),
       pvpWins: p.profile.pvpWins,
       pvpLosses: p.profile.pvpLosses,
@@ -410,36 +283,28 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     save: SaveData,
     optsIn: { imported?: boolean; trusted?: boolean; ref?: string; notify?: boolean } = {},
   ): SignedServerSave {
-    const prev = records.get(playerId)
     const now = Date.now()
-    const imported = optsIn.imported ?? prev?.imported ?? false
-    const trusted = optsIn.trusted ?? prev?.trusted ?? !imported
-    const rev = (prev?.rev ?? 0) + 1
-    const cloned = structuredClone(save)
-    const signed = signServerSave({
-      version: cloned.version,
-      accountId: playerId,
-      rev,
-      trusted,
-      imported,
-      updatedAt: now,
-      save: cloned,
-    }, secret)
-    records.set(playerId, signed)
-    indexSaveCreatures(playerId, cloned)
-    dirtySaves = true
-    try {
-      store.putAccountSave?.(playerId, cloned, { imported, trusted, now })
-    } catch {
-      // External store is optional in standalone hub tests.
-    }
-    syncPlayerPublicState(playerId, cloned)
+    const stored = store.putAccountSave(playerId, structuredClone(save), {
+      ...(optsIn.imported !== undefined ? { imported: optsIn.imported } : {}),
+      ...(optsIn.trusted !== undefined ? { trusted: optsIn.trusted } : {}),
+      now,
+    })
+    indexSaveCreatures(playerId, stored.save)
+    syncPlayerPublicState(playerId, stored.save, stored.trusted)
     if (optsIn.notify !== false) {
       const p = core.byId(playerId)
-      if (p) core.send(p, { t: 'state.sync', save: cloned, rev, ...(optsIn.ref ? { reason: optsIn.ref } : {}) })
+      if (p) core.send(p, { t: 'state.sync', save: stored.save, rev: stored.rev, ...(optsIn.ref ? { reason: optsIn.ref } : {}) })
     }
-    schedulePersist()
-    return signed
+    return {
+      version: stored.save.version,
+      accountId: playerId,
+      rev: stored.rev,
+      trusted: stored.trusted,
+      imported: stored.imported,
+      updatedAt: stored.updatedAt,
+      save: stored.save,
+      sig: stored.sig,
+    }
   }
 
   function recordSaveDiffLedger(playerId: string, before: SaveData, after: SaveData, ref: string): void {
@@ -497,7 +362,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
 
   function drainBattle(b: ActiveBattle, initialEvents: BattleEvent[]): { events: BattleEvent[]; request: BattleRequest } {
     const events = [...initialEvents]
-    for (let i = 0; i < BATTLE_UI.channel.maxAutoSteps && !b.engine.finished && b.engine.request(0).kind === 'wait' && b.engine.ready(); i++) {
+    for (let i = 0; i < BATTLE_CHANNEL_MAX_AUTO_STEPS && !b.engine.finished && b.engine.request(0).kind === 'wait' && b.engine.ready(); i++) {
       events.push(...b.engine.step())
     }
     for (const e of events) {
@@ -529,7 +394,10 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     b.done = true
     activeBattles.delete(p.id)
     const rec = getRecord(p.id)
-    const save = rec ? structuredClone(rec.save) : defaultNewSave(p.id, p.state, world, Date.now())
+    if (!rec) {
+      return { t: 'error', code: 'not_ready', message: t('net.error.not_ready') }
+    }
+    const save = structuredClone(rec.save)
     const ref = `battle:${b.id}`
     const result = b.engine.result ?? 'run'
 
@@ -563,6 +431,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       caught = structuredClone(b.engine.caught)
       storeCreatureInSave(save, caught)
       addLedger(p.id, 'creature', caught.uid, 1, save.party.length, ref)
+      if (b.bossId) save.flags[`bossWon:${b.bossId}`] = true
     }
 
     if (result === 'win') {
@@ -573,10 +442,27 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           save.badges.push(b.trainer.badge)
           const badge = world?.badges.find((bd) => bd.id === b.trainer!.badge)
           if (badge) save.flags[`badge:${badge.type}`] = true
+          const cap = bossCardCap(save.badges.length, CONTENT)
+          for (let i = 0; i < save.party.length; i++) {
+            const cr = save.party[i]
+            if (!isBossCard(cr)) continue
+            const r = settleBank(cr, cap, CONTENT)
+            if (r.learnable.length) {
+              let set = b.learnableMoves.get(i)
+              if (!set) { set = new Set(); b.learnableMoves.set(i, set) }
+              for (const m of r.learnable) set.add(m)
+            }
+          }
+          for (const box of save.boxes) {
+            for (const cr of box) {
+              if (isBossCard(cr)) settleBank(cr, cap, CONTENT)
+            }
+          }
+          save.flags['ds:licenseSettled'] = true
         }
       }
       if (b.bossId) {
-        save.flags[`boss_won:${b.bossId}`] = true
+        save.flags[`bossWon:${b.bossId}`] = true
         if (b.tierId) {
           const inst = instanceOfBoss(b.bossId)
           const rules = inst?.def.tiers[b.tierId]
@@ -636,7 +522,11 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
 
   function handleBattleStart(p: Player, msg: Extract<ClientMsg, { t: 'battle.start' }>): void {
     const rec = getRecord(p.id)
-    const save = rec ? structuredClone(rec.save) : defaultNewSave(p.id, p.state, world, Date.now())
+    if (!rec) {
+      core.error(p, 'not_ready')
+      return
+    }
+    const save = structuredClone(rec.save)
     if (!save.party.some((c) => c.hp > 0)) {
       core.error(p, 'invalid_encounter')
       return
@@ -680,10 +570,15 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           return
         }
         const bossDef = CONTENT.bossBySpecies[speciesId]
-        if (bossDef?.scriptedOnly && !msg.scripted) {
-          audit(p.id, 'battle.invalid_encounter', { reason: 'scripted_only_boss', speciesId }, 3, p.ip)
-          core.error(p, 'invalid_encounter')
-          return
+        if (bossDef?.scriptedOnly) {
+          const mapHasBossScript = !world || Boolean(
+            map?.npcs.some((n) => JSON.stringify(n.script ?? []).includes(speciesId!)),
+          )
+          if (!msg.scripted || !mapHasBossScript) {
+            audit(p.id, 'battle.invalid_encounter', { reason: 'scripted_only_boss', speciesId }, 3, p.ip)
+            core.error(p, 'invalid_encounter')
+            return
+          }
         }
         if (region && !msg.scripted && !msg.roamer && region.encounters.length > 0) {
           const inTable = region.encounters.some((s) => s.species === speciesId)
@@ -701,11 +596,22 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         speciesId = CONTENT.speciesList[0]?.id ?? ''
         level = 3
       }
-      const clampedLevel = typeof level === 'number' && Number.isInteger(level) ? level : 3
+      let clampedLevel = typeof level === 'number' && Number.isInteger(level) ? level : 3
       if (clampedLevel < 1 || clampedLevel > CONTENT.config.party.maxLevel) {
         audit(p.id, 'battle.invalid_encounter', { reason: 'level_out_of_bounds', level }, 3, p.ip)
         core.error(p, 'invalid_encounter')
         return
+      }
+      if (world && region && region.encounters.length > 0 && !msg.scripted && !msg.roamer) {
+        const slots = region.encounters.filter((s) => s.species === speciesId)
+        if (slots.length > 0) {
+          const minLv = Math.min(...slots.map((s) => Math.min(s.minLevel, s.maxLevel)))
+          const maxLv = Math.max(...slots.map((s) => Math.max(s.minLevel, s.maxLevel)))
+          clampedLevel = Math.max(minLv, Math.min(maxLv, clampedLevel))
+        }
+      } else if (world && (msg.scripted || msg.roamer)) {
+        const maxAllowed = Math.min(CONTENT.config.party.maxLevel, Math.max(25, save.badges.length * 10 + 20))
+        clampedLevel = Math.min(clampedLevel, maxAllowed)
       }
       const foe = createCreature(speciesId, clampedLevel, {
         rng,
@@ -725,7 +631,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         mods.levelCapByParty = card.levelCapByParty
         mods.expCapByParty = card.expCapByParty
       }
-      if (typeof msg.catchRateMul === 'number' && msg.catchRateMul > 0 && msg.catchRateMul <= 10) {
+      if (typeof msg.catchRateMul === 'number' && msg.catchRateMul > 0 && msg.catchRateMul <= 5 && (msg.scripted || clampedLevel <= 15)) {
         mods.catchRate = msg.catchRateMul
       }
       init = {
@@ -821,6 +727,24 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       bossId = bId
       tierId = tId
       const prog = progressOf(save, inst.id)
+      const unlock = (rules as { unlock?: { tier?: string; badges?: number; flag?: string } }).unlock
+      if (unlock) {
+        if (unlock.tier && (prog.clears[unlock.tier] ?? 0) <= 0) {
+          audit(p.id, 'battle.locked_boss_tier', { bossId: bId, tierId: tId, needTier: unlock.tier }, 2, p.ip)
+          core.error(p, 'invalid_encounter')
+          return
+        }
+        if (typeof unlock.badges === 'number' && save.badges.length < unlock.badges) {
+          audit(p.id, 'battle.locked_boss_tier', { bossId: bId, tierId: tId, needBadges: unlock.badges }, 2, p.ip)
+          core.error(p, 'invalid_encounter')
+          return
+        }
+        if (unlock.flag && !save.flags[unlock.flag]) {
+          audit(p.id, 'battle.locked_boss_tier', { bossId: bId, tierId: tId, needFlag: unlock.flag }, 2, p.ip)
+          core.error(p, 'invalid_encounter')
+          return
+        }
+      }
       firstClear = (prog.clears[tId] ?? 0) === 0
       save.rollSeed ??= hashString(save.playerId) >>> 0
       prog.runSeq += 1
@@ -844,7 +768,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         ...(msg.assist || (msg.assist === undefined && save.flags[GAMEPLAY.instanceDefaults.assistFlag]) ? { assist: true } : {}),
         ...(msg.coach ? { coach: true, skipBrief: !!save.flags['ds:skipBrief'], items: baitItems } : {}),
       })
-      if (captureAfterWin && firstClear) init.captureAfterWin = true
+      if (captureAfterWin && (firstClear || rules.repeat.capture)) init.captureAfterWin = true
       const card = partyExpMods(workingParty, save.badges.length, CONTENT)
       const mods: BattleModifiers = {}
       if (card.expByParty.some((v) => v !== 1)) mods.expByParty = card.expByParty
@@ -999,7 +923,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     const save = structuredClone(rec.save)
     const ballId = typeof msg.ballId === 'string' && CONTENT.items[msg.ballId]?.effect.kind === 'ball'
       ? msg.ballId
-      : BATTLE_UI.contract.defaultBall
+      : BATTLE_CONTRACT_DEFAULT_BALL
     const heldBalls = Object.entries(save.bag).filter(([id, n]) => n > 0 && CONTENT.items[id]?.effect.kind === 'ball')
     if (heldBalls.length > 0 && (save.bag[ballId] ?? 0) <= 0) {
       audit(p.id, 'battle.contract_ball_not_owned', { battleId: msg.battleId, ballId }, 2, p.ip)
@@ -1036,7 +960,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       filed = 'box'
     }
     prog.captures[msg.tierId] = (prog.captures[msg.tierId] ?? 0) + 1
-    if (BATTLE_UI.contract.consumeBall && (save.bag[ballId] ?? 0) > 0) {
+    if (BATTLE_CONTRACT_CONSUME_BALL && (save.bag[ballId] ?? 0) > 0) {
       if (save.bag[ballId] > 1) save.bag[ballId] -= 1
       else delete save.bag[ballId]
       addLedger(p.id, 'item', ballId, -1, save.bag[ballId] ?? 0, `contract:${msg.battleId}`)
@@ -1064,7 +988,11 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       core.error(p, 'shop_invalid')
       return
     }
-    const mul = typeof msg.priceMul === 'number' && isFiniteNumber(msg.priceMul) && msg.priceMul >= 0.5 && msg.priceMul <= 2 ? msg.priceMul : 1
+    const active = activeEvents(rec.save.events ?? {}, rec.save.clockMinutes)
+    const evMods = eventModifiers(active, { map: p.state.map, x: p.state.x, y: p.state.y }, rec.save.clockMinutes)
+    const serverMul = modifierValue(evMods, 'shopPrice', { category: item.category })
+    const reqMul = typeof msg.priceMul === 'number' && isFiniteNumber(msg.priceMul) && msg.priceMul >= 0.5 && msg.priceMul <= 2 ? msg.priceMul : 1
+    const mul = reqMul < 1 ? Math.max(reqMul, serverMul) : reqMul
     const unitPrice = shopBuyPrice(item, mul)
     const total = unitPrice * qty
     if (rec.save.money < total) {
@@ -1209,13 +1137,33 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     commitSave(p.id, save, { ref })
   }
 
+  function learnsetMovesAtOrBelow(speciesId: string, level: number): Set<string> {
+    const out = new Set<string>()
+    const seen = new Set<string>()
+    let sp: SpeciesDef | undefined = CONTENT.species[speciesId]
+    while (sp && !seen.has(sp.id)) {
+      seen.add(sp.id)
+      for (const e of sp.learnset) {
+        if (e.level <= level) out.add(e.move)
+      }
+      sp = sp.evolvesFrom ? CONTENT.species[sp.evolvesFrom] : undefined
+    }
+    return out
+  }
+
   function handleCreatureEvolve(p: Player, msg: Extract<ClientMsg, { t: 'creature.evolve' }>): void {
     const rec = getRecord(p.id)
     if (!rec) { core.error(p, 'not_ready'); return }
     const idx = typeof msg.partyIndex === 'number' && Number.isInteger(msg.partyIndex) ? msg.partyIndex : -1
     const cr = rec.save.party[idx]
     const target = typeof msg.toSpeciesId === 'string' ? msg.toSpeciesId : ''
-    if (!cr || !CONTENT.species[target] || evolutionTarget(cr, CONTENT) !== target) {
+    if (!cr || !CONTENT.species[target]) {
+      audit(p.id, 'creature.invalid_evolve', { partyIndex: msg.partyIndex, toSpeciesId: msg.toSpeciesId }, 2, p.ip)
+      core.error(p, 'authority_violation')
+      return
+    }
+    if (cr.speciesId === target) return
+    if (evolutionTarget(cr, CONTENT) !== target) {
       audit(p.id, 'creature.invalid_evolve', { partyIndex: msg.partyIndex, toSpeciesId: msg.toSpeciesId }, 2, p.ip)
       core.error(p, 'authority_violation')
       return
@@ -1231,24 +1179,31 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     const rec = getRecord(p.id)
     if (!rec) { core.error(p, 'not_ready'); return }
     const idx = typeof msg.partyIndex === 'number' && Number.isInteger(msg.partyIndex) ? msg.partyIndex : -1
-    const cr = rec.save.party[idx]
     const moveId = typeof msg.moveId === 'string' ? msg.moveId : ''
     const mv = CONTENT.moves[moveId]
-    if (!cr || !mv || !legalMoves(cr.speciesId, cr.level, CONTENT).has(moveId)) {
+    const active = activeBattles.get(p.id)
+    const battleCr = active?.workingParty[idx]
+    const saveCr = rec.save.party[idx]
+    const cr = battleCr ?? saveCr
+    const allowedInBattle = Boolean(active?.learnableMoves.get(idx)?.has(moveId))
+    const allowedByLearnset = Boolean(cr && learnsetMovesAtOrBelow(cr.speciesId, cr.level).has(moveId))
+    if (!cr || !mv || (!allowedInBattle && !allowedByLearnset)) {
       audit(p.id, 'creature.invalid_learn_move', { partyIndex: msg.partyIndex, moveId }, 2, p.ip)
       core.error(p, 'authority_violation')
       return
     }
-    const save = structuredClone(rec.save)
-    const targetCr = save.party[idx]
-    if (!targetCr.moves.some((m) => m.id === moveId)) {
+    const applySlot = (targetCr: Creature) => {
+      if (targetCr.moves.some((m) => m.id === moveId)) return
       const slot = { id: moveId, pp: mv.pp, ppMax: mv.pp }
       if (targetCr.moves.length < CONTENT.config.party.maxMoves) targetCr.moves.push(slot)
       else if (typeof msg.replaceIndex === 'number' && msg.replaceIndex >= 0 && msg.replaceIndex < targetCr.moves.length) {
         targetCr.moves[msg.replaceIndex] = slot
       }
     }
-    commitSave(p.id, save, { ref: `learnMove:${cr.uid}:${moveId}` })
+    if (battleCr) applySlot(battleCr)
+    const save = structuredClone(rec.save)
+    if (save.party[idx]) applySlot(save.party[idx])
+    commitSave(p.id, save, { ref: `learnMove:${cr.uid}:${moveId}`, notify: !active })
   }
 
   function handleCreatureNickname(p: Player, msg: Extract<ClientMsg, { t: 'creature.nickname' }>): void {
@@ -1293,7 +1248,8 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
 
   function handleScriptOp(p: Player, msg: Extract<ClientMsg, { t: 'script.op' }>): void {
     const rec = getRecord(p.id)
-    const save = rec ? structuredClone(rec.save) : defaultNewSave(p.id, p.state, world, Date.now())
+    if (!rec) { core.error(p, 'not_ready'); return }
+    const save = structuredClone(rec.save)
     switch (msg.op) {
       case 'chooseStarter': {
         if (save.party.length > 0 || save.flags[STORY_CONTENT.meta.flags.starter]) {
@@ -1306,17 +1262,35 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           ? msg.speciesId
           : (options[0]?.id ?? '')
         if (!chosen) return
-        const seed = hashString(`${p.id}:starter:${chosen}`) >>> 0
         const ballId = CONTENT.itemList.find((it) => it.effect.kind === 'ball')?.id
-        const cr = createCreature(chosen, CONTENT.config.creature.starterLevel, {
-          rng: new Rng(seed || 1),
-          otName: save.name,
-          otId: save.playerId,
-          ...(ballId ? { ballId } : {}),
-          caughtMap: p.state.map,
-          gradeFloor: CONTENT.quality.giftGradeFloor,
-          origin: { kind: 'starter' },
-        }, CONTENT)
+        const clientStarter = msg.creature ? sanitizeCreature(msg.creature, CONTENT) : null
+        let cr: Creature
+        if (
+          clientStarter &&
+          clientStarter.speciesId === chosen &&
+          clientStarter.level === CONTENT.config.creature.starterLevel
+        ) {
+          cr = {
+            ...clientStarter,
+            otName: save.name,
+            otId: save.playerId,
+            ballId: ballId ?? clientStarter.ballId,
+            caughtMap: p.state.map,
+            origin: { kind: 'starter' },
+          }
+          cr.hp = maxHp(cr, CONTENT)
+        } else {
+          const seed = hashString(`${p.id}:starter:${chosen}`) >>> 0
+          cr = createCreature(chosen, CONTENT.config.creature.starterLevel, {
+            rng: new Rng(seed || 1),
+            otName: save.name,
+            otId: save.playerId,
+            ...(ballId ? { ballId } : {}),
+            caughtMap: p.state.map,
+            gradeFloor: CONTENT.quality.giftGradeFloor,
+            origin: { kind: 'starter' },
+          }, CONTENT)
+        }
         storeCreatureInSave(save, cr)
         save.flags[STORY_CONTENT.meta.flags.starter] = chosen
         addLedger(p.id, 'creature', cr.uid, 1, save.party.length, `script:starter:${chosen}`)
@@ -1355,10 +1329,25 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           audit(p.id, 'script.duplicate_pickup', { groundId }, 2, p.ip)
           return
         }
-        const map = world ? getMap(world, p.state.map) : null
-        const ground = map?.items.find((it) => it.id === groundId)
-        const itemId = ground ? ground.item : (typeof msg.itemId === 'string' ? msg.itemId : '')
-        const qty = ground ? ground.qty : (typeof msg.qty === 'number' && msg.qty > 0 && msg.qty <= 5 ? Math.floor(msg.qty) : 1)
+        let itemId = ''
+        let qty = 1
+        if (world) {
+          const map = getMap(world, p.state.map)
+          const nearItems = map
+            ? objectsInRect(map, Math.floor(p.state.x) - 6, Math.floor(p.state.y) - 6, Math.floor(p.state.x) + 7, Math.floor(p.state.y) + 7).items
+            : []
+          const ground = nearItems.find((it) => it.id === groundId) ?? map?.items.find((it) => it.id === groundId)
+          if (!ground) {
+            audit(p.id, 'script.invalid_pickup', { groundId, map: p.state.map, x: p.state.x, y: p.state.y }, 3, p.ip)
+            core.error(p, 'authority_violation')
+            return
+          }
+          itemId = ground.item
+          qty = ground.qty
+        } else {
+          itemId = typeof msg.itemId === 'string' ? msg.itemId : ''
+          qty = typeof msg.qty === 'number' && msg.qty > 0 && msg.qty <= 5 ? Math.floor(msg.qty) : 1
+        }
         const itemDef = CONTENT.items[itemId]
         if (!itemDef || (itemDef.effect.kind === 'ball' && itemDef.effect.bonus === 'master')) {
           audit(p.id, 'script.invalid_pickup', { groundId, itemId, qty }, 3, p.ip)
@@ -1369,6 +1358,134 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         save.bag[itemId] = (save.bag[itemId] ?? 0) + qty
         addLedger(p.id, 'item', itemId, qty, save.bag[itemId], `script:pickup:${groundId}`)
         commitSave(p.id, save, { ref: `script:pickup:${groundId}` })
+        return
+      }
+      case 'giveItem': {
+        const itemId = typeof msg.itemId === 'string' ? msg.itemId : ''
+        const qty = typeof msg.qty === 'number' && Number.isInteger(msg.qty) && msg.qty > 0 && msg.qty <= 20 ? msg.qty : 0
+        const itemDef = CONTENT.items[itemId]
+        if (!itemDef || qty <= 0 || (itemDef.effect.kind === 'ball' && itemDef.effect.bonus === 'master')) {
+          audit(p.id, 'script.invalid_give_item', { itemId, qty }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
+        save.bag[itemId] = (save.bag[itemId] ?? 0) + qty
+        addLedger(p.id, 'item', itemId, qty, save.bag[itemId], `script:giveItem:${itemId}`)
+        commitSave(p.id, save, { ref: `script:giveItem:${itemId}` })
+        return
+      }
+      case 'takeItem': {
+        const itemId = typeof msg.itemId === 'string' ? msg.itemId : ''
+        const qty = typeof msg.qty === 'number' && Number.isInteger(msg.qty) && msg.qty > 0 ? msg.qty : 0
+        const have = save.bag[itemId] ?? 0
+        const n = Math.min(have, qty)
+        if (n <= 0) return
+        if (have - n > 0) save.bag[itemId] = have - n
+        else delete save.bag[itemId]
+        addLedger(p.id, 'item', itemId, -n, save.bag[itemId] ?? 0, `script:takeItem:${itemId}`)
+        commitSave(p.id, save, { ref: `script:takeItem:${itemId}` })
+        return
+      }
+      case 'giveMoney': {
+        const amount = typeof msg.amount === 'number' && Number.isInteger(msg.amount) && msg.amount > 0 && msg.amount <= 50_000 ? msg.amount : 0
+        if (amount <= 0) return
+        save.money += amount
+        addLedger(p.id, 'money', 'script', amount, save.money, 'script:giveMoney')
+        commitSave(p.id, save, { ref: 'script:giveMoney' })
+        return
+      }
+      case 'takeMoney': {
+        const amount = typeof msg.amount === 'number' && Number.isInteger(msg.amount) && msg.amount > 0 ? msg.amount : 0
+        if (amount <= 0 || save.money < amount) return
+        save.money -= amount
+        addLedger(p.id, 'money', 'script', -amount, save.money, 'script:takeMoney')
+        commitSave(p.id, save, { ref: 'script:takeMoney' })
+        return
+      }
+      case 'giveCreature': {
+        const speciesId = typeof msg.speciesId === 'string' ? msg.speciesId : ''
+        const level = typeof msg.level === 'number' && Number.isInteger(msg.level) ? Math.max(1, Math.min(35, msg.level)) : 5
+        if (!CONTENT.species[speciesId]) return
+        const ballId = CONTENT.itemList.find((it) => it.effect.kind === 'ball')?.id
+        const clientCr = msg.creature ? sanitizeCreature(msg.creature, CONTENT) : null
+        let cr: Creature
+        if (clientCr && clientCr.speciesId === speciesId && clientCr.level === level) {
+          cr = {
+            ...clientCr,
+            otName: save.name,
+            otId: save.playerId,
+            ballId: ballId ?? clientCr.ballId,
+            caughtMap: p.state.map,
+            origin: { kind: 'gift' },
+          }
+          cr.hp = maxHp(cr, CONTENT)
+        } else {
+          const seed = hashString(`${p.id}:gift:${speciesId}:${save.party.length}`) >>> 0
+          cr = createCreature(speciesId, level, {
+            rng: new Rng(seed || 1),
+            shiny: msg.shiny === true,
+            otName: save.name,
+            otId: save.playerId,
+            ...(ballId ? { ballId } : {}),
+            caughtMap: p.state.map,
+            gradeFloor: msg.gradeFloor ?? CONTENT.quality.giftGradeFloor,
+            origin: { kind: 'gift' },
+            ...(msg.nature ? { nature: msg.nature } : {}),
+            ...(msg.moves?.length ? { moves: msg.moves } : {}),
+          }, CONTENT)
+          if (msg.ability && CONTENT.abilities[msg.ability]) cr.abilityId = msg.ability
+        }
+        storeCreatureInSave(save, cr)
+        addLedger(p.id, 'creature', cr.uid, 1, save.party.length, `script:gift:${speciesId}`)
+        commitSave(p.id, save, { ref: `script:gift:${speciesId}` })
+        return
+      }
+      case 'setRespawn': {
+        const mapId = typeof msg.map === 'string' && msg.map ? msg.map : p.state.map
+        const rx = typeof msg.x === 'number' && Number.isFinite(msg.x) ? Math.floor(msg.x) : Math.floor(p.state.x)
+        const ry = typeof msg.y === 'number' && Number.isFinite(msg.y) ? Math.floor(msg.y) : Math.floor(p.state.y)
+        const facing = msg.facing && ['up', 'down', 'left', 'right'].includes(msg.facing) ? msg.facing : p.state.facing
+        save.respawn = { map: mapId, x: rx, y: ry, facing }
+        commitSave(p.id, save, { ref: 'script:respawn', notify: false })
+        return
+      }
+      case 'unlockTown': {
+        const townId = typeof msg.townId === 'string' ? msg.townId : ''
+        if (!townId || (world && !world.towns.some((tw) => tw.id === townId))) return
+        if (!save.visitedTowns.includes(townId)) {
+          save.visitedTowns.push(townId)
+          commitSave(p.id, save, { ref: `script:unlockTown:${townId}`, notify: false })
+        }
+        return
+      }
+      case 'teach': {
+        const flag = typeof msg.flag === 'string' && msg.flag && !msg.flag.startsWith('auth:')
+          ? msg.flag
+          : (typeof msg.lesson === 'string' && msg.lesson ? `tutorial:lesson:${msg.lesson}` : '')
+        if (!flag) return
+        save.flags[flag] = true
+        commitSave(p.id, save, { ref: `script:teach:${flag}`, notify: false })
+        return
+      }
+      case 'research': {
+        const spId = typeof msg.speciesId === 'string' ? msg.speciesId : ''
+        const task = typeof msg.task === 'string' ? msg.task : ''
+        const amount = typeof msg.amount === 'number' && Number.isFinite(msg.amount) && msg.amount > 0 ? Math.min(20, Math.floor(msg.amount)) : 1
+        if (!CONTENT.species[spId] || !task) return
+        const r = addTaskProgress(save.research ?? {}, spId, task, amount)
+        if (r.gains.length) {
+          save.research = r.state
+          commitSave(p.id, save, { ref: `script:research:${spId}:${task}`, notify: false })
+        }
+        return
+      }
+      case 'settleBossCards': {
+        const cap = bossCardCap(save.badges.length, CONTENT)
+        for (const cr of [...save.party, ...save.boxes.flat()]) {
+          if (isBossCard(cr)) settleBank(cr, cap, CONTENT)
+        }
+        save.flags['ds:licenseSettled'] = true
+        commitSave(p.id, save, { ref: 'script:settleBossCards', notify: false })
         return
       }
       case 'setFlag': {
@@ -1382,12 +1499,16 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       }
       case 'quest': {
         const qId = typeof msg.questId === 'string' ? msg.questId : ''
-        const def = world?.quests.find((q) => q.id === qId)
+        const def = world ? (world.quests.find((q) => q.id === qId) ?? frontierQuest(world, qId)) : null
         if (!def) return
         const prev = save.quests[qId]
         const stage = typeof msg.stage === 'number' && Number.isInteger(msg.stage) ? Math.max(0, Math.min(msg.stage, Math.max(0, def.stages.length - 1))) : 0
         const done = msg.done === true
         if (prev && (prev.done || stage < prev.stage)) return
+        if (done && def.stages.length > 2 && !prev) {
+          audit(p.id, 'script.quest_skip_rejected', { questId: qId, stage, totalStages: def.stages.length }, 2, p.ip)
+          return
+        }
         const justFinished = done && !prev?.done
         save.quests[qId] = { stage, done }
         if (justFinished && def.reward) {
@@ -1415,58 +1536,16 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       if (!opts.secret) {
         secret = await loadOrCreateSaveSecret(opts.dataDir)
       }
-      try {
-        const rawAudit = JSON.parse(await readFile(auditFile, 'utf8')) as { audits?: AuditRecord[] }
-        if (Array.isArray(rawAudit.audits)) {
-          audits.push(...rawAudit.audits)
-          nextAuditId = audits.reduce((m, a) => Math.max(m, a.id), 0) + 1
-        }
-      } catch {
-        // Fresh audit file.
-      }
-      try {
-        const rawLedger = JSON.parse(await readFile(ledgerFile, 'utf8')) as { ledgers?: LedgerRecord[] }
-        if (Array.isArray(rawLedger.ledgers)) {
-          ledgers.push(...rawLedger.ledgers)
-          nextLedgerId = ledgers.reduce((m, l) => Math.max(m, l.id), 0) + 1
-        }
-      } catch {
-        // Fresh ledger file.
-      }
-      let rawSavesText: string | null = null
-      try {
-        rawSavesText = await readFile(savesFile, 'utf8')
-      } catch {
-        return
-      }
-      try {
-        const parsed = JSON.parse(rawSavesText) as { saves?: Record<string, unknown> }
-        for (const [accountId, rawRec] of Object.entries(parsed.saves ?? {})) {
-          const check = verifyServerSave(rawRec, secret)
-          if (!check.ok || check.record.accountId !== accountId) {
-            audit(accountId, 'save.tamper_detected', { reason: check.ok ? 'account_id_mismatch' : check.reason }, 3)
-            log(`rejected tampered server save for ${accountId}: ${check.ok ? 'account_id_mismatch' : check.reason}`)
-            continue
-          }
-          records.set(accountId, check.record)
-          indexSaveCreatures(accountId, check.record.save)
-        }
-      } catch (err) {
-        audit(null, 'save.corrupt_store', { error: (err as Error).message }, 3)
-      }
     },
 
     async flush() {
-      if (persistTimer) { clearTimeout(persistTimer); persistTimer = null }
-      await flushNow()
+      await store.flush()
     },
 
     async close() {
-      closed = true
-      if (persistTimer) { clearTimeout(persistTimer); persistTimer = null }
       activeBattles.clear()
       pendingContracts.clear()
-      await flushNow()
+      await store.flush()
     },
 
     hasSave(playerId) {
@@ -1488,12 +1567,6 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       return !!rec && (rec.imported || !rec.trusted || !!rec.save.flags['auth:untrustedImport'])
     },
 
-    ensurePlayerSave(playerId, init) {
-      const existing = getRecord(playerId)
-      if (existing) return existing
-      const created = defaultNewSave(playerId, init, world, Date.now())
-      return commitSave(playerId, created, { imported: false, trusted: true, ref: 'init', notify: false })
-    },
 
     setSave(playerId, save, optsIn = {}) {
       return commitSave(playerId, save, { ...optsIn, notify: false })
@@ -1552,11 +1625,11 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     audit,
 
     listAudit(accountId) {
-      return accountId ? audits.filter((a) => a.accountId === accountId) : [...audits]
+      return store.listAudit(accountId, 500)
     },
 
     listLedger(accountId) {
-      return accountId ? ledgers.filter((l) => l.accountId === accountId) : [...ledgers]
+      return store.listLedger(accountId, 500)
     },
 
     noteStep(playerId) {
@@ -1694,6 +1767,10 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       }
       const rec = getRecord(playerId)
       if (!rec) return undefined
+      if (rec.imported || !rec.trusted || rec.save.flags['auth:untrustedImport']) {
+        audit(playerId, 'pvp.untrusted_party', {}, 2, ip)
+        return null
+      }
       if (rawParty.length < 1 || rawParty.length > CONTENT.config.party.maxParty) {
         audit(playerId, 'pvp.party_tamper', { reason: 'invalid_party_length', length: rawParty.length }, 2, ip)
         return null
@@ -1713,6 +1790,10 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         const owned = rec.save.party.find((c) => c.uid === rawCr.uid)
         if (!owned) {
           audit(playerId, 'pvp.party_tamper', { reason: 'uid_not_in_party', uid: rawCr.uid }, 3, ip)
+          return null
+        }
+        if (owned.origin?.kind === 'legacy') {
+          audit(playerId, 'pvp.untrusted_party', { reason: 'legacy_creature', uid: rawCr.uid }, 2, ip)
           return null
         }
         if (

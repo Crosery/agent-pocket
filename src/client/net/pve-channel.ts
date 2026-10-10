@@ -166,9 +166,8 @@ export async function runOnlineBattle(
   const started = await requestOnlineBattleStart(ctx.net, req)
   if (!started) return null
 
-  let finalSave: SaveData | null = null
   const channel = createPveChannel(ctx.net, started, (end) => {
-    finalSave = end.save
+    applyAuthoritativeSave(ctx, end.save)
   })
 
   let outcome: BattleOutcome
@@ -176,10 +175,6 @@ export async function runOnlineBattle(
     outcome = await ctx.battle.run(started.init, { ...runOpts, channel: channel as unknown as typeof runOpts.channel })
   } finally {
     channel.dispose()
-  }
-
-  if (finalSave) {
-    applyAuthoritativeSave(ctx, finalSave)
   }
 
   return outcome
@@ -192,19 +187,19 @@ export async function signOnlineContract(
   tierId: string,
   ballId: string,
   timeoutMs = 5000,
-): Promise<boolean> {
-  if (ctx.net.status !== 'online') return false
-  const { promise, resolve } = promiseResolvers<boolean>()
+): Promise<Extract<ServerMsg, { t: 'battle.contracted' }>['signed']> {
+  if (ctx.net.status !== 'online') return null
+  const { promise, resolve } = promiseResolvers<Extract<ServerMsg, { t: 'battle.contracted' }>['signed']>()
   let timer: ReturnType<typeof setTimeout> | null = null
   const offErr = ctx.net.on('error', () => {
     cleanup()
-    resolve(false)
+    resolve(null)
   })
   const offContract = ctx.net.on('battle.contracted', (m) => {
     if (m.battleId !== battleId) return
     cleanup()
     applyAuthoritativeSave(ctx, m.save)
-    resolve(true)
+    resolve(m.signed)
   })
   const cleanup = () => {
     clearTimeout(timer ?? undefined)
@@ -213,17 +208,48 @@ export async function signOnlineContract(
   }
   timer = setTimeout(() => {
     cleanup()
-    resolve(false)
+    resolve(null)
   }, timeoutMs)
   ctx.net.send({ t: 'battle.contract', battleId, bossId, tierId, ballId })
   return promise
 }
 
-export function applyAuthoritativeSave(ctx: GameContext, serverSave: SaveData): void {
-  const localSettings = structuredClone(ctx.save.settings)
-  ctx.save = {
-    ...structuredClone(serverSave),
-    settings: localSettings,
+export function applyAuthoritativeSave(ctx: GameContext, serverSave: SaveData, opts?: { initial?: boolean }): void {
+  const prev = ctx.save
+  const prevBadges = [...prev.badges]
+  const next = structuredClone(serverSave)
+  next.settings = structuredClone(prev.settings)
+  if (!opts?.initial) {
+    next.position = structuredClone(prev.position)
+    next.clockMinutes = prev.clockMinutes
+    next.playTimeSec = Math.max(prev.playTimeSec, next.playTimeSec)
+    next.repelSteps = prev.repelSteps
+    if (prev.explored) {
+      next.explored = prev.explored
+    }
+    if (prev.exploredChunks && Object.keys(prev.exploredChunks).length >= Object.keys(next.exploredChunks ?? {}).length) {
+      next.exploredChunks = structuredClone(prev.exploredChunks)
+    }
+    for (const p of prev.discoveredPlaces ?? []) {
+      next.discoveredPlaces ??= []
+      if (!next.discoveredPlaces.includes(p)) next.discoveredPlaces.push(p)
+    }
+    for (const tw of prev.visitedTowns) {
+      if (!next.visitedTowns.includes(tw)) next.visitedTowns.push(tw)
+    }
+    if (prev.anchors) {
+      next.anchors ??= { unlocked: [], seen: [] }
+      for (const a of prev.anchors.unlocked) {
+        if (!next.anchors.unlocked.includes(a)) next.anchors.unlocked.push(a)
+      }
+      for (const a of prev.anchors.seen) {
+        if (!next.anchors.seen.includes(a)) next.anchors.seen.push(a)
+      }
+    }
+  }
+  ctx.save = next
+  for (const b of next.badges) {
+    if (!prevBadges.includes(b)) ctx.events.emit('badge:earned', { badgeId: b })
   }
   ctx.events.emit('party:changed', {})
   ctx.events.emit('bag:changed', {})

@@ -5,7 +5,7 @@ import type { IncomingMessage } from 'node:http'
 import { promisify } from 'node:util'
 import type { Creature, SaveData, World } from '../shared/types.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
-import { sanitizeCreature } from '../shared/creature.ts'
+import { expForLevel, maxHp, sanitizeCreature } from '../shared/creature.ts'
 import { migrateSave } from '../client/core/save-migrate.ts'
 import { sanitizeSaveData, type SanitizeContext } from '../client/core/save-sanitize.ts'
 import { MODERATION, NET, type Rate } from './config.ts'
@@ -25,7 +25,7 @@ export interface SessionInfo {
   token: string
   accountId: string
   username: string
-  /** Per-session 32-byte hex secret used by #22 for signed WebSocket envelopes. */
+  /** Per-session 32-byte hex secret stored with the session row. */
   sessionSecret: string
   createdAt: number
   expiresAt: number
@@ -38,6 +38,7 @@ export interface StoredAccountSave {
   trusted: boolean
   rev: number
   updatedAt: number
+  sig: string
 }
 
 export interface AuditEntryInput {
@@ -59,6 +60,26 @@ export interface AuditRecord {
   detail: Record<string, unknown>
 }
 
+export interface LedgerEntryInput {
+  accountId: string
+  kind: 'money' | 'item' | 'exp' | 'creature'
+  subject: string
+  delta: number
+  balance: number
+  ref: string
+  at?: number
+}
+
+export interface LedgerRecord {
+  id: number
+  accountId: string
+  at: number
+  kind: 'money' | 'item' | 'exp' | 'creature'
+  subject: string
+  delta: number
+  balance: number
+  ref: string
+}
 export type AuthResult =
   | { ok: true; account: { id: string; username: string }; session: SessionInfo; save: SaveData | null; imported?: boolean }
   | { ok: false; status: number; code: string; message: string }
@@ -76,8 +97,8 @@ export interface AccountStore {
   verifySession(cookieHeaderOrToken: string | undefined | null, now?: number): SessionInfo | null
   getAccount(accountId: string): AccountInfo | null
   getSave(accountId: string): SaveData | null
-  /** Detailed save record including imported/trusted/rev metadata. */
-  getAccountSave(accountId: string): { save: SaveData | null; imported: boolean; trusted: boolean; rev: number } | null
+  /** Detailed save record including imported/trusted/rev/updatedAt/sig metadata. */
+  getAccountSave(accountId: string): { save: SaveData | null; imported: boolean; trusted: boolean; rev: number; updatedAt?: number; sig?: string } | null
   /** Internal server-only authoritative save update (never exposed as raw client overwrite). */
   putSave(accountId: string, save: SaveData, opts?: { imported?: boolean; trusted?: boolean; now?: number }): StoredAccountSave
   /** Alias for putSave (#22 Authority compatibility). */
@@ -88,6 +109,8 @@ export interface AccountStore {
   /** Alias for audit (#22 Authority compatibility). */
   recordAudit(entry: AuditEntryInput): void
   listAudit(accountId?: string, limit?: number): AuditRecord[]
+  recordLedger(entry: LedgerEntryInput): void
+  listLedger(accountId?: string, limit?: number): LedgerRecord[]
 }
 
 const INVISIBLE_OR_CONTROL_RE = /[\p{Cc}\p{Cf}\p{Co}\p{Cs}]/u
@@ -318,6 +341,8 @@ export function createKeyedRateLimiter(rate: Rate, maxBuckets: number = NET.auth
   }
 }
 
+const IMPORT_ITEM_STACK_CAP = 10
+const IMPORT_BASE_LEVEL_CAP = 20
 /** True when a candidate save carries pre-existing progression that cannot come from a brand-new character. */
 function hasPreExistingProgression(save: SaveData, rawSave: unknown): boolean {
   if (save.party.length > 0) return true
@@ -327,22 +352,38 @@ function hasPreExistingProgression(save: SaveData, rawSave: unknown): boolean {
   if (save.money > CONTENT.config.economy.startMoney) return true
   if ((save.maxDistance ?? 0) > 0) return true
   if (save.stats.battlesWon > 0 || save.stats.caught > 0 || save.stats.pvpWins > 0 || save.stats.trades > 0) return true
+  if (Object.keys(save.quests).length > 0) return true
+  if (Object.keys(save.instances ?? {}).length > 0) return true
+  const startItems = CONTENT.config.economy.startItems
+  for (const [id, qty] of Object.entries(save.bag)) {
+    if (qty > (startItems[id] ?? 0)) return true
+  }
   if (isRecord(rawSave) && ('devTaint' in rawSave || rawSave.origin === 'offline' || rawSave.origin === 'imported')) return true
   return false
 }
 
-function markCreatureLegacy(cr: Creature): void {
+function clampAndMarkCreatureLegacy(cr: Creature, levelCap: number, now: number): void {
   const originBoss = isRecord(cr.origin) && typeof cr.origin.boss === 'string' ? cr.origin.boss : undefined
   const boss = originBoss ?? CONTENT.bossBySpecies[cr.speciesId]?.id
-  cr.origin = { kind: 'legacy', ...(boss ? { boss } : {}) }
+  if (cr.level > levelCap) {
+    cr.level = levelCap
+    const sp = CONTENT.species[cr.speciesId]
+    const growth = sp?.growth ?? Object.keys(CONTENT.config.growth)[0]
+    cr.exp = expForLevel(growth, levelCap, CONTENT)
+    cr.hp = Math.min(cr.hp, maxHp(cr, CONTENT))
+  }
+  if (cr.heldItem && !CONTENT.items[cr.heldItem]?.buyable) {
+    delete cr.heldItem
+  }
+  cr.origin = { kind: 'legacy', at: now, ...(boss ? { boss } : {}) }
 }
 
 /**
  * Sanitize and prepare a SaveData for server storage.
  * - Forces `save.playerId = accountId` (never trusts client-supplied id).
  * - When `forBind` is true: strips authoritative online stats (`pvpWins`, `pvpLosses`, `trades`, `maxDistance`),
- *   and if `imported` is true (or pre-existing progression is detected), marks creatures as `legacy` and sets
- *   `imported = true, trusted = false`.
+ *   and if `imported` is true (or pre-existing progression is detected), caps money/bag stacks, strips unbuyable items,
+ *   clamps creature levels, marks creatures as `legacy`, and sets `imported = true, trusted = false`.
  */
 export function prepareAccountSave(
   rawSave: unknown,
@@ -386,8 +427,23 @@ export function prepareAccountSave(
     save.stats.trades = 0
     delete save.maxDistance
     if (imported) {
-      for (const cr of save.party) markCreatureLegacy(cr)
-      for (const box of save.boxes) for (const cr of box) markCreatureLegacy(cr)
+      const maxStartMoney = CONTENT.config.economy.startMoney
+      if (save.money > maxStartMoney) save.money = maxStartMoney
+      const startItems = CONTENT.config.economy.startItems
+      for (const [itemId, qty] of Object.entries(save.bag)) {
+        const def = CONTENT.items[itemId]
+        const allowedStart = startItems[itemId] ?? 0
+        if (!def || (!def.buyable && allowedStart <= 0)) {
+          delete save.bag[itemId]
+          continue
+        }
+        const cap = Math.max(IMPORT_ITEM_STACK_CAP, allowedStart)
+        if (qty > cap) save.bag[itemId] = cap
+      }
+      const levelCap = Math.min(CONTENT.config.party.maxLevel, IMPORT_BASE_LEVEL_CAP)
+      for (const cr of save.party) clampAndMarkCreatureLegacy(cr, levelCap, now)
+      for (const box of save.boxes) for (const cr of box) clampAndMarkCreatureLegacy(cr, levelCap, now)
+      save.flags['auth:untrustedImport'] = true
     }
   }
 

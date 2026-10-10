@@ -75,7 +75,8 @@ test('every templated screens.* text key resolves for all values it can take', (
     if (f.kind === 'choice' && !f.format) for (const o of f.options ?? []) keys.push(`screens.settings.opt.${f.key}.${String(o)}`)
   }
   // Blockers returned by medicineBlocker are shown in full and as a short party-card note.
-  const logic = sources.find((s) => s.file === 'logic.ts')!.code
+  const logic = sources.find((s) => s.file === 'logic.ts')!.code + '\n' +
+    readFileSync(join(here, '..', 'src', 'shared', 'gameplay', 'save-ops.ts'), 'utf8')
   for (const m of logic.matchAll(/'(screens\.use\.[A-Za-z]+)'/g)) keys.push(m[1], `${m[1]}Short`)
   const missing = [...new Set(keys)].filter((k) => !(k in CONTENT.text))
   assert.deepEqual(missing, [])

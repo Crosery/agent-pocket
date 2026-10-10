@@ -7,9 +7,10 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { createHmac } from 'node:crypto'
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join as pathJoin } from 'node:path'
+import { DatabaseSync } from 'node:sqlite'
 import type { BattleAction, Creature, SaveData } from '../src/shared/types.ts'
 import type { ClientMsg, PublicProfile, ServerMsg } from '../src/shared/protocol.ts'
 import { CONTENT } from '../src/shared/content/index.ts'
@@ -177,20 +178,19 @@ test('net-envelope: pure HMAC-SHA256 matches node:crypto and replay window block
   const win = createReplayWindow(64, 1000)
   const sessionKey = '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
   const m1 = signEnvelope(sessionKey, { t: 'shop.buy', itemId: 'x', qty: 1 }, 1)
-  assert.deepEqual(verifyEnvelope(sessionKey, m1, win, { requireSig: true }), { ok: true, seq: 1 })
+  assert.deepEqual(verifyEnvelope(sessionKey, m1, win, { requireSig: true }), { ok: true, authSeq: 1 })
 
   // Replaying seq 1 is rejected.
   const replay = verifyEnvelope(sessionKey, m1, win, { requireSig: true })
   assert.equal(replay.ok, false)
   if (!replay.ok) assert.equal(replay.code, 'replay_detected')
 
-  // Out-of-order within window (seq 5 then seq 3) succeeds once each.
-  const m5 = signEnvelope(sessionKey, { t: 'move', x: 5 }, 5)
-  const m3 = signEnvelope(sessionKey, { t: 'move', x: 3 }, 3)
+  // Out-of-order within window (authSeq 5 then authSeq 3) succeeds once each, while move.seq stays independent.
+  const m5 = signEnvelope(sessionKey, { t: 'move', seq: 1, x: 5 }, 5)
+  const m3 = signEnvelope(sessionKey, { t: 'move', seq: 1, x: 3 }, 3)
   assert.equal(verifyEnvelope(sessionKey, m5, win, { requireSig: true }).ok, true)
   assert.equal(verifyEnvelope(sessionKey, m3, win, { requireSig: true }).ok, true)
   assert.equal(verifyEnvelope(sessionKey, m3, win, { requireSig: true }).ok, false)
-
   // Advancing beyond window invalidates old seq 2.
   const m80 = signEnvelope(sessionKey, { t: 'move', x: 80 }, 80)
   const m2 = signEnvelope(sessionKey, { t: 'move', x: 2 }, 2)
@@ -288,19 +288,24 @@ test('save-sign: server save HMAC detects disk tampering; untrusted offline impo
     assert.equal(outOfBounds.ok, false)
     if (!outOfBounds.ok) assert.equal(outOfBounds.code, 'save_tampered')
 
-    // Server refuses to load a tampered saves.json file on boot and records an audit entry
+    // Server refuses to load a tampered SQLite characters row on read and records an audit entry
     const srv1 = await startServer({ port: 0, dataDir: dir, distDir: pathJoin(dir, 'no-dist'), quiet: true, world: null, pvp: null })
     srv1.authority.setSave('acc-tamper', makeTestSave('acc-tamper', 'TamperTarget'))
     await srv1.close()
 
-    const savesPath = pathJoin(dir, 'saves.json')
-    const disk = JSON.parse(await readFile(savesPath, 'utf8')) as { saves: Record<string, { save: SaveData }> }
-    disk.saves['acc-tamper'].save.money = 9_999_999
-    await writeFile(savesPath, JSON.stringify(disk))
+    const sqlitePath = pathJoin(dir, NET.store.sqliteFile)
+    const rawDb = new DatabaseSync(sqlitePath)
+    const charRow = rawDb.prepare('SELECT save_json FROM characters WHERE account_id = ?').get('acc-tamper')
+    assert.ok(charRow && typeof charRow.save_json === 'string')
+    const tamperedSave = JSON.parse(charRow.save_json) as SaveData
+    tamperedSave.money = 9_999_999
+    rawDb.prepare('UPDATE characters SET save_json = ? WHERE account_id = ?').run(JSON.stringify(tamperedSave), 'acc-tamper')
+    rawDb.close()
 
     const srv2 = await startServer({ port: 0, dataDir: dir, distDir: pathJoin(dir, 'no-dist'), quiet: true, world: null, pvp: null })
     try {
-      assert.equal(srv2.authority.getSave('acc-tamper'), null, 'tampered server save must be refused on load')
+      assert.equal(srv2.authority.getSave('acc-tamper'), null, 'tampered server save in SQLite must be refused on load')
+      assert.equal(srv2.store.getSave('acc-tamper'), null, 'store.getSave must also refuse tampered save_sig')
       const audits = srv2.authority.listAudit('acc-tamper')
       assert.ok(audits.some((a) => a.kind === 'save.tamper_detected'), 'tampered server save must write an audit entry')
     } finally {
@@ -504,6 +509,44 @@ test('server authority: valid battles update save once; tampered results/exp/ite
       const pvpErr = await bob.waitFor('error', (e) => e.code === 'pvp_party_invalid', fabFrom)
       assert.equal(pvpErr.code, 'pvp_party_invalid')
       assert.ok(srv.authority.listAudit(bob.selfId).some((a) => a.kind === 'pvp.party_tamper'))
+
+      // Untrusted imported account or legacy creature rejected from PvP
+      const untrustedClient = await loginSignedClient(srv.port, 'UntrustedPvP')
+      clients.push(untrustedClient)
+      const untrustedSave = makeTestSave(untrustedClient.selfId, 'UntrustedPvP')
+      srv.authority.setSave(untrustedClient.selfId, untrustedSave, { imported: true, trusted: false })
+      const untrustedRes = srv.authority.validatePvpParty(untrustedClient.selfId, untrustedSave.party, true)
+      assert.equal(untrustedRes, null, 'untrusted account party must be rejected from PvP')
+      assert.ok(srv.authority.listAudit(untrustedClient.selfId).some((a) => a.kind === 'pvp.untrusted_party'))
+
+      // 3f. Script ops (giveItem, takeItem, giveMoney, takeMoney, chooseStarter, teach, unlockTown, setRespawn, research)
+      const sFrom = alice.msgs.length
+      alice.sendSigned({ t: 'script.op', op: 'giveMoney', amount: 500 })
+      const moneySync = await alice.waitFor('state.sync', undefined, sFrom)
+      assert.equal(moneySync.save.money, srv.authority.getSave(alice.selfId)!.money)
+      assert.ok(srv.authority.listLedger(alice.selfId).some((l) => l.kind === 'money' && l.delta === 500))
+
+      const itemFrom = alice.msgs.length
+      alice.sendSigned({ t: 'script.op', op: 'giveItem', itemId: ballItem.id, qty: 2 })
+      const itemSync = await alice.waitFor('state.sync', undefined, itemFrom)
+      assert.equal(itemSync.save.bag[ballItem.id], srv.authority.getSave(alice.selfId)!.bag[ballItem.id])
+
+      alice.sendSigned({ t: 'script.op', op: 'unlockTown', townId: 'town-alpha' })
+      await new Promise((r) => setTimeout(r, 50))
+      assert.ok(srv.authority.getSave(alice.selfId)!.visitedTowns.includes('town-alpha'))
+
+      alice.sendSigned({ t: 'script.op', op: 'setRespawn', map: 'town-alpha', x: 10, y: 12, facing: 'down' })
+      await new Promise((r) => setTimeout(r, 50))
+      assert.deepEqual(srv.authority.getSave(alice.selfId)!.respawn, { map: 'town-alpha', x: 10, y: 12, facing: 'down' })
+
+      // Unverified scriptedOnly boss start rejected
+      const scriptedBoss = Object.values(CONTENT.bossBySpecies).find((b) => b.scriptedOnly)
+      if (scriptedBoss) {
+        const bFailFrom = alice.msgs.length
+        alice.sendSigned({ t: 'battle.start', kind: 'wild', speciesId: scriptedBoss.species, scripted: false })
+        await alice.waitFor('error', (e) => e.code === 'invalid_encounter', bFailFrom)
+        assert.ok(srv.authority.listAudit(alice.selfId).some((a) => a.kind === 'battle.invalid_encounter'))
+      }
     } finally {
       await Promise.all(clients.map((c) => c.close()))
       await srv.close()
@@ -556,6 +599,12 @@ test('client PveChannel + NetClient: signs session envelopes and drives authorit
       const save = makeTestSave(net.selfId, 'ClientHero')
       save.party[0] = makeCreature(555, 50, 0)
       srv.authority.setSave(net.selfId, save, { imported: false, trusted: true })
+
+      // Interleave chat (advances authSeq) with movement (move.seq = 1..3) — no replay collisions!
+      net.send({ t: 'chat', channel: 'global', text: 'hello before move' })
+      net.reportPosition({ map: 'm', x: 2, y: 1, facing: 'right', moving: true, running: false })
+      net.send({ t: 'chat', channel: 'global', text: 'hello between moves' })
+      net.reportPosition({ map: 'm', x: 3, y: 1, facing: 'right', moving: false, running: false })
 
       const started = await requestOnlineBattleStart(net, {
         kind: 'wild',

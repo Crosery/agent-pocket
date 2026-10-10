@@ -1,7 +1,7 @@
 // Persistent server store backed by Node's built-in node:sqlite (ap.db):
 // - Accounts (scrypt password hashes), sessions (SHA-256 token hashes + per-session HMAC secret),
-// - 1:1 bound character & SaveData per account (with untrusted offline import isolation),
-// - Public profiles & leaderboard stats, audit log, and one-time transactional migration from profiles.json.
+// - 1:1 bound character & SaveData per account (HMAC-SHA256 signed at rest via save-sign.ts, with untrusted offline import isolation),
+// - Public profiles & leaderboard stats, economic ledger, audit log, and one-time transactional migration from profiles.json.
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync } from 'node:fs'
 import { mkdir, rename, unlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -27,9 +27,12 @@ import {
   type AccountStore,
   type AuditEntryInput,
   type AuditRecord,
+  type LedgerEntryInput,
+  type LedgerRecord,
   type SessionInfo,
   type StoredAccountSave,
 } from './accounts.ts'
+import { computeServerSaveSig, loadOrCreateSaveSecretSync, verifyServerSave } from './save-sign.ts'
 import { codePointLength, isRecord, newSecretId, publicIdFor, safeJsonParse } from './util.ts'
 
 export {
@@ -56,6 +59,8 @@ export {
   type AuthResult,
   type BindSaveResult,
   type KeyedRateLimiter,
+  type LedgerEntryInput,
+  type LedgerRecord,
   type SessionInfo,
   type StoredAccountSave,
 } from './accounts.ts'
@@ -112,6 +117,7 @@ export interface ProfileStore extends AccountStore {
 export interface StoreOptions {
   dir: string
   world?: World | null
+  secret?: string
   log?: (msg: string) => void
 }
 
@@ -158,6 +164,7 @@ CREATE TABLE IF NOT EXISTS characters (
   trusted INTEGER NOT NULL DEFAULT 1,
   rev INTEGER NOT NULL DEFAULT 1,
   save_json TEXT NOT NULL,
+  save_sig TEXT NOT NULL DEFAULT '',
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL
 );
@@ -189,6 +196,18 @@ CREATE TABLE IF NOT EXISTS audit (
   detail_json TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_audit_account ON audit(account_id, at);
+
+CREATE TABLE IF NOT EXISTS ledger (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  at INTEGER NOT NULL,
+  account_id TEXT NOT NULL,
+  kind TEXT NOT NULL CHECK (kind IN ('money', 'item', 'exp', 'creature')),
+  subject TEXT NOT NULL,
+  delta INTEGER NOT NULL,
+  balance INTEGER NOT NULL,
+  ref TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_ledger_account ON ledger(account_id, at);
 `
 
 export function compareEntries(sortBy: readonly LeaderboardSortKey[]) {
@@ -269,17 +288,31 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
   const bindAccountLimiter = createKeyedRateLimiter(NET.auth.rates.bindAccount, NET.auth.maxRateBuckets)
 
   let db: DatabaseSync | null = null
+  let saveSecret: string | null = opts.secret ?? null
   let board: LeaderboardEntry[] | null = null
   let dirtyJson = false
   let timer: NodeJS.Timeout | null = null
   let writing: Promise<void> | null = null
   let closed = false
 
+  function getSaveSecret(): string {
+    if (!saveSecret) {
+      const s = loadOrCreateSaveSecretSync(opts.dir)
+      saveSecret = s
+      return s
+    }
+    return saveSecret
+  }
+
   function openDb(): DatabaseSync {
     if (db && db.isOpen) return db
     mkdirSync(opts.dir, { recursive: true })
     db = new DatabaseSync(sqliteFile, { timeout: 5000 })
     db.exec(SCHEMA_SQL)
+    const charCols = db.prepare('PRAGMA table_info(characters)').all()
+    if (!charCols.some((c) => c.name === 'save_sig')) {
+      db.exec("ALTER TABLE characters ADD COLUMN save_sig TEXT NOT NULL DEFAULT ''")
+    }
     const rows = db.prepare('SELECT id, profile_json, pvp_wins, pvp_losses, trades, first_seen, last_seen, max_distance FROM profiles').all()
     for (const r of rows) {
       if (typeof r.id !== 'string' || typeof r.profile_json !== 'string') continue
@@ -301,7 +334,6 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
     board = null
     return db
   }
-
   function upsertProfileRow(s: StoredProfile): void {
     if (closed) return
     const conn = openDb()
@@ -396,6 +428,15 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
     `).run(at, entry.accountId ?? null, ipHash, entry.kind, severity, detailJson)
   }
 
+  function writeLedger(entry: LedgerEntryInput): void {
+    if (closed && (!db || !db.isOpen)) return
+    const conn = openDb()
+    const at = entry.at ?? Date.now()
+    conn.prepare(`
+      INSERT INTO ledger (at, account_id, kind, subject, delta, balance, ref)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).run(at, entry.accountId, entry.kind, entry.subject, Math.trunc(entry.delta), Math.trunc(entry.balance), entry.ref)
+  }
   function createSessionRow(accountId: string, username: string, now: number): SessionInfo {
     const conn = openDb()
     const token = newSessionToken()
@@ -424,29 +465,55 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
   function readCharacterRow(accountId: string): StoredAccountSave | null {
     const conn = openDb()
     const row = conn.prepare(`
-      SELECT save_json, imported, trusted, rev, updated_at
+      SELECT save_json, save_sig, imported, trusted, rev, updated_at
       FROM characters
       WHERE account_id = ?
     `).get(accountId)
     if (!row || typeof row.save_json !== 'string') return null
     const parsed = safeJsonParse(row.save_json)
-    if (!isRecord(parsed)) return null
+    if (!isRecord(parsed)) {
+      writeAudit({ accountId, kind: 'save.tamper_detected', severity: 3, detail: { reason: 'corrupt_save_json' } })
+      return null
+    }
+    const imported = row.imported === 1
+    const trusted = row.trusted === 1
+    const rev = typeof row.rev === 'number' ? row.rev : 1
+    const updatedAt = typeof row.updated_at === 'number' ? row.updated_at : 0
+    const rawSig = typeof row.save_sig === 'string' ? row.save_sig : ''
+    const rawVersion = typeof parsed.version === 'number' ? parsed.version : CONTENT.config.save.version
+
+    const verified = verifyServerSave({
+      version: rawVersion,
+      accountId,
+      rev,
+      trusted,
+      imported,
+      updatedAt,
+      save: parsed as unknown as SaveData,
+      sig: rawSig,
+    }, getSaveSecret())
+    if (!verified.ok) {
+      writeAudit({ accountId, kind: 'save.tamper_detected', severity: 3, detail: { reason: verified.reason, rev } })
+      log(`rejected tampered character save for ${accountId}: ${verified.reason}`)
+      return null
+    }
     const prepared = prepareAccountSave(parsed, {
       accountId,
       fallbackName: typeof parsed.name === 'string' ? parsed.name : t('audio.save.defaultName'),
       world: opts.world ?? null,
-      imported: row.imported === 1,
-      trusted: row.trusted === 1,
+      imported,
+      trusted,
       forBind: false,
     })
     if (!prepared) return null
     return {
       accountId,
       save: prepared.save,
-      imported: row.imported === 1,
-      trusted: row.trusted === 1,
-      rev: typeof row.rev === 'number' ? row.rev : 1,
-      updatedAt: typeof row.updated_at === 'number' ? row.updated_at : 0,
+      imported,
+      trusted,
+      rev,
+      updatedAt,
+      sig: verified.record.sig,
     }
   }
 
@@ -499,6 +566,7 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
     }
   }
 
+
   function putSaveImpl(
     accountId: string,
     save: SaveData,
@@ -524,10 +592,19 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
     const nextRev = existing && typeof existing.rev === 'number' ? existing.rev + 1 : 1
     const createdAt = existing && typeof existing.created_at === 'number' ? existing.created_at : now
     const origin = imported ? 'legacy-import' : 'new'
+    const sig = computeServerSaveSig({
+      version: cleanSave.version,
+      accountId,
+      rev: nextRev,
+      trusted,
+      imported,
+      updatedAt: now,
+      save: cleanSave,
+    }, getSaveSecret())
 
     conn.prepare(`
-      INSERT INTO characters (account_id, name, name_key, avatar, origin, imported, trusted, rev, save_json, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO characters (account_id, name, name_key, avatar, origin, imported, trusted, rev, save_json, save_sig, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(account_id) DO UPDATE SET
         name = excluded.name,
         name_key = excluded.name_key,
@@ -536,6 +613,7 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
         trusted = excluded.trusted,
         rev = excluded.rev,
         save_json = excluded.save_json,
+        save_sig = excluded.save_sig,
         updated_at = excluded.updated_at
     `).run(
       accountId,
@@ -547,13 +625,14 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       trusted ? 1 : 0,
       nextRev,
       JSON.stringify(cleanSave),
+      sig,
       createdAt,
       now,
     )
 
     syncProfileFromSave(accountId, cleanSave, trusted, now)
     scheduleJsonMirror()
-    return { accountId, save: cleanSave, imported, trusted, rev: nextRev, updatedAt: now }
+    return { accountId, save: cleanSave, imported, trusted, rev: nextRev, updatedAt: now, sig }
   }
 
   return {
@@ -875,7 +954,7 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
     getAccountSave(accountId) {
       const conn = openDb()
       const rec = readCharacterRow(accountId)
-      if (rec) return { save: rec.save, imported: rec.imported, trusted: rec.trusted, rev: rec.rev }
+      if (rec) return { save: rec.save, imported: rec.imported, trusted: rec.trusted, rev: rec.rev, updatedAt: rec.updatedAt, sig: rec.sig }
       const acc = conn.prepare('SELECT id FROM accounts WHERE id = ?').get(accountId)
       if (!acc) return null
       return { save: null, imported: false, trusted: true, rev: 0 }
@@ -916,9 +995,18 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
 
       const { save, imported, trusted } = prepared
       const origin = imported ? 'legacy-import' : 'new'
+      const sig = computeServerSaveSig({
+        version: save.version,
+        accountId,
+        rev: 1,
+        trusted,
+        imported,
+        updatedAt: now,
+        save,
+      }, getSaveSecret())
       const insertRes = conn.prepare(`
-        INSERT INTO characters (account_id, name, name_key, avatar, origin, imported, trusted, rev, save_json, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?)
+        INSERT INTO characters (account_id, name, name_key, avatar, origin, imported, trusted, rev, save_json, save_sig, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?)
         ON CONFLICT(account_id) DO NOTHING
       `).run(
         accountId,
@@ -929,6 +1017,7 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
         imported ? 1 : 0,
         trusted ? 1 : 0,
         JSON.stringify(save),
+        sig,
         now,
         now,
       )
@@ -955,7 +1044,7 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       })
       return {
         ok: true,
-        record: { accountId, save, imported, trusted, rev: 1, updatedAt: now },
+        record: { accountId, save, imported, trusted, rev: 1, updatedAt: now, sig },
       }
     },
 
@@ -981,6 +1070,24 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       })
     },
 
+    recordLedger: writeLedger,
+
+    listLedger(accountId, limit = 200) {
+      const conn = openDb()
+      const rows = accountId
+        ? conn.prepare('SELECT id, at, account_id, kind, subject, delta, balance, ref FROM ledger WHERE account_id = ? ORDER BY id DESC LIMIT ?').all(accountId, limit)
+        : conn.prepare('SELECT id, at, account_id, kind, subject, delta, balance, ref FROM ledger ORDER BY id DESC LIMIT ?').all(limit)
+      return rows.map((r): LedgerRecord => ({
+        id: typeof r.id === 'number' ? r.id : 0,
+        accountId: typeof r.account_id === 'string' ? r.account_id : '',
+        at: typeof r.at === 'number' ? r.at : 0,
+        kind: (r.kind === 'money' || r.kind === 'item' || r.kind === 'exp' || r.kind === 'creature') ? r.kind : 'money',
+        subject: typeof r.subject === 'string' ? r.subject : '',
+        delta: typeof r.delta === 'number' ? r.delta : 0,
+        balance: typeof r.balance === 'number' ? r.balance : 0,
+        ref: typeof r.ref === 'string' ? r.ref : '',
+      }))
+    },
     async flush() {
       if (timer) { clearTimeout(timer); timer = null }
       await persistJsonMirror()
@@ -1078,16 +1185,19 @@ export async function rollbackSqliteToJson(
     if (restored[r.id]) continue
     const pub = parsePublicProfile(safeJsonParse(r.profile_json))
     if (!pub) continue
-    const pvpWins = typeof r.pvp_wins === 'number' ? r.pvp_wins : 0
-    const pvpLosses = typeof r.pvp_losses === 'number' ? r.pvp_losses : 0
-    const maxDistance = typeof r.max_distance === 'number' ? r.max_distance : 0
+    const pvpWins = typeof r.pvp_wins === 'number' ? Number(r.pvp_wins) : 0
+    const pvpLosses = typeof r.pvp_losses === 'number' ? Number(r.pvp_losses) : 0
+    const trades = typeof r.trades === 'number' ? Number(r.trades) : 0
+    const firstSeen = typeof r.first_seen === 'number' ? Number(r.first_seen) : 0
+    const lastSeen = typeof r.last_seen === 'number' ? Number(r.last_seen) : 0
+    const maxDistance = typeof r.max_distance === 'number' ? Number(r.max_distance) : 0
     restored[r.id] = {
       profile: { ...pub, id: r.id, pvpWins, pvpLosses },
       pvpWins,
       pvpLosses,
-      trades: typeof r.trades === 'number' ? r.trades : 0,
-      firstSeen: typeof r.first_seen === 'number' ? r.first_seen : 0,
-      lastSeen: typeof r.last_seen === 'number' ? r.last_seen : 0,
+      trades,
+      firstSeen,
+      lastSeen,
       ...(maxDistance > 0 ? { maxDistance } : {}),
     }
   }

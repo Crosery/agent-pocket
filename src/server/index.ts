@@ -84,7 +84,7 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
   const log = opts.quiet ? () => {} : (msg: string) => console.log(`[server] ${msg}`)
 
   const world = opts.world !== undefined ? opts.world : await loadWorldInfo(log)
-  const store = createProfileStore({ dir: opts.dataDir, log })
+  const store = createProfileStore({ dir: opts.dataDir, world: world?.world ?? null, log })
   await store.load()
   const pvp = opts.pvp !== undefined ? opts.pvp : await loadPvpModule(log)
   const sanitizer = creatureSanitizer(log)

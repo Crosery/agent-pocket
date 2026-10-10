@@ -92,6 +92,20 @@ export function createScriptRunner(host: ScriptHost) {
     ctx.audio.playSfx(GAME.items.keyItemSfx)
     await narrate(t('world.script.giveCreature', { ...params(), species }))
     const where = addCreature(ctx, cr)
+    if (where) {
+      sendScriptOp(ctx, {
+        t: 'script.op',
+        op: 'giveCreature',
+        speciesId,
+        level: s.level,
+        shiny: cr.shiny,
+        nature: cr.nature,
+        ability: cr.abilityId,
+        moves: cr.moves.map((m) => m.id),
+        gradeFloor: s.gradeFloor,
+        creature: structuredClone(cr),
+      })
+    }
     if (!where) await narrate(t('world.script.boxFull', { species }))
     else if (where.where === 'box') await narrate(t('world.script.toBox', { species, box: t('world.script.boxName', { n: where.box + 1 }) }))
     if (where) await host.reveal?.(cr, { full: revealIsFull(cr, { newSpecies: isNew, firstCatch: false }, ctx.data) })
@@ -160,6 +174,7 @@ export function createScriptRunner(host: ScriptHost) {
       case 'giveItem': {
         const item = ctx.data.items[s.item]
         if (!item || !addItem(ctx, s.item, s.qty)) { console.warn(`[script] unknown item "${s.item}"`); return 'done' }
+        sendScriptOp(ctx, { t: 'script.op', op: 'giveItem', itemId: s.item, qty: s.qty })
         const key = item.category === 'key'
         ctx.audio.playSfx(key ? GAME.items.keyItemSfx : GAME.items.pickupSfx)
         const text = key ? 'world.script.keyItem' : s.qty > 1 ? 'world.script.giveItemQty' : 'world.script.giveItem'
@@ -169,11 +184,13 @@ export function createScriptRunner(host: ScriptHost) {
       case 'takeItem': {
         const n = removeItem(ctx, s.item, s.qty)
         const item = ctx.data.items[s.item]
+        if (n > 0) sendScriptOp(ctx, { t: 'script.op', op: 'takeItem', itemId: s.item, qty: n })
         if (n > 0 && item) await narrate(t('world.script.takeItem', { ...params(), item: item.nameZh, qty: n }))
         return 'done'
       }
       case 'giveMoney':
         changeMoney(ctx, s.amount)
+        sendScriptOp(ctx, { t: 'script.op', op: 'giveMoney', amount: s.amount })
         ctx.audio.playSfx(GAME.script.moneySfx)
         await narrate(t('world.script.giveMoney', { ...params(), money: s.amount }))
         return 'done'
@@ -183,6 +200,7 @@ export function createScriptRunner(host: ScriptHost) {
           return 'end'
         }
         changeMoney(ctx, -s.amount)
+        sendScriptOp(ctx, { t: 'script.op', op: 'takeMoney', amount: s.amount })
         ctx.audio.playSfx(GAME.script.moneySfx)
         await narrate(t('world.script.takeMoney', { ...params(), money: s.amount }))
         return 'done'
@@ -201,7 +219,7 @@ export function createScriptRunner(host: ScriptHost) {
         }, ctx.data)
         addCreature(ctx, cr)
         ctx.save.flags[STORY_CONTENT.meta.flags.starter] = chosen
-        sendScriptOp(ctx, { t: 'script.op', op: 'chooseStarter', speciesId: chosen })
+        sendScriptOp(ctx, { t: 'script.op', op: 'chooseStarter', speciesId: chosen, creature: structuredClone(cr) })
         ctx.audio.playCry(chosen)
         await narrate(t('world.script.starter', { ...params(), species: creatureName(cr, ctx.data) }))
         await host.reveal?.(cr, { full: true })
@@ -210,13 +228,21 @@ export function createScriptRunner(host: ScriptHost) {
       }
       case 'battle': {
         const r = await host.trainerBattle(s.trainer, npc)
-        if (s.lossFlag && r !== null) ctx.save.flags[flagName(s.lossFlag)] = isLoss(r)
+        if (s.lossFlag && r !== null) {
+          const fl = flagName(s.lossFlag)
+          ctx.save.flags[fl] = isLoss(r)
+          sendScriptOp(ctx, { t: 'script.op', op: 'setFlag', flag: fl, value: isLoss(r) })
+        }
         if (isLoss(r) && GAME.battle.lossAbortsScript && !s.lossContinues) { await host.blackout(); return 'abort' }
         return 'done'
       }
       case 'bossBattle': {
         const r = (await host.bossBattle?.(s.boss, s.tier, { captureAfterWin: s.captureAfterWin, coach: s.coach })) ?? null
-        if (s.lossFlag && r !== null) ctx.save.flags[flagName(s.lossFlag)] = isLoss(r)
+        if (s.lossFlag && r !== null) {
+          const fl = flagName(s.lossFlag)
+          ctx.save.flags[fl] = isLoss(r)
+          sendScriptOp(ctx, { t: 'script.op', op: 'setFlag', flag: fl, value: isLoss(r) })
+        }
         if (isLoss(r) && GAME.battle.lossAbortsScript && !s.lossContinues) { await host.blackout(); return 'abort' }
         return 'done'
       }
@@ -250,6 +276,7 @@ export function createScriptRunner(host: ScriptHost) {
         const flag = `${TUTORIAL.curriculum.flagPrefix}${s.lesson}`
         if (!ctx.save.flags[flag]) {
           ctx.save.flags[flag] = true
+          sendScriptOp(ctx, { t: 'script.op', op: 'teach', lesson: s.lesson, flag })
           ctx.audio.playSfx(GAME.script.questSfx)
           ctx.ui.toast(t('tutorial.taught', { lesson: t(`tutorial.manual.${s.lesson}.title`) }), 'info')
         }
@@ -301,6 +328,7 @@ export function createScriptRunner(host: ScriptHost) {
         if (!town) { console.warn(`[script] unknown town "${s.town}"`); return 'done' }
         if (!ctx.save.visitedTowns.includes(town.id)) {
           ctx.save.visitedTowns.push(town.id)
+          sendScriptOp(ctx, { t: 'script.op', op: 'unlockTown', townId: town.id })
           ctx.audio.playSfx(GAME.script.unlockSfx)
           ctx.ui.toast(t('world.script.unlockTown', { town: town.nameZh }), 'success')
         }
@@ -308,7 +336,10 @@ export function createScriptRunner(host: ScriptHost) {
       }
       case 'setRespawn': {
         const p = host.playerPlace()
-        ctx.save.respawn = { map: p.map, x: Math.floor(p.x), y: Math.floor(p.y), facing: p.facing }
+        const rx = Math.floor(p.x)
+        const ry = Math.floor(p.y)
+        ctx.save.respawn = { map: p.map, x: rx, y: ry, facing: p.facing }
+        sendScriptOp(ctx, { t: 'script.op', op: 'setRespawn', map: p.map, x: rx, y: ry, facing: p.facing })
         return 'done'
       }
       case 'random':
@@ -332,6 +363,7 @@ export function createScriptRunner(host: ScriptHost) {
       case 'research':
         if (!ctx.data.species[s.species]) { console.warn(`[script] unknown species "${s.species}"`); return 'done' }
         scriptResearch(ctx, s.species, s.task, s.amount)
+        sendScriptOp(ctx, { t: 'script.op', op: 'research', speciesId: s.species, task: s.task, amount: s.amount })
         return 'done'
       case 'instance': {
         if (s.action === 'enter') {
