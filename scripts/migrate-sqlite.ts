@@ -47,7 +47,6 @@ export function parseMigrateArgs(argv: readonly string[]): MigrateCliOptions {
     }
   }
   if ((restoreDb || backupFile) && !rollback) throw new Error('--restore-db and --backup require --rollback')
-
   return { dataDir, rollback, restoreDb, ...(backupFile ? { backupFile } : {}) }
 }
 

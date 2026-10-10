@@ -12,7 +12,8 @@ import { decodeMoveFrame, encodePlayerDelta, staticStateKey, type CompactPlayerT
 import type { CoopClientMsg } from '../shared/coop/protocol.ts'
 import { createDungeonServer } from './dungeon.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
-import { parseSessionCookie, type SessionInfo } from './accounts.ts'
+import { toView } from '../shared/creature.ts'
+import { checkOriginCsrf, parseSessionCookie, type SessionInfo } from './accounts.ts'
 import { createAuthority, type AuthorityService } from './authority.ts'
 import { MODERATION, NET, PRESENCE, type RateKey } from './config.ts'
 import type { Conn, HubCore, LimiterKey, Player } from './core.ts'
@@ -317,12 +318,18 @@ export function createHub(opts: HubOptions): Hub {
     grid.remove(p)
     if (Math.floor(p.maxDistance) > p.distanceSaved) opts.store.recordDistance(p.id, p.maxDistance)
     if (p.accountId) {
-      const existingSave = opts.store.getSave(p.accountId)
-      if (existingSave) {
-        opts.store.putSave(p.accountId, {
-          ...existingSave,
-          position: { map: p.state.map, x: Math.floor(p.state.x), y: Math.floor(p.state.y), facing: p.state.facing },
-        })
+      const account = opts.store.getAccount(p.accountId)
+      if (account && account.status !== 'banned') {
+        const sessionStillValid = p.session ? opts.store.getAccountBySession(p.session.token) : null
+        if (sessionStillValid) {
+          const existingSave = opts.store.getSave(p.accountId)
+          if (existingSave) {
+            opts.store.putSave(p.accountId, {
+              ...existingSave,
+              position: { map: p.state.map, x: Math.floor(p.state.x), y: Math.floor(p.state.y), facing: p.state.facing },
+            })
+          }
+        }
       }
     }
     opts.store.touch(p.id)
@@ -514,6 +521,7 @@ export function createHub(opts: HubOptions): Hub {
         ...m.profile,
         badges: boundSave.trusted ? boundSave.save.badges : [],
         dexCaught: boundSave.trusted ? boundSave.save.dexCaught.length : 0,
+        party: boundSave.save.party.slice(0, CONTENT.config.party.maxParty).map((c) => toView(c, CONTENT)),
         playTimeSec: boundSave.save.playTimeSec,
       }
       : m.profile
@@ -855,12 +863,26 @@ export function createHub(opts: HubOptions): Hub {
     setInterval(retainChunks, wcfg.retainSeconds * 1000),
   ]
 
+  opts.store.onSessionRevoked?.((revokedAccountId) => {
+    for (const c of [...sockets]) {
+      if (c.accountId === revokedAccountId) {
+        drop(c, codes.shutdown, 'unauthorized', false)
+      }
+    }
+  })
+
   return {
     authority,
     attach(ws, ip, req) {
       if (sockets.size >= srv.maxClients || (ipCounts.get(ip) ?? 0) >= srv.maxClientsPerIp) {
         ws.send(JSON.stringify(errorMsg('server_full')))
         ws.close(codes.serverFull)
+        return
+      }
+      if (req && !checkOriginCsrf(req)) {
+        opts.store.audit({ ip, kind: 'ws.csrf_blocked', severity: 2, detail: {} })
+        ws.send(JSON.stringify(errorMsg('unauthorized')))
+        ws.close(codes.shutdown)
         return
       }
       const cookieHeader = req?.headers.cookie

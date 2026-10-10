@@ -10,6 +10,7 @@ import pkg from '../../package.json' with { type: 'json' }
 import type { Creature } from '../shared/types.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import type { AuthorityService } from './authority.ts'
+import { checkOriginCsrf } from './accounts.ts'
 import { NET, validateNetContent } from './config.ts'
 import { createHttpHandler } from './http.ts'
 import { createHub, type Hub, type HubMetrics } from './hub.ts'
@@ -131,6 +132,10 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
     try { pathname = new URL(req.url ?? '/', 'http://localhost').pathname } catch { /* rejected below */ }
     if (pathname !== NET.protocol.wsPath) {
       socket.end('HTTP/1.1 404 Not Found\r\nConnection: close\r\nContent-Length: 0\r\n\r\n')
+      return
+    }
+    if (!checkOriginCsrf(req)) {
+      socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\nContent-Length: 0\r\n\r\n')
       return
     }
     wss.handleUpgrade(req, socket, head, (ws) => hub.attach(ws, clientIp(req), req))

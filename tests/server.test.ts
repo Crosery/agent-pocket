@@ -1,11 +1,12 @@
 // Integration tests for src/server: real HTTP + WebSocket server on test ports 8791-8793.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, rm, symlink, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { request } from 'node:http'
 import { tmpdir } from 'node:os'
 import { join as pathJoin } from 'node:path'
+import { DatabaseSync } from 'node:sqlite'
 import { brotliDecompressSync, gunzipSync } from 'node:zlib'
 import type { ClientMsg, PlayerState, PublicProfile, ServerMsg } from '../src/shared/protocol.ts'
 import type { Creature } from '../src/shared/types.ts'
@@ -590,11 +591,14 @@ test('pvp hooks are wired to the hub and stats persist across restarts', async (
       await srv.close()
     }
     assert.equal(disposed, true)
-    const file = pathJoin(dataDir, NET.store.file)
-    assert.ok(existsSync(file), 'profiles persisted on close')
-    const saved = JSON.parse(await readFile(file, 'utf8')) as { profiles: Record<string, { pvpWins: number; pvpLosses: number }> }
-    assert.equal(saved.profiles[aId].pvpWins, 1)
-    assert.equal(saved.profiles[bId].pvpLosses, 1)
+    const dbFile = pathJoin(dataDir, NET.store.sqliteFile)
+    assert.ok(existsSync(dbFile), 'database persisted on close')
+    const checkDb = new DatabaseSync(dbFile)
+    const rowA = checkDb.prepare('SELECT pvp_wins, pvp_losses FROM profiles WHERE id = ?').get(aId) as { pvp_wins: number; pvp_losses: number }
+    const rowB = checkDb.prepare('SELECT pvp_wins, pvp_losses FROM profiles WHERE id = ?').get(bId) as { pvp_wins: number; pvp_losses: number }
+    checkDb.close()
+    assert.equal(rowA?.pvp_wins, 1)
+    assert.equal(rowB?.pvp_losses, 1)
 
     srv = await startServer({ port: PORT, dataDir, quiet: true, pvp: null, distDir: pathJoin(dataDir, 'nd') })
     try {

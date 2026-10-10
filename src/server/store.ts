@@ -94,6 +94,7 @@ export interface RollbackReport {
   restoredProfiles: number
   jsonPath: string
   restoredDbFrom: string | null
+  error?: string
 }
 
 export interface ProfileStore extends AccountStore {
@@ -168,6 +169,18 @@ CREATE TABLE IF NOT EXISTS characters (
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS ledger (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  account_id TEXT NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+  at INTEGER NOT NULL,
+  kind TEXT NOT NULL CHECK (kind IN ('money', 'item', 'exp', 'creature')),
+  subject TEXT NOT NULL,
+  delta INTEGER NOT NULL,
+  balance INTEGER NOT NULL,
+  ref TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_ledger_account ON ledger(account_id, at);
 
 CREATE TABLE IF NOT EXISTS profiles (
   id TEXT PRIMARY KEY,
@@ -265,8 +278,8 @@ function profileFromSave(accountId: string, save: SaveData, trusted: boolean, pr
     id: accountId,
     name: save.name,
     avatar: save.avatar,
-    badges: trusted ? [...save.badges] : (prev?.profile.badges ?? []),
-    dexCaught: trusted ? save.dexCaught.length : (prev?.profile.dexCaught ?? 0),
+    badges: trusted ? [...save.badges] : [],
+    dexCaught: trusted ? save.dexCaught.length : 0,
     party: save.party.slice(0, CONTENT.config.party.maxParty).map((c) => toView(c, CONTENT)),
     pvpWins: prev?.pvpWins ?? 0,
     pvpLosses: prev?.pvpLosses ?? 0,
@@ -286,13 +299,11 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
   const loginIpLimiter = createKeyedRateLimiter(NET.auth.rates.loginIp, NET.auth.maxRateBuckets)
   const loginAccountLimiter = createKeyedRateLimiter(NET.auth.rates.loginAccount, NET.auth.maxRateBuckets)
   const bindAccountLimiter = createKeyedRateLimiter(NET.auth.rates.bindAccount, NET.auth.maxRateBuckets)
+  const sessionRevokedListeners = new Set<(accountId: string) => void>()
 
   let db: DatabaseSync | null = null
   let saveSecret: string | null = opts.secret ?? null
   let board: LeaderboardEntry[] | null = null
-  let dirtyJson = false
-  let timer: NodeJS.Timeout | null = null
-  let writing: Promise<void> | null = null
   let closed = false
 
   function getSaveSecret(): string {
@@ -360,56 +371,19 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
     )
   }
 
-  function isLegacyJsonProtected(): boolean {
-    const conn = openDb()
-    const row = conn.prepare("SELECT value FROM meta WHERE key = 'legacy_source'").get()
-    return row?.value === cfg.file
-  }
-
-  function scheduleJsonMirror(): void {
-    board = null
-    dirtyJson = true
-    if (closed || timer) return
-    timer = setTimeout(() => { timer = null; void persistJsonMirror() }, cfg.debounceMs)
-    timer.unref?.()
-  }
-
-  async function writeJsonMirrorOnce(): Promise<boolean> {
-    dirtyJson = false
-    if (isLegacyJsonProtected()) return true
-    const data: ProfilesFile = { version: cfg.version, profiles: Object.fromEntries(profiles) }
-    const tmp = `${jsonFile}.${process.pid}.${Date.now()}.tmp`
-    try {
-      await mkdir(opts.dir, { recursive: true })
-      await writeFile(tmp, JSON.stringify(data))
-      await rename(tmp, jsonFile)
-      return true
-    } catch (err) {
-      dirtyJson = true
-      await unlink(tmp).catch(() => {})
-      log(`profile store mirror write failed: ${(err as Error).message}`)
-      return false
-    }
-  }
-
-  async function persistJsonMirror(): Promise<void> {
-    for (;;) {
-      if (writing) { await writing; continue }
-      if (!dirtyJson) return
-      let ok = true
-      writing = writeJsonMirrorOnce().then((r) => { ok = r }).finally(() => { writing = null })
-      await writing
-      if (!ok) { if (!closed) scheduleJsonMirror(); return }
-    }
-  }
-
   function evictIfNeeded(): void {
     if (profiles.size <= cfg.maxProfiles) return
     const conn = openDb()
-    const oldest = [...profiles.values()].sort((a, b) => a.lastSeen - b.lastSeen)
-    const toRemove = oldest.slice(0, profiles.size - cfg.maxProfiles)
+    const registeredAccounts = new Set<string>(
+      conn.prepare('SELECT id FROM accounts').all().map((r) => String(r.id)),
+    )
+    const evictable = [...profiles.values()]
+      .filter((p) => !registeredAccounts.has(p.profile.id))
+      .sort((a, b) => a.lastSeen - b.lastSeen)
+    if (evictable.length === 0) return
     const delStmt = conn.prepare('DELETE FROM profiles WHERE id = ?')
-    for (const p of toRemove) {
+    const countToRemove = Math.min(evictable.length, profiles.size - cfg.maxProfiles)
+    for (const p of evictable.slice(0, countToRemove)) {
       profiles.delete(p.profile.id)
       delStmt.run(p.profile.id)
     }
@@ -570,13 +544,13 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
   function putSaveImpl(
     accountId: string,
     save: SaveData,
-    putOpts?: { imported?: boolean; trusted?: boolean; now?: number },
+    putOpts?: { imported?: boolean; trusted?: boolean; now?: number; sig?: string },
   ): StoredAccountSave {
     const conn = openDb()
     const now = putOpts?.now ?? Date.now()
     const acc = conn.prepare('SELECT username FROM accounts WHERE id = ?').get(accountId)
     const fallbackName = typeof acc?.username === 'string' ? acc.username : t('audio.save.defaultName')
-    const existing = conn.prepare('SELECT imported, trusted, rev, created_at FROM characters WHERE account_id = ?').get(accountId)
+    const existing = conn.prepare('SELECT imported, trusted, rev, created_at, save_sig FROM characters WHERE account_id = ?').get(accountId)
     const imported = putOpts?.imported ?? (existing ? existing.imported === 1 : false)
     const trusted = putOpts?.trusted ?? (existing ? existing.trusted === 1 : !imported)
     const prepared = prepareAccountSave(save, {
@@ -631,7 +605,6 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
     )
 
     syncProfileFromSave(accountId, cleanSave, trusted, now)
-    scheduleJsonMirror()
     return { accountId, save: cleanSave, imported, trusted, rev: nextRev, updatedAt: now, sig }
   }
 
@@ -640,7 +613,10 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       const conn = openDb()
       const legacyRow = conn.prepare("SELECT value FROM meta WHERE key = 'legacy_imported'").get()
       if (legacyRow) return
-      if (!existsSync(jsonFile)) return
+      if (!existsSync(jsonFile)) {
+        conn.prepare("INSERT OR REPLACE INTO meta (key, value) VALUES ('legacy_imported', 'none')").run()
+        return
+      }
 
       let raw: string
       try {
@@ -699,7 +675,6 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
             sp.lastSeen,
             sp.maxDistance ?? 0,
           )
-          profiles.set(id, sp)
         }
         conn.prepare("INSERT OR REPLACE INTO meta (key, value) VALUES ('legacy_imported', ?)").run(String(now))
         conn.prepare("INSERT OR REPLACE INTO meta (key, value) VALUES ('legacy_source', ?)").run(cfg.file)
@@ -707,6 +682,26 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       } catch (err) {
         conn.exec('ROLLBACK')
         throw err
+      }
+
+      const rows = conn.prepare('SELECT id, profile_json, pvp_wins, pvp_losses, trades, first_seen, last_seen, max_distance FROM profiles').all()
+      profiles.clear()
+      for (const r of rows) {
+        if (typeof r.id !== 'string' || typeof r.profile_json !== 'string') continue
+        const parsedProf = parsePublicProfile(safeJsonParse(r.profile_json))
+        if (!parsedProf) continue
+        const pvpWins = typeof r.pvp_wins === 'number' ? r.pvp_wins : 0
+        const pvpLosses = typeof r.pvp_losses === 'number' ? r.pvp_losses : 0
+        const maxDistance = typeof r.max_distance === 'number' ? r.max_distance : 0
+        profiles.set(r.id, {
+          profile: { ...parsedProf, id: r.id, pvpWins, pvpLosses },
+          pvpWins,
+          pvpLosses,
+          trades: typeof r.trades === 'number' ? r.trades : 0,
+          firstSeen: typeof r.first_seen === 'number' ? r.first_seen : 0,
+          lastSeen: typeof r.last_seen === 'number' ? r.last_seen : 0,
+          ...(maxDistance > 0 ? { maxDistance } : {}),
+        })
       }
       board = null
     },
@@ -725,17 +720,26 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
     put(profile, now = Date.now()) {
       openDb()
       const prev = profiles.get(profile.id)
-      const charRow = db?.prepare('SELECT trusted FROM characters WHERE account_id = ?').get(profile.id)
-      const untrustedAccount = charRow !== undefined && charRow.trusted === 0
-      const effectiveProfile: PublicProfile = untrustedAccount
-        ? {
-          ...profile,
-          badges: prev?.profile.badges ?? [],
-          dexCaught: prev?.profile.dexCaught ?? 0,
+      const charRow = db?.prepare('SELECT trusted, save_json FROM characters WHERE account_id = ?').get(profile.id)
+      let effectiveProfile: PublicProfile
+      if (charRow !== undefined) {
+        const boundSave = typeof charRow.save_json === 'string' ? (safeJsonParse(charRow.save_json) as SaveData | null) : null
+        const trusted = charRow.trusted === 1
+        effectiveProfile = {
+          id: profile.id,
+          name: boundSave?.name ?? profile.name,
+          avatar: boundSave?.avatar ?? profile.avatar,
+          badges: trusted && boundSave ? [...boundSave.badges] : [],
+          dexCaught: trusted && boundSave ? boundSave.dexCaught.length : 0,
+          party: boundSave ? boundSave.party.slice(0, CONTENT.config.party.maxParty).map((c) => toView(c, CONTENT)) : [],
           pvpWins: prev?.pvpWins ?? 0,
           pvpLosses: prev?.pvpLosses ?? 0,
+          playTimeSec: boundSave?.playTimeSec ?? profile.playTimeSec,
+          ...(prev?.maxDistance !== undefined ? { maxDistance: prev.maxDistance } : {}),
         }
-        : { ...profile, pvpWins: prev?.pvpWins ?? 0, pvpLosses: prev?.pvpLosses ?? 0 }
+      } else {
+        effectiveProfile = { ...profile, pvpWins: prev?.pvpWins ?? 0, pvpLosses: prev?.pvpLosses ?? 0 }
+      }
       const next: StoredProfile = {
         profile: effectiveProfile,
         pvpWins: prev?.pvpWins ?? 0,
@@ -748,7 +752,6 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       profiles.set(profile.id, next)
       upsertProfileRow(next)
       evictIfNeeded()
-      scheduleJsonMirror()
     },
 
     touch(id, now = Date.now()) {
@@ -757,7 +760,6 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       if (s) {
         s.lastSeen = now
         upsertProfileRow(s)
-        scheduleJsonMirror()
       }
     },
 
@@ -775,7 +777,6 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
         l.profile.pvpLosses = l.pvpLosses
         upsertProfileRow(l)
       }
-      if (w || l) scheduleJsonMirror()
     },
 
     recordTrade(id) {
@@ -784,7 +785,6 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       if (s) {
         s.trades++
         upsertProfileRow(s)
-        scheduleJsonMirror()
       }
     },
 
@@ -794,7 +794,6 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       if (!s || !Number.isFinite(tiles) || tiles <= (s.maxDistance ?? 0)) return
       s.maxDistance = Math.floor(tiles)
       upsertProfileRow(s)
-      scheduleJsonMirror()
     },
 
     leaderboard(limit = NET.leaderboard.size) {
@@ -871,17 +870,22 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       const conn = openDb()
       const now = loginOpts?.now ?? Date.now()
       const ip = loginOpts?.ip ?? 'local'
+      if (typeof rawUsername !== 'string' || rawUsername.length === 0 || rawUsername.length > NET.auth.username.maxLen * 4) {
+        await verifyDummyPassword('invalid')
+        writeAudit({ ip, kind: 'auth.login_failed', severity: 1, detail: {}, at: now })
+        return { ok: false, status: 401, code: 'invalid_credentials', message: t('net.auth.invalidCredentials') }
+      }
       if (!loginIpLimiter.take(ip, now)) {
         writeAudit({ ip, kind: 'auth.login_rate_limited', severity: 2, detail: { scope: 'ip' }, at: now })
         return { ok: false, status: 429, code: 'rate_limited', message: t('net.error.rate_limited') }
       }
-      const usernameKey = typeof rawUsername === 'string' ? rawUsername.normalize('NFKC').trim().toLowerCase() : ''
+      const usernameKey = rawUsername.normalize('NFKC').trim().toLowerCase()
       if (usernameKey && !loginAccountLimiter.take(usernameKey, now)) {
         writeAudit({ ip, kind: 'auth.login_rate_limited', severity: 2, detail: { scope: 'account', usernameKey }, at: now })
         return { ok: false, status: 429, code: 'rate_limited', message: t('net.error.rate_limited') }
       }
-      if (!usernameKey || typeof rawPassword !== 'string' || rawPassword.length === 0 || codePointLength(rawPassword) > NET.auth.password.maxLen) {
-        await verifyDummyPassword(typeof rawPassword === 'string' ? rawPassword.slice(0, NET.auth.password.maxLen) : 'invalid')
+      if (typeof rawPassword !== 'string' || rawPassword.length === 0 || codePointLength(rawPassword) > NET.auth.password.maxLen) {
+        await verifyDummyPassword('invalid')
         writeAudit({ ip, kind: 'auth.login_failed', severity: 1, detail: {}, at: now })
         return { ok: false, status: 401, code: 'invalid_credentials', message: t('net.auth.invalidCredentials') }
       }
@@ -925,6 +929,7 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       const row = conn.prepare('SELECT account_id FROM sessions WHERE token_hash = ?').get(tokenHash)
       const res = conn.prepare('DELETE FROM sessions WHERE token_hash = ?').run(tokenHash)
       if (row && typeof row.account_id === 'string') {
+        for (const fn of sessionRevokedListeners) fn(row.account_id)
         writeAudit({ accountId: row.account_id, ip: logoutOpts?.ip, kind: 'auth.logout', severity: 1, detail: {}, at: now })
       }
       return Number(res.changes) > 0
@@ -954,10 +959,10 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
     getAccountSave(accountId) {
       const conn = openDb()
       const rec = readCharacterRow(accountId)
-      if (rec) return { save: rec.save, imported: rec.imported, trusted: rec.trusted, rev: rec.rev, updatedAt: rec.updatedAt, sig: rec.sig }
+      if (rec) return { accountId, save: rec.save, imported: rec.imported, trusted: rec.trusted, rev: rec.rev, updatedAt: rec.updatedAt, sig: rec.sig }
       const acc = conn.prepare('SELECT id FROM accounts WHERE id = ?').get(accountId)
       if (!acc) return null
-      return { save: null, imported: false, trusted: true, rev: 0 }
+      return { accountId, save: null, imported: false, trusted: true, rev: 0 }
     },
 
     putSave: putSaveImpl,
@@ -973,6 +978,10 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       const acc = conn.prepare('SELECT id, username, status FROM accounts WHERE id = ?').get(accountId)
       if (!acc || typeof acc.username !== 'string') {
         return { ok: false, status: 404, code: 'account_not_found', message: t('net.auth.unauthorized') }
+      }
+      if (acc.status === 'banned') {
+        writeAudit({ accountId, ip: bindOpts?.ip, kind: 'account.bind_banned', severity: 2, detail: {}, at: now })
+        return { ok: false, status: 403, code: 'account_banned', message: t('net.auth.accountBanned') }
       }
       const existing = conn.prepare('SELECT account_id FROM characters WHERE account_id = ?').get(accountId)
       if (existing) {
@@ -1027,7 +1036,6 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       }
 
       syncProfileFromSave(accountId, save, trusted, now)
-      scheduleJsonMirror()
       writeAudit({
         accountId,
         ip: bindOpts?.ip,
@@ -1048,6 +1056,35 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       }
     },
 
+    recordLedger(entry: { accountId: string; kind: LedgerRecord['kind']; subject: string; delta: number; balance: number; ref: string; at?: number }): void {
+      const conn = openDb()
+      const at = entry.at ?? Date.now()
+      conn.prepare(`
+        INSERT INTO ledger (account_id, at, kind, subject, delta, balance, ref)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `).run(entry.accountId, at, entry.kind, entry.subject, entry.delta, entry.balance, entry.ref)
+    },
+
+    listLedger(accountId?: string, limit = 100): LedgerRecord[] {
+      const conn = openDb()
+      const rows = accountId
+        ? conn.prepare('SELECT id, account_id, at, kind, subject, delta, balance, ref FROM ledger WHERE account_id = ? ORDER BY id DESC LIMIT ?').all(accountId, limit)
+        : conn.prepare('SELECT id, account_id, at, kind, subject, delta, balance, ref FROM ledger ORDER BY id DESC LIMIT ?').all(limit)
+      return rows.map((r) => ({
+        id: typeof r.id === 'number' ? r.id : 0,
+        accountId: String(r.account_id),
+        at: typeof r.at === 'number' ? r.at : 0,
+        kind: r.kind as LedgerRecord['kind'],
+        subject: String(r.subject),
+        delta: typeof r.delta === 'number' ? r.delta : 0,
+        balance: typeof r.balance === 'number' ? r.balance : 0,
+        ref: String(r.ref),
+      }))
+    },
+
+    onSessionRevoked(listener: (accountId: string) => void): void {
+      sessionRevokedListeners.add(listener)
+    },
     audit: writeAudit,
     recordAudit: writeAudit,
 
@@ -1089,8 +1126,6 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       }))
     },
     async flush() {
-      if (timer) { clearTimeout(timer); timer = null }
-      await persistJsonMirror()
       if (db && db.isOpen) {
         try { db.exec('PRAGMA wal_checkpoint(PASSIVE)') } catch { /* ignore */ }
       }
@@ -1098,8 +1133,6 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
 
     async close() {
       closed = true
-      if (timer) { clearTimeout(timer); timer = null }
-      await persistJsonMirror()
       if (db && db.isOpen) {
         try { db.exec('PRAGMA wal_checkpoint(TRUNCATE)') } catch { /* ignore */ }
         db.close()
@@ -1164,6 +1197,9 @@ export async function rollbackSqliteToJson(
   const jsonPath = join(dir, cfg.file)
   const backupDir = join(dir, cfg.backupDir)
 
+  if (opts.backupFile && !existsSync(opts.backupFile)) {
+    return { ok: false, restoredProfiles: 0, jsonPath, restoredDbFrom: null, error: 'backup_not_found' }
+  }
   if (!existsSync(sqlitePath)) {
     return { ok: false, restoredProfiles: 0, jsonPath, restoredDbFrom: null }
   }
@@ -1172,17 +1208,9 @@ export async function rollbackSqliteToJson(
   conn.exec(SCHEMA_SQL)
   const restored: Record<string, StoredProfile> = {}
 
-  const legacyRows = conn.prepare('SELECT id, raw_json FROM legacy_profiles').all()
-  for (const r of legacyRows) {
-    if (typeof r.id !== 'string' || typeof r.raw_json !== 'string') continue
-    const sp = parseStoredProfileRecord(safeJsonParse(r.raw_json))
-    if (sp) restored[r.id] = sp
-  }
-
   const currentRows = conn.prepare('SELECT id, profile_json, pvp_wins, pvp_losses, trades, first_seen, last_seen, max_distance FROM profiles').all()
   for (const r of currentRows) {
     if (typeof r.id !== 'string' || typeof r.profile_json !== 'string') continue
-    if (restored[r.id]) continue
     const pub = parsePublicProfile(safeJsonParse(r.profile_json))
     if (!pub) continue
     const pvpWins = typeof r.pvp_wins === 'number' ? Number(r.pvp_wins) : 0
@@ -1201,6 +1229,28 @@ export async function rollbackSqliteToJson(
       ...(maxDistance > 0 ? { maxDistance } : {}),
     }
   }
+
+  const legacyRows = conn.prepare('SELECT id, raw_json FROM legacy_profiles').all()
+  for (const r of legacyRows) {
+    if (typeof r.id !== 'string' || typeof r.raw_json !== 'string') continue
+    const sp = parseStoredProfileRecord(safeJsonParse(r.raw_json))
+    if (!sp) continue
+    const curr = restored[r.id]
+    if (curr) {
+      restored[r.id] = {
+        profile: { ...curr.profile, ...sp.profile, pvpWins: Math.max(curr.pvpWins, sp.pvpWins), pvpLosses: Math.max(curr.pvpLosses, sp.pvpLosses) },
+        pvpWins: Math.max(curr.pvpWins, sp.pvpWins),
+        pvpLosses: Math.max(curr.pvpLosses, sp.pvpLosses),
+        trades: Math.max(curr.trades, sp.trades),
+        firstSeen: Math.min(curr.firstSeen || sp.firstSeen, sp.firstSeen || curr.firstSeen),
+        lastSeen: Math.max(curr.lastSeen, sp.lastSeen),
+        maxDistance: Math.max(curr.maxDistance ?? 0, sp.maxDistance ?? 0),
+      }
+    } else {
+      restored[r.id] = sp
+    }
+  }
+  try { conn.exec('PRAGMA wal_checkpoint(TRUNCATE)') } catch { /* ignore */ }
   conn.close()
 
   const payload: ProfilesFile = { version: cfg.version, profiles: restored }
@@ -1216,6 +1266,8 @@ export async function rollbackSqliteToJson(
     if (files.length > 0) candidateBackup = join(backupDir, files[files.length - 1])
   }
   if (candidateBackup && existsSync(candidateBackup)) {
+    await unlink(`${sqlitePath}-wal`).catch(() => {})
+    await unlink(`${sqlitePath}-shm`).catch(() => {})
     copyFileSync(candidateBackup, sqlitePath)
     restoredDbFrom = candidateBackup
   }

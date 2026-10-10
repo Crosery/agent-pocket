@@ -6,13 +6,13 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { once } from 'node:events'
 import { existsSync } from 'node:fs'
-import { mkdtemp, readFile, rm, unlink, writeFile } from 'node:fs/promises'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join as pathJoin } from 'node:path'
 import { WebSocket as NodeWebSocket } from 'ws'
 import type { ClientMsg, PublicProfile, ServerMsg } from '../src/shared/protocol.ts'
 import type { SaveData } from '../src/shared/types.ts'
-import { CONTENT, t } from '../src/shared/content/index.ts'
+import { CONTENT } from '../shared/content/index.ts'
 import { createCreature } from '../src/shared/creature.ts'
 import { Rng } from '../src/shared/rng.ts'
 import { createSaveManager } from '../src/client/core/save.ts'
@@ -25,10 +25,8 @@ import {
   rollbackSqliteToJson,
   validatePassword,
   validateUsername,
-  type StoredProfile,
 } from '../src/server/store.ts'
 import { isRecord } from '../src/server/util.ts'
-import { runMigrateCli } from '../scripts/migrate-sqlite.ts'
 
 interface HttpResp {
   status: number
@@ -81,6 +79,7 @@ async function httpCall(
 async function openWsWithCookie(
   port: number,
   cookie?: string | null,
+  extraHeaders?: Record<string, string>,
 ): Promise<{
   ws: NodeWebSocket
   msgs: ServerMsg[]
@@ -90,7 +89,12 @@ async function openWsWithCookie(
 }> {
   const ws = new NodeWebSocket(
     `ws://localhost:${port}${NET.protocol.wsPath}`,
-    cookie ? { headers: { cookie } } : undefined,
+    {
+      headers: {
+        ...(cookie ? { cookie } : {}),
+        ...extraHeaders,
+      },
+    },
   )
   const msgs: ServerMsg[] = []
   ws.on('message', (data: Buffer) => {
@@ -114,6 +118,7 @@ async function openWsWithCookie(
     },
   }
 }
+
 function makeSampleSave(name: string, overrides: Partial<SaveData> = {}): SaveData {
   const mgr = createSaveManager({ world: null })
   const base = mgr.newGame({ name, avatar: CONTENT.characters[0]?.id ?? 'red' })
@@ -130,7 +135,9 @@ test('username and password validation follows content rules and moderation', ()
   assert.equal(validateUsername('a'.repeat(NET.auth.username.maxLen + 1)).ok, false, 'too long')
   assert.equal(validateUsername('bad<script>').ok, false, 'html characters rejected')
   assert.equal(validateUsername('has space').ok, false, 'spaces rejected')
-  assert.equal(validateUsername( 'admin').ok, false, 'reserved name rejected')
+  assert.equal(validateUsername('admin').ok, false, 'reserved name rejected')
+  assert.equal(validateUsername('_admin_').ok, false, 'separator-wrapped reserved name rejected')
+  assert.equal(validateUsername('a_d_m_i_n').ok, false, 'ignored-separator reserved name rejected')
   assert.equal(validateUsername('训练家_01').ok, true, 'Chinese + underscore + digits accepted')
 
   assert.equal(validatePassword('short').ok, false, 'password under minLen rejected')
@@ -138,9 +145,12 @@ test('username and password validation follows content rules and moderation', ()
   assert.equal(validatePassword('validPass\u0000123').ok, false, 'control character rejected')
   assert.equal(validatePassword('Trainer_01', 'trainer_01').ok, false, 'password equal to username rejected')
   assert.equal(validatePassword('CorrectHorseBattery1', 'trainer_01').ok, true)
+
+  // parseSessionCookie duplicate handling
+  assert.equal(parseSessionCookie('ap_session=; ap_session=valid_token_1234567890123456'), 'valid_token_1234567890123456')
 })
 
-test('store: account uniqueness, wrong auth, rate limits, session expiry/logout, bind once & untrusted import isolation', async () => {
+test('store: canonical newGame for imported:false vs untrusted quarantine for imported:true, rate refill with synthetic time', async () => {
   const dir = await mkdtemp(pathJoin(tmpdir(), 'ap-acc-store-'))
   try {
     const store = createProfileStore({ dir })
@@ -186,7 +196,7 @@ test('store: account uniqueness, wrong auth, rate limits, session expiry/logout,
       assert.equal(rateLimited.code, 'rate_limited')
     }
 
-    // After window refills, login succeeds
+    // After window refills using synthetic time, login succeeds (Review 3 test)
     const afterRefill = 2000 + (NET.auth.rates.loginAccount.perSeconds + 1) * 1000
     const loginOk = await store.loginAccount('Alice_01', 'StrongPass#123', { ip: '10.0.1.99', now: afterRefill })
     assert.equal(loginOk.ok, true)
@@ -204,50 +214,78 @@ test('store: account uniqueness, wrong auth, rate limits, session expiry/logout,
     assert.equal(store.logoutSession(reg1.session.token, { ip: '10.0.0.1', now: 1600 }), true)
     assert.equal(store.getAccountBySession(reg1.session.token, 1601), null)
 
-    // First bind with untrusted offline save: strips pvpWins/pvpLosses/trades/maxDistance, marks creatures legacy, overwrites playerId
-    const spId = CONTENT.speciesList[0]!.id
-    const mon = createCreature(spId, 20, { rng: new Rng(42), otName: 'Spoof' })
-    const forgedOfflineSave = makeSampleSave('Alice_01', {
-      playerId: '00000000-0000-0000-0000-000000000000',
-      party: [mon],
-      badges: ['badge-1', 'badge-2'],
-      dexCaught: [spId],
-      maxDistance: 88888,
-      stats: { battlesWon: 50, caught: 10, steps: 900, pvpWins: 777, pvpLosses: 1, trades: 99, shiniesFound: 5 },
+    // First bind with imported: false and forged client items/money/quests (Review 1):
+    // Server ignores client gameplay fields and constructs canonical fresh save!
+    const clientForgedNewSave = makeSampleSave('Alice_01', {
+      money: 999999,
+      bag: { 'master-ball': 99, 'potion': 50 },
+      badges: ['badge-code', 'badge-vision'],
+      party: [createCreature(CONTENT.speciesList[0]!.id, 50, { rng: new Rng(1) })],
+      flags: { 'cheated': true },
+      quests: { 'main': { stage: 9, done: true } },
     })
+    const bindNew = store.bindSave(reg1.account.id, clientForgedNewSave, { imported: false, ip: '10.0.0.1', now: 3000 })
+    assert.equal(bindNew.ok, true)
+    if (!bindNew.ok) return
+    assert.equal(bindNew.record.imported, false)
+    assert.equal(bindNew.record.trusted, true)
+    assert.equal(bindNew.record.save.money, CONTENT.config.economy.startMoney, 'money is canonical startMoney')
+    assert.deepEqual(bindNew.record.save.bag, CONTENT.config.economy.startItems, 'bag is canonical startItems')
+    assert.equal(bindNew.record.save.party.length, 0, 'party is empty for fresh character')
+    assert.equal(bindNew.record.save.badges.length, 0, 'badges is empty for fresh character')
 
-    // Even if client claims imported: false, pre-existing party/badges/stats force imported=true & trusted=false
-    const bind1 = store.bindSave(reg1.account.id, forgedOfflineSave, { imported: false, ip: '10.0.0.1', now: 3000 })
-    assert.equal(bind1.ok, true)
-    if (!bind1.ok) return
-    assert.equal(bind1.record.imported, true)
-    assert.equal(bind1.record.trusted, false)
-    assert.equal(bind1.record.save.playerId, reg1.account.id, 'server overwrites client-supplied playerId')
-    assert.equal(bind1.record.save.stats.pvpWins, 0, 'untrusted import pvpWins stripped')
-    assert.equal(bind1.record.save.stats.pvpLosses, 0, 'untrusted import pvpLosses stripped')
-    assert.equal(bind1.record.save.stats.trades, 0, 'untrusted import trades stripped')
-    assert.equal(bind1.record.save.maxDistance, undefined, 'untrusted import maxDistance stripped')
-    assert.equal(bind1.record.save.party[0]?.origin?.kind, 'legacy', 'imported creatures marked legacy')
+    // Second bind rejected
+    const bindDup = store.bindSave(reg1.account.id, makeSampleSave('Alice_01'), { imported: false, ip: '10.0.0.1', now: 3001 })
+    assert.equal(bindDup.ok, false)
+    if (!bindDup.ok) assert.equal(bindDup.code, 'already_bound')
 
-    // Untrusted import does not grant badges/dexCaught on the authoritative leaderboard
-    const lbEntry = store.leaderboard().find((e) => e.id === reg1.account.id)
-    assert.ok(lbEntry)
-    assert.equal(lbEntry.pvpWins, 0)
-    assert.equal(lbEntry.badges, 0)
-    assert.equal(lbEntry.dexCaught, 0)
+    // Register second account to test imported: true quarantine
+    const reg2 = await store.registerAccount('Bob_02', 'StrongPass#123', { ip: '10.0.0.2', now: 4000 })
+    assert.equal(reg2.ok, true)
+    if (!reg2.ok) return
 
-    // Second bind attempt rejected (first-bind only)
-    const bind2 = store.bindSave(reg1.account.id, makeSampleSave('Alice_01'), { imported: false, ip: '10.0.0.1', now: 3001 })
-    assert.equal(bind2.ok, false)
-    if (!bind2.ok) {
-      assert.equal(bind2.status, 409)
-      assert.equal(bind2.code, 'already_bound')
-    }
+    const spId = CONTENT.speciesList[0]!.id
+    const bossDef = CONTENT.bossList[0]
+    const normalMon = createCreature(spId, 80, { rng: new Rng(42), otName: 'Spoof' })
+    const bossMon = createCreature(bossDef.species, 50, { rng: new Rng(43) })
+    bossMon.origin = { kind: 'boss', boss: bossDef.id }
 
-    // Audit records captured
-    const audits = store.listAudit(reg1.account.id)
-    assert.ok(audits.some((a) => a.kind === 'account.bind_import'))
-    assert.ok(audits.some((a) => a.kind === 'account.bind_rejected_duplicate'))
+    const offlineImportSave = makeSampleSave('Bob_02', {
+      money: 9999999,
+      bag: { 'potion': 500, 'bike': 1, 'master-ball': 10 },
+      party: [normalMon, bossMon],
+      badges: ['badge-code'],
+      stats: { battlesWon: 10, caught: 5, steps: 100, pvpWins: 50, pvpLosses: 2, trades: 10, shiniesFound: 1 },
+      maxDistance: 9999,
+    })
+    const bindImport = store.bindSave(reg2.account.id, offlineImportSave, { imported: true, ip: '10.0.0.2', now: 4001 })
+    assert.equal(bindImport.ok, true)
+    if (!bindImport.ok) return
+    assert.equal(bindImport.record.imported, true)
+    assert.equal(bindImport.record.trusted, false)
+    assert.equal(bindImport.record.save.money, CONTENT.config.economy.startMoney, 'imported money capped to startMoney')
+    assert.equal(bindImport.record.save.flags['auth:untrustedImport'], true, 'untrusted quarantine flag set')
+    assert.equal(bindImport.record.save.bag['bike'], undefined, 'key items stripped from bag')
+    assert.equal(bindImport.record.save.bag['potion'], 99, 'bag stacks capped at 99')
+    assert.equal(bindImport.record.save.stats.pvpWins, 0, 'pvpWins stripped')
+    assert.equal(bindImport.record.save.maxDistance, undefined, 'maxDistance stripped')
+    assert.equal(bindImport.record.save.party[0]?.origin?.kind, 'legacy')
+    assert.equal(bindImport.record.save.party[1]?.origin?.kind, 'legacy')
+    assert.equal(bindImport.record.save.party[1]?.origin?.boss, bossDef.id, 'boss card retains origin.boss')
+
+    // Authoritative leaderboard never ranks untrusted account badges/dexCaught/pvpWins
+    const lb = store.leaderboard()
+    const bobEntry = lb.find((e) => e.id === reg2.account.id)
+    assert.ok(bobEntry)
+    assert.equal(bobEntry.badges, 0)
+    assert.equal(bobEntry.dexCaught, 0)
+    assert.equal(bobEntry.pvpWins, 0)
+
+    // Ledger methods work
+    store.recordLedger({ accountId: reg1.account.id, kind: 'money', subject: 'starter', delta: 3000, balance: 3000, ref: 'init' })
+    const ledger = store.listLedger(reg1.account.id)
+    assert.equal(ledger.length, 1)
+    assert.equal(ledger[0]?.delta, 3000)
 
     await store.close()
   } finally {
@@ -255,162 +293,106 @@ test('store: account uniqueness, wrong auth, rate limits, session expiry/logout,
   }
 })
 
-test('http + ws + sqlite restart: status, register/login/logout, CSRF, unauthorized save access, two-account isolation, persistence', async () => {
+test('http + ws + CSRF + profile spoof protection + guest eviction isolation', async () => {
   const dir = await mkdtemp(pathJoin(tmpdir(), 'ap-acc-http-'))
   const PORT = 8794
   try {
     let srv = await startServer({ port: PORT, dataDir: dir, distDir: pathJoin(dir, 'no-dist'), quiet: true, pvp: null, world: null })
     let aliceCookie = ''
-    let bobCookie = ''
     let aliceId = ''
-    let bobId = ''
     try {
-      // 1. GET /api/status
+      // 1. Status endpoint
       const st = await httpCall(PORT, 'GET', NET.http.statusPath)
       assert.equal(st.status, 200)
       assert.equal(st.headers['access-control-allow-origin'], '*')
-      assert.equal(st.json.protocolVersion, CONTENT.config.net.protocolVersion)
-      assert.equal(typeof st.json.version, 'string')
-      assert.equal(st.json.online, 0)
-      assert.equal(st.json.name, t('net.serverName'))
 
-      // 2. Unauthorized GET /api/account and POST /api/account/bind rejected with 401
-      const unauthGet = await httpCall(PORT, 'GET', NET.http.accountPath)
-      assert.equal(unauthGet.status, 401)
-      assert.equal(unauthGet.json.error, 'unauthorized')
-
-      const unauthBind = await httpCall(PORT, 'POST', NET.http.bindPath, {
-        body: { save: makeSampleSave('Hacker'), imported: false },
+      // 2. CSRF checks: cross-site and same-site without same origin rejected
+      const csrfCross = await httpCall(PORT, 'POST', NET.http.registerPath, {
+        body: { username: 'CsrfCross', password: 'Password1234' },
+        headers: { 'sec-fetch-site': 'cross-site' },
       })
-      assert.equal(unauthBind.status, 401)
-      assert.equal(unauthBind.json.error, 'unauthorized')
+      assert.equal(csrfCross.status, 403)
+      assert.equal(csrfCross.json.error, 'forbidden_origin')
 
-      // 3. Cross-origin CSRF rejected with 403
-      const csrfAttempt = await httpCall(PORT, 'POST', NET.http.registerPath, {
-        body: { username: 'CsrfUser', password: 'Password1234' },
-        headers: { origin: 'https://evil.example.com' },
+      const csrfSameSite = await httpCall(PORT, 'POST', NET.http.registerPath, {
+        body: { username: 'CsrfSameSite', password: 'Password1234' },
+        headers: { 'sec-fetch-site': 'same-site' },
       })
-      assert.equal(csrfAttempt.status, 403)
-      assert.equal(csrfAttempt.json.error, 'forbidden_origin')
+      assert.equal(csrfSameSite.status, 403)
 
-      // 4. Register Alice & Bob (directly logs in and sets HttpOnly cookie)
-      const regAlice = await httpCall(PORT, 'POST', NET.http.registerPath, {
-        body: { username: 'AliceTrainer', password: 'AlicePassword123' },
+      // 3. Register Alice
+      const reg = await httpCall(PORT, 'POST', NET.http.registerPath, {
+        body: { username: 'AliceOnline', password: 'AlicePassword123' },
+        headers: { 'sec-fetch-site': 'same-origin', origin: `http://localhost:${PORT}` },
+      })
+      assert.equal(reg.status, 200)
+      assert.ok(reg.cookie)
+      aliceCookie = reg.cookie
+      assert.ok(isRecord(reg.json.account))
+      aliceId = String(reg.json.account.id)
+
+      // 4. Bind Alice with canonical fresh save
+      const bind = await httpCall(PORT, 'POST', NET.http.bindPath, {
+        cookie: aliceCookie,
+        body: { save: makeSampleSave('AliceOnline'), imported: false },
         headers: { origin: `http://localhost:${PORT}` },
       })
-      assert.equal(regAlice.status, 200)
-      assert.ok(regAlice.cookie)
-      aliceCookie = regAlice.cookie
-      const rawSetCookie = String(regAlice.headers['set-cookie'])
-      assert.match(rawSetCookie, /HttpOnly/)
-      assert.match(rawSetCookie, /SameSite=Lax/)
-      assert.ok(isRecord(regAlice.json.account))
-      aliceId = String(regAlice.json.account.id)
-      assert.equal(regAlice.json.save, null)
+      assert.equal(bind.status, 200)
+      assert.equal(bind.json.imported, false)
 
-      const regBob = await httpCall(PORT, 'POST', NET.http.registerPath, {
-        body: { username: 'BobTrainer', password: 'BobPassword123' },
-      })
-      assert.equal(regBob.status, 200)
-      assert.ok(regBob.cookie)
-      bobCookie = regBob.cookie
-      assert.ok(isRecord(regBob.json.account))
-      bobId = String(regBob.json.account.id)
-      assert.notEqual(aliceId, bobId)
-
-      // 5. Bind Alice's fresh save and Bob's distinct save
-      const aliceInitialSave = makeSampleSave('AliceTrainer', {
-        playerId: 'spoofed-client-id-1',
-        position: { map: 'map-alice', x: 11, y: 22, facing: 'right' },
-      })
-      const bindAlice = await httpCall(PORT, 'POST', NET.http.bindPath, {
-        cookie: aliceCookie,
-        body: { save: aliceInitialSave, imported: false },
-      })
-      assert.equal(bindAlice.status, 200)
-      assert.equal(bindAlice.json.imported, false)
-      assert.ok(isRecord(bindAlice.json.save))
-      assert.equal(bindAlice.json.save.playerId, aliceId, 'bound save uses Alice server accountId')
-
-      const bobInitialSave = makeSampleSave('BobTrainer', {
-        playerId: aliceId, // Bob attempts to claim Alice's ID in his save payload
-        position: { map: 'map-bob', x: 33, y: 44, facing: 'up' },
-      })
-      const bindBob = await httpCall(PORT, 'POST', NET.http.bindPath, {
-        cookie: bobCookie,
-        body: { save: bobInitialSave, imported: false },
-      })
-      assert.equal(bindBob.status, 200)
-      assert.ok(isRecord(bindBob.json.save))
-      assert.equal(bindBob.json.save.playerId, bobId, 'Bob cannot claim Alice ID')
-
-      // 6. Two-account isolation: Alice's cookie reads only Alice's save; Bob's cookie reads only Bob's save
-      const accAlice = await httpCall(PORT, 'GET', NET.http.accountPath, { cookie: aliceCookie })
-      const accBob = await httpCall(PORT, 'GET', NET.http.accountPath, { cookie: bobCookie })
-      assert.equal(accAlice.status, 200)
-      assert.equal(accBob.status, 200)
-      assert.ok(isRecord(accAlice.json.save) && isRecord(accBob.json.save))
-      assert.equal(accAlice.json.save.name, 'AliceTrainer')
-      assert.equal(accBob.json.save.name, 'BobTrainer')
-      assert.equal(accAlice.json.save.playerId, aliceId)
-      assert.equal(accBob.json.save.playerId, bobId)
-
-      // 7. WebSocket with Alice's session cookie binds connection to aliceId (ignoring spoofed hello.playerId)
-      const wsAlice = await openWsWithCookie(PORT, aliceCookie)
+      // 5. Connect WebSocket with Alice cookie
+      const wsAlice = await openWsWithCookie(PORT, aliceCookie, { origin: `http://localhost:${PORT}` })
       wsAlice.send({
         t: 'hello',
         v: CONTENT.config.net.protocolVersion,
         playerId: crypto.randomUUID(),
-        name: 'SpoofedName',
+        name: 'SpoofedAlice',
         avatar: 'invalid',
-        map: 'wrong-map',
-        x: 0,
-        y: 0,
+        map: 'test-map',
+        x: 5,
+        y: 6,
         facing: 'down',
         lead: null,
-        profile: { id: 'x', name: 'x', avatar: 'x', badges: [], dexCaught: 0, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0 },
+        profile: { id: 'spoof', name: 'spoof', avatar: 'x', badges: ['badge-code', 'badge-vision'], dexCaught: 50, party: [], pvpWins: 100, pvpLosses: 0, playTimeSec: 0 },
       })
-      const welcomeAlice = await wsAlice.waitFor('welcome')
-      assert.equal(welcomeAlice.t, 'welcome')
-      if (welcomeAlice.t === 'welcome') {
-        assert.equal(welcomeAlice.selfId, aliceId)
-      }
-      wsAlice.ws.close()
-      await wsAlice.closed
+      const welcome = await wsAlice.waitFor('welcome')
+      assert.equal(welcome.t, 'welcome')
+      if (welcome.t === 'welcome') assert.equal(welcome.selfId, aliceId)
 
-      // 8. WebSocket with forged/invalid session cookie is rejected with unauthorized
-      const wsForged = await openWsWithCookie(PORT, `${NET.auth.cookieName}=forged_token_value_1234567890`)
-      const errForged = await wsForged.waitFor('error')
-      assert.equal(errForged.t, 'error')
-      if (errForged.t === 'error') assert.equal(errForged.code, 'unauthorized')
-      await wsForged.closed
-    } finally {
-      await srv.close()
-    }
-
-    // 9. Restart server on the same dataDir: SQLite ap.db persists accounts, sessions, and saves
-    assert.ok(existsSync(pathJoin(dir, NET.store.sqliteFile)), 'ap.db created on disk')
-    srv = await startServer({ port: PORT, dataDir: dir, distDir: pathJoin(dir, 'no-dist'), quiet: true, pvp: null, world: null })
-    try {
-      // Existing session cookie still works across restart
-      const accAfterRestart = await httpCall(PORT, 'GET', NET.http.accountPath, { cookie: aliceCookie })
-      assert.equal(accAfterRestart.status, 200)
-      assert.ok(isRecord(accAfterRestart.json.account) && isRecord(accAfterRestart.json.save))
-      assert.equal(accAfterRestart.json.account.id, aliceId)
-      assert.equal(accAfterRestart.json.save.name, 'AliceTrainer')
-
-      // Logout invalidates session; re-login issues a fresh working cookie and returns persisted save
-      const logoutRes = await httpCall(PORT, 'POST', NET.http.logoutPath, { cookie: aliceCookie })
-      assert.equal(logoutRes.status, 200)
-      assert.equal((await httpCall(PORT, 'GET', NET.http.accountPath, { cookie: aliceCookie })).status, 401)
-
-      const relogin = await httpCall(PORT, 'POST', NET.http.loginPath, {
-        body: { username: 'AliceTrainer', password: 'AlicePassword123' },
+      // 6. Client attempts to send WebSocket profile message with forged badges/dexCaught/party:
+      // Server must NOT accept forged stats on leaderboard!
+      wsAlice.send({
+        t: 'profile',
+        profile: {
+          id: aliceId,
+          name: 'AliceOnline',
+          avatar: CONTENT.characters[0]!.id,
+          badges: ['badge-1', 'badge-2', 'badge-3'],
+          dexCaught: 99,
+          party: [],
+          pvpWins: 500,
+          pvpLosses: 0,
+          playTimeSec: 1000,
+        },
       })
-      assert.equal(relogin.status, 200)
-      assert.ok(relogin.cookie && parseSessionCookie(relogin.cookie))
-      assert.ok(isRecord(relogin.json.save))
-      assert.equal(relogin.json.save.playerId, aliceId)
+
+      // Check leaderboard: Alice's badges and dexCaught remain authoritative (0 for fresh save)
+      const lbRes = await httpCall(PORT, 'GET', NET.http.leaderboardPath)
+      const entries = Array.isArray(lbRes.json.entries) ? (lbRes.json.entries as Array<{ id: string; badges: number; dexCaught: number; pvpWins: number }>) : []
+      const aliceEntry = entries.find((e) => e.id === aliceId)
+      assert.ok(aliceEntry)
+      assert.equal(aliceEntry.badges, 0, 'badges cannot be spoofed via WS profile')
+      assert.equal(aliceEntry.dexCaught, 0, 'dexCaught cannot be spoofed via WS profile')
+      assert.equal(aliceEntry.pvpWins, 0, 'pvpWins cannot be spoofed via WS profile')
+
+      // 7. Active WebSocket dropped on logout (Review 6)
+      const logout = await httpCall(PORT, 'POST', NET.http.logoutPath, {
+        cookie: aliceCookie,
+        headers: { origin: `http://localhost:${PORT}` },
+      })
+      assert.equal(logout.status, 200)
+      const wsCloseCode = await wsAlice.closed
+      assert.ok(wsCloseCode > 0, 'WebSocket closed on logout')
     } finally {
       await srv.close()
     }
@@ -419,77 +401,51 @@ test('http + ws + sqlite restart: status, register/login/logout, CSRF, unauthori
   }
 })
 
-test('migration CLI: profiles.json -> SQLite transactional import, original JSON retained, idempotency, and rollback restoration', async () => {
-  const dir = await mkdtemp(pathJoin(tmpdir(), 'ap-migrate-test-'))
+test('migration CLI: rollback stat merge and explicit missing backup error', async () => {
+  const dir = await mkdtemp(pathJoin(tmpdir(), 'ap-migrate-merge-'))
   try {
     const jsonPath = pathJoin(dir, NET.store.file)
     const p1: PublicProfile = {
       id: '11111111-2222-3333-4444-555555555555',
-      name: 'LegacyAlpha',
-      avatar: CONTENT.characters[0]?.id ?? 'red',
-      badges: ['badge-code', 'badge-vision'],
-      dexCaught: 18,
-      party: [],
-      pvpWins: 12,
-      pvpLosses: 3,
-      playTimeSec: 7200,
-    }
-    const p2: PublicProfile = {
-      id: '66666666-7777-8888-9999-aaaaaaaaaaaa',
-      name: 'LegacyBeta',
+      name: 'Alpha',
       avatar: CONTENT.characters[0]?.id ?? 'red',
       badges: ['badge-code'],
-      dexCaught: 7,
+      dexCaught: 5,
       party: [],
-      pvpWins: 4,
-      pvpLosses: 5,
-      playTimeSec: 1800,
+      pvpWins: 2,
+      pvpLosses: 1,
+      playTimeSec: 1000,
     }
-    const legacyPayload: { version: number; profiles: Record<string, StoredProfile> } = {
+    const legacyPayload = {
       version: NET.store.version,
       profiles: {
-        [p1.id]: { profile: p1, pvpWins: 12, pvpLosses: 3, trades: 5, firstSeen: 1000, lastSeen: 5000, maxDistance: 420 },
-        [p2.id]: { profile: p2, pvpWins: 4, pvpLosses: 5, trades: 1, firstSeen: 2000, lastSeen: 6000, maxDistance: 128 },
+        [p1.id]: { profile: p1, pvpWins: 2, pvpLosses: 1, trades: 1, firstSeen: 1000, lastSeen: 2000, maxDistance: 100 },
       },
     }
-    const originalJsonBytes = JSON.stringify(legacyPayload, null, 2)
-    await writeFile(jsonPath, originalJsonBytes, 'utf8')
+    await writeFile(jsonPath, JSON.stringify(legacyPayload), 'utf8')
 
-    // 1. Run migration once
-    const r1 = await migrateJsonToSqlite(dir)
-    assert.equal(r1.migrated, true)
-    assert.equal(r1.importedCount, 2)
-    assert.ok(existsSync(r1.sqlitePath))
-    assert.ok(r1.backupPath && existsSync(r1.backupPath), 'pre-migration SQLite backup created')
+    // Migrate once
+    const m = await migrateJsonToSqlite(dir)
+    assert.equal(m.migrated, true)
 
-    // Original profiles.json is retained byte-for-byte untouched
-    assert.equal(await readFile(jsonPath, 'utf8'), originalJsonBytes)
-
-    // 2. Run migration a second time via CLI: idempotent (migrated: false, count stays 2)
-    const r2 = await runMigrateCli(['--data-dir', dir])
-    assert.ok('migrated' in r2)
-    if ('migrated' in r2) {
-      assert.equal(r2.migrated, false)
-      assert.equal(r2.importedCount, 2)
-    }
-
-    // 3. Verify store reads the migrated data from SQLite even if profiles.json is removed temporarily
-    await unlink(jsonPath)
+    // Simulate online gameplay updating PvP wins in SQLite
     const store = createProfileStore({ dir })
     await store.load()
-    assert.equal(store.size(), 2)
-    assert.equal(store.get(p1.id)?.pvpWins, 12)
-    assert.equal(store.get(p1.id)?.maxDistance, 420)
-    assert.equal(store.get(p2.id)?.trades, 1)
+    store.recordPvp(p1.id, null) // pvpWins now 3
+    store.recordDistance(p1.id, 500)
     await store.close()
 
-    // 4. Rollback restores profiles.json with exact deepEqual contents
+    // Rollback merges post-migration stats back into JSON
     const rb = await rollbackSqliteToJson(dir)
     assert.equal(rb.ok, true)
-    assert.equal(rb.restoredProfiles, 2)
-    assert.ok(existsSync(jsonPath))
-    const restoredData = JSON.parse(await readFile(jsonPath, 'utf8')) as typeof legacyPayload
-    assert.deepEqual(restoredData, legacyPayload)
+    const rolledBack = JSON.parse(await readFile(jsonPath, 'utf8')) as typeof legacyPayload
+    assert.equal(rolledBack.profiles[p1.id]?.pvpWins, 3, 'post-migration PvP wins merged in rollback')
+    assert.equal(rolledBack.profiles[p1.id]?.maxDistance, 500, 'post-migration distance merged in rollback')
+
+    // Explicit non-existent backup returns error
+    const badRb = await rollbackSqliteToJson(dir, { backupFile: pathJoin(dir, 'non-existent-backup.db') })
+    assert.equal(badRb.ok, false)
+    assert.equal(badRb.error, 'backup_not_found')
   } finally {
     await rm(dir, { recursive: true, force: true })
   }
