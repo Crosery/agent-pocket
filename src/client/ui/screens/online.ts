@@ -260,17 +260,27 @@ export async function openOnline(ctx: GameContext): Promise<void> {
 
   function paintStatus(): void {
     const status: NetStatus = ctx.net.status
-    const rtt = (ctx.net as { rtt?: number }).rtt ?? -1
-    const key = `${status}|${ctx.net.online}|${Math.round(rtt)}`
+    const rtt = ctx.net.rtt ?? -1
+    const stats = ctx.net.stats
+    const key = `${status}|${ctx.net.online}|${Math.round(rtt)}|${Math.round(stats?.p95 ?? -1)}`
     if (key === statusKey) return
     statusKey = key
     statusEl.dataset.status = status
     statusEl.replaceChildren()
+    const rttSpan = status === 'online' && rtt >= 0
+      ? el('span', {
+          class: 'ap-dim',
+          text: t('multiplayer.status.rtt', { ms: Math.round(rtt) }),
+          ...(stats && stats.p50 >= 0
+            ? { title: t('multiplayer.status.rttDetail', { ms: Math.round(rtt), p50: Math.round(stats.p50), p95: Math.round(stats.p95), jitter: Math.round(stats.jitter) }) }
+            : {}),
+        })
+      : null
     append(statusEl, [
       el('span', 'mp-status-dot'),
       el('span', { text: t(`multiplayer.status.${status}`) }),
       status === 'online' ? el('span', { class: 'ap-dim', text: t('multiplayer.status.count', { n: ctx.net.online }) }) : null,
-      status === 'online' && rtt >= 0 ? el('span', { class: 'ap-dim', text: t('multiplayer.status.rtt', { ms: Math.round(rtt) }) }) : null,
+      rttSpan,
     ])
     reconnectBtn.hidden = status === 'online' || status === 'connecting'
   }

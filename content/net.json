@@ -29,6 +29,9 @@
     "moveSpeedSlack": 1.6,
     "moveToleranceTiles": 2,
     "moveMaxDtSeconds": 1,
+    "nearRadiusTiles": 16,
+    "farStrideTicks": 2,
+    "rttWindowSize": 32,
     "tradeRequestSeconds": 30,
     "sweepSeconds": 1,
     "closeGraceMs": 2000,
@@ -48,7 +51,7 @@
     "rates": {"registerIp": {"count": 5, "perSeconds": 60}, "loginIp": {"count": 10, "perSeconds": 60}, "loginAccount": {"count": 5, "perSeconds": 60}, "bindAccount": {"count": 5, "perSeconds": 60}}
   },
   "leaderboard": {"size": 50, "sortBy": ["dexCaught", "badges", "pvpWins", "maxDistance"]},
-  "client": {"reconnect": {"baseMs": 1000, "maxMs": 30000, "factor": 1.8, "jitter": 0.3}, "pingSeconds": 5, "pingTimeoutSeconds": 15, "rttSmoothing": 0.2, "interpolationDelayMs": 240, "sampleBufferMs": 1500, "snapDistanceTiles": 6, "positionDecimals": 2, "profileDebounceMs": 1500, "leaderboardTimeoutMs": 6000},
+  "client": {"reconnect": {"baseMs": 1000, "maxMs": 30000, "factor": 1.8, "jitter": 0.3}, "pingSeconds": 5, "pingTimeoutSeconds": 15, "rttSmoothing": 0.2, "interpolationDelayMs": 240, "interpolationMinMs": 150, "interpolationMaxMs": 400, "maxExtrapolateMs": 160, "correctionMs": 150, "predictionMaxPending": 64, "predictionReplayStepMaxTiles": 2, "stallThresholdMs": 250, "metricsWindowSize": 32, "sampleBufferMs": 1500, "snapDistanceTiles": 6, "positionDecimals": 2, "profileDebounceMs": 1500, "leaderboardTimeoutMs": 6000},
   "http": {
     "apiPrefix": "/api/",
     "healthPath": "/api/health",
@@ -60,6 +63,7 @@
     "accountPath": "/api/account",
     "bindPath": "/api/account/bind",
     "maxBodyBytes": 524288,
+    "metricsPath": "/api/metrics",
     "distDir": "dist",
     "publicDir": "public",
     "indexFile": "index.html",

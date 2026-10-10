@@ -2,6 +2,7 @@
 // messages and produces the periodic snapshots of a crowd of walking fake players. It owns no timers or sockets;
 // src/client/dev/net-sim.ts drives it, scripts/dev/bots.ts reuses its walking patterns for real bot connections.
 import type { ClientMsg, LeaderboardEntry, PlayerState, PublicProfile, ServerMsg } from '../protocol.ts'
+import { decodeMoveFrame } from '../net-codec.ts'
 import type { Dir } from '../types.ts'
 
 export type WalkPattern =
@@ -171,9 +172,11 @@ export class FakeServer {
         this.selfName = msg.name
         this.center = { x: msg.x, y: msg.y }
         return [{ t: 'welcome', selfId: this.cfg.selfId, serverTime: now, motd: this.text.motd, online: this.n + 1 }, this.online(now), this.snapshot(now)]
-      case 'move':
-        if (msg.map !== this.map) { this.map = msg.map; this.center = { x: msg.x, y: msg.y } }
+      case 'move': {
+        const mv = decodeMoveFrame(msg as unknown as Record<string, unknown>, this.map)
+        if (mv && mv.map !== this.map) { this.map = mv.map; this.center = { x: mv.x, y: mv.y } }
         return []
+      }
       case 'ping': return [{ t: 'pong', at: msg.at, serverTime: now }]
       case 'chat':
         return msg.channel === 'whisper' ? [] : [{ t: 'chat', from: this.cfg.selfId, name: this.selfName, channel: msg.channel, text: msg.text, at: now }]

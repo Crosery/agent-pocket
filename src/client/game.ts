@@ -356,10 +356,11 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
 
   // ---- events & net wiring ------------------------------------------------
   events.on('toast', ({ text, kind }) => ui.toast(text, kind))
-  events.on('net:status', ({ status }) => hud.setNetStatus(status, net.online))
-  net.on('online', (m) => hud.setNetStatus(net.status, m.count))
+  events.on('net:status', ({ status }) => hud.setNetStatus(status, net.online, net.rtt))
+  net.on('online', (m) => hud.setNetStatus(net.status, m.count, net.rtt))
+  net.on('pong', () => hud.setNetStatus(net.status, net.online, net.rtt))
   net.on('welcome', (m) => {
-    hud.setNetStatus(net.status, m.online)
+    hud.setNetStatus(net.status, m.online, net.rtt)
     // The server's greeting names the T key; on a phone the same sentence points at the chat icon (only the stock text is swapped).
     const motd = document.documentElement.dataset.touchControls === 'on' && m.motd === t('net.motd') ? t('net.motdTouch') : m.motd
     if (motd) chat.addMessage({ name: '', channel: 'system', text: motd, at: Date.now() })
@@ -708,7 +709,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   minimap.setVisible(ctx.save.settings.showMinimap)
   chat.setVisible(start.mode === 'multiplayer')
   hud.setMoney(ctx.save.money)
-  hud.setNetStatus(net.status, net.online)
+  hud.setNetStatus(net.status, net.online, net.rtt)
   ctx.persist(start.isNew ? 'newgame' : 'continue')
   if (start.mode === 'multiplayer') {
     net.connect()

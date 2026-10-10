@@ -1,5 +1,5 @@
 {
-  "status": {"online": "在线", "connecting": "连接中…", "offline": "离线", "error": "连接异常", "count": "共 {n} 人", "rtt": "延迟 {ms}ms", "reconnect": "重新连接", "notOnline": "尚未连接到服务器，无法进行联机操作"},
+  "status": {"online": "在线", "connecting": "连接中…", "offline": "离线", "error": "连接异常", "count": "共 {n} 人", "rtt": "延迟 {ms}ms", "rttDetail": "延迟 {ms}ms（p50 {p50}ms · p95 {p95}ms · 抖动 {jitter}ms）", "reconnect": "重新连接", "notOnline": "尚未连接到服务器，无法进行联机操作"},
   "online": {
     "title": "联机大厅",
     "close": "关闭",
@@ -25,7 +25,7 @@
   "profile": {"title": "训练家资料", "badges": "徽章", "badgesValue": "{n} 枚", "dex": "图鉴", "dexValue": "收集 {caught} · 发现 {seen}", "dexCaught": "收集 {caught}", "pvp": "对战", "pvpValue": "{wins} 胜 {losses} 负", "trades": "交易", "tradesValue": "{n} 次", "distance": "最远远行", "distanceValue": "{n} 格", "playTime": "游戏时间", "playTimeValue": "{h} 小时 {m} 分", "party": "队伍", "partyEmpty": "队伍中没有智灵", "close": "关闭"},
   "card": {"level": "Lv.{level}", "iv": "资质", "starOn": "★", "starOff": "☆", "ot": "初训家：{name}", "otUnknown": "初训家：—", "empty": "尚未放入智灵", "hp": "HP {hp}/{max}"},
   "wait": {"seconds": "剩余 {s} 秒", "cancel": "取消"},
-  "trade": {"title": "智灵交换", "with": "与 {name} 交换", "you": "你的报价", "them": "{name} 的报价", "swapGlyph": "⇄", "requesting": "正在向 {name} 发送交换请求，等待对方回应…", "incoming": "{name} 想和你交换智灵，要接受吗？", "accept": "接受", "decline": "拒绝", "autoDeclined": "你正忙，已自动拒绝 {name} 的交换请求", "selfBusy": "你正忙，暂时无法交换", "inviteStale": "这个交换请求已经失效了", "pick": "选择智灵", "change": "更换智灵", "withdraw": "撤回", "confirm": "确认交换", "cancel": "取消交换", "pickTitle": "选择要交换的智灵", "noOfferable": "队伍里至少要留下一只能战斗的智灵，无法交换", "notOfferable": "交换后队伍里将没有能战斗的智灵", "confirmed": "已确认", "waitingConfirm": "等待确认", "waitingOffer": "等待对方放入智灵", "bothNeeded": "双方都放入智灵后才能确认", "offerChanged": "报价有变动，双方需要重新确认", "timeLeft": "剩余 {s} 秒", "completeTitle": "交换成功！", "complete": "你得到了 {name}！", "sentAway": "{name} 去了新的训练家身边", "cancelAsk": "确定要取消这次交换吗？", "connectionLost": "与服务器的连接中断，交换已取消", "hint": "←→↑↓ 选择 · {confirm} 确定 · {cancel} 取消交换"},
+  "trade": {"title": "智灵交换", "with": "与 {name} 交换", "you": "你的报价", "them": "{name} 的报价", "swapGlyph": "⇄", "requesting": "正在向 {name} 发送交换请求，等待对方回应…", "accepting": "已接受 {name} 的交换请求，正在建立连接…", "incoming": "{name} 想和你交换智灵，要接受吗？", "accept": "接受", "decline": "拒绝", "autoDeclined": "你正忙，已自动拒绝 {name} 的交换请求", "selfBusy": "你正忙，暂时无法交换", "inviteStale": "这个交换请求已经失效了", "pick": "选择智灵", "change": "更换智灵", "withdraw": "撤回", "confirm": "确认交换", "cancel": "取消交换", "pickTitle": "选择要交换的智灵", "noOfferable": "队伍里至少要留下一只能战斗的智灵，无法交换", "notOfferable": "交换后队伍里将没有能战斗的智灵", "submittingOffer": "正在同步报价…", "withdrawingOffer": "正在撤回报价…", "confirming": "已发送确认，等待服务器同步…", "confirmed": "已确认", "waitingConfirm": "等待确认", "waitingOffer": "等待对方放入智灵", "bothNeeded": "双方都放入智灵后才能确认", "offerChanged": "报价有变动，双方需要重新确认", "timeLeft": "剩余 {s} 秒", "completeTitle": "交换成功！", "complete": "你得到了 {name}！", "sentAway": "{name} 去了新的训练家身边", "cancelAsk": "确定要取消这次交换吗？", "connectionLost": "与服务器的连接中断，交换已取消", "hint": "←→↑↓ 选择 · {confirm} 确定 · {cancel} 取消交换"},
   "pvp": {
     "challenging": "已向 {name} 发起对战邀请，等待对方回应…",
     "incoming": "{name} 向你发起了对战邀请！要接受吗？",
@@ -35,6 +35,7 @@
     "autoDeclined": "你正忙，已自动拒绝 {name} 的对战邀请",
     "inviteStale": "这个对战邀请已经失效了",
     "noParty": "队伍里没有可以出战的智灵",
+    "accepting": "已接受 {name} 的对战邀请，正在同步赛场…",
     "preparing": "{name} 接受了对战！正在准备队伍…",
     "waitingOpponent": "等待对手准备…",
     "cancelled": "对战已取消",

@@ -191,9 +191,13 @@ export function createHUD(root: HTMLElement): HUDHandle {
       objectiveText = text
       syncQuest()
     },
-    setNetStatus(status: NetStatus, online: number) {
+    setNetStatus(status: NetStatus, online: number, rtt = -1) {
       net.dataset.status = status
-      netText.textContent = status === 'online' ? t('hud.net.count', { n: online }) : t(`hud.net.${status}`)
+      if (status === 'online') {
+        netText.textContent = rtt >= 0 ? t('hud.net.countPing', { n: online, ms: Math.round(rtt) }) : t('hud.net.count', { n: online })
+      } else {
+        netText.textContent = t(`hud.net.${status}`)
+      }
       net.title = t(`hud.net.${status}`)
     },
     setMenuAlert(on: boolean, device) {

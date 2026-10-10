@@ -6,6 +6,7 @@ import { WebSocket } from 'ws'
 import { CONTENT, t } from '../../src/shared/content/index.ts'
 import { hash01, peerAt, type FakeConfig } from '../../src/shared/dev/netsim.ts'
 import type { ClientMsg, PublicProfile, ServerMsg } from '../../src/shared/protocol.ts'
+import { encodeMoveFrame } from '../../src/shared/net-codec.ts'
 import { buildWorld, worldAnchors } from '../../src/shared/world/index.ts'
 import { installDevText } from '../../src/client/dev/text.ts'
 import netSim from '../../content/dev/net-sim.json' with { type: 'json' }
@@ -24,8 +25,8 @@ const count = Math.max(1, Math.floor(Number(arg('count', String(FAKE.peers)))))
 const seconds = Number(arg('seconds', '60'))
 const anchorId = arg('anchor', 'town:origin')
 const host = arg('host', 'localhost')
+const legacy = process.argv.includes('--legacy')
 if (!['localhost', '127.0.0.1', '::1'].includes(host)) { console.error(`bots: only loopback hosts are allowed (got ${host})`); process.exit(2) }
-
 const world = buildWorld()
 const anchor = worldAnchors(world)[anchorId]
 if (!anchor) { console.error(`bots: unknown anchor ${anchorId}`); process.exit(2) }
@@ -45,11 +46,16 @@ function bot(i: number): void {
   const id = crypto.randomUUID()
   const ws = new WebSocket(url)
   const send = (m: ClientMsg) => { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(m)) }
-  let timer: ReturnType<typeof setInterval> | null = null
+  let timer: NodeJS.Timeout | number | null = null
   ws.on('open', () => {
     stats.connected++
     const pose = peerAt(FAKE, i, 0, anchor)
-    send({ t: 'hello', v: CONTENT.config.net.protocolVersion, playerId: id, name, avatar, map: anchor.map, x: Math.floor(pose.x) + 0.5, y: Math.floor(pose.y) + 0.5, facing: pose.facing, lead: null, profile: profile(id, name, avatar, i) })
+    const hello: ClientMsg = {
+      t: 'hello', v: CONTENT.config.net.protocolVersion, playerId: id, name, avatar, map: anchor.map,
+      x: Math.floor(pose.x) + 0.5, y: Math.floor(pose.y) + 0.5, facing: pose.facing, lead: null, profile: profile(id, name, avatar, i),
+      ...(!legacy ? { compact: true } : {}),
+    }
+    send(hello)
   })
   ws.on('message', (raw) => {
     const m = JSON.parse(String(raw)) as ServerMsg
@@ -58,7 +64,11 @@ function bot(i: number): void {
       timer = setInterval(() => {
         const p = peerAt(FAKE, i, (Date.now() - start) / 1000, anchor)
         stats.moves++
-        send({ t: 'move', map: anchor.map, x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, facing: p.facing, moving: p.moving, running: false })
+        if (legacy) {
+          send({ t: 'move', map: anchor.map, x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, facing: p.facing, moving: p.moving, running: false })
+        } else {
+          send(encodeMoveFrame({ seq: stats.moves, map: anchor.map, x: Math.round(p.x * 100) / 100, y: Math.round(p.y * 100) / 100, facing: p.facing, moving: p.moving, running: false }, false))
+        }
       }, tickMs)
     } else if (m.t === 'error') stats.errors.push(`${m.code}`)
   })

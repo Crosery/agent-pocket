@@ -4,6 +4,8 @@
 import type {
   BattleAction, BattleEvent, BattleRequest, Creature, CreatureView, Dir, SideIndex,
 } from './types.ts'
+import type { CompactMoveTuple, CompactPlayerTuple } from './net-codec.ts'
+export type { CompactMoveTuple, CompactPlayerTuple } from './net-codec.ts'
 
 export interface PresenceLead { speciesId: string; shiny: boolean; level: number }
 
@@ -45,9 +47,21 @@ export type ChatChannel = 'global' | 'local' | 'system' | 'whisper'
 
 // ----------------------------- client -> server -----------------------------
 
+export interface MoveClientMsg {
+  t: 'move'
+  seq?: number
+  map?: string
+  x?: number
+  y?: number
+  facing?: Dir
+  moving?: boolean
+  running?: boolean
+  d?: CompactMoveTuple
+}
+
 export type ClientMsg =
-  | { t: 'hello'; v: number; playerId: string; name: string; avatar: string; map: string; x: number; y: number; facing: Dir; lead: PresenceLead | null; profile: PublicProfile; build?: { devtools: boolean } }
-  | { t: 'move'; map: string; x: number; y: number; facing: Dir; moving: boolean; running: boolean }
+  | { t: 'hello'; v: number; playerId: string; name: string; avatar: string; map: string; x: number; y: number; facing: Dir; lead: PresenceLead | null; profile: PublicProfile; build?: { devtools: boolean }; compact?: boolean }
+  | MoveClientMsg
   | { t: 'lead'; lead: PresenceLead | null }
   | { t: 'profile'; profile: PublicProfile }
   | { t: 'chat'; channel: 'global' | 'local' | 'whisper'; text: string; to?: string }
@@ -65,19 +79,20 @@ export type ClientMsg =
   | { t: 'pvp.action'; battleId: string; action: BattleAction }
   | { t: 'pvp.forfeit'; battleId: string }
   | { t: 'leaderboard' }
-  | { t: 'ping'; at: number }
+  | { t: 'ping'; at: number; rtt?: number }
 
 // ----------------------------- server -> client -----------------------------
 
 export type ServerMsg =
   | { t: 'welcome'; selfId: string; serverTime: number; motd: string; online: number }
-  | { t: 'snapshot'; map: string; players: PlayerState[] }        // players near you on your map (excludes self)
-  | { t: 'join'; player: PlayerState }
+  | { t: 'snapshot'; map: string; players: PlayerState[]; d?: CompactPlayerTuple[]; at?: number; ack?: number }        // players near you on your map (excludes self)
+  | { t: 'join'; player: PlayerState; s?: number }
   | { t: 'leave'; id: string }
+  | { t: 'move.correct'; seq: number; map: string; x: number; y: number; facing: Dir; reason?: string }
   | { t: 'chat'; from: string; name: string; channel: ChatChannel; text: string; at: number }
   | { t: 'emote'; id: string; emote: string }
   | { t: 'profile'; profile: PublicProfile }
-  | { t: 'online'; count: number; players: { id: string; name: string; map: string; avatar: string; busy: boolean }[] }
+  | { t: 'online'; count: number; players: { id: string; name: string; map: string; avatar: string; busy: boolean }[]; delta?: boolean; left?: string[] }
   | { t: 'trade.requested'; from: string; name: string }
   | { t: 'trade.start'; tradeId: string; with: string; name: string }
   | { t: 'trade.offer'; tradeId: string; side: 'self' | 'other'; creature: Creature | null }
@@ -92,4 +107,4 @@ export type ServerMsg =
   | { t: 'leaderboard'; entries: LeaderboardEntry[] }
   | { t: 'system'; text: string; level: 'info' | 'warn' | 'error' }
   | { t: 'error'; code: string; message: string }
-  | { t: 'pong'; at: number; serverTime: number }
+  | { t: 'pong'; at: number; serverTime: number; ack?: number }

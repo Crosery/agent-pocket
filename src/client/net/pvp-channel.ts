@@ -375,6 +375,7 @@ export async function challengePvp(ctx: GameContext, targetId: string, targetNam
       offs.push(ctx.net.on('error', (m) => { if (R.challengeAbortErrors.includes(m.code)) { ctx.ui.toast(m.message, 'warn'); done(null) } }))
       offs.push(ctx.events.on('net:status', ({ status }) => { if (status !== 'online') { ctx.ui.toast(t('multiplayer.pvp.connectionLost'), 'warn'); done(null) } }))
       const timer = setTimeout(() => done(null), (R.challengeSeconds + R.clientSlackSeconds) * 1000)
+      ctx.net.send({ t: 'pvp.challenge', to: targetId })
       void showWaitPanel(ctx, {
         text: t('multiplayer.pvp.challenging', { name: targetName }),
         seconds: R.challengeSeconds,
@@ -385,7 +386,7 @@ export async function challengePvp(ctx: GameContext, targetId: string, targetNam
         },
       }).then((h) => {
         if (settled) h.close()
-        else { wait = h; ctx.net.send({ t: 'pvp.challenge', to: targetId }) }
+        else wait = h
       }, (err) => { reportError(err); done(null) })
     })
   } finally {
@@ -435,7 +436,9 @@ async function onChallenged(ctx: GameContext, m: Extract<ServerMsg, { t: 'pvp.ch
   }
   if (stale) { if (pick === 0) ctx.ui.toast(t('multiplayer.pvp.inviteStale'), 'info'); return }
   if (pick !== 0) { ctx.net.send({ t: 'pvp.respond', from: m.from, accept: false }); return }
-  // pvp.start (handled by installPvpHandlers) follows an accepted challenge; report why it doesn't come.
+  // pvp.start (handled by installPvpHandlers) follows an accepted challenge; give immediate feedback on weak links.
+  ctx.audio.playSfx(R.sfx.accepted)
+  ctx.ui.toast(t('multiplayer.pvp.accepting', { name: m.name }), 'info')
   const offs2: (() => void)[] = []
   const stop = () => { for (const off of offs2) off(); clearTimeout(timer) }
   const timer = setTimeout(stop, R.clientSlackSeconds * 1000)

@@ -36,6 +36,7 @@ export interface HttpApi {
   leaderboard(): LeaderboardEntry[]
   accounts?: AccountStore
   clientIp?(req: IncomingMessage): string
+  metrics?(req: IncomingMessage): Record<string, unknown> | null
 }
 
 export interface HttpOptions {
@@ -415,6 +416,12 @@ export function createHttpHandler(opts: HttpOptions): (req: IncomingMessage, res
         },
         head,
       )
+      return
+    }
+    if (pathname === h.metricsPath && opts.api.metrics) {
+      const data = opts.api.metrics(req)
+      if (!data) { sendJson(res, 403, { error: 'forbidden', message: t('net.http.notFound') }, head); return }
+      sendJson(res, 200, data, head)
       return
     }
     if (isApi) { sendJson(res, 404, { error: 'not_found', message: t('net.http.notFound') }, head); return }

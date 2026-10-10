@@ -691,10 +691,12 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
 
   function syncActor(dt: number): void {
     if (!actor) return
-    const target = ctx.world.elevationAt(player.x, player.y) + (surf ? P.surf.rideLift : 0)
+    const off = ctx.net.visualOffset ? ctx.net.visualOffset() : { ox: 0, oy: 0 }
+    const vx = player.x + off.ox, vy = player.y + off.oy
+    const target = ctx.world.elevationAt(vx, vy) + (surf ? P.surf.rideLift : 0)
     if (hop) player.elev = hop.e0 + (hop.e1 - hop.e0) * (hop.t / hop.dur)
     else player.elev = dt > 0 ? player.elev + (target - player.elev) * (1 - Math.exp(-dt * P.elevSmoothing)) : target
-    actor.setPosition(player.x, player.y, player.elev + (hop?.lift ?? 0))
+    actor.setPosition(vx, vy, player.elev + (hop?.lift ?? 0))
     actor.setFacing(player.facing)
     actor.setMoving(player.moving && !surf, player.running || bike)
     actor.update(dt)
@@ -1151,7 +1153,8 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     hiddenGlints(dt)
     scanAnchors(dt)
     updateLead(dt)
-    ctx.world.update(dt, { x: player.x, y: player.y, elev: player.elev }, ctx.clock.minutesOfDay)
+    const camOff = ctx.net.visualOffset ? ctx.net.visualOffset() : { ox: 0, oy: 0 }
+    ctx.world.update(dt, { x: player.x + camOff.ox, y: player.y + camOff.oy, elev: player.elev }, ctx.clock.minutesOfDay)
     markerT -= dt
     if (markerT <= 0) {
       markerT = GAME.markers.refreshSec
@@ -1163,6 +1166,29 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     ctx.net.reportPosition({ map: map.id, x: player.x, y: player.y, facing: player.facing, moving: player.moving, running: player.running || bike })
   }
 
+  ctx.net.setStepReplay?.((stepMap, x, y, dx, dy) => {
+    if (!grid || !map || map.id !== stepMap) return { x: x + dx, y: y + dy }
+    const res = moveBody(grid, x, y, dx, dy, {
+      radius: P.radius, surf, cornerSlip: P.cornerSlip, cornerSlipRate: P.cornerSlipRate, substep: P.substepTiles,
+    })
+    return { x: res.x, y: res.y }
+  })
+  const offCorrection = ctx.net.onCorrection?.((corr) => {
+    if (disposed || !map) return
+    travel = null
+    hop = null
+    if (corr.map !== map.id) {
+      void enterMap(corr.map, Math.floor(corr.x), Math.floor(corr.y), corr.facing, false)
+      return
+    }
+    player.x = corr.x
+    player.y = corr.y
+    player.facing = corr.facing
+    player.moving = false
+    tile = playerTile()
+    surf = isWaterTile(tile.x, tile.y)
+    syncActor(0)
+  }) ?? (() => {})
   const offTap = ctx.input.onWorldTap(onWorldTap)
   const offParty = ctx.events.on('party:changed', () => refreshFollower())
   const offMoney = ctx.events.on('money:changed', ({ money }) => ctx.hud.setMoney(money))
@@ -1224,6 +1250,8 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     storeExplored,
     dispose() {
       disposed = true
+      ctx.net.setStepReplay?.(null)
+      offCorrection()
       offTap()
       offParty()
       offMoney()

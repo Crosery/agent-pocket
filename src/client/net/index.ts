@@ -13,3 +13,7 @@ export {
   registerAccount, validatePassword, validateUsername,
 } from './auth.ts'
 export type { AccountInfo, AccountSessionResult, AuthCredentials } from './auth.ts'
+export { adaptiveInterpDelay, pushSample, sampleAt } from './interp.ts'
+export type { InterpOptions, Sample } from './interp.ts'
+export { createPredictor } from './predict.ts'
+export type { CorrectionState, PredictedMove, Predictor, PredictorOptions, StepReplayFn } from './predict.ts'

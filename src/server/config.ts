@@ -68,6 +68,9 @@ export interface NetFile {
     moveSpeedSlack: number
     moveToleranceTiles: number
     moveMaxDtSeconds: number
+    nearRadiusTiles: number
+    farStrideTicks: number
+    rttWindowSize: number
     tradeRequestSeconds: number
     sweepSeconds: number
     closeGraceMs: number
@@ -99,6 +102,7 @@ export interface NetFile {
     bindPath: string
     maxBodyBytes: number
     distDir: string
+    metricsPath: string
     publicDir: string
     indexFile: string
     /** Served with no-cache (besides indexFile), e.g. release.json read by deploy checks through the CDN. */
@@ -167,7 +171,8 @@ export function validateNetContent(net: NetFile = NET, mod: ModerationFile = MOD
   for (const k of [
     'defaultPort', 'maxPayloadBytes', 'heartbeatSeconds', 'helloTimeoutSeconds', 'onlineSummarySeconds', 'onlineListMax',
     'maxClients', 'maxClientsPerIp', 'snapshotMaxPlayers', 'maxBufferedBytes', 'skipSnapshotAboveBytes', 'emoteSeconds',
-    'emoteMaxLen', 'moveSpeedSlack', 'moveMaxDtSeconds', 'tradeRequestSeconds', 'sweepSeconds', 'closeGraceMs',
+    'emoteMaxLen', 'moveSpeedSlack', 'moveMaxDtSeconds', 'nearRadiusTiles', 'farStrideTicks', 'rttWindowSize',
+    'tradeRequestSeconds', 'sweepSeconds', 'closeGraceMs',
   ] as const) pos(`net.server.${k}`, s?.[k])
   nonNeg('net.server.boundsSlackTiles', s?.boundsSlackTiles)
   nonNeg('net.server.moveToleranceTiles', s?.moveToleranceTiles)
@@ -207,7 +212,7 @@ export function validateNetContent(net: NetFile = NET, mod: ModerationFile = MOD
   if (!Array.isArray(net.leaderboard?.sortBy) || net.leaderboard.sortBy.length === 0) errs.push('net.leaderboard.sortBy: non-empty array required')
   else for (const k of net.leaderboard.sortBy) if (!SORT_KEYS.includes(k)) errs.push(`net.leaderboard.sortBy: unknown key "${k}"`)
   const h = net.http
-  for (const k of ['apiPrefix', 'healthPath', 'statusPath', 'leaderboardPath', 'registerPath', 'loginPath', 'logoutPath', 'accountPath', 'bindPath'] as const) {
+  for (const k of ['apiPrefix', 'healthPath', 'statusPath', 'leaderboardPath', 'registerPath', 'loginPath', 'logoutPath', 'accountPath', 'bindPath', 'metricsPath'] as const) {
     if (!h?.[k]?.startsWith('/')) errs.push(`net.http.${k}: must start with "/"`)
   }
   pos('net.http.maxBodyBytes', h?.maxBodyBytes)

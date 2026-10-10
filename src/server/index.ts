@@ -11,7 +11,7 @@ import type { Creature } from '../shared/types.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { NET, validateNetContent } from './config.ts'
 import { createHttpHandler } from './http.ts'
-import { createHub } from './hub.ts'
+import { createHub, type HubMetrics } from './hub.ts'
 import { loadPvpModule, type PvpModule } from './pvp-hooks.ts'
 import { createProfileStore, type ProfileStore } from './store.ts'
 import type { SanitizeCreature } from './trade.ts'
@@ -36,6 +36,7 @@ export interface ServerOptions {
 export interface RunningServer {
   readonly port: number
   readonly store: ProfileStore
+  metrics(): HubMetrics
   close(): Promise<void>
 }
 
@@ -99,8 +100,13 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
       leaderboard: () => store.leaderboard(),
       accounts: store,
       clientIp,
+      metrics: (req) => {
+        const token = process.env.AP_METRICS_TOKEN
+        const auth = req.headers.authorization
+        if (token && auth === `Bearer ${token}`) return hub.metrics() as unknown as Record<string, unknown>
+        return null
+      },
     },
-    log,
   })
   const server = createServer(handler)
   const wss = new WebSocketServer({ noServer: true, maxPayload: NET.server.maxPayloadBytes, clientTracking: false })
@@ -129,6 +135,7 @@ export async function startServer(opts: ServerOptions): Promise<RunningServer> {
   return {
     port,
     store,
+    metrics: () => hub.metrics(),
     close() {
       closing ??= (async () => {
         hub.close()

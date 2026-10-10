@@ -342,7 +342,7 @@ export interface HUD {
   setQuest(text: string | null, summary?: string, stage?: string): void
   /** Sentence the objective card is showing (null = card hidden); see setQuest. */
   setObjective(text: string | null): void
-  setNetStatus(status: NetStatus, online: number): void
+  setNetStatus(status: NetStatus, online: number, rtt?: number): void
   /** The menu has something waiting: shows (or hides) the menu chip with a red dot; `device` picks the key cap on it. */
   setMenuAlert(on: boolean, device: Input['lastDevice']): void
   /** Name tags / speech bubbles over 3D actors are positioned by world/ using this layer. */
@@ -442,12 +442,44 @@ export interface BattleRunner {
 
 export type NetStatus = 'offline' | 'connecting' | 'online' | 'error'
 
+export interface NetClientStats {
+  /** Smoothed RTT in ms (-1 before first pong). */
+  rtt: number
+  /** Median RTT in ms (-1 before first sample). */
+  p50: number
+  /** 95th percentile RTT in ms (-1 before first sample). */
+  p95: number
+  /** 95th percentile RTT / snapshot arrival jitter in ms. */
+  jitter: number
+  /** Current adaptive interpolation delay in ms. */
+  interpDelayMs: number
+  /** Count of snapshot intervals exceeding stallThresholdMs. */
+  stalls: number
+  /** Snapshot arrival interval histogram buckets: [<=120ms, <=180ms, <=250ms, >250ms]. */
+  snapshotHistogram: [number, number, number, number]
+  /** Inbound bytes/sec over the last window. */
+  rxBps: number
+  /** Outbound bytes/sec over the last window. */
+  txBps: number
+  /** Total inbound bytes in the current session. */
+  rxBytes: number
+  /** Total outbound bytes in the current session. */
+  txBytes: number
+  /** Estimated loss / stall rate (0..1) from snapshot stalls and RTT spikes. */
+  lossRate: number
+}
+
 export interface NetClient {
   readonly status: NetStatus
   readonly selfId: string | null
   readonly online: number
+  readonly rtt?: number
   readonly endpoint?: string | null
+  readonly stats?: NetClientStats
   setEndpoint?(url: string | null): void
+  setStepReplay?(fn: ((map: string, x: number, y: number, dx: number, dy: number) => { x: number; y: number }) | null): void
+  onCorrection?(fn: (c: { seq: number; map: string; x: number; y: number; facing: Dir; ox: number; oy: number; snapped: boolean; reason?: string }) => void): () => void
+  visualOffset?(at?: number): { ox: number; oy: number; active: boolean }
   connect(): void
   disconnect(): void
   send(msg: ClientMsg): void

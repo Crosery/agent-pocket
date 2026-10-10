@@ -18,13 +18,21 @@ export interface NetClientTuning {
     /** EMA weight of a new RTT sample. */
     rttSmoothing: number
     interpolationDelayMs: number
+    interpolationMinMs: number
+    interpolationMaxMs: number
+    maxExtrapolateMs: number
+    correctionMs: number
+    predictionMaxPending: number
+    predictionReplayStepMaxTiles: number
+    stallThresholdMs: number
+    metricsWindowSize: number
     sampleBufferMs: number
     snapDistanceTiles: number
     positionDecimals: number
     profileDebounceMs: number
     leaderboardTimeoutMs: number
   }
-  http: { leaderboardPath: string }
+  http: { leaderboardPath: string; metricsPath: string }
 }
 
 export const NET_CLIENT: NetClientTuning = netJson as unknown as NetClientTuning

@@ -7,6 +7,12 @@ import type { RateKey } from './config.ts'
 import type { RateLimiter } from './util.ts'
 
 export type LimiterKey = RateKey | 'chat'
+export interface VisiblePeerState {
+  version: number
+  slot: number
+  staticKey: string
+  lastSentTick: number
+}
 
 export interface Conn {
   readonly ws: WebSocket
@@ -26,6 +32,14 @@ export interface Conn {
   profile: PublicProfile | null
   /** Hub-wide monotonically increasing version of `state`, bumped on every change. */
   version: number
+  /** True when the client requested compact delta frames in `hello`. */
+  compact: boolean
+  /** Next compact integer slot id to assign to a newly visible peer. */
+  nextSlot: number
+  /** Highest `move.seq` received from this client. */
+  lastMoveSeq: number
+  /** True when `lastMoveSeq` changed and has not yet been acknowledged in a snapshot/pong. */
+  ackDirty: boolean
   clientBusy: boolean
   pvpBusy: boolean
   tradeId: string | null
@@ -41,10 +55,26 @@ export interface Conn {
   /** Server-observed distance record (tiles from the origin, fractional) and the value last written to the store. */
   maxDistance: number
   distanceSaved: number
-  /** Players currently in this connection's interest set → version last sent. */
-  visible: Map<string, number>
+  /** Players currently in this connection's interest set → version/slot/staticKey last sent. */
+  visible: Map<string, VisiblePeerState>
+  /** Last online roster fingerprints sent to this connection (`id -> fingerprint`). */
+  rosterSent: Map<string, string>
+  lastOnlineCount: number
   /** Map of the last snapshot sent; null forces a fresh snapshot next tick. */
   snapMap: string | null
+  /** Per-connection RTT and traffic statistics (#23). */
+  pingSentAt: number
+  rtt: number
+  rttSamples: number[]
+  rttDiffSamples: number[]
+  rxBytes: number
+  txBytes: number
+  rxMsgs: number
+  txMsgs: number
+  rxWindow: { at: number; bytes: number }[]
+  txWindow: { at: number; bytes: number }[]
+  movesAccepted: number
+  movesRejected: number
   alive: boolean
   closed: boolean
   limits: Record<LimiterKey, RateLimiter>

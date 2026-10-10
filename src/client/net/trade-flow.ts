@@ -193,7 +193,18 @@ export function trackOnlineRoster(net: Pick<NetClient, 'on'>): Roster {
   let r = ROSTERS.get(net)
   if (!r) {
     const roster: Roster = { players: [], count: 0, at: 0 }
-    net.on('online', (m) => { roster.players = m.players; roster.count = m.count; roster.at = Date.now() })
+    net.on('online', (m) => {
+      if (m.delta) {
+        const byId = new Map(roster.players.map((p) => [p.id, p]))
+        for (const id of m.left ?? []) byId.delete(id)
+        for (const p of m.players) byId.set(p.id, p)
+        roster.players = [...byId.values()]
+      } else {
+        roster.players = m.players
+      }
+      roster.count = m.count
+      roster.at = Date.now()
+    })
     ROSTERS.set(net, roster)
     r = roster
   }
@@ -366,6 +377,7 @@ export async function startTradeFlow(ctx: GameContext, targetId: string, targetN
       offs.push(ctx.net.on('error', (m) => { if (TRADE_RULES.requestAbortErrors.includes(m.code)) { toastError(ctx, m); done(null) } }))
       offs.push(ctx.events.on('net:status', ({ status }) => { if (status !== 'online') { ctx.ui.toast(t('multiplayer.trade.connectionLost'), 'warn'); done(null) } }))
       const timer = setTimeout(() => done(null), (REQUEST_SECONDS + CLIENT_SLACK_SECONDS) * 1000)
+      ctx.net.send({ t: 'trade.request', to: targetId })
       void showWaitPanel(ctx, {
         text: t('multiplayer.trade.requesting', { name: targetName }),
         seconds: REQUEST_SECONDS,
@@ -376,7 +388,7 @@ export async function startTradeFlow(ctx: GameContext, targetId: string, targetN
         },
       }).then((h) => {
         if (settled) h.close()
-        else { wait = h; ctx.net.send({ t: 'trade.request', to: targetId }) }
+        else wait = h
       }, (err) => { reportError(err); done(null) })
     })
   } finally {
@@ -428,7 +440,12 @@ async function onTradeRequested(ctx: GameContext, m: Extract<ServerMsg, { t: 'tr
     ctx.ui.toast(t('multiplayer.trade.noOfferable'), 'warn')
     pick = 1
   }
-  ctx.net.send({ t: 'trade.respond', from: m.from, accept: pick === 0 })
+  if (pick !== 0) {
+    ctx.net.send({ t: 'trade.respond', from: m.from, accept: false })
+    return
+  }
+  ctx.ui.toast(t('multiplayer.trade.accepting', { name: m.name }), 'info')
+  ctx.net.send({ t: 'trade.respond', from: m.from, accept: true })
 }
 
 // ---------------------------------------------------------------------------
@@ -451,6 +468,7 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
   let myOk = false
   let theirOk = false
   let note: { text: string; cls: string } | null = null
+  let pendingAction: 'offer' | 'withdraw' | 'confirm' | null = null
   let closed = false
   let completed = false
   let picking = false
@@ -487,12 +505,19 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
   ]
   const paintFocus = () => BUTTONS.forEach((b, i) => buttons[b].classList.toggle('mp-focus', i === nav.index))
   const paint = () => {
-    mineCol.replaceChildren(...column(t('multiplayer.trade.you'), mine, myOk, ''))
+    const myStateText = pendingAction === 'offer'
+      ? t('multiplayer.trade.submittingOffer')
+      : pendingAction === 'withdraw'
+        ? t('multiplayer.trade.withdrawingOffer')
+        : pendingAction === 'confirm'
+          ? t('multiplayer.trade.confirming')
+          : ''
+    mineCol.replaceChildren(...column(t('multiplayer.trade.you'), mine, myOk, myStateText))
     theirCol.replaceChildren(...column(t('multiplayer.trade.them', { name: start.name }), theirs, theirOk, t('multiplayer.trade.waitingOffer')))
     buttons.pick.textContent = mine ? t('multiplayer.trade.change') : t('multiplayer.trade.pick')
-    buttons.pick.disabled = completed
-    buttons.withdraw.disabled = completed || !mine
-    buttons.confirm.disabled = completed || !mine || !theirs || myOk
+    buttons.pick.disabled = completed || pendingAction !== null
+    buttons.withdraw.disabled = completed || !mine || pendingAction !== null
+    buttons.confirm.disabled = completed || !mine || !theirs || myOk || pendingAction !== null
     buttons.cancel.disabled = completed
     noteEl.textContent = note?.text ?? (!mine || !theirs ? t('multiplayer.trade.bothNeeded') : '')
     noteEl.className = note?.cls ?? ''
@@ -525,13 +550,28 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
         if (closed || completed || idx < 0) return
         const cr = ctx.save.party[idx]
         if (!cr || !canOffer(ctx.save.party, cr)) { ctx.ui.toast(cr?.origin?.kind === 'boss' ? t('net.trade.boundBoss') : t('multiplayer.trade.notOfferable'), 'warn'); return }
-        ctx.net.send({ t: 'trade.offer', tradeId, creature: structuredClone(cr) })
+        const offered = structuredClone(cr)
+        mine = offered
+        pendingAction = 'offer'
+        note = { text: t('multiplayer.trade.submittingOffer'), cls: '' }
+        ctx.audio.playSfx(TRADE_RULES.sfx.offer)
+        paint()
+        ctx.net.send({ t: 'trade.offer', tradeId, creature: offered })
         return
       }
       case 'withdraw':
+        mine = null
+        myOk = false
+        pendingAction = 'withdraw'
+        note = { text: t('multiplayer.trade.withdrawingOffer'), cls: '' }
+        paint()
         ctx.net.send({ t: 'trade.offer', tradeId, creature: null })
         return
       case 'confirm':
+        pendingAction = 'confirm'
+        note = { text: t('multiplayer.trade.confirming'), cls: '' }
+        ctx.audio.playSfx(TRADE_RULES.sfx.confirm)
+        paint()
         ctx.net.send({ t: 'trade.confirm', tradeId })
         return
       case 'cancel':
@@ -564,6 +604,7 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
   const offs: (() => void)[] = [
     ctx.net.on('trade.offer', (m) => {
       if (m.tradeId !== tradeId) return
+      if (m.side === 'self') pendingAction = null
       resetConfirms()
       if (m.side === 'self') mine = m.creature
       else { theirs = m.creature; ctx.audio.playSfx(TRADE_RULES.sfx.offer) }
@@ -571,10 +612,9 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
     }),
     ctx.net.on('trade.confirmed', (m) => {
       if (m.tradeId !== tradeId) return
-      if (m.side === 'self') myOk = true
-      else theirOk = true
+      if (m.side === 'self') { myOk = true; pendingAction = null }
+      else { theirOk = true; ctx.audio.playSfx(TRADE_RULES.sfx.confirm) }
       note = null
-      ctx.audio.playSfx(TRADE_RULES.sfx.confirm)
       paint()
     }),
     ctx.net.on('trade.complete', (m) => {
@@ -609,7 +649,12 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
       close()
     }),
     ctx.net.on('error', (m) => {
-      if (!closed && !completed && TRADE_RULES.sessionErrors.includes(m.code)) toastError(ctx, m)
+      if (!closed && !completed && TRADE_RULES.sessionErrors.includes(m.code)) {
+        pendingAction = null
+        note = null
+        paint()
+        toastError(ctx, m)
+      }
     }),
     ctx.events.on('net:status', ({ status }) => {
       if (status === 'online' || completed) return
