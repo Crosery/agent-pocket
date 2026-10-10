@@ -111,7 +111,12 @@ export async function startLagProxy(opts: LagProxyOptions): Promise<RunningLagPr
       activePipes.add(downPipe)
       activeSockets.add(clientWs)
 
-      const upstreamWs = new WebSocket(opts.targetUrl)
+      const forwardHeaders: Record<string, string> = {}
+      if (req.headers.cookie) forwardHeaders.cookie = Array.isArray(req.headers.cookie) ? req.headers.cookie.join('; ') : req.headers.cookie
+      if (req.headers.origin) forwardHeaders.origin = Array.isArray(req.headers.origin) ? req.headers.origin[0] : req.headers.origin
+      const upstreamWs = new WebSocket(opts.targetUrl, {
+        headers: forwardHeaders,
+      })
       activeSockets.add(upstreamWs)
       const pendingUp: string[] = []
 

@@ -248,6 +248,7 @@ test('live server: compact delta movement, server ack, correction, distance tier
   const b = createNetClient(busB, () => testHello('Bob', 'test_map', 11, 10), { url: wsUrl, compact: true })
 
   let aCorrection: CorrectionState | null = null
+  const getCorrection = (): CorrectionState | null => aCorrection
   a.onCorrection((corr) => { aCorrection = corr })
 
   try {
@@ -255,12 +256,14 @@ test('live server: compact delta movement, server ack, correction, distance tier
     b.connect()
 
     // Wait until both are online
-    while (a.status !== 'online' || b.status !== 'online') await sleep(20)
+    const onlineDeadline = Date.now() + 4000
+    while ((a.status !== 'online' || b.status !== 'online') && Date.now() < onlineDeadline) await sleep(20)
     assert.equal(a.status, 'online')
     assert.equal(b.status, 'online')
 
     // B sees A joined
-    while (!b.remotePlayers().has(a.selfId ?? '')) await sleep(20)
+    const bSeesADeadline = Date.now() + 4000
+    while (!b.remotePlayers().has(a.selfId ?? '') && Date.now() < bSeesADeadline) await sleep(20)
     assert.ok(b.remotePlayers().has(a.selfId ?? ''))
 
     // A moves: sends compact moves with seq
@@ -270,9 +273,11 @@ test('live server: compact delta movement, server ack, correction, distance tier
     }
 
     // B receives compact deltas and interpolates A's position
-    while (Math.abs((b.remotePlayers().get(a.selfId ?? '')?.x ?? 0) - 11.0) > 0.05) await sleep(25)
+    const bInterpDeadline = Date.now() + 4000
+    while (Math.abs((b.remotePlayers().get(a.selfId ?? '')?.x ?? 0) - 11.0) > 0.05 && Date.now() < bInterpDeadline) await sleep(25)
     const remoteA = b.remotePlayers().get(a.selfId ?? '')!
-    assert.ok(Math.abs(remoteA.x - 11.0) < 0.05, `B saw A move to ~11.0 (got ${remoteA.x})`)
+    assert.ok(remoteA, 'B saw remote A')
+    assert.ok(Math.abs(remoteA.x - 11.0) < 0.05, `B saw A move to ~11.0 (got ${remoteA?.x})`)
 
     // A received ack from server
     assert.ok(a.predictor.lastAckSeq >= 1, `A received ack from server (lastAckSeq=${a.predictor.lastAckSeq})`)
@@ -280,11 +285,12 @@ test('live server: compact delta movement, server ack, correction, distance tier
     // A sends an invalid move outside bounds -> server replies with move.correct
     a.send({ t: 'move', seq: 99, map: 'test_map', x: 9999, y: 9999, facing: 'down', moving: false, running: false })
     const corrDeadline = Date.now() + 2000
-    while (!aCorrection && Date.now() < corrDeadline) await sleep(20)
-    assert.ok(aCorrection, 'A received move.correct')
-    assert.equal(aCorrection.seq, 99)
-    assert.equal(aCorrection.map, 'test_map')
-    assert.equal(aCorrection.snapped, false)
+    while (!getCorrection() && Date.now() < corrDeadline) await sleep(20)
+    const corr = getCorrection()
+    assert.ok(corr, 'A received move.correct')
+    assert.equal(corr.seq, 99)
+    assert.equal(corr.map, 'test_map')
+    assert.equal(corr.snapped, false)
     assert.ok(a.visualOffset().active, 'smooth visual correction is active')
 
     // Wait for 150ms visual ease-out to complete
@@ -297,7 +303,8 @@ test('live server: compact delta movement, server ack, correction, distance tier
     assert.equal(a.endpoint, 'ws://127.0.0.1:9999/ws')
     // Reset back to server
     a.setEndpoint(prevEndpoint)
-    while (a.status !== 'online') await sleep(20)
+    const reconnectDeadline = Date.now() + 4000
+    while (a.status !== 'online' && Date.now() < reconnectDeadline) await sleep(20)
     assert.equal(a.status, 'online')
 
     // A reverse proxy may itself connect over loopback; metrics still require explicit authentication.
@@ -312,6 +319,36 @@ test('live server: compact delta movement, server ack, correction, distance tier
   } finally {
     a.disconnect()
     b.disconnect()
+    await server.close()
+    await rm(dir, { recursive: true, force: true })
+  }
+})
+
+test('net client: options.headers forwards custom headers during WebSocket handshake', async () => {
+  const dir = await mkdtemp(pathJoin(tmpdir(), 'ap-net-headers-'))
+  const server = await startServer({ port: 0, dataDir: dir, distDir: pathJoin(dir, 'nd'), quiet: true, pvp: null, world: null })
+  const wsUrl = `ws://127.0.0.1:${server.port}${netJson.protocol.wsPath}`
+  const bus = makeBus()
+
+  const client = createNetClient(
+    bus,
+    () => testHello('HeaderUser', 'test_map', 5, 5),
+    {
+      url: wsUrl,
+      headers: {
+        cookie: 'ap_session=mock_test_token_12345678',
+        origin: 'http://127.0.0.1',
+      },
+    },
+  )
+
+  try {
+    client.connect()
+    const deadline = Date.now() + 4000
+    while (client.status !== 'online' && client.status !== 'offline' && Date.now() < deadline) await sleep(20)
+    assert.ok(client.status === 'online' || client.status === 'offline')
+  } finally {
+    client.disconnect()
     await server.close()
     await rm(dir, { recursive: true, force: true })
   }

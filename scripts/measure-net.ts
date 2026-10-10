@@ -78,6 +78,7 @@ async function runBandwidthBenchmark(compact: boolean, playersCount: number, dur
           lead: null,
           profile: emptyProfile(name),
           compact,
+          signed: true,
         }),
         { url: wsUrl, compact },
       )
@@ -87,9 +88,11 @@ async function runBandwidthBenchmark(compact: boolean, playersCount: number, dur
     }
 
     // Wait until all are online
-    const deadline = Date.now() + 5000
+    const deadline = Date.now() + 6000
     while (clients.some((c) => c.status !== 'online') && Date.now() < deadline) await sleep(20)
-
+    if (clients.some((c) => c.status !== 'online')) {
+      throw new Error(`Clients failed to connect within timeout: ${clients.filter((c) => c.status !== 'online').length} offline`)
+    }
     // Clear initial handshake bytes by reading baseline metrics
     await sleep(200)
     const m0 = server.metrics()
@@ -169,6 +172,7 @@ async function runWeakNetworkSimulation(): Promise<{
       t: 'hello', v: CONTENT.config.net.protocolVersion, playerId: crypto.randomUUID(), name: 'LocalA',
       avatar: 'char_red', map: 'sim_map', x: 10, y: 10, facing: 'down', lead: null, profile: emptyProfile('LocalA'),
       compact: true,
+      signed: true,
     }),
     { url: proxy.url, compact: true },
   )
@@ -179,6 +183,7 @@ async function runWeakNetworkSimulation(): Promise<{
       t: 'hello', v: CONTENT.config.net.protocolVersion, playerId: crypto.randomUUID(), name: 'RemoteB',
       avatar: 'char_blue', map: 'sim_map', x: 12, y: 10, facing: 'down', lead: null, profile: emptyProfile('RemoteB'),
       compact: true,
+      signed: true,
     }),
     { url: proxy.url, compact: true },
   )
@@ -192,7 +197,9 @@ async function runWeakNetworkSimulation(): Promise<{
     clientB.connect()
     const deadline = Date.now() + 6000
     while ((clientA.status !== 'online' || clientB.status !== 'online') && Date.now() < deadline) await sleep(20)
-
+    if (clientA.status !== 'online' || clientB.status !== 'online') {
+      throw new Error(`Simulation clients failed to connect: A=${clientA.status}, B=${clientB.status}`)
+    }
     // Local movement prediction is synchronous (0 ms latency)
     const tPred0 = performance.now()
     clientA.reportPosition({ map: 'sim_map', x: 10.2, y: 10, facing: 'right', moving: true, running: false })
