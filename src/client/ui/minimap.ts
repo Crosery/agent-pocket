@@ -209,7 +209,15 @@ export function createMinimap(root: HTMLElement): MinimapHandle {
   const north = el('div', { class: 'ap-mm-north', text: t('hud.minimap.north'), attrs: { 'aria-hidden': 'true' } })
   const box = el('div', { class: 'ap-minimap', attrs: { role: 'img', 'aria-label': t('hud.minimap.title') } }, [mapCv, ringCv, north])
   const layer = el('div', 'ap-layer ap-l-minimap', [box])
+  const tapFns = new Set<() => void>()
+  box.addEventListener('click', () => { for (const fn of [...tapFns]) fn() })
 
+  const closeHint = el('span', 'ap-mapview-close')
+  /** The overlay closes on any tap, so a phone gets that wording instead of a key cap it does not have. */
+  const paintCloseHint = () => closeHint.replaceChildren(
+    document.documentElement.dataset.touchControls === 'on'
+      ? el('span', 'ap-key', [t('hud.minimap.closeTouch')])
+      : keyHint('minimap', { label: t('hud.minimap.close') }))
   const viewTitle = el('div', 'ap-panel-title')
   const viewCv = el('canvas')
   const viewLabels = el('div')
@@ -218,12 +226,13 @@ export function createMinimap(root: HTMLElement): MinimapHandle {
     viewTitle,
     el('div', 'ap-mapview-body', [
       el('div', 'ap-mapview-canvas-wrap', [viewCv, viewLabels]),
-      el('div', 'ap-mapview-side', [legend, keyHint('map', { label: t('hud.minimap.close') })]),
+      el('div', 'ap-mapview-side', [legend, closeHint]),
     ]),
   ])
   const view = el('div', { class: 'ap-mapview', attrs: { role: 'dialog', 'aria-label': t('hud.minimap.title') } }, [viewFrame])
   const viewLayer = el('div', 'ap-layer ap-l-mapview', [view])
   root.append(viewLayer, layer)
+  view.addEventListener('click', () => api.setExpanded(false))
 
   let size = 0
   let mask: HTMLCanvasElement | null = null
@@ -653,7 +662,12 @@ export function createMinimap(root: HTMLElement): MinimapHandle {
       if (v === expanded) return
       expanded = v
       view.classList.toggle('is-on', v)
-      if (v) { layoutView(); drawView() }
+      view.classList.toggle('ap-fullscreen', v)
+      if (v) { paintCloseHint(); layoutView(); drawView() }
+    },
+    onTap(fn: () => void) {
+      tapFns.add(fn)
+      return () => { tapFns.delete(fn) }
     },
     setVisible(v: boolean) {
       visible = v

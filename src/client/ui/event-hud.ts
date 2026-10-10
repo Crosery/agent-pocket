@@ -146,10 +146,12 @@ export function createEventHud(uiRoot: HTMLElement, ui?: UIKit): EventHud {
       if (ui) ui.pushPanel(panel)
       else if (!details.isConnected) uiRoot.append(details)
       select(list.some(c => c.id === selectedId) ? selectedId : list[0].id)
+      details.classList.add('ap-fullscreen')
       details.showModal()
       details.querySelector<HTMLElement>('.ap-evbody')!.scrollTop = 0
       close.focus({ preventScroll: true })
     } else {
+      details.classList.remove('ap-fullscreen')
       details.close()
       ui?.popPanel(panel)
       if (visible && !chips.hidden && list.length) toggle.focus({ preventScroll: true })

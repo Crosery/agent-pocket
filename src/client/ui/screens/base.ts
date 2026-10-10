@@ -140,7 +140,7 @@ let screenId = 0
 export function openScreen<T>(env: ScreenEnv, className: string, build: (api: ScreenApi<T>) => ScreenBehaviour, leave?: () => T): Promise<T> {
   return new Promise<T>((resolve) => {
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
-    const root = el('div', { class: `aps-screen ${className}`, attrs: { role: 'dialog', 'aria-modal': 'true' } })
+    const root = el('div', { class: `aps-screen ap-fullscreen ${className}`, attrs: { role: 'dialog', 'aria-modal': 'true' } })
     root.tabIndex = -1
     let closed = false
     let busy = 0
@@ -244,9 +244,10 @@ function dirLabel(a: InputAction, device: Input['lastDevice']): string {
 
 export function hintBar(env: ScreenEnv, hints: Hint[]): HTMLElement[] {
   const device = env.ctx.input.lastDevice
+  // Key caps and pad names mean nothing to a finger, and the pad is hidden under every screen: touch gets no footer.
+  if (device === 'touch') return []
   return hints.flatMap(([a, label]) => {
     if (a !== 'lr' && a !== 'ud') return [keyHint(a, { label, device })]
-    if (device === 'touch') return []
     const [x, y] = a === 'lr' ? (['left', 'right'] as const) : (['up', 'down'] as const)
     return [el('span', 'ap-key', [el('kbd', { text: `${dirLabel(x, device)}${dirLabel(y, device)}` }), label])]
   })

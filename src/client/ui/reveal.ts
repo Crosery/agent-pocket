@@ -116,7 +116,7 @@ function fullCard(ctx: GameContext, cr: Creature, grade: GradeDef): Promise<void
   )
 
   return new Promise<void>((resolve) => {
-    const root = el('div', { class: 'aps-screen aps-reveal', attrs: { role: 'dialog', 'aria-modal': 'true', 'aria-label': t('screens.quality.reveal.title') } }, [card.el])
+    const root = el('div', { class: 'aps-screen ap-fullscreen aps-reveal', attrs: { role: 'dialog', 'aria-modal': 'true', 'aria-label': t('screens.quality.reveal.title') } }, [card.el])
     root.dataset.grade = grade.id
     root.classList.toggle('is-boss', !!bossDef)
     let closed = false
