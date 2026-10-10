@@ -5,7 +5,8 @@ import type { GameContext } from '../contracts.ts'
 import type { OverworldExt } from '../world/controller.ts'
 import { CONTENT, t } from '../../shared/content/index.ts'
 import { maxHp } from '../../shared/creature.ts'
-import { STORY_CONTENT } from '../../shared/world/story.ts'
+import { MIGRATIONS, STORY_CONTENT } from '../../shared/world/story.ts'
+import { contentUpdateSummaryText, hasPendingContentUpdate } from '../core/save-reconcile.ts'
 import { attentionCounts } from '../attention/logic.ts'
 import { ON_EVENTS, TUTORIAL, type TipDef } from './config.ts'
 import { afterDone, battleCues, condHolds, enrich, isTallGrassName, matchPayload, tipFlag, tipLive, type LiveView, type Place } from './logic.ts'
@@ -99,6 +100,25 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
   })
   const offLegacy = () => { offLegacyEvent(); window.clearTimeout(legacyTimer) }
 
+  // -- one-time summary notice for a save that was brought forward across content revisions --------------------------
+  let updateTimer = 0
+  const scheduleUpdateToast = () => {
+    const { pendingRev, toastSeen } = MIGRATIONS.noticeFlags
+    const target = ctx.save.flags[pendingRev]
+    if (!hasPendingContentUpdate(ctx.save) || typeof target !== 'number' || ctx.save.flags[toastSeen] === target || updateTimer) return
+    updateTimer = window.setTimeout(() => {
+      updateTimer = 0
+      const f = ctx.save.flags
+      const cur = f[pendingRev]
+      if (!hasPendingContentUpdate(ctx.save) || typeof cur !== 'number' || f[toastSeen] === cur) return
+      f[toastSeen] = cur
+      ctx.ui.toast(contentUpdateSummaryText(ctx.save, ctx.data), 'info')
+      ctx.persist('content-update-notice')
+    }, Math.max(400, (cfg.notices.legacyDelaySec * 1000) / 2))
+  }
+  const offUpdateMap = ctx.events.on('map:entered', scheduleUpdateToast)
+  const offUpdateEvt = ctx.events.on('content:updated', scheduleUpdateToast)
+  const offUpdate = () => { offUpdateMap(); offUpdateEvt(); window.clearTimeout(updateTimer) }
   // -- tips ----------------------------------------------------------------------------------------------------
   let battleKind = ''
   const offBattle = ctx.events.on('battle:start', ({ kind, coach }) => {
@@ -281,7 +301,7 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
       present(tip)
     },
     get objectiveId() { return objectiveRule },
-    dispose() { offRegion(); offLegacy(); offBattle(); offBattleEnd(); offCues(); offBus.forEach((off) => off()); objective.dispose(); tips.dispose() },
+    dispose() { offRegion(); offLegacy(); offUpdate(); offBattle(); offBattleEnd(); offCues(); offBus.forEach((off) => off()); objective.dispose(); tips.dispose() },
   }
   return api
 }

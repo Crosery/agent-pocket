@@ -27,8 +27,8 @@ Measured (Node 26, M-series, buildWorld incl. story):
 | export | from | purpose |
 |---|---|---|
 | `applyStory(world, sc = STORY_CONTENT)` | story.ts | place NPCs, resolve trainers / picks / scripts into the World (idempotent per World object) |
-| `storyProblems(world)` | story.ts | problems found while applying (unknown anchors, blocked tiles, bad references, unresolved text). Must be empty for shipped content |
-| `STORY_CONTENT` | story.ts | parsed story JSON (`meta`, `scripts`, `services`, `rival`, `quests`, `npcGroups`, `trainerGroups`) |
+| `storyProblems(world)` | story.ts | problems found while applying (unknown anchors, blocked tiles, bad references, unresolved text, undeclared quest-stage edits). Must be empty for shipped content |
+| `STORY_CONTENT`, `MIGRATIONS`, `validateStoryMigrations(quests?, mig?, c?)` | story.ts | parsed story JSON (`meta`, `scripts`, `services`, `rival`, `quests`, `triggers`, `migrations`, `npcGroups`, `trainerGroups`) and quest-stage / content-revision validator |
 | `starterSpecies(c?)`, `rivalStarterFor(starterId, c?)`, `rivalTrainerId(battle, starterId)` | story.ts | starter list, the rival's counter-pick, rival TrainerDef id |
 | `walkSteps(steps, fn)` | story.ts | depth-first visit of a script (then / else / choice branches) |
 | `storyFeatures(world)` | story.ts | what procgen placed on this World: `{ legends: PlacedLegend[] ({id, tablets[], final} anchor names), bounties: PlacedBounty[] ({quest, kind, giver, target?}) }` |
@@ -75,6 +75,8 @@ step carry resolved species ids.
 | `legends.json` | `spacing [min,max]` tiles between tablets, `idPatterns`, `quest` stage texts, `scripts{first,next,final}` templates, `chains[]` |
 | `bounties.json` | `count [min,max]`, `idPatterns`, `givers[]` (anchor regexes, in priority order), `distance [min,max]`, `levelSlack`, `reward{moneyPerLevel, round, items[{maxLevel, pool}]}`, `kinds{}` |
 | `trainers/routes.json`, `trainers/gyms.json`, `trainers/story.json` | `{ group: { defaults?, trainers: TrainerSpec[] } }` |
+| `triggers.json` | `TriggerSpec[]` (`on` in `TRIGGER_EVENTS`: `dex:caught`, `map:entered`, `region:entered`, `quest:updated`, `battle:end`, `badge:earned`, `save:loaded`, `content:updated`) |
+| `migrations.json` | `contentRev`, `mainStage`, `noticeFlags`, `questBaseline`, sequential `revisions[]` (`questChanges[]` + declarative `steps[]`), and `reconcile` (`mainStages[]`, `sideQuests[]`) |
 
 `NpcSpec`: `id at offset? facing? sprite nameZh role portrait? lines? script? trainer? sightRange? wander?
 hiddenUnlessFlag? hiddenIfFlag?`. `lines` is shorthand for one `say` per line. `facing` defaults to `auto`: the

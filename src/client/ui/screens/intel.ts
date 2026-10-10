@@ -5,9 +5,10 @@ import type { WorldEventDef } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
 import { GAMEPLAY } from '../../../shared/gameplay/data.ts'
 import {
-  activeEvents, dayOf, eventDescription, eventParams, eventTitle, festivalCalendar, realDateOf, rumorFlag,
+  activeEvents, dayOf, evaluateProgress, eventContext, eventDescription, eventParams, eventTitle, festivalCalendar, realDateOf, rumorFlag,
 } from '../../../shared/gameplay/events.ts'
 import { chainsProgress } from '../../../shared/gameplay/spawns.ts'
+import { acknowledgeContentUpdate, hasPendingContentUpdate, syncedContentRevisions } from '../../core/save-reconcile.ts'
 import { GPC } from '../../world/gameplay-config.ts'
 import { createRowMenu, type RowMenu } from '../menu.ts'
 import { el, tabs } from '../widgets.ts'
@@ -51,6 +52,10 @@ function tag(text: string, ok = false): HTMLElement {
 export function intelScreen(env: ScreenEnv): Promise<void> {
   const { ctx } = env
   const I = GPC.intel
+  if (hasPendingContentUpdate(ctx.save)) {
+    acknowledgeContentUpdate(ctx.save)
+    ctx.persist('intel-update-seen')
+  }
   return openScreen<void>(env, 'aps-intel', (api) => {
     let tab = 0
     let entries: Entry[] = []
@@ -72,12 +77,28 @@ export function intelScreen(env: ScreenEnv): Promise<void> {
       el('p', { class: 'aps-intel-text', text: eventDescription(def) }),
     ]
 
-    const news = (): Entry[] => flagEntries(ctx.save.flags, GPC.flags.news).slice(0, I.maxNews).flatMap(({ id, at }) => {
-      const def = GAMEPLAY.eventById[id]
-      if (!def) return []
-      return [{ label: eventTitle(def), sub: whenText(at), tag: def.tag ?? '', detail: () => eventDetail(def, [el('div', { class: 'aps-intel-when ap-dim', text: t('events.ui.startedAt', { when: whenText(at) }) })]) }]
-    })
+    const updateEntries = (): Entry[] => syncedContentRevisions(ctx.save).map((rev) => ({
+      label: t(rev.titleKey),
+      sub: t('screens.update.tag'),
+      tag: 'culture',
+      detail: () => [
+        el('div', 'aps-intel-head', [
+          el('span', { class: 'aps-intel-title ap-gold', text: t(rev.titleKey) }),
+          tag(t('screens.update.statusSynced'), true),
+        ]),
+        sectionTitle(t('screens.update.heading')),
+        el('p', { class: 'aps-intel-text', text: t(rev.summaryKey) }),
+      ],
+    }))
 
+    const news = (): Entry[] => [
+      ...updateEntries(),
+      ...flagEntries(ctx.save.flags, GPC.flags.news).slice(0, I.maxNews).flatMap(({ id, at }) => {
+        const def = GAMEPLAY.eventById[id]
+        if (!def) return []
+        return [{ label: eventTitle(def), sub: whenText(at), tag: def.tag ?? '', detail: () => eventDetail(def, [el('div', { class: 'aps-intel-when ap-dim', text: t('events.ui.startedAt', { when: whenText(at) }) })]) }]
+      }),
+    ]
     const rumors = (): Entry[] => flagEntries(ctx.save.flags, rumorFlag('')).slice(0, I.maxRumors).flatMap(({ id, at }) => {
       const def = GAMEPLAY.eventById[id]
       if (!def?.rumor) return []
@@ -96,14 +117,18 @@ export function intelScreen(env: ScreenEnv): Promise<void> {
 
     const events = (): Entry[] => {
       const out: Entry[] = []
+      const seenIds = new Set<string>()
       for (const ev of activeEvents(state(), minutes())) {
         if (ev.def.hidden || ev.def.trigger === 'legend') continue
+        seenIds.add(ev.id)
         const left = Math.max(1, Math.ceil(ev.endsAt - minutes()))
         out.push({ label: eventTitle(ev.def), sub: t('events.ui.endsIn', { minutes: left }), tag: ev.def.tag ?? '', detail: () => eventDetail(ev.def, [el('div', { class: 'aps-intel-when ap-dim', text: t('events.ui.endsIn', { minutes: left }) })]) })
       }
-      for (const c of festivalCalendar(realDateOf(new Date()), I.calendarDays)) {
+      const realNow = realDateOf(new Date())
+      for (const c of festivalCalendar(realNow, I.calendarDays)) {
         const def = GAMEPLAY.eventById[c.event]
-        if (!def || isActive(def.id)) continue
+        if (!def || seenIds.has(def.id)) continue
+        seenIds.add(def.id)
         const sub = c.inDays === 0 ? t('events.ui.statusToday') : t('events.ui.inDays', { days: c.inDays })
         out.push({
           label: eventTitle(def), sub, tag: def.tag ?? '',
@@ -111,6 +136,29 @@ export function intelScreen(env: ScreenEnv): Promise<void> {
             el('div', 'aps-intel-head', [el('span', { class: 'aps-intel-title ap-gold', text: eventTitle(def) }), tag(t(c.inDays === 0 ? 'events.ui.statusToday' : 'events.ui.statusUpcoming'))]),
             sectionTitle(t('events.ui.calendarTitle')),
             el('div', { class: 'aps-intel-when', text: c.inDays === 0 ? t('events.ui.calendarToday', { name: eventTitle(def) }) : t('events.ui.calendarSoon', { name: eventTitle(def), days: c.inDays }) }),
+            el('p', { class: 'aps-intel-text', text: eventDescription(def) }),
+          ],
+        })
+      }
+      const pctx = eventContext(ctx.save, {
+        real: realNow, weather: 'clear', biome: null, regionId: null, regionDanger: 0,
+        distance: ctx.save.maxDistance ?? 0, outdoor: true, nearPlaces: [],
+      })
+      for (const def of GAMEPLAY.events) {
+        if (seenIds.has(def.id) || def.hidden || (def.trigger ?? 'auto') !== 'auto') continue
+        if (def.when.realDate || def.when.realDateRanges?.length) continue
+        if (!evaluateProgress(def.when, pctx)) continue
+        seenIds.add(def.id)
+        out.push({
+          label: eventTitle(def),
+          sub: t('events.ui.statusEligible'),
+          tag: def.tag ?? '',
+          detail: () => [
+            el('div', 'aps-intel-head', [
+              el('span', { class: 'aps-intel-title ap-gold', text: eventTitle(def) }),
+              tag(t('events.ui.statusEligible')),
+              tag(t(`events.ui.scope.${def.scope}`)),
+            ]),
             el('p', { class: 'aps-intel-text', text: eventDescription(def) }),
           ],
         })

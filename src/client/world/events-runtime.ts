@@ -41,6 +41,7 @@ import {
 } from './rarity-spawns.ts'
 import { createResearchObserver, researchState, researchSummary, scriptResearch } from './research.ts'
 import type { RoamPick } from './roaming.ts'
+import { reconcileEventsOnSave } from '../core/save-reconcile.ts'
 import { addItem } from './save-ops.ts'
 import { eventBenefits } from './event-details.ts'
 
@@ -322,7 +323,8 @@ export function createGameplayRuntime(deps: GameplayDeps) {
   function expire(p: GameplayPlace): void {
     const now = minutes()
     const done = active.filter((ev) => ev.endsAt <= now)
-    if (!done.length) return
+    const hasStaleState = Object.values(ctx.save.events ?? {}).some((st) => st.activeUntil !== undefined && st.activeUntil <= now)
+    if (!done.length && !hasStaleState) return
     const state = { ...(ctx.save.events ?? {}) }
     for (const ev of done) {
       const st = state[ev.id]
@@ -330,7 +332,8 @@ export function createGameplayRuntime(deps: GameplayDeps) {
       onEnded(ev)
     }
     ctx.save.events = state
-    active = activeEvents(state, now)
+    reconcileEventsOnSave(ctx.save)
+    active = activeEvents(ctx.save.events, now)
     refreshMods(p)
   }
 
@@ -556,6 +559,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
 
   function onMapEntered(): void {
     if (ctx.save !== saveRef) resetForSave()
+    reconcileEventsOnSave(ctx.save)
     const p = deps.place()
     special.clear()
     items = []
@@ -568,7 +572,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     refreshMods(p)
   }
   const offMap = ctx.events.on('map:entered', () => onMapEntered())
-
+  const offSaveLoaded = ctx.events.on('save:loaded', () => { lastSlot = Number.NaN; onMapEntered() })
   function update(dt: number, o: { free: boolean; canBattle: boolean }): void {
     const p = deps.place()
     if (!p) { hud.setVisible(false); return }
@@ -771,6 +775,7 @@ export function createGameplayRuntime(deps: GameplayDeps) {
     research,
     dispose(): void {
       offMap()
+      offSaveLoaded()
       research.dispose()
       special.clear()
       hud.dispose()

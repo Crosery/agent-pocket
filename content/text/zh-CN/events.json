@@ -763,6 +763,7 @@
     "statusActive": "进行中",
     "statusEnded": "已结束",
     "statusUpcoming": "即将到来",
+    "statusEligible": "可偶遇",
     "statusToday": "今天",
     "statusConfirmed": "已证实",
     "statusUnconfirmed": "未证实",

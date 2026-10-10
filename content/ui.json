@@ -124,7 +124,8 @@
   "attention": {
     "pollSec": 0.5,
     "sources": [
-      {"id": "research", "provider": "researchClaim", "entry": "research", "guideFlag": "attn:guided:research", "detail": "hud.attention.research.detail"}
+      {"id": "research", "provider": "researchClaim", "entry": "research", "guideFlag": "attn:guided:research", "detail": "hud.attention.research.detail"},
+      {"id": "contentUpdate", "provider": "contentUpdate", "entry": "intel", "guideFlag": "attn:guided:contentUpdate", "detail": "hud.attention.contentUpdate.detail"}
     ]
   },
   "widgets": {"creatureIconSize": 32, "tooltipOffsetPx": 12, "chipDarkInkAboveLuminance": 0.42}

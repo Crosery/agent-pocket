@@ -4,6 +4,17 @@ export { createInput } from './input.ts'
 export { createAudio } from './audio.ts'
 export { createSaveManager } from './save.ts'
 export type { SaveDeps, StorageLike } from './save.ts'
+export { migrateSave, inferContentRev, hasSaveProgress, migrationCondHolds } from './save-migrate.ts'
+export {
+  reconcileSave,
+  reconcileEventsOnSave,
+  hasPendingContentUpdate,
+  pendingContentRevisions,
+  syncedContentRevisions,
+  contentUpdateSummaryText,
+  acknowledgeContentUpdate,
+  emitSaveLoaded,
+} from './save-reconcile.ts'
 export { createClock, formatClock } from './clock.ts'
 export { createAssetStore } from './assets.ts'
 export { applyDocumentSettings, computeUiScale, isTouchDevice } from './settings.ts'

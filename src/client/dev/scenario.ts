@@ -5,6 +5,7 @@ import { CONTENT, t } from '../../shared/content/index.ts'
 import { applyScenario, checkExpectations, flattenScenario, type ExpectResult, type ScenarioResult } from '../../shared/dev/scenario.ts'
 import type { SaveManager } from '../contracts.ts'
 import { migrateSave } from '../core/save-migrate.ts'
+import { emitSaveLoaded, reconcileSave } from '../core/save-reconcile.ts'
 import type { DevHost } from './kit.ts'
 import { CONSOLE, DevError } from './registry.ts'
 
@@ -17,7 +18,8 @@ export function freshBase(saves: SaveManager): SaveData {
 /** An older-format save fixture brought up to date the way a real load does it (null when there is none by that name). */
 export function legacyBase(host: DevHost, name: string): SaveData | null {
   const raw = host.content.saves[name]
-  return raw ? host.ctx.saves.sanitize(migrateSave(structuredClone(raw))) : null
+  const clean = raw ? host.ctx.saves.sanitize(migrateSave(structuredClone(raw))) : null
+  return clean ? reconcileSave(clean, host.world, CONTENT) : null
 }
 
 export function prepareScenario(host: DevHost, id: string): ScenarioResult {
@@ -71,6 +73,7 @@ export async function loadScenario(host: DevHost, id: string): Promise<{ id: str
   ctx.events.emit('money:changed', { money: ctx.save.money, delta: 0 })
   const p = ctx.save.position
   await overworld.enterMap(p.map, p.x, p.y, p.facing, true)
+  emitSaveLoaded(ctx)
   host.session.scenario = id
   await runScenarioCommands(host, res)
   return { id, position: p, commands: res.commands.length }

@@ -1,0 +1,124 @@
+{
+  "version": 2,
+  "playerId": "fixture-rc12-player",
+  "name": "品质冠军",
+  "avatar": "hero_boy",
+  "createdAt": 1696800000000,
+  "playTimeSec": 18000,
+  "money": 250000,
+  "badges": [
+    "badge-code",
+    "badge-vision",
+    "badge-sound",
+    "badge-search",
+    "badge-compute",
+    "badge-safety",
+    "badge-agent",
+    "badge-logic"
+  ],
+  "party": [
+    {
+      "uid": "rc12-mon-0001",
+      "speciesId": "deepseek-v4",
+      "level": 58,
+      "exp": 195112,
+      "ivs": {"hp": 28, "atk": 20, "def": 25, "spa": 31, "spd": 26, "spe": 27},
+      "moves": [
+        {"id": "thermal-spike", "pp": 20, "ppMax": 20},
+        {"id": "null-pointer", "pp": 25, "ppMax": 25},
+        {"id": "heat-sink-slam", "pp": 20, "ppMax": 20},
+        {"id": "distill-strike", "pp": 20, "ppMax": 20}
+      ],
+      "hp": 190,
+      "status": null,
+      "statusTurns": 0,
+      "abilityId": "moe-routing",
+      "shiny": false,
+      "friendship": 180,
+      "ballId": "rare-ball",
+      "caughtMap": "overworld",
+      "otName": "品质冠军",
+      "otId": "fixture-rc12-player",
+      "nature": "balanced",
+      "origin": {"kind": "legacy", "boss": "deepseek"},
+      "finetuned": 0
+    },
+    {
+      "uid": "rc12-mon-0002",
+      "speciesId": "o1",
+      "level": 62,
+      "exp": 238328,
+      "ivs": {"hp": 25, "atk": 18, "def": 24, "spa": 30, "spd": 24, "spe": 22},
+      "moves": [
+        {"id": "debug-strike", "pp": 20, "ppMax": 20},
+        {"id": "deductive-slash", "pp": 15, "ppMax": 15},
+        {"id": "chain-of-thought", "pp": 15, "ppMax": 15},
+        {"id": "eureka", "pp": 20, "ppMax": 20}
+      ],
+      "hp": 162,
+      "status": null,
+      "statusTurns": 0,
+      "abilityId": "deep-think",
+      "shiny": false,
+      "friendship": 220,
+      "ballId": "prompt-ball",
+      "caughtMap": "origin-lab",
+      "otName": "品质冠军",
+      "otId": "fixture-rc12-player",
+      "nature": "balanced",
+      "origin": {"kind": "starter"},
+      "finetuned": 1
+    }
+  ],
+  "boxes": [[], [], [], [], [], [], [], [], [], [], [], []],
+  "bag": {
+    "rare-ball": 10,
+    "full-restore": 12,
+    "rare-dataset": 3,
+    "persona-card": 2
+  },
+  "dexSeen": ["deepseek-v4", "o1", "kling-4", "qwen-audio"],
+  "dexCaught": ["deepseek-v4", "o1", "kling-4", "qwen-audio"],
+  "position": {"map": "overworld", "x": 519, "y": 873, "facing": "down"},
+  "respawn": {"map": "overworld", "x": 519, "y": 873, "facing": "down"},
+  "flags": {
+    "starter": "o1",
+    "champion": true,
+    "legend": true,
+    "gift:quality-legacy": true
+  },
+  "quests": {
+    "main": {"stage": 12, "done": true}
+  },
+  "visitedTowns": ["origin", "opensource", "pixelport", "chord", "retrieval", "forge", "frostshield", "hub", "balance", "agi"],
+  "exploredChunks": {},
+  "repelSteps": 0,
+  "clockMinutes": 600,
+  "stats": {"battlesWon": 85, "caught": 24, "steps": 14200, "pvpWins": 0, "pvpLosses": 0, "trades": 0, "shiniesFound": 0},
+  "settings": {
+    "bgmVolume": 0,
+    "sfxVolume": 0.8,
+    "quality": "high",
+    "pixelScale": 2,
+    "dof": true,
+    "bloom": true,
+    "shadows": true,
+    "textSpeed": "normal",
+    "battleSpeed": 1,
+    "showMinimap": true,
+    "showNames": true,
+    "showObjective": true,
+    "showTips": true,
+    "showIvNumbers": false,
+    "autoRun": false,
+    "touchControls": "auto",
+    "touchHand": "right",
+    "touchSize": "normal",
+    "haptics": true,
+    "migrations": ["bgm-mute-20261003", "phone-quality-20261009"]
+  },
+  "anchors": {
+    "unlocked": ["anchor:grand:525:877"],
+    "seen": ["anchor:grand:525:877"]
+  }
+}

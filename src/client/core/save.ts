@@ -6,6 +6,7 @@ import { preUnlockedIds } from '../../shared/world/anchors.ts'
 import { hashString } from '../../shared/rng.ts'
 import { decodeSaveCode, encodeSaveCode } from './save-codec.ts'
 import { migrateSave } from './save-migrate.ts'
+import { reconcileSave } from './save-reconcile.ts'
 import { playableAvatars, sanitizeName, sanitizeSaveData, sanitizeSettings, worldSpawn } from './save-sanitize.ts'
 import type { SanitizeContext } from './save-sanitize.ts'
 import { defaultBuildWorld, defaultSanitizeCreature } from './shared-deps.ts'
@@ -59,7 +60,12 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
       let text: string | null
       try { text = storage.getItem(key(slot)) } catch { return null }
       if (text === null) return null
-      try { return sanitize(migrateSave(JSON.parse(text), c)) } catch { return null }
+      try {
+        const clean = sanitize(migrateSave(JSON.parse(text), c))
+        return clean ? reconcileSave(clean, world(), c) : null
+      } catch {
+        return null
+      }
     },
     write(save: SaveData, slot = 0) {
       try {
@@ -80,6 +86,7 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
       const playerId = newId()
       return {
         version: c.config.save.version,
+        contentRev: c.config.save.contentRev ?? 0,
         playerId,
         name: sanitizeName(opts.name, c, t('audio.save.defaultName', undefined, c)),
         avatar: avatars.includes(opts.avatar) ? opts.avatar : avatars[0] ?? '',
@@ -112,7 +119,9 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
     },
     importCode(code: string) {
       const decoded = decodeSaveCode(code)
-      return decoded ? sanitize(migrateSave(decoded.data, c)) : null
+      if (!decoded) return null
+      const clean = sanitize(migrateSave(decoded.data, c))
+      return clean ? reconcileSave(clean, world(), c) : null
     },
     defaultSettings(): Settings {
       return sanitizeSettings(c.config.defaultSettings, c)

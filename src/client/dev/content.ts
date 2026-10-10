@@ -23,7 +23,7 @@ export function loadDevContent(): DevContent {
   const acc = import.meta.glob('../../../content/dev/acceptance/*.json', { eager: true, import: 'default' }) as Record<string, DevAcceptance>
   const acceptance = Object.values(acc).sort((a, b) => a.issue - b.issue)
   // @ts-ignore -- see above
-  const fx = import.meta.glob('../../../tests/fixtures/save-v1-*.json', { eager: true, import: 'default' }) as Record<string, unknown>
+  const fx = import.meta.glob('../../../tests/fixtures/save-*.json', { eager: true, import: 'default' }) as Record<string, unknown>
   const saves: Record<string, unknown> = {}
   for (const [path, raw] of Object.entries(fx)) saves[/([^/]+)\.json$/.exec(path)![1]] = raw
   return { scenarios, beats: beats as unknown as Record<string, DevBeat>, teams: teams as unknown as Record<string, DevTeam>, acceptance, saves }

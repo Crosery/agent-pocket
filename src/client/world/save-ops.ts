@@ -5,6 +5,7 @@ import type { GameContext } from '../contracts.ts'
 import { CONTENT, t, type Content } from '../../shared/content/index.ts'
 import { creatureName, healFull } from '../../shared/creature.ts'
 import { bossCardCap, isBossCard, settleBank } from '../../shared/gameplay/bosscard.ts'
+import { MIGRATIONS } from '../../shared/world/story.ts'
 import { BATTLE_UI } from '../battle/config.ts'
 import { GAME } from './config.ts'
 
@@ -136,18 +137,23 @@ export function applyQuest(ctx: GameContext, questId: string, stage: number, don
   const prev = ctx.save.quests[questId]
   const nextStage = Math.min(maxStage, Math.max(prev?.stage ?? 0, Math.floor(stage)))
   const wasDone = prev?.done ?? false
-  const nowDone = wasDone || done
+  const reopened = wasDone && !done && Math.floor(stage) > (prev?.stage ?? 0)
+  const nowDone = reopened ? false : (wasDone || done)
   const started = !prev
-  const advanced = !!prev && nextStage > prev.stage
+  const advanced = (!!prev && nextStage > prev.stage) || reopened
   const finished = nowDone && !wasDone
   if (!started && !advanced && !finished) return { def, started, advanced, finished }
   ctx.save.quests[questId] = { stage: nextStage, done: nowDone }
   if (!ctx.save.trackedQuest || (ctx.save.trackedQuest === questId && nowDone)) {
     ctx.save.trackedQuest = nowDone ? openQuestId(ctx) ?? undefined : questId
   }
-  if (finished && def.reward) {
+  const rewardFlag = `${MIGRATIONS.noticeFlags.questRewardPrefix}${questId}`
+  if (finished && def.reward && !ctx.save.flags[rewardFlag]) {
+    ctx.save.flags[rewardFlag] = true
     if (def.reward.money) changeMoney(ctx, def.reward.money)
     for (const [id, qty] of Object.entries(def.reward.items ?? {})) addItem(ctx, id, qty)
+  } else if (nowDone && def.reward) {
+    ctx.save.flags[rewardFlag] = true
   }
   ctx.events.emit('quest:updated', { questId, stage: nextStage, done: nowDone })
   return { def, started, advanced, finished }

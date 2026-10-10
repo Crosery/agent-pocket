@@ -1,1 +1,324 @@
-{"mainStage": {"3": {"from": 1, "add": 7}}}
+{
+  "contentRev": 4,
+  "mainStage": {"3": {"from": 1, "add": 7}},
+  "noticeFlags": {
+    "fromRev": "update:fromRev",
+    "pendingRev": "update:pendingRev",
+    "seenRev": "update:seenRev",
+    "toastSeen": "ob:contentUpdateToast",
+    "questRewardPrefix": "reward:quest:"
+  },
+  "questBaseline": {
+    "main": [
+      {"text": "妈妈说图灵博士在找你。去镇上的研究所拜访他吧。", "target": "town:origin:lab"},
+      {"text": "沿镇子西边的 1 号道路前往开源林镇，挑战代码道馆。", "target": "town:opensource:gym"},
+      {"text": "前往东边海岸的像素港，挑战视觉道馆。", "target": "town:pixelport:gym"},
+      {"text": "从开源林镇向北，挑战和弦沙城的音律道馆。", "target": "town:chord:gym"},
+      {"text": "幻觉团在检索遗都附近的沼泽里污染数据。找到他们的干部，把他们赶走！", "target": "quest:6"},
+      {"text": "挑战检索遗都的检索道馆。", "target": "town:retrieval:gym"},
+      {"text": "北上火山脚下的熔炉镇，挑战算力道馆。", "target": "town:forge:gym"},
+      {"text": "翻越霜脊山口，挑战霜盾城的对齐道馆。", "target": "town:frostshield:gym"},
+      {"text": "幻觉团占领了枢纽市的数据塔！登上塔顶，阻止他们的首领。", "target": "town:hub:tower"},
+      {"text": "挑战枢纽市的智能体道馆。", "target": "town:hub:gym"},
+      {"text": "沿 8 号道路南下高原，挑战衡理镇的推理道馆。", "target": "town:balance:gym"},
+      {"text": "集齐了八枚徽章！穿过霜盾城北边的遗迹参道，前往 AGI 圣殿。", "target": "town:agi:temple"},
+      {"text": "你成为了新的冠军。圣殿的祭坛深处，似乎有什么在等待着你……", "target": "agi-temple:champion"}
+    ],
+    "sq-floppy": [
+      {"text": "把老王的{item:retro-floppy}交给住在开源林镇的陈工。", "target": "town:opensource:house1"}
+    ],
+    "sq-dex": [
+      {"text": "帮研究助理·小图收服 10 种不同的智灵。", "target": "origin-lab:aide-1"},
+      {"text": "继续收集：收服 30 种不同的智灵。", "target": "origin-lab:aide-1"}
+    ],
+    "sq-photo": [
+      {"text": "收服两只{type:vision}系智灵，带给像素港的摄影师·阿光。", "target": "town:pixelport:npc-2"}
+    ],
+    "sq-chorus": [
+      {"text": "收服一只{type:sound}系智灵，带给和弦沙城的合唱团团长。", "target": "town:chord:npc-5"}
+    ],
+    "sq-antivirus": [
+      {"text": "买三瓶{item:antivirus}，交给检索遗都的图书管理员·典藏。", "target": "town:retrieval:house1"}
+    ],
+    "sq-fan": [
+      {"text": "把{item:server-fan}送到枢纽市数据中心的工程师手里。", "target": "town:hub:datacenter"}
+    ],
+    "sq-snow": [
+      {"text": "去霜盾城外的雪原寻找迷路的登山客·大伟。", "target": "quest:8"},
+      {"text": "回霜盾城，告诉大伟的妻子他平安无事。", "target": "town:frostshield:house1"}
+    ],
+    "sq-castaway": [
+      {"text": "使用{item:dive-protocol}出海，寻找漂流到东边小岛上的研究员·艾达。", "target": "island:island-1"},
+      {"text": "回像素港，向港口调度员报平安。", "target": "town:pixelport:dock-2"}
+    ],
+    "sq-arena": [
+      {"text": "在开源林镇的擂台上击败擂台主·阿源。", "target": "town:opensource:npc-4"}
+    ],
+    "sq-badges": [
+      {"text": "带着两枚徽章去给和弦沙城的老金看看。", "target": "town:chord:house1"},
+      {"text": "集齐五枚徽章，再去给老金看看。", "target": "town:chord:house1"},
+      {"text": "集齐八枚徽章，让老金开开眼。", "target": "town:chord:house1"}
+    ],
+    "sq-lostkid": [
+      {"text": "衡理镇的小涛跑进了晶核洞窟。去洞里找到他。", "target": "cave-core:3"},
+      {"text": "回衡理镇告诉小涛的妈妈。", "target": "town:balance:house1"}
+    ],
+    "sq-chaos": [
+      {"text": "收服一只{type:chaos}系智灵，带给枢纽市的幻觉学者·诺瓦。", "target": "town:hub:house1"}
+    ],
+    "sq-ruins": [
+      {"text": "找到遗迹里的考古队员甲，取回第一份石碑拓片。", "target": "quest:11"},
+      {"text": "找到考古队员乙，取回第二份拓片。", "target": "quest:18"},
+      {"text": "把两份拓片交给 AGI 圣殿镇的石教授。", "target": "town:agi:house1"}
+    ]
+  },
+  "revisions": [
+    {
+      "rev": 1,
+      "id": "rc5-events-and-zero",
+      "release": "0.2.0-rc.5",
+      "titleKey": "screens.update.rev.rc5EventsAndZero.title",
+      "summaryKey": "screens.update.rev.rc5EventsAndZero.summary",
+      "questChanges": [
+        {
+          "op": "addQuest",
+          "quest": "hq-zero",
+          "stages": [
+            {"text": "洞窟深处的旧终端提到了第二台机柜，它被风沙埋在大陆西边的沙海里。", "target": "region:desert"},
+            {"text": "机柜说守档人在 AGI 圣殿镇的老房子里。", "target": "agi-house1:resident-2"},
+            {"text": "把原始训练日志交给该交的人。", "target": "agi-house1:resident-2"}
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "op": "startQuest",
+          "quest": "hq-zero",
+          "stage": 0,
+          "when": {"flag": ["zero:t1"], "noFlag": ["zero:ending"]}
+        }
+      ]
+    },
+    {
+      "rev": 2,
+      "id": "rc12-quality-natures",
+      "release": "0.2.0-rc.12",
+      "titleKey": "screens.update.rev.rc12QualityNatures.title",
+      "summaryKey": "screens.update.rev.rc12QualityNatures.summary",
+      "questChanges": [],
+      "steps": [
+        {
+          "op": "giveItems",
+          "items": {"persona-card": 2},
+          "onceFlag": "gift:quality-legacy",
+          "when": {"noFlag": ["gift:quality-legacy"]}
+        }
+      ]
+    },
+    {
+      "rev": 3,
+      "id": "rc16-prologue-deepseek",
+      "release": "0.2.0-rc.16",
+      "titleKey": "screens.update.rev.rc16PrologueDeepseek.title",
+      "summaryKey": "screens.update.rev.rc16PrologueDeepseek.summary",
+      "questChanges": [
+        {
+          "op": "insertStages",
+          "quest": "main",
+          "at": 1,
+          "stages": [
+            {"text": "找阿灵上属性课，盖第二个印。", "target": "origin-lab:aide-2"},
+            {"text": "去 1 号道路收服一位队友。", "target": "route:route-1:1"},
+            {"text": "回研究所，给保安看上岗证。", "target": "origin-lab:stairs-front"},
+            {"text": "在机房前厅找小 R 报到。", "target": "origin-lab-b1:r1"},
+            {"text": "穿过排队走廊。", "target": "origin-lab-b2:queue"},
+            {"text": "叫醒核心机柜上的她。", "target": "origin-lab-b2:core"},
+            {"text": "回一楼向博士复命。", "target": "origin-lab:professor"}
+          ]
+        },
+        {
+          "op": "addQuest",
+          "quest": "ds-legacy",
+          "stages": [
+            {"text": "研究所的模拟舱里，DeepSeek 体验版还在等你。", "target": "origin-lab:terminal"}
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "op": "setFlags",
+          "when": {"flag": ["starter"], "noFlag": ["ds:done"]},
+          "set": {"ds:gateOpen": true, "ds:legacy": true, "ds:certFull": true}
+        },
+        {
+          "op": "shiftQuestStages",
+          "quest": "main",
+          "from": 1,
+          "add": 7
+        },
+        {
+          "op": "startQuest",
+          "quest": "ds-legacy",
+          "stage": 0,
+          "when": {"flag": ["ds:legacy"], "noFlag": ["ds:done"]}
+        }
+      ]
+    },
+    {
+      "rev": 4,
+      "id": "rc17-content-reconcile",
+      "release": "0.2.0-rc.17",
+      "titleKey": "screens.update.rev.rc17ContentReconcile.title",
+      "summaryKey": "screens.update.rev.rc17ContentReconcile.summary",
+      "questChanges": [],
+      "steps": [
+        {
+          "op": "startQuest",
+          "quest": "ds-legacy",
+          "stage": 0,
+          "when": {"flag": ["ds:legacy"], "noFlag": ["ds:done"]}
+        }
+      ]
+    }
+  ],
+  "reconcile": {
+    "mainStages": [
+      {"stage": 19, "done": true, "when": {"flag": ["legend"]}, "implyFlags": ["champion", "gate:ruins", "villain:boss", "villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 19, "when": {"flag": ["champion"]}, "implyFlags": ["gate:ruins", "villain:boss", "villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 18, "when": {"minBadges": 8}, "implyFlags": ["villain:boss", "villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 17, "when": {"minBadges": 7}, "implyFlags": ["villain:boss", "villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 16, "when": {"minBadges": 6, "flag": ["villain:boss"]}, "implyFlags": ["villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 15, "when": {"minBadges": 6}, "implyFlags": ["villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 14, "when": {"minBadges": 5}, "implyFlags": ["villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 13, "when": {"minBadges": 4}, "implyFlags": ["villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 12, "when": {"minBadges": 3, "flag": ["villain:swamp"]}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 11, "when": {"minBadges": 3}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 10, "when": {"minBadges": 2}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 9, "when": {"minBadges": 1}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 8, "when": {"flag": ["ds:departed"]}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 8, "when": {"flag": ["ds:gateOpen"], "noFlag": ["ds:done"]}},
+      {"stage": 7, "when": {"flag": ["ds:done"]}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 6, "when": {"flag": ["ds:relay"]}, "implyFlags": ["ds:certFull"]},
+      {"stage": 5, "when": {"flag": ["ds:drill"]}, "implyFlags": ["ds:certFull"]},
+      {"stage": 4, "when": {"flag": ["ds:briefed"]}, "implyFlags": ["ds:certFull"]},
+      {"stage": 3, "when": {"flag": ["ds:certFull"]}},
+      {"stage": 2, "when": {"flag": ["ds:stamp:types"]}},
+      {"stage": 1, "when": {"flag": ["starter"]}},
+      {"stage": 0, "when": {"flag": ["intro:mom"]}}
+    ],
+    "sideQuests": [
+      {
+        "quest": "sq-floppy",
+        "rules": [
+          {"stage": 0, "done": true, "when": {"flag": ["sq-floppy:done"]}},
+          {"stage": 0, "when": {"flag": ["sq-floppy:given"]}}
+        ]
+      },
+      {
+        "quest": "sq-dex",
+        "rules": [
+          {"stage": 1, "done": true, "when": {"flag": ["sq-dex:done"]}},
+          {"stage": 1, "when": {"flag": ["sq-dex:stage1"]}},
+          {"stage": 0, "when": {"flag": ["sq-dex:started"]}}
+        ]
+      },
+      {
+        "quest": "sq-photo",
+        "rules": [
+          {"stage": 0, "done": true, "when": {"flag": ["sq-photo:done"]}},
+          {"stage": 0, "when": {"flag": ["sq-photo:started"]}}
+        ]
+      },
+      {
+        "quest": "sq-chorus",
+        "rules": [
+          {"stage": 0, "done": true, "when": {"flag": ["sq-chorus:done"]}},
+          {"stage": 0, "when": {"flag": ["sq-chorus:started"]}}
+        ]
+      },
+      {
+        "quest": "sq-antivirus",
+        "rules": [
+          {"stage": 0, "done": true, "when": {"flag": ["sq-antivirus:done"]}},
+          {"stage": 0, "when": {"flag": ["sq-antivirus:started"]}}
+        ]
+      },
+      {
+        "quest": "sq-fan",
+        "rules": [
+          {"stage": 0, "done": true, "when": {"flag": ["sq-fan:done"]}},
+          {"stage": 0, "when": {"flag": ["sq-fan:given"]}}
+        ]
+      },
+      {
+        "quest": "sq-snow",
+        "rules": [
+          {"stage": 1, "done": true, "when": {"flag": ["sq-snow:done"]}},
+          {"stage": 1, "when": {"flag": ["sq-snow:found"]}},
+          {"stage": 0, "when": {"flag": ["sq-snow:started"]}}
+        ]
+      },
+      {
+        "quest": "sq-castaway",
+        "rules": [
+          {"stage": 1, "done": true, "when": {"flag": ["sq-castaway:done"]}},
+          {"stage": 1, "when": {"flag": ["sq-castaway:rescued"]}},
+          {"stage": 0, "when": {"flag": ["sq-castaway:started"]}}
+        ]
+      },
+      {
+        "quest": "sq-arena",
+        "rules": [
+          {"stage": 0, "done": true, "when": {"flag": ["trainer:arena-yuan"]}}
+        ]
+      },
+      {
+        "quest": "sq-badges",
+        "rules": [
+          {"stage": 2, "done": true, "when": {"flag": ["sq-badges:done"]}},
+          {"stage": 2, "when": {"flag": ["sq-badges:s2"]}},
+          {"stage": 1, "when": {"flag": ["sq-badges:s1"]}}
+        ]
+      },
+      {
+        "quest": "sq-lostkid",
+        "rules": [
+          {"stage": 1, "done": true, "when": {"flag": ["sq-lostkid:done"]}},
+          {"stage": 1, "when": {"flag": ["sq-lostkid:found"]}},
+          {"stage": 0, "when": {"flag": ["sq-lostkid:started"]}}
+        ]
+      },
+      {
+        "quest": "sq-chaos",
+        "rules": [
+          {"stage": 0, "done": true, "when": {"flag": ["sq-chaos:done"]}},
+          {"stage": 0, "when": {"flag": ["sq-chaos:started"]}}
+        ]
+      },
+      {
+        "quest": "sq-ruins",
+        "rules": [
+          {"stage": 2, "done": true, "when": {"flag": ["sq-ruins:done"]}},
+          {"stage": 2, "when": {"flag": ["sq-ruins:a", "sq-ruins:b"]}},
+          {"stage": 1, "when": {"flag": ["sq-ruins:a"]}},
+          {"stage": 0, "when": {"flag": ["sq-ruins:started"]}}
+        ]
+      },
+      {
+        "quest": "hq-zero",
+        "rules": [
+          {"stage": 2, "done": true, "when": {"flag": ["zero:ending"]}},
+          {"stage": 1, "when": {"flag": ["zero:t2"]}},
+          {"stage": 0, "when": {"flag": ["zero:t1"]}}
+        ]
+      },
+      {
+        "quest": "ds-legacy",
+        "rules": [
+          {"stage": 0, "done": true, "when": {"flag": ["ds:legacy", "ds:done"]}},
+          {"stage": 0, "when": {"flag": ["ds:legacy"], "noFlag": ["ds:done"]}}
+        ]
+      }
+    ]
+  }
+}

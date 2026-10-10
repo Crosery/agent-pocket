@@ -392,7 +392,7 @@ export interface GameConfig {
   encounters: { stageWeight: number[]; nightTypeBoost: Record<TypeId, number>; roamingMax: number; roamingRadius: number }
   economy: { startMoney: number; blackoutMoneyLoss: number; sellRatio: number; startItems: Record<string, number> }
   creature: { ivMax: number; startFriendship: number; secondAbilityChance: number; starterLevel: number; levelUpFriendship: number }
-  save: { autosaveSeconds: number; storagePrefix: string; version: number }
+  save: { autosaveSeconds: number; storagePrefix: string; version: number; contentRev?: number }
   camera: { fov: number; pitchDeg: number; zoomDistances: number[]; followDamping: number; lookAhead: number; /** Outdoor view is never narrower than this many tiles across (portrait phones pull the camera back). */ minViewTilesWide: number }
   render: { maxPointLights: number; shadowMapSize: number; internalHeight: Record<Settings['quality'], number> }
   defaultSettings: Settings
@@ -1376,6 +1376,8 @@ export interface Settings {
 
 export interface SaveData {
   version: number
+  /** Content revision (content/world/story/migrations.json contentRev) this save is synced to. */
+  contentRev?: number
   playerId: string
   name: string
   avatar: string

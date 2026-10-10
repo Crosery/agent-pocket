@@ -2,6 +2,7 @@
 // content/ui.json names a provider from PROVIDERS; adding a new kind of "go look at this" is one provider here plus one
 // source in the content, nothing else (dots, menu cursor, first-time prompt all follow).
 import type { SaveData } from '../../shared/types.ts'
+import { hasPendingContentUpdate } from '../core/save-reconcile.ts'
 import { researchSummary } from '../world/research.ts'
 import { ATTENTION, type AttentionConfig, type AttentionSource } from './config.ts'
 
@@ -12,6 +13,7 @@ export type AttentionProvider = (save: AttentionSave) => number
 
 export const PROVIDERS: Record<string, AttentionProvider> = {
   researchClaim: (save) => (researchSummary(save).canClaim ? 1 : 0),
+  contentUpdate: (save) => (hasPendingContentUpdate(save) ? 1 : 0),
 }
 
 export type AttentionCounts = Record<string, number>

@@ -11,7 +11,7 @@
 | 触屏「菜单」键（桌面没有） | `html.ap-attn-menu` 由 `src/client/attention/index.ts` 开关，样式在 `styles.css` |
 | 桌面左上角「Esc 菜单有新动态」小条（触屏隐藏） | `HUD.setMenuAlert(on, device)`，键帽来自按键绑定 |
 | 暂停菜单里对应的行 | `pause.ts` 画行时按 `entrySources()` 判断，菜单行末尾一个红点 |
-| 页面里可领取的条目（研究页的「领取研究奖励」行和顶部的「可领取」行） | 页面自己读 `researchSummary()`，领完重画，红点立刻消失 |
+| 页面里可领取的条目（研究页的「领取研究奖励」行和顶部的「可领取」行；老存档内容更新后的「情报 → 日报」更新摘要） | 研究页读 `researchSummary()`，领完重画；情报页打开即确认 `acknowledgeContentUpdate()`，红点立刻消失 |
 
 红点只是 `attentionDot()`（`widgets.ts`），颜色是 `--ap-alert`。
 

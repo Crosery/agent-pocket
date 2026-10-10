@@ -11,6 +11,7 @@ import { getMap } from '../shared/world/worldapi.ts'
 import { anchorKindSpec, anchorSpotFromId, parseAnchorId } from '../shared/world/anchors.ts'
 import {
   applyDocumentSettings, createAssetStore, createAudio, createClock, createEventBus, createInput, createSaveManager,
+  emitSaveLoaded, reconcileSave,
 } from './core/index.ts'
 import { RngHub, randomSeed } from './core/rng-hub.ts'
 import { createRenderer, createWorldView } from './render/index.ts'
@@ -693,8 +694,8 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   await ensureWorld()
   await buildWorldLayer()
   const readyWorld = needWorld()
-  ctx.save = start.save
-  playing = start.save
+  ctx.save = reconcileSave(start.save, readyWorld, data)
+  playing = ctx.save
   dev?.applyStart(ctx, readyWorld)
   applySettings(ctx.save.settings)
   audio.stopBgm(GAME.region.musicFadeMs)
@@ -703,6 +704,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   const startMap = getMap(readyWorld, pos.map) ? pos : { ...readyWorld.maps[readyWorld.startMap].spawn, map: readyWorld.startMap }
   await overworld.enterMap(startMap.map, startMap.x, startMap.y, startMap.facing, false)
   inWorld = true
+  if (!start.isNew) emitSaveLoaded(ctx)
   mark('world-entered')
   hud.setVisible(true)
   onboarding.setVisible(true)

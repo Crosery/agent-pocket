@@ -23,6 +23,7 @@
     "layer": {"ttlSec": 7, "fadeMs": 220, "gapSec": 20, "staleSec": 20},
     "list": [
       {"id": "researchReward", "trigger": {"kind": "on", "on": "attention:raised", "phase": "field", "match": {"id": "research"}, "delaySec": 1.5}, "text": "tutorial.tip.researchReward", "whileAttention": "research"},
+      {"id": "contentUpdate", "trigger": {"kind": "on", "on": "attention:raised", "phase": "field", "match": {"id": "contentUpdate"}, "delaySec": 1.2}, "text": "tutorial.tip.contentUpdate", "whileAttention": "contentUpdate"},
       {"id": "move", "trigger": {"kind": "free", "delaySec": 1.2, "needs": {"device": ["keyboard", "gamepad"]}}, "text": "tutorial.tip.move", "expires": {"flag": ["starter"]}, "doneOn": "moved"},
       {"id": "talk", "trigger": {"kind": "npcNear", "radius": 2}, "text": "tutorial.tip.talk", "expires": {"flag": ["rival:lab"]}, "doneOn": "dialogue"},
       {"id": "groundItem", "trigger": {"kind": "near", "what": "item", "radius": 3}, "text": "tutorial.tip.groundItem", "expires": {"minBadges": 1}, "after": ["talk"]},
@@ -132,7 +133,7 @@
       {"id": "badge", "group": "world", "tips": ["badge"]},
       {"id": "worldMap", "group": "world", "tips": ["worldMap"]},
       {"id": "quests", "group": "world", "tips": ["quests", "sideQuest"]},
-      {"id": "worldEvent", "group": "world", "tips": ["worldEvent"]},
+      {"id": "worldEvent", "group": "world", "tips": ["worldEvent", "contentUpdate"]},
       {"id": "rarity", "group": "world", "tips": ["rarity"]},
       {"id": "timeWeather", "group": "world", "tips": ["timeWeather"]},
       {"id": "research", "group": "world", "tips": ["research", "researchReward"]},

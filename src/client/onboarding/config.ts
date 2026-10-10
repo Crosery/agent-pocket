@@ -45,7 +45,7 @@ export interface ObjectiveRule {
 /** Game-bus events an `on` trigger may listen to (payload fields are what `match` tests; see logic.ts enrich). */
 export const ON_EVENTS = [
   'screen:opened', 'badge:earned', 'quest:updated', 'dex:seen', 'dex:caught', 'party:changed', 'map:entered', 'region:entered',
-  'net:status', 'world:event', 'battle:end', 'bag:changed', 'attention:raised',
+  'net:status', 'world:event', 'battle:end', 'bag:changed', 'attention:raised', 'save:loaded', 'content:updated',
 ] as const
 
 /** Moments inside a battle derived from its event stream (logic.ts battleCues). */

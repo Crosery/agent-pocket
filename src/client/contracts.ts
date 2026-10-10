@@ -25,6 +25,10 @@ export interface GameData extends Content {
 
 export interface GameEvents {
   'save:changed': { reason: string }
+  /** Fired once when a save enters the world (`updated` = migrated from an older contentRev). */
+  'save:loaded': { fromRev: number; toRev: number; updated: boolean }
+  /** Fired when a loaded save was brought forward across content revisions (`revisions`: applied revision ids). */
+  'content:updated': { fromRev: number; toRev: number; revisions: string[] }
   'party:changed': {}
   'bag:changed': {}
   'money:changed': { money: number; delta: number }

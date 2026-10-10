@@ -25,6 +25,10 @@ function viewOf(ctx: GameContext, on: string, p: unknown): Record<string, string
     const map = ctx.data.world.maps[String(e.mapId ?? '')]
     return { map: String(e.mapId ?? ''), region: map?.regions?.[Number(e.regionIndex)]?.id ?? '' }
   }
+  if (on === 'save:loaded' || on === 'content:updated') {
+    const base = Object.fromEntries(Object.entries(e).map(([k, v]) => [k, Array.isArray(v) ? v.join(',') : String(v)]))
+    return { map: ctx.save.position?.map ?? '', ...base }
+  }
   return Object.fromEntries(Object.entries(e).map(([k, v]) => [k, String(v)]))
 }
 

@@ -257,7 +257,7 @@ export function sanitizeSaveData(raw: unknown, ctx: SanitizeContext): SaveData |
   if (!isObj(raw)) return null
   const c = ctx.content
   // A save must at least carry its identity and progression containers.
-  if (typeof raw.version !== 'number' || !('party' in raw) || !('position' in raw)) return null
+  if (typeof raw.version !== 'number' || !Number.isFinite(raw.version) || raw.version < 1 || !('party' in raw) || !('position' in raw)) return null
 
   const avatars = playableAvatars(c)
   const avatar = str(raw.avatar)
@@ -275,8 +275,11 @@ export function sanitizeSaveData(raw: unknown, ctx: SanitizeContext): SaveData |
   const tracked = str(raw.trackedQuest)
   const clock = num(raw.clockMinutes)
 
+  const targetRev = c.config.save.contentRev ?? 0
+  const rawRev = num(raw.contentRev)
   const save: SaveData = {
     version: c.config.save.version,
+    contentRev: rawRev !== null && rawRev >= 0 ? Math.min(Math.floor(rawRev), targetRev) : targetRev,
     playerId: str(raw.playerId) || ctx.newId(),
     name: sanitizeName(raw.name, c, ctx.defaultName),
     avatar: avatar && avatars.includes(avatar) ? avatar : avatars[0] ?? '',

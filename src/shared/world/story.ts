@@ -49,7 +49,7 @@ import trainersHiddenJson from '../../../content/world/story/trainers/hidden.jso
 import populationJson from '../../../content/world/story/population.json' with { type: 'json' }
 import legendsJson from '../../../content/world/story/legends.json' with { type: 'json' }
 import bountiesJson from '../../../content/world/story/bounties.json' with { type: 'json' }
-
+import migrationsJson from '../../../content/world/story/migrations.json' with { type: 'json' }
 // ---------------------------------------------------------------------------
 // Story JSON shapes
 // ---------------------------------------------------------------------------
@@ -272,8 +272,90 @@ export interface TriggerSpec {
 
 /** A trigger with its script expanded. */
 export interface StoryTrigger extends Omit<TriggerSpec, 'script'> { steps: ScriptStep[] }
+export const TRIGGER_EVENTS: readonly string[] = [
+  'dex:caught', 'map:entered', 'region:entered', 'quest:updated', 'battle:end', 'badge:earned',
+  'save:loaded', 'content:updated',
+]
 
-export const TRIGGER_EVENTS: readonly string[] = ['dex:caught', 'map:entered', 'region:entered', 'quest:updated', 'battle:end', 'badge:earned']
+export interface MigrationCond {
+  flag?: string[]
+  noFlag?: string[]
+  flagEquals?: Record<string, boolean | number | string>
+  minBadges?: number
+  maxBadges?: number
+  minDexCaught?: number
+  questStarted?: string[]
+  questNotStarted?: string[]
+  questDone?: string[]
+  questNotDone?: string[]
+  questStageAtLeast?: Record<string, number>
+  questStageBelow?: Record<string, number>
+  hasItem?: string[]
+  lacksItem?: string[]
+}
+
+export interface QuestStageSnapshot {
+  text: string
+  target?: string
+}
+
+export type QuestStructureChange =
+  | { op: 'addQuest'; quest: string; stages: QuestStageSnapshot[] }
+  | { op: 'insertStages'; quest: string; at: number; stages: QuestStageSnapshot[] }
+  | { op: 'appendStages'; quest: string; stages: QuestStageSnapshot[] }
+  | { op: 'updateStage'; quest: string; stage: number; text: string; target?: string }
+
+export type ContentMigrationOp =
+  | { op: 'setFlags'; set?: Record<string, boolean | number | string>; clear?: string[]; when?: MigrationCond }
+  | { op: 'giveItems'; items: Record<string, number>; onceFlag: string; when?: MigrationCond }
+  | { op: 'giveMoney'; amount: number; onceFlag: string; when?: MigrationCond }
+  | { op: 'startQuest'; quest: string; stage?: number; trackIfNone?: boolean; when?: MigrationCond }
+  | { op: 'shiftQuestStages'; quest: string; from: number; add: number; onceFlag?: string; when?: MigrationCond }
+  | {
+    op: 'reopenQuest'; quest: string; fromStage: number; newStage: number
+    archiveFlag?: string; clearFlags?: string[]; setFlags?: Record<string, boolean | number | string>; when?: MigrationCond
+  }
+  | { op: 'cleanEvents'; dropIds?: string[]; resetActiveIds?: string[]; when?: MigrationCond }
+
+export interface ContentRevision {
+  rev: number
+  id: string
+  release: string
+  titleKey: string
+  summaryKey: string
+  questChanges?: QuestStructureChange[]
+  steps: ContentMigrationOp[]
+}
+
+export interface MainStageRule {
+  stage: number
+  done?: boolean
+  when: MigrationCond
+  implyFlags?: string[]
+}
+
+export interface SideQuestReconcileEntry {
+  quest: string
+  rules: { stage: number; done?: boolean; when: MigrationCond }[]
+}
+
+export interface MigrationsFile {
+  contentRev: number
+  mainStage: Record<string, { from: number; add: number }>
+  noticeFlags: {
+    fromRev: string
+    pendingRev: string
+    seenRev: string
+    toastSeen: string
+    questRewardPrefix: string
+  }
+  questBaseline: Record<string, QuestStageSnapshot[]>
+  revisions: ContentRevision[]
+  reconcile: {
+    mainStages: MainStageRule[]
+    sideQuests: SideQuestReconcileEntry[]
+  }
+}
 
 export interface StoryContent {
   meta: StoryMeta
@@ -287,8 +369,8 @@ export interface StoryContent {
   population: PopulationFile
   legends: LegendsFile
   bounties: BountiesFile
+  migrations?: MigrationsFile
 }
-
 function mergeGroups<T>(label: string, files: Record<string, T>[], problems: string[]): Record<string, T> {
   const out: Record<string, T> = {}
   for (const f of files) {
@@ -314,8 +396,157 @@ export const STORY_CONTENT: StoryContent = {
   population: populationJson as unknown as PopulationFile,
   legends: legendsJson as unknown as LegendsFile,
   bounties: bountiesJson as unknown as BountiesFile,
+  migrations: migrationsJson as unknown as MigrationsFile,
 }
 
+export const MIGRATIONS: MigrationsFile = STORY_CONTENT.migrations!
+
+/**
+ * Validates `content/world/story/migrations.json` against `quests.json` and `CONTENT`:
+ * - revision sequence 1..contentRev, unique ids, existing text keys and item/quest references;
+ * - quest stage guard: every quest in `quests` and every stage's text/target must match `questBaseline`
+ *   transformed by `revisions[*].questChanges`, and inserting/appending stages requires a matching migration step
+ *   (`shiftQuestStages` or `reopenQuest`).
+ */
+export function validateStoryMigrations(
+  quests: readonly QuestSpec[] = STORY_CONTENT.quests,
+  mig: MigrationsFile = MIGRATIONS,
+  c = CONTENT,
+): string[] {
+  const errs: string[] = []
+  if (!Number.isInteger(mig.contentRev) || mig.contentRev < 0) errs.push('migrations.contentRev must be an integer >= 0')
+  if (c.config.save.contentRev !== undefined && mig.contentRev !== c.config.save.contentRev) {
+    errs.push(`migrations.contentRev (${mig.contentRev}) must match config.save.contentRev (${c.config.save.contentRev})`)
+  }
+  const expected: Record<string, QuestStageSnapshot[]> = {}
+  for (const [qid, stages] of Object.entries(mig.questBaseline ?? {})) {
+    expected[qid] = stages.map((s) => ({ text: s.text, ...(s.target ? { target: s.target } : {}) }))
+  }
+  const revIds = new Set<string>()
+  const revs = mig.revisions ?? []
+  if (revs.length !== mig.contentRev) errs.push(`migrations.revisions: expected ${mig.contentRev} revisions, found ${revs.length}`)
+  revs.forEach((r, idx) => {
+    const where = `migrations.revisions[${idx}] (${r.id || r.rev})`
+    if (r.rev !== idx + 1) errs.push(`${where}: rev must be ${idx + 1} (got ${r.rev})`)
+    if (!r.id || revIds.has(r.id)) errs.push(`${where}: missing or duplicate revision id "${r.id}"`)
+    revIds.add(r.id)
+    if (!r.release) errs.push(`${where}: missing release label`)
+    if (!r.titleKey || !(r.titleKey in c.text)) errs.push(`${where}: missing title text "${r.titleKey}"`)
+    if (!r.summaryKey || !(r.summaryKey in c.text)) errs.push(`${where}: missing summary text "${r.summaryKey}"`)
+
+    for (const ch of r.questChanges ?? []) {
+      const cw = `${where} questChange (${ch.op} ${ch.quest})`
+      switch (ch.op) {
+        case 'addQuest':
+          if (expected[ch.quest]) errs.push(`${cw}: quest "${ch.quest}" already exists before rev ${r.rev}`)
+          if (!ch.stages?.length) errs.push(`${cw}: stages cannot be empty`)
+          expected[ch.quest] = (ch.stages ?? []).map((s) => ({ text: s.text, ...(s.target ? { target: s.target } : {}) }))
+          break
+        case 'insertStages': {
+          const cur = expected[ch.quest]
+          if (!cur) { errs.push(`${cw}: unknown quest "${ch.quest}"`); break }
+          if (!Number.isInteger(ch.at) || ch.at < 0 || ch.at > cur.length) { errs.push(`${cw}: insert index ${ch.at} out of range 0..${cur.length}`); break }
+          if (!ch.stages?.length) { errs.push(`${cw}: stages cannot be empty`); break }
+          cur.splice(ch.at, 0, ...ch.stages.map((s) => ({ text: s.text, ...(s.target ? { target: s.target } : {}) })))
+          const hasShift = r.steps.some((st) => st.op === 'shiftQuestStages' && st.quest === ch.quest && st.from === ch.at && st.add === ch.stages.length)
+          if (!hasShift) errs.push(`${cw}: inserting ${ch.stages.length} stage(s) at ${ch.at} requires a matching shiftQuestStages step in rev ${r.rev}`)
+          break
+        }
+        case 'appendStages': {
+          const cur = expected[ch.quest]
+          if (!cur) { errs.push(`${cw}: unknown quest "${ch.quest}"`); break }
+          if (!ch.stages?.length) { errs.push(`${cw}: stages cannot be empty`); break }
+          const prevLast = cur.length - 1
+          const nextFirst = cur.length
+          cur.push(...ch.stages.map((s) => ({ text: s.text, ...(s.target ? { target: s.target } : {}) })))
+          const hasReopen = r.steps.some((st) => st.op === 'reopenQuest' && st.quest === ch.quest && st.fromStage === prevLast && st.newStage === nextFirst)
+          if (!hasReopen) errs.push(`${cw}: appending ${ch.stages.length} stage(s) to "${ch.quest}" requires a matching reopenQuest(${prevLast} -> ${nextFirst}) step in rev ${r.rev}`)
+          break
+        }
+        case 'updateStage': {
+          const cur = expected[ch.quest]
+          if (!cur) { errs.push(`${cw}: unknown quest "${ch.quest}"`); break }
+          if (!Number.isInteger(ch.stage) || ch.stage < 0 || ch.stage >= cur.length) { errs.push(`${cw}: stage ${ch.stage} out of range`); break }
+          cur[ch.stage] = { text: ch.text, ...(ch.target ? { target: ch.target } : {}) }
+          break
+        }
+      }
+    }
+
+    for (const st of r.steps ?? []) {
+      const sw = `${where} step (${st.op})`
+      switch (st.op) {
+        case 'setFlags':
+          if (!Object.keys(st.set ?? {}).length && !(st.clear ?? []).length) errs.push(`${sw}: needs set or clear`)
+          break
+        case 'giveItems':
+          if (!st.onceFlag) errs.push(`${sw}: missing onceFlag`)
+          if (!Object.keys(st.items ?? {}).length) errs.push(`${sw}: empty items`)
+          for (const [id, qty] of Object.entries(st.items ?? {})) {
+            if (!c.items[id]) errs.push(`${sw}: unknown item "${id}"`)
+            if (!(qty > 0)) errs.push(`${sw}: item "${id}" quantity must be > 0`)
+          }
+          break
+        case 'giveMoney':
+          if (!st.onceFlag) errs.push(`${sw}: missing onceFlag`)
+          if (!(st.amount > 0)) errs.push(`${sw}: amount must be > 0`)
+          break
+        case 'startQuest': {
+          const q = expected[st.quest]
+          if (!q) errs.push(`${sw}: unknown quest "${st.quest}"`)
+          else if (st.stage !== undefined && (!Number.isInteger(st.stage) || st.stage < 0 || st.stage >= q.length)) {
+            errs.push(`${sw}: stage ${st.stage} out of range for "${st.quest}"`)
+          }
+          break
+        }
+        case 'shiftQuestStages': {
+          const q = expected[st.quest]
+          if (!q) errs.push(`${sw}: unknown quest "${st.quest}"`)
+          if (!Number.isInteger(st.from) || st.from < 0 || !Number.isInteger(st.add) || st.add === 0) errs.push(`${sw}: invalid shift from=${st.from} add=${st.add}`)
+          break
+        }
+        case 'reopenQuest': {
+          const q = expected[st.quest]
+          if (!q) errs.push(`${sw}: unknown quest "${st.quest}"`)
+          else if (!Number.isInteger(st.fromStage) || !Number.isInteger(st.newStage) || st.fromStage < 0 || st.newStage <= st.fromStage || st.newStage >= q.length) {
+            errs.push(`${sw}: invalid reopen stages ${st.fromStage} -> ${st.newStage} for "${st.quest}" (length ${q.length})`)
+          }
+          break
+        }
+        case 'cleanEvents':
+          if (!(st.dropIds?.length || st.resetActiveIds?.length)) errs.push(`${sw}: needs dropIds or resetActiveIds`)
+          break
+        default:
+          errs.push(`${sw}: unknown migration op`)
+      }
+    }
+  })
+
+  if (quests.length > 0) {
+    const actualIds = new Set(quests.map((q) => q.id))
+    for (const qid of Object.keys(expected)) {
+      if (!actualIds.has(qid)) errs.push(`quest ${qid}: declared in migrations.json but missing from quests.json`)
+    }
+    for (const q of quests) {
+      const exp = expected[q.id]
+      if (!exp) {
+        errs.push(`quest ${q.id}: added to quests.json without a declared addQuest migration in migrations.json`)
+        continue
+      }
+      if (q.stages.length !== exp.length) {
+        errs.push(`quest ${q.id}: stage count changed (migrations.json expects ${exp.length}, quests.json has ${q.stages.length}) without a declared migration step`)
+        continue
+      }
+      q.stages.forEach((st, i) => {
+        const e = exp[i]
+        if ((st.target ?? '') !== (e.target ?? '') || st.text !== e.text) {
+          errs.push(`quest ${q.id} stage ${i}: changed without a declared migration in migrations.json (expected target="${e.target ?? ''}", got target="${st.target ?? ''}")`)
+        }
+      })
+    }
+  }
+  return errs
+}
 // ---------------------------------------------------------------------------
 // Public helpers
 // ---------------------------------------------------------------------------
@@ -1350,6 +1581,7 @@ class StoryBuilder implements PopHost {
         checkScript(where, n.script)
       }
     }
+    this.problems.push(...validateStoryMigrations(this.sc.quests, this.sc.migrations ?? MIGRATIONS))
   }
 }
 

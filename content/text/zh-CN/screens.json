@@ -464,5 +464,17 @@
       "rateLimited": "请求过于频繁，请稍后再试",
       "alreadyBound": "该账号已绑定存档"
     }
+  },
+  "update": {
+    "toast": "版本更新已同步：{summary}",
+    "tag": "版本更新",
+    "statusSynced": "已同步",
+    "heading": "本次更新新增内容",
+    "rev": {
+      "rc5EventsAndZero": {"title": "v0.2.0-rc.5 · 世界活动与第 0 号服务器", "summary": "新增世界动态活动、传送锚点与隐藏支线「第 0 号服务器」。"},
+      "rc12QualityNatures": {"title": "v0.2.0-rc.12 · 智灵人设与品质鉴定", "summary": "新增 25 种性格与品质分级，老存档获赠 2 张人设重写卡。"},
+      "rc16PrologueDeepseek": {"title": "v0.2.0-rc.16 · 潮汐机房与 DeepSeek 体验版", "summary": "新增研究所地下机房与「潮汐机房」模拟舱挑战。"},
+      "rc17ContentReconcile": {"title": "v0.2.0-rc.17 · 存档对账与活动同步", "summary": "主线与支线进度、道馆徽章、Boss 签约记录及最新活动已全部同步。"}
+    }
   }
 }
