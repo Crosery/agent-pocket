@@ -172,6 +172,11 @@ export function auditLayout(opts) {
       const rows = new Set(x.lines.map((q) => Math.round((q.t + q.b) / 2 / 3)))
       if (rows.size > 2) violations.push({ type: 'name-lines', sel, text, detail: `model name wraps to ${rows.size} lines` })
     }
+    if (el.classList.contains('apb-detail-name')) {
+      const rows = new Set(x.raw.map((q) => Math.round((q.t + q.b) / 2 / 3)))
+      if (rows.size > 1) violations.push({ type: 'move-name-wrap', sel, text, detail: `move name wraps to ${rows.size} lines` })
+      if (el.scrollWidth > el.clientWidth + eps && el.title !== el.textContent) violations.push({ type: 'move-name-missing-full-label', sel, text, detail: 'truncated move name has no full title' })
+    }
     if (vis && (vis.l < -eps || vis.t < -eps || vis.r > vw + eps || vis.b > vh + eps)) violations.push({ type: 'offscreen', sel, text, detail: `[${Math.round(vis.l)},${Math.round(vis.t)} .. ${Math.round(vis.r)},${Math.round(vis.b)}] in ${vw}x${vh}` })
     if (!vis) continue
     const fs = parseFloat(cs.fontSize)
@@ -760,6 +765,9 @@ async function startBattle(page) {
     const weight = (s) => Math.max([...s.nameZh].length, s.nameEn.length * 0.6)
     const sp = [...ctx.data.speciesList].sort((a, b) => weight(b) - weight(a))
     const foe = createCreature(sp[1].id, 35, { rng: new Rng(9) }, ctx.data)
+    const moves = [...ctx.data.moveList].sort((a, b) => b.nameZh.length - a.nameZh.length).slice(0, 3)
+    moves.push(ctx.data.moves['hello-world'])
+    ctx.save.party[0].moves = moves.map((m) => ({ id: m.id, pp: m.pp, ppMax: m.pp }))
     window.__battle = ctx.battle.run({
       seed: 5, sides: [{ kind: 'player', name: 'p', party: ctx.save.party }, { kind: 'wild', name: 'w', party: [foe] }],
       isWild: true, canRun: true, canCatch: true, biome: ctx.data.biomes[0].id, timeOfDay: 'day', expGain: false,

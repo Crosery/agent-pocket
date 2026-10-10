@@ -37,14 +37,14 @@ const textFit = () => {
     for (const q of runs) { if (q.top >= bottom - q.height * 0.4) { count++; bottom = q.bottom } else bottom = Math.max(bottom, q.bottom) }
     return count
   }
-  for (const head of document.querySelectorAll('.apb-st-head, .apb-fx-head, .apb-fx-side-head')) {
+  for (const head of document.querySelectorAll('.apb-st-head, .apb-fx-head, .apb-fx-side-head, .apb-detail-head')) {
     if (!head.checkVisibility()) continue
     const kids = [...head.children].filter((c) => c.checkVisibility()).map((c) => c.getBoundingClientRect())
     const hMax = Math.max(0, ...kids.map((k) => k.height))
     const mid = kids.map((k) => k.top + k.height / 2)
     if (kids.length > 1 && Math.max(...mid) - Math.min(...mid) > hMax * 0.5) out.push({ type: 'header-wrap', sel: head.className.slice(0, 40), text: head.textContent.trim().slice(0, 40), detail: 'a part of the header sits on a second line' })
   }
-  for (const n of document.querySelectorAll('.apb-st-name, .apb-cmd-row .ap-row-label')) {
+  for (const n of document.querySelectorAll('.apb-st-name, .apb-cmd-row .ap-row-label, .apb-detail-name')) {
     if (n.checkVisibility() && lines(n) > 1) out.push({ type: 'label-wrap', sel: n.className.slice(0, 40), text: n.textContent.trim().slice(0, 40), detail: 'the label wraps instead of clamping' })
   }
   for (const h of document.querySelectorAll('.apb-hint-keys, .apb-hint-touch')) {

@@ -122,7 +122,7 @@ export function createMenus(audio: AudioManager): Menus {
           const low = !out && it.pp * 4 <= it.ppMax
           return row('apb-move-row', [
             it.def ? typeBadge(it.def.type) : el('span'),
-            el('span', { class: 'apb-move-name', text: it.label }),
+            el('span', { class: 'apb-move-name', text: it.label, title: it.label }),
             el('span', { class: `apb-move-pp${out ? ' is-out' : low ? ' is-low' : ''}`, text: t('battleui.move.pp', { pp: it.pp, max: it.ppMax }) }),
           ], it.disabled)
         })
@@ -148,7 +148,7 @@ export function createMenus(audio: AudioManager): Menus {
             : null
           detail.body.replaceChildren()
           append(detail.body, [
-            el('div', 'apb-detail-head', [typeBadge(m.type), el('span', { class: 'apb-detail-name', text: m.nameZh }), cat, ...(onChart ? [chart] : []), back]),
+            el('div', 'apb-detail-head', [typeBadge(m.type), el('span', { class: 'apb-detail-name', text: m.nameZh, title: m.nameZh }), cat]),
             el('div', 'apb-detail-stats', [
               stat('battleui.move.power', m.power > 0 ? String(m.power) : t('battleui.move.none')),
               stat('battleui.move.accuracy', m.accuracy === 0 ? t('battleui.move.never') : String(m.accuracy)),
@@ -164,7 +164,8 @@ export function createMenus(audio: AudioManager): Menus {
           count: items.length, cols: BATTLE_UI.moves.columns, initial, audio,
           onChange: (i) => { paint(); showDetail(i) },
         })
-        const holder = el('div', 'apb-moves-wrap', [p.el, detail.el])
+        const tools = el('div', 'apb-move-tools', [...(onChart ? [chart] : []), back])
+        const holder = el('div', 'apb-moves-wrap', [p.el, detail.el, tools])
         detail.el.dataset.hud = ''
         install([holder], rows, {
           mode: 'moves',

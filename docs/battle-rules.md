@@ -133,3 +133,10 @@ the next turn. Boss state is `extractBossState()` / `applyBossState()`. Full ref
 All randomness comes from `new Rng(init.seed)` (sfc32). Events use absolute sides (side 0 = local player).
 `perspective(events, 1)` flips sides and results, drops side-0 progression events, and swaps in side-1 wording for
 viewer-relative messages (kept off the event object; pass the original event objects, not JSON copies). Boss loot events are side-0 private.
+
+## Move selection layout
+
+The move detail header reserves its row for the type, full move name and category. Type-chart and back controls sit above the bottom windows, outside the name row. Narrow move-list labels use ellipsis and retain the full title; the highlighted move's detail remains readable without overlapping its power or accuracy.
+
+`scripts/qa-layout-audit.mjs` seeds the three longest move names plus `hello-world`; both layout and battle auditors reject wrapped detail labels. Local acceptance covers `d1000r` (1000×655, DPR 2), `d1280`, `m390` and `m844` with each of those moves highlighted.
+

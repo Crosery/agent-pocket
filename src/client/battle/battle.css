@@ -455,7 +455,7 @@ html.ap-compact :is(.apb-fx-chip, .apb-fx-status-line, .apb-fx-ability-tag, .apb
 .apb-bar.is-moves .apb-menu-wrap { grid-column: 1 / 3; position: static; }
 .apb-bar.is-moves .apb-status.is-own { visibility: hidden; pointer-events: none; }
 .apb-bar.is-moves .apb-moves { margin-right: calc(var(--apb-g)); }
-.apb-move-row .apb-move-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-shadow: 0 var(--u) 0 var(--ap-ink); }
+.apb-move-row .apb-move-name { flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; text-shadow: 0 var(--u) 0 var(--ap-ink); }
 .apb-move-row { padding-right: calc(var(--u) * 4); }
 .apb-move-row .apb-move-pp { flex: none; color: var(--ap-text-dim); }
 .apb-move-row.is-active .apb-move-pp { color: #e8d7a8; }
@@ -463,14 +463,15 @@ html.ap-compact :is(.apb-fx-chip, .apb-fx-status-line, .apb-fx-ability-tag, .apb
 .apb-move-row .apb-move-pp.is-out { color: var(--ap-error); }
 .apb-move-row .apb-ty { width: calc(var(--u) * 14); height: calc(var(--u) * 14); }
 .apb-detail { position: absolute; right: 0; top: 0; bottom: 0; width: calc(var(--u) * var(--apb-own-w, 188)); white-space: normal; overflow: hidden; }
-.apb-detail-head { display: flex; align-items: center; gap: calc(var(--u) * 4); margin-bottom: calc(var(--u) * 1); height: calc(var(--u) * 14); }
+.apb-detail-head { display: flex; align-items: center; gap: calc(var(--u) * 4); margin-bottom: calc(var(--u) * 1); min-height: calc(var(--u) * 14); }
 .apb-detail-head .ap-chip { height: calc(var(--u) * 13); min-width: calc(var(--u) * 26); padding: 0 calc(var(--u) * 2); flex: none; }
-.apb-detail-name { color: var(--ap-gold-hi); flex: 1 1 auto; min-width: 0; line-height: 1.05; text-shadow: 0 var(--u) 0 var(--ap-ink); }
-.apb-detail .apb-back { position: static; flex: none; height: calc(var(--u) * 14); min-height: 0; line-height: calc(var(--u) * 12); padding: 0 calc(var(--u) * 5); }
-.apb-detail .apb-chart { position: static; flex: none; display: inline-flex; align-items: center; gap: calc(var(--u) * 3); height: calc(var(--u) * 14); min-height: 0; padding: 0 calc(var(--u) * 4); }
+.apb-detail-name { color: var(--ap-gold-hi); flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.05; text-shadow: 0 var(--u) 0 var(--ap-ink); }
+.apb-move-tools { position: absolute; right: 0; bottom: calc(100% + var(--apb-g)); display: flex; align-items: center; gap: calc(var(--u) * 4); }
+.apb-move-tools .apb-back { position: static; flex: none; height: calc(var(--u) * 14); min-height: 0; line-height: calc(var(--u) * 12); padding: 0 calc(var(--u) * 5); }
+.apb-move-tools .apb-chart { position: static; flex: none; display: inline-flex; align-items: center; gap: calc(var(--u) * 3); height: calc(var(--u) * 14); min-height: 0; padding: 0 calc(var(--u) * 4); }
 .apb-chart-ico { width: calc(var(--u) * 10) !important; height: calc(var(--u) * 10) !important; background-size: contain; }
 .apb-chart .ap-key { color: inherit; vertical-align: baseline; }
-.apb-chart .ap-key kbd { height: calc(var(--u) * 10); line-height: calc(var(--u) * 8); }
+.apb-chart .ap-key kbd { height: auto; line-height: 1.2; }
 .apb-detail-stats { display: flex; align-items: center; gap: calc(var(--u) * 6); height: calc(var(--u) * 12); color: var(--ap-text-dim); white-space: nowrap; }
 .apb-detail-stats b { font-weight: normal; color: var(--ap-text); margin-left: calc(var(--u) * 3); }
 .apb-detail-desc {
@@ -507,10 +508,11 @@ html.ap-compact :is(.apb-fx-chip, .apb-fx-status-line, .apb-fx-ability-tag, .apb
 
 @media (pointer: coarse) {
   .apb-menu .ap-row { height: max(32px, calc(var(--u) * var(--row-h, 20))); }
-  .apb-detail .apb-back, .apb-detail .apb-chart { min-height: 28px; }
-  .apb-detail .apb-chart { min-width: 28px; justify-content: center; }
+  .apb-move-tools .apb-back, .apb-move-tools .apb-chart { min-height: 28px; }
+  .apb-move-tools .apb-chart { min-width: 28px; justify-content: center; }
   .apb-chart .ap-key { display: none; }
 }
+html[data-touch-controls='on'] .apb-move-tools .apb-chart { min-width: 44px; }
 html.ap-compact .apb-status.is-foe { width: calc(var(--u) * var(--apb-foe-w-c, 160)); }
 html.ap-compact .apb-status.is-own { width: calc(var(--u) * var(--apb-own-w-c, 170)); }
 html.ap-compact .apb-cmd { width: calc(var(--u) * var(--apb-cmd-w-c, 116)); }
