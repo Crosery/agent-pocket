@@ -1,9 +1,8 @@
 // Multiplayer server list screen: official server protection, custom server CRUD, status probing.
 import { t } from '../../../shared/content/index.ts'
 import { button, el, panel } from '../widgets.ts'
-import { backPressed, frame, H, openScreen, pressed, sfx, uiSfx, type ScreenEnv } from './base.ts'
 import {
-  addServer, deleteServer, loadServers, probeServer, OFFICIAL_SERVER_ID,
+  addServer, deleteServer, loadServers, probeServer, sanitizeServerAddress, OFFICIAL_SERVER_ID,
   type ServerEntry, type ServerProbeResult, updateServer,
 } from '../../net/servers.ts'
 
@@ -191,17 +190,18 @@ export function serverListScreen(env: ScreenEnv): Promise<ServerEntry | null> {
           nameInput.focus()
           return
         }
-        if (!addrVal) {
-          errEl.textContent = t('screens.serverList.addDialog.addrRequired')
+        const sanitized = sanitizeServerAddress(addrVal)
+        if (!sanitized.ok) {
+          errEl.textContent = sanitized.error
           errEl.hidden = false
           addrInput.focus()
           return
         }
 
         if (isEdit && initial?.id) {
-          updateServer(initial.id, { name: nameVal, address: addrVal })
+          updateServer(initial.id, { name: nameVal, address: sanitized.address })
         } else {
-          const added = addServer({ name: nameVal, address: addrVal })
+          const added = addServer({ name: nameVal, address: sanitized.address })
           servers = loadServers()
           selectedIndex = servers.findIndex((s) => s.id === added.id)
         }

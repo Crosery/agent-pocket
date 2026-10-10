@@ -1,8 +1,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import {
-  addServer, deleteServer, loadServers, normalizeWsUrl,
-  probeServer, resolveServerUrls, updateServer, OFFICIAL_SERVER_ID,
+  addServer, deleteServer, getOfficialServer, loadServers, normalizeWsUrl,
+  probeServer, resolveServerUrls, sanitizeServerAddress, updateServer, OFFICIAL_SERVER_ID,
   type StorageLike,
 } from '../src/client/net/servers.ts'
 import { validatePassword, validateUsername, getAuthLimits } from '../src/client/net/auth.ts'
@@ -23,13 +23,14 @@ function createMemoryStorage(initial: Record<string, string> = {}): StorageLike 
 // Server list persistence & official server immutability
 // ---------------------------------------------------------------------------
 
-test('official server is always present as the first entry on fresh load', () => {
+test('official server is always present as the first entry on fresh load with configured URL', () => {
   const storage = createMemoryStorage()
   const list = loadServers(storage)
-  assert.equal(list.length, 1)
+  assert.ok(list.length >= 1)
   assert.equal(list[0].id, OFFICIAL_SERVER_ID)
   assert.equal(list[0].official, true)
-})
+  assert.equal(list[0].address, getOfficialServer().address)
+  assert.equal(getOfficialServer().address, 'https://ap.crosery.com')
 
 test('custom servers can be added, updated, and deleted', () => {
   const storage = createMemoryStorage()
@@ -94,6 +95,31 @@ test('corrupted or malicious custom data in storage cannot override official ser
 // ---------------------------------------------------------------------------
 // URL normalization
 // ---------------------------------------------------------------------------
+test('sanitizeServerAddress validates safe URLs and rejects unsafe ones', () => {
+  const ok1 = sanitizeServerAddress('127.0.0.1:8787')
+  assert.equal(ok1.ok, true)
+  if (ok1.ok) {
+    assert.equal(ok1.httpBase, 'http://127.0.0.1:8787')
+    assert.equal(ok1.wsUrl, 'ws://127.0.0.1:8787/ws')
+  }
+
+  const ok2 = sanitizeServerAddress('https://ap.crosery.com')
+  assert.equal(ok2.ok, true)
+  if (ok2.ok) {
+    assert.equal(ok2.httpBase, 'https://ap.crosery.com')
+    assert.equal(ok2.wsUrl, 'wss://ap.crosery.com/ws')
+  }
+
+  // Unsafe inputs
+  assert.equal(sanitizeServerAddress('javascript:alert(1)').ok, false)
+  assert.equal(sanitizeServerAddress('data:text/html,bad').ok, false)
+  assert.equal(sanitizeServerAddress('http://user:pass@127.0.0.1:8787').ok, false)
+  assert.equal(sanitizeServerAddress('http://example.com/test?token=123').ok, false)
+  assert.equal(sanitizeServerAddress('http://example.com#section').ok, false)
+  assert.equal(sanitizeServerAddress('http://example.com/../traversal').ok, false)
+  assert.equal(sanitizeServerAddress('').ok, false)
+})
+
 
 test('resolveServerUrls handles official and empty addresses', () => {
   const def = resolveServerUrls('')

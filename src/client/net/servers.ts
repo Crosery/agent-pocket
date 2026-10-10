@@ -51,62 +51,88 @@ function fallbackStorage(): StorageLike {
   }
 }
 
+export interface SanitizedServerAddress {
+  ok: true
+  address: string
+  httpBase: string
+  wsUrl: string
+}
+
+export interface SanitizeServerError {
+  ok: false
+  error: string
+}
+
+export function sanitizeServerAddress(input: string): SanitizedServerAddress | SanitizeServerError {
+  const trimmed = input.trim()
+  if (!trimmed) return { ok: false, error: t('screens.serverList.addDialog.addrRequired') }
+
+  if (/^(javascript|data|file|blob|vbscript):/i.test(trimmed)) {
+    return { ok: false, error: t('screens.serverList.invalidUrl') }
+  }
+  if (trimmed.includes('@')) {
+    return { ok: false, error: t('screens.serverList.invalidUrl') }
+  }
+  if (trimmed.includes('?') || trimmed.includes('#')) {
+    return { ok: false, error: t('screens.serverList.invalidUrl') }
+  }
+  if (trimmed.includes('..') || trimmed.includes('\\')) {
+    return { ok: false, error: t('screens.serverList.invalidUrl') }
+  }
+
+  let fullUrl = trimmed
+  if (!/^[a-z]+:\/\//i.test(fullUrl)) {
+    const isLocal = /^localhost(:\d+)?$/i.test(fullUrl) ||
+      /^(127\.0\.0\.1|0\.0\.0\.0|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/.test(fullUrl)
+    fullUrl = `${isLocal ? 'http' : 'https'}://${fullUrl}`
+  }
+
+  try {
+    const u = new URL(fullUrl)
+    if (!['http:', 'https:', 'ws:', 'wss:'].includes(u.protocol)) {
+      return { ok: false, error: t('screens.serverList.invalidUrl') }
+    }
+    if (u.username || u.password) {
+      return { ok: false, error: t('screens.serverList.invalidUrl') }
+    }
+    const p = u.pathname
+    if (p !== '' && p !== '/' && p !== '/ws' && p !== '/ws/') {
+      return { ok: false, error: t('screens.serverList.invalidUrl') }
+    }
+    const httpProtocol = u.protocol === 'ws:' ? 'http:' : (u.protocol === 'wss:' ? 'https:' : u.protocol)
+    const wsProtocol = httpProtocol === 'https:' ? 'wss:' : 'ws:'
+    const httpBase = `${httpProtocol}//${u.host}`
+    const wsUrl = `${wsProtocol}//${u.host}${NET_CLIENT.protocol.wsPath}`
+    return { ok: true, address: httpBase, httpBase, wsUrl }
+  } catch {
+    return { ok: false, error: t('screens.serverList.invalidUrl') }
+  }
+}
+
 export function getOfficialServer(): ServerEntry {
+  const configuredUrl = NET_CLIENT.official?.url ?? 'https://ap.crosery.com'
+  const configuredName = NET_CLIENT.official?.name ?? t('screens.serverList.officialName')
   return {
     id: OFFICIAL_SERVER_ID,
-    name: t('screens.serverList.officialName'),
-    address: '',
+    name: configuredName,
+    address: configuredUrl,
     official: true,
   }
 }
 
 export function resolveServerUrls(address: string): ResolvedServerUrls {
   const trimmed = address.trim()
-  if (!trimmed || trimmed === 'official' || trimmed === 'default') {
-    if (typeof location !== 'undefined' && location.host) {
-      const isHttps = location.protocol === 'https:'
-      const httpBase = `${isHttps ? 'https:' : 'http:'}//${location.host}`
-      const wsUrl = `${isHttps ? 'wss:' : 'ws:'}//${location.host}${NET_CLIENT.protocol.wsPath}`
-      return { httpBase, wsUrl }
-    }
-    return {
-      httpBase: 'http://localhost:8787',
-      wsUrl: `ws://localhost:8787${NET_CLIENT.protocol.wsPath}`,
-    }
+  const target = !trimmed || trimmed === 'official' || trimmed === 'default'
+    ? getOfficialServer().address
+    : trimmed
+  const sanitized = sanitizeServerAddress(target)
+  if (sanitized.ok) {
+    return { httpBase: sanitized.httpBase, wsUrl: sanitized.wsUrl }
   }
-  let base = trimmed
-  let scheme = ''
-  if (/^https?:\/\//i.test(base)) {
-    scheme = base.slice(0, base.indexOf('://')).toLowerCase()
-    base = base.slice(scheme.length + 3)
-  } else if (/^wss?:\/\//i.test(base)) {
-    const wsScheme = base.slice(0, base.indexOf('://')).toLowerCase()
-    scheme = wsScheme === 'wss' ? 'https' : 'http'
-    base = base.slice(wsScheme.length + 3)
-  } else {
-    const isLocal = /^localhost(:\d+)?$/i.test(base) || /^(127\.0\.0\.1|0\.0\.0\.0|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/.test(base)
-    scheme = isLocal ? 'http' : 'https'
+  return {
+    httpBase: 'http://localhost:8787',
+    wsUrl: `ws://localhost:8787${NET_CLIENT.protocol.wsPath}`,
   }
-
-  let hostAndPath = base.replace(/\/+$/, '')
-  let hostOnly = hostAndPath
-  let wsPath = NET_CLIENT.protocol.wsPath
-  const slashIdx = hostAndPath.indexOf('/')
-  if (slashIdx >= 0) {
-    hostOnly = hostAndPath.slice(0, slashIdx)
-    const subPath = hostAndPath.slice(slashIdx)
-    if (subPath.endsWith('/ws')) {
-      wsPath = subPath
-      hostAndPath = hostAndPath.slice(0, hostAndPath.length - 3)
-    } else {
-      wsPath = subPath + NET_CLIENT.protocol.wsPath
-    }
-  }
-
-  const httpBase = `${scheme}://${hostAndPath.replace(/\/+$/, '')}`
-  const wsScheme = scheme === 'https' ? 'wss' : 'ws'
-  const wsUrl = `${wsScheme}://${hostOnly}${wsPath.startsWith('/') ? '' : '/'}${wsPath}`
-  return { httpBase, wsUrl }
 }
 
 export function normalizeWsUrl(address: string): string {
@@ -116,11 +142,29 @@ export function normalizeWsUrl(address: string): string {
 export function loadServers(storage?: StorageLike | null): ServerEntry[] {
   const store = storage ?? fallbackStorage()
   const official = getOfficialServer()
+  const results: ServerEntry[] = [official]
+
+  let localEntry: ServerEntry | null = null
+  if (typeof location !== 'undefined' && location.origin && location.origin !== official.address) {
+    localEntry = {
+      id: 'srv_local',
+      name: t('screens.serverList.currentServer', { host: location.host }),
+      address: location.origin,
+      official: false,
+    }
+  }
+
   try {
     const raw = store.getItem(SERVERS_STORAGE_KEY)
-    if (!raw) return [official]
+    if (!raw) {
+      if (localEntry) results.push(localEntry)
+      return results
+    }
     const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return [official]
+    if (!Array.isArray(parsed)) {
+      if (localEntry) results.push(localEntry)
+      return results
+    }
     const custom = parsed
       .filter((item): item is ServerEntry => (
         item &&
@@ -136,9 +180,14 @@ export function loadServers(storage?: StorageLike | null): ServerEntry[] {
         address: item.address.trim(),
         official: false,
       }))
-    return [official, ...custom]
+    results.push(...custom)
+    if (localEntry && !results.some((s) => s.id === 'srv_local' || s.address === localEntry?.address)) {
+      results.splice(1, 0, localEntry)
+    }
+    return results
   } catch {
-    return [official]
+    if (localEntry) results.push(localEntry)
+    return results
   }
 }
 
@@ -155,12 +204,14 @@ export function saveServers(servers: ServerEntry[], storage?: StorageLike | null
 }
 
 export function addServer(entry: { name: string; address: string }, storage?: StorageLike | null): ServerEntry {
+  const sanitized = sanitizeServerAddress(entry.address)
+  if (!sanitized.ok) throw new Error(sanitized.error)
   const current = loadServers(storage)
   const id = `srv_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
   const newServer: ServerEntry = {
     id,
     name: entry.name.trim() || t('screens.serverList.customTag'),
-    address: entry.address.trim(),
+    address: sanitized.address,
     official: false,
   }
   current.push(newServer)
@@ -178,7 +229,11 @@ export function updateServer(
   const idx = current.findIndex((s) => s.id === id)
   if (idx < 0) return false
   if (updates.name !== undefined) current[idx].name = updates.name.trim()
-  if (updates.address !== undefined) current[idx].address = updates.address.trim()
+  if (updates.address !== undefined) {
+    const sanitized = sanitizeServerAddress(updates.address)
+    if (!sanitized.ok) throw new Error(sanitized.error)
+    current[idx].address = sanitized.address
+  }
   saveServers(current, storage)
   return true
 }

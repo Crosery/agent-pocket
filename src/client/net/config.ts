@@ -11,6 +11,10 @@ export interface NetClientTuning {
     passwordMinLen: number
     passwordMaxLen: number
   }
+  official?: {
+    name: string
+    url: string
+  }
   client: {
     reconnect: { baseMs: number; maxMs: number; factor: number; jitter: number }
     pingSeconds: number

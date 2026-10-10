@@ -19,15 +19,9 @@ export interface AuthCredentials {
   password: string
 }
 
-const DEFAULT_AUTH_LIMITS = {
-  usernameMinLen: 2,
-  usernameMaxLen: 16,
-  passwordMinLen: 8,
-  passwordMaxLen: 72,
-}
-
 export function getAuthLimits() {
-  return NET_CLIENT.auth ?? DEFAULT_AUTH_LIMITS
+  if (!NET_CLIENT.auth) throw new Error('missing auth limits in net config')
+  return NET_CLIENT.auth
 }
 
 export function validateUsername(username: string): string | null {

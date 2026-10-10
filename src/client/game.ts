@@ -27,7 +27,7 @@ import { flyLanding, resolvePlace } from './world/explore.ts'
 import { anchorGateMessage, anchorLanding, anchorName, canAnchorTravel } from './world/anchors.ts'
 import { createDebugOverlay } from './debug-overlay.ts'
 import type { DevKit } from './dev/kit.ts'
-import { resolveServerUrls } from './net/servers.ts'
+import { resolveServerUrls, type ServerEntry } from './net/servers.ts'
 import { bindAccountSave, getAccountSession, type AccountSessionResult } from './net/auth.ts'
 
 type Mutable<T> = { -readonly [K in keyof T]: T[K] }
@@ -572,12 +572,24 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     return s
   }
 
-  async function multiplayerFlow(): Promise<{ save: SaveData; isNew: boolean; mode: 'multiplayer' } | null> {
+  async function multiplayerFlow(preselectedServer?: ServerEntry): Promise<{ save: SaveData; isNew: boolean; mode: 'multiplayer' } | null> {
+    let pendingServer = preselectedServer ?? null
     for (;;) {
-      const server = screens.serverList ? await screens.serverList() : null
+      const server = pendingServer ?? (screens.serverList ? await screens.serverList() : null)
+      pendingServer = null
       if (!server) return null
 
       const urls = resolveServerUrls(server.address)
+
+      // Cross-origin redirect: custom servers require same-origin landing for SameSite=Lax cookies and CSRF
+      if (typeof location !== 'undefined' && location.origin && urls.httpBase !== location.origin) {
+        ui.toast(t('screens.serverList.crossOriginRedirect'), 'info')
+        const target = new URL(urls.httpBase)
+        target.searchParams.set('join', '1')
+        location.href = target.href
+        return null
+      }
+
       let session: AccountSessionResult | null = null
       try {
         session = await getAccountSession(urls.httpBase)
@@ -587,7 +599,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
 
       if (!session) {
         if (!screens.accountAuth) {
-          ui.toast('账号认证模块未加载', 'warn')
+          ui.toast(t('screens.auth.moduleUnavailable'), 'warn')
           continue
         }
         session = await screens.accountAuth(server, urls.httpBase)
@@ -600,7 +612,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
       if (!serverSave) {
         const hasLocalSave = saves.hasSave(slot)
         if (!screens.bindAccount) {
-          ui.toast('角色绑定模块未加载', 'warn')
+          ui.toast(t('screens.auth.bindUnavailable'), 'warn')
           continue
         }
         const bindDecision = await screens.bindAccount(server, urls.httpBase, hasLocalSave)
@@ -625,7 +637,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         } else if (bindDecision.choice === 'local') {
           const localSave = saves.load(slot)
           if (!localSave) {
-            ui.toast('本地存档不可用', 'error')
+            ui.toast(t('screens.auth.localSaveUnavailable'), 'error')
             continue
           }
           try {
@@ -652,6 +664,24 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
       const s = existing ?? dev.newSave(saves, needWorld())
       if (!existing) applyNewGameStart(s)
       return { save: s, isNew: false, mode: 'singleplayer' }
+    }
+
+    // Landing flow: auto-join intent when redirected from another origin to this custom server
+    if (typeof location !== 'undefined') {
+      const params = new URLSearchParams(location.search)
+      if (params.has('join')) {
+        params.delete('join')
+        const clean = params.toString() ? `?${params.toString()}` : ''
+        window.history.replaceState(null, '', `${location.pathname}${clean}${location.hash}`)
+        const landingServer: ServerEntry = {
+          id: 'srv_landing',
+          name: t('screens.serverList.currentServer', { host: location.host }),
+          address: location.origin,
+          official: false,
+        }
+        const autoJoin = await multiplayerFlow(landingServer)
+        if (autoJoin) return autoJoin
+      }
     }
     for (;;) {
       const hasSave = saves.hasSave(slot)

@@ -9,6 +9,10 @@
     "passwordMinLen": 8,
     "passwordMaxLen": 72
   },
+  "official": {
+    "name": "官方服务器",
+    "url": "https://ap.crosery.com"
+  },
   "server": {
     "defaultPort": 8787,
     "maxPayloadBytes": 262144,

@@ -402,6 +402,7 @@
     "officialName": "官方服务器",
     "officialTag": "官方",
     "officialAddress": "官方默认",
+    "currentServer": "当前站点（{host}）",
     "customTag": "自定义",
     "join": "加入服务器",
     "add": "添加服务器",
@@ -431,7 +432,9 @@
       "addrRequired": "请输入服务器地址"
     },
     "deleteConfirm": "确定要删除服务器「{name}」吗？",
-    "officialImmutable": "官方服务器不可修改或删除"
+    "officialImmutable": "官方服务器不可修改或删除",
+    "crossOriginRedirect": "正在跳转至该服务器页面进行同源登录…",
+    "invalidUrl": "服务器地址无效（禁止输入查询参数、哈希、路径穿越或非法协议）"
   },
   "auth": {
     "title": "登录与注册",
@@ -463,7 +466,10 @@
       "unauthorized": "登录凭证已失效，请重新登录",
       "rateLimited": "请求过于频繁，请稍后再试",
       "alreadyBound": "该账号已绑定存档"
-    }
+    },
+    "moduleUnavailable": "账号认证模块未加载",
+    "bindUnavailable": "角色绑定模块未加载",
+    "localSaveUnavailable": "本地存档不可用"
   },
   "update": {
     "toast": "版本更新已同步：{summary}",
