@@ -75,6 +75,7 @@ export function buildGameplay(): GameplayData {
     research: researchJson as unknown as ResearchFile,
     instances: (instancesJson as unknown as InstanceFile).instances,
     instanceDefaults: (instancesJson as unknown as InstanceFile).defaults,
+    instancePeriod: (instancesJson as unknown as InstanceFile).period,
   }
 }
 

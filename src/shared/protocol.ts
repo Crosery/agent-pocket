@@ -7,6 +7,8 @@ import type {
 import type { CompactMoveTuple, CompactPlayerTuple } from './net-codec.ts'
 export type { CompactMoveTuple, CompactPlayerTuple } from './net-codec.ts'
 
+import type { CoopClientMsg, CoopServerMsg } from './coop/protocol.ts'
+export * from './coop/index.ts'
 export interface PresenceLead { speciesId: string; shiny: boolean; level: number }
 
 /** Public, compact state of another player as seen by others. */
@@ -133,8 +135,7 @@ export type ClientMsgCore =
   }
   | { t: 'save.import'; save: unknown; slotSig?: string | null; slotIndex?: number }
 
-export type ClientMsg = ClientMsgCore & EnvelopeFields
-
+export type ClientMsg = (ClientMsgCore | CoopClientMsg) & EnvelopeFields
 // ----------------------------- server -> client -----------------------------
 
 export type ServerMsg =
@@ -176,3 +177,4 @@ export type ServerMsg =
     save: SaveData
     rev: number
   }
+  | CoopServerMsg

@@ -9,7 +9,7 @@ import { Rng } from '../../shared/rng.ts'
 import { createCreature, maxHp } from '../../shared/creature.ts'
 import { buildBossInit, createBossCreature } from '../../shared/battle/boss-battle.ts'
 import { partyExpMods } from '../../shared/gameplay/bosscard.ts'
-import { instanceOfBoss, pickLossHint, progressOf, shouldOfferAssist } from '../../shared/gameplay/instances.ts'
+import { checkInstanceAchievements, instanceOfBoss, isOffPeakDouble, pickLossHint, progressOf, shouldOfferAssist } from '../../shared/gameplay/instances.ts'
 import { GAMEPLAY } from '../../shared/gameplay/data.ts'
 import { modifierValue, type EventModifiers } from '../../shared/gameplay/events.ts'
 import { regionAt } from '../../shared/world/worldapi.ts'
@@ -318,8 +318,26 @@ export function createBattleFlow(deps: BattleFlowDeps) {
       prog.losses[tierId] = 0
       ctx.save.flags[ID.assistOfferFlag] = false
       ctx.save.flags[GAME.flags.bossWonPrefix + bossId] = true
-      if (first) payBossReward({ money: rules.reward.money, items: rules.firstReward.items })
-      else payBossReward({ money: rules.repeat.money })
+
+      const offPeak = isOffPeakDouble()
+      let shards = (first ? rules.reward.shards : rules.repeat.shards) ?? 0
+      if (rules.reward.jackpot && Math.random() < rules.reward.jackpot.chance) {
+        shards *= rules.reward.jackpot.mul
+        ctx.ui.toast(t('multiplayer.dungeon.jackpot', { mul: rules.reward.jackpot.mul }), 'success')
+      }
+      if (offPeak) {
+        shards *= 2
+        ctx.ui.toast(t('multiplayer.dungeon.offPeak'), 'info')
+      }
+      if (shards > 0) {
+        addItem(ctx, 'data-shard', shards)
+        ctx.ui.toast(t('multiplayer.dungeon.shardsEarned', { n: shards }), 'success')
+      }
+
+      checkInstanceAchievements(prog, inst.def, { tierId, win: true })
+
+      if (first) payBossReward({ money: offPeak ? rules.reward.money * 2 : rules.reward.money, items: rules.firstReward.items })
+      else payBossReward({ money: offPeak ? rules.repeat.money * 2 : rules.repeat.money })
     } else if (outcome.result === 'lose' || outcome.result === 'draw') {
       prog.losses[tierId] = (prog.losses[tierId] ?? 0) + 1
       const hintKey = pickLossHint(inst.def, outcome.summary, startBaits, ctx.data)

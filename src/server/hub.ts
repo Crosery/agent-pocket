@@ -9,6 +9,8 @@ import { WebSocket, type RawData } from 'ws'
 import { createReplayWindow, verifyEnvelope } from '../shared/net-envelope.ts'
 import type { ClientMsg, PlayerState, ServerMsg } from '../shared/protocol.ts'
 import { decodeMoveFrame, encodePlayerDelta, staticStateKey, type CompactPlayerTuple } from '../shared/net-codec.ts'
+import type { CoopClientMsg } from '../shared/coop/protocol.ts'
+import { createDungeonServer } from './dungeon.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { parseSessionCookie, type SessionInfo } from './accounts.ts'
 import { createAuthority, type AuthorityService, type ExternalAccountStore } from './authority.ts'
@@ -244,6 +246,12 @@ export function createHub(opts: HubOptions): Hub {
     validateOffer: (player, raw) => authority.validateTradeOffer(player.id, raw, player.ip),
     completeTrade: (aId, aUid, bId, bUid, tradeId) => authority.completeTrade(aId, aUid, bId, bUid, tradeId),
   })
+  const dungeons = createDungeonServer({
+    core,
+    store: opts.store,
+    lookupPlayer: (id) => registry.get(id),
+    log,
+  })
 
   // ------------------------------------------------------------------ pvp
 
@@ -307,6 +315,7 @@ export function createHub(opts: HubOptions): Hub {
     const p = c as Player
     trades.onDisconnect(p)
     authority.onDisconnect(p.id)
+    dungeons.onPlayerLeave(p)
     try { pvp?.onDisconnect(p.id) } catch (err) { log(`pvp.onDisconnect failed: ${(err as Error).message}`) }
     registry.delete(p.id)
     if (byName.get(p.name.toLowerCase()) === p) byName.delete(p.name.toLowerCase())
@@ -339,19 +348,23 @@ export function createHub(opts: HubOptions): Hub {
 
   type MapRef = NonNullable<Conn['mapRef']>
 
-  const mapIdOk = (id: unknown): id is string =>
-    typeof id === 'string' && id.length > 0 && id.length <= srv.profileLimits.idMaxLen && ID_TOKEN_RE.test(id)
+  const mapIdOk = (id: unknown): id is string => {
+    if (typeof id !== 'string' || id.length === 0 || id.length > srv.profileLimits.idMaxLen) return false
+    const base = id.includes('#') ? id.split('#')[0] : id
+    return ID_TOKEN_RE.test(base)
+  }
 
   /** Static map, frontier interior (generated on demand) or injected bounds; null = unknown map. */
   function resolveMap(id: string): MapRef | null {
+    const baseId = id.includes('#') ? id.split('#')[0] : id
     if (geo) {
       // Frontier interior ids encode their site: never generate one outside the coordinate range.
-      const a = geo.anchorOf(id)
+      const a = geo.anchorOf(baseId)
       if (a && (Math.abs(a.x) > wcfg.maxCoordTiles || Math.abs(a.y) > wcfg.maxCoordTiles)) return null
-      const m = geo.map(id)
+      const m = geo.map(baseId)
       return m ? { id, map: m, width: m.width, height: m.height, infinite: geo.isInfinite(m) } : null
     }
-    const b = opts.world?.maps.get(id)
+    const b = opts.world?.maps.get(baseId)
     return b ? { id, map: null, width: b.width, height: b.height, infinite: false } : null
   }
 
@@ -798,6 +811,10 @@ export function createHub(opts: HubOptions): Hub {
       return
     }
     if (authority.handle(p, msg)) return
+    if (kind.startsWith('party.') || kind.startsWith('dungeon.') || kind.startsWith('raid.')) {
+      dungeons.handle(p, msg as CoopClientMsg)
+      return
+    }
     core.error(p, 'bad_message')
   }
 
@@ -962,6 +979,7 @@ export function createHub(opts: HubOptions): Hub {
       loopDelay.disable()
       for (const tm of timers) clearInterval(tm)
       trades.close()
+      dungeons.close()
       try { pvp?.dispose?.() } catch (err) { log(`pvp.dispose failed: ${(err as Error).message}`) }
       for (const c of [...sockets]) drop(c, codes.shutdown, undefined, true)
     },

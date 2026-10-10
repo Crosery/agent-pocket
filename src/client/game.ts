@@ -42,13 +42,13 @@ const UI_BLOCKING_CLASS = 'ap-ui-blocking'
 interface ScreensModule { createScreens(ctx: GameContext): Screens & { importSave?(): Promise<SaveData | null> }; questHudText?(def: QuestDef, stage: number): string }
 interface BattleModule { createBattleRunner(ctx: GameContext): BattleRunner }
 interface PvpModule { challengePvp(ctx: GameContext, id: string, name: string): Promise<void>; installPvpHandlers(ctx: GameContext): () => void }
-interface TradeModule { startTradeFlow(ctx: GameContext, id: string, name: string): Promise<void>; installTradeHandlers(ctx: GameContext): () => void }
-
+ interface TradeModule { startTradeFlow(ctx: GameContext, id: string, name: string): Promise<void>; installTradeHandlers(ctx: GameContext): () => void }
+interface CoopModule { installCoopChannel(net: NetClient, ctx: GameContext): unknown }
 /** Vite rewrites this into lazy loaders for the files that exist; missing files simply have no entry. */
 function optionalModules(): Record<string, Loader> {
   try {
     // @ts-ignore -- import.meta.glob is a Vite compile-time feature (not in the node/tsc lib types)
-    return import.meta.glob(['./battle/index.ts', './ui/screens/index.ts', './net/pvp-channel.ts', './net/trade-flow.ts']) as Record<string, Loader>
+    return import.meta.glob(['./battle/index.ts', './ui/screens/index.ts', './net/pvp-channel.ts', './net/trade-flow.ts', './net/coop-channel.ts']) as Record<string, Loader>
   } catch {
     return {}
   }
@@ -172,7 +172,8 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   const loadScreens = loadOptional<ScreensModule>(loaders, './ui/screens/index.ts', (m) => typeof m.createScreens === 'function')
   const loadBattle = loadOptional<BattleModule>(loaders, './battle/index.ts', (m) => typeof m.createBattleRunner === 'function')
   const loadPvp = loadOptional<PvpModule>(loaders, './net/pvp-channel.ts', (m) => typeof m.challengePvp === 'function')
-  const loadTrade = loadOptional<TradeModule>(loaders, './net/trade-flow.ts', (m) => typeof m.startTradeFlow === 'function')
+   const loadTrade = loadOptional<TradeModule>(loaders, './net/trade-flow.ts', (m) => typeof m.startTradeFlow === 'function')
+  const loadCoop = loadOptional<CoopModule>(loaders, './net/coop-channel.ts', (m) => typeof m.installCoopChannel === 'function')
   loader.step('assets')
   const assets = createAssetStore()
   await assets.init()
@@ -523,8 +524,8 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   async function buildWorldLayer(): Promise<void> {
     if (layerBuilt) return
     layerBuilt = true
-    const [pvpMod, tradeMod] = await Promise.all([loadPvp, loadTrade])
-    hooks = { startTradeFlow: tradeMod?.startTradeFlow, challengePvp: pvpMod?.challengePvp }
+    const [pvpMod, tradeMod, coopMod] = await Promise.all([loadPvp, loadTrade, loadCoop])
+     hooks = { startTradeFlow: tradeMod?.startTradeFlow, challengePvp: pvpMod?.challengePvp }
     overworld = createOverworld(ctx, {
       rng: new RngHub(dev?.rngSeed ?? randomSeed()),
       multiplayer: () => hooks,
@@ -541,9 +542,13 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     onboarding = createOnboarding(ctx, overworld, uiRoot)
     attention = createAttention(ctx)
     debugOverlay = createDebugOverlay(ctx, overworld, appRoot)
-    for (const [name, install] of [['pvp', pvpMod?.installPvpHandlers], ['trade', tradeMod?.installTradeHandlers]] as const) {
-      try { install?.(ctx) } catch (err) { console.error(`[game] ${name} handlers failed to install`, err) }
-    }
+    for (const [name, install] of [
+      ['pvp', () => pvpMod?.installPvpHandlers(ctx)],
+      ['trade', () => tradeMod?.installTradeHandlers(ctx)],
+      ['coop', () => coopMod?.installCoopChannel(net, ctx)],
+    ] as const) {
+      try { install?.() } catch (err) { console.error(`[game] ${name} handlers failed to install`, err) }
+     }
     dev?.install({ ctx, overworld, world: needWorld(), onboarding, flyTo: (id) => runModal(() => flyTo(id)), tick })
   }
   if (dev) await buildWorldLayer()

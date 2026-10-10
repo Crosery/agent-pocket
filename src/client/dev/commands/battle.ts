@@ -9,6 +9,7 @@ import { instanceOfBoss, progressOf, shouldOfferAssist } from '../../../shared/g
 import { walkSteps } from '../../../shared/world/story.ts'
 import { contractFlow } from '../../battle/capture.ts'
 import { addCreature } from '../../world/save-ops.ts'
+import { getCoopChannel, openDungeonModal } from '../../net/coop-channel.ts'
 import { GAME } from '../../world/config.ts'
 import type { DevHost } from '../kit.ts'
 import { DevError, type CommandRun } from '../registry.ts'
@@ -106,7 +107,17 @@ export const battleCommands: Record<string, CommandRun> = {
     if (!found) throw new DevError('dev.err.unknownInstance', { id })
     delete host.ctx.save.instances?.[found.id]
     delete host.ctx.save.flags[GAME.flags.bossWonPrefix + found.def.boss]
-    return { id: found.id }
+     return { id: found.id }
+   },
+  'dungeon.open': (host, a) => {
+    const id = String(a.id ?? 'deepseek-tide')
+    openDungeonModal(host.ctx, id)
+    return { opened: id }
+  },
+  'party.create': (host) => {
+    const channel = getCoopChannel()
+    if (channel) channel.createParty()
+    return { result: 'ok' }
   },
   /** A signed boss card at `level` with `bank` levels of exp banked (party or the first box when full). */
   'bosscard.give': (host, a) => {

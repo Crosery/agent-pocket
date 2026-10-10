@@ -297,6 +297,8 @@ function validateInstances(g: GameplayData, c: Content): string[] {
       if (!boss.tiers?.[tid]) errs.push(`${tw}: boss "${inst.boss}" has no tier "${tid}"`)
       const cap = t.capture
       if (!(cap.first >= 0 && cap.first <= 1)) errs.push(`${tw}.capture.first: must be within [0, 1]`)
+      if (cap.repeat !== undefined && !(cap.repeat >= 0 && cap.repeat <= 1)) errs.push(`${tw}.capture.repeat: must be within [0, 1]`)
+      if (cap.pity !== undefined && !(cap.pity >= 1)) errs.push(`${tw}.capture.pity: must be >= 1`)
       if (!(cap.perfectIvs >= 0 && cap.perfectIvs <= 6)) errs.push(`${tw}.capture.perfectIvs: must be 0..6`)
       if (!(cap.ivMin >= 0 && cap.ivMin <= c.config.creature.ivMax)) errs.push(`${tw}.capture.ivMin: must be 0..${c.config.creature.ivMax}`)
       if (!grades.has(cap.firstGradeFloor)) errs.push(`${tw}.capture.firstGradeFloor: unknown grade "${cap.firstGradeFloor}"`)
@@ -306,6 +308,12 @@ function validateInstances(g: GameplayData, c: Content): string[] {
       if (cap.ability.signature && !boss.signature?.ability) errs.push(`${tw}.capture.ability: signature weight without a signature ability`)
       for (const [where, r] of [['reward', t.reward], ['firstReward', t.firstReward]] as const) for (const it of Object.keys(r.items ?? {})) item(`${tw}.${where}`, it)
       if (!(t.repeat.expMul > 0)) errs.push(`${tw}.repeat.expMul: must be > 0`)
+      if (t.reward.jackpot && !(t.reward.jackpot.chance >= 0 && t.reward.jackpot.chance <= 1 && t.reward.jackpot.mul >= 1)) errs.push(`${tw}.reward.jackpot: invalid chance or mul`)
+      if (t.coop && !(t.coop.minPlayers >= 1 && t.coop.maxPlayers >= t.coop.minPlayers && t.coop.hpScaleExp > 0)) errs.push(`${tw}.coop: invalid player count or hpScaleExp`)
+    }
+    if (inst.desc && !(inst.desc in c.text)) errs.push(`${w}: missing text "${inst.desc}"`)
+    for (const [eid, el] of Object.entries(inst.elites ?? {})) {
+      if (!c.species[el.species]) errs.push(`${w}.elites.${eid}: unknown species "${el.species}"`)
     }
   }
   return errs

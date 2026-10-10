@@ -1033,6 +1033,8 @@ export type ScriptStep =
   | { op: 'triggerEvent'; event: string }
   | { op: 'revealPlace'; place: string }
   | { op: 'research'; species: string; task: string; amount: number }
+  | { op: 'instance'; id: string; action: 'enter' | 'room' | 'leave'; tier?: string; room?: string }
+  | { op: 'ifInstance'; id: string; tier?: string; clearedAtLeast?: number; capturedAtLeast?: number; then: ScriptStep[]; else?: ScriptStep[] }
   | { op: 'end' }
 
 export interface NpcDef {
@@ -1440,31 +1442,127 @@ export interface SaveData {
   instances?: Record<string, InstanceProgress>
 }
 
-/** Per boss instance: clears / contracts by tier id, the run counter that seeds the roll, losses by tier. */
+/** Per boss instance: clears / contracts / pity by tier id, the run counter that seeds the roll, losses by tier, daily lockout and achievements. */
 export interface InstanceProgress {
   clears: Record<string, number>
   captures: Record<string, number>
   runSeq: number
   losses: Record<string, number>
+  /** Failed contract rolls in a row per tier id (resets to 0 on a successful sign). */
+  pity?: Record<string, number>
+  /** Last runSeq that rolled a contract per tier id (prevents signing twice in the same run). */
+  lastRollRun?: Record<string, number>
+  /** Daily lockout counters for online/period-bounded runs. */
+  day?: { key: string; rolls: number; rewards: number }
+  /** Unlocked achievement ids of this instance. */
+  achievements?: string[]
+}
+
+export interface InstanceMechanismDef {
+  id: string
+  /** Text key of the mechanism name. */
+  name: string
+  /** Text key of the mechanism description / effect hint. */
+  desc: string
+  /** Kind of puzzle / interaction in the dungeon room. */
+  kind: 'switch' | 'console' | 'valve' | 'relay'
+  /** Activations needed (1 in solo; up to party size in co-op when coopScale is true). */
+  required?: number
+  coopScale?: boolean
+  /** Bait tag or meter bonus applied to the boss fight when solved. */
+  bossEffect?: { baitTag?: string; meterId?: string; meterAdd?: number; takenMulBonus?: number }
+}
+
+export interface InstanceEliteDef {
+  id: string
+  /** Text key of the elite guardian's title. */
+  name: string
+  species: string
+  levelOffset?: number
+  trainer?: string
+}
+
+export interface InstanceRoomDef {
+  id: string
+  /** Text key of the room name. */
+  name: string
+  kind: 'lobby' | 'corridor' | 'boss'
+  map?: string
+  mechanisms?: InstanceMechanismDef[]
+  elites?: InstanceEliteDef[]
+}
+
+export interface InstanceAchievementDef {
+  id: string
+  /** Text key of the achievement title. */
+  name: string
+  /** Text key of the achievement condition description. */
+  desc: string
+  tier?: string
+  maxTurns?: number
+  minPlayers?: number
+  requireMechanisms?: boolean
+  reward?: BossReward
+}
+
+export interface InstanceLossHint {
+  if?: {
+    peakDamageShare?: number
+    unusedBaitTag?: string
+    faintedInMeterState?: { meter: string; value: number; atLeast: number }
+    noHealItem?: boolean
+    enraged?: boolean
+  }
+  text: string
 }
 
 /** What a tier of an instance rolls on a contract and pays out (content/world/instances.json). */
 export interface InstanceTierDef {
+  unlock?: {
+    badgesAtLeast?: number
+    flag?: string
+    minPlayers?: number
+    maxPlayers?: number
+  }
   capture: {
-    /** Contract chance of the first / later runs (M1b: the first run always signs). */
+    /** Contract chance of the first clear (0..1). */
     first: number
+    /** Contract chance on repeat clears (0..1; defaults to `first` when omitted). */
+    repeat?: number
+    /** Failed repeat rolls before the next roll is guaranteed (100%). */
+    pity?: number
     perfectIvs: number
     ivMin: number
     /** Grade the first contract is at least. */
     firstGradeFloor: string
     /** 'signature' = the boss's signature ability on the first contract. */
     firstAbility: string
+    /** First contract extra moves (optional). */
+    firstMoves?: string[]
     /** Ability weights by 'signature' / 'slot<i>'. */
     ability: Record<string, number>
   }
-  reward: BossReward
+  reward: BossReward & {
+    /** Fragment count (`defaults.shardItem`) awarded on clear. */
+    shards?: number
+    /** Compute jackpot (算力暴击): chance to multiply shard drops by `mul`. */
+    jackpot?: { chance: number; mul: number }
+  }
   firstReward: BossReward
-  repeat: { expMul: number; money: number; capture: boolean }
+  repeat: {
+    expMul: number
+    money: number
+    capture: boolean
+    shards?: number
+  }
+  coop?: {
+    minPlayers: number
+    maxPlayers: number
+    /** Boss HP multiplier exponent: HP * N^hpScaleExp (default 0.8). */
+    hpScaleExp: number
+    /** Minimum contribution score required to qualify for rewards and a contract roll. */
+    minContribution: number
+  }
 }
 
 export interface InstanceLossHint {
@@ -1482,19 +1580,46 @@ export interface InstanceDef {
   boss: string
   /** Text key of the instance name. */
   name: string
+  /** Text key of the instance description / AI theme lore. */
+  desc?: string
+  /** AI-circle theme identifier. */
+  theme?: string
+  /** Refresh cadence ('daily' | 'weekly'). */
+  refresh?: 'daily' | 'weekly'
+  /** World entry location (map id / town id / anchor). */
+  entry?: { map: string; town?: string; anchor?: string; x?: number; y?: number }
   lobby?: string
   drill?: string
   lossHints?: InstanceLossHint[]
+  rooms?: InstanceRoomDef[] | Record<string, InstanceRoomDef>
+  mechanisms?: Record<string, InstanceMechanismDef>
+  elites?: Record<string, InstanceEliteDef>
+  exclusiveDrops?: string[]
+  achievements?: InstanceAchievementDef[] | Record<string, InstanceAchievementDef>
   tiers: Record<string, InstanceTierDef>
 }
 
-/** content/world/instances.json */
-export interface InstanceFile { defaults: InstanceDefaults; instances: Record<string, InstanceDef> }
+export interface InstancePeriodConfig {
+  utcOffset: string
+  dayStartHour: number
+  weekStartDay?: number
+}
 
-/** What every instance does after a loss: the number of losses that offers the assist ("减负") mode, and the flags the story reads. */
+/** content/world/instances.json */
+export interface InstanceFile {
+  period?: InstancePeriodConfig
+  defaults: InstanceDefaults
+  instances: Record<string, InstanceDef>
+}
+
+/** What every instance does after a loss, plus shared shard/off-peak/daily-lockout defaults. */
 export interface InstanceDefaults {
+  lossPolicy?: string
   /** Losses in a row (per tier) after which the assist mode is offered. */
   assistAfterLosses: number
+  assistEarly?: { losses: number; foeHpLeftAtLeast: number; maxTurns: number }
+  retryFromLobby?: boolean
+  couponRefill?: { item: string; min: number }
   /** Save flag set while the assist offer stands (the story script reads it), and the flag a yes sets. */
   assistOfferFlag: string
   assistFlag: string
@@ -1503,6 +1628,24 @@ export interface InstanceDefaults {
   assistEarly?: { losses: number; foeHpLeftAtLeast: number; maxTurns: number }
   retryFromLobby?: boolean
   couponRefill?: { item: string; min: number }
+  /** Item id used for boss fragments / shards (defaults to 'data-shard'). */
+  shardItem?: string
+  /** Shards granted when a contract roll fails. */
+  failShardQty?: number
+  /** Online daily limits per instance (Design 0003 §4.4). */
+  dailyRollLimit?: number
+  dailyRewardLimit?: number
+  /** Off-peak double (谷时双倍) configuration. */
+  offPeakDouble?: {
+    /** In-game or real hour range [from, to) that counts as off-peak valley hours. */
+    hours: [number, number]
+    /** World event ids that also activate off-peak double. */
+    eventIds: string[]
+    /** Multiplier on shard drops during off-peak double. */
+    shardMul: number
+    /** Multiplier on repeat contract probability during off-peak double. */
+    contractMul: number
+  }
 }
 
 // ---------------------------------------------------------------------------

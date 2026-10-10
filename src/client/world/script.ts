@@ -17,6 +17,8 @@ import { presentArrival } from './rarity-spawns.ts'
 import { scriptResearch } from './research.ts'
 import { TUTORIAL } from '../onboarding/config.ts'
 import { sendScriptOp } from '../net/authority-client.ts'
+import { getCoopChannel, openDungeonModal } from '../net/coop-channel.ts'
+import { progressOf } from '../../shared/gameplay/instances.ts'
 
 export type ScriptOutcome = 'done' | 'end' | 'abort'
 
@@ -331,6 +333,28 @@ export function createScriptRunner(host: ScriptHost) {
         if (!ctx.data.species[s.species]) { console.warn(`[script] unknown species "${s.species}"`); return 'done' }
         scriptResearch(ctx, s.species, s.task, s.amount)
         return 'done'
+      case 'instance': {
+        if (s.action === 'enter') {
+          openDungeonModal(ctx, s.id)
+        } else if (s.action === 'room') {
+          const channel = getCoopChannel()
+          if (channel && s.room) channel.moveRoom(s.room)
+        } else if (s.action === 'leave') {
+          const channel = getCoopChannel()
+          if (channel) channel.leaveDungeon()
+        }
+        return 'done'
+      }
+      case 'ifInstance': {
+        const prog = progressOf(ctx.save, s.id)
+        const tier = s.tier ?? 'story'
+        const cleared = prog.clears[tier] ?? 0
+        const captured = prog.captures[tier] ?? 0
+        let cond = true
+        if (s.clearedAtLeast !== undefined && cleared < s.clearedAtLeast) cond = false
+        if (s.capturedAtLeast !== undefined && captured < s.capturedAtLeast) cond = false
+        return exec(cond ? s.then : s.else ?? [], npc, depth + 1)
+      }
       case 'end':
         return 'end'
     }
