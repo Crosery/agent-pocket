@@ -45,7 +45,13 @@
     "bossNightTimes": ["dawn", "night"],
     "sizeCapMapKinds": ["interior", "cave"]
   },
-  "interact": {"reach": 0.85, "radius": 0.62, "reachAcrossProps": ["counter"], "props": {"pc_terminal": {"action": "box"}, "statue": {"action": "statue"}, "warp_anchor": {"action": "anchor"}, "warp_anchor_grand": {"action": "anchor"}}, "sfx": "select"},
+  "interact": {
+    "reach": 0.85,
+    "radius": 0.62,
+    "reachAcrossProps": ["counter"],
+    "props": {"pc_terminal": {"action": "box"}, "statue": {"action": "statue"}, "warp_anchor": {"action": "anchor"}, "warp_anchor_grand": {"action": "anchor"}},
+    "sfx": "select"
+  },
   "npc": {
     "showNames": false,
     "walkSpeed": 3.4,
@@ -58,14 +64,14 @@
   "encounters": {
     "requireConsciousParty": true,
     "surfEncounters": true,
-    "grassRateMultiplier": 0.18,
-    "graceSteps": 8,
+    "grassRateMultiplier": 0.06,
+    "graceSteps": 22,
     "transition": {"kind": "battle", "inMs": 950, "flashColor": "#ffffff", "flashMs": 140, "sfx": "encounter", "fx": "exclaim"},
     "legendRarityOrder": 4,
     "scriptedCanRun": true,
     "repelOfferRefill": true
   },
-  "roaming": {"mapKinds": ["overworld", "cave"], "spawnIntervalSec": 0.9, "spawnTries": 14, "minSpawnDistance": 7, "despawnMargin": 5, "lifetimeSec": [90, 200], "idleSec": [1.0, 3.4], "wanderRadius": 4, "speed": 1.5, "fleeSpeed": 2.8, "chaseSpeed": 2.2, "touchRadius": 0.62, "noticeRange": 3.6, "fleeSlideRad": 1.2, "noticeBubble": "!", "noticeBubbleMs": 900, "fleeBubble": "…", "despawnFx": "dust", "spawnFx": "dust", "requireEncounterTerrain": false, "avoidTerrain": ["causeway"], "cullDistance": 34, "arriveEpsilon": 0.05},
+  "roaming": {"mapKinds": ["overworld", "cave"], "spawnIntervalSec": 2.2, "spawnTries": 14, "minSpawnDistance": 9, "despawnMargin": 5, "lifetimeSec": [90, 200], "idleSec": [1.0, 3.4], "wanderRadius": 4, "speed": 1.5, "fleeSpeed": 2.8, "chaseSpeed": 1.5, "touchRadius": 0.42, "noticeRange": 2.6, "fleeSlideRad": 1.2, "noticeBubble": "!", "noticeBubbleMs": 900, "fleeBubble": "…", "despawnFx": "dust", "spawnFx": "dust", "requireEncounterTerrain": true, "avoidTerrain": ["causeway"], "cullDistance": 34, "arriveEpsilon": 0.05},
   "warp": {"fadeMs": 240, "sfx": {"door": "door", "stairs": "door", "cave": "door", "edge": ""}, "fx": "warp"},
   "region": {"bannerCooldownSec": 6, "musicFadeMs": 900, "nightMusicForTowns": true, "weatherIntensity": {"clear": 0, "rain": 0.85, "snow": 0.8, "sand": 0.7, "fog": 0.75, "aurora": 1, "ash": 0.7}, "recheckSec": 1, "mapKinds": ["overworld"], "defaultWeather": "clear"},
   "items": {"pickupSfx": "item", "keyItemSfx": "levelup", "hiddenGlint": {"radius": 3.2, "intervalSec": 2.6, "fx": "sparkle"}},

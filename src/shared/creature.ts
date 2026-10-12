@@ -145,11 +145,8 @@ function applyLevelUps(cr: Creature, levelCap: number, c: Content): { levels: nu
   const sp = speciesOf(cr.speciesId, c)
   const cap = Math.min(levelCap, c.config.party.maxLevel)
   while (cr.level < cap && cr.exp >= expForLevel(sp.growth, cr.level + 1, c)) {
-    const before = maxHp(cr, c)
     cr.level += 1
     res.levels.push(cr.level)
-    const after = maxHp(cr, c)
-    if (cr.hp > 0) cr.hp = Math.min(after, cr.hp + after - before)
     cr.friendship = Math.min(RULES.creature.friendshipMax, cr.friendship + c.config.creature.levelUpFriendship)
     for (const e of sp.learnset) {
       if (e.level !== cr.level || !c.moves[e.move]) continue
@@ -159,6 +156,7 @@ function applyLevelUps(cr: Creature, levelCap: number, c: Content): { levels: nu
         res.learned.push(e.move)
       } else res.learnable.push(e.move)
     }
+    healFull(cr, c)
   }
   return res
 }
@@ -287,9 +285,9 @@ export function sanitizeCreature(raw: unknown, c: Content = CONTENT): Creature |
   const ivs = {} as Stats
   for (const k of STAT_KEYS) ivs[k] = clampInt(num(ivSrc[k]) ?? 0, 0, c.config.creature.ivMax)
 
-  // The signature ability / move and the exp bank are only legal on the boss's own species.
+  // The signature ability / move and the exp bank are legal on the boss's own species (including legacy imported boss cards).
   const origin = sanitizeOrigin(raw.origin, c)
-  const bossDef = origin?.kind === 'boss' && origin.boss ? c.bosses[origin.boss] : undefined
+  const bossDef = (origin?.kind === 'boss' || origin?.kind === 'legacy') && origin?.boss ? c.bosses[origin.boss] : undefined
   const card = bossDef !== undefined && bossDef.species === speciesId ? bossDef : undefined
   const legal = legalMoves(speciesId, level, c)
   if (card?.signature?.move && c.moves[card.signature.move]) legal.add(card.signature.move)

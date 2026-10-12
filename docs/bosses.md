@@ -134,4 +134,25 @@ right now); a counter may also bring a hand-picked team (`partyIds`), kitted lik
 2. If a trigger reads a bait tag add a `bait` item (+ icon, manifest, `assets_src/prompts/items_details.json`) and sell it.
 3. Add gossip lines to an NPC pool and place the species as a legend or mythic chain.
 4. Add a counter policy to `tests/boss-counters.ts`, run `node scripts/boss-sim.ts <id>` and tune `statMul` until plain
-   is hard (about 30-50%) and the counter reliable (about 85-100%).
+    is hard (about 30-50%) and the counter reliable (about 85-100%).
+
+## Dungeons & Multiplayer Raids (M2 / M6, Issue #28)
+
+Bosses can be challenged both solo and in 2-4 player co-op through thematic overworld instances (`content/world/instances.json`):
+
+- **Difficulty Tiers:**
+  - `story`: 100% first contract / 35% repeat / pity 3 (expected ~2.35 attempts).
+  - `hard`: 60% first contract / 25% repeat / pity 4 (expected ~3.05 attempts).
+  - `full`: 40% first contract / 15% repeat / pity 5 (expected ~4.15 attempts).
+  - `cluster`: 2-4 player raid tier, scaling Boss HP by $N^{0.8}$. Same odds as `full`.
+- **Raid Boss State Synchronization:**
+  - Multi-client shared battle where damage directly decrements a centralized Boss HP pool.
+  - Retaliation damages the acting player's lead creature.
+- **Contribution Scoring & Qualification:**
+  - Each player's damage contribution is tracked. Members reaching `minContribution` (default 10%) qualify for clear rewards and post-raid contract signing.
+- **Contract Rolls & Lockouts:**
+  - Each qualified member rolls their own contract once.
+  - Ball bonuses (`quality.json:capture.ballBonus`) increase roll probabilities.
+  - Failed rolls award `data-shard` fragments and increment pity counter.
+  - Compute jackpot (`jackpot`) offers chance at 2x/3x shard drops.
+  - Valley hours / off-peak events trigger `offPeakDouble` (2x rewards & shards).

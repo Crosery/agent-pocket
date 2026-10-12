@@ -162,6 +162,11 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
   // A press on the card dismisses it; a press on one of its buttons waits for that button's click (a card that is
   // already fading out would swallow the click).
   card.addEventListener('pointerdown', (e) => { e.stopPropagation(); if (!(e.target as Element).closest('button')) clicked = true })
+  const onGlobalPointer = (e: PointerEvent) => {
+    if (card.hidden || card.classList.contains('is-out') || card.classList.contains('is-inline')) return
+    if (!card.contains(e.target as Node)) clicked = true
+  }
+  window.addEventListener('pointerdown', onGlobalPointer, { capture: true })
   close.addEventListener('click', () => { clicked = true })
   nativeActivation(close)
   let offAsked = false
@@ -171,11 +176,9 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
   open.addEventListener('click', () => { openAsked = true; clicked = true })
   nativeActivation(open)
   let hideTimer = 0
-  let expireTimer = 0
   const api = {
     show(s: TipState) {
       window.clearTimeout(hideTimer)
-      window.clearTimeout(expireTimer)
       clicked = false
       title.textContent = t(`${s.textKey}.title`)
       const touchBody = `${s.textKey}.bodyTouch`
@@ -199,11 +202,8 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
       card.classList.remove('is-in')
       void card.offsetWidth
       card.classList.add('is-in')
-      // A paused render loop or a background tab must not leave an old hint on screen.
-      expireTimer = window.setTimeout(() => { clicked = true; api.hide() }, TUTORIAL.tips.layer.ttlSec * 1000)
     },
     hide() {
-      window.clearTimeout(expireTimer)
       if (card.hidden || card.classList.contains('is-out')) return
       card.classList.remove('is-in')
       card.classList.add('is-out')
@@ -232,10 +232,15 @@ export function createTipView(uiRoot: HTMLElement, input: Input) {
     dismissed(): boolean {
       if (clicked) { clicked = false; return true }
       if (card.hidden || card.classList.contains('is-out')) return false
-      if (input.pressed('cancel')) return true
+      if (input.pressed('cancel') || input.pressed('confirm')) return true
       return false
     },
-    dispose() { window.clearTimeout(expireTimer); window.clearTimeout(hideTimer); card.remove(); layer.remove() },
+    dispose() {
+      window.clearTimeout(hideTimer)
+      window.removeEventListener('pointerdown', onGlobalPointer, { capture: true })
+      card.remove()
+      layer.remove()
+    },
   }
   return api
 }

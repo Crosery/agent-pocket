@@ -1,0 +1,1 @@
+{"id": "early-unlock", "titleKey": "dev.scn.earlyUnlock", "place": "town:origin:square", "party": [{"species": "o1", "level": 6}], "flags": {"starter": "o1"}, "expect": [{"path": "/save/flags/starter", "eq": "o1"}]}

@@ -6,8 +6,9 @@ import { createRowMenu, type RowMenu } from '../menu.ts'
 import { el, tabs } from '../widgets.ts'
 import { backPressed, frame, infoRow, isCompact, moneyEl, openScreen, pressed, quantityPicker, sfx, type ScreenEnv, setChildren } from './base.ts'
 import { SCREENS } from './config.ts'
-import { addItem, canSell, maxAffordable, sellPrice, shopBuyPrice } from './logic.ts'
+import { addItem, canSell, maxAffordable, sellPrice, shopBuyPrice } from '../../../shared/gameplay/save-ops.ts'
 import { moveDetail } from './summary.ts'
+import { sendShopBuy, sendShopSell } from '../../net/authority-client.ts'
 
 interface ShopRow { item: ItemDef; price: number; owned: number }
 
@@ -95,6 +96,7 @@ export function shopScreen(env: ScreenEnv, itemIds: string[], opts: { priceMul?:
         if (!await ctx.ui.confirm(t('screens.shop.sellConfirm', { item: name, n, total: total.toLocaleString(t('ui.locale')) }))) return
         addItem(ctx.save, r.item.id, -n)
         changeMoney(total)
+        sendShopSell(ctx, r.item.id, n)
         sfx(env, 'sell')
         ctx.ui.toast(t('screens.shop.sold', { item: name, n, total: total.toLocaleString(t('ui.locale')) }), 'success')
         rebuild(i)
@@ -108,6 +110,7 @@ export function shopScreen(env: ScreenEnv, itemIds: string[], opts: { priceMul?:
       if (!await ctx.ui.confirm(t('screens.shop.buyConfirm', { item: name, n, total: total.toLocaleString(t('ui.locale')) }))) return
       addItem(ctx.save, r.item.id, n)
       changeMoney(-total)
+      sendShopBuy(ctx, r.item.id, n, mulOf(r.item))
       sfx(env, 'buy')
       ctx.ui.toast(t('screens.shop.bought', { item: name, n }), 'success')
       rebuild(i)

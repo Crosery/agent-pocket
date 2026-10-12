@@ -1,17 +1,25 @@
 // Title screen: key art (assets.uiUrl, placed by title-art.ts so the cast stays on screen at any aspect) or the
 // procedural pixel scene, logo, drifting motes, "press any key", then the main menu from content/screens.json.
 // Plays the title music.
-import { t } from '../../../shared/content/index.ts'
+import type { SaveData } from '../../../shared/types.ts'
+import { CONTENT, t } from '../../../shared/content/index.ts'
 import pkg from '../../../../package.json' with { type: 'json' }
 import { createRowMenu } from '../menu.ts'
 import { getUIScale, onUIScaleChange } from '../scale.ts'
-import { el } from '../widgets.ts'
+import { button, el, panel } from '../widgets.ts'
 import { SCREENS, type TitleChoice } from './config.ts'
-import { openScreen, sfx, type ScreenEnv } from './base.ts'
+import { backPressed, infoRow, moneyEl, openScreen, sfx, type ScreenEnv } from './base.ts'
 import { placeTitleArt, type Size } from './title-art.ts'
 import { createMotes, paintTitleScene } from './title-scene.ts'
+import { portraitEl } from './sprites.ts'
 
-export function titleScreen(env: ScreenEnv, hasSave: boolean): Promise<TitleChoice> {
+const ACCOUNT_AVATARS = ['hero_boy', 'hero_girl', 'hero_hacker', 'hero_engineer', 'hero_ranger', 'hero_idol'] as const
+export function titleScreen(
+  env: ScreenEnv,
+  hasSave: boolean,
+  session?: { account: { id: string; username: string }; save: SaveData | null } | null,
+  onSwitchAccount?: () => void,
+): Promise<TitleChoice> {
   const { ctx } = env
   const cfg = SCREENS.title
   ctx.audio.playBgm(cfg.music)
@@ -50,19 +58,154 @@ export function titleScreen(env: ScreenEnv, hasSave: boolean): Promise<TitleChoi
         el('div', { class: 'aps-title-logo-sub', text: t('screens.title.subtitle') }),
       ])
     const press = el('div', { class: 'aps-title-press', text: t(document.documentElement.dataset.touchControls === 'on' ? 'screens.title.pressTouch' : 'screens.title.press'), vars: { '--blink-ms': `${SCREENS.anim.pressBlinkMs}ms` } })
-    const entries = cfg.menu.filter((m) => !m.needsSave || hasSave)
-    const menu = createRowMenu(entries.map((m) => ({ label: t(m.label) })), {
-      visibleRows: entries.length,
+    const mainEntries = cfg.menu
+    const spConfig = cfg.singleplayerMenu ?? [
+      { id: 'continue', label: 'screens.title.menu.continue', needsSave: true },
+      { id: 'new', label: 'screens.title.menu.new' },
+      { id: 'import', label: 'screens.title.menu.import' },
+      { id: 'back', label: 'screens.title.menu.back' },
+    ]
+    const spEntries = spConfig.filter((m) => !m.needsSave || hasSave)
+
+    let phase: 'press' | 'main' | 'singleplayer' = 'press'
+
+    const mainMenu = createRowMenu(mainEntries.map((m) => ({ label: t(m.label) })), {
+      visibleRows: mainEntries.length,
       wrap: true,
       audio: ctx.audio,
-      onPick: api.guard((i: number) => pick(i)),
+      onPick: api.guard((i: number) => pickMain(i)),
     })
-    const menuWin = el('nav', { class: 'aps-title-menu ap-panel', attrs: { 'aria-label': t('screens.title.menuLabel') } }, [menu.el])
+
+    const spMenu = createRowMenu(spEntries.map((m) => ({ label: t(m.label) })), {
+      visibleRows: spEntries.length,
+      wrap: true,
+      audio: ctx.audio,
+      onPick: api.guard((i: number) => pickSP(i)),
+    })
+
+    const menuWin = el('nav', { class: 'aps-title-menu ap-panel', attrs: { 'aria-label': t('screens.title.menuLabel') } }, [mainMenu.el])
     menuWin.hidden = true
     const online = el('span', 'aps-title-online')
+    let rightFooter: HTMLElement = online
+    if (session?.account) {
+      const acc = session.account
+      const save = session.save
+      const storageKey = `ap_account_avatar_${acc.username}`
+      let hash = 0
+      for (let i = 0; i < acc.username.length; i++) hash = ((hash << 5) - hash + acc.username.charCodeAt(i)) | 0
+      const fallbackAvatar = ACCOUNT_AVATARS[Math.abs(hash) % ACCOUNT_AVATARS.length]
+      const pickInitialAvatar = (): string => {
+        try {
+          const saved = localStorage.getItem(storageKey)
+          if (saved && CONTENT.characterById[saved]?.portrait) return saved
+        } catch { /* ignore */ }
+        if (save?.avatar && CONTENT.characterById[save.avatar]?.portrait) return save.avatar
+        return fallbackAvatar
+      }
+      let currentAvatarId = pickInitialAvatar()
+
+      const badgeAvatarWrap = el('div', 'aps-title-account-portrait', [
+        portraitEl(ctx.assets, currentAvatarId, 'aps-title-account-avatar-img'),
+      ])
+      const nameSpan = el('span', { class: 'aps-title-account-name', text: acc.username })
+      const accountBadge = el('div', {
+        class: 'aps-title-account',
+        attrs: { role: 'button', tabindex: '0', 'aria-label': '账号信息' },
+        on: {
+          click: (e) => {
+            e.stopPropagation()
+            openAccountDetails()
+          },
+        },
+      }, [
+        badgeAvatarWrap,
+        nameSpan,
+      ])
+      rightFooter = accountBadge
+
+      const openAccountDetails = () => {
+        sfx(env, 'press')
+        const p = panel('账号信息', { className: 'aps-account-modal-panel ap-anim-in' })
+        const modalBackdrop = el('div', {
+          class: 'aps-account-modal-backdrop',
+          attrs: { role: 'dialog', 'aria-modal': 'true' },
+          on: {
+            click: (e) => { if (e.target === modalBackdrop) closeModal() },
+            keydown: (e) => { if (e.key === 'Escape') { e.stopPropagation(); closeModal() } },
+          },
+        }, [p.el])
+
+        const closeModal = () => {
+          sfx(env, 'press')
+          modalBackdrop.remove()
+        }
+
+        const bigAvatarBox = el('div', 'aps-pc-avatar', [
+          portraitEl(ctx.assets, currentAvatarId, 'aps-pc-portrait'),
+        ])
+        const classTitle = el('div', {
+          class: 'aps-pc-class ap-dim',
+          text: CONTENT.characterById[currentAvatarId]?.nameZh ?? '训练家',
+        })
+
+        const head = el('div', 'aps-account-modal-head', [
+          bigAvatarBox,
+          el('div', 'aps-pc-id', [
+            el('div', { class: 'aps-pc-name', text: acc.username }),
+            classTitle,
+          ]),
+        ])
+
+        const avatarOptionBtns = ACCOUNT_AVATARS.map((id) => {
+          const btn = el('button', {
+            class: `aps-account-avatar-opt${id === currentAvatarId ? ' is-active' : ''}`,
+            attrs: { type: 'button', title: CONTENT.characterById[id]?.nameZh ?? id },
+            on: {
+              click: () => {
+                sfx(env, 'pick')
+                currentAvatarId = id
+                try { localStorage.setItem(storageKey, id) } catch { /* ignore */ }
+                bigAvatarBox.replaceChildren(portraitEl(ctx.assets, id, 'aps-pc-portrait'))
+                badgeAvatarWrap.replaceChildren(portraitEl(ctx.assets, id, 'aps-title-account-avatar-img'))
+                classTitle.textContent = CONTENT.characterById[id]?.nameZh ?? '训练家'
+                avatarOptionBtns.forEach((b, idx) => b.classList.toggle('is-active', ACCOUNT_AVATARS[idx] === id))
+              },
+            },
+          }, [
+            portraitEl(ctx.assets, id, 'aps-account-avatar-opt-img'),
+          ])
+          return btn
+        })
+
+        const avatarPicker = el('div', 'aps-account-avatar-picker', [
+          el('div', { class: 'aps-account-avatar-label', text: '形象头像' }),
+          el('div', 'aps-account-avatar-grid', avatarOptionBtns),
+        ])
+
+        const infoRows = el('div', 'aps-account-modal-rows', save ? [
+          infoRow('角色名称', save.name),
+          infoRow('Token 币', moneyEl(save.money)),
+          infoRow('同行智灵', `${save.party.length} / 6`),
+          infoRow('道馆徽章', `${save.badges.length} / 8`),
+        ] : [
+          infoRow('角色状态', '尚未创建角色'),
+        ])
+
+        const logoutBtn = button('切换账号', () => {
+          closeModal()
+          onSwitchAccount?.()
+        }, { className: 'aps-account-modal-logout' })
+        const closeBtn = button('关 闭', () => closeModal(), { primary: true })
+
+        p.body.append(head, avatarPicker, infoRows, el('div', 'aps-account-modal-btns', [logoutBtn, closeBtn]))
+        api.root.append(modalBackdrop)
+        requestAnimationFrame(() => closeBtn.focus())
+      }
+    }
+
     const foot = el('div', 'aps-title-foot', [
       el('span', { text: t('screens.title.version', { v: pkg.version }) }),
-      online,
+      rightFooter,
     ])
     const vg = cfg.vignette
     const vignette = el('div', {
@@ -100,29 +243,55 @@ export function titleScreen(env: ScreenEnv, hasSave: boolean): Promise<TitleChoi
     const offNet = ctx.events.on('net:status', refreshOnline)
     let onlineTimer = 0
 
-    let phase: 'press' | 'menu' = 'press'
     const toMenu = () => {
       if (phase !== 'press') return
-      phase = 'menu'
+      phase = 'main'
       ctx.audio.unlock()
       sfx(env, 'press')
       press.hidden = true
       menuWin.hidden = false
+      menuWin.replaceChildren(mainMenu.el)
+      mainMenu.setIndex(0, false)
       menuWin.classList.add('ap-anim-in')
     }
     const anyKey = (e: Event) => {
       if (phase !== 'press' || api.closed) return
       if (e instanceof KeyboardEvent && (e.repeat || e.isComposing)) return
-      // Defer to the next frame so the same key cannot also activate the menu.
       requestAnimationFrame(toMenu)
     }
     window.addEventListener('keydown', anyKey)
     api.root.addEventListener('pointerdown', anyKey)
 
-    const pick = (i: number) => {
-      if (phase !== 'menu') return
+    const backToMain = () => {
+      sfx(env, 'press')
+      phase = 'main'
+      menuWin.replaceChildren(mainMenu.el)
+      mainMenu.setIndex(0, false)
+    }
+
+    const pickMain = (i: number) => {
+      if (phase !== 'main') return
+      const chosen = mainEntries[i].id
+      if (chosen === 'singleplayer') {
+        sfx(env, 'press')
+        phase = 'singleplayer'
+        menuWin.replaceChildren(spMenu.el)
+        spMenu.setIndex(0, false)
+        return
+      }
       sfx(env, 'start')
-      api.close(entries[i].id)
+      api.close(chosen)
+    }
+
+    const pickSP = (i: number) => {
+      if (phase !== 'singleplayer') return
+      const chosen = spEntries[i].id
+      if (chosen === 'back') {
+        backToMain()
+        return
+      }
+      sfx(env, 'start')
+      api.close(chosen)
     }
 
     return {
@@ -133,7 +302,15 @@ export function titleScreen(env: ScreenEnv, hasSave: boolean): Promise<TitleChoi
           }
           return
         }
-        if (menu.handleInput(input) === 'confirm') pick(menu.index)
+        if (phase === 'main') {
+          if (mainMenu.handleInput(input) === 'confirm') pickMain(mainMenu.index)
+        } else if (phase === 'singleplayer') {
+          if (backPressed(input)) {
+            backToMain()
+            return
+          }
+          if (spMenu.handleInput(input) === 'confirm') pickSP(spMenu.index)
+        }
       },
       update(dt) {
         motes.update(dt)

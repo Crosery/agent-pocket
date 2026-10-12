@@ -12,11 +12,11 @@
   "save": {"quick": "已快速保存。", "failed": "保存失败：存储空间不足或被禁用。"},
   "title": {"overwrite": "开始新游戏会覆盖现有的存档，确定吗？", "imported": "存档导入成功！欢迎回来，{name}。", "importFailed": "存档码无效。"},
   "net": {"offlineChat": "当前离线，消息没有发送出去。"},
-  "debug": {"title": "调试信息（F3）", "fps": "FPS {fps} · 帧 {ms}ms", "calls": "绘制调用 {calls} · 三角形 {tris}k", "pos": "{map} ({x}, {y}) 高度 {elev}", "region": "区域 {region} · 地形 {terrain}", "time": "时间 {clock}（{tod}）· 天气 {weather}", "net": "网络 {status} · 在线 {n} · 附近玩家 {near}", "player": "{mode} · 驱散 {repel} 步 · 野生 {roamers}"},
+  "debug": {"title": "调试信息（F3）", "fps": "FPS {fps} · 帧 {ms}ms", "calls": "绘制调用 {calls} · 三角形 {tris}k", "pos": "{map} ({x}, {y}) 高度 {elev}", "region": "区域 {region} · 地形 {terrain}", "time": "时间 {clock}（{tod}）· 天气 {weather}", "net": "网络 {status} · 在线 {n} · 附近玩家 {near}", "netStats": "延迟 {rtt}ms（p50 {p50} / p95 {p95} · 抖动 {jitter}ms · 停顿 {stalls}）· 缓冲 {buf}ms · 收发 {rx}/{tx} B/s", "player": "{mode} · 驱散 {repel} 步 · 野生 {roamers}"},
   "mode": {"walk": "步行", "run": "奔跑", "bike": "滑板", "surf": "冲浪"},
   "fallback": {
     "unavailable": "这个界面暂时无法打开。",
-    "title": {"prompt": "智灵口袋", "continue": "继续游戏", "new": "新的冒险", "import": "导入存档", "settings": "设置"},
+    "title": {"prompt": "智灵口袋", "singleplayer": "单人游戏", "multiplayer": "多人游戏", "continue": "继续游戏", "new": "新的冒险", "import": "导入存档", "settings": "设置"},
     "namePrompt": "请输入你的名字：",
     "avatarPrompt": "选择你的形象：",
     "starterPrompt": "选择你的第一位搭档：",

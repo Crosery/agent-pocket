@@ -3,25 +3,10 @@
   "titleKey": "dev.scn.legacySaveV1",
   "legacySave": "save-v1-3badges",
   "expect": [
-    {
-      "path": "/save/version",
-      "eq": 3
-    },
-    {
-      "path": "/save/flags/ds:gateOpen",
-      "eq": true
-    },
-    {
-      "path": "/save/bag/persona-card",
-      "eq": 2
-    },
-    {
-      "path": "/save/party/0/nature",
-      "eq": "balanced"
-    },
-    {
-      "path": "/save/flags/gift:quality-legacy",
-      "eq": true
-    }
+    {"path": "/save/version", "eq": 3},
+    {"path": "/save/flags/ds:gateOpen", "eq": true},
+    {"path": "/save/bag/persona-card", "eq": 2},
+    {"path": "/save/party/0/nature", "eq": "balanced"},
+    {"path": "/save/flags/gift:quality-legacy", "eq": true}
   ]
 }

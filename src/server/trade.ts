@@ -34,6 +34,10 @@ export interface TradeDeps {
   recordTrade(id: string): void
   /** Proximity rule (same map, within range); omitted = no range limit. */
   inRange?(a: Player, b: Player): boolean
+  /** Optional authoritative ownership check (#22); when present, validates ownership and returns the server copy. */
+  validateOffer?(player: Player, raw: unknown): { ok: true; creature: Creature | null } | { ok: false; code: string }
+  /** Optional atomic ownership swap in the authoritative save store (#22). */
+  completeTrade?(aId: string, aUid: string, bId: string, bUid: string, tradeId: string): boolean
 }
 
 export function createTrades(deps: TradeDeps): TradeService {
@@ -140,13 +144,18 @@ export function createTrades(deps: TradeDeps): TradeService {
     if (raw !== null) {
       const sanitize = deps.sanitizer()
       if (!sanitize) { core.error(c, 'trade_unavailable'); return }
-      creature = sanitize(raw)
-      if (!creature || !CONTENT.species[creature.speciesId]) { core.error(c, 'trade_invalid_creature'); return }
-      if (creature.origin?.kind === 'boss') { core.error(c, 'trade_bound_boss'); return }
-      // Free text travels to another player: apply the same word filter as chat.
-      if (creature.nickname) creature.nickname = maskBanned(creature.nickname)
-      creature.otName = maskBanned(creature.otName)
-      if (other.offer && other.offer.uid === creature.uid) { core.error(c, 'trade_invalid_creature'); return }
+      if (deps.validateOffer) {
+        const checked = deps.validateOffer(c, raw)
+        if (!checked.ok) { core.error(c, checked.code); return }
+        creature = checked.creature
+      } else {
+        creature = sanitize(raw)
+        if (!creature || !CONTENT.species[creature.speciesId]) { core.error(c, 'trade_invalid_creature'); return }
+        if (creature.origin?.kind === 'boss') { core.error(c, 'trade_bound_boss'); return }
+        if (creature.nickname) creature.nickname = maskBanned(creature.nickname)
+        creature.otName = maskBanned(creature.otName)
+      }
+      if (!creature || (other.offer && other.offer.uid === creature.uid)) { core.error(c, 'trade_invalid_creature'); return }
     }
     me.offer = creature
     me.confirmed = false
@@ -175,6 +184,10 @@ export function createTrades(deps: TradeDeps): TradeService {
     const pa = core.byId(a.id), pb = core.byId(b.id)
     if (!pa || !pb) { endTrade(tr, t('net.trade.disconnected', { name: pa ? nameOf(b.id) : nameOf(a.id) }), [a.id, b.id]); return }
     const giveA = a.offer, giveB = b.offer
+    if (deps.completeTrade && !deps.completeTrade(a.id, giveA.uid, b.id, giveB.uid, tr.id)) {
+      endTrade(tr, t('net.error.trade_invalid_creature'), [a.id, b.id])
+      return
+    }
     release(tr)
     core.send(pa, { t: 'trade.complete', tradeId: tr.id, received: giveB, given: giveA.uid })
     core.send(pb, { t: 'trade.complete', tradeId: tr.id, received: giveA, given: giveB.uid })

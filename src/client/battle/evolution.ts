@@ -10,6 +10,7 @@ import { learnWithScreen } from './learn.ts'
 import { evolutionMoves } from './model.ts'
 import { markCaught } from './saveops.ts'
 import type { BattleScene } from './scene.ts'
+import { sendCreatureEvolve } from '../net/authority-client.ts'
 
 /** Plays the cutscene and applies the evolution. Resolves false when the player cancelled it. */
 export async function playEvolution(ctx: GameContext, scene: BattleScene, cr: Creature, toSpeciesId: string): Promise<boolean> {
@@ -31,8 +32,9 @@ export async function playEvolution(ctx: GameContext, scene: BattleScene, cr: Cr
   ctx.audio.playCry(cr.speciesId)
   ctx.audio.playSfx(S.evolveStart)
   view.setInterceptor((inp) => {
-    if (!inp.pressed('cancel')) return false
+    if (!inp.pressed('cancel') && !inp.pressed('menu')) return false
     inp.consume('cancel')
+    inp.consume('menu')
     stage.cancelEvolve()
     return true
   })
@@ -50,13 +52,18 @@ export async function playEvolution(ctx: GameContext, scene: BattleScene, cr: Cr
     await view.message.show(t('battleui.evolve.cancelled', { name }))
     return false
   }
+  const kind = ctx.data.species[cr.speciesId]?.evolvesTo?.kind
   const pending = evolutionMoves(cr, toSpeciesId)
   evolve(cr, toSpeciesId, ctx.data)
+  const pIdx = ctx.save.party.findIndex((x) => x.uid === cr.uid)
+  if (pIdx >= 0) {
+    if (ctx.save.party[pIdx] !== cr) evolve(ctx.save.party[pIdx], toSpeciesId, ctx.data)
+    sendCreatureEvolve(ctx, pIdx, toSpeciesId, cr.uid)
+  }
   ctx.audio.playCry(toSpeciesId, { pitch: BATTLE_UI.cry.evolvePitch })
   ctx.audio.playSfx(S.evolveDone)
   if (markCaught(ctx, toSpeciesId)) ctx.ui.toast(t('battleui.evolve.newDexToast', { name: to.nameZh }), 'success')
   ctx.events.emit('party:changed', {})
-  const kind = to.evolvesFrom ? CONTENT.species[to.evolvesFrom]?.evolvesTo?.kind : undefined
   await view.message.show(t(kind === 'post-training' ? 'battleui.evolve.donePostTraining' : 'battleui.evolve.done', { name, to: to.nameZh }))
   for (const moveId of pending) if (!cr.moves.some((m) => m.id === moveId)) await learnWithScreen(ctx, view, cr, moveId)
   await scene.wait(BATTLE_UI.evolve.endHoldMs)

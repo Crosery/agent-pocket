@@ -4,6 +4,7 @@ import type { Creature, DevBeat, DevCommandCall, DevExpectation, DevPartyEntry, 
 import type { IRng } from '../contracts.ts'
 import { CONTENT, type Content } from '../content/index.ts'
 import { createCreature } from '../creature.ts'
+import { sanitizeInstances } from '../gameplay/instances.ts'
 import { STORY_CONTENT } from '../world/story.ts'
 import { worldAnchors } from '../world/index.ts'
 import { getMap } from '../world/worldapi.ts'
@@ -46,11 +47,12 @@ export function flattenScenario(id: string, scenarios: Record<string, DevScenari
   }
   const out: DevScenario = { id, titleKey: chain[chain.length - 1].titleKey }
   for (const sc of chain) {
-    const { extends: _x, then, expect, bag, flags, quests, ...rest } = sc
+    const { extends: _x, then, expect, bag, flags, quests, instances, ...rest } = sc
     Object.assign(out, rest)
     if (bag) out.bag = { ...out.bag, ...bag }
     if (flags) out.flags = { ...out.flags, ...flags }
     if (quests) out.quests = { ...out.quests, ...quests }
+    if (instances) out.instances = { ...out.instances, ...instances }
     if (then) out.then = [...(out.then ?? []), ...then]
     if (expect) out.expect = [...(out.expect ?? []), ...expect]
   }
@@ -110,6 +112,7 @@ export function applyScenario(id: string, deps: ScenarioDeps): ScenarioResult {
   }
   Object.assign(save.flags, sc.flags)
   Object.assign(save.quests, sc.quests)
+  if (sc.instances) save.instances = sanitizeInstances({ ...save.instances, ...sc.instances })
 
   const place = sc.place ?? beat?.place
   if (place) {

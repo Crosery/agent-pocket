@@ -4,8 +4,10 @@ import { CONTENT, t } from '../../shared/content/index.ts'
 import type { Content } from '../../shared/content/index.ts'
 import { preUnlockedIds } from '../../shared/world/anchors.ts'
 import { hashString } from '../../shared/rng.ts'
+import { signLocalSlotText, verifyLocalSlotText } from '../../shared/save-provenance.ts'
 import { decodeSaveCode, encodeSaveCode } from './save-codec.ts'
 import { migrateSave } from './save-migrate.ts'
+import { reconcileSave } from './save-reconcile.ts'
 import { playableAvatars, sanitizeName, sanitizeSaveData, sanitizeSettings, worldSpawn } from './save-sanitize.ts'
 import type { SanitizeContext } from './save-sanitize.ts'
 import { defaultBuildWorld, defaultSanitizeCreature } from './shared-deps.ts'
@@ -21,7 +23,7 @@ export interface SaveDeps {
   world?: World | (() => World | null) | null
   /** Creature validator; defaults to src/shared/creature.ts sanitizeCreature. */
   sanitizeCreature?: (raw: unknown) => Creature | null
-  /** Defaults to window.localStorage, else an in-memory store. */
+  /** Defaults to window.localStorage, else memory; null always uses a private in-memory store. */
   storage?: StorageLike | null
   now?: () => number
   newId?: () => string
@@ -30,7 +32,7 @@ export interface SaveDeps {
 
 export function createSaveManager(deps: SaveDeps = {}): SaveManager {
   const c = deps.content ?? CONTENT
-  const storage = deps.storage ?? defaultStorage()
+  const storage = deps.storage ?? defaultStorage(deps.storage !== null)
   const now = deps.now ?? (() => Date.now())
   const newId = deps.newId ?? randomId
   const sanitizeCreature = deps.sanitizeCreature ?? ((raw: unknown) => defaultSanitizeCreature(raw, c))
@@ -59,14 +61,30 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
       let text: string | null
       try { text = storage.getItem(key(slot)) } catch { return null }
       if (text === null) return null
-      try { return sanitize(migrateSave(JSON.parse(text), c)) } catch { return null }
+      try {
+        const clean = sanitize(migrateSave(JSON.parse(text), c))
+        return clean ? reconcileSave(clean, world(), c) : null
+      } catch {
+        return null
+      }
     },
     write(save: SaveData, slot = 0) {
       try {
-        storage.setItem(key(slot), JSON.stringify(save))
+        const json = JSON.stringify(save)
+        storage.setItem(key(slot), json)
+        storage.setItem(`${key(slot)}:sig`, signLocalSlotText(json, slot))
         return true
       } catch {
         return false
+      }
+    },
+    verifySlot(slot = 0) {
+      try {
+        const text = storage.getItem(key(slot))
+        const sig = storage.getItem(`${key(slot)}:sig`)
+        return verifyLocalSlotText(text, sig, slot)
+      } catch {
+        return { valid: false, tampered: true, reason: 'storage_error' }
       }
     },
     newGame(opts) {
@@ -80,6 +98,7 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
       const playerId = newId()
       return {
         version: c.config.save.version,
+        contentRev: c.config.save.contentRev ?? 0,
         playerId,
         name: sanitizeName(opts.name, c, t('audio.save.defaultName', undefined, c)),
         avatar: avatars.includes(opts.avatar) ? opts.avatar : avatars[0] ?? '',
@@ -112,7 +131,9 @@ export function createSaveManager(deps: SaveDeps = {}): SaveManager {
     },
     importCode(code: string) {
       const decoded = decodeSaveCode(code)
-      return decoded ? sanitize(migrateSave(decoded.data, c)) : null
+      if (!decoded) return null
+      const clean = sanitize(migrateSave(decoded.data, c))
+      return clean ? reconcileSave(clean, world(), c) : null
     },
     defaultSettings(): Settings {
       return sanitizeSettings(c.config.defaultSettings, c)
@@ -129,9 +150,9 @@ function randomId(): string {
   return s
 }
 
-function defaultStorage(): StorageLike {
+function defaultStorage(useBrowserStorage: boolean): StorageLike {
   try {
-    const ls = (globalThis as { localStorage?: Storage }).localStorage
+    const ls = useBrowserStorage && typeof window !== 'undefined' ? window.localStorage : null
     if (ls) {
       const probe = '__ap_probe__'
       ls.setItem(probe, '1')

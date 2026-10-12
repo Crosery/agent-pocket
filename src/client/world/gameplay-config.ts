@@ -37,7 +37,7 @@ export interface CueDef {
 }
 
 export interface GameplayClientConfig {
-  scheduler: { mapKinds: MapKind[]; minCheckRealSec: number; localEndDistance: number; fallbackAreaLevel: [number, number]; seedSalt: string }
+  scheduler: { mapKinds: MapKind[]; requireFlag?: string; minCheckRealSec: number; localEndDistance: number; fallbackAreaLevel: [number, number]; seedSalt: string }
   places: { nearCacheTiles: number; revealSearchRadius: number; revealPinReachTiles: number; revealPinsMax: number; revealPingMinutes: number }
   start: { bannerTags: string[]; bannerCooldownSec: number; hiddenSfx: string; startSfx: string; rumorToastKind: ToastKind; hiddenToastKind: ToastKind }
   /** Flag prefixes owned by the client runtime (news log, consumed event spawns / items, places revealed by events). */

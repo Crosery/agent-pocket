@@ -32,6 +32,8 @@ export default defineConfig(({ command, mode }) => ({
   build: {
     outDir: 'dist',
     target: 'es2022',
+    sourcemap: false,
+    minify: 'oxc',
     chunkSizeWarningLimit: 4000,
   },
   experimental: CDN_BASE && PUBLIC_BASE

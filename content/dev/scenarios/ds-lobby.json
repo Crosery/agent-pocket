@@ -1,0 +1,22 @@
+{
+  "id": "ds-lobby",
+  "titleKey": "dev.scn.dsLobby",
+  "rng": 41,
+  "place": "origin-lab-b1:r1-front",
+  "party": [
+    {"species": "o1", "level": 7, "grade": "B"},
+    {"species": "ernie-bot", "level": 6, "grade": "B"},
+    {"species": "phi-3", "level": 6, "grade": "B"}
+  ],
+  "bag": {"work-permit": 1, "dex-device": 1, "town-map": 1, "prompt-ball": 4, "cache-potion": 5},
+  "quests": {"main": {"stage": 4, "done": false}},
+  "flags": {"intro:mom": true, "starter": "o1", "rival:lab": true, "ds:stamp:starter": true, "tip:move": true, "tip:talk": true, "ds:stamp:types": true, "lesson:typeChart": true, "ds:ernie": true, "ds:stamp:catch": true, "ds:certFull": true, "ds:called": true},
+  "then": [
+    {"cmd": "party.set", "args": {"index": 1, "field": "moves", "value": "token-tackle,web-crawl,morning-greeting,embedding-orb"}}
+  ],
+  "expect": [
+    {"path": "/save/position/map", "eq": "origin-lab-b1"},
+    {"path": "/save/flags/ds:certFull", "eq": true},
+    {"path": "/save/party", "length": 3}
+  ]
+}

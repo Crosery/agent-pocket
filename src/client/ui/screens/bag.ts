@@ -6,7 +6,8 @@ import { createRowMenu, type RowMenu } from '../menu.ts'
 import { el, tabs } from '../widgets.ts'
 import { backPressed, frame, infoRow, isCompact, keepTabVisible, moneyEl, openScreen, popupMenu, pressed, quantityPicker, sfx, type ScreenEnv, setChildren } from './base.ts'
 import { SCREENS } from './config.ts'
-import { addItem, bagEntries, needsTarget, teachState, type BagEntry } from './logic.ts'
+import { addItem, needsTarget, teachState } from '../../../shared/gameplay/save-ops.ts'
+import { bagEntries, type BagEntry } from './logic.ts'
 import { pickBattleTarget, useItemInField } from './item-use.ts'
 import { moveDetail } from './summary.ts'
 
@@ -18,7 +19,11 @@ export function bagScreen(env: ScreenEnv, mode: 'field' | 'battle'): Promise<Bag
   const { ctx } = env
   const tabDefs = SCREENS.bag.tabs.filter((tb) => mode === 'field' || tb.battle)
   return openScreen<BagResult>(env, `aps-bag is-${mode}`, (api) => {
-    let tabIndex = Math.max(0, tabDefs.findIndex((tb) => tb.id === lastTab[mode]))
+    const hasCoupon = (ctx.save.bag['off-peak-coupon'] ?? 0) > 0
+    const guideCatch = mode === 'battle' && !ctx.save.flags['ds:ernie'] && Object.entries(ctx.save.bag).some(([id, n]) => n > 0 && CONTENT.items[id]?.effect.kind === 'ball')
+    const guideCoupon = mode === 'battle' && hasCoupon && !guideCatch && !ctx.save.flags['ds:done']
+    const defaultTabId = guideCatch ? 'ball' : guideCoupon ? 'battle' : lastTab[mode]
+    let tabIndex = Math.max(0, tabDefs.findIndex((tb) => tb.id === defaultTabId))
     let entries: BagEntry[] = []
     let menu: RowMenu | null = null
     let dirty = false
@@ -39,16 +44,32 @@ export function bagScreen(env: ScreenEnv, mode: 'field' | 'battle'): Promise<Bag
 
     const rebuild = (keepIndex: number) => {
       entries = bagEntries(ctx.save, tabDefs[tabIndex], mode)
+      let initialRow = keepIndex
+      if (guideCoupon && tabDefs[tabIndex]?.id === 'battle') {
+        const couponIdx = entries.findIndex((e) => e.item.id === 'off-peak-coupon')
+        if (couponIdx >= 0 && keepIndex === 0) initialRow = couponIdx
+      }
       const rows = isCompact() ? SCREENS.bag.compactVisibleRows : SCREENS.bag.visibleRows
       menu = createRowMenu(entries.map((e) => ({ label: e.item.nameZh, sub: t('screens.bag.qty', { n: e.qty }), icon: ctx.assets.itemIconUrl(e.item.id) })), {
         visibleRows: rows,
-        initial: Math.min(keepIndex, Math.max(0, entries.length - 1)),
+        initial: Math.min(initialRow, Math.max(0, entries.length - 1)),
         wrap: true,
         audio: ctx.audio,
         onChange: (i) => paintDetail(i),
         onPick: api.guard((i: number) => void activate(i)),
       })
       menu.el.style.setProperty('--rows', String(rows))
+      if (guideCatch && tabDefs[tabIndex]?.id === 'ball') {
+        const rowNodes = menu.el.querySelectorAll<HTMLElement>('.ap-row')
+        entries.forEach((e, idx) => {
+          if (e.item.effect.kind === 'ball') rowNodes[idx]?.classList.add('is-guide')
+        })
+      } else if (guideCoupon && tabDefs[tabIndex]?.id === 'battle') {
+        const rowNodes = menu.el.querySelectorAll<HTMLElement>('.ap-row')
+        entries.forEach((e, idx) => {
+          if (e.item.id === 'off-peak-coupon') rowNodes[idx]?.classList.add('is-guide')
+        })
+      }
       listBox.replaceChildren(menu.el)
       money.replaceChildren(moneyEl(ctx.save.money))
       paintDetail(menu.index)

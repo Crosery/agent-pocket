@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "playerId": "fixture-rc5-player",
+  "name": "锚点训练家",
+  "avatar": "hero_girl",
+  "createdAt": 1696400000000,
+  "playTimeSec": 7200,
+  "money": 18500,
+  "badges": [
+    "badge-code",
+    "badge-vision",
+    "badge-sound",
+    "badge-search"
+  ],
+  "party": [
+    {
+      "uid": "rc5-mon-0001",
+      "speciesId": "o1",
+      "level": 35,
+      "exp": 53593,
+      "ivs": {"hp": 14, "atk": 12, "def": 20, "spa": 28, "spd": 19, "spe": 15},
+      "moves": [
+        {"id": "debug-strike", "pp": 20, "ppMax": 20},
+        {"id": "deductive-slash", "pp": 15, "ppMax": 15},
+        {"id": "chain-of-thought", "pp": 15, "ppMax": 15},
+        {"id": "eureka", "pp": 20, "ppMax": 20}
+      ],
+      "hp": 84,
+      "status": null,
+      "statusTurns": 0,
+      "abilityId": "deep-think",
+      "shiny": false,
+      "friendship": 95,
+      "ballId": "prompt-ball",
+      "caughtMap": "overworld",
+      "otName": "锚点训练家",
+      "otId": "fixture-rc5-player"
+    }
+  ],
+  "boxes": [[], [], [], [], [], [], [], [], [], [], [], []],
+  "bag": {
+    "prompt-ball": 12,
+    "cot-ball": 4,
+    "hyper-cache": 3,
+    "dive-protocol": 1
+  },
+  "dexSeen": ["o1", "deepseek-v3", "kling-4", "qwen-audio", "perplexity-sonar"],
+  "dexCaught": ["o1", "deepseek-v3", "kling-4", "qwen-audio", "perplexity-sonar"],
+  "position": {"map": "overworld", "x": 172, "y": 599, "facing": "down"},
+  "respawn": {"map": "overworld", "x": 172, "y": 599, "facing": "down"},
+  "flags": {
+    "starter": "o1",
+    "intro:mom": true,
+    "rival:lab": true,
+    "villain:swamp": true,
+    "zero:t1": true,
+    "zero:t2": true,
+    "evspawn:ev:token-rain:0.0": 480,
+    "evitem:ev:token-rain:item-1": 480,
+    "trainer:ev:benchmark-tournament:tr-grinder": true,
+    "news:retired-beta-event": 400,
+    "rumor:retired-beta-event": 410
+  },
+  "quests": {
+    "main": {"stage": 6, "done": false}
+  },
+  "visitedTowns": ["origin", "opensource", "pixelport", "chord", "retrieval"],
+  "exploredChunks": {},
+  "repelSteps": 0,
+  "clockMinutes": 960,
+  "stats": {"battlesWon": 28, "caught": 5, "steps": 4100, "pvpWins": 0, "pvpLosses": 0, "trades": 0, "shiniesFound": 0},
+  "settings": {
+    "bgmVolume": 0,
+    "sfxVolume": 0.8,
+    "quality": "high",
+    "pixelScale": 2,
+    "dof": true,
+    "bloom": true,
+    "shadows": true,
+    "textSpeed": "normal",
+    "battleSpeed": 1,
+    "showMinimap": true,
+    "showNames": true,
+    "showObjective": true,
+    "showTips": true,
+    "autoRun": false,
+    "touchControls": "auto",
+    "touchHand": "right",
+    "touchSize": "normal",
+    "haptics": true,
+    "migrations": ["bgm-mute-20261003", "phone-quality-20261009"]
+  },
+  "events": {
+    "token-rain": {"lastDay": 0, "count": 1, "startedAt": 480, "activeUntil": 540},
+    "retired-beta-event": {"lastDay": 0, "count": 1, "startedAt": 400, "activeUntil": 1200}
+  },
+  "anchors": {
+    "unlocked": ["anchor:grand:525:877"],
+    "seen": ["anchor:grand:525:877"]
+  }
+}

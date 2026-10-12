@@ -5,19 +5,19 @@ import assert from 'node:assert/strict'
 import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { setTimeout as sleep } from 'node:timers/promises'
 import { WebSocketServer, type WebSocket as WsSocket } from 'ws'
 import type { EventBus, GameEvents, NetStatus } from '../src/client/contracts.ts'
 import type { ClientMsg, PublicProfile, ServerMsg } from '../src/shared/protocol.ts'
 import { CONTENT, t } from '../src/shared/content/index.ts'
 import { createNetClient, NET_CLIENT } from '../src/client/net/index.ts'
-import { startServer } from '../src/server/index.ts'
+import { startServer, type RunningServer } from '../src/server/index.ts'
 import { NET, validateNetContent } from '../src/server/config.ts'
 import { devtoolsBuild, devtoolsProblems, GATE, productionProblems, scanBundle } from '../scripts/dev-gate.ts'
+import { registerTestAccount } from './net-fixture.ts'
 
 const root = new URL('../', import.meta.url)
 const read = (rel: string) => readFileSync(new URL(rel, root), 'utf8')
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
 function withTempDir<T>(fn: (dir: string) => T): T {
   const dir = mkdtempSync(join(tmpdir(), 'ap-devgate-test-'))
   try { return fn(dir) } finally { rmSync(dir, { recursive: true, force: true }) }
@@ -113,10 +113,14 @@ function helloMsg(build?: { devtools: boolean }): ClientMsg {
   }
 }
 
-/** Opens a socket, sends the hello and reports the messages seen until the server closes it or says welcome. */
-function handshake(port: number, hello: ClientMsg): Promise<{ welcome: boolean; errors: string[]; closeCode: number | null }> {
+/** Opens an authenticated socket, sends the hello and reports the messages seen until the server closes it or says welcome. */
+async function handshake(srv: RunningServer, hello: ClientMsg): Promise<{ welcome: boolean; errors: string[]; closeCode: number | null }> {
+  const acct = await registerTestAccount(srv, { name: 'Dev', map: 'm', x: 1, y: 1 })
   return new Promise((resolve, reject) => {
-    const ws = new WebSocket(`ws://localhost:${port}${NET.protocol.wsPath}`)
+    const ws = new WebSocket(
+      `ws://localhost:${srv.port}${NET.protocol.wsPath}`,
+      { headers: { Cookie: acct.cookie, Origin: `http://localhost:${srv.port}` } } as unknown as string[],
+    )
     const errors: string[] = []
     let welcome = false
     const timer = setTimeout(() => { ws.close(); reject(new Error('handshake timeout')) }, 4000)
@@ -143,16 +147,16 @@ test('server: a devtools client is refused unless AP_DEV is on; production-style
   const official = await startServer({ port: 0, dataDir: join(dataDir, 'a'), distDir: join(dataDir, 'no-dist'), quiet: true, pvp: null, world: null })
   const permissive = await startServer({ port: 0, dataDir: join(dataDir, 'b'), distDir: join(dataDir, 'no-dist'), quiet: true, pvp: null, world: null, allowDev: true })
   try {
-    const refused = await handshake(official.port, helloMsg({ devtools: true }))
+    const refused = await handshake(official, helloMsg({ devtools: true }))
     assert.equal(refused.welcome, false)
     assert.deepEqual(refused.errors, ['dev_not_allowed'])
     assert.equal(refused.closeCode, NET.protocol.closeCodes.devNotAllowed)
 
-    assert.equal((await handshake(official.port, helloMsg({ devtools: false }))).welcome, true, 'production build declares devtools:false')
-    assert.equal((await handshake(official.port, helloMsg())).welcome, true, 'older clients send no build field')
-    assert.equal((await handshake(official.port, { ...helloMsg(), build: 'yes' } as unknown as ClientMsg)).welcome, true, 'a malformed build field is ignored, not trusted')
+    assert.equal((await handshake(official, helloMsg({ devtools: false }))).welcome, true, 'production build declares devtools:false')
+    assert.equal((await handshake(official, helloMsg())).welcome, true, 'older clients send no build field')
+    assert.equal((await handshake(official, { ...helloMsg(), build: 'yes' } as unknown as ClientMsg)).welcome, true, 'a malformed build field is ignored, not trusted')
 
-    assert.equal((await handshake(permissive.port, helloMsg({ devtools: true }))).welcome, true, 'AP_DEV servers accept devtools builds')
+    assert.equal((await handshake(permissive, helloMsg({ devtools: true }))).welcome, true, 'AP_DEV servers accept devtools builds')
   } finally {
     await official.close()
     await permissive.close()
@@ -186,11 +190,14 @@ test('client: devNotAllowed ends reconnecting and tells the player why', async (
     w.on('connection', (ws: WsSocket) => {
       sockets.push(ws)
       ws.on('message', (d: Buffer) => {
-        if ((JSON.parse(String(d)) as ClientMsg).t === 'hello') { hellos++; ws.close(NET_CLIENT.protocol.closeCodes.devNotAllowed) }
+        const parsed = JSON.parse(String(d)) as ClientMsg
+        if (parsed.t === 'hello') { hellos++; ws.close(NET_CLIENT.protocol.closeCodes.devNotAllowed) }
       })
     })
   })
-  const port = (wss.address() as { port: number }).port
+  const addr = wss.address()
+  assert.ok(addr && typeof addr === 'object')
+  const port = addr.port
   const events = bus()
   const net = createNetClient(events, () => helloMsg({ devtools: true }) as Extract<ClientMsg, { t: 'hello' }>, { url: `ws://localhost:${port}${NET_CLIENT.protocol.wsPath}` })
   try {

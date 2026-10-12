@@ -12,6 +12,7 @@ import { SCREENS } from './config.ts'
 import { dexCounts, playTimeParts } from './logic.ts'
 import { intelScreen } from './intel.ts'
 import { researchScreen } from './research.ts'
+import { researchSummary } from '../../world/research.ts'
 import { portraitEl } from './sprites.ts'
 
 const css = (c: [number, number, number, number]) => `rgb(${c[0]}, ${c[1]}, ${c[2]})`
@@ -56,7 +57,13 @@ function playerCard(env: ScreenEnv): HTMLElement {
 
 export function pauseScreen(env: ScreenEnv): Promise<void> {
   const { ctx } = env
-  const entries = SCREENS.pause.entries
+  const isUnlocked = (e: (typeof SCREENS.pause.entries)[number]): boolean => {
+    if (e.action === 'research' && researchSummary(ctx.save).canClaim) return true
+    if (!e.unlockFlag) return true
+    return Boolean(ctx.save.flags[e.unlockFlag])
+  }
+  const unlocked = SCREENS.pause.entries.filter(isUnlocked)
+  const entries = unlocked.length > 0 ? unlocked : SCREENS.pause.entries
   ctx.audio.setMuffled(true)
   return openScreen<void>(env, 'aps-pause', (api) => {
     const f = frame(env, { title: t('screens.pause.heading'), onClose: api.guard(() => api.close()), hints: ctx.input.lastDevice === 'touch' ? [] : [H.select(), H.back()] })
@@ -71,14 +78,23 @@ export function pauseScreen(env: ScreenEnv): Promise<void> {
     const enabled = (i: number) => entries[i].requires !== 'party' || ctx.save.party.length > 0
     const dots = entries.map(() => attentionDot())
     dots.forEach((d) => { d.hidden = true })
+    let lastMouseX = -1
+    let lastMouseY = -1
     const rowsEl = entries.map((e, i) => {
       const r = el('button', { class: 'aps-pause-row ap-row ap-cursor-host', attrs: { type: 'button' } }, [
         e.glyph ? icon(e.glyph, { className: 'aps-pause-icon' }) : null,
         el('span', { class: 'ap-row-label', text: t(e.label) }),
         dots[i],
       ])
-      r.addEventListener('mouseenter', api.guard(() => { if (nav.index !== i) { nav.index = i; uiSfx(env, 'move'); paint() } }))
-      r.addEventListener('focus', api.guard(() => { nav.index = i; paint() }))
+      const onHover = api.guard((ev: MouseEvent) => {
+        if (ev.clientX === lastMouseX && ev.clientY === lastMouseY) return
+        lastMouseX = ev.clientX
+        lastMouseY = ev.clientY
+        if (nav.index !== i) { nav.index = i; uiSfx(env, 'move'); paint() }
+      })
+      r.addEventListener('mouseenter', onHover)
+      r.addEventListener('mousemove', onHover)
+      r.addEventListener('focus', api.guard(() => { if (nav.index !== i) { nav.index = i; paint() } }))
       r.addEventListener('click', api.guard(() => { nav.index = i; paint(); void activate(i) }))
       return r
     })

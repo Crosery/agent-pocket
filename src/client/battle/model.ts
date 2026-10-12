@@ -9,7 +9,8 @@ import type {
 import { CONTENT, t, typeEffectiveness, type Content } from '../../shared/content/index.ts'
 import { cycleLeft } from '../../shared/battle/boss.ts'
 import { STAT_KEYS, calcStats, expForLevel } from '../../shared/creature.ts'
-import { BATTLE_UI, type EffCategory } from './config.ts'
+import { catchPlacement, type CatchPlacement } from '../../shared/gameplay/save-ops.ts'
+import { BATTLE_UI, type CommandId, type EffCategory } from './config.ts'
 
 export type SlotState = 'ok' | 'status' | 'fainted'
 export interface SlotInfo { state: SlotState; status: string | null }
@@ -39,6 +40,8 @@ export interface BattleModel {
   readonly evolutions: Map<number, string>
   end: { result: BattleResult; winner: SideIndex | -1 } | null
   money: number
+  /** Latest turn number announced by the engine (0 before the first turn starts). */
+  turn: number
   /** Latest boss HUD snapshot (null outside boss fights). */
   boss: BossHud | null
   /** Coach lines the engine sent, shown one per command menu (the head is the next one). */
@@ -66,6 +69,7 @@ export function createBattleModel(init: BattleInit, clear: string): BattleModel 
     evolutions: new Map(),
     end: null,
     money: 0,
+    turn: 0,
     boss: null,
     coach: [],
   }
@@ -80,6 +84,9 @@ function refreshSlot(s: SideModel): void {
 /** Folds one event into the model (call in display order, after its animation decided what it needs). */
 export function applyEvent(m: BattleModel, e: BattleEvent): void {
   switch (e.t) {
+    case 'turn':
+      m.turn = e.turn
+      break
     case 'switch': {
       const s = m.sides[e.side]
       s.active = e.partyIndex
@@ -232,18 +239,7 @@ export function moveEffectiveness(move: MoveDef, defTypes: readonly TypeId[], c:
   return effCategory(mul)
 }
 
-export type CatchPlacement = { where: 'party' } | { where: 'box'; box: number } | null
-
-/** Where a newly caught creature goes: the party while it has room, else the first box with space. */
-export function catchPlacement(save: Pick<SaveData, 'party' | 'boxes'>, c: Content = CONTENT): CatchPlacement {
-  const P = c.config.party
-  if (save.party.length < P.maxParty) return { where: 'party' }
-  for (let i = 0; i < P.boxCount; i++) {
-    const box = save.boxes[i]
-    if (!box || box.length < P.boxSize) return { where: 'box', box: i }
-  }
-  return null
-}
+export { catchPlacement, type CatchPlacement }
 
 /** Moves the new species learns on evolving (level 0 = "on evolution", or the current level) not yet known. */
 export function evolutionMoves(cr: Pick<Creature, 'level' | 'moves'>, toSpeciesId: string, c: Content = CONTENT): string[] {
@@ -347,4 +343,20 @@ export function bossPanelInfo(hud: BossHud, c: Content = CONTENT, tier?: string)
   }
   const tierName = tier && def.tiers?.[tier] ? t(`boss.${hud.bossId}.tier.${tier}`, undefined, c) : null
   return { bossId: hud.bossId, title: t(def.title), tier: tierName, phase: hud.phase, phases: hud.phases, chips }
+}
+
+/** Which command button pulses on the first cycle of a coached fight ('bag' in the first segment with a bait item, 'fight' in the second). */
+export function coachCommandPulse(
+  m: Pick<BattleModel, 'turn' | 'boss'>, coach: boolean | undefined, bag: Readonly<Record<string, number>>, c: Content = CONTENT,
+): CommandId | null {
+  if (!coach || !m.boss) return null
+  const def = c.bosses[m.boss.bossId]
+  const meter = def?.meters.find((x) => x.cycle)
+  if (!meter?.cycle || m.turn >= meter.cycle.period) return null
+  const val = m.boss.meters[meter.id] ?? 0
+  if (val <= 0) {
+    const hasBait = Object.entries(bag).some(([id, n]) => n > 0 && c.items[id]?.effect.kind === 'bait')
+    return hasBait ? 'bag' : null
+  }
+  return 'fight'
 }

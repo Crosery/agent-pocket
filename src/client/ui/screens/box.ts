@@ -7,8 +7,10 @@ import { gradeOf } from '../../../shared/gameplay/quality.ts'
 import { button, creatureIcon, el, gradeChip, hpBar, rarityBadge, statusChip, typeChip } from '../widgets.ts'
 import { backPressed, frame, isCompact, openScreen, popupMenu, pressed, sfx, uiSfx, type ScreenEnv, setChildren , arrowButton } from './base.ts'
 import { SCREENS } from './config.ts'
-import { boxView, creatureAt, moveCreature, releaseCreature, type Slot } from './logic.ts'
+import { creatureAt, moveCreature, releaseCreature, type Slot } from '../../../shared/gameplay/save-ops.ts'
+import { boxView } from './logic.ts'
 import { creatureImg } from './sprites.ts'
+import { sendBoxMove, sendBoxRelease } from '../../net/authority-client.ts'
 
 type Zone = 'party' | 'head' | 'box'
 
@@ -23,8 +25,11 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
   const cols = SCREENS.box.cols
   const rows = Math.ceil(P.boxSize / cols)
   return openScreen<void>(env, 'aps-box', (api) => {
-    const save = ctx.save
-    while (save.boxes.length < P.boxCount) save.boxes.push([])
+    const ensureBoxes = () => {
+      while (ctx.save.boxes.length < P.boxCount) ctx.save.boxes.push([])
+      return ctx.save
+    }
+    ensureBoxes()
     let box = Math.min(lastBox, P.boxCount - 1)
     let zone: Zone = 'box'
     let pIndex = 0
@@ -65,7 +70,7 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
 
     /** Display cell -> real slot of the current box; a cell past the shown creatures maps to the list end (always empty). */
     let shown: number[] = []
-    const realIndex = (i: number): number => shown[i] ?? (save.boxes[box]?.length ?? 0)
+    const realIndex = (i: number): number => shown[i] ?? (ensureBoxes().boxes[box]?.length ?? 0)
     const curSlot = (): Slot => (zone === 'party' ? { area: 'party', box, index: pIndex } : { area: 'box', box, index: realIndex(bIndex) })
     const sameSlot = (a: Slot | null, b: Slot) => !!a && a.area === b.area && a.index === b.index && (a.area === 'party' || a.box === b.box)
 
@@ -92,7 +97,8 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
       const wp = SCREENS.box.wallpapers[box % SCREENS.box.wallpapers.length]
       grid.style.setProperty('--wp1', wp[0])
       grid.style.setProperty('--wp2', wp[1])
-      const items = save.boxes[box] ?? []
+      const curSave = ensureBoxes()
+      const items = curSave.boxes[box] ?? []
       shown = boxView(items, view)
       sortBtn.textContent = t(view.sortByGrade ? 'screens.quality.box.sortGrade' : 'screens.quality.box.sortDefault')
       sortBtn.classList.toggle('is-on', view.sortByGrade)
@@ -101,14 +107,14 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
       boxName.textContent = t('screens.box.name', { n: box + 1, count: items.length, size: P.boxSize })
       head.classList.toggle('is-active', zone === 'head')
       partyCells.forEach((cell, i) => {
-        fill(cell, save.party[i], { area: 'party', box, index: i }, !isCompact())
+        fill(cell, curSave.party[i], { area: 'party', box, index: i }, !isCompact())
         cell.classList.toggle('is-active', zone === 'party' && i === pIndex)
       })
       boxCells.forEach((cell, i) => {
         fill(cell, items[shown[i]], { area: 'box', box, index: realIndex(i) }, false)
         cell.classList.toggle('is-active', zone === 'box' && i === bIndex)
       })
-      const stored = save.boxes.reduce((s, b) => s + b.length, 0)
+      const stored = curSave.boxes.reduce((s, b) => s + b.length, 0)
       total.textContent = t('screens.box.total', { n: stored, max: P.boxCount * P.boxSize })
       paintSide()
       f.setHints(held
@@ -119,8 +125,9 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
     }
 
     const paintSide = () => {
-      const show = zone === 'head' ? undefined : creatureAt(save, curSlot())
-      const heldC = held ? creatureAt(save, held) : undefined
+      const curSave = ensureBoxes()
+      const show = zone === 'head' ? undefined : creatureAt(curSave, curSlot())
+      const heldC = held ? creatureAt(curSave, held) : undefined
       const parts: (HTMLElement | null)[] = []
       if (heldC) parts.push(el('div', 'aps-box-holding', [
         el('span', { class: 'ap-gold', text: t('screens.box.holding') }),
@@ -157,8 +164,10 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
 
     const place = (target: Slot) => {
       if (!held) return
-      const err = moveCreature(save, held, target)
+      const from = held
+      const err = moveCreature(ensureBoxes(), from, target)
       if (err) { sfx(env, 'error'); ctx.ui.toast(t(err), 'warn'); return }
+      sendBoxMove(ctx, from, target)
       held = null
       dirty = true
       sfx(env, 'drop')
@@ -175,7 +184,8 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
       }
       const slot = curSlot()
       if (held) { place(slot); return }
-      const c = creatureAt(save, slot)
+      const curSave = ensureBoxes()
+      const c = creatureAt(curSave, slot)
       if (!c) return
       const anchor = zone === 'party' ? partyCells[pIndex] : boxCells[bIndex]
       const menu = SCREENS.box.menu
@@ -183,15 +193,16 @@ export function boxScreen(env: ScreenEnv): Promise<void> {
       const id = menu[pick]?.id
       if (id === 'move') { held = slot; sfx(env, 'pick'); paint() }
       else if (id === 'summary') {
-        const list = slot.area === 'party' ? save.party : save.boxes[box]
+        const list = slot.area === 'party' ? curSave.party : curSave.boxes[box]
         await env.internal.summaryOf(list, slot.index)
         paint()
       } else if (id === 'release') {
         const name = creatureName(c)
         if (!await ctx.ui.confirm(t('screens.box.releaseConfirm', { name }))) return
         if (!await ctx.ui.confirm(t('screens.box.releaseConfirm2', { name }))) return
-        const err = releaseCreature(save, slot)
+        const err = releaseCreature(ensureBoxes(), slot)
         if (err) { sfx(env, 'error'); ctx.ui.toast(t(err), 'warn'); return }
+        sendBoxRelease(ctx, slot)
         dirty = true
         sfx(env, 'release')
         ctx.events.emit('party:changed', {})

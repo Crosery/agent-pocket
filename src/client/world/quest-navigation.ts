@@ -242,8 +242,26 @@ export function createQuestNavigator(world: World, rules: NavigationRules) {
     update(dt: number, grid: MotionGrid, player: RoutePoint, save: SaveData, surf: boolean, liveNpc?: (target: RoutePoint) => RoutePoint | null) {
       const quest = save.settings.showObjective ? trackedQuest(world, save) : null
       const stage = quest?.def.stages[quest.stage]
-      if (!quest || !stage?.target) { clear(); return }
-      const nextKey = `${grid.map.id}|${quest.def.id}|${quest.stage}|${surf}`
+      let navTarget: RoutePlace | null = null
+      let navId = ''
+      let navTitle = ''
+      let navText = ''
+      if (quest && stage?.target) {
+        navTarget = destination(world, quest.def, stage.target, save)
+        navId = quest.def.id
+        navTitle = quest.def.nameZh
+        navText = stage.text
+      } else if (save.settings.showObjective && !save.flags['intro:mom'] && !save.flags['starter']) {
+        const momNpc = world.maps['origin-home']?.npcs.find(n => n.id === 'mom')
+        if (momNpc) {
+          navTarget = { map: 'origin-home', x: momNpc.x, y: momNpc.y }
+          navId = 'mom'
+          navTitle = '与妈妈对话'
+          navText = '与妈妈对话'
+        }
+      }
+      if (!navTarget) { clear(); return }
+      const nextKey = `${grid.map.id}|${navId}|${navText}|${surf}`
       const from = { map: grid.map.id, x: Math.floor(player.x), y: Math.floor(player.y) }
       checkT -= dt
       retryT -= dt
@@ -269,7 +287,7 @@ export function createQuestNavigator(world: World, rules: NavigationRules) {
       if (replan || !state) {
         const previous = key === nextKey ? state : null
         key = nextKey
-        canonicalTarget = destination(world, quest.def, stage.target, save)
+        canonicalTarget = navTarget
         const live = canonicalTarget.map === from.map && liveNpc?.(canonicalTarget)
         const target = live ? { ...canonicalTarget, x: Math.floor(live.x), y: Math.floor(live.y) } : canonicalTarget
         goals = navigationWaypoints(world, from, target)
@@ -284,7 +302,7 @@ export function createQuestNavigator(world: World, rules: NavigationRules) {
         } else {
           repairTail = null
           search = createRouteSearch(grid, from, goals.map(g => g.point), surf, rules)
-          state = { questId: quest.def.id, title: quest.def.nameZh, text: stage.text, target,
+          state = { questId: navId, title: navTitle, text: navText, target,
             waypoint: goals[0]?.point ?? from, status: 'searching', path: [], steps: 0 }
         }
         checkT = rules.recheckSec

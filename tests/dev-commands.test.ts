@@ -219,7 +219,7 @@ test('items: give / take, money, badges, dex', async () => {
 // ----------------------------------------------------------------------------- battle, environment, encounters, onboarding
 
 test('battle: wild, trainer and boss start (and refuse while a fight is on)', async () => {
-  const { reg, calls, host } = rig()
+  const { reg, calls, host, save } = rig()
   assert.deepEqual(await reg.run('battle.wild', { species: 'o1', level: 8 }), { species: 'o1', level: 8 })
   const trainer = Object.keys(world.trainers)[0]
   await reg.run('battle.trainer', { trainer })
@@ -228,6 +228,13 @@ test('battle: wild, trainer and boss start (and refuse while a fight is on)', as
   assert.equal(boss.level, CONTENT.bosses.astra.level)
   assert.equal(((await reg.run('battle.boss', { boss: 'astra', level: 40 })) as { level: number }).level, 40)
   assert.deepEqual(calls.map((c) => c.name), ['wild', 'trainer', 'wild', 'wild'])
+  save.instances = { 'deepseek-tide': { clears: {}, captures: {}, losses: { story: 1 }, runSeq: 1 } }
+  const forced = await reg.run('battle.forceResult', { result: 'lose', boss: 'deepseek', tier: 'story', hint: 'peakDamage' }) as { losses: number; assistOffer: boolean; hint: string }
+  assert.equal(forced.losses, 2)
+  assert.equal(forced.assistOffer, true)
+  assert.equal(forced.hint, 'peakDamage')
+  assert.equal(save.flags['ds:assistOffer'], true)
+  assert.equal(save.flags['ds:lossHint'], 'peakDamage')
   await rejects(reg.run('battle.wild', { species: 'nope' }), 'dev.err.unknownSpecies')
   await rejects(reg.run('battle.trainer', { trainer: 'nope' }), 'dev.err.unknownTrainer')
   await rejects(reg.run('battle.boss', { boss: 'nope' }))

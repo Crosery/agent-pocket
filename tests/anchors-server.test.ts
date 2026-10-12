@@ -6,67 +6,19 @@ import assert from 'node:assert/strict'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join as pathJoin } from 'node:path'
-import type { ClientMsg, PublicProfile, ServerMsg } from '../src/shared/protocol.ts'
+import { setTimeout as sleep } from 'node:timers/promises'
 import { CONTENT } from '../src/shared/content/index.ts'
 import { startServer } from '../src/server/index.ts'
 import { NET } from '../src/server/config.ts'
 import { buildWorld } from '../src/shared/world/index.ts'
 import { coreAnchors, homeAnchor } from '../src/shared/world/anchors.ts'
 import { anchorLanding } from '../src/client/world/anchors.ts'
+import { joinAuthenticatedClient, type TestWsClient } from './net-fixture.ts'
 
-type Msg<T extends ServerMsg['t']> = Extract<ServerMsg, { t: T }>
-
-interface Client {
-  ws: WebSocket
-  selfId: string
-  send(m: ClientMsg | Record<string, unknown>): void
-  mark(): number
-  waitFor<T extends ServerMsg['t']>(type: T, pred?: (m: Msg<T>) => boolean, opts?: { from?: number; ms?: number }): Promise<Msg<T>>
-  all<T extends ServerMsg['t']>(type: T, from?: number): Msg<T>[]
-}
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 const tickMs = 1000 / CONTENT.config.net.tickHz
 
-async function join(port: number, name: string, map: string, x: number, y: number): Promise<Client> {
-  const ws = new WebSocket(`ws://localhost:${port}${NET.protocol.wsPath}`)
-  const msgs: ServerMsg[] = []
-  const waiters = new Set<() => void>()
-  ws.addEventListener('message', (e) => {
-    msgs.push(JSON.parse(String(e.data)) as ServerMsg)
-    for (const w of [...waiters]) w()
-  })
-  const c: Client = {
-    ws, selfId: '',
-    send: (m) => ws.send(JSON.stringify(m)),
-    mark: () => msgs.length,
-    all: (type, from = 0) => msgs.slice(from).filter((m) => m.t === type) as never,
-    waitFor(type, pred = () => true, opts = {}) {
-      const from = opts.from ?? msgs.length
-      return new Promise((resolve, reject) => {
-        let i = from
-        const check = () => {
-          for (; i < msgs.length; i++) {
-            const m = msgs[i]
-            if (m.t === type && pred(m as never)) { cleanup(); resolve(m as never); return }
-          }
-        }
-        const timer = setTimeout(() => { cleanup(); reject(new Error(`timeout waiting for ${type}; got ${msgs.slice(from).map((m) => m.t).join(',')}`)) }, opts.ms ?? 4000)
-        const cleanup = () => { clearTimeout(timer); waiters.delete(check) }
-        waiters.add(check)
-        check()
-      })
-    },
-  }
-  await new Promise<void>((ok, fail) => { ws.addEventListener('open', () => ok()); ws.addEventListener('error', () => fail(new Error('ws error'))) })
-  const profile: PublicProfile = { id: 'x', name: 'x', avatar: 'x', badges: [], dexCaught: 0, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0 }
-  c.send({ t: 'hello', v: CONTENT.config.net.protocolVersion, playerId: crypto.randomUUID(), name, avatar: '', map, x, y, facing: 'down', lead: null, profile })
-  c.selfId = (await c.waitFor('welcome', undefined, { from: 0 })).selfId
-  return c
-}
-
-const move = (c: Client, map: string, x: number, y: number) => c.send({ t: 'move', map, x, y, facing: 'up', moving: false, running: false })
-
+const move = (c: TestWsClient, map: string, x: number, y: number) =>
+  c.send({ t: 'move', map, x, y, facing: 'up', moving: false, running: false })
 test('an anchor trip is accepted like a fly: one jump, no distance credit, no error, no kick', async () => {
   const world = buildWorld()
   const ow = world.maps[world.startMap]
@@ -80,8 +32,13 @@ test('an anchor trip is accepted like a fly: one jump, no distance credit, no er
 
   const dataDir = await mkdtemp(pathJoin(tmpdir(), 'ap-anchors-server-'))
   const srv = await startServer({ port: 0, dataDir, distDir: pathJoin(dataDir, 'nd'), quiet: true, pvp: null })
-  const clients: Client[] = []
-  const open = async (name: string, p: { x: number; y: number }) => { const c = await join(srv.port, name, ow.id, p.x, p.y); clients.push(c); return c }
+  const clients: TestWsClient[] = []
+  const open = async (name: string, p: { x: number; y: number }) => {
+    const c = await joinAuthenticatedClient(srv, { name, map: ow.id, x: p.x, y: p.y })
+    move(c, ow.id, p.x, p.y)
+    clients.push(c)
+    return c
+  }
   try {
     const rider = await open('Rider', H)
     const atFar = await open('FarWatcher', F)

@@ -122,3 +122,13 @@ test('conditions: device is live state, expires may be a list, the retired cards
   for (const id of ['objective', 'menuHint', 'signs', 'fly', 'tradePvp', 'center']) assert.ok(!TUTORIAL.tips.list.some((x) => x.id === id), `${id} is retired`)
   assert.equal(TUTORIAL.objective.hideQuestCardUntilFlag, 'ds:gateOpen')
 })
+
+test('roamTouch tip: registered in grass lesson and triggers on route-1 after ds:stamp:types when roamers are visible', () => {
+  const roam = TUTORIAL.tips.list.find((x) => x.id === 'roamTouch')
+  assert.ok(roam, 'roamTouch tip exists')
+  assert.equal(roam.trigger.kind, 'roamer')
+  if (roam.trigger.kind === 'roamer') {
+    assert.deepEqual(roam.trigger.needs, { flag: ['ds:stamp:types', 'ob:route1'] })
+  }
+  assert.equal(t('tutorial.tip.roamTouch.body'), '画面里走来走去的智灵，碰一下就能开战。')
+})

@@ -13,7 +13,7 @@ import { createRowMenu, listMetrics, type RowMenu } from '../menu.ts'
 import { actionKeyLabel, append, button, creatureIcon, el, formatNumber, keyHint, panel, tabs, type TabsHandle } from '../widgets.ts'
 import { challengePvp } from '../../net/pvp-channel.ts'
 import { injectStyle, startTradeFlow, trackOnlineRoster, type RosterEntry } from '../../net/trade-flow.ts'
-
+import { getCoopChannel, openPartyModal } from '../../net/coop-channel.ts'
 /** Client view of content/multiplayer.json → online + emotes. */
 export interface OnlineHubRules {
   tabs: TabId[]
@@ -34,7 +34,7 @@ export interface OnlineHubRules {
 }
 type TabId = 'players' | 'leaderboard' | 'profile'
 type Zone = 'tabs' | 'list' | 'emotes'
-type PlayerAction = 'whisper' | 'inspect' | 'trade' | 'battle'
+type PlayerAction = 'whisper' | 'inspect' | 'trade' | 'battle' | 'party'
 
 const MP = multiplayerJson as unknown as { online: OnlineHubRules; emotes: string[] }
 const RULES = MP.online
@@ -260,17 +260,27 @@ export async function openOnline(ctx: GameContext): Promise<void> {
 
   function paintStatus(): void {
     const status: NetStatus = ctx.net.status
-    const rtt = (ctx.net as { rtt?: number }).rtt ?? -1
-    const key = `${status}|${ctx.net.online}|${Math.round(rtt)}`
+    const rtt = ctx.net.rtt ?? -1
+    const stats = ctx.net.stats
+    const key = `${status}|${ctx.net.online}|${Math.round(rtt)}|${Math.round(stats?.p95 ?? -1)}`
     if (key === statusKey) return
     statusKey = key
     statusEl.dataset.status = status
     statusEl.replaceChildren()
+    const rttSpan = status === 'online' && rtt >= 0
+      ? el('span', {
+          class: 'ap-dim',
+          text: t('multiplayer.status.rtt', { ms: Math.round(rtt) }),
+          ...(stats && stats.p50 >= 0
+            ? { title: t('multiplayer.status.rttDetail', { ms: Math.round(rtt), p50: Math.round(stats.p50), p95: Math.round(stats.p95), jitter: Math.round(stats.jitter) }) }
+            : {}),
+        })
+      : null
     append(statusEl, [
       el('span', 'mp-status-dot'),
       el('span', { text: t(`multiplayer.status.${status}`) }),
       status === 'online' ? el('span', { class: 'ap-dim', text: t('multiplayer.status.count', { n: ctx.net.online }) }) : null,
-      status === 'online' && rtt >= 0 ? el('span', { class: 'ap-dim', text: t('multiplayer.status.rtt', { ms: Math.round(rtt) }) }) : null,
+      rttSpan,
     ])
     reconnectBtn.hidden = status === 'online' || status === 'connecting'
   }
@@ -401,7 +411,7 @@ export async function openOnline(ctx: GameContext): Promise<void> {
     const online = ctx.net.status === 'online'
     const reason = (a: PlayerAction): string | undefined => {
       if (!online) return t('multiplayer.online.actions.offline')
-      if (isSelf && a !== 'inspect') return t('multiplayer.online.actions.selfOnly')
+      if (isSelf && a !== 'inspect' && a !== 'party') return t('multiplayer.online.actions.selfOnly')
       if (p.busy && (a === 'trade' || a === 'battle')) return t('multiplayer.online.actions.busy')
       return undefined
     }
@@ -421,6 +431,19 @@ export async function openOnline(ctx: GameContext): Promise<void> {
       case 'inspect': return inspect(p.id, p.name)
       case 'trade': return startTradeFlow(ctx, p.id, p.name)
       case 'battle': return challengePvp(ctx, p.id, p.name)
+      case 'party': {
+        const channel = getCoopChannel()
+        if (!channel) return
+        if (isSelf) {
+          openPartyModal(ctx)
+          return
+        }
+        if (!channel.getParty()) channel.createParty()
+        channel.inviteParty(p.id)
+        ctx.ui.toast(`${t('multiplayer.party.invite')} -> ${p.name}`, 'info')
+        openPartyModal(ctx)
+        return
+      }
     }
   }
 

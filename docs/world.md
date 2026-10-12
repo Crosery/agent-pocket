@@ -456,4 +456,19 @@ start region enclosed, anchor coverage (incl. hamlet/POI/dungeon/wild anchors, �
 spots never seal warps/leaders/towns, encounter tables, elevation steps ≤ 1 and stairs direction, feature counts
 within the JSON ranges and unique names, dungeon floors chained and walkable to stairs/boss, wild regions
 (encounters, danger tiers raise levels, biome variety), terrain variety, ground items, signs, and CollisionApi
-on synthetic maps. Seeds 1–16 were additionally checked for 0 problems and 0 cliffs.
+ on synthetic maps. Seeds 1–16 were additionally checked for 0 problems and 0 cliffs.
+
+## Thematic Dungeons & Instances (`content/world/instances.json`)
+
+Overworld maps feature thematic AI-circle dungeons with multi-room layouts, mechanisms, elites, and difficulty tiers:
+
+- **Instances:**
+  - `deepseek-tide` (Origin Lab B1 / Origin overworld): Compute Tide facility with peak/valley mechanics and load breakers.
+  - `cursor-atelier` (Opensource Town): Billing Craft workshop with metered PP cost and public outrage billboards.
+  - `doubao-arena` (Pixelport): Red-envelope Broadcast Studio with subsidies and streamer bots.
+  - `minimax-colosseum` (Chord): Benchmark Arena with holdout problem sets and overfitting defenses.
+  - `kimi-archive` (Retrieval): Long-context Archive with context decompression valves and 429 quota limits.
+  - `qwen-distill` (Forge): Distillation Plant with teacher model valves and move replication.
+  - `astra-datacenter` (Hub): Downgrade Router datacenter with bypass switches and pelican verification.
+  - `mythos-vault` (AGI): Safety Sandbox Vault with airgap reinforcements and sandbox containment.
+- **Modes:** Solo (N=1) and 2-4 player co-op with shared progress, real-time mechanism sync, and authoritative boss raids.

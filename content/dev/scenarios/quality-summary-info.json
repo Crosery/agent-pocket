@@ -1,14 +1,1 @@
-{
-  "id": "quality-summary-info",
-  "titleKey": "dev.scn.qualitySummaryInfo",
-  "extends": "quality-showcase",
-  "then": [
-    {
-      "cmd": "screen.open",
-      "args": {
-        "screen": "summary",
-        "index": 3
-      }
-    }
-  ]
-}
+{"id": "quality-summary-info", "titleKey": "dev.scn.qualitySummaryInfo", "extends": "quality-showcase", "then": [{"cmd": "screen.open", "args": {"screen": "summary", "index": 3}}]}

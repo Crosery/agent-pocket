@@ -9,7 +9,7 @@ import { Rng } from '../../shared/rng.ts'
 import { createCreature, maxHp } from '../../shared/creature.ts'
 import { buildBossInit, createBossCreature } from '../../shared/battle/boss-battle.ts'
 import { partyExpMods } from '../../shared/gameplay/bosscard.ts'
-import { instanceOfBoss, progressOf } from '../../shared/gameplay/instances.ts'
+import { checkInstanceAchievements, instanceOfBoss, isOffPeakDouble, pickLossHint, progressOf, shouldOfferAssist } from '../../shared/gameplay/instances.ts'
 import { GAMEPLAY } from '../../shared/gameplay/data.ts'
 import { modifierValue, type EventModifiers } from '../../shared/gameplay/events.ts'
 import { regionAt } from '../../shared/world/worldapi.ts'
@@ -18,6 +18,8 @@ import { GAME } from './config.ts'
 import { battleWeatherFor } from './encounters.ts'
 import { addItem, changeMoney } from './save-ops.ts'
 import { randomSeed } from '../core/rng-hub.ts'
+import { isOnlineAuthorityActive } from '../net/authority-client.ts'
+import { runOnlineBattle } from '../net/pve-channel.ts'
 
 export interface BattleFlowDeps {
   readonly ctx: GameContext
@@ -139,11 +141,49 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     return order >= GAME.encounters.legendRarityOrder ? 'legend' : 'wild'
   }
 
-  async function wild(cr: Creature, opts: { music?: string; scripted?: boolean; flee?: BattleSideInit['flee']; catchRateMul?: number } = {}): Promise<BattleOutcome> {
+  async function wild(
+    cr: Creature,
+    opts: {
+      music?: string
+      scripted?: boolean
+      roamer?: boolean
+      moves?: string[]
+      gradeFloor?: string
+      flee?: BattleSideInit['flee']
+      catchRateMul?: number
+    } = {},
+  ): Promise<BattleOutcome> {
     await transition()
     const name = ctx.data.species[cr.speciesId]?.nameZh ?? cr.speciesId
     // A species with a boss definition (content/bosses.json) is fought with its boss rules; bosses never flee.
     const boss = ctx.data.bossBySpecies[cr.speciesId]
+    if (isOnlineAuthorityActive(ctx)) {
+      deps.setBattleActive(true)
+      let onlineOutcome: BattleOutcome | null = null
+      try {
+        onlineOutcome = await runOnlineBattle(ctx, {
+          kind: 'wild',
+          speciesId: cr.speciesId,
+          level: cr.level,
+          scripted: opts.scripted,
+          ...(opts.roamer ? { roamer: true } : {}),
+          ...(opts.moves?.length ? { moves: opts.moves } : {}),
+          ...(opts.gradeFloor ? { gradeFloor: opts.gradeFloor } : {}),
+          catchRateMul: opts.catchRateMul,
+          flee: opts.flee,
+          timeOfDay: ctx.clock.timeOfDay,
+        }, { kind: wildKind(cr), ...(opts.music ? { music: opts.music } : {}) })
+      } finally {
+        deps.setBattleActive(false)
+        ctx.renderer.setTransition('none', 0)
+        ctx.hud.overlay.style.visibility = ''
+      }
+      if (onlineOutcome) {
+        lastOutcome = onlineOutcome
+        deps.afterBattle()
+        return onlineOutcome
+      }
+    }
     const init: BattleInit = {
       seed: rng.int(1, 0x7fffffff),
       sides: [playerSide(), boss
@@ -167,7 +207,30 @@ export function createBattleFlow(deps: BattleFlowDeps) {
 
   function trainerParty(tr: TrainerDef): Creature[] {
     const out: Creature[] = []
-    for (const e of tr.party) {
+    let partyDefs = tr.party
+    if (tr.id === 'lesson-types') {
+      const starterId = ctx.save.party[0]?.speciesId ?? 'o1'
+      if (starterId === 'claude-haiku') {
+        partyDefs = [
+          { species: 'phi-3', level: 2, moves: ['white-noise'] },
+          { species: 'gpt-35', level: 2, moves: ['white-noise'] },
+          { species: 'codex-2021', level: 2, moves: ['white-noise'] },
+        ]
+      } else if (starterId === 'deepseek-v3') {
+        partyDefs = [
+          { species: 'codex-2021', level: 2, moves: ['white-noise'] },
+          { species: 'gemini-flash-lite', level: 2, moves: ['white-noise'] },
+          { species: 'phi-3', level: 2, moves: ['white-noise'] },
+        ]
+      } else {
+        partyDefs = [
+          { species: 'gemini-flash-lite', level: 2, moves: ['white-noise'] },
+          { species: 'phi-3', level: 2, moves: ['white-noise'] },
+          { species: 'codex-2021', level: 2, moves: ['white-noise'] },
+        ]
+      }
+    }
+    for (const e of partyDefs) {
       if (!e.species || !ctx.data.species[e.species]) { console.warn(`[overworld] trainer ${tr.id}: unresolved party entry`); continue }
       const opts = { rng, otName: tr.nameZh, otId: tr.id, nature: ctx.data.quality.npcNature, ...(e.moves?.length ? { moves: e.moves } : {}) }
       out.push(createCreature(e.species, e.level, opts, ctx.data))
@@ -189,6 +252,31 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     await transition()
     const kind: BattleKind = tr.badge ? 'gym' : 'trainer'
     const music = tr.music ?? (tr.badge ? ctx.data.audio.battleMusic.gym : undefined)
+    if (isOnlineAuthorityActive(ctx)) {
+      deps.setBattleActive(true)
+      let onlineOutcome: BattleOutcome | null = null
+      try {
+        onlineOutcome = await runOnlineBattle(ctx, {
+          kind: 'trainer',
+          trainerId: tr.id,
+          timeOfDay: ctx.clock.timeOfDay,
+        }, { kind, trainer: tr, ...(music ? { music } : {}) })
+      } finally {
+        deps.setBattleActive(false)
+        ctx.renderer.setTransition('none', 0)
+        ctx.hud.overlay.style.visibility = ''
+      }
+      if (onlineOutcome) {
+        lastOutcome = onlineOutcome
+        if (onlineOutcome.result === 'win' && GAME.battle.sayDefeatTextAfter && tr.defeatText.length) {
+          await ctx.ui.say(tr.defeatText.map((text) => (portrait ? { text, speaker, portrait } : { text, speaker })))
+        }
+        deps.afterBattle()
+        return onlineOutcome
+      }
+    }
+    const alreadyWon = Boolean(ctx.save.flags[STORY_CONTENT.meta.flags.trainerWon + tr.id])
+    const isRepeatTutorial = alreadyWon && tr.id === 'lesson-types'
     const init: BattleInit = {
       seed: rng.int(1, 0x7fffffff),
       sides: [playerSide(), {
@@ -198,12 +286,15 @@ export function createBattleFlow(deps: BattleFlowDeps) {
       isWild: false,
       canRun: false,
       canCatch: false,
-      expGain: true,
-      rewardMoney: prizeMoney(tr.reward),
+      expGain: !isRepeatTutorial,
+      rewardMoney: isRepeatTutorial ? 0 : alreadyWon ? Math.floor(prizeMoney(tr.reward) * 0.25) : prizeMoney(tr.reward),
       ...arena(),
     }
-    const mods = battleMods(null)
-    if (mods) init.mods = mods
+    const mods = battleMods(null) ?? {}
+    if (alreadyWon && !isRepeatTutorial) {
+      mods.expByParty = ctx.save.party.map((_, i) => (mods.expByParty?.[i] ?? 1) * 0.25)
+    }
+    if (Object.keys(mods).length) init.mods = mods
     const outcome = await run(init, { kind, trainer: tr, ...(music ? { music } : {}) })
     if (outcome.result === 'win') {
       ctx.save.flags[STORY_CONTENT.meta.flags.trainerWon + tr.id] = true
@@ -244,23 +335,70 @@ export function createBattleFlow(deps: BattleFlowDeps) {
     const rules = inst?.def.tiers[tierId]
     if (!def || !tier || !inst || !rules) { console.warn(`[overworld] unknown boss tier "${bossId}:${tierId}"`); return null }
     const prog = progressOf(ctx.save, inst.id)
-    const first = (prog.clears[tierId] ?? 0) === 0
+    const first = (prog.clears[tierId] ?? 0) === 0 && !(bossId === 'deepseek-drill' && Boolean(ctx.save.flags['ds:drill']))
     ctx.save.rollSeed ??= randomSeed() >>> 0
     prog.runSeq += 1
     ctx.persist('boss-room')
     await transition()
     const seed = rng.int(1, 0x7fffffff)
     const foe = createBossCreature(bossId, tier.level, new Rng(seed ^ 0x5bd1e995), ctx.data)
+    if (isOnlineAuthorityActive(ctx)) {
+      const shardItem = ID.shardItem
+      const prevShards = shardItem ? ctx.save.bag[shardItem] ?? 0 : 0
+      const prevMoney = ctx.save.money
+      const prevBag = { ...ctx.save.bag }
+      deps.setBattleActive(true)
+      let onlineOutcome: BattleOutcome | null = null
+      try {
+        onlineOutcome = await runOnlineBattle(ctx, {
+          kind: 'boss',
+          bossId,
+          tierId,
+          assist: opts.assist,
+          coach: opts.coach,
+          captureAfterWin: opts.captureAfterWin,
+          timeOfDay: ctx.clock.timeOfDay,
+        }, { kind: wildKind(foe) })
+      } finally {
+        deps.setBattleActive(false)
+        ctx.renderer.setTransition('none', 0)
+        ctx.hud.overlay.style.visibility = ''
+      }
+      if (onlineOutcome) {
+        if (onlineOutcome.result === 'win') {
+          const shardDiff = (shardItem ? ctx.save.bag[shardItem] ?? 0 : 0) - prevShards
+          if (shardDiff > 0) {
+            if (isOffPeakDouble()) ctx.ui.toast(t('multiplayer.dungeon.offPeak'), 'info')
+            ctx.ui.toast(t('multiplayer.dungeon.shardsEarned', { n: shardDiff }), 'success')
+          }
+          const moneyDiff = ctx.save.money - prevMoney
+          if (moneyDiff > 0) {
+            ctx.ui.toast(t('battle.moneyWon', { amount: moneyDiff, currency: t('common.money') }), 'success')
+          }
+          if (first && rules.firstReward.items) {
+            for (const [itemId, qty] of Object.entries(rules.firstReward.items)) {
+              if ((ctx.save.bag[itemId] ?? 0) > (prevBag[itemId] ?? 0)) {
+                ctx.ui.toast(t('battle.lootGot', { item: ctx.data.items[itemId]?.nameZh ?? itemId, qty }), 'success')
+              }
+            }
+          }
+        }
+        lastOutcome = onlineOutcome
+        deps.afterBattle()
+        return onlineOutcome
+      }
+    }
     const a = arena()
+    const startBaits = baitCounts()
     const init = buildBossInit(bossId, ctx.save.party, {
-      seed, tier: tierId, boss: foe, c: ctx.data, expGain: true, playerName: ctx.save.name, ...(ctx.save.avatar ? { playerSprite: ctx.save.avatar } : {}),
+      seed, tier: tierId, boss: foe, c: ctx.data, expGain: !(def.scriptedOnly && !first), playerName: ctx.save.name, ...(ctx.save.avatar ? { playerSprite: ctx.save.avatar } : {}),
       biome: a.biome, timeOfDay: a.timeOfDay, ...(a.weather ? { weather: a.weather } : {}), ...(opts.assist ? { assist: true } : {}),
-      ...(opts.coach ? { coach: true, skipBrief: !!ctx.save.flags['ds:skipBrief'], items: baitCounts() } : {}),
+      ...(opts.coach ? { coach: true, skipBrief: !!ctx.save.flags['ds:skipBrief'], items: startBaits } : {}),
       ...(opts.assist === undefined && ctx.save.flags[ID.assistFlag] ? { assist: true } : {}),
     })
     if (opts.captureAfterWin && first) init.captureAfterWin = true
     const mods = battleMods(foe) ?? {}
-    if (!first && rules.repeat.expMul !== 1) mods.expByParty = ctx.save.party.map((_, i) => (mods.expByParty?.[i] ?? 1) * rules.repeat.expMul)
+    if (!first && !def.scriptedOnly && rules.repeat.expMul !== 1) mods.expByParty = ctx.save.party.map((_, i) => (mods.expByParty?.[i] ?? 1) * rules.repeat.expMul)
     if (Object.keys(mods).length) init.mods = mods
     const outcome = await run(init, { kind: wildKind(foe) })
     if (outcome.result === 'win') {
@@ -268,12 +406,35 @@ export function createBattleFlow(deps: BattleFlowDeps) {
       prog.losses[tierId] = 0
       ctx.save.flags[ID.assistOfferFlag] = false
       ctx.save.flags[GAME.flags.bossWonPrefix + bossId] = true
-      if (first) payBossReward({ money: rules.reward.money, items: rules.firstReward.items })
-      else payBossReward({ money: rules.repeat.money })
+
+      const offPeak = isOffPeakDouble()
+      let shards = (first ? rules.reward.shards : rules.repeat.shards) ?? 0
+      const baseMoney = (first ? rules.reward.money : rules.repeat.money) ?? 0
+      if (shards > 0 && rules.reward.jackpot && Math.random() < rules.reward.jackpot.chance) {
+        shards *= rules.reward.jackpot.mul
+        ctx.ui.toast(t('multiplayer.dungeon.jackpot', { mul: rules.reward.jackpot.mul }), 'success')
+      }
+      if (offPeak && (shards > 0 || baseMoney > 0)) {
+        shards *= 2
+        ctx.ui.toast(t('multiplayer.dungeon.offPeak'), 'info')
+      }
+      if (shards > 0 && ID.shardItem) {
+        addItem(ctx, ID.shardItem, shards)
+        ctx.ui.toast(t('multiplayer.dungeon.shardsEarned', { n: shards }), 'success')
+      }
+
+      checkInstanceAchievements(prog, inst.def, { tierId, win: true })
+
+      const firstMoney = (rules.reward.money ?? 0) * (offPeak ? 2 : 1)
+      const repeatMoney = (rules.repeat.money ?? 0) * (offPeak ? 2 : 1)
+      if (first) payBossReward({ money: firstMoney, items: rules.firstReward.items })
+      else payBossReward({ money: repeatMoney })
     } else if (outcome.result === 'lose' || outcome.result === 'draw') {
       prog.losses[tierId] = (prog.losses[tierId] ?? 0) + 1
-      // The assist mode ("减负") is offered once the losses add up; the story script of the instance asks the player.
-      ctx.save.flags[ID.assistOfferFlag] = prog.losses[tierId] >= ID.assistAfterLosses
+      const hintKey = pickLossHint(inst.def, outcome.summary, startBaits, ctx.data)
+      if (ID.lossHintFlag) ctx.save.flags[ID.lossHintFlag] = hintKey.slice(hintKey.lastIndexOf('.') + 1)
+      // The assist mode ("减负") is offered once the losses add up or after an early wipe; the story script of the instance asks the player.
+      ctx.save.flags[ID.assistOfferFlag] = shouldOfferAssist(ID, prog.losses[tierId], outcome.summary)
     }
     ctx.persist('boss-run')
     return outcome

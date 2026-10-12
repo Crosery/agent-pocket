@@ -13,6 +13,7 @@ import {
 } from '../../shared/gameplay/research.ts'
 import { GPC } from './gameplay-config.ts'
 import { addItem, changeMoney } from './save-ops.ts'
+import { isOnlineAuthorityActive, sendScriptOp } from '../net/authority-client.ts'
 
 export type ResearchCtx = Pick<GameContext, 'save' | 'ui' | 'events' | 'data'>
 
@@ -64,9 +65,15 @@ export function rewardLabel(r: Rewards, ctx: Pick<GameContext, 'data'>): string 
 export function claimResearchRewards(ctx: ResearchCtx): Rewards | null {
   const s = researchSummary(ctx.save)
   if (!s.canClaim) return null
-  if (s.claimable.money) changeMoney(ctx as GameContext, s.claimable.money)
-  for (const [id, n] of Object.entries(s.claimable.items)) addItem(ctx as GameContext, id, n)
+  const fullCtx = ctx as GameContext
+  if (s.claimable.money) {
+    changeMoney(fullCtx, s.claimable.money)
+  }
+  for (const [id, n] of Object.entries(s.claimable.items)) {
+    addItem(fullCtx, id, n)
+  }
   ctx.save.flags[GPC.research.claimFlag] = s.level
+  sendScriptOp(fullCtx, { t: 'script.op', op: 'claimResearch', level: s.level })
   ctx.events.emit('save:changed', { reason: 'research-claim' })
   return s.claimable
 }
@@ -194,7 +201,7 @@ export function createResearchObserver(ctx: GameContext, env: () => BattleEnviro
     if (!tr) return
     tr.result = result
     last = tr
-    if (kind === 'pvp' || !at) return
+    if (kind === 'pvp' || !at || isOnlineAuthorityActive(ctx)) return
     const items = researchFromBattle({
       seen: tr.seen, defeated: tr.defeated, result, caught: tr.caught, foeMoves: tr.foeMoves,
       timeOfDay: at.timeOfDay, weather: at.weather, biome: at.biome, roamingLegend: tr.roamingLegend,
@@ -207,6 +214,11 @@ export function createResearchObserver(ctx: GameContext, env: () => BattleEnviro
   /** Evolutions (species of a known uid changed), trades (new creature of another trainer) and friendship. */
   function scanParty(): void {
     const s = ctx.save
+    if (isOnlineAuthorityActive(ctx)) {
+      marksOf = s
+      marks = new Map(allCreatures(s).map((cr) => [cr.uid, { species: cr.speciesId, friendship: cr.friendship }]))
+      return
+    }
     if (marksOf !== s || !marks) {
       marksOf = s
       marks = new Map(allCreatures(s).map((cr) => [cr.uid, { species: cr.speciesId, friendship: cr.friendship }]))

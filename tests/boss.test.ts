@@ -22,6 +22,8 @@ import { resolveBossDef } from '../src/shared/battle/boss-tier.ts'
 import { bossCondHolds } from '../src/shared/battle/boss.ts'
 import { computeDamage, condHolds, toStages, type Fighter } from '../src/shared/battle/formulas.ts'
 import { calcStats, createCreature } from '../src/shared/creature.ts'
+import { GAMEPLAY } from '../src/shared/gameplay/data.ts'
+import { pickLossHint, shouldOfferAssist } from '../src/shared/gameplay/instances.ts'
 import { fightStory, rateStory, STARTERS, storyParty } from './boss-story.ts'
 
 /** Fought by scripts only (sparring partners): no wild counterpart, no placement, no balance bands. */
@@ -1054,4 +1056,56 @@ test('boss HUD: the tide meter shows a countdown of the current segment (peak 3 
   const info = (turn: number) => bossPanelInfo({ ...bossOpeningHud('deepseek')!, meters: { tide: turn % 6 < 3 ? 0 : 1 }, cycles: { tide: cycleLeft({ period: 6, from: 0, to: 3 }, turn) } }, CONTENT, 'story')!.chips[0].text
   const dots = (s: string) => [...s].filter((c) => c === t('battleui.boss.dotOn') || c === t('battleui.boss.dotOff')).join('')
   assert.deepEqual([0, 1, 2, 3, 4, 5, 6].map((turn) => dots(info(turn))), ['●●●', '●●○', '●○○', '●●●', '●●○', '●○○', '●●●'])
+})
+
+test('drill: 2 turns peak + 2 turns valley, and both drill coach lines fire in a 4-turn spar', () => {
+  const party = storyParty('o1', [7, 6, 5], 11)
+  const { engine, intro: startEvents } = startBossBattle('deepseek-drill', party, {
+    seed: 11, tier: 'story', expGain: false, coach: true, items: { 'off-peak-coupon': 3 },
+  })
+  const seen = coachLines(startEvents).map((c) => c.text)
+  assert.deepEqual(seen, [t('boss.deepseek.drill.coupon')], 'turn 1 command menu shows the coupon coach line')
+  assert.equal(engine.extractBossState()!.meters.tide, 0, 'turn 1 is peak')
+  const step = () => {
+    engine.choose(0, { kind: 'move', moveIndex: 0 })
+    return engine.step()
+  }
+  const t1 = step()
+  assert.equal(engine.extractBossState()!.meters.tide, 0, 'turn 2 stays peak (2 turns peak)')
+  assert.equal(coachLines(t1).length, 0)
+  const t2 = step()
+  assert.equal(engine.extractBossState()!.meters.tide, 1, 'turn 3 switches to valley (2 turns valley)')
+  assert.deepEqual(coachLines(t2).map((c) => c.text), [t('boss.deepseek.drill.valley')], 'entering valley queues the valley coach line')
+})
+
+test('summary & post-loss rules: BattleEngine.summary, pickLossHint and shouldOfferAssist (including assistEarly)', () => {
+  const party = storyParty('o1', [8, 6, 5], 19)
+  const { engine } = startBossBattle('deepseek', party, {
+    seed: 19, tier: 'story', expGain: false, coach: true, items: { 'off-peak-coupon': 2, 'cache-potion': 2 },
+  })
+  engine.choose(0, { kind: 'move', moveIndex: 0 })
+  engine.step()
+  const sum1 = engine.summary()
+  assert.equal(sum1.turns, 1)
+  assert.ok((sum1.damageByMeterState.tide?.[0] ?? 0) > 0, 'peak damage recorded under meter tide=0')
+  assert.deepEqual(sum1.baitTagsUsed, [])
+
+  const inst = GAMEPLAY.instances['deepseek-tide']
+  const defs = GAMEPLAY.instanceDefaults
+  assert.equal(pickLossHint(inst, sum1, { 'off-peak-coupon': 2 }, CONTENT), 'boss.deepseek.loss.peakDamage')
+  assert.equal(
+    pickLossHint(inst, { ...sum1, damageByMeterState: { tide: { 0: 10, 1: 90 } } }, { 'off-peak-coupon': 2 }, CONTENT),
+    'boss.deepseek.loss.noCoupon',
+  )
+  assert.equal(
+    pickLossHint(inst, { ...sum1, damageByMeterState: { tide: { 1: 100 } }, baitTagsUsed: ['offpeak'], faintedByMeterState: { tide: { 0: 2 } }, healItemsUsed: 0 }, { 'off-peak-coupon': 2 }, CONTENT),
+    'boss.deepseek.loss.noHeal',
+  )
+  assert.equal(
+    pickLossHint(inst, { ...sum1, damageByMeterState: { tide: { 1: 100 } }, baitTagsUsed: ['offpeak'], enraged: true }, {}, CONTENT),
+    'boss.deepseek.loss.enrage',
+  )
+  assert.equal(shouldOfferAssist(defs, 1, { ...sum1, foeHpLeft: 0.85, turns: 5 }), true, 'early wipe on loss 1 offers assist')
+  assert.equal(shouldOfferAssist(defs, 1, { ...sum1, foeHpLeft: 0.5, turns: 5 }), false, 'close fight on loss 1 does not offer assist yet')
+  assert.equal(shouldOfferAssist(defs, 2, { ...sum1, foeHpLeft: 0.2, turns: 12 }), true, 'loss 2 always offers assist')
 })

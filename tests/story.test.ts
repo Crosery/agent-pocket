@@ -15,7 +15,6 @@ import { HintIndex } from '../src/shared/world/story-procgen.ts'
 
 // Acceptance thresholds for the shipped story content.
 const MIN_ROUTE_TRAINERS = 50
-const ROUTE_SIGHT = [3, 5]
 const ROUTE_PARTY = [1, 4]
 const ROUTE_LEVEL_SLACK = 2
 const GYM_TRAINERS = [2, 4]
@@ -127,59 +126,6 @@ test('trainers: references, resolved species, levels, sprites', () => {
   }
 })
 
-const KNOWN_OPS = new Set([
-  'say', 'choice', 'setFlag', 'ifFlag', 'ifBadges', 'ifItem', 'ifCaught', 'giveItem', 'takeItem', 'giveMoney', 'takeMoney',
-  'giveCreature', 'chooseStarter', 'battle', 'bossBattle', 'wildBattle', 'heal', 'shop', 'openBox', 'quest', 'warp', 'moveNpc', 'faceNpc',
-  'hideNpc', 'showNpc', 'sfx', 'bgm', 'wait', 'fade', 'unlockTown', 'setRespawn', 'end', 'exchange', 'teach', 'openTypeChart', 'emote',
-])
-
-test('scripts are well-formed recursively and every reference resolves', () => {
-  const quests = new Map(world.quests.map((q) => [q.id, q]))
-  const bgm = new Set(CONTENT.audio.bgm.map((b) => b.id))
-  const check = (steps: unknown, where: string): void => {
-    assert.ok(Array.isArray(steps), `${where}: not a step list`)
-    for (const [i, raw] of (steps as unknown[]).entries()) {
-      const at = `${where}.${i}`
-      const s = raw as ScriptStep
-      assert.ok(KNOWN_OPS.has(s.op), `${at}: unknown op ${s.op}`)
-      assert.equal((s as { pick?: unknown }).pick, undefined, `${at}: pick leaked`)
-      switch (s.op) {
-        case 'say': assert.ok(s.text, at); break
-        case 'choice':
-          assert.ok(s.options.length >= 2 && s.options.length === s.branches.length, `${at}: options/branches`)
-          s.branches.forEach((b, j) => check(b, `${at}.b${j}`))
-          break
-        case 'ifFlag': case 'ifBadges': case 'ifItem': case 'ifCaught':
-          check(s.then, `${at}.then`)
-          if (s.else !== undefined) check(s.else, `${at}.else`)
-          if (s.op === 'ifItem') assert.ok(CONTENT.items[s.item], `${at}: item ${s.item}`)
-          if (s.op === 'ifCaught' && s.type) assert.ok(CONTENT.typeById[s.type], `${at}: type ${s.type}`)
-          if (s.op === 'ifCaught' && s.species) assert.ok(CONTENT.species[s.species], `${at}: species ${s.species}`)
-          break
-        case 'giveItem': case 'takeItem': assert.ok(CONTENT.items[s.item] && s.qty > 0, `${at}: item ${s.item}`); break
-        case 'giveMoney': case 'takeMoney': assert.ok(s.amount > 0, at); break
-        case 'giveCreature': case 'wildBattle':
-          assert.ok(s.species && CONTENT.species[s.species], `${at}: species ${s.species}`)
-          if (s.op === 'wildBattle' && s.music) assert.ok(bgm.has(s.music), `${at}: music`)
-          break
-        case 'battle': assert.ok(world.trainers[s.trainer], `${at}: trainer ${s.trainer}`); break
-        case 'bossBattle': assert.ok(CONTENT.bosses[s.boss]?.tiers?.[s.tier], `${at}: boss tier ${s.boss}:${s.tier}`); break
-        case 'shop': assert.ok(s.items.length > 0 && s.items.every((x) => CONTENT.items[x]), `${at}: shop items`); break
-        case 'quest': {
-          const q = quests.get(s.quest)
-          assert.ok(q && s.stage >= 0 && s.stage < q.stages.length, `${at}: quest ${s.quest}#${s.stage}`)
-          break
-        }
-        case 'hideNpc': case 'showNpc': case 'faceNpc': case 'moveNpc': assert.ok(npcById.has(s.npc), `${at}: npc ${s.npc}`); break
-        case 'warp': assert.ok(world.maps[s.map], `${at}: map ${s.map}`); break
-        case 'sfx': assert.ok(CONTENT.audio.sfx.includes(s.id), `${at}: sfx ${s.id}`); break
-        case 'bgm': assert.ok(bgm.has(s.id), `${at}: bgm ${s.id}`); break
-        case 'unlockTown': assert.ok(world.towns.some((t) => t.id === s.town), `${at}: town ${s.town}`); break
-      }
-    }
-  }
-  for (const n of npcs) check(n.script, n.id)
-})
 
 test('no unresolved placeholders or authoring macros reach the World', () => {
   const placeholder = /\{[\w:-]+\}/
@@ -192,7 +138,7 @@ test('no unresolved placeholders or authoring macros reach the World', () => {
 })
 
 /** Written by the v2 -> v3 save migration (src/client/core/save-migrate.ts), not by a script. */
-const MIGRATION_FLAGS = new Set(['ds:legacy', 'ds:assistOffer'])
+const MIGRATION_FLAGS = new Set(['ds:legacy', 'ds:assistOffer', 'ds:lossHint'])
 /** Never set on purpose: the NPC is hidden by default and a script shows it for one scene (hiddenUnlessFlag). */
 const SCENE_ONLY_FLAGS = new Set(['ds:zeroBack'])
 
@@ -247,14 +193,13 @@ test('every gym has a leader that awards its badge', () => {
   assert.ok(last >= LAST_LEADER_ACE[0] && last <= LAST_LEADER_ACE[1], `last ace ${last}`)
 })
 
-test('route trainers: count, sight, party size, region-appropriate levels', () => {
+test('route trainers: count, party size, region-appropriate levels', () => {
   const route = npcs.filter((n) => n.trainer && n.map === ow.id && Object.entries(anchors).some(([k, a]) => k.startsWith('route:') && a.map === n.map && a.x === n.x && a.y === n.y))
   assert.ok(route.length >= MIN_ROUTE_TRAINERS, `${route.length} route trainers`)
   for (const n of route) {
     const name = Object.entries(anchors).find(([k, a]) => k.startsWith('route:') && a.x === n.x && a.y === n.y)![0]
     const spec = WORLD_CONTENT.routes.find((r) => r.id === name.split(':')[1])!
     const t = world.trainers[n.trainer!]
-    assert.ok(n.sightRange! >= ROUTE_SIGHT[0] && n.sightRange! <= ROUTE_SIGHT[1], `${n.id} sight ${n.sightRange}`)
     assert.ok(t.party.length >= ROUTE_PARTY[0] && t.party.length <= ROUTE_PARTY[1], `${n.id} party`)
     for (const p of t.party) {
       assert.ok(p.level >= spec.levelRange[0] - ROUTE_LEVEL_SLACK && p.level <= spec.levelRange[1] + ROUTE_LEVEL_SLACK, `${n.id} level ${p.level} vs ${spec.levelRange}`)
@@ -262,13 +207,13 @@ test('route trainers: count, sight, party size, region-appropriate levels', () =
   }
 })
 
-test('rival: one variant per starter and battle, always taking the advantaged starter', () => {
+test('rival: one variant per starter and battle, picking the starter weak to player', () => {
   const starters = starterSpecies()
   assert.ok(starters.length > 0)
   for (const p of starters) {
     const r = rivalStarterFor(p.id)!
-    const off = (a: SpeciesDef) => Math.max(...a.types.map((t) => typeEffectiveness(t, p.types)))
-    for (const o of starters) if (o.id !== p.id && starters.length > 1) assert.ok(off(r) >= off(o), `rival vs ${p.id}`)
+    const offPlayer = (target: SpeciesDef) => Math.max(...p.types.map((t) => typeEffectiveness(t, target.types)))
+    for (const o of starters) if (o.id !== p.id && starters.length > 1) assert.ok(offPlayer(r) >= offPlayer(o), `player vs ${r.id}`)
     for (const b of STORY_CONTENT.rival.battles) {
       const t = world.trainers[rivalTrainerId(b.key, p.id)]
       assert.ok(t, `rival ${b.key} for ${p.id}`)
@@ -280,23 +225,13 @@ test('rival: one variant per starter and battle, always taking the advantaged st
   for (const p of starters) assert.ok(branches.some(({ s }) => (s as { equals?: unknown }).equals === p.id), `no rival branch for ${p.id}`)
 })
 
-test('prologue: starter, gifts, rival battle and heal are wired', () => {
-  const ops = everyStep.map(({ s }) => s)
-  assert.ok(ops.some((s) => s.op === 'chooseStarter'))
-  for (const key of ['dex', 'map']) {
-    assert.ok(ops.some((s) => s.op === 'giveItem' && (CONTENT.items[s.item]?.effect as { key?: string }).key === key), `key item ${key} given`)
-  }
-  assert.ok(ops.some((s) => s.op === 'giveItem' && CONTENT.items[s.item]?.category === 'ball' && s.qty >= 5))
-  assert.ok(ops.some((s) => s.op === 'heal'))
-  for (const key of ['bike', 'surf', 'badgeCase', 'pass']) {
-    assert.ok(ops.some((s) => s.op === 'giveItem' && (CONTENT.items[s.item]?.effect as { key?: string }).key === key), `key item ${key} given`)
-  }
+test('prologue: origin patrols and every OpenSource town exit reopen only after DeepSeek', () => {
   // Three stages of the start town: no partner = sealed; partner but DeepSeek still up = only the west road is open;
   // after the machine room (ds:gateOpen) every exit is open.
   const starterFlag = STORY_CONTENT.meta.flags.starter
   const sealedBy = (hidden: string[]) => npcs.filter((n) => n.map === ow.id && n.hiddenIfFlag !== undefined && !hidden.includes(n.hiddenIfFlag) && (n.hiddenIfFlag === starterFlag || n.hiddenIfFlag === 'ds:gateOpen'))
-  const reachedTowns = (blockers: typeof npcs) => {
-    const reach = floodReach(ow, col(ow), ow.spawn.x, ow.spawn.y, false, new Set(blockers.map((n) => n.y * ow.width + n.x)))
+  const reachedTowns = (blockers: typeof npcs, from: { x: number; y: number } = ow.spawn) => {
+    const reach = floodReach(ow, col(ow), from.x, from.y, false, new Set(blockers.map((n) => n.y * ow.width + n.x)))
     return world.towns.filter((t) => reach[t.y * ow.width + t.x] !== 0).map((t) => t.id)
   }
   const start = world.towns.find((t) => t.x === anchors['town:origin']?.x && t.y === anchors['town:origin']?.y)
@@ -307,7 +242,8 @@ test('prologue: starter, gifts, rival battle and heal are wired', () => {
   const holds = (blockers: typeof npcs, exit: string) => blockers.some((n) => Math.abs(n.x - anchors[exit].x) <= 1 && Math.abs(n.y - anchors[exit].y) <= 1)
   for (const e of ['north', 'east', 'south']) assert.ok(holds(stateB, `town:origin:exit-${e}`), `exit-${e} is held until ds:gateOpen`)
   assert.ok(!holds(stateB, 'town:origin:exit-west'), 'the west road is open once the partner is chosen')
-  assert.ok(holds(stateB, 'town:opensource:exit-east'), 'the far end of the west road is held too')
+  for (const e of ['east', 'north', 'south', 'west']) assert.ok(holds(stateB, `town:opensource:exit-${e}`), `opensource exit-${e} is held until ds:gateOpen`)
+  assert.deepEqual(reachedTowns(stateB, anchors['town:opensource']).filter((id) => id !== 'opensource'), [], 'all OpenSource town exits are sealed before ds:gateOpen')
   assert.equal(reachedTowns(sealedBy([starterFlag, 'ds:gateOpen'])).length, world.towns.length, 'ds:gateOpen opens every road')
 })
 

@@ -12,6 +12,8 @@ import { creatureImg } from '../ui/screens/sprites.ts'
 import { actionKeyLabel, button, el, panel } from '../ui/widgets.ts'
 import { BATTLE_UI, type SignedLine } from './config.ts'
 import { ballChoices, signContract, type BallChoice, type Signed } from './contract.ts'
+import { isOnlineAuthorityActive } from '../net/authority-client.ts'
+import { signOnlineContract } from '../net/pve-channel.ts'
 import './capture.css'
 
 export interface ContractOptions {
@@ -21,6 +23,9 @@ export interface ContractOptions {
   foe: Creature
   /** Success chance shown (the tier's `capture.first`, 0..1). */
   chance: number
+  battleId?: string
+  /** Skip the pre-contract story lines (used by `capture.force` so the scenario opens on `.aps-contract` right away). */
+  skipBefore?: boolean
 }
 
 /** The boss's contract line: `contractWake` when the story woke it, else `contract`. */
@@ -185,6 +190,7 @@ function contractPanel(ctx: GameContext, a: PanelArgs): Promise<void> {
       },
     }
     root.addEventListener('pointerdown', (e) => { e.preventDefault(); advance() })
+    root.addEventListener('click', (e) => { if (e.detail === 0) advance() })
     paintPick()
     setPhase('pick')
     ctx.ui.pushPanel(panelApi)
@@ -202,18 +208,26 @@ const sayLines = (ctx: GameContext, lines: readonly SignedLine[] | undefined) =>
  */
 export async function contractFlow(ctx: GameContext, o: ContractOptions): Promise<Signed | null> {
   const choices = ballChoices(ctx)
+  const online = Boolean(o.battleId && isOnlineAuthorityActive(ctx))
   let signed: Signed | null = null
+  let onlinePromise: Promise<Signed | null> | null = null
   let tried = false
+  let selectedBallId = choices[0].id
   const commit = (ballId: string): Signed | null => {
     if (tried) return signed
     tried = true
+    selectedBallId = ballId
+    if (online && o.battleId) {
+      onlinePromise = signOnlineContract(ctx, o.battleId, o.bossId, o.tierId, ballId)
+      return null
+    }
     signed = signContract(ctx, o.bossId, o.tierId, ballId)
     // Saved before anything else is shown: closing the tab on the next screen cannot lose or reroll the card.
     if (signed) ctx.persist('boss-sign')
     return signed
   }
   const talk = BATTLE_UI.contract.lines[o.bossId]
-  await sayLines(ctx, talk?.before)
+  if (!o.skipBefore) await sayLines(ctx, talk?.before)
   try {
     await contractPanel(ctx, { ...o, choices, commit })
   } catch (err) {
@@ -221,10 +235,17 @@ export async function contractFlow(ctx: GameContext, o: ContractOptions): Promis
   }
   // However the screen ended, a first clear always signs.
   if (!tried) commit(choices[0].id)
+  if (onlinePromise) {
+    signed = await onlinePromise
+  } else if (o.battleId && !online) {
+    const onlineSigned = await signOnlineContract(ctx, o.battleId, o.bossId, o.tierId, selectedBallId)
+    if (onlineSigned) signed = onlineSigned
+  }
   if (!signed) return null
   const { card, where } = signed
   const name = creatureName(card)
-  ctx.ui.toast(where === 'party' ? t('battleui.catch.toParty', { name }) : t('battleui.catch.toBox', { name, box: ctx.save.boxes.findIndex((b) => b.includes(card)) + 1 }), 'success')
+  const boxNum = Math.max(1, ctx.save.boxes.findIndex((b) => b.some((c) => c.uid === card.uid)) + 1)
+  ctx.ui.toast(where === 'party' ? t('battleui.catch.toParty', { name }) : t('battleui.catch.toBox', { name, box: boxNum }), 'success')
   await showReveal(ctx, card, { full: true })
   await sayLines(ctx, talk?.after)
   return signed

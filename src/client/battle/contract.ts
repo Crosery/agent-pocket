@@ -5,9 +5,10 @@ import type { Creature } from '../../shared/types.ts'
 import type { GameContext } from '../contracts.ts'
 import { hashString, Rng } from '../../shared/rng.ts'
 import { captureSeed, rollBossCard } from '../../shared/gameplay/bosscard.ts'
-import { instanceOfBoss, progressOf } from '../../shared/gameplay/instances.ts'
+import { contractOdds, instanceOfBoss, progressOf, rollContractOutcome } from '../../shared/gameplay/instances.ts'
+import { GAMEPLAY } from '../../shared/gameplay/data.ts'
 import { BATTLE_UI } from './config.ts'
-import { consumeItem, markCaught, storeCaught, type SaveCtx } from './saveops.ts'
+import { addBagItem, consumeItem, markCaught, storeCaught, type SaveCtx } from './saveops.ts'
 
 export interface BallChoice {
   id: string
@@ -44,9 +45,35 @@ export function signContract(
   const inst = instanceOfBoss(bossId)
   const rules = inst?.def.tiers[tierId]
   if (!inst || !rules) return null
+  const ballDef = ctx.data.items[ballId]
+  if (!ballDef || ballDef.effect.kind !== 'ball') return null
+  const heldBalls = Object.entries(ctx.save.bag).filter(([id, n]) => n > 0 && ctx.data.items[id]?.effect.kind === 'ball')
+  if (heldBalls.length > 0 ? (ctx.save.bag[ballId] ?? 0) <= 0 : ballId !== BATTLE_UI.contract.defaultBall) return null
   const prog = progressOf(ctx.save, inst.id)
   const first = (prog.captures[tierId] ?? 0) === 0
   if (!first && !rules.repeat.capture) return null
+  if (prog.lastRollRun?.[tierId] !== undefined && prog.lastRollRun[tierId] === prog.runSeq) return null
+
+  const ballBonus = ctx.data.quality.capture.ballBonus?.[ballId] ?? 0
+  const isMaster = ballId === ctx.data.quality.capture.masterBall && (ctx.save.bag[ballId] ?? 0) > 0
+  const curPity = prog.pity?.[tierId] ?? 0
+  const odds = contractOdds(rules, ballBonus, !first, curPity)
+  const rollRng = new Rng(contractSeed(ctx, inst.id, tierId, first))
+  const success = isMaster || odds.guaranteed || rollContractOutcome(rollRng, odds.chance)
+  prog.lastRollRun ??= {}
+  prog.lastRollRun[tierId] = prog.runSeq
+  if (BATTLE_UI.contract.consumeBall) consumeItem(ctx, ballId)
+  if (!success) {
+    prog.pity ??= {}
+    prog.pity[tierId] = curPity + 1
+    const failShard = rules.repeat.shards ?? GAMEPLAY.instanceDefaults.failShardQty
+    const shardItem = GAMEPLAY.instanceDefaults.shardItem
+    if (shardItem && failShard && failShard > 0) addBagItem(ctx, shardItem, failShard)
+    return null
+  }
+  prog.pity ??= {}
+  prog.pity[tierId] = 0
+
   const rng = new Rng(contractSeed(ctx, inst.id, tierId, first))
   const card = rollBossCard(rng, bossId, tierId, rules, {
     first, run: String(prog.runSeq), at: Date.now(), otName: ctx.save.name, otId: ctx.save.playerId, ballId,
@@ -63,6 +90,5 @@ export function signContract(
     filed = 'box'
   }
   prog.captures[tierId] = (prog.captures[tierId] ?? 0) + 1
-  if (BATTLE_UI.contract.consumeBall) consumeItem(ctx, ballId)
   return { card, where: filed, newEntry }
 }

@@ -1,6 +1,6 @@
 // Snapshot interpolation for remote players: buffer timestamped positions and render slightly in the past.
 
-export interface Sample { t: number; x: number; y: number }
+export interface Sample { t: number; x: number; y: number; vx?: number; vy?: number }
 
 export interface InterpOptions {
   /** Drop samples older than this (ms) relative to the newest one (keeps at least two). */
@@ -9,6 +9,14 @@ export interface InterpOptions {
   snapDistance: number
   /** Expected interval between server updates (ms); bridges the gap after a pause. */
   tickMs: number
+  /** Optional bounded dead-reckoning window (ms) past the newest sample when velocity is known. */
+  maxExtrapolateMs?: number
+}
+
+/** Adaptive jitter buffer delay: clamp(p95Jitter + tickMs, minMs, maxMs) (ADR 0001 §4.3). */
+export function adaptiveInterpDelay(jitterP95Ms: number, tickMs: number, minMs: number, maxMs: number): number {
+  const raw = (Number.isFinite(jitterP95Ms) && jitterP95Ms >= 0 ? jitterP95Ms : 0) + tickMs
+  return Math.max(minMs, Math.min(maxMs, Math.round(raw)))
 }
 
 export function pushSample(buf: Sample[], s: Sample, o: InterpOptions): void {
@@ -21,7 +29,7 @@ export function pushSample(buf: Sample[], s: Sample, o: InterpOptions): void {
     }
   }
   const tail = buf[buf.length - 1]
-  if (tail && s.t <= tail.t) { tail.x = s.x; tail.y = s.y }
+  if (tail && s.t <= tail.t) { tail.x = s.x; tail.y = s.y; tail.vx = s.vx; tail.vy = s.vy }
   else buf.push(s)
   const cutoff = s.t - o.keepMs
   let drop = 0
@@ -29,13 +37,20 @@ export function pushSample(buf: Sample[], s: Sample, o: InterpOptions): void {
   if (drop > 0) buf.splice(0, drop)
 }
 
-/** Position at time `t` (clamped to the buffered range). */
-export function sampleAt(buf: readonly Sample[], t: number): { x: number; y: number } | null {
+/** Position at time `t` (clamped to the buffered range, or extrapolated up to `maxExtrapolateMs` when moving). */
+export function sampleAt(buf: readonly Sample[], t: number, maxExtrapolateMs = 0): { x: number; y: number } | null {
   const n = buf.length
   if (n === 0) return null
   if (t <= buf[0].t) return buf[0]
   const last = buf[n - 1]
-  if (t >= last.t) return last
+  if (t >= last.t) {
+    const vx = last.vx ?? 0, vy = last.vy ?? 0
+    if (maxExtrapolateMs > 0 && (vx !== 0 || vy !== 0)) {
+      const dtSec = Math.min(maxExtrapolateMs, t - last.t) / 1000
+      return { x: last.x + vx * dtSec, y: last.y + vy * dtSec }
+    }
+    return last
+  }
   for (let i = n - 2; i >= 0; i--) {
     const a = buf[i]
     if (a.t <= t) {

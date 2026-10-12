@@ -22,6 +22,8 @@ import { createBattleModel, finalResult } from './model.ts'
 import { createPresenter, type PresenterEnv } from './present.ts'
 import { markCaught, storeCaught } from './saveops.ts'
 import { openScene, type BattleScene, type CoverMode } from './scene.ts'
+import { sendCreatureEvolve, sendCreatureNickname } from '../net/authority-client.ts'
+import { isPveChannel } from '../net/pve-channel.ts'
 
 declare const __AP_DEVTOOLS__: boolean | undefined
 
@@ -50,17 +52,30 @@ const coveredByCaller = (ctx: GameContext): boolean => (ctx.overworld as { battl
 
 export function createBattleRunner(ctx: GameContext): BattleRunner {
   /** Stores the capture first (synchronously, so a failing prompt can never lose it), then narrates and appraises. */
-  async function catchFlow(scene: BattleScene, cr: Creature): Promise<void> {
+  async function catchFlow(
+    scene: BattleScene,
+    cr: Creature,
+    preBattle?: { firstCatch: boolean; newEntry: boolean },
+  ): Promise<void> {
     const { view } = scene
     const name = CONTENT.species[cr.speciesId]?.nameZh ?? cr.speciesId
-    const firstCatch = ctx.save.stats.caught === 0
-    const newEntry = markCaught(ctx, cr.speciesId)
-    const where = storeCaught(ctx, cr)
+    const inParty = ctx.save.party.find((x) => x.uid === cr.uid)
+    const inBoxIdx = inParty ? -1 : ctx.save.boxes.findIndex((b) => b.some((x) => x.uid === cr.uid))
+    const inBoxCr = inBoxIdx >= 0 ? ctx.save.boxes[inBoxIdx].find((x) => x.uid === cr.uid) : undefined
+    const alreadyStored = inParty ?? inBoxCr
+    const firstCatch = preBattle ? preBattle.firstCatch : ctx.save.stats.caught === 0
+    const newEntry = alreadyStored
+      ? (preBattle ? preBattle.newEntry : false)
+      : markCaught(ctx, cr.speciesId)
+    const where = alreadyStored
+      ? (inParty ? { where: 'party' as const } : { where: 'box' as const, box: inBoxIdx })
+      : storeCaught(ctx, cr)
+    const targetCr = alreadyStored ?? cr
     if (newEntry) {
       ctx.ui.toast(t('battleui.catch.newDexToast', { name }), 'success')
       await view.message.show(t('battleui.catch.newDex', { name }))
     }
-    if (cr.shiny) ctx.ui.toast(t('battleui.catch.shinyToast', { name }), 'success')
+    if (targetCr.shiny) ctx.ui.toast(t('battleui.catch.shinyToast', { name }), 'success')
     if (BATTLE_UI.catch.nicknamePrompt) {
       view.setBarVisible(false)
       try {
@@ -68,29 +83,39 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
           const max = RULES.creature.nicknameMaxLen
           const nick = await ctx.ui.prompt(t('battleui.catch.nicknamePrompt', { name }), Array.from(name).length <= max ? name : '', max)
           const v = nick?.trim()
-          if (v && v !== name) cr.nickname = v
+          if (v && v !== name) {
+            targetCr.nickname = v
+            cr.nickname = v
+          }
         }
       } finally {
         view.setBarVisible(true)
       }
     }
-    if (cr.nickname) ctx.events.emit('party:changed', {})
-    const shown = creatureName(cr)
+    if (targetCr.nickname) {
+      sendCreatureNickname(ctx, targetCr.uid, targetCr.nickname)
+      ctx.events.emit('party:changed', {})
+    }
+    const shown = creatureName(targetCr)
     if (where?.where === 'party') await view.message.show(t('battleui.catch.toParty', { name: shown }))
     else if (where?.where === 'box') await view.message.show(t('battleui.catch.toBox', { name: shown, box: where.box + 1 }))
-    if (where) await showReveal(ctx, cr, { full: revealIsFull(cr, { newSpecies: newEntry, firstCatch }, ctx.data) })
+    if (where) await showReveal(ctx, targetCr, { full: revealIsFull(targetCr, { newSpecies: newEntry, firstCatch }, ctx.data) })
   }
 
   return {
     async run(init: BattleInit, opts): Promise<BattleOutcome> {
       const kind = opts.kind
+      const pve = isPveChannel(opts.channel) ? opts.channel : null
       const remote = opts.channel !== undefined
       const ownParty = init.sides[0].party
       const model = createBattleModel(init, CLEAR)
       const known = new Set<string>(ctx.save.dexSeen)
+      const preBattleCaught = new Set<string>(ctx.save.dexCaught)
+      const preBattleCaughtCount = ctx.save.stats.caught
       let engine: BattleEngine | null = null
       let local: LocalChannel | null = null
       let scene: BattleScene | null = null
+      let offUpdate: (() => void) | undefined
       let caught: Creature | undefined
       let stored = false
       ctx.events.emit('battle:start', { kind, ...(init.coach ? { coach: true } : {}) })
@@ -105,7 +130,7 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         const cover: CoverMode = coveredByCaller(ctx) ? 'covered' : 'transition'
         scene = await openScene(ctx, {
           paced: true,
-          biome: init.biome, timeOfDay: init.timeOfDay, indoor: !remote && currentPlace(ctx).indoor, cover,
+          biome: init.biome, timeOfDay: init.timeOfDay, indoor: (pve !== null || !remote) && currentPlace(ctx).indoor, cover,
         })
         const { stage, view } = scene
         if (bossId) stage.setBoss(1, bossId)
@@ -121,6 +146,18 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         const env: PresenterEnv = { ctx, scene, model, init, kind, engine, ownParty, writesSave: !remote, introduced: null, known }
         const presenter = createPresenter(env)
         const decider = createDecider({ ctx, scene, model, init, kind, ownParty, known })
+        offUpdate = channel.onUpdate?.((update) => {
+          if (update.events.length > 0) {
+            ctx.events.emit('battle:events', { kind, events: update.events, ...(init.coach ? { coach: true } : {}) })
+            void presenter.sync(update.events)
+          }
+          if (update.request) {
+            batch = { events: [], request: update.request }
+          }
+          if (model.end || update.events.some((e) => e.t === 'end') || update.request?.kind === 'wait') {
+            decider.cancel()
+          }
+        })
 
         let batch = await channel.start()
         ctx.events.emit('battle:events', { kind, events: batch.events, ...(init.coach ? { coach: true } : {}) })
@@ -140,10 +177,29 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         const foeLabel = init.sides[1].trainerClass ? t('battle.trainerLabel', { class: init.sides[1].trainerClass, name: init.sides[1].name }) : init.sides[1].name
         while (!model.end) {
           const req = batch.request
-          let action: BattleAction
+          let action: BattleAction | null = null
           if (req.kind === 'action') action = await decider.chooseAction(req)
           else if (req.kind === 'switch') action = await decider.chooseReplacement()
-          else break
+          else if (req.kind === 'wait' && channel.wait) {
+            view.menus.close()
+            if (remote) view.message.hold(t('battleui.prompt.waiting', { name: foeLabel }))
+            batch = await channel.wait()
+            ctx.events.emit('battle:events', { kind, events: batch.events, ...(init.coach ? { coach: true } : {}) })
+            await presenter.play(batch.events)
+            continue
+          } else break
+          if (!action) {
+            if (model.end) break
+            if (channel.wait) {
+              view.menus.close()
+              if (remote) view.message.hold(t('battleui.prompt.waiting', { name: foeLabel }))
+              batch = await channel.wait()
+              ctx.events.emit('battle:events', { kind, events: batch.events, ...(init.coach ? { coach: true } : {}) })
+              await presenter.play(batch.events)
+              continue
+            }
+            break
+          }
           view.menus.close()
           if (remote) view.message.hold(t('battleui.prompt.waiting', { name: foeLabel }))
           else view.message.clear()
@@ -156,40 +212,51 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         view.menus.close()
         if (result === 'win' && BATTLE_UI.music.victoryKinds.includes(kind)) ctx.audio.playBgm(BATTLE_UI.music.victory, { fadeMs: BATTLE_UI.music.fadeMs })
         await scene.wait(BATTLE_UI.timing.endHoldMs)
-        if (result === 'caught' && engine?.caught) {
-          caught = engine.caught
+        const caughtFromBattle = engine?.caught ?? pve?.caught ?? null
+        if (result === 'caught' && caughtFromBattle) {
+          caught = caughtFromBattle
           stored = true
-          await catchFlow(scene, caught)
+          await catchFlow(scene, caught, {
+            firstCatch: preBattleCaughtCount === 0,
+            newEntry: !preBattleCaught.has(caught.speciesId),
+          })
         }
         // A boss instance's first clear ends in the contract (capture.ts), still on the battle stage.
-        if (result === 'win' && init.captureAfterWin && bossId && init.bossTier && engine) {
-          const foe = engine.party(1)[engine.activeIndex(1)] ?? engine.party(1)[0]
+        if (result === 'win' && init.captureAfterWin && bossId && init.bossTier && (engine || pve)) {
+          const foe = engine ? (engine.party(1)[engine.activeIndex(1)] ?? engine.party(1)[0]) : init.sides[1].party[0]
           const chance = instanceOfBoss(bossId)?.def.tiers[init.bossTier]?.capture.first ?? 1
-          if (foe) await contractFlow(ctx, { bossId, tierId: init.bossTier, foe, chance })
+          if (foe) await contractFlow(ctx, { bossId, tierId: init.bossTier, foe, chance, ...(pve ? { battleId: pve.battleId } : {}) })
         }
         for (const [i, to] of model.evolutions) {
-          const cr = ownParty[i]
+          const cr = ctx.save.party[i] ?? ownParty[i]
           if (cr && cr.hp > 0) await playEvolution(ctx, scene, cr, to)
         }
       } catch (err) {
         console.error('[battle] battle aborted', err)
         ctx.ui.toast(t('battleui.error.aborted'), 'error')
       } finally {
+        offUpdate?.()
         local?.dispose()
         if (scene) await scene.close().catch((err: unknown) => console.error('[battle] scene close failed', err))
         else ctx.renderer.setTransition('none', 0)
       }
 
-      const result: BattleResult = finalResult(model.end?.result, engine?.result, remote)
-      if (result === 'caught' && !stored && engine?.caught) {
-        caught = engine.caught
-        markCaught(ctx, caught.speciesId)
-        storeCaught(ctx, caught)
+      const result: BattleResult = finalResult(model.end?.result, engine?.result ?? pve?.result, remote)
+      const fallbackCaught = engine?.caught ?? pve?.caught ?? null
+      if (result === 'caught' && !stored && fallbackCaught) {
+        caught = fallbackCaught
+        const alreadyInSave = ctx.save.party.some((x) => x.uid === caught!.uid)
+          || ctx.save.boxes.some((b) => b.some((x) => x.uid === caught!.uid))
+        if (!alreadyInSave) {
+          markCaught(ctx, caught.speciesId)
+          storeCaught(ctx, caught)
+        }
       }
       if (!remote) ctx.persist('battle')
       ctx.events.emit('battle:end', { kind, result })
-      const moneyDelta = remote ? 0 : model.money
-      return caught ? { result, moneyDelta, caught } : { result, moneyDelta }
+      const moneyDelta = pve ? pve.moneyDelta : (remote ? 0 : model.money)
+      const summary = engine ? engine.summary() : undefined
+      return { result, moneyDelta, ...(caught ? { caught } : {}), ...(summary ? { summary } : {}) }
     },
 
     async evolve(partyIndex: number, toSpeciesId: string): Promise<boolean> {
@@ -205,6 +272,7 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         console.error('[battle] evolution scene failed', err)
         evolve(cr, toSpeciesId, ctx.data)
         markCaught(ctx, toSpeciesId)
+        sendCreatureEvolve(ctx, partyIndex, toSpeciesId)
         ctx.events.emit('party:changed', {})
         ctx.persist('evolve')
         return true
@@ -222,7 +290,9 @@ export function createBattleRunner(ctx: GameContext): BattleRunner {
         await scene.close().catch((err: unknown) => console.error('[battle] scene close failed', err))
         if (before) ctx.audio.playBgm(before, { fadeMs: BATTLE_UI.music.fadeMs })
       }
-      if (ok) ctx.persist('evolve')
+      if (ok) {
+        ctx.persist('evolve')
+      }
       return ok
     },
   }

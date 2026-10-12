@@ -5,8 +5,10 @@ import type { GameContext } from '../contracts.ts'
 import { CONTENT, t, type Content } from '../../shared/content/index.ts'
 import { creatureName, healFull } from '../../shared/creature.ts'
 import { bossCardCap, isBossCard, settleBank } from '../../shared/gameplay/bosscard.ts'
+import { MIGRATIONS } from '../../shared/world/story.ts'
 import { BATTLE_UI } from '../battle/config.ts'
 import { GAME } from './config.ts'
+import { sendCreatureLearnMove, sendScriptOp } from '../net/authority-client.ts'
 
 export function truthy(v: boolean | number | string | undefined): boolean {
   return v !== undefined && v !== false && v !== 0 && v !== ''
@@ -84,6 +86,7 @@ export async function settleBossCards(ctx: GameContext): Promise<Creature[]> {
   const cap = bossCardCap(ctx.save.badges.length, ctx.data)
   const levelled: Creature[] = []
   const inParty = new Set(ctx.save.party)
+  const pendingLearn: { cr: Creature; learnable: string[] }[] = []
   for (const cr of [...ctx.save.party, ...ctx.save.boxes.flat()]) {
     if (!isBossCard(cr)) continue
     const r = settleBank(cr, cap, ctx.data)
@@ -91,19 +94,34 @@ export async function settleBossCards(ctx: GameContext): Promise<Creature[]> {
     levelled.push(cr)
     ctx.audio.playSfx(BATTLE_UI.sfx.levelUp)
     ctx.ui.toast(t('hud.license.up', { name: creatureName(cr), from: r.from, to: r.to }), 'success')
-    if (!inParty.has(cr)) continue
-    for (const moveId of r.learnable) {
+    if (inParty.has(cr) && r.learnable.length) {
+      pendingLearn.push({ cr, learnable: r.learnable })
+    }
+  }
+  ctx.save.flags[GAME.flags.licenseSettled] = true
+  sendScriptOp(ctx, { t: 'script.op', op: 'settleBossCards' })
+  for (const { cr, learnable } of pendingLearn) {
+    for (const moveId of learnable) {
       const move = ctx.data.moves[moveId]
       if (!move || cr.moves.some((m) => m.id === moveId)) continue
       const slot = await ctx.screens.learnMove(cr, moveId)
       if (slot < 0 || slot > cr.moves.length) continue
       const entry = { id: moveId, pp: move.pp, ppMax: move.pp }
+      const replacing = slot < cr.moves.length
       if (slot === cr.moves.length) cr.moves.push(entry)
       else cr.moves[slot] = entry
+      const pIdx = ctx.save.party.findIndex((c) => c.uid === cr.uid)
+      if (pIdx >= 0) {
+        const live = ctx.save.party[pIdx]
+        if (live !== cr && !live.moves.some((m) => m.id === moveId)) {
+          if (!replacing && live.moves.length < ctx.data.config.party.maxMoves) live.moves.push({ ...entry })
+          else if (slot < live.moves.length) live.moves[slot] = { ...entry }
+        }
+        sendCreatureLearnMove(ctx, pIdx, moveId, replacing ? slot : undefined, cr.uid)
+      }
       ctx.ui.toast(t('hud.license.learned', { name: creatureName(cr) }), 'success')
     }
   }
-  ctx.save.flags[GAME.flags.licenseSettled] = true
   if (levelled.length) {
     ctx.events.emit('party:changed', {})
     ctx.persist('license')
@@ -136,18 +154,23 @@ export function applyQuest(ctx: GameContext, questId: string, stage: number, don
   const prev = ctx.save.quests[questId]
   const nextStage = Math.min(maxStage, Math.max(prev?.stage ?? 0, Math.floor(stage)))
   const wasDone = prev?.done ?? false
-  const nowDone = wasDone || done
+  const reopened = wasDone && !done && Math.floor(stage) > (prev?.stage ?? 0)
+  const nowDone = reopened ? false : (wasDone || done)
   const started = !prev
-  const advanced = !!prev && nextStage > prev.stage
+  const advanced = (!!prev && nextStage > prev.stage) || reopened
   const finished = nowDone && !wasDone
   if (!started && !advanced && !finished) return { def, started, advanced, finished }
   ctx.save.quests[questId] = { stage: nextStage, done: nowDone }
   if (!ctx.save.trackedQuest || (ctx.save.trackedQuest === questId && nowDone)) {
     ctx.save.trackedQuest = nowDone ? openQuestId(ctx) ?? undefined : questId
   }
-  if (finished && def.reward) {
+  const rewardFlag = `${MIGRATIONS.noticeFlags.questRewardPrefix}${questId}`
+  if (finished && def.reward && !ctx.save.flags[rewardFlag]) {
+    ctx.save.flags[rewardFlag] = true
     if (def.reward.money) changeMoney(ctx, def.reward.money)
     for (const [id, qty] of Object.entries(def.reward.items ?? {})) addItem(ctx, id, qty)
+  } else if (nowDone && def.reward) {
+    ctx.save.flags[rewardFlag] = true
   }
   ctx.events.emit('quest:updated', { questId, stage: nextStage, done: nowDone })
   return { def, started, advanced, finished }

@@ -76,7 +76,7 @@ html.ap-compact .ap-l-tips.is-battle .ap-tip { width: calc(100% - var(--u) * 184
 .ap-tip.is-inline::before { display: none; }
 .ap-tip.is-inline::after { display: none; }
 .ap-tip.is-inline.is-in { animation: none; }
-.aps-pause-detail:has(.ap-tip.is-inline) { min-height: 0; overflow-y: auto; }
+.aps-pause-detail:has(.ap-tip.is-inline) { overflow-y: auto; }
 html.ap-compact .aps-pause-detail:has(.ap-tip.is-inline:not([hidden])) { display: block; flex: none; }
 html.ap-compact .aps-pause-detail > :not(.ap-tip) { display: none; }
 html.ap-compact .ap-tip.is-inline { margin-bottom: 0; border-bottom: 0; }

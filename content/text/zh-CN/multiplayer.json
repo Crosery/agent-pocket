@@ -1,5 +1,5 @@
 {
-  "status": {"online": "在线", "connecting": "连接中…", "offline": "离线", "error": "连接异常", "count": "共 {n} 人", "rtt": "延迟 {ms}ms", "reconnect": "重新连接", "notOnline": "尚未连接到服务器，无法进行联机操作"},
+  "status": {"online": "在线", "connecting": "连接中…", "offline": "离线", "error": "连接异常", "count": "共 {n} 人", "rtt": "延迟 {ms}ms", "rttDetail": "延迟 {ms}ms（p50 {p50}ms · p95 {p95}ms · 抖动 {jitter}ms）", "reconnect": "重新连接", "notOnline": "尚未连接到服务器，无法进行联机操作"},
   "online": {
     "title": "联机大厅",
     "close": "关闭",
@@ -11,7 +11,7 @@
     "sub": "{map}",
     "subBusy": "{map} · 忙碌中",
     "unknownMap": "未知地点",
-    "actions": {"whisper": "私聊", "inspect": "查看资料", "trade": "交易", "battle": "对战", "busy": "对方正忙", "selfOnly": "不能对自己使用", "offline": "未连接"},
+    "actions": {"whisper": "私聊", "inspect": "查看资料", "trade": "交易", "battle": "对战", "party": "邀请组队", "busy": "对方正忙", "selfOnly": "不能对自己使用", "offline": "未连接"},
     "whisperPrompt": "悄悄对 {name} 说：",
     "inspectFailed": "无法获取 {name} 的资料",
     "rank": "{rank}. {name}",
@@ -25,7 +25,7 @@
   "profile": {"title": "训练家资料", "badges": "徽章", "badgesValue": "{n} 枚", "dex": "图鉴", "dexValue": "收集 {caught} · 发现 {seen}", "dexCaught": "收集 {caught}", "pvp": "对战", "pvpValue": "{wins} 胜 {losses} 负", "trades": "交易", "tradesValue": "{n} 次", "distance": "最远远行", "distanceValue": "{n} 格", "playTime": "游戏时间", "playTimeValue": "{h} 小时 {m} 分", "party": "队伍", "partyEmpty": "队伍中没有智灵", "close": "关闭"},
   "card": {"level": "Lv.{level}", "iv": "资质", "starOn": "★", "starOff": "☆", "ot": "初训家：{name}", "otUnknown": "初训家：—", "empty": "尚未放入智灵", "hp": "HP {hp}/{max}"},
   "wait": {"seconds": "剩余 {s} 秒", "cancel": "取消"},
-  "trade": {"title": "智灵交换", "with": "与 {name} 交换", "you": "你的报价", "them": "{name} 的报价", "swapGlyph": "⇄", "requesting": "正在向 {name} 发送交换请求，等待对方回应…", "incoming": "{name} 想和你交换智灵，要接受吗？", "accept": "接受", "decline": "拒绝", "autoDeclined": "你正忙，已自动拒绝 {name} 的交换请求", "selfBusy": "你正忙，暂时无法交换", "inviteStale": "这个交换请求已经失效了", "pick": "选择智灵", "change": "更换智灵", "withdraw": "撤回", "confirm": "确认交换", "cancel": "取消交换", "pickTitle": "选择要交换的智灵", "noOfferable": "队伍里至少要留下一只能战斗的智灵，无法交换", "notOfferable": "交换后队伍里将没有能战斗的智灵", "confirmed": "已确认", "waitingConfirm": "等待确认", "waitingOffer": "等待对方放入智灵", "bothNeeded": "双方都放入智灵后才能确认", "offerChanged": "报价有变动，双方需要重新确认", "timeLeft": "剩余 {s} 秒", "completeTitle": "交换成功！", "complete": "你得到了 {name}！", "sentAway": "{name} 去了新的训练家身边", "cancelAsk": "确定要取消这次交换吗？", "connectionLost": "与服务器的连接中断，交换已取消", "hint": "←→↑↓ 选择 · {confirm} 确定 · {cancel} 取消交换"},
+  "trade": {"title": "智灵交换", "with": "与 {name} 交换", "you": "你的报价", "them": "{name} 的报价", "swapGlyph": "⇄", "requesting": "正在向 {name} 发送交换请求，等待对方回应…", "accepting": "已接受 {name} 的交换请求，正在建立连接…", "incoming": "{name} 想和你交换智灵，要接受吗？", "accept": "接受", "decline": "拒绝", "autoDeclined": "你正忙，已自动拒绝 {name} 的交换请求", "selfBusy": "你正忙，暂时无法交换", "inviteStale": "这个交换请求已经失效了", "pick": "选择智灵", "change": "更换智灵", "withdraw": "撤回", "confirm": "确认交换", "cancel": "取消交换", "pickTitle": "选择要交换的智灵", "noOfferable": "队伍里至少要留下一只能战斗的智灵，无法交换", "notOfferable": "交换后队伍里将没有能战斗的智灵", "submittingOffer": "正在同步报价…", "withdrawingOffer": "正在撤回报价…", "confirming": "已发送确认，等待服务器同步…", "confirmed": "已确认", "waitingConfirm": "等待确认", "waitingOffer": "等待对方放入智灵", "bothNeeded": "双方都放入智灵后才能确认", "offerChanged": "报价有变动，双方需要重新确认", "timeLeft": "剩余 {s} 秒", "completeTitle": "交换成功！", "complete": "你得到了 {name}！", "sentAway": "{name} 去了新的训练家身边", "cancelAsk": "确定要取消这次交换吗？", "connectionLost": "与服务器的连接中断，交换已取消", "hint": "←→↑↓ 选择 · {confirm} 确定 · {cancel} 取消交换"},
   "pvp": {
     "challenging": "已向 {name} 发起对战邀请，等待对方回应…",
     "incoming": "{name} 向你发起了对战邀请！要接受吗？",
@@ -35,6 +35,7 @@
     "autoDeclined": "你正忙，已自动拒绝 {name} 的对战邀请",
     "inviteStale": "这个对战邀请已经失效了",
     "noParty": "队伍里没有可以出战的智灵",
+    "accepting": "已接受 {name} 的对战邀请，正在同步赛场…",
     "preparing": "{name} 接受了对战！正在准备队伍…",
     "waitingOpponent": "等待对手准备…",
     "cancelled": "对战已取消",
@@ -46,5 +47,7 @@
     "result": {"win": "你在对战中战胜了 {name}！", "lose": "你输给了 {name}……", "draw": "与 {name} 的对战以平局告终", "forfeit": "你向 {name} 认输了", "disconnect": "{name} 中途离开，你获得了胜利！"}
   },
   "emote": {"greet": {"symbol": "你好！", "label": "打招呼"}, "happy": {"symbol": "^_^", "label": "开心"}, "love": {"symbol": "♥", "label": "喜欢"}, "surprise": {"symbol": "！", "label": "惊讶"}, "question": {"symbol": "？", "label": "疑问"}, "awkward": {"symbol": "^^;", "label": "尴尬"}, "angry": {"symbol": "怒", "label": "生气"}, "music": {"symbol": "♪", "label": "哼歌"}, "thanks": {"symbol": "谢谢！", "label": "感谢"}, "gg": {"symbol": "GG", "label": "好对局"}},
-  "serverError": {"pvp_bad_message": "对战消息格式错误", "pvp_not_found": "找不到该玩家，对方可能已离线", "pvp_self": "不能向自己发起对战", "pvp_self_busy": "你正忙，暂时无法对战", "pvp_busy": "对方正忙，请稍后再试", "pvp_pending": "已经有一个等待回应的对战邀请", "pvp_declined": "{name} 拒绝了你的对战邀请", "pvp_expired": "对战邀请已过期", "pvp_cancelled": "{name} 取消了对战", "pvp_challenge_not_found": "对战邀请不存在或已经失效", "pvp_battle_not_found": "对战不存在或已经结束", "pvp_party_invalid": "队伍数据无效，对战取消", "pvp_party_timeout": "没有及时准备好队伍，对战取消", "pvp_opponent_timeout": "对手没有及时准备好队伍，对战取消", "pvp_opponent_left": "{name} 已断开连接，对战取消", "pvp_error": "对战出现异常，已中止", "pvp_too_far": "与 {name} 距离太远，走近一些再对战吧"}
+  "serverError": {"pvp_bad_message": "对战消息格式错误", "pvp_not_found": "找不到该玩家，对方可能已离线", "pvp_self": "不能向自己发起对战", "pvp_self_busy": "你正忙，暂时无法对战", "pvp_busy": "对方正忙，请稍后再试", "pvp_pending": "已经有一个等待回应的对战邀请", "pvp_declined": "{name} 拒绝了你的对战邀请", "pvp_expired": "对战邀请已过期", "pvp_cancelled": "{name} 取消了对战", "pvp_challenge_not_found": "对战邀请不存在或已经失效", "pvp_battle_not_found": "对战不存在或已经结束", "pvp_party_invalid": "队伍数据无效，对战取消", "pvp_party_timeout": "没有及时准备好队伍，对战取消", "pvp_opponent_timeout": "对手没有及时准备好队伍，对战取消", "pvp_opponent_left": "{name} 已断开连接，对战取消", "pvp_error": "对战出现异常，已中止", "pvp_too_far": "与 {name} 距离太远，走近一些再对战吧"},
+  "party": {"create": "创建队伍", "disband": "解散队伍", "leave": "离开队伍", "invite": "邀请组队", "kick": "移出队伍", "ready": "准备", "unready": "取消准备", "start": "开始挑战", "leader": "队长", "member": "队员", "waiting": "等待队员准备…", "partyFull": "队伍已满", "notLeader": "只有队长可以发起操作", "enterDungeon": "进入副本", "incomingInvite": "{name} 邀请你加入副本探险队！", "declined": "{name} 拒绝了组队邀请", "left": "{name} 离开了队伍", "kicked": "你已被移出队伍", "noParty": "尚未加入任何队伍", "alreadyInParty": "已在队伍中", "noSave": "未找到在线存档，请先登录", "emptyParty": "队伍中没有出战智灵", "targetOffline": "目标玩家不在线", "targetBusy": "目标玩家已在其他队伍中", "notAllReady": "还有队员尚未准备就绪", "readyYes": "已准备", "readyNo": "未准备", "manage": "组队管理", "invitePrompt": "输入要邀请的在线训练家 ID 或名字："},
+  "dungeon": {"title": "副本挑战", "tier": "难度档位", "dailyLimit": "今日签约机会：{left}/{max}", "coopRequired": "该档位需要 2-4 人组队挑战", "minContribution": "最低贡献度要求：{req}%", "contribution": "我的贡献度：{score}%", "raidVictory": "Boss 讨伐成功！", "raidDefeat": "全员溃败……", "jackpot": "【算力暴击！】掉落残片额外 ×{mul}！", "offPeak": "【谷时双倍！】掉落与收益翻倍！", "shardsEarned": "获得残片 ×{n}", "contractPity": "保底进度：{pity}/{max}（平均约 {avg} 次）", "contractSuccess": "签约成功！", "contractFailed": "数据核心断开了连接……（保底 +1，残片补正 +1）", "untrustedCoop": "本地导入的未受信任存档无法参与联机组队或共享掉落副本", "errInvalidInstance": "未知副本或难度", "errLocked": "难度未解锁", "errRoomNotFound": "房间不存在", "errInvalidMechanism": "当前房间不存在该机关", "errMechanismActive": "机关已处于激活状态", "errInvalidElite": "当前房间不存在该精英守卫", "errEliteDefeated": "精英已被击败", "errRoomNotCleared": "请先击败前序房间的精英守卫", "errNotQualified": "贡献度不足，无法参与本次签约", "errNoRepeatCapture": "该难度不支持重复签约", "errAlreadyRolled": "本轮已经完成签约掷骰", "errDailyLimit": "今日签约次数已达上限", "errNoBall": "背包中没有该捕获球", "errInvalidBall": "无效的捕获球", "errBattleNotFound": "未找到进行中的战斗", "roomEntered": "进入房间：{room}", "mechanismActivated": "{by} 激活了机关：{mech}", "eliteDefeated": "{by} 击败了精英守卫：{elite}", "raidStarted": "【Boss 讨伐开始！】{boss} HP {hp}/{max}", "roomTitle": "{dungeon} · {room}", "mechanismsLabel": "房间机关", "mechanismActiveTag": "已激活", "activateBtn": "激活机关：{name}", "elitesLabel": "精英守卫", "eliteDefeatedTag": "已击败", "fightEliteBtn": "挑战精英：{name} (Lv.{level})", "roomsLabel": "房间移动", "moveRoomBtn": "前往：{name}", "leaveBtn": "离开副本", "totalDamage": "总伤害：{n}", "memberContribution": "贡献：{dmg} ({pct}%)", "qualifiedYes": "达标", "qualifiedNo": "未达标", "contractHint": "讨伐成功！请选择要投掷的捕获球完成签约（成功率 {pct}%）：", "raidAttack": "出招：{name}", "raidSwitch": "换人：{name}"}
 }

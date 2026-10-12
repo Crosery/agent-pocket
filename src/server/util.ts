@@ -15,13 +15,20 @@ export interface RateLimiter {
   available(now?: number): number
 }
 
-export function createRateLimiter(rate: Rate): RateLimiter {
+export function createRateLimiter(rate: Rate, initialNow?: number): RateLimiter {
   const capacity = rate.count
   const perMs = rate.count / (rate.perSeconds * 1000)
   let tokens = capacity
-  let last = Date.now()
+  let last: number | null = initialNow ?? null
   const refill = (now: number) => {
-    if (now > last) { tokens = Math.min(capacity, tokens + (now - last) * perMs); last = now }
+    if (last === null) {
+      last = now
+      return
+    }
+    if (now > last) {
+      tokens = Math.min(capacity, tokens + (now - last) * perMs)
+      last = now
+    }
   }
   return {
     take(now = Date.now(), n = 1) {
@@ -30,7 +37,10 @@ export function createRateLimiter(rate: Rate): RateLimiter {
       tokens -= n
       return true
     },
-    available(now = Date.now()) { refill(now); return tokens },
+    available(now = Date.now()) {
+      refill(now)
+      return tokens
+    },
   }
 }
 

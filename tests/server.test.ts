@@ -1,103 +1,39 @@
 // Integration tests for src/server: real HTTP + WebSocket server on test ports 8791-8793.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, rm, symlink, writeFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { request } from 'node:http'
 import { tmpdir } from 'node:os'
 import { join as pathJoin } from 'node:path'
+import { DatabaseSync } from 'node:sqlite'
+import { setTimeout as sleep } from 'node:timers/promises'
 import { brotliDecompressSync, gunzipSync } from 'node:zlib'
-import type { ClientMsg, PlayerState, PublicProfile, ServerMsg } from '../src/shared/protocol.ts'
+import type { PlayerState } from '../src/shared/protocol.ts'
 import type { Creature } from '../src/shared/types.ts'
 import { CONTENT, t } from '../src/shared/content/index.ts'
 import { startServer } from '../src/server/index.ts'
 import { MODERATION, NET, PRESENCE, validateNetContent } from '../src/server/config.ts'
 import { cleanText, maskBanned, sanitizeChat, sanitizeName, uniqueName } from '../src/server/moderation.ts'
+import { createPvp } from '../src/server/pvp.ts'
 import { createRateLimiter, isUuidLike, publicIdFor } from '../src/server/util.ts'
 import { loadWorldInfo, type WorldInfo } from '../src/server/world.ts'
 import { negotiateEncoding } from '../src/server/http.ts'
-import type { PvpHost, PvpModule } from '../src/server/pvp-hooks.ts'
+import {
+  buildHelloMsg,
+  defaultPublicProfile as profileOf,
+  joinAuthenticatedClient as join,
+  openRawWsClient,
+  registerTestAccount,
+  type TestWsClient,
+} from './net-fixture.ts'
 
 // ----------------------------------------------------------------------------- helpers
 
-type Msg<T extends ServerMsg['t']> = Extract<ServerMsg, { t: T }>
-
-interface TestClient {
-  ws: WebSocket
-  msgs: ServerMsg[]
-  selfId: string
-  closed: Promise<number>
-  send(m: ClientMsg | Record<string, unknown>): void
-  mark(): number
-  waitFor<T extends ServerMsg['t']>(type: T, pred?: (m: Msg<T>) => boolean, opts?: { from?: number; ms?: number }): Promise<Msg<T>>
-  all<T extends ServerMsg['t']>(type: T, from?: number): Msg<T>[]
-}
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 const tickMs = 1000 / CONTENT.config.net.tickHz
-
-function openClient(port: number): Promise<TestClient> {
-  const ws = new WebSocket(`ws://localhost:${port}${NET.protocol.wsPath}`)
-  const msgs: ServerMsg[] = []
-  const waiters = new Set<() => void>()
-  const closed = new Promise<number>((r) => ws.addEventListener('close', (e) => r(e.code)))
-  ws.addEventListener('message', (e) => {
-    msgs.push(JSON.parse(String(e.data)) as ServerMsg)
-    for (const w of [...waiters]) w()
-  })
-  const c: TestClient = {
-    ws, msgs, selfId: '', closed,
-    send: (m) => ws.send(JSON.stringify(m)),
-    mark: () => msgs.length,
-    all: (type, from = 0) => msgs.slice(from).filter((m) => m.t === type) as never,
-    waitFor(type, pred = () => true, opts = {}) {
-      const from = opts.from ?? msgs.length
-      return new Promise((resolve, reject) => {
-        let i = from
-        const check = () => {
-          for (; i < msgs.length; i++) {
-            const m = msgs[i]
-            if (m.t === type && pred(m as never)) { cleanup(); resolve(m as never); return }
-          }
-        }
-        const timer = setTimeout(() => { cleanup(); reject(new Error(`timeout waiting for ${type}; got ${msgs.slice(from).map((m) => m.t).join(',')}`)) }, opts.ms ?? 3000)
-        const cleanup = () => { clearTimeout(timer); waiters.delete(check) }
-        waiters.add(check)
-        check()
-      })
-    },
-  }
-  return new Promise((resolve, reject) => {
-    ws.addEventListener('open', () => resolve(c))
-    ws.addEventListener('error', () => reject(new Error('ws error')))
-  })
-}
-
-const profileOf = (o: Partial<PublicProfile> = {}): PublicProfile => ({
-  id: 'ignored', name: 'ignored', avatar: 'ignored', badges: [], dexCaught: 0, party: [], pvpWins: 99, pvpLosses: 99, playTimeSec: 10, ...o,
-})
-
-interface JoinOpts { name: string; map: string; x: number; y: number; playerId?: string; profile?: Partial<PublicProfile>; v?: number }
-
-function helloMsg(o: JoinOpts): ClientMsg {
-  return {
-    t: 'hello', v: o.v ?? CONTENT.config.net.protocolVersion, playerId: o.playerId ?? crypto.randomUUID(), name: o.name,
-    avatar: 'not-a-character', map: o.map, x: o.x, y: o.y, facing: 'down', lead: null, profile: profileOf(o.profile),
-  }
-}
-
-async function join(port: number, o: JoinOpts): Promise<TestClient> {
-  const c = await openClient(port)
-  const from = c.mark()
-  c.send(helloMsg(o))
-  const w = await c.waitFor('welcome', undefined, { from })
-  c.selfId = w.selfId
-  return c
-}
-
 function httpGet(port: number, path: string, headers: Record<string, string> = {}, method = 'GET'): Promise<{ status: number; headers: Record<string, string | string[] | undefined>; body: Buffer }> {
   return new Promise((resolve, reject) => {
-    const req = request({ host: 'localhost', port, path, method, headers }, (res) => {
+    const req = request({ host: 'localhost', port, path, method, headers, agent: false }, (res) => {
       const chunks: Buffer[] = []
       res.on('data', (d: Buffer) => chunks.push(d))
       res.on('end', () => resolve({ status: res.statusCode ?? 0, headers: res.headers, body: Buffer.concat(chunks) }))
@@ -106,7 +42,6 @@ function httpGet(port: number, path: string, headers: Record<string, string> = {
     req.end()
   })
 }
-
 /** Two real map ids + positions: from the generated world when available, else free-form ids. */
 async function pickMaps() {
   const world = await loadWorldInfo()
@@ -186,23 +121,31 @@ test('hub: presence, interest, chat, inspect, trade, leaderboard', async (tc) =>
     const srv = await startServer({ port: PORT, dataDir, distDir: pathJoin(dataDir, 'no-dist'), quiet: true, pvp: null })
     const { a: mapA, b: mapB } = await pickMaps()
     const ax = Math.min(10, mapA.w - 2), ay = Math.min(10, mapA.h - 2)
-    const clients: TestClient[] = []
+    const clients: TestWsClient[] = []
     try {
       const pidA = crypto.randomUUID()
-      const A = await join(PORT, { name: 'Alice', map: mapA.id, x: ax, y: ay, playerId: pidA, profile: { dexCaught: 3, badges: ['b1'] } })
-      const B = await join(PORT, { name: 'Bob', map: mapA.id, x: ax + 1, y: ay })
-      const C = await join(PORT, { name: 'Carol', map: mapB.id, x: 1, y: 1 })
+      const aliceAcct = await registerTestAccount(srv, {
+        name: 'Alice',
+        map: mapA.id,
+        x: ax,
+        y: ay,
+        dexCaught: 3,
+      })
+      const A = await join(srv, { name: 'Alice', map: mapA.id, x: ax, y: ay, playerId: pidA, account: aliceAcct, profile: { dexCaught: 3, badges: ['b1'] } })
+      const B = await join(srv, { name: 'Bob', map: mapA.id, x: ax + 1, y: ay })
+      const C = await join(srv, { name: 'Carol', map: mapB.id, x: 1, y: 1 })
       clients.push(A, B, C)
 
-      await tc.test('hello/welcome: stable public id, sanitized avatar', async () => {
-        assert.equal(A.selfId, publicIdFor(pidA))
+      await tc.test('hello/welcome: account identity, session key, sanitized avatar', async () => {
+        assert.equal(A.selfId, aliceAcct.accountId)
         assert.notEqual(A.selfId, pidA)
+        assert.ok(isUuidLike(A.selfId))
+        assert.ok(A.sessionKey.length >= 32)
         // The joiner gets an immediate summary; periodic ones follow every onlineSummarySeconds.
         const online = await C.waitFor('online', (m) => m.count >= 3, { from: 0 })
         const me = online.players.find((p) => p.id === A.selfId)
         assert.ok(me && CONTENT.characterById[me.avatar]?.playable)
       })
-
       await tc.test('snapshots only include nearby players on the same map', async () => {
         const snap = await A.waitFor('snapshot', (m) => m.players.some((p) => p.id === B.selfId), { from: 0 })
         assert.equal(snap.map, mapA.id)
@@ -255,15 +198,15 @@ test('hub: presence, interest, chat, inspect, trade, leaderboard', async (tc) =>
       })
 
       await tc.test('chat: rate limit', async () => {
-        const D = await join(PORT, { name: 'Dave', map: mapB.id, x: 2, y: 2 })
+        const D = await join(srv, { name: 'Dave', map: mapB.id, x: 2, y: 2 })
         clients.push(D)
         const from = D.mark()
         for (let i = 0; i <= CONTENT.config.net.chatRate.count; i++) D.send({ t: 'chat', channel: 'local', text: `m${i}` })
         const err = await D.waitFor('error', (m) => m.code === 'chat_rate', { from })
         assert.equal(err.message, t('net.error.chat_rate'))
         assert.equal(D.all('chat', from).filter((m) => m.channel === 'local').length, CONTENT.config.net.chatRate.count)
+        await D.close()
       })
-
       await tc.test('emote reaches nearby players', async () => {
         const fb = B.mark()
         A.send({ t: 'emote', emote: '!' })
@@ -310,7 +253,7 @@ test('hub: presence, interest, chat, inspect, trade, leaderboard', async (tc) =>
         await B.waitFor('trade.cancelled', (m) => m.tradeId === sa.tradeId, { from: fb })
         await A.waitFor('snapshot', (m) => m.players.some((p) => p.id === B.selfId && !p.busy), { from: fa })
 
-        const E = await join(PORT, { name: 'Eve', map: mapB.id, x: 3, y: 3 })
+        const E = await join(srv, { name: 'Eve', map: mapB.id, x: 3, y: 3 })
         const fc2 = C.mark()
         E.send({ t: 'trade.request', to: C.selfId })
         await C.waitFor('trade.requested', undefined, { from: fc2 })
@@ -326,7 +269,15 @@ test('hub: presence, interest, chat, inspect, trade, leaderboard', async (tc) =>
         const make = await loadCreatureFactory()
         if (!make || CONTENT.speciesList.length === 0) { st.skip('src/shared/creature.ts unavailable'); return }
         const sp = CONTENT.speciesList
-        const ca = make(sp[0].id, 1), cb = make(sp[sp.length > 1 ? 1 : 0].id, 2), cb2 = make(sp[0].id, 3)
+        const ca = make(sp[0].id, 1)
+        const caBackup = make(sp[0].id, 11)
+        const cb = make(sp[sp.length > 1 ? 1 : 0].id, 2)
+        const cb2 = make(sp[0].id, 3)
+        const saveA = srv.authority.getSave(A.selfId)!
+        const saveB = srv.authority.getSave(B.selfId)!
+        srv.authority.setSave(A.selfId, { ...saveA, party: [ca, caBackup] }, { imported: false, trusted: true })
+        srv.authority.setSave(B.selfId, { ...saveB, party: [cb, cb2] }, { imported: false, trusted: true })
+
         const fa = A.mark(), fb = B.mark()
         A.send({ t: 'trade.request', to: B.selfId })
         await B.waitFor('trade.requested', undefined, { from: fb })
@@ -336,7 +287,10 @@ test('hub: presence, interest, chat, inspect, trade, leaderboard', async (tc) =>
 
         A.send({ t: 'trade.confirm', tradeId })
         await A.waitFor('error', (m) => m.code === 'trade_incomplete', { from: fa })
+        const fTamper = A.mark()
         A.send({ t: 'trade.offer', tradeId, creature: { ...ca, level: 100000 } as Creature })
+        await A.waitFor('error', (m) => m.code === 'trade_invalid_creature', { from: fTamper })
+        A.send({ t: 'trade.offer', tradeId, creature: ca })
         const selfOffer = await A.waitFor('trade.offer', (m) => m.side === 'self', { from: fa })
         assert.equal(selfOffer.creature?.uid, ca.uid)
         assert.ok((selfOffer.creature?.level ?? 0) <= CONTENT.config.party.maxLevel, 'offer is sanitized')
@@ -349,7 +303,6 @@ test('hub: presence, interest, chat, inspect, trade, leaderboard', async (tc) =>
         await B.waitFor('error', (m) => m.code === 'trade_bound_boss', { from: fBound })
         B.send({ t: 'trade.offer', tradeId, creature: cb })
         await A.waitFor('trade.offer', (m) => m.side === 'other' && m.creature?.uid === cb.uid, { from: fa })
-
         A.send({ t: 'trade.confirm', tradeId })
         await B.waitFor('trade.confirmed', (m) => m.side === 'other', { from: fb })
         const fb2 = B.mark()
@@ -393,21 +346,44 @@ test('hub: presence, interest, chat, inspect, trade, leaderboard', async (tc) =>
         assert.deepEqual(body.entries.map((e) => e.id), lb.entries.map((e) => e.id))
       })
 
-      await tc.test('protocol errors: not ready, bad json, version mismatch, duplicate login', async () => {
-        const raw = await openClient(PORT)
-        clients.push(raw)
-        raw.send({ t: 'chat', channel: 'global', text: 'too early' })
-        await raw.waitFor('error', (m) => m.code === 'not_ready', { from: 0 })
-        raw.ws.send('{nope')
-        await raw.waitFor('error', (m) => m.code === 'bad_message', { from: 0 })
+      await tc.test('protocol errors: unauthorized no-cookie, csrf, not ready, bad json, bad signature, replay, version mismatch, duplicate login', async () => {
+        const unauth = await openRawWsClient(PORT, { cookie: null, allowHandshakeError: true })
+        await unauth.waitFor('error', (m) => m.code === 'unauthorized', { from: 0 })
+        assert.equal(await unauth.closed, NET.protocol.closeCodes.shutdown)
 
-        const old = await openClient(PORT)
-        old.send(helloMsg({ name: 'Old', map: mapA.id, x: 1, y: 1, v: CONTENT.config.net.protocolVersion + 1 }))
+        const csrfWs = await openRawWsClient(PORT, {
+          cookie: aliceAcct.cookie,
+          origin: 'http://evil.example.com',
+          allowHandshakeError: true,
+        })
+        assert.notEqual(await csrfWs.closed, 1000)
+
+        const rawAcct = await registerTestAccount(srv, { name: 'RawUser', map: mapA.id, x: 1, y: 1 })
+        const raw = await openRawWsClient(PORT, { cookie: rawAcct.cookie })
+        clients.push(raw)
+        raw.sendRaw({ t: 'chat', channel: 'global', text: 'too early' })
+        await raw.waitFor('error', (m) => m.code === 'not_ready', { from: 0 })
+        raw.sendRaw('{nope')
+        await raw.waitFor('error', (m) => m.code === 'bad_message', { from: 0 })
+        await raw.close()
+
+        const oldAcct = await registerTestAccount(srv, { name: 'Old', map: mapA.id, x: 1, y: 1 })
+        const old = await openRawWsClient(PORT, { cookie: oldAcct.cookie })
+        old.sendRaw(buildHelloMsg({ name: 'Old', map: mapA.id, x: 1, y: 1, v: CONTENT.config.net.protocolVersion + 1 }))
         await old.waitFor('error', (m) => m.code === 'version_mismatch', { from: 0 })
         assert.equal(await old.closed, NET.protocol.closeCodes.version)
 
+        const fSig = B.mark()
+        B.sendRaw({ t: 'chat', channel: 'local', text: 'unsigned frame' })
+        await B.waitFor('error', (m) => m.code === 'bad_signature', { from: fSig })
+
+        const fRep = B.mark()
+        const usedSeq = B.send({ t: 'chat', channel: 'local', text: 'signed once' })
+        B.send({ t: 'chat', channel: 'local', text: 'signed once' }, usedSeq)
+        await B.waitFor('error', (m) => m.code === 'replay_detected', { from: fRep })
+
         const fb = B.mark()
-        const A2 = await join(PORT, { name: 'Alice', map: mapA.id, x: ax, y: ay, playerId: pidA })
+        const A2 = await join(srv, { name: 'Alice', map: mapA.id, x: ax, y: ay, account: aliceAcct })
         clients.push(A2)
         assert.equal(A2.selfId, A.selfId)
         await A.waitFor('error', (m) => m.code === 'kicked_duplicate', { from: 0 })
@@ -421,8 +397,8 @@ test('hub: presence, interest, chat, inspect, trade, leaderboard', async (tc) =>
         const p2 = { x: Math.min(mapA.w - 2, 300), y: Math.min(mapA.h - 2, 300) }
         const budget = NET.server.rates.jump.count
         const expected = budget % 2 === 1 ? p2 : p1
-        const W = await join(PORT, { name: 'Watcher', map: mapA.id, x: expected.x, y: expected.y })
-        const J = await join(PORT, { name: 'Jumper', map: mapA.id, x: p1.x, y: p1.y })
+        const W = await join(srv, { name: 'Watcher', map: mapA.id, x: expected.x, y: expected.y })
+        const J = await join(srv, { name: 'Jumper', map: mapA.id, x: p1.x, y: p1.y })
         clients.push(W, J)
         for (let i = 1; i <= budget + 1; i++) {
           const p = i % 2 === 1 ? p2 : p1
@@ -538,63 +514,65 @@ test('http: static dist serving, caching, compression, ranges, traversal, SPA fa
 
 // ----------------------------------------------------------------------------- pvp hooks + persistence
 
-test('pvp hooks are wired to the hub and stats persist across restarts', async () => {
+test('pvp service is wired to the hub and stats persist across restarts', async () => {
   await withTempDir(async (dataDir) => {
     const PORT = 8793
     const { a: mapA } = await pickMaps()
-    let host: PvpHost | null = null
-    const handled: { from: string; t: string }[] = []
-    const disconnected: string[] = []
-    let disposed = false
-    const fake: PvpModule = {
-      createPvp(h) {
-        host = h
-        return {
-          handle(from, msg) { handled.push({ from, t: msg.t }) },
-          onDisconnect(id) { disconnected.push(id) },
-          dispose() { disposed = true },
-        }
-      },
-    }
-    let srv = await startServer({ port: PORT, dataDir, quiet: true, pvp: fake, distDir: pathJoin(dataDir, 'nd') })
-    let A: TestClient | null = null, B: TestClient | null = null
+    const make = await loadCreatureFactory()
+    assert.ok(make && CONTENT.speciesList.length > 0)
+    const sp = CONTENT.speciesList[0].id
+    const partyA = [make(sp, 101)]
+    const partyB = [make(sp, 202)]
+
+    let srv = await startServer({
+      port: PORT,
+      dataDir,
+      quiet: true,
+      pvp: { createPvp: (host) => createPvp(host) },
+      distDir: pathJoin(dataDir, 'nd'),
+    })
+    let A: TestWsClient | null = null, B: TestWsClient | null = null
     let aId = '', bId = ''
     try {
-      A = await join(PORT, { name: 'Ann', map: mapA.id, x: 5, y: 5 })
-      B = await join(PORT, { name: 'Ben', map: mapA.id, x: 6, y: 5 })
+      A = await join(srv, { name: 'Ann', map: mapA.id, x: 5, y: 5, party: partyA })
+      B = await join(srv, { name: 'Ben', map: mapA.id, x: 6, y: 5, party: partyB })
       aId = A.selfId; bId = B.selfId
-      A.send({ t: 'pvp.challenge', to: bId })
-      await sleep(100)
-      assert.deepEqual(handled, [{ from: aId, t: 'pvp.challenge' }])
-      assert.ok(host)
-      const h = host as PvpHost
-      assert.deepEqual(h.getPlayer(aId), { id: aId, name: 'Ann', avatar: h.getPlayer(aId)!.avatar, busy: false })
-      assert.equal(h.getPlayer('nobody'), null)
       const fb = B.mark()
-      h.setBusy(aId, true)
-      await B.waitFor('snapshot', (m) => m.players.some((p) => p.id === aId && p.busy), { from: fb })
-      assert.equal(h.getPlayer(aId)!.busy, true)
-      h.send(bId, { t: 'pvp.challenged', from: aId, name: 'Ann' })
-      await B.waitFor('pvp.challenged', (m) => m.from === aId, { from: fb })
       const fa = A.mark()
+      A.send({ t: 'pvp.challenge', to: bId })
+      await B.waitFor('pvp.challenged', (m) => m.from === aId, { from: fb })
+      B.send({ t: 'pvp.respond', from: aId, accept: true })
+      const startA = await A.waitFor('pvp.start', undefined, { from: fa })
+      await B.waitFor('pvp.start', undefined, { from: fb })
+      await B.waitFor('snapshot', (m) => m.players.some((p) => p.id === aId && p.busy), { from: fb })
+
+      const fTrade = A.mark()
       A.send({ t: 'trade.request', to: bId })
-      await A.waitFor('error', (m) => m.code === 'self_busy', { from: fa })
-      h.recordPvp(aId, bId)
-      h.setBusy(aId, false)
-      B.ws.close()
-      await sleep(150)
-      assert.deepEqual(disconnected, [bId])
+      await A.waitFor('error', (m) => m.code === 'self_busy', { from: fTrade })
+
+      const fBeginA = A.mark(), fBeginB = B.mark()
+      A.send({ t: 'pvp.party', battleId: startA.battleId, party: partyA })
+      B.send({ t: 'pvp.party', battleId: startA.battleId, party: partyB })
+      await A.waitFor('pvp.begin', (m) => m.battleId === startA.battleId, { from: fBeginA })
+      await B.waitFor('pvp.begin', (m) => m.battleId === startA.battleId, { from: fBeginB })
+
+      const fEndA = A.mark()
+      await B.close()
+      const endA = await A.waitFor('pvp.end', (m) => m.battleId === startA.battleId, { from: fEndA })
+      assert.equal(endA.result, 'disconnect')
     } finally {
-      A?.ws.close()
-      B?.ws.close()
+      await A?.close()
+      await B?.close()
       await srv.close()
     }
-    assert.equal(disposed, true)
-    const file = pathJoin(dataDir, NET.store.file)
-    assert.ok(existsSync(file), 'profiles persisted on close')
-    const saved = JSON.parse(await readFile(file, 'utf8')) as { profiles: Record<string, { pvpWins: number; pvpLosses: number }> }
-    assert.equal(saved.profiles[aId].pvpWins, 1)
-    assert.equal(saved.profiles[bId].pvpLosses, 1)
+    const dbFile = pathJoin(dataDir, NET.store.sqliteFile)
+    assert.ok(existsSync(dbFile), 'database persisted on close')
+    const checkDb = new DatabaseSync(dbFile)
+    const rowA = checkDb.prepare('SELECT pvp_wins, pvp_losses FROM profiles WHERE id = ?').get(aId) as { pvp_wins: number; pvp_losses: number }
+    const rowB = checkDb.prepare('SELECT pvp_wins, pvp_losses FROM profiles WHERE id = ?').get(bId) as { pvp_wins: number; pvp_losses: number }
+    checkDb.close()
+    assert.equal(rowA?.pvp_wins, 1)
+    assert.equal(rowB?.pvp_losses, 1)
 
     srv = await startServer({ port: PORT, dataDir, quiet: true, pvp: null, distDir: pathJoin(dataDir, 'nd') })
     try {
@@ -617,10 +595,17 @@ test('world bounds: spawn fallback, out-of-bounds moves, badge filtering', async
       badgeIds: new Set(['badge-a']),
     }
     const srv = await startServer({ port: PORT, dataDir, distDir: pathJoin(dataDir, 'nd'), quiet: true, pvp: null, world })
-    const clients: TestClient[] = []
+    const clients: TestWsClient[] = []
     try {
-      const W = await join(PORT, { name: 'Wally', map: 'town', x: 6, y: 6, profile: { badges: ['badge-a', 'forged', 'badge-a'] } })
-      const L = await join(PORT, { name: 'Lost', map: 'nowhere', x: 3, y: 3 })
+      const W = await join(srv, {
+        name: 'Wally',
+        map: 'town',
+        x: 6,
+        y: 6,
+        badges: ['badge-a'],
+        profile: { badges: ['badge-a', 'forged', 'badge-a'] },
+      })
+      const L = await join(srv, { name: 'Lost', map: 'nowhere', x: 3, y: 3 })
       clients.push(W, L)
       const snap = await W.waitFor('snapshot', (m) => m.players.some((p) => p.id === L.selfId), { from: 0 })
       const lost = snap.players.find((p) => p.id === L.selfId)!
@@ -635,6 +620,7 @@ test('world bounds: spawn fallback, out-of-bounds moves, badge filtering', async
       assert.equal(ok.players.find((p) => p.id === L.selfId)?.x, 6)
       assert.ok(!W.all('snapshot', from).some((m) => m.players.some((p) => p.id === L.selfId && (p.y === 25 || p.map === 'house'))))
 
+      W.send({ t: 'profile', profile: profileOf({ id: W.selfId, name: 'Wally', badges: ['badge-a', 'forged', 'badge-a'] }) })
       const fl = L.mark()
       L.send({ t: 'inspect', target: 'Wally' })
       const prof = await L.waitFor('profile', undefined, { from: fl })

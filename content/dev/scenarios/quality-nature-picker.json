@@ -1,14 +1,1 @@
-{
-  "id": "quality-nature-picker",
-  "titleKey": "dev.scn.qualityNaturePicker",
-  "extends": "quality-showcase",
-  "then": [
-    {
-      "cmd": "screen.open",
-      "args": {
-        "screen": "nature",
-        "index": 3
-      }
-    }
-  ]
-}
+{"id": "quality-nature-picker", "titleKey": "dev.scn.qualityNaturePicker", "extends": "quality-showcase", "then": [{"cmd": "screen.open", "args": {"screen": "nature", "index": 3}}]}

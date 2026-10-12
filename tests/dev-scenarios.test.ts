@@ -11,7 +11,8 @@ import { applyScenario, checkExpectations, flattenScenario, resolveDevPlace } fr
 import { digest } from '../src/shared/dev/diff.ts'
 import { createSaveManager } from '../src/client/core/save.ts'
 import { migrateSave } from '../src/client/core/save-migrate.ts'
-import { pickObjective } from '../src/client/onboarding/logic.ts'
+import { reconcileSave } from '../src/client/core/save-reconcile.ts'
+import { nearestTarget, pickObjective } from '../src/client/onboarding/logic.ts'
 import { TIP_FLAG_PREFIX } from '../src/client/onboarding/config.ts'
 import { resolvePlace } from '../src/client/world/explore.ts'
 import { CONSOLE } from '../src/client/dev/registry.ts'
@@ -32,7 +33,10 @@ const memory = () => {
 }
 const saves = createSaveManager({ world, storage: memory(), now: () => 1_700_000_000_000, newId: () => '00000000-0000-4000-8000-000000000001' })
 const avatar = CONTENT.characters.find((c) => c.playable)!
-const legacy = (name: string) => (content.saves[name] ? saves.sanitize(migrateSave(structuredClone(content.saves[name]))) : null)
+const legacy = (name: string) => {
+  const clean = content.saves[name] ? saves.sanitize(migrateSave(structuredClone(content.saves[name]))) : null
+  return clean ? reconcileSave(clean, world) : null
+}
 const apply = (id: string) => applyScenario(id, { world, ...content, base: saves.newGame({ name: avatar.nameZh, avatar: avatar.id }), legacy, rng: new Rng(7) })
 
 test('at least six scenarios, each file named after its id, each with a title', () => {
@@ -137,8 +141,11 @@ for (const id of ids) {
     assert.ok(obj.ruleId, 'an objective rule applies')
     const main = save.quests.main
     if (main && !main.done) {
-      assert.ok(obj.questTarget, 'the main quest stage has a target for the arrow')
-      assert.ok(getMap(world, obj.questTarget.map), 'on a real map')
+      const questTarget = world.quests.find((q) => q.id === 'main')?.stages[main.stage]?.target
+      const candidates = questTarget ? [questTarget] : obj.questTarget ? [obj.questTarget] : obj.targets.map((id) => anchors[id]).filter((p) => p !== undefined)
+      const target = nearestTarget(world, save.position, candidates)
+      assert.ok(target, 'the selected onboarding objective resolves to a reachable arrow target')
+      assert.ok(getMap(world, target.map), 'on a real map')
     }
 
     // expectations about the save hold (runtime ones are checked in the browser suite)
@@ -210,4 +217,34 @@ test('boss-astra-counter: the scenario team plays out the Astra fight with the s
   assert.ok(r.result !== null, 'the fight ends')
   assert.ok(r.turns > 0 && r.turns <= 120)
   assert.ok(boss.level >= res.save.party[0].level)
+})
+
+test('M1c prologue & boss scenarios: opening-cert, opening-ernie, ds-lobby, ds-boss-story, ds-loss-assist, after-deepseek', () => {
+  const cert = apply('opening-cert')
+  assert.equal(cert.save.position.map, 'origin-lab')
+  assert.equal(cert.save.flags['ds:stamp:starter'], true)
+  assert.equal(cert.save.bag['work-permit'], 1)
+
+  const ernie = apply('opening-ernie')
+  assert.equal(ernie.save.position.map, 'overworld')
+  assert.equal(ernie.save.flags['ds:stamp:types'], true)
+  assert.equal(ernie.save.party.length, 2)
+
+  const lobby = apply('ds-lobby')
+  assert.equal(lobby.save.position.map, 'origin-lab-b1')
+  assert.equal(lobby.save.flags['ds:certFull'], true)
+  assert.equal(lobby.save.party.length, 3)
+
+  const bossStory = apply('ds-boss-story')
+  const bossCall = bossStory.commands.find((c) => c.cmd === 'battle.boss')
+  assert.equal(bossCall?.args?.coach, true, 'ds-boss-story enables the coach bar')
+
+  const lossAssist = apply('ds-loss-assist')
+  assert.equal(lossAssist.save.instances?.['deepseek-tide']?.losses.story, 1)
+  assert.ok(lossAssist.commands.some((c) => c.cmd === 'battle.forceResult' && c.args?.result === 'lose'))
+
+  const afterDs = apply('after-deepseek')
+  assert.equal(afterDs.save.flags['ds:done'], true)
+  assert.equal(afterDs.save.flags['ds:gateOpen'], true)
+  assert.ok(afterDs.commands.some((c) => c.cmd === 'bosscard.give' && c.args?.boss === 'deepseek' && c.args?.level === 1))
 })

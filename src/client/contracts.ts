@@ -3,12 +3,13 @@
 // Interfaces only — no implementation here.
 import type * as THREE from 'three'
 import type {
-  BattleInit, BattleResult, BiomeId, Creature, Dir, GameMap, NpcDef, SaveData,
+  BattleInit, BattleResult, BattleSummary, BiomeId, Creature, Dir, GameMap, NpcDef, SaveData,
   Settings, SpeciesDef, TrainerDef, World, TimeOfDay, CreatureView,
   BattleAction, BattleEvent, BattleRequest, FieldWeatherKind,
 } from '../shared/types.ts'
 import type { Content } from '../shared/content/index.ts'
 import type { ClientMsg, PlayerState, PublicProfile, ServerMsg, ChatChannel, LeaderboardEntry } from '../shared/protocol.ts'
+import type { ServerEntry } from './net/servers.ts'
 
 // ---------------------------------------------------------------------------
 // Game data = loaded content tables (content/**/*.json) + the generated world.
@@ -24,6 +25,10 @@ export interface GameData extends Content {
 
 export interface GameEvents {
   'save:changed': { reason: string }
+  /** Fired once when a save enters the world (`updated` = migrated from an older contentRev). */
+  'save:loaded': { fromRev: number; toRev: number; updated: boolean }
+  /** Fired when a loaded save was brought forward across content revisions (`revisions`: applied revision ids). */
+  'content:updated': { fromRev: number; toRev: number; revisions: string[] }
   'party:changed': {}
   'bag:changed': {}
   'money:changed': { money: number; delta: number }
@@ -153,6 +158,8 @@ export interface SaveManager {
   defaultSettings(): Settings
   /** Migrates/validates foreign data into a well-formed SaveData. */
   sanitize(raw: unknown): SaveData | null
+  /** Checks whether a local save slot's stored HMAC matches its JSON content. */
+  verifySlot?(slot?: number): { valid: boolean; tampered: boolean; reason?: string }
 }
 
 // ---------------------------------------------------------------------------
@@ -341,9 +348,11 @@ export interface HUD {
   setQuest(text: string | null, summary?: string, stage?: string): void
   /** Sentence the objective card is showing (null = card hidden); see setQuest. */
   setObjective(text: string | null): void
-  setNetStatus(status: NetStatus, online: number): void
+  setNetStatus(status: NetStatus, online: number, rtt?: number): void
   /** The menu has something waiting: shows (or hides) the menu chip with a red dot; `device` picks the key cap on it. */
   setMenuAlert(on: boolean, device: Input['lastDevice']): void
+  /** Floating interaction prompt [F] action · name positioned in screen space next to target. */
+  setInteractPrompt?(prompt: { key: string; action: string; name: string; x?: number; y?: number; onTrigger?: () => void } | null): void
   /** Name tags / speech bubbles over 3D actors are positioned by world/ using this layer. */
   readonly overlay: HTMLElement
 }
@@ -375,8 +384,10 @@ export interface TypeChartOptions {
 }
 
 /** High-level screens (src/client/ui/screens/*). All resolve when closed. */
+export type TitleChoice = 'continue' | 'new' | 'import' | 'settings' | 'singleplayer' | 'multiplayer'
+
 export interface Screens {
-  title(hasSave: boolean): Promise<'continue' | 'new' | 'import' | 'settings'>
+  title(hasSave: boolean, session?: { account: { id: string; username: string }; save: SaveData | null } | null, onSwitchAccount?: () => void): Promise<TitleChoice>
   newGame(): Promise<{ name: string; avatar: string } | null>
   starter(options: SpeciesDef[]): Promise<string>
   pauseMenu(): Promise<void>
@@ -401,6 +412,9 @@ export interface Screens {
   settings(): Promise<void>
   online(): Promise<void>                                     // multiplayer hub: online list, leaderboard, trade/pvp entry
   learnMove(creature: Creature, moveId: string): Promise<number> // slot to replace or -1 to skip
+  serverList?(): Promise<ServerEntry | null>
+  accountAuth?(server: ServerEntry, httpBase: string, opts?: { required?: boolean }): Promise<{ account: { id: string; username: string }; save: SaveData | null } | null>
+  bindAccount?(server: ServerEntry, httpBase: string, hasLocalSave: boolean): Promise<{ choice: 'new' | 'local' | 'cancel' }>
 }
 
 // ---------------------------------------------------------------------------
@@ -413,13 +427,21 @@ export interface BattleOutcome {
   result: BattleResult
   caught?: Creature
   moneyDelta: number
+  summary?: BattleSummary
 }
 
-/** Abstracts where battle decisions/events come from (local engine vs server PvP). */
+export interface BattleChannelUpdate {
+  events: BattleEvent[]
+  request?: BattleRequest
+}
+
+/** Abstracts where battle decisions/events come from (local engine vs server PvP/coop). */
 export interface BattleChannel {
   /** Initial view for side 0 (the local player). */
   start(): Promise<{ events: BattleEvent[]; request: BattleRequest }>
   submit(action: BattleAction): Promise<{ events: BattleEvent[]; request: BattleRequest }>
+  wait?(): Promise<{ events: BattleEvent[]; request: BattleRequest }>
+  onUpdate?(fn: (update: BattleChannelUpdate) => void): () => void
   dispose(): void
 }
 
@@ -436,10 +458,44 @@ export interface BattleRunner {
 
 export type NetStatus = 'offline' | 'connecting' | 'online' | 'error'
 
+export interface NetClientStats {
+  /** Smoothed RTT in ms (-1 before first pong). */
+  rtt: number
+  /** Median RTT in ms (-1 before first sample). */
+  p50: number
+  /** 95th percentile RTT in ms (-1 before first sample). */
+  p95: number
+  /** 95th percentile RTT / snapshot arrival jitter in ms. */
+  jitter: number
+  /** Current adaptive interpolation delay in ms. */
+  interpDelayMs: number
+  /** Count of snapshot intervals exceeding stallThresholdMs. */
+  stalls: number
+  /** Snapshot arrival interval histogram buckets: [<=120ms, <=180ms, <=250ms, >250ms]. */
+  snapshotHistogram: [number, number, number, number]
+  /** Inbound bytes/sec over the last window. */
+  rxBps: number
+  /** Outbound bytes/sec over the last window. */
+  txBps: number
+  /** Total inbound bytes in the current session. */
+  rxBytes: number
+  /** Total outbound bytes in the current session. */
+  txBytes: number
+  /** Estimated loss / stall rate (0..1) from snapshot stalls and RTT spikes. */
+  lossRate: number
+}
+
 export interface NetClient {
   readonly status: NetStatus
   readonly selfId: string | null
   readonly online: number
+  readonly rtt?: number
+  readonly endpoint?: string | null
+  readonly stats?: NetClientStats
+  setEndpoint?(url: string | null): void
+  setStepReplay?(fn: ((map: string, x: number, y: number, dx: number, dy: number) => { x: number; y: number }) | null): void
+  onCorrection?(fn: (c: { seq: number; map: string; x: number; y: number; facing: Dir; ox: number; oy: number; snapped: boolean; reason?: string }) => void): () => void
+  visualOffset?(at?: number): { ox: number; oy: number; active: boolean }
   connect(): void
   disconnect(): void
   send(msg: ClientMsg): void

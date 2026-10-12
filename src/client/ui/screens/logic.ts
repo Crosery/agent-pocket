@@ -1,41 +1,33 @@
 // Pure game-screen logic (no DOM): dex filters, shop prices, item effects in the field, box moves, map
 // navigation, quest lists. Everything reads data from CONTENT / SaveData; failures return text keys.
-import type { Creature, Dir, GameMap, ItemDef, NatureDef, QuestDef, SaveData, SpeciesDef, StatKey, StatusId, TypeId, Warp, World } from '../../../shared/types.ts'
+import type { Creature, Dir, ItemDef, NatureDef, QuestDef, SaveData, SpeciesDef, StatKey, TypeId, Warp, World } from '../../../shared/types.ts'
 import { CONTENT, typeEffectiveness, type Content } from '../../../shared/content/index.ts'
-import { STAT_KEYS, expForLevel, legalMoves, maxHp } from '../../../shared/creature.ts'
+import { STAT_KEYS, expForLevel } from '../../../shared/creature.ts'
 import { gradeOf, gradeRank } from '../../../shared/gameplay/quality.ts'
+import {
+  addItem, applyMedicine, canSell, creatureAt, isConscious, maxAffordable, medicineBlocker, moveCreature,
+  needsMovePick, needsTarget, releaseCreature, sellPrice, shopBuyPrice, slotList, teachState,
+  type MedicineResult, type Slot, type TeachState,
+} from '../../../shared/gameplay/save-ops.ts'
 import { getMap } from '../../../shared/world/worldapi.ts'
 import type { ScreensConfig, SettingsField } from './config.ts'
+
+export {
+  addItem, applyMedicine, canSell, creatureAt, isConscious, maxAffordable, medicineBlocker, moveCreature,
+  needsMovePick, needsTarget, releaseCreature, sellPrice, shopBuyPrice, slotList, teachState,
+  type MedicineResult, type Slot, type TeachState,
+}
 
 // ---------------------------------------------------------------------------
 // Economy
 // ---------------------------------------------------------------------------
 
-export function sellPrice(item: ItemDef, c: Content = CONTENT): number {
-  return Math.max(0, Math.floor(item.price * c.config.economy.sellRatio))
-}
 
-/** Buy price under a world-event multiplier (Screens.shop priceMul); never below 1. */
-export function shopBuyPrice(item: ItemDef, mul = 1): number {
-  return mul === 1 ? item.price : Math.max(1, Math.round(item.price * mul))
-}
 
 /** The English name when it adds something (75 of 190 species are named identically in both languages). */
 export const extraEnglishName = (sp: Pick<SpeciesDef, 'nameZh' | 'nameEn'>): string | null => (sp.nameEn && sp.nameEn !== sp.nameZh ? sp.nameEn : null)
 
-export const canSell = (item: ItemDef): boolean => item.category !== 'key' && item.price > 0
 
-/** Largest quantity purchasable with `money` (0 when unaffordable). */
-export function maxAffordable(price: number, money: number, cap: number): number {
-  if (price <= 0) return Math.max(0, cap)
-  return Math.max(0, Math.min(cap, Math.floor(money / price)))
-}
-
-export function addItem(save: SaveData, itemId: string, qty: number): void {
-  const next = (save.bag[itemId] ?? 0) + Math.floor(qty)
-  if (next > 0) save.bag[itemId] = next
-  else delete save.bag[itemId]
-}
 
 // ---------------------------------------------------------------------------
 // Bag
@@ -59,7 +51,7 @@ export function bagEntries(save: SaveData, tab: ScreensConfig['bag']['tabs'][num
 // Creatures
 // ---------------------------------------------------------------------------
 
-export const isConscious = (cr: Creature): boolean => cr.hp > 0
+
 
 export function ivStars(iv: number, ivMax: number, count: number): number {
   if (ivMax <= 0 || count <= 0) return 0
@@ -92,17 +84,7 @@ export function defensiveProfile(types: readonly TypeId[], c: Content = CONTENT)
   return [...groups.entries()].sort((a, b) => b[0] - a[0]).map(([mul, ts]) => ({ mul, types: ts }))
 }
 
-export type TeachState = 'ok' | 'known' | 'unable'
 
-/** Whether a creature can learn `moveId` from a chip: own teachables, any learnset level, or legal pre-evolution moves. */
-export function teachState(cr: Creature, moveId: string, c: Content = CONTENT): TeachState {
-  if (cr.moves.some((m) => m.id === moveId)) return 'known'
-  const sp = c.species[cr.speciesId]
-  if (!sp || !c.moves[moveId]) return 'unable'
-  const learnable = sp.teachable.includes(moveId) || sp.learnset.some((l) => l.move === moveId) ||
-    legalMoves(cr.speciesId, c.config.party.maxLevel, c).has(moveId)
-  return learnable ? 'ok' : 'unable'
-}
 
 /** Linear evolution family of a species (root first), following evolvesFrom / evolvesTo. */
 export function evolutionChain(speciesId: string, c: Content = CONTENT): SpeciesDef[] {
@@ -130,91 +112,7 @@ export function statKeys(c: Content = CONTENT): StatKey[] {
   return c.stats.map((s) => s.key).filter((k): k is StatKey => (keys as string[]).includes(k))
 }
 
-// ---------------------------------------------------------------------------
-// Item effects in the field (medicine / level-up / evolve / chip). Failures are text keys.
-// ---------------------------------------------------------------------------
 
-export interface MedicineResult { hp: number; cured: StatusId | null; revived: boolean; pp: number }
-
-/** null when the item would have an effect on this creature, else the reason (text key). */
-export function medicineBlocker(cr: Creature, item: ItemDef, c: Content = CONTENT): string | null {
-  const e = item.effect
-  const max = maxHp(cr, c)
-  const fainted = cr.hp <= 0
-  switch (e.kind) {
-    case 'heal':
-      if (fainted) return 'screens.use.fainted'
-      return cr.hp >= max ? 'screens.use.hpFull' : null
-    case 'cure':
-      if (fainted) return 'screens.use.fainted'
-      return cr.status && (e.status === 'all' || e.status === cr.status) ? null : 'screens.use.noEffect'
-    case 'healCure':
-      if (fainted) return 'screens.use.fainted'
-      return cr.hp < max || cr.status ? null : 'screens.use.noEffect'
-    case 'revive':
-      return fainted ? null : 'screens.use.notFainted'
-    case 'pp':
-      return cr.moves.some((m) => m.pp < m.ppMax) ? null : 'screens.use.ppFull'
-    case 'levelUp':
-      return cr.level >= c.config.party.maxLevel ? 'screens.use.maxLevel' : null
-    case 'evolve':
-      return c.species[cr.speciesId]?.evolvesTo && c.species[c.species[cr.speciesId].evolvesTo!.id] ? null : 'screens.use.cannotEvolve'
-    case 'chip': {
-      const s = teachState(cr, e.move, c)
-      return s === 'ok' ? null : s === 'known' ? 'screens.use.known' : 'screens.use.cannotLearn'
-    }
-    case 'nature':
-      return null
-    default:
-      return 'screens.use.noEffect'
-  }
-}
-
-/** Effects that need a target creature when used from the bag. */
-export const needsTarget = (item: ItemDef): boolean =>
-  ['heal', 'cure', 'healCure', 'revive', 'pp', 'levelUp', 'evolve', 'chip', 'nature'].includes(item.effect.kind)
-
-/** Single-move PP items need the player to pick a move. */
-export const needsMovePick = (item: ItemDef): boolean => item.effect.kind === 'pp' && !item.effect.all
-
-/** Applies a medicine (heal/cure/healCure/revive/pp). Mutates the creature. */
-export function applyMedicine(cr: Creature, item: ItemDef, moveIndex = -1, c: Content = CONTENT): MedicineResult {
-  const e = item.effect
-  const max = maxHp(cr, c)
-  const res: MedicineResult = { hp: 0, cured: null, revived: false, pp: 0 }
-  const heal = (amount: number) => {
-    const before = cr.hp
-    cr.hp = Math.min(max, cr.hp + Math.max(0, Math.floor(amount)))
-    res.hp = cr.hp - before
-  }
-  const cure = () => {
-    if (cr.status) { res.cured = cr.status; cr.status = null; cr.statusTurns = 0 }
-  }
-  switch (e.kind) {
-    case 'heal': heal(e.amount === 'full' ? max : e.amount); break
-    case 'cure': if (cr.status && (e.status === 'all' || e.status === cr.status)) cure(); break
-    case 'healCure': heal(max); cure(); break
-    case 'revive':
-      if (cr.hp <= 0) {
-        cr.hp = Math.max(1, Math.floor(max * e.fraction))
-        cure()
-        res.revived = true
-        res.hp = cr.hp
-      }
-      break
-    case 'pp': {
-      const slots = e.all ? cr.moves : cr.moves.filter((_, i) => i === moveIndex)
-      for (const m of slots) {
-        const before = m.pp
-        m.pp = e.amount === 'full' ? m.ppMax : Math.min(m.ppMax, m.pp + e.amount)
-        res.pp += m.pp - before
-      }
-      break
-    }
-    default: break
-  }
-  return res
-}
 
 // ---------------------------------------------------------------------------
 // Dex
@@ -283,65 +181,7 @@ export function dexCompanies(list: readonly SpeciesDef[], save: SaveData, seenOn
   return [...count.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([k]) => k)
 }
 
-// ---------------------------------------------------------------------------
-// Box / party storage. Party and boxes are dense lists; an "empty slot" means "append here".
-// ---------------------------------------------------------------------------
 
-export interface Slot { area: 'party' | 'box'; box: number; index: number }
-
-export function slotList(save: SaveData, s: Slot): Creature[] {
-  if (s.area === 'party') return save.party
-  while (save.boxes.length <= s.box) save.boxes.push([])
-  return save.boxes[s.box]
-}
-
-export function creatureAt(save: SaveData, s: Slot): Creature | undefined {
-  return slotList(save, s)[s.index]
-}
-
-const partyOk = (party: Creature[]) => party.length > 0 && party.some(isConscious)
-
-/**
- * Moves the creature at `from` onto `to`: occupied target swaps, empty target appends to that list.
- * Returns null on success or a text key explaining why the move is not allowed (state unchanged).
- */
-export function moveCreature(save: SaveData, from: Slot, to: Slot, c: Content = CONTENT): string | null {
-  const src = slotList(save, from)
-  const dst = slotList(save, to)
-  const a = src[from.index]
-  if (!a) return 'screens.box.err.empty'
-  if (src === dst && from.index === to.index) return null
-  const b = dst[to.index]
-  const party = save.party.slice()
-  const boxes = save.boxes.map((x) => x.slice())
-  const list = (s: Slot) => (s.area === 'party' ? party : boxes[s.box])
-  const ls = list(from)
-  const ld = list(to)
-  if (b) {
-    ls[from.index] = b
-    ld[to.index] = a
-  } else {
-    const cap = to.area === 'party' ? c.config.party.maxParty : c.config.party.boxSize
-    if (ls !== ld && ld.length >= cap) return to.area === 'party' ? 'screens.box.err.partyFull' : 'screens.box.err.boxFull'
-    ls.splice(from.index, 1)
-    ld.push(a)
-  }
-  if (!partyOk(party)) return party.length === 0 ? 'screens.box.err.lastMember' : 'screens.box.err.needConscious'
-  save.party = party
-  save.boxes = boxes
-  return null
-}
-
-export function releaseCreature(save: SaveData, at: Slot): string | null {
-  const src = slotList(save, at)
-  if (!src[at.index]) return 'screens.box.err.empty'
-  if (at.area === 'party') {
-    const rest = save.party.filter((_, i) => i !== at.index)
-    if (!partyOk(rest)) return rest.length === 0 ? 'screens.box.err.lastMember' : 'screens.box.err.needConscious'
-  }
-  src.splice(at.index, 1)
-  return null
-}
 
 // ---------------------------------------------------------------------------
 // World map

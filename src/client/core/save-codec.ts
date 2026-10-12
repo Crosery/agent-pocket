@@ -1,5 +1,9 @@
 // Portable save codes: "<version>.<base64url(utf8 JSON)>.<checksum>". Pure, works in browsers and Node.
+import { timingSafeEqualStr } from '../../shared/net-envelope.ts'
+import { portableChecksum } from '../../shared/save-provenance.ts'
 import { hashString } from './hash.ts'
+
+const SAVE_CODE_DOMAIN = 'agent-pocket/save-code-v1'
 
 export function toBase64Url(text: string): string {
   const bytes = new TextEncoder().encode(text)
@@ -31,17 +35,27 @@ export function encodeSaveCode(data: unknown, version: number): string {
   return `${version}.${payload}.${checksum(payload)}`
 }
 
-/** Returns the parsed JSON value, or null when the code is malformed or its checksum does not match. */
-export function decodeSaveCode(code: string): { version: number; data: unknown } | null {
+/** Returns the parsed JSON value, or null when the code is malformed or its checksum/signature does not match. */
+export function decodeSaveCode(code: string, domain = SAVE_CODE_DOMAIN): { version: number; data: unknown; signed?: boolean } | null {
   const parts = code.replace(/\s+/g, '').split('.')
-  if (parts.length !== 3) return null
-  const [ver, payload, sum] = parts
+  if (parts.length !== 3 && parts.length !== 4) return null
+  const [ver, payload, sum, sig] = parts
   if (!/^\d+$/.test(ver) || !payload || checksum(payload) !== sum.toLowerCase()) return null
+  if (sig !== undefined) {
+    const expected = portableChecksum(domain, `${ver}.${payload}.${sum.toLowerCase()}`)
+    if (!timingSafeEqualStr(sig.toLowerCase(), expected.toLowerCase())) return null
+  }
   const json = fromBase64Url(payload)
   if (json === null) return null
   try {
-    return { version: Number(ver), data: JSON.parse(json) as unknown }
+    return { version: Number(ver), data: JSON.parse(json) as unknown, ...(sig !== undefined ? { signed: true } : {}) }
   } catch {
     return null
   }
+}
+
+export function encodeSignedSaveCode(data: unknown, version: number, domain = SAVE_CODE_DOMAIN): string {
+  const base = encodeSaveCode(data, version)
+  const sig = portableChecksum(domain, base)
+  return `${base}.${sig}`
 }

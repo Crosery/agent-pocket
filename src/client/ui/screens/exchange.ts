@@ -6,6 +6,7 @@ import { createRowMenu, type RowMenu } from '../menu.ts'
 import { el } from '../widgets.ts'
 import { backPressed, frame, isCompact, openScreen, quantityPicker, sectionTitle, setChildren, sfx, type ScreenEnv } from './base.ts'
 import { SCREENS } from './config.ts'
+import { sendExchangeDeal } from '../../net/authority-client.ts'
 
 const names = (m: Record<string, number>): string => Object.entries(m).map(([id, n]) => t('screens.exchange.stack', { item: CONTENT.items[id]?.nameZh ?? id, n })).join(t('screens.exchange.join'))
 
@@ -69,6 +70,7 @@ export function exchangeScreen(env: ScreenEnv, desk: string): Promise<void> {
       if (n <= 0) return
       if (!await ctx.ui.confirm(t('screens.exchange.confirm', { give: names(scale(o.give, n)), get: names(scale(o.get, n)) }))) return
       if (!takeOffer(o, ctx.save, n)) return
+      sendExchangeDeal(ctx, desk, i, n)
       dirty = true
       ctx.events.emit('bag:changed', {})
       sfx(env, 'buy')

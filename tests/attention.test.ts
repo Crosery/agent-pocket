@@ -56,7 +56,7 @@ test('research: nothing waiting at the start, a dot once the level reward is cla
   assert.equal(attentionTotal(counts), 1)
   assert.deepEqual(entrySources(counts, 'research').map((s) => s.id), ['research'])
   assert.deepEqual(entrySources(counts, 'dex'), [], 'only the research row wears the dot')
-  const ctx = { save, ui: { toast() {} }, events: { emit() {} }, data: { ...CONTENT, world: buildWorld() } } as unknown as GameContext
+  const ctx = { save, net: { status: 'offline' }, ui: { toast() {} }, events: { emit() {} }, data: { ...CONTENT, world: buildWorld() } } as unknown as GameContext
   assert.ok(claimResearchRewards(ctx))
   assert.equal(attentionTotal(attentionCounts(save)), 0, 'the dot goes away as soon as the reward is claimed')
 })
@@ -94,7 +94,7 @@ test('the mechanism is generic: a second source is one provider and one config l
   assert.deepEqual(validateAttention(cfg, Object.keys(providers), pauseActions), [])
   const save: AttentionSave = { research: {}, flags: { 'fresh:items': 3 } }
   const counts = attentionCounts(save, cfg, providers)
-  assert.deepEqual(counts, { research: 0, newItems: 3 })
+  assert.deepEqual(counts, { research: 0, contentUpdate: 0, newItems: 3 })
   assert.deepEqual(entrySources(counts, 'bag', cfg).map((s) => s.id), ['newItems'])
   assert.equal(guidedSource(save, counts, 'bag', cfg)?.id, 'newItems')
   assert.deepEqual(raisedSources({ research: 0, newItems: 0 }, counts), ['newItems'])
@@ -118,4 +118,17 @@ test('the first-time prompt is a tutorial tip: once, in the world, only while th
   assert.match(t(`${tip.text}.bodyTouch`), /菜单/)
   assert.match(t(`${tip.text}.body`), /智灵研究/)
   assert.match(t(`${tip.text}.bodyTouch`), /智灵研究/)
+})
+
+test('contentUpdate: raises a dot on intel when update:pendingRev > update:seenRev and clears once seen', () => {
+  const save = createSaveManager({ world: buildWorld(), storage: null }).newGame({ name: 'p', avatar: '' })
+  assert.equal(attentionCounts(save).contentUpdate, 0)
+  save.flags['update:fromRev'] = 1
+  save.flags['update:pendingRev'] = 4
+  const counts = attentionCounts(save)
+  assert.equal(counts.contentUpdate, 1)
+  assert.deepEqual(entrySources(counts, 'intel').map((s) => s.id), ['contentUpdate'])
+  assert.equal(guidedSource(save, counts, 'intel')?.id, 'contentUpdate')
+  save.flags['update:seenRev'] = 4
+  assert.equal(attentionCounts(save).contentUpdate, 0)
 })

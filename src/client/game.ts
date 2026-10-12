@@ -3,7 +3,7 @@
 // are discovered with import.meta.glob so the game still runs, with fallbacks, while they are missing.
 import type { Creature, QuestDef, SaveData, Settings, World } from '../shared/types.ts'
 import type { ClientMsg, PublicProfile } from '../shared/protocol.ts'
-import type { AudioManager, BattleRunner, GameClock, GameContext, GameData, GameEvents, Minimap, Screens, WorldFx } from './contracts.ts'
+import type { AudioManager, BattleRunner, GameClock, GameContext, GameData, GameEvents, Minimap, NetClient, Screens, WorldFx } from './contracts.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { toView } from '../shared/creature.ts'
 import { buildWorld, buildWorldAsync, worldAnchors } from '../shared/world/index.ts'
@@ -11,11 +11,13 @@ import { getMap } from '../shared/world/worldapi.ts'
 import { anchorKindSpec, anchorSpotFromId, parseAnchorId } from '../shared/world/anchors.ts'
 import {
   applyDocumentSettings, createAssetStore, createAudio, createClock, createEventBus, createInput, createSaveManager,
+  emitSaveLoaded, reconcileSave,
 } from './core/index.ts'
 import { RngHub, randomSeed } from './core/rng-hub.ts'
 import { createRenderer, createWorldView } from './render/index.ts'
 import { UI_CONFIG, createChatUI, createEscapeStack, createHUD, createMinimap, createUIKit, installEscapeFallback, releaseButtonFocusAfterClick } from './ui/index.ts'
 import { createNetClient } from './net/index.ts'
+import { installAuthorityHandlers, isOnlineAuthorityActive } from './net/authority-client.ts'
 import { createAttention } from './attention/index.ts'
 import { createOnboarding } from './onboarding/index.ts'
 import { createFallbackBattleRunner, createFallbackScreens, createOverworld, GAME, type MultiplayerHooks, type OverworldExt } from './world/index.ts'
@@ -26,6 +28,8 @@ import { flyLanding, resolvePlace } from './world/explore.ts'
 import { anchorGateMessage, anchorLanding, anchorName, canAnchorTravel } from './world/anchors.ts'
 import { createDebugOverlay } from './debug-overlay.ts'
 import type { DevKit } from './dev/kit.ts'
+import { getOfficialServer, probeServer, resolveServerUrls, type ServerEntry } from './net/servers.ts'
+import { bindAccountSave, getAccountSession, logoutAccount, type AccountSessionResult } from './net/auth.ts'
 
 type Mutable<T> = { -readonly [K in keyof T]: T[K] }
 type Loader = () => Promise<unknown>
@@ -38,13 +42,13 @@ const UI_BLOCKING_CLASS = 'ap-ui-blocking'
 interface ScreensModule { createScreens(ctx: GameContext): Screens & { importSave?(): Promise<SaveData | null> }; questHudText?(def: QuestDef, stage: number): string }
 interface BattleModule { createBattleRunner(ctx: GameContext): BattleRunner }
 interface PvpModule { challengePvp(ctx: GameContext, id: string, name: string): Promise<void>; installPvpHandlers(ctx: GameContext): () => void }
-interface TradeModule { startTradeFlow(ctx: GameContext, id: string, name: string): Promise<void>; installTradeHandlers(ctx: GameContext): () => void }
-
+ interface TradeModule { startTradeFlow(ctx: GameContext, id: string, name: string): Promise<void>; installTradeHandlers(ctx: GameContext): () => void }
+interface CoopModule { installCoopChannel(net: NetClient, ctx: GameContext): unknown }
 /** Vite rewrites this into lazy loaders for the files that exist; missing files simply have no entry. */
 function optionalModules(): Record<string, Loader> {
   try {
     // @ts-ignore -- import.meta.glob is a Vite compile-time feature (not in the node/tsc lib types)
-    return import.meta.glob(['./battle/index.ts', './ui/screens/index.ts', './net/pvp-channel.ts', './net/trade-flow.ts']) as Record<string, Loader>
+    return import.meta.glob(['./battle/index.ts', './ui/screens/index.ts', './net/pvp-channel.ts', './net/trade-flow.ts', './net/coop-channel.ts']) as Record<string, Loader>
   } catch {
     return {}
   }
@@ -168,7 +172,8 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   const loadScreens = loadOptional<ScreensModule>(loaders, './ui/screens/index.ts', (m) => typeof m.createScreens === 'function')
   const loadBattle = loadOptional<BattleModule>(loaders, './battle/index.ts', (m) => typeof m.createBattleRunner === 'function')
   const loadPvp = loadOptional<PvpModule>(loaders, './net/pvp-channel.ts', (m) => typeof m.challengePvp === 'function')
-  const loadTrade = loadOptional<TradeModule>(loaders, './net/trade-flow.ts', (m) => typeof m.startTradeFlow === 'function')
+   const loadTrade = loadOptional<TradeModule>(loaders, './net/trade-flow.ts', (m) => typeof m.startTradeFlow === 'function')
+  const loadCoop = loadOptional<CoopModule>(loaders, './net/coop-channel.ts', (m) => typeof m.installCoopChannel === 'function')
   loader.step('assets')
   const assets = createAssetStore()
   await assets.init()
@@ -274,16 +279,28 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
 
   // ---- context ------------------------------------------------------------
   let inWorld = false
+  let activeMode: 'singleplayer' | 'multiplayer' = 'singleplayer'
   let lastPersistAt = 0
   let lastFrame = performance.now()
   const ctxObj: Partial<Mutable<GameContext>> & { save: SaveData } = {
     data,
     get save() { return save },
-    set save(v: SaveData) { save = v; clockHolder.rebind(v) },
+    set save(v: SaveData) { save = v; if (playing) playing = v; clockHolder.rebind(v) },
     events, input, audio, assets, saves,
     clock: clockHolder.clock,
     renderer, world: worldView, ui, hud, minimap, chat, net,
     persist(reason: string) {
+      if (activeMode === 'multiplayer') {
+        if (ctx.save === playing) {
+          overworld.storeExplored()
+          const p = overworld.player
+          ctx.save.position = { map: p.map, x: Math.floor(p.x), y: Math.floor(p.y), facing: p.facing }
+        }
+        lastPersistAt = performance.now()
+        net.updateProfile(profile())
+        events.emit('save:changed', { reason })
+        return
+      }
       if (!inWorld) {
         if (titleSaveStored && !saves.write(ctx.save, slot)) ui.toast(t('game.save.failed'), 'error')
         return
@@ -293,9 +310,8 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         const p = overworld.player
         ctx.save.position = { map: p.map, x: Math.floor(p.x), y: Math.floor(p.y), facing: p.facing }
       }
-      if (!saves.write(ctx.save, slot)) ui.toast(t('game.save.failed'), 'error')
+      if (!isOnlineAuthorityActive(ctx) && !saves.write(ctx.save, slot)) ui.toast(t('game.save.failed'), 'error')
       lastPersistAt = performance.now()
-      net.updateProfile(profile())
       events.emit('save:changed', { reason })
     },
     species: (id: string) => data.species[id],
@@ -343,10 +359,12 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
 
   // ---- events & net wiring ------------------------------------------------
   events.on('toast', ({ text, kind }) => ui.toast(text, kind))
-  events.on('net:status', ({ status }) => hud.setNetStatus(status, net.online))
-  net.on('online', (m) => hud.setNetStatus(net.status, m.count))
+  events.on('net:status', ({ status }) => hud.setNetStatus(status, net.online, net.rtt))
+  net.on('online', (m) => hud.setNetStatus(net.status, m.count, net.rtt))
+  net.on('pong', () => hud.setNetStatus(net.status, net.online, net.rtt))
+  installAuthorityHandlers(ctx)
   net.on('welcome', (m) => {
-    hud.setNetStatus(net.status, m.online)
+    hud.setNetStatus(net.status, m.online, net.rtt)
     // The server's greeting names the T key; on a phone the same sentence points at the chat icon (only the stock text is swapped).
     const motd = document.documentElement.dataset.touchControls === 'on' && m.motd === t('net.motd') ? t('net.motdTouch') : m.motd
     if (motd) chat.addMessage({ name: '', channel: 'system', text: motd, at: Date.now() })
@@ -506,8 +524,8 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   async function buildWorldLayer(): Promise<void> {
     if (layerBuilt) return
     layerBuilt = true
-    const [pvpMod, tradeMod] = await Promise.all([loadPvp, loadTrade])
-    hooks = { startTradeFlow: tradeMod?.startTradeFlow, challengePvp: pvpMod?.challengePvp }
+    const [pvpMod, tradeMod, coopMod] = await Promise.all([loadPvp, loadTrade, loadCoop])
+     hooks = { startTradeFlow: tradeMod?.startTradeFlow, challengePvp: pvpMod?.challengePvp }
     overworld = createOverworld(ctx, {
       rng: new RngHub(dev?.rngSeed ?? randomSeed()),
       multiplayer: () => hooks,
@@ -524,9 +542,13 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     onboarding = createOnboarding(ctx, overworld, uiRoot)
     attention = createAttention(ctx)
     debugOverlay = createDebugOverlay(ctx, overworld, appRoot)
-    for (const [name, install] of [['pvp', pvpMod?.installPvpHandlers], ['trade', tradeMod?.installTradeHandlers]] as const) {
-      try { install?.(ctx) } catch (err) { console.error(`[game] ${name} handlers failed to install`, err) }
-    }
+    for (const [name, install] of [
+      ['pvp', () => pvpMod?.installPvpHandlers(ctx)],
+      ['trade', () => tradeMod?.installTradeHandlers(ctx)],
+      ['coop', () => coopMod?.installCoopChannel(net, ctx)],
+    ] as const) {
+      try { install?.() } catch (err) { console.error(`[game] ${name} handlers failed to install`, err) }
+     }
     dev?.install({ ctx, overworld, world: needWorld(), onboarding, flyTo: (id) => runModal(() => flyTo(id)), tick })
   }
   if (dev) await buildWorldLayer()
@@ -557,20 +579,137 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
     return s
   }
 
-  async function titleFlow(): Promise<{ save: SaveData; isNew: boolean }> {
+  async function multiplayerFlow(preselectedServer?: ServerEntry): Promise<{ save: SaveData; isNew: boolean; mode: 'multiplayer' } | null> {
+    let pendingServer = preselectedServer ?? null
+    for (;;) {
+      const server = pendingServer ?? (screens.serverList ? await screens.serverList() : null)
+      pendingServer = null
+      if (!server) return null
+
+      let urls = resolveServerUrls(server.address)
+
+      // Cross-origin redirect: custom servers require same-origin landing for SameSite=Lax cookies and CSRF
+      if (typeof location !== 'undefined' && location.origin && urls.httpBase !== location.origin) {
+        if (server.id === 'official' || server.official) {
+          const probe = await probeServer(urls.httpBase, 1500)
+          if (!probe.online) {
+            urls = resolveServerUrls(location.origin)
+          }
+        }
+        if (urls.httpBase !== location.origin) {
+          ui.toast(t('screens.serverList.crossOriginRedirect'), 'info')
+          const target = new URL(urls.httpBase)
+          target.searchParams.set('join', '1')
+          location.href = target.href
+          return null
+        }
+      }
+
+      let session: AccountSessionResult | null = null
+      try {
+        session = await getAccountSession(urls.httpBase)
+      } catch {
+        // unauthenticated or offline
+      }
+
+      if (!session) {
+        if (!screens.accountAuth) {
+          ui.toast(t('screens.auth.moduleUnavailable'), 'warn')
+          continue
+        }
+        session = await screens.accountAuth(server, urls.httpBase)
+        if (!session) continue
+      }
+
+      let serverSave = session.save
+      let isNew = false
+
+      if (!serverSave) {
+        // Entering server must not use offline save: create a dedicated player save on the server directly
+        const char = await screens.newGame()
+        if (!char) continue
+        await ensureWorld()
+        const newSave = saves.newGame(char)
+        newSave.settings = { ...ctx.save.settings }
+        applyNewGameStart(newSave)
+
+        try {
+          const bound = await bindAccountSave(urls.httpBase, { save: newSave, imported: false })
+          serverSave = bound.save
+          isNew = true
+        } catch (err) {
+          ui.toast(err instanceof Error ? err.message : String(err), 'error')
+          continue
+        }
+      }
+      if (!serverSave) continue
+
+      net.setEndpoint?.(urls.wsUrl)
+      return { save: serverSave, isNew, mode: 'multiplayer' }
+    }
+  }
+
+  async function titleFlow(): Promise<{ save: SaveData; isNew: boolean; mode: 'singleplayer' | 'multiplayer' }> {
     if (dev?.skipTitle) {
       const existing = saves.load(slot)
       const s = existing ?? dev.newSave(saves, needWorld())
       if (!existing) applyNewGameStart(s)
-      return { save: s, isNew: false }
+      return { save: s, isNew: false, mode: 'singleplayer' }
     }
+
+    // Landing flow: auto-join intent when redirected from another origin to this custom server
+    if (typeof location !== 'undefined') {
+      const params = new URLSearchParams(location.search)
+      if (params.has('join')) {
+        params.delete('join')
+        const clean = params.toString() ? `?${params.toString()}` : ''
+        window.history.replaceState(null, '', `${location.pathname}${clean}${location.hash}`)
+        const landingServer: ServerEntry = {
+          id: 'srv_landing',
+          name: t('screens.serverList.currentServer', { host: location.host }),
+          address: location.origin,
+          official: false,
+        }
+        const autoJoin = await multiplayerFlow(landingServer)
+        if (autoJoin) return autoJoin
+      }
+    }
+    // Startup authentication gate: require account login/registration right when entering the game
+    // if not already authenticated via session cookie.
+    const defaultServer = getOfficialServer()
+    const defaultUrls = resolveServerUrls(defaultServer.address)
+    let existingSession: AccountSessionResult | null = null
+    if (screens.accountAuth) {
+      try {
+        existingSession = await getAccountSession(defaultUrls.httpBase)
+      } catch {
+        // offline or unauthenticated
+      }
+      while (!existingSession) {
+        existingSession = await screens.accountAuth(defaultServer, defaultUrls.httpBase, { required: true })
+      }
+    }
+
+    const handleSwitchAccount = async () => {
+      try {
+        await logoutAccount(defaultUrls.httpBase)
+      } catch { /* ignore */ }
+      existingSession = null
+      while (!existingSession) {
+        if (!screens.accountAuth) break
+        existingSession = await screens.accountAuth(defaultServer, defaultUrls.httpBase, { required: true })
+      }
+    }
+
     for (;;) {
       const hasSave = saves.hasSave(slot)
-      const choice = await screens.title(hasSave)
+      const choice = await screens.title(hasSave, existingSession, () => void handleSwitchAccount())
       if (choice === 'continue') {
         await ensureWorld()
         const s = saves.load(slot)
-        if (s) return { save: s, isNew: false }
+        if (s) {
+          return { save: s, isNew: false, mode: 'singleplayer' }
+        }
       } else if (choice === 'new') {
         if (hasSave && !(await ui.confirm(t('game.title.overwrite')))) continue
         const r = await screens.newGame()
@@ -579,7 +718,7 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         const s = saves.newGame(r)
         s.settings = { ...ctx.save.settings }
         applyNewGameStart(s)
-        return { save: s, isNew: true }
+        return { save: s, isNew: true, mode: 'singleplayer' }
       } else if (choice === 'import') {
         await ensureWorld()
         const s = await importSave()
@@ -588,21 +727,25 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
           s.settings = { ...ctx.save.settings }
           saves.write(s, slot)
           ui.toast(t('game.title.imported', { name: s.name }), 'success')
-          return { save: s, isNew: false }
+          return { save: s, isNew: false, mode: 'singleplayer' }
         }
       } else if (choice === 'settings') {
         await screens.settings()
+      } else if (choice === 'multiplayer') {
+        const mp = await multiplayerFlow()
+        if (mp) return mp
       }
     }
   }
 
   if (!dev) void startWorld()
   const start = await titleFlow()
+  activeMode = start.mode
   await ensureWorld()
   await buildWorldLayer()
   const readyWorld = needWorld()
-  ctx.save = start.save
-  playing = start.save
+  ctx.save = reconcileSave(start.save, readyWorld, data)
+  playing = ctx.save
   dev?.applyStart(ctx, readyWorld)
   applySettings(ctx.save.settings)
   audio.stopBgm(GAME.region.musicFadeMs)
@@ -611,15 +754,18 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
   const startMap = getMap(readyWorld, pos.map) ? pos : { ...readyWorld.maps[readyWorld.startMap].spawn, map: readyWorld.startMap }
   await overworld.enterMap(startMap.map, startMap.x, startMap.y, startMap.facing, false)
   inWorld = true
+  if (!start.isNew) emitSaveLoaded(ctx)
   mark('world-entered')
   hud.setVisible(true)
   onboarding.setVisible(true)
   minimap.setVisible(ctx.save.settings.showMinimap)
-  chat.setVisible(true)
+  chat.setVisible(start.mode === 'multiplayer')
   hud.setMoney(ctx.save.money)
-  hud.setNetStatus(net.status, net.online)
+  hud.setNetStatus(net.status, net.online, net.rtt)
   ctx.persist(start.isNew ? 'newgame' : 'continue')
-  net.connect()
+  if (start.mode === 'multiplayer') {
+    net.connect()
+  }
   await ui.fade(false, GAME.warp.fadeMs)
   if (start.isNew) await overworld.playIntro()
   await dev?.runActions(ctx, overworld, readyWorld, screens)

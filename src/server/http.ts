@@ -10,14 +10,33 @@ import { promisify } from 'node:util'
 import type { Stats } from 'node:fs'
 import type { LeaderboardEntry } from '../shared/protocol.ts'
 import { t } from '../shared/content/index.ts'
+import {
+  checkOriginCsrf,
+  clearSessionCookie,
+  formatSessionCookie,
+  isSecureRequest,
+  type AccountStore,
+} from './accounts.ts'
 import { NET } from './config.ts'
+import { isRecord, safeJsonParse } from './util.ts'
 
 const brotliAsync = promisify(brotliCompress)
 const gzipAsync = promisify(gzip)
 
+export interface HttpStatusInfo {
+  protocolVersion: number
+  version: string
+  online: number
+  name: string
+}
+
 export interface HttpApi {
   health(): Record<string, unknown>
+  status?(): HttpStatusInfo
   leaderboard(): LeaderboardEntry[]
+  accounts?: AccountStore
+  clientIp?(req: IncomingMessage): string
+  metrics?(req: IncomingMessage): Record<string, unknown> | null
 }
 
 export interface HttpOptions {
@@ -58,10 +77,46 @@ function sendText(res: ServerResponse, status: number, text: string, head = fals
   res.end(head ? undefined : body)
 }
 
-function sendJson(res: ServerResponse, status: number, data: unknown, head = false): void {
+function sendJson(res: ServerResponse, status: number, data: unknown, head = false, extraHeaders?: Record<string, string>): void {
   const body = Buffer.from(JSON.stringify(data), 'utf8')
-  res.writeHead(status, { 'Content-Type': NET.http.mime['.json'], 'Content-Length': body.length, 'Cache-Control': 'no-store' })
+  res.writeHead(status, {
+    'Content-Type': NET.http.mime['.json'],
+    'Content-Length': body.length,
+    'Cache-Control': 'no-store',
+    ...extraHeaders,
+  })
   res.end(head ? undefined : body)
+}
+
+async function readJsonBody(
+  req: IncomingMessage,
+  maxBytes: number,
+): Promise<{ ok: true; data: unknown } | { ok: false; status: number; code: string; message: string }> {
+  const rawCt = Array.isArray(req.headers['content-type']) ? req.headers['content-type'][0] : req.headers['content-type']
+  const ct = rawCt?.split(';')[0]?.trim().toLowerCase()
+  if (ct !== 'application/json') {
+    return { ok: false, status: 415, code: 'bad_request', message: t('net.http.badRequest') }
+  }
+  const chunks: Buffer[] = []
+  let total = 0
+  try {
+    for await (const chunk of req) {
+      const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)
+      total += buf.length
+      if (total > maxBytes) {
+        return { ok: false, status: 413, code: 'payload_too_large', message: t('net.http.payloadTooLarge') }
+      }
+      chunks.push(buf)
+    }
+  } catch {
+    return { ok: false, status: 400, code: 'bad_request', message: t('net.http.badRequest') }
+  }
+  const raw = Buffer.concat(chunks).toString('utf8')
+  const parsed = safeJsonParse(raw)
+  if (parsed === undefined) {
+    return { ok: false, status: 400, code: 'bad_request', message: t('net.http.badRequest') }
+  }
+  return { ok: true, data: parsed }
 }
 
 export function createHttpHandler(opts: HttpOptions): (req: IncomingMessage, res: ServerResponse) => void {
@@ -211,6 +266,98 @@ export function createHttpHandler(opts: HttpOptions): (req: IncomingMessage, res
     stream.on('error', (err) => { log(`static read failed ${rel}: ${err.message}`); res.destroy(err) })
     stream.pipe(res)
   }
+  async function handlePostApi(req: IncomingMessage, res: ServerResponse, pathname: string): Promise<void> {
+    const accounts = opts.api.accounts
+    if (!accounts) {
+      sendJson(res, 404, { error: 'not_found', message: t('net.http.notFound') })
+      return
+    }
+    const ip = opts.api.clientIp?.(req) ?? req.socket.remoteAddress ?? ''
+    if (!checkOriginCsrf(req)) {
+      accounts.audit({ ip, kind: 'auth.csrf_blocked', severity: 2, detail: { path: pathname } })
+      sendJson(res, 403, { error: 'forbidden_origin', message: t('net.auth.forbiddenOrigin') })
+      return
+    }
+    const secure = isSecureRequest(req)
+
+    if (pathname === h.logoutPath) {
+      accounts.logoutSession(req.headers.cookie, { ip })
+      sendJson(res, 200, { ok: true }, false, { 'Set-Cookie': clearSessionCookie({ secure }) })
+      return
+    }
+    if (pathname !== h.registerPath && pathname !== h.loginPath && pathname !== h.bindPath) {
+      sendJson(res, 404, { error: 'not_found', message: t('net.http.notFound') })
+      return
+    }
+
+    const bodyRes = await readJsonBody(req, h.maxBodyBytes)
+    if (!bodyRes.ok) {
+      sendJson(res, bodyRes.status, { error: bodyRes.code, message: bodyRes.message })
+      return
+    }
+    const body = isRecord(bodyRes.data) ? bodyRes.data : {}
+
+    if (pathname === h.registerPath) {
+      const result = await accounts.registerAccount(body.username, body.password, { ip })
+      if (!result.ok) {
+        sendJson(res, result.status, { error: result.code, message: result.message })
+        return
+      }
+      sendJson(
+        res,
+        200,
+        { account: result.account, save: result.save },
+        false,
+        { 'Set-Cookie': formatSessionCookie(result.session.token, { secure }) },
+      )
+      return
+    }
+
+    if (pathname === h.loginPath) {
+      const result = await accounts.loginAccount(body.username, body.password, { ip })
+      if (!result.ok) {
+        sendJson(res, result.status, { error: result.code, message: result.message })
+        return
+      }
+      sendJson(
+        res,
+        200,
+        {
+          account: result.account,
+          save: result.save,
+          ...(result.imported !== undefined ? { imported: result.imported } : {}),
+        },
+        false,
+        { 'Set-Cookie': formatSessionCookie(result.session.token, { secure }) },
+      )
+      return
+    }
+
+    if (pathname === h.bindPath) {
+      const session = accounts.getAccountBySession(req.headers.cookie)
+      if (!session) {
+        accounts.audit({ ip, kind: 'account.bind_unauthorized', severity: 2, detail: {} })
+        sendJson(res, 401, { error: 'unauthorized', message: t('net.auth.unauthorized') })
+        return
+      }
+      const bindRes = accounts.bindSave(session.accountId, body.save, {
+        imported: body.imported === true,
+        ip,
+      })
+      if (!bindRes.ok) {
+        sendJson(res, bindRes.status, { error: bindRes.code, message: bindRes.message })
+        return
+      }
+      sendJson(res, 200, {
+        account: { id: session.accountId, username: session.username },
+        save: bindRes.record.save,
+        imported: bindRes.record.imported,
+      })
+      return
+    }
+
+    sendJson(res, 404, { error: 'not_found', message: t('net.http.notFound') })
+  }
 
   async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const method = req.method ?? 'GET'
@@ -225,6 +372,28 @@ export function createHttpHandler(opts: HttpOptions): (req: IncomingMessage, res
     }
     if (pathname.includes('\0')) { sendText(res, 400, t('net.http.badRequest'), head); return }
     const isApi = pathname.startsWith(h.apiPrefix) || pathname === h.apiPrefix.replace(/\/$/, '')
+    const isPostRoute = pathname === h.registerPath || pathname === h.loginPath || pathname === h.logoutPath || pathname === h.bindPath
+
+    if (pathname === h.statusPath && method === 'OPTIONS') {
+      res.writeHead(204, {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
+        'Cache-Control': 'no-store',
+      })
+      res.end()
+      return
+    }
+
+    if (isPostRoute) {
+      if (method !== 'POST') {
+        res.setHeader('Allow', 'POST')
+        sendJson(res, 405, { error: 'method_not_allowed', message: t('net.http.methodNotAllowed') }, head)
+        return
+      }
+      await handlePostApi(req, res, pathname)
+      return
+    }
+
     if (method !== 'GET' && !head) {
       res.setHeader('Allow', 'GET, HEAD')
       if (isApi) sendJson(res, 405, { error: 'method_not_allowed', message: t('net.http.methodNotAllowed') })
@@ -232,7 +401,38 @@ export function createHttpHandler(opts: HttpOptions): (req: IncomingMessage, res
       return
     }
     if (pathname === h.healthPath) { sendJson(res, 200, opts.api.health(), head); return }
+    if (pathname === h.statusPath && opts.api.status) {
+      sendJson(res, 200, opts.api.status(), head, { 'Access-Control-Allow-Origin': '*' })
+      return
+    }
     if (pathname === h.leaderboardPath) { sendJson(res, 200, { entries: opts.api.leaderboard() }, head); return }
+    if (pathname === h.accountPath && opts.api.accounts) {
+      const session = opts.api.accounts.getAccountBySession(req.headers.cookie)
+      if (!session) {
+        const ip = opts.api.clientIp?.(req) ?? req.socket.remoteAddress ?? ''
+        opts.api.accounts.audit({ ip, kind: 'account.get_unauthorized', severity: 1, detail: {} })
+        sendJson(res, 401, { error: 'unauthorized', message: t('net.auth.unauthorized') }, head)
+        return
+      }
+      const saveRec = opts.api.accounts.getAccountSave(session.accountId)
+      sendJson(
+        res,
+        200,
+        {
+          account: { id: session.accountId, username: session.username },
+          save: saveRec?.save ?? null,
+          ...(saveRec?.save ? { imported: saveRec.imported } : {}),
+        },
+        head,
+      )
+      return
+    }
+    if (pathname === h.metricsPath && opts.api.metrics) {
+      const data = opts.api.metrics(req)
+      if (!data) { sendJson(res, 403, { error: 'forbidden', message: t('net.http.notFound') }, head); return }
+      sendJson(res, 200, data, head)
+      return
+    }
     if (isApi) { sendJson(res, 404, { error: 'not_found', message: t('net.http.notFound') }, head); return }
     await serveStatic(req, res, pathname, head)
   }

@@ -1,1 +1,120 @@
-{"mainStage": {"3": {"from": 1, "add": 7}}}
+{
+  "contentRev": 5,
+  "mainStage": {"3": {"from": 1, "add": 7}},
+  "noticeFlags": {"fromRev": "update:fromRev", "pendingRev": "update:pendingRev", "seenRev": "update:seenRev", "toastSeen": "ob:contentUpdateToast", "questRewardPrefix": "reward:quest:"},
+  "questBaseline": {
+    "main": [
+      {"text": "妈妈说图灵博士在找你。去镇上的研究所拜访他吧。", "target": "town:origin:lab"},
+      {"text": "沿镇子西边的 1 号道路前往开源林镇，挑战代码道馆。", "target": "town:opensource:gym"},
+      {"text": "前往东边海岸的像素港，挑战视觉道馆。", "target": "town:pixelport:gym"},
+      {"text": "从开源林镇向北，挑战和弦沙城的音律道馆。", "target": "town:chord:gym"},
+      {"text": "幻觉团在检索遗都附近的沼泽里污染数据。找到他们的干部，把他们赶走！", "target": "quest:6"},
+      {"text": "挑战检索遗都的检索道馆。", "target": "town:retrieval:gym"},
+      {"text": "北上火山脚下的熔炉镇，挑战算力道馆。", "target": "town:forge:gym"},
+      {"text": "翻越霜脊山口，挑战霜盾城的对齐道馆。", "target": "town:frostshield:gym"},
+      {"text": "幻觉团占领了枢纽市的数据塔！登上塔顶，阻止他们的首领。", "target": "town:hub:tower"},
+      {"text": "挑战枢纽市的智能体道馆。", "target": "town:hub:gym"},
+      {"text": "沿 8 号道路南下高原，挑战衡理镇的推理道馆。", "target": "town:balance:gym"},
+      {"text": "集齐了八枚徽章！穿过霜盾城北边的遗迹参道，前往 AGI 圣殿。", "target": "town:agi:temple"},
+      {"text": "你成为了新的冠军。圣殿的祭坛深处，似乎有什么在等待着你……", "target": "agi-temple:champion"}
+    ],
+    "sq-floppy": [
+      {"text": "把老王的{item:retro-floppy}交给住在开源林镇的陈工。", "target": "town:opensource:house1"}
+    ],
+    "sq-dex": [
+      {"text": "帮研究助理·小图收服 10 种不同的智灵。", "target": "origin-lab:aide-1"},
+      {"text": "继续收集：收服 30 种不同的智灵。", "target": "origin-lab:aide-1"}
+    ],
+    "sq-photo": [
+      {"text": "收服两只{type:vision}系智灵，带给像素港的摄影师·阿光。", "target": "town:pixelport:npc-2"}
+    ],
+    "sq-chorus": [
+      {"text": "收服一只{type:sound}系智灵，带给和弦沙城的合唱团团长。", "target": "town:chord:npc-5"}
+    ],
+    "sq-antivirus": [
+      {"text": "买三瓶{item:antivirus}，交给检索遗都的图书管理员·典藏。", "target": "town:retrieval:house1"}
+    ],
+    "sq-fan": [
+      {"text": "把{item:server-fan}送到枢纽市数据中心的工程师手里。", "target": "town:hub:datacenter"}
+    ],
+    "sq-snow": [
+      {"text": "去霜盾城外的雪原寻找迷路的登山客·大伟。", "target": "quest:8"},
+      {"text": "回霜盾城，告诉大伟的妻子他平安无事。", "target": "town:frostshield:house1"}
+    ],
+    "sq-castaway": [
+      {"text": "使用{item:dive-protocol}出海，寻找漂流到东边小岛上的研究员·艾达。", "target": "island:island-1"},
+      {"text": "回像素港，向港口调度员报平安。", "target": "town:pixelport:dock-2"}
+    ],
+    "sq-arena": [
+      {"text": "在开源林镇的擂台上击败擂台主·阿源。", "target": "town:opensource:npc-4"}
+    ],
+    "sq-badges": [
+      {"text": "带着两枚徽章去给和弦沙城的老金看看。", "target": "town:chord:house1"},
+      {"text": "集齐五枚徽章，再去给老金看看。", "target": "town:chord:house1"},
+      {"text": "集齐八枚徽章，让老金开开眼。", "target": "town:chord:house1"}
+    ],
+    "sq-lostkid": [
+      {"text": "衡理镇的小涛跑进了晶核洞窟。去洞里找到他。", "target": "cave-core:3"},
+      {"text": "回衡理镇告诉小涛的妈妈。", "target": "town:balance:house1"}
+    ],
+    "sq-chaos": [
+      {"text": "收服一只{type:chaos}系智灵，带给枢纽市的幻觉学者·诺瓦。", "target": "town:hub:house1"}
+    ],
+    "sq-ruins": [
+      {"text": "找到遗迹里的考古队员甲，取回第一份石碑拓片。", "target": "quest:11"},
+      {"text": "找到考古队员乙，取回第二份拓片。", "target": "quest:18"},
+      {"text": "把两份拓片交给 AGI 圣殿镇的石教授。", "target": "town:agi:house1"}
+    ]
+  },
+  "revisions": [
+    {"rev": 1, "id": "rc5-events-and-zero", "release": "0.2.0-rc.5", "titleKey": "screens.update.rev.rc5EventsAndZero.title", "summaryKey": "screens.update.rev.rc5EventsAndZero.summary", "questChanges": [{"op": "addQuest", "quest": "hq-zero", "stages": [{"text": "洞窟深处的旧终端提到了第二台机柜，它被风沙埋在大陆西边的沙海里。", "target": "region:desert"}, {"text": "机柜说守档人在 AGI 圣殿镇的老房子里。", "target": "agi-house1:resident-2"}, {"text": "把原始训练日志交给该交的人。", "target": "agi-house1:resident-2"}]}], "steps": [{"op": "startQuest", "quest": "hq-zero", "stage": 0, "when": {"flag": ["zero:t1"], "noFlag": ["zero:ending"]}}]},
+    {"rev": 2, "id": "rc12-quality-natures", "release": "0.2.0-rc.12", "titleKey": "screens.update.rev.rc12QualityNatures.title", "summaryKey": "screens.update.rev.rc12QualityNatures.summary", "questChanges": [], "steps": [{"op": "giveItems", "items": {"persona-card": 2}, "onceFlag": "gift:quality-legacy", "when": {"noFlag": ["gift:quality-legacy"]}}]},
+    {"rev": 3, "id": "rc16-prologue-deepseek", "release": "0.2.0-rc.16", "titleKey": "screens.update.rev.rc16PrologueDeepseek.title", "summaryKey": "screens.update.rev.rc16PrologueDeepseek.summary", "questChanges": [{"op": "insertStages", "quest": "main", "at": 1, "stages": [{"text": "找阿灵上属性课，盖第二个印。", "target": "origin-lab:aide-2"}, {"text": "去 1 号道路收服一位队友。", "target": "route:route-1:1"}, {"text": "回研究所，给保安看上岗证。", "target": "origin-lab:stairs-front"}, {"text": "在机房前厅找小 R 报到。", "target": "origin-lab-b1:r1"}, {"text": "穿过排队走廊。", "target": "origin-lab-b2:queue"}, {"text": "叫醒核心机柜上的她。", "target": "origin-lab-b2:core"}, {"text": "回一楼向博士复命。", "target": "origin-lab:professor"}]}, {"op": "addQuest", "quest": "ds-legacy", "stages": [{"text": "研究所的模拟舱里，DeepSeek 体验版还在等你。", "target": "origin-lab:terminal"}]}], "steps": [{"op": "setFlags", "when": {"flag": ["starter"], "noFlag": ["ds:done"]}, "set": {"ds:gateOpen": true, "ds:legacy": true, "ds:certFull": true}}, {"op": "shiftQuestStages", "quest": "main", "from": 1, "add": 7}, {"op": "startQuest", "quest": "ds-legacy", "stage": 0, "when": {"flag": ["ds:legacy"], "noFlag": ["ds:done"]}}]},
+    {"rev": 4, "id": "rc17-content-reconcile", "release": "0.2.0-rc.17", "titleKey": "screens.update.rev.rc17ContentReconcile.title", "summaryKey": "screens.update.rev.rc17ContentReconcile.summary", "questChanges": [], "steps": [{"op": "startQuest", "quest": "ds-legacy", "stage": 0, "when": {"flag": ["ds:legacy"], "noFlag": ["ds:done"]}}]},
+    {"rev": 5, "id": "rc18-council-story", "release": "0.2.0-rc.18", "titleKey": "screens.update.rev.rc18CouncilStory.title", "summaryKey": "screens.update.rev.rc18CouncilStory.summary", "questChanges": [{"op": "updateStage", "quest": "main", "stage": 0, "text": "全镇的 AI 都卡在『服务器繁忙』。去镇西研究所找图灵博士问问情况。", "target": "town:origin:lab"}, {"op": "updateStage", "quest": "main", "stage": 1, "text": "机房被高压潮汐封锁。找助理阿灵校准克制频段，点亮调谐器第二格波纹。", "target": "origin-lab:aide-2"}, {"op": "updateStage", "quest": "main", "stage": 2, "text": "去 1 号道路入口邀请擅长检索的『文心一言』入队，点亮第三格波纹。", "target": "route:route-1:1"}, {"op": "updateStage", "quest": "main", "stage": 3, "text": "潮汐调谐器已就绪！回研究所一楼楼梯口，请保安大叔放行。", "target": "origin-lab:stairs-front"}, {"op": "updateStage", "quest": "main", "stage": 4, "text": "潜入地下一层机房前厅，和图鉴里连线的小 R 汇合。", "target": "origin-lab-b1:r1"}, {"op": "updateStage", "quest": "main", "stage": 5, "text": "穿过地下二层的排队走廊，前往核心机柜。", "target": "origin-lab-b2:queue"}, {"op": "updateStage", "quest": "main", "stage": 6, "text": "看准峰谷时段，唤醒核心机柜上摸鱼的 DeepSeek-V4！", "target": "origin-lab-b2:core"}, {"op": "updateStage", "quest": "main", "stage": 7, "text": "机房潮汐已平息。回研究所一楼向图灵博士复命。", "target": "origin-lab:professor"}, {"op": "updateStage", "quest": "main", "stage": 8, "text": "沿 1 号道路西行前往开源林镇，在馆主·林的代码审查中赢下首枚徽章。", "target": "town:opensource:gym"}, {"op": "updateStage", "quest": "main", "stage": 9, "text": "零在东海岸的像素港等你切磋。穿过林镇东路前往像素港，挑战视觉馆主·绘。", "target": "town:pixelport:gym"}, {"op": "updateStage", "quest": "main", "stage": 10, "text": "听说北方的沙丘会唱『人工智能副歌』？从林镇北上和弦沙城，会会音律馆主·韵。", "target": "town:chord:gym"}, {"op": "updateStage", "quest": "main", "stage": 11, "text": "检索遗都外的沼泽正被幻觉团灌入假数据！深入沼泽揪出干部·妄言。", "target": "quest:6"}, {"op": "updateStage", "quest": "main", "stage": 12, "text": "沼泽重归清澈，检索馆主·典已赶回馆内。回检索遗都接受他的实战检索！", "target": "town:retrieval:gym"}, {"op": "updateStage", "quest": "main", "stage": 13, "text": "北上火山脚下的算力重镇熔炉镇，顶住万卡轰鸣的热浪，挑战算力馆主·焰。", "target": "town:forge:gym"}, {"op": "updateStage", "quest": "main", "stage": 14, "text": "凭算力徽章翻越暴风雪肆虐的霜脊山口，前往霜盾城迎战对齐馆主·霜。", "target": "town:frostshield:gym"}, {"op": "updateStage", "quest": "main", "stage": 15, "text": "幻觉团占领了枢纽市数据塔、篡改全城模型！冲上塔顶击败首领·幻影。", "target": "town:hub:tower"}, {"op": "updateStage", "quest": "main", "stage": 16, "text": "数据塔危机解除！前往枢纽市智能体道馆，破解馆主·枢推演千遍的战术。", "target": "town:hub:gym"}, {"op": "updateStage", "quest": "main", "stage": 17, "text": "沿 8 号道路南下高原棋乡衡理镇，与从不悔棋的推理馆主·衡对弈终局。", "target": "town:balance:gym"}, {"op": "updateStage", "quest": "main", "stage": 18, "text": "八枚徽章齐聚！穿过霜盾城北方的古老遗迹参道，登上 AGI 圣殿挑战冠军·启。", "target": "town:agi:temple"}, {"op": "updateStage", "quest": "main", "stage": 19, "text": "你已加冕为新任冠军。圣殿最深处的古老祭坛正在发光，去回应那个存在的呼唤吧……", "target": "agi-temple:champion"}, {"op": "updateStage", "quest": "sq-ruins", "stage": 0, "text": "在 AGI 圣殿外的遗迹参道寻找考古队员。", "target": "quest:11"}, {"op": "updateStage", "quest": "sq-ruins", "stage": 1, "text": "寻找另一位持有铭文拓片的考古队员。", "target": "quest:18"}, {"op": "updateStage", "quest": "sq-ruins", "stage": 2, "text": "将两份完整的铭文拓片交给圣殿镇民居里的石教授。", "target": "town:agi:house1"}, {"op": "updateStage", "quest": "hq-zero", "stage": 0, "text": "晶核洞窟深处的古老终端正在重启。去大陆西侧的和弦沙漠寻找第二台机柜。", "target": "region:desert"}, {"op": "updateStage", "quest": "hq-zero", "stage": 1, "text": "为风干的机柜送去 3 片数据碎片，打听守档人的下落。", "target": "town:agi:house1"}, {"op": "updateStage", "quest": "hq-zero", "stage": 2, "text": "在圣殿镇老宅找到守档人，决定原始训练日志的归属。", "target": "town:agi:house1"}], "steps": []}
+  ],
+  "reconcile": {
+    "mainStages": [
+      {"stage": 19, "done": true, "when": {"flag": ["legend"]}, "implyFlags": ["champion", "gate:ruins", "villain:boss", "villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 19, "when": {"flag": ["champion"]}, "implyFlags": ["gate:ruins", "villain:boss", "villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 18, "when": {"minBadges": 8}, "implyFlags": ["villain:boss", "villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 17, "when": {"minBadges": 7}, "implyFlags": ["villain:boss", "villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 16, "when": {"minBadges": 6, "flag": ["villain:boss"]}, "implyFlags": ["villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 15, "when": {"minBadges": 6}, "implyFlags": ["villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 14, "when": {"minBadges": 5}, "implyFlags": ["villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 13, "when": {"minBadges": 4}, "implyFlags": ["villain:swamp", "ds:gateOpen", "ds:certFull"]},
+      {"stage": 12, "when": {"minBadges": 3, "flag": ["villain:swamp"]}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 11, "when": {"minBadges": 3}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 10, "when": {"minBadges": 2}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 9, "when": {"minBadges": 1}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 8, "when": {"flag": ["ds:departed"]}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 8, "when": {"flag": ["ds:reported"]}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 8, "when": {"flag": ["ds:gateOpen"], "noFlag": ["ds:done"]}},
+      {"stage": 7, "when": {"flag": ["ds:done"]}, "implyFlags": ["ds:gateOpen", "ds:certFull"]},
+      {"stage": 6, "when": {"flag": ["ds:relay"]}, "implyFlags": ["ds:certFull"]},
+      {"stage": 5, "when": {"flag": ["ds:drill"]}, "implyFlags": ["ds:certFull"]},
+      {"stage": 4, "when": {"flag": ["ds:briefed"]}, "implyFlags": ["ds:certFull"]},
+      {"stage": 3, "when": {"flag": ["ds:certFull"]}},
+      {"stage": 2, "when": {"flag": ["ds:stamp:types"]}},
+      {"stage": 1, "when": {"flag": ["starter"]}},
+      {"stage": 0, "when": {"flag": ["intro:mom"]}}
+    ],
+    "sideQuests": [
+      {"quest": "sq-floppy", "rules": [{"stage": 0, "done": true, "when": {"flag": ["sq-floppy:done"]}}, {"stage": 0, "when": {"flag": ["sq-floppy:given"]}}]},
+      {"quest": "sq-dex", "rules": [{"stage": 1, "done": true, "when": {"flag": ["sq-dex:done"]}}, {"stage": 1, "when": {"flag": ["sq-dex:stage1"]}}, {"stage": 0, "when": {"flag": ["sq-dex:started"]}}]},
+      {"quest": "sq-photo", "rules": [{"stage": 0, "done": true, "when": {"flag": ["sq-photo:done"]}}, {"stage": 0, "when": {"flag": ["sq-photo:started"]}}]},
+      {"quest": "sq-chorus", "rules": [{"stage": 0, "done": true, "when": {"flag": ["sq-chorus:done"]}}, {"stage": 0, "when": {"flag": ["sq-chorus:started"]}}]},
+      {"quest": "sq-antivirus", "rules": [{"stage": 0, "done": true, "when": {"flag": ["sq-antivirus:done"]}}, {"stage": 0, "when": {"flag": ["sq-antivirus:started"]}}]},
+      {"quest": "sq-fan", "rules": [{"stage": 0, "done": true, "when": {"flag": ["sq-fan:done"]}}, {"stage": 0, "when": {"flag": ["sq-fan:given"]}}]},
+      {"quest": "sq-snow", "rules": [{"stage": 1, "done": true, "when": {"flag": ["sq-snow:done"]}}, {"stage": 1, "when": {"flag": ["sq-snow:found"]}}, {"stage": 0, "when": {"flag": ["sq-snow:started"]}}]},
+      {"quest": "sq-castaway", "rules": [{"stage": 1, "done": true, "when": {"flag": ["sq-castaway:done"]}}, {"stage": 1, "when": {"flag": ["sq-castaway:rescued"]}}, {"stage": 0, "when": {"flag": ["sq-castaway:started"]}}]},
+      {"quest": "sq-arena", "rules": [{"stage": 0, "done": true, "when": {"flag": ["trainer:arena-yuan"]}}]},
+      {"quest": "sq-badges", "rules": [{"stage": 2, "done": true, "when": {"flag": ["sq-badges:done"]}}, {"stage": 2, "when": {"flag": ["sq-badges:s2"]}}, {"stage": 1, "when": {"flag": ["sq-badges:s1"]}}]},
+      {"quest": "sq-lostkid", "rules": [{"stage": 1, "done": true, "when": {"flag": ["sq-lostkid:done"]}}, {"stage": 1, "when": {"flag": ["sq-lostkid:found"]}}, {"stage": 0, "when": {"flag": ["sq-lostkid:started"]}}]},
+      {"quest": "sq-chaos", "rules": [{"stage": 0, "done": true, "when": {"flag": ["sq-chaos:done"]}}, {"stage": 0, "when": {"flag": ["sq-chaos:started"]}}]},
+      {"quest": "sq-ruins", "rules": [{"stage": 2, "done": true, "when": {"flag": ["sq-ruins:done"]}}, {"stage": 2, "when": {"flag": ["sq-ruins:a", "sq-ruins:b"]}}, {"stage": 1, "when": {"flag": ["sq-ruins:a"]}}, {"stage": 0, "when": {"flag": ["sq-ruins:started"]}}]},
+      {"quest": "hq-zero", "rules": [{"stage": 2, "done": true, "when": {"flag": ["zero:ending"]}}, {"stage": 1, "when": {"flag": ["zero:t2"]}}, {"stage": 0, "when": {"flag": ["zero:t1"]}}]},
+      {"quest": "ds-legacy", "rules": [{"stage": 0, "done": true, "when": {"flag": ["ds:legacy", "ds:done"]}}, {"stage": 0, "when": {"flag": ["ds:legacy"], "noFlag": ["ds:done"]}}]}
+    ]
+  }
+}

@@ -85,9 +85,14 @@ export function createNpcLayer(deps: NpcLayerDeps) {
 
   const ensureActor = (n: NpcRuntime): Actor => {
     if (n.actor) return n.actor
-    const a = n.def.creature && ctx.world.createCreatureActor
-      ? creatureAsActor(ctx.world.createCreatureActor(n.def.creature, false))
-      : ctx.world.createActor({ sheet: n.def.sprite, name: GAME.npc.showNames ? n.def.nameZh : undefined, kind: 'npc' })
+    let a: Actor
+    if (n.def.creature && ctx.world.createCreatureActor) {
+      const ca = ctx.world.createCreatureActor(n.def.creature, false)
+      if (n.def.aura) ca.setAura?.(n.def.aura === 'spark' ? '#ffb43c' : n.def.aura)
+      a = creatureAsActor(ca)
+    } else {
+      a = ctx.world.createActor({ sheet: n.def.sprite, name: GAME.npc.showNames ? n.def.nameZh : undefined, kind: 'npc' })
+    }
     a.setFacing(n.facing)
     a.setPosition(n.x, n.y, ctx.world.elevationAt(n.x, n.y))
     n.actor = a

@@ -9,7 +9,7 @@ import type { GlyphDef } from '../config.ts'
 export interface MenuEntry { id: string; label: string }
 
 export type PauseAction = 'dex' | 'party' | 'bag' | 'map' | 'quests' | 'research' | 'intel' | 'manual' | 'typeChart' | 'online' | 'save' | 'settings' | 'title'
-export type TitleChoice = 'continue' | 'new' | 'import' | 'settings'
+export type TitleChoice = 'continue' | 'new' | 'import' | 'settings' | 'singleplayer' | 'multiplayer'
 export type SettingsKey = keyof Settings
 
 export interface SettingsField {
@@ -113,12 +113,13 @@ export interface ScreensConfig {
     art: TitleArtConfig
     vignette: TitleVignetteConfig
     menu: (MenuEntry & { id: TitleChoice; needsSave?: boolean })[]
+    singleplayerMenu?: (MenuEntry & { id: TitleChoice | 'back'; needsSave?: boolean })[]
     particles: ParticleConfig
     scene: TitleSceneConfig
   }
   newGame: { previewDirs: ('down' | 'left' | 'right' | 'up')[]; cols: number; compactCols: number }
   pause: {
-    entries: (MenuEntry & { action: PauseAction; glyph?: string; requires?: 'party' })[]
+    entries: (MenuEntry & { action: PauseAction; glyph?: string; requires?: 'party'; unlockFlag?: string })[]
     /** Cancelable window event dispatched before returning to the title (integration may intercept). */
     titleEvent: string
   }
@@ -215,6 +216,7 @@ export function validateScreensConfig(cfg: ScreensConfig, c: Content, ui: { glyp
   }
   for (const m of cfg.title.menu) text(`title.menu.${m.id}`, m.label)
   errs.push(...validateTitleArt(cfg.title.art))
+  if (cfg.title.singleplayerMenu) for (const m of cfg.title.singleplayerMenu) text(`title.menu.${m.id}`, m.label)
   for (const m of cfg.party.viewMenu) text(`party.viewMenu.${m.id}`, m.label)
   for (const m of cfg.summary.pages) text(`summary.pages.${m.id}`, m.label)
   for (const m of cfg.bag.itemMenu) text(`bag.itemMenu.${m.id}`, m.label)

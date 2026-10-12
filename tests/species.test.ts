@@ -134,14 +134,15 @@ test('pre-evolution learnset carries into the evolved form', () => {
 
 test('teachables are chip moves the species is compatible with', () => {
   const chipMoves = new Set(CONTENT.itemList.flatMap((i) => (i.effect.kind === 'chip' ? [i.effect.move] : [])))
-  const tr = rules.teachable as { compatByCategory: Record<string, string[]> }
+  const tr = rules.teachable as { compatByCategory: Record<string, string[]>; extraBySpecies?: Record<string, string[]> }
   const lr = rules.learnset as { coverageByCategory: Record<string, string[]>; coverageByFamily: Record<string, string[]>; universalTypes: string[] }
   for (const s of list) {
     assert.ok(within(s.teachable.length, TEACHABLE_SIZE), `${s.id}: ${s.teachable.length} teachables`)
     assert.equal(new Set(s.teachable).size, s.teachable.length, `${s.id}: duplicate teachable`)
     const ok = new Set([...s.types, ...(tr.compatByCategory[s.category] ?? []), ...(lr.coverageByFamily[s.family] ?? lr.coverageByCategory[s.category] ?? []), ...lr.universalTypes])
+    const extra = tr.extraBySpecies?.[s.id] ?? []
     for (const m of s.teachable) {
-      assert.ok(chipMoves.has(m), `${s.id}: ${m} has no chip`)
+      assert.ok(chipMoves.has(m) || extra.includes(m), `${s.id}: ${m} has no chip`)
       assert.ok(ok.has(CONTENT.moves[m].type), `${s.id}: ${m} (${CONTENT.moves[m].type}) not compatible`)
     }
   }

@@ -21,7 +21,8 @@ export function createDebugOverlay(ctx: GameContext, ow: OverworldExt, root: HTM
     const info = ctx.renderer.gl.info.render
     const p = ow.player
     const region = ow.region
-    el.textContent = [
+    const st = ctx.net.stats
+    const lines = [
       t('game.debug.title'),
       t('game.debug.fps', { fps: fps.toFixed(0), ms: frameMs.toFixed(1) }),
       t('game.debug.calls', { calls: info.calls, tris: (info.triangles / 1000).toFixed(1) }),
@@ -29,8 +30,21 @@ export function createDebugOverlay(ctx: GameContext, ow: OverworldExt, root: HTM
       t('game.debug.region', { region: region?.nameZh ?? '-', terrain: ow.terrainName || '-' }),
       t('game.debug.time', { clock: ctx.clock.label(), tod: t(`hud.tod.${ctx.clock.timeOfDay}`), weather: t(`game.weather.${ow.weather}`) }),
       t('game.debug.net', { status: t(`hud.net.${ctx.net.status}`), n: ctx.net.online, near: ctx.net.remotePlayers().size }),
-      t('game.debug.player', { mode: t(`game.mode.${ow.mode}`), repel: ctx.save.repelSteps, roamers: ow.roamerCount }),
-    ].join('\n')
+    ]
+    if (ctx.net.status === 'online' && st) {
+      lines.push(t('game.debug.netStats', {
+        rtt: st.rtt >= 0 ? Math.round(st.rtt) : '-',
+        p50: st.p50 >= 0 ? Math.round(st.p50) : '-',
+        p95: st.p95 >= 0 ? Math.round(st.p95) : '-',
+        jitter: Math.round(st.jitter),
+        stalls: st.stalls,
+        buf: st.interpDelayMs,
+        rx: st.rxBps,
+        tx: st.txBps,
+      }))
+    }
+    lines.push(t('game.debug.player', { mode: t(`game.mode.${ow.mode}`), repel: ctx.save.repelSteps, roamers: ow.roamerCount }))
+    el.textContent = lines.join('\n')
   }
 
   return {

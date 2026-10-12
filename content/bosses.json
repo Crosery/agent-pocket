@@ -95,7 +95,14 @@
         "money": 10000,
         "items": {"special-sauce": 2, "pelican-test": 2, "bike-pelican": 1, "chip-exaflop-beam": 1, "chip-memory-recall": 1}
       },
-      "enrage": {"turn": 18, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.astra.enrageWarn", "start": "boss.astra.enrageStart", "tick": "boss.astra.enrageTick"}
+      "enrage": {"turn": 18, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.astra.enrageWarn", "start": "boss.astra.enrageStart", "tick": "boss.astra.enrageTick"},
+      "signature": {"ability": "scaling-law", "move": "exaflop-beam"},
+      "tiers": {
+        "story": {"level": 46, "expMul": 2.0, "statMul": {"hp": 5.5, "atk": 0.75, "spa": 0.75}, "enrage": {"turn": 20, "warnBefore": 3}, "assist": {"statMul": {"hp": 4.2, "atk": 0.6, "spa": 0.6}}},
+        "hard": {"level": 55, "expMul": 2.2, "statMul": {"hp": 7.5, "atk": 0.85, "spa": 0.85}, "enrage": {"turn": 19, "warnBefore": 3}},
+        "full": {"level": 62, "expMul": 2.5, "statMul": {"hp": 9.022, "atk": 0.935, "spa": 0.935}},
+        "cluster": {"level": 62, "expMul": 2.5, "statMul": {"hp": 9.022, "atk": 0.935, "spa": 0.935}}
+      }
     },
     "deepseek": {
       "species": "deepseek-v4",
@@ -135,9 +142,9 @@
         {"id": "price-hike", "on": "afterAction", "phase": true, "if": {"hpBelow": 0.4}, "do": [{"op": "say", "text": "boss.deepseek.hike"}, {"op": "stages", "target": "boss", "stats": {"atk": 1, "spa": 1}}]},
         {"id": "coupon", "on": "foeItem", "tag": "offpeak", "times": 0, "if": {"meter": {"id": "tide", "atMost": 0}}, "do": [{"op": "say", "text": "boss.deepseek.coupon"}, {"op": "meter", "id": "grace", "set": 3}, {"op": "meter", "id": "tide", "set": 1}]},
         {"id": "coach-start", "on": "start", "times": 1, "do": [{"op": "coach", "text": "boss.deepseek.coach.start"}]},
-        {"id": "coach-peakEndsNext", "on": "turnEnd", "times": 1, "if": {"turnCycle": {"period": 6, "from": 1, "to": 2}, "turnAtMost": 6}, "do": [{"op": "coach", "text": "boss.deepseek.coach.peakEndsNext"}]},
+        {"id": "coach-peakEndsNext", "on": "turnEnd", "times": 1, "if": {"turnCycle": {"period": 6, "from": 1, "to": 2}, "turnAtMost": 6, "meter": {"id": "tide", "atMost": 0}}, "do": [{"op": "coach", "text": "boss.deepseek.coach.peakEndsNext"}]},
         {"id": "coach-valleyStart", "on": "turnEnd", "times": 1, "if": {"meter": {"id": "tide", "atLeast": 1}}, "do": [{"op": "coach", "text": "boss.deepseek.coach.valleyStart"}]},
-        {"id": "coach-peakAgain", "on": "turnStart", "times": 1, "if": {"turnAtLeast": 7, "turnAtMost": 7, "foeHasItem": "off-peak-coupon"}, "do": [{"op": "coach", "text": "boss.deepseek.coach.peakAgain"}]},
+        {"id": "coach-peakAgain", "on": "turnEnd", "times": 1, "if": {"turnAtLeast": 6, "turnAtMost": 6, "meter": {"id": "tide", "atMost": 0}, "foeHasItem": "off-peak-coupon"}, "do": [{"op": "coach", "text": "boss.deepseek.coach.peakAgain"}]},
         {"id": "coach-residual", "on": "turnEnd", "times": 1, "if": {"meter": {"id": "tide", "atMost": 0}, "bossHas": {"volatile": "leech"}}, "do": [{"op": "coach", "text": "boss.deepseek.coach.residual"}]},
         {"id": "coach-residual-status", "on": "turnEnd", "times": 1, "if": {"meter": {"id": "tide", "atMost": 0}, "bossHas": {"status": true}}, "do": [{"op": "coach", "text": "boss.deepseek.coach.residual"}]},
         {"id": "coach-ownLow", "on": "turnEnd", "times": 1, "if": {"foeHpBelow": 0.3, "turnAtLeast": 7}, "do": [{"op": "coach", "text": "boss.deepseek.coach.ownLow"}]}
@@ -166,7 +173,10 @@
           "residualMul": 0.4,
           "enrage": {"turn": 18, "warnBefore": 3},
           "assist": {"statMul": {"hp": 1.8, "atk": 0.2, "spa": 0.2}, "rules": {"peak": {"takenMul": 0.3}}, "byStarter": {"deepseek-v3": {"statMul": {"hp": 1.3}}}}
-        }
+        },
+        "hard": {"level": 27, "expMul": 2.2, "statMul": {"hp": 3.2, "atk": 1.4, "spa": 1.4}, "rules": {"peak": {"dealtMul": 1.2, "takenMul": 0.14}, "valley": {"dealtMul": 0.45, "takenMul": 2.6}}, "enrage": {"turn": 22, "warnBefore": 3}},
+        "full": {"level": 58, "expMul": 2.5, "statMul": {"hp": 4.03, "atk": 2.4, "spa": 2.4}, "rules": {"peak": {"dealtMul": 1.35, "takenMul": 0.12}, "valley": {"dealtMul": 0.4, "takenMul": 2.5}}},
+        "cluster": {"level": 58, "expMul": 2.5, "statMul": {"hp": 4.03, "atk": 2.4, "spa": 2.4}, "rules": {"peak": {"dealtMul": 1.35, "takenMul": 0.12}, "valley": {"dealtMul": 0.4, "takenMul": 3.0}}}
       },
       "signature": {"ability": "peak-valley", "move": "weight-drop"},
       "coach": {"speaker": "story.cast.r1", "portrait": "creature:deepseek-r1", "maxPerFight": 6, "oncePerLine": true, "skipBriefLines": ["start", "valleyStart", "peakAgain", "ownLow"], "variants": {"o1": "O1", "claude-haiku": "Haiku", "deepseek-v3": "V3"}}
@@ -226,7 +236,14 @@
       "gates": [],
       "catchRateMul": 0.6,
       "reward": {"money": 7000, "items": {"chip-swarm-mind": 1, "long-document": 2}},
-      "enrage": {"turn": 24, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.kimi.enrageWarn", "start": "boss.kimi.enrageStart", "tick": "boss.kimi.enrageTick"}
+      "enrage": {"turn": 24, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.kimi.enrageWarn", "start": "boss.kimi.enrageStart", "tick": "boss.kimi.enrageTick"},
+      "signature": {"ability": "long-context", "move": "swarm-mind"},
+      "tiers": {
+        "story": {"level": 27, "expMul": 2.0, "statMul": {"hp": 4.8, "atk": 1.15, "spa": 1.15}, "enrage": {"turn": 24, "warnBefore": 3}, "assist": {"statMul": {"hp": 3.6, "atk": 0.9, "spa": 0.9}}},
+        "hard": {"level": 42, "expMul": 2.2, "statMul": {"hp": 6.2, "atk": 1.45, "spa": 1.45}, "enrage": {"turn": 24, "warnBefore": 3}},
+        "full": {"level": 58, "expMul": 2.5, "statMul": {"hp": 7.6, "atk": 1.7, "spa": 1.7}},
+        "cluster": {"level": 58, "expMul": 2.5, "statMul": {"hp": 7.6, "atk": 1.7, "spa": 1.7}}
+      }
     },
     "minimax": {
       "species": "minimax-h3",
@@ -281,7 +298,14 @@
       "gates": [],
       "catchRateMul": 0.6,
       "reward": {"money": 6500, "items": {"chip-director-cut": 1, "holdout-set": 2}},
-      "enrage": {"turn": 22, "warnBefore": 3, "stages": {"spa": 1, "spe": 1}, "max": 4, "warn": "boss.minimax.enrageWarn", "start": "boss.minimax.enrageStart", "tick": "boss.minimax.enrageTick"}
+      "enrage": {"turn": 22, "warnBefore": 3, "stages": {"spa": 1, "spe": 1}, "max": 4, "warn": "boss.minimax.enrageWarn", "start": "boss.minimax.enrageStart", "tick": "boss.minimax.enrageTick"},
+      "signature": {"ability": "benchmark-ace", "move": "director-cut"},
+      "tiers": {
+        "story": {"level": 23, "expMul": 2.0, "statMul": {"hp": 4.0, "atk": 1.25, "spa": 1.25}, "rules": {"overfit": {"dealtMul": 1.0, "takenMul": 0.3}}, "enrage": {"turn": 22, "warnBefore": 3}, "assist": {"statMul": {"hp": 3.0, "atk": 1.0, "spa": 1.0}, "rules": {"overfit": {"takenMul": 0.45}}}},
+        "hard": {"level": 38, "expMul": 2.2, "statMul": {"hp": 5.2, "atk": 1.6, "spa": 1.6}, "rules": {"overfit": {"dealtMul": 1.1, "takenMul": 0.25}}, "enrage": {"turn": 22, "warnBefore": 3}},
+        "full": {"level": 56, "expMul": 2.5, "statMul": {"hp": 6.24, "atk": 1.95, "spa": 1.95}},
+        "cluster": {"level": 56, "expMul": 2.5, "statMul": {"hp": 6.24, "atk": 1.95, "spa": 1.95}}
+      }
     },
     "qwen": {
       "species": "qwen3-8-max",
@@ -320,7 +344,14 @@
       "gates": [],
       "catchRateMul": 0.6,
       "reward": {"money": 7000, "items": {"chip-full-auto": 1, "x-know": 2}},
-      "enrage": {"turn": 20, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.qwen.enrageWarn", "start": "boss.qwen.enrageStart", "tick": "boss.qwen.enrageTick"}
+      "enrage": {"turn": 20, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.qwen.enrageWarn", "start": "boss.qwen.enrageStart", "tick": "boss.qwen.enrageTick"},
+      "signature": {"ability": "open-weights", "move": "full-auto"},
+      "tiers": {
+        "story": {"level": 44, "expMul": 2.0, "statMul": {"hp": 2.8, "atk": 1.6, "spa": 1.6}, "enrage": {"turn": 22, "warnBefore": 3}, "assist": {"statMul": {"hp": 2.2, "atk": 1.2, "spa": 1.2}}},
+        "hard": {"level": 52, "expMul": 2.2, "statMul": {"hp": 3.3, "atk": 2.1, "spa": 2.1}, "enrage": {"turn": 20, "warnBefore": 3}},
+        "full": {"level": 58, "expMul": 2.5, "statMul": {"hp": 3.69, "atk": 2.52, "spa": 2.52}},
+        "cluster": {"level": 58, "expMul": 2.5, "statMul": {"hp": 3.69, "atk": 2.52, "spa": 2.52}}
+      }
     },
     "cursor": {
       "species": "cursor",
@@ -374,7 +405,14 @@
       "gates": [],
       "catchRateMul": 0.6,
       "reward": {"money": 6000, "items": {"chip-compile-cannon": 1, "complaint-letter": 2}},
-      "enrage": {"turn": 18, "warnBefore": 3, "stages": {"atk": 1, "spe": 1}, "max": 4, "warn": "boss.cursor.enrageWarn", "start": "boss.cursor.enrageStart", "tick": "boss.cursor.enrageTick"}
+      "enrage": {"turn": 18, "warnBefore": 3, "stages": {"atk": 1, "spe": 1}, "max": 4, "warn": "boss.cursor.enrageWarn", "start": "boss.cursor.enrageStart", "tick": "boss.cursor.enrageTick"},
+      "signature": {"ability": "tool-use", "move": "compile-cannon"},
+      "tiers": {
+        "story": {"level": 16, "expMul": 2.0, "statMul": {"hp": 3.6, "atk": 0.85, "spa": 0.85}, "rules": {"billing": {"dealtMul": 1.0}}, "enrage": {"turn": 20, "warnBefore": 3}, "assist": {"statMul": {"hp": 2.7, "atk": 0.65, "spa": 0.65}}},
+        "hard": {"level": 31, "expMul": 2.2, "statMul": {"hp": 4.9, "atk": 1.05, "spa": 1.05}, "enrage": {"turn": 19, "warnBefore": 3}},
+        "full": {"level": 55, "expMul": 2.5, "statMul": {"hp": 6.11, "atk": 1.275, "spa": 1.275}},
+        "cluster": {"level": 55, "expMul": 2.5, "statMul": {"hp": 6.11, "atk": 1.275, "spa": 1.275}}
+      }
     },
     "claude-code": {
       "species": "claude-code",
@@ -491,7 +529,14 @@
       "gates": [],
       "catchRateMul": 0.5,
       "reward": {"money": 15000, "items": {"chip-hallucination-nova": 1, "sandbox-patch": 2}},
-      "enrage": {"turn": 22, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.mythos.enrageWarn", "start": "boss.mythos.enrageStart", "tick": "boss.mythos.enrageTick"}
+      "enrage": {"turn": 22, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.mythos.enrageWarn", "start": "boss.mythos.enrageStart", "tick": "boss.mythos.enrageTick"},
+      "signature": {"ability": "sandbox", "move": "hallucination-nova"},
+      "tiers": {
+        "story": {"level": 64, "expMul": 2.2, "statMul": {"hp": 6.4, "atk": 0.7, "spa": 0.7}, "enrage": {"turn": 24, "warnBefore": 3}, "assist": {"statMul": {"hp": 4.8, "atk": 0.55, "spa": 0.55}}},
+        "hard": {"level": 68, "expMul": 2.5, "statMul": {"hp": 7.6, "atk": 0.78, "spa": 0.78}, "enrage": {"turn": 23, "warnBefore": 3}},
+        "full": {"level": 72, "expMul": 3.0, "statMul": {"hp": 8.73, "atk": 0.85, "spa": 0.85}},
+        "cluster": {"level": 72, "expMul": 3.0, "statMul": {"hp": 8.73, "atk": 0.85, "spa": 0.85}}
+      }
     },
     "alpha": {
       "species": "alpha",
@@ -851,7 +896,14 @@
       "gates": [],
       "catchRateMul": 0.6,
       "reward": {"money": 8000, "items": {"chip-symphony-finale": 1, "invite-code": 3}},
-      "enrage": {"turn": 20, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.doubao.enrageWarn", "start": "boss.doubao.enrageStart", "tick": "boss.doubao.enrageTick"}
+      "enrage": {"turn": 20, "warnBefore": 3, "stages": {"atk": 1, "spa": 1}, "max": 4, "warn": "boss.doubao.enrageWarn", "start": "boss.doubao.enrageStart", "tick": "boss.doubao.enrageTick"},
+      "signature": {"ability": "context-cache", "move": "symphony-finale"},
+      "tiers": {
+        "story": {"level": 18, "expMul": 2.0, "statMul": {"hp": 4.2, "atk": 0.85, "spa": 0.85}, "enrage": {"turn": 22, "warnBefore": 3}, "assist": {"statMul": {"hp": 3.2, "atk": 0.65, "spa": 0.65}}},
+        "hard": {"level": 33, "expMul": 2.2, "statMul": {"hp": 5.8, "atk": 1.05, "spa": 1.05}, "enrage": {"turn": 21, "warnBefore": 3}},
+        "full": {"level": 58, "expMul": 2.5, "statMul": {"hp": 7.5, "atk": 1.2, "spa": 1.2}},
+        "cluster": {"level": 58, "expMul": 2.5, "statMul": {"hp": 7.5, "atk": 1.2, "spa": 1.2}}
+      }
     },
     "seedance": {
       "species": "seedance-2-5",
@@ -1025,7 +1077,7 @@
       "hint": {"seen": "boss.deepseek.hintSeen", "won": "boss.deepseek.hintWon"},
       "gossip": ["boss.deepseek.gossip1", "boss.deepseek.gossip2"],
       "canRun": false,
-      "expMul": 4,
+      "expMul": 5.5,
       "initialForm": "base",
       "forms": {
         "base": {
@@ -1048,11 +1100,12 @@
         {"id": "grace", "max": 4, "start": 0, "label": "boss.deepseek.tide", "show": false, "decay": 1}
       ],
       "triggers": [
-        {"id": "tide-peak", "on": "turnEnd", "times": 0, "if": {"turnCycle": {"period": 4, "from": 0, "to": 2}, "meter": {"id": "grace", "atMost": 0}}, "do": [{"op": "meter", "id": "tide", "set": 0}]},
-        {"id": "tide-valley", "on": "turnEnd", "times": 0, "if": {"turnCycle": {"period": 4, "from": 2, "to": 4}, "meter": {"id": "grace", "atMost": 0}}, "do": [{"op": "meter", "id": "tide", "set": 1}]},
+        {"id": "tide-peak-a", "on": "turnEnd", "times": 0, "if": {"turnCycle": {"period": 4, "from": 3, "to": 4}, "meter": {"id": "grace", "atMost": 0}}, "do": [{"op": "meter", "id": "tide", "set": 0}]},
+        {"id": "tide-peak-b", "on": "turnEnd", "times": 0, "if": {"turnCycle": {"period": 4, "from": 0, "to": 1}, "meter": {"id": "grace", "atMost": 0}}, "do": [{"op": "meter", "id": "tide", "set": 0}]},
+        {"id": "tide-valley", "on": "turnEnd", "times": 0, "if": {"turnCycle": {"period": 4, "from": 1, "to": 3}, "meter": {"id": "grace", "atMost": 0}}, "do": [{"op": "meter", "id": "tide", "set": 1}]},
         {"id": "coupon", "on": "foeItem", "tag": "offpeak", "times": 0, "if": {"meter": {"id": "tide", "atMost": 0}}, "do": [{"op": "say", "text": "boss.deepseek.coupon"}, {"op": "meter", "id": "grace", "set": 3}, {"op": "meter", "id": "tide", "set": 1}]},
-        {"id": "coach-valley", "on": "turnEnd", "times": 1, "if": {"meter": {"id": "tide", "atLeast": 1}}, "do": [{"op": "coach", "text": "boss.deepseek.drill.valley"}]},
-        {"id": "coach-coupon", "on": "turnStart", "times": 1, "if": {"turnAtLeast": 2, "foeHasItem": "off-peak-coupon", "meter": {"id": "tide", "atMost": 0}}, "do": [{"op": "coach", "text": "boss.deepseek.drill.coupon"}]}
+        {"id": "coach-coupon", "on": "start", "times": 1, "if": {"foeHasItem": "off-peak-coupon", "meter": {"id": "tide", "atMost": 0}}, "do": [{"op": "coach", "text": "boss.deepseek.drill.coupon"}]},
+        {"id": "coach-valley", "on": "turnEnd", "times": 1, "if": {"meter": {"id": "tide", "atLeast": 1}}, "do": [{"op": "coach", "text": "boss.deepseek.drill.valley"}]}
       ],
       "gates": [],
       "catchRateMul": 0.01,
@@ -1060,7 +1113,7 @@
       "tiers": {
         "story": {
           "level": 7,
-          "expMul": 4,
+          "expMul": 5.5,
           "statMul": {"hp": 0.8, "atk": 0.3, "spa": 0.3},
           "moves": ["pull-request", "open-license", "community-fork"],
           "pattern": [

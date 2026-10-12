@@ -2,7 +2,7 @@
 // the matching GameEvents. Pure over a GameContext subset so it is testable without DOM.
 import type { Creature } from '../../shared/types.ts'
 import type { GameContext } from '../contracts.ts'
-import { catchPlacement, type CatchPlacement } from './model.ts'
+import { catchPlacement, type CatchPlacement } from '../../shared/gameplay/save-ops.ts'
 
 export type SaveCtx = Pick<GameContext, 'save' | 'events' | 'data'>
 
@@ -52,6 +52,10 @@ export function changeMoney(ctx: SaveCtx, delta: number): number {
 
 /** Stores a captured creature (party, else first box with room), registers it and counts it. */
 export function storeCaught(ctx: SaveCtx, cr: Creature): CatchPlacement {
+  const partyIdx = ctx.save.party.findIndex((c) => c.uid === cr.uid)
+  if (partyIdx >= 0) return { where: 'party' }
+  const boxIdx = ctx.save.boxes.findIndex((b) => b.some((c) => c.uid === cr.uid))
+  if (boxIdx >= 0) return { where: 'box', box: boxIdx }
   const where = catchPlacement(ctx.save, ctx.data)
   if (!where) return null
   if (!cr.otName) cr.otName = ctx.save.name

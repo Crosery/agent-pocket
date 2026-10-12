@@ -3,10 +3,11 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { buildWorld, worldAnchors } from '../src/shared/world/index.ts'
-import { STORY_CONTENT, starterSpecies, storyProblems, walkSteps } from '../src/shared/world/story.ts'
+import { STORY_CONTENT, starterSpecies, storyFeatures, storyProblems, walkSteps } from '../src/shared/world/story.ts'
 import { CONTENT } from '../src/shared/content/index.ts'
+import { createCreature, legalMoves, sanitizeCreature } from '../src/shared/creature.ts'
+import { Rng } from '../src/shared/rng.ts'
 import type { NpcDef, ScriptStep } from '../src/shared/types.ts'
-
 const world = buildWorld()
 const anchors = worldAnchors(world)
 const PROLOGUE_STAGES = 7
@@ -16,7 +17,7 @@ const npcById = new Map<string, { map: string; n: NpcDef }>()
 for (const [map, m] of Object.entries(world.maps)) for (const n of m.npcs) npcById.set(n.id, { map, n })
 const npc = (id: string) => { const e = npcById.get(id); assert.ok(e, `npc ${id}`); return e }
 /** Every prologue script: the DS story scripts plus the NPCs that run them. */
-const PROLOGUE_NPCS = ['mom', 'professor', 'rival-lab', 'aide-types', 'ds-terminal', 'rival-lab-back', 'ds-guard', 'ds-guard-aside', 'ds-ernie', 'ds-r1', 'ds-v2', 'ds-supply', 'ds-heal', 'ds-relay', 'ds-v4', 'rival-depart']
+const PROLOGUE_NPCS = ['mom', 'professor', 'rival-lab', 'aide-types', 'ds-terminal', 'rival-lab-back', 'ds-guard', 'ds-guard-aside', 'ds-ernie', 'ds-r1', 'ds-v2', 'ds-supply', 'ds-heal', 'ds-relay', 'ds-v4', 'rival-depart', 'os-greeter', 'ds-spark']
 const scriptList = (): { id: string; steps: ScriptStep[] }[] => [
   ...PROLOGUE_NPCS.filter((id) => npcById.has(id)).map((id) => ({ id: `npc:${id}`, steps: npc(id).n.script })),
   ...Object.entries(STORY_CONTENT.scripts).filter(([id]) => id.startsWith('ds-')).map(([id, steps]) => ({ id, steps: steps as unknown as ScriptStep[] })),
@@ -185,3 +186,17 @@ test('time model: the shortest road from waking to the DeepSeek fight stays with
   if (process.env.OPENING_REPORT) console.log(`opening time model: ${lines} lines, ${turns} turns, ${tiles} tiles = ${minutes.toFixed(1)} min`)
   assert.ok(minutes <= MODEL.maxMinutes, `${minutes.toFixed(1)} min > ${MODEL.maxMinutes}`)
 })
+
+test('ernie-bot: scripted encounter carries embedding-orb at Lv6 and sanitizeCreature preserves it', () => {
+  const ernieNpc = npc('ds-ernie').n
+  const battles: Extract<ScriptStep, { op: 'wildBattle' }>[] = []
+  walkSteps(ernieNpc.script, (s) => { if (s.op === 'wildBattle') battles.push(s) })
+  const wild = battles[0]
+  assert.ok(wild, 'ds-ernie has a wildBattle step')
+  assert.ok(wild.moves?.includes('embedding-orb'), 'ds-ernie knows embedding-orb')
+  assert.ok(legalMoves('ernie-bot', 6, CONTENT).has('embedding-orb'), 'embedding-orb is legal at Lv6')
+  const cr = createCreature('ernie-bot', 6, { rng: new Rng(1), moves: wild.moves }, CONTENT)
+  const sanitized = sanitizeCreature(JSON.parse(JSON.stringify(cr)), CONTENT)
+  assert.ok(sanitized?.moves.some((m) => m.id === 'embedding-orb'), 'sanitizeCreature preserves embedding-orb at Lv6')
+})
+

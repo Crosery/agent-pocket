@@ -20,10 +20,10 @@
     "ballBonus": {"night": 3.5, "quick": 4, "status": 2.5, "lowLevel": 3, "lowLevelMax": 20, "rare": 3, "rareMinRarityOrder": 2}
   },
   "growth": {"fast": {"mul": 0.8}, "medium": {"mul": 1.0}, "slow": {"mul": 1.25}},
-  "encounters": {"stageWeight": [1, 0.35, 0.08], "nightTypeBoost": {"chaos": 2.0, "sound": 1.3}, "roamingMax": 10, "roamingRadius": 18},
-  "economy": {"startMoney": 3000, "blackoutMoneyLoss": 0.25, "sellRatio": 0.5, "startItems": {}},
+  "encounters": {"stageWeight": [1, 0.35, 0.08], "nightTypeBoost": {"chaos": 2.0, "sound": 1.3}, "roamingMax": 6, "roamingRadius": 18},
+  "economy": {"startMoney": 3000, "blackoutMoneyLoss": 0.05, "sellRatio": 0.5, "startItems": {"cache-potion": 2}},
   "creature": {"ivMax": 31, "startFriendship": 70, "secondAbilityChance": 0.2, "starterLevel": 5, "levelUpFriendship": 3},
-  "save": {"autosaveSeconds": 60, "storagePrefix": "agent-pocket/save/", "version": 3},
+  "save": {"autosaveSeconds": 60, "storagePrefix": "agent-pocket/save/", "version": 3, "contentRev": 5},
   "camera": {"fov": 32, "pitchDeg": 36, "zoomDistances": [11, 16, 24], "followDamping": 6, "lookAhead": 1.2, "minViewTilesWide": 7},
   "render": {"maxPointLights": 10, "shadowMapSize": 2048, "internalHeight": {"low": 300, "medium": 360, "high": 450, "ultra": 540}},
   "settingsMigrations": [

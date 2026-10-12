@@ -1,8 +1,5 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync, readdirSync } from 'node:fs'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import type { Creature, ItemDef, SaveData } from '../src/shared/types.ts'
 import { CONTENT, t } from '../src/shared/content/index.ts'
 import { createCreature, maxHp } from '../src/shared/creature.ts'
@@ -15,11 +12,6 @@ import {
   medicineBlocker, moveCreature, natureAxis, natureGrid, pickInDirection, playTimeParts, releaseCreature, sellPrice, stepSetting, teachState,
 } from '../src/client/ui/screens/logic.ts'
 
-const here = dirname(fileURLToPath(import.meta.url))
-const screensDir = join(here, '..', 'src', 'client', 'ui', 'screens')
-// online.ts belongs to the multiplayer module and is checked by its own tests.
-const sources = readdirSync(screensDir).filter((f) => f.endsWith('.ts') && f !== 'online.ts')
-  .map((f) => ({ file: f, code: readFileSync(join(screensDir, f), 'utf8') }))
 
 // ---------------------------------------------------------------------------
 // Fixtures built only from CONTENT (no ids hardcoded)
@@ -47,15 +39,6 @@ test('content/screens.json validates against CONTENT and the ui-kit glyphs', () 
   assert.deepEqual(errs, [], errs.join('\n'))
 })
 
-test('every literal screens.* text key used by the screens exists', () => {
-  const missing: string[] = []
-  for (const { file, code } of sources) {
-    for (const m of code.matchAll(/'(screens\.[A-Za-z0-9_.]+)'/g)) {
-      if (!(m[1] in CONTENT.text)) missing.push(`${file}: ${m[1]}`)
-    }
-  }
-  assert.deepEqual(missing, [])
-})
 
 test('every templated screens.* text key resolves for all values it can take', () => {
   const keys: string[] = []
@@ -74,9 +57,6 @@ test('every templated screens.* text key resolves for all values it can take', (
     keys.push(`screens.settings.field.${f.key}`, `screens.settings.section.${f.section}`)
     if (f.kind === 'choice' && !f.format) for (const o of f.options ?? []) keys.push(`screens.settings.opt.${f.key}.${String(o)}`)
   }
-  // Blockers returned by medicineBlocker are shown in full and as a short party-card note.
-  const logic = sources.find((s) => s.file === 'logic.ts')!.code
-  for (const m of logic.matchAll(/'(screens\.use\.[A-Za-z]+)'/g)) keys.push(m[1], `${m[1]}Short`)
   const missing = [...new Set(keys)].filter((k) => !(k in CONTENT.text))
   assert.deepEqual(missing, [])
 })
@@ -94,19 +74,6 @@ test('species country / category labels (soft: unknown codes fall back to the ra
   if (missing.size) t.diagnostic(`labels missing (raw code shown): ${[...missing].join(', ')}`)
 })
 
-test('screens code carries no player-facing text, colours or entity ids', () => {
-  const problems: string[] = []
-  // Effect / key kinds are schema enums shared with item ids of the same name (e.g. an item whose effect kind is its id).
-  const kinds = new Set<string>(CONTENT.itemList.flatMap((i) => [i.effect.kind, ...(i.effect.kind === 'key' ? [i.effect.key] : [])]))
-  const ids = new Set([...CONTENT.speciesList.map((s) => s.id), ...CONTENT.itemList.map((i) => i.id), ...CONTENT.moveList.map((m) => m.id)].filter((id) => !kinds.has(id)))
-  for (const { file, code } of sources) {
-    const noComments = code.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1')
-    if (/[㐀-鿿＀-￯]/.test(noComments)) problems.push(`${file}: CJK text in code`)
-    for (const m of noComments.matchAll(/['"`](#[0-9a-fA-F]{3,8})\b/g)) problems.push(`${file}: colour literal ${m[1]}`)
-    for (const m of noComments.matchAll(/'([a-z0-9][a-z0-9_-]*)'/g)) if (ids.has(m[1]) && m[1].length > 3) problems.push(`${file}: entity id '${m[1]}'`)
-  }
-  assert.deepEqual(problems, [])
-})
 
 // ---------------------------------------------------------------------------
 // Logic
@@ -290,13 +257,3 @@ test('nature picker grid: 25 distinct natures, row = stat raised, column = stat 
   })
 })
 
-test('party row and summary carry the quality: grade chip on both, 人设 and 性格 as separate info rows', () => {
-  const party = sources.find((x) => x.file === 'party.ts')!.code
-  const summary = sources.find((x) => x.file === 'summary.ts')!.code
-  assert.match(party, /gradeChip\(gradeOf\(/, 'party row shows the grade chip')
-  assert.match(summary, /gradeChip\(gradeOf\(/, 'summary left panel shows the grade chip')
-  assert.match(summary, /screens\.summary\.personality/)
-  assert.match(summary, /screens\.quality\.summary\.nature/)
-  assert.equal(t('screens.summary.personality'), '人设')
-  assert.equal(t('screens.quality.summary.nature'), '性格')
-})

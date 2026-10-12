@@ -5,12 +5,11 @@ import type { EventBus, GameContext, GameEvents, Input, NetClient, UIPanel } fro
 import type { ServerMsg } from '../../shared/protocol.ts'
 import type { Creature, SaveData } from '../../shared/types.ts'
 import { CONTENT, t, type Content } from '../../shared/content/index.ts'
-import { STAT_KEYS, creatureName, newUid } from '../../shared/creature.ts'
+import { STAT_KEYS, creatureName } from '../../shared/creature.ts'
 import { gradeOf } from '../../shared/gameplay/quality.ts'
+import { applyTradeResult, canOffer, offerableIndices, type TradeApplied } from '../../shared/gameplay/save-ops.ts'
 import { natureName } from '../ui/quality-text.ts'
-import { Rng, hashString } from '../../shared/rng.ts'
 import multiplayerJson from '../../../content/multiplayer.json' with { type: 'json' }
-import netJson from '../../../content/net.json' with { type: 'json' }
 import { UI_CONFIG } from '../ui/config.ts'
 
 type ToastKind = 'info' | 'success' | 'warn' | 'error'
@@ -19,6 +18,7 @@ type Widgets = typeof import('../ui/widgets.ts')
 
 /** Client view of content/multiplayer.json → trade. */
 export interface TradeRules {
+  requestSeconds: number
   ivStars: number
   cardIconSize: number
   completeAnimMs: number
@@ -32,22 +32,16 @@ export interface TradeRules {
   sessionErrors: string[]
 }
 
-export const TRADE_RULES: TradeRules = (multiplayerJson as unknown as { trade: TradeRules }).trade
-const CLIENT_SLACK_SECONDS = (multiplayerJson as unknown as { pvp: { clientSlackSeconds: number } }).pvp.clientSlackSeconds
-const REQUEST_SECONDS = (netJson as unknown as { server: { tradeRequestSeconds: number } }).server.tradeRequestSeconds
+// multiplayer.json trade section matches TradeRules; buttons array is narrowed from string[]
+export const TRADE_RULES: TradeRules = multiplayerJson.trade as TradeRules
+const CLIENT_SLACK_SECONDS = multiplayerJson.pvp.clientSlackSeconds
+const REQUEST_SECONDS = TRADE_RULES.requestSeconds
 
 // ---------------------------------------------------------------------------
 // Pure rules (Node-testable)
 // ---------------------------------------------------------------------------
 
-/** A creature may be offered only if the party keeps at least one other creature able to battle; a signed boss card is bound to its trainer. */
-export function canOffer(party: readonly Creature[], cr: Creature): boolean {
-  return cr.origin?.kind !== 'boss' && party.includes(cr) && party.some((o) => o !== cr && o.hp > 0)
-}
-
-export function offerableIndices(party: readonly Creature[]): number[] {
-  return party.flatMap((cr, i) => (canOffer(party, cr) ? [i] : []))
-}
+export { applyTradeResult, canOffer, offerableIndices, type TradeApplied }
 
 /** IV quality as 0..stars (sum of IVs relative to the maximum). */
 export function ivStars(cr: Pick<Creature, 'ivs'>, stars = TRADE_RULES.ivStars, c: Content = CONTENT): number {
@@ -56,58 +50,7 @@ export function ivStars(cr: Pick<Creature, 'ivs'>, stars = TRADE_RULES.ivStars, 
   return max > 0 ? Math.max(0, Math.min(stars, Math.round((sum / max) * stars))) : 0
 }
 
-export interface TradeApplied {
-  where: 'party' | 'box'
-  index: number
-  given: Creature | null
-  newSeen: boolean
-  newCaught: boolean
-}
 
-/**
- * Applies trade.complete to a save: the given creature leaves (party slot is reused so the party never
- * shrinks), the received one joins the party or the first box with room, dex and stats update.
- */
-export function applyTradeResult(save: SaveData, givenUid: string, received: Creature, c: Content = CONTENT): TradeApplied {
-  const cr: Creature = structuredClone(received)
-  let given: Creature | null = null
-  let where: TradeApplied['where'] | null = null
-  let index = -1
-  const pi = save.party.findIndex((x) => x.uid === givenUid)
-  if (pi >= 0) {
-    given = save.party[pi]
-    save.party.splice(pi, 1)
-  } else {
-    for (const box of save.boxes) {
-      const bi = box.findIndex((x) => x.uid === givenUid)
-      if (bi >= 0) { given = box.splice(bi, 1)[0]; break }
-    }
-  }
-  const owned = (uid: string) => save.party.some((x) => x.uid === uid) || save.boxes.some((b) => b.some((x) => x.uid === uid))
-  if (owned(cr.uid)) cr.uid = newUid(new Rng(hashString(`${cr.uid}/${givenUid}/${save.playerId}`)))
-  if (pi >= 0) {
-    save.party.splice(pi, 0, cr)
-    where = 'party'
-    index = pi
-  } else if (save.party.length < c.config.party.maxParty) {
-    save.party.push(cr)
-    where = 'party'
-    index = save.party.length - 1
-  } else {
-    let bi = save.boxes.findIndex((b) => b.length < c.config.party.boxSize)
-    // Storage completely full: overflow the last box rather than ever losing a creature.
-    if (bi < 0) { if (!save.boxes.length) save.boxes.push([]); bi = save.boxes.length - 1 }
-    save.boxes[bi].push(cr)
-    where = 'box'
-    index = bi
-  }
-  const newSeen = !save.dexSeen.includes(cr.speciesId)
-  const newCaught = !save.dexCaught.includes(cr.speciesId)
-  if (newSeen) save.dexSeen.push(cr.speciesId)
-  if (newCaught) save.dexCaught.push(cr.speciesId)
-  save.stats.trades += 1
-  return { where, index, given, newSeen, newCaught }
-}
 
 // ---------------------------------------------------------------------------
 // Shared multiplayer session state (per GameContext)
@@ -193,7 +136,18 @@ export function trackOnlineRoster(net: Pick<NetClient, 'on'>): Roster {
   let r = ROSTERS.get(net)
   if (!r) {
     const roster: Roster = { players: [], count: 0, at: 0 }
-    net.on('online', (m) => { roster.players = m.players; roster.count = m.count; roster.at = Date.now() })
+    net.on('online', (m) => {
+      if (m.delta) {
+        const byId = new Map(roster.players.map((p) => [p.id, p]))
+        for (const id of m.left ?? []) byId.delete(id)
+        for (const p of m.players) byId.set(p.id, p)
+        roster.players = [...byId.values()]
+      } else {
+        roster.players = m.players
+      }
+      roster.count = m.count
+      roster.at = Date.now()
+    })
     ROSTERS.set(net, roster)
     r = roster
   }
@@ -366,6 +320,7 @@ export async function startTradeFlow(ctx: GameContext, targetId: string, targetN
       offs.push(ctx.net.on('error', (m) => { if (TRADE_RULES.requestAbortErrors.includes(m.code)) { toastError(ctx, m); done(null) } }))
       offs.push(ctx.events.on('net:status', ({ status }) => { if (status !== 'online') { ctx.ui.toast(t('multiplayer.trade.connectionLost'), 'warn'); done(null) } }))
       const timer = setTimeout(() => done(null), (REQUEST_SECONDS + CLIENT_SLACK_SECONDS) * 1000)
+      ctx.net.send({ t: 'trade.request', to: targetId })
       void showWaitPanel(ctx, {
         text: t('multiplayer.trade.requesting', { name: targetName }),
         seconds: REQUEST_SECONDS,
@@ -376,7 +331,7 @@ export async function startTradeFlow(ctx: GameContext, targetId: string, targetN
         },
       }).then((h) => {
         if (settled) h.close()
-        else { wait = h; ctx.net.send({ t: 'trade.request', to: targetId }) }
+        else wait = h
       }, (err) => { reportError(err); done(null) })
     })
   } finally {
@@ -428,7 +383,12 @@ async function onTradeRequested(ctx: GameContext, m: Extract<ServerMsg, { t: 'tr
     ctx.ui.toast(t('multiplayer.trade.noOfferable'), 'warn')
     pick = 1
   }
-  ctx.net.send({ t: 'trade.respond', from: m.from, accept: pick === 0 })
+  if (pick !== 0) {
+    ctx.net.send({ t: 'trade.respond', from: m.from, accept: false })
+    return
+  }
+  ctx.ui.toast(t('multiplayer.trade.accepting', { name: m.name }), 'info')
+  ctx.net.send({ t: 'trade.respond', from: m.from, accept: true })
 }
 
 // ---------------------------------------------------------------------------
@@ -451,6 +411,7 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
   let myOk = false
   let theirOk = false
   let note: { text: string; cls: string } | null = null
+  let pendingAction: 'offer' | 'withdraw' | 'confirm' | null = null
   let closed = false
   let completed = false
   let picking = false
@@ -487,12 +448,19 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
   ]
   const paintFocus = () => BUTTONS.forEach((b, i) => buttons[b].classList.toggle('mp-focus', i === nav.index))
   const paint = () => {
-    mineCol.replaceChildren(...column(t('multiplayer.trade.you'), mine, myOk, ''))
+    const myStateText = pendingAction === 'offer'
+      ? t('multiplayer.trade.submittingOffer')
+      : pendingAction === 'withdraw'
+        ? t('multiplayer.trade.withdrawingOffer')
+        : pendingAction === 'confirm'
+          ? t('multiplayer.trade.confirming')
+          : ''
+    mineCol.replaceChildren(...column(t('multiplayer.trade.you'), mine, myOk, myStateText))
     theirCol.replaceChildren(...column(t('multiplayer.trade.them', { name: start.name }), theirs, theirOk, t('multiplayer.trade.waitingOffer')))
     buttons.pick.textContent = mine ? t('multiplayer.trade.change') : t('multiplayer.trade.pick')
-    buttons.pick.disabled = completed
-    buttons.withdraw.disabled = completed || !mine
-    buttons.confirm.disabled = completed || !mine || !theirs || myOk
+    buttons.pick.disabled = completed || pendingAction !== null
+    buttons.withdraw.disabled = completed || !mine || pendingAction !== null
+    buttons.confirm.disabled = completed || !mine || !theirs || myOk || pendingAction !== null
     buttons.cancel.disabled = completed
     noteEl.textContent = note?.text ?? (!mine || !theirs ? t('multiplayer.trade.bothNeeded') : '')
     noteEl.className = note?.cls ?? ''
@@ -525,13 +493,28 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
         if (closed || completed || idx < 0) return
         const cr = ctx.save.party[idx]
         if (!cr || !canOffer(ctx.save.party, cr)) { ctx.ui.toast(cr?.origin?.kind === 'boss' ? t('net.trade.boundBoss') : t('multiplayer.trade.notOfferable'), 'warn'); return }
-        ctx.net.send({ t: 'trade.offer', tradeId, creature: structuredClone(cr) })
+        const offered = structuredClone(cr)
+        mine = offered
+        pendingAction = 'offer'
+        note = { text: t('multiplayer.trade.submittingOffer'), cls: '' }
+        ctx.audio.playSfx(TRADE_RULES.sfx.offer)
+        paint()
+        ctx.net.send({ t: 'trade.offer', tradeId, creature: offered })
         return
       }
       case 'withdraw':
+        mine = null
+        myOk = false
+        pendingAction = 'withdraw'
+        note = { text: t('multiplayer.trade.withdrawingOffer'), cls: '' }
+        paint()
         ctx.net.send({ t: 'trade.offer', tradeId, creature: null })
         return
       case 'confirm':
+        pendingAction = 'confirm'
+        note = { text: t('multiplayer.trade.confirming'), cls: '' }
+        ctx.audio.playSfx(TRADE_RULES.sfx.confirm)
+        paint()
         ctx.net.send({ t: 'trade.confirm', tradeId })
         return
       case 'cancel':
@@ -547,7 +530,7 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
       if (completed || picking) return true
       const r = nav.handle(input)
       if (r === 'confirm') void activate(BUTTONS[nav.index])
-      else if (r === 'cancel') void activate('cancel')
+      else if (r === 'cancel' || input.pressed('menu')) { input.consume('menu'); void activate('cancel') }
       else if (r === 'move') paintFocus()
       return true
     },
@@ -564,6 +547,7 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
   const offs: (() => void)[] = [
     ctx.net.on('trade.offer', (m) => {
       if (m.tradeId !== tradeId) return
+      if (m.side === 'self') pendingAction = null
       resetConfirms()
       if (m.side === 'self') mine = m.creature
       else { theirs = m.creature; ctx.audio.playSfx(TRADE_RULES.sfx.offer) }
@@ -571,10 +555,9 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
     }),
     ctx.net.on('trade.confirmed', (m) => {
       if (m.tradeId !== tradeId) return
-      if (m.side === 'self') myOk = true
-      else theirOk = true
+      if (m.side === 'self') { myOk = true; pendingAction = null }
+      else { theirOk = true; ctx.audio.playSfx(TRADE_RULES.sfx.confirm) }
       note = null
-      ctx.audio.playSfx(TRADE_RULES.sfx.confirm)
       paint()
     }),
     ctx.net.on('trade.complete', (m) => {
@@ -609,7 +592,12 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
       close()
     }),
     ctx.net.on('error', (m) => {
-      if (!closed && !completed && TRADE_RULES.sessionErrors.includes(m.code)) toastError(ctx, m)
+      if (!closed && !completed && TRADE_RULES.sessionErrors.includes(m.code)) {
+        pendingAction = null
+        note = null
+        paint()
+        toastError(ctx, m)
+      }
     }),
     ctx.events.on('net:status', ({ status }) => {
       if (status === 'online' || completed) return

@@ -1,15 +1,15 @@
 {
-  "scheduler": {"mapKinds": ["overworld"], "minCheckRealSec": 0.4, "localEndDistance": 96, "fallbackAreaLevel": [5, 12], "seedSalt": "events"},
+  "scheduler": {"mapKinds": ["overworld"], "requireFlag": "ds:gateOpen", "minCheckRealSec": 0.4, "localEndDistance": 96, "fallbackAreaLevel": [5, 12], "seedSalt": "events"},
   "places": {"nearCacheTiles": 8, "revealSearchRadius": 900, "revealPinReachTiles": 6, "revealPinsMax": 4, "revealPingMinutes": 4320},
   "start": {"bannerTags": ["festival", "culture", "legend", "chain"], "bannerCooldownSec": 25, "hiddenSfx": "notify", "startSfx": "notify", "rumorToastKind": "info", "hiddenToastKind": "success"},
   "flags": {"news": "news:", "spawnTaken": "evspawn:", "itemTaken": "evitem:", "revealed": "revealed:"},
   "rumors": {"townEnterChance": 0.45, "cooldownMinutes": 90, "ambientEveryMinutes": 240, "ambientChance": 0.25, "toastKind": "info"},
   "items": {"pickupRadius": 0.8, "glintEverySec": 2.2, "hiddenGlintRadius": 3.5, "visibleFx": "sparkle", "hiddenFx": "sparkle", "sfx": "item", "snapRadius": 4},
-  "special": {"mapKinds": ["overworld", "cave"], "speed": 1.5, "wanderRadius": 4, "idleSec": [1.2, 3.2], "fleeSpeedMul": 1.7, "chaseSpeedMul": 1.15, "noticeRange": 4.5, "touchRadius": 0.62, "cullDistance": 34, "despawnDistance": 70, "snapRadius": 6, "arriveEpsilon": 0.08, "shinyCue": "sparkle-soft"},
+  "special": {"mapKinds": ["overworld", "cave"], "speed": 1.5, "wanderRadius": 4, "idleSec": [1.2, 3.2], "fleeSpeedMul": 1.7, "chaseSpeedMul": 1.15, "noticeRange": 4.5, "touchRadius": 0.45, "cullDistance": 34, "despawnDistance": 70, "snapRadius": 6, "arriveEpsilon": 0.08, "shinyCue": "sparkle-soft"},
   "legends": {"checkSec": 1.0, "mapKinds": ["overworld"], "senseToastCooldownSec": 150, "despawnBeyondMul": 2.2, "senseAmbience": true},
   "roaming": {"rareFromOrder": 2, "noticeBubbleFallback": "!"},
   "presentation": {"arriveHoldMs": 900, "arriveDistance": 2.2, "rarities": ["UR", "MYTHIC"]},
-  "research": {"claimFlag": "research:claimed", "toastGains": true, "toastKind": "info", "visibleRows": 8, "compactVisibleRows": 5},
+  "research": {"claimFlag": "research:claimed", "toastGains": false, "toastKind": "info", "visibleRows": 8, "compactVisibleRows": 5},
   "hud": {
     "maxChips": 3,
     "refreshSec": 0.5,

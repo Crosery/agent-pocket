@@ -10,7 +10,7 @@ import { icon } from '../ui/screens/base.ts'
 import { categoryIcon, commandIcon, typeBadge } from './badges.ts'
 import { BATTLE_UI, type CommandId, type EffCategory } from './config.ts'
 
-export interface CommandItem { id: CommandId; disabled: boolean }
+export interface CommandItem { id: CommandId; disabled: boolean; pulse?: boolean }
 
 export interface MoveItem {
   /** null = unknown move id (still selectable by index). */
@@ -21,6 +21,8 @@ export interface MoveItem {
   disabled: boolean
   /** Effectiveness against the foe on the field; null = not shown. */
   hint: EffCategory | 'unknown' | null
+  /** Highlight this move row for tutorial guidance. */
+  pulse?: boolean
 }
 
 export interface Menus {
@@ -29,7 +31,7 @@ export interface Menus {
   readonly mode: 'commands' | 'moves' | null
   openCommands(items: CommandItem[], initial: number): Promise<CommandId>
   /** Resolves the move index, or -1 when backing out. `onChart(i)` opens the type chart for move i; the list stays up beneath it. */
-  openMoves(items: MoveItem[], initial: number, onChart?: (i: number) => void): Promise<number>
+  openMoves(items: MoveItem[], initial: number, onChart?: (i: number) => void, opts?: { chartPulse?: boolean }): Promise<number>
   close(): void
   input(inp: Input): boolean
 }
@@ -97,7 +99,7 @@ export function createMenus(audio: AudioManager): Menus {
       return new Promise<CommandId>((resolve) => {
         const p = panel(null, { className: 'apb-win apb-menu apb-cmd' })
         p.el.style.setProperty('--cols', String(BATTLE_UI.commands.columns))
-        const rows = items.map((it) => row('apb-cmd-row', [commandIcon(it.id), el('span', { class: 'ap-row-label', text: t(`battleui.cmd.${it.id}`) })], it.disabled))
+        const rows = items.map((it) => row(`apb-cmd-row${it.pulse ? ' is-pulse' : ''}`, [commandIcon(it.id), el('span', { class: 'ap-row-label', text: t(`battleui.cmd.${it.id}`) })], it.disabled))
         const hint = el('div', 'apb-cmd-hint', [
           el('span', { class: 'apb-hint-keys', text: t('battleui.hint.keys', { confirm: actionKeyLabel('confirm'), menu: actionKeyLabel('menu') }) }),
           el('span', { class: 'apb-hint-touch', text: t('battleui.hint.touch') }),
@@ -113,23 +115,31 @@ export function createMenus(audio: AudioManager): Menus {
       })
     },
 
-    openMoves(items, initial, onChart) {
+    openMoves(items, initial, onChart, opts) {
       return new Promise<number>((resolve) => {
         const p = panel(null, { className: 'apb-win apb-menu apb-moves' })
         p.el.style.setProperty('--cols', String(BATTLE_UI.moves.columns))
         const rows = items.map((it) => {
           const out = it.pp <= 0
           const low = !out && it.pp * 4 <= it.ppMax
-          return row('apb-move-row', [
+          const effBadge = it.hint === 'super'
+            ? el('span', { class: 'apb-move-eff is-super', text: '克制' })
+            : it.hint === 'weak'
+              ? el('span', { class: 'apb-move-eff is-weak', text: '微弱' })
+              : it.hint === 'immune'
+                ? el('span', { class: 'apb-move-eff is-immune', text: '无效' })
+                : null
+          return row(`apb-move-row${it.pulse ? ' is-pulse' : ''}`, [
             it.def ? typeBadge(it.def.type) : el('span'),
-            el('span', { class: 'apb-move-name', text: it.label }),
+            el('span', { class: 'apb-move-name', text: it.label, title: it.label }),
+            ...(effBadge ? [effBadge] : []),
             el('span', { class: `apb-move-pp${out ? ' is-out' : low ? ' is-low' : ''}`, text: t('battleui.move.pp', { pp: it.pp, max: it.ppMax }) }),
           ], it.disabled)
         })
         p.body.replaceWith(...rows)
         const back = button(t('battleui.move.back'), (e) => { e.stopPropagation(); active?.cancel() }, { className: 'apb-back' })
         // Icon button (the key cap shows where there is a keyboard): the type chart for the highlighted move.
-        const chart = el('button', { class: 'ap-btn apb-chart', title: t('battleui.move.chart'), attrs: { type: 'button', 'aria-label': t('battleui.move.chart') } }, [
+        const chart = el('button', { class: `ap-btn apb-chart${opts?.chartPulse ? ' is-pulse' : ''}`, title: t('battleui.move.chart'), attrs: { type: 'button', 'aria-label': t('battleui.move.chart') } }, [
           icon('typeChart', { className: 'apb-chart-ico' }),
           keyHint(BATTLE_UI.moves.chart.action),
         ])
@@ -148,7 +158,7 @@ export function createMenus(audio: AudioManager): Menus {
             : null
           detail.body.replaceChildren()
           append(detail.body, [
-            el('div', 'apb-detail-head', [typeBadge(m.type), el('span', { class: 'apb-detail-name', text: m.nameZh }), cat, ...(onChart ? [chart] : []), back]),
+            el('div', 'apb-detail-head', [typeBadge(m.type), el('span', { class: 'apb-detail-name', text: m.nameZh, title: m.nameZh }), cat, ...(onChart ? [chart] : []), back]),
             el('div', 'apb-detail-stats', [
               stat('battleui.move.power', m.power > 0 ? String(m.power) : t('battleui.move.none')),
               stat('battleui.move.accuracy', m.accuracy === 0 ? t('battleui.move.never') : String(m.accuracy)),
@@ -184,6 +194,7 @@ export function createMenus(audio: AudioManager): Menus {
       const a = active
       if (!a) return false
       if (a.chart && inp.pressed(BATTLE_UI.moves.chart.action)) { inp.consume(BATTLE_UI.moves.chart.action); a.chart(a.nav.index); return true }
+      if (a.mode === 'moves' && inp.pressed('menu')) { inp.consume('menu'); a.cancel(); return true }
       const r = a.nav.handle(inp)
       if (r === 'confirm') a.pick(a.nav.index)
       else if (r === 'cancel') a.cancel()

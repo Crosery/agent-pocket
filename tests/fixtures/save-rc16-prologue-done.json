@@ -1,0 +1,137 @@
+{
+  "version": 3,
+  "playerId": "fixture-rc16-player",
+  "name": "机房训练家",
+  "avatar": "hero_girl",
+  "createdAt": 1697000000000,
+  "playTimeSec": 3600,
+  "money": 9400,
+  "badges": [
+    "badge-code",
+    "badge-vision"
+  ],
+  "party": [
+    {
+      "uid": "rc16-mon-0001",
+      "speciesId": "o1",
+      "level": 18,
+      "exp": 5832,
+      "ivs": {"hp": 22, "atk": 15, "def": 20, "spa": 28, "spd": 21, "spe": 19},
+      "moves": [
+        {"id": "debug-strike", "pp": 20, "ppMax": 20},
+        {"id": "deductive-slash", "pp": 15, "ppMax": 15},
+        {"id": "chain-of-thought", "pp": 15, "ppMax": 15},
+        {"id": "eureka", "pp": 20, "ppMax": 20}
+      ],
+      "hp": 49,
+      "status": null,
+      "statusTurns": 0,
+      "abilityId": "deep-think",
+      "shiny": false,
+      "friendship": 90,
+      "ballId": "prompt-ball",
+      "caughtMap": "origin-lab",
+      "otName": "机房训练家",
+      "otId": "fixture-rc16-player",
+      "nature": "erudite",
+      "origin": {"kind": "starter"},
+      "finetuned": 0
+    },
+    {
+      "uid": "rc16-mon-0002",
+      "speciesId": "deepseek-v4",
+      "level": 14,
+      "exp": 3430,
+      "ivs": {"hp": 24, "atk": 18, "def": 22, "spa": 31, "spd": 25, "spe": 20},
+      "moves": [
+        {"id": "thermal-spike", "pp": 20, "ppMax": 20},
+        {"id": "null-pointer", "pp": 25, "ppMax": 25},
+        {"id": "distill-strike", "pp": 20, "ppMax": 20},
+        {"id": "weight-drop", "pp": 5, "ppMax": 5}
+      ],
+      "hp": 52,
+      "status": null,
+      "statusTurns": 0,
+      "abilityId": "sparse-moe",
+      "shiny": false,
+      "friendship": 85,
+      "ballId": "prompt-ball",
+      "caughtMap": "origin-lab-b2",
+      "otName": "机房训练家",
+      "otId": "fixture-rc16-player",
+      "nature": "imaginative",
+      "origin": {"kind": "boss", "boss": "deepseek", "tier": "story", "run": "1"},
+      "finetuned": 0
+    }
+  ],
+  "boxes": [[], [], [], [], [], [], [], [], [], [], [], []],
+  "bag": {
+    "prompt-ball": 8,
+    "off-peak-coupon": 2,
+    "chip-weight-drop": 1,
+    "hover-board": 1,
+    "badge-case": 1
+  },
+  "dexSeen": ["o1", "ernie-bot", "deepseek-v4"],
+  "dexCaught": ["o1", "ernie-bot", "deepseek-v4"],
+  "position": {"map": "overworld", "x": 526, "y": 873, "facing": "down"},
+  "respawn": {"map": "overworld", "x": 526, "y": 873, "facing": "down"},
+  "flags": {
+    "starter": "o1",
+    "intro:mom": true,
+    "rival:lab": true,
+    "ds:stamp:types": true,
+    "ds:stamp:catch": true,
+    "ds:certFull": true,
+    "ds:briefed": true,
+    "ds:drill": true,
+    "ds:relay": true,
+    "ds:met": true,
+    "ds:done": true,
+    "ds:gateOpen": true,
+    "ds:departed": true
+  },
+  "quests": {
+    "main": {"stage": 8, "done": false}
+  },
+  "visitedTowns": ["origin", "opensource", "pixelport"],
+  "exploredChunks": {},
+  "repelSteps": 0,
+  "clockMinutes": 720,
+  "stats": {"battlesWon": 14, "caught": 3, "steps": 1800, "pvpWins": 0, "pvpLosses": 0, "trades": 0, "shiniesFound": 0},
+  "settings": {
+    "bgmVolume": 0,
+    "sfxVolume": 0.8,
+    "quality": "high",
+    "pixelScale": 2,
+    "dof": true,
+    "bloom": true,
+    "shadows": true,
+    "textSpeed": "normal",
+    "battleSpeed": 1,
+    "showMinimap": true,
+    "showNames": true,
+    "showObjective": true,
+    "showTips": true,
+    "showIvNumbers": false,
+    "autoRun": false,
+    "touchControls": "auto",
+    "touchHand": "right",
+    "touchSize": "normal",
+    "haptics": true,
+    "migrations": ["bgm-mute-20261003", "phone-quality-20261009"]
+  },
+  "anchors": {
+    "unlocked": ["anchor:grand:525:877"],
+    "seen": ["anchor:grand:525:877"]
+  },
+  "rollSeed": 305419896,
+  "instances": {
+    "deepseek-tide": {
+      "clears": {"story": 1},
+      "captures": {"story": 1},
+      "runSeq": 1,
+      "losses": {"story": 0}
+    }
+  }
+}

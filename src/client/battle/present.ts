@@ -33,6 +33,7 @@ export interface PresenterEnv {
 
 export interface Presenter {
   play(events: readonly BattleEvent[]): Promise<void>
+  sync(events: readonly BattleEvent[]): Promise<void>
 }
 
 export function ballColorOf(cr: Pick<Creature, 'ballId'> | undefined): string | undefined {
@@ -146,10 +147,15 @@ export function createPresenter(env: PresenterEnv): Presenter {
       view.status[0].setLevel(lv(e.level))
       if (v) {
         v.level = lv(e.level)
-        const before = calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, nature: cr.nature, level: lv(e.level - 1) }).hp
         const max = calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, nature: cr.nature, level: lv(e.level) }).hp
-        if (v.hp > 0) v.hp = Math.min(max, v.hp + max - before)
+        v.hp = max
         v.maxHp = max
+        v.status = null
+        for (const [k, val] of Object.entries(model.sides[0].stages)) {
+          if ((val ?? 0) < 0) delete model.sides[0].stages[k as keyof typeof model.sides[0]['stages']]
+        }
+        view.status[0].setStatus(null)
+        view.status[0].setStages(model.sides[0].stages)
         void view.status[0].setHp(v.hp, v.maxHp, true)
       }
       void scene.settle(stage.levelUpFx(0))
@@ -179,6 +185,7 @@ export function createPresenter(env: PresenterEnv): Presenter {
         return
       }
       case 'turn':
+        applyEvent(model, e)
         return
       case 'move': {
         const def = CONTENT.moves[e.moveId]
@@ -318,6 +325,9 @@ export function createPresenter(env: PresenterEnv): Presenter {
         }
         return
       }
+      case 'coach':
+        applyEvent(model, e)
+        return
       case 'form':
         await onForm(e)
         return
@@ -345,6 +355,42 @@ export function createPresenter(env: PresenterEnv): Presenter {
       const queued = after
       after = []
       for (const fn of queued) await fn()
+    },
+    async sync(events) {
+      for (const e of events) {
+        switch (e.t) {
+          case 'damage':
+          case 'heal':
+            applyEvent(model, e)
+            mirrorOwn(e.side)
+            syncSlots(e.side)
+            await view.status[e.side].setHp(e.hp, e.maxHp, true)
+            break
+          case 'status':
+            applyEvent(model, e)
+            mirrorOwn(e.side)
+            view.status[e.side].setStatus(e.status)
+            syncSlots(e.side)
+            break
+          case 'boss':
+            applyEvent(model, e)
+            view.setBoss(bossPanelInfo(e.hud, undefined, env.init.bossTier))
+            break
+          case 'form': {
+            applyEvent(model, e)
+            const s = model.sides[e.side]
+            view.status[e.side].setCreature(e.creature, env.init.sides[e.side].party[s.active]?.abilityId, foeGrade(e.side, s.active, e.creature.speciesId))
+            view.status[e.side].setVolatiles(s.volatiles)
+            view.status[e.side].setStages(s.stages)
+            syncSlots(e.side)
+            stage.setCreature(e.side, e.creature.speciesId, e.creature.shiny)
+            break
+          }
+          default:
+            applyEvent(model, e)
+            break
+        }
+      }
     },
   }
 }
