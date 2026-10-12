@@ -3,9 +3,13 @@
 import { createHash, randomBytes, scrypt as scryptCb, timingSafeEqual } from 'node:crypto'
 import type { IncomingMessage } from 'node:http'
 import { promisify } from 'node:util'
+import gameJson from '../../content/game.json' with { type: 'json' }
 import type { Creature, SaveData, World } from '../shared/types.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
-import { sanitizeCreature } from '../shared/creature.ts'
+import { newUid, sanitizeCreature } from '../shared/creature.ts'
+import { hashString, Rng } from '../shared/rng.ts'
+import { worldAnchors } from '../shared/world/index.ts'
+import { getMap } from '../shared/world/worldapi.ts'
 import { createSaveManager } from '../client/core/save.ts'
 import { migrateSave } from '../client/core/save-migrate.ts'
 import { sanitizeSaveData, sanitizeSettings, type SanitizeContext } from '../client/core/save-sanitize.ts'
@@ -352,6 +356,28 @@ function markCreatureLegacy(cr: Creature, now: number): void {
   cr.origin = { kind: 'legacy', at: now, ...(boss ? { boss } : {}) }
 }
 
+/** Deterministically re-key creature UIDs on offline import so client-chosen UIDs never collide with other accounts. */
+export function rekeyImportedSaveCreatures(save: SaveData, accountId: string): void {
+  const used = new Set<string>()
+  let seq = 0
+  const rekey = (cr: Creature): void => {
+    let salt = 0
+    let candidate = ''
+    do {
+      const seed = (hashString(`import-uid:${accountId}:${seq}:${salt}:${cr.uid}`) >>> 0) || 1
+      candidate = newUid(new Rng(seed))
+      salt++
+    } while (!candidate || used.has(candidate))
+    used.add(candidate)
+    cr.uid = candidate
+    seq++
+  }
+  for (const cr of save.party) rekey(cr)
+  for (const box of save.boxes) {
+    for (const cr of box) rekey(cr)
+  }
+}
+
 /**
  * Sanitize and prepare a SaveData for server storage.
  * - Forces `save.playerId = accountId` (never trusts client-supplied id).
@@ -374,7 +400,7 @@ export function prepareAccountSave(
 
   if (opts.forBind && opts.imported !== true) {
     // Canonical fresh SaveData creation on server: only name, avatar and settings accepted
-    const saveMgr = createSaveManager({ world: opts.world ?? null })
+    const saveMgr = createSaveManager({ world: opts.world ?? null, storage: null })
     const reqName = isRecord(rawSave) && typeof rawSave.name === 'string' ? rawSave.name : opts.fallbackName
     const safeName = moderateName(reqName) ?? moderateName(opts.fallbackName) ?? t('audio.save.defaultName')
     const reqAvatar = isRecord(rawSave) && typeof rawSave.avatar === 'string' ? rawSave.avatar : undefined
@@ -383,6 +409,11 @@ export function prepareAccountSave(
       name: safeName,
       avatar: safeAvatar,
     })
+    const anchor = opts.world ? worldAnchors(opts.world)[gameJson.newGame.startAnchor] : undefined
+    if (anchor && opts.world && getMap(opts.world, anchor.map)) {
+      save.position = { ...anchor, facing: gameJson.newGame.facing as SaveData['position']['facing'] }
+      if (gameJson.newGame.respawnAtStart) save.respawn = { ...save.position }
+    }
     if (isRecord(rawSave) && isRecord(rawSave.settings)) {
       save.settings = sanitizeSettings(rawSave.settings, CONTENT)
     }
@@ -406,21 +437,23 @@ export function prepareAccountSave(
   save.name = moderateName(save.name) ?? moderateName(opts.fallbackName) ?? t('audio.save.defaultName')
   save.avatar = sanitizeAvatar(save.avatar)
 
-  let imported = opts.imported === true
+  let imported = opts.imported === true || save.flags['auth:untrustedImport'] === true
   let trusted = opts.trusted ?? !imported
 
   if (opts.forBind) {
     imported = true
     trusted = false
     save.flags['auth:untrustedImport'] = true
+    rekeyImportedSaveCreatures(save, opts.accountId)
     for (const cr of save.party) markCreatureLegacy(cr, now)
     for (const box of save.boxes) for (const cr of box) markCreatureLegacy(cr, now)
     save.stats.pvpWins = 0
     save.stats.pvpLosses = 0
     save.stats.trades = 0
     delete save.maxDistance
+  } else if (imported || !trusted) {
+    save.flags['auth:untrustedImport'] = true
   }
-
   return { save, imported, trusted }
 }
 

@@ -3,10 +3,7 @@
     "wsPath": "/ws",
     "closeCodes": {"shutdown": 1001, "duplicate": 4001, "version": 4002, "flood": 4003, "helloTimeout": 4004, "serverFull": 4005, "slowConsumer": 4006, "devNotAllowed": 4007}
   },
-  "official": {
-    "name": "官方服务器",
-    "url": "https://ap.crosery.com"
-  },
+  "official": {"name": "官方服务器", "url": "https://ap.crosery.com"},
   "server": {
     "defaultPort": 8787,
     "maxPayloadBytes": 262144,

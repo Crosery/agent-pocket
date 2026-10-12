@@ -28,8 +28,8 @@ import { flyLanding, resolvePlace } from './world/explore.ts'
 import { anchorGateMessage, anchorLanding, anchorName, canAnchorTravel } from './world/anchors.ts'
 import { createDebugOverlay } from './debug-overlay.ts'
 import type { DevKit } from './dev/kit.ts'
-import { resolveServerUrls, type ServerEntry } from './net/servers.ts'
-import { bindAccountSave, getAccountSession, type AccountSessionResult } from './net/auth.ts'
+import { getOfficialServer, probeServer, resolveServerUrls, type ServerEntry } from './net/servers.ts'
+import { bindAccountSave, getAccountSession, logoutAccount, type AccountSessionResult } from './net/auth.ts'
 
 type Mutable<T> = { -readonly [K in keyof T]: T[K] }
 type Loader = () => Promise<unknown>
@@ -586,15 +586,23 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
       pendingServer = null
       if (!server) return null
 
-      const urls = resolveServerUrls(server.address)
+      let urls = resolveServerUrls(server.address)
 
       // Cross-origin redirect: custom servers require same-origin landing for SameSite=Lax cookies and CSRF
       if (typeof location !== 'undefined' && location.origin && urls.httpBase !== location.origin) {
-        ui.toast(t('screens.serverList.crossOriginRedirect'), 'info')
-        const target = new URL(urls.httpBase)
-        target.searchParams.set('join', '1')
-        location.href = target.href
-        return null
+        if (server.id === 'official' || server.official) {
+          const probe = await probeServer(urls.httpBase, 1500)
+          if (!probe.online) {
+            urls = resolveServerUrls(location.origin)
+          }
+        }
+        if (urls.httpBase !== location.origin) {
+          ui.toast(t('screens.serverList.crossOriginRedirect'), 'info')
+          const target = new URL(urls.httpBase)
+          target.searchParams.set('join', '1')
+          location.href = target.href
+          return null
+        }
       }
 
       let session: AccountSessionResult | null = null
@@ -617,47 +625,23 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
       let isNew = false
 
       if (!serverSave) {
-        const hasLocalSave = saves.hasSave(slot)
-        if (!screens.bindAccount) {
-          ui.toast(t('screens.auth.bindUnavailable'), 'warn')
+        // Entering server must not use offline save: create a dedicated player save on the server directly
+        const char = await screens.newGame()
+        if (!char) continue
+        await ensureWorld()
+        const newSave = saves.newGame(char)
+        newSave.settings = { ...ctx.save.settings }
+        applyNewGameStart(newSave)
+
+        try {
+          const bound = await bindAccountSave(urls.httpBase, { save: newSave, imported: false })
+          serverSave = bound.save
+          isNew = true
+        } catch (err) {
+          ui.toast(err instanceof Error ? err.message : String(err), 'error')
           continue
         }
-        const bindDecision = await screens.bindAccount(server, urls.httpBase, hasLocalSave)
-        if (bindDecision.choice === 'cancel') continue
-
-        if (bindDecision.choice === 'new') {
-          const char = await screens.newGame()
-          if (!char) continue
-          await ensureWorld()
-          const newSave = saves.newGame(char)
-          newSave.settings = { ...ctx.save.settings }
-          applyNewGameStart(newSave)
-
-          try {
-            const bound = await bindAccountSave(urls.httpBase, { save: newSave, imported: false })
-            serverSave = bound.save
-            isNew = true
-          } catch (err) {
-            ui.toast(err instanceof Error ? err.message : String(err), 'error')
-            continue
-          }
-        } else if (bindDecision.choice === 'local') {
-          const localSave = saves.load(slot)
-          if (!localSave) {
-            ui.toast(t('screens.auth.localSaveUnavailable'), 'error')
-            continue
-          }
-          try {
-            const bound = await bindAccountSave(urls.httpBase, { save: localSave, imported: true })
-            serverSave = bound.save
-            isNew = false
-          } catch (err) {
-            ui.toast(err instanceof Error ? err.message : String(err), 'error')
-            continue
-          }
-        }
       }
-
       if (!serverSave) continue
 
       net.setEndpoint?.(urls.wsUrl)
@@ -690,13 +674,42 @@ async function boot(loader: ReturnType<typeof createLoader>): Promise<void> {
         if (autoJoin) return autoJoin
       }
     }
+    // Startup authentication gate: require account login/registration right when entering the game
+    // if not already authenticated via session cookie.
+    const defaultServer = getOfficialServer()
+    const defaultUrls = resolveServerUrls(defaultServer.address)
+    let existingSession: AccountSessionResult | null = null
+    if (screens.accountAuth) {
+      try {
+        existingSession = await getAccountSession(defaultUrls.httpBase)
+      } catch {
+        // offline or unauthenticated
+      }
+      while (!existingSession) {
+        existingSession = await screens.accountAuth(defaultServer, defaultUrls.httpBase, { required: true })
+      }
+    }
+
+    const handleSwitchAccount = async () => {
+      try {
+        await logoutAccount(defaultUrls.httpBase)
+      } catch { /* ignore */ }
+      existingSession = null
+      while (!existingSession) {
+        if (!screens.accountAuth) break
+        existingSession = await screens.accountAuth(defaultServer, defaultUrls.httpBase, { required: true })
+      }
+    }
+
     for (;;) {
       const hasSave = saves.hasSave(slot)
-      const choice = await screens.title(hasSave)
+      const choice = await screens.title(hasSave, existingSession, () => void handleSwitchAccount())
       if (choice === 'continue') {
         await ensureWorld()
         const s = saves.load(slot)
-        if (s) return { save: s, isNew: false, mode: 'singleplayer' }
+        if (s) {
+          return { save: s, isNew: false, mode: 'singleplayer' }
+        }
       } else if (choice === 'new') {
         if (hasSave && !(await ui.confirm(t('game.title.overwrite')))) continue
         const r = await screens.newGame()

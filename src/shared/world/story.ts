@@ -559,8 +559,8 @@ export function starterSpecies(c = CONTENT): SpeciesDef[] {
 }
 
 /**
- * The starter the rival picks against the player's: best type advantage over it, then best resistance to it,
- * then dex order. Falls back to the player's own starter when it is the only one.
+ * The starter the rival picks against the player's: player has best type advantage over it (super effective),
+ * then least threat from rival to player, then dex order.
  */
 export function rivalStarterFor(playerStarter: string, c = CONTENT): SpeciesDef | null {
   const all = starterSpecies(c)
@@ -571,8 +571,8 @@ export function rivalStarterFor(playerStarter: string, c = CONTENT): SpeciesDef 
   const offense = (a: SpeciesDef, d: SpeciesDef) => Math.max(...a.types.map((t) => typeEffectiveness(t, d.types, c)))
   let best = others[0]
   for (const s of others.slice(1)) {
-    const ds = offense(s, p) - offense(best, p)
-    const dr = offense(best, p) === offense(s, p) ? offense(p, best) - offense(p, s) : 0
+    const ds = offense(p, s) - offense(p, best)
+    const dr = offense(p, best) === offense(p, s) ? offense(best, p) - offense(s, p) : 0
     if (ds > 0 || (ds === 0 && dr > 0)) best = s
   }
   return best

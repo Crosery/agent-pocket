@@ -243,11 +243,12 @@ export function createPvp(host: PvpHost, overrides: PvpOverrides = {}): PvpInsta
   }
 
   function begin(s: Session): void {
-    const seed = randomInt(0, 2 ** 31 - 1)
-    const arena = arenaFor(seed, rules)
+    const arenaSeed = randomInt(0, 2 ** 31 - 1)
+    const engineSeed = randomInt(1, 2 ** 31 - 1)
+    const arena = arenaFor(arenaSeed, rules)
     const weather = rules.arena.weather
     const init: BattleInit = {
-      seed,
+      seed: engineSeed,
       sides: [
         { kind: 'remote', name: s.seats[0].name, party: s.seats[0].party! },
         { kind: 'remote', name: s.seats[1].name, party: s.seats[1].party! },
@@ -272,7 +273,7 @@ export function createPvp(host: PvpHost, overrides: PvpOverrides = {}): PvpInsta
     for (const side of SIDES) {
       const foe = other(side)
       host.send(s.seats[side].id, {
-        t: 'pvp.begin', battleId: s.id, seed,
+        t: 'pvp.begin', battleId: s.id, seed: arenaSeed,
         yourParty: partyViews(engine, side),
         theirLead: engine.activeView(foe),
         theirPartySize: engine.party(foe).length,

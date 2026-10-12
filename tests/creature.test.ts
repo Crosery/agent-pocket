@@ -135,16 +135,20 @@ test('second ability chance comes from config', () => {
 
 // ---------------------------------------------------------------- progression
 
-test('gainExp levels up, keeps damage taken, learns or offers moves', () => {
+test('gainExp levels up, restores full hp/status/pp, learns or offers moves', () => {
   const cr = createCreature('base', 9, { rng: new Rng(3), moves: ['m1', 'm2'] }, SC)
   cr.hp -= 5
+  cr.status = 'burn'
+  cr.moves[0].pp = 1
   const before = maxHp(cr, SC)
   const r = gainExp(cr, expForLevel('medium', 12, SC) - cr.exp, SC)
   assert.deepEqual(r.levels, [10, 11, 12])
   assert.equal(cr.level, 12)
   assert.deepEqual(r.learned, ['m5'])
   assert.deepEqual(r.learnable, [])
-  assert.equal(cr.hp, maxHp(cr, SC) - 5)
+  assert.equal(cr.hp, maxHp(cr, SC))
+  assert.equal(cr.status, null)
+  assert.equal(cr.moves[0].pp, cr.moves[0].ppMax)
   assert.ok(maxHp(cr, SC) > before)
   assert.equal(cr.friendship, SC.config.creature.startFriendship + 3 * SC.config.creature.levelUpFriendship)
 

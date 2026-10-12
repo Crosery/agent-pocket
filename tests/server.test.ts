@@ -33,7 +33,7 @@ import {
 const tickMs = 1000 / CONTENT.config.net.tickHz
 function httpGet(port: number, path: string, headers: Record<string, string> = {}, method = 'GET'): Promise<{ status: number; headers: Record<string, string | string[] | undefined>; body: Buffer }> {
   return new Promise((resolve, reject) => {
-    const req = request({ host: 'localhost', port, path, method, headers }, (res) => {
+    const req = request({ host: 'localhost', port, path, method, headers, agent: false }, (res) => {
       const chunks: Buffer[] = []
       res.on('data', (d: Buffer) => chunks.push(d))
       res.on('end', () => resolve({ status: res.statusCode ?? 0, headers: res.headers, body: Buffer.concat(chunks) }))

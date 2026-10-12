@@ -83,8 +83,9 @@ export function sanitizeServerAddress(input: string): SanitizedServerAddress | S
 
   let fullUrl = trimmed
   if (!/^[a-z]+:\/\//i.test(fullUrl)) {
-    const isLocal = /^localhost(:\d+)?$/i.test(fullUrl) ||
-      /^(127\.0\.0\.1|0\.0\.0\.0|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/.test(fullUrl)
+    const authority = fullUrl.split('/')[0]
+    const isLocal = /^localhost(:\d+)?$/i.test(authority) ||
+      /^(127\.0\.0\.1|0\.0\.0\.0|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|\[::1\])(:\d+)?$/.test(authority)
     fullUrl = `${isLocal ? 'http' : 'https'}://${fullUrl}`
   }
 
@@ -113,10 +114,13 @@ export function sanitizeServerAddress(input: string): SanitizedServerAddress | S
 export function getOfficialServer(): ServerEntry {
   const configuredUrl = NET_CLIENT.official.url
   const configuredName = NET_CLIENT.official.name
+  const browserOrigin = typeof location !== 'undefined' && typeof location.origin === 'string' && /^https?:\/\//i.test(location.origin)
+    ? location.origin
+    : null
   return {
     id: OFFICIAL_SERVER_ID,
     name: configuredName,
-    address: configuredUrl,
+    address: browserOrigin ?? configuredUrl,
     official: true,
   }
 }
@@ -251,11 +255,24 @@ export async function probeServer(
 ): Promise<ServerProbeResult> {
   const addr = typeof server === 'string' ? server : server.address
   const urls = resolveServerUrls(addr)
+  const isOfficial = typeof server === 'object' && (server.id === OFFICIAL_SERVER_ID || !!server.official)
+  const res = await probeSingleUrl(urls.httpBase, timeoutMs)
+  if (!res.online && isOfficial && typeof location !== 'undefined' && typeof location.origin === 'string' && /^https?:\/\//i.test(location.origin) && urls.httpBase !== location.origin) {
+    const localRes = await probeSingleUrl(location.origin, timeoutMs)
+    if (localRes.online) return localRes
+  }
+  return res
+}
+
+async function probeSingleUrl(
+  httpBase: string,
+  timeoutMs: number,
+): Promise<ServerProbeResult> {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), timeoutMs)
   const start = performance.now()
   try {
-    const res = await fetch(`${urls.httpBase}/api/status`, {
+    const res = await fetch(`${httpBase}/api/status`, {
       method: 'GET',
       signal: controller.signal,
       cache: 'no-store',

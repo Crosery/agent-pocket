@@ -417,7 +417,7 @@ test('save:loaded and content:updated triggers fire on load, run once, and drive
 
   const events = createEventBus<GameEvents>()
   const ranSteps: ScriptStep[][] = []
-  const ctx = { data: { ...CONTENT, world }, save: loaded, events } as unknown as GameContext
+  const ctx = { data: { ...CONTENT, world }, save: loaded, events, net: { status: 'offline' } } as unknown as GameContext
   const runner = createTriggers({
     ctx,
     isFree: () => true,

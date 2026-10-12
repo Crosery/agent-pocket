@@ -276,10 +276,13 @@ v1 只记审计并把账号标为 `flagged`（不进排行榜），由人工复�
   - 静态部分：名字、形象、首发、徽章、图鉴，只在加入或变化时发送；
   - 动态增量 `[n, x, y, flags]`：`n` 是加入时分配的短 id，坐标是整数厘格，状态位压进 `flags`。先用 JSON 数组，二进制作为第二步。
 
-带宽验收由 `node scripts/measure-net.ts` 对真实 WebSocket 帧计数，对照全量 JSON 与紧凑差量模式。编码长度估算不能替代运行结果，最终记录每玩家每秒上下行字节数及采样条件。
+带宽验收由 `node scripts/measure-net.ts --seconds 4 --players 12 --json` 对真实 WebSocket 帧计数，对照全量 JSON 与紧凑差量模式。
 
-弱网验收条件：150 ms RTT、±10 ms 抖动、2% 重传停顿。本地移动不等待回包；非法移动经过碰撞规则校正，视觉偏移在配置的校正窗口内衰减；远端插值和有界外推须通过录屏及逐帧位移统计验证。`correctionMs` 与 `snapDistanceTiles` 是参数，不是已测量的结果。
-
+**测试方法与注资说明：**
+- **账号供给：** 采用进程内 Store 显式固件注资（`in_process_store_fixture_seeding`），为 12 个并发测试账号分别生成运行时随机高熵密码（从不输出与落盘），并分配测试 IP，避免触发生产环境 5/min 的 HTTP 注册频控；每个连接均持有真实有效会话 Cookie，并在 `hello` 后严格校验会话有效性、HMAC-SHA256 逐帧签名信封（`authSeq` 严格单调递增）、服务端防重放滑动窗口以及移动 ACK，非任何形式的鉴权旁路。
+- **真实网络开销：** 套接字收发字节统计直接基于底层的真实数据流（Socket Byte Counters），真实包含了逐帧 HMAC 签名及信封封装的所有通信开销；脚本内的单帧载荷计算仅为静态格式对比样本，不替代运行期多玩家动态测量的实际吞吐量。
+- **弱网验收模型与指标边界：** 基于 `scripts/lagproxy.ts` 确定性注入 150 ms RTT、±10 ms 抖动与 2% 丢包导致的 TCP 队头阻塞停顿。实测客观记录本地输入即时预测生效耗时（0 ms 零等待）、远端插值最大单帧位移步进（`maxRemoteStepDiscontinuity`）以及越界移动服务端权威校正（`move.correct`）平滑过渡耗时（`correctionSnapped=false`）。`correctionMs` 与 `snapDistanceTiles` 仅为客户端防御性配置参数，不可直接拿来作为伪“零瞬移验证”的成功标签，指标以真实有界观测值为准。
+- **外网链路边界：** 现有外网实测样本仅记录端到端往返总体中位数，不声明已分解并测定实际 WAN / SSH 隧道的独立阶段耗时。
 ### 4.5 EdgeOne 能做什么、不能做什么
 
 **能做：**

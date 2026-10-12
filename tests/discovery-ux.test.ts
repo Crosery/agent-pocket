@@ -12,6 +12,13 @@ import { GAMEPLAY } from '../src/shared/gameplay/data.ts'
 import { createSaveManager } from '../src/client/core/save.ts'
 import { researchSummary } from '../src/client/world/research.ts'
 import type { SaveData } from '../src/shared/types.ts'
+import type { GameContext, GameEvents } from '../src/client/contracts.ts'
+import { createEventBus } from '../src/client/core/events.ts'
+import { createCreature, maxHp } from '../src/shared/creature.ts'
+import { Rng } from '../src/shared/rng.ts'
+import { collisionField, warpAt } from '../src/shared/world/worldapi.ts'
+import { createScriptRunner } from '../src/client/world/script.ts'
+import type { ScriptHost } from '../src/client/world/script.ts'
 
 const world = buildWorld()
 applyStory(world)
@@ -126,49 +133,52 @@ test('event scheduler: quiet in prologue before ds:gateOpen', () => {
   assert.equal(unGated, false, 'scheduler activates after prologue boss')
 })
 
-test('all 3 local easter eggs: placed on walkable non-warp spots, single-time flag and payoff', () => {
-  assert.deepEqual(storyProblems(world), [], 'story validator reports zero errors')
-
-  const qwen = world.maps.overworld.npcs.find((n) => n.id === 'easter-origin-qwen')!
-  assert.ok(qwen, '蹭暖气的千问视觉 exists')
-  assert.equal(world.maps.overworld.npcs.some((n) => n.id === 'easter-origin-qwen'), true)
-
-  const terminal = world.maps.overworld.npcs.find((n) => n.id === 'easter-route1-terminal')!
-  assert.ok(terminal, '卡壳的路标终端 exists')
-  assert.equal(terminal.hiddenUnlessFlag, 'starter')
-
-  const zeroLog = world.maps['origin-lab-b1'].npcs.find((n) => n.id === 'zero-log-b1')!
-  assert.ok(zeroLog, '00 号备份磁带机 exists in lab b1')
-
-  // Verify scripts set their respective persistent one-time flags
-  const opsOf = (script: unknown[]) => {
-    const out: { op: string; flag?: string; item?: string; qty?: number; anchor?: string }[] = []
-    const walk = (steps: unknown[]) => {
-      for (const s of steps as { op: string; then?: unknown[]; else?: unknown[]; branches?: unknown[][]; flag?: string; item?: string; qty?: number; anchor?: string }[]) {
-        out.push(s)
-        if (s.then) walk(s.then)
-        if (s.else) walk(s.else)
-        if (s.branches) s.branches.forEach((b) => walk(b))
-      }
+test('local easter egg rewards and healing cannot be claimed again after reload', async () => {
+  assert.deepEqual(storyProblems(world), [])
+  const cases = [
+    { map: world.startMap, npc: 'easter-origin-qwen', flag: 'easter:origin-qwen', rewards: { 'data-shard': 2, 'server-fan': 1 }, heals: false },
+    { map: world.startMap, npc: 'easter-route1-terminal', flag: 'easter:route1-terminal', rewards: { 'data-shard': 1, 'few-shot-ball': 2 }, heals: true },
+    { map: 'origin-lab-b1', npc: 'zero-log-b1', flag: 'easter:zero-b1', rewards: { 'data-shard': 1, 'server-fan': 1 }, heals: false },
+  ]
+  for (const entry of cases) {
+    const map = world.maps[entry.map]
+    const npc = map.npcs.find((n) => n.id === entry.npc)!
+    assert.ok(npc)
+    assert.equal(collisionField(map).at(npc.x, npc.y), 0)
+    assert.ok(!warpAt(map, npc.x, npc.y), 'easter egg does not stand on a warp')
+    const save = freshSave()
+    save.flags.starter = 'o1'
+    const lead = createCreature('o1', 6, { rng: new Rng(123) })
+    lead.hp = 1
+    save.party = [lead]
+    const before = { ...save.bag }
+    const ctx = {
+      data: { ...CONTENT, world }, save, saves, events: createEventBus<GameEvents>(),
+      net: { status: 'offline' },
+      ui: { async say() {}, async choose() { return 0 }, toast() {}, async fade() {} },
+      audio: { playSfx() {} },
+      persist() { saves.write(ctx.save) },
+    } as unknown as GameContext
+    const host: ScriptHost = {
+      ctx, async moveNpc() {}, faceNpc() {}, setNpcHidden() {},
+      async trainerBattle() { throw new Error('Unexpected battle in an easter egg') },
+      async wildBattle() { throw new Error('Unexpected encounter in an easter egg') },
+      async blackout() { throw new Error('Unexpected blackout in an easter egg') },
+      async warp() { throw new Error('Unexpected warp in an easter egg') },
+      playerPlace: () => ({ map: entry.map, x: npc.x, y: npc.y + 1, facing: 'up' }),
+      playMusic() {}, onWorldChanged() {},
     }
-    walk(script)
-    return out
+    const runner = createScriptRunner(host)
+    await runner.run(npc.script, npc)
+    assert.equal(ctx.save.flags[entry.flag], true)
+    for (const [id, qty] of Object.entries(entry.rewards)) assert.equal(ctx.save.bag[id], (before[id] ?? 0) + qty)
+    assert.equal(ctx.save.party[0].hp, entry.heals ? maxHp(lead, CONTENT) : 1)
+    const rewardedBag = { ...ctx.save.bag }
+    ctx.save.party[0].hp = 1
+    ctx.persist('easter-egg-reload')
+    ctx.save = saves.load()!
+    await runner.run(npc.script, npc)
+    assert.deepEqual(ctx.save.bag, rewardedBag, `${entry.npc} cannot double-pay after reload`)
+    assert.equal(ctx.save.party[0].hp, 1, 'one-time healing does not reset on reload')
   }
-
-  const qwenOps = opsOf(qwen.script)
-  assert.ok(qwenOps.some((s) => s.op === 'setFlag' && s.flag === 'easter:origin-qwen'))
-  assert.ok(qwenOps.some((s) => s.op === 'giveItem' && s.item === 'server-fan'))
-
-  const termOps = opsOf(terminal.script)
-  assert.ok(termOps.some((s) => s.op === 'setFlag' && s.flag === 'easter:route1-terminal'))
-  assert.ok(termOps.some((s) => s.op === 'heal'))
-
-  const logOps = opsOf(zeroLog.script)
-  assert.ok(logOps.some((s) => s.op === 'setFlag' && s.flag === 'easter:zero-b1'))
-  assert.ok(logOps.some((s) => s.op === 'giveItem' && s.item === 'server-fan'))
-
-  const keeper = world.maps['agi-house1'].npcs.find((n) => n.id === 'zero-keeper')!
-  assert.ok(keeper, 'zero-keeper exists in agi-house1')
-  const keeperOps = opsOf(keeper.script)
-  assert.ok(keeperOps.some((s) => s.op === 'warpTo' && s.anchor === 'origin-lab:starters-front'), 'zero-keeper offers return warp to lab')
 })

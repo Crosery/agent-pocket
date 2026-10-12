@@ -12,11 +12,14 @@ import { join as pathJoin } from 'node:path'
 import { WebSocket as NodeWebSocket } from 'ws'
 import type { ClientMsg, PublicProfile, ServerMsg } from '../src/shared/protocol.ts'
 import type { SaveData } from '../src/shared/types.ts'
-import { CONTENT } from '../shared/content/index.ts'
+import { CONTENT } from '../src/shared/content/index.ts'
+import gameJson from '../content/game.json' with { type: 'json' }
+import { buildWorld, worldAnchors } from '../src/shared/world/index.ts'
 import { createCreature } from '../src/shared/creature.ts'
 import { Rng } from '../src/shared/rng.ts'
 import { createSaveManager } from '../src/client/core/save.ts'
 import { NET } from '../src/server/config.ts'
+import { signEnvelopeNode } from '../src/server/net-envelope.ts'
 import { startServer } from '../src/server/index.ts'
 import {
   createProfileStore,
@@ -27,6 +30,7 @@ import {
   validateUsername,
 } from '../src/server/store.ts'
 import { isRecord } from '../src/server/util.ts'
+import { runMigrateCli } from '../scripts/migrate-sqlite.ts'
 
 interface HttpResp {
   status: number
@@ -97,8 +101,12 @@ async function openWsWithCookie(
     },
   )
   const msgs: ServerMsg[] = []
+  let sessionKey = ''
+  let authSeq = 0
   ws.on('message', (data: Buffer) => {
-    msgs.push(JSON.parse(data.toString('utf8')) as ServerMsg)
+    const msg = JSON.parse(data.toString('utf8')) as ServerMsg
+    if (msg.t === 'welcome') sessionKey = msg.sessionKey ?? ''
+    msgs.push(msg)
   })
   const closed = once(ws, 'close').then(([code]) => (typeof code === 'number' ? code : 0))
   await once(ws, 'open')
@@ -107,7 +115,7 @@ async function openWsWithCookie(
     msgs,
     closed,
     send(m: ClientMsg) {
-      ws.send(JSON.stringify(m))
+      ws.send(JSON.stringify(m.t === 'hello' || m.t === 'ping' ? m : signEnvelopeNode(sessionKey, m, ++authSeq)))
     },
     async waitFor(type: ServerMsg['t']): Promise<ServerMsg> {
       for (;;) {
@@ -120,7 +128,7 @@ async function openWsWithCookie(
 }
 
 function makeSampleSave(name: string, overrides: Partial<SaveData> = {}): SaveData {
-  const mgr = createSaveManager({ world: null })
+  const mgr = createSaveManager({ world: null, storage: null })
   const base = mgr.newGame({ name, avatar: CONTENT.characters[0]?.id ?? 'red' })
   return {
     ...base,
@@ -153,7 +161,8 @@ test('username and password validation follows content rules and moderation', ()
 test('store: canonical newGame for imported:false vs untrusted quarantine for imported:true, rate refill with synthetic time', async () => {
   const dir = await mkdtemp(pathJoin(tmpdir(), 'ap-acc-store-'))
   try {
-    const store = createProfileStore({ dir })
+    const world = buildWorld()
+    const store = createProfileStore({ dir, world })
     await store.load()
 
     const reg1 = await store.registerAccount('Alice_01', 'StrongPass#123', { ip: '10.0.0.1', now: 1000 })
@@ -233,6 +242,8 @@ test('store: canonical newGame for imported:false vs untrusted quarantine for im
     assert.deepEqual(bindNew.record.save.bag, CONTENT.config.economy.startItems, 'bag is canonical startItems')
     assert.equal(bindNew.record.save.party.length, 0, 'party is empty for fresh character')
     assert.equal(bindNew.record.save.badges.length, 0, 'badges is empty for fresh character')
+    assert.deepEqual(bindNew.record.save.position, { ...worldAnchors(world)[gameJson.newGame.startAnchor], facing: gameJson.newGame.facing })
+    assert.deepEqual(bindNew.record.save.respawn, bindNew.record.save.position)
 
     // Second bind rejected
     const bindDup = store.bindSave(reg1.account.id, makeSampleSave('Alice_01'), { imported: false, ip: '10.0.0.1', now: 3001 })
@@ -252,34 +263,40 @@ test('store: canonical newGame for imported:false vs untrusted quarantine for im
 
     const offlineImportSave = makeSampleSave('Bob_02', {
       money: 9999999,
-      bag: { 'potion': 500, 'bike': 1, 'master-ball': 10 },
+      bag: { 'cache-potion': 50, 'hover-board': 1, 'master-ball': 10 },
       party: [normalMon, bossMon],
       badges: ['badge-code'],
       stats: { battlesWon: 10, caught: 5, steps: 100, pvpWins: 50, pvpLosses: 2, trades: 10, shiniesFound: 1 },
       maxDistance: 9999,
     })
+    const originalImport = structuredClone(offlineImportSave)
     const bindImport = store.bindSave(reg2.account.id, offlineImportSave, { imported: true, ip: '10.0.0.2', now: 4001 })
     assert.equal(bindImport.ok, true)
     if (!bindImport.ok) return
     assert.equal(bindImport.record.imported, true)
     assert.equal(bindImport.record.trusted, false)
-    assert.equal(bindImport.record.save.money, CONTENT.config.economy.startMoney, 'imported money capped to startMoney')
+    assert.equal(bindImport.record.save.money, offlineImportSave.money, 'validated offline money retained')
     assert.equal(bindImport.record.save.flags['auth:untrustedImport'], true, 'untrusted quarantine flag set')
-    assert.equal(bindImport.record.save.bag['bike'], undefined, 'key items stripped from bag')
-    assert.equal(bindImport.record.save.bag['potion'], 99, 'bag stacks capped at 99')
+    assert.equal(bindImport.record.save.bag['hover-board'], 1, 'owned key item retained')
+    assert.equal(bindImport.record.save.bag['cache-potion'], 50, 'validated inventory retained')
+    assert.equal(bindImport.record.save.party[0]?.level, normalMon.level)
+    assert.equal(bindImport.record.save.party[1]?.level, bossMon.level)
+    assert.equal(bindImport.record.save.stats.battlesWon, offlineImportSave.stats.battlesWon)
+    assert.equal(bindImport.record.save.stats.pvpLosses, 0)
+    assert.equal(bindImport.record.save.stats.trades, 0)
+    assert.deepEqual(offlineImportSave, originalImport, 'binding never mutates the local source slot')
     assert.equal(bindImport.record.save.stats.pvpWins, 0, 'pvpWins stripped')
     assert.equal(bindImport.record.save.maxDistance, undefined, 'maxDistance stripped')
     assert.equal(bindImport.record.save.party[0]?.origin?.kind, 'legacy')
     assert.equal(bindImport.record.save.party[1]?.origin?.kind, 'legacy')
     assert.equal(bindImport.record.save.party[1]?.origin?.boss, bossDef.id, 'boss card retains origin.boss')
 
-    // Authoritative leaderboard never ranks untrusted account badges/dexCaught/pvpWins
-    const lb = store.leaderboard()
-    const bobEntry = lb.find((e) => e.id === reg2.account.id)
-    assert.ok(bobEntry)
-    assert.equal(bobEntry.badges, 0)
-    assert.equal(bobEntry.dexCaught, 0)
-    assert.equal(bobEntry.pvpWins, 0)
+    assert.equal(store.leaderboard().some((e) => e.id === reg2.account.id), false, 'imported accounts are excluded entirely, not ranked with zero stats')
+    store.putSave(reg2.account.id, bindImport.record.save)
+    const persistedImport = store.getAccountSave(reg2.account.id)!
+    assert.equal(persistedImport.imported, true)
+    assert.equal(persistedImport.trusted, false)
+    assert.equal(store.leaderboard().some((e) => e.id === reg2.account.id), false, 'ordinary save writes cannot remove isolation')
 
     // Ledger methods work
     store.recordLedger({ accountId: reg1.account.id, kind: 'money', subject: 'starter', delta: 3000, balance: 3000, ref: 'init' })
@@ -358,6 +375,11 @@ test('http + ws + CSRF + profile spoof protection + guest eviction isolation', a
       const welcome = await wsAlice.waitFor('welcome')
       assert.equal(welcome.t, 'welcome')
       if (welcome.t === 'welcome') assert.equal(welcome.selfId, aliceId)
+      const anonymous = await openWsWithCookie(PORT)
+      const denial = await anonymous.waitFor('error')
+      assert.equal(denial.t === 'error' && denial.code, 'unauthorized')
+      assert.equal(await anonymous.closed, NET.protocol.closeCodes.shutdown)
+      assert.equal(srv.hub.onlineCount(), 1, 'unauthenticated sockets cannot replace the active account')
 
       // 6. Client attempts to send WebSocket profile message with forged badges/dexCaught/party:
       // Server must NOT accept forged stats on leaderboard!
@@ -375,6 +397,9 @@ test('http + ws + CSRF + profile spoof protection + guest eviction isolation', a
           playTimeSec: 1000,
         },
       })
+      wsAlice.send({ t: 'ping', at: Date.now() })
+      await wsAlice.waitFor('pong')
+      assert.equal(wsAlice.msgs.some((m) => m.t === 'error' && m.code === 'bad_signature'), false, 'profile reached the authoritative consumer with a valid signature')
 
       // Check leaderboard: Alice's badges and dexCaught remain authoritative (0 for fresh save)
       const lbRes = await httpCall(PORT, 'GET', NET.http.leaderboardPath)

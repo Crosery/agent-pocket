@@ -10,7 +10,6 @@ import { gradeOf } from '../../shared/gameplay/quality.ts'
 import { applyTradeResult, canOffer, offerableIndices, type TradeApplied } from '../../shared/gameplay/save-ops.ts'
 import { natureName } from '../ui/quality-text.ts'
 import multiplayerJson from '../../../content/multiplayer.json' with { type: 'json' }
-import netJson from '../../../content/net.json' with { type: 'json' }
 import { UI_CONFIG } from '../ui/config.ts'
 
 type ToastKind = 'info' | 'success' | 'warn' | 'error'
@@ -19,6 +18,7 @@ type Widgets = typeof import('../ui/widgets.ts')
 
 /** Client view of content/multiplayer.json → trade. */
 export interface TradeRules {
+  requestSeconds: number
   ivStars: number
   cardIconSize: number
   completeAnimMs: number
@@ -32,9 +32,10 @@ export interface TradeRules {
   sessionErrors: string[]
 }
 
-export const TRADE_RULES: TradeRules = (multiplayerJson as unknown as { trade: TradeRules }).trade
-const CLIENT_SLACK_SECONDS = (multiplayerJson as unknown as { pvp: { clientSlackSeconds: number } }).pvp.clientSlackSeconds
-const REQUEST_SECONDS = (netJson as unknown as { server: { tradeRequestSeconds: number } }).server.tradeRequestSeconds
+// multiplayer.json trade section matches TradeRules; buttons array is narrowed from string[]
+export const TRADE_RULES: TradeRules = multiplayerJson.trade as TradeRules
+const CLIENT_SLACK_SECONDS = multiplayerJson.pvp.clientSlackSeconds
+const REQUEST_SECONDS = TRADE_RULES.requestSeconds
 
 // ---------------------------------------------------------------------------
 // Pure rules (Node-testable)
@@ -529,7 +530,7 @@ async function runTradeWindow(ctx: GameContext, start: TradeStart): Promise<void
       if (completed || picking) return true
       const r = nav.handle(input)
       if (r === 'confirm') void activate(BUTTONS[nav.index])
-      else if (r === 'cancel') void activate('cancel')
+      else if (r === 'cancel' || input.pressed('menu')) { input.consume('menu'); void activate('cancel') }
       else if (r === 'move') paintFocus()
       return true
     },

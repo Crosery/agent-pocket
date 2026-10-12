@@ -4,7 +4,7 @@
 // All tile/object access goes through WorldApi, so the same code runs on finite maps and on the infinite
 // overworld (any integer coordinate, negatives included): objects stream in around the player (stream.ts),
 // one-way ledges are jumped with a hop, and exploration (fog pages, milestones, discoveries) lives in explore.ts.
-import type { BattleSideInit, Creature, Dir, FieldWeatherKind, GameMap, GroundItemDef, NpcDef, QuestDef, RegionDef, ScriptStep } from '../../shared/types.ts'
+import type { BattleSideInit, Creature, Dir, FieldWeatherKind, GameMap, GroundItemDef, NpcDef, PropDef, PropPlacement, QuestDef, RegionDef, ScriptStep, SignDef } from '../../shared/types.ts'
 import type { GameContext, MinimapMarker, OverworldController, WorldFx } from '../contracts.ts'
 import { t } from '../../shared/content/index.ts'
 import { RngHub } from '../core/rng-hub.ts'
@@ -34,7 +34,7 @@ import { INPUT_CONFIG } from '../core/input-config.ts'
 import { createTravel, pickCandidate, planTapRoute, retravel, screenToGround, stepTravel, type TapCandidate, type TapTarget, type Travel } from './tap-move.ts'
 import { DIR_VEC, dirTowards, facingFromAxis, moveBody, tilePassable, type MotionGrid } from './motion.ts'
 import { createNpcLayer, type NpcRuntime } from './npcs.ts'
-import { createPresence, type MultiplayerHooks } from './presence.ts'
+import { createPresence, type MultiplayerHooks, type RemoteView } from './presence.ts'
 import { createRoamingLayer, type Roamer } from './roaming.ts'
 import { addItem, changeMoney, flagSet, healParty, ownedKeyItem, removeItem, settleBossCards } from './save-ops.ts'
 import { sendItemUse, sendScriptOp } from '../net/authority-client.ts'
@@ -318,8 +318,24 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     }
   }
 
+  interface InteractivePropMatch {
+    placement: PropPlacement
+    def: PropDef
+  }
+
+  type NearbyTarget =
+    | { kind: 'npc'; npc: NpcRuntime; x: number; y: number; name: string; action: string }
+    | { kind: 'item'; item: GroundItemDef; x: number; y: number; name: string; action: string }
+    | { kind: 'prop'; prop: InteractivePropMatch; x: number; y: number; name: string; action: string }
+    | { kind: 'sign'; sign: SignDef; x: number; y: number; name: string; action: string }
+    | { kind: 'remote'; remote: RemoteView; x: number; y: number; name: string; action: string }
+
+  let currentNearbyTarget: NearbyTarget | null = null
+
   async function enterMap(mapId: string, x: number, y: number, facing: Dir, transition = false): Promise<void> {
     travel = null
+    currentNearbyTarget = null
+    ctx.hud.setInteractPrompt?.(null)
     const next = getMap(ctx.data.world, mapId)
     if (!next) { console.warn(`[overworld] unknown map "${mapId}"`); return }
     lock('warp')
@@ -889,8 +905,8 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     return objectsInRect(map, tx - R, ty - R, tx + 1, ty + 1).props
   }
 
-  function interactiveProp(tx: number, ty: number) {
-    if (!map) return null
+
+  function interactiveProp(tx: number, ty: number): InteractivePropMatch | null {
     for (const p of propsNear(tx, ty)) {
       const def = ctx.data.props[p.prop]
       if (!def?.interactable) continue
@@ -926,6 +942,160 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     return null
   }
 
+  function findNearbyTarget(): NearbyTarget | null {
+    if (!map || !isFree()) return null
+    const px = player.x, py = player.y
+    const v = DIR_VEC[player.facing]
+    let best: NearbyTarget | null = null
+    let bestScore = Infinity
+    const PROXIMITY_RADIUS = 1.6
+
+    // 1. NPCs (highest priority)
+    for (const n of npcs.list) {
+      if (!n.visible) continue
+      const dist = Math.hypot(n.x - px, n.y - py)
+      if (dist <= PROXIMITY_RADIUS) {
+        const dot = (n.x - px) * v.x + (n.y - py) * v.y
+        if (dist > 0.7 && dot <= -0.1) continue
+        const score = dist - (dot > 0 ? 0.4 : 0)
+        if (score < bestScore) {
+          bestScore = score
+          const isTrainer = n.def.role === 'trainer' && Boolean(n.def.trainer && !flagSet(ctx.save, STORY_CONTENT.meta.flags.trainerWon + n.def.trainer))
+          best = {
+            kind: 'npc',
+            npc: n,
+            x: n.x,
+            y: n.y,
+            name: n.def.nameZh || n.def.id,
+            action: isTrainer ? t('hud.interact.battle') : t('hud.interact.talk'),
+          }
+        }
+      }
+    }
+
+    // 2. Ground items
+    const prefix = STORY_CONTENT.meta.flags.groundItem
+    for (const it of liveItems()) {
+      if (flagSet(ctx.save, prefix + it.id)) continue
+      const dist = Math.hypot(it.x + 0.5 - px, it.y + 0.5 - py)
+      if (dist <= 1.5) {
+        const dot = (it.x + 0.5 - px) * v.x + (it.y + 0.5 - py) * v.y
+        if (dist > 0.6 && dot <= -0.1) continue
+        const score = dist - (dot > 0 ? 0.3 : 0)
+        if (score < bestScore) {
+          bestScore = score
+          const itemDef = ctx.data.items[it.item]
+          best = {
+            kind: 'item',
+            item: it,
+            x: it.x + 0.5,
+            y: it.y + 0.5,
+            name: itemDef?.nameZh || it.item,
+            action: t('hud.interact.pickup'),
+          }
+        }
+      }
+    }
+
+    // 3. Interactive Props & Mechanisms
+    const roundX = Math.round(px), roundY = Math.round(py)
+    for (let dx = -1; dx <= 1; dx++) {
+      for (let dy = -1; dy <= 1; dy++) {
+        const tx = roundX + dx, ty = roundY + dy
+        const prop = interactiveProp(tx, ty)
+        if (prop) {
+          const dist = Math.hypot(tx + 0.5 - px, ty + 0.5 - py)
+          if (dist <= 1.5) {
+            const dot = (tx + 0.5 - px) * v.x + (ty + 0.5 - py) * v.y
+            if (dist > 0.6 && dot <= -0.1) continue
+            const score = dist - (dot > 0 ? 0.3 : 0)
+            if (score < bestScore) {
+              bestScore = score
+              const cfg = GAME.interact.props[prop.placement.prop]
+              let action = t('hud.interact.inspect')
+              if (cfg?.action === 'box') action = t('hud.interact.box')
+              else if (cfg?.action === 'anchor') action = t('hud.interact.touch')
+              best = {
+                kind: 'prop',
+                prop,
+                x: tx + 0.5,
+                y: ty + 0.5,
+                name: prop.def.nameZh || prop.placement.prop,
+                action,
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 4. Signs
+    const signs = objectsInRect(map, roundX - 1, roundY - 1, roundX + 2, roundY + 2).signs
+    for (const s of signs) {
+      const dist = Math.hypot(s.x + 0.5 - px, s.y + 0.5 - py)
+      if (dist <= 1.5) {
+        const dot = (s.x + 0.5 - px) * v.x + (s.y + 0.5 - py) * v.y
+        if (dist > 0.6 && dot <= -0.1) continue
+        const score = dist - (dot > 0 ? 0.3 : 0)
+        if (score < bestScore) {
+          bestScore = score
+          best = {
+            kind: 'sign',
+            sign: s,
+            x: s.x + 0.5,
+            y: s.y + 0.5,
+            name: s.text ? (ctx.data.text[s.text] ? t(s.text) : '路牌') : '路牌',
+            action: t('hud.interact.inspect'),
+          }
+        }
+      }
+    }
+
+    // 5. Remote presence players
+    const remote = presence.nearest(px, py, 1.6)
+    if (remote) {
+      const dist = Math.hypot(remote.x - px, remote.y - py)
+      const dot = (remote.x - px) * v.x + (remote.y - py) * v.y
+      if (dist <= 1.6 && !(dist > 0.8 && dot <= -0.1)) {
+        if (dist < bestScore) {
+          bestScore = dist
+          best = {
+            kind: 'remote',
+            remote,
+            x: remote.x,
+            y: remote.y,
+            name: remote.name,
+            action: t('hud.interact.remote'),
+          }
+        }
+      }
+    }
+
+    return best
+  }
+
+  async function triggerNearbyTarget(target: NearbyTarget): Promise<void> {
+    if (!map || !isFree()) return
+    const dx = target.x - player.x, dy = target.y - player.y
+    if (Math.hypot(dx, dy) > 1e-3) player.facing = facingFromAxis(dx, dy, player.facing, 0)
+    lock('prompt')
+    try {
+      if (target.kind === 'npc') {
+        await talkTo(target.npc)
+      } else if (target.kind === 'item') {
+        await pickup(target.item)
+      } else if (target.kind === 'prop') {
+        await propInteract(target.prop, Math.floor(target.x), Math.floor(target.y))
+      } else if (target.kind === 'sign') {
+        await say(textOrKey(target.sign.text, params()))
+      } else if (target.kind === 'remote') {
+        await presence.interact(target.remote)
+      }
+    } finally {
+      unlock('prompt')
+    }
+  }
+
   async function pickup(it: GroundItemDef): Promise<void> {
     const item = ctx.data.items[it.item]
     ctx.save.flags[STORY_CONTENT.meta.flags.groundItem + it.id] = true
@@ -951,7 +1121,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     return lines
   }
 
-  async function propInteract(prop: NonNullable<ReturnType<typeof interactiveProp>>, tx: number, ty: number): Promise<void> {
+  async function propInteract(prop: InteractivePropMatch, tx: number, ty: number): Promise<void> {
     const cfg = GAME.interact.props[prop.placement.prop]
     if (!cfg) { await say(t('world.interact.prop', { prop: prop.def.nameZh })); return }
     switch (cfg.action) {
@@ -1138,8 +1308,38 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     if (free) {
       const seen = npcs.sightCheck(playerTile())
       if (seen) void trainerSpotted(seen)
-      else if (ctx.input.pressed('confirm')) { ctx.input.consume('confirm'); void interact() }
+      else if (ctx.input.pressed('confirm')) {
+        ctx.input.consume('confirm')
+        if (currentNearbyTarget) void triggerNearbyTarget(currentNearbyTarget)
+        else void interact()
+      }
       else if (ctx.input.pressed('bike')) { ctx.input.consume('bike'); toggleBike() }
+
+      const target = findNearbyTarget()
+      currentNearbyTarget = target
+      if (target) {
+        const elev = ctx.world.elevationAt(target.x, target.y) + 1.25
+        const pt = ctx.world.worldToScreen(target.x, elev, target.y)
+        if (pt.visible) {
+          ctx.hud.setInteractPrompt?.({
+            key: 'F',
+            action: target.action,
+            name: target.name,
+            x: pt.x,
+            y: pt.y,
+            onTrigger: () => void triggerNearbyTarget(target),
+          })
+        } else {
+          ctx.hud.setInteractPrompt?.(null)
+        }
+      } else {
+        ctx.hud.setInteractPrompt?.(null)
+      }
+    } else {
+      if (currentNearbyTarget) {
+        currentNearbyTarget = null
+        ctx.hud.setInteractPrompt?.(null)
+      }
     }
     triggers.update()
     npcs.update(dt, { allowWander: !locks.has('script'), focus: player })
@@ -1263,6 +1463,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     playIntro: () => runScript(GAME.newGame.introScript, null),
     storeExplored,
     dispose() {
+      ctx.hud.setInteractPrompt?.(null)
       disposed = true
       ctx.net.setStepReplay?.(null)
       offCorrection()

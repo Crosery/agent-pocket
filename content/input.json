@@ -1,5 +1,5 @@
 {
-  "keyboard": {"up": ["KeyW", "ArrowUp"], "down": ["KeyS", "ArrowDown"], "left": ["KeyA", "ArrowLeft"], "right": ["KeyD", "ArrowRight"], "confirm": ["KeyZ", "Space", "Enter", "NumpadEnter"], "cancel": ["KeyX", "Backspace"], "menu": ["Escape", "Tab"], "run": ["ShiftLeft", "ShiftRight"], "map": ["KeyM"], "chat": ["KeyT"], "minimap": ["KeyN"], "bike": ["KeyB"], "quickSave": ["F5"], "debug": ["F3"]},
+  "keyboard": {"up": ["KeyW", "ArrowUp"], "down": ["KeyS", "ArrowDown"], "left": ["KeyA", "ArrowLeft"], "right": ["KeyD", "ArrowRight"], "confirm": ["KeyF", "KeyZ", "Space", "Enter", "NumpadEnter"], "cancel": ["KeyX", "Backspace"], "menu": ["Escape", "Tab"], "run": ["ShiftLeft", "ShiftRight"], "map": ["KeyM"], "chat": ["KeyT"], "minimap": ["KeyN"], "bike": ["KeyB"], "quickSave": ["F5"], "debug": ["F3"]},
   "gamepad": {
     "buttons": {"up": [12], "down": [13], "left": [14], "right": [15], "confirm": [0], "cancel": [1], "run": [2], "bike": [3], "minimap": [4], "chat": [5], "map": [8], "menu": [9]},
     "stick": {"xAxis": 0, "yAxis": 1, "deadzone": 0.24, "digitalThreshold": 0.5},
@@ -24,22 +24,7 @@
     "tap": {"slopPx": 8, "maxMs": 280, "stickHoldMs": 120},
     "haptics": {"button": 10, "toggle": 14, "stick": 5, "tap": 8},
     "sizes": {"small": 0.96, "normal": 1, "large": 1.25},
-    "tapMove": {
-      "pickRadiusPx": 38,
-      "bodyLift": 0.8,
-      "candidateTiles": 14,
-      "maxNodes": 6000,
-      "marginTiles": 12,
-      "waypointReach": 0.45,
-      "finalReach": 0.2,
-      "stuckSec": 0.8,
-      "stuckMinMove": 0.15,
-      "replans": 1,
-      "elevationPasses": 2,
-      "kindBiasPx": {"npc": 10, "item": 8, "sign": 6, "prop": 4, "warp": 6},
-      "markerFx": "tapMarker",
-      "blockedFx": "tapBlocked"
-    },
+    "tapMove": {"pickRadiusPx": 38, "bodyLift": 0.8, "candidateTiles": 14, "maxNodes": 6000, "marginTiles": 12, "waypointReach": 0.45, "finalReach": 0.2, "stuckSec": 0.8, "stuckMinMove": 0.15, "replans": 1, "elevationPasses": 2, "kindBiasPx": {"npc": 10, "item": 8, "sign": 6, "prop": 4, "warp": 6}, "markerFx": "tapMarker", "blockedFx": "tapBlocked"},
     "buttons": [
       {"action": "confirm", "label": "audio.touch.confirm", "size": "large", "right": 0, "bottom": 34},
       {"action": "cancel", "label": "audio.touch.cancel", "size": "large", "right": 76, "bottom": 0},

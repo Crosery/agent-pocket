@@ -7,8 +7,17 @@ export interface StripRule { file: string; fields: string[] }
 /** Deletes `fields` from a JSON document that is an array of objects or an object of objects; returns the new text. */
 export function stripFields(text: string, fields: readonly string[]): string {
   const doc = JSON.parse(text) as unknown
+  if (doc && typeof doc === 'object' && !Array.isArray(doc)) {
+    const top = doc as Record<string, unknown>
+    for (const f of fields) delete top[f]
+  }
   const rows = Array.isArray(doc) ? doc : doc && typeof doc === 'object' ? Object.values(doc) : []
-  for (const row of rows) if (row && typeof row === 'object') for (const f of fields) delete (row as Record<string, unknown>)[f]
+  for (const row of rows) {
+    if (row && typeof row === 'object') {
+      const rec = row as Record<string, unknown>
+      for (const f of fields) delete rec[f]
+    }
+  }
   return JSON.stringify(doc)
 }
 
@@ -24,6 +33,11 @@ export function clientStripPlugin(rules: readonly StripRule[] = loadStripRules()
     apply: 'build',
     transform(code, id) {
       const path = id.split('?')[0].replace(/\\/g, '/')
+      if (path.endsWith('/package.json')) {
+        const parsed = JSON.parse(code) as Record<string, unknown>
+        const ver = typeof parsed.version === 'string' ? parsed.version : '0.0.0'
+        return { code: JSON.stringify({ version: ver }), map: null }
+      }
       const rule = rules.find((r) => path.endsWith(`/content/${r.file}`))
       return rule ? { code: stripFields(code, rule.fields), map: null } : null
     },

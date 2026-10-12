@@ -3,38 +3,14 @@
   "titleKey": "dev.scn.all3Eggs",
   "place": "origin-lab-b1:v2",
   "party": [
-    {
-      "species": "o1",
-      "level": 6
-    }
+    {"species": "o1", "level": 6}
   ],
-  "flags": {
-    "starter": "o1",
-    "easter:origin-qwen": true,
-    "easter:route1-terminal": true,
-    "easter:zero-b1": true
-  },
-  "bag": {
-    "data-shard": 4,
-    "server-fan": 2,
-    "few-shot-ball": 2
-  },
+  "flags": {"starter": "o1", "easter:origin-qwen": true, "easter:route1-terminal": true, "easter:zero-b1": true},
+  "bag": {"data-shard": 4, "server-fan": 2, "few-shot-ball": 2},
   "expect": [
-    {
-      "path": "/save/flags/easter:origin-qwen",
-      "eq": true
-    },
-    {
-      "path": "/save/flags/easter:route1-terminal",
-      "eq": true
-    },
-    {
-      "path": "/save/flags/easter:zero-b1",
-      "eq": true
-    },
-    {
-      "path": "/save/bag/server-fan",
-      "eq": 2
-    }
+    {"path": "/save/flags/easter:origin-qwen", "eq": true},
+    {"path": "/save/flags/easter:route1-terminal", "eq": true},
+    {"path": "/save/flags/easter:zero-b1", "eq": true},
+    {"path": "/save/bag/server-fan", "eq": 2}
   ]
 }

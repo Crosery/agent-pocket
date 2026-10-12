@@ -147,10 +147,15 @@ export function createPresenter(env: PresenterEnv): Presenter {
       view.status[0].setLevel(lv(e.level))
       if (v) {
         v.level = lv(e.level)
-        const before = calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, nature: cr.nature, level: lv(e.level - 1) }).hp
         const max = calcStats({ speciesId: cr.speciesId, ivs: cr.ivs, nature: cr.nature, level: lv(e.level) }).hp
-        if (v.hp > 0) v.hp = Math.min(max, v.hp + max - before)
+        v.hp = max
         v.maxHp = max
+        v.status = null
+        for (const [k, val] of Object.entries(model.sides[0].stages)) {
+          if ((val ?? 0) < 0) delete model.sides[0].stages[k as keyof typeof model.sides[0]['stages']]
+        }
+        view.status[0].setStatus(null)
+        view.status[0].setStages(model.sides[0].stages)
         void view.status[0].setHp(v.hp, v.maxHp, true)
       }
       void scene.settle(stage.levelUpFx(0))

@@ -182,6 +182,9 @@ if (isMain) {
   const distDir = process.env.AP_DIST_DIR ? resolve(process.env.AP_DIST_DIR) : undefined
   const host = process.env.AP_HOST || undefined
   const allowDev = /^(1|true|yes|on)$/i.test(process.env.AP_DEV ?? '')
+  if (!allowDev && (process.env.AP_SAVE_SECRET ?? process.env.SAVE_SECRET ?? '').trim().length < 32) {
+    throw new Error('AP_SAVE_SECRET must contain at least 32 characters and remain stable across server restarts')
+  }
   startServer({ port, host, dataDir, distDir, allowDev }).then(
     (srv) => {
       const stop = () => { srv.close().then(() => process.exit(0), () => process.exit(1)) }

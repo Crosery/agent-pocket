@@ -1,1 +1,22 @@
-{"id": "after-deepseek", "titleKey": "dev.scn.afterDeepseek", "extends": "fresh-start", "beat": "after-deepseek", "rng": 44, "place": "town:origin:lab", "party": [{"species": "o1", "level": 9, "grade": "B"}, {"species": "ernie-bot", "level": 7, "grade": "B"}, {"species": "phi-3", "level": 6, "grade": "B"}], "bag": {"work-permit": 1, "dex-device": 1, "town-map": 1, "prompt-ball": 5, "cache-potion": 3, "chip-weight-drop": 1}, "then": [{"cmd": "party.set", "args": {"index": 1, "field": "moves", "value": "token-tackle,web-crawl,morning-greeting,embedding-orb"}}, {"cmd": "bosscard.give", "args": {"boss": "deepseek", "level": 1, "bank": 0}}], "expect": [{"path": "/save/flags/ds:done", "eq": true}, {"path": "/save/flags/ds:gateOpen", "eq": true}]}
+{
+  "id": "after-deepseek",
+  "titleKey": "dev.scn.afterDeepseek",
+  "extends": "fresh-start",
+  "beat": "after-deepseek",
+  "rng": 44,
+  "place": "town:origin:lab",
+  "party": [
+    {"species": "o1", "level": 9, "grade": "B"},
+    {"species": "ernie-bot", "level": 7, "grade": "B"},
+    {"species": "phi-3", "level": 6, "grade": "B"}
+  ],
+  "bag": {"work-permit": 1, "dex-device": 1, "town-map": 1, "prompt-ball": 5, "cache-potion": 3, "chip-weight-drop": 1},
+  "then": [
+    {"cmd": "party.set", "args": {"index": 1, "field": "moves", "value": "token-tackle,web-crawl,morning-greeting,embedding-orb"}},
+    {"cmd": "bosscard.give", "args": {"boss": "deepseek", "level": 1, "bank": 0}}
+  ],
+  "expect": [
+    {"path": "/save/flags/ds:done", "eq": true},
+    {"path": "/save/flags/ds:gateOpen", "eq": true}
+  ]
+}

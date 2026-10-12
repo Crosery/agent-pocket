@@ -177,15 +177,16 @@ export function createBattleView(audio: AudioManager, settings: () => Settings, 
     input(inp) {
       if (interceptor?.(inp)) return true
       if (effects.input(inp)) return true
-      if (inp.pressed('menu')) {
+      if (inp.pressed('menu') && menus.mode !== 'moves') {
         inp.consume('menu')
         effects.show(0)
         return true
       }
       if (levelWait) {
-        if (inp.pressed('confirm') || inp.pressed('cancel')) {
+        if (inp.pressed('confirm') || inp.pressed('cancel') || inp.pressed('menu')) {
           inp.consume('confirm')
           inp.consume('cancel')
+          inp.consume('menu')
           audio.playSfx(BATTLE_UI.sfx.advance)
           levelWait.done()
         }

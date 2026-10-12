@@ -1,9 +1,1 @@
-{
-  "issue": 38,
-  "titleKey": "dev.acc.i38",
-  "scenarios": [
-    "anchor-origin",
-    "anchor-wild",
-    "anchor-network"
-  ]
-}
+{"issue": 38, "titleKey": "dev.acc.i38", "scenarios": ["anchor-origin", "anchor-wild", "anchor-network"]}

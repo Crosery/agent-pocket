@@ -1,1 +1,17 @@
-{"id": "opening-ernie", "titleKey": "dev.scn.openingErnie", "extends": "opening-cert", "place": {"map": "overworld", "x": 483, "y": 870}, "party": [{"species": "o1", "level": 6, "grade": "B"}, {"species": "phi-3", "level": 5, "grade": "B"}], "bag": {"work-permit": 1, "dex-device": 1, "town-map": 1, "prompt-ball": 5, "cache-potion": 5}, "quests": {"main": {"stage": 2, "done": false}}, "flags": {"ds:stamp:types": true, "lesson:typeChart": true}, "expect": [{"path": "/save/position/map", "eq": "overworld"}, {"path": "/save/flags/ds:stamp:types", "eq": true}]}
+{
+  "id": "opening-ernie",
+  "titleKey": "dev.scn.openingErnie",
+  "rng": 41,
+  "place": {"map": "overworld", "x": 483, "y": 870},
+  "party": [
+    {"species": "o1", "level": 6, "grade": "B"},
+    {"species": "phi-3", "level": 6, "grade": "B"}
+  ],
+  "bag": {"work-permit": 1, "dex-device": 1, "town-map": 1, "prompt-ball": 5, "cache-potion": 5},
+  "quests": {"main": {"stage": 2, "done": false}},
+  "flags": {"intro:mom": true, "starter": "o1", "rival:lab": true, "ds:stamp:starter": true, "tip:move": true, "tip:talk": true, "ds:stamp:types": true, "lesson:typeChart": true},
+  "expect": [
+    {"path": "/save/position/map", "eq": "overworld"},
+    {"path": "/save/flags/ds:stamp:types", "eq": true}
+  ]
+}

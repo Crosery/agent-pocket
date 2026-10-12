@@ -23,8 +23,9 @@
   - 每个账号在同一服务器上只绑定一个角色与一份 `SaveData`。
   - 联机身份、角色 ID 与存档归属完全由服务端会话决定，忽略任何客户端自报的 `playerId` / `accountId`。
   - 首次登录且服务端尚无存档时，允许玩家一次性绑定（新建角色或上传本地旧档 `POST /api/account/bind`）；已绑定账号再次调用返回 `409 already_bound`。
-  - `imported: false` 采用**服务端标准新角色生成**：仅接受校验合规的名字、头像与偏好设置，服务端直接由 `newGame` 生成标准初始状态（3000 金钱、初始道具包、空队伍、空图鉴与任务），完全免疫客户端伪造道具、徽章或进度的注入。
-  - `imported: true` 进入**显式不可信隔离区**：清洗版本并校验，强写 `playerId = accountId`，标记 `imported: true, trusted: false, origin: 'legacy-import'`，写入 `save.flags['auth:untrustedImport'] = true`；金钱截断至初始金额；背包清理（非出售/关键道具剔除，堆叠上限 99）；携带道具清理与等级截断；智灵标记为 `legacy`（Boss 卡保留 `origin.boss` 签名能力）；清零服务端权威战绩（`pvpWins / pvpLosses / trades / maxDistance`）且排行榜不计其徽章与图鉴，绝不凭未验明来源的客户端数据授予权威排行或经济。
+  - `imported: false` 采用**服务端标准新角色生成**：仅接受校验合规的名字、头像与偏好设置，按内容配置生成初始状态，并在 `game.newGame.startAnchor` 指定的室内起点醒来；不接受客户端提交的道具、徽章或进度。
+  - `imported: true` 保留**经正常格式校验的离线进度**：剧情、智灵、收藏、金钱和道具不做额外削减，原单人存档不变。强写 `playerId = accountId`，标记 `imported: true, trusted: false, origin: 'legacy-import'` 与 `auth:untrustedImport`；智灵标记为 `legacy`，保留 Boss 来源。仅清除在线竞争记录 `pvpWins / pvpLosses / trades / maxDistance`。导入账号从排行榜完全排除，不能参与交易、玩家对战或共享奖励组队副本；仍可单人探索、聊天。普通存档写回不解除隔离。
+  - WebSocket 只接受有效会话 Cookie，`hello` 时再次核验会话及已绑定存档；匿名连接不能加入，也不能挤掉已登录玩家。
 - **内置 `node:sqlite` 持久化与彻底移除运行期 JSON 镜像：**
   - 使用 Node 内置 `node:sqlite`（`DatabaseSync`，零新增 npm 生产依赖），开启 `WAL` 与外键约束。SQLite 是运行期唯一的事实源；彻底移除运行期定时写回 `profiles.json` 的镜像开销。原遗留 `profiles.json` 仅作为迁移前只读备份留存。
   - 提供一次性事务迁移（启动自动检测 + 独立 CLI `scripts/migrate-sqlite.ts`），将现有 `profiles.json` 导入 SQLite，支持幂等重跑与合并战绩回滚。

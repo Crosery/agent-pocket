@@ -32,8 +32,9 @@ export async function playEvolution(ctx: GameContext, scene: BattleScene, cr: Cr
   ctx.audio.playCry(cr.speciesId)
   ctx.audio.playSfx(S.evolveStart)
   view.setInterceptor((inp) => {
-    if (!inp.pressed('cancel')) return false
+    if (!inp.pressed('cancel') && !inp.pressed('menu')) return false
     inp.consume('cancel')
+    inp.consume('menu')
     stage.cancelEvolve()
     return true
   })
@@ -51,6 +52,7 @@ export async function playEvolution(ctx: GameContext, scene: BattleScene, cr: Cr
     await view.message.show(t('battleui.evolve.cancelled', { name }))
     return false
   }
+  const kind = ctx.data.species[cr.speciesId]?.evolvesTo?.kind
   const pending = evolutionMoves(cr, toSpeciesId)
   evolve(cr, toSpeciesId, ctx.data)
   const pIdx = ctx.save.party.findIndex((x) => x.uid === cr.uid)

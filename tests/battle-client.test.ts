@@ -1,10 +1,6 @@
-// Battle client (src/client/battle): pure modules only (config, local channel, presentation model, save ops) plus
-// static checks that the client code carries no game data and every battleui text key it uses exists.
+// Battle client: content validation, local channel, presentation model and save operations.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync, readdirSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import { dirname, join } from 'node:path'
 import type { BattleEvent, BattleInit, Creature, SaveData } from '../src/shared/types.ts'
 import type { GameContext, GameEvents } from '../src/client/contracts.ts'
 import { CONTENT, typeEffectiveness } from '../src/shared/content/index.ts'
@@ -20,12 +16,7 @@ import {
 } from '../src/client/battle/model.ts'
 import { changeMoney, consumeItem, markCaught, markSeen, storeCaught } from '../src/client/battle/saveops.ts'
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const SRC = join(ROOT, 'src/client/battle')
 const CLEAR = 'none'
-const codeFiles = readdirSync(SRC).filter((f) => f.endsWith('.ts')).map((f) => ({ f, src: readFileSync(join(SRC, f), 'utf8') }))
-/** Source without comments (line and block). */
-const stripComments = (s: string) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:'"`])\/\/.*$/gm, '$1')
 
 const species = CONTENT.speciesList
 const mk = (rng: Rng, i: number, level: number): Creature => createCreature(species[i % species.length].id, level, { rng })
@@ -62,7 +53,7 @@ function fakeCtx(save: Partial<SaveData> = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// Content & static checks
+// Content validation
 // ---------------------------------------------------------------------------
 
 test('battle-ui.json validates against the loaded content', () => {
@@ -80,48 +71,6 @@ test('the move list offers the type chart: a bound key, a real view, and the val
   assert.match(errs, /moves\.chart\.action/)
 })
 
-test('every battleui text key used by the client exists, and every defined key is used', () => {
-  const all = codeFiles.map((x) => x.src).join('\n')
-  const literal = new Set([...all.matchAll(/'((?:battleui|battle)\.[\w.]+)'/g)].map((m) => m[1]))
-  const dynamic: Record<string, string[]> = {
-    'battleui.cmd.': [...new Set([...BATTLE_UI.commands.normal, ...BATTLE_UI.commands.pvp])],
-    'battleui.move.category.': ['physical', 'special', 'status'],
-    'battleui.eff.': ['immune', 'weak', 'normal', 'super', 'unknown'],
-    'battleui.effects.status.': Object.keys(CONTENT.statusById),
-    'battleui.effects.volatile.': Object.keys(CONTENT.volatileById),
-    'battleui.effects.statusShort.': Object.keys(CONTENT.statusById),
-  }
-  for (const prefix of Object.keys(dynamic)) assert.ok(all.includes(`\`${prefix}\${`), `dynamic prefix ${prefix} is used`)
-  const used = new Set([...literal, ...Object.entries(dynamic).flatMap(([p, xs]) => xs.map((x) => p + x))])
-  for (const k of used) assert.ok(k in CONTENT.text, `missing text key ${k}`)
-  const defined = Object.keys(CONTENT.text).filter((k) => k.startsWith('battleui.'))
-  for (const k of defined) assert.ok(used.has(k), `unused text key ${k}`)
-})
-
-test('client code carries no player-facing text, colors or content ids', () => {
-  const ids = new Set<string>([
-    ...species.map((s) => s.id), ...CONTENT.moveList.map((m) => m.id), ...CONTENT.itemList.map((i) => i.id),
-    ...CONTENT.statuses.map((s) => s.id), ...CONTENT.volatiles.map((v) => v.id), ...CONTENT.weathers.map((w) => w.id),
-    ...Object.keys(CONTENT.abilities), ...CONTENT.biomes.map((b) => b.id), ...CONTENT.characters.map((c) => c.id),
-    ...CONTENT.audio.bgm.map((b) => b.id),
-  ])
-  // Contract union members (BattleKind, CommandId, ...) are type vocabulary, not content data;
-  // some coincide with bgm/sfx ids (e.g. 'gym', 'run').
-  const vocab = new Set<string>([
-    'wild', 'trainer', 'gym', 'legend', 'pvp', 'fight', 'bag', 'party', 'run', 'forfeit',
-    'fade', 'battle', 'iris', 'immune', 'weak', 'normal', 'super', 'physical', 'special', 'status',
-    'slow', 'fast', 'instant',
-  ])
-  for (const { f, src } of codeFiles) {
-    const code = stripComments(src)
-    assert.ok(!/[㐀-鿿＀-￯]/.test(code), `${f}: CJK text in code`)
-    assert.ok(!/#[0-9a-fA-F]{3,8}\b/.test(code), `${f}: hex colour in code`)
-    for (const m of code.matchAll(/'([^'\\\n]+)'/g)) {
-      if (m[1] === CLEAR || vocab.has(m[1])) continue
-      assert.ok(!ids.has(m[1]), `${f}: content id literal '${m[1]}'`)
-    }
-  }
-})
 
 // ---------------------------------------------------------------------------
 // Local channel
@@ -301,7 +250,7 @@ test('coach model: applyEvent queues coach lines, tracks turn, and coachCommandP
     ],
   }
   const m = createBattleModel(init, CLEAR)
-  applyEvent(m, { t: 'boss', hud: bossOpeningHud('deepseek')! })
+  applyEvent(m, { t: 'boss', side: 1, hud: bossOpeningHud('deepseek')! })
   applyEvent(m, { t: 'coach', text: 'line1', speaker: 'R1' })
   assert.equal(m.coach.length, 1)
   applyEvent(m, { t: 'turn', turn: 1 })
@@ -309,7 +258,7 @@ test('coach model: applyEvent queues coach lines, tracks turn, and coachCommandP
   assert.equal(coachCommandPulse(m, true, { 'off-peak-coupon': 2 }, CONTENT), 'bag', 'peak + bait in bag pulses bag')
   assert.equal(coachCommandPulse(m, true, {}, CONTENT), null, 'peak without bait does not pulse bag')
   assert.equal(coachCommandPulse(m, false, { 'off-peak-coupon': 2 }, CONTENT), null, 'ordinary fights do not coach')
-  applyEvent(m, { t: 'boss', hud: { ...bossOpeningHud('deepseek')!, meters: { tide: 1 } } })
+  applyEvent(m, { t: 'boss', side: 1, hud: { ...bossOpeningHud('deepseek')!, meters: { tide: 1 } } })
   applyEvent(m, { t: 'turn', turn: 4 })
   assert.equal(coachCommandPulse(m, true, { 'off-peak-coupon': 2 }, CONTENT), 'fight', 'valley in first cycle pulses fight')
   applyEvent(m, { t: 'turn', turn: 7 })

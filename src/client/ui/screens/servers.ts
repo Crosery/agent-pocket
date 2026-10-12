@@ -14,7 +14,7 @@ export function serverListScreen(env: ScreenEnv): Promise<ServerEntry | null> {
     let selectedIndex = 0
     const probes = new Map<string, ServerProbeResult>()
     let modalOpen = false
-
+    let activeCloseDialog: (() => void) | null = null
     const f = frame(env, {
       title: t('screens.serverList.title'),
       onClose: api.guard(() => api.close(null)),
@@ -101,7 +101,7 @@ export function serverListScreen(env: ScreenEnv): Promise<ServerEntry | null> {
         ])
 
         const card = el('div', {
-          class: `aps-server-card ap-row ${isSelected ? 'is-active' : ''}`,
+          class: `aps-server-card ${isSelected ? 'is-active' : ''}`.trim(),
           attrs: { role: 'option', 'aria-selected': String(isSelected), tabindex: isSelected ? '0' : '-1' },
           on: {
             click: api.guard(() => {
@@ -178,9 +178,11 @@ export function serverListScreen(env: ScreenEnv): Promise<ServerEntry | null> {
 
       const closeDialog = () => {
         modalOpen = false
+        activeCloseDialog = null
         backdrop.remove()
         renderList()
       }
+      activeCloseDialog = closeDialog
 
       const saveDialog = () => {
         const nameVal = nameInput.value.trim()
@@ -230,8 +232,8 @@ export function serverListScreen(env: ScreenEnv): Promise<ServerEntry | null> {
         attrs: { role: 'dialog', 'aria-modal': 'true' },
         on: {
           keydown: (e) => {
-            if (e.key === 'Escape') { e.stopPropagation(); closeDialog() }
-            else if (e.key === 'Enter') { e.stopPropagation(); saveDialog() }
+            if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); closeDialog() }
+            else if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); saveDialog() }
           },
         },
       }, [dlgPanel.el])
@@ -255,7 +257,10 @@ export function serverListScreen(env: ScreenEnv): Promise<ServerEntry | null> {
 
     return {
       onInput(input) {
-        if (modalOpen) return
+        if (modalOpen) {
+          if (backPressed(input)) activeCloseDialog?.()
+          return
+        }
         if (backPressed(input)) {
           api.close(null)
           return

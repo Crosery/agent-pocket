@@ -62,14 +62,7 @@
     "channelColors": {"global": "#f3dca0", "local": "#ffffff", "whisper": "#ff9fd0", "system": "#8fd3ff"},
     "commands": {"whisper": ["/w", "/m", "/tell"], "reply": ["/r"], "global": ["/g", "/world"], "local": ["/l", "/s"]}
   },
-  "phoneHud": {
-    "portrait": {"toast": {"top": 116, "left": 164, "right": 8}, "lowerStackWidth": 150, "bannerSubLines": 2},
-    "landscape": {"toast": {"top": 8, "left": 190, "right": 190}, "lowerStackWidth": 176, "bannerSubLines": 0},
-    "toastLines": 2,
-    "chatClearPx": 56,
-    "tipFootGapPx": 4,
-    "audit": {"playerPadPx": {"x": 6, "top": 26, "bottom": 6}}
-  },
+  "phoneHud": {"portrait": {"toast": {"top": 116, "left": 164, "right": 8}, "lowerStackWidth": 150, "bannerSubLines": 2}, "landscape": {"toast": {"top": 8, "left": 190, "right": 190}, "lowerStackWidth": 176, "bannerSubLines": 0}, "toastLines": 2, "chatClearPx": 56, "tipFootGapPx": 4, "audit": {"playerPadPx": {"x": 6, "top": 26, "bottom": 6}}},
   "focus": {"stallSec": 1.5, "escapeOrder": ["chat"], "releaseClickScopes": [".ap-chat-bar"]},
   "glyphPalette": {"o": "#0d0a08", "g": "#c9a45c", "h": "#f3dca0", "d": "#7a5a26", "w": "#ffffff", "k": "#0e1424", "r": "#e0524a", "R": "#9c2a26", "b": "#5a9cf0", "B": "#2a5596", "c": "#8fe6ff", "y": "#ffd84a", "n": "#ffa53a", "N": "#b4562a", "e": "#5ccf6a", "E": "#2a7a3a", "s": "#b8c0d0", "S": "#6b7488", "m": "#e8eeff"},
   "glyphs": {
@@ -79,9 +72,13 @@
     "scrollUp": {"rows": ["...o...", "..oho..", ".ohggo.", "ooooooo"]},
     "scrollDown": {"rows": ["ooooooo", ".ohggo.", "..ogo..", "...o..."]},
     "diamond": {"rows": ["..o..", ".oho.", "ohhgo", ".ogo.", "..o.."]},
-    "coin": {"rows": ["..ooooo..", ".ohhhggo.", "ohgggggdo", "ohgwwwgdo", "ohggwggdo", "ohggwggdo", "ogggggddo", ".ogddddo.", "..ooooo.."]},
+    "coin": {
+      "rows": ["..ooooo..", ".ohhhggo.", "ohgggggdo", "ohgwwwgdo", "ohggwggdo", "ohggwggdo", "ogggggddo", ".ogddddo.", "..ooooo.."]
+    },
     "crown": {"rows": ["y...y...y", "yy.yyy.yy", "yyhyyyhyy", "yyyyryyyy", "nnnnnnnnn"]},
-    "location": {"rows": ["...hhh...", "..hgggh..", ".hgkkkgh.", ".hgkhkgh.", ".hgggggh.", "..hgggh..", "...hgh...", "....h....", "........."]},
+    "location": {
+      "rows": ["...hhh...", "..hgggh..", ".hgkkkgh.", ".hgkhkgh.", ".hgggggh.", "..hgggh..", "...hgh...", "....h....", "........."]
+    },
     "todDawn": {
       "rows": [".........", "....n....", ".n.....n.", "...yyy...", "..yhhyy..", ".yhyyyyy.", "sssssssss", ".........", "..s...s.."]
     },
@@ -95,11 +92,21 @@
       "rows": ["...m...w.", "..mm.....", ".mm......", "mmm...w..", "mmm......", "mmmm.....", ".mmmm..w.", "..mmmmm..", "...mmm..."]
     },
     "shine": {"rows": ["..w..", "..y..", "wyhyw", "..y..", "..w.."]},
-    "quest": {"rows": [".hhhhhhh.", ".hgggggh.", ".hgkkkgh.", ".hgggggh.", ".hgkkggh.", ".hgggggh.", ".hgggggh.", ".hdddddh.", ".hhhhhhh."]},
-    "objective": {"rows": [".....h.....", "....hgh....", "...hgkgh...", "..hgkkkgh..", ".hgkkhkkgh.", "hgkkhhhkkgh", ".hgkkhkkgh.", "..hgkkkgh..", "...hgkgh...", "....hgh....", ".....h....."]},
-    "home": {"rows": [".....h.....", "....hgh....", "...hgggh.h.", "..hggggghh.", ".hgggggggh.", "hhhhhhhhhhh", "..hgggggh..", "..hgkkggh..", "..hgkkggh..", "..hgkkggh..", "..hhhhhhh.."]},
-    "event": {"rows": ["..h...h..", ".hhhhhhh.", ".hgggggh.", ".hhhhhhh.", ".hkghgkh.", ".hkkkkkh.", ".hkhgkkh.", ".hkkkkkh.", ".hhhhhhh."]},
-    "chat": {"rows": [".hhhhhhhhh.", "hgggggggggh", "hgkkkkkkkgh", "hgkssssskgh", "hgkkkkkkkgh", "hgksssskkgh", "hgkkkkkkkgh", "hgggggggggh", ".hhhghhhhh.", "..hgh......", "..hh......."]},
+    "quest": {
+      "rows": [".hhhhhhh.", ".hgggggh.", ".hgkkkgh.", ".hgggggh.", ".hgkkggh.", ".hgggggh.", ".hgggggh.", ".hdddddh.", ".hhhhhhh."]
+    },
+    "objective": {
+      "rows": [".....h.....", "....hgh....", "...hgkgh...", "..hgkkkgh..", ".hgkkhkkgh.", "hgkkhhhkkgh", ".hgkkhkkgh.", "..hgkkkgh..", "...hgkgh...", "....hgh....", ".....h....."]
+    },
+    "home": {
+      "rows": [".....h.....", "....hgh....", "...hgggh.h.", "..hggggghh.", ".hgggggggh.", "hhhhhhhhhhh", "..hgggggh..", "..hgkkggh..", "..hgkkggh..", "..hgkkggh..", "..hhhhhhh.."]
+    },
+    "event": {
+      "rows": ["..h...h..", ".hhhhhhh.", ".hgggggh.", ".hhhhhhh.", ".hkghgkh.", ".hkkkkkh.", ".hkhgkkh.", ".hkkkkkh.", ".hhhhhhh."]
+    },
+    "chat": {
+      "rows": [".hhhhhhhhh.", "hgggggggggh", "hgkkkkkkkgh", "hgkssssskgh", "hgkkkkkkkgh", "hgksssskkgh", "hgkkkkkkkgh", "hgggggggggh", ".hhhghhhhh.", "..hgh......", "..hh......."]
+    },
     "close": {"rows": ["h.....h", "hh...hh", ".hh.hh.", "..hhh..", ".hh.hh.", "hh...hh", "h.....h"]},
     "mPlayer": {"rows": ["...o...", "..oyo..", ".oyhyo.", "oyhhhyo", "oyyoyyo", "oyo.oyo", "oo...oo"]},
     "mOther": {"rows": [".ooo.", "obbbo", "obcbo", "obbbo", ".ooo."]},
@@ -110,7 +117,9 @@
     "mItem": {"rows": ["..o..", ".oco.", "ocwco", ".oco.", "..o.."]},
     "mWarp": {"rows": [".ooo.", "oNNNo", "oNnNo", "oNNyo", "oNNNo", "ooooo"]},
     "mAnchor": {"rows": ["...o...", "..omo..", ".ocmco.", ".ocmco.", ".obcbo.", "..obo..", ".oSSSo.", "oSSSSSo", "ooooooo"]},
-    "mAnchorGrand": {"rows": [".....o.....", "....omo....", "...ocmco...", "..ocmmmco..", "..ocmmmco..", "..obcmcbo..", "...obcbo...", "....obo....", "..oSSSSSo..", ".oSSSSSSSo.", "oSSSSSSSSSo", "ooooooooooo"]},
+    "mAnchorGrand": {
+      "rows": [".....o.....", "....omo....", "...ocmco...", "..ocmmmco..", "..ocmmmco..", "..obcmcbo..", "...obcbo...", "....obo....", "..oSSSSSo..", ".oSSSSSSSo.", "oSSSSSSSSSo", "ooooooooooo"]
+    },
     "mQuest": {"rows": [".ooo.", "oyyyo", "oyyyo", ".oyo.", ".oyo.", ".ooo.", ".oyo.", ".ooo."]},
     "mCenter": {"rows": ["ooooooo", "owwwwwo", "owwrwwo", "owrrrwo", "owwrwwo", "owwwwwo", "ooooooo"]},
     "mShop": {"rows": ["..ooo..", ".ow.wo.", "ooooooo", "obbbbbo", "obwbbbo", "obbbbBo", "ooooooo"]},

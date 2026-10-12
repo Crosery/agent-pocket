@@ -906,6 +906,71 @@ html.ap-attn-menu .ap-touch__btn[data-action='menu']::after {
 
 .ap-hud-missions { width: 100%; min-width: 0; }
 .ap-hud-missions:not(:has(> :not([hidden]))) { display: none; }
+/* Floating in-world interaction chip [F] 对话 · 名称 — matches .ap-menu-chip & Octopath pixel HUD */
+.ap-interact-prompt {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, calc(-100% - var(--u) * 6));
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--u) * 3.5);
+  padding: calc(var(--u) * 2) calc(var(--u) * 5);
+  font-size: calc(var(--u) * 10);
+  line-height: calc(var(--u) * 14);
+  color: var(--ap-text);
+  background: var(--ap-hud-bg);
+  border: var(--u) solid var(--ap-hud-edge);
+  border-top-color: var(--ap-gold);
+  border-radius: 0;
+  box-shadow:
+    0 0 0 var(--u) var(--ap-ink),
+    0 calc(var(--u) * 2) calc(var(--u) * 5) rgba(0, 0, 0, 0.55);
+  cursor: pointer;
+  pointer-events: auto;
+  user-select: none;
+  z-index: 95;
+  white-space: nowrap;
+  animation: ap-hud-reveal 140ms ease-out both;
+}
+.ap-interact-prompt::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--u) * -4);
+  width: calc(var(--u) * 6);
+  height: calc(var(--u) * 3);
+  margin-left: calc(var(--u) * -3);
+  background: var(--ap-gold);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  pointer-events: none;
+}
+.ap-interact-prompt:hover {
+  border-color: var(--ap-gold-hi);
+  background: var(--ap-surface);
+}
+.ap-interact-prompt[hidden] {
+  display: none !important;
+}
+.ap-interact-key {
+  color: inherit;
+  vertical-align: baseline;
+}
+.ap-interact-key kbd {
+  min-width: calc(var(--u) * 12);
+  height: calc(var(--u) * 11);
+  line-height: calc(var(--u) * 9);
+  padding: 0 calc(var(--u) * 2.5);
+}
+.ap-interact-action {
+  color: var(--ap-gold-hi);
+}
+.ap-interact-sep {
+  color: var(--ap-gold-dk);
+}
+.ap-interact-name {
+  color: var(--ap-text);
+}
 .ap-hud-missions:has(.ap-objective:not([hidden])) .ap-quest:not([hidden]) { border-bottom: var(--u) solid var(--ap-line); }
 .ap-quest {
   position: relative;

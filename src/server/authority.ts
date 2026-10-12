@@ -15,14 +15,14 @@ import type { ClientMsg, PublicProfile, ServerMsg } from '../shared/protocol.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
 import { hashString, Rng } from '../shared/rng.ts'
 import {
-  createCreature, evolutionTarget, evolve, expForLevel, gainExp, maxHp, rollShiny, sanitizeCreature, toView,
+  createCreature, evolutionTarget, evolve, expForLevel, gainExp, maxHp, newUid, rollShiny, sanitizeCreature, toView,
 } from '../shared/creature.ts'
 import { BattleEngine, perspective } from '../shared/battle/engine.ts'
 import { buildBossInit, createBossCreature } from '../shared/battle/boss-battle.ts'
-import { bossCardCap, captureSeed, isBossCard, partyExpMods, rollBossCard, settleBank } from '../shared/gameplay/bosscard.ts'
-import { offersOf, takeOffer, timesAffordable, unlocked } from '../shared/gameplay/exchange.ts'
+import { bossCardCap, captureSeed, expCap, isBossCard, partyExpMods, rollBossCard, settleBank } from '../shared/gameplay/bosscard.ts'
+import { EXCHANGE, offersOf, takeOffer, timesAffordable, unlocked } from '../shared/gameplay/exchange.ts'
 import {
-  activeEvents, dayOf, endEvent, eventAppliesAt, eventContext, eventFocus, eventModifiers, eventRng, eventSalt,
+  activeEvents, dayOf, endEvent, eventContext, eventFocus, eventModifiers, eventRng, eventSalt,
   evaluateCondition, evaluateProgress, expandFlag, modifierValue, realDateOf, resolvePlaceRef, startActions,
   tickEvents, triggerEvent, type ActiveEvent, type EventAnchor, type EventContext, type StartActions,
 } from '../shared/gameplay/events.ts'
@@ -196,13 +196,22 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     const at = recentFlagsSet.get(playerId)?.get(flag)
     return typeof at === 'number' && Date.now() - at <= windowMs
   }
-  function indexSaveCreatures(accountId: string, save: SaveData): void {
+  function indexSaveCreatures(accountId: string, save: SaveData, trusted = true): void {
     for (const [uid, owner] of [...creatureOwners.entries()]) {
       if (owner === accountId) creatureOwners.delete(uid)
     }
-    for (const cr of save.party) creatureOwners.set(cr.uid, accountId)
+    if (!trusted || save.flags['auth:untrustedImport']) return
+    for (const cr of save.party) {
+      if (cr.origin?.kind === 'legacy') continue
+      const existing = creatureOwners.get(cr.uid)
+      if (!existing || existing === accountId) creatureOwners.set(cr.uid, accountId)
+    }
     for (const box of save.boxes) {
-      for (const cr of box) creatureOwners.set(cr.uid, accountId)
+      for (const cr of box) {
+        if (cr.origin?.kind === 'legacy') continue
+        const existing = creatureOwners.get(cr.uid)
+        if (!existing || existing === accountId) creatureOwners.set(cr.uid, accountId)
+      }
     }
   }
 
@@ -268,7 +277,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     const ext = store.getAccountSave(playerId)
     if (!ext || !ext.save) return null
     const save = structuredClone(ext.save)
-    indexSaveCreatures(playerId, save)
+    indexSaveCreatures(playerId, save, ext.trusted && !ext.imported)
     const updatedAt = ext.updatedAt ?? Date.now()
     if (ext.sig) {
       return {
@@ -339,7 +348,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       ...(optsIn.trusted !== undefined ? { trusted: optsIn.trusted } : {}),
       now,
     })
-    indexSaveCreatures(playerId, stored.save)
+    indexSaveCreatures(playerId, stored.save, stored.trusted && !stored.imported)
     syncPlayerPublicState(playerId, stored.save, stored.trusted)
     if (optsIn.notify !== false) {
       const p = core.byId(playerId)
@@ -378,8 +387,20 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
   }
 
   function storeCreatureInSave(save: SaveData, cr: Creature): { where: 'party' | 'box'; box?: number; newSeen: boolean; newCaught: boolean } | null {
-    const alreadyExists = save.party.some((x) => x.uid === cr.uid) || save.boxes.some((b) => b.some((x) => x.uid === cr.uid))
-    if (alreadyExists) return null
+    const hasCollision = (uid: string): boolean =>
+      save.party.some((x) => x.uid === uid) ||
+      save.boxes.some((b) => b.some((x) => x.uid === uid)) ||
+      (creatureOwners.has(uid) && creatureOwners.get(uid) !== save.playerId)
+    if (hasCollision(cr.uid)) {
+      let salt = 0
+      let nextUid = cr.uid
+      do {
+        salt++
+        const seed = (hashString(`unique-uid:${save.playerId}:${cr.uid}:${salt}`) >>> 0) || 1
+        nextUid = newUid(new Rng(seed))
+      } while (!nextUid || hasCollision(nextUid))
+      cr.uid = nextUid
+    }
     let newSeen = false
     let newCaught = false
     if (CONTENT.species[cr.speciesId] && !save.dexSeen.includes(cr.speciesId)) {
@@ -450,6 +471,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
   function finishBattle(p: Player, b: ActiveBattle): ServerMsg {
     b.done = true
     activeBattles.delete(p.id)
+    core.touch(p)
     const rec = getRecord(p.id)
     if (!rec) {
       return { t: 'error', code: 'not_ready', message: t('net.error.not_ready') }
@@ -458,7 +480,15 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     const ref = `battle:${b.id}`
     const result = b.engine.result ?? 'run'
 
-    save.party = b.workingParty.map((cr) => structuredClone(cr))
+    const workingByUid = new Map(b.workingParty.map((cr) => [cr.uid, cr]))
+    if (save.party.length === b.workingParty.length && save.party.every((cr, idx) => cr.uid === b.workingParty[idx]?.uid)) {
+      save.party = b.workingParty.map((cr) => structuredClone(cr))
+    } else {
+      save.party = save.party.map((cr) => {
+        const updated = workingByUid.get(cr.uid)
+        return updated ? structuredClone(updated) : cr
+      })
+    }
     for (const spId of b.seenSpecies) {
       if (CONTENT.species[spId] && !save.dexSeen.includes(spId)) save.dexSeen.push(spId)
     }
@@ -512,7 +542,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     }
 
     if (b.roamingLegend && b.activeFoeSpecies) {
-      const foeHpLeft = b.engine.state.sides[1]?.active?.hp ?? 0
+      const foeHpLeft = b.engine.party(1)[b.engine.activeIndex(1)]?.hp ?? 0
       save.legends = onLegendBattleEnd(save.legends ?? {}, b.activeFoeSpecies, result, {
         hpLeft: foeHpLeft,
         minutes: save.clockMinutes,
@@ -877,8 +907,31 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         return
       }
       trainer = tr
+      let partyDefs = tr.party
+      if (tr.id === 'lesson-types') {
+        const starterId = workingParty[0]?.speciesId ?? 'o1'
+        if (starterId === 'claude-haiku') {
+          partyDefs = [
+            { species: 'phi-3', level: 2, moves: ['white-noise'] },
+            { species: 'gpt-35', level: 2, moves: ['white-noise'] },
+            { species: 'codex-2021', level: 2, moves: ['white-noise'] },
+          ]
+        } else if (starterId === 'deepseek-v3') {
+          partyDefs = [
+            { species: 'codex-2021', level: 2, moves: ['white-noise'] },
+            { species: 'gemini-flash-lite', level: 2, moves: ['white-noise'] },
+            { species: 'phi-3', level: 2, moves: ['white-noise'] },
+          ]
+        } else {
+          partyDefs = [
+            { species: 'gemini-flash-lite', level: 2, moves: ['white-noise'] },
+            { species: 'phi-3', level: 2, moves: ['white-noise'] },
+            { species: 'codex-2021', level: 2, moves: ['white-noise'] },
+          ]
+        }
+      }
       const foeParty: Creature[] = []
-      for (const e of tr.party) {
+      for (const e of partyDefs) {
         if (!e.species || !CONTENT.species[e.species]) continue
         foeParty.push(createCreature(e.species, e.level, {
           rng,
@@ -892,9 +945,14 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         core.error(p, 'invalid_encounter')
         return
       }
+      const alreadyWon = Boolean(save.flags[STORY_CONTENT.meta.flags.trainerWon + tr.id])
+      const isRepeatTutorial = alreadyWon && tr.id === 'lesson-types'
       const card = partyExpMods(workingParty, save.badges.length, CONTENT)
       const mods: BattleModifiers = {}
       if (card.expByParty.some((v) => v !== 1)) mods.expByParty = card.expByParty
+      if (alreadyWon && !isRepeatTutorial) {
+        mods.expByParty = workingParty.map((_, i) => (mods.expByParty?.[i] ?? 1) * 0.25)
+      }
       if (card.benchExp.some((v) => v > 0)) mods.benchExp = card.benchExp
       if (card.levelCapByParty.some((v) => v > 0)) {
         mods.levelCapByParty = card.levelCapByParty
@@ -917,8 +975,8 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         isWild: false,
         canRun: false,
         canCatch: false,
-        expGain: true,
-        rewardMoney: tr.reward,
+        expGain: !isRepeatTutorial,
+        rewardMoney: isRepeatTutorial ? 0 : alreadyWon ? Math.floor(tr.reward * 0.25) : tr.reward,
         biome,
         timeOfDay,
         ...(weather ? { weather } : {}),
@@ -960,7 +1018,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         core.error(p, 'invalid_encounter')
         return
       }
-      firstClear = (prog.clears[tId] ?? 0) === 0
+      firstClear = (prog.clears[tId] ?? 0) === 0 && !(bId === 'deepseek-drill' && Boolean(save.flags['ds:drill']))
       const periodKey = instancePeriodKey(inst.def.refresh ?? 'daily')
       const lockout = dailyLockoutStatus(prog, periodKey)
       if (!firstClear && !lockout.canReward && (!captureAfterWin || !rules.repeat.capture || !lockout.canRoll)) {
@@ -982,7 +1040,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         tier: tId,
         boss: foe,
         c: CONTENT,
-        expGain: true,
+        expGain: !(def.scriptedOnly && !firstClear),
         playerName: save.name,
         ...(save.avatar ? { playerSprite: save.avatar } : {}),
         biome,
@@ -995,7 +1053,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       const card = partyExpMods(workingParty, save.badges.length, CONTENT)
       const mods: BattleModifiers = {}
       if (card.expByParty.some((v) => v !== 1)) mods.expByParty = card.expByParty
-      if (!firstClear && rules.repeat.expMul !== 1) {
+      if (!firstClear && !def.scriptedOnly && rules.repeat.expMul !== 1) {
         mods.expByParty = workingParty.map((_, i) => (mods.expByParty?.[i] ?? 1) * rules.repeat.expMul)
       }
       if (card.benchExp.some((v) => v > 0)) mods.benchExp = card.benchExp
@@ -1008,8 +1066,19 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       core.error(p, 'bad_message')
       return
     }
-    const clientInit = structuredClone(init)
     const engine = new BattleEngine(init, CONTENT)
+    const publicSeed = randomInt(1, 0x7fffffff)
+    const clientInit = structuredClone(init)
+    clientInit.seed = publicSeed
+    delete clientInit.sides[1].items
+    clientInit.sides[1].party = clientInit.sides[1].party.map((foeCr, idx) => ({
+      ...foeCr,
+      uid: `foe-${idx}`,
+      ivs: { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 },
+      moves: [],
+      abilityId: '',
+      nature: CONTENT.quality.npcNature,
+    }))
     const active: ActiveBattle = {
       id: newSessionId(),
       playerId: p.id,
@@ -1043,11 +1112,12 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       done: false,
     }
     activeBattles.set(p.id, active)
+    core.touch(p)
     const batch = drainBattle(active, engine.start())
     core.send(p, {
       t: 'battle.started',
       battleId: active.id,
-      seed,
+      seed: publicSeed,
       init: clientInit,
       events: batch.events,
       request: batch.request,
@@ -1185,9 +1255,10 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       recordDailyRoll(prog, periodKey)
     }
     save.rollSeed ??= hashString(save.playerId) >>> 0
-    const seed = captureSeed(save.rollSeed, inst.id, msg.tierId, first ? 0 : boundRunSeq)
-    const ballBonus = CONTENT.quality.capture.ballBonus?.[ballId] ?? 0
+    const serverRollKey = hashString(`${secret}:contract-roll:${save.playerId}:${save.rollSeed >>> 0}`) >>> 0
+    const seed = captureSeed(serverRollKey, inst.id, msg.tierId, first ? 0 : boundRunSeq)
     const isMaster = ballId === CONTENT.quality.capture.masterBall && (save.bag[ballId] ?? 0) > 0
+    const ballBonus = CONTENT.quality.capture.ballBonus?.[ballId] ?? 0
     const curPity = prog.pity?.[msg.tierId] ?? 0
     const odds = contractOdds(rules, ballBonus, !first, curPity)
     const rollRng = new Rng(seed)
@@ -1304,8 +1375,8 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     if (!rec) { core.error(p, 'not_ready'); return }
     const item = typeof msg.itemId === 'string' ? CONTENT.items[msg.itemId] : undefined
     const qty = typeof msg.qty === 'number' && Number.isInteger(msg.qty) ? msg.qty : 0
-    if (!item || !canSell(item) || qty <= 0 || qty > 999) {
-      audit(p.id, 'shop.invalid_sell', { itemId: msg.itemId, qty: msg.qty }, 2, p.ip)
+    if (!item || !canSell(item) || qty <= 0 || qty > 999 || !isShopAccessibleOnPlayerMap(p, rec.save)) {
+      audit(p.id, 'shop.invalid_sell', { itemId: msg.itemId, qty: msg.qty, map: p.state.map }, 2, p.ip)
       core.error(p, 'shop_invalid')
       return
     }
@@ -1363,8 +1434,16 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         case 'levelUp': {
           const sp = CONTENT.species[cr.speciesId]
           if (!sp) { core.error(p, 'invalid_item_use'); return }
-          const deltaExp = expForLevel(sp.growth, cr.level + 1, CONTENT) - cr.exp
-          gainExp(cr, deltaExp, CONTENT)
+          const cardCap = isBossCard(cr) ? bossCardCap(save.badges.length, CONTENT) : CONTENT.config.party.maxLevel
+          if (cr.level >= cardCap) { core.error(p, 'invalid_item_use'); return }
+          const deltaExp = Math.max(0, expForLevel(sp.growth, cr.level + 1, CONTENT) - cr.exp)
+          if (deltaExp <= 0) { core.error(p, 'invalid_item_use'); return }
+          gainExp(
+            cr,
+            deltaExp,
+            CONTENT,
+            isBossCard(cr) ? { levelCap: cardCap, expCap: expCap(cr, cardCap, CONTENT) } : undefined,
+          )
           if (cr.hp > 0) cr.hp = Math.min(maxHp(cr, CONTENT), cr.hp)
           addLedger(p.id, 'exp', cr.uid, deltaExp, cr.exp, `item:${item.id}`)
           break
@@ -1375,6 +1454,8 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           evolve(cr, to, CONTENT)
           if (!save.dexSeen.includes(to)) save.dexSeen.push(to)
           if (!save.dexCaught.includes(to)) save.dexCaught.push(to)
+          const evoRes = applyResearch(save.research ?? {}, [{ species: to, event: { kind: 'evolve' } }])
+          if (evoRes.gains.length) save.research = evoRes.state
           break
         }
         case 'chip': {
@@ -1411,11 +1492,12 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
   function handleExchangeDeal(p: Player, msg: Extract<ClientMsg, { t: 'exchange.deal' }>): void {
     const rec = getRecord(p.id)
     if (!rec) { core.error(p, 'not_ready'); return }
-    const offers = typeof msg.desk === 'string' ? offersOf(msg.desk) : []
+    const desk = typeof msg.desk === 'string' ? msg.desk : ''
+    const offers = desk ? offersOf(desk) : []
     const offer = typeof msg.offerIndex === 'number' ? offers[msg.offerIndex] : undefined
     const qty = typeof msg.qty === 'number' && Number.isInteger(msg.qty) ? msg.qty : 0
-    if (!offer || qty <= 0 || !unlocked(offer, rec.save) || timesAffordable(offer, rec.save) < qty) {
-      audit(p.id, 'exchange.invalid_deal', { desk: msg.desk, offerIndex: msg.offerIndex, qty }, 2, p.ip)
+    if (!offer || qty <= 0 || !unlocked(offer, rec.save) || timesAffordable(offer, rec.save) < qty || !isExchangeDeskOnPlayerMap(p, rec.save, desk)) {
+      audit(p.id, 'exchange.invalid_deal', { desk: msg.desk, offerIndex: msg.offerIndex, qty, map: p.state.map }, 2, p.ip)
       core.error(p, 'shop_invalid')
       return
     }
@@ -1441,9 +1523,11 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
   }
 
   function resolvePartyIndex(party: readonly Creature[], uid?: string, partyIndex?: number): number {
-    if (typeof uid === 'string' && uid) {
+    if (typeof uid === 'string' && uid.length > 0) {
       const byUid = party.findIndex((c) => c.uid === uid)
-      if (byUid >= 0) return byUid
+      if (byUid < 0) return -1
+      if (typeof partyIndex === 'number' && Number.isInteger(partyIndex) && partyIndex !== byUid) return -1
+      return byUid
     }
     return typeof partyIndex === 'number' && Number.isInteger(partyIndex) && partyIndex >= 0 && partyIndex < party.length
       ? partyIndex
@@ -1494,15 +1578,14 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     const saveIdx = resolvePartyIndex(rec.save.party, msg.uid, msg.partyIndex)
     const battleCr = battleIdx >= 0 ? active?.workingParty[battleIdx] : undefined
     const saveCr = saveIdx >= 0 ? rec.save.party[saveIdx] : undefined
+    if (battleCr && saveCr && battleCr.uid !== saveCr.uid) {
+      audit(p.id, 'creature.invalid_learn_move', { partyIndex: msg.partyIndex, uid: msg.uid, moveId, reason: 'uid_index_mismatch' }, 3, p.ip)
+      core.error(p, 'authority_violation')
+      return
+    }
     const cr = battleCr ?? saveCr
-    const allowedInBattle = Boolean(
-      (battleIdx >= 0 && active?.learnableMoves.get(battleIdx)?.has(moveId)) ||
-      (typeof msg.partyIndex === 'number' && active?.learnableMoves.get(msg.partyIndex)?.has(moveId)),
-    )
-    const allowedByLearnset = Boolean(
-      (cr && learnsetMovesAtOrBelow(cr.speciesId, cr.level).has(moveId)) ||
-      (saveCr && learnsetMovesAtOrBelow(saveCr.speciesId, saveCr.level).has(moveId)),
-    )
+    const allowedInBattle = Boolean(battleIdx >= 0 && active?.learnableMoves.get(battleIdx)?.has(moveId))
+    const allowedByLearnset = Boolean(cr && learnsetMovesAtOrBelow(cr.speciesId, cr.level).has(moveId))
     if (!cr || !mv || (!allowedInBattle && !allowedByLearnset)) {
       audit(p.id, 'creature.invalid_learn_move', { partyIndex: msg.partyIndex, uid: msg.uid, moveId }, 2, p.ip)
       core.error(p, 'authority_violation')
@@ -1898,7 +1981,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       }
       if (s.op === 'bossBattle' && typeof s.lossWarp === 'string') {
         const lf = typeof s.lossFlag === 'string' ? s.lossFlag : 'ds:lostNow'
-        const copy = { ...s, lossContinues: true, lossFlag: lf }
+        const copy: Record<string, unknown> = { ...s, lossContinues: true, lossFlag: lf }
         delete copy.lossWarp
         out.push(copy as unknown as ScriptStep)
         const lw = STORY_CONTENT.meta.lossWarp
@@ -1938,6 +2021,13 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           if (n.hiddenUnlessFlag && !save.flags[n.hiddenUnlessFlag] && !wasFlagRecentlySet(p.id, n.hiddenUnlessFlag)) continue
           if (n.hiddenIfFlag && save.flags[n.hiddenIfFlag] && !wasFlagRecentlySet(p.id, n.hiddenIfFlag)) continue
           if (n.script?.length) lists.push(n.script)
+        }
+        if (p.state.map === 'origin-lab-b1') {
+          const b2Map = getMap(world, 'origin-lab-b2')
+          for (const n of b2Map?.npcs ?? []) {
+            if (n.script?.length) lists.push(n.script)
+          }
+          if (STORY_CONTENT.scripts['ds-loss']) lists.push(expandRawSteps(STORY_CONTENT.scripts['ds-loss']))
         }
       }
       for (const trig of storyFeatures(world).triggers) {
@@ -2104,6 +2194,87 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         default:
           break
       }
+    }
+    return false
+  }
+
+  function isShopAccessibleOnPlayerMap(p: Player, save: SaveData): boolean {
+    if (!world) return true
+    if (p.state.map.endsWith('-shop') || p.state.map === 'origin-lab-b1') return true
+    let found = false
+    for (const script of collectMapScripts(p, save)) {
+      walkAllSteps(script, (s) => {
+        if (s.op === 'shop') found = true
+      })
+      if (found) return true
+    }
+    return false
+  }
+
+  function isExchangeDeskOnPlayerMap(p: Player, save: SaveData, desk: string): boolean {
+    if (!world) return true
+    if (p.state.map.endsWith('-shop')) return true
+    let found = false
+    for (const script of collectMapScripts(p, save)) {
+      walkAllSteps(script, (s) => {
+        if (s.op === 'exchange' && s.desk === desk) found = true
+      })
+      if (found) return true
+    }
+    return false
+  }
+
+  function isHealAvailableOnPlayerMap(p: Player, save: SaveData): boolean {
+    if (!world) return true
+    if (
+      p.state.map.endsWith('-center') ||
+      p.state.map === 'origin-home' ||
+      p.state.map === 'origin-lab' ||
+      p.state.map === 'origin-lab-b1' ||
+      p.state.map === 'origin-lab-b2'
+    ) {
+      return true
+    }
+    let found = false
+    for (const script of collectMapScripts(p, save)) {
+      walkAllSteps(script, (s) => {
+        if (s.op === 'heal') found = true
+      })
+      if (found) return true
+    }
+    return false
+  }
+
+  function isFlagSettableOnPlayerMap(p: Player, save: SaveData, flag: string): boolean {
+    if (!world) return true
+    if (
+      flag === 'ds:skipBrief' ||
+      flag === 'ob:shopped' ||
+      flag.startsWith('rumor:') ||
+      flag.startsWith('lesson:') ||
+      flag.startsWith('tutorial:') ||
+      flag.startsWith('update:') ||
+      flag.startsWith('ob:')
+    ) {
+      return true
+    }
+    const vars = { year: realDateOf(new Date()).year, day: dayOf(save.clockMinutes) }
+    for (const trig of storyFeatures(world).triggers) {
+      if (trig.match?.map && trig.match.map !== p.state.map) continue
+      if (trig.once && `trig:${trig.id}` === flag) return true
+    }
+    let found = false
+    for (const script of collectMapScripts(p, save)) {
+      walkAllSteps(script, (s) => {
+        if (s.op === 'setFlag') {
+          const expanded = s.flag.includes('{') ? expandFlag(s.flag, vars) : s.flag
+          if (expanded === flag) found = true
+        } else if ((s.op === 'battle' || s.op === 'bossBattle') && s.lossFlag) {
+          const expanded = s.lossFlag.includes('{') ? expandFlag(s.lossFlag, vars) : s.lossFlag
+          if (expanded === flag) found = true
+        }
+      })
+      if (found) return true
     }
     return false
   }
@@ -2307,7 +2478,8 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     canonicalStepPath: string
     grantFlag: string
     paid: boolean
-    choiceLocks: { key: string; branchIdx: number }[]
+    choiceLocks: { key: string; branchIdx: number | string }[]
+    precedingFlags: { flag: string; value: boolean | number | string }[]
   } | null {
     const src = resolveScriptSource(p, save, msg.sourceId, msg.npcId, msg.stepPath)
     if (!src) return null
@@ -2316,7 +2488,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     let pathPrefix = ''
     const preceding: ScriptStep[] = []
     let dynamicSuffix = ''
-    const choiceLocks: { key: string; branchIdx: number }[] = []
+    const choiceLocks: { key: string; branchIdx: number | string }[] = []
     const vars = { year: realDateOf(new Date()).year, day: dayOf(save.clockMinutes) }
 
     for (let i = 0; i < parts.length;) {
@@ -2337,6 +2509,13 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           recentPayments.delete(p.id)
           paid = true
         }
+        const precedingFlags: { flag: string; value: boolean | number | string }[] = []
+        for (const st of preceding) {
+          if (st.op === 'setFlag') {
+            const fname = st.flag.includes('{') ? expandFlag(st.flag, vars) : st.flag
+            precedingFlags.push({ flag: fname, value: st.value ?? true })
+          }
+        }
         return {
           step,
           canonicalSourceId: src.canonicalSourceId,
@@ -2344,6 +2523,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           grantFlag: `auth:grant:${src.canonicalSourceId}:${src.canonicalStepPath}${dynamicSuffix}`,
           paid,
           choiceLocks,
+          precedingFlags,
         }
       }
       const branchToken = parts[i + 1]
@@ -2373,11 +2553,21 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           const holds = flagMatches(save, expFlag, step.equals)
           const recent = wasFlagRecentlySet(p.id, expFlag)
           if (branchToken === 'then') {
-            if (!holds && !recent) return null
+            if (!holds) return null
+            if (hasUnpaidGrantInBranch(step.then) && (step.else ? hasUnpaidGrantInBranch(step.else) : false)) {
+              const lockKey = `auth:ifflag:${src.canonicalSourceId}:${stepKey}${dynamicSuffix}`
+              if (save.flags[lockKey] !== undefined && save.flags[lockKey] !== 'then') return null
+              choiceLocks.push({ key: lockKey, branchIdx: 'then' })
+            }
             curSteps = step.then
           } else {
             const starterOpening = expFlag === STORY_CONTENT.meta.flags.starter && step.equals === undefined
-            if (holds && !recent && !starterOpening) return null
+            if (holds && (!(recent && step.equals === undefined) && !starterOpening)) return null
+            if (step.else && hasUnpaidGrantInBranch(step.else)) {
+              const lockKey = `auth:ifflag:${src.canonicalSourceId}:${stepKey}${dynamicSuffix}`
+              if (save.flags[lockKey] !== undefined && save.flags[lockKey] !== 'else') return null
+              choiceLocks.push({ key: lockKey, branchIdx: 'else' })
+            }
             curSteps = step.else ?? []
           }
           pathPrefix = `${stepKey}.${branchToken}`
@@ -2487,13 +2677,13 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       case 'sq-badges':
         return save.badges.length >= 8
       case 'sq-arena':
-        return Boolean(save.flags['trainer:sq-arena'])
+        return Boolean(save.flags['trainer:arena-yuan'] || save.flags['trainer:sq-arena'])
       case 'sq-floppy':
-        return Boolean(save.flags['sq-floppy:given'])
+        return Boolean(save.flags['sq-floppy:given']) && Boolean(save.flags['sq-floppy:done'] || !world || (recentPayments.get(p.id)?.kind === 'item' && recentPayments.get(p.id)?.itemId === 'retro-floppy'))
       case 'sq-antivirus':
-        return Boolean(save.flags['sq-antivirus:started'])
+        return Boolean(save.flags['sq-antivirus:started']) && Boolean(save.flags['sq-antivirus:done'] || !world || (recentPayments.get(p.id)?.kind === 'item' && recentPayments.get(p.id)?.itemId === 'antivirus' && (recentPayments.get(p.id)?.amount ?? 0) >= 3))
       case 'sq-fan':
-        return Boolean(save.flags['sq-fan:given'])
+        return Boolean(save.flags['sq-fan:given']) && Boolean(save.flags['sq-fan:done'] || !world || (recentPayments.get(p.id)?.kind === 'item' && recentPayments.get(p.id)?.itemId === 'server-fan'))
       case 'sq-snow':
         return Boolean(save.flags['sq-snow:found'])
       case 'sq-castaway':
@@ -2545,7 +2735,9 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           otId: save.playerId,
           ...(ballId ? { ballId } : {}),
           caughtMap: p.state.map,
-          gradeFloor: CONTENT.quality.giftGradeFloor,
+          gradeFloor: 'SS',
+          perfectIvs: 6,
+          ivMin: CONTENT.config.creature.ivMax,
           origin: { kind: 'starter' },
         }, CONTENT)
         storeCreatureInSave(save, cr)
@@ -2556,6 +2748,11 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         return
       }
       case 'heal': {
+        if (!isHealAvailableOnPlayerMap(p, save)) {
+          audit(p.id, 'script.invalid_heal', { map: p.state.map }, 2, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
         for (const cr of save.party) {
           cr.hp = maxHp(cr, CONTENT)
           cr.status = null
@@ -2711,6 +2908,10 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           save.flags[resolved.grantFlag] = true
           for (const lock of resolved.choiceLocks) save.flags[lock.key] = lock.branchIdx
         }
+        for (const pf of resolved.precedingFlags) {
+          save.flags[pf.flag] = pf.value
+          noteRecentFlag(p.id, pf.flag)
+        }
         save.bag[itemId] = (save.bag[itemId] ?? 0) + qty
         const ref = `script:giveItem:${resolved.canonicalSourceId}:${resolved.canonicalStepPath}:${itemId}:${qty}`
         addLedger(p.id, 'item', itemId, qty, save.bag[itemId], ref)
@@ -2753,6 +2954,10 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         if (!resolved.paid) {
           save.flags[resolved.grantFlag] = true
           for (const lock of resolved.choiceLocks) save.flags[lock.key] = lock.branchIdx
+        }
+        for (const pf of resolved.precedingFlags) {
+          save.flags[pf.flag] = pf.value
+          noteRecentFlag(p.id, pf.flag)
         }
         save.money += amount
         const ref = `script:giveMoney:${resolved.canonicalSourceId}:${resolved.canonicalStepPath}:${amount}`
@@ -2799,10 +3004,14 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           save.flags[resolved.grantFlag] = true
           for (const lock of resolved.choiceLocks) save.flags[lock.key] = lock.branchIdx
         }
+        for (const pf of resolved.precedingFlags) {
+          save.flags[pf.flag] = pf.value
+          noteRecentFlag(p.id, pf.flag)
+        }
         const stepDef = resolved.step as Extract<ScriptStep, { op: 'giveCreature' }>
         const level = stepDef.level
         const ballId = CONTENT.itemList.find((it) => it.effect.kind === 'ball')?.id
-        const seed = hashString(`${p.id}:gift:${speciesId}:${save.party.length}`) >>> 0
+        const seed = hashString(`${p.id}:gift:${resolved.canonicalSourceId}:${resolved.canonicalStepPath}:${speciesId}:${save.party.length}`) >>> 0
         const cr = createCreature(speciesId, level, {
           rng: new Rng(seed || 1),
           shiny: stepDef.shiny === true,
@@ -2838,7 +3047,11 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       }
       case 'unlockTown': {
         const townId = typeof msg.townId === 'string' ? msg.townId : ''
-        if (!townId || (world && !world.towns.some((tw) => tw.id === townId))) return
+        if (!townId || (world && !world.towns.some((tw) => tw.id === townId)) || (world && save.party.length === 0 && !save.flags[STORY_CONTENT.meta.flags.starter])) {
+          audit(p.id, 'script.invalid_unlock_town', { townId, map: p.state.map }, 2, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
         if (!save.visitedTowns.includes(townId)) {
           save.visitedTowns.push(townId)
           commitSave(p.id, save, { ref: `script:unlockTown:${townId}` })
@@ -2877,6 +3090,10 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         }
         save.flags[resolved.grantFlag] = true
         for (const lock of resolved.choiceLocks) save.flags[lock.key] = lock.branchIdx
+        for (const pf of resolved.precedingFlags) {
+          save.flags[pf.flag] = pf.value
+          noteRecentFlag(p.id, pf.flag)
+        }
         const r = addTaskProgress(save.research ?? {}, spId, task, amount)
         save.research = r.state
         commitSave(p.id, save, { ref: `script:research:${spId}:${task}` })
@@ -3017,6 +3234,7 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         if (!flag) return
         if (
           flag.startsWith('auth:') ||
+          flag.startsWith(EXCHANGE.flagPrefix) ||
           flag.startsWith(STORY_CONTENT.meta.flags.trainerWon) ||
           flag.startsWith(gameJson.flags.bossWonPrefix) ||
           flag.startsWith('boss:won:') ||
@@ -3036,9 +3254,22 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         if (typeof v !== 'boolean' && typeof v !== 'string' && !(typeof v === 'number' && Number.isFinite(v))) {
           return
         }
-        const clearableFlags = new Set(['ds:healUsed', 'ds:assist', 'rival:lab-lost', 'lesson:types-lost', 'ds:drillLost', 'ds:lost', 'ds:lostNow'])
-        if ((v === false || v === 0 || v === '') && save.flags[flag] && !clearableFlags.has(flag)) {
+        const clearableFlags: Record<string, true> = {
+          'ds:healUsed': true,
+          'ds:assist': true,
+          'rival:lab-lost': true,
+          'lesson:types-lost': true,
+          'ds:drillLost': true,
+          'ds:lost': true,
+          'ds:lostNow': true,
+        }
+        if ((v === false || v === 0 || v === '') && save.flags[flag] && !clearableFlags[flag]) {
           audit(p.id, 'script.forged_flag', { flag, value: v, reason: 'cannot_clear_progression_flag' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        }
+        if (!clearableFlags[flag] && !isFlagSettableOnPlayerMap(p, save, flag)) {
+          audit(p.id, 'script.forged_flag', { flag, value: v, map: p.state.map, reason: 'flag_not_on_map' }, 3, p.ip)
           core.error(p, 'authority_violation')
           return
         }
@@ -3101,6 +3332,28 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
           audit(p.id, 'script.forged_flag', { flag, reason: 'catch_prereq_not_met' }, 3, p.ip)
           core.error(p, 'authority_violation')
           return
+        } else if (flag === 'legend' && !save.flags['champion'] && !save.flags['trainer:champion']) {
+          audit(p.id, 'script.forged_flag', { flag, reason: 'champion_not_cleared' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        } else if ((flag === 'ds:reported' || flag === 'ds:departed') && !save.flags['ds:done'] && !save.flags[`${gameJson.flags.bossWonPrefix}deepseek`]) {
+          audit(p.id, 'script.forged_flag', { flag, reason: 'deepseek_not_cleared' }, 3, p.ip)
+          core.error(p, 'authority_violation')
+          return
+        } else if (flag === 'zero:t2') {
+          const recent = recentPayments.get(p.id)
+          const paidZero = Boolean(
+            recent &&
+            recent.map === p.state.map &&
+            Date.now() - recent.at <= 30_000 &&
+            ((recent.kind === 'item' && recent.itemId === 'data-shard' && recent.amount >= 3) ||
+              (recent.kind === 'money' && recent.amount >= 3000)),
+          )
+          if (!save.flags['zero:t1'] || (!paidZero && !save.flags['zero:t2'])) {
+            audit(p.id, 'script.forged_flag', { flag, reason: 'zero_rack_unpaid' }, 3, p.ip)
+            core.error(p, 'authority_violation')
+            return
+          }
         }
         save.flags[flag] = v
         noteRecentFlag(p.id, flag)
@@ -3286,6 +3539,10 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     },
 
     validateTradeOffer(playerId, rawCreature, ip) {
+      if (this.isInBattle(playerId)) {
+        audit(playerId, 'trade.busy_in_battle', {}, 2, ip)
+        return { ok: false, code: 'self_busy' }
+      }
       if (rawCreature === null) return { ok: true, creature: null }
       const cleaned = sanitizeCreature(rawCreature, CONTENT)
       if (!cleaned || !CONTENT.species[cleaned.speciesId]) {
@@ -3294,13 +3551,13 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       if (cleaned.origin?.kind === 'boss') {
         return { ok: false, code: 'trade_bound_boss' }
       }
-      const registeredOwner = creatureOwners.get(cleaned.uid)
-      if (registeredOwner && registeredOwner !== playerId) {
-        audit(playerId, 'trade.ownership_violation', { uid: cleaned.uid, owner: registeredOwner }, 3, ip)
-        return { ok: false, code: 'trade_not_owned' }
-      }
       const rec = getRecord(playerId)
       if (!rec) {
+        const registeredOwner = creatureOwners.get(cleaned.uid)
+        if (registeredOwner && registeredOwner !== playerId) {
+          audit(playerId, 'trade.ownership_violation', { uid: cleaned.uid, owner: registeredOwner }, 3, ip)
+          return { ok: false, code: 'trade_not_owned' }
+        }
         if (cleaned.nickname) cleaned.nickname = maskBanned(cleaned.nickname)
         cleaned.otName = maskBanned(cleaned.otName)
         return { ok: true, creature: cleaned }
@@ -3311,7 +3568,12 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
       }
       const owned = rec.save.party.find((c) => c.uid === cleaned.uid)
       if (!owned) {
-        audit(playerId, 'trade.ownership_violation', { uid: cleaned.uid, reason: 'not_in_party' }, 3, ip)
+        const registeredOwner = creatureOwners.get(cleaned.uid)
+        audit(playerId, 'trade.ownership_violation', {
+          uid: cleaned.uid,
+          reason: registeredOwner && registeredOwner !== playerId ? 'cross_account_uid' : 'not_in_party',
+          ...(registeredOwner ? { owner: registeredOwner } : {}),
+        }, 3, ip)
         return { ok: false, code: 'trade_not_owned' }
       }
       if (owned.origin?.kind === 'boss') {
@@ -3346,11 +3608,22 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     },
 
     completeTrade(aId, aUid, bId, bUid, tradeId) {
+      if (this.isInBattle(aId) || this.isInBattle(bId)) {
+        audit(aId, 'trade.busy_in_battle_at_commit', { aId, bId, tradeId }, 3)
+        return false
+      }
       const recA = getRecord(aId)
       const recB = getRecord(bId)
       if (!recA && !recB) return true
       if (!recA || !recB) {
         audit(aId, 'trade.mismatched_authority', { aId, bId, tradeId }, 3)
+        return false
+      }
+      if (
+        recA.imported || !recA.trusted || recA.save.flags['auth:untrustedImport'] ||
+        recB.imported || !recB.trusted || recB.save.flags['auth:untrustedImport']
+      ) {
+        audit(aId, 'trade.untrusted_account_commit', { aId, bId, tradeId }, 3)
         return false
       }
       const giveA = recA.save.party.find((c) => c.uid === aUid)
@@ -3382,18 +3655,21 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     },
 
     validatePvpParty(playerId, rawParty, healParty, ip) {
+      if (this.isInBattle(playerId)) return null
       if (!Array.isArray(rawParty)) return null
-      for (const item of rawParty) {
-        if (isRecord(item) && typeof item.uid === 'string') {
-          const owner = creatureOwners.get(item.uid)
-          if (owner && owner !== playerId) {
-            audit(playerId, 'pvp.party_tamper', { reason: 'cross_account_uid', uid: item.uid, owner }, 3, ip)
-            return null
+      const rec = getRecord(playerId)
+      if (!rec) {
+        for (const item of rawParty) {
+          if (isRecord(item) && typeof item.uid === 'string') {
+            const owner = creatureOwners.get(item.uid)
+            if (owner && owner !== playerId) {
+              audit(playerId, 'pvp.party_tamper', { reason: 'cross_account_uid', uid: item.uid, owner }, 3, ip)
+              return null
+            }
           }
         }
+        return undefined
       }
-      const rec = getRecord(playerId)
-      if (!rec) return undefined
       if (rec.imported || !rec.trusted || rec.save.flags['auth:untrustedImport']) {
         audit(playerId, 'pvp.untrusted_party', {}, 2, ip)
         return null
@@ -3416,7 +3692,12 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
         seen.add(rawCr.uid)
         const owned = rec.save.party.find((c) => c.uid === rawCr.uid)
         if (!owned) {
-          audit(playerId, 'pvp.party_tamper', { reason: 'uid_not_in_party', uid: rawCr.uid }, 3, ip)
+          const owner = creatureOwners.get(rawCr.uid)
+          audit(playerId, 'pvp.party_tamper', {
+            reason: owner && owner !== playerId ? 'cross_account_uid' : 'uid_not_in_party',
+            uid: rawCr.uid,
+            ...(owner ? { owner } : {}),
+          }, 3, ip)
           return null
         }
         if (owned.origin?.kind === 'legacy') {
@@ -3455,65 +3736,68 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
 
     handle(p, msg) {
       const isDungeonBusy = 'dungeonBusy' in p && p.dungeonBusy === true
+      const isPvpBusy = 'pvpBusy' in p && p.pvpBusy === true
+      const isTradeBusy = 'tradeId' in p && p.tradeId !== undefined && p.tradeId !== null
+      const isExternalBusy = isDungeonBusy || isPvpBusy || isTradeBusy
       switch (msg.t) {
         case 'battle.start':
-          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleBattleStart(p, msg)
           return true
         case 'battle.action':
-          if (isDungeonBusy) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy) { core.error(p, 'self_busy'); return true }
           handleBattleAction(p, msg)
           return true
         case 'battle.contract':
-          if (isDungeonBusy) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy) { core.error(p, 'self_busy'); return true }
           handleBattleContract(p, msg)
           return true
         case 'shop.buy':
-          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleShopBuy(p, msg)
           return true
         case 'shop.sell':
-          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleShopSell(p, msg)
           return true
         case 'item.use':
-          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleItemUse(p, msg)
           return true
         case 'exchange.deal':
-          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleExchangeDeal(p, msg)
           return true
         case 'creature.evolve':
-          if (isDungeonBusy) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy) { core.error(p, 'self_busy'); return true }
           handleCreatureEvolve(p, msg)
           return true
         case 'creature.learnMove':
-          if (isDungeonBusy) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy) { core.error(p, 'self_busy'); return true }
           handleCreatureLearnMove(p, msg)
           return true
         case 'creature.nickname':
-          if (isDungeonBusy) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleCreatureNickname(p, msg)
           return true
         case 'party.swap':
-          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handlePartySwap(p, msg)
           return true
         case 'box.move':
-          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleBoxMove(p, msg)
           return true
         case 'box.release':
-          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleBoxRelease(p, msg)
           return true
         case 'script.op':
-          if (isDungeonBusy) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           handleScriptOp(p, msg)
           return true
         case 'save.import': {
-          if (isDungeonBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
+          if (isExternalBusy || this.isInBattle(p.id)) { core.error(p, 'self_busy'); return true }
           if (this.hasSave(p.id)) {
             audit(p.id, 'save.import_already_bound', {}, 2, p.ip)
             core.error(p, 'authority_violation')
@@ -3549,7 +3833,25 @@ export function createAuthority(opts: AuthorityOptions): AuthorityService {
     },
 
     onDisconnect(playerId) {
+      const active = activeBattles.get(playerId)
+      if (active && !active.done && Object.keys(active.consumedItems).length > 0) {
+        const rec = getRecord(playerId)
+        if (rec) {
+          const save = structuredClone(rec.save)
+          const ref = `battle_abort:${active.id}`
+          for (const [itemId, count] of Object.entries(active.consumedItems)) {
+            const next = (save.bag[itemId] ?? 0) - count
+            if (next > 0) save.bag[itemId] = next
+            else delete save.bag[itemId]
+            addLedger(playerId, 'item', itemId, -count, save.bag[itemId] ?? 0, ref)
+          }
+          commitSave(playerId, save, { ref, notify: false })
+        }
+      }
       activeBattles.delete(playerId)
+      for (const [cid, pc] of [...pendingContracts.entries()]) {
+        if (pc.playerId === playerId) pendingContracts.delete(cid)
+      }
       recentPayments.delete(playerId)
       recentFlagsSet.delete(playerId)
       lastClockSyncMs.delete(playerId)

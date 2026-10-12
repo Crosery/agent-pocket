@@ -48,6 +48,7 @@ export {
   newSessionToken,
   parseSessionCookie,
   prepareAccountSave,
+  rekeyImportedSaveCreatures,
   validatePassword,
   validateUsername,
   verifyDummyPassword,
@@ -752,6 +753,7 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       }
       profiles.set(profile.id, next)
       upsertProfileRow(next)
+      board = null
       evictIfNeeded()
     },
 
@@ -772,11 +774,13 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
         w.pvpWins++
         w.profile.pvpWins = w.pvpWins
         upsertProfileRow(w)
+        board = null
       }
       if (l) {
         l.pvpLosses++
         l.profile.pvpLosses = l.pvpLosses
         upsertProfileRow(l)
+        board = null
       }
     },
 
@@ -790,17 +794,22 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
     },
 
     recordDistance(id, tiles) {
-      openDb()
+      const conn = openDb()
       const s = profiles.get(id)
       if (!s || !Number.isFinite(tiles) || tiles <= (s.maxDistance ?? 0)) return
+      const charRow = conn.prepare('SELECT imported, trusted FROM characters WHERE account_id = ?').get(id)
+      if (charRow && (charRow.imported === 1 || charRow.trusted === 0)) return
       s.maxDistance = Math.floor(tiles)
       upsertProfileRow(s)
+      board = null
     },
 
     leaderboard(limit = NET.leaderboard.size) {
-      openDb()
+      const conn = openDb()
       if (!board) {
+        const isolated = new Set(conn.prepare('SELECT account_id FROM characters WHERE imported = 1 OR trusted = 0').all().map((row) => String(row.account_id)))
         board = [...profiles.values()]
+          .filter((s) => !isolated.has(s.profile.id))
           .map((s): LeaderboardEntry => ({
             id: s.profile.id,
             name: s.profile.name,
@@ -1057,31 +1066,6 @@ export function createProfileStore(opts: StoreOptions): ProfileStore {
       }
     },
 
-    recordLedger(entry: { accountId: string; kind: LedgerRecord['kind']; subject: string; delta: number; balance: number; ref: string; at?: number }): void {
-      const conn = openDb()
-      const at = entry.at ?? Date.now()
-      conn.prepare(`
-        INSERT INTO ledger (account_id, at, kind, subject, delta, balance, ref)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-      `).run(entry.accountId, at, entry.kind, entry.subject, entry.delta, entry.balance, entry.ref)
-    },
-
-    listLedger(accountId?: string, limit = 100): LedgerRecord[] {
-      const conn = openDb()
-      const rows = accountId
-        ? conn.prepare('SELECT id, account_id, at, kind, subject, delta, balance, ref FROM ledger WHERE account_id = ? ORDER BY id DESC LIMIT ?').all(accountId, limit)
-        : conn.prepare('SELECT id, account_id, at, kind, subject, delta, balance, ref FROM ledger ORDER BY id DESC LIMIT ?').all(limit)
-      return rows.map((r) => ({
-        id: typeof r.id === 'number' ? r.id : 0,
-        accountId: String(r.account_id),
-        at: typeof r.at === 'number' ? r.at : 0,
-        kind: r.kind as LedgerRecord['kind'],
-        subject: String(r.subject),
-        delta: typeof r.delta === 'number' ? r.delta : 0,
-        balance: typeof r.balance === 'number' ? r.balance : 0,
-        ref: String(r.ref),
-      }))
-    },
 
     onSessionRevoked(listener: (accountId: string) => void): void {
       sessionRevokedListeners.add(listener)

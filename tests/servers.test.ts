@@ -35,7 +35,7 @@ test('custom servers can be added, updated, and deleted', () => {
   const s1 = addServer({ name: '测试服一', address: '127.0.0.1:8787' }, storage)
   assert.ok(s1.id.startsWith('srv_'))
   assert.equal(s1.name, '测试服一')
-  assert.equal(s1.address, '127.0.0.1:8787')
+  assert.equal(resolveServerUrls(s1.address).httpBase, 'http://127.0.0.1:8787')
   assert.equal(s1.official, false)
 
   let list = loadServers(storage)
@@ -48,7 +48,7 @@ test('custom servers can be added, updated, and deleted', () => {
 
   list = loadServers(storage)
   assert.equal(list[1].name, '测试服改名')
-  assert.equal(list[1].address, '192.168.1.100:8787')
+  assert.equal(resolveServerUrls(list[1].address).wsUrl, 'ws://192.168.1.100:8787/ws')
 
   const deleted = deleteServer(s1.id, storage)
   assert.equal(deleted, true)

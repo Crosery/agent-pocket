@@ -251,7 +251,7 @@ export function createScriptRunner(host: ScriptHost) {
         const chosen = ctx.data.species[id] ? id : options[0].id
         const cr = createCreature(chosen, ctx.data.config.creature.starterLevel, {
           rng, otName: ctx.save.name, otId: ctx.save.playerId, ballId: ballId(ctx), caughtMap: host.playerPlace().map,
-          gradeFloor: ctx.data.quality.giftGradeFloor, origin: { kind: 'starter' },
+          gradeFloor: 'SS', perfectIvs: 6, ivMin: ctx.data.config.creature.ivMax, origin: { kind: 'starter' },
         }, ctx.data)
         addCreature(ctx, cr)
         ctx.save.flags[STORY_CONTENT.meta.flags.starter] = chosen

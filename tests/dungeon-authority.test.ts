@@ -25,9 +25,9 @@ test('dungeon authority regressions: entry map check, per-member badge/alive gat
   const srv = await startServer({ port: 0, dataDir: dir, world: null, pvp: null, quiet: true })
 
   try {
-    const p1Lead = createCreature('o1', 85, { rng: new Rng(101) })
+    const p1Lead = createCreature('agi', 100, { rng: new Rng(101) })
     const p1Backup = createCreature('deepseek-v3', 80, { rng: new Rng(102) })
-    const p2Lead = createCreature('o1', 85, { rng: new Rng(202) })
+    const p2Lead = createCreature('agi', 100, { rng: new Rng(202) })
 
     // 1. Connect P1 (7 badges) in origin-home (bedroom) and P2 (0 badges initially) at origin-lab-b1 entry
     const c1 = await joinAuthenticatedClient(srv, {

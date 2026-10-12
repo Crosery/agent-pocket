@@ -42,8 +42,14 @@
     "unexplored": "未探索",
     "legend": {"player": "你", "other": "其他玩家", "npc": "居民", "trainer": "训练家", "center": "补给站", "shop": "商店", "gym": "道馆", "lab": "研究所", "quest": "任务目标", "item": "道具", "wild": "野生智灵", "rare": "稀有智灵", "warp": "出入口", "house": "民居", "tower": "高塔", "legend": "传说踪迹", "event": "事件地点"}
   },
-  "attention": {"menu": "菜单有新动态", "dot": "有新动态", "research": {"detail": "有研究奖励可以领取，打开后在第一行领取。"}, "contentUpdate": {"detail": "版本内容已同步，打开情报查看本次更新摘要。"}},
+  "attention": {
+    "menu": "菜单有新动态",
+    "dot": "有新动态",
+    "research": {"detail": "有研究奖励可以领取，打开后在第一行领取。"},
+    "contentUpdate": {"detail": "版本内容已同步，打开情报查看本次更新摘要。"}
+  },
   "clock": {"placeholder": "--:--"},
   "party": {"boss": "BOSS", "bank": "储备 +{n}"},
-  "license": {"up": "算力许可 Lv{from} → Lv{to}：{name}", "capped": "{name} 已到许可上限 Lv{cap}，多余经验进入储备（最多 {max} 级）。", "learned": "{name} 学会了新招式。"}
+  "license": {"up": "算力许可 Lv{from} → Lv{to}：{name}", "capped": "{name} 已到许可上限 Lv{cap}，多余经验进入储备（最多 {max} 级）。", "learned": "{name} 学会了新招式。"},
+  "interact": {"key": "F", "talk": "对话", "battle": "挑战", "inspect": "调查", "pickup": "拾取", "touch": "激活", "box": "整理盒子", "remote": "互动"}
 }

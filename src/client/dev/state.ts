@@ -28,9 +28,10 @@ export function runtimeState(host: DevHost, log: EventLog, extras: RuntimeExtras
   const lastEnd = [...events].reverse().find((e) => e.type === 'battle:end')
   const html = document.documentElement
   const battleUp = ow.battleActive || html.classList.contains('ap-battle-on')
-  const screens = [...document.querySelectorAll<HTMLElement>('[class*="aps-"]')]
-    .map((el) => [...el.classList].find((c) => c.startsWith('aps-'))?.slice(4) ?? '')
-    .filter((id, i, all) => id && all.indexOf(id) === i)
+  const screens = [...document.querySelectorAll<HTMLElement>('.aps-screen')]
+    .filter((el) => el.checkVisibility())
+    .flatMap((el) => [...el.classList].filter((c) => c.startsWith('aps-') && c !== 'aps-screen').map((c) => c.slice(4)))
+    .filter((id, i, all) => all.indexOf(id) === i)
   return canonical({
     map: ow.mapId,
     position: { x: r3(p.x), y: r3(p.y), elev: r3(p.elev), facing: p.facing },

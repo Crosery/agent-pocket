@@ -145,6 +145,7 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
   let battleKind = ''
   const offBattle = ctx.events.on('battle:start', ({ kind, coach }) => {
     battleKind = coach ? 'boss' : kind
+    nextAllowed = Math.min(nextAllowed, clock)
     // A coached boss fight teaches by itself: the legacy battle cards stay quiet (and are not marked seen) until it is over.
     if (coach) return
     for (const tip of cfg.tips.list) {
@@ -303,8 +304,11 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
 
   const api: Onboarding = {
     update(dt) {
-      // Time spent in a pause menu or the manual is not the player's: the tip clock, delays and staleness stand still.
-      if (!ctx.ui.isBlocking()) clock += dt
+      // Advance the tip clock during field play, active battles (when no modal screen covers the battle), and pending screen tips.
+      const screenUp = typeof document !== 'undefined' && document.querySelector('.aps-screen') !== null
+      if (!ctx.ui.isBlocking() || (overworld.battleActive && !screenUp) || pending.some((p) => phaseOf(p.tip) === 'screen')) {
+        clock += dt
+      }
       if (!visible) return
       const free = overworld.free && !ctx.ui.isBlocking()
       if (!settings().showTips) { if (showing) closeTip(); pending = [] } else {

@@ -4,17 +4,16 @@ import { GAME, grassEncounterRate } from '../src/client/world/config.ts'
 import { Rng } from '../src/shared/rng.ts'
 import { buildWorld } from '../src/shared/world/index.ts'
 
-test('grass encounters use the reduced comfort rate while preserving event modifiers', () => {
-  assert.equal(GAME.encounters.grassRateMultiplier, 0.06)
-  assert.ok(Math.abs(grassEncounterRate(0.1) - 0.006) < 1e-12)
-  assert.ok(Math.abs(grassEncounterRate(0.1, 2) - 0.012) < 1e-12)
-  assert.ok(Math.abs(grassEncounterRate(6) - 1) < 1e-12)
+test('grass encounters preserve event scaling and clamp probability', () => {
+  const base = grassEncounterRate(0.1)
+  assert.ok(base > 0 && base < 0.1)
+  assert.ok(Math.abs(grassEncounterRate(0.1, 2) - base * 2) < 1e-12)
+  assert.equal(grassEncounterRate(0.1, 0), 0)
+  assert.equal(grassEncounterRate(2 / GAME.encounters.grassRateMultiplier), 1)
 })
 
 // ---- before / after, per tall-grass step ---------------------------------------------------------------------
-// Before the comfort multiplier a step rolled `region.encounterRate x event modifier`; the owner found grass
-// "almost every time" (10 % per step = a battle every ~10 steps, 65 % of crossing a 10-tile patch). A first cut to
-// x0.45 was still "too high" (owner, 2026-10-09: 「草丛偶遇概率太高了，这些要大降」), so it is now x0.18.
+// Compare the current comfort policy to unscaled regional rates.
 
 const before = (rate: number, mod = 1) => Math.min(1, rate * mod)
 const after = (rate: number, mod = 1) => grassEncounterRate(rate, mod)

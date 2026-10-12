@@ -185,7 +185,10 @@ export function createUIKit(root: HTMLElement, input: Input, audio: AudioManager
         }
         const r = menu.handleInput(inp)
         if (r === 'confirm') finish(menu.index)
-        else if (r === 'cancel' && cancelIndex !== undefined && cancelIndex >= 0 && cancelIndex < options.length) finish(cancelIndex)
+        else if ((r === 'cancel' || inp.pressed('menu')) && cancelIndex !== undefined && cancelIndex >= 0 && cancelIndex < options.length) {
+          inp.consume('menu')
+          finish(cancelIndex)
+        }
       },
       update(dt) {
         dlg.update(dt)
@@ -323,7 +326,10 @@ export function createUIKit(root: HTMLElement, input: Input, audio: AudioManager
       input(inp) {
         const r = menu.handleInput(inp)
         if (r === 'confirm') finish(menu.index)
-        else if (r === 'cancel') finish(-1)
+        else if (r === 'cancel' || inp.pressed('menu')) {
+          inp.consume('menu')
+          finish(-1)
+        }
       },
       pointerCancel: () => finish(-1),
     }

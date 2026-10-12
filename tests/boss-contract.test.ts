@@ -31,6 +31,7 @@ function ctxOf(save: SaveData): GameContext & { toasts: string[]; persisted: str
   const persisted: string[] = []
   return {
     save, data: CONTENT, toasts, persisted,
+    net: { status: 'offline' },
     events: { emit: (name: string) => { events.push(name) } },
     overworld: { player: { map: 'overworld' } },
     persist: (why: string) => { persisted.push(why) },

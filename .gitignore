@@ -31,3 +31,4 @@ __pycache__/
 # local QA artifacts (screenshots, reports)
 output/
 docs/research/*/raw-*.json
+artifacts/

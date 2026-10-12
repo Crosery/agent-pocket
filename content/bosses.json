@@ -1077,7 +1077,7 @@
       "hint": {"seen": "boss.deepseek.hintSeen", "won": "boss.deepseek.hintWon"},
       "gossip": ["boss.deepseek.gossip1", "boss.deepseek.gossip2"],
       "canRun": false,
-      "expMul": 6,
+      "expMul": 5.5,
       "initialForm": "base",
       "forms": {
         "base": {
@@ -1113,7 +1113,7 @@
       "tiers": {
         "story": {
           "level": 7,
-          "expMul": 6,
+          "expMul": 5.5,
           "statMul": {"hp": 0.8, "atk": 0.3, "spa": 0.3},
           "moves": ["pull-request", "open-license", "community-fork"],
           "pattern": [

@@ -34,8 +34,7 @@ export interface ScreensHandle extends Screens {
   /** Multiplayer server list selection. */
   serverList(): Promise<ServerEntry | null>
   /** Account login & registration form. */
-  accountAuth(server: ServerEntry, httpBase: string): Promise<AccountSessionResult | null>
-  /** First-time account character binding dialog. */
+  accountAuth(server: ServerEntry, httpBase: string, opts?: { required?: boolean }): Promise<AccountSessionResult | null>
   bindAccount(server: ServerEntry, httpBase: string, hasLocalSave: boolean): Promise<{ choice: 'new' | 'local' | 'cancel' }>
   /** Paste-a-save-code dialog (title "import"): resolves the validated save, or null if cancelled. */
   importSave(): Promise<SaveData | null>
@@ -68,7 +67,7 @@ export function createScreens(ctx: GameContext): ScreensHandle {
     badges: () => badgeCaseScreen(env),
   }
   const screens: ScreensHandle = {
-    title: (hasSave) => titleScreen(env, hasSave),
+    title: (hasSave, session, onSwitchAccount) => titleScreen(env, hasSave, session, onSwitchAccount),
     newGame: () => newGameScreen(env),
     starter: (options) => starterScreen(env, options),
     pauseMenu: () => pauseScreen(env),
@@ -104,7 +103,7 @@ export function createScreens(ctx: GameContext): ScreensHandle {
     pickNature: (creature) => natureScreen(env, creature),
     summaryAt: (creature, page) => summaryScreen(env, ctx.save.party.includes(creature) ? ctx.save.party : [creature], Math.max(0, ctx.save.party.indexOf(creature)), page),
     serverList: () => serverListScreen(env),
-    accountAuth: (server, httpBase) => accountAuthScreen(env, server, httpBase),
+    accountAuth: (server, httpBase, opts) => accountAuthScreen(env, server, httpBase, opts),
     bindAccount: (server, httpBase, hasLocalSave) => accountBindScreen(env, server, hasLocalSave),
   }
   const env: ScreenEnv = { ctx, screens, internal, state: { depth: 0, leave: false, after: null } }

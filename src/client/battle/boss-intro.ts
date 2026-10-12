@@ -68,7 +68,7 @@ function whenPlayable(video: HTMLVideoElement, timeoutMs: number, gate: SkipGate
 export async function playBossIntro(view: BattleView, bossId: string, prefetch: BossIntroPrefetch | null): Promise<BossIntroResult> {
   const entry = bossEntry(bossId)
   const def = CONTENT.bosses[bossId]
-  if (!entry || !def) return 'none'
+  if (!entry || !def || def.scriptedOnly || !entry.intro) return 'none'
   const C = BOSS_PRES.intro
   const clip = entry.intro
   const species = CONTENT.species[entry.species]

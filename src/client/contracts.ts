@@ -351,6 +351,8 @@ export interface HUD {
   setNetStatus(status: NetStatus, online: number, rtt?: number): void
   /** The menu has something waiting: shows (or hides) the menu chip with a red dot; `device` picks the key cap on it. */
   setMenuAlert(on: boolean, device: Input['lastDevice']): void
+  /** Floating interaction prompt [F] action · name positioned in screen space next to target. */
+  setInteractPrompt?(prompt: { key: string; action: string; name: string; x?: number; y?: number; onTrigger?: () => void } | null): void
   /** Name tags / speech bubbles over 3D actors are positioned by world/ using this layer. */
   readonly overlay: HTMLElement
 }
@@ -385,7 +387,7 @@ export interface TypeChartOptions {
 export type TitleChoice = 'continue' | 'new' | 'import' | 'settings' | 'singleplayer' | 'multiplayer'
 
 export interface Screens {
-  title(hasSave: boolean): Promise<TitleChoice>
+  title(hasSave: boolean, session?: { account: { id: string; username: string }; save: SaveData | null } | null, onSwitchAccount?: () => void): Promise<TitleChoice>
   newGame(): Promise<{ name: string; avatar: string } | null>
   starter(options: SpeciesDef[]): Promise<string>
   pauseMenu(): Promise<void>
@@ -411,7 +413,7 @@ export interface Screens {
   online(): Promise<void>                                     // multiplayer hub: online list, leaderboard, trade/pvp entry
   learnMove(creature: Creature, moveId: string): Promise<number> // slot to replace or -1 to skip
   serverList?(): Promise<ServerEntry | null>
-  accountAuth?(server: ServerEntry, httpBase: string): Promise<{ account: { id: string; username: string }; save: SaveData | null } | null>
+  accountAuth?(server: ServerEntry, httpBase: string, opts?: { required?: boolean }): Promise<{ account: { id: string; username: string }; save: SaveData | null } | null>
   bindAccount?(server: ServerEntry, httpBase: string, hasLocalSave: boolean): Promise<{ choice: 'new' | 'local' | 'cancel' }>
 }
 

@@ -14,7 +14,7 @@ export interface MultiplayerHooks {
   challengePvp?: (ctx: GameContext, id: string, name: string) => Promise<void>
 }
 
-interface RemoteView {
+export interface RemoteView {
   id: string
   name: string
   actor: Actor

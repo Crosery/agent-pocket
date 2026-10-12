@@ -158,6 +158,31 @@ test('save write / load round-trip through storage', () => {
   assert.equal(saves.load(1), null)
 })
 
+test('explicit null storage never reads or overwrites ambient browser slots', () => {
+  const priorWindow = Object.getOwnPropertyDescriptor(globalThis, 'window')
+  const priorStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+  const ambient = memoryStorage()
+  const key = `${CONTENT.config.save.storagePrefix}0`
+  ambient.setItem(key, 'existing-browser-save')
+  Object.defineProperty(globalThis, 'window', { configurable: true, value: { localStorage: ambient } })
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: ambient })
+  try {
+    const a = createSaveManager({ world: stubWorld(), storage: null })
+    const b = createSaveManager({ world: stubWorld(), storage: null })
+    assert.equal(a.hasSave(), false)
+    const save = a.newGame({ name: 'isolated', avatar: '' })
+    assert.equal(a.write(save), true)
+    assert.equal(a.load()?.playerId, save.playerId)
+    assert.equal(b.hasSave(), false, 'in-memory managers do not share slots')
+    assert.equal(ambient.getItem(key), 'existing-browser-save')
+  } finally {
+    if (priorWindow) Object.defineProperty(globalThis, 'window', priorWindow)
+    else Reflect.deleteProperty(globalThis, 'window')
+    if (priorStorage) Object.defineProperty(globalThis, 'localStorage', priorStorage)
+    else Reflect.deleteProperty(globalThis, 'localStorage')
+  }
+})
+
 test('save: rollSeed is drawn for a new game, kept by a round trip and drawn once for a save that lacks it', () => {
   const storage = memoryStorage()
   const saves = manager(storage)
@@ -191,7 +216,14 @@ test('save: instance progress is cleaned to known ids and non-negative integers'
       other: 'junk',
     },
   })!
-  assert.deepEqual(out.instances, { [id]: { clears: { story: 2, hard: 0 }, captures: { story: 0 }, runSeq: 7, losses: { story: 0 } } })
+  assert.deepEqual(Object.keys(out.instances!), [id])
+  const progress = out.instances![id]!
+  assert.deepEqual(progress.clears, { story: 2, hard: 0 })
+  assert.deepEqual(progress.captures, { story: 0 })
+  assert.equal(progress.runSeq, 7)
+  assert.deepEqual(progress.losses, { story: 0 })
+  assert.equal('extra' in progress, false)
+  assert.deepEqual(saves.sanitize(out)!.instances, out.instances, 'sanitation preserves clean progression')
   assert.deepEqual(saves.sanitize({ ...base, instances: 'nope' })!.instances, {})
 })
 

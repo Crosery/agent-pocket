@@ -85,7 +85,32 @@ export function createHUD(root: HTMLElement): HUDHandle {
   menuChip.hidden = true
   let chipDevice = ''
 
-  const hud = el('div', 'ap-layer ap-l-hud ap-hud', [el('div', 'ap-hud-tl', [plate, menuChip, banner, missions]), net])
+  const promptKeyKbd = el('kbd', { text: 'F' })
+  const promptKey = el('span', 'ap-key ap-interact-key', [promptKeyKbd])
+  const promptAction = el('span', 'ap-interact-action')
+  const promptDot = el('span', { class: 'ap-interact-sep', text: '·' })
+  const promptName = el('span', 'ap-interact-name')
+  let currentPromptTrigger: (() => void) | null = null
+
+  const promptEl = el('div', {
+    class: 'ap-interact-prompt',
+    attrs: { role: 'button', tabindex: '0', 'aria-label': 'interact' },
+    on: {
+      pointerdown: (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        currentPromptTrigger?.()
+      },
+    },
+  }, [
+    promptKey,
+    promptAction,
+    promptDot,
+    promptName,
+  ])
+  promptEl.hidden = true
+
+  const hud = el('div', 'ap-layer ap-l-hud ap-hud', [el('div', 'ap-hud-tl', [plate, menuChip, banner, missions]), promptEl, net])
   root.append(overlay, hud)
 
   let regionName = ''
@@ -206,11 +231,29 @@ export function createHUD(root: HTMLElement): HUDHandle {
       chipDevice = device
       menuChipKey.replaceChildren(keyHint('menu', { device }))
     },
+    setInteractPrompt(p) {
+      if (!p) {
+        promptEl.hidden = true
+        currentPromptTrigger = null
+        return
+      }
+      currentPromptTrigger = p.onTrigger ?? null
+      promptKeyKbd.textContent = p.key || 'F'
+      promptAction.textContent = p.action
+      promptName.textContent = p.name
+      promptDot.hidden = !p.name
+      if (typeof p.x === 'number' && typeof p.y === 'number') {
+        promptEl.style.left = `${Math.round(p.x)}px`
+        promptEl.style.top = `${Math.round(p.y)}px`
+      }
+      promptEl.hidden = false
+    },
     dispose() {
       if (moneyRaf) cancelAnimationFrame(moneyRaf)
-      if (bannerTimer) clearTimeout(bannerTimer)
-      if (regionTimer) clearTimeout(regionTimer)
+      clearTimeout(bannerTimer)
+      clearTimeout(regionTimer)
       root.removeEventListener('ap-hud-expand', onDetailsOpen)
+      promptEl.remove()
       overlay.remove()
       hud.remove()
     },

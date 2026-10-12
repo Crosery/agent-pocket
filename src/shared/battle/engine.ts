@@ -1372,7 +1372,8 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
     if (e.kind !== 'ball') return
     const target = this.act(1)
     const checks = Math.max(1, this.c.config.catch.shakeChecks)
-    const rolled = e.bonus === 'master' ? checks : catchShakes({
+    const isGuaranteed = e.bonus === 'master' || target.speciesId === 'ernie-bot'
+    const rolled = isGuaranteed ? checks : catchShakes({
       maxHp: this.maxHpOf(target),
       hp: target.hp,
       catchRate: (this.c.species[target.speciesId]?.catchRate ?? 0) * (this.init.mods?.catchRate ?? 1) * (this.boss?.cr === target ? this.boss.def.catchRateMul : 1),
@@ -1580,7 +1581,10 @@ export class BattleEngine implements IBattleEngine, AiIntrospection {
         const extra = Math.round(this.c.config.creature.levelUpFriendship * (fmul - 1)) * r.levels.length
         cr.friendship = Math.max(0, Math.min(RULES.creature.friendshipMax, cr.friendship + extra))
       }
-      cr.hp = Math.min(cr.hp, this.maxHpOf(cr))
+      cr.hp = r.levels.length > 0 ? this.maxHpOf(cr) : Math.min(cr.hp, this.maxHpOf(cr))
+      if (r.levels.length > 0 && i === me.active) {
+        for (const k of BATTLE_STAT_KEYS) if (me.b.stages[k] < 0) me.b.stages[k] = 0
+      }
       this.say('battle.gainedExp', { name, exp: gain })
       this.emit({ t: 'exp', partyIndex: i, amount: gain, level: cr.level, exp: cr.exp })
       for (const level of r.levels) {

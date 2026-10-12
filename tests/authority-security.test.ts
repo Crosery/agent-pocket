@@ -19,7 +19,8 @@ import { levelRewards, researchLevel, researchPoints } from '../src/shared/gamep
 import { hashString, Rng } from '../src/shared/rng.ts'
 import { startServer } from '../src/server/index.ts'
 import { loadWorldInfo } from '../src/server/world.ts'
-import { joinAuthenticatedClient } from './net-fixture.ts'
+import { NET } from '../src/server/config.ts'
+import { createBaseSave, httpRequest, joinAuthenticatedClient } from './net-fixture.ts'
 
 async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {
   const dir = await mkdtemp(pathJoin(tmpdir(), 'ap-auth-sec-'))
@@ -31,10 +32,12 @@ async function withTempDir<T>(fn: (dir: string) => Promise<T>): Promise<T> {
 }
 
 function makeStrongCreature(seed: number, level = 80): Creature {
-  return createCreature(CONTENT.speciesList[0].id, level, {
+  const sp = CONTENT.species['agi'] ? 'agi' : CONTENT.speciesList[0].id
+  return createCreature(sp, level, {
     rng: new Rng(seed),
     otName: 'SecTester',
     shiny: false,
+    moves: ['kill-switch', 'qed'],
   }, CONTENT)
 }
 
@@ -151,6 +154,7 @@ test('authority security: event scatter verification, script step context, resea
       assert.ok((afterLessonSave.research?.['phi-3']?.see ?? 0) >= 1, 'lesson-types battle sets phi-3 see research')
 
       // Claim branch 0's 3x cache-potion (0.else.1.b0.0.5.else.0 -> 0.else.1.b0.5.else.0)
+      const initialPotions = srv.authority.getSave(hero.selfId)!.bag['cache-potion'] ?? 0
       const b0GiftFrom = hero.mark()
       hero.send({
         t: 'script.op',
@@ -162,7 +166,7 @@ test('authority security: event scatter verification, script step context, resea
         choiceIndex: 0,
       })
       const b0GiftSync = await hero.waitFor('state.sync', undefined, { from: b0GiftFrom })
-      assert.equal(b0GiftSync.save.bag['cache-potion'], 3)
+      assert.equal(b0GiftSync.save.bag['cache-potion'], initialPotions + 3)
 
       // Trying to also claim branch 1's 3x cache-potion (0.else.1.b1.1) is rejected by choice lock
       const b1GiftFrom = hero.mark()
@@ -365,8 +369,9 @@ test('authority security: event scatter verification, script step context, resea
         speciesId: 'claude-mythos',
         task: 'mythic-chain',
         amount: 1,
-        sourceId: 'ev:mythos-1:script:0',
-        stepPath: '2',
+        sourceId: 'npc:stele',
+        stepPath: '0.else.1.b2.3',
+        choiceIndex: 2,
       })
       const m1Sync = await explorer.waitFor('state.sync', undefined, { from: m1From })
       assert.equal(m1Sync.save.research?.['claude-mythos']?.['mythic-chain'], 1)
@@ -378,8 +383,9 @@ test('authority security: event scatter verification, script step context, resea
         speciesId: 'claude-mythos',
         task: 'mythic-chain',
         amount: 1,
-        sourceId: 'ev:mythos-2:script:0',
-        stepPath: '2',
+        sourceId: 'npc:warden',
+        stepPath: '0.else.2.b0.3',
+        choiceIndex: 0,
       })
       const m2Sync = await explorer.waitFor('state.sync', undefined, { from: m2From })
       assert.equal(m2Sync.save.research?.['claude-mythos']?.['mythic-chain'], 2)
@@ -473,6 +479,8 @@ test('authority security: event scatter verification, script step context, resea
         avatar: '',
         ip: '127.0.0.1',
         dungeonBusy: true,
+        closed: true,
+        ws: { readyState: 3 },
         state: { id: raider.selfId, name: 'Raider', avatar: '', map: 'origin-lab-b1', x: 13, y: 3, facing: 'down' as const, lead: null, busy: true, badges: 0, dexCaught: 0 },
         profile: { id: raider.selfId, name: 'Raider', avatar: '', badges: [], dexCaught: 0, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0 },
         limits: { errors: { take: () => true } },
@@ -481,6 +489,217 @@ test('authority security: event scatter verification, script step context, resea
       srv.authority.handle(fakeBusyPlayer as never, { t: 'shop.buy', itemId: 'prompt-ball', qty: 1 })
       assert.equal(srv.authority.getSave(raider.selfId)!.bag['prompt-ball'], raiderSaveBeforeBusy.bag['prompt-ball'], 'dungeonBusy must block shop.buy mutation')
       assert.equal(busyErrors.length, 0)
+    } finally {
+      await Promise.all(clients.map((c) => c.close()))
+      await srv.close()
+    }
+  })
+})
+
+test('authority security: battle+trade race & clientBusy bypass, cross-account UID collision, learnMove index/UID confusion, map-gated ops & scrubbed battle init', async () => {
+  await withTempDir(async (dir) => {
+    const worldInfo = await loadWorldInfo()
+    assert.ok(worldInfo?.world, 'worldInfo must load generated world')
+    const srv = await startServer({
+      port: 0,
+      dataDir: dir,
+      distDir: pathJoin(dir, 'no-dist'),
+      quiet: true,
+      world: worldInfo,
+      pvp: null,
+    })
+
+    const clients = []
+    try {
+      // 1. HTTP JSON POST routes require Content-Type: application/json (415 otherwise)
+      const badCtRes = await httpRequest(srv.port, NET.http.loginPath, {
+        method: 'POST',
+        headers: { 'content-type': 'text/plain' },
+        body: JSON.stringify({ username: 'AnyUser', password: 'Password123!' }),
+      })
+      assert.equal(badCtRes.status, 415, 'POST /api/auth/login without application/json must return 415')
+
+      // 2. Cross-account UID collision hijacking & DoS immunity on offline import / bindSave
+      const partyA1 = makeStrongCreature(501, 80)
+      const partyA2 = createCreature('claude-haiku', 12, { rng: new Rng(502), otName: 'TraderA' }, CONTENT)
+      const partyB1 = createCreature('gemini-flash', 20, { rng: new Rng(601), otName: 'TraderB' }, CONTENT)
+      const partyB2 = createCreature('llama-3', 15, { rng: new Rng(602), otName: 'TraderB' }, CONTENT)
+
+      const traderA = await joinAuthenticatedClient(srv, {
+        name: 'TraderA',
+        map: 'origin-lab',
+        x: 6,
+        y: 6,
+        party: [partyA1, partyA2],
+        bag: { 'cache-potion': 5 },
+      })
+      const traderB = await joinAuthenticatedClient(srv, {
+        name: 'TraderB',
+        map: 'origin-lab',
+        x: 7,
+        y: 6,
+        party: [partyB1, partyB2],
+      })
+      clients.push(traderA, traderB)
+
+      const victimCreature = srv.authority.getSave(traderA.selfId)!.party[0]!
+      const victimUid = victimCreature.uid
+
+      // Attacker imports an offline save forged with victimUid
+      const regSpoof = await httpRequest(srv.port, NET.http.registerPath, {
+        method: 'POST',
+        body: { username: 'UidSpoofer1', password: 'StrongPass#123' },
+      })
+      assert.equal(regSpoof.status, 200)
+      const spoofSave = createBaseSave('UidSpoofer1')
+      spoofSave.party = [{ ...structuredClone(victimCreature), uid: victimUid }]
+      const bindSpoof = await httpRequest(srv.port, NET.http.bindPath, {
+        method: 'POST',
+        cookie: regSpoof.cookie,
+        body: { save: spoofSave, imported: true },
+      })
+      assert.equal(bindSpoof.status, 200)
+      const rawAccount = regSpoof.json.account
+      assert.ok(rawAccount && typeof rawAccount === 'object' && 'id' in rawAccount && typeof rawAccount.id === 'string')
+      const spoofAccountId = rawAccount.id
+      const boundSpoofSave = srv.store.getSave(spoofAccountId)!
+      assert.notEqual(boundSpoofSave.party[0]?.uid, victimUid, 'imported save creature UIDs must be deterministically re-keyed')
+      assert.equal(boundSpoofSave.flags['auth:untrustedImport'], true, 'imported save must preserve auth:untrustedImport flag')
+
+      // Victim can still offer their creature in trade and validate PvP party (no ownership poisoning)
+      const victimOfferCheck = srv.authority.validateTradeOffer(traderA.selfId, victimCreature)
+      assert.equal(victimOfferCheck.ok, true, 'victim trade offer must remain valid after attacker UID collision attempt')
+      const victimPvpCheck = srv.authority.validatePvpParty(traderA.selfId, [victimCreature], true)
+      assert.ok(Array.isArray(victimPvpCheck) && victimPvpCheck.length === 1, 'victim PvP party validation must remain valid')
+
+      // 3. Concurrent PvE battle + Trade race & clientBusy: false bypass protection
+      // 3a. Pending trade request before battle: TraderA requests trade with TraderB, then enters PvE battle and sends busy:false; TraderB accepting must fail with busy
+      const reqBeforeFrom = traderB.mark()
+      traderA.send({ t: 'trade.request', to: traderB.selfId })
+      await traderB.waitFor('trade.requested', (m) => m.from === traderA.selfId, { from: reqBeforeFrom })
+
+      const battleStartFrom = traderA.mark()
+      traderA.send({ t: 'battle.start', kind: 'trainer', trainerId: 'lesson-types' })
+      const started = await traderA.waitFor('battle.started', undefined, { from: battleStartFrom })
+      assert.equal(srv.authority.isInBattle(traderA.selfId), true)
+
+      // Scrubbed foe stats & seed check on battle.started
+      const foe0 = started.init.sides[1].party[0]!
+      assert.deepEqual(foe0.ivs, { hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0 }, 'battle.started must scrub foe IVs')
+      assert.deepEqual(foe0.moves, [], 'battle.started must scrub foe move slots')
+      assert.equal(foe0.abilityId, '', 'battle.started must scrub foe abilityId')
+      assert.equal(started.init.sides[1].items, undefined, 'battle.started must scrub foe bag items')
+
+      // TraderA maliciously sends { t: 'busy', busy: false } while in authoritative PvE battle
+      traderA.send({ t: 'busy', busy: false })
+
+      // TraderB tries to accept the earlier trade request while TraderA is in battle -> rejected with 'busy'
+      const acceptBusyFrom = traderB.mark()
+      const cancelNoticeFrom = traderA.mark()
+      traderB.send({ t: 'trade.respond', from: traderA.selfId, accept: true })
+      await traderB.waitFor('error', (m) => m.code === 'busy', { from: acceptBusyFrom })
+      await traderA.waitFor('trade.cancelled', undefined, { from: cancelNoticeFrom })
+
+      // 3b. While still in battle (and after clientBusy:false), TraderA cannot initiate trade.request (`self_busy`) and TraderB cannot request TraderA (`busy`)
+      const selfReqBusyFrom = traderA.mark()
+      traderA.send({ t: 'trade.request', to: traderB.selfId })
+      await traderA.waitFor('error', (m) => m.code === 'self_busy', { from: selfReqBusyFrom })
+
+      const targetReqBusyFrom = traderB.mark()
+      traderB.send({ t: 'trade.request', to: traderA.selfId })
+      await traderB.waitFor('error', (m) => m.code === 'busy', { from: targetReqBusyFrom })
+
+      // Direct authority trade hooks also reject while in battle
+      assert.deepEqual(srv.authority.validateTradeOffer(traderA.selfId, victimCreature), { ok: false, code: 'self_busy' })
+      assert.equal(srv.authority.completeTrade(traderA.selfId, victimUid, traderB.selfId, partyB1.uid, 'forged-trade'), false)
+
+      // 3c. script.op while in battle is rejected with self_busy
+      const healInBattleFrom = traderA.mark()
+      traderA.send({ t: 'script.op', op: 'heal' })
+      await traderA.waitFor('error', (m) => m.code === 'self_busy', { from: healInBattleFrom })
+
+      // 4. Cross-creature creature.learnMove index/UID confusion in battle is rejected
+      const secondUid = srv.authority.getSave(traderA.selfId)!.party[1]!.uid
+      const mismatchLearnFrom = traderA.mark()
+      traderA.send({
+        t: 'creature.learnMove',
+        partyIndex: 0,
+        uid: secondUid,
+        moveId: 'kill-switch',
+      })
+      await traderA.waitFor('error', (m) => m.code === 'authority_violation', { from: mismatchLearnFrom })
+      assert.ok(
+        !srv.authority.getSave(traderA.selfId)!.party[1]!.moves.some((m) => m.id === 'kill-switch'),
+        'mismatched partyIndex/uid must never teach move to another creature',
+      )
+
+      // Finish TraderA's trainer battle cleanly
+      for (let turn = 0; turn < 10 && srv.authority.isInBattle(traderA.selfId); turn++) {
+        const actFrom = traderA.mark()
+        traderA.send({
+          t: 'battle.action',
+          battleId: started.battleId,
+          action: { kind: 'move', moveIndex: 0 } satisfies BattleAction,
+        })
+        const ev = await traderA.waitFor('battle.events', (m) => m.battleId === started.battleId, { from: actFrom })
+        if (ev.events.some((e) => e.t === 'end')) break
+      }
+      await traderA.waitFor('battle.end', (m) => m.battleId === started.battleId, { from: battleStartFrom })
+      assert.equal(srv.authority.isInBattle(traderA.selfId), false)
+
+      // Verify TraderA's party has no duplicate UIDs after battle finish
+      const postBattleParty = srv.authority.getSave(traderA.selfId)!.party
+      assert.equal(new Set(postBattleParty.map((c) => c.uid)).size, postBattleParty.length, 'party UIDs must remain unique')
+
+      // 5. Map-gated heal, shop.sell, exchange.deal, setFlag, and delivery quest item prerequisite on non-shop/non-heal map (origin-house-1)
+      const mapChecker = await joinAuthenticatedClient(srv, {
+        name: 'MapGate',
+        map: 'origin-house-1',
+        x: 4,
+        y: 4,
+        party: [
+          {
+            ...makeStrongCreature(701, 30),
+            hp: 10,
+          },
+        ],
+        bag: { 'cache-potion': 5, 'red-shard': 10 },
+      })
+      clients.push(mapChecker)
+
+      // 5a. Remote heal on origin-lab-b1 (no heal NPC/trigger on map) is rejected
+      const badHealFrom = mapChecker.mark()
+      mapChecker.send({ t: 'script.op', op: 'heal' })
+      await mapChecker.waitFor('error', (m) => m.code === 'authority_violation', { from: badHealFrom })
+      assert.equal(srv.authority.getSave(mapChecker.selfId)!.party[0]!.hp, 10, 'remote heal on non-heal map must not restore HP')
+
+      // 5b. shop.sell on origin-lab-b1 (no shop on map) is rejected with shop_invalid
+      const badSellFrom = mapChecker.mark()
+      mapChecker.send({ t: 'shop.sell', itemId: 'cache-potion', qty: 1 })
+      await mapChecker.waitFor('error', (m) => m.code === 'shop_invalid', { from: badSellFrom })
+      assert.equal(srv.authority.getSave(mapChecker.selfId)!.bag['cache-potion'], 5)
+
+      // 5c. exchange.deal on origin-lab-b1 (no exchange desk on map) is rejected with shop_invalid
+      const badExchFrom = mapChecker.mark()
+      mapChecker.send({ t: 'exchange.deal', desk: 'shard-trader', offerIndex: 0, qty: 1 })
+      await mapChecker.waitFor('error', (m) => m.code === 'shop_invalid', { from: badExchFrom })
+
+      // 5d. Forged progression/quest flags via setFlag (sq-ruins:a, exchange:*, zero:t2) are rejected
+      for (const forgedFlag of ['sq-ruins:a', 'exchange:shard-repel', 'zero:t2']) {
+        const flagFrom = mapChecker.mark()
+        mapChecker.send({ t: 'script.op', op: 'setFlag', flag: forgedFlag, value: true })
+        await mapChecker.waitFor('error', (m) => m.code === 'authority_violation', { from: flagFrom })
+        assert.equal(srv.authority.getSave(mapChecker.selfId)!.flags[forgedFlag], undefined, `forged flag ${forgedFlag} must be rejected`)
+      }
+
+      // 5e. Delivery quest completion without takeItem is rejected
+      const sqSave = srv.authority.getSave(mapChecker.selfId)!
+      sqSave.quests = { 'sq-floppy': { stage: 0, done: false } }
+      srv.authority.setSave(mapChecker.selfId, sqSave, { imported: false, trusted: true })
+      const badQuestFrom = mapChecker.mark()
+      mapChecker.send({ t: 'script.op', op: 'quest', questId: 'sq-floppy', stage: 1, done: true })
+      await mapChecker.waitFor('error', (m) => m.code === 'authority_violation', { from: badQuestFrom })
+      assert.equal(srv.authority.getSave(mapChecker.selfId)!.quests?.['sq-floppy']?.done, false)
     } finally {
       await Promise.all(clients.map((c) => c.close()))
       await srv.close()

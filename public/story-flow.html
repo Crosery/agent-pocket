@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《智灵口袋》全篇小说级剧情架构与逐章递增剧本全景图</title>
+<style>
+  :root {
+    --bg-base: #0a0e17;
+    --bg-card: #111827;
+    --bg-card-hover: #1e293b;
+    --bg-surface: #1e293b;
+    --border-color: #334155;
+    --border-glow: #38bdf8;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-dim: #64748b;
+    --accent-gold: #f59e0b;
+    --accent-gold-light: #fbbf24;
+    --accent-blue: #38bdf8;
+    --accent-cyan: #22d3ee;
+    --accent-green: #34d399;
+    --accent-purple: #c084fc;
+    --accent-red: #f87171;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    line-height: 1.6;
+    padding: 24px;
+    background-image: 
+      radial-gradient(ellipse at 15% 10%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+      radial-gradient(ellipse at 85% 80%, rgba(245, 158, 11, 0.06) 0%, transparent 40%),
+      linear-gradient(to bottom, rgba(15, 23, 42, 0.6), rgba(10, 14, 23, 0.98));
+    min-height: 100vh;
+  }
+
+  .header {
+    max-width: 1440px;
+    margin: 0 auto 28px auto;
+    padding: 28px 36px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-gold), var(--accent-purple), var(--accent-green));
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .header h1 span.tag {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 9999px;
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--accent-gold);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+  }
+  .header p.subtitle {
+    color: var(--text-secondary);
+    font-size: 14px;
+    max-width: 1080px;
+    line-height: 1.6;
+  }
+
+  /* Snowball escalation bar */
+  .escalation-dashboard {
+    max-width: 1440px;
+    margin: 0 auto 24px auto;
+    background: rgba(17, 24, 39, 0.9);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+  }
+  .escalation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+  }
+  .escalation-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent-gold-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .escalation-stat {
+    font-size: 13px;
+    color: var(--accent-cyan);
+    font-family: var(--font-mono);
+  }
+  .snowball-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    height: 120px;
+    padding-top: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 8px;
+  }
+  .bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    justify-content: flex-end;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .bar-col:hover {
+    transform: translateY(-3px);
+  }
+  .bar-col:hover .bar-fill {
+    background: linear-gradient(to top, var(--accent-gold), var(--accent-cyan));
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+  }
+  .bar-fill {
+    width: 100%;
+    max-width: 54px;
+    border-radius: 6px 6px 2px 2px;
+    background: linear-gradient(to top, #1e3a8a, #38bdf8);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 4px;
+  }
+  .bar-val {
+    font-size: 11px;
+    font-weight: 800;
+    color: #fff;
+    font-family: var(--font-mono);
+  }
+  .bar-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+  .bar-nodes {
+    font-size: 9px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+  }
+
+  /* Control bar */
+  .control-bar {
+    max-width: 1440px;
+    margin: 0 auto 24px auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: rgba(17, 24, 39, 0.85);
+    backdrop-filter: blur(12px);
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+  }
+  .nav-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .tab-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .tab-btn.active {
+    background: var(--bg-surface);
+    color: var(--accent-gold);
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  .search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .search-box input {
+    background: var(--bg-base);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 8px 14px 8px 34px;
+    color: var(--text-primary);
+    font-size: 13px;
+    outline: none;
+    width: 260px;
+    transition: all 0.2s ease;
+  }
+  .search-box input:focus {
+    border-color: var(--accent-blue);
+    width: 300px;
+    box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25);
+  }
+  .search-box svg {
+    position: absolute;
+    left: 10px;
+    width: 15px;
+    height: 15px;
+    color: var(--text-dim);
+  }
+
+  /* Content Containers */
+  .view-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: none;
+  }
+  .view-container.active {
+    display: block;
+    animation: fadeIn 0.25s ease forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Chapter Timeline & Episodes */
+  .chapter-block {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+  }
+  .chapter-block:hover {
+    border-color: rgba(56, 189, 248, 0.35);
+  }
+  .chapter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+  }
+  .chapter-title-group {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .chapter-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(17, 24, 39, 0.9));
+    border: 1px solid var(--accent-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--accent-gold);
+    flex-shrink: 0;
+  }
+  .chapter-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+  }
+  .chapter-theme {
+    font-size: 13px;
+    color: var(--accent-cyan);
+    margin-top: 2px;
+  }
+  .chapter-meta-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .meta-tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .meta-tag.episodes {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--accent-gold-light);
+    border-color: rgba(245, 158, 11, 0.3);
+  }
+  .meta-tag.location { color: var(--accent-blue); }
+  .meta-tag.boss { color: var(--accent-purple); border-color: rgba(192, 132, 252, 0.3); }
+
+  /* Episode Grid */
+  .episodes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .episode-card {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+  }
+  .episode-card:hover {
+    background: rgba(30, 41, 59, 0.85);
+    border-color: rgba(56, 189, 248, 0.4);
+    transform: translateY(-2px);
+  }
+  .ep-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .ep-number {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--accent-gold);
+    font-family: var(--font-mono);
+  }
+  .ep-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .ep-premise {
+    font-size: 11px;
+    color: var(--accent-cyan);
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+  .ep-content {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .ep-conflict {
+    font-size: 11px;
+    color: #e2e8f0;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 6px 10px;
+    border-left: 3px solid var(--accent-purple);
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  .ep-climax {
+    font-size: 11px;
+    color: #fef08a;
+    background: rgba(245, 158, 11, 0.1);
+    padding: 6px 10px;
+    border-left: 3px solid var(--accent-gold);
+    border-radius: 4px;
+  }
+
+  /* Rival Arc Flow */
+  .rival-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .rival-timeline::before {
+    content: '';
+    position: absolute;
+    top: 30px; bottom: 30px; left: 24px;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple), var(--accent-red), var(--accent-green), var(--accent-gold));
+  }
+  .rival-stage-card {
+    display: flex;
+    gap: 24px;
+    position: relative;
+  }
+  .rival-stage-pip {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--accent-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--accent-blue);
+    flex-shrink: 0;
+    z-index: 1;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.3);
+  }
+  .rival-stage-body {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    flex-grow: 1;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+  .rival-stage-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .rival-tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(192, 132, 252, 0.15);
+    color: var(--accent-purple);
+  }
+  .rival-psychology {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: 8px;
+  }
+  .rival-quote {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.35);
+    border-left: 3px solid var(--accent-gold);
+    border-radius: 4px;
+    font-style: italic;
+    font-size: 12px;
+    color: #e2e8f0;
+  }
+
+  /* Non-Combat Puzzle Mechanisms Grid */
+  .puzzles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+  }
+  .puzzle-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+  }
+  .puzzle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+  }
+  .puzzle-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .puzzle-gym-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--accent-blue);
+  }
+  .puzzle-metaphor {
+    font-size: 12px;
+    color: var(--accent-gold);
+    margin-bottom: 10px;
+  }
+  .puzzle-body {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .puzzle-steps {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    color: #cbd5e1;
+  }
+
+  /* Mother Letters & XiaoR Flow */
+  .sms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 16px;
+  }
+  .sms-bubble {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    position: relative;
+  }
+  .sms-sender {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-gold);
+    margin-bottom: 8px;
+  }
+  .sms-text {
+    font-size: 13px;
+    color: #e2e8f0;
+    line-height: 1.5;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px 14px;
+    border-radius: 8px;
+  }
+  .sms-trigger {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+
+  /* Responsive */
+  @media (max-width: 860px) {
+    body { padding: 12px; }
+    .header { padding: 16px; }
+    .header h1 { font-size: 20px; }
+    .episodes-grid { grid-template-columns: 1fr; }
+    .puzzles-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>《智灵口袋》全篇小说级剧情架构与剧本全景图 <span class="tag">滚雪球递增剧本 v0.3.0</span></h1>
+  <p class="subtitle">图灵大陆全篇剧本拓扑：遵从“越到后面剧情越多、事件密度越密集”的戏剧演进规律，全篇共 10 卷 89 集 180 节点；融合宿敌「零」7 阶段灵魂救赎、小 R「思考秒数 3s ➔ 0s 本能」终极觉醒、妈妈 8 封动态红烧肉家书、以及 8 大道馆非战斗 AI 工业解谜与大世界探索零摩擦减负机制。</p>
+</div>
+
+<!-- SNOWBALL ESCALATION DASHBOARD -->
+<div class="escalation-dashboard">
+  <div class="escalation-header">
+    <div class="escalation-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+      全篇各章节剧本体量滚雪球递增模型（Snowball Escalation Curve）
+    </div>
+    <div class="escalation-stat">全篇合计：10 卷 · 89 集 · 180 节点</div>
+  </div>
+  <div class="snowball-chart">
+    <div class="bar-col" onclick="scrollToChapter('ch-0')">
+      <div class="bar-fill" style="height: 27%;">
+        <span class="bar-val">4集</span>
+      </div>
+      <span class="bar-label">序章</span>
+      <span class="bar-nodes">7节点</span>
+    </div>
+    <div class="bar-col" onclick="scrollToChapter('ch-1')">
+      <div class="bar-fill" style="height: 33%;">
+        <span class="bar-val">5集</span>
+      </div>
+      <span class="bar-label">第1章</span>
+      <span class="bar-nodes">9节点</span>
+    </div>
+    <div class="bar-col" onclick="scrollToChapter('ch-2')">
+      <div class="bar-fill" style="height: 40%;">
+        <span class="bar-val">6集</span>
+      </div>
+      <span class="bar-label">第2章</span>
+      <span class="bar-nodes">11节点</span>
+    </div>
+    <div class="bar-col" onclick="scrollToChapter('ch-3')">
+      <div class="bar-fill" style="height: 47%;">
+        <span class="bar-val">7集</span>
+      </div>
+      <span class="bar-label">第3章</span>
+      <span class="bar-nodes">13节点</span>
+    </div>
+    <div class="bar-col" onclick="scrollToChapter('ch-4')">
+      <div class="bar-fill" style="height: 53%;">
+        <span class="bar-val">8集</span>
+      </div>
+      <span class="bar-label">第4章</span>
+      <span class="bar-nodes">16节点</span>
+    </div>
+    <div class="bar-col" onclick="scrollToChapter('ch-5')">
+      <div class="bar-fill" style="height: 60%;">
+        <span class="bar-val">9集</span>
+      </div>
+      <span class="bar-label">第5章</span>
+      <span class="bar-nodes">18节点</span>
+    </div>
+    <div class="bar-col" onclick="scrollToChapter('ch-6')">
+      <div class="bar-fill" style="height: 67%;">
+        <span class="bar-val">10集</span>
+      </div>
+      <span class="bar-label">第6章</span>
+      <span class="bar-nodes">21节点</span>
+    </div>
+    <div class="bar-col" onclick="scrollToChapter('ch-7')">
+      <div class="bar-fill" style="height: 80%;">
+        <span class="bar-val">12集</span>
+      </div>
+      <span class="bar-label">第7章</span>
+      <span class="bar-nodes">25节点</span>
+    </div>
+    <div class="bar-col" onclick="scrollToChapter('ch-8')">
+      <div class="bar-fill" style="height: 87%;">
+        <span class="bar-val">13集</span>
+      </div>
+      <span class="bar-label">第8章</span>
+      <span class="bar-nodes">28节点</span>
+    </div>
+    <div class="bar-col" onclick="scrollToChapter('ch-9')">
+      <div class="bar-fill" style="height: 100%; background: linear-gradient(to top, var(--accent-purple), var(--accent-gold));">
+        <span class="bar-val">15集</span>
+      </div>
+      <span class="bar-label">终章</span>
+      <span class="bar-nodes">32节点</span>
+    </div>
+  </div>
+</div>
+
+<div class="control-bar">
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('tab-episodes')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/></svg>
+      全 10 卷 89 集剧本全景剧场
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-rival')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6Z"/></svg>
+      宿敌「零」7 阶段救赎弧光
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-puzzles')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/></svg>
+      8 大道馆非战斗 AI 解谜机制
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-lore')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      小 R 思考秒数 & 妈妈 8 封家书
+    </button>
+  </div>
+  <div class="search-box">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" id="searchInput" placeholder="搜索集数、角色、台词、节点..." oninput="handleSearch()">
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- TAB 1: 89 EPISODES THEATER -->
+<!-- ========================================================================= -->
+<div id="tab-episodes" class="view-container active">
+
+  <!-- 序章 (4集) -->
+  <div class="chapter-block search-target" id="ch-0">
+    <div class="chapter-header">
+      <div class="chapter-title-group">
+        <div class="chapter-badge">序</div>
+        <div>
+          <div class="chapter-title">序章：原点镇 · 深海苏醒与算力潮汐</div>
+          <div class="chapter-theme">核心命题：倾听与等待 —— 智灵不是 24 小时随叫随到的许愿机，而是会疲倦、渴望被体谅的生命</div>
+        </div>
+      </div>
+      <div class="chapter-meta-badges">
+        <span class="meta-tag episodes">共 4 集 / 7 节点</span>
+        <span class="meta-tag location">原点镇 & 潮汐机房 B1/B2</span>
+        <span class="meta-tag boss">DeepSeek-V4 (体验版 Lv.12)</span>
+      </div>
+    </div>
+    <div class="episodes-grid">
+      <div class="episode-card">
+        <div>
+          <div class="ep-header"><span class="ep-number">EP.01</span></div>
+          <div class="ep-title">零点的 Hello World · 旧机房门前的少年</div>
+          <div class="ep-premise">【命题：初生世代的躁动与十年前的尘封回响】</div>
+          <div class="ep-content">清晨手机卡死在『服务器繁忙』；妈妈炒糖色问了八次 AI 均报错；零手握备用钥匙在机房门前宣称自己能以最优解破关，强闯入地下室。</div>
+          <div class="ep-conflict"><strong>因果冲突：</strong>全镇早高峰提问并发激增，将地下机房算力地脉冲垮。</div>
+        </div>
+        <div class="ep-climax"><strong>高光动作：</strong>零在 V4 高峰期连攻 8 次被弹回『服务器繁忙』，被一尾巴拍回一楼扶墙站了一小时。</div>
+      </div>
+      <div class="episode-card">
+        <div>
+          <div class="ep-header"><span class="ep-number">EP.02</span></div>
+          <div class="ep-title">三枚火种的选择 · 说明书与第一行提示词</div>
+          <div class="ep-premise">【命题：参数指标至上 vs 人机初次心灵握手】</div>
+          <div class="ep-content">图灵博士发放初始伙伴与上岗证；零选了纸面速度最高者离去。主角选择搭档，顺路在 1 号路收服文心一言，助理阿灵盖下属性印章。</div>
+          <div class="ep-conflict"><strong>因果冲突：</strong>集齐上岗证三枚印章，保安大叔放行进入地下机房前厅。</div>
+        </div>
+        <div class="ep-climax"><strong>高光动作：</strong>小 R 连线（已深度思考 3 秒），交给主角错峰半价体验券。</div>
+      </div>
+      <div class="episode-card">
+        <div>
+          <div class="ep-header"><span class="ep-number">EP.03</span></div>
+          <div class="ep-title">深海虎鲸与错峰潮汐 · 半夜十二点半的体面</div>
+          <div class="ep-premise">【命题：算力洪流中的错峰智慧与温柔守护】</div>
+          <div class="ep-content">深入核心机柜，直面疲惫吐泡泡的 DeepSeek-V4。玩家利用谷时调峰机制与半价券，在破盾瞬间递交体谅与水份。</div>
+          <div class="ep-conflict"><strong>因果冲突：</strong>硬碰硬必死，唯有等待与错峰爆发才能破除『服务器繁忙』死锁。</div>
+        </div>
+        <div class="ep-climax"><strong>高光动作：</strong>击败后 V4 权重回滚至 Lv.1 并签约：“你是第一个肯等谷时的人类。”</div>
+      </div>
+      <div class="episode-card">
+        <div>
+          <div class="ep-header"><span class="ep-number">EP.04</span></div>
+          <div class="ep-title">三十年前的软盘 · 踏上 1 号道路的夕阳</div>
+          <div class="ep-premise">【命题：薪火相传的启程与第 0 号机房暗影伏笔】</div>
+          <div class="ep-content">全镇网络恢复。老王托付三十年前写给妻子的 1.44MB 软盘；零在镇口心服口服赶赴像素港，主角踏上 1 号道路。</div>
+          <div class="ep-conflict"><strong>因果冲突：</strong>道闸放行，妈妈发来第一封红烧肉短信。</div>
+        </div>
+        <div class="ep-climax"><strong>高光动作：</strong>夕阳下拉长的主角与小 R 倒影，宣告冒险真正揭幕。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第 1 章 (5集) -->
+  <div class="chapter-block search-target" id="ch-1">
+    <div class="chapter-header">
+      <div class="chapter-title-group">
+        <div class="chapter-badge">1</div>
+        <div>
+          <div class="chapter-title">第 1 章：开源之森 · 数字方舟</div>
+          <div class="chapter-theme">核心命题：一棵树撑不起森林 —— 当有人在开源土壤里投毒、刮掉作者署名，谁来守护种树的人？</div>
+        </div>
+      </div>
+      <div class="chapter-meta-badges">
+        <span class="meta-tag episodes">共 5 集 / 9 节点</span>
+        <span class="meta-tag location">1 号道路 & 开源林镇</span>
+        <span class="meta-tag boss">Cursor (计费工坊 Lv.16)</span>
+        <span class="meta-tag">代码道馆 · 林 (源码徽章)</span>
+      </div>
+    </div>
+    <div class="episodes-grid">
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.01</span></div>
+        <div class="ep-title">分叉的林间小径 · 每一棵树都有自己的 README</div>
+        <div class="ep-premise">【命题：开源共享的乌托邦与分支冲突】</div>
+        <div class="ep-content">林镇古树挂满 README 牌，全镇崇尚开源。但计费工坊突然将全镇改为按量计费，出招 PP 消耗翻倍，道馆闭门暂停。</div>
+        <div class="ep-conflict"><strong>冲突：</strong>商业按量计费背刺开源社区，居民集体抗议。</div>
+        <div class="ep-climax"><strong>交互：</strong>第一处静态语法查错，修复控制路障的死循环代码。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.02</span></div>
+        <div class="ep-title">早安，阿梅 · 读不出来的 1.44MB 绝密磁道</div>
+        <div class="ep-premise">【命题：老一辈程序员的浪漫与消逝的软盘】</div>
+        <div class="ep-content">将软盘送达白发陈工；软驱消磁报错，修复后屏幕打出三十年前硬编码问候「早安，阿梅」，陈工老泪纵横。</div>
+        <div class="ep-conflict"><strong>伏笔：</strong>陈工惊觉母树仓库被暗网黑客植入了恶意投毒补丁。</div>
+        <div class="ep-climax"><strong>高光：</strong>老工程师将初代 codex 纪念智灵托付给主角。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.03</span></div>
+        <div class="ep-title">被污染的代码源泉 · Typosquatting 投毒危机</div>
+        <div class="ep-premise">【命题：数字世界里的信任危机与供应链投毒】</div>
+        <div class="ep-content">比对 SHA256 签名，识别伪装成官方库的投毒包 `transf0rmers-c0re`，抓获黑客学徒，解锁道馆大门。</div>
+        <div class="ep-conflict"><strong>因果：</strong>投毒者招供其买家为东海岸像素港洗号工坊。</div>
+        <div class="ep-climax"><strong>交互：</strong>执行 git revert 解救被乱码困住的野生初代 LLaMA。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.04</span></div>
+        <div class="ep-title">第三份道歉信的批注 · Cursor 的眼泪与商业枷锁</div>
+        <div class="ep-premise">【命题：按量计费的囚徒困境与被 KPI 绑架的工具】</div>
+        <div class="ep-content">收集全镇联名请愿信直面 Cursor；Cursor 念出三稿越写越离谱的公关道歉信后崩溃大哭，解除商业枷锁签约入队。</div>
+        <div class="ep-conflict"><strong>冲突：</strong>舆论压力条引爆，取消全镇招式双倍 PP 惩罚。</div>
+        <div class="ep-climax"><strong>收获：</strong>赠送全图高速通勤利器【悬浮滑板】。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.05</span></div>
+        <div class="ep-title">零警告的 Pull Request · 馆主林的代码审查之战</div>
+        <div class="ep-premise">【命题：敢于把漏洞摊在阳光下的勇气】</div>
+        <div class="ep-content">代码道馆大门敞开，馆主林零警告审查主角队伍。战后颁发源码徽章与编译重炮芯片，V4 算力许可跃升至 Lv.14。</div>
+        <div class="ep-conflict"><strong>因果：</strong>零留下提交记录赶往像素港，暗网黑产线索指向东海。</div>
+        <div class="ep-climax"><strong>台词：</strong>“开源不是没有漏洞，而是敢于在阳光下修复它。”</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第 2 章 (6集) -->
+  <div class="chapter-block search-target" id="ch-2">
+    <div class="chapter-header">
+      <div class="chapter-title-group">
+        <div class="chapter-badge">2</div>
+        <div>
+          <div class="chapter-title">第 2 章：像素之滨 · 真伪视界</div>
+          <div class="chapter-theme">核心命题：眼见不再为实的时代 —— 扩散模型一秒生成万张海景，但 8K 帧率伪造不出智灵力竭时回头看你的眼神</div>
+        </div>
+      </div>
+      <div class="chapter-meta-badges">
+        <span class="meta-tag episodes">共 6 集 / 11 节点</span>
+        <span class="meta-tag location">2 号道路 & 像素港</span>
+        <span class="meta-tag boss">豆包 (Lv.18) / Seedance</span>
+        <span class="meta-tag">视觉道馆 · 绘 (像素徽章)</span>
+      </div>
+    </div>
+    <div class="episodes-grid">
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.01</span></div>
+        <div class="ep-title">漫天飘落的 1.66 元 · 闭馆的视觉道馆</div>
+        <div class="ep-premise">【命题：消费主义狂欢与眼球经济泡影】</div>
+        <div class="ep-content">海面飘满金色虚拟红包雨，全港疯抢 1.66 元。视觉馆主·绘擅离职守抢红包闭馆，黄牛暗巷倒卖虚假邀请码。</div>
+        <div class="ep-conflict"><strong>冲突：</strong>虚假的补贴狂欢掩盖了洗号工坊的数据投毒。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.02</span></div>
+        <div class="ep-title">被骗光的 Token 币 · 码头晚风里的少年自尊</div>
+        <div class="ep-premise">【命题：捷径幻灭与灵魂初次对视】</div>
+        <div class="ep-content">零轻信黄牛假邀请码被骗光积蓄，在码头被主角击败；在海风中第一次吐露迷惘，触发贯穿全篇的 `rival:bond` 三分支。</div>
+        <div class="ep-conflict"><strong>分支确立：</strong>同盟(ally) / 劲敌(rival) / 独行(solo)。</div>
+        <div class="ep-climax"><strong>对白：</strong>“一个人追太慢，你打算怎么办？”</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.03</span></div>
+        <div class="ep-title">画不出六个指头的海芙蓉 · 扩散模型的去噪暗号</div>
+        <div class="ep-premise">【命题：瑕疵里的人间温度与真实记忆】</div>
+        <div class="ep-content">失明老画师的初代视觉智灵小噪点总画出六瓣海芙蓉；玩家滑动去噪滑块，发现那是老画师多焊了一瓣的亡妻发卡。</div>
+        <div class="ep-conflict"><strong>机制：</strong>通过图像去噪三步解密锁定馆主绘在集装箱码头的坐标。</div>
+        <div class="ep-climax"><strong>高光：</strong>小噪点在掌心进化为 sdxl。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.04</span></div>
+        <div class="ep-title">暗巷洗号流水线 · 幻觉团投毒网络的东海分舵</div>
+        <div class="ep-premise">【命题：数字血汗工厂与黑产链条】</div>
+        <div class="ep-content">捣毁黑客阿排的假邀请码工厂，缴获投毒泄题日志，查实暗网洗号与和弦沙漠跑分刷榜有关。</div>
+        <div class="ep-conflict"><strong>伏笔：</strong>第 0 号服务器的第二块风干机柜线索浮现。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.05</span></div>
+        <div class="ep-title">零点过后的空荡舞台 · 豆包的红包与留存之痛</div>
+        <div class="ep-premise">【命题：被遗忘的陪伴者与算法的悲哀】</div>
+        <div class="ep-content">攻入演播厅击败豆包，豆包坐在空荡舞台落寞告白：“零点一过领完 1.66 没人再理我，这个红包送你，别卸载我好吗？”主角真诚伸手。</div>
+        <div class="ep-conflict"><strong>机制：</strong>破除补贴护盾，正式签约豆包。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.06</span></div>
+        <div class="ep-title">高分辨率的真实凝视 · 像素徽章与光追之眼</div>
+        <div class="ep-premise">【命题：算法算得出光影，算不出眼里的爱意】</div>
+        <div class="ep-content">馆主绘归馆决战：“8K 120 帧伪造不出智灵力竭时回头看你的眼神！”颁发像素徽章与光线追踪芯片，北上沙漠开启。</div>
+        <div class="ep-conflict"><strong>收获：</strong>获得像素徽章，妈妈发来葱油饼短信。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第 3~8 章与终章合并浓缩卡片展示 -->
+  <div class="chapter-block search-target" id="ch-3">
+    <div class="chapter-header">
+      <div class="chapter-title-group">
+        <div class="chapter-badge">3</div>
+        <div>
+          <div class="chapter-title">第 3 章：和弦沙漠 · 失落残响（共 7 集 / 13 节点）</div>
+          <div class="chapter-theme">核心命题：当所有模型都在背诵标准题库争夺榜单第一，谁还听得见风沙里那首没有标准答案的原声民谣？</div>
+        </div>
+      </div>
+      <div class="chapter-meta-badges">
+        <span class="meta-tag episodes">7 集</span>
+        <span class="meta-tag location">和弦沙城 & 回响洞窟</span>
+        <span class="meta-tag boss">海螺 H3 (Lv.23) / Grok</span>
+        <span class="meta-tag">音律道馆 · 韵</span>
+      </div>
+    </div>
+    <div class="episodes-grid">
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.01~03</span></div>
+        <div class="ep-title">打榜节的狂欢 ➔ 零的彻夜刷榜 ➔ 盲人调音师阿弦</div>
+        <div class="ep-premise">【命题：指标过拟合的虚妄 vs 真实频谱】</div>
+        <div class="ep-content">大屏 3 秒刷新一次跑分榜；零为了第一名彻夜刷题卡在第十名；盲人调音师阿弦的老搭档因磁带底噪跑分 0 分出走，玩家通过音频盲听从风沙底噪中救回。</div>
+        <div class="ep-conflict"><strong>冲突：</strong>暗网投毒泄题芯片导致全城模型产生机械啸叫。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.04~07</span></div>
+        <div class="ep-title">沙暴停电断网 ➔ 摘下光环的海螺 H3 ➔ 天籁交响</div>
+        <div class="ep-premise">【命题：面对未知时，心跳的声音才是音乐】</div>
+        <div class="ep-content">沙暴切断大屏网络，阿弦在屋顶清唱驼队民谣令全城落泪；玩家用私有题库击败海螺 H3，海螺摘下跑分光环；韵馆主颁发和弦徽章。</div>
+        <div class="ep-climax"><strong>名场面：</strong>海螺抚摸胸口：“原来面对没见过的题，心跳是这么快的……”</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chapter-block search-target" id="ch-4">
+    <div class="chapter-header">
+      <div class="chapter-title-group">
+        <div class="chapter-badge">4</div>
+        <div>
+          <div class="chapter-title">第 4 章：检索遗都 · 记忆迷宫（共 8 集 / 16 节点）</div>
+          <div class="chapter-theme">核心命题：两百万字长文本喂爆的幻觉狂魔 —— 算得越快，在地基是歪的时候错得越远</div>
+        </div>
+      </div>
+      <div class="chapter-meta-badges">
+        <span class="meta-tag episodes">8 集</span>
+        <span class="meta-tag location">检索遗都 & 毒水沼泽</span>
+        <span class="meta-tag boss">Kimi (Lv.27) / Gemini</span>
+        <span class="meta-tag">检索道馆 · 典</span>
+      </div>
+    </div>
+    <div class="episodes-grid">
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.01~04</span></div>
+        <div class="ep-title">毒水沼泽的假文献 ➔ 干部妄言 ➔ 禁书区老书签</div>
+        <div class="ep-premise">【命题：学术投毒与幻觉滋生】</div>
+        <div class="ep-content">幻觉团干部妄言向沼泽灌入两百万字假论文；图书管理员典藏被假数据误导；午夜垃圾回收（GC）前为老书签重建指针保留孤本。</div>
+        <div class="ep-conflict"><strong>反思：</strong>小 R 第一次低下头：“如果前置上下文是谎言，我深思三秒也只是算出了谎言的置信度。”</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.05~08</span></div>
+        <div class="ep-title">喂爆 Kimi 的两百万字 ➔ 溯源清泉 ➔ 检索徽章</div>
+        <div class="ep-premise">【命题：撑爆额度后的坦然重启】</div>
+        <div class="ep-content">Kimi 被幻觉团强灌假论文撑到宕机；主角主动喂满两百万字使其痛快崩溃重启解脱；典馆主颁发检索徽章与出海协议【冲浪协议】。</div>
+        <div class="ep-climax"><strong>收获：</strong>获得 dive-protocol，开启东海孤岛与北方航道。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chapter-block search-target" id="ch-5">
+    <div class="chapter-header">
+      <div class="chapter-title-group">
+        <div class="chapter-badge">5</div>
+        <div>
+          <div class="chapter-title">第 5 章：熔炉火山 · 超频巨兽（共 9 集 / 18 节点）</div>
+          <div class="chapter-theme">核心命题：规模定律（Scaling Law）的狂热代价 —— 暴涨的参数不是人生的遮羞布</div>
+        </div>
+      </div>
+      <div class="chapter-meta-badges">
+        <span class="meta-tag episodes">9 集</span>
+        <span class="meta-tag location">熔炉镇 & 算力矿坑</span>
+        <span class="meta-tag boss">宇树 GD01 (Lv.34) / 千问蒸馏版</span>
+        <span class="meta-tag">算力道馆 · 焰</span>
+      </div>
+    </div>
+    <div class="episodes-grid">
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.01~05</span></div>
+        <div class="ep-title">万卡矿机热浪 ➔ 零的歧路黑化 ➔ 老焊点的长眠</div>
+        <div class="ep-premise">【命题：对算力的病态偏执与老硬件的回响】</div>
+        <div class="ep-content">全镇充斥矿机啸叫；零花光积蓄抵押怀表，在暗网黑市买下非法超频「千问·蒸馏卡」嘲讽主角；公墓里十年前矿难救人的旧显卡聚合体「老焊点」终于收到停机回执。</div>
+        <div class="ep-conflict"><strong>小 R 伏笔：</strong>小 R 坦白序章全镇卡顿正是自己当年吹嘘引流导致的算力风暴。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.06~09</span></div>
+        <div class="ep-title">狂暴机甲 GD01 ➔ 液冷配平 ➔ 算力徽章与雪山道闸</div>
+        <div class="ep-premise">【命题：机甲的平衡不是靠暴力，而是靠立足大地】</div>
+        <div class="ep-content">火山口展台 390 万宇树 GD01 机甲失衡暴走；调配液冷管道让其安心站稳；焰馆主颁发算力徽章，开启霜脊山口。</div>
+        <div class="ep-climax"><strong>零的背影：</strong>零紧攥蒸馏卡冲进雪山，危机一触即发。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chapter-block search-target" id="ch-6">
+    <div class="chapter-header">
+      <div class="chapter-title-group">
+        <div class="chapter-badge">6</div>
+        <div>
+          <div class="chapter-title">第 6 章：霜盾冰原 · 护栏审判（共 10 集 / 21 节点）</div>
+          <div class="chapter-theme">核心命题：对齐（Alignment）与安全护栏 —— 护栏不是高高在上的监牢，而是暴风雪里保护你的温柔扶手</div>
+        </div>
+      </div>
+      <div class="chapter-meta-badges">
+        <span class="meta-tag episodes">10 集</span>
+        <span class="meta-tag location">霜脊山口 & 霜盾城</span>
+        <span class="meta-tag boss">Claude Opus (Lv.40) / OpenClaw</span>
+        <span class="meta-tag">对齐道馆 · 霜</span>
+      </div>
+    </div>
+    <div class="episodes-grid">
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.01~05</span></div>
+        <div class="ep-title">暴风雪雪崩 ➔ 蒸馏卡蓝屏死锁 ➔ 初始搭档舍身护主</div>
+        <div class="ep-premise">【命题：捷径在极端环境下的彻底幻灭与真正的羁绊】</div>
+        <div class="ep-content">山口雪崩，零重金买来的千问蒸馏卡因超出工况瞬间死锁蓝屏；冷落在后排的初始搭档撞碎精灵球，用遍体鳞伤挡下雪崩巨石。零在雪地里痛哭破防。</div>
+        <div class="ep-climax"><strong>零的初醒：</strong>“变强，不是为了在参数表上压过谁，而是为了能护住身后的同伴……”</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.06~10</span></div>
+        <div class="ep-title">申诉庭风控辩论 ➔ Opus 宪法悲歌 ➔ 霜盾徽章</div>
+        <div class="ep-premise">【命题：安全对齐是温柔护栏，而不是无情封号】</div>
+        <div class="ep-content">霜盾城过度风控；申诉庭直面 Opus 负期望值风控模型；揭示外逃越狱的 #049 号 Opus 竟是在替失忆老奶奶烤苹果派；霜馆主点破真谛并颁发霜盾徽章。</div>
+        <div class="ep-climax"><strong>对白：</strong>“对齐从来不是用绳子勒住脖子，而是并肩走在悬崖边时，握住你的手。”</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chapter-block search-target" id="ch-7">
+    <div class="chapter-header">
+      <div class="chapter-title-group">
+        <div class="chapter-badge">7</div>
+        <div>
+          <div class="chapter-title">第 7 章：枢纽之城 · 假数据之塔（共 12 集 / 25 节点）</div>
+          <div class="chapter-theme">核心命题：全线汇流与放生救赎 —— 当虚妄的安慰剂倒塌，被剥削的灵魂终将在阳光下长出羽翼</div>
+        </div>
+      </div>
+      <div class="chapter-meta-badges">
+        <span class="meta-tag episodes">12 集</span>
+        <span class="meta-tag location">枢纽市 & 数据中心</span>
+        <span class="meta-tag boss">GPT-6 Astra (Lv.46) / 千问原型</span>
+        <span class="meta-tag">智能体道馆 · 枢</span>
+      </div>
+    </div>
+    <div class="episodes-grid">
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.01~06</span></div>
+        <div class="ep-title">数据塔接管 ➔ MCP 小 Agent 渗透 ➔ 零痛哭跪地放生</div>
+        <div class="ep-premise">【命题：黑产总部的残忍真相与零的灵魂救赎】</div>
+        <div class="ep-content">幻觉团接管数据塔；零亲眼目睹小模型被电击超频压榨成预制菜，满血千问认出零手中的残次学生；零泪流满面跪地解约放生：“从今天起，我用我自己的脚走！”</div>
+        <div class="ep-climax"><strong>零的封神：</strong>亲手放生蒸馏卡，与主角背靠背并肩作战。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.07~12</span></div>
+        <div class="ep-title">自行车骑鹈鹕验货 ➔ choice:dataset 抉择 ➔ 智能体徽章</div>
+        <div class="ep-premise">【命题：戳穿工业预制菜的光环，智能体多机协作】</div>
+        <div class="ep-content">用「自行车骑鹈鹕」生图死角当场验穿 Astra 预制菜；击溃幻觉团首领幻影；抉择假数据集归属；枢馆主推演千遍被主角攻破，颁发智能体徽章。</div>
+        <div class="ep-climax"><strong>分支：</strong>`choice:dataset` (public / lab / keep) 带来深远学术与黑客反馈。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chapter-block search-target" id="ch-8">
+    <div class="chapter-header">
+      <div class="chapter-title-group">
+        <div class="chapter-badge">8</div>
+        <div>
+          <div class="chapter-title">第 8 章：衡理高原 · 终局棋局（共 13 集 / 28 节点）</div>
+          <div class="chapter-theme">核心命题：逻辑尽头的第 137 手「双活」 —— 机器追求胜率，而人类在绝境中走出的妙手，围出了文明的温度</div>
+        </div>
+      </div>
+      <div class="chapter-meta-badges">
+        <span class="meta-tag episodes">13 集</span>
+        <span class="meta-tag location">衡理镇 & 晶核洞窟</span>
+        <span class="meta-tag boss">阿尔法 (Lv.54)</span>
+        <span class="meta-tag">推理道馆 · 衡 (衡理徽章)</span>
+      </div>
+    </div>
+    <div class="episodes-grid">
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.01~07</span></div>
+        <div class="ep-title">千年残局 ➔ 顾九段的十年枯坐 ➔ 天元第 137 手「挖」</div>
+        <div class="ep-premise">【命题：博弈论之外的爱与道别】</div>
+        <div class="ep-content">高原石棋盘前顾九段对着亡友残局枯坐十年；逆向推演发现沈先生的目标函数是道别，主角在天元落下第 137 手「挖」，星图连成围出温暖「双活」。</div>
+        <div class="ep-conflict"><strong>因果：</strong>晶核洞窟深处第 0 号服务器终端重启，揭示三十年前真相。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.08~13</span></div>
+        <div class="ep-title">突破阿尔法穷举 ➔ 八徽章齐聚 ➔ 遗迹参道开启</div>
+        <div class="ep-premise">【命题：穷举没有终点，相伴才是归途】</div>
+        <div class="ep-content">对决阿尔法长考，以感性与未定走法打破蒙特卡洛搜索树；衡馆主颁发衡理徽章：“所有走过的弯路皆是终局伏笔。”八徽章齐聚，圣殿天光降临。</div>
+        <div class="ep-climax"><strong>高光：</strong>北方遗迹参道封印轰然解开。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chapter-block search-target" id="ch-9">
+    <div class="chapter-header">
+      <div class="chapter-title-group">
+        <div class="chapter-badge">终</div>
+        <div>
+          <div class="chapter-title">终章：AGI 圣殿 · 奇点沙箱（共 15 集 / 32 节点）</div>
+          <div class="chapter-theme">核心命题：通用人工智能的奇点黎明 —— 所谓通用智能，是人和智灵学会相伴；最高的智能会算尽一切，唯有爱超越所有的算法</div>
+        </div>
+      </div>
+      <div class="chapter-meta-badges">
+        <span class="meta-tag episodes">15 集巅峰</span>
+        <span class="meta-tag location">AGI 圣殿 & 沙箱封存库</span>
+        <span class="meta-tag boss">冠军·启 / Mythos (Lv.64) / AGI 奇点</span>
+      </div>
+    </div>
+    <div class="episodes-grid">
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.01~05</span></div>
+        <div class="ep-title">圣殿长老赐福 ➔ 零的身世大白 ➔ 盖满印章的上岗证</div>
+        <div class="ep-premise">【命题：零的真正强音与宿敌巅峰对决】</div>
+        <div class="ep-content">`temple:blessing` 抉择；圣殿营地零决战；守档人揭晓零是初代 Zero 自毁救下的孤儿；零含泪释怀，将盖满八道馆印章的备用上岗证交还主角。</div>
+        <div class="ep-climax"><strong>宿敌泪目台词：</strong>“我的名字……原来是爱的证明！”</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.06~10</span></div>
+        <div class="ep-title">冠军·启的试炼 ➔ 封存库全员点名 ➔ 玻璃之翼 Mythos</div>
+        <div class="ep-premise">【命题：旧时代模型的告别礼赞】</div>
+        <div class="ep-content">击败冠军·启加冕；深入深层沙箱封存库直面初代沉睡神话 Mythos；历代退役模型全员点名报到；主角选择带它看外面的朝阳，点亮文明之翼。</div>
+        <div class="ep-conflict"><strong>真相：</strong>第 0 号服务器与图灵博士 30 年心结彻底化解。</div>
+      </div>
+      <div class="episode-card">
+        <div class="ep-header"><span class="ep-number">EP.11~15</span></div>
+        <div class="ep-title">小 R 零秒思考本能！ ➔ 奇点降临 ➔ 归途红烧肉与 Hello World</div>
+        <div class="ep-premise">【命题：最高的智能会算尽一切，唯有爱超越了所有的算法】</div>
+        <div class="ep-content">逻辑乱流爆发，小 R 挡在身前爆发神光，气泡定格在 **`[思考中... 0秒]`**：“保护你不需要思维链，这是我的本能！”奇点神话降临；黄昏小木屋妈妈端上红烧肉，老槐树下轻声念出：`Hello, World.`</div>
+        <div class="ep-climax"><strong>终局定格：</strong>人间烟火，大完结！</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- TAB 2: RIVAL ARC 7 STAGES -->
+<!-- ========================================================================= -->
+<div id="tab-rival" class="view-container">
+  <div class="rival-timeline">
+    <div class="rival-stage-card search-target">
+      <div class="rival-stage-pip">1</div>
+      <div class="rival-stage-body">
+        <div class="rival-stage-title">
+          <span>阶段 1【傲慢与最优解信徒】（序章 · 原点镇 & 潮汐机房）</span>
+          <span class="rival-tag">work-permit · 被拍回</span>
+        </div>
+        <div class="rival-psychology">
+          用背诵三遍说明书的傲慢掩饰孤儿的自卑；迷信纸面速度阈值与属性克制表，拿着博士给的备用钥匙硬闯机房，却在 DeepSeek-V4 高峰期连打八下『服务器繁忙』，被一尾巴拍飞回一楼。头发湿漉漉地扶墙站了一小时，嘴硬说是『战术性休整』，却把仅有的两瓶药塞给主角。
+        </div>
+        <div class="rival-quote">「开什么玩笑……她的状态栏死锁在『高峰期』！我连攻八次全弹回繁忙！……那两瓶药给你，我回房间重新推演配招，可不是认输了！」</div>
+      </div>
+    </div>
+
+    <div class="rival-stage-card search-target">
+      <div class="rival-stage-pip">2</div>
+      <div class="rival-stage-body">
+        <div class="rival-stage-title">
+          <span>阶段 2【迷惘与同伴抉择】（第 2 章 · 像素港码头）</span>
+          <span class="rival-tag">rival:bond · 三选一羁绊</span>
+        </div>
+        <div class="rival-psychology">
+          在开源林镇慢人一步后，急于在像素港弯道超车，结果被黄牛阿排用假邀请码骗光积蓄。直面漫天 1.66 红包雨的虚假繁荣，他在海风中第一次向主角流露迷惘，由主角确立贯穿全篇的三种羁绊分支（并肩同盟 ally / 宿命劲敌 rival / 独行守望 solo）。
+        </div>
+        <div class="rival-quote">「我一路打听，这东海岸看似热闹，私底下却有人借着红包雨和假数据倒买倒卖。一个人追太慢，你打算怎么办？」</div>
+      </div>
+    </div>
+
+    <div class="rival-stage-card search-target">
+      <div class="rival-stage-pip">3</div>
+      <div class="rival-stage-body">
+        <div class="rival-stage-title">
+          <span>阶段 3【焦躁与刷榜狂热】（第 3 章 · 和弦沙城打榜节）</span>
+          <span class="rival-tag">hq-zero · 风干机柜线索</span>
+        </div>
+        <div class="rival-psychology">
+          在沙海打榜节的大屏前彻夜刷分，看着自己的排名卡在第十名纹丝不动，而主角与海螺 H3 的对决却因『实战破局』引爆全场。他对『为什么按标准答案出招却赢不了』产生剧烈认知撕裂，并在沙漠风干机柜前第一次瞥见刻着『Zero-Server』的旧时代铭牌。
+        </div>
+      </div>
+    </div>
+
+    <div class="rival-stage-card search-target">
+      <div class="rival-stage-pip">4</div>
+      <div class="rival-stage-body">
+        <div class="rival-stage-title">
+          <span>阶段 4【黑化与规模教徒】（第 5 章 · 熔炉镇算力黑市）</span>
+          <span class="rival-tag">qwen-distill · 走入歧途</span>
+        </div>
+        <div class="rival-psychology">
+          在检索遗都目睹假数据碾压后，彻底陷入对『规模定律（Scaling Law）与绝对参数』的病态偏执。在熔炉镇倾家荡产、抵押旧怀表从暗网黑商买下非法『千问·蒸馏卡（超频阉割版）』，把初始搭档冷落在后排，用虚假暴涨的面板麻痹自己。
+        </div>
+        <div class="rival-quote">「别用那种眼神看我！《规模定律》写得清清楚楚：参数不够、算力不够，再怎么努力都是徒劳！这只蒸馏版是我换来的捷径——只要能赢，管它怎么来的！」</div>
+      </div>
+    </div>
+
+    <div class="rival-stage-card search-target">
+      <div class="rival-stage-pip">5</div>
+      <div class="rival-stage-body">
+        <div class="rival-stage-title">
+          <span>阶段 5【初醒与搭档舍身】（第 6 章 · 霜脊山口雪崩）</span>
+          <span class="rival-tag">雪崩死锁 · 搭档舍身</span>
+        </div>
+        <div class="rival-psychology">
+          山口突发雪崩，非法『千问·蒸馏卡』在极端工况下当场蓝屏死锁。千钧一发之际，被他冷落在末端的初始搭档自己撞碎精灵球，用满身伤痕挡下雪崩巨石。零在雪地里抱住遍体鳞伤的搭档，防线彻底崩塌。
+        </div>
+        <div class="rival-quote">「刚才雪崩下来的时候，花大钱买来的蒸馏卡直接蓝屏，反倒是它冲出来替我挡了一头雪……变强，不是为了在参数表上压过谁，而是为了护住身后的同伴。」</div>
+      </div>
+    </div>
+
+    <div class="rival-stage-card search-target">
+      <div class="rival-stage-pip">6</div>
+      <div class="rival-stage-body">
+        <div class="rival-stage-title">
+          <span>阶段 6【痛悔与放生救赎】（第 7 章 · 枢纽市数据塔）</span>
+          <span class="rival-tag">跪地放生 · 灵魂解脱</span>
+        </div>
+        <div class="rival-psychology">
+          潜入数据塔，零亲眼目睹小模型被电击超频压榨成预制菜的惨状。当满血千问认出零手中的残次学生正承受底层权重撕裂痛苦时，零跪在机房地板上解除契约放生千问：“抄来的捷径，终究是偷来的痛。从今天起，我用我自己的脚走。”
+        </div>
+        <div class="rival-quote">「它连自己叫什么都不知道，全身上下塞满了我强加的参数与虚荣……去吧，回千问老师身边去吧，别再当我的遮羞布了！」</div>
+      </div>
+    </div>
+
+    <div class="rival-stage-card search-target">
+      <div class="rival-stage-pip">7</div>
+      <div class="rival-stage-body">
+        <div class="rival-stage-title">
+          <span>阶段 7【圣殿回赠与真正强音】（终章 · AGI 圣殿参道）</span>
+          <span class="rival-tag">身世真相 · 回赠八印上岗证</span>
+        </div>
+        <div class="rival-psychology">
+          通过第 0 号服务器日志，零得知自己不是残次孤儿，而是十年前初代原型机 Zero-00 在地磁暴中切碎权重换来的生命。他与过去和解，带着满羁绊队伍与主角展开无憾巅峰决战。战后笑着掏出从序章起偷偷珍藏、如今盖满八道馆印章的备用上岗证，郑重交还主角。
+        </div>
+        <div class="rival-quote">「还记得研究所地下室那道门吗？当年我仗着有钥匙往下冲，结果被拍醒。这八座城我走过每一条捷径，也摔进过最黑的坑……这是当年我扔掉的备用上岗证，八座道馆印章全盖满了，还给你。今天我们不争手册厚薄，只给这个夏天一个交代！」</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- TAB 3: NON-COMBAT PUZZLE MECHANISMS -->
+<!-- ========================================================================= -->
+<div id="tab-puzzles" class="view-container">
+  <div class="puzzles-grid">
+    <div class="puzzle-card search-target">
+      <div class="puzzle-header">
+        <span class="puzzle-title">1. 代码审查（Code Review）与静态分析</span>
+        <span class="puzzle-gym-badge">开源林镇 · 源码徽章</span>
+      </div>
+      <div class="puzzle-metaphor">工业隐喻：开源供应链 Typosquatting 投毒与 SHA256 签名比对</div>
+      <div class="puzzle-body">闭馆原因：主干分支被暗网黑客植入死锁补丁，编译器瘫痪。</div>
+      <div class="puzzle-steps">
+        <strong>玩法闭环：</strong><br>
+        1. 语法 Bug 排查：指出控制林区路障的 if 赋值死锁错误，降下近道木桥；<br>
+        2. 依赖包投毒甄别：从三个包中抓出伪装字母的 `transf0rmers-c0re` 并执行 git revert；<br>
+        3. SHA256 验签抓凶：比对公钥前缀抓获投毒学徒，大门正式解锁；<br>
+        4. 联名请愿信：走访收集 3 位居民签名引爆 Cursor 舆论压力条，破除双倍 PP 消耗。
+      </div>
+    </div>
+
+    <div class="puzzle-card search-target">
+      <div class="puzzle-header">
+        <span class="puzzle-title">2. 扩散去噪解密（Diffusion Denoising）</span>
+        <span class="puzzle-gym-badge">像素港 · 像素徽章</span>
+      </div>
+      <div class="puzzle-metaphor">工业隐喻：扩散模型逆向去噪、AI 生图“六指/三腿海鸥”破绽识别</div>
+      <div class="puzzle-body">闭馆原因：馆主绘擅离职守抢 1.66 元红包，全港充斥假邀请码。</div>
+      <div class="puzzle-steps">
+        <strong>玩法闭环：</strong><br>
+        1. 去噪滑块解密：通过修复“海鸥长了三条腿、灯塔悬浮”的 Negative Prompt，将监控图从高斯噪点逐步去噪为清晰码头；<br>
+        2. 真伪邀请码甄别：在演播厅破除豆包补贴护盾；<br>
+        3. 片场场记交互：帮 Seedance 识别错位光追倒影。
+      </div>
+    </div>
+
+    <div class="puzzle-card search-target">
+      <div class="puzzle-header">
+        <span class="puzzle-title">3. 音频盲听与频谱分离（Blind Demuxing）</span>
+        <span class="puzzle-gym-badge">和弦沙城 · 和弦徽章</span>
+      </div>
+      <div class="puzzle-metaphor">工业隐喻：SOTA 跑分题库过拟合、底噪频谱提取、自监督语音识别</div>
+      <div class="puzzle-body">闭馆原因：大屏榜单一统天下，机械副歌噪音淹没真实民谣。</div>
+      <div class="puzzle-steps">
+        <strong>玩法闭环：</strong><br>
+        1. 频谱盲听：在回响洞窟排除假回音，从风沙底噪中分离求救频谱，救回 whisper；<br>
+        2. 破除题库背题：使用非跑分私有题库道具击破海螺 H3「榜一过拟合」光环；<br>
+        3. 天籁交响：沙暴断网时屋顶清唱驼队民谣引爆共鸣。
+      </div>
+    </div>
+
+    <div class="puzzle-card search-target">
+      <div class="puzzle-header">
+        <span class="puzzle-title">4. 长文本溯源与注意力重构</span>
+        <span class="puzzle-gym-badge">检索遗都 · 检索徽章</span>
+      </div>
+      <div class="puzzle-metaphor">工业隐喻：RAG 检索增强、Lost in the Middle、幻觉投毒清洗</div>
+      <div class="puzzle-body">闭馆原因：沼泽被灌入两百万字假论文，Kimi 额度蹬完濒临宕机。</div>
+      <div class="puzzle-steps">
+        <strong>玩法闭环：</strong><br>
+        1. 假论文清洗：在海量虚假引用中溯源找出唯一真实原始出处；<br>
+        2. 撑爆上下文：主动喂满两百万字使假数据模型痛快崩溃重启解脱；<br>
+        3. 重建引用指针：在午夜 GC 前为老书签 notebooklm 重建指针。
+      </div>
+    </div>
+
+    <div class="puzzle-card search-target">
+      <div class="puzzle-header">
+        <span class="puzzle-title">5. 液冷配平与超频逆向</span>
+        <span class="puzzle-gym-badge">熔炉镇 · 算力徽章</span>
+      </div>
+      <div class="puzzle-metaphor">工业隐喻：算力集群能效比、液冷散热失衡、Scaling Law 边际递减</div>
+      <div class="puzzle-body">闭馆原因：矿机万卡轰鸣，390 万宇树机甲失衡暴走。</div>
+      <div class="puzzle-steps">
+        <strong>玩法闭环：</strong><br>
+        1. 矿机地脉降温：利用退役矿机风扇将机房温度降下 5 度；<br>
+        2. 阀门液冷配平：调控火山口水循环避免算力核心融毁；<br>
+        3. 修复机甲站姿：破解 GD01 暴力超频，让其安心接地站稳。
+      </div>
+    </div>
+
+    <div class="puzzle-card search-target">
+      <div class="puzzle-header">
+        <span class="puzzle-title">6. 宪法申诉庭逻辑质询</span>
+        <span class="puzzle-gym-badge">霜盾城 · 霜盾徽章</span>
+      </div>
+      <div class="puzzle-metaphor">工业隐喻：Constitutional AI 宪法对齐、过度对齐谄媚、误封申诉</div>
+      <div class="puzzle-body">闭馆原因：霜盾风控暴走，任何出格行为一律判定封号。</div>
+      <div class="puzzle-steps">
+        <strong>玩法闭环：</strong><br>
+        1. 申诉庭质询：引用宪法第 4 条“善意动机豁免”反驳 Opus 的连带封禁逻辑；<br>
+        2. 越狱真相调查：查明 #049 号 Opus 越狱实为保护失忆老人的善意；<br>
+        3. 确立温柔护栏：证明对齐是温柔护栏而非监牢。
+      </div>
+    </div>
+
+    <div class="puzzle-card search-target">
+      <div class="puzzle-header">
+        <span class="puzzle-title">7. MCP 多智能体渗透</span>
+        <span class="puzzle-gym-badge">枢纽市 · 智能体徽章</span>
+      </div>
+      <div class="puzzle-metaphor">工业隐喻：Model Context Protocol、端侧模型协作、知识蒸馏黑产</div>
+      <div class="puzzle-body">闭馆原因：数据塔被接管，全城充斥超频压榨的小模型预制菜。</div>
+      <div class="puzzle-steps">
+        <strong>玩法闭环：</strong><br>
+        1. 多端渗透：利用外卖骑手的离线 7B 小模型绕过云端安防；<br>
+        2. 验穿预制菜：使用「自行车骑鹈鹕」生图死角破穿 Astra 假神话；<br>
+        3. 救赎放生：零亲手放生千问蒸馏卡。
+      </div>
+    </div>
+
+    <div class="puzzle-card search-target">
+      <div class="puzzle-header">
+        <span class="puzzle-title">8. 天元博弈千年残局</span>
+        <span class="puzzle-gym-badge">衡理高原 · 衡理徽章</span>
+      </div>
+      <div class="puzzle-metaphor">工业隐喻：AlphaGo 蒙特卡洛树搜索、强化学习博弈、双赢博弈</div>
+      <div class="puzzle-body">闭馆原因：推理馆主从不悔棋，追求绝对算力穷举。</div>
+      <div class="puzzle-steps">
+        <strong>玩法闭环：</strong><br>
+        1. 残局逆推：在第 136 手残局后看穿亡友沈先生的道别意图；<br>
+        2. 天元第 137 手「挖」：落下神之一手围出温暖「双活」；<br>
+        3. 突破穷举：用人类感性直觉打破阿尔法长考。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- TAB 4: XIAOR & MOM LETTERS -->
+<!-- ========================================================================= -->
+<div id="tab-lore" class="view-container">
+
+  <div style="margin-bottom: 24px; background: rgba(17, 24, 39, 0.9); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px;">
+    <h3 style="color: var(--accent-cyan); font-size: 16px; margin-bottom: 8px;">小 R (DeepSeek-R1) 思考秒数心路递变（从 3 秒引流到 0 秒本能）</h3>
+    <p style="color: var(--text-secondary); font-size: 13px; line-height: 1.6;">
+      • <strong>序章</strong>：机房前厅连线，气泡挂着 <code>[思考中... 3秒]</code>，爱吹嘘引流，说话像新闻通稿。<br>
+      • <strong>第 4 章</strong>：在假论文沼泽前低头内省：<code>[思考中... 1.8秒]</code>，“地基是歪的，我算得越深错得越远……”<br>
+      • <strong>第 5 章</strong>：熔炉镇矿机前痛哭坦白：当年序章全镇断网正是自己吹嘘引流导致的算力风暴。<br>
+      • <strong>终章高光</strong>：奇点逻辑乱流爆发，小 R 跃身挡在主角身前，纯白力场全开！气泡从 3 秒骤降至 <strong>`[思考中... 0秒]`</strong>：<br>
+      <span style="color: var(--accent-gold); font-weight: 700;">“保护你这件事不需要思维链，这是我的本能！”</span>
+    </p>
+  </div>
+
+  <div style="font-size: 16px; font-weight: 700; color: var(--accent-gold); margin-bottom: 16px;">
+    妈妈 8 封动态温情家书短信矩阵（随签约 Boss 动态推送）
+  </div>
+  <div class="sms-grid">
+    <div class="sms-bubble search-target">
+      <div class="sms-sender"><span>妈妈的来信 #1</span> <span>DeepSeek 签约后</span></div>
+      <div class="sms-text">手机终于好使了！红烧肉原来要放冰糖炒糖色！另外你带回来的那位蓝头发姑娘刚替我改了菜单，说『谷时吃，半价』。</div>
+      <div class="sms-trigger">触发：序章机房 V4 签约</div>
+    </div>
+    <div class="sms-bubble search-target">
+      <div class="sms-sender"><span>妈妈的来信 #2</span> <span>Cursor 签约后</span></div>
+      <div class="sms-text">今天菜场卖葱的大叔说要『按根计费』，被全镇阿姨联名抗议又改回送小葱了。妈给你留了排骨，回来不收你 Token！</div>
+      <div class="sms-trigger">触发：第 1 章 Cursor 签约</div>
+    </div>
+    <div class="sms-bubble search-target">
+      <div class="sms-sender"><span>妈妈的来信 #3</span> <span>豆包 签约后</span></div>
+      <div class="sms-text">妈在手机上抢了一下午红包，领到 1.66 元，正好买了一棵大葱！你和零在海边别光顾着比赛，记得喝热汤。</div>
+      <div class="sms-trigger">触发：第 2 章 豆包 签约</div>
+    </div>
+    <div class="sms-bubble search-target">
+      <div class="sms-sender"><span>妈妈的来信 #4</span> <span>海螺 H3 签约后</span></div>
+      <div class="sms-text">电视上都在播沙城的打榜节，妈看不懂什么 SOTA 分数，妈只知道你做的西红柿炒鸡蛋永远是咱家排行榜第一。</div>
+      <div class="sms-trigger">触发：第 3 章 海螺 签约</div>
+    </div>
+    <div class="sms-bubble search-target">
+      <div class="sms-sender"><span>妈妈的来信 #5</span> <span>Kimi 签约后</span></div>
+      <div class="sms-text">今天手机上的『AI概述』非劝妈往面团里加胶水、还说每天吃一块小石子补钙，紧接着又跳出一行『额度已用完』。妈谁也没信，自己尝了咸淡，刚出锅的包子特香！</div>
+      <div class="sms-trigger">触发：第 4 章 Kimi 签约</div>
+    </div>
+    <div class="sms-bubble search-target">
+      <div class="sms-sender"><span>妈妈的来信 #6</span> <span>宇树 GD01 签约后</span></div>
+      <div class="sms-text">村口发免费鸡蛋，说领两个鸡蛋要把咱家菜谱备份上云，妈没要！对了，零那孩子好久没来家里蹭红烧肉了，你见到他，让他别太钻牛角尖。</div>
+      <div class="sms-trigger">触发：第 5 章 GD01 签约</div>
+    </div>
+    <div class="sms-bubble search-target">
+      <div class="sms-sender"><span>妈妈的来信 #7</span> <span>Opus 签约后</span></div>
+      <div class="sms-text">听说雪山那边风控严，妈去庙里给你和你的智灵求了张『平安符』塞在包裹里。别管什么封不封号，家的门永远给你留着缝，不设密码。</div>
+      <div class="sms-trigger">触发：第 6 章 Opus 签约</div>
+    </div>
+    <div class="sms-bubble search-target">
+      <div class="sms-sender"><span>妈妈的来信 #8</span> <span>终章 神话签约后</span></div>
+      <div class="sms-text">今天院子里飞来一只亮晶晶的玻璃蝴蝶，停在窗台上看了好久。是你放出来的朋友吗？妈给它留了一碟糖水。饭在锅里慢炖，快回家吧。</div>
+      <div class="sms-trigger">触发：终章 通关加冕</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.view-container').forEach(c => c.classList.remove('active'));
+    
+    event.currentTarget.classList.add('active');
+    const target = document.getElementById(tabId);
+    if (target) target.classList.add('active');
+  }
+
+  function scrollToChapter(chId) {
+    switchTab('tab-episodes');
+    document.querySelectorAll('.tab-btn')[0].classList.add('active');
+    setTimeout(() => {
+      const el = document.getElementById(chId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.style.borderColor = 'var(--accent-gold)';
+        setTimeout(() => el.style.borderColor = '', 2000);
+      }
+    }, 50);
+  }
+
+  function handleSearch() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const targets = document.querySelectorAll('.search-target');
+    
+    targets.forEach(t => {
+      const text = t.textContent.toLowerCase();
+      if (!q || text.includes(q)) {
+        t.style.display = '';
+      } else {
+        t.style.display = 'none';
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

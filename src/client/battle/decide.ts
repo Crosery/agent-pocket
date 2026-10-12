@@ -51,21 +51,61 @@ export function createDecider(env: DecideEnv): Decider {
     return () => { scene.onFrame(null); view.setTimer(null) }
   }
 
+  const isTypeLesson = () =>
+    env.init.sides[1].name === '陪练智灵' || Boolean(ctx.save.flags['ob:typeLesson'] && !ctx.save.flags['ds:stamp:types'])
+
+  const hasStatBuff = () =>
+    Object.values(model.sides[0].stages).some((v) => (v ?? 0) > 0) ||
+    Object.values(model.sides[1].stages).some((v) => (v ?? 0) < 0) ||
+    model.sides[0].volatiles.length > 0
+
+  const isCaptureTutorial = () => {
+    if (!env.init.isWild || !env.init.canCatch) return false
+    const hasBall = Object.entries(ctx.save.bag).some(([id, n]) => n > 0 && CONTENT.items[id]?.effect.kind === 'ball')
+    if (!hasBall) return false
+    const foe = model.sides[1].view
+    return foe?.speciesId === 'ernie-bot' || (ctx.save.stats.caught === 0 && !ctx.save.flags['ds:ernie'])
+  }
+
   function moveItems(cr: Creature): MoveItem[] {
     const foe = model.sides[1].view
     const foeTypes = foe ? CONTENT.species[foe.speciesId]?.types ?? [] : []
-    const seen = !BATTLE_UI.moves.hintRequiresSeen || (foe !== null && env.known.has(foe.speciesId))
+    const typeLesson = isTypeLesson()
+    const seen = typeLesson || !BATTLE_UI.moves.hintRequiresSeen || (foe !== null && env.known.has(foe.speciesId))
     const blocker = model.sides[0].volatiles.find((v) => CONTENT.volatileById[v]?.blocksStatusMoves)
+    const buffed = hasStatBuff()
+
+    const atkItems = cr.moves
+      .map((slot) => ({ slot, def: CONTENT.moves[slot.id] ?? null }))
+      .filter(({ def }) => def && def.category !== 'status')
+    const hasSuper = atkItems.some(({ def }) => foe && moveEffectiveness(def!, foeTypes) === 'super')
+    const allWeak = atkItems.length > 0 && atkItems.every(({ def }) => {
+      const eff = moveEffectiveness(def!, foeTypes)
+      return eff === 'weak' || eff === 'immune'
+    })
+    const neutralAtkSlots = atkItems
+      .filter(({ def }) => {
+        const eff = moveEffectiveness(def!, foeTypes)
+        return eff === 'normal' || eff === null
+      })
+      .sort((a, b) => (b.def?.power ?? 0) - (a.def?.power ?? 0))
+    const bestNeutralId = neutralAtkSlots[0]?.slot.id
+
     return cr.moves.map((slot) => {
       const def = CONTENT.moves[slot.id] ?? null
       const eff = def && foe ? moveEffectiveness(def, foeTypes) : null
+      const hint = eff === null ? null : seen ? eff : 'unknown'
+      const isSuper = typeLesson && hint === 'super'
+      const isStatusPulse = typeLesson && !hasSuper && !allWeak && !buffed && def?.category === 'status'
+      const isNeutralPulse = typeLesson && !hasSuper && !allWeak && slot.id === bestNeutralId
       return {
         def,
         label: def?.nameZh ?? slot.id,
         pp: slot.pp,
         ppMax: slot.ppMax,
         disabled: slot.pp <= 0 || !def || (blocker !== undefined && def.category === 'status'),
-        hint: eff === null ? null : seen ? eff : 'unknown',
+        hint,
+        pulse: isSuper || isStatusPulse || isNeutralPulse,
       }
     })
   }
@@ -108,7 +148,23 @@ export function createDecider(env: DecideEnv): Decider {
       view.setBarVisible(false)
       void ctx.screens.typeChart({ view: BATTLE_UI.moves.chart.view, ...(type ? { type } : {}) }).finally(() => view.setBarVisible(true))
     }
-    const i = await view.menus.openMoves(items, Math.min(lastMove, items.length - 1), openChart)
+    const typeLesson = isTypeLesson()
+    let initMoveIdx = Math.min(lastMove, items.length - 1)
+    if (typeLesson) {
+      const superIdx = items.findIndex((m) => m.hint === 'super' && !m.disabled)
+      const atkMoves = items
+        .map((m, idx) => ({ m, idx }))
+        .filter(({ m }) => m.def?.category !== 'status' && !m.disabled)
+      const allWeak = atkMoves.length > 0 && atkMoves.every(({ m }) => m.hint === 'weak' || m.hint === 'immune')
+      const neutralMoves = atkMoves.filter(({ m }) => m.hint === 'normal' || m.hint === 'unknown')
+      neutralMoves.sort((a, b) => (b.m.def?.power ?? 0) - (a.m.def?.power ?? 0))
+      const bestNeutralIdx = neutralMoves[0]?.idx ?? -1
+
+      if (superIdx >= 0) initMoveIdx = superIdx
+      else if (allWeak && atkMoves[0]) initMoveIdx = atkMoves[0].idx
+      else if (bestNeutralIdx >= 0) initMoveIdx = bestNeutralIdx
+    }
+    const i = await view.menus.openMoves(items, initMoveIdx, openChart, { chartPulse: typeLesson })
     if (i < 0) return null
     lastMove = i
     const it = items[i]
@@ -180,7 +236,6 @@ export function createDecider(env: DecideEnv): Decider {
       try {
         // The coach speaks when the command menu opens (one line per turn) and steps aside once a command is picked.
         const line = model.coach.shift()
-        const showCoach = () => view.setCoach(line ? { text: line.text, speaker: line.speaker, portraitUrl: line.portrait ? ctx.assets.portraitUrl(line.portrait) : null } : null)
         const loop = async (): Promise<BattleAction | null> => {
           for (;;) {
             if (cancelled || model.end) return null
@@ -188,8 +243,80 @@ export function createDecider(env: DecideEnv): Decider {
             if (!cr) return { kind: 'move', moveIndex: 0 }
             view.message.hold(t('battleui.prompt.command', { name: model.sides[0].view ? creatureName(model.sides[0].view) : creatureName(cr) }))
             const ids = pvp ? BATTLE_UI.commands.pvp : BATTLE_UI.commands.normal
-            showCoach()
-            const pulse = coachCommandPulse(model, env.init.coach, ctx.save.bag, ctx.data)
+
+            let activeCoach = line ? { text: line.text, speaker: line.speaker, portraitUrl: line.portrait ? ctx.assets.portraitUrl(line.portrait) : null } : null
+            const needsCouponGuide = Boolean(
+              (env.init.coach || model.boss) &&
+              (ctx.save.bag['off-peak-coupon'] ?? 0) > 0 &&
+              (model.boss?.meters['tide'] ?? 0) <= 0 &&
+              !ctx.save.flags['ds:done']
+            )
+            let pulse = coachCommandPulse(model, env.init.coach, ctx.save.bag, ctx.data)
+            if (!activeCoach && isTypeLesson()) {
+              const foe = model.sides[1].view
+              const foeName = foe ? creatureName(foe) : '对手'
+              const foeTypes = (foe ? CONTENT.species[foe.speciesId]?.types ?? [] : [])
+                .map((ty) => CONTENT.typeById[ty]?.nameZh ?? ty)
+                .join(' / ')
+              const moves = moveItems(cr)
+              const superMove = moves.find((m) => m.hint === 'super' && !m.disabled)
+              const atkMoves = moves.filter((m) => m.def?.category !== 'status' && !m.disabled)
+              const allWeak = atkMoves.length > 0 && atkMoves.every((m) => m.hint === 'weak' || m.hint === 'immune')
+              const neutralMoves = atkMoves.filter((m) => m.hint === 'normal' || m.hint === 'unknown')
+              neutralMoves.sort((a, b) => (b.def?.power ?? 0) - (a.def?.power ?? 0))
+              const bestNeutral = neutralMoves[0]
+              const statusMove = moves.find((m) => m.def?.category === 'status' && !m.disabled)
+              const buffed = hasStatBuff()
+
+              if (superMove) {
+                activeCoach = {
+                  speaker: '阿灵',
+                  portraitUrl: ctx.assets.portraitUrl('trainer_scientist'),
+                  text: `【第一课·属性克制】${foeName}是【${foeTypes}】！你的属性正好克制它，点击高亮「战斗」选标有【克制】的「${superMove.label}」，能打出 2 倍效果拔群！`,
+                }
+                pulse = 'fight'
+              } else if (allWeak) {
+                activeCoach = {
+                  speaker: '阿灵',
+                  portraitUrl: ctx.assets.portraitUrl('trainer_scientist'),
+                  text: `【第三课·属性抵抗】注意！${foeName}是【${foeTypes}】，抵抗你的招式（只有 0.5 倍微弱伤害，会刮痧）！遇到逆属性强攻很吃亏，实战中点【队伍】换队友！`,
+                }
+                pulse = 'fight'
+              } else {
+                activeCoach = {
+                  speaker: '阿灵',
+                  portraitUrl: ctx.assets.portraitUrl('trainer_scientist'),
+                  text: (!buffed && statusMove)
+                    ? `【第二课·常规与增益】${foeName}是【${foeTypes}】，双方无克制（1 倍标准伤害）。除了用「${bestNeutral?.label ?? '攻击招式'}」出招，也可以用增益招式「${statusMove.label}」强化自身！`
+                    : `【第二课·全力进攻】${foeName}是【${foeTypes}】，双方无克制（1 倍标准伤害）。选择威力最高的「${bestNeutral?.label ?? '攻击招式'}」全力进攻！`,
+                }
+                pulse = 'fight'
+              }
+            } else if (!activeCoach && isCaptureTutorial()) {
+              const foe = model.sides[1].view
+              const foeName = foe ? creatureName(foe) : '野生智灵'
+              activeCoach = {
+                speaker: '收服引导',
+                portraitUrl: ctx.assets.portraitUrl('creature:deepseek-r1'),
+                text: `${foeName}已经迫不及待加入队伍了！无需攻击，直接点击高亮的「背包」投出提示词球即可 100% 成功收服！`,
+              }
+              pulse = 'bag'
+              const bagIdx = ids.indexOf('bag')
+              if (bagIdx >= 0) lastCommand = bagIdx
+            } else if (needsCouponGuide) {
+              if (!activeCoach) {
+                activeCoach = {
+                  speaker: '小 R',
+                  portraitUrl: ctx.assets.portraitUrl('creature:deepseek-r1'),
+                  text: `现在是高峰期！点击高亮的「背包」使用【谷时半价券】，直接将她打入谷时半价！`,
+                }
+              }
+              pulse = 'bag'
+              const bagIdx = ids.indexOf('bag')
+              if (bagIdx >= 0) lastCommand = bagIdx
+            }
+
+            view.setCoach(activeCoach)
             const id = await view.menus.openCommands(ids.map((x) => ({ id: x, disabled: !enabled(x, req), pulse: x === pulse })), Math.min(lastCommand, ids.length - 1))
             view.setCoach(null)
             if (cancelled || model.end) return null

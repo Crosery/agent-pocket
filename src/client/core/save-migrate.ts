@@ -52,7 +52,7 @@ export function inferContentRev(raw: Obj, targetVer: number, targetRev: number):
     return Math.min(targetRev, hasRc5Fields ? 1 : 0)
   }
   if (ver === 2) return Math.min(targetRev, 2)
-  if (ver === targetVer) return hasSaveProgress(raw) ? Math.min(targetRev, Math.max(0, targetRev - 1)) : targetRev
+  if (ver === 3 && ver <= targetVer) return hasSaveProgress(raw) ? Math.min(targetRev, 3) : targetRev
   return targetRev
 }
 

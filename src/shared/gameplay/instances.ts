@@ -4,11 +4,11 @@ import type { BattleSummary, InstanceDef, InstanceDefaults, InstanceLossHint, In
 import { CONTENT, type Content } from '../content/index.ts'
 import { GAMEPLAY } from './data.ts'
 /**
- * Returns the 8 actual multi-room dungeons (excluding scripted drills like `deepseek-drill`).
+ * Returns configured multi-room dungeons; scripted drills have no room graph.
  */
 export function getActualDungeons(): Array<[string, (typeof GAMEPLAY.instances)[string]]> {
   return Object.entries(GAMEPLAY.instances).filter(
-    ([id, inst]) => id !== 'deepseek-drill' && Boolean(inst.rooms && Object.keys(inst.rooms).length >= 2),
+    ([, inst]) => Boolean(inst.rooms && Object.keys(inst.rooms).length >= 2),
   )
 }
 

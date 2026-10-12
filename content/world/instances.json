@@ -456,7 +456,7 @@
           "capture": {"first": 0, "perfectIvs": 0, "ivMin": 0, "firstGradeFloor": "C", "firstAbility": "slot0", "ability": {"slot0": 1}},
           "reward": {"money": 0},
           "firstReward": {"items": {}},
-          "repeat": {"expMul": 1, "money": 0, "capture": false}
+          "repeat": {"expMul": 0.1, "money": 0, "capture": false}
         }
       }
     }

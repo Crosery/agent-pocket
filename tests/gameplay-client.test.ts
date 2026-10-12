@@ -32,6 +32,7 @@ function fakeCtx() {
     ui: { async say() {}, async choose() { return 0 }, toast(text: string) { toasts.push(text) }, async fade() {} },
     audio: { playSfx() {}, playCry() {}, playBgm() {} },
     events: { emit(name: string) { events.push(name) } },
+    net: { status: 'offline' },
   }
   return { ctx: ctx as unknown as GameContext, toasts, events }
 }

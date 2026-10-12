@@ -191,8 +191,9 @@ export function createHub(opts: HubOptions): Hub {
 
   const errorMsg = (code: string): ServerMsg => ({ t: 'error', code, message: t(`net.error.${code}`) })
 
-  const isBusy = (c: Conn) => c.clientBusy || c.pvpBusy || c.dungeonBusy || c.tradeId !== null
-
+  let authorityRef: AuthorityService | null = null
+  const isBusy = (c: Conn) =>
+    c.clientBusy || c.pvpBusy || c.dungeonBusy || c.tradeId !== null || Boolean(c.id && authorityRef?.isInBattle(c.id))
   const inRange = (a: Player, b: Player, range: number | null): boolean =>
     range === null || (a.state.map === b.state.map && Math.hypot(a.state.x - b.state.x, a.state.y - b.state.y) <= range)
 
@@ -232,7 +233,7 @@ export function createHub(opts: HubOptions): Hub {
     world: opts.world?.world ?? null,
     log,
   })
-
+  authorityRef = authority
   const chat = createChat(core)
   const trades = createTrades({
     core,
@@ -244,7 +245,6 @@ export function createHub(opts: HubOptions): Hub {
   })
   const dungeons = createDungeonServer({
     core,
-    store: opts.store,
     authority,
     lookupPlayer: (id) => registry.get(id) ?? null,
     log,

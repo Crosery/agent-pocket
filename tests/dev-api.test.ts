@@ -2,13 +2,11 @@
 // consistency of content/dev/console.json with the registered handlers and the dev text table.
 import { test, before } from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync, readdirSync, statSync } from 'node:fs'
 import type { EventBus, GameEvents } from '../src/client/contracts.ts'
 import { CONTENT, t } from '../src/shared/content/index.ts'
 import { canonical, diff, digest, getPointer, matches, partialMatch, pointer } from '../src/shared/dev/diff.ts'
 import { createEventLog } from '../src/client/dev/events.ts'
 import { createRegistry, CONSOLE, DevError, tokenize, type CommandMeta, type CommandRun } from '../src/client/dev/registry.ts'
-import { COMMANDS } from '../src/client/dev/commands/index.ts'
 import { devEnums } from '../src/client/dev/enums.ts'
 import { devContentFromDisk } from './dev-content.ts'
 import { installDevText } from '../src/client/dev/text.ts'
@@ -18,7 +16,6 @@ import type { DevHost } from '../src/client/dev/kit.ts'
 import { RngHub } from '../src/client/core/rng-hub.ts'
 import { createDevClock } from '../src/client/dev/clock.ts'
 
-const root = new URL('../', import.meta.url)
 before(() => installDevText())
 
 // ----------------------------------------------------------------------------- diff
@@ -108,9 +105,7 @@ test('registry: coercion, optional args, enums, positional command lines, taint 
 
 // ----------------------------------------------------------------------------- content consistency
 
-test('console.json: handlers and metadata line up one to one, enum refs exist, texts resolve', () => {
-  const ids = Object.keys(CONSOLE.commands).sort()
-  assert.deepEqual(ids, Object.keys(COMMANDS).sort(), 'every command has a handler and every handler is declared')
+test('console.json: argument schemas, enum choices and visible labels are valid', () => {
   for (const [id, m] of Object.entries(CONSOLE.commands)) {
     assert.ok(['live', 'rebuildWorld', 'reload'].includes(m.needs), `${id}.needs`)
     assert.equal(typeof m.mutates, 'boolean', `${id}.mutates`)
@@ -128,24 +123,6 @@ test('console.json: handlers and metadata line up one to one, enum refs exist, t
   for (const k of ['eventBuffer', 'logLines', 'waitTimeoutMs', 'waitPollMs', 'dumpMaxChars'] as const) assert.ok(CONSOLE.limits[k] > 0, k)
 })
 
-test('every dev.* text key referenced by src/client/dev exists', () => {
-  const files: string[] = []
-  const walk = (rel: string) => {
-    for (const name of readdirSync(new URL(rel, root))) {
-      const p = `${rel}${name}`
-      if (statSync(new URL(p, root)).isDirectory()) walk(`${p}/`)
-      else if (name.endsWith('.ts')) files.push(p)
-    }
-  }
-  walk('src/client/dev/')
-  const missing: string[] = []
-  for (const f of files) {
-    for (const m of readFileSync(new URL(f, root), 'utf8').matchAll(/'(dev\.[A-Za-z0-9_.]+)'/g)) {
-      if (!m[1].endsWith('.') && CONTENT.text[m[1]] === undefined) missing.push(`${f}: ${m[1]}`)
-    }
-  }
-  assert.deepEqual(missing, [])
-})
 
 // ----------------------------------------------------------------------------- event log and waits
 

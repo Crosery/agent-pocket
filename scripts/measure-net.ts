@@ -1,12 +1,12 @@
 // Deterministic network measurement script (#23):
 // 1. Quantifies before/after bytes per player per second (legacy verbose vs Issue #23 compact delta frames).
-// 2. Simulates 150ms RTT and 2% packet-loss stalls over lagproxy, verifying local prediction + smooth correction
-//    and remote player jitter-buffered interpolation with zero snapping.
+// 2. Simulates 150ms RTT and 2% packet-loss stalls over lagproxy, verifying local prediction, authoritative
+//    smooth reconciliation, and bounded remote player jitter-buffered interpolation.
 //
 // Usage:
 //   node scripts/measure-net.ts [--seconds 4] [--players 12] [--json]
+import { randomBytes } from 'node:crypto'
 import { mkdtemp, rm } from 'node:fs/promises'
-import { request } from 'node:http'
 import { tmpdir } from 'node:os'
 import { join as pathJoin } from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
@@ -14,7 +14,6 @@ import { startServer, type RunningServer } from '../src/server/index.ts'
 import { NET } from '../src/server/config.ts'
 import { signEnvelopeNode } from '../src/server/net-envelope.ts'
 import type { WorldInfo } from '../src/server/world.ts'
-import { isRecord } from '../src/server/util.ts'
 import { createSaveManager } from '../src/client/core/save.ts'
 import { createNetClient, type NetClientExt } from '../src/client/net/index.ts'
 import type { EventBus, GameEvents } from '../src/client/contracts.ts'
@@ -48,45 +47,9 @@ const emptyProfile = (name: string): PublicProfile => ({
   id: 'x', name, avatar: 'char_red', badges: [], dexCaught: 5, party: [], pvpWins: 0, pvpLosses: 0, playTimeSec: 0,
 })
 
-function httpPostJson(
-  port: number,
-  path: string,
-  body: unknown,
-  opts: { cookie?: string; host?: string } = {},
-): Promise<{ status: number; json: Record<string, unknown>; cookie: string | null }> {
-  const host = opts.host ?? '127.0.0.1'
-  const payload = JSON.stringify(body)
-  const headers: Record<string, string> = {
-    'content-type': 'application/json',
-    origin: `http://${host}:${port}`,
-    'sec-fetch-site': 'same-origin',
-    ...(opts.cookie ? { cookie: opts.cookie } : {}),
-  }
-  return new Promise((resolve, reject) => {
-    const req = request({ host, port, path, method: 'POST', headers }, (res) => {
-      const chunks: Buffer[] = []
-      res.on('data', (d: Buffer) => chunks.push(d))
-      res.on('end', () => {
-        let json: Record<string, unknown> = {}
-        try {
-          const parsed: unknown = JSON.parse(Buffer.concat(chunks).toString('utf8'))
-          if (isRecord(parsed)) json = parsed
-        } catch { /* ignore */ }
-        const rawSetCookie = res.headers['set-cookie']
-        const first = Array.isArray(rawSetCookie) ? rawSetCookie[0] ?? null : (rawSetCookie ?? null)
-        const cookie = first ? first.split(';')[0]?.trim() ?? null : null
-        resolve({ status: res.statusCode ?? 0, json, cookie })
-      })
-    })
-    req.on('error', reject)
-    req.write(payload)
-    req.end()
-  })
-}
-
 let benchAccountSeq = 0
 
-async function registerBenchAccount(
+async function seedBenchAccount(
   server: RunningServer,
   name: string,
   map: string,
@@ -95,29 +58,32 @@ async function registerBenchAccount(
 ): Promise<{ accountId: string; cookie: string }> {
   const seq = ++benchAccountSeq
   const username = `${name.replace(/[^A-Za-z0-9_-]/g, '').slice(0, 8) || 'Bot'}_${seq}`
-  const password = 'StrongPass#123'
-  let accountId = ''
-  let cookie = ''
+  // High-entropy runtime password satisfying net.auth complexity rules, never emitted or logged
+  const runtimePassword = `Sec#${randomBytes(16).toString('hex')}!`
 
-  const regHttp = await httpPostJson(server.port, NET.http.registerPath, { username, password })
-  if (regHttp.status === 200 && regHttp.cookie && isRecord(regHttp.json.account) && typeof regHttp.json.account.id === 'string') {
-    accountId = regHttp.json.account.id
-    cookie = regHttp.cookie
-  } else {
-    const regStore = await server.store.registerAccount(username, password, { ip: `10.200.${(seq >> 8) & 255}.${seq & 255}` })
-    if (!regStore.ok) throw new Error(`Failed to register benchmark account ${username}: ${regStore.message}`)
-    accountId = regStore.account.id
-    cookie = `${NET.auth.cookieName}=${regStore.session.token}`
+  // Explicit fixture-seeding via existing in-process store.
+  // Note: this is NOT an auth bypass — each WebSocket connection still undergoes real session validation,
+  // receives a real session cookie, and signs all frames via HMAC-SHA256 envelopes.
+  // Using distinct synthetic IPs per fixture account prevents hitting the production 5/min registration limit.
+  const regStore = await server.store.registerAccount(username, runtimePassword, {
+    ip: `10.200.${(seq >> 8) & 255}.${seq & 255}`,
+  })
+  if (!regStore.ok) {
+    throw new Error(`Failed to fixture-seed benchmark account ${username}: ${regStore.message}`)
   }
+  const accountId = regStore.account.id
+  const cookie = `${NET.auth.cookieName}=${regStore.session.token}`
 
+  // Create valid initial character save and bind it to the account in-process
   const mgr = createSaveManager({ world: null, storage: null })
   const playable = CONTENT.characters.find((c) => c.playable)?.id ?? CONTENT.characters[0]?.id ?? ''
   const baseSave = mgr.newGame({ name, avatar: playable })
-  const bindHttp = await httpPostJson(server.port, NET.http.bindPath, { save: baseSave, imported: false }, { cookie })
-  if (bindHttp.status !== 200) {
-    throw new Error(`Failed to bind benchmark account ${username}: ${bindHttp.status}`)
+  const bindRes = server.store.bindSave(accountId, baseSave, { imported: false })
+  if (!bindRes.ok) {
+    throw new Error(`Failed to bind fixture save for ${username}: ${bindRes.code}`)
   }
 
+  // Authoritatively set spawn position on the server
   const current = server.store.getSave(accountId) ?? baseSave
   server.authority.setSave(accountId, {
     ...current,
@@ -130,6 +96,9 @@ async function registerBenchAccount(
   return { accountId, cookie }
 }
 
+const registerBenchAccount = seedBenchAccount
+
+
 async function runBandwidthBenchmark(compact: boolean, playersCount: number, durationSec: number): Promise<{
   upBpsPerPlayer: number
   downBpsPerPlayer: number
@@ -140,12 +109,18 @@ async function runBandwidthBenchmark(compact: boolean, playersCount: number, dur
   totalTxMsgs: number
   clientTxBytes: number
   clientRxBytes: number
+  movesAccepted: number
+  movesRejected: number
+  movementAcksReceived: boolean
+  minAckSeq: number
+  maxAckSeq: number
 }> {
   const dir = await mkdtemp(pathJoin(tmpdir(), `ap-bench-${compact ? 'compact' : 'legacy'}-`))
   const server = await startServer({ port: 0, dataDir: dir, distDir: pathJoin(dir, 'nd'), quiet: true, pvp: null, world: null })
   const world = buildWorld()
   const anchor = worldAnchors(world)['town:origin'] ?? { map: 'town:origin', x: 20, y: 20 }
   const clients: NetClientExt[] = []
+  const clientErrors: { name: string; error: unknown }[] = []
 
   try {
     const wsUrlV4 = `ws://127.0.0.1:${server.port}${netJson.protocol.wsPath}`
@@ -154,7 +129,7 @@ async function runBandwidthBenchmark(compact: boolean, playersCount: number, dur
     for (let i = 0; i < playersCount; i++) {
       const name = `Bot${i}`
       const pose = peerAt(FAKE, i % 4, 0, anchor)
-      const acct = await registerBenchAccount(server, name, anchor.map, pose.x, pose.y)
+      const acct = await seedBenchAccount(server, name, anchor.map, pose.x, pose.y)
       const bus = makeBus()
       const useIpv6 = i % 2 === 1
       const origin = useIpv6 ? `http://[::1]:${server.port}` : `http://127.0.0.1:${server.port}`
@@ -187,6 +162,7 @@ async function runBandwidthBenchmark(compact: boolean, playersCount: number, dur
             : {}),
         },
       )
+      client.on('error', (err) => clientErrors.push({ name, error: err }))
       clients.push(client)
       client.connect()
       await sleep(20)
@@ -242,6 +218,9 @@ async function runBandwidthBenchmark(compact: boolean, playersCount: number, dur
     const c1 = clients.map((c) => ({ rx: c.stats.rxBytes, tx: c.stats.txBytes }))
     const elapsedSec = (tMeasureEnd - tMeasureStart) / 1000
 
+    if (clientErrors.length > 0) {
+      throw new Error(`Client errors occurred during benchmark: ${JSON.stringify(clientErrors)}`)
+    }
     const rxBytes = Math.max(0, m1.rxBytes - m0.rxBytes)
     const txBytes = Math.max(0, m1.txBytes - m0.txBytes)
     const rxMsgs = Math.max(0, m1.rxMsgs - m0.rxMsgs)
@@ -250,6 +229,12 @@ async function runBandwidthBenchmark(compact: boolean, playersCount: number, dur
     const clientRxBytes = c1.reduce((acc, cur, idx) => acc + Math.max(0, cur.rx - c0[idx].rx), 0)
     const upBpsPerPlayer = Math.round(rxBytes / elapsedSec / playersCount)
     const downBpsPerPlayer = Math.round(txBytes / elapsedSec / playersCount)
+
+    const movesAccepted = Math.max(0, m1.movesAccepted - m0.movesAccepted)
+    const movesRejected = Math.max(0, m1.movesRejected - m0.movesRejected)
+    const minAckSeq = Math.min(...clients.map((c) => c.predictor.lastAckSeq))
+    const maxAckSeq = Math.max(...clients.map((c) => c.predictor.lastAckSeq))
+    const movementAcksReceived = clients.every((c) => c.predictor.lastAckSeq > 0)
 
     return {
       upBpsPerPlayer,
@@ -261,6 +246,11 @@ async function runBandwidthBenchmark(compact: boolean, playersCount: number, dur
       totalTxMsgs: txMsgs,
       clientTxBytes,
       clientRxBytes,
+      movesAccepted,
+      movesRejected,
+      movementAcksReceived,
+      minAckSeq,
+      maxAckSeq,
     }
   } finally {
     for (const c of clients) c.disconnect()
@@ -296,8 +286,8 @@ async function runWeakNetworkSimulation(): Promise<{
   })
 
   const origin = `http://127.0.0.1:${server.port}`
-  const acctA = await registerBenchAccount(server, 'LocalA', 'sim_map', 18, 10)
-  const acctB = await registerBenchAccount(server, 'RemoteB', 'sim_map', 12, 10)
+  const acctA = await seedBenchAccount(server, 'LocalA', 'sim_map', 18, 10)
+  const acctB = await seedBenchAccount(server, 'RemoteB', 'sim_map', 12, 10)
 
   const busA = makeBus(), busB = makeBus()
   let correctedState: { snapped: boolean; durationMs: number } | null = null
@@ -455,6 +445,23 @@ async function main(): Promise<void> {
       players,
       durationSec: seconds,
       authenticatedAndSigned: true,
+      accountProvisioning: {
+        method: 'in_process_store_fixture_seeding',
+        note: 'Explicit in-process store registration and save binding avoiding 5/min HTTP registration rate limit; WS session cookie and HMAC-SHA256 signature strictly validated',
+      },
+      movementValidation: {
+        allMovementAcksReceived: legacy.movementAcksReceived && compact.movementAcksReceived,
+        legacyMovesAccepted: legacy.movesAccepted,
+        compactMovesAccepted: compact.movesAccepted,
+        legacyMovesRejected: legacy.movesRejected,
+        compactMovesRejected: compact.movesRejected,
+        minAckSeq: Math.min(legacy.minAckSeq, compact.minAckSeq),
+        maxAckSeq: Math.max(legacy.maxAckSeq, compact.maxAckSeq),
+      },
+      illustrativeFramePayload: {
+        note: 'Illustrative single-frame wire payload sizes (static comparison), not measured runtime throughput',
+        ...frameSample,
+      },
       frameSample,
       legacy: {
         upBpsPerPlayer: legacy.upBpsPerPlayer,
@@ -485,7 +492,26 @@ async function main(): Promise<void> {
       },
     },
     weakNetworkSimulation: {
-      link: { rttMs: 150, jitterMs: 10, lossRatePercent: 2 },
+      model: {
+        rttMs: 150,
+        jitterMs: 10,
+        lossRatePercent: 2,
+        stallMechanism: 'tcp_retransmission_head_of_line_delay',
+      },
+      observedMetrics: {
+        localInputLatencyMs: weakSim.predictionLatencyMs,
+        authoritativeCorrectionDurationMs: weakSim.correctionDurationMs,
+        authoritativeCorrectionSnapped: weakSim.correctionSnapped,
+        maxRemoteStepDiscontinuityTiles: weakSim.maxRemoteStepDiscontinuity,
+        rttP50Ms: weakSim.measuredRttP50,
+        rttP95Ms: weakSim.measuredRttP95,
+        jitterMs: weakSim.jitterMs,
+        stallsObserved: weakSim.stallsObserved,
+      },
+      configuredThresholds: {
+        snapDistanceTiles: netJson.client.snapDistanceTiles,
+        correctionWindowMs: netJson.client.correctionMs,
+      },
       localInputLatencyMs: weakSim.predictionLatencyMs,
       correctionDurationMs: weakSim.correctionDurationMs,
       correctionSnapped: weakSim.correctionSnapped,
@@ -494,7 +520,6 @@ async function main(): Promise<void> {
       rttP95Ms: weakSim.measuredRttP95,
       jitterMs: weakSim.jitterMs,
       stallsObserved: weakSim.stallsObserved,
-      zeroSnappingVerified: weakSim.maxRemoteStepDiscontinuity <= netJson.client.snapDistanceTiles,
     },
   }
 
@@ -504,7 +529,8 @@ async function main(): Promise<void> {
   }
 
   console.log(`\n### 1. 协议带宽对比（实测数据：N=${players} 玩家，已鉴权 + HMAC-SHA256 逐帧签名，同屏移动）\n`)
-  console.log(`- 单帧移动载荷对比：未签名全量 ${frameSample.unsignedVerboseBytes} B -> 未签名紧凑 ${frameSample.unsignedCompactBytes} B；含 HMAC 签名（开销 +${frameSample.signatureOverheadBytes} B/帧）全量 ${frameSample.signedVerboseBytes} B -> 紧凑 ${frameSample.signedCompactBytes} B\n`)
+  console.log(`- 账号供给方式：基于进程内 Store 显式固件注资（in_process_store_fixture_seeding，避开 5/min HTTP 注册限频；全部 WebSocket 会话 Cookie 与逐帧签名均真实校验）`)
+  console.log(`- 单帧移动载荷样本（静态编码对比，非实测吞吐量）：未签名全量 ${frameSample.unsignedVerboseBytes} B -> 未签名紧凑 ${frameSample.unsignedCompactBytes} B；含 HMAC 签名（开销 +${frameSample.signatureOverheadBytes} B/帧）全量 ${frameSample.signedVerboseBytes} B -> 紧凑 ${frameSample.signedCompactBytes} B\n`)
   console.log('| 协议版本 | 上行 / 玩家 | 下行 / 玩家 | 合计 / 玩家 | 变化比例 |')
   console.log('|---|---|---|---|---|')
   console.log(`| 改动前（全量 JSON + 签名） | ${legacy.upBpsPerPlayer} B/s | ${legacy.downBpsPerPlayer} B/s | ${legacy.totalBpsPerPlayer} B/s | 基线 |`)
@@ -512,9 +538,9 @@ async function main(): Promise<void> {
 
   console.log('\n### 2. 弱网模拟（150ms RTT、±10ms 抖动、2% 丢包 / TCP 队头阻塞）\n')
   console.log(`- 本地输入立即生效延迟：${weakSim.predictionLatencyMs} ms（零等待）`)
-  console.log(`- 服务端校正平滑过渡耗时：${weakSim.correctionDurationMs} ms（snapped=${weakSim.correctionSnapped}）`)
-  console.log(`- 远端角色插值最大帧步进：${weakSim.maxRemoteStepDiscontinuity} 格（低于瞬移阈值 ${netJson.client.snapDistanceTiles} 格，平滑无跳变）`)
-  console.log(`- 实测 RTT 中位数：${weakSim.measuredRttP50} ms，p95：${weakSim.measuredRttP95} ms，抖动：${weakSim.jitterMs} ms`)
+  console.log(`- 服务端权威校正过渡耗时：${weakSim.correctionDurationMs} ms（snapped=${weakSim.correctionSnapped}，平滑拉回）`)
+  console.log(`- 远端角色插值最大帧步进：${weakSim.maxRemoteStepDiscontinuity} 格（配置瞬移阈值：${netJson.client.snapDistanceTiles} 格，实测位移平滑有界）`)
+  console.log(`- 实测 RTT 中位数：${weakSim.measuredRttP50} ms，p95：${weakSim.measuredRttP95} ms，抖动：${weakSim.jitterMs} ms，观测停顿：${weakSim.stallsObserved} 次`)
 }
 
 main().catch((err) => {

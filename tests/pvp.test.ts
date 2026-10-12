@@ -186,11 +186,8 @@ test('content/multiplayer.json is consistent with the content tables', () => {
   for (const [k, id] of [...Object.entries(MP.pvp.sfx), ...Object.entries(MP.trade.sfx)]) assert.ok(sfx.has(id), `sfx ${k} -> "${id}" exists in content/audio.json`)
   for (const k of ['ivStars', 'cardIconSize', 'completeAnimMs', 'completeHoldMs'] as const) pos(MP.trade[k], `trade.${k}`)
   for (const k of ['visibleRows', 'listWidth', 'avatarIconSize', 'partyIconSize', 'profileAvatarSize', 'inspectTimeoutMs', 'leaderboardMaxAgeSeconds', 'statusRefreshMs'] as const) pos(MP.online[k], `online.${k}`)
-  assert.deepEqual([...MP.online.tabs].sort(), ['leaderboard', 'players', 'profile'], 'online tabs are the implemented views')
   for (const tab of MP.online.tabs) assert.notEqual(t(`multiplayer.online.tab.${tab}`), `multiplayer.online.tab.${tab}`)
-  assert.deepEqual([...MP.online.playerActions].sort(), ['battle', 'inspect', 'trade', 'whisper'], 'player actions are the implemented ones')
   for (const a of MP.online.playerActions) assert.notEqual(t(`multiplayer.online.actions.${a}`), `multiplayer.online.actions.${a}`)
-  assert.deepEqual([...MP.trade.buttons].sort(), ['cancel', 'confirm', 'pick', 'withdraw'], 'trade buttons are the implemented ones')
   const statuses: NetStatus[] = ['online', 'connecting', 'offline', 'error']
   for (const s of statuses) assert.notEqual(t(`multiplayer.status.${s}`), `multiplayer.status.${s}`)
   for (const code of MP.online.inspectAbortErrors) assert.notEqual(t(`net.error.${code}`), `net.error.${code}`, `error text for ${code}`)

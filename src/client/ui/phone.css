@@ -97,3 +97,36 @@ html[data-touch-controls='on'] .ap-l-tips:not(.is-battle) .ap-tip:not(.is-inline
 html[data-touch-controls='on'] .ap-l-tips:not(.is-battle) .ap-tip:not(.is-inline) .ap-tip-foot-text { display: none; }
 html[data-touch-controls='on'] .ap-l-tips:not(.is-battle) .ap-tip:not(.is-inline) .ap-tip-title { min-height: 44px; }
 html[data-touch-controls='on'] .ap-l-tips:not(.is-battle) .ap-tip:not(.is-inline) .ap-tip-title-text { margin-right: calc(var(--u) * 52); }
+
+/* ------------------------------------------------------------------ in-world touch interaction prompt */
+html[data-touch-controls='on'] .ap-interact-prompt {
+  min-height: 44px;
+  padding: calc(var(--u) * 4) calc(var(--u) * 9);
+  font-size: calc(var(--u) * 11);
+  line-height: calc(var(--u) * 16);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+html[data-touch-controls='on'] .ap-interact-prompt:active {
+  transform: translate(-50%, calc(-100% - var(--u) * 4)) scale(0.96);
+  border-color: var(--ap-gold-hi);
+}
+html[data-touch-controls='on'] .ap-interact-key kbd {
+  display: none;
+}
+html[data-touch-controls='on'] .ap-interact-prompt::before {
+  content: '👆';
+  margin-right: calc(var(--u) * 2);
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+/* Mobile portrait battle coach & move controls */
+html.ap-portrait .apb-coach {
+  font-size: calc(var(--u) * 9.5);
+  padding: calc(var(--u) * 2) calc(var(--u) * 4);
+  touch-action: manipulation;
+}
+html.ap-portrait .apb-coach:active {
+  opacity: 0.85;
+}

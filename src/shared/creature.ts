@@ -145,11 +145,8 @@ function applyLevelUps(cr: Creature, levelCap: number, c: Content): { levels: nu
   const sp = speciesOf(cr.speciesId, c)
   const cap = Math.min(levelCap, c.config.party.maxLevel)
   while (cr.level < cap && cr.exp >= expForLevel(sp.growth, cr.level + 1, c)) {
-    const before = maxHp(cr, c)
     cr.level += 1
     res.levels.push(cr.level)
-    const after = maxHp(cr, c)
-    if (cr.hp > 0) cr.hp = Math.min(after, cr.hp + after - before)
     cr.friendship = Math.min(RULES.creature.friendshipMax, cr.friendship + c.config.creature.levelUpFriendship)
     for (const e of sp.learnset) {
       if (e.level !== cr.level || !c.moves[e.move]) continue
@@ -159,6 +156,7 @@ function applyLevelUps(cr: Creature, levelCap: number, c: Content): { levels: nu
         res.learned.push(e.move)
       } else res.learnable.push(e.move)
     }
+    healFull(cr, c)
   }
   return res
 }

@@ -1,13 +1,14 @@
 // Server-side cryptographic save signing (HMAC-SHA256) and untrusted offline import isolation.
 // Server saves are signed with a server-only secret key and verified on every load; tampered saves are
-// rejected and audited. Offline/portable saves cannot prove anti-cheat (client holds the code), so any
-// accepted legacy import is sanitized, stripped of forged online-valuable resources, and marked untrusted.
+// rejected and audited. Offline/portable checksums cannot prove trusted origin; validated imported progress
+// is preserved in an account isolated from competitive and shared-reward features.
 import { createHmac, randomBytes } from 'node:crypto'
 import type { Creature, SaveData, World } from '../shared/types.ts'
 import { CONTENT, t } from '../shared/content/index.ts'
-import { expForLevel, maxHp, sanitizeCreature } from '../shared/creature.ts'
+import { sanitizeCreature } from '../shared/creature.ts'
 import { canonicalJson, timingSafeEqualStr } from '../shared/net-envelope.ts'
 import { verifyLocalSlotText, verifyPortableSave } from '../shared/save-provenance.ts'
+import { rekeyImportedSaveCreatures } from './accounts.ts'
 import { decodeSaveCode } from '../client/core/save-codec.ts'
 import { migrateSave } from '../client/core/save-migrate.ts'
 import { sanitizeSaveData } from '../client/core/save-sanitize.ts'
@@ -24,8 +25,6 @@ export interface SignedServerSave {
   sig: string
 }
 
-const IMPORT_ITEM_STACK_CAP = 10
-const IMPORT_BASE_LEVEL_CAP = 20
 
 let ephemeralProcessSecret: string | null = null
 
@@ -150,32 +149,16 @@ function detectRawSaveTampering(raw: Record<string, unknown>): string | null {
   return null
 }
 
-function clampImportedCreature(cr: Creature, levelCap: number, now: number): { creature: Creature; clamped: boolean } {
-  let clamped = false
-  const out = structuredClone(cr)
-  if (out.level > levelCap) {
-    out.level = levelCap
-    const sp = CONTENT.species[out.speciesId]
-    const growth = sp?.growth ?? Object.keys(CONTENT.config.growth)[0]
-    out.exp = expForLevel(growth, levelCap, CONTENT)
-    out.hp = Math.min(out.hp, maxHp(out, CONTENT))
-    clamped = true
-  }
-  if (out.heldItem && !CONTENT.items[out.heldItem]?.buyable) {
-    delete out.heldItem
-    clamped = true
-  }
-  out.origin = { kind: 'legacy', at: now }
-  return { creature: out, clamped }
+function markImportedCreature(cr: Creature, now: number): void {
+  const boss = cr.origin?.boss ?? CONTENT.bossBySpecies[cr.speciesId]?.id
+  cr.origin = { kind: 'legacy', at: now, ...(boss ? { boss } : {}) }
 }
 
 /**
  * Validates and isolates an untrusted offline/imported save before it can be bound to an online account:
- * - Verifies portable save code checksum/HMAC or local slot HMAC if provided; rejects tampered inputs.
- * - Rejects raw saves with tampered out-of-bounds money, items, levels, or IVs.
- * - Sanitizes and strips online-authoritative resources (caps money & bag stacks, strips unbuyable items,
- *   clamps creature levels, marks creatures `origin: { kind: 'legacy' }` so they cannot be traded to other accounts,
- *   and zeroes online PvP/trade/distance leaderboard counters).
+ * - Verifies portable/local checksums if provided; they detect damage, not trusted provenance.
+ * - Rejects malformed raw values, then applies normal save sanitation.
+ * - Preserves gameplay progress, marks legacy origins and clears competitive records.
  */
 export function isolateUntrustedSave(rawInput: unknown, opts: IsolateSaveOptions): IsolateSaveResult {
   const now = opts.now ?? Date.now()
@@ -235,44 +218,10 @@ export function isolateUntrustedSave(rawInput: unknown, opts: IsolateSaveOptions
   sanitized.stats.pvpWins = 0
   sanitized.stats.pvpLosses = 0
   sanitized.stats.trades = 0
-  sanitized.maxDistance = 0
-
-  const maxStartMoney = CONTENT.config.economy.startMoney
-  if (sanitized.money > maxStartMoney) {
-    sanitized.money = maxStartMoney
-    stripped.push('money_capped')
-  }
-
-  const startItems = CONTENT.config.economy.startItems
-  for (const [itemId, qty] of Object.entries(sanitized.bag)) {
-    const def = CONTENT.items[itemId]
-    const allowedStart = startItems[itemId] ?? 0
-    if (!def || (!def.buyable && allowedStart <= 0)) {
-      delete sanitized.bag[itemId]
-      stripped.push(`bag_removed:${itemId}`)
-      continue
-    }
-    const cap = Math.max(IMPORT_ITEM_STACK_CAP, allowedStart)
-    if (qty > cap) {
-      sanitized.bag[itemId] = cap
-      stripped.push(`bag_capped:${itemId}`)
-    }
-  }
-
-  const levelCap = Math.min(CONTENT.config.party.maxLevel, IMPORT_BASE_LEVEL_CAP)
-  sanitized.party = sanitized.party.map((cr) => {
-    const res = clampImportedCreature(cr, levelCap, now)
-    if (res.clamped) stripped.push(`party_clamped:${cr.uid}`)
-    return res.creature
-  })
-  sanitized.boxes = sanitized.boxes.map((box) =>
-    box.map((cr) => {
-      const res = clampImportedCreature(cr, levelCap, now)
-      if (res.clamped) stripped.push(`box_clamped:${cr.uid}`)
-      return res.creature
-    }),
-  )
+  delete sanitized.maxDistance
+  rekeyImportedSaveCreatures(sanitized, opts.accountId)
+  for (const cr of sanitized.party) markImportedCreature(cr, now)
+  for (const box of sanitized.boxes) for (const cr of box) markImportedCreature(cr, now)
   sanitized.flags['auth:untrustedImport'] = true
-
   return { ok: true, save: sanitized, stripped }
 }

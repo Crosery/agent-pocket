@@ -111,7 +111,7 @@ export const battleCommands: Record<string, CommandRun> = {
      return { id: found.id }
    },
   'dungeon.open': async (host, a) => {
-    const id = String(a.id ?? 'deepseek-tide')
+    const id = String(a.id)
     // Dungeon screens are browser-only; keep the Node command registry loadable without CSS.
     const { openDungeonModal } = await import('../../net/coop-channel.ts')
     openDungeonModal(host.ctx, id)
@@ -121,7 +121,8 @@ export const battleCommands: Record<string, CommandRun> = {
     // The active channel is installed with browser-only dungeon screens.
     const { getCoopChannel } = await import('../../net/coop-channel.ts')
     const channel = getCoopChannel()
-    if (channel) channel.createParty()
+    if (!channel || host.ctx.net.status !== 'online') throw new DevError('dev.err.coopOffline')
+    channel.createParty()
     return { result: 'ok' }
   },
   /** A signed boss card at `level` with `bank` levels of exp banked (party or the first box when full). */

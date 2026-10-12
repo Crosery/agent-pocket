@@ -56,7 +56,7 @@ test('research: nothing waiting at the start, a dot once the level reward is cla
   assert.equal(attentionTotal(counts), 1)
   assert.deepEqual(entrySources(counts, 'research').map((s) => s.id), ['research'])
   assert.deepEqual(entrySources(counts, 'dex'), [], 'only the research row wears the dot')
-  const ctx = { save, ui: { toast() {} }, events: { emit() {} }, data: { ...CONTENT, world: buildWorld() } } as unknown as GameContext
+  const ctx = { save, net: { status: 'offline' }, ui: { toast() {} }, events: { emit() {} }, data: { ...CONTENT, world: buildWorld() } } as unknown as GameContext
   assert.ok(claimResearchRewards(ctx))
   assert.equal(attentionTotal(attentionCounts(save)), 0, 'the dot goes away as soon as the reward is claimed')
 })

@@ -78,6 +78,8 @@ step carry resolved species ids.
 | `triggers.json` | `TriggerSpec[]` (`on` in `TRIGGER_EVENTS`: `dex:caught`, `map:entered`, `region:entered`, `quest:updated`, `battle:end`, `badge:earned`, `save:loaded`, `content:updated`) |
 | `migrations.json` | `contentRev`, `mainStage`, `noticeFlags`, `questBaseline`, sequential `revisions[]` (`questChanges[]` + declarative `steps[]`), and `reconcile` (`mainStages[]`, `sideQuests[]`) |
 
+存档缺少 `contentRev` 时，按历史 schema 固定推断起点：v1 无活动字段为 rev 0，v1 有活动字段为 rev 1，v2 为 rev 2，已有进度的 v3 为 rev 3。不能使用“当前修订减一”，否则后续发布会跳过老存档应执行的迁移。读取更新摘要后写入 `update:seenRev`；再次打开菜单不重复显示版本提醒。
+
 `NpcSpec`: `id at offset? facing? sprite nameZh role portrait? lines? script? trainer? sightRange? wander?
 hiddenUnlessFlag? hiddenIfFlag?`. `lines` is shorthand for one `say` per line. `facing` defaults to `auto`: the
 direction with the longest clear line of sight (up to `sightRange` or `facing.lookDistance`), preferring directions
@@ -397,9 +399,9 @@ NPCs never seal warps/towns and stay talkable; trainer refs and resolved, level-
 well-formed recursively with every item/trainer/quest/stage/npc/sfx/bgm/town reference; no placeholder or macro
 leaks; every read flag is written or a client convention; every badge has a leader in its gym that battles, sets
 the badge flag and gives a chip, with 2–4 gym trainers and rising aces (12–14 … 50–55); ≥ 50 route trainers with
-sight 3–5, 1–4 creatures and route-band levels; rival variant per starter/battle with the advantaged starter line;
-prologue gifts/heal/key items and the sealed start town; gates lock until opened; quests start, finish and use
-every stage; services and villagers in every town, buyable shops, tutors; villains, champion (60–65) and a
+1–4 creatures and route-band levels; rival variant per starter/battle with the advantaged starter line;
+the Origin start patrols and all OpenSource exits remain blocked until their respective progression flags;
+quests start, finish and use every stage; services and villagers in every town, buyable shops, tutors; villains, champion (60–65) and a
 one-time legend; determinism and another seed; problem reporting on broken content; `resolvePick` on a synthetic
 roster; legend chains (tablet order, flags, quest stages, hop spacing, UR one-time encounter above its region,
 no shared landmarks); ≥ 15 bounties with all kinds, giver/target placement, distance, on-foot reachability and

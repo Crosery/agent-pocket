@@ -23,7 +23,7 @@ export interface SaveDeps {
   world?: World | (() => World | null) | null
   /** Creature validator; defaults to src/shared/creature.ts sanitizeCreature. */
   sanitizeCreature?: (raw: unknown) => Creature | null
-  /** Defaults to window.localStorage, else an in-memory store. */
+  /** Defaults to window.localStorage, else memory; null always uses a private in-memory store. */
   storage?: StorageLike | null
   now?: () => number
   newId?: () => string
@@ -32,7 +32,7 @@ export interface SaveDeps {
 
 export function createSaveManager(deps: SaveDeps = {}): SaveManager {
   const c = deps.content ?? CONTENT
-  const storage = deps.storage ?? defaultStorage()
+  const storage = deps.storage ?? defaultStorage(deps.storage !== null)
   const now = deps.now ?? (() => Date.now())
   const newId = deps.newId ?? randomId
   const sanitizeCreature = deps.sanitizeCreature ?? ((raw: unknown) => defaultSanitizeCreature(raw, c))
@@ -150,9 +150,9 @@ function randomId(): string {
   return s
 }
 
-function defaultStorage(): StorageLike {
+function defaultStorage(useBrowserStorage: boolean): StorageLike {
   try {
-    const ls = (globalThis as { localStorage?: Storage }).localStorage
+    const ls = useBrowserStorage && typeof window !== 'undefined' ? window.localStorage : null
     if (ls) {
       const probe = '__ap_probe__'
       ls.setItem(probe, '1')

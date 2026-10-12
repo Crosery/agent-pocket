@@ -92,6 +92,11 @@ async function readJsonBody(
   req: IncomingMessage,
   maxBytes: number,
 ): Promise<{ ok: true; data: unknown } | { ok: false; status: number; code: string; message: string }> {
+  const rawCt = Array.isArray(req.headers['content-type']) ? req.headers['content-type'][0] : req.headers['content-type']
+  const ct = rawCt?.split(';')[0]?.trim().toLowerCase()
+  if (ct !== 'application/json') {
+    return { ok: false, status: 415, code: 'bad_request', message: t('net.http.badRequest') }
+  }
   const chunks: Buffer[] = []
   let total = 0
   try {
@@ -278,6 +283,10 @@ export function createHttpHandler(opts: HttpOptions): (req: IncomingMessage, res
     if (pathname === h.logoutPath) {
       accounts.logoutSession(req.headers.cookie, { ip })
       sendJson(res, 200, { ok: true }, false, { 'Set-Cookie': clearSessionCookie({ secure }) })
+      return
+    }
+    if (pathname !== h.registerPath && pathname !== h.loginPath && pathname !== h.bindPath) {
+      sendJson(res, 404, { error: 'not_found', message: t('net.http.notFound') })
       return
     }
 

@@ -12,7 +12,7 @@ import { digest } from '../src/shared/dev/diff.ts'
 import { createSaveManager } from '../src/client/core/save.ts'
 import { migrateSave } from '../src/client/core/save-migrate.ts'
 import { reconcileSave } from '../src/client/core/save-reconcile.ts'
-import { pickObjective } from '../src/client/onboarding/logic.ts'
+import { nearestTarget, pickObjective } from '../src/client/onboarding/logic.ts'
 import { TIP_FLAG_PREFIX } from '../src/client/onboarding/config.ts'
 import { resolvePlace } from '../src/client/world/explore.ts'
 import { CONSOLE } from '../src/client/dev/registry.ts'
@@ -141,8 +141,11 @@ for (const id of ids) {
     assert.ok(obj.ruleId, 'an objective rule applies')
     const main = save.quests.main
     if (main && !main.done) {
-      assert.ok(obj.questTarget, 'the main quest stage has a target for the arrow')
-      assert.ok(getMap(world, obj.questTarget.map), 'on a real map')
+      const questTarget = world.quests.find((q) => q.id === 'main')?.stages[main.stage]?.target
+      const candidates = questTarget ? [questTarget] : obj.questTarget ? [obj.questTarget] : obj.targets.map((id) => anchors[id]).filter((p) => p !== undefined)
+      const target = nearestTarget(world, save.position, candidates)
+      assert.ok(target, 'the selected onboarding objective resolves to a reachable arrow target')
+      assert.ok(getMap(world, target.map), 'on a real map')
     }
 
     // expectations about the save hold (runtime ones are checked in the browser suite)

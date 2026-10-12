@@ -181,11 +181,6 @@ export function createBattleEffectsPanel(root: HTMLElement, statuses: readonly [
   close.addEventListener('click', (e) => { e.stopPropagation(); closePanel() })
   backdrop.addEventListener('click', (e) => { e.stopPropagation(); closePanel() })
   p.el.addEventListener('click', (e) => e.stopPropagation())
-  p.el.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return
-    e.preventDefault()
-    closePanel()
-  })
 
   return {
     el: p.el,

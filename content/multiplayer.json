@@ -15,6 +15,7 @@
     "sfx": {"challenged": "exclaim", "accepted": "confirm"}
   },
   "trade": {
+    "requestSeconds": 30,
     "ivStars": 5,
     "cardIconSize": 48,
     "completeAnimMs": 1400,

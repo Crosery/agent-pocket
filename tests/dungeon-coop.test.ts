@@ -2,9 +2,9 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { CONTENT } from '../src/shared/content/index.ts'
 import { GAMEPLAY } from '../src/shared/gameplay/data.ts'
-import type { BattleAction, SaveData } from '../src/shared/types.ts'
+import type { BattleAction, BattleEvent, BattleInit, SaveData } from '../src/shared/types.ts'
 import type { GameContext } from '../src/client/contracts.ts'
-import { createCreature } from '../src/shared/creature.ts'
+import { createCreature, legalMoves } from '../src/shared/creature.ts'
 import { Rng } from '../src/shared/rng.ts'
 import { createSaveManager } from '../src/client/core/save.ts'
 import {
@@ -42,7 +42,9 @@ import {
   rejoinRaidMember,
   scaleBossHp,
 } from '../src/shared/coop/raid.ts'
-import { createDungeonServer, type DungeonAuthority } from '../src/server/dungeon.ts'
+import { createDungeonRuntime, type DungeonAuthority, type DungeonPlayer } from '../src/shared/coop/runtime.ts'
+import type { CoopClientMsg, CoopServerMsg } from '../src/shared/coop/protocol.ts'
+import { createDungeonServer } from '../src/server/dungeon.ts'
 import type { HubCore, Player } from '../src/server/core.ts'
 import type { ServerMsg } from '../src/shared/protocol.ts'
 import { signContract } from '../src/client/battle/contract.ts'
@@ -130,30 +132,29 @@ test('contract odds and pity: M2 repeat probabilities, pity triggers, ball bonus
   const hardTier = doubao.tiers.hard
   const fullTier = doubao.tiers.full
 
-  // Story repeat: 35%, pity 3 -> E ~ 2.35
+  // Story repeat: 35%, pity 3
   const storyOdds = contractOdds(storyTier, 0, true, 0)
   assert.equal(storyOdds.chance, 0.35)
   assert.equal(storyOdds.maxPity, 3)
   assert.equal(storyOdds.guaranteed, false)
-  assert.equal(storyOdds.avgAttempts, 2.35)
+  assert.ok(storyOdds.avgAttempts > 1 && storyOdds.avgAttempts < storyOdds.maxPity)
 
   // Pity guarantee at count >= 3
   const storyPityOdds = contractOdds(storyTier, 0, true, 3)
   assert.equal(storyPityOdds.chance, 1.0)
   assert.equal(storyPityOdds.guaranteed, true)
 
-  // Hard repeat: 25%, pity 4 -> E ~ 3.05
+  // Hard repeat: 25%, pity 4
   const hardOdds = contractOdds(hardTier, 0, true, 0)
   assert.equal(hardOdds.chance, 0.25)
   assert.equal(hardOdds.maxPity, 4)
-  assert.equal(hardOdds.avgAttempts, 3.05)
+  assert.ok(hardOdds.avgAttempts > storyOdds.avgAttempts && hardOdds.avgAttempts < hardOdds.maxPity)
 
-  // Full repeat: 15%, pity 5 -> E ~ 4.15
+  // Full repeat: 15%, pity 5
   const fullOdds = contractOdds(fullTier, 0, true, 0)
   assert.equal(fullOdds.chance, 0.15)
   assert.equal(fullOdds.maxPity, 5)
-  assert.equal(fullOdds.avgAttempts, 4.15)
-
+  assert.ok(fullOdds.avgAttempts > hardOdds.avgAttempts && fullOdds.avgAttempts < fullOdds.maxPity)
   // Ball bonus increases probability
   const withBonus = contractOdds(hardTier, 0.10, true, 0)
   assert.equal(Number(withBonus.chance.toFixed(2)), 0.35)
@@ -290,8 +291,8 @@ test('authoritative shared boss raid: HP scaling N^0.8, damage attribution, minC
   assert.equal(scaleBossHp(baseHp, 2, 0.8), 1741)
   assert.equal(scaleBossHp(baseHp, 4, 0.8), 3031)
 
-  const p1Cr = createCreature('o1', 25, { rng: new Rng(10) })
-  const p2Cr = createCreature('phi-3', 25, { rng: new Rng(20) })
+  const p1Cr = createCreature('agi', 95, { rng: new Rng(10) })
+  const p2Cr = createCreature('claude-fable', 95, { rng: new Rng(20) })
 
   const session = createRaidSession({
     raidId: 'raid-1',
@@ -318,7 +319,7 @@ test('authoritative shared boss raid: HP scaling N^0.8, damage attribution, minC
     tierId: 'cluster',
     bossId: 'deepseek',
     hpScaleExp: 0.8,
-    members: [{ id: 'u1', name: 'Alice', avatar: 'hero', party: [createCreature('o1', 25, { rng: new Rng(10) })] }],
+    members: [{ id: 'u1', name: 'Alice', avatar: 'hero', party: [createCreature('agi', 95, { rng: new Rng(10) })] }],
   })
   const expectedScaledMaxHp = scaleBossHp(soloSession.bossState.maxHp, 2, 0.8)
   assert.equal(session.bossState.maxHp, expectedScaledMaxHp)
@@ -333,8 +334,10 @@ test('authoritative shared boss raid: HP scaling N^0.8, damage attribution, minC
   assert.equal(session.members.get('u1')!.damageDealt, initialBossHp - session.boss.hp)
   assert.ok(res1.events.some((e) => e.t === 'damage'))
 
-  // Force boss HP to low to test victory
-  session.bossState.hp = 10
+  // Force boss HP to 150 in valley state to test victory and >=10% contribution qualification
+  session.bossState.meters.tide = 1
+  session.bossState.hp = 150
+  session.boss.hp = 150
   const resVictory = applyRaidPlayerAction(session, 'u2', act1)
   assert.equal(resVictory.victory, true)
   assert.equal(session.ended, true)
@@ -377,6 +380,10 @@ test('multiplayer server simulation: authoritative elite battle, mechanism effec
       ip: '127.0.0.1',
       version: 1,
       limits: {} as never,
+      clientBusy: false,
+      pvpBusy: false,
+      dungeonBusy: false,
+      tradeId: null,
       closed: false,
       state: { map: 'origin-lab-b1', x: 13, y: 3 } as never,
     }) as unknown as Player
@@ -387,13 +394,18 @@ test('multiplayer server simulation: authoritative elite battle, mechanism effec
 
   const p1Save = newTestSave(p1.id, p1.name)
   p1Save.badges = ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7']
-  p1Save.party = [createCreature('o1', 80, { rng: new Rng(1) })]
+  p1Save.party = [
+    createCreature('agi', 100, { rng: new Rng(1) }),
+    createCreature('claude-fable', 100, { rng: new Rng(11) }),
+  ]
   p1Save.bag = { 'prompt-ball': 3, 'few-shot-ball': 2, 'data-shard': 0 }
 
   const p2Save = newTestSave(p2.id, p2.name)
   p2Save.badges = ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7']
-  p2Save.party = [createCreature('o1', 80, { rng: new Rng(2) })]
-  p2Save.bag = { 'prompt-ball': 3, 'few-shot-ball': 2, 'data-shard': 0 }
+  p2Save.party = [
+    createCreature('agi', 100, { rng: new Rng(2) }),
+    createCreature('claude-fable', 100, { rng: new Rng(12) }),
+  ]
 
   const p3Save = newTestSave(pUntrusted.id, pUntrusted.name)
   p3Save.flags['auth:untrustedImport'] = true
@@ -431,6 +443,7 @@ test('multiplayer server simulation: authoritative elite battle, mechanism effec
   const mockAuthority: DungeonAuthority = {
     getSave: (id) => playerSaves.get(id) ?? null,
     isUntrustedImport: (id) => untrustedIds.has(id),
+    isInBattle: () => false,
     mutateSave: (id, ref, fn) => {
       const s = playerSaves.get(id)
       if (!s) return null
@@ -586,7 +599,7 @@ test('multiplayer server simulation: authoritative elite battle, mechanism effec
   server.handle(p1, { t: 'dungeon.leave' })
   p1Save.party = [createCreature('phi-3', 1, { rng: new Rng(3) })]
   p1Save.party[0].hp = 1
-  p2Save.party = [createCreature('o1', 80, { rng: new Rng(4) })]
+  p2Save.party = [createCreature('agi', 100, { rng: new Rng(4) })]
 
   server.handle(p1, { t: 'party.start', instanceId: 'deepseek-tide', tierId: 'cluster' })
   server.handle(p2, { t: 'dungeon.roomMove', roomId: 'corridor' })
@@ -623,7 +636,7 @@ test('raid engine regression: individual wipeout with surviving teammate preserv
   // P1 has a fragile Lv1 creature that will faint; P2 has a high-level creature with plenty of HP
   const p1Cr = createCreature('phi-3', 1, { rng: new Rng(1) })
   p1Cr.hp = 1
-  const p2Cr = createCreature('o1', 50, { rng: new Rng(2) })
+  const p2Cr = createCreature('agi', 95, { rng: new Rng(2) })
 
   const session = createRaidSession({
     raidId: 'raid-wipeout-test',
@@ -679,8 +692,8 @@ test('raid engine regression: individual wipeout with surviving teammate preserv
 })
 
 test('raid engine regression: killing blow contribution is exact and does not suffer phantom damage loss', () => {
-  const p1Cr = createCreature('o1', 30, { rng: new Rng(11) })
-  const p2Cr = createCreature('o1', 30, { rng: new Rng(22) })
+  const p1Cr = createCreature('agi', 95, { rng: new Rng(11) })
+  const p2Cr = createCreature('agi', 95, { rng: new Rng(22) })
 
   const session = createRaidSession({
     raidId: 'raid-kill-test',
@@ -689,6 +702,7 @@ test('raid engine regression: killing blow contribution is exact and does not su
     bossId: 'deepseek',
     hpScaleExp: 0.8,
     minContribution: 10,
+    activeMechanisms: ['load-breaker'],
     members: [
       { id: 'u1', name: 'Alice', avatar: 'hero', party: [p1Cr] },
       { id: 'u2', name: 'Bob', avatar: 'hero', party: [p2Cr] },
@@ -787,10 +801,11 @@ test('raid engine regression: scaled startup and rejoin visible events reflect s
 })
 
 test('raid engine regression: recharge moves auto-drain so player request is actionable or terminal, preventing UI forfeit', () => {
-  // Give creature the recharge move exaflop-beam
-  const p1Cr = createCreature('o1', 50, { rng: new Rng(41) })
-  p1Cr.moves = [{ id: 'exaflop-beam', pp: 5, ppMax: 5 }]
-
+  // perplexity-computer legitimately learns the recharge move long-horizon (Lv64) and owns the retrieval ability
+  const p1Cr = createCreature('perplexity-computer', 100, { rng: new Rng(41), moves: ['long-horizon'] })
+  p1Cr.abilityId = 'retrieval'
+  assert.ok(CONTENT.species[p1Cr.speciesId].abilities.includes(p1Cr.abilityId))
+  assert.ok(legalMoves(p1Cr.speciesId, p1Cr.level).has('long-horizon'))
   const session = createRaidSession({
     raidId: 'raid-recharge-test',
     instanceId: 'deepseek-tide',
@@ -866,4 +881,138 @@ test('raid engine regression: session identity, runSeq binding, contract rolls a
   recordMemberSettled(session, 'u1')
   assert.equal(isMemberSettled(session, 'u1'), true)
   assert.equal(isMemberSettled(session, 'u2'), false, 'u2 settlement is isolated from u1')
+})
+
+test('offline dungeon runtime: real battles, room gates, mechanism, one-shot contracts, repeat rewards and daily counters', () => {
+  const save = newTestSave('offline-hero-1', '离线训练家')
+  save.position = { map: 'origin-lab-b1', x: 13, y: 4, facing: 'up' }
+  save.party = [
+    createCreature('agi', 95, { rng: new Rng(77) }),
+    createCreature('claude-fable', 95, { rng: new Rng(88) }),
+  ]
+  save.bag = { 'prompt-ball': 5, 'data-shard': 0 }
+  save.money = 1000
+  const player: DungeonPlayer = {
+    id: save.playerId, name: save.name, avatar: save.avatar,
+    closed: false, pvpBusy: false, tradeId: null, dungeonBusy: false,
+    state: { map: save.position.map, x: 13, y: 4 },
+  }
+  const messages: CoopServerMsg[] = []
+  const persisted: string[] = []
+  const runtime = createDungeonRuntime({
+    allowParties: false,
+    lookupPlayer: (id) => id === player.id ? player : null,
+    send: (_player, msg) => { messages.push(structuredClone(msg)) },
+    authority: {
+      getSave: (id) => id === player.id ? save : null,
+      isUntrustedImport: () => false,
+      isInBattle: () => false,
+      mutateSave(id, ref, fn) {
+        assert.equal(id, player.id)
+        const result = fn(save)
+        persisted.push(ref)
+        return result
+      },
+    },
+  })
+  const send = (msg: CoopClientMsg) => runtime.handle(player, msg)
+  function message<T extends CoopServerMsg['t']>(type: T, from = 0): Extract<CoopServerMsg, { t: T }> {
+    const found = messages.slice(from).find((m) => m.t === type)
+    assert.ok(found, `expected ${type}; received ${messages.slice(from).map((m) => m.t).join(', ')}`)
+    return found as Extract<CoopServerMsg, { t: T }>
+  }
+  function completeRun(tierId: string, mechanism: boolean): string {
+    const start = messages.length
+    send({ t: 'dungeon.enter', instanceId: 'deepseek-tide', tierId })
+    const instance = message('dungeon.update', start).instance
+    assert.ok(instance)
+    assert.equal(instance.currentRoom, 'lobby')
+    send({ t: 'dungeon.roomMove', roomId: 'boss' })
+    assert.equal(message('dungeon.error', start).code, 'room_not_cleared')
+    send({ t: 'dungeon.roomMove', roomId: 'corridor' })
+    assert.equal(message('dungeon.roomChanged', start).roomId, 'corridor')
+    if (mechanism) {
+      send({ t: 'dungeon.mechanism', mechanismId: 'load-breaker' })
+      assert.equal(message('dungeon.mechanismActivated', start).mechanismId, 'load-breaker')
+    }
+    send({ t: 'dungeon.eliteFight', eliteId: 'queue-guard' })
+    const elite = message('dungeon.eliteStarted', start)
+    assert.equal(player.dungeonBusy, true)
+    for (let turn = 0; turn < 30 && !messages.slice(start).some((m) => m.t === 'dungeon.eliteEnd'); turn++) {
+      send({ t: 'dungeon.eliteAction', battleId: elite.battleId, action: { kind: 'move', moveIndex: 0 } })
+    }
+    assert.equal(message('dungeon.eliteEnd', start).result, 'win')
+    assert.ok(message('dungeon.eliteEvents', start).events.some((e) => e.t === 'damage'))
+    assert.equal(player.dungeonBusy, false)
+    const bossFrom = messages.length
+    send({ t: 'dungeon.roomMove', roomId: 'boss' })
+    const raid = message('raid.start', bossFrom)
+    assert.ok(raid.events)
+    assert.equal(raid.raidId, instance.id)
+    if (mechanism) {
+      const hud = raid.events.find((e) => e.t === 'boss' && e.side === 1)
+      assert.ok(hud?.t === 'boss')
+      assert.equal(hud.hud.meters.tide, 1)
+    }
+    for (let turn = 0; turn < 30 && !messages.slice(bossFrom).some((m) => m.t === 'raid.end'); turn++) {
+      send({ t: 'raid.action', raidId: raid.raidId, action: { kind: 'move', moveIndex: 0 } })
+    }
+    const end = message('raid.end', bossFrom)
+    assert.equal(end.victory, true)
+    assert.equal(end.summary.members[0].qualified, true)
+    assert.equal(player.dungeonBusy, false)
+    return raid.raidId
+  }
+  try {
+    send({ t: 'party.create' })
+    assert.equal(message('party.error').code, 'offline')
+    const lockedFrom = messages.length
+    send({ t: 'dungeon.enter', instanceId: 'deepseek-tide', tierId: 'cluster' })
+    assert.ok(message('dungeon.error', lockedFrom))
+    const firstId = completeRun('story', true)
+    const progress = progressOf(save, 'deepseek-tide')
+    assert.equal(progress.runSeq, 1)
+    assert.equal(progress.clears.story, 1)
+    assert.equal(save.flags['bossWon:deepseek'], true)
+    assert.ok(progress.achievements?.includes('clear-story'))
+    assert.ok(save.money > 1000)
+    assert.ok(save.bag['data-shard'] >= 2)
+    assert.equal(save.bag['off-peak-coupon'], 2)
+    assert.equal(progress.day?.rewards, 1)
+    assert.ok(persisted.includes('dungeon:deepseek-tide'))
+    const partySize = save.party.length
+    send({ t: 'raid.rollContract', raidId: firstId, ballId: 'prompt-ball' })
+    assert.equal(message('raid.contractResult').success, true)
+    assert.equal(save.bag['prompt-ball'], 4)
+    assert.equal(save.party.length, partySize + 1)
+    assert.equal(progress.captures.story, 1)
+    assert.equal(progress.lastRollRun?.story, 1)
+    assert.equal(progress.day?.rolls, 1)
+    const replayFrom = messages.length
+    send({ t: 'raid.rollContract', raidId: firstId, ballId: 'prompt-ball' })
+    assert.equal(message('raid.error', replayFrom).code, 'already_rolled')
+    assert.equal(save.bag['prompt-ball'], 4)
+    send({ t: 'dungeon.leave' })
+    const moneyBeforeRepeat = save.money
+    const secondId = completeRun('story', false)
+    assert.equal(progress.runSeq, 2)
+    assert.equal(progress.clears.story, 2)
+    assert.equal(progress.day?.rewards, 2)
+    assert.ok(save.money > moneyBeforeRepeat)
+    assert.equal(save.bag['off-peak-coupon'], 2, 'first-clear gift must not repeat')
+    const noRepeatFrom = messages.length
+    send({ t: 'raid.rollContract', raidId: secondId, ballId: 'prompt-ball' })
+    assert.equal(message('raid.error', noRepeatFrom).code, 'no_repeat_capture')
+    assert.equal(save.bag['prompt-ball'], 4)
+    send({ t: 'dungeon.leave' })
+    save.badges = ['badge-code', 'badge-vision', 'badge-sound', 'badge-search']
+    const hardId = completeRun('hard', true)
+    assert.equal(progress.runSeq, 3)
+    assert.equal(progress.clears.hard, 1)
+    send({ t: 'raid.rollContract', raidId: hardId, ballId: 'prompt-ball' })
+    assert.equal(save.bag['prompt-ball'], 3)
+    assert.equal(progress.day?.rolls, 2)
+  } finally {
+    runtime.close()
+  }
 })

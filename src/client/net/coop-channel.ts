@@ -13,11 +13,14 @@ import {
 } from '../../shared/coop/instance.ts'
 import type {
   BossRaidState,
+  CoopClientMsg,
+  CoopServerMsg,
   InstanceState,
   PartyState,
   RaidMemberState,
   RaidSummary,
 } from '../../shared/coop/protocol.ts'
+import { createDungeonRuntime, type DungeonPlayer } from '../../shared/coop/runtime.ts'
 import { GAMEPLAY } from '../../shared/gameplay/data.ts'
 import {
   contractOdds,
@@ -28,9 +31,9 @@ import {
   getActualDungeons,
 } from '../../shared/gameplay/instances.ts'
 import type { BattleChannel, BattleChannelUpdate, GameContext, Input, NetClient, UIPanel } from '../contracts.ts'
-import { showReveal } from '../ui/reveal.ts'
 import { button, el, panel } from '../ui/widgets.ts'
-import { adoptServerSave } from './authority-client.ts'
+import { adoptServerSave, isUntrustedImportOnline } from './authority-client.ts'
+import { promiseResolvers } from './pve-channel.ts'
 
 export interface CoopChannel {
   getParty(): PartyState | null
@@ -71,15 +74,132 @@ function safePopPanel(ctx: GameContext, p: UIPanel): void {
   ctx.ui.popPanel?.(p)
 }
 
+const COOP_SERVER_MSG_TYPES: ReadonlyArray<CoopServerMsg['t']> = [
+  'party.update',
+  'party.invited',
+  'party.error',
+  'dungeon.update',
+  'dungeon.roomChanged',
+  'dungeon.mechanismActivated',
+  'dungeon.eliteStarted',
+  'dungeon.eliteEvents',
+  'dungeon.eliteEnd',
+  'dungeon.eliteDefeated',
+  'dungeon.error',
+  'raid.start',
+  'raid.tick',
+  'raid.end',
+  'raid.contractResult',
+  'raid.error',
+]
+
 export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChannel {
   let currentParty: PartyState | null = null
   let currentInstance: InstanceState | null = null
   let currentRaid: { raidId: string; boss: BossRaidState; members: RaidMemberState[] } | null = null
   let lastCompletedRaidId: string | null = null
   let eliteBattleActive = false
+  let localDungeonBusy = false
   let raidBattlePromise: Promise<unknown> | null = null
   let roomModal: { panel: UIPanel; refresh: () => void; close: () => void } | null = null
   const partyListeners = new Set<() => void>()
+
+  type CoopMsgType = CoopServerMsg['t']
+  type CoopMsgOf<T extends CoopMsgType> = Extract<CoopServerMsg, { t: T }>
+  const msgListeners = new Map<CoopMsgType, Set<(msg: never) => void>>()
+
+  function onCoopMsg<T extends CoopMsgType>(type: T, fn: (msg: CoopMsgOf<T>) => void): () => void {
+    let set = msgListeners.get(type)
+    if (!set) {
+      set = new Set()
+      msgListeners.set(type, set)
+    }
+    set.add(fn as (msg: never) => void)
+    return () => {
+      set?.delete(fn as (msg: never) => void)
+    }
+  }
+
+  function emitCoopMsg(msg: CoopServerMsg): void {
+    const set = msgListeners.get(msg.t)
+    if (!set) return
+    for (const fn of [...set]) {
+      ;(fn as (m: CoopServerMsg) => void)(msg)
+    }
+  }
+
+  const getSelfId = (): string => net.selfId ?? (ctx.save?.playerId || 'local-player')
+
+  const getLocalPlayer = (): DungeonPlayer => {
+    const id = getSelfId()
+    const owPlayer = ctx.overworld?.player
+    const pos = ctx.save?.position
+    const map = owPlayer?.map ?? pos?.map ?? ''
+    const hasOwCoords = typeof owPlayer?.x === 'number' && typeof owPlayer?.y === 'number'
+    const hasPosCoords = pos?.map === map && typeof pos?.x === 'number' && typeof pos?.y === 'number'
+    const entry = Object.values(GAMEPLAY.instances).find((d) => d.entry?.map === map)?.entry
+    const x = hasOwCoords ? owPlayer!.x : hasPosCoords ? pos!.x : (entry?.x ?? pos?.x ?? 0)
+    const y = hasOwCoords ? owPlayer!.y : hasPosCoords ? pos!.y : (entry?.y ?? pos?.y ?? 0)
+    return {
+      id,
+      name: ctx.save?.name || '训练家',
+      avatar: ctx.save?.avatar || 'hero',
+      closed: false,
+      pvpBusy: false,
+      tradeId: null,
+      dungeonBusy: localDungeonBusy,
+      state: { map, x, y },
+    }
+  }
+
+  const localRuntime = createDungeonRuntime({
+    allowParties: false,
+    lookupPlayer: (id) => (id === getSelfId() ? getLocalPlayer() : null),
+    send: (_player, msg) => {
+      emitCoopMsg(structuredClone(msg))
+    },
+    onBusyChange: (_player, busy) => {
+      localDungeonBusy = busy
+    },
+    authority: {
+      getSave: (playerId) => (playerId === getSelfId() ? ctx.save : null),
+      isUntrustedImport: () => Boolean(ctx.save?.flags?.['auth:untrustedImport']) || isUntrustedImportOnline(ctx),
+      isInBattle: () => Boolean((ctx.overworld as { battleActive?: boolean } | undefined)?.battleActive),
+      mutateSave: (playerId, ref, fn) => {
+        if (!ctx.save || playerId !== getSelfId()) return null
+        const prevMoney = ctx.save.money ?? 0
+        const prevSeen = new Set(ctx.save.dexSeen ?? [])
+        const prevCaught = new Set(ctx.save.dexCaught ?? [])
+        const out = fn(ctx.save)
+        if (out === null || out === undefined) return out
+        for (const spId of ctx.save.dexSeen ?? []) {
+          if (!prevSeen.has(spId)) ctx.events?.emit?.('dex:seen', { speciesId: spId })
+        }
+        for (const spId of ctx.save.dexCaught ?? []) {
+          if (!prevCaught.has(spId)) ctx.events?.emit?.('dex:caught', { speciesId: spId })
+        }
+        ctx.events?.emit?.('party:changed', {})
+        ctx.events?.emit?.('bag:changed', {})
+        const nextMoney = ctx.save.money ?? 0
+        if (nextMoney !== prevMoney) {
+          ctx.events?.emit?.('money:changed', { money: nextMoney, delta: nextMoney - prevMoney })
+        }
+        ctx.hud?.setMoney?.(nextMoney)
+        ctx.overworld?.refresh?.()
+        ctx.persist?.(ref)
+        return out
+      },
+      audit: () => {},
+    },
+  })
+
+  const sendCoop = (msg: CoopClientMsg): void => {
+    if (net.status === 'online') {
+      net.send(msg)
+    } else {
+      localRuntime.handle(getLocalPlayer(), msg)
+    }
+  }
 
   const ensureRoomModal = () => {
     if (
@@ -106,61 +226,79 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     }
   }
 
-  const runAuthoritativeEliteBattle = async (eliteId: string): Promise<BattleResult | null> => {
-    return new Promise<BattleResult | null>((resolve) => {
-      let settled = false
-      let battleId: string | null = null
-      const inbox: Array<{ events: BattleEvent[]; request: BattleRequest }> = []
-      let endResult: BattleResult | null = null
-      let wake: (() => void) | null = null
-      const updateListeners = new Set<(update: BattleChannelUpdate) => void>()
+  const runAuthoritativeEliteBattle = (eliteId: string): Promise<BattleResult | null> => {
+    const { promise, resolve } = promiseResolvers<BattleResult | null>()
+    let settled = false
+    let battleId: string | null = null
+    const inbox: Array<{ events: BattleEvent[]; request: BattleRequest }> = []
+    let lastRequest: BattleRequest = WAIT_REQ
+    let endResult: BattleResult | null = null
+    let awaitingTurn = false
+    let wake: (() => void) | null = null
+    const updateListeners = new Set<(update: BattleChannelUpdate) => void>()
 
-      const poke = () => {
-        const w = wake
-        wake = null
-        w?.()
+    const poke = () => {
+      const w = wake
+      wake = null
+      w?.()
+    }
+
+    const cleanup = () => {
+      offStarted()
+      offEvents()
+      offEnd()
+      offErr()
+      updateListeners.clear()
+    }
+
+    const finish = (res: BattleResult | null) => {
+      if (settled) return
+      settled = true
+      cleanup()
+      poke()
+      resolve(res)
+    }
+
+    const offErr = onCoopMsg('dungeon.error', () => {
+      if (!battleId) {
+        finish(null)
+        return
       }
+      inbox.push({ events: [], request: lastRequest })
+      poke()
+    })
 
-      const cleanup = () => {
-        offStarted()
-        offEvents()
-        offEnd()
-        offErr()
-        updateListeners.clear()
-      }
+    const offEvents = onCoopMsg('dungeon.eliteEvents', (msg) => {
+      if (!battleId || msg.battleId !== battleId) return
+      lastRequest = msg.request
+      inbox.push({ events: [...msg.events], request: msg.request })
+      poke()
+    })
 
-      const finish = (res: BattleResult | null) => {
-        if (settled) return
-        settled = true
-        cleanup()
-        poke()
-        resolve(res)
-      }
-
-      const offErr = net.on('dungeon.error', () => {
-        if (!battleId) finish(null)
-      })
-
-      const offEvents = net.on('dungeon.eliteEvents', (msg) => {
-        if (!battleId || msg.battleId !== battleId) return
-        inbox.push({ events: [...msg.events], request: msg.request })
-        poke()
-      })
-
-      const offEnd = net.on('dungeon.eliteEnd', (msg) => {
-        if (!battleId || msg.battleId !== battleId) return
-        endResult = msg.result
-        const endEv: BattleEvent = { t: 'end', result: msg.result, winner: msg.result === 'win' ? 0 : 1 }
+    const offEnd = onCoopMsg('dungeon.eliteEnd', (msg) => {
+      if (!battleId || msg.battleId !== battleId) return
+      endResult = msg.result
+      const endEv: BattleEvent = { t: 'end', result: msg.result, winner: msg.result === 'win' ? 0 : 1 }
+      if (!awaitingTurn && inbox.length === 0) {
         for (const fn of updateListeners) fn({ events: [endEv], request: WAIT_REQ })
-        poke()
-      })
+      }
+      poke()
+      if (!ctx.battle?.run) {
+        eliteBattleActive = false
+        finish(msg.result)
+        ensureRoomModal()
+      }
+    })
 
-      const offStarted = net.on('dungeon.eliteStarted', (started) => {
-        if (started.eliteId !== eliteId || battleId !== null) return
-        battleId = started.battleId
-        inbox.push({ events: [...started.events], request: started.request })
+    const offStarted = onCoopMsg('dungeon.eliteStarted', (started) => {
+      if (started.eliteId !== eliteId || battleId !== null) return
+      battleId = started.battleId
+      lastRequest = started.request
+      inbox.push({ events: [...started.events], request: started.request })
 
-        const collect = async (): Promise<{ events: BattleEvent[]; request: BattleRequest }> => {
+      const collect = async (): Promise<{ events: BattleEvent[]; request: BattleRequest }> => {
+        awaitingTurn = true
+        try {
           for (;;) {
             if (inbox.length > 0) {
               const combined: BattleEvent[] = []
@@ -184,33 +322,40 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
                 request: WAIT_REQ,
               }
             }
-            await new Promise<void>((r) => { wake = r })
+            const gate = promiseResolvers<void>()
+            wake = gate.resolve
+            await gate.promise
           }
+        } finally {
+          awaitingTurn = false
         }
+      }
 
-        const battleChannel: BattleChannel = {
-          start: () => collect(),
-          submit(action: BattleAction) {
-            if (endResult !== null || settled) return collect()
-            net.send({ t: 'dungeon.eliteAction', battleId: started.battleId, action })
-            return collect()
-          },
-          wait: () => collect(),
-          onUpdate(fn) {
-            updateListeners.add(fn)
-            return () => updateListeners.delete(fn)
-          },
-          dispose() {
-            if (endResult === null && !settled) net.send({ t: 'dungeon.leave' })
-            finish(endResult)
-          },
-        }
+      const battleChannel: BattleChannel = {
+        start: () => collect(),
+        submit(action: BattleAction) {
+          if (endResult !== null || settled) return collect()
+          awaitingTurn = true
+          sendCoop({ t: 'dungeon.eliteAction', battleId: started.battleId, action })
+          return collect()
+        },
+        wait: () => collect(),
+        onUpdate(fn) {
+          updateListeners.add(fn)
+          return () => updateListeners.delete(fn)
+        },
+        dispose() {
+          if (endResult === null && !settled) sendCoop({ t: 'dungeon.leave' })
+          finish(endResult)
+        },
+      }
 
-        eliteBattleActive = true
-        if (roomModal) {
-          roomModal.close()
-          roomModal = null
-        }
+      eliteBattleActive = true
+      if (roomModal) {
+        roomModal.close()
+        roomModal = null
+      }
+      if (ctx.battle?.run) {
         void ctx.battle.run(started.init, { kind: 'wild', channel: battleChannel }).then(
           (outcome) => {
             finish(endResult ?? outcome.result)
@@ -223,51 +368,66 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
           battleChannel.dispose()
           ensureRoomModal()
         })
-      })
-
-      net.send({ t: 'dungeon.eliteFight', eliteId })
+      }
     })
+
+    sendCoop({ t: 'dungeon.eliteFight', eliteId })
+    return promise
   }
 
   const channel: CoopChannel = {
     getParty: () => currentParty,
     getInstance: () => currentInstance,
     getRaid: () => currentRaid,
-    createParty: () => net.send({ t: 'party.create' }),
-    inviteParty: (to: string) => net.send({ t: 'party.invite', to }),
-    respondParty: (from: string, accept: boolean) => net.send({ t: 'party.respond', from, accept }),
-    leaveParty: () => net.send({ t: 'party.leave' }),
-    kickParty: (targetId: string) => net.send({ t: 'party.kick', targetId }),
-    readyParty: (ready: boolean) => net.send({ t: 'party.ready', ready }),
-    startParty: (instanceId: string, tierId: string) => net.send({ t: 'party.start', instanceId, tierId }),
-    disbandParty: () => net.send({ t: 'party.disband' }),
-    enterDungeon: (instanceId: string, tierId: string) => net.send({ t: 'dungeon.enter', instanceId, tierId }),
-    moveRoom: (roomId: string) => net.send({ t: 'dungeon.roomMove', roomId }),
-    activateMechanism: (mechanismId: string) => net.send({ t: 'dungeon.mechanism', mechanismId }),
+    createParty: () => sendCoop({ t: 'party.create' }),
+    inviteParty: (to: string) => sendCoop({ t: 'party.invite', to }),
+    respondParty: (from: string, accept: boolean) => sendCoop({ t: 'party.respond', from, accept }),
+    leaveParty: () => sendCoop({ t: 'party.leave' }),
+    kickParty: (targetId: string) => sendCoop({ t: 'party.kick', targetId }),
+    readyParty: (ready: boolean) => sendCoop({ t: 'party.ready', ready }),
+    startParty: (instanceId: string, tierId: string) => sendCoop({ t: 'party.start', instanceId, tierId }),
+    disbandParty: () => sendCoop({ t: 'party.disband' }),
+    enterDungeon: (instanceId: string, tierId: string) => sendCoop({ t: 'dungeon.enter', instanceId, tierId }),
+    moveRoom: (roomId: string) => sendCoop({ t: 'dungeon.roomMove', roomId }),
+    activateMechanism: (mechanismId: string) => sendCoop({ t: 'dungeon.mechanism', mechanismId }),
     fightElite: (eliteId: string) => runAuthoritativeEliteBattle(eliteId),
-    actionElite: (battleId: string, action: BattleAction) => net.send({ t: 'dungeon.eliteAction', battleId, action }),
-    leaveDungeon: () => net.send({ t: 'dungeon.leave' }),
-    joinRaid: (raidId: string) => net.send({ t: 'raid.join', raidId }),
+    actionElite: (battleId: string, action: BattleAction) => sendCoop({ t: 'dungeon.eliteAction', battleId, action }),
+    leaveDungeon: () => sendCoop({ t: 'dungeon.leave' }),
+    joinRaid: (raidId: string) => sendCoop({ t: 'raid.join', raidId }),
     actionRaid: (action: BattleAction) => {
-      if (currentRaid) net.send({ t: 'raid.action', raidId: currentRaid.raidId, action })
+      if (currentRaid) sendCoop({ t: 'raid.action', raidId: currentRaid.raidId, action })
     },
     rollContract: (ballId: string, raidId?: string) => {
       const targetRaidId = raidId ?? currentRaid?.raidId ?? lastCompletedRaidId
-      if (targetRaidId) net.send({ t: 'raid.rollContract', raidId: targetRaidId, ballId })
+      if (targetRaidId) sendCoop({ t: 'raid.rollContract', raidId: targetRaidId, ballId })
     },
   }
 
   activeCoopChannel = channel
 
   // -------------------------------------------------------------
-  // Server message subscriptions
+  // Server & local runtime message subscriptions
   // -------------------------------------------------------------
 
-  net.on('state.sync', (msg) => {
+  net.on?.('state.sync', (msg) => {
     adoptServerSave(ctx, msg.save, msg.rev)
   })
 
-  net.on('party.update', (msg) => {
+  for (const tType of COOP_SERVER_MSG_TYPES) {
+    net.on?.(tType, (msg) => {
+      emitCoopMsg(msg as CoopServerMsg)
+    })
+  }
+
+  ctx.events?.on?.('net:status', ({ status }) => {
+    if (status === 'online') {
+      localRuntime.close()
+    } else {
+      currentParty = null
+    }
+  })
+
+  onCoopMsg('party.update', (msg) => {
     const hadParty = currentParty !== null
     currentParty = msg.party
     if (!currentParty && hadParty) {
@@ -276,33 +436,34 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     for (const fn of partyListeners) fn()
   })
 
-  net.on('party.invited', (msg) => {
+  onCoopMsg('party.invited', (msg) => {
     ctx.audio.playSfx('notify')
     showInvitePrompt(ctx, msg.from, msg.name, (accept) => {
       channel.respondParty(msg.from, accept)
     })
   })
 
-  net.on('party.error', (msg) => {
+  onCoopMsg('party.error', (msg) => {
     ctx.ui.toast(msg.message, 'warn')
   })
 
-  net.on('dungeon.update', (msg) => {
+  onCoopMsg('dungeon.update', (msg) => {
     currentInstance = msg.instance
     if (!currentInstance) {
       currentRaid = null
     }
+    for (const fn of partyListeners) fn()
     ensureRoomModal()
   })
 
-  net.on('dungeon.roomChanged', (msg) => {
+  onCoopMsg('dungeon.roomChanged', (msg) => {
     const instDef = currentInstance ? GAMEPLAY.instances[currentInstance.instanceId] : null
     const roomDef = getRoomDef(instDef, msg.roomId)
     ctx.ui.toast(t('multiplayer.dungeon.roomEntered', { room: roomDef?.name ?? msg.roomId }), 'info')
     ensureRoomModal()
   })
 
-  net.on('dungeon.mechanismActivated', (msg) => {
+  onCoopMsg('dungeon.mechanismActivated', (msg) => {
     const instDef = currentInstance ? GAMEPLAY.instances[currentInstance.instanceId] : null
     const mechDef = getMechanismDef(instDef, msg.mechanismId)
     ctx.audio.playSfx('confirm')
@@ -313,7 +474,7 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     ensureRoomModal()
   })
 
-  net.on('dungeon.eliteDefeated', (msg) => {
+  onCoopMsg('dungeon.eliteDefeated', (msg) => {
     const instDef = currentInstance ? GAMEPLAY.instances[currentInstance.instanceId] : null
     const eliteDef = getEliteDef(instDef, msg.eliteId)
     ctx.audio.playSfx('confirm')
@@ -324,18 +485,20 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     ensureRoomModal()
   })
 
-  net.on('dungeon.error', (msg) => {
+  onCoopMsg('dungeon.error', (msg) => {
     ctx.ui.toast(msg.message, 'warn')
   })
 
   let raidBattleWake: (() => void) | null = null
   const raidBattleInbox: Array<{ events: BattleEvent[]; request: BattleRequest }> = []
+  let lastRaidRequest: BattleRequest = WAIT_REQ
   let raidBattleEnd: { victory: boolean } | null = null
+  let awaitingRaidTurn = false
   const raidUpdateListeners = new Set<(update: BattleChannelUpdate) => void>()
   let displayedBossHp = 0
   let displayedBossMaxHp = 0
 
-  net.on('raid.start', (msg) => {
+  onCoopMsg('raid.start', (msg) => {
     currentRaid = {
       raidId: msg.raidId,
       boss: msg.boss,
@@ -345,6 +508,7 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     displayedBossMaxHp = msg.boss.maxHp
     raidBattleInbox.length = 0
     raidBattleEnd = null
+    awaitingRaidTurn = false
     raidUpdateListeners.clear()
     if (roomModal) {
       roomModal.close()
@@ -363,41 +527,50 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
         canRun: false,
         canItem: true,
       }
+      lastRaidRequest = defaultReq
       raidBattleInbox.push({ events: [...(msg.events ?? [])], request: defaultReq })
       const collectRaid = async (): Promise<{ events: BattleEvent[]; request: BattleRequest }> => {
-        for (;;) {
-          if (raidBattleInbox.length > 0) {
-            const combined: BattleEvent[] = []
-            let lastReq: BattleRequest = WAIT_REQ
-            while (raidBattleInbox.length > 0) {
-              const item = raidBattleInbox.shift()!
-              combined.push(...item.events)
-              lastReq = item.request
+        awaitingRaidTurn = true
+        try {
+          for (;;) {
+            if (raidBattleInbox.length > 0) {
+              const combined: BattleEvent[] = []
+              let lastReq: BattleRequest = WAIT_REQ
+              while (raidBattleInbox.length > 0) {
+                const item = raidBattleInbox.shift()!
+                combined.push(...item.events)
+                lastReq = item.request
+              }
+              if (raidBattleEnd !== null) {
+                const v = raidBattleEnd.victory
+                if (!combined.some((e) => e.t === 'end')) {
+                  combined.push({ t: 'end', result: v ? 'win' : 'lose', winner: v ? 0 : 1 })
+                }
+                lastReq = WAIT_REQ
+              }
+              return { events: combined, request: lastReq }
             }
             if (raidBattleEnd !== null) {
               const v = raidBattleEnd.victory
-              if (!combined.some((e) => e.t === 'end')) {
-                combined.push({ t: 'end', result: v ? 'win' : 'lose', winner: v ? 0 : 1 })
+              return {
+                events: [{ t: 'end', result: v ? 'win' : 'lose', winner: v ? 0 : 1 }],
+                request: WAIT_REQ,
               }
-              lastReq = WAIT_REQ
             }
-            return { events: combined, request: lastReq }
+            const gate = promiseResolvers<void>()
+            raidBattleWake = gate.resolve
+            await gate.promise
           }
-          if (raidBattleEnd !== null) {
-            const v = raidBattleEnd.victory
-            return {
-              events: [{ t: 'end', result: v ? 'win' : 'lose', winner: v ? 0 : 1 }],
-              request: WAIT_REQ,
-            }
-          }
-          await new Promise<void>((r) => { raidBattleWake = r })
+        } finally {
+          awaitingRaidTurn = false
         }
       }
       const raidBattleChannel: BattleChannel = {
         start: () => collectRaid(),
         submit(action: BattleAction) {
           if (raidBattleEnd !== null) return collectRaid()
-          net.send({ t: 'raid.action', raidId: msg.raidId, action })
+          awaitingRaidTurn = true
+          sendCoop({ t: 'raid.action', raidId: msg.raidId, action })
           return collectRaid()
         },
         wait: () => collectRaid(),
@@ -406,7 +579,7 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
           return () => raidUpdateListeners.delete(fn)
         },
         dispose() {
-          if (raidBattleEnd === null) net.send({ t: 'dungeon.leave' })
+          if (raidBattleEnd === null) sendCoop({ t: 'dungeon.leave' })
           raidBattleEnd ??= { victory: false }
           raidBattleInbox.length = 0
           raidUpdateListeners.clear()
@@ -427,7 +600,7 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     }
   })
 
-  net.on('raid.tick', (msg) => {
+  onCoopMsg('raid.tick', (msg) => {
     if (currentRaid && currentRaid.raidId === msg.raidId) {
       currentRaid.boss = msg.boss
       currentRaid.members = msg.members
@@ -454,13 +627,14 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
       displayedBossHp = msg.boss.hp
       displayedBossMaxHp = msg.boss.maxHp
 
-      if (!msg.actorId || msg.actorId === net.selfId) {
+      if (!msg.actorId || msg.actorId === getSelfId()) {
         const nextReq: BattleRequest = msg.request ?? {
           kind: 'action',
           canSwitch: ctx.save.party.filter((c) => c.hp > 0).length > 1,
           canRun: false,
           canItem: true,
         }
+        lastRaidRequest = nextReq
         const tickEvents = [...msg.events]
         const hasFoeHpEvent = tickEvents.some(
           (e) => (e.t === 'damage' || e.t === 'heal') && e.side === 1 && e.hp === msg.boss.hp && e.maxHp === msg.boss.maxHp,
@@ -489,7 +663,7 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     }
   })
 
-  net.on('raid.end', (msg) => {
+  onCoopMsg('raid.end', (msg) => {
     lastCompletedRaidId = msg.raidId
     currentRaid = null
     if (currentInstance && currentInstance.id === msg.raidId) {
@@ -505,12 +679,15 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
       result: msg.victory ? 'win' : 'lose',
       winner: msg.victory ? 0 : 1,
     }
+    const hadPendingTurnEvents = awaitingRaidTurn || raidBattleInbox.length > 0
     raidBattleInbox.push({
       events: [endEv],
       request: WAIT_REQ,
     })
-    for (const fn of raidUpdateListeners) {
-      fn({ events: [endEv], request: WAIT_REQ })
+    if (!hadPendingTurnEvents) {
+      for (const fn of raidUpdateListeners) {
+        fn({ events: [endEv], request: WAIT_REQ })
+      }
     }
     const w = raidBattleWake
     raidBattleWake = null
@@ -531,7 +708,7 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
         roomModal.close()
         roomModal = null
       }
-      net.send({ t: 'dungeon.leave' })
+      sendCoop({ t: 'dungeon.leave' })
     }
 
     const activePromise = raidBattlePromise
@@ -543,9 +720,9 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
           // ignore
         }
       }
-      if (typeof document !== 'undefined') {
+      if (typeof ctx.ui.pushPanel === 'function' && typeof document !== 'undefined') {
         showRaidSummaryModal(ctx, msg.summary, () => {
-          const selfMember = msg.summary.members.find((m) => m.id === net.selfId)
+          const selfMember = msg.summary.members.find((m) => m.id === getSelfId())
           if (msg.victory && selfMember?.qualified) {
             promptContractRoll(ctx, channel, msg.summary, finishCompletedDungeon)
           } else {
@@ -557,13 +734,16 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
       }
     })()
   })
-  net.on('raid.contractResult', (msg) => {
+
+  onCoopMsg('raid.contractResult', (msg) => {
     if (msg.success && msg.card) {
       ctx.ui.toast(t('multiplayer.dungeon.contractSuccess'), 'success')
       const name = creatureName(msg.card)
       ctx.ui.toast(t('battleui.catch.toParty', { name }), 'success')
-      if (typeof document !== 'undefined') {
-        void showReveal(ctx, msg.card, { full: true })
+      if (typeof document !== 'undefined' && typeof ctx.ui.pushPanel === 'function' && ctx.assets) {
+        void import('../ui/reveal.ts')
+          .then(({ showReveal }) => showReveal(ctx, msg.card!, { full: true }))
+          .catch(() => {})
       }
     } else {
       ctx.ui.toast(t('multiplayer.dungeon.contractFailed'), 'warn')
@@ -573,8 +753,14 @@ export function installCoopChannel(net: NetClient, ctx: GameContext): CoopChanne
     }
   })
 
-  net.on('raid.error', (msg) => {
+  onCoopMsg('raid.error', (msg) => {
     ctx.ui.toast(msg.message, 'warn')
+    if (currentRaid && raidBattleEnd === null && awaitingRaidTurn) {
+      raidBattleInbox.push({ events: [], request: lastRaidRequest })
+      const w = raidBattleWake
+      raidBattleWake = null
+      w?.()
+    }
   })
 
   ;(channel as CoopChannel & { _onPartyChange?: (fn: () => void) => () => void })._onPartyChange = (fn) => {
@@ -621,8 +807,9 @@ function showInvitePrompt(
         onRespond(true)
         return true
       }
-      if (input.pressed('cancel')) {
+      if (input.pressed('cancel') || input.pressed('menu')) {
         input.consume('cancel')
+        input.consume('menu')
         safePopPanel(ctx, pApi)
         onRespond(false)
         return true
@@ -761,8 +948,9 @@ function mountDungeonRoomModal(
   const pApi: UIPanel = {
     el: root,
     onInput(input: Input) {
-      if (input.pressed('cancel')) {
+      if (input.pressed('cancel') || input.pressed('menu')) {
         input.consume('cancel')
+        input.consume('menu')
         channel.leaveDungeon()
         close()
         return true
@@ -807,9 +995,10 @@ function showRaidSummaryModal(ctx: GameContext, summary: RaidSummary, onClose: (
   const pApi: UIPanel = {
     el: root,
     onInput(input: Input) {
-      if (input.pressed('confirm') || input.pressed('cancel')) {
+      if (input.pressed('confirm') || input.pressed('cancel') || input.pressed('menu')) {
         input.consume('confirm')
         input.consume('cancel')
+        input.consume('menu')
         safePopPanel(ctx, pApi)
         onClose()
         return true
@@ -923,8 +1112,9 @@ function promptContractRoll(
         finishRoll(true)
         return true
       }
-      if (input.pressed('cancel')) {
+      if (input.pressed('cancel') || input.pressed('menu')) {
         input.consume('cancel')
+        input.consume('menu')
         finishRoll(false)
         return true
       }
@@ -1012,8 +1202,9 @@ export function openDungeonModal(ctx: GameContext, defaultInstanceId?: string): 
   const pApi: UIPanel = {
     el: root,
     onInput(input: Input) {
-      if (input.pressed('cancel')) {
+      if (input.pressed('cancel') || input.pressed('menu')) {
         input.consume('cancel')
+        input.consume('menu')
         safePopPanel(ctx, pApi)
         return true
       }
@@ -1042,9 +1233,12 @@ export function openPartyModal(ctx: GameContext): void {
   }
 
   const render = () => {
+    if (channel.getInstance()) {
+      close()
+      return
+    }
     card.body.replaceChildren()
     const party = channel.getParty()
-
     if (!party) {
       const createBtn = button(t('multiplayer.party.create'), () => {
         channel.createParty()
@@ -1058,8 +1252,9 @@ export function openPartyModal(ctx: GameContext): void {
         el('div', { class: 'ap-btn-row' }, [createBtn, dungeonBtn]),
       )
     } else {
-      const isLeader = party.leaderId === ctx.net.selfId
-      const selfMember = party.members.find((m) => m.id === ctx.net.selfId)
+      const selfId = ctx.net?.selfId ?? (ctx.save?.playerId || 'local-player')
+      const isLeader = party.leaderId === selfId
+      const selfMember = party.members.find((m) => m.id === selfId)
 
       const memberRows = el('div', { class: 'ap-party-members' }, party.members.map((m) => {
         const roleLabel = m.leader ? `[${t('multiplayer.party.leader')}]` : `[${t('multiplayer.party.member')}]`
@@ -1123,8 +1318,9 @@ export function openPartyModal(ctx: GameContext): void {
   const pApi: UIPanel = {
     el: root,
     onInput(input: Input) {
-      if (input.pressed('cancel')) {
+      if (input.pressed('cancel') || input.pressed('menu')) {
         input.consume('cancel')
+        input.consume('menu')
         close()
         return true
       }

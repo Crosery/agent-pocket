@@ -78,14 +78,23 @@ export function pauseScreen(env: ScreenEnv): Promise<void> {
     const enabled = (i: number) => entries[i].requires !== 'party' || ctx.save.party.length > 0
     const dots = entries.map(() => attentionDot())
     dots.forEach((d) => { d.hidden = true })
+    let lastMouseX = -1
+    let lastMouseY = -1
     const rowsEl = entries.map((e, i) => {
       const r = el('button', { class: 'aps-pause-row ap-row ap-cursor-host', attrs: { type: 'button' } }, [
         e.glyph ? icon(e.glyph, { className: 'aps-pause-icon' }) : null,
         el('span', { class: 'ap-row-label', text: t(e.label) }),
         dots[i],
       ])
-      r.addEventListener('mouseenter', api.guard(() => { if (nav.index !== i) { nav.index = i; uiSfx(env, 'move'); paint() } }))
-      r.addEventListener('focus', api.guard(() => { nav.index = i; paint() }))
+      const onHover = api.guard((ev: MouseEvent) => {
+        if (ev.clientX === lastMouseX && ev.clientY === lastMouseY) return
+        lastMouseX = ev.clientX
+        lastMouseY = ev.clientY
+        if (nav.index !== i) { nav.index = i; uiSfx(env, 'move'); paint() }
+      })
+      r.addEventListener('mouseenter', onHover)
+      r.addEventListener('mousemove', onHover)
+      r.addEventListener('focus', api.guard(() => { if (nav.index !== i) { nav.index = i; paint() } }))
       r.addEventListener('click', api.guard(() => { nav.index = i; paint(); void activate(i) }))
       return r
     })
