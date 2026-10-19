@@ -123,7 +123,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
+  padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
   background: rgba(5, 8, 15, 0.55);
   cursor: pointer;
   user-select: none;
@@ -132,7 +133,6 @@
   --pm-w: min(calc(var(--u) * 196), calc(100% - var(--u) * 16));
   width: var(--pm-w);
   height: min(calc(var(--u) * 252), calc(100% - var(--u) * 14));
-  margin-bottom: calc(var(--u) * 8 + env(safe-area-inset-bottom, 0px));
   display: flex;
   flex-direction: column;
   padding: calc(var(--u) * 6) calc(var(--u) * 5) calc(var(--u) * 5);
@@ -213,8 +213,8 @@
 .aps-pm-hint { font-size: var(--ap-fs-caption); color: var(--ap-text-dim); }
 .aps-pm-hint.is-done { color: var(--ap-gold-hi); animation: aps-ch-blink 1400ms steps(2) 600ms infinite; }
 
-@keyframes aps-pm-in { from { transform: translateY(110%); } to { transform: none; } }
-@keyframes aps-pm-out { to { transform: translateY(110%); } }
+@keyframes aps-pm-in { from { opacity: 0; transform: translateY(calc(var(--u) * 24)) scale(0.94); } to { opacity: 1; transform: none; } }
+@keyframes aps-pm-out { to { opacity: 0; transform: translateY(calc(var(--u) * 16)) scale(0.96); } }
 @keyframes aps-pm-pop { from { opacity: 0; transform: translateY(calc(var(--u) * 3)) scale(0.92); } to { opacity: 1; transform: none; } }
 @keyframes aps-pm-dot { 50% { transform: translateY(calc(var(--u) * -2)); background: #9aa0b2; } }
 
