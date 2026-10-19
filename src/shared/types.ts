@@ -1036,6 +1036,13 @@ export type ScriptStep =
   | { op: 'research'; species: string; task: string; amount: number }
   | { op: 'instance'; id: string; action: 'enter' | 'room' | 'leave'; tier?: string; room?: string }
   | { op: 'ifInstance'; id: string; tier?: string; clearedAtLeast?: number; capturedAtLeast?: number; then: ScriptStep[]; else?: ScriptStep[] }
+  /** Cinematic chapter title card of content/world/story/chapters.json (texts: story.chapter.<id>.*). */
+  | { op: 'chapter'; chapter: string }
+  /**
+   * Phone chat thread from `from` (avatar: portrait id): `ask` is the player's earlier message at the top, `lines` arrive
+   * one by one, `reply` is the player's answer bubble at the end.
+   */
+  | { op: 'message'; from: string; lines: string[]; ask?: string; reply?: string; avatar?: string }
   | { op: 'end' }
 
 export interface NpcDef {
@@ -1137,7 +1144,8 @@ export interface QuestDef {
   id: string
   nameZh: string
   kind: 'main' | 'side'
-  stages: { text: string; hint?: string; target?: { map: string; x: number; y: number } }[]
+  /** short: a few words for the folded HUD objective (falls back to text). */
+  stages: { text: string; short?: string; hint?: string; target?: { map: string; x: number; y: number } }[]
   reward?: { money?: number; items?: Record<string, number> }
 }
 

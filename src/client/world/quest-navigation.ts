@@ -18,6 +18,8 @@ export interface QuestNavigation {
   questId: string
   title: string
   text: string
+  /** Folded objective (the stage's `short`, else its text). */
+  short: string
   status: 'searching' | 'ready' | 'arrived' | 'unreachable'
   target: RoutePlace
   waypoint: RoutePlace
@@ -246,11 +248,13 @@ export function createQuestNavigator(world: World, rules: NavigationRules) {
       let navId = ''
       let navTitle = ''
       let navText = ''
+      let navShort = ''
       if (quest && stage?.target) {
         navTarget = destination(world, quest.def, stage.target, save)
         navId = quest.def.id
         navTitle = quest.def.nameZh
         navText = stage.text
+        navShort = stage.short ?? stage.text
       } else if (save.settings.showObjective && !save.flags['intro:mom'] && !save.flags['starter']) {
         const momNpc = world.maps['origin-home']?.npcs.find(n => n.id === 'mom')
         if (momNpc) {
@@ -258,6 +262,7 @@ export function createQuestNavigator(world: World, rules: NavigationRules) {
           navId = 'mom'
           navTitle = '与妈妈对话'
           navText = '与妈妈对话'
+          navShort = navText
         }
       }
       if (!navTarget) { clear(); return }
@@ -302,7 +307,7 @@ export function createQuestNavigator(world: World, rules: NavigationRules) {
         } else {
           repairTail = null
           search = createRouteSearch(grid, from, goals.map(g => g.point), surf, rules)
-          state = { questId: navId, title: navTitle, text: navText, target,
+          state = { questId: navId, title: navTitle, text: navText, short: navShort, target,
             waypoint: goals[0]?.point ?? from, status: 'searching', path: [], steps: 0 }
         }
         checkT = rules.recheckSec

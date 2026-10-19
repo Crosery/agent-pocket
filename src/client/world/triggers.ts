@@ -23,8 +23,9 @@ function viewOf(ctx: GameContext, on: string, p: unknown): Record<string, string
   if (on === 'dex:caught') return { species: String(e.speciesId ?? '') }
   if (on === 'map:entered') return { map: String(e.mapId ?? '') }
   if (on === 'region:entered') {
+    // Infinite-world regions (towns, routes) have no index in map.regions, so the event carries the id itself.
     const map = ctx.data.world.maps[String(e.mapId ?? '')]
-    return { map: String(e.mapId ?? ''), region: map?.regions?.[Number(e.regionIndex)]?.id ?? '' }
+    return { map: String(e.mapId ?? ''), region: String(e.regionId ?? '') || (map?.regions?.[Number(e.regionIndex)]?.id ?? '') }
   }
   if (on === 'save:loaded' || on === 'content:updated') {
     const base = Object.fromEntries(Object.entries(e).map(([k, v]) => [k, Array.isArray(v) ? v.join(',') : String(v)]))

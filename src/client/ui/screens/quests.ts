@@ -2,11 +2,15 @@
 // hint, rewards and tracking (SaveData.trackedQuest, mirrored to the HUD).
 import type { QuestDef } from '../../../shared/types.ts'
 import { CONTENT, t } from '../../../shared/content/index.ts'
+import { CHAPTERS, chapterIndexOfStage, chapterTextKey, type ChapterDef } from '../../../shared/world/chapters.ts'
 import { createRowMenu, type RowMenu } from '../menu.ts'
 import { el, tabs } from '../widgets.ts'
 import { backPressed, frame, icon, isCompact, moneyEl, openScreen, pressed, sectionTitle, uiSfx, type ScreenEnv, setChildren } from './base.ts'
 import { SCREENS } from './config.ts'
 import { questEntries, type QuestEntry } from './logic.ts'
+
+/** The quest whose stages the story chapters cover (shared/world/chapters.ts). */
+const MAIN_QUEST = 'main'
 
 /** Text shown on the HUD for a tracked quest (current stage). */
 export function questHudText(def: QuestDef, stage: number): string {
@@ -63,10 +67,18 @@ export function questsScreen(env: ScreenEnv): Promise<void> {
         return
       }
       const tracked = ctx.save.trackedQuest === e.def.id
+      // The main quest reads as chapters (content/world/story/chapters.json): the current chapter's banner and stages,
+      // then a recap of the chapters already played, newest first.
+      const chapterIdx = e.def.id === MAIN_QUEST && CHAPTERS.length ? chapterIndexOfStage(e.done ? e.def.stages.length - 1 : e.stage) : -1
+      const chapter = chapterIdx >= 0 ? CHAPTERS[chapterIdx] : null
+      const from = chapter ? chapter.stages[0] : 0
       const stages = e.def.stages.slice(0, e.done ? e.def.stages.length : e.stage + 1).map((s, k) => {
+        if (k < from) return null
         const done = e.done || k < e.stage
         return el('li', `aps-stage${done ? ' is-done' : ' is-current'}`, [done ? icon('check', { className: 'aps-stage-mark' }) : icon('diamond', { className: 'aps-stage-mark' }), el('span', { text: s.text })])
       })
+      const part = (c: ChapterDef, p: Parameters<typeof chapterTextKey>[1]) => t(chapterTextKey(c.id, p))
+      const recap = chapter ? CHAPTERS.slice(0, chapterIdx).reverse() : []
       const cur = e.def.stages[e.stage]
       const reward = e.def.reward
       const rewardItems = Object.entries(reward?.items ?? {}).filter(([id]) => CONTENT.items[id])
@@ -76,9 +88,19 @@ export function questsScreen(env: ScreenEnv): Promise<void> {
           el('span', { class: 'aps-quest-name ap-gold', text: e.def.nameZh }),
           tracked ? el('span', { class: 'aps-tag is-ok', text: t('screens.quests.tracking') }) : null,
         ]),
+        chapter ? el('div', 'aps-qchap', [
+          el('div', 'aps-qchap-kicker', [el('span', { text: t('screens.quests.chapter') }), el('span', { class: 'aps-qchap-no', text: part(chapter, 'no') })]),
+          el('div', { class: 'aps-qchap-title ap-gold', text: part(chapter, 'title') }),
+          el('div', { class: 'aps-qchap-quote', text: part(chapter, 'quote') }),
+        ]) : null,
         sectionTitle(t('screens.quests.stages')),
         el('ol', 'aps-stages', stages),
         !e.done && cur?.hint ? el('div', 'aps-quest-hint', [el('span', { class: 'ap-gold', text: t('screens.quests.hintLabel') }), cur.hint]) : null,
+        recap.length ? sectionTitle(t('screens.quests.recap')) : null,
+        recap.length ? el('ol', 'aps-recaps', recap.map((c) => el('li', 'aps-recap', [
+          el('div', 'aps-recap-head', [el('span', { class: 'aps-recap-no', text: part(c, 'no') }), el('span', { class: 'aps-recap-title', text: part(c, 'title') })]),
+          el('div', { class: 'aps-recap-text', text: part(c, 'recap') }),
+        ]))) : null,
         reward && (reward.money || rewardItems.length) ? sectionTitle(t('screens.quests.rewards')) : null,
         reward && (reward.money || rewardItems.length) ? el('div', 'aps-rewards', [
           reward.money ? moneyEl(reward.money) : null,

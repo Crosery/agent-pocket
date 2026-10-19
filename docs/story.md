@@ -207,6 +207,55 @@ Gates: `gate:snowpass` 山口守卫 (`hiddenIfFlag: badge:compute`); `gate:ruins
 `setFlag gate:ruins` + `hideNpc`). Before the starter, eight patrol NPCs stand in the start town's four exits
 (`hiddenIfFlag: starter`).
 
+## Chapters, arrival beats and the phone (issue #90)
+
+The main quest reads as ten chapters (`chapters.json`: `{id, town, stages:[first,last]}`, contiguous over every main
+stage; checked by `validateChapters`). Texts live in `story.chapter.<id>.{no,title,quote,goal,recap}` (+ `r1` / `v4`
+arrival lines). The quest log shows the current chapter's banner, only that chapter's stages and a newest-first
+「往期回顾」 of the chapters already played; every main stage also has a `short` objective for the folded HUD chip
+(`tutorial.objective.short.next` = `{short}`), the full `text` stays in the expanded objective and the quest log.
+
+| chapter | town | stages | title |
+|---|---|---|---|
+| prologue | origin | 0–7 | 序章《服务器繁忙》 |
+| ch1 | opensource | 8 | 《把破绽摊在阳光下》 |
+| ch2 | pixelport | 9 | 《海雾与红包雨》 |
+| ch3 | chord | 10 | 《榜单之外的副歌》 |
+| ch4 | retrieval | 11–12 | 《429 与幻觉沼泽》 |
+| ch5 | forge | 13 | 《规模定律的热浪》 |
+| ch6 | frostshield | 14 | 《护栏与温度》 |
+| ch7 | hub | 15–16 | 《256 满血的光标》 |
+| ch8 | balance | 17 | 《不悔棋》 |
+| finale | agi | 18–19 | 终章《最优解之外》 |
+
+Presentation ops (pure presentation, no state; the server ignores them):
+
+- `{op:'chapter', chapter}` — letterboxed title card (`ui/story-cards.ts`, timings `content/ui.json` `storyCards.chapter`).
+- `{op:'message', from, lines[], ask?, reply?, avatar?}` — phone chat thread: `ask` is the player's earlier bubble, `lines`
+  arrive after a typing indicator, `reply` is sent last. Texts are keys or literals; `avatar` is a portrait id.
+- A line opening with `（已深度思考 N 秒）` (`ui.json` `dialogue.thought.pattern`) shows a reasoning chip instead of the stamp,
+  in the dialogue box and in phone bubbles. R1's thinking time is a running arc: 3 s in the prologue → 2 → 1.5 → 4–5 (the
+  swamp) → 9.9 (her confession after the compute badge) → 1 → 0.5 → 0.1 → 0 s at the temple.
+
+Triggers (`triggers.json`, all `once`):
+
+| id | on | when | script |
+|---|---|---|---|
+| `chapter-ch1` … `chapter-ch8` | `region:entered` town | badge count = chapter index (ch1: `ds:reported`, 0 badges) | card + `ch*.arrival` + R1 / V4 lines |
+| `chapter-finale` | `region:entered` agi | ≥ 8 badges, no `champion` | card + `finale.arrive` + V4 |
+| `finale-temple` | `map:entered` agi-temple | ≥ 8 badges, no `champion` | `finale.r1ZeroSec` + `finale.v4Online` |
+| `badge-<type>-after` | `badge:earned` `badge-<type>` | — | mom's phone message `story.home.<type>.*` (+ `ch4.r1Reflect` after search, the R1/V4 confession after compute) |
+
+`match.region` compares the region id. On the infinite overworld, towns and routes have no index in `map.regions`
+(`regionIndex` is `-1`), so `region:entered` also carries `regionId`. Trigger matching and onboarding `objective.markers`
+read that field. Before this, region triggers on the overworld (`ds-first-spark`, the `ob:route1` marker) never matched.
+
+Mom's thread runs alongside the whole journey and ends at home: after `champion` her greeting is `story.home.champion.*`.
+Rival beats added between the existing ones: `rival-forge` (熔炉镇广场, after `badge:search`; the distilled card, a
+3-way choice with no state, sets `rival:forge`) and `rival-release` (枢纽市广场, after `villain:boss`; reads `rival:bond`,
+sets `rival:release`); `rival-final` opens with `finale.campZero`. Instance terminals (cursor / doubao / minimax / kimi /
+astra) send the boss's after-story line as a one-time phone message once the story tier is cleared (`beat:<boss>`).
+
 ## Branches and the hidden storyline (issue #25)
 
 Four `choice` steps decide a flag value and pay out differently; later scripts read the value with `ifFlag … equals`.
@@ -252,7 +301,9 @@ merchant `shop`, optional trainers (外卖骑手, 岛主, 机房主管 behind `l
 |---|---|---|
 | `starter` | client (`chooseStarter`) | professor, aide, rival branches, start-town patrols |
 | `intro:mom` | mom | — (progress marker) |
-| `rival:lab` `rival:pixelport` `rival:frost` `rival:final` | rival scripts | rival NPC visibility |
+| `rival:lab` `rival:pixelport` `rival:forge` `rival:frost` `rival:release` `rival:final` | rival scripts | rival NPC visibility |
+| `beat:<boss>` | instance terminals | one-time boss phone message |
+| `trig:<id>` | `once` triggers | trigger runner (chapter cards, mom's messages) |
 | `badge:<type>` | gym-leader script | leader after-line, snow pass guard, rival visibility |
 | `villain:swamp` `villain:boss` | admin / boss scripts | grunts, search & agent leaders, villagers, main-progress |
 | `gate:ruins` | ruins gate keeper | gate keeper, final rival |

@@ -35,7 +35,7 @@ export interface GameEvents {
   'dex:seen': { speciesId: string }
   'dex:caught': { speciesId: string }
   'map:entered': { mapId: string; x: number; y: number }
-  'region:entered': { mapId: string; regionIndex: number; nameZh: string }
+  'region:entered': { mapId: string; regionIndex: number; nameZh: string; /** Region id; the only handle on the infinite overworld, where regionIndex is -1. */ regionId: string }
   'quest:updated': { questId: string; stage: number; done: boolean }
   'badge:earned': { badgeId: string }
   /** `coach`: a guided boss fight (BattleInit.coach): the legacy tips stay quiet until it is over. */
