@@ -7,10 +7,10 @@
     "respawnAtStart": true,
     "introScript": [
       {"op": "wait", "ms": 500},
+      {"op": "chapter", "chapter": "prologue"},
       {"op": "say", "text": "story.opening.intro.n1"},
       {"op": "say", "text": "story.opening.intro.phone1"},
-      {"op": "sfx", "id": "notify"},
-      {"op": "say", "text": "story.opening.intro.phone2"},
+      {"op": "message", "from": "story.opening.intro.app", "avatar": "creature:deepseek-app", "ask": "story.opening.intro.ask", "lines": ["story.opening.intro.think", "story.opening.intro.phone2"]},
       {"op": "say", "text": "story.opening.intro.wake"}
     ]
   },

@@ -4,6 +4,7 @@ import type { WorldFx } from '../contracts.ts'
 import { CONTENT, t, type Content } from '../../shared/content/index.ts'
 import gameJson from '../../../content/game.json' with { type: 'json' }
 import { WORLD_CONTENT } from '../../shared/world/data.ts'
+import { chapterById } from '../../shared/world/chapters.ts'
 
 export type MapKind = GameMap['kind']
 export type Range = [number, number]
@@ -243,7 +244,10 @@ export function validateGameContent(g: GameTuning = GAME, c: Content = CONTENT):
   for (const cat of Object.keys(g.debug.categoryQty)) if (!c.itemList.some((it) => it.category === cat)) errs.push(`game.json debug.categoryQty: no items in category "${cat}"`)
   for (const id of g.debug.boss.party) if (!c.species[id]) errs.push(`game.json debug.boss.party: unknown species "${id}"`)
   for (const step of g.newGame.introScript) {
-    if (step.op === 'say' && !(step.text in c.text)) errs.push(`game.json newGame.introScript: missing text key "${step.text}"`)
+    const needText = (key: string) => { if (!(key in c.text)) errs.push(`game.json newGame.introScript: missing text key "${key}"`) }
+    if (step.op === 'say') needText(step.text)
+    if (step.op === 'message') for (const key of [step.from, ...step.lines, step.ask, step.reply]) if (key) needText(key)
+    if (step.op === 'chapter' && !chapterById(step.chapter)) errs.push(`game.json newGame.introScript: unknown chapter "${step.chapter}"`)
     if (step.op === 'sfx') checkSfx('newGame.introScript', step.id)
   }
   return errs

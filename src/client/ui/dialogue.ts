@@ -30,7 +30,11 @@ export function createDialogueBox(audio: AudioManager, getSettings: () => Settin
   const shown = el('span', { attrs: { 'aria-hidden': 'true' } })
   const hidden = el('span', { class: 'ap-tw-hidden', attrs: { 'aria-hidden': 'true' } })
   const spoken = el('span', 'ap-sr-only')
-  const text = el('div', 'ap-dlg-text', [spoken, shown, hidden])
+  // Reasoning chip: a line opening with a thinking-time stamp (ui.json dialogue.thought) shows it here, not typed out.
+  const thought = el('div', { class: 'ap-dlg-thought', attrs: { 'aria-hidden': 'true' } })
+  thought.hidden = true
+  const thoughtRe = new RegExp(cfg.thought.pattern)
+  const text = el('div', 'ap-dlg-text', [thought, spoken, shown, hidden])
   const name = el('div', 'ap-nameplate')
   const img = el('img', { attrs: { alt: '', draggable: 'false' } })
   const placeholder = el('div', 'ap-dlg-portrait-ph')
@@ -103,7 +107,10 @@ export function createDialogueBox(audio: AudioManager, getSettings: () => Settin
       name.hidden = !line.speaker
       setPortrait(line)
       spoken.textContent = line.speaker ? t('ui.dialogue.spoken', { speaker: line.speaker, text: line.text }) : line.text
-      tw = createTypewriter(line.text)
+      const stamp = thoughtRe.exec(line.text)
+      thought.hidden = !stamp
+      thought.textContent = stamp ? t(cfg.thought.text, { sec: stamp[1] ?? '' }) : ''
+      tw = createTypewriter(stamp ? line.text.slice(stamp[0].length).trimStart() : line.text)
       blipCount = 0
       lastShown = -1
       if (instant || cfg.charsPerSecond[getSettings().textSpeed] <= 0) completeTypewriter(tw)

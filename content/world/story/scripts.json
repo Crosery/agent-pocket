@@ -222,5 +222,92 @@
   "dungeon-entry": [
     {"op": "ifInstance", "id": "{instance}", "tier": "story", "clearedAtLeast": 1, "then": [{"op": "say", "text": "你已经通关过「{instanceName}」剧情档，可以挑战更高难度或组队进入集群版。"}], "else": [{"op": "say", "text": "这里是「{instanceName}」副本终端，支持单人挑战与好友组队讨伐。"}]},
     {"op": "choice", "text": "要打开「{instanceName}」副本面板吗？", "options": ["进入副本面板", "稍后再来"], "branches": [[{"op": "instance", "id": "{instance}", "action": "enter"}], []]}
+  ],
+  "chapter-ch1": [
+    {"op": "chapter", "chapter": "ch1"},
+    {"op": "say", "text": "story.ch1.arrival", "speaker": ""},
+    {"op": "say", "text": "story.ch1.cursorNotice", "speaker": ""},
+    {"op": "say", "text": "story.chapter.ch1.r1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+    {"op": "say", "text": "story.chapter.ch1.v4", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}
+  ],
+  "chapter-ch2": [
+    {"op": "chapter", "chapter": "ch2"},
+    {"op": "say", "text": "story.ch2.arrival", "speaker": ""},
+    {"op": "say", "text": "story.chapter.ch2.r1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+    {"op": "say", "text": "story.chapter.ch2.v4", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}
+  ],
+  "chapter-ch3": [
+    {"op": "chapter", "chapter": "ch3"},
+    {"op": "say", "text": "story.ch3.arrival", "speaker": ""},
+    {"op": "say", "text": "story.chapter.ch3.r1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+    {"op": "say", "text": "story.chapter.ch3.v4", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}
+  ],
+  "chapter-ch4": [
+    {"op": "chapter", "chapter": "ch4"},
+    {"op": "say", "text": "story.ch4.arrival", "speaker": ""},
+    {"op": "say", "text": "story.chapter.ch4.r1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+    {"op": "say", "text": "story.chapter.ch4.v4", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}
+  ],
+  "chapter-ch5": [
+    {"op": "chapter", "chapter": "ch5"},
+    {"op": "say", "text": "story.ch5.arrival", "speaker": ""},
+    {"op": "say", "text": "story.chapter.ch5.r1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+    {"op": "say", "text": "story.chapter.ch5.v4", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}
+  ],
+  "chapter-ch6": [
+    {"op": "chapter", "chapter": "ch6"},
+    {"op": "say", "text": "story.ch6.arrival", "speaker": ""},
+    {"op": "say", "text": "story.chapter.ch6.r1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+    {"op": "say", "text": "story.chapter.ch6.v4", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}
+  ],
+  "chapter-ch7": [
+    {"op": "chapter", "chapter": "ch7"},
+    {"op": "say", "text": "story.ch7.arrival", "speaker": ""},
+    {"op": "say", "text": "story.chapter.ch7.r1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+    {"op": "say", "text": "story.chapter.ch7.v4", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}
+  ],
+  "chapter-ch8": [
+    {"op": "chapter", "chapter": "ch8"},
+    {"op": "say", "text": "story.ch8.arrival", "speaker": ""},
+    {"op": "say", "text": "story.chapter.ch8.r1", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+    {"op": "say", "text": "story.chapter.ch8.v4", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}
+  ],
+  "chapter-finale": [
+    {"op": "chapter", "chapter": "finale"},
+    {"op": "say", "text": "story.finale.arrive", "speaker": ""},
+    {"op": "say", "text": "story.chapter.finale.v4", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}
+  ],
+  "finale-temple": [
+    {"op": "say", "text": "story.finale.r1ZeroSec", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+    {"op": "say", "text": "story.finale.v4Online", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}
+  ],
+  "badge-code-after": [
+    {"op": "message", "from": "story.cast.mom", "lines": ["story.home.code.m1", "story.home.code.m2", "story.home.code.m3"], "reply": "story.home.code.reply"}
+  ],
+  "badge-vision-after": [
+    {"op": "message", "from": "story.cast.mom", "lines": ["story.home.vision.m1", "story.home.vision.m2", "story.home.vision.m3"], "reply": "story.home.vision.reply"}
+  ],
+  "badge-sound-after": [
+    {"op": "message", "from": "story.cast.mom", "lines": ["story.home.sound.m1", "story.home.sound.m2", "story.home.sound.m3"], "reply": "story.home.sound.reply"}
+  ],
+  "badge-search-after": [
+    {"op": "message", "from": "story.cast.mom", "lines": ["story.home.search.m1", "story.home.search.m2", "story.home.search.m3"], "reply": "story.home.search.reply"},
+    {"op": "say", "text": "story.ch4.r1Reflect", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"}
+  ],
+  "badge-compute-after": [
+    {"op": "message", "from": "story.cast.mom", "lines": ["story.home.compute.m1", "story.home.compute.m2", "story.home.compute.m3"], "reply": "story.home.compute.reply"},
+    {"op": "say", "text": "story.ch5.r1V4Confess", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+    {"op": "say", "text": "story.ch5.v4Hear", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"},
+    {"op": "say", "text": "story.ch5.r1Sorry", "speaker": "story.cast.r1", "portrait": "creature:deepseek-r1"},
+    {"op": "say", "text": "story.ch5.v4Forgive", "speaker": "story.cast.v4", "portrait": "creature:deepseek-v4"}
+  ],
+  "badge-safety-after": [
+    {"op": "message", "from": "story.cast.mom", "lines": ["story.home.safety.m1", "story.home.safety.m2", "story.home.safety.m3"], "reply": "story.home.safety.reply"}
+  ],
+  "badge-agent-after": [
+    {"op": "message", "from": "story.cast.mom", "lines": ["story.home.agent.m1", "story.home.agent.m2", "story.home.agent.m3"], "reply": "story.home.agent.reply"}
+  ],
+  "badge-logic-after": [
+    {"op": "message", "from": "story.cast.mom", "lines": ["story.home.logic.m1", "story.home.logic.m2", "story.home.logic.m3"], "reply": "story.home.logic.reply"}
   ]
 }

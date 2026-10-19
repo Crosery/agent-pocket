@@ -64,7 +64,7 @@ function viewOf(world: World, r: ObjectiveRule, s: ProgressView): ObjectiveView 
     const q = openQuestStage(world, r.fromQuest, s)
     if (!q) return { ruleId: r.id, textKey: r.textDone ?? r.text, params: {}, targets: [] }
     const st = q.def.stages[q.stage]
-    return { ruleId: r.id, textKey: r.text, params: { stage: st?.text ?? '' }, targets: [], ...(st?.target ? { questTarget: st.target } : {}) }
+    return { ruleId: r.id, textKey: r.text, params: { stage: st?.text ?? '', short: st?.short ?? st?.text ?? '' }, targets: [], ...(st?.target ? { questTarget: st.target } : {}) }
   }
   return { ruleId: r.id, textKey: r.text, params: {}, targets: r.target ?? [] }
 }

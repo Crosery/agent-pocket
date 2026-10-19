@@ -53,6 +53,17 @@ export interface UIConfig {
     pause: { chars: string; ms: number }
     lingerMs: number
     portraitFallbackChars: number
+    /** A leading "thinking time" stamp (regex with the seconds as group 1) is lifted out of the spoken line and shown
+     *  as a reasoning chip with this text key ({sec}). */
+    thought: { pattern: string; text: string }
+  }
+  /** Chapter title card and phone chat thread (ui/story-cards.ts). */
+  storyCards: {
+    chapter: { sfx: string; minMs: number; autoCloseMs: number; titleDelayMs: number; titleStepMs: number; leaveMs: number }
+    phone: {
+      openSfx: string; lineSfx: string; replySfx: string
+      firstMs: number; gapMs: number; typingMs: number; perCharMs: number; maxTypingMs: number; replyMs: number; leaveMs: number
+    }
   }
   list: {
     visibleRows: number; compactVisibleRows: number; rowHeight: number; wrap: boolean; pageStep: number; minWidth: number; detailWidth: number
@@ -159,6 +170,9 @@ export function validateUIConfig(cfg: UIConfig, knownSfx: readonly string[]): st
   const checkSfx = (where: string, id: string) => { if (!sfx.has(id)) errs.push(`${where}: unknown sfx "${id}"`) }
   for (const [k, id] of Object.entries(cfg.sfx)) checkSfx(`ui.sfx.${k}`, id)
   checkSfx('ui.dialogue.blip.sfx', cfg.dialogue.blip.sfx)
+  checkSfx('ui.storyCards.chapter.sfx', cfg.storyCards.chapter.sfx)
+  for (const k of ['openSfx', 'lineSfx', 'replySfx'] as const) checkSfx(`ui.storyCards.phone.${k}`, cfg.storyCards.phone[k])
+  try { new RegExp(cfg.dialogue.thought.pattern) } catch { errs.push(`ui.dialogue.thought.pattern: invalid regex "${cfg.dialogue.thought.pattern}"`) }
   for (const [k, id] of Object.entries(cfg.toast.sfx)) checkSfx(`ui.toast.sfx.${k}`, id)
 
   for (const [id, g] of Object.entries(cfg.glyphs)) {

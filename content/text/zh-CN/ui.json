@@ -33,5 +33,9 @@
     "unread": "+{n}"
   },
   "bar": {"value": "{value}/{max}"},
-  "dialogue": {"spoken": "{speaker}：{text}"}
+  "dialogue": {"spoken": "{speaker}：{text}", "thought": "已深度思考（用时 {sec} 秒）"},
+  "story": {
+    "chapter": {"goal": "本章目标", "next": "{key} 继续", "nextTouch": "轻触继续"},
+    "phone": {"label": "{from}发来的消息", "online": "在线", "typing": "对方正在输入…", "skip": "{key} 跳过", "skipTouch": "轻触跳过", "close": "{key} 收起手机", "closeTouch": "轻触收起手机"}
+  }
 }

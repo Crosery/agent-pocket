@@ -2,7 +2,7 @@ import { TUTORIAL } from '../src/client/onboarding/config.ts'
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { CONTENT, typeEffectiveness, type Content } from '../src/shared/content/index.ts'
-import type { GameMap, NpcDef, ScriptStep, SpeciesDef, World } from '../src/shared/types.ts'
+import type { GameMap, NpcDef, SaveData, ScriptStep, SpeciesDef, World } from '../src/shared/types.ts'
 import { WORLD_CONTENT, buildWorld, worldAnchors, worldBuildInfo } from '../src/shared/world/index.ts'
 import { buildCollision } from '../src/shared/world/collision.ts'
 import { floodReach } from '../src/shared/world/reach.ts'
@@ -12,6 +12,9 @@ import {
   type StoryContent,
 } from '../src/shared/world/story.ts'
 import { HintIndex } from '../src/shared/world/story-procgen.ts'
+import type { GameContext, GameEvents } from '../src/client/contracts.ts'
+import { createEventBus } from '../src/client/core/events.ts'
+import { createTriggers } from '../src/client/world/triggers.ts'
 
 // Acceptance thresholds for the shipped story content.
 const MIN_ROUTE_TRAINERS = 50
@@ -716,4 +719,37 @@ test('the simulator terminal stands on its lab anchor, reachable from the door a
   const reach = floodReach(lab, buildCollision(lab), lab.spawn.x, lab.spawn.y, false)
   assert.ok(reach[term.y * lab.width + term.x - 1], 'the player can stand in front of it')
   assert.ok(term.hiddenUnlessFlag === 'ds:legacy' && !term.hiddenIfFlag, 'only for saves that skipped the new opening (ds:legacy); the story fights DeepSeek in the machine room')
+})
+
+test('overworld region:entered carries the region id: region triggers fire there, chapter cards only in their badge window and once', async () => {
+  // On the infinite overworld regions have no index in map.regions (regionIndex -1); only regionId names them.
+  const overworld = Object.values(world.maps).find((m) => m.infinite)
+  assert.ok(overworld, 'the overworld is an infinite map')
+  const mapId = overworld.id
+  const save = { flags: { 'ds:done': true, 'ds:reported': true }, badges: [] as string[], party: [], stats: {}, bag: {} } as unknown as SaveData
+  const events = createEventBus<GameEvents>()
+  const ctx = { data: { ...CONTENT, world }, save, events, net: { status: 'offline' } } as unknown as GameContext
+  const ran: string[] = []
+  const runner = createTriggers({ ctx, isFree: () => true, run: async (_steps, id) => { ran.push(id ?? '') } })
+  const enter = async (regionId: string) => {
+    events.emit('region:entered', { mapId, regionIndex: -1, nameZh: regionId, regionId })
+    while (runner.pending) {
+      runner.update()
+      await new Promise((r) => setImmediate(r))
+    }
+  }
+  try {
+    await enter('route-1')
+    assert.deepEqual(ran, ['trig:ds-first-spark'], 'the route-1 trigger fires on the overworld')
+    await enter('opensource')
+    assert.deepEqual(ran.slice(1), ['trig:chapter-ch1'], 'chapter 1 opens in the first town')
+    await enter('pixelport')
+    assert.equal(ran.length, 2, 'chapter 2 waits for the first badge')
+    save.badges.push('badge-code')
+    await enter('pixelport')
+    await enter('opensource')
+    assert.deepEqual(ran.slice(2), ['trig:chapter-ch2'], 'chapter 2 opens with one badge; chapter 1 never repeats')
+  } finally {
+    runner.dispose()
+  }
 })

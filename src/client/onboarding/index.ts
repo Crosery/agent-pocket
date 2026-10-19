@@ -75,7 +75,7 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
       const angle = next ? Math.atan2(next.y + 0.5 - from.y, next.x + 0.5 - from.x) : 0
       objective.set({
         textKey: 'tutorial.objective.next',
-        params: { stage: route.text },
+        params: { stage: route.text, short: route.short },
         arrow: next ? { angle, steps: route.steps } : null,
         note: route.status === 'ready' ? undefined : `tutorial.objective.navigation.${route.status}`,
         device: ctx.input.lastDevice,
@@ -99,11 +99,10 @@ export function createOnboarding(ctx: GameContext, overworld: OverworldExt, uiRo
   }
 
   // -- progress markers (region visits that have no other persistent trace) --------------------------------------
-  const offRegion = ctx.events.on('region:entered', ({ regionIndex, mapId }) => {
-    const map = ctx.data.world.maps[mapId]
-    const region = map?.regions[regionIndex]
-    if (!region) return
-    for (const m of cfg.objective.markers) if (m.on === 'region:entered' && m.region === region.id) ctx.save.flags[m.flag] = true
+  const offRegion = ctx.events.on('region:entered', ({ regionIndex, mapId, regionId }) => {
+    const id = regionId || ctx.data.world.maps[mapId]?.regions[regionIndex]?.id
+    if (!id) return
+    for (const m of cfg.objective.markers) if (m.on === 'region:entered' && m.region === id) ctx.save.flags[m.flag] = true
   })
 
   // -- one-time notice for a save that was migrated to natures (it got the persona-card gift) ------------------------

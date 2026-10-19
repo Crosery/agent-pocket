@@ -1,0 +1,14 @@
+{
+  "chapters": [
+    {"id": "prologue", "town": "origin", "stages": [0, 7]},
+    {"id": "ch1", "town": "opensource", "stages": [8, 8]},
+    {"id": "ch2", "town": "pixelport", "stages": [9, 9]},
+    {"id": "ch3", "town": "chord", "stages": [10, 10]},
+    {"id": "ch4", "town": "retrieval", "stages": [11, 12]},
+    {"id": "ch5", "town": "forge", "stages": [13, 13]},
+    {"id": "ch6", "town": "frostshield", "stages": [14, 14]},
+    {"id": "ch7", "town": "hub", "stages": [15, 16]},
+    {"id": "ch8", "town": "balance", "stages": [17, 17]},
+    {"id": "finale", "town": "agi", "stages": [18, 19]}
+  ]
+}

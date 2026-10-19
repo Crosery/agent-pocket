@@ -18,6 +18,7 @@ import { frontierTrainer, registerFrontierRefs } from '../../shared/world/fronti
 import { decodeExplored, encodeExplored, type MinimapHandle } from '../ui/minimap.ts'
 import { UI_CONFIG } from '../ui/config.ts'
 import { showReveal } from '../ui/reveal.ts'
+import { showChapterCard, showPhoneMessage } from '../ui/story-cards.ts'
 import { TUTORIAL } from '../onboarding/config.ts'
 import { GAME, textOrKey } from './config.ts'
 import { EXPLORE } from './explore-config.ts'
@@ -252,6 +253,8 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     revealPlace: (ref) => gameplay.revealPlace(ref),
     shopPriceMul: (item) => gameplay.modifier('shopPrice', { category: item.category }),
     reveal: (cr, o) => showReveal(ctx, cr, o),
+    chapterCard: (id) => showChapterCard(ctx, id),
+    message: (m) => showPhoneMessage(ctx, m),
   }
   const scripts = createScriptRunner(host)
   /** World events, rarity spawns, roaming legends, rumors, research (events-runtime.ts). */
@@ -447,7 +450,7 @@ export function createOverworld(ctx: GameContext, opts: OverworldOptions = {}): 
     const regional = regionalMap(map)
     const name = regional ? r?.nameZh ?? map.nameZh : map.nameZh
     ctx.hud.setRegion(name)
-    if (r) ctx.events.emit('region:entered', { mapId: map.id, regionIndex: ri, nameZh: r.nameZh })
+    if (r) ctx.events.emit('region:entered', { mapId: map.id, regionIndex: ri, nameZh: r.nameZh, regionId: r.id })
     if (r?.isTown && r.townId && !ctx.save.visitedTowns.includes(r.townId)) {
       ctx.save.visitedTowns.push(r.townId)
       sendScriptOp(ctx, { t: 'script.op', op: 'unlockTown', townId: r.townId })

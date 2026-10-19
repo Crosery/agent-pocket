@@ -53,6 +53,10 @@ export interface ScriptHost {
   shopPriceMul?(item: ItemDef): number
   /** Appraisal card (full) or chip for a creature that just joined the player; absent = nothing is shown. */
   reveal?(cr: Creature, opts: { full: boolean }): Promise<void>
+  /** Chapter title card ('chapter'); absent = the chapter title is narrated. */
+  chapterCard?(chapter: string): Promise<void>
+  /** Phone chat thread ('message', texts resolved); absent = the lines are spoken in the dialogue box. */
+  message?(m: { from: string; lines: string[]; ask?: string; reply?: string; avatar?: string }): Promise<void>
 }
 
 const ballId = (ctx: GameContext): string | undefined => ctx.data.itemList.find((it) => it.effect.kind === 'ball')?.id
@@ -431,6 +435,17 @@ export function createScriptRunner(host: ScriptHost) {
         if (s.clearedAtLeast !== undefined && cleared < s.clearedAtLeast) cond = false
         if (s.capturedAtLeast !== undefined && captured < s.capturedAtLeast) cond = false
         return exec(cond ? s.then : s.else ?? [], npc, depth + 1, `${c.stepPath}.${cond ? 'then' : 'else'}`, c.sourceId, c.choiceIndex)
+      }
+      case 'chapter':
+        if (host.chapterCard) await host.chapterCard(s.chapter)
+        else await narrate(t(`story.chapter.${s.chapter}.title`))
+        return 'done'
+      case 'message': {
+        const text = (k: string) => textOrKey(deviceKey(k), params())
+        const m = { from: text(s.from), lines: s.lines.map(text), ...(s.ask ? { ask: text(s.ask) } : {}), ...(s.reply ? { reply: text(s.reply) } : {}), ...(s.avatar ? { avatar: s.avatar } : {}) }
+        if (host.message) await host.message(m)
+        else await ctx.ui.say(m.lines.map((l) => ({ text: l, speaker: m.from })))
+        return 'done'
       }
       case 'end':
         return 'end'

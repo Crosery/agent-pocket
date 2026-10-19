@@ -21,6 +21,7 @@ import { EXCHANGE } from '../gameplay/exchange.ts'
 import { GAMEPLAY } from '../gameplay/data.ts'
 import { worldAnchors, worldBuildInfo } from './index.ts'
 import { WORLD_CONTENT } from './data.ts'
+import { chapterById, validateChapters } from './chapters.ts'
 import { COLLISION_FREE, COLLISION_WATER, DIR_DX, DIR_DY, DIRS, buildCollision, canStep, inBounds } from './collision.ts'
 import { seedFor } from './random.ts'
 import { levelForm, resolvePickAvoiding, type PickRules, type StoryPick } from './pick.ts'
@@ -159,7 +160,8 @@ export interface QuestSpec {
   id: string
   nameZh: string
   kind: 'main' | 'side'
-  stages: { text: string; hint?: string; target?: string }[]
+  /** short: the folded HUD objective (a few words); text stays the full sentence. */
+  stages: { text: string; short?: string; hint?: string; target?: string }[]
   reward?: { money?: number; items?: Record<string, number> }
 }
 
@@ -267,7 +269,8 @@ export interface TriggerSpec {
   id: string
   on: string
   match?: Record<string, string>
-  when?: { flag?: string[]; noFlag?: string[] }
+  /** minBadges / maxBadges: badge-count window (chapter arrivals fire only while the story is at that point). */
+  when?: { flag?: string[]; noFlag?: string[]; minBadges?: number; maxBadges?: number }
   script: string
   once?: boolean
 }
@@ -677,6 +680,10 @@ class StoryBuilder implements PopHost {
   /** Sorted anchor names (stable iteration for population). */
   readonly anchorNames: string[]
   private readonly occupied = new Map<string, string>()
+  /** Quest stages and the anchor they aim at; NPCs placed exactly on an anchor / beside it (offset), by anchor name. */
+  private readonly stageAnchors: { stage: QuestDef['stages'][number]; anchor: string }[] = []
+  private readonly onAnchor = new Set<string>()
+  private readonly besideAnchor = new Map<string, NpcDef[]>()
   private readonly npcIds = new Set<string>()
   /** Tile indices of every placed NPC, per map. */
   private readonly npcTiles = new Map<string, number[]>()
@@ -837,10 +844,12 @@ class StoryBuilder implements PopHost {
       id: q.id, nameZh: this.text(q.nameZh, params, where), kind: q.kind,
       stages: q.stages.map((s, i) => {
         const st: QuestDef['stages'][number] = { text: this.text(s.text, params, where) }
+        if (s.short) st.short = this.text(s.short, params, where)
         if (s.hint) st.hint = this.text(s.hint, params, where)
         if (s.target) {
-          const a = this.anchors[fill(s.target, params)]
-          if (a) st.target = { map: a.map, x: a.x, y: a.y }
+          const anchor = fill(s.target, params)
+          const a = this.anchors[anchor]
+          if (a) { st.target = { map: a.map, x: a.x, y: a.y }; this.stageAnchors.push({ stage: st, anchor }) }
           else this.problems.push(`${where} stage ${i}: unknown target anchor "${s.target}"`)
         }
         return st
@@ -1122,9 +1131,23 @@ class StoryBuilder implements PopHost {
       if (s.hiddenUnlessFlag) npc.hiddenUnlessFlag = s.hiddenUnlessFlag
       if (s.hiddenIfFlag) npc.hiddenIfFlag = s.hiddenIfFlag
       map.npcs.push(npc)
+      if (x === a.x && y === a.y) this.onAnchor.add(s.at)
+      else this.besideAnchor.set(s.at, [...(this.besideAnchor.get(s.at) ?? []), npc])
       const tiles = this.npcTiles.get(map.id)
       if (tiles) tiles.push(i)
       else this.npcTiles.set(map.id, [i])
+    }
+  }
+
+  /**
+   * A quest stage aims at an anchor; when nobody stands on it but exactly one NPC was placed beside it (an `offset`),
+   * that NPC is who the stage means, so the guide trail and the arrival check lead to them instead of an empty tile.
+   */
+  retargetQuests(): void {
+    for (const { stage, anchor } of this.stageAnchors) {
+      const beside = this.besideAnchor.get(anchor)
+      if (this.onAnchor.has(anchor) || beside?.length !== 1 || !stage.target) continue
+      stage.target = { map: stage.target.map, x: beside[0].x, y: beside[0].y }
     }
   }
 
@@ -1616,6 +1639,12 @@ class StoryBuilder implements PopHost {
             if (!GAMEPLAY.instances[s.id]) bad(`unknown instance "${s.id}"`)
             list(s.then, 'then')
             break
+          case 'chapter': if (!chapterById(s.chapter)) bad(`unknown chapter "${s.chapter}"`); break
+          case 'message':
+            str(s.from, 'from')
+            if (!Array.isArray(s.lines) || !s.lines.length || s.lines.some((l) => typeof l !== 'string' || !l)) bad('lines must be a non-empty string list')
+            if (s.avatar && !portraitKnown(s.avatar)) bad(`unknown avatar "${s.avatar}"`)
+            break
           case 'chooseStarter': case 'heal': case 'openBox': case 'setRespawn': case 'end': break
           default: bad('unknown op')
         }
@@ -1634,6 +1663,7 @@ class StoryBuilder implements PopHost {
       }
     }
     this.problems.push(...validateStoryMigrations(this.sc.quests, this.sc.migrations ?? MIGRATIONS))
+    this.problems.push(...validateChapters(CONTENT.text, w.towns.map((t) => t.id), quests.get('main')?.stages.length ?? 0))
   }
 }
 
@@ -1654,6 +1684,7 @@ export function applyStory(world: World, sc: StoryContent = STORY_CONTENT): void
   for (const [group, list] of Object.entries(sc.npcGroups)) for (const spec of list) b.addNpc(spec, {}, `npcs/${group}`)
   b.place()
   b.populate()
+  b.retargetQuests()
   b.validate()
   PROBLEMS.set(world, b.problems)
   FEATURES.set(world, { legends: b.legends, bounties: b.bounties, triggers: b.triggers })
